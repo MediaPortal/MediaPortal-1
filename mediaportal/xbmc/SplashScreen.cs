@@ -23,13 +23,14 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using System;
-using System.Xml;
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal
 {
@@ -90,15 +91,16 @@ namespace MediaPortal
     public bool isStopped()
     {
       // do only return the state of the normal splashscreen to allow mp to work during the delay stop phase of the fullscreen splash
-      return (frm == null); 
+      return (frm == null);
     }
+
     /// <summary>
     /// Set the contents of the information label of the splash screen
     /// </summary>
     /// <param name="information">the information to set</param>
     public void SetInformation(string information)
     {
-        info = information;
+      info = information;
     }
 
     /// <summary>
@@ -113,14 +115,20 @@ namespace MediaPortal
         bool useFullScreenSplash = true;
         bool startFullScreen = true;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
           startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);
         }
 
-        if (useFullScreenSplash && startFullScreen) ShowFullScreenSplashScreen();
-        else ShowNormalSplash();
+        if (useFullScreenSplash && startFullScreen)
+        {
+          ShowFullScreenSplashScreen();
+        }
+        else
+        {
+          ShowNormalSplash();
+        }
       }
       catch (Exception e)
       {
@@ -150,7 +158,7 @@ namespace MediaPortal
         //Application.DoEvents();
       }
       frm.FadeOut();
-      frm.Close();  //closes, and disposes the form
+      frm.Close(); //closes, and disposes the form
       frm = null;
     }
 
@@ -165,11 +173,11 @@ namespace MediaPortal
       //frmFull.pbBackground.Image = new System.Drawing.Bitmap(GetBackgroundImagePath());
       frmFull.RetrieveSplashScreenInfo();
 
-      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - frmFull.Width / 2) + 1;
-      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - frmFull.Height / 2) + 1;
+      frmFull.Left = (Screen.PrimaryScreen.Bounds.Width/2 - frmFull.Width/2) + 1;
+      frmFull.Top = (Screen.PrimaryScreen.Bounds.Height/2 - frmFull.Height/2) + 1;
 
       frmFull.lblMain.Parent = frmFull.pbBackground;
-      frmFull.lblVersion .Parent = frmFull.lblMain;
+      frmFull.lblVersion.Parent = frmFull.lblMain;
       frmFull.lblCVS.Parent = frmFull.lblMain;
 
       frmFull.SetVersion(Version);
@@ -178,20 +186,22 @@ namespace MediaPortal
       frmFull.Update();
       //frmFull.FadeIn(); // remarked because without it the start looks faster (more powerful and responding)
       frmFull.Opacity = 100;
-      
+
       string oldInfo = null;
       bool delayedStopAllowed = false;
-      int stopRequestTime = 0; 
-      while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null)) //run until stop of splashscreen is requested
+      int stopRequestTime = 0;
+      while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null))
+        //run until stop of splashscreen is requested
       {
         if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
         {
-          stopRequestTime = System.Environment.TickCount;
+          stopRequestTime = Environment.TickCount;
           frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
         }
-        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null) // Allow other Windows to Overlay the splashscreen
+        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
+          // Allow other Windows to Overlay the splashscreen
         {
-          if (OutDatedSkinForm.Visible)  // prepare everything to let the Outdated skin message appear
+          if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
           {
             if (frmFull.Focused)
             {
@@ -209,7 +219,10 @@ namespace MediaPortal
             Cursor.Hide();
           }
         }
-        if ((stopRequestTime != 0) && ((System.Environment.TickCount - 5000) > stopRequestTime)) delayedStopAllowed = true; // if stop is requested for more than 5sec ... leave the loop
+        if ((stopRequestTime != 0) && ((Environment.TickCount - 5000) > stopRequestTime))
+        {
+          delayedStopAllowed = true; // if stop is requested for more than 5sec ... leave the loop
+        }
 
         if (oldInfo != info)
         {
@@ -224,11 +237,11 @@ namespace MediaPortal
       frmFull = null;
     }
 
-    
+
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>
-    private class SplashForm : MediaPortal.UserInterface.Controls.MPForm
+    private class SplashForm : MPForm
     {
       private Panel panel1;
       private Label versionLabel;
@@ -272,7 +285,7 @@ namespace MediaPortal
           string time = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
           cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
-          Log.Info("Version: {0}", cvsLabel.Text);          
+          Log.Info("Version: {0}", cvsLabel.Text);
         }
         Update();
       }
@@ -326,7 +339,7 @@ namespace MediaPortal
         this.cvsLabel = new System.Windows.Forms.Label();
         this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.panel1.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
         // panel1
@@ -352,7 +365,7 @@ namespace MediaPortal
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
         this.informationLabel.Font =
           new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte)(0)));
+                                  ((byte) (0)));
         this.informationLabel.Location = new System.Drawing.Point(15, 99);
         this.informationLabel.Name = "informationLabel";
         this.informationLabel.Size = new System.Drawing.Size(358, 16);
@@ -369,7 +382,7 @@ namespace MediaPortal
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
         this.versionLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte)(0)));
+                                  ((byte) (0)));
         this.versionLabel.Location = new System.Drawing.Point(267, 79);
         this.versionLabel.Name = "versionLabel";
         this.versionLabel.Size = new System.Drawing.Size(100, 16);
@@ -386,7 +399,7 @@ namespace MediaPortal
         this.cvsLabel.BackColor = System.Drawing.Color.Transparent;
         this.cvsLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte)(0)));
+                                  ((byte) (0)));
         this.cvsLabel.Location = new System.Drawing.Point(24, 79);
         this.cvsLabel.Name = "cvsLabel";
         this.cvsLabel.Size = new System.Drawing.Size(200, 16);
@@ -420,14 +433,11 @@ namespace MediaPortal
         this.Text = "SplashScreen";
         this.TopMost = true;
         this.panel1.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
       }
 
       #endregion
     }
-
   }
-
-
- }
+}

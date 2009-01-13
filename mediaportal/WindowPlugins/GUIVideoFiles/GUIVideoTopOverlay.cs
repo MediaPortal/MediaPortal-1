@@ -28,28 +28,24 @@ using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Video
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
+  /// <summary>
+  /// Summary description for Class1.
+  /// </summary>
   public class GUIVideoTopOverlay : GUIOverlayWindow, IRenderLayer
   {
+    [SkinControl(4)] protected GUIImage imagePause = null;
+    [SkinControl(5)] protected GUIImage imageFastForward = null;
+    [SkinControl(6)] protected GUIImage imageRewind = null;
 
-    [SkinControlAttribute(4)]
-    protected GUIImage imagePause = null;
-    [SkinControlAttribute(5)]
-    protected GUIImage imageFastForward = null;
-    [SkinControlAttribute(6)]
-    protected GUIImage imageRewind = null;
-
-		public GUIVideoTopOverlay()
-		{
-			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY_TOP;
-		}
+    public GUIVideoTopOverlay()
+    {
+      GetID = (int) Window.WINDOW_VIDEO_OVERLAY_TOP;
+    }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOverlayTop.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY_TOP;
+      GetID = (int) Window.WINDOW_VIDEO_OVERLAY_TOP;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TopOverlay);
       return bResult;
     }
@@ -57,45 +53,64 @@ namespace MediaPortal.GUI.Video
     public override bool SupportsDelayedLoad
     {
       get { return false; }
-    }    
-    public override void PreInit()
-		{
-			base.PreInit();
-      AllocResources();
-    
     }
+
+    public override void PreInit()
+    {
+      base.PreInit();
+      AllocResources();
+    }
+
     public override void Render(float timePassed)
     {
     }
-    
+
     public override bool DoesPostRender()
     {
-			if (GUIGraphicsContext.IsFullScreenVideo) return false;
-			if (GUIGraphicsContext.Calibrating) return false;
-			if (!GUIGraphicsContext.Overlay) return false;
-      if (!g_Player.Playing) return false;
-      if (g_Player.IsMusic) return false;
-      
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        return false;
+      }
+      if (GUIGraphicsContext.Calibrating)
+      {
+        return false;
+      }
+      if (!GUIGraphicsContext.Overlay)
+      {
+        return false;
+      }
+      if (!g_Player.Playing)
+      {
+        return false;
+      }
+      if (g_Player.IsMusic)
+      {
+        return false;
+      }
+
       return true;
     }
-    
-    public override void PostRender(float timePassed,int iLayer)
+
+    public override void PostRender(float timePassed, int iLayer)
     {
       imagePause.Visible = g_Player.Paused;
       imageRewind.Visible = (g_Player.Speed < 0);
-      imageFastForward.Visible = (g_Player.Speed>1);
+      imageFastForward.Visible = (g_Player.Speed > 1);
       base.Render(timePassed);
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return DoesPostRender();
     }
+
     public void RenderLayer(float timePassed)
     {
       PostRender(timePassed, 2);
     }
+
     #endregion
-	}
+  }
 }

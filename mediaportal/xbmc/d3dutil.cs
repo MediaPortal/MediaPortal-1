@@ -23,17 +23,10 @@
 
 #endregion
 
-using System;
-using System.Windows.Forms;
-using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal
 {
-
-
   /// <summary>
   /// Various helper functions for graphics samples
   /// </summary>
@@ -42,8 +35,8 @@ namespace MediaPortal
     /// <summary>
     /// Private Constructor 
     /// </summary>
-    private D3DUtil() 
-    { 
+    private D3DUtil()
+    {
     }
 
     /// <summary>
@@ -83,8 +76,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Gets the number of alpha channel bits 
     /// </summary>
@@ -122,8 +113,6 @@ namespace MediaPortal
     }
 
 
-
-    
     /// <summary>
     /// Gets the number of depth bits
     /// </summary>
@@ -149,8 +138,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Gets the number of stencil bits
     /// </summary>
@@ -174,8 +161,5 @@ namespace MediaPortal
           return 0;
       }
     }
-
-
-
   }
-};
+} ;

@@ -24,51 +24,50 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Diagnostics;
+using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Picture.Database;
 
-class SlideCache
+internal class SlideCache
 {
-  enum RelativeIndex
+  private enum RelativeIndex
   {
     Prev = 0,
     Curr = 1,
     Next = 2
   }
 
-  Thread _prefetchingThread;
-  Object _prefetchingThreadLock = new Object();
+  private Thread _prefetchingThread;
+  private Object _prefetchingThreadLock = new Object();
 
-  SlidePicture[] _slides = new SlidePicture[3];
-  Object _slidesLock = new Object();
+  private SlidePicture[] _slides = new SlidePicture[3];
+  private Object _slidesLock = new Object();
 
-  string _neededSlideFilePath;
-  RelativeIndex _neededSlideRelativeIndex;
+  private string _neededSlideFilePath;
+  private RelativeIndex _neededSlideRelativeIndex;
 
   private SlidePicture NeededSlide
   {
-    get { return _slides[(int)_neededSlideRelativeIndex]; }
-    set { _slides[(int)_neededSlideRelativeIndex] = value; }
+    get { return _slides[(int) _neededSlideRelativeIndex]; }
+    set { _slides[(int) _neededSlideRelativeIndex] = value; }
   }
 
   private SlidePicture PrevSlide
   {
-    get { return _slides[(int)RelativeIndex.Prev]; }
-    set { _slides[(int)RelativeIndex.Prev] = value; }
+    get { return _slides[(int) RelativeIndex.Prev]; }
+    set { _slides[(int) RelativeIndex.Prev] = value; }
   }
 
   private SlidePicture CurrentSlide
   {
-    get { return _slides[(int)RelativeIndex.Curr]; }
-    set { _slides[(int)RelativeIndex.Curr] = value; }
+    get { return _slides[(int) RelativeIndex.Curr]; }
+    set { _slides[(int) RelativeIndex.Curr] = value; }
   }
 
   private SlidePicture NextSlide
   {
-    get { return _slides[(int)RelativeIndex.Next]; }
-    set { _slides[(int)RelativeIndex.Next] = value; }
+    get { return _slides[(int) RelativeIndex.Next]; }
+    set { _slides[(int) RelativeIndex.Next] = value; }
   }
 
   public SlidePicture GetCurrentSlide(string slideFilePath)
@@ -93,17 +92,25 @@ class SlideCache
     }
 
     while (_prefetchingThread != null)
+    {
       GUIWindowManager.Process();
+    }
 
     lock (_slidesLock)
     {
       // try and use pre-fetched slide if appropriate
       if (NextSlide != null && NextSlide.FilePath == slideFilePath)
+      {
         return NextSlide;
+      }
       else if (PrevSlide != null && PrevSlide.FilePath == slideFilePath)
+      {
         return PrevSlide;
+      }
       else if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
+      {
         return CurrentSlide;
+      }
       else
       {
         // slide is not in cache, so get it now
@@ -189,7 +196,9 @@ class SlideCache
       // abort is expected when slide changes outpace prefetch, ignore
       // Trace.WriteLine(String.Format("  ...aborted {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
     }
-    catch (Exception) { }
+    catch (Exception)
+    {
+    }
   }
 
   public void InvalidateSlide(string slideFilePath)

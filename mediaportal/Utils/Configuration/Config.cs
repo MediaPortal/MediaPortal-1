@@ -33,6 +33,7 @@ namespace MediaPortal.Configuration
   public class Config
   {
     #region Enums
+
     public enum Dir
     {
       // Path holding Path Information
@@ -50,13 +51,17 @@ namespace MediaPortal.Configuration
       CustomInputDefault,
       BurnerSupport,
     }
+
     #endregion
 
     #region Variables
+
     private static Dictionary<Dir, string> directories;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Private constructor. Singleton. Do not allow any instance of this class.
     /// </summary>
@@ -71,9 +76,11 @@ private Config()
       directories = new Dictionary<Dir, string>();
       LoadDirs(AppDomain.CurrentDomain.BaseDirectory);
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Returns the complete path for the specified file in the specified MP directory.
     /// </summary>
@@ -192,21 +199,30 @@ private Config()
     {
       get
       {
-        string userFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\MediaPortalDirs.xml";
+        string userFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
+                          @"\Team MediaPortal\MediaPortalDirs.xml";
         string baseFile = AppDomain.CurrentDomain.BaseDirectory + "MediaPortalDirs.xml";
 
         if (!File.Exists(userFile))
+        {
           return false;
+        }
 
         if (File.GetLastWriteTimeUtc(userFile) < File.GetLastWriteTimeUtc(baseFile))
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Read the Directory Configuration from the Config File.
     /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
@@ -258,7 +274,6 @@ private Config()
                 XmlNode path = nodeDir.SelectSingleNode("Path");
                 if (path != null)
                 {
-
                   string strPath = path.InnerText;
                   string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                   strPath = strPath.Replace("%APPDATA%", appData);
@@ -290,7 +305,7 @@ private Config()
                   }
                   try
                   {
-                    Set((Dir)Enum.Parse(typeof(Dir), dirId.InnerText), strPath);
+                    Set((Dir) Enum.Parse(typeof (Dir), dirId.InnerText), strPath);
                   }
                   catch (Exception)
                   {
@@ -361,6 +376,7 @@ private Config()
         directories[path] = Path.GetFullPath(value);
       }
     }
+
     #endregion
   }
 }

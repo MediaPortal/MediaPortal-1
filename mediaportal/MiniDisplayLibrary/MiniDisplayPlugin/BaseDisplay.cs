@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
   public abstract class BaseDisplay
   {
@@ -9,4 +7,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

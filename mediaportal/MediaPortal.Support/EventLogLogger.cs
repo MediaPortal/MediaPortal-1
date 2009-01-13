@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -35,6 +32,7 @@ namespace MediaPortal.Support
   public class EventLogLogger : ILogCreator
   {
     private string logname;
+
     public EventLogLogger(string logname)
     {
       this.logname = logname;

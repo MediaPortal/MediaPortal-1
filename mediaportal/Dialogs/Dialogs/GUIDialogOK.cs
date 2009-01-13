@@ -23,10 +23,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using MediaPortal.GUI.Library;
-
 
 namespace MediaPortal.Dialogs
 {
@@ -35,25 +32,25 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogOK : GUIDialogWindow
   {
-    [SkinControlAttribute(10)]    protected GUIButtonControl btnNo = null;
-    [SkinControlAttribute(11)]    protected GUIButtonControl btnYes = null;
-    bool m_bConfirmed = false;
-    
+    [SkinControl(10)] protected GUIButtonControl btnNo = null;
+    [SkinControl(11)] protected GUIButtonControl btnYes = null;
+    private bool m_bConfirmed = false;
+
     public GUIDialogOK()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_OK;
+      GetID = (int) Window.WINDOW_DIALOG_OK;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogOK.xml");
     }
-    
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT :
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             SetControlLabel(GetID, 1, string.Empty);
             base.OnMessage(message);
@@ -110,13 +107,22 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(string.Empty);
-      else SetHeading(GUILocalizeStrings.Get(iString));
+      if (iString == 0)
+      {
+        SetHeading(string.Empty);
+      }
+      else
+      {
+        SetHeading(GUILocalizeStrings.Get(iString));
+      }
     }
 
     public void SetLine(int iLine, string strLine)
     {
-      if (iLine <= 0) return;
+      if (iLine <= 0)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1 + iLine, 0, 0, null);
       msg.Label = strLine;
       OnMessage(msg);
@@ -124,10 +130,15 @@ namespace MediaPortal.Dialogs
 
     public void SetLine(int iLine, int iString)
     {
-      if (iLine <= 0) return;
-      if (iString == 0) SetLine(iLine, string.Empty);
+      if (iLine <= 0)
+      {
+        return;
+      }
+      if (iString == 0)
+      {
+        SetLine(iLine, string.Empty);
+      }
       SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
-
   }
 }

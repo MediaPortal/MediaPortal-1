@@ -28,7 +28,6 @@ using MediaPortal.Services;
 
 namespace MediaPortal.Tests.MockObjects
 {
-
   /// <summary>
   /// Dummy <see cref="ILog"/> service implementation that does absolutely nothing.
   /// </summary>

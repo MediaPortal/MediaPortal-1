@@ -1,12 +1,11 @@
 using System;
-using System.Windows.Forms;
-using XPBurn;
-using XPBurn.COM;
-using System.Diagnostics;
 using System.Collections;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
+using XPBurn.COM;
 
 namespace XPBurn
 {
@@ -21,86 +20,83 @@ namespace XPBurn
 
     // Property backing stores
 
-    unsafe uint** fProgressCookie;
-    XPBurnIStorage fRootStorage;
-    bool fIsBurning;
-    bool fIsErasing;
-    RecordType fActiveFormat;
-    SupportedRecordTypes fSupportedFormats;
-    int fBurnerDrive;
-    string fVendor;
-    string fProductID;
-    string fRevision;
-    bool fSimulate;
-    bool fEjectAfterBurn;
-    RecorderType fRecorderType;
+    private unsafe uint** fProgressCookie;
+    private XPBurnIStorage fRootStorage;
+    private bool fIsBurning;
+    private bool fIsErasing;
+    private RecordType fActiveFormat;
+    private SupportedRecordTypes fSupportedFormats;
+    private int fBurnerDrive;
+    private string fVendor;
+    private string fProductID;
+    private string fRevision;
+    private bool fSimulate;
+    private bool fEjectAfterBurn;
+    private RecorderType fRecorderType;
 
     // End property backing stores
 
     // Backing stores which need to be cloned before returning
 
-    ArrayList fMusicRecorderDrives;
-    ArrayList fDataRecorderDrives;
-    Hashtable fFiles;
+    private ArrayList fMusicRecorderDrives;
+    private ArrayList fDataRecorderDrives;
+    private Hashtable fFiles;
 
     // END backing stores which need to be cloned before returning
 
     // Internal fields
 
-    IDiscMaster fDiscMaster;
-    IDiscRecorder fActiveRecorder;
-    IJolietDiscMaster fDataDiscWriter;
-    IRedbookMaster fMusicDiscWriter;
+    private IDiscMaster fDiscMaster;
+    private IDiscRecorder fActiveRecorder;
+    private IJolietDiscMaster fDataDiscWriter;
+    private IRedbookMaster fMusicDiscWriter;
     // TODO: Should be List<IDiscRecorder>
-    ArrayList fMusicRecorders;
+    private ArrayList fMusicRecorders;
     // TODO: Should be List<IDiscRecorder>
-    ArrayList fDataRecorders;
-    byte[] fBuffer;
-    ArrayList fFileNames;
-    int fFileListOffset;
-    bool fFullErase;
-    XPBurnMessageQueue fMessageQueue;
+    private ArrayList fDataRecorders;
+    private byte[] fBuffer;
+    private ArrayList fFileNames;
+    private int fFileListOffset;
+    private bool fFullErase;
+    private XPBurnMessageQueue fMessageQueue;
 
     #endregion
 
-
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    struct RIFFChunk
+    private struct RIFFChunk
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      public char[] riff;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public char[] riff;
       public int length;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      public char[] wave;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public char[] wave;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    struct FormatHeader
+    private struct FormatHeader
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-      public char[] formatHeader;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] public char[] formatHeader;
       // Format Fields
-      short audioFormat;
-      short numOfChannels;
-      int sampleRate;
-      int avgBytesPerSecond;
-      short bytesPerSample;
-      short bitsPerSample;
+      private short audioFormat;
+      private short numOfChannels;
+      private int sampleRate;
+      private int avgBytesPerSecond;
+      private short bytesPerSample;
+      private short bitsPerSample;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    struct DataChunk
+    private struct DataChunk
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      public char[] data;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public char[] data;
       public int length;
     }
 
-    private object RawDeserializeEx(byte[] rawdata, System.Type t)
+    private object RawDeserializeEx(byte[] rawdata, Type t)
     {
       int rawsize = Marshal.SizeOf(t);
       if (rawsize > rawdata.Length)
+      {
         return null;
+      }
       GCHandle handle = GCHandle.Alloc(rawdata, GCHandleType.Pinned);
       IntPtr buffer = handle.AddrOfPinnedObject();
       object retobj = Marshal.PtrToStructure(buffer, t);
@@ -131,25 +127,25 @@ namespace XPBurn
             }
           }
 
-          byte[] b = new byte[Marshal.SizeOf(typeof(RIFFChunk))];
+          byte[] b = new byte[Marshal.SizeOf(typeof (RIFFChunk))];
           fileStream.Read(b, 0, b.Length);
 
           // Load riffchunk of wav file
-          RIFFChunk riffChunk = (RIFFChunk)RawDeserializeEx(b, typeof(RIFFChunk));
+          RIFFChunk riffChunk = (RIFFChunk) RawDeserializeEx(b, typeof (RIFFChunk));
 
           // check for valid file
           if (new string(riffChunk.riff) != "RIFF"
-            && new string(riffChunk.wave) != "WAVE")
+              && new string(riffChunk.wave) != "WAVE")
           {
             throw new Exception("Not a valid wav file!");
           }
 
-          b = new byte[Marshal.SizeOf(typeof(FormatHeader))];
+          b = new byte[Marshal.SizeOf(typeof (FormatHeader))];
           fileStream.Read(b, 0, b.Length);
-          FormatHeader formatHeader = (FormatHeader)RawDeserializeEx(b, typeof(FormatHeader));
+          FormatHeader formatHeader = (FormatHeader) RawDeserializeEx(b, typeof (FormatHeader));
 
           DataChunk dataChunk;
-          b = new byte[Marshal.SizeOf(typeof(DataChunk))];
+          b = new byte[Marshal.SizeOf(typeof (DataChunk))];
 
           // Locate the the .wav data chunk. I think a whole
           // bunch of meta data is stored in the front of the file
@@ -159,7 +155,7 @@ namespace XPBurn
           {
             // Load DataChunks in the wav file
             int nRead = fileStream.Read(b, 0, b.Length);
-            dataChunk = (DataChunk)RawDeserializeEx(b, typeof(DataChunk));
+            dataChunk = (DataChunk) RawDeserializeEx(b, typeof (DataChunk));
 
             if (nRead == 0)
             {
@@ -171,7 +167,8 @@ namespace XPBurn
               break;
             }
 
-            Debug.WriteLine(String.Format("Skipping chunk: '{0}{1}{2}{3}'", dataChunk.data[0], dataChunk.data[1], dataChunk.data[2], dataChunk.data[3]));
+            Debug.WriteLine(String.Format("Skipping chunk: '{0}{1}{2}{3}'", dataChunk.data[0], dataChunk.data[1],
+                                          dataChunk.data[2], dataChunk.data[3]));
 
             int i = 0;
             while (i < dataChunk.length)
@@ -179,13 +176,15 @@ namespace XPBurn
               char[] buffer = new char[16];
               int nToRead = 16;
               if (nToRead > (dataChunk.length - i))
+              {
                 nToRead = (dataChunk.length - i);
+              }
 
               b = new byte[16];
-              nRead = fileStream.Read(b, 0, (int)nToRead);
+              nRead = fileStream.Read(b, 0, (int) nToRead);
               for (int x = 0; x < b.Length; x++)
               {
-                buffer[x] = (char)b[x];
+                buffer[x] = (char) b[x];
               }
 
               if (nRead != nToRead)
@@ -197,31 +196,33 @@ namespace XPBurn
             }
           }
 
-          ulong nBlocksCount = (ulong)dataChunk.length / 2352;
-          if (dataChunk.length % 2352 != 0)
+          ulong nBlocksCount = (ulong) dataChunk.length/2352;
+          if (dataChunk.length%2352 != 0)
+          {
             nBlocksCount++;
+          }
 
           // why might this fail now but worked okay before?
-          fMusicDiscWriter.CreateAudioTrack((int)nBlocksCount);
+          fMusicDiscWriter.CreateAudioTrack((int) nBlocksCount);
 
           for (ulong k = 0; k < nBlocksCount; k++)
           {
             byte[] blocks = new byte[2352];
             ulong nToRead = 2352;
             if (k == (nBlocksCount - 1))
-              nToRead = (ulong)dataChunk.length % 2352;
+            {
+              nToRead = (ulong) dataChunk.length%2352;
+            }
 
-            int nRead = fileStream.Read(blocks, 0, (int)nToRead);
-            if (nRead != (int)nToRead)
+            int nRead = fileStream.Read(blocks, 0, (int) nToRead);
+            if (nRead != (int) nToRead)
             {
               throw new Exception("Error while reading wav file!");
             }
 
             fMusicDiscWriter.AddAudioTrackBlocks(ref blocks[0], 2352);
-
           }
           fMusicDiscWriter.CloseAudioTrack();
-
         }
       }
       catch (Exception)
@@ -252,7 +253,9 @@ namespace XPBurn
         fDataDiscWriter.AddData(fRootStorage, 1);
       }
       else
+      {
         CreateAudioTracks();
+      }
 
       fSimulate = false;
       try
@@ -266,6 +269,7 @@ namespace XPBurn
     }
 
     #region Private Methods
+
     private void EnumerateDiscRecorders()
     {
       Guid guidFormatID;
@@ -309,19 +313,21 @@ namespace XPBurn
         case RecordType.afMusic:
           if ((driveIndex > fMusicRecorders.Count) || (driveIndex < 0))
           {
-            throw new XPBurnException("Unable to set drive to " + driveIndex.ToString() + " because it is not a valid recorder drive");
+            throw new XPBurnException("Unable to set drive to " + driveIndex.ToString() +
+                                      " because it is not a valid recorder drive");
           }
 
-          fActiveRecorder = (IDiscRecorder)fMusicRecorders[driveIndex];
+          fActiveRecorder = (IDiscRecorder) fMusicRecorders[driveIndex];
 
           break;
         case RecordType.afData:
           if ((driveIndex > fDataRecorders.Count) || (driveIndex < 0))
           {
-            throw new XPBurnException("Unable to set drive to " + driveIndex.ToString() + " because it is not a valid recorder drive");
+            throw new XPBurnException("Unable to set drive to " + driveIndex.ToString() +
+                                      " because it is not a valid recorder drive");
           }
 
-          fActiveRecorder = (IDiscRecorder)fDataRecorders[driveIndex];
+          fActiveRecorder = (IDiscRecorder) fDataRecorders[driveIndex];
 
           break;
       }
@@ -362,13 +368,14 @@ namespace XPBurn
       while (fFileListOffset < fFileNames.Count)
       {
         //StreamHelper(fRootStorage, "", (string)fFileNames[fFileListOffset]);
-        StreamHelper(fRootStorage, "", (string)fFileNames[fFileListOffset], (string)fFiles[fFileNames[fFileListOffset]]);
+        StreamHelper(fRootStorage, "", (string) fFileNames[fFileListOffset],
+                     (string) fFiles[fFileNames[fFileListOffset]]);
       }
     }
 
     private void WriteStream(XPBurnIStorage storage, string streamName)
     {
-      string fileToWrite = (string)fFileNames[fFileListOffset];
+      string fileToWrite = (string) fFileNames[fFileListOffset];
 
       if (File.Exists(fileToWrite))
       {
@@ -455,11 +462,13 @@ namespace XPBurn
       {
         if (path != "")
         {
-          nestedFilename = (string)fFiles[fFileNames[fFileListOffset]];
+          nestedFilename = (string) fFiles[fFileNames[fFileListOffset]];
           index = nestedFilename.IndexOf(path);
           if (index != -1)
           {
-            StreamHelper(storage, path, nestedFilename.Substring(index + path.Length, nestedFilename.Length - (index + path.Length)), "");
+            StreamHelper(storage, path,
+                         nestedFilename.Substring(index + path.Length, nestedFilename.Length - (index + path.Length)),
+                         "");
           }
         }
       }
@@ -479,7 +488,7 @@ namespace XPBurn
     /// The constructor for the burn component.  This call does a lot of work under the covers,
     /// including communicating with imapi to find out whether there is an XP compatible cd drive attached.
     /// </summary>
-    unsafe public XPBurnCD()
+    public unsafe XPBurnCD()
     {
       IEnumDiscMasterFormats pEnumDiscFormats;
       uint pcFetched;
@@ -487,7 +496,7 @@ namespace XPBurn
 
       fCancel = false;
       fIsBurning = false;
-      uint cookieValue = (uint)10;
+      uint cookieValue = (uint) 10;
       uint* tempCookie = &cookieValue;
       fProgressCookie = &tempCookie;
 
@@ -506,7 +515,7 @@ namespace XPBurn
 
       try
       {
-        fDiscMaster = (IDiscMaster)new MSDiscMasterObj();
+        fDiscMaster = (IDiscMaster) new MSDiscMasterObj();
       }
       catch (COMException)
       {
@@ -525,13 +534,13 @@ namespace XPBurn
         pEnumDiscFormats.Next(1, out guidFormatID, out pcFetched);
         if (guidFormatID == GUIDS.IID_IJolietDiscMaster)
         {
-          fSupportedFormats = ((SupportedRecordTypes)((int)fSupportedFormats | 1));
+          fSupportedFormats = ((SupportedRecordTypes) ((int) fSupportedFormats | 1));
         }
         else
         {
           if (guidFormatID == GUIDS.IID_IRedbookDiscMaster)
           {
-            fSupportedFormats = ((SupportedRecordTypes)((int)fSupportedFormats | 2));
+            fSupportedFormats = ((SupportedRecordTypes) ((int) fSupportedFormats | 2));
           }
         }
       }
@@ -561,36 +570,43 @@ namespace XPBurn
     /// it may indicate the removal of the recorder on which the component is currently acting.
     /// </summary>
     public event NotifyPnPActivity RecorderChange;
+
     /// <summary>
     /// This event occurs as the first step of the burn process, while data which has been added through 
     /// AddFile is being staged.
     /// </summary>
     public event NotifyCDProgress AddProgress;
+
     /// <summary>
     /// This event is the third step in the burn process (for data CDs), and is the main burning phase.  
     /// While this phase executes, the staged area will be written to the CD.
     /// </summary>
     public event NotifyCDProgress BlockProgress;
+
     /// <summary>
     /// This event is the third step in the burn process (for music CDs).  Currently it will never be invoked.
     /// </summary>
     public event NotifyCDProgress TrackProgress;
+
     /// <summary>
     /// This event is the second step in the burn process, it is called once with an estimated time it will take 
     /// before the recorder starts writing data to the CD.
     /// </summary>
     public event NotifyEstimatedTime PreparingBurn;
+
     /// <summary>
     /// This event occurs as the fourth and final step of the burn process.  It is called once with an estimated time 
     /// it will take before the burn is completely finished (it is during this step that the recorder is writing the 
     /// table of contents of the CD).
     /// </summary>
     public event NotifyEstimatedTime ClosingDisc;
+
     /// <summary>
     /// This event occurs after all four stages of the burn process have completed.  
     /// After this event occurs the burner may burn again.
     /// </summary>
     public event NotifyCompletionStatus BurnComplete;
+
     /// <summary>
     /// This event occurs after an erase has completed.
     /// </summary>
@@ -706,7 +722,6 @@ namespace XPBurn
           if ((fSupportedFormats == SupportedRecordTypes.sfMusic) || (fSupportedFormats == SupportedRecordTypes.sfBoth))
           {
             formatGUID = GUIDS.IID_IRedbookDiscMaster;
-
           }
           else
           {
@@ -795,7 +810,7 @@ namespace XPBurn
 
         if (recorderDrives.Count > 0)
         {
-          return (string)recorderDrives[fBurnerDrive];
+          return (string) recorderDrives[fBurnerDrive];
         }
         else
         {
@@ -826,14 +841,14 @@ namespace XPBurn
           }
           else
           {
-            throw new XPBurnException("Unable to set drive to " + value + ". It either does not exist or cannot burn the current format");
+            throw new XPBurnException("Unable to set drive to " + value +
+                                      ". It either does not exist or cannot burn the current format");
           }
         }
         else
         {
           throw new XPBurnException("There are no drives on this system which burn the active format");
         }
-
       }
     }
 
@@ -885,7 +900,9 @@ namespace XPBurn
         Media result;
 
         if ((fIsErasing) || (fIsBurning))
+        {
           throw new XPBurnException("It's not possible to get media information while burning or erasing the media");
+        }
 
         fActiveRecorder.OpenExclusive();
         try
@@ -909,7 +926,7 @@ namespace XPBurn
     /// Reads the maximum write speed for the currently selected recorder.  
     /// This number will be 4, 8, 10, etc. representing a 4x, 8x, or 10x CD recorder drive.
     /// </summary>
-    unsafe public uint MaxWriteSpeed
+    public unsafe uint MaxWriteSpeed
     {
       get
       {
@@ -923,7 +940,7 @@ namespace XPBurn
         rgPropID = new PROPSPEC();
         rgPropVar = new PROPVARIANT();
         rgPropID.ulKind = 0;
-        rgPropID.__unnamed.lpwstr = (char*)Marshal.StringToCoTaskMemUni(propertyID);
+        rgPropID.__unnamed.lpwstr = (char*) Marshal.StringToCoTaskMemUni(propertyID);
 
         try
         {
@@ -943,7 +960,7 @@ namespace XPBurn
     /// it is occasionally lower if the CD recorder is unreliable at it's max speed.  
     /// This property will be read/write in the future.
     /// </summary>
-    unsafe public uint WriteSpeed
+    public unsafe uint WriteSpeed
     {
       get
       {
@@ -957,7 +974,7 @@ namespace XPBurn
         rgPropID = new PROPSPEC();
         rgPropVar = new PROPVARIANT();
         rgPropID.ulKind = 0;
-        rgPropID.__unnamed.lpwstr = (char*)Marshal.StringToCoTaskMemUni(propertyID);
+        rgPropID.__unnamed.lpwstr = (char*) Marshal.StringToCoTaskMemUni(propertyID);
 
         try
         {
@@ -975,7 +992,7 @@ namespace XPBurn
     /// Reads the current recorder setting for the number of blank audio blocks to put in 
     /// between tracks when writing a music CD.  The default value is 150.
     /// </summary>
-    unsafe public byte AudioGapSize
+    public unsafe byte AudioGapSize
     {
       get
       {
@@ -989,7 +1006,7 @@ namespace XPBurn
         rgPropID = new PROPSPEC();
         rgPropVar = new PROPVARIANT();
         rgPropID.ulKind = 0;
-        rgPropID.__unnamed.lpwstr = (char*)Marshal.StringToCoTaskMemUni(propertyID);
+        rgPropID.__unnamed.lpwstr = (char*) Marshal.StringToCoTaskMemUni(propertyID);
 
         try
         {
@@ -1010,7 +1027,7 @@ namespace XPBurn
     /// Reads the volume name of the CD in the currently selected recorder.  
     /// This property will be read/write in the future.
     /// </summary>
-    unsafe public string VolumeName
+    public unsafe string VolumeName
     {
       get
       {
@@ -1024,7 +1041,7 @@ namespace XPBurn
         rgPropID = new PROPSPEC();
         rgPropVar = new PROPVARIANT();
         rgPropID.ulKind = 0;
-        rgPropID.__unnamed.lpwstr = (char*)Marshal.StringToCoTaskMemUni(propertyID);
+        rgPropID.__unnamed.lpwstr = (char*) Marshal.StringToCoTaskMemUni(propertyID);
 
         try
         {
@@ -1049,7 +1066,7 @@ namespace XPBurn
         //create a new PROPSPEC-Object for reading the VolumeName-Property
         PROPSPEC spec = new PROPSPEC();
         spec.ulKind = 0;
-        spec.__unnamed.lpwstr = (char*)Marshal.StringToBSTR(propertyID);
+        spec.__unnamed.lpwstr = (char*) Marshal.StringToBSTR(propertyID);
 
         //create a new PROPVARIANT-Object for storing the Propertyvalue
         PROPVARIANT pVar = new PROPVARIANT();
@@ -1058,7 +1075,8 @@ namespace XPBurn
         ppPropStg.ReadMultiple(1, ref spec, ref pVar);
 
         //set a new Value
-        pVar.__unnamed.__unnamed.__unnamed.bstrVal = (char*)Marshal.StringToBSTR(value);// StringToCoTaskMemUni(value);
+        pVar.__unnamed.__unnamed.__unnamed.bstrVal = (char*) Marshal.StringToBSTR(value);
+          // StringToCoTaskMemUni(value);
 
         //store it
         ppPropStg.WriteMultiple(1, &spec, &pVar, 2);
@@ -1080,7 +1098,7 @@ namespace XPBurn
           fDataDiscWriter.GetTotalDataBlocks(out pnBlocks);
           fDataDiscWriter.GetDataBlockSize(out pnBlockBytes);
 
-          return pnBlocks * pnBlockBytes;
+          return pnBlocks*pnBlockBytes;
         }
         else
         {
@@ -1104,7 +1122,7 @@ namespace XPBurn
         {
           fDataDiscWriter.GetUsedDataBlocks(out pnBlocks);
           fDataDiscWriter.GetDataBlockSize(out pnBlockBytes);
-          return pnBlocks * pnBlockBytes;
+          return pnBlocks*pnBlockBytes;
         }
         else
         {
@@ -1140,7 +1158,9 @@ namespace XPBurn
 
       NotifyPnPActivity tempDel = RecorderChange;
       if (tempDel != null)
+      {
         tempDel();
+      }
     }
 
     /// <summary>
@@ -1152,7 +1172,9 @@ namespace XPBurn
     {
       NotifyCDProgress tempDel = AddProgress;
       if (tempDel != null)
+      {
         tempDel(nCompletdSteps, nTotalSteps);
+      }
     }
 
     /// <summary>
@@ -1164,7 +1186,9 @@ namespace XPBurn
     {
       NotifyCDProgress tempDel = BlockProgress;
       if (tempDel != null)
+      {
         tempDel(nCompletedSteps, nTotalSteps);
+      }
     }
 
     /// <summary>
@@ -1176,7 +1200,9 @@ namespace XPBurn
     {
       NotifyCDProgress tempDel = TrackProgress;
       if (tempDel != null)
+      {
         tempDel(nCompletedSteps, nTotalSteps);
+      }
     }
 
     /// <summary>
@@ -1187,7 +1213,9 @@ namespace XPBurn
     {
       NotifyEstimatedTime tempDel = PreparingBurn;
       if (tempDel != null)
+      {
         tempDel(nEstimatedSeconds);
+      }
     }
 
     /// <summary>
@@ -1198,7 +1226,9 @@ namespace XPBurn
     {
       NotifyEstimatedTime tempDel = ClosingDisc;
       if (tempDel != null)
+      {
         tempDel(nEstimatedSeconds);
+      }
     }
 
     /// <summary>
@@ -1209,7 +1239,9 @@ namespace XPBurn
     {
       NotifyCompletionStatus tempDel = BurnComplete;
       if (tempDel != null)
+      {
         tempDel(status);
+      }
     }
 
     /// <summary>
@@ -1220,7 +1252,9 @@ namespace XPBurn
     {
       NotifyCompletionStatus tempDel = EraseComplete;
       if (tempDel != null)
+      {
         tempDel(status);
+      }
     }
 
     #endregion
@@ -1233,7 +1267,9 @@ namespace XPBurn
     public void Eject()
     {
       if ((fIsErasing) || (fIsBurning))
+      {
         throw new XPBurnException("The burner is currently in use, either burning or erasing and cannot be ejected");
+      }
 
       fActiveRecorder.OpenExclusive();
       try
@@ -1258,7 +1294,7 @@ namespace XPBurn
         fActiveRecorder.Close();
       }
       fIsErasing = false;
-      fMessageQueue.BeginInvoke(new NotifyCompletionStatus(fMessageQueue.OnEraseComplete), new object[] { (uint)0 });
+      fMessageQueue.BeginInvoke(new NotifyCompletionStatus(fMessageQueue.OnEraseComplete), new object[] {(uint) 0});
     }
 
     /// <summary>
@@ -1268,7 +1304,9 @@ namespace XPBurn
     public void Erase(EraseKind eraseType)
     {
       if ((fIsErasing) || (fIsBurning))
+      {
         throw new XPBurnException("The burner is already either burning or erasing");
+      }
 
 
       // used to check CDR type, but it doesnt seem to detect correctly
@@ -1297,7 +1335,9 @@ namespace XPBurn
       string cdName, root;
 
       if (fIsBurning)
+      {
         throw new XPBurnException("Cannot add or remove files when the cd burner is burning a CD");
+      }
 
       if ((filename == null) || (nameOnCD == null) || (filename == "") || (nameOnCD == ""))
       {
@@ -1342,7 +1382,9 @@ namespace XPBurn
     public void RecordDisc(bool simulate, bool ejectAfterBurn)
     {
       if ((fIsBurning) || (fIsErasing))
+      {
         throw new XPBurnException("The burner is already burning or erasing");
+      }
 
       fIsBurning = true;
       fSimulate = simulate;
@@ -1359,6 +1401,5 @@ namespace XPBurn
     // END: NYI methods
 
     #endregion
-
   }
 }

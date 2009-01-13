@@ -24,12 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
@@ -37,6 +31,7 @@ namespace MediaPortal.MPInstaller
   {
     public string Type = string.Empty;
     public string SubType = string.Empty;
+
     public SkinSelect()
     {
       InitializeComponent();
@@ -54,7 +49,6 @@ namespace MediaPortal.MPInstaller
 
     private void SkinSelect_Load(object sender, EventArgs e)
     {
-
     }
   }
 }

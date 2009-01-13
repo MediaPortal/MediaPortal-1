@@ -24,27 +24,27 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for ParameterForm.
   /// </summary>
-  public class ParameterForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class ParameterForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPListView parametersListView;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private MPButton cancelButton;
+    private MPButton okButton;
+    private MPListView parametersListView;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public ParameterForm()
     {
@@ -74,6 +74,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -89,7 +90,9 @@ namespace MediaPortal.Configuration
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(286, 144);
       this.cancelButton.Name = "cancelButton";
@@ -99,7 +102,9 @@ namespace MediaPortal.Configuration
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Enabled = false;
       this.okButton.Location = new System.Drawing.Point(206, 144);
       this.okButton.Name = "okButton";
@@ -109,12 +114,16 @@ namespace MediaPortal.Configuration
       // 
       // parametersListView
       // 
-      this.parametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                         this.columnHeader1,
-                                                                                         this.columnHeader2});
+      this.parametersListView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                                 {
+                                                   this.columnHeader1,
+                                                   this.columnHeader2
+                                                 });
       this.parametersListView.FullRowSelect = true;
       this.parametersListView.Location = new System.Drawing.Point(8, 8);
       this.parametersListView.Name = "parametersListView";
@@ -122,7 +131,8 @@ namespace MediaPortal.Configuration
       this.parametersListView.TabIndex = 0;
       this.parametersListView.View = System.Windows.Forms.View.Details;
       this.parametersListView.DoubleClick += new System.EventHandler(this.parametersListView_DoubleClick);
-      this.parametersListView.SelectedIndexChanged += new System.EventHandler(this.parametersListView_SelectedIndexChanged);
+      this.parametersListView.SelectedIndexChanged +=
+        new System.EventHandler(this.parametersListView_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
@@ -150,11 +160,11 @@ namespace MediaPortal.Configuration
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Parameter";
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void parametersListView_DoubleClick(object sender, System.EventArgs e)
+    private void parametersListView_DoubleClick(object sender, EventArgs e)
     {
       if (parametersListView.SelectedItems.Count > 0)
       {
@@ -168,7 +178,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void parametersListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void parametersListView_SelectedIndexChanged(object sender, EventArgs e)
     {
       okButton.Enabled = parametersListView.SelectedItems.Count > 0;
     }
@@ -178,7 +188,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void okButton_Click(object sender, System.EventArgs e)
+    private void okButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
       this.Hide();
@@ -189,7 +199,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void cancelButton_Click(object sender, System.EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Hide();
@@ -203,9 +213,13 @@ namespace MediaPortal.Configuration
       get
       {
         if (parametersListView.SelectedItems.Count == 0)
+        {
           return string.Empty;
+        }
         else
+        {
           return parametersListView.SelectedItems[0].Text;
+        }
       }
     }
 
@@ -216,7 +230,7 @@ namespace MediaPortal.Configuration
     /// <param name="description"></param>
     public void AddParameter(string parameter, string description)
     {
-      parametersListView.Items.Add(new ListViewItem(new string[] { parameter, description }));
+      parametersListView.Items.Add(new ListViewItem(new string[] {parameter, description}));
     }
   }
 }

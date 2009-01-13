@@ -26,9 +26,7 @@
 #region Usings
 
 using System;
-using System.Text;
 using System.Threading;
-using System.Collections.Generic;
 
 #endregion
 
@@ -74,47 +72,60 @@ namespace MediaPortal.Threading
 
     #region Constructors
 
-    public ThreadPoolStartInfo() { }
+    public ThreadPoolStartInfo()
+    {
+    }
+
     public ThreadPoolStartInfo(string name)
     {
       this.Name = name;
     }
+
     public ThreadPoolStartInfo(int minThreads)
     {
       this.MinimumThreads = minThreads;
       if (MaximumThreads < MinimumThreads)
+      {
         MaximumThreads = MinimumThreads;
+      }
     }
+
     public ThreadPoolStartInfo(string name, int minThreads)
       : this(name)
     {
       this.MinimumThreads = minThreads;
     }
+
     public ThreadPoolStartInfo(int minThreads, int maxThreads)
       : this(minThreads)
     {
       this.MaximumThreads = maxThreads;
     }
+
     public ThreadPoolStartInfo(string name, int minThreads, int maxThreads)
       : this(name, minThreads)
     {
       this.MaximumThreads = maxThreads;
     }
+
     public ThreadPoolStartInfo(int minThreads, int maxThreads, int idleTimeout)
       : this(minThreads, maxThreads)
     {
       this.ThreadIdleTimeout = idleTimeout;
     }
+
     public ThreadPoolStartInfo(string name, int minThreads, int maxThreads, int idleTimeout)
       : this(name, minThreads, maxThreads)
     {
       this.ThreadIdleTimeout = idleTimeout;
     }
+
     public ThreadPoolStartInfo(int minThreads, int maxThreads, int idleTimeout, bool delayedInit)
       : this(minThreads, maxThreads, idleTimeout)
     {
       this.DelayedInit = delayedInit;
     }
+
     public ThreadPoolStartInfo(string name, int minThreads, int maxThreads, int idleTimeout, bool delayedInit)
       : this(name, minThreads, maxThreads, idleTimeout)
     {
@@ -134,13 +145,22 @@ namespace MediaPortal.Threading
     public static void Validate(ThreadPoolStartInfo tpsi)
     {
       if (tpsi.MinimumThreads < 1)
+      {
         throw new ArgumentOutOfRangeException("MinimumThreads", tpsi.MinimumThreads, "cannot be less than one");
+      }
       if (tpsi.MaximumThreads < 1)
+      {
         throw new ArgumentOutOfRangeException("MaximumThreads", tpsi.MaximumThreads, "cannot be less than one");
+      }
       if (tpsi.MinimumThreads > tpsi.MaximumThreads)
-        throw new ArgumentOutOfRangeException("MinimumThreads", tpsi.MinimumThreads, "must be less or equal to MaximumThreads");
+      {
+        throw new ArgumentOutOfRangeException("MinimumThreads", tpsi.MinimumThreads,
+                                              "must be less or equal to MaximumThreads");
+      }
       if (tpsi.ThreadIdleTimeout < 0)
+      {
         throw new ArgumentOutOfRangeException("ThreadIdleTimeout", tpsi.ThreadIdleTimeout, "cannot be less than zero");
+      }
     }
 
     #endregion

@@ -24,40 +24,36 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using DShowNET;
-using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersMPEG2DecVideo : MediaPortal.Configuration.SectionSettings
+  public class FiltersMPEG2DecVideo : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSettings;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDeinterlaceMethod;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeinterlace;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxForcedSubtitles;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPlanar;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBrightness;
-    private MediaPortal.UserInterface.Controls.MPLabel labelContrast;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHue;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSaturation;
-    private System.Windows.Forms.TrackBar trackBarBrightness;
-    private System.Windows.Forms.TrackBar trackBarContrast;
-    private System.Windows.Forms.TrackBar trackBarHue;
-    private System.Windows.Forms.TrackBar trackBarSaturation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelNote;
-    private MediaPortal.UserInterface.Controls.MPButton buttonReset;
-    private MediaPortal.UserInterface.Controls.MPButton buttonTvDefaults;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOutputInterlaced;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBoxSettings;
+    private MPLabel labelDeinterlaceMethod;
+    private MPComboBox comboBoxDeinterlace;
+    private MPCheckBox checkBoxForcedSubtitles;
+    private MPCheckBox checkBoxPlanar;
+    private MPLabel labelBrightness;
+    private MPLabel labelContrast;
+    private MPLabel labelHue;
+    private MPLabel labelSaturation;
+    private TrackBar trackBarBrightness;
+    private TrackBar trackBarContrast;
+    private TrackBar trackBarHue;
+    private TrackBar trackBarSaturation;
+    private MPLabel labelNote;
+    private MPButton buttonReset;
+    private MPButton buttonTvDefaults;
+    private MPCheckBox checkBoxOutputInterlaced;
+    private IContainer components = null;
 
     /// <summary>
     /// 
@@ -73,7 +69,6 @@ namespace MediaPortal.Configuration.Sections
     public FiltersMPEG2DecVideo(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
     }
@@ -94,6 +89,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -118,16 +114,18 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarContrast = new System.Windows.Forms.TrackBar();
       this.trackBarBrightness = new System.Windows.Forms.TrackBar();
       this.groupBoxSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarSaturation)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarHue)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarContrast)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarBrightness)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxSettings
       // 
-      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSettings.Controls.Add(this.checkBoxOutputInterlaced);
       this.groupBoxSettings.Controls.Add(this.buttonReset);
       this.groupBoxSettings.Controls.Add(this.buttonTvDefaults);
@@ -162,7 +160,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxOutputInterlaced.TabIndex = 15;
       this.checkBoxOutputInterlaced.Text = "Set interlaced flag for output";
       this.checkBoxOutputInterlaced.UseVisualStyleBackColor = true;
-      this.checkBoxOutputInterlaced.CheckedChanged += new System.EventHandler(this.checkBoxOutputInterlaced_CheckedChanged);
+      this.checkBoxOutputInterlaced.CheckedChanged +=
+        new System.EventHandler(this.checkBoxOutputInterlaced_CheckedChanged);
       // 
       // buttonReset
       // 
@@ -186,15 +185,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelNote
       // 
-      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelNote.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelNote.Location = new System.Drawing.Point(13, 362);
       this.labelNote.Name = "labelNote";
       this.labelNote.Size = new System.Drawing.Size(440, 40);
       this.labelNote.TabIndex = 12;
       this.labelNote.Text = "Note: Using a non-planar output format, bob deinterlacer, or adjusting color prop" +
-          "erties may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if ne" +
-          "cessary.";
+                            "erties may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if ne" +
+                            "cessary.";
       // 
       // labelSaturation
       // 
@@ -230,15 +231,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDeinterlace
       // 
-      this.comboBoxDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDeinterlace.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDeinterlace.Items.AddRange(new object[] {
-            "Auto",
-            "Weave",
-            "Blend",
-            "Bob",
-            "Field Shift"});
+      this.comboBoxDeinterlace.Items.AddRange(new object[]
+                                                {
+                                                  "Auto",
+                                                  "Weave",
+                                                  "Blend",
+                                                  "Bob",
+                                                  "Field Shift"
+                                                });
       this.comboBoxDeinterlace.Location = new System.Drawing.Point(131, 103);
       this.comboBoxDeinterlace.Name = "comboBoxDeinterlace";
       this.comboBoxDeinterlace.Size = new System.Drawing.Size(322, 21);
@@ -280,8 +285,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarSaturation
       // 
-      this.trackBarSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarSaturation.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarSaturation.LargeChange = 10;
       this.trackBarSaturation.Location = new System.Drawing.Point(131, 268);
       this.trackBarSaturation.Maximum = 200;
@@ -293,8 +300,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarHue
       // 
-      this.trackBarHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarHue.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarHue.LargeChange = 15;
       this.trackBarHue.Location = new System.Drawing.Point(131, 228);
       this.trackBarHue.Maximum = 360;
@@ -306,8 +315,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarContrast
       // 
-      this.trackBarContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarContrast.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarContrast.LargeChange = 10;
       this.trackBarContrast.Location = new System.Drawing.Point(131, 188);
       this.trackBarContrast.Maximum = 200;
@@ -319,8 +330,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarBrightness
       // 
-      this.trackBarBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarBrightness.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBrightness.LargeChange = 16;
       this.trackBarBrightness.Location = new System.Drawing.Point(131, 148);
       this.trackBarBrightness.Maximum = 256;
@@ -337,60 +350,81 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarSaturation)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarHue)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarContrast)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarBrightness)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    byte[] ConvertFromRegisty(int regValue)
+    private byte[] ConvertFromRegisty(int regValue)
     {
       byte[] tempArray = new byte[4];
       for (int i = 0; i < 4; i++)
-        tempArray[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
+      {
+        tempArray[i] = (byte) ((regValue & (0xFF << 8*i)) >> 8*i);
+      }
       return tempArray;
     }
 
     public override void LoadSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Gabest\Filters\MPEG Video Decoder"))
+      {
         if (subkey != null)
         {
           try
           {
-            if ((int)subkey.GetValue("PlanarYUV") == 1)
+            if ((int) subkey.GetValue("PlanarYUV") == 1)
+            {
               checkBoxPlanar.Checked = true;
+            }
             else
+            {
               checkBoxPlanar.Checked = false;
+            }
 
-            if ((int)subkey.GetValue("ForcedSubtitles") == 1)
+            if ((int) subkey.GetValue("ForcedSubtitles") == 1)
+            {
               checkBoxForcedSubtitles.Checked = true;
+            }
             else
+            {
               checkBoxForcedSubtitles.Checked = false;
+            }
 
-            if ((int)subkey.GetValue("Interlaced") == 1)
+            if ((int) subkey.GetValue("Interlaced") == 1)
+            {
               checkBoxOutputInterlaced.Checked = true;
+            }
             else
+            {
               checkBoxOutputInterlaced.Checked = false;
+            }
 
-            comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
+            comboBoxDeinterlace.SelectedIndex = (int) subkey.GetValue("DeinterlaceMethod");
 
             byte[] convertedKey;
 
-            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Brightness"));
-            trackBarBrightness.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 128;
+            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Brightness"));
+            trackBarBrightness.Value =
+              (int)
+              ((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) +
+              128;
 
-            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Contrast"));
-            trackBarContrast.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Contrast"));
+            trackBarContrast.Value = (int) ((100*BitConverter.ToSingle(convertedKey, 0) + 0.5f));
 
-            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Hue"));
-            trackBarHue.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 180;
+            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Hue"));
+            trackBarHue.Value =
+              (int)
+              ((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) +
+              180;
 
-            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
-            trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Saturation"));
+            trackBarSaturation.Value = (int) ((100*BitConverter.ToSingle(convertedKey, 0) + 0.5f));
           }
           catch (Exception ex)
           {
@@ -398,51 +432,69 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         else
+        {
           Log.Info("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
+        }
+      }
     }
 
     public override void SaveSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Gabest\Filters\MPEG Video Decoder"))
+      {
         if (subkey != null)
         {
           int regValue;
 
           if (checkBoxPlanar.Checked)
+          {
             regValue = 1;
+          }
           else
+          {
             regValue = 0;
+          }
           subkey.SetValue("PlanarYUV", regValue);
 
           if (checkBoxForcedSubtitles.Checked)
+          {
             regValue = 1;
+          }
           else
+          {
             regValue = 0;
+          }
           subkey.SetValue("ForcedSubtitles", regValue);
 
           if (checkBoxOutputInterlaced.Checked)
+          {
             regValue = 1;
+          }
           else
+          {
             regValue = 0;
+          }
           subkey.SetValue("Interlaced", regValue);
 
-          subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
+          subkey.SetValue("DeinterlaceMethod", (int) comboBoxDeinterlace.SelectedIndex);
 
-          float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
+          float brightness = Convert.ToSingle((UInt32) (trackBarBrightness.Value));
           brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 127.5f;
-          subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0), RegistryValueKind.DWord);
+          subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0),
+                          RegistryValueKind.DWord);
 
-          float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
-          contrast = contrast / 100;
+          float contrast = Convert.ToSingle((UInt32) (trackBarContrast.Value));
+          contrast = contrast/100;
           subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
 
-          float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
+          float hue = Convert.ToSingle((UInt32) (trackBarHue.Value));
           hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 179.5f;
           subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
 
-          float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
-          saturation = saturation / 100;
-          subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0), RegistryValueKind.DWord);
+          float saturation = Convert.ToSingle((UInt32) (trackBarSaturation.Value));
+          saturation = saturation/100;
+          subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0),
+                          RegistryValueKind.DWord);
 
           /// Floats are dumped to the registry by taking their address and moving 4 bytes into it (unsigned long conversion)
           /// see ~CMpeg2DecFilter()
@@ -455,6 +507,7 @@ namespace MediaPortal.Configuration.Sections
           //arBitshift[3] = (regValue >> 24) & FF;
           //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
         }
+      }
     }
 
     private void btnReset_Click(object sender, EventArgs e)
@@ -480,6 +533,5 @@ namespace MediaPortal.Configuration.Sections
     {
       comboBoxDeinterlace.Enabled = !checkBoxOutputInterlaced.Checked;
     }
-
   }
 }

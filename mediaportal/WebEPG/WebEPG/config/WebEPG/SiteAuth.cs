@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
 using System.Net;
-using System.Collections;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.config
@@ -36,12 +34,11 @@ namespace MediaPortal.WebEPG.config
   public class SiteAuth
   {
     #region Variables
-    [XmlAttribute("id")]
-    public string id;
-    [XmlAttribute("username")]
-    public string username;
-    [XmlAttribute("password")]
-    public string password;
+
+    [XmlAttribute("id")] public string id;
+    [XmlAttribute("username")] public string username;
+    [XmlAttribute("password")] public string password;
+
     #endregion
 
     public NetworkCredential GetCredentails()

@@ -1,31 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
+using System.Collections.Generic;
 using System.Globalization;
-using MediaPortal.Services;
+using System.IO;
+using System.Xml.Serialization;
 using MediaPortal.Localisation.LanguageStrings;
+using MediaPortal.Services;
 
 namespace MediaPortal.Localisation
 {
   public class LocalisationProvider
   {
     #region Variables
-    Dictionary<string, Dictionary<int, StringLocalised>> _languageStrings;
-    Dictionary<string, CultureInfo> _availableLanguages;
-    List<string> _languageDirectories;
-    CultureInfo _currentLanguage;
-    string _systemDirectory;
-    string _userDirectory;
-    int _characters;
-    bool _prefix;
-    bool _userLanguage;
+
+    private Dictionary<string, Dictionary<int, StringLocalised>> _languageStrings;
+    private Dictionary<string, CultureInfo> _availableLanguages;
+    private List<string> _languageDirectories;
+    private CultureInfo _currentLanguage;
+    private string _systemDirectory;
+    private string _userDirectory;
+    private int _characters;
+    private bool _prefix;
+    private bool _userLanguage;
+
     #endregion
 
     #region Constructors/Destructors
+
     public LocalisationProvider(string systemDirectory, string userDirectory, string cultureName, bool prefix)
     {
       // Base strings directory
@@ -42,12 +43,18 @@ namespace MediaPortal.Localisation
 
       // If the language cannot be found default to Local language or English
       if (cultureName != null && _availableLanguages.ContainsKey(cultureName))
+      {
         _currentLanguage = _availableLanguages[cultureName];
+      }
       else
+      {
         _currentLanguage = GetBestLanguage();
+      }
 
       if (_currentLanguage == null)
+      {
         throw (new ArgumentException("No available language found"));
+      }
 
       _languageStrings = new Dictionary<string, Dictionary<int, StringLocalised>>();
 
@@ -69,9 +76,11 @@ namespace MediaPortal.Localisation
     {
       Clear();
     }
+
     #endregion
 
     #region Properties
+
     public CultureInfo CurrentLanguage
     {
       get { return _currentLanguage; }
@@ -81,9 +90,11 @@ namespace MediaPortal.Localisation
     {
       get { return _characters; }
     }
+
     #endregion
 
     #region Public Methods
+
     public void AddDirection(string directory)
     {
       // Add directory to list, to enable reloading/changing language
@@ -95,7 +106,9 @@ namespace MediaPortal.Localisation
     public void ChangeLanguage(string cultureName)
     {
       if (!_availableLanguages.ContainsKey(cultureName))
+      {
         throw new ArgumentException("Language not available");
+      }
 
       _currentLanguage = _availableLanguages[cultureName];
 
@@ -118,7 +131,9 @@ namespace MediaPortal.Localisation
       {
         string prefix = string.Empty;
         if (_prefix)
+        {
           prefix = _languageStrings[section.ToLower()][id].prefix;
+        }
 
         return prefix + _languageStrings[section.ToLower()][id].text;
       }
@@ -140,7 +155,7 @@ namespace MediaPortal.Localisation
       {
         return String.Format(translation, parameters);
       }
-      catch (System.FormatException)
+      catch (FormatException)
       {
         //Log.Error("Error formatting translation with id {0}", dwCode);
         //Log.Error("Unformatted translation: {0}", translation);
@@ -159,7 +174,7 @@ namespace MediaPortal.Localisation
       for (int i = 0; i < _availableLanguages.Count; i++)
       {
         languageEnumerator.MoveNext();
-        available[i] = (CultureInfo)languageEnumerator.Value;
+        available[i] = (CultureInfo) languageEnumerator.Value;
       }
 
       return available;
@@ -168,7 +183,9 @@ namespace MediaPortal.Localisation
     public bool IsLocalSupported()
     {
       if (_availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Name))
+      {
         return true;
+      }
 
       return false;
     }
@@ -177,27 +194,37 @@ namespace MediaPortal.Localisation
     {
       // Try current local language
       if (_availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Name))
+      {
         return CultureInfo.CurrentCulture;
+      }
 
       // Try Language Parent if it has one
       if (!CultureInfo.CurrentCulture.IsNeutralCulture &&
-        _availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Parent.Name))
+          _availableLanguages.ContainsKey(CultureInfo.CurrentCulture.Parent.Name))
+      {
         return CultureInfo.CurrentCulture.Parent;
+      }
 
       // default to English
       if (_availableLanguages.ContainsKey("en"))
+      {
         return _availableLanguages["en"];
+      }
 
       return null;
     }
+
     #endregion
 
     #region Private Methods
+
     private void LoadUserStrings()
     {
       // Load User Custom strings
       if (_userLanguage)
+      {
         LoadStrings(_userDirectory, "user", false);
+      }
     }
 
     private void LoadStrings(string directory)
@@ -207,11 +234,15 @@ namespace MediaPortal.Localisation
 
       // Parent Language
       if (!_currentLanguage.IsNeutralCulture)
+      {
         LoadStrings(directory, _currentLanguage.Parent.Name, false);
+      }
 
       // Default to English
       if (_currentLanguage.Name != "en")
+      {
         LoadStrings(directory, "en", true);
+      }
     }
 
     private void ReloadAll()
@@ -221,13 +252,17 @@ namespace MediaPortal.Localisation
       LoadUserStrings();
 
       foreach (string directoy in _languageDirectories)
+      {
         LoadStrings(directoy);
+      }
     }
 
     private void Clear()
     {
       if (_languageStrings != null)
+      {
         _languageStrings.Clear();
+      }
 
       _characters = 255;
     }
@@ -239,7 +274,9 @@ namespace MediaPortal.Localisation
       string path = Path.Combine(_userDirectory, "strings_user.xml");
 
       if (File.Exists(path))
+      {
         _userLanguage = true;
+      }
     }
 
     private void GetAvailableLangauges()
@@ -261,7 +298,6 @@ namespace MediaPortal.Localisation
         {
           // Log file error?
         }
-
       }
     }
 
@@ -276,9 +312,9 @@ namespace MediaPortal.Localisation
         StringFile strings;
         try
         {
-          XmlSerializer s = new XmlSerializer(typeof(StringFile));
+          XmlSerializer s = new XmlSerializer(typeof (StringFile));
           TextReader r = new StreamReader(path);
-          strings = (StringFile)s.Deserialize(r);
+          strings = (StringFile) s.Deserialize(r);
         }
         catch (Exception)
         {
@@ -286,7 +322,9 @@ namespace MediaPortal.Localisation
         }
 
         if (_characters < strings.characters)
+        {
           _characters = strings.characters;
+        }
 
         foreach (StringSection section in strings.sections)
         {
@@ -311,15 +349,21 @@ namespace MediaPortal.Localisation
               languageString.language = language;
               newSection.Add(languageString.id, languageString);
               if (log)
-                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}", languageString.ToString());
+              {
+                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}",
+                                                       languageString.ToString());
+              }
             }
           }
 
           if (newSection.Count > 0)
+          {
             _languageStrings.Add(section.name, newSection);
+          }
         }
       }
     }
+
     #endregion
   }
 }

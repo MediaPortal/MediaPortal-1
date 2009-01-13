@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
   public enum Status
   {
@@ -17,4 +15,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     Dialog
   }
 }
-

@@ -1,5 +1,5 @@
-﻿using MediaPortal.GUI.Library;
-using System;
+﻿using System;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
@@ -27,4 +27,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     }
   }
 }
-

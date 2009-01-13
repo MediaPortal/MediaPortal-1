@@ -23,18 +23,13 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.config
 {
   public class WebepgInfo
   {
-    [XmlAttribute("maxGrabDays")]
-    public int GrabDays;
-    [XmlAttribute("grabberDir")]
-    public string GrabberDir;
+    [XmlAttribute("maxGrabDays")] public int GrabDays;
+    [XmlAttribute("grabberDir")] public string GrabberDir;
   }
 }

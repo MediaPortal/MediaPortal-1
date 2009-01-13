@@ -24,32 +24,27 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
 
 namespace ProcessPlugins.DiskSpace
 {
-  public class RecordingManagement : IPlugin, ISetupForm 
+  public class RecordingManagement : IPlugin, ISetupForm
   {
-    System.Windows.Forms.Timer _timer;
+    private Timer _timer;
 
     public RecordingManagement()
     {
-      _timer = new System.Windows.Forms.Timer();
+      _timer = new Timer();
       _timer.Interval = 4*60*60*1000;
       _timer.Enabled = false;
       _timer.Tick += new EventHandler(OnTimerElapsed);
     }
 
-    void OnTimerElapsed(object sender, EventArgs e)
+    private void OnTimerElapsed(object sender, EventArgs e)
     {
       DeleteOldRecordings();
     }
@@ -62,17 +57,20 @@ namespace ProcessPlugins.DiskSpace
     /// </summary>
     /// <remarks>Note, this method will only work after a day-change has occured(and at startup)
     /// </remarks>
-    void DeleteOldRecordings()
+    private void DeleteOldRecordings()
     {
       List<TVRecorded> recordings = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref recordings);
       foreach (TVRecorded rec in recordings)
       {
-        if (!rec.ShouldBeDeleted) continue;
+        if (!rec.ShouldBeDeleted)
+        {
+          continue;
+        }
 
         Log.Info("RecordingManagement: delete old recording: {0} date: {1}",
-                          rec.FileName,
-                          rec.StartTime.ToShortDateString());
+                 rec.FileName,
+                 rec.StartTime.ToShortDateString());
         Recorder.DeleteRecording(rec);
       }
     }
@@ -114,7 +112,8 @@ namespace ProcessPlugins.DiskSpace
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add CallerIdPlugin.GetHome implementation
       strButtonText = null;

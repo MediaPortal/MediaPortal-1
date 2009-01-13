@@ -24,8 +24,8 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MediaPortal.PowerScheduler
 {
@@ -138,13 +138,22 @@ namespace MediaPortal.PowerScheduler
       lock (m_Sync)
       {
         // Block hibernation once
-        if (0 != m_HibCount++) return;
+        if (0 != m_HibCount++)
+        {
+          return;
+        }
 
         // Call kernel 
-        if (ExecutionState.Error == SetThreadExecutionState(ExecutionState.SystemRequired | ExecutionState.Continuous)) throw new PowerException("Could not block Hibernation");
+        if (ExecutionState.Error == SetThreadExecutionState(ExecutionState.SystemRequired | ExecutionState.Continuous))
+        {
+          throw new PowerException("Could not block Hibernation");
+        }
 
         // Report
-        if (null != OnChanged) OnChanged(true);
+        if (null != OnChanged)
+        {
+          OnChanged(true);
+        }
       }
     }
 
@@ -166,13 +175,22 @@ namespace MediaPortal.PowerScheduler
       lock (m_Sync)
       {
         // Unblock
-        if (0 != --m_HibCount) return;
+        if (0 != --m_HibCount)
+        {
+          return;
+        }
 
         // Call kernel
-        if (ExecutionState.Error == SetThreadExecutionState(ExecutionState.Continuous)) throw new PowerException("Could not unblock Hibernation");
+        if (ExecutionState.Error == SetThreadExecutionState(ExecutionState.Continuous))
+        {
+          throw new PowerException("Could not unblock Hibernation");
+        }
 
         // Report
-        if (null != OnChanged) OnChanged(false);
+        if (null != OnChanged)
+        {
+          OnChanged(false);
+        }
       }
     }
 
@@ -219,7 +237,10 @@ namespace MediaPortal.PowerScheduler
       try
       {
         // Trigger events
-        if (null != OnPowerUp) OnPowerUp();
+        if (null != OnPowerUp)
+        {
+          OnPowerUp();
+        }
       }
       finally
       {

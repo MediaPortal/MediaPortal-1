@@ -27,28 +27,30 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
-
-[assembly : AssemblyTitle("DirectShow Net Library")]
-[assembly : AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
-[assembly : AssemblyConfiguration("")]
+[assembly: AssemblyTitle("DirectShow Net Library")]
+[assembly: AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
-[assembly : Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
-[assembly : AssemblyVersion("2.0.0.0")]
+[assembly: Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
+[assembly: AssemblyVersion("2.0.0.0")]
 #if DEBUG
 [assembly: AssemblyProduct("MediaPortal")]
 #else
-[assembly : AssemblyProduct("Release Version")]
+
+[assembly: AssemblyProduct("Release Version")]
 #endif
-[assembly : AssemblyCopyright("GNU Lesser General Public License v2.1")]
-[assembly : AssemblyTrademark("")]
-[assembly : AssemblyCulture("")]
-[assembly : AssemblyDelaySign(false)]
+
+[assembly: AssemblyCopyright("GNU Lesser General Public License v2.1")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyDelaySign(false)]
 // Path is relative to the resulting executable (\Bin\Debug)
 #if USING_NET11
 [assembly : AssemblyKeyFile("..\\..\\DShowNET.snk")]
 #endif
-[assembly : AssemblyKeyName("")]
-[assembly : ComVisible(false)]
-[assembly : CLSCompliant(true)]
-[assembly : SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode=true)]
-[assembly: AssemblyFileVersionAttribute("2.0.0.0")]
+
+[assembly: AssemblyKeyName("")]
+[assembly: ComVisible(false)]
+[assembly: CLSCompliant(true)]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
+[assembly: AssemblyFileVersion("2.0.0.0")]

@@ -21,12 +21,8 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using DirecTV;
-
-using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace ProcessPlugins.DirectTVTunerPlugin
 {
@@ -34,8 +30,8 @@ namespace ProcessPlugins.DirectTVTunerPlugin
   {
     #region global variables
 
-    public static readonly string[] BoxTypes = new string[4] { "RCA (Old)", "RCA (New)", "D10-100", "D10-200" };
-    public static readonly string[] KeyMaps = new string[2] { "RCA keymap", "D10-100/D10-200 keymap" };
+    public static readonly string[] BoxTypes = new string[4] {"RCA (Old)", "RCA (New)", "D10-100", "D10-200"};
+    public static readonly string[] KeyMaps = new string[2] {"RCA keymap", "D10-100/D10-200 keymap"};
 
     private const string _sectionName = "directvtuner";
 
@@ -74,7 +70,7 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("mediaportal.xml"))
+      using (Settings reader = new Settings("mediaportal.xml"))
       {
         _boxName = reader.GetValueAsString(_sectionName, "boxtype", BoxTypes[1]);
         _useOldCommandSet = reader.GetValueAsBool(_sectionName, "oldcommandset", false);
@@ -97,7 +93,7 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings("mediaportal.xml"))
+      using (Settings writer = new Settings("mediaportal.xml"))
       {
         writer.SetValue(_sectionName, "boxtype", _boxName);
         writer.SetValueAsBool(_sectionName, "oldcommandset", _useOldCommandSet);
@@ -260,8 +256,8 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 
     public bool Advanced
     {
-      get {return _advanced;}
-      set {_advanced = value;}
+      get { return _advanced; }
+      set { _advanced = value; }
     }
 
     public bool TwoWayDisable
@@ -281,7 +277,7 @@ namespace ProcessPlugins.DirectTVTunerPlugin
       get { return _allowDigitalSubchannels; }
       set { _allowDigitalSubchannels = value; }
     }
-    #endregion
 
+    #endregion
   }
 }

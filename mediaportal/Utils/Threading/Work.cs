@@ -26,9 +26,7 @@
 #region Usings
 
 using System;
-using System.Text;
 using System.Threading;
-using System.Collections.Generic;
 
 #endregion
 
@@ -52,6 +50,7 @@ namespace MediaPortal.Threading
   #region Work delegates
 
   public delegate void DoWorkHandler();
+
   public delegate void WorkEventHandler(WorkEventArgs args);
 
   #endregion
@@ -59,6 +58,7 @@ namespace MediaPortal.Threading
   public class Work : IWork
   {
     #region Variables
+
     private WorkState _state;
     private string _description;
     private ThreadPriority _priority;
@@ -67,9 +67,11 @@ namespace MediaPortal.Threading
     public DoWorkHandler WorkLoad;
     public WorkEventHandler WorkCompleted;
     private bool _simpleWork = false;
+
     #endregion
 
     #region Constructors
+
     public Work()
     {
       _state = WorkState.INIT;
@@ -79,21 +81,32 @@ namespace MediaPortal.Threading
     }
 
     public Work(DoWorkHandler work)
-      : this(work, string.Empty, ThreadPriority.Normal, null) { }
+      : this(work, string.Empty, ThreadPriority.Normal, null)
+    {
+    }
 
     public Work(DoWorkHandler work, ThreadPriority threadPriority)
-      : this(work, string.Empty, threadPriority, null) { }
+      : this(work, string.Empty, threadPriority, null)
+    {
+    }
 
     public Work(DoWorkHandler work, WorkEventHandler workCompletedHandler)
-      : this(work, string.Empty, ThreadPriority.Normal, workCompletedHandler) { }
+      : this(work, string.Empty, ThreadPriority.Normal, workCompletedHandler)
+    {
+    }
 
     public Work(DoWorkHandler work, string description, ThreadPriority threadPriority)
-      : this(work, description, threadPriority, null) { }
+      : this(work, description, threadPriority, null)
+    {
+    }
 
     public Work(DoWorkHandler work, ThreadPriority threadPriority, WorkEventHandler workCompletedHandler)
-      : this(work, string.Empty, threadPriority, workCompletedHandler) { }
+      : this(work, string.Empty, threadPriority, workCompletedHandler)
+    {
+    }
 
-    public Work(DoWorkHandler work, string description, ThreadPriority threadPriority, WorkEventHandler workCompletedHandler)
+    public Work(DoWorkHandler work, string description, ThreadPriority threadPriority,
+                WorkEventHandler workCompletedHandler)
     {
       WorkLoad = work;
       _description = description;
@@ -112,27 +125,40 @@ namespace MediaPortal.Threading
     {
       // don't perform canceled work
       if (_state == WorkState.CANCELED)
+      {
         return;
+      }
       // don't perform work which is in an invalid state
       if (_state != WorkState.INQUEUE)
-        throw new InvalidOperationException(String.Format("WorkState for work {0} not INQUEUE, but {1}", _description, _state));
+      {
+        throw new InvalidOperationException(String.Format("WorkState for work {0} not INQUEUE, but {1}", _description,
+                                                          _state));
+      }
 
       // mark work as in progress
       if (_simpleWork)
+      {
         State = WorkState.INPROGRESS;
+      }
 
       // perform work 
       if (WorkLoad != null)
+      {
         WorkLoad();
+      }
       else
+      {
         throw new NotImplementedException();
+      }
 
       // mark work as finished and fire work completion delegate
       if (_simpleWork)
       {
         State = WorkState.FINISHED;
         if (WorkCompleted != null)
+        {
           WorkCompleted(_eventArgs);
+        }
       }
     }
 
@@ -182,11 +208,11 @@ namespace MediaPortal.Threading
         return true;
       }
       else
+      {
         return false;
+      }
     }
 
     #endregion
-
   }
-
 }

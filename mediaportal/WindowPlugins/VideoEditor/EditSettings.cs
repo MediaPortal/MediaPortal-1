@@ -1,67 +1,46 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace WindowPlugins.VideoEditor
 {
-	enum EditType
-	{
-		Join,
-		Cut,
-		Convert,
-		Compress,
-	}
-	class EditSettings
-	{
-		string fileName;
-		object settings;
-		bool deleteAfter;
-		EditType type;
+  internal enum EditType
+  {
+    Join,
+    Cut,
+    Convert,
+    Compress,
+  }
 
-		public EditSettings(object setting)
-		{
-			this.settings = setting;
-		}
+  internal class EditSettings
+  {
+    private string fileName;
+    private object settings;
+    private bool deleteAfter;
+    private EditType type;
 
-		public object Settings
-		{
-			get
-			{
-				return settings;
-			}
-		}
-		public string FileName
-		{
-			get
-			{
-				return fileName;
-			}
-			set
-			{
-				fileName = value;
-			}
-		}
-		public bool DeleteAfter
-		{
-			get
-			{
-				return deleteAfter;
-			}
-			set
-			{
-				deleteAfter = value;
-			}
-		}
-		public EditType Type
-		{
-			get
-			{
-				return type;
-			}
-			set
-			{
-				type = value;
-			}
-		}
-	}
+    public EditSettings(object setting)
+    {
+      this.settings = setting;
+    }
+
+    public object Settings
+    {
+      get { return settings; }
+    }
+
+    public string FileName
+    {
+      get { return fileName; }
+      set { fileName = value; }
+    }
+
+    public bool DeleteAfter
+    {
+      get { return deleteAfter; }
+      set { deleteAfter = value; }
+    }
+
+    public EditType Type
+    {
+      get { return type; }
+      set { type = value; }
+    }
+  }
 }

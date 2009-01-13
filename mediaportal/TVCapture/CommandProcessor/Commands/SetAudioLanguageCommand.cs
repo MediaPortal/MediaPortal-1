@@ -24,31 +24,15 @@
 #endregion
 
 #region usings
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
-  public class SetAudioLanguageCommand: CardCommand
+  public class SetAudioLanguageCommand : CardCommand
   {
     protected int _audioPid;
 
@@ -62,18 +46,19 @@ namespace MediaPortal.TV.Recording
       get { return _audioPid; }
       set { _audioPid = value; }
     }
+
     public override void Execute(CommandProcessor handler)
     {
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); // "No tuner cards installed";
         Succeeded = false;
         return;
       }
       if (handler.CurrentCardIndex < 0)
       {
         Succeeded = false;
-        ErrorMessage = GUILocalizeStrings.Get(755);// "No tuner is viewing tv";
+        ErrorMessage = GUILocalizeStrings.Get(755); // "No tuner is viewing tv";
         return;
       }
       Log.WriteFile(LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}", AudioPid);

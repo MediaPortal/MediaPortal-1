@@ -23,10 +23,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Xml.Serialization;
-using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG.config
 {
@@ -36,14 +33,12 @@ namespace MediaPortal.WebEPG.config
   public class MergedChannel
   {
     #region Variables
-    [XmlAttribute("id")]
-    public string id;
-    [XmlAttribute("grabber")]
-    public string grabber;
-    [XmlAttribute("start")]
-    public string start;
-    [XmlAttribute("end")]
-    public string end;
+
+    [XmlAttribute("id")] public string id;
+    [XmlAttribute("grabber")] public string grabber;
+    [XmlAttribute("start")] public string start;
+    [XmlAttribute("end")] public string end;
+
     #endregion
   }
 }

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -35,10 +33,10 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class XmlField
   {
     #region Variables
-    [XmlAttribute("name")]
-    public string FieldName;
-    [XmlAttribute("xmlname")]
-    public string XmlName;
+
+    [XmlAttribute("name")] public string FieldName;
+    [XmlAttribute("xmlname")] public string XmlName;
+
     #endregion
   }
 }

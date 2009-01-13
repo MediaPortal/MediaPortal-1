@@ -24,28 +24,23 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.IO;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using Microsoft.Win32;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class GeneralFileMenu : MediaPortal.Configuration.SectionSettings
+  public class GeneralFileMenu : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox textPinCodeBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPTextBox textTrashcanFolder;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPCheckBox chbEnabled;
+    private MPLabel label1;
+    private MPTextBox textPinCodeBox;
+    private MPLabel label3;
+    private MPTextBox textTrashcanFolder;
+    private IContainer components = null;
 
     public GeneralFileMenu()
       : this("File Menu")
@@ -57,7 +52,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -81,25 +75,26 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        textPinCodeBox.Text = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
+        textPinCodeBox.Text = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
-        xmlwriter.SetValue("filemenu", "pincode", MediaPortal.Util.Utils.EncryptPin(textPinCodeBox.Text));
+        xmlwriter.SetValue("filemenu", "pincode", Util.Utils.EncryptPin(textPinCodeBox.Text));
         xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
       }
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -117,8 +112,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
@@ -140,8 +137,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textPinCodeBox
       // 
-      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textPinCodeBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textPinCodeBox.Location = new System.Drawing.Point(168, 44);
       this.textPinCodeBox.Name = "textPinCodeBox";
       this.textPinCodeBox.Size = new System.Drawing.Size(288, 20);
@@ -169,8 +168,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textTrashcanFolder
       // 
-      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTrashcanFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textTrashcanFolder.Location = new System.Drawing.Point(168, 100);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
       this.textTrashcanFolder.Size = new System.Drawing.Size(288, 20);
@@ -189,17 +190,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void chbEnabled_CheckedChanged(object sender, System.EventArgs e)
+    private void chbEnabled_CheckedChanged(object sender, EventArgs e)
     {
       textPinCodeBox.Enabled = chbEnabled.Checked;
       textTrashcanFolder.Enabled = chbEnabled.Checked;
     }
-
-
   }
 }
-

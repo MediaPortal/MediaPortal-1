@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
@@ -26,10 +25,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       lock (this.m_Obj)
       {
-        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
+                                                bitmap.PixelFormat);
         try
         {
-          int length = bitmapdata.Stride * bitmap.Height;
+          int length = bitmapdata.Stride*bitmap.Height;
           if (((this.m_Buffer == null) || (this.m_Buffer.Length != length)) || !this.m_ReuseBuffer)
           {
             this.m_Buffer = new byte[length];
@@ -48,10 +48,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       lock (this.m_Obj)
       {
-        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
+                                                bitmap.PixelFormat);
         try
         {
-          int length = bitmapdata.Stride * bitmap.Height;
+          int length = bitmapdata.Stride*bitmap.Height;
           if (((this.m_Buffer == null) || (this.m_Buffer.Length != length)) || !this.m_ReuseBuffer)
           {
             this.m_Buffer = new byte[length];
@@ -67,4 +68,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

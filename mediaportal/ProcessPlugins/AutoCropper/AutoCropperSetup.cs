@@ -24,63 +24,59 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Util;
-using DShowNET;
-using DShowNET.Helper;
-using DirectShowLib;
-using System.Diagnostics;
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace ProcessPlugins.AutoCropper
 {
-  public class AutoCropperConfig : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class AutoCropperConfig : MPConfigForm
   {
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableAutoCropper;
+    private IContainer components = null;
+    private MPCheckBox enableAutoCropper;
     private GroupBox Parameters;
-    private MediaPortal.UserInterface.Controls.MPLabel topScanStartLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel bottomScanEndLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel bottomScanStartLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel topScanEndLabel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox manualModeGroup;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableManualMode;
-    private MediaPortal.UserInterface.Controls.MPGroupBox automodeGroup;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableMoveSubs;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableAutoMode;
-    private MediaPortal.UserInterface.Controls.MPLabel autoSampleIntervalLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel manualSampleLengthLabel;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown bottomScanEndInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown topScanEndInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown bottomScanStartInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown topScanStartInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown manualSampleLengthInput;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton defaultsButton;
-    private MediaPortal.UserInterface.Controls.MPLabel minSubtitleHeightLabel;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown minSubtitleHeightInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown bottomMemLength;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown topMemLength;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBottomMemLength;
-    private MediaPortal.UserInterface.Controls.MPLabel labelTopMemLength;
-    private MediaPortal.UserInterface.Controls.MPRadioButton rbDefaultManual;
-    private MediaPortal.UserInterface.Controls.MPRadioButton rbDefaultAutomatic;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupDefaultMode;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbVerboseLog;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbUseForVideos;
-    private MediaPortal.UserInterface.Controls.MPLabel labelWarning;
+    private MPLabel topScanStartLabel;
+    private MPLabel bottomScanEndLabel;
+    private MPLabel bottomScanStartLabel;
+    private MPLabel topScanEndLabel;
+    private MPGroupBox manualModeGroup;
+    private MPCheckBox enableManualMode;
+    private MPGroupBox automodeGroup;
+    private MPCheckBox enableMoveSubs;
+    private MPCheckBox enableAutoMode;
+    private MPLabel autoSampleIntervalLabel;
+    private MPLabel manualSampleLengthLabel;
+    private MPNumericUpDown bottomScanEndInput;
+    private MPNumericUpDown topScanEndInput;
+    private MPNumericUpDown bottomScanStartInput;
+    private MPNumericUpDown topScanStartInput;
+    private MPNumericUpDown manualSampleLengthInput;
+    private MPButton okButton;
+    private MPButton defaultsButton;
+    private MPLabel minSubtitleHeightLabel;
+    private MPNumericUpDown minSubtitleHeightInput;
+    private MPNumericUpDown bottomMemLength;
+    private MPNumericUpDown topMemLength;
+    private MPLabel labelBottomMemLength;
+    private MPLabel labelTopMemLength;
+    private MPRadioButton rbDefaultManual;
+    private MPRadioButton rbDefaultAutomatic;
+    private MPGroupBox groupDefaultMode;
+    private MPCheckBox cbVerboseLog;
+    private MPCheckBox cbUseForVideos;
+    private MPLabel labelWarning;
     private LinkLabel linkHelp;
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPLabel maxBrightnessTresholdLabel;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown maxBrightnessTresholdInput;
-    private MediaPortal.UserInterface.Controls.MPLabel minBrightnessTresholdLabel;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown minBrightnessTresholdInput;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown sampleIntervalInput;
+    private MPButton cancelButton;
+    private MPLabel maxBrightnessTresholdLabel;
+    private MPNumericUpDown maxBrightnessTresholdInput;
+    private MPLabel minBrightnessTresholdLabel;
+    private MPNumericUpDown minBrightnessTresholdInput;
+    private MPNumericUpDown sampleIntervalInput;
 
     public AutoCropperConfig(string name)
       : base()
@@ -101,6 +97,7 @@ namespace ProcessPlugins.AutoCropper
          _init = true;
        }
      }*/
+
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -117,6 +114,7 @@ namespace ProcessPlugins.AutoCropper
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -163,19 +161,19 @@ namespace ProcessPlugins.AutoCropper
       this.linkHelp = new System.Windows.Forms.LinkLabel();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.Parameters.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.maxBrightnessTresholdInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.minBrightnessTresholdInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.minSubtitleHeightInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomScanEndInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topScanEndInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomScanStartInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topScanStartInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.maxBrightnessTresholdInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.minBrightnessTresholdInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.minSubtitleHeightInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomScanEndInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topScanEndInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomScanStartInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topScanStartInput)).BeginInit();
       this.manualModeGroup.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.manualSampleLengthInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.manualSampleLengthInput)).BeginInit();
       this.automodeGroup.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomMemLength)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topMemLength)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.sampleIntervalInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomMemLength)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topMemLength)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.sampleIntervalInput)).BeginInit();
       this.groupDefaultMode.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -194,9 +192,11 @@ namespace ProcessPlugins.AutoCropper
       // 
       // Parameters
       // 
-      this.Parameters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.Parameters.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.Parameters.Controls.Add(this.maxBrightnessTresholdLabel);
       this.Parameters.Controls.Add(this.maxBrightnessTresholdInput);
       this.Parameters.Controls.Add(this.minBrightnessTresholdLabel);
@@ -232,11 +232,13 @@ namespace ProcessPlugins.AutoCropper
       // maxBrightnessTresholdInput
       // 
       this.maxBrightnessTresholdInput.Location = new System.Drawing.Point(154, 137);
-      this.maxBrightnessTresholdInput.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
+      this.maxBrightnessTresholdInput.Maximum = new decimal(new int[]
+                                                              {
+                                                                255,
+                                                                0,
+                                                                0,
+                                                                0
+                                                              });
       this.maxBrightnessTresholdInput.Name = "maxBrightnessTresholdInput";
       this.maxBrightnessTresholdInput.Size = new System.Drawing.Size(61, 20);
       this.maxBrightnessTresholdInput.TabIndex = 22;
@@ -253,11 +255,13 @@ namespace ProcessPlugins.AutoCropper
       // minBrightnessTresholdInput
       // 
       this.minBrightnessTresholdInput.Location = new System.Drawing.Point(154, 172);
-      this.minBrightnessTresholdInput.Maximum = new decimal(new int[] {
-            238,
-            0,
-            0,
-            0});
+      this.minBrightnessTresholdInput.Maximum = new decimal(new int[]
+                                                              {
+                                                                238,
+                                                                0,
+                                                                0,
+                                                                0
+                                                              });
       this.minBrightnessTresholdInput.Name = "minBrightnessTresholdInput";
       this.minBrightnessTresholdInput.Size = new System.Drawing.Size(61, 20);
       this.minBrightnessTresholdInput.TabIndex = 20;
@@ -409,8 +413,10 @@ namespace ProcessPlugins.AutoCropper
       // 
       // automodeGroup
       // 
-      this.automodeGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.automodeGroup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.automodeGroup.Controls.Add(this.bottomMemLength);
       this.automodeGroup.Controls.Add(this.topMemLength);
       this.automodeGroup.Controls.Add(this.labelBottomMemLength);
@@ -502,7 +508,9 @@ namespace ProcessPlugins.AutoCropper
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(266, 446);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(93, 27);
@@ -513,7 +521,9 @@ namespace ProcessPlugins.AutoCropper
       // 
       // defaultsButton
       // 
-      this.defaultsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultsButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultsButton.Location = new System.Drawing.Point(160, 446);
       this.defaultsButton.Name = "defaultsButton";
       this.defaultsButton.Size = new System.Drawing.Size(100, 27);
@@ -549,8 +559,10 @@ namespace ProcessPlugins.AutoCropper
       // 
       // groupDefaultMode
       // 
-      this.groupDefaultMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupDefaultMode.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupDefaultMode.Controls.Add(this.rbDefaultAutomatic);
       this.groupDefaultMode.Controls.Add(this.rbDefaultManual);
       this.groupDefaultMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -563,7 +575,9 @@ namespace ProcessPlugins.AutoCropper
       // 
       // labelWarning
       // 
-      this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelWarning.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelWarning.AutoSize = true;
       this.labelWarning.ForeColor = System.Drawing.Color.Red;
       this.labelWarning.Location = new System.Drawing.Point(119, 9);
@@ -574,7 +588,9 @@ namespace ProcessPlugins.AutoCropper
       // 
       // linkHelp
       // 
-      this.linkHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkHelp.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkHelp.AutoSize = true;
       this.linkHelp.Location = new System.Drawing.Point(10, 453);
       this.linkHelp.Name = "linkHelp";
@@ -586,7 +602,9 @@ namespace ProcessPlugins.AutoCropper
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(365, 446);
       this.cancelButton.Name = "cancelButton";
@@ -618,44 +636,45 @@ namespace ProcessPlugins.AutoCropper
       this.Text = "AutoCropper - Setup";
       this.Parameters.ResumeLayout(false);
       this.Parameters.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.maxBrightnessTresholdInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.minBrightnessTresholdInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.minSubtitleHeightInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomScanEndInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topScanEndInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomScanStartInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topScanStartInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.maxBrightnessTresholdInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.minBrightnessTresholdInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.minSubtitleHeightInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomScanEndInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topScanEndInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomScanStartInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topScanStartInput)).EndInit();
       this.manualModeGroup.ResumeLayout(false);
       this.manualModeGroup.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.manualSampleLengthInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.manualSampleLengthInput)).EndInit();
       this.automodeGroup.ResumeLayout(false);
       this.automodeGroup.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.bottomMemLength)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.topMemLength)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.sampleIntervalInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.bottomMemLength)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.topMemLength)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.sampleIntervalInput)).EndInit();
       this.groupDefaultMode.ResumeLayout(false);
       this.groupDefaultMode.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
-    void OnCancel(object sender, EventArgs e)
+    private void OnCancel(object sender, EventArgs e)
     {
-      this.Close();      
+      this.Close();
     }
 
-    void OnHelp(object sender, EventArgs e)
+    private void OnHelp(object sender, EventArgs e)
     {
       try
       {
-          System.Diagnostics.Process.Start("IExplore", "http://wiki.team-mediaportal.com/MediaPortalSetup_Plugins/AutoCropper");
+        System.Diagnostics.Process.Start("IExplore",
+                                         "http://wiki.team-mediaportal.com/MediaPortalSetup_Plugins/AutoCropper");
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Warn(ex.ToString());
       }
     }
+
     #endregion
 
     public void OnOk(object o, MouseEventArgs args)
@@ -689,8 +708,6 @@ namespace ProcessPlugins.AutoCropper
     // if any settings change check if some options such be hidden
     public void OnChange(object o, EventArgs args)
     {
-
-
       //enableManualMode.Enabled = enableAutoCropper.Checked;
 
       /*if (!enableAutoCropper.Checked)
@@ -744,7 +761,7 @@ namespace ProcessPlugins.AutoCropper
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         this.enableAutoCropper.Checked = reader.GetValueAsBool(autoCropSectionName, enableAutoCropSetting, false);
         this.enableAutoMode.Checked = reader.GetValueAsBool(autoCropSectionName, enableAutoModeSetting, false);
@@ -755,15 +772,18 @@ namespace ProcessPlugins.AutoCropper
         this.bottomScanEndInput.Value = reader.GetValueAsInt(autoCropSectionName, parmBottomEndSetting, 100);
         //this.manualSampleLengthInput.Value = reader.GetValueAsInt(autoCropSectionName, parmManualSampleLength, 30);
         this.minSubtitleHeightInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMinSubtitleHeight, 10);
-        this.topMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmTopMemoryLength, 10); // 10 seconds default
-        this.bottomMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmBottomMemoryLength, 60); // 60 seconds default
+        this.topMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmTopMemoryLength, 10);
+          // 10 seconds default
+        this.bottomMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmBottomMemoryLength, 60);
+          // 60 seconds default
         this.rbDefaultManual.Checked = reader.GetValueAsBool(autoCropSectionName, parmDefaultModeIsManual, true);
         this.cbVerboseLog.Checked = reader.GetValueAsBool(autoCropSectionName, parmVerboseLog, false);
         this.rbDefaultAutomatic.Checked = !rbDefaultManual.Checked;
         this.cbUseForVideos.Checked = reader.GetValueAsBool(autoCropSectionName, parmUseForMyVideos, false);
         this.sampleIntervalInput.Maximum = 10000;
         this.sampleIntervalInput.Minimum = 0;
-        this.sampleIntervalInput.Value = reader.GetValueAsInt(autoCropSectionName, parmSampleInterval, 500); // 2 times a second default
+        this.sampleIntervalInput.Value = reader.GetValueAsInt(autoCropSectionName, parmSampleInterval, 500);
+          // 2 times a second default
         this.minBrightnessTresholdInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMinBrightnessTreshold, 4);
         this.maxBrightnessTresholdInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMaxBrightnessTreshold, 40);
       }
@@ -771,7 +791,7 @@ namespace ProcessPlugins.AutoCropper
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool(autoCropSectionName, enableAutoCropSetting, enableAutoCropper.Checked);
         xmlwriter.SetValueAsBool(autoCropSectionName, enableManualModeSetting, enableManualMode.Checked);
@@ -794,4 +814,3 @@ namespace ProcessPlugins.AutoCropper
     }
   }
 }
-

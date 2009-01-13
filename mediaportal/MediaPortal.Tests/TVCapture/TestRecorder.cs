@@ -23,25 +23,18 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
-using NUnit.Framework;
-using ProcessPlugins.DiskSpace;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using System.IO;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.TVCapture
 {
   [TestFixture]
   public class TestRecorder
   {
-    class CommandProcessorMock : CommandProcessor
+    private class CommandProcessorMock : CommandProcessor
     {
       public override void WaitTillFinished()
       {
@@ -51,21 +44,25 @@ namespace MediaPortal.Tests.TVCapture
           ProcessScheduler();
         }
       }
-    };
+    } ;
 
     [SetUp]
     public void Init()
     {
-        GlobalServiceProvider.Replace<ILog>(new NoLog());
+      GlobalServiceProvider.Replace<ILog>(new NoLog());
 
       TVChannel ch;
       TVDatabase.ClearAll();
 
       // add 3 channels
-      ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL 5"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("SBS 6"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("CNN"); TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 4");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 5");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("SBS 6");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("CNN");
+      TVDatabase.AddChannel(ch);
       CommandProcessorMock proc = new CommandProcessorMock();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       Recorder.Start(proc);
@@ -108,6 +105,7 @@ namespace MediaPortal.Tests.TVCapture
       TimeShiftTv("SBS 6");
       ViewTv("CNN");
     }
+
     [Test]
     public void TestStopTv()
     {
@@ -117,7 +115,7 @@ namespace MediaPortal.Tests.TVCapture
       StopTv();
     }
 
-    void StopTv()
+    private void StopTv()
     {
       string errorMessage;
       Recorder.StartViewing("", false, false, false, out errorMessage);
@@ -129,19 +127,19 @@ namespace MediaPortal.Tests.TVCapture
       Assert.AreEqual(Recorder.TVChannelName, "");
     }
 
-    void TimeShiftTv(string channelName)
+    private void TimeShiftTv(string channelName)
     {
       string errorMessage;
       Recorder.StartViewing(channelName, true, true, false, out errorMessage);
       Recorder.CommandProcessor.WaitTillFinished();
-      
+
 
       Assert.IsTrue(Recorder.IsTimeShifting());
       Assert.IsFalse(Recorder.IsRecording());
       Assert.AreEqual(Recorder.TVChannelName, channelName);
     }
 
-    void ViewTv(string channelName)
+    private void ViewTv(string channelName)
     {
       string errorMessage;
       Recorder.StartViewing(channelName, true, false, false, out errorMessage);

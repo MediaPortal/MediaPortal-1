@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -35,24 +33,23 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class ModifyInfo
   {
     #region Enums
+
     public enum Action
     {
       Replace,
       Remove
     }
+
     #endregion
 
     #region Variables
-    [XmlAttribute("channel")]
-    public string channel;
-    [XmlAttribute("field")]
-    public string field;
-    [XmlAttribute("search")]
-    public string search;
-    [XmlAttribute("action")]
-    public Action action;
-    [XmlText()]
-    public string text;
+
+    [XmlAttribute("channel")] public string channel;
+    [XmlAttribute("field")] public string field;
+    [XmlAttribute("search")] public string search;
+    [XmlAttribute("action")] public Action action;
+    [XmlText()] public string text;
+
     #endregion
   }
 }

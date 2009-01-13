@@ -30,30 +30,24 @@ using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
-	/// <summary>
-	/// WebParser information.
-	/// </summary>
+  /// <summary>
+  /// WebParser information.
+  /// </summary>
   [Serializable]
-	public class WebParserTemplate
-	{
+  public class WebParserTemplate
+  {
     #region Variables
-    [XmlElement("Template")]
-    public List<HtmlParserTemplate> Templates;
-    [XmlArray("DataPreference")]
-    [XmlArrayItem("Preference")]
-    public List<DataPreference> preferences;
-    [XmlArray("Sublinks")]
-    [XmlArrayItem("Sublink")]
-    public List<SublinkInfo> sublinks;
-    [XmlArray("Searches")]
-    [XmlArrayItem("Search")]
-    public List<WebSearchData> searchList;
-    [XmlArray("DateTime")]
-    [XmlArrayItem("Month")]
-    public string[] months;
+
+    [XmlElement("Template")] public List<HtmlParserTemplate> Templates;
+    [XmlArray("DataPreference")] [XmlArrayItem("Preference")] public List<DataPreference> preferences;
+    [XmlArray("Sublinks")] [XmlArrayItem("Sublink")] public List<SublinkInfo> sublinks;
+    [XmlArray("Searches")] [XmlArrayItem("Search")] public List<WebSearchData> searchList;
+    [XmlArray("DateTime")] [XmlArrayItem("Month")] public string[] months;
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets the template.
     /// </summary>
@@ -64,7 +58,9 @@ namespace MediaPortal.WebEPG.Config.Grabber
       for (int i = 0; i < Templates.Count; i++)
       {
         if (Templates[i].Name == name)
+        {
           return Templates[i];
+        }
       }
       return null;
     }
@@ -79,10 +75,13 @@ namespace MediaPortal.WebEPG.Config.Grabber
       for (int i = 0; i < preferences.Count; i++)
       {
         if (preferences[i].Template == name)
+        {
           return preferences[i];
+        }
       }
       return null;
     }
+
     #endregion
   }
 }

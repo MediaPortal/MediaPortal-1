@@ -19,10 +19,6 @@
  *
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace DirecTV
 {
   public class CommandSet
@@ -42,6 +38,7 @@ namespace DirecTV
     public Command REMOTE_CONTROL_KEY;
     public Command SET_CHANNEL_NUMBER;
     public Command DISPLAY_TEXT;
+
     public CommandSet(
       string name,
       Command pwrOff,
@@ -58,7 +55,7 @@ namespace DirecTV
       Command remoteControlKey,
       Command setChanNum,
       Command displayText
-    )
+      )
     {
       this.Name = name;
       this.POWER_OFF = pwrOff;

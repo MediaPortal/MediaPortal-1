@@ -24,20 +24,17 @@
 #endregion
 
 using System;
-
-using NUnit.Framework;
-
 using MediaPortal.Profile;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Profile
 {
   [TestFixture]
   public class SettingsTest
   {
-
     private static Settings CreateXml()
     {
-      return new MediaPortal.Profile.Settings("Core\\guilib\\TestData\\MediaPortal.xml");
+      return new Settings("Core\\guilib\\TestData\\MediaPortal.xml");
     }
 
     [SetUp]
@@ -53,7 +50,6 @@ namespace MediaPortal.Tests.Core.Profile
 
       string ret = doc.GetValue("capture", "country");
       Assert.AreEqual("31", ret);
-
     }
 
     [Test]
@@ -111,6 +107,7 @@ namespace MediaPortal.Tests.Core.Profile
       doc.SetValueAsBool("general", "minimizeonstartup", !val);
       Assert.AreEqual(!val, doc.GetValueAsBool("general", "minimizeonstartup", val));
     }
+
     [Test]
     public void SetGet()
     {

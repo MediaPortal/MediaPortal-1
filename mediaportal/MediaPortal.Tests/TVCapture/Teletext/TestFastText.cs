@@ -23,10 +23,7 @@
 
 #endregion
 
-using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using MediaPortal.TV.Teletext;
 using NUnit.Framework;
@@ -44,13 +41,13 @@ namespace MediaPortal.Tests.Teletext
       Stream stream = assm.GetManifestResourceStream("MediaPortal.Tests.TVCapture.Teletext.FastTextPage");
       BinaryReader reader = new BinaryReader(stream);
       byte[] byPage = new byte[stream.Length];
-      reader.Read(byPage, 0, (int)stream.Length);
+      reader.Read(byPage, 0, (int) stream.Length);
 
       FastTextDecoder decoder = new FastTextDecoder();
       decoder.Decode(byPage);
       Assert.AreEqual(decoder.Red, 0x123);
       Assert.AreEqual(decoder.Green, 0x456);
-      Assert.AreEqual(decoder.Yellow,0x678);
+      Assert.AreEqual(decoder.Yellow, 0x678);
       Assert.AreEqual(decoder.Blue, 0x789);
       Assert.AreEqual(decoder.White, 0x874);
     }

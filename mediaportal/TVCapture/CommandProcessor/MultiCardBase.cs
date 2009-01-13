@@ -24,25 +24,14 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
 using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+using MediaPortal.TV.Database;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -50,6 +39,7 @@ namespace MediaPortal.TV.Recording
   public class MultiCardBase
   {
     public delegate void OnTvViewHandler(int card, TVCaptureDevice device);
+
     public delegate void OnTvChannelChangeHandler(string tvChannelName);
 
     //event which gets called when the tv channel changes (due to zapping for example)
@@ -62,17 +52,15 @@ namespace MediaPortal.TV.Recording
     public event OnTvViewHandler OnTvViewingStopped = null;
 
 
-
     protected int _currentCardIndex = -1;
-    string _currentTvChannel = string.Empty;
+    private string _currentTvChannel = string.Empty;
     protected DateTime _killTimeshiftingTimer;
 
-    static List<TVChannel> _tvChannelsList = new List<TVChannel>();
+    private static List<TVChannel> _tvChannelsList = new List<TVChannel>();
 
 
     public MultiCardBase()
     {
-
       _killTimeshiftingTimer = DateTime.Now;
       TVDatabase.GetChannels(ref _tvChannelsList);
     }
@@ -88,7 +76,9 @@ namespace MediaPortal.TV.Recording
           if (_currentTvChannel != string.Empty)
           {
             if (OnTvChannelChanged != null)
+            {
               OnTvChannelChanged(_currentTvChannel);
+            }
           }
         }
       }
@@ -99,6 +89,7 @@ namespace MediaPortal.TV.Recording
       get { return _currentCardIndex; }
       set { _currentCardIndex = value; }
     }
+
     public virtual void ResetTimeshiftTimer()
     {
       _killTimeshiftingTimer = DateTime.Now;
@@ -126,19 +117,29 @@ namespace MediaPortal.TV.Recording
     public void OnTvStopped(int card, TVCaptureDevice device)
     {
       if (OnTvViewingStopped != null)
+      {
         OnTvViewingStopped(card, device);
+      }
     }
 
     public void OnTvStart(int card, TVCaptureDevice device)
     {
       if (OnTvViewingStarted != null)
+      {
         OnTvViewingStarted(card, device);
+      }
       if (OnTvChannelChanged != null)
+      {
         OnTvChannelChanged(_currentTvChannel);
+      }
     }
+
     public void StopPlayer()
     {
-      if (!g_Player.Playing) return;
+      if (!g_Player.Playing)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msg);
       /*
@@ -156,9 +157,12 @@ namespace MediaPortal.TV.Recording
       int counter = 0;
       while (VMR9Util.g_vmr9 != null)
       {
-        System.Threading.Thread.Sleep(100);
+        Thread.Sleep(100);
         counter++;
-        if (counter > 100) break;
+        if (counter > 100)
+        {
+          break;
+        }
       }
       if (VMR9Util.g_vmr9 != null)
       {

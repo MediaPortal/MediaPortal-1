@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-
 namespace MediaPortal.EPG.config
 {
   /// <summary>
@@ -34,6 +31,7 @@ namespace MediaPortal.EPG.config
   public class EPGConfigData
   {
     #region Variables
+
     public string DisplayName;
     public string ChannelID;
     public string PrimaryGrabberID;
@@ -41,6 +39,7 @@ namespace MediaPortal.EPG.config
     public bool Linked;
     public int linkStart;
     public int linkEnd;
+
     #endregion
   }
 }

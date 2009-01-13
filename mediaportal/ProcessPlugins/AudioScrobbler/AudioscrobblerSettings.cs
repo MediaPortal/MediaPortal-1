@@ -28,20 +28,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Web;
 using System.Windows.Forms;
-
-using MediaPortal.Music.Database;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 namespace MediaPortal.AudioScrobbler
 {
-  public partial class AudioscrobblerSettings : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class AudioscrobblerSettings : MPConfigForm
   {
     private AudioscrobblerUtils lastFmLookup;
-    List<Song> songList = null;
-    List<Song> similarList = null;
+    private List<Song> songList = null;
+    private List<Song> similarList = null;
     private string _currentUser = string.Empty;
 
     public AudioscrobblerSettings()
@@ -51,6 +54,7 @@ namespace MediaPortal.AudioScrobbler
     }
 
     #region Serialisation
+
     protected void LoadSettings()
     {
       try
@@ -61,7 +65,7 @@ namespace MediaPortal.AudioScrobbler
         string tmppass = "";
         groupBoxProfile.Visible = false;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
           checkBoxEnableNowPlaying.Checked = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);
@@ -76,7 +80,7 @@ namespace MediaPortal.AudioScrobbler
             tabControlSettings.TabPages.RemoveAt(1);
             labelNoUser.Visible = true;
           }
-          // only load settings if a user is present
+            // only load settings if a user is present
           else
           {
             int selected = 0;
@@ -84,10 +88,14 @@ namespace MediaPortal.AudioScrobbler
             foreach (string scrobbler in scrobbleusers)
             {
               if (!comboBoxUserName.Items.Contains(scrobbler))
+              {
                 comboBoxUserName.Items.Add(scrobbler);
+              }
 
               if (scrobbler == tmpuser)
+              {
                 selected = count;
+              }
               count++;
             }
             comboBoxUserName.SelectedIndex = selected;
@@ -119,15 +127,21 @@ namespace MediaPortal.AudioScrobbler
 
             checkBoxLogVerbose.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", -1) == 1) ? true : false;
             tmpRand = mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", -1);
-            checkBoxEnableSubmits.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == 1) ? true : false;
-            checkBoxScrobbleDefault.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == 1) ? true : false;
+            checkBoxEnableSubmits.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == 1)
+                                              ? true
+                                              : false;
+            checkBoxScrobbleDefault.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == 1)
+                                                ? true
+                                                : false;
             tmpArtists = mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", -1);
             //numericUpDownTracksPerArtist.Value = mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", -1);
             tmpNMode = mdb.AddScrobbleUserSettings(tmpUserID, "iNeighbourMode", -1);
 
             tmpOfflineMode = mdb.AddScrobbleUserSettings(tmpUserID, "iOfflineMode", -1);
             tmpPreferTracks = mdb.AddScrobbleUserSettings(tmpUserID, "iPreferCount", -1);
-            checkBoxReAddArtist.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", -1) == 1) ? true : false;
+            checkBoxReAddArtist.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iRememberStartArtist", -1) == 1)
+                                            ? true
+                                            : false;
 
             numericUpDownSimilarArtist.Value = (tmpArtists > 0) ? tmpArtists : 2;
             trackBarRandomness.Value = (tmpRand >= 25) ? tmpRand : 25;
@@ -185,9 +199,10 @@ namespace MediaPortal.AudioScrobbler
           lblProfPlaycount.Text = Convert.ToString(myProfile[0].TimesPlayed);
           lblProfRegistered.Text = myProfile[0].DateTimePlayed.ToShortDateString();
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
-
     }
 
     protected void SaveSettings()
@@ -207,7 +222,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (comboBoxUserName.Text != string.Empty)
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("audioscrobbler", "user", comboBoxUserName.Text);
           xmlwriter.SetValueAsBool("audioscrobbler", "EnableNowPlaying", checkBoxEnableNowPlaying.Checked);
@@ -228,28 +243,48 @@ namespace MediaPortal.AudioScrobbler
           mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(comboBoxUserName.Text)), tmpPass);
 
           if (checkBoxLogVerbose != null)
+          {
             usedebuglog = checkBoxLogVerbose.Checked ? 1 : 0;
+          }
           if (checkBoxEnableSubmits != null)
+          {
             submitsenabled = checkBoxEnableSubmits.Checked ? 1 : 0;
+          }
           if (checkBoxScrobbleDefault != null)
+          {
             scrobbledefault = checkBoxScrobbleDefault.Checked ? 1 : 0;
+          }
           if (trackBarRandomness != null)
+          {
             randomness = trackBarRandomness.Value;
+          }
           if (numericUpDownSimilarArtist != null)
-            artisttoadd = (int)numericUpDownSimilarArtist.Value;
+          {
+            artisttoadd = (int) numericUpDownSimilarArtist.Value;
+          }
           //if (numericUpDownTracksPerArtist != null)
           //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
           if (lastFmLookup != null)
-            neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
+          {
+            neighbourmode = (int) lastFmLookup.CurrentNeighbourMode;
+          }
           else
+          {
             Log.Info("DEBUG *** lastFMLookup was null. neighbourmode: {0}", Convert.ToString(neighbourmode));
+          }
 
           if (comboBoxOfflineMode != null)
+          {
             offlinemode = comboBoxOfflineMode.SelectedIndex;
+          }
           if (trackBarConsiderCount != null)
+          {
             prefercount = trackBarConsiderCount.Value;
+          }
           if (checkBoxReAddArtist != null)
+          {
             rememberstartartist = checkBoxReAddArtist.Checked ? 1 : 0;
+          }
 
           tmpUserID = Convert.ToString(mdb.AddScrobbleUser(comboBoxUserName.Text));
           mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", usedebuglog);
@@ -266,31 +301,34 @@ namespace MediaPortal.AudioScrobbler
         }
       }
     }
+
     #endregion
 
     #region Control events
 
     // Implements the manual sorting of items by columns.
-    class ListViewItemComparer : IComparer
+    private class ListViewItemComparer : IComparer
     {
       private int col;
+
       public ListViewItemComparer()
       {
         col = 0;
       }
+
       public ListViewItemComparer(int column)
       {
         col = column;
       }
+
       public int Compare(object x, object y)
       {
         try
         {
-          double xval = Convert.ToDouble(((ListViewItem)x).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
-          double yval = Convert.ToDouble(((ListViewItem)y).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+          double xval = Convert.ToDouble(((ListViewItem) x).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+          double yval = Convert.ToDouble(((ListViewItem) y).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
 
           return -(xval.CompareTo(yval));
-
         }
         catch (Exception)
         {
@@ -301,7 +339,8 @@ namespace MediaPortal.AudioScrobbler
 
     private void trackBarRandomness_MouseHover(object sender, EventArgs e)
     {
-      toolTipRandomness.SetToolTip(trackBarRandomness, "If you lower the percentage value you'll get results more similar");
+      toolTipRandomness.SetToolTip(trackBarRandomness,
+                                   "If you lower the percentage value you'll get results more similar");
       toolTipRandomness.Active = true;
     }
 
@@ -312,7 +351,8 @@ namespace MediaPortal.AudioScrobbler
 
     private void labelSimilarArtistsUpDown_MouseHover(object sender, EventArgs e)
     {
-      toolTipRandomness.SetToolTip(labelSimilarArtistsUpDown, "Increase if you do not get enough songs - lower if the playlist grows too fast");
+      toolTipRandomness.SetToolTip(labelSimilarArtistsUpDown,
+                                   "Increase if you do not get enough songs - lower if the playlist grows too fast");
       toolTipRandomness.Active = true;
     }
 
@@ -410,14 +450,18 @@ namespace MediaPortal.AudioScrobbler
     private void textBoxTagToSearch_KeyUp(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter)
+      {
         buttonTaggedArtists_Click(sender, e);
+      }
     }
 
     private void comboBoxUserName_SelectedIndexChanged(object sender, EventArgs e)
     {
       _currentUser = comboBoxUserName.Text;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         xmlwriter.SetValue("audioscrobbler", "user", _currentUser);
+      }
       LoadSettings();
     }
 
@@ -425,8 +469,11 @@ namespace MediaPortal.AudioScrobbler
     private void maskedTextBoxASPassword_KeyUp(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter)
+      {
         buttonOk_Click(sender, e);
+      }
     }
+
     #endregion
 
     #region Internal formatting
@@ -443,9 +490,13 @@ namespace MediaPortal.AudioScrobbler
     {
       ListViewItem listItem = new ListViewItem(song_.Artist);
       if (showPlayed_)
+      {
         listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      }
       if (showMatch_)
+      {
         listItem.SubItems.Add(song_.LastFMMatch);
+      }
       listItem.Tag = song_;
       return listItem;
     }
@@ -464,9 +515,13 @@ namespace MediaPortal.AudioScrobbler
       ListViewItem listItem = new ListViewItem(song_.Title);
       listItem.SubItems.Add(song_.Artist);
       if (showPlayed_)
+      {
         listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
+      }
       if (showDate_)
+      {
         listItem.SubItems.Add(song_.getQueueTime(false));
+      }
       listItem.Tag = song_;
       return listItem;
     }
@@ -480,6 +535,7 @@ namespace MediaPortal.AudioScrobbler
       listItem.Tag = song_;
       return listItem;
     }
+
     #endregion
 
     #region Button events
@@ -497,7 +553,9 @@ namespace MediaPortal.AudioScrobbler
         this.Close();
       }
       else
+      {
         MessageBox.Show("No password has been configured yet!");
+      }
     }
 
     private void buttonTagsRefresh_Click(object sender, EventArgs e)
@@ -511,7 +569,9 @@ namespace MediaPortal.AudioScrobbler
       listViewTags.Columns.Add("Your tags", 170);
       listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTags.Items.Add(BuildListViewItemSingleTag(songList[i]));
+      }
       listViewTags.EndUpdate();
       buttonTagsRefresh.Enabled = true;
     }
@@ -521,11 +581,14 @@ namespace MediaPortal.AudioScrobbler
       buttonGetTaggedArtists.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedartists, HttpUtility.UrlEncode(textBoxTagToSearch.Text),
+                                              checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTags.Items.Add(BuildListViewArtist(songList[i], true, false));
+      }
       buttonGetTaggedArtists.Enabled = true;
     }
 
@@ -534,12 +597,15 @@ namespace MediaPortal.AudioScrobbler
       buttonTaggedAlbums.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedalbums, HttpUtility.UrlEncode(textBoxTagToSearch.Text),
+                                              checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Album", 170);
       listViewTags.Columns.Add("Popularity", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTags.Items.Add(BuildListViewArtistAlbum(songList[i]));
+      }
       buttonTaggedAlbums.Enabled = true;
     }
 
@@ -548,12 +614,15 @@ namespace MediaPortal.AudioScrobbler
       buttonTaggedTracks.Enabled = false;
       listViewTags.Clear();
       songList = new List<Song>();
-      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, System.Web.HttpUtility.UrlEncode(textBoxTagToSearch.Text), checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
+      songList = lastFmLookup.getSimilarToTag(lastFMFeed.taggedtracks, HttpUtility.UrlEncode(textBoxTagToSearch.Text),
+                                              checkBoxTagRandomize.Checked, checkBoxLocalOnly.Checked);
       listViewTags.Columns.Add("Track", 170);
       listViewTags.Columns.Add("Artist", 170);
       listViewTags.Columns.Add("Played", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTags.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
+      }
       buttonTaggedTracks.Enabled = true;
     }
 
@@ -561,14 +630,17 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonRefreshRecent.Enabled = false;
       listViewRecentTracks.Clear();
-      songList = new List<Song>(); ;
+      songList = new List<Song>();
+      ;
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recenttracks, _currentUser);
       listViewRecentTracks.Columns.Add("Track", 155);
       listViewRecentTracks.Columns.Add("Artist", 155);
       listViewRecentTracks.Columns.Add("Date", 115);
 
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
+      }
       buttonRefreshRecent.Enabled = true;
     }
 
@@ -576,14 +648,17 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonRefreshRecentLoved.Enabled = false;
       listViewRecentTracks.Clear();
-      songList = new List<Song>(); ;
+      songList = new List<Song>();
+      ;
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recentlovedtracks, _currentUser);
       listViewRecentTracks.Columns.Add("Track", 155);
       listViewRecentTracks.Columns.Add("Artist", 155);
       listViewRecentTracks.Columns.Add("Date", 115);
 
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
+      }
       buttonRefreshRecentLoved.Enabled = true;
     }
 
@@ -591,14 +666,17 @@ namespace MediaPortal.AudioScrobbler
     {
       buttonRefreshRecentBanned.Enabled = false;
       listViewRecentTracks.Clear();
-      songList = new List<Song>(); ;
+      songList = new List<Song>();
+      ;
       songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.recentbannedtracks, _currentUser);
       listViewRecentTracks.Columns.Add("Track", 155);
       listViewRecentTracks.Columns.Add("Artist", 155);
       listViewRecentTracks.Columns.Add("Date", 115);
 
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewRecentTracks.Items.Add(BuildListViewTrackArtist(songList[i], false, true));
+      }
       buttonRefreshRecentBanned.Enabled = true;
     }
 
@@ -611,7 +689,9 @@ namespace MediaPortal.AudioScrobbler
       listViewTopArtists.Columns.Add("Artist", 200);
       listViewTopArtists.Columns.Add("Play count", 100);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTopArtists.Items.Add(BuildListViewArtist(songList[i], true, false));
+      }
       buttonArtistsRefresh.Enabled = true;
     }
 
@@ -624,7 +704,9 @@ namespace MediaPortal.AudioScrobbler
       listViewWeeklyArtists.Columns.Add("Artist", 200);
       listViewWeeklyArtists.Columns.Add("Play count", 100);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewWeeklyArtists.Items.Add(BuildListViewArtist(songList[i], true, false));
+      }
       buttonRefreshWeeklyArtists.Enabled = true;
     }
 
@@ -638,7 +720,9 @@ namespace MediaPortal.AudioScrobbler
       listViewTopTracks.Columns.Add("Artist", 170);
       listViewTopTracks.Columns.Add("Play count", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewTopTracks.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
+      }
       buttonTopTracks.Enabled = true;
     }
 
@@ -652,7 +736,9 @@ namespace MediaPortal.AudioScrobbler
       listViewWeeklyTracks.Columns.Add("Artist", 170);
       listViewWeeklyTracks.Columns.Add("Play count", 70);
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewWeeklyTracks.Items.Add(BuildListViewTrackArtist(songList[i], true, false));
+      }
       buttonRefreshWeeklyTracks.Enabled = true;
     }
 
@@ -688,7 +774,9 @@ namespace MediaPortal.AudioScrobbler
       listViewSysRecs.Columns.Add("Artist", 250);
 
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewSysRecs.Items.Add(BuildListViewArtist(songList[i], false, false));
+      }
 
       buttonRefreshSysRecs.Enabled = true;
     }
@@ -731,7 +819,9 @@ namespace MediaPortal.AudioScrobbler
             }
           }
           if (!foundDoubleEntry)
+          {
             listViewSuggestions.Items.Add(BuildListViewArtist(similarList[i], false, true));
+          }
         }
 
         listViewSuggestions.Sorting = SortOrder.Descending;
@@ -741,7 +831,9 @@ namespace MediaPortal.AudioScrobbler
         listViewSuggestions.ResumeLayout();
       }
       else
+      {
         listViewSuggestions.Items.Add("Not enough overall top artists found");
+      }
       progressBarSuggestions.PerformStep();
       changeControlsSuggestions(false);
     }
@@ -757,7 +849,9 @@ namespace MediaPortal.AudioScrobbler
       listViewNeighbours.Columns.Add("Match", 100);
 
       for (int i = 0; i < songList.Count; i++)
+      {
         listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], false, true));
+      }
       buttonRefreshNeighbours.Enabled = true;
 
       if (listViewNeighbours.Items.Count > 0)
@@ -793,7 +887,9 @@ namespace MediaPortal.AudioScrobbler
           }
         }
         if (!foundDoubleEntry)
+        {
           listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], true, false));
+        }
       }
       buttonRefreshNeigboursArtists.Enabled = true;
       if (listViewNeighbours.Items.Count > 0)
@@ -802,7 +898,9 @@ namespace MediaPortal.AudioScrobbler
         buttonNeighboursFilter.Enabled = true;
       }
       else
+      {
         buttonNeighboursFilter.Enabled = false;
+      }
     }
 
     private void buttonNeighboursFilter_Click(object sender, EventArgs e)
@@ -829,7 +927,9 @@ namespace MediaPortal.AudioScrobbler
             }
           }
           if (!foundDoubleEntry)
+          {
             listViewNeighbours.Items.Add(BuildListViewArtist(songList[i], false, false));
+          }
         }
         //else
         //  MessageBox.Show("Artist " + songList[i].Artist + " already in DB!");
@@ -863,9 +963,11 @@ namespace MediaPortal.AudioScrobbler
             ListViewItem listItem = new ListViewItem(curArtist);
 
             // check low res
-            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
-            if (System.IO.File.Exists(strThumb))
-              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            string strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
+            if (File.Exists(strThumb))
+            {
+              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+            }
             else
             {
               listItem.SubItems.Add("none");
@@ -874,10 +976,14 @@ namespace MediaPortal.AudioScrobbler
 
             // check high res
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-            if (System.IO.File.Exists(strThumb))
-              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            if (File.Exists(strThumb))
+            {
+              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+            }
             else
+            {
               listItem.SubItems.Add("none");
+            }
 
             listViewCoverArtists.Items.Add(listItem);
 
@@ -910,7 +1016,8 @@ namespace MediaPortal.AudioScrobbler
           if (listViewCoverArtists.Items[i].SubItems[2].Text == "none" || !checkBoxCoverArtistsMissing.Checked)
           {
             string curArtist = listViewCoverArtists.Items[i].Text;
-            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists || curArtist.ToLowerInvariant() == "unknown")
+            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists ||
+                curArtist.ToLowerInvariant() == "unknown")
             {
               listViewCoverArtists.Items[i].ForeColor = Color.LightGray;
               continue;
@@ -918,23 +1025,27 @@ namespace MediaPortal.AudioScrobbler
 
             lastFmLookup.getArtistInfo(curArtist);
             // let's check and update the artist's status
-            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
-            if (System.IO.File.Exists(strThumb))
+            string strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
+            if (File.Exists(strThumb))
             {
               listViewCoverArtists.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverArtists.Items[i].SubItems[1].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+              listViewCoverArtists.Items[i].SubItems[1].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
             }
             else
+            {
               listViewCoverArtists.Items[i].ForeColor = Color.Red;
+            }
 
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-            if (System.IO.File.Exists(strThumb))
+            if (File.Exists(strThumb))
             {
               listViewCoverArtists.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverArtists.Items[i].SubItems[2].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+              listViewCoverArtists.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
             }
             else
+            {
               listViewCoverArtists.Items[i].ForeColor = Color.Red;
+            }
 
             //listViewCoverArtists.RedrawItems(i, i, false);
             this.Refresh();
@@ -972,19 +1083,23 @@ namespace MediaPortal.AudioScrobbler
         {
           try
           {
-            string curArtist = CoverAlbums[i].AlbumArtist.Trim(new char[] { '|', ' ' });
+            string curArtist = CoverAlbums[i].AlbumArtist.Trim(new char[] {'|', ' '});
             string curAlbum = CoverAlbums[i].Album;
 
             if (curArtist.ToLowerInvariant().Contains("unknown"))
-              curArtist = CoverAlbums[i].Artist.Trim(new char[] { '|', ' ' });
+            {
+              curArtist = CoverAlbums[i].Artist.Trim(new char[] {'|', ' '});
+            }
 
             ListViewItem listItem = new ListViewItem(curArtist);
             listItem.SubItems.Add(curAlbum);
 
             // check low res
             string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
-            if (System.IO.File.Exists(strThumb))
-              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            if (File.Exists(strThumb))
+            {
+              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+            }
             else
             {
               listItem.SubItems.Add("none");
@@ -993,10 +1108,14 @@ namespace MediaPortal.AudioScrobbler
 
             // check high res
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-            if (System.IO.File.Exists(strThumb))
-              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            if (File.Exists(strThumb))
+            {
+              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+            }
             else
+            {
               listItem.SubItems.Add("none");
+            }
 
             listViewCoverAlbums.Items.Add(listItem);
 
@@ -1032,8 +1151,11 @@ namespace MediaPortal.AudioScrobbler
             string curAlbum = listViewCoverAlbums.Items[i].SubItems[1].Text;
 
             if (string.IsNullOrEmpty(curArtist) || string.IsNullOrEmpty(curAlbum))
+            {
               continue;
-            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists || curArtist.ToLowerInvariant() == "unknown" || curAlbum.ToLowerInvariant() == "unknown")
+            }
+            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists ||
+                curArtist.ToLowerInvariant() == "unknown" || curAlbum.ToLowerInvariant() == "unknown")
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.LightGray;
               continue;
@@ -1042,22 +1164,26 @@ namespace MediaPortal.AudioScrobbler
             lastFmLookup.getAlbumInfo(curArtist, curAlbum, false, false);
             // let's check and update the artist's status
             string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
-            if (System.IO.File.Exists(strThumb))
+            if (File.Exists(strThumb))
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverAlbums.Items[i].SubItems[2].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+              listViewCoverAlbums.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
             }
             else
+            {
               listViewCoverAlbums.Items[i].ForeColor = Color.Red;
+            }
 
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-            if (System.IO.File.Exists(strThumb))
+            if (File.Exists(strThumb))
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverAlbums.Items[i].SubItems[3].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+              listViewCoverAlbums.Items[i].SubItems[3].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
             }
             else
+            {
               listViewCoverAlbums.Items[i].ForeColor = Color.Red;
+            }
 
             //listViewCoverAlbums.RedrawItems(i, i, false);
             listViewCoverAlbums.Items[i].EnsureVisible();
@@ -1074,7 +1200,7 @@ namespace MediaPortal.AudioScrobbler
     }
 
     private void buttonAddUser_Click(object sender, EventArgs e)
-    {      
+    {
       if (tabControlSettings.TabCount > 1)
       {
         tabControlLiveFeeds.Enabled = false;
@@ -1107,6 +1233,5 @@ namespace MediaPortal.AudioScrobbler
     }
 
     #endregion
-
   }
 }

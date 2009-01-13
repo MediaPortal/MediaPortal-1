@@ -24,15 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Visualization;
-using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Configuration.Sections
@@ -40,38 +34,45 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// This Form shows the Preview of Winamp Visualisation Plugins.
   /// </summary>
-  public partial class MusicWinampPreview : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class MusicWinampPreview : MPConfigForm
   {
-
     #region Variables
+
     private VisualizationInfo VizPluginInfo;
     private int _visHandle = 0;
 
-    IntPtr hwndWinAmp;          // The handle to the Winamp Dummy Window
-    IntPtr hwndGen;             // The handle to the Winamp Gen Window
+    private IntPtr hwndWinAmp; // The handle to the Winamp Dummy Window
+    private IntPtr hwndGen; // The handle to the Winamp Gen Window
+
     #endregion
 
     #region Constructors/Destructors
+
     public MusicWinampPreview(VisualizationInfo vizinfo)
     {
       InitializeComponent();
 
       VizPluginInfo = vizinfo;
-      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), this.Handle);
+      BassVis.BASS_WINAMPVIS_Init(
+        BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int) GWLIndex.GWL_HINSTANCE), this.Handle);
       StartVis();
     }
+
     #endregion
 
     #region Private Methods
+
     private void btClose_Click(object sender, EventArgs e)
     {
       if (_visHandle != 0)
+      {
         BassVis.BASS_WINAMPVIS_Free(_visHandle);
+      }
 
       BassVis.BASS_WINAMPVIS_Quit();
       Close();
     }
-    
+
     private void btStart_Click(object sender, EventArgs e)
     {
       StartVis();
@@ -91,7 +92,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (hwndWinAmp != IntPtr.Zero)
       {
-        BassVis.BASS_WINAMPVIS_Stop((int)hwndWinAmp);
+        BassVis.BASS_WINAMPVIS_Stop((int) hwndWinAmp);
         BassVis.BASS_WINAMPVIS_Free(_visHandle);
         _visHandle = 0;
       }
@@ -101,7 +102,9 @@ namespace MediaPortal.Configuration.Sections
     {
       // Do we have a Vis running, then stop it
       if (_visHandle != 0)
+      {
         btStop_Click(null, null);
+      }
 
       // The following Play is necessary for supporting Winamp Viz, which need a playing env, like Geiss 2, Beatharness, etc.
       // Workaround until BassVis 2.3.0.7 is released
@@ -114,15 +117,17 @@ namespace MediaPortal.Configuration.Sections
         hwndWinAmp = BassVis.BASS_WINAMPVIS_GetAmpHwnd();
 
         // Set Status to Playing
-        BassVis.BASS_WINAMPVIS_Play((int)hwndWinAmp);
+        BassVis.BASS_WINAMPVIS_Play((int) hwndWinAmp);
 
         // Now move the Vis to our own Picturebox
         hwndGen = BassVis.BASS_WINAMPVIS_GetGenHwnd();
         if (hwndGen != IntPtr.Zero)
+        {
           BassVis.BASS_WINAMPVIS_SetGenHwndParent(hwndGen,
                                                   pictureBoxVis.Handle, 5, 5,
                                                   pictureBoxVis.Width - 12,
                                                   pictureBoxVis.Height - 12);
+        }
 
         // Set Dummy Song Information for the Plugin
         BassVis.BASS_WINAMPVIS_SetChanInfo(_visHandle, "Mediaportal Preview", "  ", 0, 0, 1, 1);
@@ -131,6 +136,7 @@ namespace MediaPortal.Configuration.Sections
         BassVis.BASS_WINAMPVIS_RenderStream(stream);
       }
     }
+
     #endregion
   }
 }

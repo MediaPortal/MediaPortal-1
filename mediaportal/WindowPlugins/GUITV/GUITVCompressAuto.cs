@@ -25,11 +25,11 @@
 
 using System;
 using System.Collections.Generic;
-
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Configuration;
-using MediaPortal.TV.Recording;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal.GUI.TV
 {
@@ -38,16 +38,13 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITVCompressAuto : GUIWindow
   {
-    [SkinControlAttribute(5)]
-    protected GUISpinControl spinHour = null;
-    [SkinControlAttribute(2)]
-    protected GUICheckMarkControl checkAutoCompress = null;
-    [SkinControlAttribute(7)]
-    protected GUICheckMarkControl checkDeleteOriginal = null;
+    [SkinControl(5)] protected GUISpinControl spinHour = null;
+    [SkinControl(2)] protected GUICheckMarkControl checkAutoCompress = null;
+    [SkinControl(7)] protected GUICheckMarkControl checkDeleteOriginal = null;
 
     public GUITVCompressAuto()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO;
+      GetID = (int) Window.WINDOW_TV_COMPRESS_AUTO;
     }
 
     public override bool Init()
@@ -60,9 +57,10 @@ namespace MediaPortal.GUI.TV
       base.OnPageLoad();
       LoadSettings();
     }
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         spinHour.Value = xmlreader.GetValueAsInt("autocompression", "hour", 4);
         checkDeleteOriginal.Selected = xmlreader.GetValueAsBool("autocompression", "deleteoriginal", true);
@@ -71,10 +69,9 @@ namespace MediaPortal.GUI.TV
       UpdateButtons();
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("autocompression", "hour", spinHour.Value);
         xmlreader.SetValueAsBool("autocompression", "deleteoriginal", checkDeleteOriginal.Selected);
@@ -90,29 +87,39 @@ namespace MediaPortal.GUI.TV
       base.OnAction(action);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       UpdateButtons();
     }
-    void UpdateButtons()
+
+    private void UpdateButtons()
     {
       spinHour.Disabled = !checkAutoCompress.Selected;
       checkDeleteOriginal.Disabled = !checkAutoCompress.Selected;
     }
 
-    void AutoCompress()
+    private void AutoCompress()
     {
       List<TVRecorded> recordings = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref recordings);
       foreach (TVRecorded rec in recordings)
       {
-        if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
+        if (Transcoder.IsTranscoding(rec))
+        {
+          continue; //already transcoding...
+        }
         try
         {
-          if (!System.IO.File.Exists(rec.FileName)) continue;
-          string ext = System.IO.Path.GetExtension(rec.FileName).ToLower();
-          if (ext != ".dvr-ms" && ext != ".sbe") continue;
+          if (!File.Exists(rec.FileName))
+          {
+            continue;
+          }
+          string ext = Path.GetExtension(rec.FileName).ToLower();
+          if (ext != ".dvr-ms" && ext != ".sbe")
+          {
+            continue;
+          }
         }
         catch (Exception)
         {

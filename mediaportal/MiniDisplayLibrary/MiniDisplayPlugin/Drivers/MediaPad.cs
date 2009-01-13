@@ -27,7 +27,6 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -240,8 +239,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="lcdUid">The id of the LCD to clear</param>
     /// <returns><see cref="Status.Success"/> or another <see cref="Status"/> value in case of an error</returns>
     [
-      DllImport("MediaPadLayer.dll", EntryPoint="clearScreen", CharSet=CharSet.Ansi, SetLastError=true,
-        ExactSpelling=true)]
+      DllImport("MediaPadLayer.dll", EntryPoint = "clearScreen", CharSet = CharSet.Ansi, SetLastError = true,
+        ExactSpelling = true)]
     private static extern Status ClearScreen(double lcdUid);
 
 //
@@ -261,8 +260,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="lcdUid">The uid of the lcd linked to the mediapad</param>
     /// <returns>The uid of the mediapad</returns>
     [
-      DllImport("MediaPadLayer.dll", EntryPoint="getMediapadUID", CharSet=CharSet.Ansi, SetLastError=true,
-        ExactSpelling=true)]
+      DllImport("MediaPadLayer.dll", EntryPoint = "getMediapadUID", CharSet = CharSet.Ansi, SetLastError = true,
+        ExactSpelling = true)]
     private static extern double GetMediapadUID(out double lcdUid);
 
 //
@@ -280,7 +279,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// </summary>
     /// <param name="DUID"></param>
     /// <returns><see cref="Status.Success"/> or another <see cref="Status"/> value in case of an error</returns>
-    [DllImport("MediaPadLayer.dll", EntryPoint="makeBeep", CharSet=CharSet.Ansi, SetLastError=true, ExactSpelling=true)]
+    [DllImport("MediaPadLayer.dll", EntryPoint = "makeBeep", CharSet = CharSet.Ansi, SetLastError = true,
+      ExactSpelling = true)]
     private static extern Status MakeBeep(double DUID);
 
 //    /// <summary>
@@ -314,7 +314,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 //    [DllImport("MediaPadLayer.dll", EntryPoint="SetIconState", CharSet=CharSet.Ansi, SetLastError=true, ExactSpelling=true)]
 //    private static extern Status SetIconState(double lcdUid, IconConst icon, IconState state);
 
-    [DllImport("MediaPadLayer.dll", EntryPoint="setLine", CharSet=CharSet.Ansi, ExactSpelling=true)]
+    [DllImport("MediaPadLayer.dll", EntryPoint = "setLine", CharSet = CharSet.Ansi, ExactSpelling = true)]
     private static extern Status SetLine(double lcdUid, short line,
                                          [MarshalAs(UnmanagedType.VBByRefStr)] ref string text, DisplayMode mode);
 
@@ -324,7 +324,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="lcdUid">The uid of the lcd to set the current screenmode for</param>
     /// <param name="state">The desired <see cref="ScreenMode"/> value.</param>
     /// <returns><see cref="Status.Success"/> or another <see cref="Status"/> value in case of an error</returns>
-    [DllImport("MediaPadLayer.dll", EntryPoint="SetMode", CharSet=CharSet.Ansi, SetLastError=true, ExactSpelling=true)]
+    [DllImport("MediaPadLayer.dll", EntryPoint = "SetMode", CharSet = CharSet.Ansi, SetLastError = true,
+      ExactSpelling = true)]
     private static extern Status SetMode(double lcdUid, ScreenMode state);
 
 
@@ -524,8 +525,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       /// because it might interfere with the other users device settings.
       /// NOTE : THIS IS NOT USED ANYMORE.
       /// </summary>
-      [Obsolete]
-      SessionLocked = 0x80000018,
+      [Obsolete] SessionLocked = 0x80000018,
       /// <summary>
       /// The exact same event has already been registered by the same client.
       /// Note that event must also have same notification method to be

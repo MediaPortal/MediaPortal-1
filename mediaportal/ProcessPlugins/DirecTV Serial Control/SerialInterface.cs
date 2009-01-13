@@ -20,16 +20,12 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO.Ports;
-using System.Threading;
 
 namespace DirecTV
 {
   public class SerialInterface
   {
-
     #region structs
 
     public struct Response
@@ -49,53 +45,59 @@ namespace DirecTV
     #endregion
 
     #region Command Sets
+
     public static readonly CommandSet oldCommandSet = new CommandSet(
-      "oldCommandSet",            // Command Set name
-      new Command(0x01),          // Power Off
-      new Command(0x02),          // Power On
-      new Command(0x05),          // Show Text
-      new Command(0x06),          // Hide Text
-      new Command(0x07, 0, 2),    // Get Channel Number
-      new Command(0x0A, 0, 8),    // Cold Boot
-      new Command(0x0B, 0, 8),    // Warm Boot
-      new Command(0x10, 0, 1),    // Get Signal Strength
-      new Command(0x11, 0, 7),    // Get Date, Time, Day of week
-      new Command(0x13),          // Enable Ir Remote
-      new Command(0x14),          // Disable Ir Remote
-      new Command(0x45, 3),       // Remote Control Key
-      new Command(0x46, 2),       // Set Channel Number
-      new Command(0x4A, 2)        // Display Text
+      "oldCommandSet", // Command Set name
+      new Command(0x01), // Power Off
+      new Command(0x02), // Power On
+      new Command(0x05), // Show Text
+      new Command(0x06), // Hide Text
+      new Command(0x07, 0, 2), // Get Channel Number
+      new Command(0x0A, 0, 8), // Cold Boot
+      new Command(0x0B, 0, 8), // Warm Boot
+      new Command(0x10, 0, 1), // Get Signal Strength
+      new Command(0x11, 0, 7), // Get Date, Time, Day of week
+      new Command(0x13), // Enable Ir Remote
+      new Command(0x14), // Disable Ir Remote
+      new Command(0x45, 3), // Remote Control Key
+      new Command(0x46, 2), // Set Channel Number
+      new Command(0x4A, 2) // Display Text
       );
+
     public static readonly CommandSet newCommandSet = new CommandSet(
-      "newCommandSet",            // Command Set name
-      new Command(0x81),          // Power Off
-      new Command(0x82),          // Power On
-      new Command(0x00),          // Show Text (not available)
-      new Command(0x86),          // Hide Text
-      new Command(0x87, 0, 4),    // Get Channel Number
-      new Command(0x00),          // Cold Boot (not available)
-      new Command(0x00),          // Warm Boot (not available)
-      new Command(0x90, 0, 1),    // Get Signal Strength
-      new Command(0x91, 0, 7),    // Get Date, Time, Day of week
-      new Command(0x93),          // Enable Ir Remote
-      new Command(0x94),          // Disable Ir Remote
-      new Command(0xA5, 3),       // Remote Control Key
-      new Command(0xA6, 4),       // Set Channel Number
-      new Command(0xAA, 2)        // Display Text
+      "newCommandSet", // Command Set name
+      new Command(0x81), // Power Off
+      new Command(0x82), // Power On
+      new Command(0x00), // Show Text (not available)
+      new Command(0x86), // Hide Text
+      new Command(0x87, 0, 4), // Get Channel Number
+      new Command(0x00), // Cold Boot (not available)
+      new Command(0x00), // Warm Boot (not available)
+      new Command(0x90, 0, 1), // Get Signal Strength
+      new Command(0x91, 0, 7), // Get Date, Time, Day of week
+      new Command(0x93), // Enable Ir Remote
+      new Command(0x94), // Disable Ir Remote
+      new Command(0xA5, 3), // Remote Control Key
+      new Command(0xA6, 4), // Set Channel Number
+      new Command(0xAA, 2) // Display Text
       );
+
     #endregion
 
     #region KeyMaps
+
     public static readonly KeyMap keyMap_RCA = new KeyMap(
       "RCA",
       0xA8, 0xA9, 0xA6, 0xA7, 0x9E, 0xC3, 0xC3, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC,
       0xCD, 0xCE, 0xCF, 0x00, 0xD2, 0xD3, 0xD5, 0xD8, 0xE5, 0xF7, 0x00, 0x00, 0x00, 0x00
       );
+
     public static readonly KeyMap keyMap_D10100_D10200 = new KeyMap(
       "D10-100/200",
       0x9A, 0x9B, 0x9C, 0x9D, 0x00, 0xC3, 0xA0, 0xD4, 0xE9, 0xE8, 0xE7, 0xE6, 0xE5, 0xE4, 0xE3,
       0xE2, 0xE1, 0xE0, 0xA5, 0xD1, 0xD2, 0xD5, 0xD6, 0xD3, 0xF7, 0xA1, 0xA2, 0xA3, 0xA4
       );
+
     #endregion
 
     #region enums
@@ -113,6 +115,7 @@ namespace DirecTV
     #region Debug message handling
 
     public delegate void DebugMessageHandler(string format, params object[] args);
+
     public event DebugMessageHandler OnDebugMessage;
 
     #endregion
@@ -144,7 +147,7 @@ namespace DirecTV
 
     #region defaults
 
-   // default box type
+    // default box type
     private const BoxType _defaultBoxType = BoxType.D10_200;
     // default COM port
     private const string _defaultPortName = "COM1";
@@ -164,21 +167,42 @@ namespace DirecTV
     #endregion
 
     #region C#tor
-    
-    public SerialInterface() 
-      : this(_defaultBoxType) { }
-    public SerialInterface(BoxType box) 
-      : this(box, _defaultPortName) { }
+
+    public SerialInterface()
+      : this(_defaultBoxType)
+    {
+    }
+
+    public SerialInterface(BoxType box)
+      : this(box, _defaultPortName)
+    {
+    }
+
     public SerialInterface(BoxType box, string portName)
-      : this(box, portName, _defaultBaudRate) { }
+      : this(box, portName, _defaultBaudRate)
+    {
+    }
+
     public SerialInterface(BoxType box, string portName, int baudRate)
-      : this(box, portName, baudRate, _defaultReadTimeout) { }
-    public SerialInterface(BoxType box, CommandSet set, KeyMap map) 
-      : this(box, set, map, _defaultPortName) { }
-    public SerialInterface(BoxType box, CommandSet set, KeyMap map, string portName) 
-      : this(box, set, map, portName, _defaultBaudRate) { }
-    public SerialInterface(BoxType box, CommandSet set, KeyMap map, string portName, int baudRate) 
-      : this(box, set, map, portName, _defaultBaudRate, _defaultReadTimeout) { }
+      : this(box, portName, baudRate, _defaultReadTimeout)
+    {
+    }
+
+    public SerialInterface(BoxType box, CommandSet set, KeyMap map)
+      : this(box, set, map, _defaultPortName)
+    {
+    }
+
+    public SerialInterface(BoxType box, CommandSet set, KeyMap map, string portName)
+      : this(box, set, map, portName, _defaultBaudRate)
+    {
+    }
+
+    public SerialInterface(BoxType box, CommandSet set, KeyMap map, string portName, int baudRate)
+      : this(box, set, map, portName, _defaultBaudRate, _defaultReadTimeout)
+    {
+    }
+
     public SerialInterface(BoxType box, string portName, int baudRate, int readTimeout)
     {
       _box = box;
@@ -205,6 +229,7 @@ namespace DirecTV
       BaudRate = baudRate;
       _readTimeout = readTimeout;
     }
+
     public SerialInterface(BoxType box, CommandSet set, KeyMap map, string portName, int baudRate, int readTimeout)
     {
       _box = box;
@@ -250,7 +275,7 @@ namespace DirecTV
     {
       get { return KeyMapD10100_D10200; }
     }
-    
+
     public string PortName
     {
       get { return _portName; }
@@ -324,16 +349,20 @@ namespace DirecTV
 
     public bool AllowDigitalSubchannels
     {
-       get { return _allowSubchannels; }
-       set { _allowSubchannels = value; }
+      get { return _allowSubchannels; }
+      set { _allowSubchannels = value; }
     }
 
     #endregion
 
     #region Serial Interface Control
+
     public void OpenPort()
     {
-      if (_serialPort != null && _serialPort.IsOpen) return;
+      if (_serialPort != null && _serialPort.IsOpen)
+      {
+        return;
+      }
       _serialPort = new SerialPort(PortName, BaudRate);
       _serialPort.ReadTimeout = ReadTimeout;
       _serialPort.Open();
@@ -364,7 +393,7 @@ namespace DirecTV
 
     #region SendCommand helpers
 
-    byte[] GetCommandData(byte cmd)
+    private byte[] GetCommandData(byte cmd)
     {
       byte[] cmdData;
       if (_box == BoxType.D10_200)
@@ -381,18 +410,18 @@ namespace DirecTV
       return cmdData;
     }
 
-    bool ReadResponse(byte verify, out byte expect, out byte response)
+    private bool ReadResponse(byte verify, out byte expect, out byte response)
     {
       expect = verify;
       response = 0x00;
 
       try
       {
-        response = (byte)_serialPort.ReadByte();
+        response = (byte) _serialPort.ReadByte();
         WriteDebug("DirecTV.SerialInterface.ReadResponse(): received: {0:x}", response);
         return (response == expect);
       }
-      catch (System.TimeoutException)
+      catch (TimeoutException)
       {
         WriteDebug("DirecTV.SerialInterface.ReadResponse(): SerialPortTimedOut");
       }
@@ -404,7 +433,7 @@ namespace DirecTV
       return false;
     }
 
-    void ReadPossibleTrailingData()
+    private void ReadPossibleTrailingData()
     {
       try
       {
@@ -412,17 +441,22 @@ namespace DirecTV
         WriteDebug("DirecTV.SerialInterface.ReadPossibleTrailingData(): ignored trailing garbage: {0}", dummy);
         dummy = null;
       }
-      catch (InvalidOperationException) { }
+      catch (InvalidOperationException)
+      {
+      }
     }
 
-    string ToString(byte data)
+    private string ToString(byte data)
     {
-     return String.Format("{0.x}", data);
+      return String.Format("{0.x}", data);
     }
 
-    string ToString(byte[] data)
+    private string ToString(byte[] data)
     {
-      if (data == null) return string.Empty;
+      if (data == null)
+      {
+        return string.Empty;
+      }
       string tmp = string.Empty;
       foreach (byte b in data)
       {
@@ -442,9 +476,9 @@ namespace DirecTV
 
       // Start with sending the command to the box
       byte[] cmdData = GetCommandData(cmd.command);
-      
-      WriteDebug("DirecTV.SerialInterface.SendCommand(): send command: {0}, size {1}", 
-        ToString(cmdData), cmdData.Length);
+
+      WriteDebug("DirecTV.SerialInterface.SendCommand(): send command: {0}, size {1}",
+                 ToString(cmdData), cmdData.Length);
 
       _serialPort.Write(cmdData, 0, cmdData.Length);
 
@@ -463,21 +497,25 @@ namespace DirecTV
             // check if the data was correctly received by the box
             if (ReadResponse(Response.COMMAND_IS_BEING_PROCESSED, out expect, out reponse))
             {
-
               // it was, so now check if the command succeeded
               WriteDebug("DirecTV.SerialInterface.SendCommand(): data is being processed by box");
 
               // The HTL-HD box sends a null byte back before the Successful so check for it
               bool okContinue = false;
               ReadResponse(Response.NULL_BYTE, out expect, out reponse);
-              if (reponse == (byte)Response.NULL_BYTE)
+              if (reponse == (byte) Response.NULL_BYTE)
               {
-                WriteDebug("DirecTV.SerialInterface.SendCommand(): Null Byte Recieved Will Now Check for Successful Completion");
+                WriteDebug(
+                  "DirecTV.SerialInterface.SendCommand(): Null Byte Recieved Will Now Check for Successful Completion");
                 if (ReadResponse(Response.COMMAND_COMPLETED_SUCCESSFULLY, out expect, out reponse))
+                {
                   okContinue = true;
+                }
               }
-              else if (reponse == (byte)Response.COMMAND_COMPLETED_SUCCESSFULLY)
+              else if (reponse == (byte) Response.COMMAND_COMPLETED_SUCCESSFULLY)
+              {
                 okContinue = true;
+              }
 
               if (okContinue)
               {
@@ -493,11 +531,12 @@ namespace DirecTV
                 else
                 {
                   // no data expected, so return a null-byte
-                  receivedData = new byte[1] { 0x00 };
+                  receivedData = new byte[1] {0x00};
                 }
                 // make sure all received data is read
                 ReadPossibleTrailingData();
-                WriteDebug("DirecTV.SerialInterface.SendCommand({0}) succeeded: expected {1:x} and received {2:x} data: {3}",
+                WriteDebug(
+                  "DirecTV.SerialInterface.SendCommand({0}) succeeded: expected {1:x} and received {2:x} data: {3}",
                   ToString(cmdData), expect, reponse, ToString(receivedData));
                 return;
               }
@@ -511,27 +550,27 @@ namespace DirecTV
           {
             // no extra data needs to be send and command was valid
             WriteDebug("DirecTV.SerialInterface.SendCommand({0}) succeeded: expected {1:x} and received {2:x}",
-              ToString(cmdData), expect, reponse);
+                       ToString(cmdData), expect, reponse);
             // no data expected, so return a null-byte
-            receivedData = new byte[1] { 0x00 };
+            receivedData = new byte[1] {0x00};
             return;
           }
         }
 
         WriteDebug("DirecTV.SerialInterface.SendCommand(): command NOT accepted by box!");
-        
+
         // If we get here, the command must somehow have failed
         // make sure all received data is read
         ReadPossibleTrailingData();
         WriteDebug("DirecTV.SerialInterface.SendCommand({0}) failed: expected {1:x} but received {2:x}",
-          ToString(cmdData), expect, reponse);
+                   ToString(cmdData), expect, reponse);
         throw new InvalidOperationException("Unable to send command to DirecTV box");
       }
       else
       {
         WriteDebug("DirecTV.SerialInterface.SendCommand(): send data: {0}", ToString(cmd.dataToSend));
         _serialPort.Write(cmd.dataToSend, 0, cmd.dataToSend.Length);
-        byte[] temp = new byte [1];
+        byte[] temp = new byte[1];
         temp[0] = 0x00;
         _serialPort.Write(temp, 0, 1);
         receivedData = temp;
@@ -555,13 +594,13 @@ namespace DirecTV
       {
         case BoxType.RCA_Old:
         case BoxType.RCA_New:
-          return new byte[2] { 0x00, 0x00 };
+          return new byte[2] {0x00, 0x00};
         default:
-          return new byte[2] { 0x00, 0x01 };
+          return new byte[2] {0x00, 0x01};
       }
     }
 
-    byte GetRemoteKeyCode(char num)
+    private byte GetRemoteKeyCode(char num)
     {
       switch (num)
       {
@@ -592,7 +631,7 @@ namespace DirecTV
       }
     }
 
-    void ParseMajorMinorChannel(string channel, out int channelMajor, out int channelMinor)
+    private void ParseMajorMinorChannel(string channel, out int channelMajor, out int channelMinor)
     {
       channelMajor = -1;
       channelMinor = -1;
@@ -606,7 +645,9 @@ namespace DirecTV
           channelMajor = Int32.Parse(channel.Substring(0, channel.IndexOf("-")));
 
           if (channel.Length > (channel.IndexOf("-") + 1))
+          {
             channelMinor = Int32.Parse(channel.Substring(channel.IndexOf("-") + 1, 1));
+          }
         }
         catch
         {
@@ -637,7 +678,7 @@ namespace DirecTV
       }
     }
 
-    void TuneWithSetChannel(int channel)
+    private void TuneWithSetChannel(int channel)
     {
       Command cmd = _commandSet.SET_CHANNEL_NUMBER.Clone();
       if (channel < 256)
@@ -658,12 +699,14 @@ namespace DirecTV
       if (cmd.bytesToSend > 2)
       {
         for (int i = 2; i < cmd.bytesToSend; i++)
+        {
           cmd.dataToSend[i] = 0xFF;
+        }
       }
       SendCommand(cmd);
     }
 
-    void TuneWithSetChannel(string channel)
+    private void TuneWithSetChannel(string channel)
     {
       WriteDebug("DirecTV.SerialInterface.TuneWithSetChannel: Attempting to tune STRING Channel: {0}", channel);
       Command cmd = _commandSet.SET_CHANNEL_NUMBER.Clone();
@@ -675,14 +718,15 @@ namespace DirecTV
 
       if (chMajor < 0)
       {
-        WriteDebug("DirecTV.SerialInterface.TuneWithSetChannel: Invalid Channel Received: {0} - Channel String: {1}", chMajor.ToString(), channel);
+        WriteDebug("DirecTV.SerialInterface.TuneWithSetChannel: Invalid Channel Received: {0} - Channel String: {1}",
+                   chMajor.ToString(), channel);
         return;
       }
 
       if (chMajor < 256)
       {
         cmd.dataToSend[0] = 0x00;
-        cmd.dataToSend[1] = (byte)chMajor;
+        cmd.dataToSend[1] = (byte) chMajor;
       }
       else if (chMajor < 65536)
       {
@@ -692,55 +736,59 @@ namespace DirecTV
       }
       else
       {
-        WriteDebug("DirecTV.SerialInterface.TuneWithSetChannel: Channel Value Too Large: {0} - Channel String: {1}", chMajor.ToString(), channel);
+        WriteDebug("DirecTV.SerialInterface.TuneWithSetChannel: Channel Value Too Large: {0} - Channel String: {1}",
+                   chMajor.ToString(), channel);
         return;
       }
 
       if (chMinor > 0 && cmd.bytesToSend > 2)
       {
         //byte[] chdata = BitConverter.GetBytes(chMinor);
-        cmd.dataToSend[2] = 0x00;           // chdata[1];
-        cmd.dataToSend[3] = (byte)chMinor;  // chdata[0];
+        cmd.dataToSend[2] = 0x00; // chdata[1];
+        cmd.dataToSend[3] = (byte) chMinor; // chdata[0];
       }
       else if (cmd.bytesToSend > 2)
       {
         for (int i = 2; i < cmd.bytesToSend; i++)
-           cmd.dataToSend[i] = 0xFF;
+        {
+          cmd.dataToSend[i] = 0xFF;
+        }
       }
 
       SendCommand(cmd);
     }
 
-    void TuneWithRemoteKeys(int channel)
+    private void TuneWithRemoteKeys(int channel)
     {
       WriteDebug("DirecTV: In tuning");
       if (channel > 65535)
+      {
         throw new ArgumentOutOfRangeException("channel", channel, "not a valid channel number");
+      }
       string strChannel = channel.ToString();
       WriteDebug("DirecTV: Channel " + strChannel);
       Command cmd = _commandSet.REMOTE_CONTROL_KEY.Clone();
       GetKeyMapPadBytes(_box).CopyTo(cmd.dataToSend, 0);
       for (int i = 0; i < strChannel.Length; i++)
       {
-        
         cmd.dataToSend[2] = GetRemoteKeyCode(strChannel[i]);
         WriteDebug("Directv: Sending command - {0}", cmd.bytesToSend);
-        SendCommand(cmd); 
+        SendCommand(cmd);
       }
-      if(TwoWayDisable == false)
+      if (TwoWayDisable == false)
       {
         cmd.dataToSend[2] = _keyMap.EXIT;
         WriteDebug("DirecTV " + cmd.bytesToSend.ToString());
         SendCommand(cmd);
       }
-      if(HideOSD == true)
+      if (HideOSD == true)
       {
         cmd.dataToSend[2] = 0x86;
         SendCommand(cmd);
       }
     }
 
-    void TuneWithRemoteKeys(string channel)
+    private void TuneWithRemoteKeys(string channel)
     {
       WriteDebug("DirecTV.SerialInterface.TuneWithRemoteKeys: Attempting to tune STRING Channel: {0}", channel);
       for (int i = 0; i < channel.Length; i++)
@@ -759,7 +807,8 @@ namespace DirecTV
 
       if (chMajor > 65535 || chMajor < 0)
       {
-        WriteDebug("DirecTV.SerialInterface.TuneWithRemoteKeys: Channel Value Invalid: {0} - Channel String: {1}", chMajor.ToString(), channel);
+        WriteDebug("DirecTV.SerialInterface.TuneWithRemoteKeys: Channel Value Invalid: {0} - Channel String: {1}",
+                   chMajor.ToString(), channel);
         return;
       }
 
@@ -806,7 +855,9 @@ namespace DirecTV
     public void TuneToChannel(string channel)
     {
       if (_serialPort == null || !_serialPort.IsOpen)
+      {
         OpenPort();
+      }
       if (PowerOnBeforeTuning)
       {
         WriteDebug("DirecTV.SerialInterface.TuneToChannel(): send power on command");
@@ -823,6 +874,7 @@ namespace DirecTV
         TuneWithRemoteKeys(channel);
       }
     }
+
     #endregion
 
     #region power handling
@@ -843,15 +895,18 @@ namespace DirecTV
 
     #region Debug interface
 
-    void WriteDebug(string format, params object[] args)
+    private void WriteDebug(string format, params object[] args)
     {
       if (OnDebugMessage != null)
+      {
         OnDebugMessage(format, args);
+      }
     }
 
     public void DumpConfig()
     {
-      WriteDebug("DirecTV.SerialInterface() created; boxtype: {0}, commandset: {1}, keymap: {2}, port: {3}, baudrate: {4}, timeout: {5}, poweron: {6}",
+      WriteDebug(
+        "DirecTV.SerialInterface() created; boxtype: {0}, commandset: {1}, keymap: {2}, port: {3}, baudrate: {4}, timeout: {5}, poweron: {6}",
         _box, _commandSet.Name, _keyMap.KeyMapName, PortName, BaudRate, ReadTimeout, PowerOnBeforeTuning
         );
     }

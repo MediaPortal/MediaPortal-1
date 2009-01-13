@@ -30,12 +30,15 @@ namespace MediaPortal.Utils.Time
   public class TimeRange
   {
     #region Variables
+
     private BasicTime _start;
     private BasicTime _end;
     private bool _overMidnight;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TimeRange"/> class.
     /// </summary>
@@ -48,7 +51,9 @@ namespace MediaPortal.Utils.Time
 
       _overMidnight = false;
       if (_end.Hour < _start.Hour)
+      {
         _overMidnight = true;
+      }
     }
 
     /// <summary>
@@ -63,11 +68,15 @@ namespace MediaPortal.Utils.Time
 
       _overMidnight = false;
       if (_end.Hour < _start.Hour)
+      {
         _overMidnight = true;
+      }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Determines whether [is in range] [the specified check time].
     /// </summary>
@@ -80,13 +89,17 @@ namespace MediaPortal.Utils.Time
       if (_overMidnight)
       {
         if (_start < checkTime && checkTime.Hour < 24 ||
-        _end > checkTime && checkTime.Hour > 0)
+            _end > checkTime && checkTime.Hour > 0)
+        {
           return true;
+        }
       }
       else
       {
         if (_start < checkTime && _end > checkTime)
+        {
           return true;
+        }
       }
       return false;
     }
@@ -105,13 +118,17 @@ namespace MediaPortal.Utils.Time
       if (_overMidnight)
       {
         if (_start < checkTime && checkTime.Hour < 24 ||
-        _end > checkTime && checkTime.Hour > 0)
+            _end > checkTime && checkTime.Hour > 0)
+        {
           return true;
+        }
       }
       else
       {
         if (_start < checkTime && _end > checkTime)
+        {
           return true;
+        }
       }
       return false;
     }
@@ -120,6 +137,7 @@ namespace MediaPortal.Utils.Time
     {
       return _start.ToString() + "-" + _end.ToString();
     }
+
     #endregion
   }
 }

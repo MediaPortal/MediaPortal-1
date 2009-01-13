@@ -12,4 +12,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     Trigger = 4
   }
 }
-

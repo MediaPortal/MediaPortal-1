@@ -24,37 +24,19 @@
 #endregion
 
 #region usings
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
-using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
-#endregion
 
+using System.Threading;
+
+#endregion
 
 namespace MediaPortal.TV.Recording
 {
-  public class CardCommand   
+  public class CardCommand
   {
-    bool _isFinished = false;
-    bool _isSucceeded=false;
-    string _errorMessage = "";
-    AutoResetEvent _event=null;
+    private bool _isFinished = false;
+    private bool _isSucceeded = false;
+    private string _errorMessage = "";
+    private AutoResetEvent _event = null;
 
     public CardCommand()
     {
@@ -62,15 +44,10 @@ namespace MediaPortal.TV.Recording
 
     public AutoResetEvent Event
     {
-      get
-      {
-        return _event;
-      }
-      set
-      {
-        _event = value;
-      }
+      get { return _event; }
+      set { _event = value; }
     }
+
     public virtual void Execute(CommandProcessor handler)
     {
     }
@@ -82,15 +59,12 @@ namespace MediaPortal.TV.Recording
 
     public void WaitOne(int millisecondsTimeout)
     {
-      _event.WaitOne(millisecondsTimeout,true);
+      _event.WaitOne(millisecondsTimeout, true);
     }
 
     public bool Finished
     {
-      get
-      {
-        return _isFinished;
-      }
+      get { return _isFinished; }
 
       set
       {
@@ -107,21 +81,14 @@ namespace MediaPortal.TV.Recording
 
     public bool Succeeded
     {
-      get
-      {
-        return _isSucceeded;
-      }
-      set
-      {
-        _isSucceeded=value;
-      }
+      get { return _isSucceeded; }
+      set { _isSucceeded = value; }
     }
-    
+
     public string ErrorMessage
     {
       get { return _errorMessage; }
       set { _errorMessage = value; }
     }
-
   }
 }

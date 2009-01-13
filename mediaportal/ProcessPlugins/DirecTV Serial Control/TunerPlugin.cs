@@ -20,18 +20,17 @@
  */
 
 using System;
-using System.Text;
-
-using MediaPortal.GUI.Library;
+using System.Windows.Forms;
 using DirecTV;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.DirectTVTunerPlugin
 {
   public class TunerPlugin : IPlugin, ISetupForm
   {
-    private const int _windowID = 0;                // process plugin - doesn't need windowID
-    private DirecTVSettings _settings;              // Serialized settings placeholder
-    private SerialInterface _serialInterface;       // generic interface to DirecTV boxes
+    private const int _windowID = 0; // process plugin - doesn't need windowID
+    private DirecTVSettings _settings; // Serialized settings placeholder
+    private SerialInterface _serialInterface; // generic interface to DirecTV boxes
 
     public TunerPlugin()
     {
@@ -128,7 +127,8 @@ namespace ProcessPlugins.DirectTVTunerPlugin
       return _windowID;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = string.Empty;
       strButtonImage = string.Empty;
@@ -149,7 +149,7 @@ namespace ProcessPlugins.DirectTVTunerPlugin
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form f = new SetupForm();
+      Form f = new SetupForm();
       f.ShowDialog();
     }
 

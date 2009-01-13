@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 {
-
   internal class IPAddresses
   {
     [DllImport("Iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
     public static extern int GetIpAddrTable(IntPtr pAddrTable, ref int pdwSize, bool bOrder);
+
     public static ArrayList LocalIPAddresses(EventLog ErrorLog)
     {
       IntPtr zero = IntPtr.Zero;
@@ -22,14 +22,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         GetIpAddrTable(zero, ref pdwSize, false);
         zero = Marshal.AllocHGlobal(pdwSize);
         GetIpAddrTable(zero, ref pdwSize, false);
-        int num3 = (int)Marshal.PtrToStructure(zero, typeof(int));
+        int num3 = (int) Marshal.PtrToStructure(zero, typeof (int));
         for (int i = 0; i < num3; i++)
         {
-          _MIB_IPADDRROW _mib_ipaddrrow = (_MIB_IPADDRROW)Marshal.PtrToStructure((IntPtr)((zero.ToInt32() + 4) + (i * Marshal.SizeOf(typeof(_MIB_IPADDRROW)))), typeof(_MIB_IPADDRROW));
+          _MIB_IPADDRROW _mib_ipaddrrow =
+            (_MIB_IPADDRROW)
+            Marshal.PtrToStructure((IntPtr) ((zero.ToInt32() + 4) + (i*Marshal.SizeOf(typeof (_MIB_IPADDRROW)))),
+                                   typeof (_MIB_IPADDRROW));
           newAddress = long.Parse(_mib_ipaddrrow.dwAddr.ToString());
           list.Add(new IPAddress(newAddress).ToString());
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         if (ErrorLog != null)
         {
@@ -69,4 +73,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     }
   }
 }
-

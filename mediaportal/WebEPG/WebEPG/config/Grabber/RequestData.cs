@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Text;
-using MediaPortal.Utils.Web;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -36,27 +33,18 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class RequestData
   {
     #region Variables
-    [XmlIgnore()]
-    public string ChannelId;
-    [XmlAttribute("startOffset")]
-    public int OffsetStart;
-    [XmlAttribute("weekday")]
-    public string WeekDay = "dddd";
-    [XmlAttribute("maxlistings")]
-    public int MaxListingCount = 0;
-    [XmlAttribute("listStart")]
-    public int ListStart = 0;
-    [XmlAttribute("startPage")]
-    public int PageStart;
-    [XmlAttribute("endPage")]
-    public int PageEnd;
-    [XmlAttribute("language")]
-    public string SearchLang = "en-US";
-    [XmlAttribute("baseDate")]
-    public string BaseDate;
-    [XmlArray("DayNames")]
-    [XmlArrayItem("Day")]
-    public string[] DayNames;
+
+    [XmlIgnore()] public string ChannelId;
+    [XmlAttribute("startOffset")] public int OffsetStart;
+    [XmlAttribute("weekday")] public string WeekDay = "dddd";
+    [XmlAttribute("maxlistings")] public int MaxListingCount = 0;
+    [XmlAttribute("listStart")] public int ListStart = 0;
+    [XmlAttribute("startPage")] public int PageStart;
+    [XmlAttribute("endPage")] public int PageEnd;
+    [XmlAttribute("language")] public string SearchLang = "en-US";
+    [XmlAttribute("baseDate")] public string BaseDate;
+    [XmlArray("DayNames")] [XmlArrayItem("Day")] public string[] DayNames;
+
     #endregion
   }
 }

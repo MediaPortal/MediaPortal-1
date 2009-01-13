@@ -24,20 +24,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.IO;
-using MediaPortal.GUI.Library;
+using System.Collections.Generic;
 using System.Diagnostics;
-using MediaPortal.Util;
+using System.IO;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.GUIBurner
 {
   public class BurnDataDVD
   {
     #region enums
+
     private enum CopyState
     {
       FileCopy = 0,
@@ -50,44 +49,53 @@ namespace MediaPortal.GUI.GUIBurner
       Step2 = 1,
       Finished = 2
     }
+
     #endregion
 
     //class variables
+
     #region Class Variables
 
-    System.Diagnostics.Process BurnerProcess;         // Will run the external processes in another thread
-    CopyState _CurrentCopyState;             // Current Convert State aka Step
-    DVDBurnStates _CurrentBurnState;                // Current Burn State aka Step
-    string _CurrentProcess = string.Empty; // Current Process Running
-    bool _Started = false;        // Has the Processing Started
-    string _PathtoDvdBurnExe = string.Empty; // Path to the EXE files for Burning
-    string _CurrentFileName = string.Empty; // Current Filename being processed
-    ArrayList _FileNames;                       // ArrayList of files to process
-    int _FileNameCount = 0;            // Track the file in the Array being processed
-    string _TempFolderPath = string.Empty; // Path to temp folder used
-    string _RecorderDrive = string.Empty; // CD/DVD Drive letter
-    bool _InDebugMode = false;        // Debug option
-    bool _BurnTheDVD = true;         // Burn the DVD
-    List<string> _FilesToBurn = new List<string>(); // Converted Files ready to Burn
+    private Process BurnerProcess; // Will run the external processes in another thread
+    private CopyState _CurrentCopyState; // Current Convert State aka Step
+    private DVDBurnStates _CurrentBurnState; // Current Burn State aka Step
+    private string _CurrentProcess = string.Empty; // Current Process Running
+    private bool _Started = false; // Has the Processing Started
+    private string _PathtoDvdBurnExe = string.Empty; // Path to the EXE files for Burning
+    private string _CurrentFileName = string.Empty; // Current Filename being processed
+    private ArrayList _FileNames; // ArrayList of files to process
+    private int _FileNameCount = 0; // Track the file in the Array being processed
+    private string _TempFolderPath = string.Empty; // Path to temp folder used
+    private string _RecorderDrive = string.Empty; // CD/DVD Drive letter
+    private bool _InDebugMode = false; // Debug option
+    private bool _BurnTheDVD = true; // Burn the DVD
+    private List<string> _FilesToBurn = new List<string>(); // Converted Files ready to Burn
+
     #endregion
 
     //events
     //in your UI class, listen in on these events to report back to user
+
     #region Events and Delegates
+
     public delegate void FileFinishedEventHandler(object sender, FileFinishedEventArgs e);
+
     public event FileFinishedEventHandler FileFinished;
 
     public event EventHandler AllFinished;
 
     public delegate void BurnDVDErrorEventHandler(object sender, BurnDVDErrorEventArgs e);
+
     public event BurnDVDErrorEventHandler BurnDVDError;
 
     public delegate void BurnDVDStatusUpdateEventHandler(object sender, BurnDVDStatusUpdateEventArgs e);
+
     public event BurnDVDStatusUpdateEventHandler BurnDVDStatusUpdate;
 
     #endregion
 
     //constructor
+
     #region Constructors
 
     ///<summary>BurnDataDVD Class Constructor.</summary>
@@ -98,19 +106,23 @@ namespace MediaPortal.GUI.GUIBurner
     ///<param name="DebugMode">Debug Mode includes more logging and does not delete the temporary files created</param>
     ///<param name="RecorderDrive">The drive letter of the Recorder</param>
     ///<param name="DummyBurn">Do everything except the burn. Used for debugging</param>
-    public BurnDataDVD(ArrayList FileNames, string PathToTempFolder, string PathtoDVDBurnExe, bool DebugMode, string RecorderDrive, bool DummyBurn)
+    public BurnDataDVD(ArrayList FileNames, string PathToTempFolder, string PathtoDVDBurnExe, bool DebugMode,
+                       string RecorderDrive, bool DummyBurn)
     {
       _InDebugMode = DebugMode;
 
       // Override burn setting if in debug mode
       if (DummyBurn)
+      {
         _BurnTheDVD = false;
+      }
 
       pBurnDataDVD(FileNames, PathToTempFolder, PathtoDVDBurnExe, RecorderDrive);
     }
 
     ///<summary>Private Initialization method called by the Constructors.</summary>
-    private void pBurnDataDVD(ArrayList FileNames, string PathToTempFolder, string PathtoDVDBurnExe, string RecorderDrive)
+    private void pBurnDataDVD(ArrayList FileNames, string PathToTempFolder, string PathtoDVDBurnExe,
+                              string RecorderDrive)
     {
       _FileNames = FileNames;
       _FileNameCount = 0;
@@ -120,9 +132,13 @@ namespace MediaPortal.GUI.GUIBurner
       _RecorderDrive = RecorderDrive;
 
       if (_TempFolderPath.EndsWith(@"\\") || _TempFolderPath.EndsWith("//"))
+      {
         _TempFolderPath = _TempFolderPath.Substring(0, (_TempFolderPath.Length - 2));
+      }
       else if (_TempFolderPath.EndsWith(@"\") || _TempFolderPath.EndsWith("/"))
+      {
         _TempFolderPath = _TempFolderPath.Substring(0, (_TempFolderPath.Length - 1));
+      }
 
       // Make the DVD dir. Gets deleted straight away, but saves an exception
       Directory.CreateDirectory(_TempFolderPath);
@@ -133,7 +149,7 @@ namespace MediaPortal.GUI.GUIBurner
       // Make the DVD dir that we just deleted above
       Directory.CreateDirectory(_TempFolderPath);
 
-      Directory.CreateDirectory(_TempFolderPath+ "/DVD_Image");
+      Directory.CreateDirectory(_TempFolderPath + "/DVD_Image");
 
       LogWrite("BurnDataDVDInit", "TempFolderPath: " + _TempFolderPath);
       LogWrite("BurnDataDVDInit", "Debug Mode: " + _InDebugMode.ToString());
@@ -142,6 +158,7 @@ namespace MediaPortal.GUI.GUIBurner
     #endregion
 
     #region Getters and Setters
+
     ///<summary>Called to Start the DataDVD File Conversion and Burning.</summary>
     ///<return>True if File Conversion and Burning has Started.</return>
     ///<return>False if File Conversion and Burning has not Started.</return>
@@ -149,6 +166,7 @@ namespace MediaPortal.GUI.GUIBurner
     {
       get { return _Started; }
     }
+
     #endregion
 
     ///<summary>Called to Start the DataDVD File Conversion and Burning.</summary>
@@ -180,7 +198,7 @@ namespace MediaPortal.GUI.GUIBurner
       if (_FileNameCount <= _FileNames.Count)
       {
         //get next filename and reset the state
-        _CurrentFileName = (string)_FileNames[_FileNameCount - 1];
+        _CurrentFileName = (string) _FileNames[_FileNameCount - 1];
         _CurrentCopyState = CopyState.FileCopy;
 
         ProvideStatusUpdate("Copying " + _CurrentFileName);
@@ -200,7 +218,7 @@ namespace MediaPortal.GUI.GUIBurner
     ///</summary>
     private void BurnPrep()
     {
-      if (_FilesToBurn.Count > 0)  // Make sure we have files to burn
+      if (_FilesToBurn.Count > 0) // Make sure we have files to burn
       {
         // Reset the Burn State
         ProvideStatusUpdate("Data DVD Burn Preperation for " + _FilesToBurn.Count.ToString() + " Data files.");
@@ -213,14 +231,12 @@ namespace MediaPortal.GUI.GUIBurner
         CleanUp();
         if (AllFinished != null)
         {
-          AllFinished(this, new System.EventArgs());
+          AllFinished(this, new EventArgs());
         }
       }
     }
 
-
     #region DVD Burn Steps
-
 
     ///<summary>Generate the DVD ISO File</summary>
     private void ISOFileCreation()
@@ -240,7 +256,7 @@ namespace MediaPortal.GUI.GUIBurner
         BurnerProcess.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.BurnerSupport);
         BurnerProcess.StartInfo.UseShellExecute = false;
 
-        if (!_InDebugMode)                 // Show output if in Debug mode
+        if (!_InDebugMode) // Show output if in Debug mode
         {
           BurnerProcess.StartInfo.RedirectStandardOutput = true;
           BurnerProcess.StartInfo.CreateNoWindow = true;
@@ -273,7 +289,6 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
 
-
     ///<summary>Burn the DVD to a Disc</summary>
     private void WriteDVD()
     {
@@ -292,7 +307,7 @@ namespace MediaPortal.GUI.GUIBurner
           BurnerProcess.StartInfo.WorkingDirectory = _TempFolderPath;
           BurnerProcess.StartInfo.UseShellExecute = false;
 
-          if (!_InDebugMode)                 // Show output if in Debug mode
+          if (!_InDebugMode) // Show output if in Debug mode
           {
             BurnerProcess.StartInfo.RedirectStandardOutput = true;
             BurnerProcess.StartInfo.CreateNoWindow = true;
@@ -303,7 +318,8 @@ namespace MediaPortal.GUI.GUIBurner
 
           //string isofile = Path.Combine(_TempFolderPath, "dvd.iso");
 
-          string args = _RecorderDrive + " " + Path.Combine(_TempFolderPath, "dvd.iso"); ;
+          string args = _RecorderDrive + " " + Path.Combine(_TempFolderPath, "dvd.iso");
+          ;
 
           BurnerProcess.StartInfo.Arguments = args;
 
@@ -318,7 +334,6 @@ namespace MediaPortal.GUI.GUIBurner
             BurnerProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
             // BurnerProcess.BeginOutputReadLine();
           }
-
         }
         else
         {
@@ -331,6 +346,7 @@ namespace MediaPortal.GUI.GUIBurner
         Log.Error(ex.ToString());
       }
     }
+
     #endregion
 
     ///<summary>Called for each Step in the DVD Creation after the File Copy(ing). </summary>
@@ -361,17 +377,18 @@ namespace MediaPortal.GUI.GUIBurner
           }
           break;
       }
-
     }
 
     ///<summary>Called for each File Stepping through the File Conversion(s).</summary>
     private void NextStep_FileCopy()
     {
-      LogWrite("NextStep_FileCopy", "CurrentState: " + _CurrentCopyState.ToString() + " CurrentFile: " + _CurrentFileName);
+      LogWrite("NextStep_FileCopy",
+               "CurrentState: " + _CurrentCopyState.ToString() + " CurrentFile: " + _CurrentFileName);
 
       switch (_CurrentCopyState)
       {
-        #region Convert input file to a the DVD temp folder
+          #region Convert input file to a the DVD temp folder
+
         case CopyState.FileCopy:
           {
             string strFileName = Path.GetFileName(_CurrentFileName);
@@ -385,7 +402,7 @@ namespace MediaPortal.GUI.GUIBurner
             string SourceFilePath = _CurrentFileName;
 
             // Set the current filename to the new output file
-            _CurrentFileName = DestinationFilePath;     // Ready for next file?? 
+            _CurrentFileName = DestinationFilePath; // Ready for next file?? 
 
             _CurrentProcess = "Data file copy";
 
@@ -398,11 +415,12 @@ namespace MediaPortal.GUI.GUIBurner
             try
             {
               BurnerProcess = new Process();
-              BurnerProcess.EnableRaisingEvents = true;                    // Gets or sets whether the Exited event should be raised when the process terminates. 
+              BurnerProcess.EnableRaisingEvents = true;
+                // Gets or sets whether the Exited event should be raised when the process terminates. 
               BurnerProcess.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.BurnerSupport);
               BurnerProcess.StartInfo.UseShellExecute = false;
 
-              if (!_InDebugMode)                 // Show output if in Debug mode
+              if (!_InDebugMode) // Show output if in Debug mode
               {
                 BurnerProcess.StartInfo.RedirectStandardOutput = true;
                 BurnerProcess.StartInfo.CreateNoWindow = true;
@@ -411,7 +429,7 @@ namespace MediaPortal.GUI.GUIBurner
 
               BurnerProcess.Exited += new EventHandler(FileCopyProcess_Exited);
 
-              LogWrite("Starting File Copy","Starting File Copy");
+              LogWrite("Starting File Copy", "Starting File Copy");
 
               BurnerProcess.Start();
 
@@ -420,32 +438,33 @@ namespace MediaPortal.GUI.GUIBurner
                 //BurnerProcess.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
                 BurnerProcess.BeginOutputReadLine();
               }
- */ 
+ */
             }
             catch (Exception ex)
             {
               Log.Error(ex.ToString());
             }
-
           }
           break;
-        #endregion
 
-        #region Finished File Copy Step   Start Next File
-        case CopyState.Finished:  // Finished one file Start Next
+          #endregion
 
-          ProvideStatusUpdate("Completed File Copy For: " + (string)_FileNames[_FileNameCount - 1]);
+          #region Finished File Copy Step   Start Next File
+
+        case CopyState.Finished: // Finished one file Start Next
+
+          ProvideStatusUpdate("Completed File Copy For: " + (string) _FileNames[_FileNameCount - 1]);
 
           if (FileFinished != null)
           {
-            FileFinished(this, new FileFinishedEventArgs((string)_FileNames[_FileNameCount - 1], _CurrentFileName));
+            FileFinished(this, new FileFinishedEventArgs((string) _FileNames[_FileNameCount - 1], _CurrentFileName));
           }
           _FilesToBurn.Add(_CurrentFileName);
           NextFileCopy();
 
           break;
-        #endregion
 
+          #endregion
       }
     }
 
@@ -455,7 +474,9 @@ namespace MediaPortal.GUI.GUIBurner
     private void ProvideStatusUpdate(string status)
     {
       if (_InDebugMode)
+      {
         Log.Debug("ProvideStatusUpdate: {0}", status.ToString());
+      }
 
       if (BurnDVDStatusUpdate != null)
       {
@@ -491,8 +512,7 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
 
-
-    private void MakeISOOutputDataReceivedHandler(object sender, System.Diagnostics.DataReceivedEventArgs e)
+    private void MakeISOOutputDataReceivedHandler(object sender, DataReceivedEventArgs e)
     {
       //     Debugger.Launch();
       //   Debugger.Break();
@@ -526,10 +546,9 @@ namespace MediaPortal.GUI.GUIBurner
     }
 
 
-
     private void ProcessingError(string ErrorTitle, string ErrorText)
     {
-      Log.Error("Processing Error: {0} - {1}",  ErrorTitle, ErrorText);
+      Log.Error("Processing Error: {0} - {1}", ErrorTitle, ErrorText);
       ProvideStatusUpdate("Processing Error: " + ErrorTitle + ": " + ErrorText);
       if (BurnDVDError != null)
       {
@@ -537,9 +556,11 @@ namespace MediaPortal.GUI.GUIBurner
         BurnDVDError(this, be);
       }
     }
+
     #endregion
 
     #region LogWriting
+
     ///<summary>Called to Write to the MediaPortal.Log file</summary>
     ///<param name="EntryTitle">Log Entry Title Text.</param>
     ///<param name="EntryText">Log entry Main Text.</param>
@@ -547,6 +568,7 @@ namespace MediaPortal.GUI.GUIBurner
     {
       Log.Info("My Burner Plugin->BurnDataDVD Class: {0} - {1}", EntryTitle, EntryText);
     }
+
     #endregion
 
     ///<summary>Simple Cleanup that deletes the temp files and directory</summary>
@@ -563,6 +585,5 @@ namespace MediaPortal.GUI.GUIBurner
         ProvideStatusUpdate("Temporary Files Not Deleted: In Debug Mode");
       }
     }
-
   }
 }

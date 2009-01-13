@@ -23,17 +23,17 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX.Direct3D;
 using MediaPortal.Picture.Database;
+using MediaPortal.Util;
+using Microsoft.DirectX.Direct3D;
 
 #region SlidePicture class
 
-class SlidePicture
+internal class SlidePicture
 {
-  const int MAX_PICTURE_WIDTH = 2040;
-  const int MAX_PICTURE_HEIGHT = 2040;
+  private const int MAX_PICTURE_WIDTH = 2040;
+  private const int MAX_PICTURE_HEIGHT = 2040;
 
   private Texture _texture;
   private int _width = 0;
@@ -77,7 +77,7 @@ class SlidePicture
   {
     _filePath = strFilePath;
 
-      _rotation = PictureDatabase.GetRotation(_filePath);
+    _rotation = PictureDatabase.GetRotation(_filePath);
 
     int iMaxWidth = GUIGraphicsContext.OverScanWidth;
     int iMaxHeight = GUIGraphicsContext.OverScanHeight;
@@ -89,7 +89,7 @@ class SlidePicture
       iMaxHeight = MAX_PICTURE_HEIGHT;
     }
 
-    _texture = MediaPortal.Util.Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+    _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
   }
 
   ~SlidePicture()

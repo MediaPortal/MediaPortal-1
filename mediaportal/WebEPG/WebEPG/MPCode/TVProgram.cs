@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Text;
 using System.Data.SqlTypes;
 
 namespace MediaPortal.Webepg.TV.Database
@@ -34,31 +32,32 @@ namespace MediaPortal.Webepg.TV.Database
   /// Class which holds all details about a TV program
   /// </summary>
   public class TVProgram //: IComparable
-	{
-		string _strChannel=string.Empty;
-    string _strGenre=string.Empty;
-    string _strTitle=string.Empty;
-    string _strEpisode=string.Empty;
-    string _strDescription=string.Empty;
-    string _strRepeat=string.Empty;
-    string _strDate=string.Empty;
-    string _strSeriesNum=string.Empty;
-    string _strEpisodeNum=string.Empty;
-    string _strEpisodePart=string.Empty;
-    string _strEpisodeFullDetails=string.Empty;
-    string _strStarRating=string.Empty;
-    string _strClassification=string.Empty;
-    long   _iStartTime=0;
-    long   _iEndTime=0;
-    int    _iID=0;
-    string _strDuration=string.Empty;
-    string _strTimeFromNow=string.Empty;
+  {
+    private string _strChannel = string.Empty;
+    private string _strGenre = string.Empty;
+    private string _strTitle = string.Empty;
+    private string _strEpisode = string.Empty;
+    private string _strDescription = string.Empty;
+    private string _strRepeat = string.Empty;
+    private string _strDate = string.Empty;
+    private string _strSeriesNum = string.Empty;
+    private string _strEpisodeNum = string.Empty;
+    private string _strEpisodePart = string.Empty;
+    private string _strEpisodeFullDetails = string.Empty;
+    private string _strStarRating = string.Empty;
+    private string _strClassification = string.Empty;
+    private long _iStartTime = 0;
+    private long _iEndTime = 0;
+    private int _iID = 0;
+    private string _strDuration = string.Empty;
+    private string _strTimeFromNow = string.Empty;
+
     /// <summary>
     /// Constructor
     /// </summary>
     public TVProgram()
-		{
-		}
+    {
+    }
 
     /// <summary>
     /// Returns a new TVProgram instance which contains the same values
@@ -67,24 +66,24 @@ namespace MediaPortal.Webepg.TV.Database
     public TVProgram Clone()
     {
       TVProgram prog = new TVProgram();
-      prog.ID=_iID;
-			prog._strChannel=_strChannel;
-      prog._strGenre=_strGenre;
-      prog._strTitle=_strTitle;
-	  prog._strEpisode=_strEpisode;
-      prog._strDescription=_strDescription;
-	  prog._strRepeat=_strRepeat;
-      prog._iStartTime=_iStartTime;
-      prog._iEndTime=_iEndTime;
-      prog._strDate=_strDate;
-      prog._strSeriesNum=_strSeriesNum;
-      prog._strEpisodeNum=_strEpisodeNum;
-      prog._strEpisodePart=_strEpisodePart;
-      prog._strStarRating=_strStarRating;
-      prog._strClassification=_strClassification;
-      prog._strDuration=_strDuration;
-      prog._strTimeFromNow=_strTimeFromNow;
-      prog._strEpisodeFullDetails=_strEpisodeFullDetails;
+      prog.ID = _iID;
+      prog._strChannel = _strChannel;
+      prog._strGenre = _strGenre;
+      prog._strTitle = _strTitle;
+      prog._strEpisode = _strEpisode;
+      prog._strDescription = _strDescription;
+      prog._strRepeat = _strRepeat;
+      prog._iStartTime = _iStartTime;
+      prog._iEndTime = _iEndTime;
+      prog._strDate = _strDate;
+      prog._strSeriesNum = _strSeriesNum;
+      prog._strEpisodeNum = _strEpisodeNum;
+      prog._strEpisodePart = _strEpisodePart;
+      prog._strStarRating = _strStarRating;
+      prog._strClassification = _strClassification;
+      prog._strDuration = _strDuration;
+      prog._strTimeFromNow = _strTimeFromNow;
+      prog._strEpisodeFullDetails = _strEpisodeFullDetails;
       return prog;
     }
 
@@ -93,35 +92,54 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     /// <param name="ldate">date/time</param>
     /// <returns>DateTime object containing the date/time</returns>
-    DateTime longtodate(long ldate)
+    private DateTime longtodate(long ldate)
     {
       if (ldate <= 0)
+      {
         return SqlDateTime.MinValue.Value;
-      int year,month,day,hour,minute,sec;
-      sec=(int)(ldate%100L); ldate /=100L;
-      minute=(int)(ldate%100L); ldate /=100L;
-      hour=(int)(ldate%100L); ldate /=100L;
-      day=(int)(ldate%100L); ldate /=100L;
-      month=(int)(ldate%100L); ldate /=100L;
-      year=(int)ldate;
+      }
+      int year, month, day, hour, minute, sec;
+      sec = (int) (ldate%100L);
+      ldate /= 100L;
+      minute = (int) (ldate%100L);
+      ldate /= 100L;
+      hour = (int) (ldate%100L);
+      ldate /= 100L;
+      day = (int) (ldate%100L);
+      ldate /= 100L;
+      month = (int) (ldate%100L);
+      ldate /= 100L;
+      year = (int) ldate;
       if (day < 0 || day > 31)
+      {
         return SqlDateTime.MinValue.Value;
+      }
       if (month < 0 || month > 12)
+      {
         return SqlDateTime.MinValue.Value;
+      }
       if (year < 1900 || year > 2100)
+      {
         return SqlDateTime.MinValue.Value;
-      if (sec<0 || sec>59)
+      }
+      if (sec < 0 || sec > 59)
+      {
         return SqlDateTime.MinValue.Value;
-      if (minute<0 || minute>59)
+      }
+      if (minute < 0 || minute > 59)
+      {
         return SqlDateTime.MinValue.Value;
-      if (hour<0 || hour>23)
+      }
+      if (hour < 0 || hour > 23)
+      {
         return SqlDateTime.MinValue.Value;
+      }
       try
       {
-        DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
+        DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
       return SqlDateTime.MinValue.Value;
@@ -132,8 +150,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Channel
     {
-      get { return _strChannel;}
-      set { _strChannel=value;}
+      get { return _strChannel; }
+      set { _strChannel = value; }
     }
 
     /// <summary>
@@ -141,8 +159,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Genre
     {
-      get { return _strGenre;}
-      set { _strGenre=value;}
+      get { return _strGenre; }
+      set { _strGenre = value; }
     }
 
 
@@ -151,8 +169,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public int ID
     {
-      get { return _iID;}
-      set { _iID=value;}
+      get { return _iID; }
+      set { _iID = value; }
     }
 
     /// <summary>
@@ -160,8 +178,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Title
     {
-      get { return _strTitle;}
-      set { _strTitle=value;}
+      get { return _strTitle; }
+      set { _strTitle = value; }
     }
 
     /// <summary>
@@ -169,76 +187,85 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Description
     {
-      get { return _strDescription;}
-      set { _strDescription=value;}
+      get { return _strDescription; }
+      set { _strDescription = value; }
     }
+
     /// <summary>
     /// Property to get/set the episode name of this tv program
     /// </summary>
-	public string Episode
-	{
-	  get { return _strEpisode;}
-	  set { _strEpisode=value;}
+    public string Episode
+    {
+      get { return _strEpisode; }
+      set { _strEpisode = value; }
     }
+
     /// <summary>
     /// Property to get/set whether this tv program is a repeat
     /// </summary>	
-	public string Repeat
-	{
-	  get { return _strRepeat;}
-	  set { _strRepeat=value;}
-	}
+    public string Repeat
+    {
+      get { return _strRepeat; }
+      set { _strRepeat = value; }
+    }
+
     /// <summary>
     /// Property to get/set the series number of this tv program
     /// </summary>
-  public string SeriesNum
-  {
-    get { return _strSeriesNum;}
-    set { _strSeriesNum=value;}
-  }
+    public string SeriesNum
+    {
+      get { return _strSeriesNum; }
+      set { _strSeriesNum = value; }
+    }
+
     /// <summary>
     /// Property to get/set the episode number of this tv program
     /// </summary>
-  public string EpisodeNum
-  {
-    get { return _strEpisodeNum;}
-    set { _strEpisodeNum=value;}
-  }
+    public string EpisodeNum
+    {
+      get { return _strEpisodeNum; }
+      set { _strEpisodeNum = value; }
+    }
+
     /// <summary>
     /// Property to get/set the episode part of this tv program eg: part 1 of 2
     /// </summary>
-  public string EpisodePart
-  {
-    get { return _strEpisodePart;}
-    set { _strEpisodePart=value;}
-  }  
+    public string EpisodePart
+    {
+      get { return _strEpisodePart; }
+      set { _strEpisodePart = value; }
+    }
+
     /// <summary>
     /// Property to get/set the original date of this tv program
     /// </summary>
-  public string Date
-  {
-    get { return _strDate;}
-    set { _strDate=value;}
-  }
-  /// <summary>
-  /// Property to get/set the star rating of this tv program(film)
-  /// </summary>
-  public string StarRating
-  {
-    get { return _strStarRating;}
-    set { _strStarRating=value;}
-  }
-  /// <summary>
-  /// Property to get/set the classification of this tv program(film eg: PG,18 etc)
-  /// </summary>
-  public string Classification
-  {
-    get { return _strClassification;}
-    set { _strClassification=value;}
-  }
-  /// <summary>
-  /// Property to get the duration of this tv program
-  /// </summary>
+    public string Date
+    {
+      get { return _strDate; }
+      set { _strDate = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the star rating of this tv program(film)
+    /// </summary>
+    public string StarRating
+    {
+      get { return _strStarRating; }
+      set { _strStarRating = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the classification of this tv program(film eg: PG,18 etc)
+    /// </summary>
+    public string Classification
+    {
+      get { return _strClassification; }
+      set { _strClassification = value; }
+    }
+
+    /// <summary>
+    /// Property to get the duration of this tv program
+    /// </summary>
 //  public string Duration
 //  {
 //    get
@@ -247,11 +274,11 @@ namespace MediaPortal.Webepg.TV.Database
 //      return _strDuration;
 //    }
 //  }
-  /// <summary>
-  /// <summary>
-  /// Property to get the start time relative to current time of this tv program
-  /// eg. Starts in 2 Hours 25 Minutes, Started 35 Minutes ago - 25 Minutes remaining
-  /// </summary>
+    /// <summary>
+    /// <summary>
+    /// Property to get the start time relative to current time of this tv program
+    /// eg. Starts in 2 Hours 25 Minutes, Started 35 Minutes ago - 25 Minutes remaining
+    /// </summary>
 //  public string TimeFromNow
 //  {
 //    get
@@ -277,8 +304,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public long Start
     {
-      get { return _iStartTime;}
-      set { _iStartTime=value;}
+      get { return _iStartTime; }
+      set { _iStartTime = value; }
     }
 
     /// <summary>
@@ -286,8 +313,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public long End
     {
-      get { return _iEndTime;}
-      set { _iEndTime=value;}
+      get { return _iEndTime; }
+      set { _iEndTime = value; }
     }
 
     /// <summary>
@@ -295,7 +322,7 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return longtodate(_iStartTime);}
+      get { return longtodate(_iStartTime); }
     }
 
     /// <summary>
@@ -303,8 +330,9 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return longtodate(_iEndTime);}
+      get { return longtodate(_iEndTime); }
     }
+
     /// <summary>
     /// Checks if the program is running between the specified start and end time/dates
     /// </summary>
@@ -313,13 +341,22 @@ namespace MediaPortal.Webepg.TV.Database
     /// <returns>true if program is running between tStartTime-tEndTime</returns>
     public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
     {
-      DateTime dtStart=StartTime;
-      DateTime dtEnd=EndTime;
+      DateTime dtStart = StartTime;
+      DateTime dtEnd = EndTime;
 
-      bool bRunningAt=false;
-      if (dtEnd>=tStartTime && dtEnd <= tEndTime) bRunningAt=true;
-      if (dtStart >=tStartTime && dtStart <= tEndTime) bRunningAt=true;
-      if (dtStart <=tStartTime && dtEnd>=tEndTime) bRunningAt=true;
+      bool bRunningAt = false;
+      if (dtEnd >= tStartTime && dtEnd <= tEndTime)
+      {
+        bRunningAt = true;
+      }
+      if (dtStart >= tStartTime && dtStart <= tEndTime)
+      {
+        bRunningAt = true;
+      }
+      if (dtStart <= tStartTime && dtEnd >= tEndTime)
+      {
+        bRunningAt = true;
+      }
       return bRunningAt;
     }
 
@@ -330,10 +367,14 @@ namespace MediaPortal.Webepg.TV.Database
     /// <returns>true if program is running at tCurTime</returns>
     public bool IsRunningAt(DateTime tCurTime)
     {
-      bool bRunningAt=false;
-      if (tCurTime >=StartTime && tCurTime <= EndTime) bRunningAt=true;
+      bool bRunningAt = false;
+      if (tCurTime >= StartTime && tCurTime <= EndTime)
+      {
+        bRunningAt = true;
+      }
       return bRunningAt;
     }
+
     /// <summary>
     /// Calculates the duration of a program and sets the Duration property
     /// </summary>
@@ -471,5 +512,5 @@ namespace MediaPortal.Webepg.TV.Database
 //		}
 //
 //		#endregion
-	}
+  }
 }

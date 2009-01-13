@@ -25,8 +25,8 @@
 
 using System;
 using System.Text;
+using System.Web;
 using MediaPortal.TagReader;
-
 
 namespace MediaPortal.Music.Database
 {
@@ -96,34 +96,34 @@ namespace MediaPortal.Music.Database
   [Serializable()]
   public class Song
   {
-    int _iTrackId = -1;
-    string _strFileName = String.Empty;
-    string _strTitle = String.Empty;
-    string _strArtist = String.Empty;
-    string _strAlbum = String.Empty;
-    string _strAlbumArtist = String.Empty;
-    string _strGenre = String.Empty;
-    int _iTrack = 0;
-    int _iNumTracks = 0;
-    int _iDuration = 0;
-    int _iYear = 0;
-    int _iTimedPlayed = 0;
-    int _iRating = 0;
-    int _iResumeAt = 0;
-    bool _favorite = false;
-    DateTime _dateTimeModified = DateTime.MinValue;
-    DateTime _dateTimePlayed = DateTime.MinValue;
-    SongStatus _audioScrobblerStatus;
-    string _musicBrainzID;
-    string _strURL = String.Empty;
-    string _webImage = String.Empty;
-    string _lastFMMatch = String.Empty;
-    int _iDisc = 0;
-    int _iNumDisc = 0;
-    string _strLyrics = String.Empty;
-    SongSource _songSource = SongSource.P;
-    string _authToken = String.Empty;
-    SongAction _songAction = SongAction.N;
+    private int _iTrackId = -1;
+    private string _strFileName = String.Empty;
+    private string _strTitle = String.Empty;
+    private string _strArtist = String.Empty;
+    private string _strAlbum = String.Empty;
+    private string _strAlbumArtist = String.Empty;
+    private string _strGenre = String.Empty;
+    private int _iTrack = 0;
+    private int _iNumTracks = 0;
+    private int _iDuration = 0;
+    private int _iYear = 0;
+    private int _iTimedPlayed = 0;
+    private int _iRating = 0;
+    private int _iResumeAt = 0;
+    private bool _favorite = false;
+    private DateTime _dateTimeModified = DateTime.MinValue;
+    private DateTime _dateTimePlayed = DateTime.MinValue;
+    private SongStatus _audioScrobblerStatus;
+    private string _musicBrainzID;
+    private string _strURL = String.Empty;
+    private string _webImage = String.Empty;
+    private string _lastFMMatch = String.Empty;
+    private int _iDisc = 0;
+    private int _iNumDisc = 0;
+    private string _strLyrics = String.Empty;
+    private SongSource _songSource = SongSource.P;
+    private string _authToken = String.Empty;
+    private SongAction _songAction = SongAction.N;
 
     public Song()
     {
@@ -271,7 +271,9 @@ namespace MediaPortal.Music.Database
       {
         _iTrack = value;
         if (_iTrack < 0)
+        {
           _iTrack = 0;
+        }
       }
     }
 
@@ -282,7 +284,9 @@ namespace MediaPortal.Music.Database
       {
         _iNumTracks = value;
         if (_iNumTracks < 0)
+        {
           _iNumTracks = 0;
+        }
       }
     }
 
@@ -296,7 +300,9 @@ namespace MediaPortal.Music.Database
       {
         _iDuration = value;
         if (_iDuration < 0)
+        {
           _iDuration = 0;
+        }
       }
     }
 
@@ -307,11 +313,15 @@ namespace MediaPortal.Music.Database
       {
         _iYear = value;
         if (_iYear < 0)
+        {
           _iYear = 0;
+        }
         else
         {
           if (_iYear > 0 && _iYear < 100)
+          {
             _iYear += 1900;
+          }
         }
       }
     }
@@ -392,7 +402,9 @@ namespace MediaPortal.Music.Database
       {
         _iResumeAt = value;
         if (_iResumeAt < 0)
+        {
           _iResumeAt = 0;
+        }
       }
     }
 
@@ -403,7 +415,9 @@ namespace MediaPortal.Music.Database
       {
         _iDisc = value;
         if (_iDisc < 0)
+        {
           _iDisc = 0;
+        }
       }
     }
 
@@ -414,7 +428,9 @@ namespace MediaPortal.Music.Database
       {
         _iNumDisc = value;
         if (_iNumDisc < 0)
+        {
           _iNumDisc = 0;
+        }
       }
     }
 
@@ -478,13 +494,21 @@ namespace MediaPortal.Music.Database
       StringBuilder s = new StringBuilder();
 
       if (_strTitle != String.Empty)
+      {
         s.Append(_strTitle);
+      }
       else
+      {
         s.Append("(Untitled)");
+      }
       if (_strArtist != String.Empty)
+      {
         s.Append(" - " + _strArtist);
+      }
       if (_strAlbum != String.Empty)
+      {
         s.Append(" (" + _strAlbum + ")");
+      }
 
       return s.ToString();
     }
@@ -499,7 +523,9 @@ namespace MediaPortal.Music.Database
         s.Append(" - ");
       }
       if (_strTitle != String.Empty)
+      {
         s.Append(_strTitle);
+      }
       if (_iDuration > 0)
       {
         s.Append(" [");
@@ -507,7 +533,9 @@ namespace MediaPortal.Music.Database
         s.Append("]");
       }
       if (_iTimedPlayed > 0)
+      {
         s.Append(" (played: " + Convert.ToString(_iTimedPlayed) + " times)");
+      }
 
       return s.ToString();
     }
@@ -519,43 +547,60 @@ namespace MediaPortal.Music.Database
       {
         s.Append(_strArtist);
         if (_strAlbum != String.Empty)
+        {
           s.Append(" - " + _strAlbum);
+        }
         else
         {
           if (_strTitle != String.Empty)
+          {
             s.Append(" - " + _strTitle);
+          }
           if (_strGenre != String.Empty)
+          {
             s.Append(" (tagged: " + _strGenre + ")");
+          }
         }
       }
-      else
-        if (_strAlbum != String.Empty)
-          s.Append(_strAlbum);
+      else if (_strAlbum != String.Empty)
+      {
+        s.Append(_strAlbum);
+      }
       if (_lastFMMatch != String.Empty)
+      {
         if (_lastFMMatch.IndexOf(".") == -1)
+        {
           s.Append(" (match: " + _lastFMMatch + "%)");
+        }
         else
+        {
           s.Append(" (match: " + _lastFMMatch.Remove(_lastFMMatch.IndexOf(".") + 2) + "%)");
+        }
+      }
       if (showURL_)
+      {
         if (_strURL != String.Empty)
+        {
           s.Append(" (link: " + _strURL + ")");
+        }
+      }
 
       return s.ToString();
     }
 
     public string ToURLArtistString()
     {
-      return System.Web.HttpUtility.UrlEncode(_strArtist);
+      return HttpUtility.UrlEncode(_strArtist);
     }
 
     public override string ToString()
     {
       return _strArtist + "\t" +
-        _strTitle + "\t" +
-        _strAlbum + "\t" +
-        _musicBrainzID + "\t" +
-        _iDuration + "\t" +
-        _dateTimePlayed.ToString("s");
+             _strTitle + "\t" +
+             _strAlbum + "\t" +
+             _musicBrainzID + "\t" +
+             _iDuration + "\t" +
+             _dateTimePlayed.ToString("s");
     }
 
     public string getQueueTime(bool asUnixTime)
@@ -563,7 +608,9 @@ namespace MediaPortal.Music.Database
       string queueTime = string.Empty;
 
       if (asUnixTime)
+      {
         queueTime = Convert.ToString(Util.Utils.GetUnixTime(DateTimePlayed.ToUniversalTime()));
+      }
       else
       {
         queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
@@ -616,7 +663,7 @@ namespace MediaPortal.Music.Database
     #endregion
   }
 
-    
+
   public class SongMap
   {
     public string m_strPath;

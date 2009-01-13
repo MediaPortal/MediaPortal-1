@@ -24,48 +24,49 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using System.Text;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Keys : MediaPortal.Configuration.SectionSettings
+  public class Keys : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
-    private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPTextBox keyTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox soundTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    protected MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPLabel label1;
+    private MPButton deleteButton;
+    private MPButton addButton;
+    private MPLabel label2;
+    private MPLabel label3;
+    private MPTextBox keyTextBox;
+    private MPTextBox soundTextBox;
+    private MPLabel label4;
+    protected MPButton fileNameButton;
+    private IContainer components = null;
 
     //
     // Private members
     //
-    ArrayList globalActions = new ArrayList();
-    private System.Windows.Forms.TreeView keyTreeView;
-    private MediaPortal.UserInterface.Controls.MPTextBox descriptionTextBox;
-    private System.Windows.Forms.OpenFileDialog openFileDialog;
-    ArrayList windowActions = new ArrayList();
+    private ArrayList globalActions = new ArrayList();
+    private TreeView keyTreeView;
+    private MPTextBox descriptionTextBox;
+    private OpenFileDialog openFileDialog;
+    private ArrayList windowActions = new ArrayList();
 
-    TreeNode currentlySelectedNode;
-    TreeNode globalNode, windowsNode;
+    private TreeNode currentlySelectedNode;
+    private TreeNode globalNode, windowsNode;
 
-    KeyMappings keyMappings = new KeyMappings();
-    private MediaPortal.UserInterface.Controls.MPComboBox idComboBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox idTextBox;
+    private KeyMappings keyMappings = new KeyMappings();
+    private MPComboBox idComboBox;
+    private MPTextBox idTextBox;
 
     public Keys()
       : this("Keys and Sounds")
@@ -85,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       PopulateKeyTree();
 
       // Fill action combo
-      string[] names = Enum.GetNames(typeof(Action.ActionType));
+      string[] names = Enum.GetNames(typeof (Action.ActionType));
       idComboBox.Items.AddRange(names);
     }
 
@@ -123,7 +124,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        action = Enum.GetName(typeof(Action.ActionType), id);
+        action = Enum.GetName(typeof (Action.ActionType), id);
       }
       catch
       {
@@ -250,13 +251,18 @@ namespace MediaPortal.Configuration.Sections
         // Load the xml document
         string keyConfigFile = Config.GetFile(Config.Dir.Config, "keymap.xml");
         if (!File.Exists(keyConfigFile))
+        {
           keyConfigFile = Config.GetFile(Config.Dir.Base, "keymap.xml");
+        }
 
         if (File.Exists(keyConfigFile))
+        {
           document.Load(keyConfigFile);
+        }
         else
         {
-          Log.Error("GeneralKeys: Error loading Keymap.xml - make sure you've got a valid file in your base or config directory!");
+          Log.Error(
+            "GeneralKeys: Error loading Keymap.xml - make sure you've got a valid file in your base or config directory!");
           return;
         }
 
@@ -298,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (Exception e)
       {
-        System.Diagnostics.Debug.WriteLine(e.Message);
+        Debug.WriteLine(e.Message);
       }
     }
 
@@ -312,16 +318,24 @@ namespace MediaPortal.Configuration.Sections
       XmlNode descriptionNode = node.SelectSingleNode("description");
 
       if (idNode != null)
+      {
         id = idNode.InnerText;
+      }
 
       if (keyNode != null)
+      {
         key = keyNode.InnerText;
+      }
 
       if (soundNode != null)
+      {
         sound = soundNode.InnerText;
+      }
 
       if (descriptionNode != null)
+      {
         description = descriptionNode.InnerText;
+      }
 
       list.Add(new KeyAction(Convert.ToInt32(id), key, description, sound));
     }
@@ -342,6 +356,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -368,9 +383,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.idTextBox);
       this.groupBox1.Controls.Add(this.idComboBox);
       this.groupBox1.Controls.Add(this.addButton);
@@ -394,8 +411,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idTextBox
       // 
-      this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.idTextBox.BorderColor = System.Drawing.Color.Empty;
       this.idTextBox.Enabled = false;
       this.idTextBox.Location = new System.Drawing.Point(168, 324);
@@ -408,8 +427,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idComboBox
       // 
-      this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.idComboBox.BorderColor = System.Drawing.Color.Empty;
       this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.idComboBox.Enabled = false;
@@ -421,7 +442,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Enabled = false;
       this.addButton.Location = new System.Drawing.Point(304, 272);
       this.addButton.Name = "addButton";
@@ -433,7 +456,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(384, 272);
       this.deleteButton.Name = "deleteButton";
@@ -445,7 +470,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Enabled = false;
       this.fileNameButton.Location = new System.Drawing.Point(384, 371);
       this.fileNameButton.Name = "fileNameButton";
@@ -457,8 +484,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundTextBox
       // 
-      this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.soundTextBox.BorderColor = System.Drawing.Color.Empty;
       this.soundTextBox.Enabled = false;
       this.soundTextBox.Location = new System.Drawing.Point(168, 372);
@@ -469,7 +498,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label4
       // 
-      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label4.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label4.Location = new System.Drawing.Point(16, 376);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(40, 16);
@@ -479,8 +510,10 @@ namespace MediaPortal.Configuration.Sections
       // keyTextBox
       // 
       this.keyTextBox.AcceptsReturn = true;
-      this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.keyTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTextBox.BorderColor = System.Drawing.Color.Empty;
       this.keyTextBox.Enabled = false;
       this.keyTextBox.Location = new System.Drawing.Point(168, 348);
@@ -493,7 +526,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label3.Location = new System.Drawing.Point(16, 352);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(32, 16);
@@ -502,7 +537,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label2.Location = new System.Drawing.Point(16, 328);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(40, 16);
@@ -511,8 +548,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // descriptionTextBox
       // 
-      this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.descriptionTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.descriptionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.descriptionTextBox.Enabled = false;
       this.descriptionTextBox.Location = new System.Drawing.Point(168, 300);
@@ -523,7 +562,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.Location = new System.Drawing.Point(16, 304);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 16);
@@ -532,9 +573,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // keyTreeView
       // 
-      this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.keyTreeView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTreeView.FullRowSelect = true;
       this.keyTreeView.HideSelection = false;
       this.keyTreeView.Location = new System.Drawing.Point(16, 24);
@@ -551,15 +594,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void keyTreeView_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+    private void keyTreeView_AfterSelect(object sender, TreeViewEventArgs e)
     {
       currentlySelectedNode = e.Node;
 
-      addButton.Enabled = currentlySelectedNode != null && (!(currentlySelectedNode.Tag is KeyAction) && currentlySelectedNode.Tag != null);
+      addButton.Enabled = currentlySelectedNode != null &&
+                          (!(currentlySelectedNode.Tag is KeyAction) && currentlySelectedNode.Tag != null);
 
       if (addButton.Enabled == false)
       {
@@ -569,7 +613,11 @@ namespace MediaPortal.Configuration.Sections
       //
       // Enable/Disable controls
       //
-      deleteButton.Enabled = keyTextBox.Enabled = fileNameButton.Enabled = idComboBox.Enabled = idTextBox.Enabled = soundTextBox.Enabled = descriptionTextBox.Enabled = e.Node.Tag is KeyAction;
+      deleteButton.Enabled =
+        keyTextBox.Enabled =
+        fileNameButton.Enabled =
+        idComboBox.Enabled =
+        idTextBox.Enabled = soundTextBox.Enabled = descriptionTextBox.Enabled = e.Node.Tag is KeyAction;
 
       if (deleteButton.Enabled == false)
       {
@@ -624,7 +672,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void fileNameButton_Click(object sender, System.EventArgs e)
+    private void fileNameButton_Click(object sender, EventArgs e)
     {
       using (openFileDialog = new OpenFileDialog())
       {
@@ -639,12 +687,12 @@ namespace MediaPortal.Configuration.Sections
 
         if (dialogResult == DialogResult.OK)
         {
-          soundTextBox.Text = System.IO.Path.GetFileName(openFileDialog.FileName);
+          soundTextBox.Text = Path.GetFileName(openFileDialog.FileName);
         }
       }
     }
 
-    private void descriptionTextBox_TextChanged(object sender, System.EventArgs e)
+    private void descriptionTextBox_TextChanged(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -673,7 +721,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void keyTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    private void keyTextBox_KeyDown(object sender, KeyEventArgs e)
     {
       if (keyMappings.IsValid(e.KeyValue))
       {
@@ -697,7 +745,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void keyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void keyTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       keyTextBox.Text = e.KeyChar.ToString().ToUpper(); // keyMappings.GetName(e.KeyValue);
 
@@ -714,7 +762,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void addButton_Click(object sender, System.EventArgs e)
+    private void addButton_Click(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -794,7 +842,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void deleteButton_Click(object sender, System.EventArgs e)
+    private void deleteButton_Click(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -819,11 +867,10 @@ namespace MediaPortal.Configuration.Sections
         }
 
         parentNode.Nodes.Remove(currentlySelectedNode);
-
       }
     }
 
-    private void idTextBox_TextChanged(object sender, System.EventArgs e)
+    private void idTextBox_TextChanged(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -848,7 +895,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void idTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void idTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
@@ -856,7 +903,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void soundTextBox_TextChanged(object sender, System.EventArgs e)
+    private void soundTextBox_TextChanged(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -871,7 +918,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void idComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void idComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (currentlySelectedNode != null)
       {
@@ -893,19 +940,22 @@ namespace MediaPortal.Configuration.Sections
 
             try
             {
-              Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
+              Action.ActionType actionType = (Action.ActionType) Enum.Parse(typeof (Action.ActionType), idComboBox.Text);
 
-              action.Id = (int)actionType;
+              action.Id = (int) actionType;
 
               currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
               currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
             }
-            catch { }
+            catch
+            {
+            }
           }
         }
       }
     }
   }
+
   public class KeyMappings : Hashtable
   {
     public class KeyMap
@@ -1000,17 +1050,17 @@ namespace MediaPortal.Configuration.Sections
 
     public void Add(System.Windows.Forms.Keys key, string name, string settingName)
     {
-      Add((int)key, key, name, settingName, true);
+      Add((int) key, key, name, settingName, true);
     }
 
     public void Add(System.Windows.Forms.Keys key, string name)
     {
-      Add((int)key, key, name, name, true);
+      Add((int) key, key, name, name, true);
     }
 
     public void Add(System.Windows.Forms.Keys key, string name, bool valid)
     {
-      Add((int)key, key, name, name, valid);
+      Add((int) key, key, name, name, valid);
     }
 
     public string GetName(int code)
@@ -1027,7 +1077,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Item wasn't found in map, this must be a common key
         //
-        result = String.Format("{0}", (char)code);
+        result = String.Format("{0}", (char) code);
       }
 
       return result;
@@ -1047,7 +1097,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Item wasn't found in map, this must be a common key
         //
-        result = String.Format("{0}", (char)code);
+        result = String.Format("{0}", (char) code);
       }
 
       return result;
@@ -1082,4 +1132,3 @@ namespace MediaPortal.Configuration.Sections
     public ArrayList Actions = new ArrayList();
   }
 }
-

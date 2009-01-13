@@ -27,10 +27,10 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using Microsoft.DirectX.DirectInput;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using Microsoft.DirectX.DirectInput;
 
 namespace MediaPortal.InputDevices
 {
@@ -42,27 +42,27 @@ namespace MediaPortal.InputDevices
     [DllImport("winmm.dll")]
     public static extern int timeGetTime();
 
-    DirectInputListener _diListener = null;
-    DeviceList _deviceList = null;
-    string _selectedDeviceGUID = string.Empty;
-    InputHandler _inputHandler = null;
+    private DirectInputListener _diListener = null;
+    private DeviceList _deviceList = null;
+    private string _selectedDeviceGUID = string.Empty;
+    private InputHandler _inputHandler = null;
 
-    ArrayList _deviceNames = new ArrayList();
-    ArrayList _deviceGUIDs = new ArrayList();
-    bool _active = false;
-    bool _doSendActions = true;
-    int _delay = 150; // delay in milliseconds, used to filter events
-    string _buttonComboKill = "2,3";
-    string _buttonComboClose = "1,3";
+    private ArrayList _deviceNames = new ArrayList();
+    private ArrayList _deviceGUIDs = new ArrayList();
+    private bool _active = false;
+    private bool _doSendActions = true;
+    private int _delay = 150; // delay in milliseconds, used to filter events
+    private string _buttonComboKill = "2,3";
+    private string _buttonComboClose = "1,3";
 
-    int _lastCodeSent = -1;
-    int _lastAxisValue = 0;
-    int _timeLastSend = 0;
-    int _axisLimit = 4200;
-    Process _lastProc = null;
+    private int _lastCodeSent = -1;
+    private int _lastAxisValue = 0;
+    private int _timeLastSend = 0;
+    private int _axisLimit = 4200;
+    private Process _lastProc = null;
 
 
-    enum joyButton
+    private enum joyButton
     {
       axisXUp = 3000,
       axisXDown = 3001,
@@ -120,7 +120,6 @@ namespace MediaPortal.InputDevices
 
     public DirectInputHandler()
     {
-      
     }
 
     ~DirectInputHandler()
@@ -132,7 +131,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       bool _controlEnabled = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "DirectInput", false);
       }
@@ -147,10 +146,14 @@ namespace MediaPortal.InputDevices
           AttachHandlers();
         }
         else
+        {
           Log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
+        }
       }
       else
+      {
         Log.Info("DirectInput: not enabled");
+      }
     }
 
     public void InitDeviceList()
@@ -160,7 +163,10 @@ namespace MediaPortal.InputDevices
         _deviceList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
         _deviceNames.Clear();
         _deviceGUIDs.Clear();
-        if (null == _deviceList) return;
+        if (null == _deviceList)
+        {
+          return;
+        }
         _deviceList.Reset();
         foreach (DeviceInstance di in _deviceList)
         {
@@ -198,14 +204,14 @@ namespace MediaPortal.InputDevices
 
     public string ButtonComboKill
     {
-      get { return _buttonComboKill;}
-      set { _buttonComboKill = value;}
+      get { return _buttonComboKill; }
+      set { _buttonComboKill = value; }
     }
 
     public string ButtonComboClose
     {
-      get { return _buttonComboClose;}
-      set { _buttonComboClose = value;}
+      get { return _buttonComboClose; }
+      set { _buttonComboClose = value; }
     }
 
     public string GetCurrentButtonCombo()
@@ -218,7 +224,7 @@ namespace MediaPortal.InputDevices
       return res;
     }
 
-    void SetActive(bool value)
+    private void SetActive(bool value)
     {
       _active = value;
       if (_active)
@@ -231,9 +237,12 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    int GetSelectedDeviceIndex()
+    private int GetSelectedDeviceIndex()
     {
-      if (null == _deviceList) return -1;
+      if (null == _deviceList)
+      {
+        return -1;
+      }
       int res = -1;
       int i = 0;
       if ((null != _diListener.SelectedDevice) && (_selectedDeviceGUID != string.Empty))
@@ -260,7 +269,9 @@ namespace MediaPortal.InputDevices
     public void Stop()
     {
       if (_diListener != null)
+      {
         _diListener.StopListener();
+      }
     }
 
     public string SelectedDeviceGUID
@@ -299,16 +310,19 @@ namespace MediaPortal.InputDevices
     }
 
 
-    void UnacquireDevice()
+    private void UnacquireDevice()
     {
       _diListener.DeInitDevice();
       _selectedDeviceGUID = string.Empty;
     }
 
-    bool AcquireDevice(string devGUID)
+    private bool AcquireDevice(string devGUID)
     {
       bool res = false;
-      if (null == _deviceList) return false;
+      if (null == _deviceList)
+      {
+        return false;
+      }
       _deviceList.Reset();
       foreach (DeviceInstance di in _deviceList)
       {
@@ -331,7 +345,7 @@ namespace MediaPortal.InputDevices
     }
 
 
-    void SendActions(JoystickState state)
+    private void SendActions(JoystickState state)
     {
       int actionCode = -1;
       int actionParam = -1;
@@ -516,7 +530,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    bool VerifyAction(int actionCode, int curAxisValue)
+    private bool VerifyAction(int actionCode, int curAxisValue)
     {
       bool res = false;
       if (_diListener.IsRunning)
@@ -530,15 +544,17 @@ namespace MediaPortal.InputDevices
       return res;
     }
 
-    string GetStateAsText(JoystickState state)
+    private string GetStateAsText(JoystickState state)
     {
       string strText = string.Empty;
 
-      string joyState = string.Format("Axis    : {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n", state.X, state.Y, state.Z);
-      joyState += string.Format      ("Rotation: {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n\n", state.Rx, state.Ry, state.Rz);
+      string joyState = string.Format("Axis    : {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n", state.X,
+                                      state.Y, state.Z);
+      joyState += string.Format("Rotation: {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n\n", state.Rx, state.Ry,
+                                state.Rz);
 
       int[] slider = state.GetSlider();
-      joyState += string.Format      ("Slider  : 0: {0:+0000;-0000} 1: {1:+0000;-0000}\n\n", slider[0], slider[1]);
+      joyState += string.Format("Slider  : 0: {0:+0000;-0000} 1: {1:+0000;-0000}\n\n", slider[0], slider[1]);
 
       int[] pov = state.GetPointOfView();
       switch (pov[0])
@@ -596,11 +612,15 @@ namespace MediaPortal.InputDevices
       foreach (byte b in buttons)
       {
         if (0 != (b & 0x80))
+        {
           strText += button.ToString("00 ");
+        }
         button++;
       }
       if (strText != string.Empty)
+      {
         joyState += "Buttons : " + strText;
+      }
       return joyState;
     }
 
@@ -615,7 +635,7 @@ namespace MediaPortal.InputDevices
 
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _active = xmlreader.GetValueAsBool("remote", "DirectInput", false);
         string strGUID = xmlreader.GetValueAsString("remote", "DirectInputDeviceGUID", "");
@@ -624,14 +644,14 @@ namespace MediaPortal.InputDevices
           SelectDevice(strGUID);
         }
         _delay = xmlreader.GetValueAsInt("remote", "DirectInputDelayMS", 150);
-        _buttonComboKill = xmlreader.GetValueAsString("remote", "DirectInputKillCombo", ""); 
-        _buttonComboClose = xmlreader.GetValueAsString("remote", "DirectInputCloseCombo", ""); 
+        _buttonComboKill = xmlreader.GetValueAsString("remote", "DirectInputKillCombo", "");
+        _buttonComboClose = xmlreader.GetValueAsString("remote", "DirectInputCloseCombo", "");
       }
     }
 
     public void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("remote", "DirectInput", _active);
         xmlwriter.SetValue("remote", "DirectInputDeviceGUID", SelectedDeviceGUID);
@@ -641,23 +661,23 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    void CreateListener()
+    private void CreateListener()
     {
       _diListener = new DirectInputListener();
       _diListener.Delay = this.Delay;
-      _diListener.OnStateChange += new MediaPortal.DirectInputListener.diStateChange(diListener_OnStateChange);
+      _diListener.OnStateChange += new DirectInputListener.diStateChange(diListener_OnStateChange);
     }
 
-    void FreeListener()
+    private void FreeListener()
     {
       if (_diListener != null)
       {
-        _diListener.OnStateChange -= new MediaPortal.DirectInputListener.diStateChange(diListener_OnStateChange);
+        _diListener.OnStateChange -= new DirectInputListener.diStateChange(diListener_OnStateChange);
         _diListener = null;
       }
     }
 
-    void diListener_OnStateChange(object sender, JoystickState state)
+    private void diListener_OnStateChange(object sender, JoystickState state)
     {
       if (null != this.OnStateChangeText)
       {
@@ -670,7 +690,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    bool FilterAction(int actionCode, int axisValue)
+    private bool FilterAction(int actionCode, int axisValue)
     {
       bool res = false;
       // filter actionCodes only if
@@ -687,7 +707,7 @@ namespace MediaPortal.InputDevices
           res = true;
         }
         else 
-*/        
+*/
         if (Math.Abs(axisValue) < Math.Abs(_lastAxisValue))
         {
           // axis is being released => don't send action!
@@ -704,21 +724,21 @@ namespace MediaPortal.InputDevices
     }
 
 
-    void CreateMapper()
+    private void CreateMapper()
     {
-        _inputHandler = new InputHandler("DirectInput");
+      _inputHandler = new InputHandler("DirectInput");
     }
 
-    void AttachHandlers()
+    private void AttachHandlers()
     {
-      MediaPortal.Util.Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
-      MediaPortal.Util.Utils.OnStopExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
+      Util.Utils.OnStartExternal += new Util.Utils.UtilEventHandler(OnStartExternal);
+      Util.Utils.OnStopExternal += new Util.Utils.UtilEventHandler(OnStopExternal);
     }
 
-    void DetachHandlers()
+    private void DetachHandlers()
     {
-      MediaPortal.Util.Utils.OnStartExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
-      MediaPortal.Util.Utils.OnStopExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
+      Util.Utils.OnStartExternal -= new Util.Utils.UtilEventHandler(OnStartExternal);
+      Util.Utils.OnStopExternal -= new Util.Utils.UtilEventHandler(OnStopExternal);
     }
 
     public void OnStartExternal(Process proc, bool waitForExit)
@@ -738,7 +758,5 @@ namespace MediaPortal.InputDevices
         _diListener.Resume();
       }
     }
-
-
   }
 }

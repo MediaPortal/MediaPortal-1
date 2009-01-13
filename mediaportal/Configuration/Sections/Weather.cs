@@ -26,18 +26,19 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Weather : MediaPortal.Configuration.SectionSettings
+  public class Weather : SectionSettings
   {
-    const int MaximumCities = 20;
+    private const int MaximumCities = 20;
 
-    enum WindUnit : int
+    private enum WindUnit : int
     {
       Kmh = 0,
       mph = 1,
@@ -47,27 +48,27 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private WindUnit selectedWindUnit = WindUnit.Bft;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPComboBox temperatureComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox windSpeedComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPButton removeButton;
-    private MediaPortal.UserInterface.Controls.MPButton searchButton;
-    private MediaPortal.UserInterface.Controls.MPListView citiesListView;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPTextBox intervalTextBox;
-    private MediaPortal.UserInterface.Controls.MPButton editButton;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
-    private System.Windows.Forms.ColumnHeader columnHeader6;
-    private System.Windows.Forms.ColumnHeader columnHeader7;
-    private System.Windows.Forms.ColumnHeader columnHeader8;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel label1;
+    private MPComboBox temperatureComboBox;
+    private MPComboBox windSpeedComboBox;
+    private MPLabel label2;
+    private MPLabel label3;
+    private MPButton removeButton;
+    private MPButton searchButton;
+    private MPListView citiesListView;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private MPTextBox intervalTextBox;
+    private MPButton editButton;
+    private ColumnHeader columnHeader3;
+    private ColumnHeader columnHeader4;
+    private ColumnHeader columnHeader5;
+    private ColumnHeader columnHeader6;
+    private ColumnHeader columnHeader7;
+    private ColumnHeader columnHeader8;
+    private IContainer components = null;
 
     public Weather()
       : this("Weather")
@@ -83,8 +84,9 @@ namespace MediaPortal.Configuration.Sections
       //
       // Populate combo boxes with default values
       //
-      temperatureComboBox.Items.AddRange(new string[] { "Celsius", "Fahrenheit" });
-      windSpeedComboBox.Items.AddRange(new string[] { "kilometers / hour", "miles / hour", "meters / second", "Knots", "Beaufort" });
+      temperatureComboBox.Items.AddRange(new string[] {"Celsius", "Fahrenheit"});
+      windSpeedComboBox.Items.AddRange(new string[]
+                                         {"kilometers / hour", "miles / hour", "meters / second", "Knots", "Beaufort"});
     }
 
     /// <summary>
@@ -92,37 +94,46 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int loadWind = xmlreader.GetValueAsInt("weather", "speed", 4);
         switch (loadWind)
         {
-          case 0: selectedWindUnit = WindUnit.Kmh;
+          case 0:
+            selectedWindUnit = WindUnit.Kmh;
             windSpeedComboBox.Text = "kilometers / hour";
             break;
-          case 1: selectedWindUnit = WindUnit.mph;
+          case 1:
+            selectedWindUnit = WindUnit.mph;
             windSpeedComboBox.Text = "miles / hour";
             break;
-          case 2: selectedWindUnit = WindUnit.ms;
+          case 2:
+            selectedWindUnit = WindUnit.ms;
             windSpeedComboBox.Text = "meters / second";
             break;
-          case 3: selectedWindUnit = WindUnit.Kn;
+          case 3:
+            selectedWindUnit = WindUnit.Kn;
             windSpeedComboBox.Text = "Knots";
             break;
-          case 4: selectedWindUnit = WindUnit.Bft;
+          case 4:
+            selectedWindUnit = WindUnit.Bft;
             windSpeedComboBox.Text = "Beaufort";
             break;
           default:
             selectedWindUnit = WindUnit.Bft;
             windSpeedComboBox.Text = "Beaufort";
             break;
-        }            
+        }
         // Get temperature measurement type
         string temperature = xmlreader.GetValueAsString("weather", "temperature", "C");
         if (temperature.Equals("C"))
+        {
           temperatureComboBox.Text = "Celsius";
+        }
         else if (temperature.Equals("F"))
+        {
           temperatureComboBox.Text = "Fahrenheit";
+        }
         // Get refresh interval setting
         intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 60));
         // Get number of cities and city information
@@ -146,33 +157,54 @@ namespace MediaPortal.Configuration.Sections
           string cityHumidData = xmlreader.GetValueAsString("weather", cityHumid, "");
           string cityPrecipData = xmlreader.GetValueAsString("weather", cityPrecip, "");
           if (cityNameData.Length > 0 && cityCodeData.Length > 0)
-            citiesListView.Items.Add(new ListViewItem(new string[] { cityNameData, cityCodeData, citySatData, cityTempData, cityUVData, cityWindsData, cityHumidData, cityPrecipData }));
+          {
+            citiesListView.Items.Add(
+              new ListViewItem(new string[]
+                                 {
+                                   cityNameData, cityCodeData, citySatData, cityTempData, cityUVData, cityWindsData,
+                                   cityHumidData, cityPrecipData
+                                 }));
+          }
         }
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (windSpeedComboBox.Text.Equals("kilometers / hour"))
+        {
           selectedWindUnit = WindUnit.Kmh;
+        }
         else if (windSpeedComboBox.Text.Equals("miles / hour"))
+        {
           selectedWindUnit = WindUnit.mph;
+        }
         else if (windSpeedComboBox.Text.Equals("meters / second"))
+        {
           selectedWindUnit = WindUnit.ms;
+        }
         else if (windSpeedComboBox.Text.Equals("Knots"))
+        {
           selectedWindUnit = WindUnit.Kn;
+        }
         else if (windSpeedComboBox.Text.Equals("Beaufort"))
+        {
           selectedWindUnit = WindUnit.Bft;
+        }
         // Write the speed units
-        xmlwriter.SetValue("weather", "speed", (int)selectedWindUnit);
+        xmlwriter.SetValue("weather", "speed", (int) selectedWindUnit);
         // Define the temperature measurement
         string temperature = string.Empty;
         if (temperatureComboBox.Text.Equals("Celsius"))
+        {
           temperature = "C";
+        }
         else if (temperatureComboBox.Text.Equals("Fahrenheit"))
+        {
           temperature = "F";
+        }
         xmlwriter.SetValue("weather", "temperature", temperature);
         // Define the interval time between weather updates
         xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
@@ -234,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -266,8 +299,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.intervalTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.windSpeedComboBox);
@@ -283,8 +318,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // intervalTextBox
       // 
-      this.intervalTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.intervalTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.intervalTextBox.Location = new System.Drawing.Point(168, 68);
       this.intervalTextBox.Name = "intervalTextBox";
       this.intervalTextBox.Size = new System.Drawing.Size(288, 20);
@@ -301,8 +338,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // windSpeedComboBox
       // 
-      this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.windSpeedComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.windSpeedComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.windSpeedComboBox.Location = new System.Drawing.Point(168, 44);
       this.windSpeedComboBox.Name = "windSpeedComboBox";
@@ -319,8 +358,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // temperatureComboBox
       // 
-      this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.temperatureComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.temperatureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.temperatureComboBox.Location = new System.Drawing.Point(168, 20);
       this.temperatureComboBox.Name = "temperatureComboBox";
@@ -337,9 +378,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.editButton);
       this.mpGroupBox1.Controls.Add(this.searchButton);
       this.mpGroupBox1.Controls.Add(this.removeButton);
@@ -353,7 +396,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // editButton
       // 
-      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.editButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
       this.editButton.Location = new System.Drawing.Point(384, 208);
       this.editButton.Name = "editButton";
@@ -364,7 +409,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // searchButton
       // 
-      this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.searchButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.searchButton.Location = new System.Drawing.Point(224, 208);
       this.searchButton.Name = "searchButton";
       this.searchButton.Size = new System.Drawing.Size(72, 22);
@@ -374,7 +421,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // removeButton
       // 
-      this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.removeButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
       this.removeButton.Location = new System.Drawing.Point(304, 208);
       this.removeButton.Name = "removeButton";
@@ -385,18 +434,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       // citiesListView
       // 
-      this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                     this.columnHeader1,
-                                                                                     this.columnHeader2,
-                                                                                     this.columnHeader3,
-                                                                                     this.columnHeader4,
-                                                                                     this.columnHeader5,
-                                                                                     this.columnHeader6,
-                                                                                     this.columnHeader7,
-                                                                                     this.columnHeader8});
+      this.citiesListView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                             {
+                                               this.columnHeader1,
+                                               this.columnHeader2,
+                                               this.columnHeader3,
+                                               this.columnHeader4,
+                                               this.columnHeader5,
+                                               this.columnHeader6,
+                                               this.columnHeader7,
+                                               this.columnHeader8
+                                             });
       this.citiesListView.FullRowSelect = true;
       this.citiesListView.Location = new System.Drawing.Point(16, 24);
       this.citiesListView.Name = "citiesListView";
@@ -454,8 +507,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -463,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void searchButton_Click(object sender, System.EventArgs e)
+    private void searchButton_Click(object sender, EventArgs e)
     {
       SearchCityForm searchForm = new SearchCityForm();
       // Show dialog
@@ -473,12 +526,18 @@ namespace MediaPortal.Configuration.Sections
         ArrayList cities = searchForm.SelectedCities;
         foreach (WeatherChannel.City city in cities)
         {
-          citiesListView.Items.Add(new ListViewItem(new string[] {  city.Name, city.Id, searchForm.SatteliteImage, searchForm.TemperatureImage, searchForm.UVIndexImage, searchForm.WindsImage, searchForm.HumidityImage, searchForm.PrecipitationImage }));
+          citiesListView.Items.Add(
+            new ListViewItem(new string[]
+                               {
+                                 city.Name, city.Id, searchForm.SatteliteImage, searchForm.TemperatureImage,
+                                 searchForm.UVIndexImage, searchForm.WindsImage, searchForm.HumidityImage,
+                                 searchForm.PrecipitationImage
+                               }));
         }
       }
     }
 
-    private void removeButton_Click(object sender, System.EventArgs e)
+    private void removeButton_Click(object sender, EventArgs e)
     {
       int numberItems = citiesListView.SelectedItems.Count;
       for (int index = 0; index < numberItems; index++)
@@ -487,7 +546,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void editButton_Click(object sender, System.EventArgs e)
+    private void editButton_Click(object sender, EventArgs e)
     {
       foreach (ListViewItem listItem in citiesListView.SelectedItems)
       {
@@ -513,7 +572,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void citiesListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void citiesListView_SelectedIndexChanged(object sender, EventArgs e)
     {
       editButton.Enabled = removeButton.Enabled = (citiesListView.SelectedItems.Count > 0);
     }

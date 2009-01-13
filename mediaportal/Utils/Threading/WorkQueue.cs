@@ -26,14 +26,14 @@
 #region Usings
 
 using System;
-using System.Text;
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
 
 #endregion
 
 namespace MediaPortal.Threading
 {
+
   #region enums
 
   public enum QueuePriority
@@ -58,8 +58,7 @@ namespace MediaPortal.Threading
 
     // Thread-specific variables
 
-    [ThreadStatic]
-    private static WorkWaiter _workWaiter;
+    [ThreadStatic] private static WorkWaiter _workWaiter;
 
     #endregion
 
@@ -124,18 +123,20 @@ namespace MediaPortal.Threading
             return work;
           }
         }
-        // block the call to this method for the current thread until we receive work,
-        // or until the given timeout has been reached
+          // block the call to this method for the current thread until we receive work,
+          // or until the given timeout has been reached
         else
         {
           if (_workWaiter == null)
+          {
             _workWaiter = new WorkWaiter();
+          }
           _workWaiter.Reset();
           _workWaiters.Add(_workWaiter);
         }
       }
       // create array of waiters, and invoke waitany so we wait until any of the handles is signaled
-      WaitHandle[] waiters = new WaitHandle[] { _workWaiter.WaitHandle, cancelHandle };
+      WaitHandle[] waiters = new WaitHandle[] {_workWaiter.WaitHandle, cancelHandle};
       int i = WaitHandle.WaitAny(waiters, timeoutMilliSeconds, true);
       lock (_queueMutex)
       {
@@ -148,7 +149,9 @@ namespace MediaPortal.Threading
         {
           // waiting has either been canceled, or timeout has been reached
           if (_workWaiters.Contains(_workWaiter))
+          {
             _workWaiters.Remove(_workWaiter);
+          }
         }
       }
       return work;
@@ -176,13 +179,21 @@ namespace MediaPortal.Threading
     private Queue<IWork> GetFirstQueueWithWork()
     {
       if (_highQueue.Count > 0)
+      {
         return _highQueue;
+      }
       else if (_normalQueue.Count > 0)
+      {
         return _normalQueue;
+      }
       else if (_lowQueue.Count > 0)
+      {
         return _lowQueue;
+      }
       else
+      {
         return null;
+      }
     }
 
     #endregion
@@ -200,20 +211,25 @@ namespace MediaPortal.Threading
   public class WorkWaiter
   {
     #region Variables
+
     private AutoResetEvent _waitHandle = new AutoResetEvent(false);
     private IWork _work = null;
     private bool _signaled = false;
     private bool _timedout = false;
+
     #endregion
 
     #region Constructor
+
     public WorkWaiter()
     {
       Reset();
     }
+
     #endregion
 
     #region Properties
+
     public WaitHandle WaitHandle
     {
       get { return _waitHandle; }
@@ -223,9 +239,11 @@ namespace MediaPortal.Threading
     {
       get { return _work; }
     }
+
     #endregion
 
     #region Public methods
+
     public bool Signal(IWork work)
     {
       lock (this)
@@ -240,6 +258,7 @@ namespace MediaPortal.Threading
       }
       return false;
     }
+
     public bool Timeout()
     {
       lock (this)
@@ -252,6 +271,7 @@ namespace MediaPortal.Threading
       }
       return false;
     }
+
     public void Reset()
     {
       _work = null;
@@ -259,6 +279,7 @@ namespace MediaPortal.Threading
       _signaled = false;
       _waitHandle.Reset();
     }
+
     public void Close()
     {
       if (_waitHandle != null)
@@ -267,6 +288,7 @@ namespace MediaPortal.Threading
         _waitHandle = null;
       }
     }
+
     #endregion
   }
 }

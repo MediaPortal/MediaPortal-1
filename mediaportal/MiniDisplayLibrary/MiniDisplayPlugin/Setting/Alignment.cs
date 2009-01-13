@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
+﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
   public enum Alignment
   {
@@ -9,4 +7,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     Right
   }
 }
-

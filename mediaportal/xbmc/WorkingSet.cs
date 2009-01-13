@@ -24,17 +24,15 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Diagnostics;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal
 {
-  class WorkingSet
+  internal class WorkingSet
   {
     [DllImport("kernel32")]
-    static extern bool SetProcessWorkingSetSize(IntPtr handle, int minSize, int maxSize);
+    private static extern bool SetProcessWorkingSetSize(IntPtr handle, int minSize, int maxSize);
 
     public static void Minimize()
     {

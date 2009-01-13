@@ -24,15 +24,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Text;
-using System.Collections;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.InputDevices;
-using MediaPortal.ControlDevices;
 
 namespace MediaPortal.ControlDevices.USBUIRT
 {
@@ -43,7 +34,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
   /// VCR, Audio System, etc. 
   /// See www.usbuirt.com for more details on USBUIRT
   /// </summary>
-  public class LearningEventArgs : System.EventArgs
+  public class LearningEventArgs : EventArgs
   {
     public bool Succeeded = false;
     public string Button;
@@ -53,7 +44,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
     public int CurrentCodeCount = 0;
 
     public LearningEventArgs(string button, string ircode, bool succeeded,
-      bool capturingToggledIrCode, int totalCodeCount, int curCodeCount)
+                             bool capturingToggledIrCode, int totalCodeCount, int curCodeCount)
     {
       this.Button = button;
       this.IrCode = ircode;
@@ -64,7 +55,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
     }
 
     public LearningEventArgs(string button, bool capturingToggledIrCode,
-      int totalCodeCount, int curCodeCount)
+                             int totalCodeCount, int curCodeCount)
     {
       this.Button = button;
       this.IsToggledIrCode = capturingToggledIrCode;
@@ -76,15 +67,36 @@ namespace MediaPortal.ControlDevices.USBUIRT
 
   public partial class USBUIRTPlugin : AbstractControlPlugin, IDisposable, IControlPlugin
   {
-    public string DeviceName { get { return "USB-UIRT"; } }
-    public Uri VendorUri { get { return new Uri("http://www.usbuirt.com/"); } }
-    public IControlInput InputInterface { get { return null; } }
-    public IControlOutput OutputInterface { get { return null; } }
-    public bool DriverInstalled { get { return false; } }
+    public string DeviceName
+    {
+      get { return "USB-UIRT"; }
+    }
+
+    public Uri VendorUri
+    {
+      get { return new Uri("http://www.usbuirt.com/"); }
+    }
+
+    public IControlInput InputInterface
+    {
+      get { return null; }
+    }
+
+    public IControlOutput OutputInterface
+    {
+      get { return null; }
+    }
+
+    public bool DriverInstalled
+    {
+      get { return false; }
+    }
+
     public string DriverVersion
     {
       get
-      {/*
+      {
+/*
         if (this.Connected)
         {
           USBUIRTAPI.UUINFO p = new USBUIRTAPI.UUINFO();
@@ -103,16 +115,31 @@ namespace MediaPortal.ControlDevices.USBUIRT
 
         else
         {
-*/          return "USBUIRT device not detected!";
-  //      }
+*/
+        return "USBUIRT device not detected!";
+        //      }
       }
     }
 
-    public string DeviceDescription { get { return "lalala"; } }
-    public string DevicePrefix { get { return _settings.Prefix; } }
+    public string DeviceDescription
+    {
+      get { return "lalala"; }
+    }
 
-    public bool HardwareInstalled { get { return true; } }
-    public string HardwareVersion { get { return "UDddg "; } }
+    public string DevicePrefix
+    {
+      get { return _settings.Prefix; }
+    }
+
+    public bool HardwareInstalled
+    {
+      get { return true; }
+    }
+
+    public string HardwareVersion
+    {
+      get { return "UDddg "; }
+    }
 
     public bool Capability(EControlCapabilities capability)
     {
@@ -129,7 +156,10 @@ namespace MediaPortal.ControlDevices.USBUIRT
       }
     }
 
-    public IControlSettings Settings { get { return _settings; } }
+    public IControlSettings Settings
+    {
+      get { return _settings; }
+    }
 
 
     public string PluginName()
@@ -166,7 +196,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
 
     ~USBUIRTPlugin()
     {
-  //    Dispose(false);
+      //    Dispose(false);
     }
 
 
@@ -188,7 +218,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
     /// <returns>true when successfully loaded</returns>
     protected bool LoadDrivers()
     {
-      try 
+      try
       {
         _uirtHandle = USBUIRTAPI.UUIRTOpen();
 
@@ -209,9 +239,9 @@ namespace MediaPortal.ControlDevices.USBUIRT
         //RemoteCommandCallback = callback;
       }
 
-      catch (System.DllNotFoundException e)
+      catch (DllNotFoundException e)
       {
-        _log.Error("USBUIRT: Error loading driver uuirtdrv.dll : ",e.Message);
+        _log.Error("USBUIRT: Error loading driver uuirtdrv.dll : ", e.Message);
         _log.Error(e);
       }
 
@@ -261,13 +291,13 @@ namespace MediaPortal.ControlDevices.USBUIRT
     public void Transmit(string irCode, int codeFormat, int repeatCount)
     {
       bool result = USBUIRTAPI.UUIRTTransmitIR(_uirtHandle,
-        irCode,		        // IRCode 
-        codeFormat,	      // codeFormat 
-        repeatCount,	    // repeatCount 
-        0,				        // inactivityWaitTime 
-        IntPtr.Zero,	    // hEvent 
-        0,				        // reserved1
-        0				          // reserved2 
+                                               irCode, // IRCode 
+                                               codeFormat, // codeFormat 
+                                               repeatCount, // repeatCount 
+                                               0, // inactivityWaitTime 
+                                               IntPtr.Zero, // hEvent 
+                                               0, // reserved1
+                                               0 // reserved2 
         );
 
       if (!result)
@@ -276,7 +306,6 @@ namespace MediaPortal.ControlDevices.USBUIRT
       }
       // System.Threading.Thread.Sleep(interCommandDelay);
     }
-
 
 
 /*
@@ -301,8 +330,6 @@ namespace MediaPortal.ControlDevices.USBUIRT
       }
     }
     */
-
-
 
 
     /*
@@ -740,6 +767,6 @@ namespace MediaPortal.ControlDevices.USBUIRT
 
     #endregion
 
-   */ 
+   */
   }
 }

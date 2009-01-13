@@ -24,38 +24,25 @@
 #endregion
 
 #region usings
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
 using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+using MediaPortal.Services;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
   public class StopTvCommand : CardCommand
   {
-    int _cardNumber=-1;
+    private int _cardNumber = -1;
+
     public int CardNo
     {
       get { return _cardNumber; }
-      set { _cardNumber=value; }
+      set { _cardNumber = value; }
     }
+
     public StopTvCommand()
     {
     }
@@ -68,16 +55,19 @@ namespace MediaPortal.TV.Recording
     public override void Execute(CommandProcessor handler)
     {
       Log.WriteFile(LogType.Recorder, "Command:Stop all card except card:{0}", CardNo);
-      
+
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); // "No tuner cards installed";
         Succeeded = false;
         return;
       }
       for (int i = 0; i < handler.TVCards.Count; ++i)
       {
-        if (i == CardNo) continue;
+        if (i == CardNo)
+        {
+          continue;
+        }
 
         bool stopped = false;
 
@@ -99,14 +89,16 @@ namespace MediaPortal.TV.Recording
           {
             stopped = (dev.View);
             Log.WriteFile(LogType.Recorder, "Recorder:  stop card:{0}", dev.CommercialName);
-            
+
             dev.StopTimeShifting();
             dev.StopViewing();
             dev.StopRadio();
           }
         }
-        if (stopped )
+        if (stopped)
+        {
           handler.OnTvStopped(i, dev);
+        }
 
         if (i == handler.CurrentCardIndex)
         {

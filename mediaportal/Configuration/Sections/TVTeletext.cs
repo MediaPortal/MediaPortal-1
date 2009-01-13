@@ -23,31 +23,26 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.Util;
-using DShowNET;
-using DShowNET.Helper;
-using DirectShowLib;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class TVTeletext : MediaPortal.Configuration.SectionSettings
+  public class TVTeletext : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButton1;
-    private System.ComponentModel.IContainer components = null;
-    bool _init = false;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbHiddenMode;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbTransparentMode;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbRememberValue;
-    private MediaPortal.UserInterface.Controls.MPLabel FontSizeLbl;
-    private MediaPortal.UserInterface.Controls.MPLabel FontSizeValueLbl;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown nudFontSize;
+    private MPGroupBox groupBox1;
+    private MPRadioButton radioButton1;
+    private IContainer components = null;
+    private bool _init = false;
+    private MPCheckBox cbHiddenMode;
+    private MPCheckBox cbTransparentMode;
+    private MPCheckBox cbRememberValue;
+    private MPLabel FontSizeLbl;
+    private MPLabel FontSizeValueLbl;
+    private MPNumericUpDown nudFontSize;
     public int pluginVersion;
 
     public TVTeletext()
@@ -88,6 +83,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -103,13 +99,15 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.nudFontSize)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.nudFontSize);
       this.groupBox1.Controls.Add(this.FontSizeValueLbl);
       this.groupBox1.Controls.Add(this.FontSizeLbl);
@@ -124,7 +122,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       this.FontSizeValueLbl.AutoSize = true;
-      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                           System.Drawing.FontStyle.Regular,
+                                                           System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.FontSizeValueLbl.Location = new System.Drawing.Point(134, 99);
       this.FontSizeValueLbl.Name = "FontSizeValueLbl";
       this.FontSizeValueLbl.Size = new System.Drawing.Size(105, 13);
@@ -185,19 +185,23 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1.UseVisualStyleBackColor = true;
       // 
       this.nudFontSize.Location = new System.Drawing.Point(72, 97);
-      this.nudFontSize.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
+      this.nudFontSize.Minimum = new decimal(new int[]
+                                               {
+                                                 50,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
       this.nudFontSize.Name = "nudFontSize";
       this.nudFontSize.Size = new System.Drawing.Size(56, 20);
       this.nudFontSize.TabIndex = 1;
-      this.nudFontSize.Value = new decimal(new int[] {
-            80,
-            0,
-            0,
-            0});
+      this.nudFontSize.Value = new decimal(new int[]
+                                             {
+                                               80,
+                                               0,
+                                               0,
+                                               0
+                                             });
       // TVTeletext
       // 
       this.Controls.Add(this.groupBox1);
@@ -205,20 +209,22 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.nudFontSize)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void LoadSettings()
     {
-      if (_init == false) return;
-
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
       {
+        return;
+      }
 
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         cbHiddenMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         cbTransparentMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         cbRememberValue.Checked = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
@@ -229,16 +235,17 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
       {
-
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         xmlwriter.SetValueAsBool("mytv", "teletextHidden", cbHiddenMode.Checked);
         xmlwriter.SetValueAsBool("mytv", "teletextTransparent", cbTransparentMode.Checked);
         xmlwriter.SetValueAsBool("mytv", "teletextRemember", cbRememberValue.Checked);
         xmlwriter.SetValue("mytv", "teletextFontSize", nudFontSize.Value);
       }
     }
-
   }
 }

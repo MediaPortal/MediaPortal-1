@@ -24,10 +24,11 @@
 #endregion
 
 using System;
-
 using System.Globalization;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+
 namespace MediaPortal.TV.Database
 {
   /// <summary>
@@ -42,31 +43,26 @@ namespace MediaPortal.TV.Database
       UntilSpaceNeeded,
       TillDate,
       Always
-    };
-    long _startTime;
-    long _endTime;
-    string _title;
-    string _channelName;
-    string _genre;
-    string _description;
-    string _fileName;
-    int _recordedId = -1;
-    int _playedCounter = 0;
-    int _recordedCardIndex = 1;
+    } ;
 
-    DateTime _keepUntilDate = DateTime.MaxValue;
-    KeepMethod _keepUntilMethod = KeepMethod.UntilSpaceNeeded;
+    private long _startTime;
+    private long _endTime;
+    private string _title;
+    private string _channelName;
+    private string _genre;
+    private string _description;
+    private string _fileName;
+    private int _recordedId = -1;
+    private int _playedCounter = 0;
+    private int _recordedCardIndex = 1;
+
+    private DateTime _keepUntilDate = DateTime.MaxValue;
+    private KeepMethod _keepUntilMethod = KeepMethod.UntilSpaceNeeded;
 
     public DateTime KeepRecordingTill
     {
-      get
-      {
-        return _keepUntilDate;
-      }
-      set
-      {
-        _keepUntilDate = value;
-      }
+      get { return _keepUntilDate; }
+      set { _keepUntilDate = value; }
     }
 
     public KeepMethod KeepRecordingMethod
@@ -143,7 +139,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return MediaPortal.Util.Utils.longtodate(_startTime); }
+      get { return Util.Utils.longtodate(_startTime); }
     }
 
     /// <summary>
@@ -151,7 +147,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return MediaPortal.Util.Utils.longtodate(_endTime); }
+      get { return Util.Utils.longtodate(_endTime); }
     }
 
     /// <summary>
@@ -175,16 +171,16 @@ namespace MediaPortal.TV.Database
     public void SetProperties()
     {
       string strTime = String.Format("{0} {1} - {2}",
-        MediaPortal.Util.Utils.GetShortDayString(StartTime),
-        StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Util.Utils.GetShortDayString(StartTime),
+                                     StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", Title);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", Genre);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", Description);
-      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, Channel);
-      if (System.IO.File.Exists(strLogo))
+      string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, Channel);
+      if (File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
       }
@@ -198,8 +194,14 @@ namespace MediaPortal.TV.Database
     {
       get
       {
-        if (KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) return false;
-        if (KeepRecordingTill.Date > DateTime.Now.Date) return false;
+        if (KeepRecordingMethod != KeepMethod.TillDate)
+        {
+          return false;
+        }
+        if (KeepRecordingTill.Date > DateTime.Now.Date)
+        {
+          return false;
+        }
         return true;
       }
     }
@@ -212,6 +214,5 @@ namespace MediaPortal.TV.Database
       get { return _recordedCardIndex; }
       set { _recordedCardIndex = value; }
     }
-
   }
 }

@@ -24,19 +24,17 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
-using SQLite.NET;
-using MediaPortal.Util;
+using MediaPortal.Configuration;
+using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
-using MediaPortal.Database;
-using MediaPortal.Configuration;
-
+using MediaPortal.Player;
+using SQLite.NET;
 
 namespace MediaPortal.Picture.Database
 {
@@ -45,8 +43,8 @@ namespace MediaPortal.Picture.Database
   /// </summary>
   public class PictureDatabaseSqlLite : IPictureDatabase, IDisposable
   {
-    bool disposed = false;
-    SQLiteClient m_db = null;
+    private bool disposed = false;
+    private SQLiteClient m_db = null;
 
     public PictureDatabaseSqlLite()
     {
@@ -54,7 +52,7 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    void Open()
+    private void Open()
     {
       try
       {
@@ -67,7 +65,9 @@ namespace MediaPortal.Picture.Database
             m_db.Dispose();
             Log.Warn("PictureDatabaseSqlLite: Disposing current instance..");
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
         }
 
         // Open database
@@ -75,7 +75,9 @@ namespace MediaPortal.Picture.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "PictureDatabase.db3"));
         // Retry 10 times on busy (DB in use or system resources exhausted)
         m_db.BusyRetries = 10;
@@ -94,11 +96,15 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    bool CreateTables()
+    private bool CreateTables()
     {
-      if (m_db == null) return false;
+      if (m_db == null)
+      {
+        return false;
+      }
       //Changed mbuzina
-      DatabaseUtility.AddTable(m_db, "picture", "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
+      DatabaseUtility.AddTable(m_db, "picture",
+                               "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
       //End Changed
       return true;
     }
@@ -107,9 +113,14 @@ namespace MediaPortal.Picture.Database
     public int AddPicture(string strPicture, int iRotation)
     {
       if (String.IsNullOrEmpty(strPicture))
+      {
         return -1;
+      }
 
-      if (m_db == null) return -1;
+      if (m_db == null)
+      {
+        return -1;
+      }
       try
       {
         int lPicId = -1;
@@ -120,7 +131,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
-          lPicId = System.Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
+          lPicId = Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
           return lPicId;
         }
 
@@ -129,35 +140,52 @@ namespace MediaPortal.Picture.Database
           try
           {
             DateTime dat = File.GetLastWriteTime(strPicture);
-            if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(dat)) dat = dat.AddHours(1); // Try to respect the timezone of the file date
+            if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(dat))
+            {
+              dat = dat.AddHours(1); // Try to respect the timezone of the file date
+            }
             strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
           }
           catch (Exception ex)
           {
-            Log.Error("PictureDatabaseSqlLite: Conversion exception getting file date - err:{0} stack:{1}", ex.Message, ex.StackTrace);
+            Log.Error("PictureDatabaseSqlLite: Conversion exception getting file date - err:{0} stack:{1}", ex.Message,
+                      ex.StackTrace);
           }
         }
 
         if (GetPicasaRotation(strPic, ref iRotation))
-          Log.Debug("PictureDatabaseSqlLite: Changed rotation of image {0} based on picasa file to {1}", strPic, iRotation);
+        {
+          Log.Debug("PictureDatabaseSqlLite: Changed rotation of image {0} based on picasa file to {1}", strPic,
+                    iRotation);
+        }
 
         // Transactions are a special case for SQLite - they speed things up quite a bit
         strSQL = "begin";
         results = m_db.Execute(strSQL);
-        strSQL = String.Format("insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')", strPic, iRotation, strDateTaken);
+        strSQL =
+          String.Format(
+            "insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')", strPic,
+            iRotation, strDateTaken);
 
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
-          Log.Debug("PictureDatabaseSqlLite: Picture {0} has been added to database with orientation {1}", strPic, iRotation);
+        {
+          Log.Debug("PictureDatabaseSqlLite: Picture {0} has been added to database with orientation {1}", strPic,
+                    iRotation);
+        }
         strSQL = "commit";
         results = m_db.Execute(strSQL);
 
         lPicId = m_db.LastInsertID();
 
-        if (MediaPortal.Player.g_Player.Playing)
+        if (g_Player.Playing)
+        {
           Thread.Sleep(50);
+        }
         else
+        {
           Thread.Sleep(0);
+        }
 
         return lPicId;
       }
@@ -177,10 +205,11 @@ namespace MediaPortal.Picture.Database
         try
         {
           string picExifDate = metaData.DatePictureTaken.DisplayValue;
-          if (!String.IsNullOrEmpty(picExifDate)) // If the image contains a valid exif date store it in the database, otherwise use the file date
+          if (!String.IsNullOrEmpty(picExifDate))
+            // If the image contains a valid exif date store it in the database, otherwise use the file date
           {
             DateTime dat;
-            DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, DateTimeStyles.None, out dat);
+            DateTime.TryParseExact(picExifDate, "G", Thread.CurrentThread.CurrentCulture, DateTimeStyles.None, out dat);
             strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
             return true;
@@ -188,7 +217,8 @@ namespace MediaPortal.Picture.Database
         }
         catch (FormatException ex)
         {
-          Log.Error("PictureDatabaseSqlLite: Exif date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("PictureDatabaseSqlLite: Exif date conversion exception err:{0} stack:{1}", ex.Message,
+                    ex.StackTrace);
         }
       }
       return false;
@@ -241,9 +271,12 @@ namespace MediaPortal.Picture.Database
 
     public void DeletePicture(string strPicture)
     {
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return;
+        if (m_db == null)
+        {
+          return;
+        }
         string strSQL = "";
         try
         {
@@ -255,7 +288,8 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message,
+                    ex.StackTrace);
           Open();
         }
         return;
@@ -265,17 +299,21 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
-      if (m_db == null) return -1;
+      if (m_db == null)
+      {
+        return -1;
+      }
       try
       {
         string strPic = strPicture;
         int iRotation;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        SQLiteResultSet results = m_db.Execute(String.Format("select strFile, iRotation from picture where strFile like '{0}'", strPic));
+        SQLiteResultSet results =
+          m_db.Execute(String.Format("select strFile, iRotation from picture where strFile like '{0}'", strPic));
         if (results != null && results.Rows.Count > 0)
         {
-          iRotation = System.Int32.Parse(DatabaseUtility.Get(results, 0, 1));
+          iRotation = Int32.Parse(DatabaseUtility.Get(results, 0, 1));
           return iRotation;
         }
 
@@ -298,7 +336,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void SetRotation(string strPicture, int iRotation)
     {
-      if (m_db == null) return;
+      if (m_db == null)
+      {
+        return;
+      }
       try
       {
         string strPic = strPicture;
@@ -372,20 +413,29 @@ namespace MediaPortal.Picture.Database
     public int EXIFOrientationToRotation(int orientation)
     {
       if (orientation == 6)
+      {
         return 1;
+      }
       if (orientation == 3)
+      {
         return 2;
+      }
       if (orientation == 8)
+      {
         return 3;
+      }
       return 0;
     }
 
     public int ListYears(ref List<string> Years)
     {
       int Count = 0;
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return 0;
+        if (m_db == null)
+        {
+          return 0;
+        }
         string strSQL = "select distinct substr(strDateTaken,1,4) from picture order by 1";
         SQLiteResultSet result;
         try
@@ -394,7 +444,9 @@ namespace MediaPortal.Picture.Database
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
+            {
               Years.Add(DatabaseUtility.Get(result, Count, 0));
+            }
           }
         }
         catch (Exception ex)
@@ -409,10 +461,14 @@ namespace MediaPortal.Picture.Database
     public int ListMonths(string Year, ref List<string> Months)
     {
       int Count = 0;
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return 0;
-        string strSQL = "select distinct substr(strDateTaken,6,2) from picture where strDateTaken like '" + Year + "%' order by 1";
+        if (m_db == null)
+        {
+          return 0;
+        }
+        string strSQL = "select distinct substr(strDateTaken,6,2) from picture where strDateTaken like '" + Year +
+                        "%' order by 1";
         SQLiteResultSet result;
         try
         {
@@ -420,7 +476,9 @@ namespace MediaPortal.Picture.Database
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
+            {
               Months.Add(DatabaseUtility.Get(result, Count, 0));
+            }
           }
         }
         catch (Exception ex)
@@ -435,10 +493,14 @@ namespace MediaPortal.Picture.Database
     public int ListDays(string Month, string Year, ref List<string> Days)
     {
       int Count = 0;
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return 0;
-        string strSQL = "select distinct substr(strDateTaken,9,2) from picture where strDateTaken like '" + Year + "-" + Month + "%' order by 1";
+        if (m_db == null)
+        {
+          return 0;
+        }
+        string strSQL = "select distinct substr(strDateTaken,9,2) from picture where strDateTaken like '" + Year + "-" +
+                        Month + "%' order by 1";
         SQLiteResultSet result;
         try
         {
@@ -446,7 +508,9 @@ namespace MediaPortal.Picture.Database
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
+            {
               Days.Add(DatabaseUtility.Get(result, Count, 0));
+            }
           }
         }
         catch (Exception ex)
@@ -461,9 +525,12 @@ namespace MediaPortal.Picture.Database
     public int ListPicsByDate(string Date, ref List<string> Pics)
     {
       int Count = 0;
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return 0;
+        if (m_db == null)
+        {
+          return 0;
+        }
         string strSQL = "select strFile from picture where strDateTaken like '" + Date + "%' order by 1";
         SQLiteResultSet result;
         try
@@ -472,12 +539,15 @@ namespace MediaPortal.Picture.Database
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
+            {
               Pics.Add(DatabaseUtility.Get(result, Count, 0));
+            }
           }
         }
         catch (Exception ex)
         {
-          Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message,
+                    ex.StackTrace);
           Open();
         }
         return Count;
@@ -487,9 +557,12 @@ namespace MediaPortal.Picture.Database
     public int CountPicsByDate(string Date)
     {
       int Count = 0;
-      lock (typeof(PictureDatabase))
+      lock (typeof (PictureDatabase))
       {
-        if (m_db == null) return 0;
+        if (m_db == null)
+        {
+          return 0;
+        }
         string strSQL = "select count(strFile) from picture where strDateTaken like '" + Date + "%' order by 1";
         SQLiteResultSet result;
         try
@@ -502,7 +575,8 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message,
+                    ex.StackTrace);
           Open();
         }
         return Count;
@@ -523,7 +597,9 @@ namespace MediaPortal.Picture.Database
             m_db.Close();
             m_db.Dispose();
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
           m_db = null;
         }
       }

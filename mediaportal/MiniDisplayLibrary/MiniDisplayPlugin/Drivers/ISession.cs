@@ -7,4 +7,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     void Process();
   }
 }
-

@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using MediaPortal.Util;
 using MediaPortal.Playlists;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Playlists
 {

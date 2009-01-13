@@ -26,16 +26,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.IO;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Player;
-using MediaPortal.Video.Database;
-using Toub.MediaCenter.Dvrms.Metadata;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.TV
 {
@@ -45,15 +43,16 @@ namespace MediaPortal.GUI.TV
   public class GUITVCompress : GUIWindow, IComparer<GUIListItem>
   {
     #region enums
-    enum Controls
+
+    private enum Controls
     {
       LABEL_PROGRAMTITLE = 13,
       LABEL_PROGRAMTIME = 14,
       LABEL_PROGRAMDESCRIPTION = 15,
       LABEL_PROGRAMGENRE = 17,
-    };
+    } ;
 
-    enum SortMethod
+    private enum SortMethod
     {
       Channel = 0,
       Date = 1,
@@ -61,71 +60,90 @@ namespace MediaPortal.GUI.TV
       Genre = 3,
       Played = 4,
     }
-    enum ViewAs
+
+    private enum ViewAs
     {
       List,
       Album
     }
+
     #endregion
 
     #region variables
-    ViewAs currentViewMethod = ViewAs.Album;
-    SortMethod currentSortMethod = SortMethod.Date;
-    bool m_bSortAscending = true;
-    bool m_bDeleteWatchedShow = false;
-    int m_iSelectedItem = 0;
-    string currentShow = string.Empty;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnSelectAll = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnSelectNone = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnOK = null;
-    [SkinControlAttribute(10)]
-    protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]
-    protected GUIListControl listViews = null;
+    private ViewAs currentViewMethod = ViewAs.Album;
+    private SortMethod currentSortMethod = SortMethod.Date;
+    private bool m_bSortAscending = true;
+    private bool m_bDeleteWatchedShow = false;
+    private int m_iSelectedItem = 0;
+    private string currentShow = string.Empty;
+
+    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(5)] protected GUIButtonControl btnSelectAll = null;
+    [SkinControl(6)] protected GUIButtonControl btnSelectNone = null;
+    [SkinControl(7)] protected GUIButtonControl btnOK = null;
+    [SkinControl(10)] protected GUIListControl listAlbums = null;
+    [SkinControl(11)] protected GUIListControl listViews = null;
+
     #endregion
 
     public GUITVCompress()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS;
+      GetID = (int) Window.WINDOW_TV_COMPRESS_COMPRESS;
     }
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strTmp = string.Empty;
-        strTmp = (string)xmlreader.GetValue("tvcompress", "sort");
+        strTmp = (string) xmlreader.GetValue("tvcompress", "sort");
         if (strTmp != null)
         {
-          if (strTmp == "channel") currentSortMethod = SortMethod.Channel;
-          else if (strTmp == "date") currentSortMethod = SortMethod.Date;
-          else if (strTmp == "name") currentSortMethod = SortMethod.Name;
-          else if (strTmp == "type") currentSortMethod = SortMethod.Genre;
-          else if (strTmp == "played") currentSortMethod = SortMethod.Played;
+          if (strTmp == "channel")
+          {
+            currentSortMethod = SortMethod.Channel;
+          }
+          else if (strTmp == "date")
+          {
+            currentSortMethod = SortMethod.Date;
+          }
+          else if (strTmp == "name")
+          {
+            currentSortMethod = SortMethod.Name;
+          }
+          else if (strTmp == "type")
+          {
+            currentSortMethod = SortMethod.Genre;
+          }
+          else if (strTmp == "played")
+          {
+            currentSortMethod = SortMethod.Played;
+          }
         }
-        strTmp = (string)xmlreader.GetValue("tvcompress", "view");
+        strTmp = (string) xmlreader.GetValue("tvcompress", "view");
         if (strTmp != null)
         {
-          if (strTmp == "albu,") currentViewMethod = ViewAs.Album;
-          else if (strTmp == "list") currentViewMethod = ViewAs.List;
+          if (strTmp == "albu,")
+          {
+            currentViewMethod = ViewAs.Album;
+          }
+          else if (strTmp == "list")
+          {
+            currentViewMethod = ViewAs.List;
+          }
         }
         m_bSortAscending = xmlreader.GetValueAsBool("tvcompress", "sortascending", true);
         m_bDeleteWatchedShow = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (currentSortMethod)
         {
@@ -157,9 +175,11 @@ namespace MediaPortal.GUI.TV
         xmlwriter.SetValueAsBool("tvcompress", "sortascending", m_bSortAscending);
       }
     }
+
     #endregion
 
     #region overrides
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvcompress.xml");
@@ -198,16 +218,20 @@ namespace MediaPortal.GUI.TV
       base.OnPageLoad();
       LoadSettings();
       LoadDirectory();
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int) Window.WINDOW_TV, GetID, 0, 0, 0,
+                                      null);
       msg.SendToTargetWindow = true;
       GUIWindowManager.SendThreadMessage(msg);
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+      {
+        m_iSelectedItem--;
+      }
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnSelectAll)
@@ -264,9 +288,10 @@ namespace MediaPortal.GUI.TV
       }
       if (control == listAlbums || control == listViews)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           GUIListItem item = GetItem(iItem);
@@ -293,7 +318,7 @@ namespace MediaPortal.GUI.TV
       return base.OnMessage(message);
     }
 
-    void LoadDirectory()
+    private void LoadDirectory()
     {
       GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listAlbums.GetID);
@@ -303,12 +328,15 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetRecordedTV(ref recordings);
       foreach (TVRecorded rec in recordings)
       {
-        if (Transcoder.IsTranscoding(rec)) continue; //already transcoding...
+        if (Transcoder.IsTranscoding(rec))
+        {
+          continue; //already transcoding...
+        }
         GUIListItem item = new GUIListItem();
         item.Label = rec.Title;
         item.TVTag = rec;
-        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
-        if (!System.IO.File.Exists(strLogo))
+        string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -331,25 +359,25 @@ namespace MediaPortal.GUI.TV
       GUIWaitCursor.Hide();
     }
 
-    void UpdateButtonStates()
+    private void UpdateButtonStates()
     {
       string strLine = string.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
-          strLine = GUILocalizeStrings.Get(620);//Sort by: Channel
+          strLine = GUILocalizeStrings.Get(620); //Sort by: Channel
           break;
         case SortMethod.Date:
-          strLine = GUILocalizeStrings.Get(621);//Sort by: Date
+          strLine = GUILocalizeStrings.Get(621); //Sort by: Date
           break;
         case SortMethod.Name:
-          strLine = GUILocalizeStrings.Get(268);//Sort by: Title
+          strLine = GUILocalizeStrings.Get(268); //Sort by: Title
           break;
         case SortMethod.Genre:
-          strLine = GUILocalizeStrings.Get(678);//Sort by: Genre
+          strLine = GUILocalizeStrings.Get(678); //Sort by: Genre
           break;
         case SortMethod.Played:
-          strLine = GUILocalizeStrings.Get(671);//Sort by: Watched
+          strLine = GUILocalizeStrings.Get(671); //Sort by: Watched
           break;
       }
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
@@ -366,25 +394,25 @@ namespace MediaPortal.GUI.TV
       btnSortBy.IsAscending = m_bSortAscending;
       if (currentViewMethod == ViewAs.List)
       {
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
+        GUIControl.HideControl(GetID, (int) Controls.LABEL_PROGRAMTITLE);
+        GUIControl.HideControl(GetID, (int) Controls.LABEL_PROGRAMDESCRIPTION);
+        GUIControl.HideControl(GetID, (int) Controls.LABEL_PROGRAMGENRE);
+        GUIControl.HideControl(GetID, (int) Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = false;
         listViews.IsVisible = true;
       }
       else
       {
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
+        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMTITLE);
+        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMDESCRIPTION);
+        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMGENRE);
+        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = true;
         listViews.IsVisible = false;
       }
     }
 
-    void SetLabels()
+    private void SetLabels()
     {
       SortMethod method = currentSortMethod;
       bool bAscending = m_bSortAscending;
@@ -392,13 +420,16 @@ namespace MediaPortal.GUI.TV
       {
         GUIListItem item1 = listAlbums[i];
         GUIListItem item2 = listViews[i];
-        if (item1.Label == "..") continue;
-        TVRecorded rec = (TVRecorded)item1.TVTag;
+        if (item1.Label == "..")
+        {
+          continue;
+        }
+        TVRecorded rec = (TVRecorded) item1.TVTag;
         item1.Label = item2.Label = rec.Title;
         TimeSpan ts = rec.EndTime - rec.StartTime;
         string strTime = String.Format("{0} {1} ",
-          MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
-          MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
+                                       Util.Utils.GetShortDayString(rec.StartTime),
+                                       Util.Utils.SecondsToHMString((int) ts.TotalSeconds));
         item1.Label2 = item2.Label2 = strTime;
         if (currentViewMethod == ViewAs.Album)
         {
@@ -407,12 +438,14 @@ namespace MediaPortal.GUI.TV
         else
         {
           if (currentSortMethod == SortMethod.Channel)
+          {
             item1.Label2 = item2.Label2 = rec.Channel;
+          }
         }
       }
     }
 
-    void OnTranscode()
+    private void OnTranscode()
     {
       ArrayList transcodings = new ArrayList();
       for (int i = 0; i < GetItemCount(); ++i)
@@ -424,22 +457,28 @@ namespace MediaPortal.GUI.TV
           transcodings.Add(rec);
         }
       }
-      if (transcodings.Count == 0) return;//nothing selected
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (transcodings.Count == 0)
+      {
+        return; //nothing selected
+      }
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(894);
       dlgYesNo.SetLine(1, 995);
       dlgYesNo.SetLine(2, 996);
       dlgYesNo.DoModal(GetID);
-      if (!dlgYesNo.IsConfirmed) return;
+      if (!dlgYesNo.IsConfirmed)
+      {
+        return;
+      }
       foreach (TVRecorded rec in transcodings)
       {
         Transcoder.Transcode(rec, true);
       }
       //now switch to status screen....
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS, true);
+      GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS, true);
     }
 
-    void UpdateProperties()
+    private void UpdateProperties()
     {
       TVRecorded rec;
       GUIListItem pItem = GetItem(GetSelectedItemNo());
@@ -458,54 +497,75 @@ namespace MediaPortal.GUI.TV
       }
       rec.SetProperties();
     }
+
     #endregion
 
     #region album/list view management
-    GUIListItem GetSelectedItem()
+
+    private GUIListItem GetSelectedItem()
     {
       int iControl;
       iControl = listAlbums.GetID;
       if (currentViewMethod == ViewAs.List)
+      {
         iControl = listViews.GetID;
+      }
       GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
       return item;
     }
-    GUIListItem GetItem(int iItem)
+
+    private GUIListItem GetItem(int iItem)
     {
       if (currentViewMethod == ViewAs.List)
       {
-        if (iItem < 0 || iItem >= listViews.Count) return null;
+        if (iItem < 0 || iItem >= listViews.Count)
+        {
+          return null;
+        }
         return listViews[iItem];
       }
       else
       {
-        if (iItem < 0 || iItem >= listAlbums.Count) return null;
+        if (iItem < 0 || iItem >= listAlbums.Count)
+        {
+          return null;
+        }
         return listAlbums[iItem];
       }
     }
-    int GetSelectedItemNo()
+
+    private int GetSelectedItemNo()
     {
       int iControl;
       iControl = listAlbums.GetID;
       if (currentViewMethod == ViewAs.List)
+      {
         iControl = listViews.GetID;
+      }
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
       OnMessage(msg);
-      int iItem = (int)msg.Param1;
+      int iItem = (int) msg.Param1;
       return iItem;
     }
-    int GetItemCount()
+
+    private int GetItemCount()
     {
       if (currentViewMethod == ViewAs.List)
+      {
         return listViews.Count;
+      }
       else
+      {
         return listAlbums.Count;
+      }
     }
+
     #endregion
 
     #region Sort Members
-    void OnSort()
+
+    private void OnSort()
     {
       SetLabels();
       listAlbums.Sort(this);
@@ -515,68 +575,134 @@ namespace MediaPortal.GUI.TV
 
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (item1 == item2) return 0;
-      if (item1 == null) return -1;
-      if (item2 == null) return -1;
-      if (item1.IsFolder && item1.Label == "..") return -1;
-      if (item2.IsFolder && item2.Label == "..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1;
+      if (item1 == item2)
+      {
+        return 0;
+      }
+      if (item1 == null)
+      {
+        return -1;
+      }
+      if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "..")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "..")
+      {
+        return -1;
+      }
+      if (item1.IsFolder && !item2.IsFolder)
+      {
+        return -1;
+      }
+      else if (!item1.IsFolder && item2.IsFolder)
+      {
+        return 1;
+      }
       int iComp = 0;
       TimeSpan ts;
-      TVRecorded rec1 = (TVRecorded)item1.TVTag;
-      TVRecorded rec2 = (TVRecorded)item2.TVTag;
+      TVRecorded rec1 = (TVRecorded) item1.TVTag;
+      TVRecorded rec2 = (TVRecorded) item2.TVTag;
       switch (currentSortMethod)
       {
         case SortMethod.Played:
-          item1.Label2 = String.Format("{0} {1}", rec1.Played, GUILocalizeStrings.Get(677));//times
-          item2.Label2 = String.Format("{0} {1}", rec2.Played, GUILocalizeStrings.Get(677));//times
-          if (rec1.Played == rec2.Played) goto case SortMethod.Name;
+          item1.Label2 = String.Format("{0} {1}", rec1.Played, GUILocalizeStrings.Get(677)); //times
+          item2.Label2 = String.Format("{0} {1}", rec2.Played, GUILocalizeStrings.Get(677)); //times
+          if (rec1.Played == rec2.Played)
+          {
+            goto case SortMethod.Name;
+          }
           else
           {
-            if (m_bSortAscending) return rec1.Played - rec2.Played;
-            else return rec2.Played - rec1.Played;
+            if (m_bSortAscending)
+            {
+              return rec1.Played - rec2.Played;
+            }
+            else
+            {
+              return rec2.Played - rec1.Played;
+            }
           }
 
         case SortMethod.Name:
           if (m_bSortAscending)
           {
             iComp = String.Compare(rec1.Title, rec2.Title, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Channel;
+            }
+            else
+            {
+              return iComp;
+            }
           }
           else
           {
             iComp = String.Compare(rec2.Title, rec1.Title, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Channel;
+            }
+            else
+            {
+              return iComp;
+            }
           }
 
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
             iComp = String.Compare(rec1.Channel, rec2.Channel, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Date;
+            }
+            else
+            {
+              return iComp;
+            }
           }
           else
           {
             iComp = String.Compare(rec2.Channel, rec1.Channel, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Date;
+            }
+            else
+            {
+              return iComp;
+            }
           }
 
         case SortMethod.Date:
           if (m_bSortAscending)
           {
-            if (rec1.StartTime == rec2.StartTime) return 0;
-            if (rec1.StartTime > rec2.StartTime) return 1;
+            if (rec1.StartTime == rec2.StartTime)
+            {
+              return 0;
+            }
+            if (rec1.StartTime > rec2.StartTime)
+            {
+              return 1;
+            }
             return -1;
           }
           else
           {
-            if (rec2.StartTime == rec1.StartTime) return 0;
-            if (rec2.StartTime > rec1.StartTime) return 1;
+            if (rec2.StartTime == rec1.StartTime)
+            {
+              return 0;
+            }
+            if (rec2.StartTime > rec1.StartTime)
+            {
+              return 1;
+            }
             return -1;
           }
 
@@ -586,44 +712,61 @@ namespace MediaPortal.GUI.TV
           if (rec1.Genre != rec2.Genre)
           {
             if (m_bSortAscending)
+            {
               return String.Compare(rec1.Genre, rec2.Genre, true);
+            }
             else
+            {
               return String.Compare(rec2.Genre, rec1.Genre, true);
+            }
           }
           if (rec1.StartTime != rec2.StartTime)
           {
             if (m_bSortAscending)
             {
               ts = rec1.StartTime - rec2.StartTime;
-              return (int)(ts.Minutes);
+              return (int) (ts.Minutes);
             }
             else
             {
               ts = rec2.StartTime - rec1.StartTime;
-              return (int)(ts.Minutes);
+              return (int) (ts.Minutes);
             }
           }
           if (rec1.Channel != rec2.Channel)
+          {
             if (m_bSortAscending)
+            {
               return String.Compare(rec1.Channel, rec2.Channel);
+            }
             else
+            {
               return String.Compare(rec2.Channel, rec1.Channel);
+            }
+          }
           if (rec1.Title != rec2.Title)
+          {
             if (m_bSortAscending)
+            {
               return String.Compare(rec1.Title, rec2.Title);
+            }
             else
+            {
               return String.Compare(rec2.Title, rec1.Title);
+            }
+          }
           return 0;
       }
       return 0;
     }
+
     #endregion
 
-    void SortChanged(object sender, SortEventArgs e)
+    private void SortChanged(object sender, SortEventArgs e)
     {
-      m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+      m_bSortAscending = e.Order != SortOrder.Descending;
       OnSort();
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+      GUIControl.FocusControl(GetID, ((GUIControl) sender).GetID);
     }
   }
 }

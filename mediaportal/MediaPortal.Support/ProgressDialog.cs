@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MediaPortal.Support
@@ -14,11 +8,13 @@ namespace MediaPortal.Support
     {
       InitializeComponent();
     }
+
     public void SetCurrentAction(string currentAction)
     {
-      labelCurrentAction.Text=currentAction;
+      labelCurrentAction.Text = currentAction;
       Update();
     }
+
     public void UpdateProgress()
     {
       progressBar.PerformStep();

@@ -1,6 +1,6 @@
-﻿using MediaPortal.GUI.Library;
-using System;
+﻿using System;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
@@ -45,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
           builder2.Append(text[num++]);
         }
         byte num3 = Convert.ToByte(builder2.ToString(), 0x10);
-        text = text.Replace("@" + builder2.ToString(), Encoding.ASCII.GetString(new byte[] { num3 }));
+        text = text.Replace("@" + builder2.ToString(), Encoding.ASCII.GetString(new byte[] {num3}));
       }
       return this.EvaluateHex(text);
     }
@@ -60,10 +60,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
           builder.Append(text[i++]);
         }
         byte num2 = Convert.ToByte(builder.ToString(), 0x10);
-        text = text.Replace("@" + builder.ToString(), Encoding.ASCII.GetString(new byte[] { num2 }));
+        text = text.Replace("@" + builder.ToString(), Encoding.ASCII.GetString(new byte[] {num2}));
       }
       return text;
     }
   }
 }
-

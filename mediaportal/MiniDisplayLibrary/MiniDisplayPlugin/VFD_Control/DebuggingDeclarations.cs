@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
@@ -40,7 +41,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("kernel32.dll", CharSet=CharSet.Auto)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
     public static extern int FormatMessage(int dwFlags, ref long lpSource, int dwMessageId, int dwLanguageZId,
                                            string lpBuffer, int nSize, int Arguments);
   }

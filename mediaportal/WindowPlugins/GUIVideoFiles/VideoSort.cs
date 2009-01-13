@@ -24,9 +24,8 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Collections.Generic;
-
+using System.Globalization;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Video
@@ -45,6 +44,7 @@ namespace MediaPortal.GUI.Video
       Rating = 4,
       Label = 5,
     }
+
     protected SortMethod currentSortMethod;
     protected bool sortAscending;
 
@@ -56,13 +56,34 @@ namespace MediaPortal.GUI.Video
 
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (item1 == item2) return 0;
-      if (item1 == null) return -1;
-      if (item2 == null) return -1;
-      if (item1.IsFolder && item1.Label == "..") return -1;
-      if (item2.IsFolder && item2.Label == "..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1;
+      if (item1 == item2)
+      {
+        return 0;
+      }
+      if (item1 == null)
+      {
+        return -1;
+      }
+      if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "..")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "..")
+      {
+        return -1;
+      }
+      if (item1.IsFolder && !item2.IsFolder)
+      {
+        return -1;
+      }
+      else if (!item1.IsFolder && item2.IsFolder)
+      {
+        return 1;
+      }
 
 
       switch (currentSortMethod)
@@ -71,13 +92,25 @@ namespace MediaPortal.GUI.Video
           {
             if (sortAscending)
             {
-              if (item1.Year > item2.Year) return 1;
-              if (item1.Year < item2.Year) return -1;
+              if (item1.Year > item2.Year)
+              {
+                return 1;
+              }
+              if (item1.Year < item2.Year)
+              {
+                return -1;
+              }
             }
             else
             {
-              if (item1.Year > item2.Year) return -1;
-              if (item1.Year < item2.Year) return 1;
+              if (item1.Year > item2.Year)
+              {
+                return -1;
+              }
+              if (item1.Year < item2.Year)
+              {
+                return 1;
+              }
             }
             return 0;
           }
@@ -85,13 +118,25 @@ namespace MediaPortal.GUI.Video
           {
             if (sortAscending)
             {
-              if (item1.Rating > item2.Rating) return 1;
-              if (item1.Rating < item2.Rating) return -1;
+              if (item1.Rating > item2.Rating)
+              {
+                return 1;
+              }
+              if (item1.Rating < item2.Rating)
+              {
+                return -1;
+              }
             }
             else
             {
-              if (item1.Rating > item2.Rating) return -1;
-              if (item1.Rating < item2.Rating) return 1;
+              if (item1.Rating > item2.Rating)
+              {
+                return -1;
+              }
+              if (item1.Rating < item2.Rating)
+              {
+                return 1;
+              }
             }
             return 0;
           }
@@ -121,33 +166,40 @@ namespace MediaPortal.GUI.Video
           {
             if (sortAscending)
             {
-              return (int)(item1.Duration - item2.Duration);
+              return (int) (item1.Duration - item2.Duration);
             }
             else
             {
-              return (int)(item2.Duration - item1.Duration);
+              return (int) (item2.Duration - item1.Duration);
             }
           }
           else
           {
             if (sortAscending)
             {
-              return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+              return (int) (item1.FileInfo.Length - item2.FileInfo.Length);
             }
             else
             {
-              return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+              return (int) (item2.FileInfo.Length - item1.FileInfo.Length);
             }
           }
 
 
-
         case SortMethod.Date:
-          if (item1.FileInfo == null) return -1;
-          if (item2.FileInfo == null) return -1;
+          if (item1.FileInfo == null)
+          {
+            return -1;
+          }
+          if (item2.FileInfo == null)
+          {
+            return -1;
+          }
 
-          item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " + item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " + item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
+                         item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
+                         item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           if (sortAscending)
           {
             return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
@@ -156,11 +208,8 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
-
-
       }
       return 0;
     }
-
   }
 }

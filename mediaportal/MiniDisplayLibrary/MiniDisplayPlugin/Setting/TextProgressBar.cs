@@ -48,7 +48,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         int num2;
         int num3;
         int num4;
-        string[] strArray = stringValue.Split(new char[] { ':' });
+        string[] strArray = stringValue.Split(new char[] {':'});
         if (strArray.Length == 3)
         {
           num2 = int.Parse(strArray[0]);
@@ -65,7 +65,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         {
           return 0.0;
         }
-        return (double)(((num2 * 0xe10) + (num3 * 60)) + num4);
+        return (double) (((num2*0xe10) + (num3*60)) + num4);
       }
       if (!double.TryParse(stringValue, out num))
       {
@@ -85,7 +85,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         num3 = 0;
         return "[TextProgressBar Error]";
       }
-      num3 = (num <= 0.0) ? ((int)0.0) : ((int)((num / num2) * (this.length - 2)));
+      num3 = (num <= 0.0) ? ((int) 0.0) : ((int) ((num/num2)*(this.length - 2)));
       builder.Append(this.startChar);
       builder.Append(this.valueChar, num3);
       builder.Append(this.fillChar, (this.length - 2) - num3);
@@ -96,10 +96,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute]
     public string EndChar
     {
-      get
-      {
-        return new string(this.endChar, 1);
-      }
+      get { return new string(this.endChar, 1); }
       set
       {
         if ((value != null) && (value.Length > 0))
@@ -112,10 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute]
     public string FillChar
     {
-      get
-      {
-        return new string(this.fillChar, 1);
-      }
+      get { return new string(this.fillChar, 1); }
       set
       {
         if ((value != null) && (value.Length > 0))
@@ -128,23 +122,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute]
     public int Length
     {
-      get
-      {
-        return this.length;
-      }
-      set
-      {
-        this.length = value;
-      }
+      get { return this.length; }
+      set { this.length = value; }
     }
 
     [XmlAttribute]
     public string StartChar
     {
-      get
-      {
-        return new string(this.startChar, 1);
-      }
+      get { return new string(this.startChar, 1); }
       set
       {
         if ((value != null) && (value.Length > 0))
@@ -157,23 +142,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlElement]
     public Property TargetProperty
     {
-      get
-      {
-        return this.targetProperty;
-      }
-      set
-      {
-        this.targetProperty = value;
-      }
+      get { return this.targetProperty; }
+      set { this.targetProperty = value; }
     }
 
     [XmlAttribute]
     public string ValueChar
     {
-      get
-      {
-        return new string(this.valueChar, 1);
-      }
+      get { return new string(this.valueChar, 1); }
       set
       {
         if ((value != null) && (value.Length > 0))
@@ -186,15 +162,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlElement]
     public Property ValueProperty
     {
-      get
-      {
-        return this.valueProperty;
-      }
-      set
-      {
-        this.valueProperty = value;
-      }
+      get { return this.valueProperty; }
+      set { this.valueProperty = value; }
     }
   }
 }
-

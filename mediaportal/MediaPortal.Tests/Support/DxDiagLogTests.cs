@@ -24,11 +24,9 @@
 #endregion
 
 using System;
+using System.IO;
 using MediaPortal.Support;
 using NUnit.Framework;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.Tests.Support
 {
@@ -38,11 +36,14 @@ namespace MediaPortal.Tests.Support
     private class MyProcRunner : ProcessRunner
     {
       public bool hasRun = false;
+
       public override void Run()
       {
         base.Run();
         if (LastExitCode == 0)
+        {
           hasRun = true;
+        }
       }
     }
 

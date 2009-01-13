@@ -23,41 +23,31 @@
 
 #endregion
 
-using System;
-using System.Text;
-using System.IO;
-using System.Net;
-using System.Web;
-
 namespace MediaPortal.Utils.Web
 {
   /// <summary>
   /// Interface to enable HTML caching
   /// </summary>
-	public interface IHtmlCache
-	{
+  public interface IHtmlCache
+  {
     #region Properties
+
     /// <summary>
     /// Gets a value indicating whether this <see cref="IHtmlCache"/> is initialised.
     /// </summary>
     /// <value><c>true</c> if initialised; otherwise, <c>false</c>.</value>
-    bool Initialised
-    {
-      get;
-    }
+    bool Initialised { get; }
 
     /// <summary>
     /// Gets or sets the cache mode.
     /// </summary>
     /// <value>The cache mode.</value>
-    HTMLCache.Mode CacheMode
-    {
-      get;
-      set;
-    }
+    HTMLCache.Mode CacheMode { get; set; }
+
     #endregion
 
     #region Methods
+
     /// <summary>
     /// Deletes a cached page.
     /// </summary>
@@ -82,7 +72,8 @@ namespace MediaPortal.Utils.Web
     /// Gets the page source of the current loaded page.
     /// </summary>
     /// <returns>HTML source as a string</returns>
-		string GetPage();
+    string GetPage();
+
     #endregion
   }
 }

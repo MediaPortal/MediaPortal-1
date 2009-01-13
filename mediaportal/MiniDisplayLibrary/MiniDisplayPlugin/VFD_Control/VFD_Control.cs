@@ -84,7 +84,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("MiniDisplay.VFD_Control: Searching for display with VendorID:{0:X} & ProductID:{1:X}",_VendorID, _ProductID);
+          Log.Debug("MiniDisplay.VFD_Control: Searching for display with VendorID:{0:X} & ProductID:{1:X}", _VendorID,
+                    _ProductID);
         }
 
         Guid HidGuid = Guid.Empty;
@@ -105,7 +106,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         HidApiDeclarations.HidD_GetHidGuid(ref HidGuid);
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("MiniDisplay.VFD_Control: "+Debugging.ResultOfAPICall("GetHidGuid"));
+          Log.Debug("MiniDisplay.VFD_Control: " + Debugging.ResultOfAPICall("GetHidGuid"));
         }
 
         // Display the GUID.
@@ -196,7 +197,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
 
                 if (Settings.Instance.ExtensiveLogging)
                 {
-                  Log.Debug("MiniDisplay.VFD_Control: Vendor ID: {0:X}, Product ID: {1:X}, Version {2:X}" + _MyHID.DeviceAttributes.VendorID,_MyHID.DeviceAttributes.ProductID,_MyHID.DeviceAttributes.VersionNumber);
+                  Log.Debug(
+                    "MiniDisplay.VFD_Control: Vendor ID: {0:X}, Product ID: {1:X}, Version {2:X}" +
+                    _MyHID.DeviceAttributes.VendorID, _MyHID.DeviceAttributes.ProductID,
+                    _MyHID.DeviceAttributes.VersionNumber);
                 }
 
                 // Find out if the device matches the one we're looking for.

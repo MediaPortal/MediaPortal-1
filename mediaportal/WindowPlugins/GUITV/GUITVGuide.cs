@@ -24,24 +24,14 @@
 #endregion
 
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-#endregion
 
+using System;
+using System.Collections.Generic;
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
+
+#endregion
 
 namespace MediaPortal.GUI.TV
 {
@@ -50,15 +40,14 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITVGuide : GUITvGuideBase
   {
-    [SkinControlAttribute(98)]
-    protected GUIImage videoBackground;
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl videoWindow;
+    [SkinControl(98)] protected GUIImage videoBackground;
+    [SkinControl(99)] protected GUIVideoControl videoWindow;
 
     public GUITVGuide() : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TVGUIDE;
+      GetID = (int) Window.WINDOW_TVGUIDE;
     }
+
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
@@ -85,16 +74,18 @@ namespace MediaPortal.GUI.TV
       {
       }
 
-      TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-      TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+      TVDatabase.OnProgramsChanged += new TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+      TVDatabase.OnNotifiesChanged += new TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+      ConflictManager.OnConflictsUpdated +=
+        new ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-      TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-      ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+      TVDatabase.OnProgramsChanged -= new TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+      TVDatabase.OnNotifiesChanged -= new TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+      ConflictManager.OnConflictsUpdated -=
+        new ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 
       base.OnPageDestroy(newWindowId);
 
@@ -113,4 +104,3 @@ namespace MediaPortal.GUI.TV
     }
   }
 }
-

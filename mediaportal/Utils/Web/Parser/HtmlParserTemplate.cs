@@ -24,27 +24,23 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Utils.Web
 {
-	/// <summary>
-	/// Class generic for parser data.
-	/// </summary>
+  /// <summary>
+  /// Class generic for parser data.
+  /// </summary>
   [Serializable]
-	public class HtmlParserTemplate
-	{
+  public class HtmlParserTemplate
+  {
     #region Variables
-    [XmlAttribute("name")]
-    public string Name;
-    [XmlAttribute("start")]
-    public string Start;
-    [XmlAttribute("end")]
-    public string End;
-    [XmlElement("SectionTemplate")]
-    public HtmlSectionTemplate SectionTemplate;
+
+    [XmlAttribute("name")] public string Name;
+    [XmlAttribute("start")] public string Start;
+    [XmlAttribute("end")] public string End;
+    [XmlElement("SectionTemplate")] public HtmlSectionTemplate SectionTemplate;
+
     #endregion
   }
 }

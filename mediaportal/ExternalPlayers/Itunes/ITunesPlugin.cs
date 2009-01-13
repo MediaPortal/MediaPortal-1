@@ -24,11 +24,11 @@
 #endregion
 
 using System;
+using iTunesLib;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using iTunesLib;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.ITunesPlayer
 {
@@ -38,16 +38,16 @@ namespace MediaPortal.ITunesPlayer
   [PluginIcons("ExternalPlayers.Itunes.iTunesLogo.png", "ExternalPlayers.Itunes.iTunesLogoDisabled.png")]
   public class ITunesPlugin : IExternalPlayer
   {
-    iTunesLib.iTunesAppClass _iTunesApplication = null;
-    IITUserPlaylist _playList;
-    bool _playerIsPaused;
-    string _currentFile = string.Empty;
-    bool _started;
-    bool _ended;
-    double _duration;
-    double _currentPosition;
-    ITPlayerState _playerState;
-    DateTime _updateTimer;
+    private iTunesAppClass _iTunesApplication = null;
+    private IITUserPlaylist _playList;
+    private bool _playerIsPaused;
+    private string _currentFile = string.Empty;
+    private bool _started;
+    private bool _ended;
+    private double _duration;
+    private double _currentPosition;
+    private ITPlayerState _playerState;
+    private DateTime _updateTimer;
     private string[] m_supportedExtensions = new string[0];
     private bool _notifyPlaying = false;
 
@@ -110,18 +110,26 @@ namespace MediaPortal.ITunesPlayer
     {
       readConfig();
       string ext = null;
-      int dot = filename.LastIndexOf(".");    // couldn't find the dot to get the extension
-      if (dot == -1) return false;
+      int dot = filename.LastIndexOf("."); // couldn't find the dot to get the extension
+      if (dot == -1)
+      {
+        return false;
+      }
 
       ext = filename.Substring(dot).Trim();
-      if (ext.Length == 0) return false;   // no extension so return false;
+      if (ext.Length == 0)
+      {
+        return false; // no extension so return false;
+      }
 
       ext = ext.ToLower();
 
       for (int i = 0; i < m_supportedExtensions.Length; i++)
       {
         if (m_supportedExtensions[i].Equals(ext))
+        {
           return true;
+        }
       }
 
       // could not match the extension, so return false;
@@ -132,13 +140,13 @@ namespace MediaPortal.ITunesPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions", "");
       }
       if (strExt != null && strExt.Length > 0)
       {
-        m_supportedExtensions = strExt.Split(new char[] { ':', ',' });
+        m_supportedExtensions = strExt.Split(new char[] {':', ','});
         for (int i = 0; i < m_supportedExtensions.Length; i++)
         {
           m_supportedExtensions[i] = m_supportedExtensions[i].Trim();
@@ -153,10 +161,14 @@ namespace MediaPortal.ITunesPlayer
       {
         if (_iTunesApplication == null)
         {
-          _iTunesApplication = new iTunesLib.iTunesAppClass();
-          _iTunesApplication.OnPlayerPlayEvent += new _IiTunesEvents_OnPlayerPlayEventEventHandler(_iTunesApplication_OnPlayerPlayEvent);
-          _iTunesApplication.OnPlayerStopEvent += new _IiTunesEvents_OnPlayerStopEventEventHandler(_iTunesApplication_OnPlayerStopEvent);
-          _iTunesApplication.OnPlayerPlayingTrackChangedEvent += new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(_iTunesApplication_OnPlayerPlayingTrackChangedEvent);
+          _iTunesApplication = new iTunesAppClass();
+          _iTunesApplication.OnPlayerPlayEvent +=
+            new _IiTunesEvents_OnPlayerPlayEventEventHandler(_iTunesApplication_OnPlayerPlayEvent);
+          _iTunesApplication.OnPlayerStopEvent +=
+            new _IiTunesEvents_OnPlayerStopEventEventHandler(_iTunesApplication_OnPlayerStopEvent);
+          _iTunesApplication.OnPlayerPlayingTrackChangedEvent +=
+            new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(
+              _iTunesApplication_OnPlayerPlayingTrackChangedEvent);
           IITPlaylist playList = null;
           foreach (IITPlaylist pl in _iTunesApplication.LibrarySource.Playlists)
           {
@@ -168,18 +180,20 @@ namespace MediaPortal.ITunesPlayer
           }
           if (playList == null)
           {
-            _playList = (IITUserPlaylist)_iTunesApplication.CreatePlaylist("MediaPortalTemporaryPlaylist");
+            _playList = (IITUserPlaylist) _iTunesApplication.CreatePlaylist("MediaPortalTemporaryPlaylist");
           }
           else
           {
-            _playList = (IITUserPlaylist)playList;
+            _playList = (IITUserPlaylist) playList;
           }
           _playList.SongRepeat = ITPlaylistRepeatMode.ITPlaylistRepeatModeOff;
         }
 
         // stop other media which might be active until now.
         if (g_Player.Playing)
-          g_Player.Stop();        
+        {
+          g_Player.Stop();
+        }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
         msg.Label = strFile;
@@ -188,7 +202,9 @@ namespace MediaPortal.ITunesPlayer
         _started = false;
         _ended = false;
         foreach (IITTrack track in _playList.Tracks)
+        {
           track.Delete();
+        }
         _playList.AddFile(strFile);
         _playList.PlayFirstTrack();
 
@@ -213,29 +229,31 @@ namespace MediaPortal.ITunesPlayer
       return false;
     }
 
-    void _iTunesApplication_OnPlayerPlayingTrackChangedEvent(object iTrack)
+    private void _iTunesApplication_OnPlayerPlayingTrackChangedEvent(object iTrack)
     {
-      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      IITTrack track = iTrack as IITTrack;
       Log.Info("ITunes:track changed track :{0} duration:{1}", track.Name, track.Duration);
       _iTunesApplication.Stop();
       _ended = true;
     }
 
-    void _iTunesApplication_OnPlayerStopEvent(object iTrack)
+    private void _iTunesApplication_OnPlayerStopEvent(object iTrack)
     {
       // ignore event if we're pausing
       if (_playerIsPaused)
+      {
         return;
-      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      }
+      IITTrack track = iTrack as IITTrack;
       Log.Info("ITunes:playback stopped track :{0} duration:{1}", track.Name, track.Duration);
 
       _iTunesApplication.Stop();
       _ended = true;
     }
 
-    void _iTunesApplication_OnPlayerPlayEvent(object iTrack)
+    private void _iTunesApplication_OnPlayerPlayEvent(object iTrack)
     {
-      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      IITTrack track = iTrack as IITTrack;
       Log.Info("ITunes:playback started track :{0} duration:{1}", track.Name, track.Duration);
       _started = true;
     }
@@ -244,10 +262,16 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        if (_iTunesApplication == null) return 0.0d;
+        if (_iTunesApplication == null)
+        {
+          return 0.0d;
+        }
 
         UpdateStatus();
-        if (_started == false) return 300;
+        if (_started == false)
+        {
+          return 300;
+        }
         try
         {
           return _duration;
@@ -266,9 +290,15 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (_iTunesApplication == null) return 0.0d;
+          if (_iTunesApplication == null)
+          {
+            return 0.0d;
+          }
           UpdateStatus();
-          if (_started == false) return 0.0d;
+          if (_started == false)
+          {
+            return 0.0d;
+          }
           return _currentPosition;
         }
         catch (Exception)
@@ -281,9 +311,15 @@ namespace MediaPortal.ITunesPlayer
 
     public override void Pause()
     {
-      if (_iTunesApplication == null) return;
+      if (_iTunesApplication == null)
+      {
+        return;
+      }
       UpdateStatus();
-      if (_started == false && !_playerIsPaused) return;
+      if (_started == false && !_playerIsPaused)
+      {
+        return;
+      }
       try
       {
         if (Paused || !_started)
@@ -311,7 +347,10 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (_started == false) return false;
+          if (_started == false)
+          {
+            return false;
+          }
           return _playerIsPaused;
         }
         catch (Exception)
@@ -329,12 +368,19 @@ namespace MediaPortal.ITunesPlayer
         try
         {
           if (_iTunesApplication == null)
+          {
             return false;
+          }
           UpdateStatus();
-          if (_started == false) return true;
-          if (Paused) return true;
+          if (_started == false)
+          {
+            return true;
+          }
+          if (Paused)
+          {
+            return true;
+          }
           return (_playerState != ITPlayerState.ITPlayerStateStopped);
-
         }
         catch (Exception)
         {
@@ -349,14 +395,21 @@ namespace MediaPortal.ITunesPlayer
       get
       {
         if (_iTunesApplication == null)
+        {
           return true;
+        }
         try
         {
           UpdateStatus();
-          if (_started == false) return false;
-          if (Paused) return false;
+          if (_started == false)
+          {
+            return false;
+          }
+          if (Paused)
+          {
+            return false;
+          }
           return (_ended);
-
         }
         catch (Exception)
         {
@@ -373,12 +426,19 @@ namespace MediaPortal.ITunesPlayer
         try
         {
           if (_iTunesApplication == null)
+          {
             return true;
+          }
           UpdateStatus();
-          if (_started == false) return false;
-          if (Paused) return false;
+          if (_started == false)
+          {
+            return false;
+          }
+          if (Paused)
+          {
+            return false;
+          }
           return (_ended);
-
         }
         catch (Exception)
         {
@@ -390,15 +450,15 @@ namespace MediaPortal.ITunesPlayer
 
     public override string CurrentFile
     {
-      get
-      {
-        return _currentFile;
-      }
+      get { return _currentFile; }
     }
 
     public override void Stop()
     {
-      if (_iTunesApplication == null) return;
+      if (_iTunesApplication == null)
+      {
+        return;
+      }
       try
       {
         _iTunesApplication.Stop();
@@ -416,7 +476,10 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        if (_iTunesApplication == null) return 0;
+        if (_iTunesApplication == null)
+        {
+          return 0;
+        }
         try
         {
           return _iTunesApplication.SoundVolume;
@@ -429,11 +492,13 @@ namespace MediaPortal.ITunesPlayer
       }
       set
       {
-        if (_iTunesApplication == null || value < 0 || value > 100) return;
+        if (_iTunesApplication == null || value < 0 || value > 100)
+        {
+          return;
+        }
         _iTunesApplication.SoundVolume = value;
         try
         {
-
         }
         catch (Exception)
         {
@@ -446,7 +511,10 @@ namespace MediaPortal.ITunesPlayer
     {
       double dCurTime = CurrentPosition;
       dTime = dCurTime + dTime;
-      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < 0.0d)
+      {
+        dTime = 0.0d;
+      }
       if (dTime < Duration)
       {
         SeekAbsolute(dTime);
@@ -455,16 +523,24 @@ namespace MediaPortal.ITunesPlayer
 
     public override void SeekAbsolute(double dTime)
     {
-      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < 0.0d)
+      {
+        dTime = 0.0d;
+      }
       if (dTime < Duration)
       {
         //m_winampController.Position = dTime;
-        if (_iTunesApplication == null) return;
+        if (_iTunesApplication == null)
+        {
+          return;
+        }
         try
         {
-          _iTunesApplication.PlayerPosition = (int)dTime;
+          _iTunesApplication.PlayerPosition = (int) dTime;
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -473,11 +549,14 @@ namespace MediaPortal.ITunesPlayer
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
-      double fOnePercent = Duration / 100.0d;
-      fCurPercent = fCurPercent + (double)iPercentage;
+      double fCurPercent = (dCurrentPos/Duration)*100.0d;
+      double fOnePercent = Duration/100.0d;
+      fCurPercent = fCurPercent + (double) iPercentage;
       fCurPercent *= fOnePercent;
-      if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+      if (fCurPercent < 0.0d)
+      {
+        fCurPercent = 0.0d;
+      }
       if (fCurPercent < Duration)
       {
         SeekAbsolute(fCurPercent);
@@ -486,19 +565,29 @@ namespace MediaPortal.ITunesPlayer
 
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (iPercentage < 0) iPercentage = 0;
-      if (iPercentage >= 100) iPercentage = 100;
-      double fPercent = Duration / 100.0f;
-      fPercent *= (double)iPercentage;
+      if (iPercentage < 0)
+      {
+        iPercentage = 0;
+      }
+      if (iPercentage >= 100)
+      {
+        iPercentage = 100;
+      }
+      double fPercent = Duration/100.0f;
+      fPercent *= (double) iPercentage;
       SeekAbsolute(fPercent);
     }
 
     private void UpdateStatus()
     {
       if (_started == false)
+      {
         return;
+      }
       if (_iTunesApplication == null)
+      {
         return;
+      }
 
       TimeSpan ts = DateTime.Now - _updateTimer;
 
@@ -506,7 +595,7 @@ namespace MediaPortal.ITunesPlayer
       {
         _playerState = _iTunesApplication.PlayerState;
         _duration = _iTunesApplication.CurrentTrack.Duration;
-        _currentPosition = (double)_iTunesApplication.PlayerPosition;
+        _currentPosition = (double) _iTunesApplication.PlayerPosition;
         _updateTimer = DateTime.Now;
       }
     }
@@ -514,7 +603,9 @@ namespace MediaPortal.ITunesPlayer
     public override void Process()
     {
       if (!Playing)
+      {
         return;
+      }
 
       if (_notifyPlaying && CurrentPosition >= 10.0)
       {

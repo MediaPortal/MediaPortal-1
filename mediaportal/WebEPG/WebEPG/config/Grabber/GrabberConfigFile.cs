@@ -23,11 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using MediaPortal.WebEPG.Parser;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
@@ -38,19 +35,16 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class GrabberConfigFile
   {
     #region Variables
-    [XmlElement("Info")]
-    public GrabberInfo Info;
-    [XmlArray("Channels")]
-    [XmlArrayItem("Channel")]
-    public List<ChannelInfo> Channels;
-    [XmlElement("Listing")]
-    public ListingInfo Listing;
-    [XmlArray("Actions")]
-    [XmlArrayItem("Modify")]
-    public List<ModifyInfo> Actions;
+
+    [XmlElement("Info")] public GrabberInfo Info;
+    [XmlArray("Channels")] [XmlArrayItem("Channel")] public List<ChannelInfo> Channels;
+    [XmlElement("Listing")] public ListingInfo Listing;
+    [XmlArray("Actions")] [XmlArrayItem("Modify")] public List<ModifyInfo> Actions;
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets the site id for a channel.
     /// </summary>
@@ -61,11 +55,14 @@ namespace MediaPortal.WebEPG.Config.Grabber
       for (int i = 0; i < Channels.Count; i++)
       {
         if (Channels[i].id == id)
+        {
           return Channels[i].siteId;
+        }
       }
 
       return null;
     }
+
     #endregion
   }
 }

@@ -24,69 +24,73 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Globalization;
-using MediaPortal.Util;
+using System.IO;
+using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Movies : MediaPortal.Configuration.SectionSettings
+  public class Movies : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox folderNameTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel folderNameLabel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-    private MediaPortal.UserInterface.Controls.MPButton subtitlesButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox subtitlesFontTextBox;
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private System.Windows.Forms.FontDialog fontDialog;
-    private System.ComponentModel.IContainer components = null;
-    string fontName;
-    string fontColor;
-    bool fontIsBold;
-    private MediaPortal.UserInterface.Controls.MPTextBox dropShadowTextBox;
-    int fontSize;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowWatched;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gAllowedModes;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNormal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom149;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowOriginal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowSmartStretch;
-    string m_strDefaultRegionLanguage = "English";
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEachFolderIsMovie;
-    private MediaPortal.UserInterface.Controls.MPLabel labelsubsinfo;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultAudioLanguageComboBox;
-    string[] aspectRatio = {
-                            "normal", 
-                            "original",
-                            "zoom", 
-                            "zoom149",  
-                            "stretch",
-                            "smartstretch",
-                            "letterbox"
-                           };
-    string m_strDefaultAudioLanguage = "English";
+    private MPGroupBox groupBox1;
+    private MPButton fileNameButton;
+    private MPTextBox folderNameTextBox;
+    private MPLabel folderNameLabel;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel label4;
+    private MPLabel label6;
+    private MPCheckBox repeatPlaylistCheckBox;
+    private MPCheckBox showSubtitlesCheckBox;
+    private MPButton subtitlesButton;
+    private MPTextBox subtitlesFontTextBox;
+    private FolderBrowserDialog folderBrowserDialog;
+    private FontDialog fontDialog;
+    private IContainer components = null;
+    private string fontName;
+    private string fontColor;
+    private bool fontIsBold;
+    private MPTextBox dropShadowTextBox;
+    private int fontSize;
+    private MPComboBox defaultZoomModeComboBox;
+    private MPLabel label1;
+    private MPTabControl tabControl1;
+    private MPTabPage tabPage1;
+    private MPTabPage tabPage3;
+    private MPLabel label7;
+    private MPComboBox defaultSubtitleLanguageComboBox;
+    private MPCheckBox checkBoxShowWatched;
+    private MPGroupBox gAllowedModes;
+    private MPCheckBox cbAllowNormal;
+    private MPCheckBox cbAllowZoom149;
+    private MPCheckBox cbAllowOriginal;
+    private MPCheckBox cbAllowZoom;
+    private MPCheckBox cbAllowLetterbox;
+    private MPCheckBox cbAllowStretch;
+    private MPCheckBox cbAllowSmartStretch;
+    private string m_strDefaultRegionLanguage = "English";
+    private MPCheckBox checkBoxEachFolderIsMovie;
+    private MPLabel labelsubsinfo;
+    private MPGroupBox mpGroupBox2;
+    private MPLabel mpLabel1;
+    private MPComboBox defaultAudioLanguageComboBox;
+
+    private string[] aspectRatio = {
+                                     "normal",
+                                     "original",
+                                     "zoom",
+                                     "zoom149",
+                                     "stretch",
+                                     "smartstretch",
+                                     "letterbox"
+                                   };
+
+    private string m_strDefaultAudioLanguage = "English";
 
     public Movies()
       : this("Videos")
@@ -99,17 +103,17 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       // Populate combo boxes with languages
-      m_strDefaultRegionLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
-      m_strDefaultAudioLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
+      m_strDefaultRegionLanguage = Util.Utils.GetCultureRegionLanguage();
+      m_strDefaultAudioLanguage = Util.Utils.GetCultureRegionLanguage();
       defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
       defaultAudioLanguageComboBox.Text = m_strDefaultAudioLanguage;
-      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
-      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultAudioLanguage);
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultAudioLanguage);
     }
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("movies", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("movies", "allowaroriginal", true);
@@ -118,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
         cbAllowSmartStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
-        
+
         checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
 
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -128,13 +132,15 @@ namespace MediaPortal.Configuration.Sections
 
         if (string.Compare(folderNameTextBox.Text, playListFolder) == 0)
         {
-          if (System.IO.Directory.Exists(playListFolder) == false)
+          if (Directory.Exists(playListFolder) == false)
           {
             try
             {
-              System.IO.Directory.CreateDirectory(playListFolder);
+              Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
           }
         }
 
@@ -143,7 +149,8 @@ namespace MediaPortal.Configuration.Sections
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
 
-        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "language", m_strDefaultRegionLanguage);
+        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "language",
+                                                                                  m_strDefaultRegionLanguage);
 
         dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
 
@@ -168,7 +175,9 @@ namespace MediaPortal.Configuration.Sections
             subtitlesFontTextBox.BackColor = Color.Black;
             subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
           }
-          catch { }
+          catch
+          {
+          }
         }
 
         //
@@ -184,13 +193,14 @@ namespace MediaPortal.Configuration.Sections
             break;
           }
         }
-        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiolanguage", m_strDefaultAudioLanguage);
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiolanguage",
+                                                                               m_strDefaultAudioLanguage);
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
@@ -237,13 +247,15 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Movies));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (Movies));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -290,8 +302,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
@@ -334,18 +348,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Zoom",
-            "Zoom 14:9",
-            "Stretch",
-            "Non-linear Smart Zoom",
-            "4:3 Letterbox"});
+      this.defaultZoomModeComboBox.Items.AddRange(new object[]
+                                                    {
+                                                      "Normal",
+                                                      "Original Source Format",
+                                                      "Zoom",
+                                                      "Zoom 14:9",
+                                                      "Stretch",
+                                                      "Non-linear Smart Zoom",
+                                                      "4:3 Letterbox"
+                                                    });
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
@@ -361,7 +379,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(344, 61);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -372,8 +392,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderNameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderNameTextBox.Location = new System.Drawing.Point(136, 63);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -401,8 +423,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label7);
       this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
@@ -429,8 +453,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
@@ -441,8 +467,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dropShadowTextBox
       // 
-      this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dropShadowTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.dropShadowTextBox.BorderColor = System.Drawing.Color.Empty;
       this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
       this.dropShadowTextBox.Name = "dropShadowTextBox";
@@ -470,7 +498,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesButton
       // 
-      this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
       this.subtitlesButton.Name = "subtitlesButton";
       this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
@@ -481,8 +511,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesFontTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -500,9 +532,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -630,8 +664,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.mpLabel1);
       this.mpGroupBox2.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -652,8 +688,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(136, 28);
@@ -686,8 +724,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage3.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -695,7 +733,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void fileNameButton_Click(object sender, System.EventArgs e)
+    private void fileNameButton_Click(object sender, EventArgs e)
     {
       using (folderBrowserDialog = new FolderBrowserDialog())
       {
@@ -716,7 +754,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void subtitlesButton_Click(object sender, System.EventArgs e)
+    private void subtitlesButton_Click(object sender, EventArgs e)
     {
       using (fontDialog = new FontDialog())
       {
@@ -725,22 +763,24 @@ namespace MediaPortal.Configuration.Sections
         fontDialog.FontMustExist = true;
         fontDialog.ShowEffects = true;
 
-        fontDialog.Font = new Font(fontName, (float)fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
+        fontDialog.Font = new Font(fontName, (float) fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
 
         if (fontColor != null && fontColor.Length > 0)
+        {
           fontDialog.Color = subtitlesFontTextBox.BackColor;
+        }
 
         DialogResult dialogResult = fontDialog.ShowDialog(this);
 
         if (dialogResult == DialogResult.OK)
         {
           fontName = fontDialog.Font.Name;
-          fontSize = (int)fontDialog.Font.Size;
+          fontSize = (int) fontDialog.Font.Size;
           fontIsBold = fontDialog.Font.Style == FontStyle.Bold;
           fontColor = String.Format("{0:x}", fontDialog.Color.ToArgb());
 
           subtitlesFontTextBox.Text = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
-          
+
           //
           // Try to parse the specified color into a valid color
           //
@@ -752,7 +792,9 @@ namespace MediaPortal.Configuration.Sections
               subtitlesFontTextBox.BackColor = Color.Black;
               subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
             }
-            catch { }
+            catch
+            {
+            }
           }
         }
       }

@@ -35,20 +35,20 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogNotify : GUIDialogWindow
   {
-    [SkinControl(4)]   protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(3)]   protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(5)]   protected GUIImage imgLogo = null;
-    [SkinControlAttribute(6)]   protected GUITextControl txtArea = null;
+    [SkinControl(4)] protected GUIButtonControl btnClose = null;
+    [SkinControl(3)] protected GUILabelControl lblHeading = null;
+    [SkinControl(5)] protected GUIImage imgLogo = null;
+    [SkinControl(6)] protected GUITextControl txtArea = null;
 
-    int timeOutInSeconds = 5;
+    private int timeOutInSeconds = 5;
     private DateTime timeStart = DateTime.Now;
-    bool m_bNeedRefresh = false;
-    string logoUrl = string.Empty;
+    private bool m_bNeedRefresh = false;
+    private string logoUrl = string.Empty;
 
 
     public GUIDialogNotify()
     {
-      GetID = (int)Window.WINDOW_DIALOG_NOTIFY;
+      GetID = (int) Window.WINDOW_DIALOG_NOTIFY;
     }
 
     public override bool Init()
@@ -57,6 +57,7 @@ namespace MediaPortal.Dialogs
     }
 
     #region Base Dialog Members
+
     public override void DoModal(int dwParentId)
     {
       timeStart = DateTime.Now;
@@ -77,6 +78,7 @@ namespace MediaPortal.Dialogs
       }
       return true;
     }
+
     #endregion
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -110,7 +112,6 @@ namespace MediaPortal.Dialogs
           }
 
           return true;
-
       }
 
       return base.OnMessage(message);
@@ -164,9 +165,12 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
+    public void SetImageDimensions(Size size, bool keepAspectRatio, bool centered)
     {
-      if (imgLogo == null) return;
+      if (imgLogo == null)
+      {
+        return;
+      }
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
@@ -175,15 +179,8 @@ namespace MediaPortal.Dialogs
 
     public int TimeOut
     {
-      get
-      {
-        return timeOutInSeconds;
-      }
-      set
-      {
-        timeOutInSeconds = value;
-      }
-
+      get { return timeOutInSeconds; }
+      set { timeOutInSeconds = value; }
     }
 
     public override bool NeedRefresh()

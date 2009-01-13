@@ -24,10 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using MediaPortal.GUI.Library;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Teletext
 {
@@ -37,47 +37,51 @@ namespace MediaPortal.TV.Teletext
 
     public TeletextPageRenderer()
     {
-      _isRegionalDK = (System.Globalization.RegionInfo.CurrentRegion.Equals("DK"));
+      _isRegionalDK = (RegionInfo.CurrentRegion.Equals("DK"));
     }
 
     #endregion
 
     #region constants
-    const int MAX_ROWS = 50;
+
+    private const int MAX_ROWS = 50;
+
     #endregion
 
     #region variables
 
     //regional stuff
-    bool _isRegionalDK = false;
+    private bool _isRegionalDK = false;
 
-    Bitmap _pageBitmap = null;
-    Graphics _renderGraphics = null;
-    Font _fontTeletext = null;
+    private Bitmap _pageBitmap = null;
+    private Graphics _renderGraphics = null;
+    private Font _fontTeletext = null;
 
-    bool _hiddenMode = true;
-    bool _transparentMode = false;
-    bool _fullscreenMode = false;
+    private bool _hiddenMode = true;
+    private bool _transparentMode = false;
+    private bool _fullscreenMode = false;
 
-    string _selectedPageText = "";
+    private string _selectedPageText = "";
 
-    int _pageRenderWidth = 1920;
-    int _pageRenderHeight = 1080;
-    int _percentageOfMaximumHeight = 80;
-    int _fontwidth = 0;
-    int _fontheight = 0;
-    int _background = 0;
-    Brush[] _brushes = new Brush[15];
-    Pen[] _pens = new Pen[15];
-    byte[] _pageChars;
-    int[] _pageAttribs;
+    private int _pageRenderWidth = 1920;
+    private int _pageRenderHeight = 1080;
+    private int _percentageOfMaximumHeight = 80;
+    private int _fontwidth = 0;
+    private int _fontheight = 0;
+    private int _background = 0;
+    private Brush[] _brushes = new Brush[15];
+    private Pen[] _pens = new Pen[15];
+    private byte[] _pageChars;
+    private int[] _pageAttribs;
+
     #endregion
 
     #region enums
+
     /// <summary>
     /// Enumeration of all availabel colors in teletext
     /// </summary>
-    enum TextColors
+    private enum TextColors
     {
       None,
       Black,
@@ -130,37 +134,59 @@ namespace MediaPortal.TV.Teletext
       HoldMosaic,
       ReleaseMosaic
     }
+
     #endregion
 
     #region character and other tables for multi-language support. Referring the bits C12-C14 in the header
-    char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
-	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
-	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
-	};
-    char[] m_charTableB = new char[] { '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C', 'É', '\u0130' };
-    char[,] m_charTableC = new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
-	{ 'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161' },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
-	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
-	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
-	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
-	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },
-    { 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
- 	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' },
-    { 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' }
-    };
 
-    char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
-	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
-	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
-	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
-	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' },
-    { 'æ', 'ø', 'å', 'ü' }
-    };
-    char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
+    private char[,] m_charTableA = new char[,]
+                                     {
+                                       {'#', '\u016F'}, {'£', '$'},
+                                       {'#', 'õ'}, {'é', 'ï'}, {'#', '$'}, {'£', '$'}, {'#', '$'},
+                                       {'#', '\u0149'}, {'ç', '$'}, {'#', '¤'}, {'#', 'Ë'}, {'#', '¤'}, {'£', '\u011F'}
+                                     };
+
+    private char[] m_charTableB = new char[]
+                                    {
+                                      '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C'
+                                      , 'É', '\u0130'
+                                    };
+
+    private char[,] m_charTableC = new char[,]
+                                     {
+                                       {'\u0165', '\u017E', 'ý', 'í', '\u0159', 'é'},
+                                       {'\u2190', '½', '\u2192', '\u2191', '#', '\u0336'},
+                                       {'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161'}, {'ë', 'ê', 'ù', 'î', '#', 'è'},
+                                       {'Ä', 'Ö', 'Ü', '^', '_', '°'}, {'°', 'ç', '\u2192', '\u2191', '#', 'ù'},
+                                       {'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161'},
+                                       {'\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119'},
+                                       {'á', 'é', 'í', 'ó', 'ú', '¿'},
+                                       {'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163'},
+                                       {'\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D'},
+                                       {'Ä', 'Ö', 'Å', 'Ü', '_', 'é'},
+                                       {'\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131'},
+                                       {'Æ', 'Ø', 'Å', 'Ü', '_', 'é'}
+                                     };
+
+    private char[,] m_charTableD = new char[,]
+                                     {
+                                       {'á', '\u011B', 'ú', '\u0161'}, {'¼', '\u2016', '¾', '÷'},
+                                       {'ä', 'ö', '\u017E', 'ü'}, {'â', 'ô', 'û', 'ç'}, {'ä', 'ö', 'ü', 'ß'},
+                                       {'à', 'ò', 'è', 'ì'}, {'\u0105', '\u0173', '\u017E', '\u012F'},
+                                       {'\u017C', '\u015B', '\u0142', '\u017A'},
+                                       {'ü', 'ñ', 'è', 'à'}, {'â', '\u015F', '\u01CE', 'î'},
+                                       {'\u0107', '\u017E', '\u0111', '\u0161'},
+                                       {'ä', 'ö', 'å', 'ü'}, {'\u015F', 'ö', 'ç', 'ü'},
+                                       {'æ', 'ø', 'å', 'ü'}
+                                     };
+
+    private char[] m_charTableE = new char[]
+                                    {'\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190'};
 
     #endregion
 
     #region properties
+
     /// <summary>
     /// Width of the bitmap
     /// </summary>
@@ -192,14 +218,8 @@ namespace MediaPortal.TV.Teletext
     /// </summary>
     public bool HiddenMode
     {
-      get
-      {
-        return _hiddenMode;
-      }
-      set
-      {
-        _hiddenMode = value;
-      }
+      get { return _hiddenMode; }
+      set { _hiddenMode = value; }
     }
 
     /// <summary>
@@ -225,10 +245,7 @@ namespace MediaPortal.TV.Teletext
     /// </summary>
     public string PageSelectText
     {
-      get
-      {
-        return _selectedPageText;
-      }
+      get { return _selectedPageText; }
       set
       {
         _selectedPageText = "";
@@ -251,6 +268,7 @@ namespace MediaPortal.TV.Teletext
       get { return _percentageOfMaximumHeight; }
       set { _percentageOfMaximumHeight = value; }
     }
+
     #endregion
 
     #region private methods
@@ -259,7 +277,7 @@ namespace MediaPortal.TV.Teletext
     /// Returns a cached brush.
     /// </summary>
     /// 
-    Brush getBrush(int bColor)
+    private Brush getBrush(int bColor)
     {
       if (_brushes[bColor] == null)
       {
@@ -272,7 +290,7 @@ namespace MediaPortal.TV.Teletext
     /// Returns a cached pen.
     /// </summary>
     /// 
-    Pen getPen(int bColor)
+    private Pen getPen(int bColor)
     {
       if (_pens[bColor] == null)
       {
@@ -301,28 +319,32 @@ namespace MediaPortal.TV.Teletext
         {
           if (_selectedPageText.Equals(Convert.ToString(mPage, 16)))
           {
-            lineColor = (int)TextColors.Green;
+            lineColor = (int) TextColors.Green;
             pageNumber = Convert.ToString(mPage, 16) + "/" + Convert.ToString(sPage, 16);
           }
           else
           {
-            lineColor = (int)TextColors.Yellow;
+            lineColor = (int) TextColors.Yellow;
             pageNumber = _selectedPageText;
           }
         }
         else
         {
-          lineColor = (int)TextColors.Red;
+          lineColor = (int) TextColors.Red;
           pageNumber = _selectedPageText;
         }
         string headline = "MediaPortal P." + pageNumber;
-        headline += new string((char)32, 32 - headline.Length);
-        byte[] mpText = System.Text.Encoding.ASCII.GetBytes(headline);
-        System.Array.Copy(mpText, 0, _pageChars, 0, mpText.Length);
+        headline += new string((char) 32, 32 - headline.Length);
+        byte[] mpText = Encoding.ASCII.GetBytes(headline);
+        Array.Copy(mpText, 0, _pageChars, 0, mpText.Length);
         for (i = 0; i < 11; i++)
-          _pageAttribs[i] = ((int)TextColors.Black << 4) | lineColor;
+        {
+          _pageAttribs[i] = ((int) TextColors.Black << 4) | lineColor;
+        }
         for (i = 12; i < 40; i++)
-          _pageAttribs[i] = ((int)TextColors.Black << 4) | ((int)TextColors.White);
+        {
+          _pageAttribs[i] = ((int) TextColors.Black << 4) | ((int) TextColors.White);
+        }
       }
     }
 
@@ -330,7 +352,6 @@ namespace MediaPortal.TV.Teletext
     /// Generate intermediate page that is later drawn on Bmp
     /// </summary>
     /// 
-
     private void GeneratePage(bool row24, bool isBoxed, bool displayHeaderAndTopText)
     {
       int row, col;
@@ -344,14 +365,16 @@ namespace MediaPortal.TV.Teletext
       {
         // If row 24 and no toptext exists, then skip this row
         if (row == 24 && !row24)
+        {
           continue;
+        }
         // If not display the header and toptext line, then clear these two rows
         if ((row == 0 || row == 24) && !displayHeaderAndTopText)
         {
           for (int i = 0; i < 40; ++i)
           {
-            _pageChars[row * 40 + i] = 32;
-            _pageAttribs[row * 40 + i] = ((int)TextColors.Trans1 << 4) | ((int)TextColors.White);
+            _pageChars[row*40 + i] = 32;
+            _pageAttribs[row*40 + i] = ((int) TextColors.Trans1 << 4) | ((int) TextColors.White);
           }
         }
         else
@@ -359,11 +382,15 @@ namespace MediaPortal.TV.Teletext
           // Otherwise, analyse the information. First set the forground to white and the background to:
           // - Transparent, if transparent mode or boxed and fullscreen and not display the header and toptext line
           // - Black otherwise
-          foreground = (int)TextColors.White;
+          foreground = (int) TextColors.White;
           if ((isBoxed || _transparentMode) && _fullscreenMode && !displayHeaderAndTopText)
-            background = (int)TextColors.Trans1;
+          {
+            background = (int) TextColors.Trans1;
+          }
           else
-            background = (int)TextColors.Black;
+          {
+            background = (int) TextColors.Black;
+          }
 
           _background = background;
 
@@ -377,7 +404,7 @@ namespace MediaPortal.TV.Teletext
           for (int loop1 = 0; loop1 < 40; loop1++)
           {
             // Box starts in this row
-            if (_pageChars[(row * 40) + loop1] == (int)Attributes.StartBox)
+            if (_pageChars[(row*40) + loop1] == (int) Attributes.StartBox)
             {
               flag = true;
               break;
@@ -390,20 +417,20 @@ namespace MediaPortal.TV.Teletext
           {
             if (_fullscreenMode)
             {
-              foreground = (int)TextColors.Trans1;
-              background = (int)TextColors.Trans1;
+              foreground = (int) TextColors.Trans1;
+              background = (int) TextColors.Trans1;
             }
             else
             {
-              foreground = (int)TextColors.Black;
-              background = (int)TextColors.Black;
+              foreground = (int) TextColors.Black;
+              background = (int) TextColors.Black;
             }
           }
 
           // Iterate over all columns in the row again and now analyse every byte
           for (col = 0; col < 40; col++)
           {
-            int index = row * 40 + col;
+            int index = row*40 + col;
 
             // Set the attributes
             _pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
@@ -417,146 +444,154 @@ namespace MediaPortal.TV.Teletext
             {
               switch (_pageChars[index])
               {
-                case (int)Attributes.AlphaBlack:
-                  foreground = (int)TextColors.Black;
+                case (int) Attributes.AlphaBlack:
+                  foreground = (int) TextColors.Black;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaRed:
-                  foreground = (int)TextColors.Red;
+                case (int) Attributes.AlphaRed:
+                  foreground = (int) TextColors.Red;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaGreen:
-                  foreground = (int)TextColors.Green;
+                case (int) Attributes.AlphaGreen:
+                  foreground = (int) TextColors.Green;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaYellow:
-                  foreground = (int)TextColors.Yellow;
+                case (int) Attributes.AlphaYellow:
+                  foreground = (int) TextColors.Yellow;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaBlue:
-                  foreground = (int)TextColors.Blue;
+                case (int) Attributes.AlphaBlue:
+                  foreground = (int) TextColors.Blue;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaMagenta:
-                  foreground = (int)TextColors.Magenta;
+                case (int) Attributes.AlphaMagenta:
+                  foreground = (int) TextColors.Magenta;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaCyan:
-                  foreground = (int)TextColors.Cyan;
+                case (int) Attributes.AlphaCyan:
+                  foreground = (int) TextColors.Cyan;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaWhite:
-                  foreground = (int)TextColors.White;
+                case (int) Attributes.AlphaWhite:
+                  foreground = (int) TextColors.White;
                   charset = 0;
                   break;
 
-                case (int)Attributes.Flash:
+                case (int) Attributes.Flash:
                   break;
 
-                case (int)Attributes.Steady:
+                case (int) Attributes.Steady:
                   break;
 
-                case (int)Attributes.EndBox:
+                case (int) Attributes.EndBox:
                   if (isBoxed)
                   {
                     if (_fullscreenMode)
                     {
-                      foreground = (int)TextColors.Trans1;
-                      background = (int)TextColors.Trans1;
+                      foreground = (int) TextColors.Trans1;
+                      background = (int) TextColors.Trans1;
                     }
                     else
                     {
-                      foreground = (int)TextColors.Black;
-                      background = (int)TextColors.Black;
+                      foreground = (int) TextColors.Black;
+                      background = (int) TextColors.Black;
                     }
                   }
                   break;
 
-                case (int)Attributes.StartBox:
+                case (int) Attributes.StartBox:
                   if (isBoxed)
                   {
                     // Clear everything until this position in the line
                     if (col > 0)
+                    {
                       for (int loop1 = 0; loop1 < col; loop1++)
-                        _pageChars[(row * 40) + loop1] = 32;
+                      {
+                        _pageChars[(row*40) + loop1] = 32;
+                      }
+                    }
                     // Clear also the page attributes
                     for (int clear = 0; clear < col; clear++)
                     {
                       if (_fullscreenMode)
                       {
-                        _pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Trans1 << 4 | (int)TextColors.Trans1;
+                        _pageAttribs[row*40 + clear] = doubleheight << 10 | charset << 8 | (int) TextColors.Trans1 << 4 |
+                                                       (int) TextColors.Trans1;
                       }
                       else
                       {
-                        _pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 | (int)TextColors.Black;
+                        _pageAttribs[row*40 + clear] = doubleheight << 10 | charset << 8 | (int) TextColors.Black << 4 |
+                                                       (int) TextColors.Black;
                       }
                     }
                     // Set the standard background color
-                    if (background == (int)TextColors.Trans1)
+                    if (background == (int) TextColors.Trans1)
                     {
-                      background = (int)TextColors.Black;
+                      background = (int) TextColors.Black;
                     }
                   }
                   break;
 
-                case (int)Attributes.NormalSize:
+                case (int) Attributes.NormalSize:
                   doubleheight = 0;
                   _pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.DoubleHeight:
+                case (int) Attributes.DoubleHeight:
                   if (row < 23)
+                  {
                     doubleheight = 1;
+                  }
                   break;
 
-                case (int)Attributes.MosaicBlack:
-                  foreground = (int)TextColors.Black;
+                case (int) Attributes.MosaicBlack:
+                  foreground = (int) TextColors.Black;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicRed:
-                  foreground = (int)TextColors.Red;
+                case (int) Attributes.MosaicRed:
+                  foreground = (int) TextColors.Red;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicGreen:
-                  foreground = (int)TextColors.Green;
+                case (int) Attributes.MosaicGreen:
+                  foreground = (int) TextColors.Green;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicYellow:
-                  foreground = (int)TextColors.Yellow;
+                case (int) Attributes.MosaicYellow:
+                  foreground = (int) TextColors.Yellow;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicBlue:
-                  foreground = (int)TextColors.Blue;
+                case (int) Attributes.MosaicBlue:
+                  foreground = (int) TextColors.Blue;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicMagenta:
-                  foreground = (int)TextColors.Magenta;
+                case (int) Attributes.MosaicMagenta:
+                  foreground = (int) TextColors.Magenta;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicCyan:
-                  foreground = (int)TextColors.Cyan;
+                case (int) Attributes.MosaicCyan:
+                  foreground = (int) TextColors.Cyan;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicWhite:
-                  foreground = (int)TextColors.White;
+                case (int) Attributes.MosaicWhite:
+                  foreground = (int) TextColors.White;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.Conceal:
+                case (int) Attributes.Conceal:
                   if (_hiddenMode == false)
                   {
                     foreground = background;
@@ -564,7 +599,7 @@ namespace MediaPortal.TV.Teletext
                   }
                   break;
 
-                case (int)Attributes.ContiguousMosaic:
+                case (int) Attributes.ContiguousMosaic:
                   mosaictype = 0;
                   if (charset > 0)
                   {
@@ -573,7 +608,7 @@ namespace MediaPortal.TV.Teletext
                   }
                   break;
 
-                case (int)Attributes.SeparatedMosaic:
+                case (int) Attributes.SeparatedMosaic:
                   mosaictype = 1;
                   if (charset > 0)
                   {
@@ -582,66 +617,78 @@ namespace MediaPortal.TV.Teletext
                   }
                   break;
 
-                case (int)Attributes.Esc:
+                case (int) Attributes.Esc:
                   break;
 
-                case (int)Attributes.BlackBackground:
-                  background = (int)TextColors.Black;
+                case (int) Attributes.BlackBackground:
+                  background = (int) TextColors.Black;
                   _pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.NewBackground:
+                case (int) Attributes.NewBackground:
                   background = foreground;
                   _pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.HoldMosaic:
+                case (int) Attributes.HoldMosaic:
                   hold = 1;
                   break;
 
-                case (int)Attributes.ReleaseMosaic:
+                case (int) Attributes.ReleaseMosaic:
                   hold = 2;
                   break;
               }
 
               if (hold > 0 && charset > 0)
+              {
                 _pageChars[index] = held_mosaic;
+              }
               else
+              {
                 _pageChars[index] = 32;
+              }
 
               if (hold == 2)
+              {
                 hold = 0;
+              }
             }
             else
             {
               if (charset > 0)
+              {
                 held_mosaic = _pageChars[index];
+              }
               // If doubleheight is selected than delete the following line
               if (doubleheight > 0)
+              {
                 _pageChars[index + 40] = 0xFF;
+              }
             }
           }
           // Check, if there is double height selected in than set the attributes for the next row and skip it
-          for (int count = (row + 1) * 40; count < ((row + 1) * 40) + 40; count++)
+          for (int count = (row + 1)*40; count < ((row + 1)*40) + 40; count++)
           {
             if (_pageChars[count] == 255)
             {
               for (int loop1 = 0; loop1 < 40; loop1++)
-                _pageAttribs[(row + 1) * 40 + loop1] = ((_pageAttribs[(row * 40) + loop1] & 0xF0) | ((_pageAttribs[(row * 40) + loop1] & 0xF0) >> 4));
+              {
+                _pageAttribs[(row + 1)*40 + loop1] = ((_pageAttribs[(row*40) + loop1] & 0xF0) |
+                                                      ((_pageAttribs[(row*40) + loop1] & 0xF0) >> 4));
+              }
 
               row++;
               break;
             }
           }
         }
-      }//for (int rowNr = 0; rowNr < 24; rowNr++)
+      } //for (int rowNr = 0; rowNr < 24; rowNr++)
     }
 
     /// <summary>
     /// Render background
     /// </summary>
     /// 
-
     private void RenderBackground(Graphics graph, int w, int h, bool displayHeaderAndTopText)
     {
       int row, col;
@@ -653,28 +700,35 @@ namespace MediaPortal.TV.Teletext
 
       for (row = 0; row <= 24; row++)
       {
-
-        startColor = (_pageAttribs[row * 40] >> 4) & 0x0F;
+        startColor = (_pageAttribs[row*40] >> 4) & 0x0F;
         startCol = 0;
 
         if (!displayHeaderAndTopText && row == 24)
+        {
           break;
+        }
 
         for (col = 1; col <= 40; col++)
         {
           int thisColor;
 
           if (col < 40)
-            thisColor = (_pageAttribs[row * 40 + col] >> 4) & 0x0F;
+          {
+            thisColor = (_pageAttribs[row*40 + col] >> 4) & 0x0F;
+          }
           else
+          {
             thisColor = -1; // col == 40 (force draw of line)
+          }
 
           // if the color has changed, draw the previous color 
           if (thisColor != startColor)
           {
             Brush backBrush = getBrush(startColor);
             if (startColor != _background) // But dont background twice
-              graph.FillRectangle(backBrush, startCol * w, y, (col - startCol) * w, h);
+            {
+              graph.FillRectangle(backBrush, startCol*w, y, (col - startCol)*w, h);
+            }
             startColor = thisColor;
             startCol = col;
           }
@@ -682,6 +736,7 @@ namespace MediaPortal.TV.Teletext
         y += _fontheight + (row == 23 ? 2 : 0);
       }
     }
+
     /// <summary>
     /// Render a single position in the bitmap
     /// </summary>
@@ -693,7 +748,8 @@ namespace MediaPortal.TV.Teletext
     /// <param name="w">width of the font</param>
     /// <param name="h">height of the font</param>
     /// <param name="txtLanguage">Teletext language</param>
-    private void RenderForeground(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
+    private void RenderForeground(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h,
+                                  int txtLanguage)
     {
       bool charReady = false;
       char chr2 = '?';
@@ -707,8 +763,8 @@ namespace MediaPortal.TV.Teletext
       // Generate mosaic
       int[] mosaicY = new int[4];
       mosaicY[0] = 0;
-      mosaicY[1] = (h + 1) / 3;
-      mosaicY[2] = (h * 2 + 1) / 3;
+      mosaicY[1] = (h + 1)/3;
+      mosaicY[2] = (h*2 + 1)/3;
       mosaicY[3] = h;
 
       /* get fg color */
@@ -722,29 +778,42 @@ namespace MediaPortal.TV.Teletext
       {
         if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
         {
-          int w1 = w / 2;
+          int w1 = w/2;
           int w2 = w - w1;
           int y1;
 
-          chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
+          chr = (byte) ((chr & 0x1f) | ((chr & 0x40) >> 1));
           if ((attrib & 0x200) > 0)
+          {
             for (y1 = 0; y1 < 3; y1++)
             {
               if ((chr & 1) > 0)
+              {
                 graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              }
               if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              {
+                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2,
+                                    mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              }
               chr >>= 2;
             }
+          }
           else
+          {
             for (y1 = 0; y1 < 3; y1++)
             {
               if ((chr & 1) > 0)
+              {
                 graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
               if ((chr & 2) > 0)
+              {
                 graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
               chr >>= 2;
             }
+          }
 
           x += w;
           return;
@@ -752,9 +821,13 @@ namespace MediaPortal.TV.Teletext
         int factor = 0;
 
         if ((attrib & 1 << 10) > 0)
+        {
           factor = 2;
+        }
         else
+        {
           factor = 1;
+        }
 
         charReady = false;
         // If character is still not drawn, then we analyse it again
@@ -787,7 +860,7 @@ namespace MediaPortal.TV.Teletext
             chr2 = m_charTableD[txtLanguage, chr - 0x7B];
             break;
           case 0x7F:
-            graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
+            graph.FillRectangle(foreBrush, x + (w/12), y + factor*(h*5/20), w*10/12, factor*(h*11/20));
             x += w;
             charReady = true;
             break;
@@ -836,29 +909,33 @@ namespace MediaPortal.TV.Teletext
             charReady = true;
             break;
           case 0xE8:
-            for (int r = 0; r < w / 2; r++)
+            for (int r = 0; r < w/2; r++)
+            {
               graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
+            }
             x += w;
             charReady = true;
             break;
           case 0xE9:
-            graph.FillRectangle(foreBrush, x, y, w / 2, h);
+            graph.FillRectangle(foreBrush, x, y, w/2, h);
             x += w;
             charReady = true;
             break;
           case 0xEA:
-            graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
+            graph.FillRectangle(foreBrush, x, y, w/2, h/2);
             x += w;
             charReady = true;
             break;
           case 0xEB:
-            for (int r = 0; r < w / 2; r++)
+            for (int r = 0; r < w/2; r++)
+            {
               graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
+            }
             x += w;
             charReady = true;
             break;
           case 0xEC:
-            graph.FillRectangle(foreBrush, x, y, w, h / 2);
+            graph.FillRectangle(foreBrush, x, y, w, h/2);
             x += w;
             charReady = true;
             break;
@@ -875,16 +952,18 @@ namespace MediaPortal.TV.Teletext
             chr2 = m_charTableE[chr - 0xED];
             break;
           default:
-            chr2 = (char)chr;
+            chr2 = (char) chr;
             break;
         }
         if (charReady)
+        {
           return;
+        }
 
         // If still not drawn than it's a text and we draw the string
         string text = "" + chr2;
         SizeF width = graph.MeasureString(text, _fontTeletext);
-        PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
+        PointF xyPos = new PointF((float) x + ((w - ((int) width.Width))/2), (float) y);
         graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
         if (factor == 2)
         {
@@ -895,23 +974,27 @@ namespace MediaPortal.TV.Teletext
             {
               try
               {
-                if (y + (ypos * 2) + 1 < _pageBitmap.Height)
+                if (y + (ypos*2) + 1 < _pageBitmap.Height)
                 {
                   int m = h - ypos - 1;
-                  _pageBitmap.SetPixel(x + xpos, y + (m * 2), _pageBitmap.GetPixel(xpos + x, m + y));
-                  _pageBitmap.SetPixel(x + xpos, y + (m * 2) + 1, _pageBitmap.GetPixel(xpos + x, m + y));
+                  _pageBitmap.SetPixel(x + xpos, y + (m*2), _pageBitmap.GetPixel(xpos + x, m + y));
+                  _pageBitmap.SetPixel(x + xpos, y + (m*2) + 1, _pageBitmap.GetPixel(xpos + x, m + y));
                 }
               }
-              catch { }
+              catch
+              {
+              }
             }
           }
-
         }
         x += w;
       }
-      catch { }
+      catch
+      {
+      }
       return;
     }
+
     /// <summary>
     /// Converts the color of the teletext informations to a system color
     /// </summary>
@@ -919,32 +1002,32 @@ namespace MediaPortal.TV.Teletext
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
     private Color GetColor(int colorNumber)
     {
-
       switch (colorNumber)
       {
-        case (int)TextColors.Black:
+        case (int) TextColors.Black:
           return Color.Black;
-        case (int)TextColors.Red:
+        case (int) TextColors.Red:
           return Color.Red;
-        case (int)TextColors.Green:
+        case (int) TextColors.Green:
           return Color.FromArgb(0, 255, 0);
-        case (int)TextColors.Yellow:
+        case (int) TextColors.Yellow:
           return Color.Yellow;
-        case (int)TextColors.Blue:
+        case (int) TextColors.Blue:
           return Color.Blue;
-        case (int)TextColors.Magenta:
+        case (int) TextColors.Magenta:
           return Color.Magenta;
-        case (int)TextColors.White:
+        case (int) TextColors.White:
           return Color.White;
-        case (int)TextColors.Cyan:
+        case (int) TextColors.Cyan:
           return Color.Cyan;
-        case (int)TextColors.Trans1:
+        case (int) TextColors.Trans1:
           return Color.HotPink;
-        case (int)TextColors.Trans2:
+        case (int) TextColors.Trans2:
           return Color.HotPink;
       }
       return Color.Black;
     }
+
     /// <summary>
     /// Checks if is a valid page to be displayed
     /// </summary>
@@ -952,7 +1035,7 @@ namespace MediaPortal.TV.Teletext
     /// <returns>True, if page should be displayed</returns>
     private bool IsDecimalPage(int i)
     {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+      return (bool) (((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
     }
 
     /// <summary>
@@ -962,9 +1045,12 @@ namespace MediaPortal.TV.Teletext
     /// <returns>True, if subpage is valid</returns>
     private bool IsDecimalSubPage(int i)
     {
-      if (i >= 0x80) return false;
+      if (i >= 0x80)
+      {
+        return false;
+      }
 
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
+      return (bool) (((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
     }
 
     private int GetLanguageCode(byte code)
@@ -972,9 +1058,13 @@ namespace MediaPortal.TV.Teletext
       int languageCode;
 
       if (code == 0xff)
+      {
         languageCode = 0;
+      }
       else
+      {
         languageCode = ((code >> 3) & 0x01) | (((code >> 2) & 0x01) << 1) | (((code >> 1) & 0x01) << 2);
+      }
 
       switch (languageCode)
       {
@@ -983,8 +1073,11 @@ namespace MediaPortal.TV.Teletext
         case 1:
           return 4;
         case 2:
-            if (_isRegionalDK) return 13;
-            return 11;
+          if (_isRegionalDK)
+          {
+            return 13;
+          }
+          return 11;
         case 3:
           return 5;
         case 4:
@@ -1001,6 +1094,7 @@ namespace MediaPortal.TV.Teletext
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Renders a teletext page to a bitmap
     /// </summary>
@@ -1014,21 +1108,21 @@ namespace MediaPortal.TV.Teletext
       bool isBoxed = false;
       bool row24 = false;
 
-      MediaPortal.GUI.Library.Log.Debug("RenderPage start");
+      Log.Debug("RenderPage start");
       // Create Bitmap and set HotPink as the transparent color
       if (_pageBitmap == null)
       {
         _pageBitmap = new Bitmap(_pageRenderWidth, _pageRenderHeight);
         _pageBitmap.MakeTransparent(Color.HotPink);
         _renderGraphics = Graphics.FromImage(_pageBitmap);
-        _fontwidth = _pageRenderWidth / 40;
-        _fontheight = (_pageRenderHeight - 2) / 25;
+        _fontwidth = _pageRenderWidth/40;
+        _fontheight = (_pageRenderHeight - 2)/25;
 
         float fntSize = Math.Min(_fontwidth, _fontheight);
-        float nPercentage = ((float)_percentageOfMaximumHeight / 100);
+        float nPercentage = ((float) _percentageOfMaximumHeight/100);
         _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
         float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
-        while (fntHeight > nPercentage * _fontheight || fntHeight > nPercentage * _fontwidth)
+        while (fntHeight > nPercentage*_fontheight || fntHeight > nPercentage*_fontwidth)
         {
           fntSize -= 0.1f;
           _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -1036,33 +1130,48 @@ namespace MediaPortal.TV.Teletext
         }
       }
 
-      _pageChars = new byte[31 * 40];
-      _pageAttribs = new int[31 * 40];
+      _pageChars = new byte[31*40];
+      _pageAttribs = new int[31*40];
 
       // Decode the page data (Hamming 8/4 or odd parity)
       for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
       {
-        if (rowNr * 42 >= byPage.Length) break;
-        int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref byPage);
+        if (rowNr*42 >= byPage.Length)
+        {
+          break;
+        }
+        int packetNumber = Hamming.GetPacketNumber(rowNr*42, ref byPage);
         // Only the packets 0-25 are accepted
-        if (packetNumber < 0 || packetNumber > 25) continue;
+        if (packetNumber < 0 || packetNumber > 25)
+        {
+          continue;
+        }
         bool stripParity = true;
         // Packets 0 and 25 are hamming 8/4 encoded
         if (packetNumber == 25 || packetNumber == 0)
+        {
           stripParity = false;
+        }
         // Decode the whole row and remove the first two bytes
         for (col = 2; col < 42; col++)
         {
           // After pageheader in packet 0 (Bit 10) odd parity is used
-          if (col >= 10 && packetNumber == 0) stripParity = true;
-          byte kar = byPage[rowNr * 42 + col];
+          if (col >= 10 && packetNumber == 0)
+          {
+            stripParity = true;
+          }
+          byte kar = byPage[rowNr*42 + col];
           if (stripParity)
+          {
             kar &= 0x7f;
-          _pageChars[packetNumber * 40 + col - 2] = kar;
+          }
+          _pageChars[packetNumber*40 + col - 2] = kar;
         }
         // Exists a packet 24 (Toptext line)
         if (packetNumber == 24)
+        {
           row24 = true;
+        }
       }
       row = col = 0;
 
@@ -1077,12 +1186,16 @@ namespace MediaPortal.TV.Teletext
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
-        || (isBoxed && _selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
+                                     ||
+                                     (isBoxed && _selectedPageText.IndexOf("-") == -1 &&
+                                      !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
 
       GeneratePage(row24, isBoxed, displayHeaderAndTopText);
 
       if (displayHeaderAndTopText)
+      {
         GenerateHeaderLine(mPage, sPage);
+      }
 
       // Now we generate the bitmap
       int y = 0;
@@ -1093,9 +1206,13 @@ namespace MediaPortal.TV.Teletext
         // Select the brush, depending on the page and mode
 
         if ((isBoxed || _transparentMode) && _fullscreenMode)
-          _background = (int)TextColors.Trans1;
+        {
+          _background = (int) TextColors.Trans1;
+        }
         else
-          _background = (int)TextColors.Black;
+        {
+          _background = (int) TextColors.Black;
+        }
 
         // Draw the base rectangle:
         // Select the brush, depending on the page and mode and fill the rectangle with the teletext bg
@@ -1108,32 +1225,45 @@ namespace MediaPortal.TV.Teletext
         {
           x = 0;
           // If not display a toptext line then abort
-          if (!displayHeaderAndTopText && row == 24) 
+          if (!displayHeaderAndTopText && row == 24)
+          {
             break;
+          }
           // Draw a single point
           for (col = 0; col < 40; col++)
-            RenderForeground(_renderGraphics, _pageChars[row * 40 + col], _pageAttribs[row * 40 + col], ref x, ref y, _fontwidth, _fontheight, txtLanguage);
+          {
+            RenderForeground(_renderGraphics, _pageChars[row*40 + col], _pageAttribs[row*40 + col], ref x, ref y,
+                             _fontwidth, _fontheight, txtLanguage);
+          }
           y += _fontheight + (row == 23 ? 2 : 0);
         }
       }
-      catch { }
+      catch
+      {
+      }
       Log.Debug("RenderPage end");
       return _pageBitmap;
       // send the bitmap to the callback
     }
+
     /// <summary>
     /// Dispose the bitmap
     /// </summary>
     public void DisposeBitMap()
     {
       if (_renderGraphics != null)
+      {
         _renderGraphics.Dispose();
+      }
       _renderGraphics = null;
 
       if (_pageBitmap != null)
+      {
         _pageBitmap.Dispose();
+      }
       _pageBitmap = null;
     }
+
     public void Clear()
     {
       if (_renderGraphics != null)
@@ -1141,14 +1271,15 @@ namespace MediaPortal.TV.Teletext
         // For Mantis: 0001445: TeletextPageRenderer crashes in Finalizer on MP-exit
         try
         {
-          _renderGraphics.FillRectangle(getBrush((int)TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
+          _renderGraphics.FillRectangle(getBrush((int) TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
         }
         catch (ArgumentException)
         {
-          MediaPortal.GUI.Library.Log.Debug("Teletext Clear() ArgumentException - MP closing down?");
+          Log.Debug("Teletext Clear() ArgumentException - MP closing down?");
         }
       }
     }
+
     #endregion
   }
 }

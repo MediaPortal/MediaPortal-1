@@ -6,14 +6,13 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Xml;
-using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 using MediaPortal.GUI.Library;
+using Microsoft.Win32;
+using Timer=System.Timers.Timer;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 {
@@ -59,7 +58,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     private int XPL_Portnum;
     public HBeatItemsCallback XplHBeatItems;
     public OnTimerCallback XplOnTimer;
-    private System.Timers.Timer XPLTimer;
+    private Timer XPLTimer;
 
     public event XplConfigDoneEventHandler XplConfigDone;
 
@@ -100,7 +99,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       this.VersionNumber = this.getVersionNumber();
       if (strSource.Length == 0)
       {
-        throw new Exception("You must pass the XPL Vendor-Device identifier for this instance to the constructor when creating a new instance of the xplListener object");
+        throw new Exception(
+          "You must pass the XPL Vendor-Device identifier for this instance to the constructor when creating a new instance of the xplListener object");
       }
       this.privSource = strSource;
       this.InstanceNumber = InstanceNo;
@@ -133,7 +133,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             return true;
           }
         }
-      } catch
+      }
+      catch
       {
       }
       return false;
@@ -153,7 +154,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           this.sockIncoming.Shutdown(SocketShutdown.Both);
           this.sockIncoming.Close();
         }
-      } catch
+      }
+      catch
       {
       }
     }
@@ -166,7 +168,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           this.Dispose();
         }
-      } catch
+      }
+      catch
       {
       }
     }
@@ -176,8 +179,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       try
       {
         Version version = Assembly.GetEntryAssembly().GetName().Version;
-        return string.Concat(new object[] { version.Major, ".", version.Minor, ".", version.Build, ".", version.Revision });
-      } catch
+        return string.Concat(new object[] {version.Major, ".", version.Minor, ".", version.Build, ".", version.Revision});
+      }
+      catch
       {
         return "0.0.0.0";
       }
@@ -191,7 +195,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         this.LogInfo("Processing config message: " + x.XPL_Msg[1].Section.ToLower());
         if (this.DoDebug)
         {
-          MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): received config message: " + x.XPL_Msg[1].Section.ToLower(), new object[0]);
+          Log.Info("xPL.XplListener.HandleConfigMessage(): received config message: " + x.XPL_Msg[1].Section.ToLower(),
+                   new object[0]);
         }
         string str4 = x.XPL_Msg[1].Section.ToLower();
         if (str4 != null)
@@ -201,11 +206,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if (!(str4 == "config.list"))
             {
-              if ((str4 == "config.response") && (x.GetParam(0, "target").ToLower() == (this.Source.ToLower() + "." + this.InstanceName.ToLower())))
+              if ((str4 == "config.response") &&
+                  (x.GetParam(0, "target").ToLower() == (this.Source.ToLower() + "." + this.InstanceName.ToLower())))
               {
                 if (this.DoDebug)
                 {
-                  MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config.response message", new object[0]);
+                  Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config.response message", new object[0]);
                 }
                 ArrayList list = new ArrayList();
                 for (int i = 0; i < x.XPL_Msg[1].Details.Count; i++)
@@ -227,7 +233,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                       try
                       {
                         num5 = int.Parse(s);
-                      } catch
+                      }
+                      catch
                       {
                         num5 = 5;
                       }
@@ -253,7 +260,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                         this.XplConfigItemDone(key, s);
                       }
                     }
-                  } catch (Exception exception)
+                  }
+                  catch (Exception exception)
                   {
                     this.LogError(exception.Message);
                   }
@@ -272,7 +280,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                   {
                     this.XplReConfigDone();
                   }
-                } catch
+                }
+                catch
                 {
                 }
                 this.SaveState();
@@ -307,7 +316,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               }
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.list request", new object[0]);
+                Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.list request", new object[0]);
               }
               this.SendMessage("xpl-stat", "*", "config.list", strMessage);
             }
@@ -319,24 +328,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config for config.current command=request ({0} config items)", new object[] { this.ConfigItems.Count });
+                Log.Info(
+                  "xPL.XplListener.HandleConfigMessage(): parsing config for config.current command=request ({0} config items)",
+                  new object[] {this.ConfigItems.Count});
               }
               for (int k = 0; k < this.ConfigItems.Count; k++)
               {
                 if (this.DoDebug)
                 {
-                  MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config items {0} ({1})", new object[] { k, this.ConfigItems.ConfigItem(k).Name });
+                  Log.Info("xPL.XplListener.HandleConfigMessage(): parsing config items {0} ({1})",
+                           new object[] {k, this.ConfigItems.ConfigItem(k).Name});
                 }
                 item = this.ConfigItems.ConfigItem(k);
                 for (int m = 0; m < item.ValueCount; m++)
                 {
                   object obj2 = strMessage;
-                  strMessage = string.Concat(new object[] { obj2, item.Name, "=", item.Values[m], '\n' });
+                  strMessage = string.Concat(new object[] {obj2, item.Name, "=", item.Values[m], '\n'});
                 }
               }
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.current command=request", new object[0]);
+                Log.Info("xPL.XplListener.HandleConfigMessage(): responding to config.current command=request",
+                         new object[0]);
               }
               this.SendMessage("xpl-stat", "*", "config.current", strMessage);
             }
@@ -349,7 +362,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       if (this.DoDebug)
       {
-        MediaPortal.GUI.Library.Log.Info("xPL.XplListener.InitSocket(): Called", new object[0]);
+        Log.Info("xPL.XplListener.InitSocket(): Called", new object[0]);
       }
       this.XPL_Portnum = 0xc350;
       this.sockIncoming = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -358,23 +371,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         if (this.DoDebug)
         {
-          MediaPortal.GUI.Library.Log.Info("xPL.XplListener.InitSocket(): trying IP = {0}:{1}", new object[] { this.ListenOnIP_IP.ToString(), port });
+          Log.Info("xPL.XplListener.InitSocket(): trying IP = {0}:{1}",
+                   new object[] {this.ListenOnIP_IP.ToString(), port});
         }
         try
         {
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.InitSocket(): Binding to IP = {0}:{1}", new object[] { this.ListenOnIP_IP.ToString(), port });
+            Log.Info("xPL.XplListener.InitSocket(): Binding to IP = {0}:{1}",
+                     new object[] {this.ListenOnIP_IP.ToString(), port});
           }
           this.sockIncoming.Bind(new IPEndPoint(this.ListenOnIP_IP, port));
           this.XPL_Portnum = port;
           port = 0;
           continue;
-        } catch
+        }
+        catch
         {
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.InitSocket(): IP = {0}:{1} not available...", new object[] { this.ListenOnIP_IP.ToString(), port });
+            Log.Info("xPL.XplListener.InitSocket(): IP = {0}:{1} not available...",
+                     new object[] {this.ListenOnIP_IP.ToString(), port});
           }
           port++;
           this.sockIncoming.Close();
@@ -386,14 +403,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         throw new Exception("Unable to bind to a free UDP port for listening.");
       }
-      this.XPLTimer = new System.Timers.Timer();
+      this.XPLTimer = new Timer();
       this.XPLTimer.Interval = 3000.0;
       this.XPLTimer.AutoReset = false;
       this.XPLTimer.Elapsed += new ElapsedEventHandler(this.XPLTimerElapsed);
       this.XPLTimer.Enabled = true;
       this.epIncoming = new IPEndPoint(IPAddress.Any, 0);
       EndPoint epIncoming = this.epIncoming;
-      this.sockIncoming.BeginReceiveFrom(this.XPL_Buff, 0, 0x5dc, SocketFlags.None, ref epIncoming, new AsyncCallback(this.ReceiveData), null);
+      this.sockIncoming.BeginReceiveFrom(this.XPL_Buff, 0, 0x5dc, SocketFlags.None, ref epIncoming,
+                                         new AsyncCallback(this.ReceiveData), null);
       this.bListening = true;
       this.XPLTimerElapsed(null, null);
     }
@@ -415,7 +433,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       bool flag = false;
       try
       {
-        if (!System.IO.File.Exists(path))
+        if (!File.Exists(path))
         {
           this.LogInfo("The config file " + path + " does not exist. Going into remote config mode.");
         }
@@ -426,14 +444,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if ((reader.NodeType == XmlNodeType.Element) & (reader.Name == "configItem"))
             {
-              this.ConfigItems.Add(reader.GetAttribute("key"), reader.GetAttribute("value"), (xplConfigTypes)int.Parse(reader.GetAttribute("cfgtype")));
+              this.ConfigItems.Add(reader.GetAttribute("key"), reader.GetAttribute("value"),
+                                   (xplConfigTypes) int.Parse(reader.GetAttribute("cfgtype")));
             }
           }
           reader.Close();
           flag = true;
           this.LogInfo("Configuration loaded OK.");
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         this.LogError("Loading did not succeed: " + exception.Message);
       }
@@ -459,7 +479,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       }
       else if (this.DoDebug)
       {
-        MediaPortal.GUI.Library.Log.Info("xPL.XplListener (LogError) - Source {0}: {1}", new object[] { this.Source, s });
+        Log.Info("xPL.XplListener (LogError) - Source {0}: {1}", new object[] {this.Source, s});
       }
     }
 
@@ -467,13 +487,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       if (this.WriteDebugInfo)
       {
-        StreamWriter writer = System.IO.File.AppendText(@"c:\xpllib-debug-log.txt");
+        StreamWriter writer = File.AppendText(@"c:\xpllib-debug-log.txt");
         writer.WriteLine(DateTime.Now.ToString("dd-MMM-yy HH:mm:ss") + " " + this.Source + ": " + s);
         writer.Close();
       }
       else if (this.DoDebug)
       {
-        MediaPortal.GUI.Library.Log.Info("xPL.XplListener (LogInfo) - Source {0}: {1}", new object[] { this.Source, s });
+        Log.Info("xPL.XplListener (LogInfo) - Source {0}: {1}", new object[] {this.Source, s});
       }
     }
 
@@ -515,7 +535,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     private bool MsgTypeMatchesFilter(string m, XplMessageTypes f)
     {
-      if (((int)f) == 0xff)
+      if (((int) f) == 0xff)
       {
         return true;
       }
@@ -527,17 +547,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (str == "xpl-stat")
           {
-            if (((byte)(f & XplMessageTypes.Status)) > 0)
+            if (((byte) (f & XplMessageTypes.Status)) > 0)
             {
               flag = true;
             }
           }
-          else if ((str == "xpl-trig") && (((byte)(f & XplMessageTypes.Trigger)) > 0))
+          else if ((str == "xpl-trig") && (((byte) (f & XplMessageTypes.Trigger)) > 0))
           {
             flag = true;
           }
         }
-        else if (((byte)(f & XplMessageTypes.Command)) > 0)
+        else if (((byte) (f & XplMessageTypes.Command)) > 0)
         {
           flag = true;
         }
@@ -557,10 +577,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         EndPoint epIncoming = this.epIncoming;
         int count = this.sockIncoming.EndReceiveFrom(ar, ref epIncoming);
-        this.epIncoming = (IPEndPoint)epIncoming;
+        this.epIncoming = (IPEndPoint) epIncoming;
         if (this.DoDebug)
         {
-          MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): received {0} bytes", new object[] { count });
+          Log.Info("xPL.XplListener.ReceiveData(): received {0} bytes", new object[] {count});
         }
         bool flag = false;
         for (int i = 0; !flag & (i < this.ListenToIPs.Length); i++)
@@ -582,7 +602,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): Illegal source - " + this.epIncoming.Address.ToString(), new object[0]);
+            Log.Info("xPL.XplListener.ReceiveData(): Illegal source - " + this.epIncoming.Address.ToString(),
+                     new object[0]);
           }
           this.LogInfo("Illegal source: " + this.epIncoming.Address.ToString());
         }
@@ -590,12 +611,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): reading data", new object[0]);
+            Log.Info("xPL.XplListener.ReceiveData(): reading data", new object[0]);
           }
           XplMsg x = new XplMsg(Encoding.ASCII.GetString(this.XPL_Buff, 0, count));
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): read data\n\n{0}\n", new object[] { Encoding.ASCII.GetString(this.XPL_Buff, 0, count) });
+            Log.Info("xPL.XplListener.ReceiveData(): read data\n\n{0}\n",
+                     new object[] {Encoding.ASCII.GetString(this.XPL_Buff, 0, count)});
           }
           try
           {
@@ -603,7 +625,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): received data is a valid xPL message", new object[0]);
+                Log.Info("xPL.XplListener.ReceiveData(): received data is a valid xPL message", new object[0]);
               }
               string t = x.GetParam(0, "target").ToLower();
               bool flag2 = x.GetParam(0, "target").ToLower() == (this.Source + "." + this.InstanceName).ToLower();
@@ -613,17 +635,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               string str3 = x.Schema.msgType.ToLower();
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): received Source = {0}, Instance = {1} - Schema - Class = {2}, Type = {3}", new object[] { this.Source, this.InstanceName, c, str3 });
+                Log.Info(
+                  "xPL.XplListener.ReceiveData(): received Source = {0}, Instance = {1} - Schema - Class = {2}, Type = {3}",
+                  new object[] {this.Source, this.InstanceName, c, str3});
               }
-              if ((!this.mHubFound && (c.Equals("hbeat") || c.Equals("config"))) && (str3.Equals("app") & x.GetParam(0, "source").Equals(this.Source + "." + this.InstanceName)))
+              if ((!this.mHubFound && (c.Equals("hbeat") || c.Equals("config"))) &&
+                  (str3.Equals("app") & x.GetParam(0, "source").Equals(this.Source + "." + this.InstanceName)))
               {
                 if (this.DoDebug)
                 {
-                  MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): received message from Source = {0}", new object[] { x.GetParam(0, "source") });
+                  Log.Info("xPL.XplListener.ReceiveData(): received message from Source = {0}",
+                           new object[] {x.GetParam(0, "source")});
                 }
                 if (this.DoDebug)
                 {
-                  MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ReceiveData(): Found xPL hub", new object[0]);
+                  Log.Info("xPL.XplListener.ReceiveData(): Found xPL hub", new object[0]);
                 }
                 this.mHubFound = true;
                 this.XPLTimer.Interval = 60000.0;
@@ -646,7 +672,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                   for (int j = 0; j < this.Filters.Count; j++)
                   {
                     XplFilter filter = this.Filters.Item(j);
-                    if ((this.MsgTypeMatchesFilter(m, filter.MessageType) && this.MsgSourceMatchesFilter(x.Source, filter.Source)) && this.MsgSchemaMatchesFilter(c, str3, filter.Schema))
+                    if ((this.MsgTypeMatchesFilter(m, filter.MessageType) &&
+                         this.MsgSourceMatchesFilter(x.Source, filter.Source)) &&
+                        this.MsgSchemaMatchesFilter(c, str3, filter.Schema))
                     {
                       flag4 = true;
                       break;
@@ -659,12 +687,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                 }
               }
             }
-          } catch (Exception exception)
+          }
+          catch (Exception exception)
           {
             this.LogError(exception.ToString());
           }
         }
-        this.sockIncoming.BeginReceiveFrom(this.XPL_Buff, 0, 0x5dc, SocketFlags.None, ref epIncoming, new AsyncCallback(this.ReceiveData), null);
+        this.sockIncoming.BeginReceiveFrom(this.XPL_Buff, 0, 0x5dc, SocketFlags.None, ref epIncoming,
+                                           new AsyncCallback(this.ReceiveData), null);
       }
     }
 
@@ -675,7 +705,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         this.LogInfo("Saving state...");
         try
         {
-          XmlTextWriter writer = new XmlTextWriter("xpl_" + this.Source + ".instance" + this.InstanceNumber.ToString() + ".3.0.xml", null);
+          XmlTextWriter writer =
+            new XmlTextWriter("xpl_" + this.Source + ".instance" + this.InstanceNumber.ToString() + ".3.0.xml", null);
           writer.Formatting = Formatting.Indented;
           writer.WriteStartDocument(false);
           writer.WriteComment("This file was automatically generated by the xPL Library for c# .NET");
@@ -689,7 +720,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               writer.WriteStartElement("configItem");
               writer.WriteAttributeString("key", item.Name);
               writer.WriteAttributeString("value", item.Values[j]);
-              writer.WriteAttributeString("cfgtype", ((int)item.ConfigType).ToString());
+              writer.WriteAttributeString("cfgtype", ((int) item.ConfigType).ToString());
               writer.WriteEndElement();
             }
           }
@@ -697,7 +728,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           writer.WriteEndElement();
           writer.Flush();
           writer.Close();
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           this.LogError("Error saving state: " + exception.ToString());
         }
@@ -708,8 +740,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       try
       {
-        object obj2 = string.Concat(new object[] { "xpl-stat", '\n', "{", '\n' }) + "hop=1" + '\n';
-        string str = (string.Concat(new object[] { obj2, "source=", this.Source, ".", this.InstanceName, '\n' }) + "target=*" + '\n') + "}" + '\n';
+        object obj2 = string.Concat(new object[] {"xpl-stat", '\n', "{", '\n'}) + "hop=1" + '\n';
+        string str = (string.Concat(new object[] {obj2, "source=", this.Source, ".", this.InstanceName, '\n'}) +
+                      "target=*" + '\n') + "}" + '\n';
         if (this.bConfigOnly)
         {
           if (closingDown)
@@ -730,23 +763,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           str = str + "hbeat.app";
         }
         object obj3 = str;
-        object obj4 = string.Concat(new object[] { obj3, '\n', "{", '\n' });
-        object obj5 = string.Concat(new object[] { obj4, "interval=", this.HBeat_Interval.ToString(), '\n' });
-        str = string.Concat(new object[] { obj5, "port=", this.XPL_Portnum.ToString(), '\n' });
+        object obj4 = string.Concat(new object[] {obj3, '\n', "{", '\n'});
+        object obj5 = string.Concat(new object[] {obj4, "interval=", this.HBeat_Interval.ToString(), '\n'});
+        str = string.Concat(new object[] {obj5, "port=", this.XPL_Portnum.ToString(), '\n'});
         string listenOnIP = this.ListenOnIP;
         if (!this.LocalIP.Contains(listenOnIP))
         {
           listenOnIP = this.LocalIP[0].ToString();
         }
         object obj6 = str;
-        object obj7 = string.Concat(new object[] { obj6, "remote-ip=", listenOnIP, '\n' });
-        str = string.Concat(new object[] { obj7, "version=", this.VersionNumber, '\n' });
+        object obj7 = string.Concat(new object[] {obj6, "remote-ip=", listenOnIP, '\n'});
+        str = string.Concat(new object[] {obj7, "version=", this.VersionNumber, '\n'});
         if ((this.XplHBeatItems != null) & !this.bConfigOnly)
         {
           str = str + this.XplHBeatItems();
         }
         new XplMsg(str + "}" + '\n').Send();
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         this.LogError("Error sending heartbeat: " + exception.ToString());
       }
@@ -754,11 +788,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public void SendMessage(string MsgType, string strTarget, string strSchema, string strMessage)
     {
-      string str = string.Concat(new object[] { MsgType, '\n', "{", '\n' }) + "hop=1" + '\n';
-      str = string.Concat(new object[] { str, "source=", this.Source, ".", this.InstanceName, '\n' });
-      str = string.Concat(new object[] { str, "target=", strTarget, '\n' });
-      str = string.Concat(new object[] { str, "}", '\n', strSchema, '\n', "{", '\n' });
-      new XplMsg(string.Concat(new object[] { str, strMessage, "}", '\n' })).Send();
+      string str = string.Concat(new object[] {MsgType, '\n', "{", '\n'}) + "hop=1" + '\n';
+      str = string.Concat(new object[] {str, "source=", this.Source, ".", this.InstanceName, '\n'});
+      str = string.Concat(new object[] {str, "target=", strTarget, '\n'});
+      str = string.Concat(new object[] {str, "}", '\n', strSchema, '\n', "{", '\n'});
+      new XplMsg(string.Concat(new object[] {str, strMessage, "}", '\n'})).Send();
     }
 
     public static string sListenOnIP()
@@ -772,15 +806,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (extensiveLogging)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.sListenOnIP: checking registry", new object[0]);
+            Log.Info("xPL.XplListener.sListenOnIP: checking registry", new object[0]);
           }
           key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
           if (key != null)
           {
-            str = (string)key.GetValue("ListenOnAddress", "ANY_LOCAL");
+            str = (string) key.GetValue("ListenOnAddress", "ANY_LOCAL");
             if (extensiveLogging)
             {
-              MediaPortal.GUI.Library.Log.Info("xPL.XplListener.sListenOnIP: retreived \"{0}\" from registry", new object[] { str });
+              Log.Info("xPL.XplListener.sListenOnIP: retreived \"{0}\" from registry", new object[] {str});
             }
           }
           else
@@ -788,14 +822,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             str = "ANY_LOCAL";
             if (extensiveLogging)
             {
-              MediaPortal.GUI.Library.Log.Info("xPL.XplListener.sListenOnIP: using \"{0}\" as default value", new object[] { str });
+              Log.Info("xPL.XplListener.sListenOnIP: using \"{0}\" as default value", new object[] {str});
             }
           }
-        } catch
+        }
+        catch
         {
           if (extensiveLogging)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.sListenOnIP: registry read threw exception", new object[0]);
+            Log.Info("xPL.XplListener.sListenOnIP: registry read threw exception", new object[0]);
           }
           str = "ANY_LOCAL";
         }
@@ -813,7 +848,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     private static XplFilter Str2Filter(string StrFilter)
     {
-      string[] strArray = StrFilter.Split(new char[] { '.' });
+      string[] strArray = StrFilter.Split(new char[] {'.'});
       if (strArray.Length != 6)
       {
         throw new Exception("Malformed filter: " + StrFilter);
@@ -840,7 +875,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           return XplMessageTypes.Trigger;
 
         case "*":
-          return (XplMessageTypes)0xff;
+          return (XplMessageTypes) 0xff;
       }
       return XplMessageTypes.None;
     }
@@ -858,7 +893,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         case XplMessageTypes.Trigger:
           return "xpl-trig";
 
-        case (XplMessageTypes)0xff:
+        case (XplMessageTypes) 0xff:
           return "*";
       }
       return "";
@@ -898,7 +933,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             try
             {
               this.XplOnTimer();
-            } catch
+            }
+            catch
             {
             }
           }
@@ -908,7 +944,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             this.SendHeartbeatMessage(false);
             this.HBeat_Count = 0;
           }
-          this.XPLTimer.Interval = ((60 - DateTime.Now.Second) + 1) * 0x3e8;
+          this.XPLTimer.Interval = ((60 - DateTime.Now.Second) + 1)*0x3e8;
         }
         if (this.WriteDebugInfo)
         {
@@ -920,26 +956,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public bool AwaitingConfiguration
     {
-      get
-      {
-        return this.bConfigOnly;
-      }
+      get { return this.bConfigOnly; }
     }
 
     public EventLog ErrorEventLog
     {
-      set
-      {
-        this.mEventLog = value;
-      }
+      set { this.mEventLog = value; }
     }
 
     public XplFilters Filters
     {
-      get
-      {
-        return this.mFilters;
-      }
+      get { return this.mFilters; }
     }
 
     public string[] Groups
@@ -961,24 +988,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         try
         {
           return int.Parse(this.ConfigItems.ConfigItem("interval").Value);
-        } catch
+        }
+        catch
         {
           this.HBeat_Interval = 5;
           return 5;
         }
       }
-      set
-      {
-        this.ConfigItems.ConfigItem("interval").Value = value.ToString();
-      }
+      set { this.ConfigItems.ConfigItem("interval").Value = value.ToString(); }
     }
 
     public int HBeatInterval
     {
-      get
-      {
-        return this.HBeat_Interval;
-      }
+      get { return this.HBeat_Interval; }
       set
       {
         if (value < 5)
@@ -998,30 +1020,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public string InstanceName
     {
-      get
-      {
-        return this.ConfigItems.ConfigItem("newconf").Value;
-      }
-      set
-      {
-        this.ConfigItems.ConfigItem("newconf").Value = value;
-      }
+      get { return this.ConfigItems.ConfigItem("newconf").Value; }
+      set { this.ConfigItems.ConfigItem("newconf").Value = value; }
     }
 
     public bool JoinedxPLNetwork
     {
-      get
-      {
-        return this.mHubFound;
-      }
+      get { return this.mHubFound; }
     }
 
     private string ListenOnIP
     {
-      get
-      {
-        return sListenOnIP();
-      }
+      get { return sListenOnIP(); }
     }
 
     private IPAddress ListenOnIP_IP
@@ -1031,7 +1041,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         IPAddress any;
         if (this.DoDebug)
         {
-          MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenOnIP_IP: called", new object[0]);
+          Log.Info("xPL.XplListener.ListenOnIP_IP: called", new object[0]);
         }
         string listenOnIP = this.ListenOnIP;
         if (listenOnIP == "ANY_LOCAL")
@@ -1043,14 +1053,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           try
           {
             any = IPAddress.Parse(listenOnIP);
-          } catch (Exception exception)
+          }
+          catch (Exception exception)
           {
             throw new Exception("Could not decode to valid IPAddress: " + listenOnIP, exception);
           }
         }
         if (this.DoDebug)
         {
-          MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenOnIP_IP - {0}", new object[] { listenOnIP });
+          Log.Info("xPL.XplListener.ListenOnIP_IP - {0}", new object[] {listenOnIP});
         }
         return any;
       }
@@ -1068,26 +1079,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           {
             if (this.DoDebug)
             {
-              MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenOnIPs: checking registry", new object[0]);
+              Log.Info("xPL.XplListener.ListenOnIPs: checking registry", new object[0]);
             }
             key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
             if (key != null)
             {
-              str = (string)key.GetValue("ListenToAddresses", "ANY");
+              str = (string) key.GetValue("ListenToAddresses", "ANY");
               if (this.DoDebug)
               {
-                MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenOnIPs: retreived \"{0}\" from registry", new object[] { str });
+                Log.Info("xPL.XplListener.ListenOnIPs: retreived \"{0}\" from registry", new object[] {str});
               }
             }
             else
             {
               str = "ANY";
             }
-          } catch
+          }
+          catch
           {
             if (this.DoDebug)
             {
-              MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenToIPs: registry read threw exception", new object[0]);
+              Log.Info("xPL.XplListener.ListenToIPs: registry read threw exception", new object[0]);
             }
             str = "ANY";
           }
@@ -1098,14 +1110,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               key.Close();
             }
           }
-          this.mListenTo = str.Split(new char[] { ',' });
+          this.mListenTo = str.Split(new char[] {','});
           for (int i = 0; i < this.mListenTo.Length; i++)
           {
             this.mListenTo[i] = this.mListenTo[i].Trim();
           }
           if (this.DoDebug)
           {
-            MediaPortal.GUI.Library.Log.Info("xPL.XplListener.ListenToIPs: found {0}", new object[] { this.mListenTo.Length });
+            Log.Info("xPL.XplListener.ListenToIPs: found {0}", new object[] {this.mListenTo.Length});
           }
         }
         return this.mListenTo;
@@ -1114,30 +1126,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public int Port
     {
-      get
-      {
-        return this.XPL_Portnum;
-      }
+      get { return this.XPL_Portnum; }
     }
 
     public string Source
     {
-      get
-      {
-        return this.privSource;
-      }
+      get { return this.privSource; }
     }
 
     public bool suppressDuplicateMessages
     {
-      get
-      {
-        return this._suppressDuplicateMessages;
-      }
-      set
-      {
-        this._suppressDuplicateMessages = value;
-      }
+      get { return this._suppressDuplicateMessages; }
+      set { this._suppressDuplicateMessages = value; }
     }
 
     public delegate string HBeatItemsCallback();
@@ -1208,58 +1208,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
       public xplConfigTypes ConfigType
       {
-        get
-        {
-          return this.mConfigType;
-        }
+        get { return this.mConfigType; }
       }
 
       public int MaxValues
       {
-        get
-        {
-          return this.mMaxValues;
-        }
-        set
-        {
-          this.mMaxValues = value;
-        }
+        get { return this.mMaxValues; }
+        set { this.mMaxValues = value; }
       }
 
       public string Name
       {
-        get
-        {
-          return this.mName;
-        }
+        get { return this.mName; }
       }
 
       public string Value
       {
-        get
-        {
-          return this.mValue[0];
-        }
-        set
-        {
-          this.mValue[0] = value;
-        }
+        get { return this.mValue[0]; }
+        set { this.mValue[0] = value; }
       }
 
       public int ValueCount
       {
-        get
-        {
-          return this.mValue.Count;
-        }
+        get { return this.mValue.Count; }
       }
 
       public string[] Values
       {
-        get
-        {
-          return this.mValue.ToArray();
-        }
+        get { return this.mValue.ToArray(); }
       }
     }
 
@@ -1268,18 +1244,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     public class XplConfigItems
     {
       private List<string> mKeys = new List<string>();
-      private List<XplListener.XplConfigItem> mValues = new List<XplListener.XplConfigItem>();
+      private List<XplConfigItem> mValues = new List<XplConfigItem>();
 
       public XplConfigItems()
       {
         this.mKeys.Add("newconf");
-        this.mValues.Add(new XplListener.XplConfigItem("newconf", "", xplConfigTypes.xReconf));
+        this.mValues.Add(new XplConfigItem("newconf", "", xplConfigTypes.xReconf));
         this.mKeys.Add("interval");
-        this.mValues.Add(new XplListener.XplConfigItem("interval", "", xplConfigTypes.xReconf));
+        this.mValues.Add(new XplConfigItem("interval", "", xplConfigTypes.xReconf));
         this.mKeys.Add("filter");
-        this.mValues.Add(new XplListener.XplConfigItem("filter", "", xplConfigTypes.xOption));
+        this.mValues.Add(new XplConfigItem("filter", "", xplConfigTypes.xOption));
         this.mKeys.Add("group");
-        this.mValues.Add(new XplListener.XplConfigItem("group", "", xplConfigTypes.xOption));
+        this.mValues.Add(new XplConfigItem("group", "", xplConfigTypes.xOption));
       }
 
       public void Add(string itemName, string itemValue)
@@ -1291,7 +1267,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         if (!this.mKeys.Contains(itemName.ToLower()))
         {
-          XplListener.XplConfigItem item = new XplListener.XplConfigItem(itemName, itemValue, itemtype);
+          XplConfigItem item = new XplConfigItem(itemName, itemValue, itemtype);
           this.mKeys.Add(itemName.ToLower());
           this.mValues.Add(item);
         }
@@ -1301,12 +1277,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         }
       }
 
-      public XplListener.XplConfigItem ConfigItem(int idx)
+      public XplConfigItem ConfigItem(int idx)
       {
         return this.mValues[idx];
       }
 
-      public XplListener.XplConfigItem ConfigItem(string key)
+      public XplConfigItem ConfigItem(string key)
       {
         return this.mValues[this.mKeys.IndexOf(key.ToLower())];
       }
@@ -1318,18 +1294,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
       public int Count
       {
-        get
-        {
-          return this.mKeys.Count;
-        }
+        get { return this.mKeys.Count; }
       }
     }
 
     public class XplEventArgs : EventArgs
     {
-      public MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL.XplMsg XplMsg;
+      public XplMsg XplMsg;
 
-      public XplEventArgs(MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL.XplMsg x)
+      public XplEventArgs(XplMsg x)
       {
         this.XplMsg = x;
       }
@@ -1351,7 +1324,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         this.Schema.msgType = "";
       }
 
-      public XplFilter(XplMessageTypes t, string Source_Vendor, string Source_Device, string Source_Instance, string Schema_class, string Schema_Type)
+      public XplFilter(XplMessageTypes t, string Source_Vendor, string Source_Device, string Source_Instance,
+                       string Schema_class, string Schema_Type)
       {
         this.MessageType = t;
         this.Source.Vendor = Source_Vendor.ToLower();
@@ -1365,36 +1339,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     public class XplFilters
     {
       private bool mAlwaysPassMessages;
-      private XplListener.XplConfigItems mConfigItems;
+      private XplConfigItems mConfigItems;
       private bool mMatchTarget;
 
-      public XplFilters(XplListener.XplConfigItems ConfigItems)
+      public XplFilters(XplConfigItems ConfigItems)
       {
         this.mConfigItems = ConfigItems;
         this.mMatchTarget = true;
         this.mAlwaysPassMessages = false;
       }
 
-      public void Add(XplListener.XplFilter f)
+      public void Add(XplFilter f)
       {
         this.mConfigItems.Add("filter", f.ToString(), xplConfigTypes.xOption);
       }
 
-      public XplListener.XplFilter Item(int index)
+      public XplFilter Item(int index)
       {
-        return XplListener.Str2Filter(this.mConfigItems.ConfigItem("filter").Values[index]);
+        return Str2Filter(this.mConfigItems.ConfigItem("filter").Values[index]);
       }
 
       public bool AlwaysPassMessages
       {
-        get
-        {
-          return this.mAlwaysPassMessages;
-        }
-        set
-        {
-          this.mAlwaysPassMessages = value;
-        }
+        get { return this.mAlwaysPassMessages; }
+        set { this.mAlwaysPassMessages = value; }
       }
 
       public int Count
@@ -1411,22 +1379,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
       public bool MatchTarget
       {
-        get
-        {
-          return this.mMatchTarget;
-        }
-        set
-        {
-          this.mMatchTarget = value;
-        }
+        get { return this.mMatchTarget; }
+        set { this.mMatchTarget = value; }
       }
     }
 
     public delegate void XplJoinedxPLNetworkEventHandler();
 
-    public delegate void XplMessageReceivedEventHandler(object sender, XplListener.XplEventArgs e);
+    public delegate void XplMessageReceivedEventHandler(object sender, XplEventArgs e);
 
     public delegate void XplReConfigDoneEventHandler();
   }
 }
-

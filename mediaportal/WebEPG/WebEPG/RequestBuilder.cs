@@ -24,10 +24,9 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Globalization;
-using MediaPortal.Utils.Web;
 using MediaPortal.Utils.Time;
+using MediaPortal.Utils.Web;
 using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG
@@ -38,14 +37,17 @@ namespace MediaPortal.WebEPG
   public class RequestBuilder
   {
     #region Variables
+
     private HTTPRequest _baseRequest;
     private WorldDateTime _requestTime;
     private RequestData _data;
     private int _dayOffset;
     private int _offset;
+
     #endregion
 
     #region Constructors/Destructors
+
     public RequestBuilder(HTTPRequest baseRequest, DateTime startTime, RequestData data)
     {
       _baseRequest = baseRequest;
@@ -54,9 +56,11 @@ namespace MediaPortal.WebEPG
       _dayOffset = 0;
       _offset = 0;
     }
+
     #endregion
 
     #region Properties
+
     public int DayOffset
     {
       get { return _dayOffset; }
@@ -68,9 +72,11 @@ namespace MediaPortal.WebEPG
       get { return _offset; }
       set { _offset = value; }
     }
+
     #endregion
 
     #region Public Methods
+
     public void AddDays(int days)
     {
       _dayOffset += days;
@@ -83,7 +89,9 @@ namespace MediaPortal.WebEPG
       CultureInfo culture = new CultureInfo(_data.SearchLang);
 
       if (_data.DayNames != null)
+      {
         request.ReplaceTag("[DAY_NAME]", _data.DayNames[_dayOffset]);
+      }
 
       if (_data.BaseDate != null)
       {
@@ -104,15 +112,21 @@ namespace MediaPortal.WebEPG
       request.ReplaceTag("[DD]", String.Format("{0:00}", _requestTime.Day));
       request.ReplaceTag("[_D]", _requestTime.Day.ToString());
       request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
-      
+
       // this fix is needed for countries where the first day (0) is Sunday (not Monday)
       // thoose grabbers should include OffsetStart="1" in the Search tag.
-      int dayNum = (int)_requestTime.DateTime.DayOfWeek + _data.OffsetStart;
-      if (dayNum < 0) dayNum += 7;
-      if (dayNum > 6) dayNum = dayNum % 7;
+      int dayNum = (int) _requestTime.DateTime.DayOfWeek + _data.OffsetStart;
+      if (dayNum < 0)
+      {
+        dayNum += 7;
+      }
+      if (dayNum > 6)
+      {
+        dayNum = dayNum%7;
+      }
       request.ReplaceTag("[DAY_OF_WEEK]", dayNum.ToString());
-      
-      request.ReplaceTag("[LIST_OFFSET]", ((_offset * _data.MaxListingCount)+_data.ListStart).ToString());
+
+      request.ReplaceTag("[LIST_OFFSET]", ((_offset*_data.MaxListingCount) + _data.ListStart).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (_offset + _data.PageStart).ToString());
 
       return request;
@@ -121,21 +135,23 @@ namespace MediaPortal.WebEPG
     public bool HasDate()
     {
       if (
-      _baseRequest.HasTag("[DD]") ||
-      _baseRequest.HasTag("[_D]") ||
-      _baseRequest.HasTag("[MM]") ||
-      _baseRequest.HasTag("[_M]") ||
-      _baseRequest.HasTag("[YYYY]") ||
-      _baseRequest.HasTag("[MONTH]") ||
-      _baseRequest.HasTag("[DAY_OF_WEEK]") ||
-      _baseRequest.HasTag("[WEEKDAY]") ||
-      _baseRequest.HasTag("[DAY_NAME]") ||
-      _baseRequest.HasTag("[DAY_OFFSET]") ||
-      _baseRequest.HasTag("[EPOCH_TIME]") ||
-      _baseRequest.HasTag("[EPOCH_DATE]") ||
-      _baseRequest.HasTag("[DAYS_SINCE]") ||
-      _baseRequest.HasTag("[DAYOFYEAR]"))
+        _baseRequest.HasTag("[DD]") ||
+        _baseRequest.HasTag("[_D]") ||
+        _baseRequest.HasTag("[MM]") ||
+        _baseRequest.HasTag("[_M]") ||
+        _baseRequest.HasTag("[YYYY]") ||
+        _baseRequest.HasTag("[MONTH]") ||
+        _baseRequest.HasTag("[DAY_OF_WEEK]") ||
+        _baseRequest.HasTag("[WEEKDAY]") ||
+        _baseRequest.HasTag("[DAY_NAME]") ||
+        _baseRequest.HasTag("[DAY_OFFSET]") ||
+        _baseRequest.HasTag("[EPOCH_TIME]") ||
+        _baseRequest.HasTag("[EPOCH_DATE]") ||
+        _baseRequest.HasTag("[DAYS_SINCE]") ||
+        _baseRequest.HasTag("[DAYOFYEAR]"))
+      {
         return true;
+      }
 
       return false;
     }
@@ -143,7 +159,9 @@ namespace MediaPortal.WebEPG
     public bool HasList()
     {
       if (_baseRequest.HasTag("[LIST_OFFSET]"))
+      {
         return true;
+      }
 
       return false;
     }
@@ -151,7 +169,9 @@ namespace MediaPortal.WebEPG
     public bool IsLastPage()
     {
       if (_offset + _data.PageStart == _data.PageEnd)
+      {
         return true;
+      }
 
       return false;
     }
@@ -159,10 +179,13 @@ namespace MediaPortal.WebEPG
     public bool IsMaxListing(int count)
     {
       if (_data.MaxListingCount != 0 && _data.MaxListingCount == count)
+      {
         return true;
+      }
 
       return false;
     }
+
     #endregion
   }
 }

@@ -26,17 +26,13 @@
 using System;
 using System.IO;
 using System.Threading;
-using System.Collections.Generic;
-using System.Text;
-
 using Databases.Folders;
-using Databases.Folders.SqlServer;
 
 namespace MediaPortal.Database
 {
   public class FolderSettings
   {
-    static IFolderSettings _database = DatabaseFactory.GetFolderDatabase();
+    private static IFolderSettings _database = DatabaseFactory.GetFolderDatabase();
 
     public static void Dispose()
     {
@@ -57,7 +53,7 @@ namespace MediaPortal.Database
       //we cant be sure if pathName is a file or a folder, so we look for both.      
       while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 10)
       {
-        System.Threading.Thread.Sleep(250);
+        Thread.Sleep(250);
         count++;
       }
 

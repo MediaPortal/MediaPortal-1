@@ -23,34 +23,35 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using MediaPortal.UserInterface.Controls;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-	public class Wizard_Finished : MediaPortal.Configuration.SectionSettings
-	{
-    private MediaPortal.UserInterface.Controls.MPLabel headerLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel bodyLabel;
-    private System.Windows.Forms.PictureBox pictureBox;
-    private System.Windows.Forms.PictureBox itemPictureBox;
-		private System.ComponentModel.IContainer components = null;
+  public class Wizard_Finished : SectionSettings
+  {
+    private MPLabel headerLabel;
+    private MPLabel bodyLabel;
+    private PictureBox pictureBox;
+    private PictureBox itemPictureBox;
+    private IContainer components = null;
 
-		public Wizard_Finished() : this("Wizard Done")
-		{
-		}
+    public Wizard_Finished() : this("Wizard Done")
+    {
+    }
 
-		public Wizard_Finished(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Wizard_Finished(string name) : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
     /// <summary>
     /// 
@@ -71,7 +72,7 @@ namespace MediaPortal.Configuration.Sections
       bodyLabel.Text = body;
     }
 
-    public override void LoadWizardSettings(System.Xml.XmlNode node)
+    public override void LoadWizardSettings(XmlNode node)
     {
       //
       // Fetch section information
@@ -79,46 +80,47 @@ namespace MediaPortal.Configuration.Sections
       XmlNode headerNode = node.SelectSingleNode("header");
       XmlNode bodyNode = node.SelectSingleNode("body");
       XmlNode imageNode = node.SelectSingleNode("image");
-      
-      if(headerNode != null && headerNode.InnerText.Length > 0)
+
+      if (headerNode != null && headerNode.InnerText.Length > 0)
       {
         SetHeader(headerNode.InnerText);
       }
 
-      if(bodyNode != null && bodyNode.InnerText.Length > 0)
+      if (bodyNode != null && bodyNode.InnerText.Length > 0)
       {
         SetBody(bodyNode.InnerText);
       }
 
-      if(imageNode != null && imageNode.InnerText.Length > 0)
+      if (imageNode != null && imageNode.InnerText.Length > 0)
       {
         SetImage(Image.FromFile(imageNode.InnerText));
       }
     }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Finished));
+    #region Designer generated code
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof (Wizard_Finished));
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.bodyLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pictureBox = new System.Windows.Forms.PictureBox();
@@ -127,9 +129,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.headerLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold,
+                                                      System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
       this.headerLabel.Location = new System.Drawing.Point(192, 8);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.Size = new System.Drawing.Size(280, 23);
@@ -138,10 +143,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // bodyLabel
       // 
-      this.bodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.bodyLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.bodyLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular,
+                                                    System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
       this.bodyLabel.Location = new System.Drawing.Point(192, 48);
       this.bodyLabel.Name = "bodyLabel";
       this.bodyLabel.Size = new System.Drawing.Size(276, 360);
@@ -150,10 +158,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBox
       // 
-      this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left)));
-      this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
-      this.pictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox.Image")));
+      this.pictureBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
+      this.pictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte) (46)), ((System.Byte) (68)),
+                                                                ((System.Byte) (150)));
+      this.pictureBox.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox.Image")));
       this.pictureBox.Location = new System.Drawing.Point(0, 0);
       this.pictureBox.Name = "pictureBox";
       this.pictureBox.Size = new System.Drawing.Size(184, 408);
@@ -162,7 +173,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // itemPictureBox
       // 
-      this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte)(46)), ((System.Byte)(68)), ((System.Byte)(150)));
+      this.itemPictureBox.BackColor = System.Drawing.Color.FromArgb(((System.Byte) (46)), ((System.Byte) (68)),
+                                                                    ((System.Byte) (150)));
       this.itemPictureBox.Location = new System.Drawing.Point(30, 208);
       this.itemPictureBox.Name = "itemPictureBox";
       this.itemPictureBox.Size = new System.Drawing.Size(128, 128);
@@ -178,9 +190,8 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Wizard_Finished";
       this.Size = new System.Drawing.Size(472, 408);
       this.ResumeLayout(false);
-
     }
-		#endregion
-	}
-}
 
+    #endregion
+  }
+}

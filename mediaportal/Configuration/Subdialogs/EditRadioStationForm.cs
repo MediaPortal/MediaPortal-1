@@ -24,41 +24,42 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for EditRadioStationForm.
   /// </summary>
-  public class EditRadioStationForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class EditRadioStationForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton buttonClose;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox nameTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPTextBox genreTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPTextBox bitrateTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPTextBox urlTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPComboBox typeComboBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox frequencyTextBox;
-    private MediaPortal.UserInterface.Controls.MPButton searchButton;
+    private MPGroupBox groupBox1;
+    private MPButton buttonClose;
+    private MPButton buttonOK;
+    private MPLabel label1;
+    private MPTextBox nameTextBox;
+    private MPLabel label2;
+    private MPLabel label3;
+    private MPTextBox genreTextBox;
+    private MPLabel label4;
+    private MPTextBox bitrateTextBox;
+    private MPLabel label5;
+    private MPTextBox urlTextBox;
+    private MPLabel label6;
+    private MPComboBox typeComboBox;
+    private MPTextBox frequencyTextBox;
+    private MPButton searchButton;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
-    RadioStation station = new RadioStation();
+    private Container components = null;
+
+    private RadioStation station = new RadioStation();
 
     public EditRadioStationForm()
     {
@@ -66,7 +67,6 @@ namespace MediaPortal.Configuration
       // Required for Windows Form Designer support
       //
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -85,6 +85,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -112,9 +113,11 @@ namespace MediaPortal.Configuration
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.typeComboBox);
       this.groupBox1.Controls.Add(this.urlTextBox);
       this.groupBox1.Controls.Add(this.label6);
@@ -137,13 +140,17 @@ namespace MediaPortal.Configuration
       // 
       // typeComboBox
       // 
-      this.typeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.typeComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.typeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.typeComboBox.Items.AddRange(new object[] {
-            "Radio",
-            "Stream"});
+      this.typeComboBox.Items.AddRange(new object[]
+                                         {
+                                           "Radio",
+                                           "Stream"
+                                         });
       this.typeComboBox.Location = new System.Drawing.Point(121, 27);
       this.typeComboBox.Name = "typeComboBox";
       this.typeComboBox.Size = new System.Drawing.Size(226, 21);
@@ -152,8 +159,10 @@ namespace MediaPortal.Configuration
       // 
       // urlTextBox
       // 
-      this.urlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.urlTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.urlTextBox.BorderColor = System.Drawing.Color.Empty;
       this.urlTextBox.Location = new System.Drawing.Point(120, 152);
       this.urlTextBox.Name = "urlTextBox";
@@ -188,8 +197,10 @@ namespace MediaPortal.Configuration
       // 
       // genreTextBox
       // 
-      this.genreTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.genreTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.genreTextBox.BorderColor = System.Drawing.Color.Empty;
       this.genreTextBox.Location = new System.Drawing.Point(120, 102);
       this.genreTextBox.Name = "genreTextBox";
@@ -224,8 +235,10 @@ namespace MediaPortal.Configuration
       // 
       // nameTextBox
       // 
-      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.nameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.nameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.nameTextBox.Location = new System.Drawing.Point(120, 52);
       this.nameTextBox.Name = "nameTextBox";
@@ -250,7 +263,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonClose
       // 
-      this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonClose.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonClose.Location = new System.Drawing.Point(294, 213);
       this.buttonClose.Name = "buttonClose";
@@ -262,7 +277,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonOK
       // 
-      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOK.Location = new System.Drawing.Point(213, 213);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
@@ -273,7 +290,9 @@ namespace MediaPortal.Configuration
       // 
       // searchButton
       // 
-      this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.searchButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.searchButton.Enabled = false;
       this.searchButton.Location = new System.Drawing.Point(18, 214);
       this.searchButton.Name = "searchButton";
@@ -304,26 +323,28 @@ namespace MediaPortal.Configuration
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
-      private void EditRadioStationForm_Load(object sender, System.EventArgs e)
-      {
-          UpdateControlStates();
-      }
-    private void okButton_Click(object sender, System.EventArgs e)
+
+    private void EditRadioStationForm_Load(object sender, EventArgs e)
+    {
+      UpdateControlStates();
+    }
+
+    private void okButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
       this.Hide();
     }
 
-    private void closeButton_Click(object sender, System.EventArgs e)
+    private void closeButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Hide();
     }
 
-    private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void typeComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       UpdateControlStates();
     }
@@ -334,24 +355,26 @@ namespace MediaPortal.Configuration
       // Make default selection
       //
       if (typeComboBox.SelectedItem == null)
+      {
         typeComboBox.SelectedItem = "Radio";
+      }
 
       if ((station != null) && (station.ID != -1))
       {
-          typeComboBox.Enabled = false;
+        typeComboBox.Enabled = false;
       }
       bitrateTextBox.Enabled = urlTextBox.Enabled = searchButton.Enabled = typeComboBox.SelectedItem.Equals("Stream");
       frequencyTextBox.Enabled = !urlTextBox.Enabled && !searchButton.Enabled;
     }
 
-    private void frequencyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void frequencyTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       //
       // Make sure we only type one comma or dot
       //
       if (e.KeyChar == '.' || e.KeyChar == ',')
       {
-        if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+        if (frequencyTextBox.Text.IndexOfAny(new char[] {',', '.'}) >= 0)
         {
           e.Handled = true;
           return;
@@ -364,7 +387,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void bitrateTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void bitrateTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
@@ -372,28 +395,30 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void searchButton_Click(object sender, System.EventArgs e)
+    private void searchButton_Click(object sender, EventArgs e)
     {
       SearchSHOUTcast fm = new SearchSHOUTcast();
       DialogResult dialogResult = fm.ShowDialog(this);
-      if (fm.Station == null) return;
+      if (fm.Station == null)
+      {
+        return;
+      }
       nameTextBox.Text = fm.Station.Name;
       bitrateTextBox.Text = fm.Station.Bitrate.ToString();
       urlTextBox.Text = fm.Station.URL;
     }
+
     public RadioStation Station
     {
       get
       {
-
-        station.Type = (string)typeComboBox.SelectedItem;
+        station.Type = (string) typeComboBox.SelectedItem;
         station.Name = nameTextBox.Text;
         try
         {
-
-          if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+          if (frequencyTextBox.Text.IndexOfAny(new char[] {',', '.'}) >= 0)
           {
-            char[] separators = new char[] { '.', ',' };
+            char[] separators = new char[] {'.', ','};
 
             for (int index = 0; index < separators.Length; index++)
             {
@@ -405,7 +430,8 @@ namespace MediaPortal.Configuration
                 //
                 // MegaHertz
                 //
-                station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+                station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0",
+                                                     CultureInfo.InvariantCulture);
 
                 break;
               }
@@ -428,7 +454,8 @@ namespace MediaPortal.Configuration
             }
             else
             {
-              station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+              station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0",
+                                                   CultureInfo.InvariantCulture);
             }
           }
         }
@@ -448,7 +475,7 @@ namespace MediaPortal.Configuration
       {
         station = value as RadioStation;
 
-        typeComboBox.SelectedItem = (string)station.Type;
+        typeComboBox.SelectedItem = (string) station.Type;
         nameTextBox.Text = station.Name;
         frequencyTextBox.Text = station.Frequency.ToString(Frequency.Format.MegaHertz);
         genreTextBox.Text = station.Genre;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
@@ -37,10 +36,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     [DllImport("Kernel32.dll", SetLastError = true)]
     public static extern int CloseHandle(IntPtr hObject);
+
     [DllImport("Kernel32.dll", SetLastError = true)]
-    public static extern IntPtr CreateFile(string FileName, uint DesiredAccess, uint ShareMode, IntPtr lpSecurityAttributes, uint CreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+    public static extern IntPtr CreateFile(string FileName, uint DesiredAccess, uint ShareMode,
+                                           IntPtr lpSecurityAttributes, uint CreationDisposition,
+                                           uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
     [DllImport("Kernel32.dll", SetLastError = true)]
-    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode, [In] byte[] InBuffer, uint InBufferSize, [In, Out] byte[] OutBuffer, uint OutBufferSize, ref uint BytesReturned, IntPtr Overlapped);
+    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode, [In] byte[] InBuffer, uint InBufferSize,
+                                             [In, Out] byte[] OutBuffer, uint OutBufferSize, ref uint BytesReturned,
+                                             IntPtr Overlapped);
+
     public static void DisableScreenSaver()
     {
       SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED);
@@ -52,14 +58,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
 
     [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+    private static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass,
+                                              string lpszWindow);
+
     [DllImport("user32.dll")]
     private static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
     [DllImport("kernel32.dll", ExactSpelling = true)]
     private static extern IntPtr GetConsoleWindow();
+
     private static IntPtr GetNotificationAreaHandle()
     {
-      IntPtr hwndParent = FindWindowEx(FindWindowEx(FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null), IntPtr.Zero, "TrayNotifyWnd", null), IntPtr.Zero, "SysPager", null);
+      IntPtr hwndParent =
+        FindWindowEx(
+          FindWindowEx(FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null), IntPtr.Zero, "TrayNotifyWnd", null),
+          IntPtr.Zero, "SysPager", null);
       if (hwndParent != IntPtr.Zero)
       {
         hwndParent = FindWindowEx(hwndParent, IntPtr.Zero, null, "Notification Area");
@@ -76,17 +89,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         for (int j = 0; j < rect.Bottom; j += 5)
         {
-          SendMessage(notificationAreaHandle, 0x200, 0, (uint)((j << 0x10) + i));
+          SendMessage(notificationAreaHandle, 0x200, 0, (uint) ((j << 0x10) + i));
         }
       }
     }
 
     [DllImport("Kernel32.dll", SetLastError = true)]
     public static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
+
     [DllImport("user32.dll")]
     public static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+
     [DllImport("user32.dll")]
     public static extern bool SetCursorPos(int X, int Y);
+
     [DllImport("Kernel32.DLL", CharSet = CharSet.Auto, SetLastError = true)]
     protected static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
@@ -112,6 +128,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       public int Top;
       public int Right;
       public int Bottom;
+
       public RECT(int left_, int top_, int right_, int bottom_)
       {
         this.Left = left_;
@@ -122,53 +139,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       public int Height
       {
-        get
-        {
-          return (this.Bottom - this.Top);
-        }
+        get { return (this.Bottom - this.Top); }
       }
+
       public int Width
       {
-        get
-        {
-          return (this.Right - this.Left);
-        }
+        get { return (this.Right - this.Left); }
       }
-      public System.Drawing.Size Size
+
+      public Size Size
       {
-        get
-        {
-          return new System.Drawing.Size(this.Width, this.Height);
-        }
+        get { return new Size(this.Width, this.Height); }
       }
+
       public Point Location
       {
-        get
-        {
-          return new Point(this.Left, this.Top);
-        }
+        get { return new Point(this.Left, this.Top); }
       }
+
       public Rectangle ToRectangle()
       {
         return Rectangle.FromLTRB(this.Left, this.Top, this.Right, this.Bottom);
       }
 
-      public static Win32Functions.RECT FromRectangle(Rectangle rectangle)
+      public static RECT FromRectangle(Rectangle rectangle)
       {
-        return new Win32Functions.RECT(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+        return new RECT(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
       }
 
       public override int GetHashCode()
       {
-        return (((this.Left ^ ((this.Top << 13) | (this.Top >> 0x13))) ^ ((this.Width << 0x1a) | (this.Width >> 6))) ^ ((this.Height << 7) | (this.Height >> 0x19)));
+        return (((this.Left ^ ((this.Top << 13) | (this.Top >> 0x13))) ^ ((this.Width << 0x1a) | (this.Width >> 6))) ^
+                ((this.Height << 7) | (this.Height >> 0x19)));
       }
 
-      public static implicit operator Rectangle(Win32Functions.RECT rect)
+      public static implicit operator Rectangle(RECT rect)
       {
         return rect.ToRectangle();
       }
 
-      public static implicit operator Win32Functions.RECT(Rectangle rect)
+      public static implicit operator RECT(Rectangle rect)
       {
         return FromRectangle(rect);
       }
@@ -188,10 +198,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool CloseDesktop(IntPtr hDesktop);
+
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDesktopWindowsProc callback, IntPtr lParam);
+
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       public static extern IntPtr GetForegroundWindow();
+
       public static bool GetScreenSaverActive()
       {
         bool lpvParam = false;
@@ -215,12 +228,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool IsWindowVisible(IntPtr hWnd);
+
       public static void KillScreenSaver()
       {
         IntPtr hDesktop = OpenDesktop("Screen-saver", 0, false, 0x81);
         if (hDesktop != IntPtr.Zero)
         {
-          EnumDesktopWindows(hDesktop, new EnumDesktopWindowsProc(Win32Functions.ScreenSaver.KillScreenSaverFunc), IntPtr.Zero);
+          EnumDesktopWindows(hDesktop, new EnumDesktopWindowsProc(KillScreenSaverFunc), IntPtr.Zero);
           CloseDesktop(hDesktop);
         }
         else
@@ -240,8 +254,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern IntPtr OpenDesktop(string hDesktop, int Flags, bool Inherit, uint DesiredAccess);
+
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern int PostMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
+
       public static void SetScreenSaverActive(bool MakeActive)
       {
         int lpvParam = 0;
@@ -263,8 +279,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool SystemParametersInfo(int uAction, int uParam, ref bool lpvParam, int flags);
+
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool SystemParametersInfo(int uAction, int uParam, ref int lpvParam, int flags);
+
       [return: MarshalAs(UnmanagedType.Bool)]
       [DllImport("user32.dll", CharSet = CharSet.Auto)]
       private static extern bool SystemParametersInfo(int uiAction, int uParam, ref IntPtr lpvParam, int flags);
@@ -273,4 +291,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

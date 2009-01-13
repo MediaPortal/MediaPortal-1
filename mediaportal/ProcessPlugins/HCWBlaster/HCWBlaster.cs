@@ -24,178 +24,181 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.HCWBlaster
 {
-	/// <summary>
-	/// Summary description for HCWBlaster.
-	/// </summary>
-	public class HCWBlaster: IPlugin, ISetupForm
-	{
-		private static int    _MPWindowID  = 9090;
-		private static string _Description = "Controls your external settop box via infrared remote commands";
-		private static string _Author      = "unknown";
+  /// <summary>
+  /// Summary description for HCWBlaster.
+  /// </summary>
+  public class HCWBlaster : IPlugin, ISetupForm
+  {
+    private static int _MPWindowID = 9090;
+    private static string _Description = "Controls your external settop box via infrared remote commands";
+    private static string _Author = "unknown";
     private static string _PluginName = "Hauppauge IR Blaster";
-		private static bool   _CanEnable   = true;
-		private static bool   _DefEnabled  = false;
-		private static bool   _HasSetup    = true;
+    private static bool _CanEnable = true;
+    private static bool _DefEnabled = false;
+    private static bool _HasSetup = true;
 
 
-		private const  string _version     = "0.1";
-		private        bool   _ExLogging   = false;
+    private const string _version = "0.1";
+    private bool _ExLogging = false;
 
-		private HCWIRBlaster irblaster;
-		#region MPInteraction
+    private HCWIRBlaster irblaster;
 
-		public HCWBlaster()
-		{
-			//
-			//irblaster = new HCWIRBlaster();
-		}
+    #region MPInteraction
 
-		public void Start()
-		{
-			Log.Info("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
+    public HCWBlaster()
+    {
+      //
+      //irblaster = new HCWIRBlaster();
+    }
 
-			LoadSettings();
-			
-			if (_ExLogging == true) 
-                Log.Info("HCWBlaster: Extended Logging is Enabled.");
+    public void Start()
+    {
+      Log.Info("HCWBlaster: HCWBlaster {0} plugin starting.", _version);
 
-			if (_ExLogging == false) 
-				Log.Info("HCWBlaster: Extended Logging is NOT Enabled.");
+      LoadSettings();
 
-			if (_ExLogging == true)
-				Log.Info("HCWBlaster: Creating IRBlaster Object.");
+      if (_ExLogging == true)
+      {
+        Log.Info("HCWBlaster: Extended Logging is Enabled.");
+      }
 
-			irblaster = new HCWIRBlaster();
+      if (_ExLogging == false)
+      {
+        Log.Info("HCWBlaster: Extended Logging is NOT Enabled.");
+      }
 
-			Log.Info("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
+      if (_ExLogging == true)
+      {
+        Log.Info("HCWBlaster: Creating IRBlaster Object.");
+      }
 
-			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
-			return;
-		}
+      irblaster = new HCWIRBlaster();
 
-		public void Stop()
-		{
-			Log.Info("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
-			return;
-		}
+      Log.Info("HCWBlaster: Adding message handler for HCWBlaster {0}.", _version);
 
-		private void LoadSettings()
-		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				_ExLogging = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
-			}
-		}
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+      return;
+    }
 
-		private void OnThreadMessage(GUIMessage message)
-		{
-			switch (message.Message)
-			{
-				case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
-					bool bIsInteger;
-					double retNum;
-					bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum );
-					this.ChangeTunerChannel( message.Label );
-					break;
-			}
-		}
+    public void Stop()
+    {
+      Log.Info("HCWBlaster: HCWBlaster {0} plugin stopping.", _version);
+      return;
+    }
 
-		public void ChangeTunerChannel(string channel_data) 
-		{
-			if (_ExLogging == true)
-				Log.Info("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data );
-			irblaster.blast(channel_data, _ExLogging);
-		}
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _ExLogging = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
+      }
+    }
 
+    private void OnThreadMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
+          bool bIsInteger;
+          double retNum;
+          bIsInteger = Double.TryParse(message.Label, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out retNum);
+          this.ChangeTunerChannel(message.Label);
+          break;
+      }
+    }
 
+    public void ChangeTunerChannel(string channel_data)
+    {
+      if (_ExLogging == true)
+      {
+        Log.Info("HCWBlaster: Calling IR Blaster Code for: {0}", channel_data);
+      }
+      irblaster.blast(channel_data, _ExLogging);
+    }
 
-		#endregion
+    #endregion
 
+    #region ISetupForm Members
 
+    // Returns the name of the plugin which is shown in the plugin menu
+    public string PluginName()
+    {
+      return _PluginName.ToString();
+    }
 
+    // Returns the description of the plugin is shown in the plugin menu
+    public string Description()
+    {
+      return _Description.ToString();
+    }
 
+    // Returns the author of the plugin which is shown in the plugin menu
+    public string Author()
+    {
+      return _Author.ToString();
+    }
 
-		#region ISetupForm Members
-		
-		// Returns the name of the plugin which is shown in the plugin menu
-		public string PluginName()
-		{
-			return _PluginName.ToString();
-		}
+    // Indicates whether plugin can be enabled/disabled
+    public bool CanEnable()
+    {
+      return _CanEnable;
+    }
 
-		// Returns the description of the plugin is shown in the plugin menu
-		public string Description()
-		{
-			return _Description.ToString();
-		}
+    // get ID of windowplugin belonging to this setup
+    public int GetWindowId()
+    {
+      return _MPWindowID;
+    }
 
-		// Returns the author of the plugin which is shown in the plugin menu
-		public string Author()
-		{
-			return _Author.ToString();
-		}
+    // Indicates if plugin is enabled by default;
+    public bool DefaultEnabled()
+    {
+      return _DefEnabled;
+    }
 
-		// Indicates whether plugin can be enabled/disabled
-		public bool CanEnable()
-		{
-			return _CanEnable;
-		}
+    // indicates if a plugin has its own setup screen
+    public bool HasSetup()
+    {
+      return _HasSetup;
+    }
 
-		// get ID of windowplugin belonging to this setup
-		public int GetWindowId()
-		{
-			return _MPWindowID;
-		}
+    // show the setup dialog
+    public void ShowPlugin()
+    {
+      //MessageBox.Show("Nothing to configure, this is just an example");
+      Form setup = new HCWBlasterSetupForm();
+      setup.ShowDialog();
+    }
 
-		// Indicates if plugin is enabled by default;
-		public bool DefaultEnabled()
-		{
-			return _DefEnabled;
-		}
+    /// <summary>
+    /// If the plugin should have its own button on the main menu of MediaPortal then it
+    /// should return true to this method, otherwise if it should not be on home
+    /// it should return false
+    /// </summary>
+    /// <param name="strButtonText">text the button should have</param>
+    /// <param name="strButtonImage">image for the button, or empty for default</param>
+    /// <param name="strButtonImageFocus">image for the button, or empty for default</param>
+    /// <param name="strPictureImage">subpicture for the button or empty for none</param>
+    /// <returns>true  : plugin needs its own button on home
+    ///          false : plugin does not need its own button on home</returns>
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
+    {
+      strButtonText = string.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
+      return false;
+    }
 
-		// indicates if a plugin has its own setup screen
-		public bool HasSetup()
-		{
-			return _HasSetup;
-		}
-
-		// show the setup dialog
-		public void   ShowPlugin()
-		{
-			//MessageBox.Show("Nothing to configure, this is just an example");
-			Form setup = new HCWBlasterSetupForm();
-			setup.ShowDialog();
-		}
-
-		/// <summary>
-		/// If the plugin should have its own button on the main menu of MediaPortal then it
-		/// should return true to this method, otherwise if it should not be on home
-		/// it should return false
-		/// </summary>
-		/// <param name="strButtonText">text the button should have</param>
-		/// <param name="strButtonImage">image for the button, or empty for default</param>
-		/// <param name="strButtonImageFocus">image for the button, or empty for default</param>
-		/// <param name="strPictureImage">subpicture for the button or empty for none</param>
-		/// <returns>true  : plugin needs its own button on home
-		///          false : plugin does not need its own button on home</returns>
-		public bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-		{
-			strButtonText       = string.Empty;
-			strButtonImage      = string.Empty;
-			strButtonImageFocus = string.Empty;
-			strPictureImage     = string.Empty;
-			return false;
-		}
-
-		#endregion
-
-
-	}
+    #endregion
+  }
 }

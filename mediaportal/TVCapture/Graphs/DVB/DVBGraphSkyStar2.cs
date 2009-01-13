@@ -27,32 +27,32 @@
 //#define DUMP
 //#define USEMTSWRITER
 #define COMPARE_PMT
+
 #region usings
+
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
+using DirectShowLib;
+using DirectShowLib.SBE;
 using DShowNET;
 using DShowNET.Helper;
 using DShowNET.MPSA;
-using DirectShowLib;
-using DirectShowLib.BDA;
-using DirectShowLib.SBE;
-using MediaPortal.Util;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.TV.Epg;
-using TVCapture;
-using System.Xml;
+using TunerLib;
+using IBaseFilter=DirectShowLib.IBaseFilter;
+using IEnumMediaTypes=DirectShowLib.IEnumMediaTypes;
+using IEnumPins=DirectShowLib.IEnumPins;
+using IFilterGraph=DirectShowLib.IFilterGraph;
+using IGraphBuilder=DirectShowLib.IGraphBuilder;
+using IPin=DirectShowLib.IPin;
 //using DirectX.Capture;
-using MediaPortal.Radio.Database;
-using Toub.MediaCenter.Dvrms.Metadata;
-using MediaPortal.TV.BDA;
-using MediaPortal.Configuration;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -69,6 +69,7 @@ namespace MediaPortal.TV.Recording
       ttATSC = 3,
       ttUnknown = -1
     }
+
     protected enum eModulationTAG
     {
       QAM_4 = 2,
@@ -78,7 +79,8 @@ namespace MediaPortal.TV.Recording
       QAM_128,
       QAM_256,
       MODE_UNKNOWN = -1
-    };
+    } ;
+
     protected enum GuardIntervalType
     {
       Interval_1_32 = 0,
@@ -86,13 +88,15 @@ namespace MediaPortal.TV.Recording
       Interval_1_8,
       Interval_1_4,
       Interval_Auto
-    };
+    } ;
+
     protected enum BandWidthType
     {
       MHz_6 = 6,
       MHz_7 = 7,
       MHz_8 = 8,
-    };
+    } ;
+
     protected enum DisEqcType
     {
       None = 0,
@@ -102,15 +106,16 @@ namespace MediaPortal.TV.Recording
       Level_1_B_A = 4,
       Level_1_A_B = 5,
       Level_1_B_B = 6,
-    };
+    } ;
+
     protected enum FecType
     {
       Fec_1_2 = 1,
-      Fec_2_3 =2,
+      Fec_2_3 = 2,
       Fec_3_4 = 3,
       Fec_5_6 = 4,
       Fec_7_8 = 5,
-      Fec_Auto =6,
+      Fec_Auto = 6,
     }
 
     protected enum LNBSelectionType
@@ -125,33 +130,36 @@ namespace MediaPortal.TV.Recording
     {
       Horizontal = 0,
       Vertical = 1,
-    };
+    } ;
 
     #endregion
 
     #region Structs
+
     /*
 				*	Structure completedy by GetTunerCapabilities() to return tuner capabilities
 				*/
+
     public struct tTunerCapabilities
     {
       public TunerType eModulation;
-      public int dwConstellationSupported;       // Show if SetModulation() is supported
-      public int dwFECSupported;                 // Show if SetFec() is suppoted
+      public int dwConstellationSupported; // Show if SetModulation() is supported
+      public int dwFECSupported; // Show if SetFec() is suppoted
       public int dwMinTransponderFreqInKHz;
       public int dwMaxTransponderFreqInKHz;
       public int dwMinTunerFreqInKHz;
       public int dwMaxTunerFreqInKHz;
       public int dwMinSymbolRateInBaud;
       public int dwMaxSymbolRateInBaud;
-      public int bAutoSymbolRate;				// Obsolte		
-      public int dwPerformanceMonitoring;        // See bitmask definitions below
-      public int dwLockTimeInMilliSecond;		// lock time in millisecond
-      public int dwKernelLockTimeInMilliSecond;	// lock time for kernel
+      public int bAutoSymbolRate; // Obsolte		
+      public int dwPerformanceMonitoring; // See bitmask definitions below
+      public int dwLockTimeInMilliSecond; // lock time in millisecond
+      public int dwKernelLockTimeInMilliSecond; // lock time for kernel
       public int dwAcquisitionCapabilities;
     }
 
     #endregion
+
     #region imports
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -162,42 +170,47 @@ namespace MediaPortal.TV.Recording
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
+
     #endregion
 
     #region variables
+
     protected IBaseFilter _filterB2C2Adapter = null;
     protected DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl = null;
     protected DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl = null;
     //protected DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2 _interfaceB2C2AvcCtrl = null;
-    string _cardType = "";
-
+    private string _cardType = "";
 
     #endregion
 
     public DVBGraphSkyStar2(TVCaptureDevice pCard)
       : base(pCard)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
       }
       GetTunerCapabilities();
-      _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, _networkType);
+      _streamDemuxer.SetCardType((int) DVBEPG.EPGCard.TechnisatStarCards, _networkType);
       _cardProperties = new VideoCaptureProperties(null);
     }
+
     public override bool CreateGraph(int Quality)
     {
       try
       {
-
         _inScanningMode = false;
         //check if we didnt already create a graph
         if (_graphState != State.None)
+        {
           return false;
+        }
         _currentTuningObject = null;
         _isUsingAC3 = false;
         if (_streamDemuxer != null)
+        {
           _streamDemuxer.GrabTeletext(false);
+        }
 
         _isGraphRunning = false;
         Log.Info("DVBGraphSkyStar2:CreateGraph(). ");
@@ -213,11 +226,11 @@ namespace MediaPortal.TV.Recording
 
         // Make a new filter graph
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
 
 
         // Get the Capture Graph Builder
-        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
 
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
@@ -227,15 +240,15 @@ namespace MediaPortal.TV.Recording
           return false;
         }
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
 
 
         //=========================================================================================================
         // add the skystar 2 specific filters
         //=========================================================================================================
         Log.Info("DVBGraphSkyStar2:CreateGraph() create B2C2 adapter");
-        _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+        _filterB2C2Adapter =
+          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
         if (_filterB2C2Adapter == null)
         {
           Log.Info("DVBGraphSkyStar2:creategraph() _filterB2C2Adapter not found");
@@ -303,7 +316,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // Use CLSID_filterMpeg2Demultiplexer to create the filter
         Log.Info("DVBGraphSkyStar2: Add Sample MPEG2-Demultiplexer");
-        _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
+        _filterMpeg2Demultiplexer = (IBaseFilter) new MPEG2Demultiplexer();
         if (_filterMpeg2Demultiplexer == null)
         {
           Log.Error("DVBGraphSkyStar2:Failed to create Mpeg2 Demultiplexer");
@@ -345,8 +358,8 @@ namespace MediaPortal.TV.Recording
         //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
         mpegVideoOut.formatType = FormatType.Mpeg2Video;
         mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
-        mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
+        mpegVideoOut.formatPtr = Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
+        Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
         AMMediaType mpegAudioOut = new AMMediaType();
         mpegAudioOut.majorType = MediaType.Audio;
         mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
@@ -356,11 +369,11 @@ namespace MediaPortal.TV.Recording
         mpegAudioOut.unkPtr = IntPtr.Zero;
         mpegAudioOut.formatType = FormatType.WaveEx;
         mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
-        mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+        mpegAudioOut.formatPtr = Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+        Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
 
         IPin filterMpeg2DemuxerVideoPin, filterMpeg2DemuxerAudioPin;
-        hr = demuxer.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out filterMpeg2DemuxerVideoPin);
+        hr = demuxer.CreateOutputPin(mpegVideoOut /*vidOut*/, "video", out filterMpeg2DemuxerVideoPin);
         if (hr != 0)
         {
           Log.Info("DVBGraphSkyStar2:FAILED to create video output pin on demuxer");
@@ -377,8 +390,9 @@ namespace MediaPortal.TV.Recording
         // add the stream analyzer
         //=========================================================================================================
         Log.Info("DVBGraphSkyStar2: Add Stream Analyzer");
-        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
-        _analyzerInterface = (IStreamAnalyzer)_filterDvbAnalyzer;
+        _filterDvbAnalyzer =
+          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
+        _analyzerInterface = (IStreamAnalyzer) _filterDvbAnalyzer;
         _epgGrabberInterface = _filterDvbAnalyzer as IEPGGrabber;
         _mhwGrabberInterface = _filterDvbAnalyzer as IMHWGrabber;
         _atscGrabberInterface = _filterDvbAnalyzer as IATSCGrabber;
@@ -470,7 +484,7 @@ namespace MediaPortal.TV.Recording
             IEnumMediaTypes enumMedia;
             pin[0].EnumMediaTypes(out enumMedia);
             enumMedia.Reset();
-            DirectShowLib.AMMediaType[] pinMediaType = new DirectShowLib.AMMediaType[2];
+            AMMediaType[] pinMediaType = new AMMediaType[2];
             int fetchedm = 0;
             while (enumMedia.Next(1, pinMediaType, out fetchedm) == 0)
             {
@@ -517,15 +531,24 @@ namespace MediaPortal.TV.Recording
               }
             }
             if (enumMedia != null)
+            {
               DirectShowUtil.ReleaseComObject(enumMedia);
+            }
             enumMedia = null;
             if (pin[0] != null)
+            {
               DirectShowUtil.ReleaseComObject(pin[0]);
+            }
             pin[0] = null;
           }
         }
-        DirectShowUtil.ReleaseComObject(pinEnum); pinEnum = null;
-        if (pinAnalyzerIn != null) DirectShowUtil.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
+        DirectShowUtil.ReleaseComObject(pinEnum);
+        pinEnum = null;
+        if (pinAnalyzerIn != null)
+        {
+          DirectShowUtil.ReleaseComObject(pinAnalyzerIn);
+        }
+        pinAnalyzerIn = null;
         //get the video/audio output pins of the mpeg2 demultiplexer
         if (_pinDemuxerVideo == null)
         {
@@ -546,7 +569,6 @@ namespace MediaPortal.TV.Recording
         Log.Info("DVBGraphSkyStar2:CreateGraph() create ac3/mpg1 pins");
         if (demuxer != null)
         {
-
           //Log.Info("mpeg2: create ac3 pin");
           AMMediaType mediaAC3 = new AMMediaType();
           mediaAC3.majorType = MediaType.Audio;
@@ -557,10 +579,10 @@ namespace MediaPortal.TV.Recording
           mediaAC3.unkPtr = IntPtr.Zero;
           mediaAC3.formatType = FormatType.WaveEx;
           mediaAC3.formatSize = MPEG1AudioFormat.GetLength(0);
-          mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
+          mediaAC3.formatPtr = Marshal.AllocCoTaskMem(mediaAC3.formatSize);
+          Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
 
-          hr = demuxer.CreateOutputPin(mediaAC3/*vidOut*/, "AC3", out _pinAC3Out);
+          hr = demuxer.CreateOutputPin(mediaAC3 /*vidOut*/, "AC3", out _pinAC3Out);
           if (hr != 0 || _pinAC3Out == null)
           {
             Log.Error("DVBGraphSkyStar2:FAILED to create AC3 pin:0x{0:X}", hr);
@@ -576,10 +598,10 @@ namespace MediaPortal.TV.Recording
           mediaMPG1.unkPtr = IntPtr.Zero;
           mediaMPG1.formatType = FormatType.WaveEx;
           mediaMPG1.formatSize = MPEG1AudioFormat.GetLength(0);
-          mediaMPG1.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaMPG1.formatPtr, mediaMPG1.formatSize);
+          mediaMPG1.formatPtr = Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
+          Marshal.Copy(MPEG1AudioFormat, 0, mediaMPG1.formatPtr, mediaMPG1.formatSize);
 
-          hr = demuxer.CreateOutputPin(mediaMPG1/*vidOut*/, "audioMpg1", out _pinMPG1Out);
+          hr = demuxer.CreateOutputPin(mediaMPG1 /*vidOut*/, "audioMpg1", out _pinMPG1Out);
           if (hr != 0 || _pinMPG1Out == null)
           {
             Log.Error("DVBGraphSkyStar2:FAILED to create MPG1 pin:0x{0:X}", hr);
@@ -656,9 +678,21 @@ namespace MediaPortal.TV.Recording
           }
           //Log.Info("DVBGraphSkyStar2:Demuxer is setup");
 
-          if (pinMHW1In != null) DirectShowUtil.ReleaseComObject(pinMHW1In); pinMHW1In = null;
-          if (pinMHW2In != null) DirectShowUtil.ReleaseComObject(pinMHW2In); pinMHW2In = null;
-          if (pinEPGIn != null) DirectShowUtil.ReleaseComObject(pinEPGIn); pinEPGIn = null;
+          if (pinMHW1In != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinMHW1In);
+          }
+          pinMHW1In = null;
+          if (pinMHW2In != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinMHW2In);
+          }
+          pinMHW2In = null;
+          if (pinEPGIn != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinEPGIn);
+          }
+          pinEPGIn = null;
 
           //setup teletext grabbing....
           if (GUIGraphicsContext.DX9Device != null)
@@ -673,8 +707,8 @@ namespace MediaPortal.TV.Recording
               return false;
             }
 
-            _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
-            _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
+            _filterSampleGrabber = (IBaseFilter) new SampleGrabber();
+            _sampleInterface = (ISampleGrabber) _filterSampleGrabber;
             _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
 
             IPin pinIn = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
@@ -692,7 +726,9 @@ namespace MediaPortal.TV.Recording
           }
         }
         else
+        {
           Log.Error("DVBGraphSkyStar2:mapped IMPEG2Demultiplexer not found");
+        }
 
         //=========================================================================================================
         // Create the streambuffer engine and mpeg2 video analyzer components since we need them for
@@ -700,13 +736,13 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         m_StreamBufferSink = new StreamBufferSink();
         m_mpeg2Analyzer = new VideoAnalyzer();
-        m_IStreamBufferSink = (IStreamBufferSink3)m_StreamBufferSink;
+        m_IStreamBufferSink = (IStreamBufferSink3) m_StreamBufferSink;
         _graphState = State.Created;
 
 
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
         //_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-        _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
+        _streamDemuxer.SetCardType((int) DVBEPG.EPGCard.BDACards, Network());
         //_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
         if (_sampleInterface != null)
@@ -720,9 +756,13 @@ namespace MediaPortal.TV.Recording
         }
 
         if (Network() == NetworkType.ATSC)
+        {
           _analyzerInterface.UseATSC(1);
+        }
         else
+        {
           _analyzerInterface.UseATSC(0);
+        }
 
         _epgGrabber.EPGInterface = _epgGrabberInterface;
         _epgGrabber.MHWInterface = _mhwGrabberInterface;
@@ -743,7 +783,9 @@ namespace MediaPortal.TV.Recording
       try
       {
         if (_graphState < State.Created)
+        {
           return;
+        }
         int hr;
         _currentTuningObject = null;
         Log.Info("DVBGraphSkyStar2:DeleteGraph(). ac3=false");
@@ -763,7 +805,10 @@ namespace MediaPortal.TV.Recording
         }
 
         //Log.Info("DVBGraphSkyStar2:stop graph");
-        if (_mediaControl != null) _mediaControl.Stop();
+        if (_mediaControl != null)
+        {
+          _mediaControl.Stop();
+        }
         _mediaControl = null;
         //Log.Info("DVBGraphSkyStar2:graph stopped");
 
@@ -793,38 +838,60 @@ namespace MediaPortal.TV.Recording
         //Log.Info("free pins");
 
         if (_pinDemuxerSections != null)
+        {
           DirectShowUtil.ReleaseComObject(_pinDemuxerSections);
+        }
         _pinDemuxerSections = null;
 
         if (_pinAC3Out != null)
+        {
           DirectShowUtil.ReleaseComObject(_pinAC3Out);
+        }
         _pinAC3Out = null;
 
         if (_pinMPG1Out != null)
+        {
           DirectShowUtil.ReleaseComObject(_pinMPG1Out);
+        }
         _pinMPG1Out = null;
 
         if (_pinDemuxerVideo != null)
+        {
           DirectShowUtil.ReleaseComObject(_pinDemuxerVideo);
+        }
         _pinDemuxerVideo = null;
 
         if (_pinDemuxerAudio != null)
+        {
           DirectShowUtil.ReleaseComObject(_pinDemuxerAudio);
+        }
         _pinDemuxerAudio = null;
 
 
         if (_filterB2C2Adapter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
+          }
           _filterB2C2Adapter = null;
         }
 
         if (_filterDvbAnalyzer != null)
         {
           //Log.Info("free dvbanalyzer");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
-          if (hr != 0) Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
+          }
           _filterDvbAnalyzer = null;
         }
 #if USEMTSWRITER
@@ -838,8 +905,14 @@ namespace MediaPortal.TV.Recording
 #endif
         if (_filterSmartTee != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSmartTee):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSmartTee):{0}", hr);
+          }
           _filterSmartTee = null;
         }
 
@@ -857,31 +930,55 @@ namespace MediaPortal.TV.Recording
         if (_filterSampleGrabber != null)
         {
           //Log.Info("DVBGraphSkyStar2:free samplegrabber");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSampleGrabber):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterSampleGrabber):{0}", hr);
+          }
           _filterSampleGrabber = null;
         }
 
 
         if (m_IStreamBufferConfig != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
+          }
           m_IStreamBufferConfig = null;
         }
 
         if (m_IStreamBufferSink != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
+          }
           m_IStreamBufferSink = null;
         }
 
         if (m_StreamBufferSink != null)
         {
           //Log.Info("DVBGraphSkyStar2:free streambuffersink");
-          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferSink):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferSink):{0}", hr);
+          }
           m_StreamBufferSink = null;
         }
 
@@ -889,23 +986,37 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferConfig != null)
         {
           //Log.Info("DVBGraphSkyStar2:free streambufferconfig");
-          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
+          }
           m_StreamBufferConfig = null;
         }
 
         if (_filterMpeg2Demultiplexer != null)
         {
           //Log.Info("DVBGraphSkyStar2:free demux");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
+          }
           _filterMpeg2Demultiplexer = null;
         }
 
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: remove filters");
 
         if (_graphBuilder != null)
+        {
           DirectShowUtil.RemoveFilters(_graphBuilder);
+        }
 
 
         //Log.Info("DVBGraphSkyStar2:free remove graph");
@@ -918,16 +1029,28 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          }
           _captureGraphBuilderInterface = null;
         }
 
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphSkyStar2:free graphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
+          }
           _graphBuilder = null;
         }
 
@@ -939,7 +1062,9 @@ namespace MediaPortal.TV.Recording
 				}
 #endif
 
-        GC.Collect(); GC.Collect(); GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
         _graphState = State.None;
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2: delete graph done");
       }
@@ -962,10 +1087,22 @@ namespace MediaPortal.TV.Recording
       int level, quality;
       _signalPresent = (_interfaceB2C2TunerCtrl.CheckLock() == 0);
       GetSNR(_interfaceB2C2TunerCtrl, out level, out quality);
-      if (level < 0) level = 0;
-      if (level > 100) level = 100;
-      if (quality < 0) quality = 0;
-      if (quality > 100) quality = 100;
+      if (level < 0)
+      {
+        level = 0;
+      }
+      if (level > 100)
+      {
+        level = 100;
+      }
+      if (quality < 0)
+      {
+        quality = 0;
+      }
+      if (quality > 100)
+      {
+        quality = 100;
+      }
       _signalQuality = quality;
       _signalLevel = level;
     }
@@ -989,7 +1126,9 @@ namespace MediaPortal.TV.Recording
       //DisEQC            none
       int frequency = ch.Frequency;
       if (frequency > 13000)
+      {
         frequency /= 1000;
+      }
       Log.Info("DVBGraphSkyStar2:  Transponder Frequency:{0} MHz", frequency);
       int hr = _interfaceB2C2TunerCtrl.SetFrequency(frequency);
       if (hr != 0)
@@ -1004,9 +1143,18 @@ namespace MediaPortal.TV.Recording
           Log.Info("DVBGraphSkyStar2:  ATSC Channel:{0}", ch.PhysicalChannel);
           //#DM B2C2 SDK says ATSC is tuned by frequency. Here we work the OTA frequency by channel number#
           int atscfreq = 0;
-          if (ch.PhysicalChannel <= 6) atscfreq = 45+(ch.PhysicalChannel*6);
-          if (ch.PhysicalChannel >= 7 && ch.PhysicalChannel <= 13) atscfreq = 177 + ((ch.PhysicalChannel - 7) * 6);
-          if (ch.PhysicalChannel >= 14) atscfreq = 473+((ch.PhysicalChannel - 14) * 6);
+          if (ch.PhysicalChannel <= 6)
+          {
+            atscfreq = 45 + (ch.PhysicalChannel*6);
+          }
+          if (ch.PhysicalChannel >= 7 && ch.PhysicalChannel <= 13)
+          {
+            atscfreq = 177 + ((ch.PhysicalChannel - 7)*6);
+          }
+          if (ch.PhysicalChannel >= 14)
+          {
+            atscfreq = 473 + ((ch.PhysicalChannel - 14)*6);
+          }
           //#DM changed tuning parameter from physical channel to calculated frequency above.
           //Log.Info("DVBGraphSkyStar2:  Channel:{0} KHz", ch.Frequency);
           //hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
@@ -1018,7 +1166,7 @@ namespace MediaPortal.TV.Recording
             return;
           }
           break;
-        
+
         case NetworkType.DVBC:
           {
             Log.Info("DVBGraphSkyStar2:  SymbolRate:{0} KS/s", ch.Symbolrate);
@@ -1029,26 +1177,26 @@ namespace MediaPortal.TV.Recording
               return;
             }
 
-            int modulation = (int)eModulationTAG.QAM_64;
+            int modulation = (int) eModulationTAG.QAM_64;
             switch (ch.Modulation)
             {
-              case (int)TunerLib.ModulationType.BDA_MOD_16QAM:
-                modulation = (int)eModulationTAG.QAM_16;
+              case (int) ModulationType.BDA_MOD_16QAM:
+                modulation = (int) eModulationTAG.QAM_16;
                 break;
-              case (int)TunerLib.ModulationType.BDA_MOD_32QAM:
-                modulation = (int)eModulationTAG.QAM_32;
+              case (int) ModulationType.BDA_MOD_32QAM:
+                modulation = (int) eModulationTAG.QAM_32;
                 break;
-              case (int)TunerLib.ModulationType.BDA_MOD_64QAM:
-                modulation = (int)eModulationTAG.QAM_64;
+              case (int) ModulationType.BDA_MOD_64QAM:
+                modulation = (int) eModulationTAG.QAM_64;
                 break;
-              case (int)TunerLib.ModulationType.BDA_MOD_128QAM:
-                modulation = (int)eModulationTAG.QAM_128;
+              case (int) ModulationType.BDA_MOD_128QAM:
+                modulation = (int) eModulationTAG.QAM_128;
                 break;
-              case (int)TunerLib.ModulationType.BDA_MOD_256QAM:
-                modulation = (int)eModulationTAG.QAM_256;
+              case (int) ModulationType.BDA_MOD_256QAM:
+                modulation = (int) eModulationTAG.QAM_256;
                 break;
             }
-            Log.Info("DVBGraphSkyStar2:  Modulation:{0}", ((eModulationTAG)modulation));
+            Log.Info("DVBGraphSkyStar2:  Modulation:{0}", ((eModulationTAG) modulation));
             hr = _interfaceB2C2TunerCtrl.SetModulation(modulation);
             if (hr != 0)
             {
@@ -1060,7 +1208,7 @@ namespace MediaPortal.TV.Recording
 
         case NetworkType.DVBT:
           Log.Info("DVBGraphSkyStar2:  GuardInterval:auto");
-          hr = _interfaceB2C2TunerCtrl.SetGuardInterval((int)GuardIntervalType.Interval_Auto);
+          hr = _interfaceB2C2TunerCtrl.SetGuardInterval((int) GuardIntervalType.Interval_Auto);
           if (hr != 0)
           {
             Log.Error("DVBGraphSkyStar2:SetGuardInterval() failed:0x{0:X}", hr);
@@ -1072,7 +1220,7 @@ namespace MediaPortal.TV.Recording
           // Set Channel Bandwidth (NOTE: Temporarily use polarity function to avoid having to 
           // change SDK interface for SetBandwidth)
           // from Technisat SDK 02/2005
-          hr = _interfaceB2C2TunerCtrl.SetPolarity((int)ch.Bandwidth);
+          hr = _interfaceB2C2TunerCtrl.SetPolarity((int) ch.Bandwidth);
           if (hr != 0)
           {
             Log.Error("DVBGraphSkyStar2:SetBandwidth() failed:0x{0:X}", hr);
@@ -1084,7 +1232,10 @@ namespace MediaPortal.TV.Recording
 
           int lowOsc, hiOsc, disEqcUsed, lnbKhzTone;
           //#DM - I think the new driver allows for expanded DiSEqC support so lets try it :) #
-          if (ch.DiSEqC < 1) ch.DiSEqC = 1;
+          if (ch.DiSEqC < 1)
+          {
+            ch.DiSEqC = 1;
+          }
           //if (ch.DiSEqC > 4) ch.DiSEqC = 4;
           GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone, out disEqcUsed);
           if (ch.LNBFrequency >= frequency)
@@ -1109,8 +1260,8 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          int fec = (int)FecType.Fec_Auto;
-          Log.Info("DVBGraphSkyStar2:  Fec:{0} {1}", ((FecType)fec), fec);
+          int fec = (int) FecType.Fec_Auto;
+          Log.Info("DVBGraphSkyStar2:  Fec:{0} {1}", ((FecType) fec), fec);
           hr = _interfaceB2C2TunerCtrl.SetFec(fec);
           if (hr != 0)
           {
@@ -1119,7 +1270,7 @@ namespace MediaPortal.TV.Recording
           }
 
           //0=horizontal,1=vertical
-          Log.Info("DVBGraphSkyStar2:  Polarity:{0} {1}", ((PolarityType)ch.Polarity), ch.Polarity);
+          Log.Info("DVBGraphSkyStar2:  Polarity:{0} {1}", ((PolarityType) ch.Polarity), ch.Polarity);
           hr = _interfaceB2C2TunerCtrl.SetPolarity(ch.Polarity);
           if (hr != 0)
           {
@@ -1148,7 +1299,7 @@ namespace MediaPortal.TV.Recording
             lnbSelection = LNBSelectionType.Lnb0;
           }
           Log.Info("DVBGraphSkyStar2:  Lnb: {0} Khz", lnbKhzTone);
-          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
+          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int) lnbSelection);
           if (hr != 0)
           {
             Log.Error("DVBGraphSkyStar2:SetLnbKHz() failed:0x{0:X}", hr);
@@ -1180,8 +1331,8 @@ namespace MediaPortal.TV.Recording
               disType = DisEqcType.Level_1_B_B;
               break;
           }
-          Log.Info("DVBGraphSkyStar2:  Diseqc:{0} {1}", disType, (int)disType);
-          hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
+          Log.Info("DVBGraphSkyStar2:  Diseqc:{0} {1}", disType, (int) disType);
+          hr = _interfaceB2C2TunerCtrl.SetDiseqc((int) disType);
           if (hr != 0)
           {
             Log.Error("DVBGraphSkyStar2:SetDiseqc() failed:0x{0:X}", hr);
@@ -1194,7 +1345,7 @@ namespace MediaPortal.TV.Recording
       //hr=_interfaceB2C2TunerCtrl.SetTunerStatusEx(5);//20*50ms= max 2 sec to lock tuner
       hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
       _interfaceB2C2TunerCtrl.CheckLock();
-      if (((uint)hr) == (uint)0x90010115)
+      if (((uint) hr) == (uint) 0x90010115)
       {
         Log.Error("DVBGraphSkyStar2:could not lock tuner");
         //dump all values:
@@ -1211,23 +1362,25 @@ namespace MediaPortal.TV.Recording
         Log.Info("DVBGraphSkyStar2    LNB freq:{0} MHz", ss2lnbfreq);
 
         _interfaceB2C2TunerCtrl.GetFec(out ss2fec);
-        Log.Info("DVBGraphSkyStar2    fec:{0}", (FecType)ss2fec);
+        Log.Info("DVBGraphSkyStar2    fec:{0}", (FecType) ss2fec);
         //Log.Info("DVBGraphSkyStar2    fec:{0}", ss2fec);
 
         _interfaceB2C2TunerCtrl.GetPolarity(out ss2pol);
-        Log.Info("DVBGraphSkyStar2    polarity:{0}", (PolarityType)ss2pol);
+        Log.Info("DVBGraphSkyStar2    polarity:{0}", (PolarityType) ss2pol);
 
         _interfaceB2C2TunerCtrl.GetLnbKHz(out ss2lnbkhz);
         Log.Info("DVBGraphSkyStar2    LNB {0} kHz: ", ss2lnbkhz);
 
         _interfaceB2C2TunerCtrl.GetDiseqc(out ss2diseqc);
-        Log.Info("DVBGraphSkyStar2    diseqc:{0}", (DisEqcType)ss2diseqc);
+        Log.Info("DVBGraphSkyStar2    diseqc:{0}", (DisEqcType) ss2diseqc);
         //Log.Info("DVBGraphSkyStar2    diseqc:{0}", ss2diseqc);
       }
       else
       {
         if (hr != 0)
+        {
           hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+        }
         if (hr != 0)
         {
           Log.Error("DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
@@ -1237,17 +1390,20 @@ namespace MediaPortal.TV.Recording
       _interfaceB2C2TunerCtrl.CheckLock();
       UpdateSignalPresent();
       if (!_inScanningMode)
+      {
         SetHardwarePidFiltering();
+      }
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
-      Log.Info("DVBGraphSkyStar2: signal strength:{0} signal quality:{1} signal present:{2}", SignalStrength(), SignalQuality(), SignalPresent());
-
+      Log.Info("DVBGraphSkyStar2: signal strength:{0} signal quality:{1} signal present:{2}", SignalStrength(),
+               SignalQuality(), SignalPresent());
     }
 
 
     protected override void SendHWPids(ArrayList pids)
     {
-      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
+      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;
+        //Enables reception of all PIDs in the transport stream including the NULL PID
       // const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.
 
       if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
@@ -1268,15 +1424,14 @@ namespace MediaPortal.TV.Recording
         _interfaceB2C2DataCtrl.GetMaxPIDCount(out maxPids);
         for (int i = 0; i < pids.Count && i < maxPids; ++i)
         {
-          ushort pid = (ushort)pids[i];
+          ushort pid = (ushort) pids[i];
           SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
         }
       }
     }
 
-    DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
+    private DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
     {
-
       int lnbKhz = 0;
       int lnbKhzVal = 0;
       int diseqc = 0;
@@ -1289,7 +1444,7 @@ namespace MediaPortal.TV.Recording
       int circularMHZ = 0;
 
       string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+      using (Settings xmlreader = new Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
         lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);
@@ -1320,7 +1475,7 @@ namespace MediaPortal.TV.Recording
             diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
             break;
-          //
+            //
           case 4:
             // config d
             lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
@@ -1328,22 +1483,28 @@ namespace MediaPortal.TV.Recording
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
             //
             break;
-        }// switch(disNo)
+        } // switch(disNo)
         switch (lnbKhz)
         {
-          case 0: lnbKhzVal = (int)LNBSelectionType.Lnb0; break;
-          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22kHz; break;
-          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33kHz; break;
-          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44kHz; break;
+          case 0:
+            lnbKhzVal = (int) LNBSelectionType.Lnb0;
+            break;
+          case 22:
+            lnbKhzVal = (int) LNBSelectionType.Lnb22kHz;
+            break;
+          case 33:
+            lnbKhzVal = (int) LNBSelectionType.Lnb33kHz;
+            break;
+          case 44:
+            lnbKhzVal = (int) LNBSelectionType.Lnb44kHz;
+            break;
         }
-
-
-      }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
+      } //using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
 
       // set values to dvbchannel-object
       ch.DiSEqC = diseqc;
       // set the lnb parameter
-      if (ch.Frequency >= lnbswMHZ * 1000)
+      if (ch.Frequency >= lnbswMHZ*1000)
       {
         ch.LNBFrequency = lnb1MHZ;
         ch.LnbSwitchFrequency = lnbKhzVal;
@@ -1354,14 +1515,17 @@ namespace MediaPortal.TV.Recording
         ch.LnbSwitchFrequency = 0;
       }
       //Log.Info("auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
-      Log.Info("auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, lnbKhz, ch.LNBFrequency, ch.DiSEqC);
+      Log.Info("auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, lnbKhz, ch.LNBFrequency,
+               ch.DiSEqC);
       return ch;
-
-    }// LoadDiseqcSettings()
+    } // LoadDiseqcSettings()
 
     protected override void SetupDiseqc(int disNo)
     {
-      if (_currentTuningObject == null) return;
+      if (_currentTuningObject == null)
+      {
+        return;
+      }
       string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
 
       int lnbKhz = 0;
@@ -1375,7 +1539,7 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+      using (Settings xmlreader = new Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
         lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);
@@ -1406,7 +1570,7 @@ namespace MediaPortal.TV.Recording
             diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
             break;
-          //
+            //
           case 4:
             // config d
             lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
@@ -1414,22 +1578,28 @@ namespace MediaPortal.TV.Recording
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
             //
             break;
-        }// switch(disNo)
+        } // switch(disNo)
         switch (lnbKhz)
         {
-          case 0: lnbKhzVal = (int)LNBSelectionType.Lnb0; break;
-          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22kHz; break;
-          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33kHz; break;
-          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44kHz; break;
+          case 0:
+            lnbKhzVal = (int) LNBSelectionType.Lnb0;
+            break;
+          case 22:
+            lnbKhzVal = (int) LNBSelectionType.Lnb22kHz;
+            break;
+          case 33:
+            lnbKhzVal = (int) LNBSelectionType.Lnb33kHz;
+            break;
+          case 44:
+            lnbKhzVal = (int) LNBSelectionType.Lnb44kHz;
+            break;
         }
-
-
-      }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
+      } //using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
 
       // set values to dvbchannel-object
       _currentTuningObject.DiSEqC = disNo;
       // set the lnb parameter
-      if (_currentTuningObject.Frequency >= lnbswMHZ * 1000)
+      if (_currentTuningObject.Frequency >= lnbswMHZ*1000)
       {
         _currentTuningObject.LNBFrequency = lnb1MHZ;
         _currentTuningObject.LnbSwitchFrequency = lnbKhzVal;
@@ -1439,8 +1609,9 @@ namespace MediaPortal.TV.Recording
         _currentTuningObject.LNBFrequency = lnb0MHZ;
         _currentTuningObject.LnbSwitchFrequency = 0;
       }
-      Log.Info("auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LnbSwitchFrequency, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
-    }// LoadDiseqcSettings()
+      Log.Info("auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency,
+               _currentTuningObject.LnbSwitchFrequency, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
+    } // LoadDiseqcSettings()
 
     public override bool SupportsHardwarePidFiltering()
     {
@@ -1449,7 +1620,7 @@ namespace MediaPortal.TV.Recording
 
     public override bool Supports5vAntennae()
     {
-        return false;
+      return false;
     }
 
     private void GetTunerCapabilities()
@@ -1458,10 +1629,10 @@ namespace MediaPortal.TV.Recording
       {
         // Make a new filter graph
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:create new filter graph (IGraphBuilder)");
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
 
         // Get the Capture Graph Builder
-        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
 
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
@@ -1471,13 +1642,14 @@ namespace MediaPortal.TV.Recording
           return;
         }
         //Log.WriteFile(LogType.Log,"DVBGraphSkyStar2:Add graph to ROT table");
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
 
         //=========================================================================================================
         // add the skystar 2 specific filters
         //=========================================================================================================
         Log.Info("DVBGraphSkyStar2:GetTunerCapabilities() create B2C2 adapter");
-        _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+        _filterB2C2Adapter =
+          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
         if (_filterB2C2Adapter == null)
         {
           Log.Info("DVBGraphSkyStar2:GetTunerCapabilities() _filterB2C2Adapter not found");
@@ -1503,7 +1675,7 @@ namespace MediaPortal.TV.Recording
         // Get tuner type (DVBS, DVBC, DVBT, ATSC)
 
         tTunerCapabilities tc;
-        int lTunerCapSize = Marshal.SizeOf(typeof(tTunerCapabilities));
+        int lTunerCapSize = Marshal.SizeOf(typeof (tTunerCapabilities));
 
         IntPtr ptCaps = Marshal.AllocHGlobal(lTunerCapSize);
 
@@ -1514,7 +1686,7 @@ namespace MediaPortal.TV.Recording
           return;
         }
 
-        tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof(tTunerCapabilities));
+        tc = (tTunerCapabilities) Marshal.PtrToStructure(ptCaps, typeof (tTunerCapabilities));
 
         switch (tc.eModulation)
         {
@@ -1543,13 +1715,21 @@ namespace MediaPortal.TV.Recording
 
         if (_filterB2C2Adapter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterB2C2Adapter)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_filterB2C2Adapter):{0}", hr);
+          }
           _filterB2C2Adapter = null;
         }
 
         if (_graphBuilder != null)
+        {
           DirectShowUtil.RemoveFilters(_graphBuilder);
+        }
 
         //Log.Info("DVBGraphSkyStar2:free remove graph");
         if (_rotEntry != null)
@@ -1561,15 +1741,27 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphSkyStar2:free remove capturegraphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          }
           _captureGraphBuilderInterface = null;
         }
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphSkyStar2:free graphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphSkyStar2:ReleaseComObject(_graphBuilder):{0}", hr);
+          }
           _graphBuilder = null;
         }
       }

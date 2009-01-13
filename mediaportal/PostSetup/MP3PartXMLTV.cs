@@ -28,75 +28,78 @@ using System.Windows.Forms;
 
 namespace PostSetup
 {
-	/// <summary>
-	/// Summary description for DownloadAndInstall.
-	/// </summary>
-	public class MP3PartXMLTV : MP3PartInstaller
-	{
+  /// <summary>
+  /// Summary description for DownloadAndInstall.
+  /// </summary>
+  public class MP3PartXMLTV : MP3PartInstaller
+  {
+    /// <summary>
+    /// Init this package..
+    /// </summary>
+    /// <param name="mpTargetDir"></param>
+    public override void Init(string mpTargetDir)
+    {
+      this.Title = "XMLTV";
+      this.Description =
+        "If you want to download TV listings and use them within MediaPortal's Electronic Programming Guide (EPG) then you may want to install this XMLTV grabber. \nThis grabber can provide listings for Austria, Canada, Denmark, Finland, France, Germany, Hungary, Italy, Japan, Netherlands, Norway, Romania, Spain, Sweden, UK and USA.";
+      this.DownloadUrls = new string[]
+                            {
+                              "http://umn.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip",
+                              "http://heanet.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip",
+                              "http://jaist.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip"
+                            };
+      this.UnZipToPath = mpTargetDir + @"\xmltv"; // fix so it dont creates the first dir.
+      this.UnzipToExcludeDir = "xmltv-0.5.37-win32";
+      this.ExecCommand = "";
+      this.ExecCmdArguments = "";
+      this.MoreInfoUrl = "http://www.maisenbachers.de/dokuw/glossary:xmltv";
+      this.Dock = DockStyle.Top;
+      this.Visible = true;
+    }
 
-		/// <summary>
-		/// Init this package..
-		/// </summary>
-		/// <param name="mpTargetDir"></param>
-		public override void Init(string mpTargetDir)
-		{
-			this.Title = "XMLTV";
-			this.Description = "If you want to download TV listings and use them within MediaPortal's Electronic Programming Guide (EPG) then you may want to install this XMLTV grabber. \nThis grabber can provide listings for Austria, Canada, Denmark, Finland, France, Germany, Hungary, Italy, Japan, Netherlands, Norway, Romania, Spain, Sweden, UK and USA.";
-			this.DownloadUrls = new string[] {"http://umn.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip", "http://heanet.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip", "http://jaist.dl.sourceforge.net/sourceforge/xmltv/xmltv-0.5.37-win32.zip"};
-			this.UnZipToPath = mpTargetDir + @"\xmltv"; // fix so it dont creates the first dir.
-			this.UnzipToExcludeDir="xmltv-0.5.37-win32";
-			this.ExecCommand = "";
-			this.ExecCmdArguments = "";
-			this.MoreInfoUrl = "http://www.maisenbachers.de/dokuw/glossary:xmltv";			
-			this.Dock=DockStyle.Top;
-			this.Visible=true;
-			
+    /// <summary>
+    /// called when some one checks the box
+    /// </summary>
+    public override void CheckedToInstall()
+    {
+      if (File.Exists(this.UnZipToPath + @"\xmltv.exe"))
+      {
+        DialogResult dr =
+          MessageBox.Show(
+            "MediaPortal has detected that XMLTV is already installed. \nTo remove the existing XMLTV, press Yes. \nTo continue the installation with your existing XMLTV setup press No",
+            "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-		}
-		/// <summary>
-		/// called when some one checks the box
-		/// </summary>
-		public override void CheckedToInstall()
-		{			
-			if(File.Exists(this.UnZipToPath+@"\xmltv.exe")) 
-			{
-				DialogResult dr = MessageBox.Show("MediaPortal has detected that XMLTV is already installed. \nTo remove the existing XMLTV, press Yes. \nTo continue the installation with your existing XMLTV setup press No","Warning",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
-				
-				if(dr.Equals(DialogResult.No))
-				{
-					//skip installation, go to next.
-					this.DoInstallation=false;
-					this.panPackage.Enabled=false;
-					this.ButtonAction=MP3PartInstaller.BUTTONACTION_DONTINSTALL;
-					
-				} 
-				else if(dr.Equals(DialogResult.Yes))
-				{
-					//cancel...stop! remove first.
-					this.DoInstallation=true;
-					this.panPackage.Enabled=true;
-					// remove (delete directory)
-					Directory.Delete(this.UnZipToPath,true);
-					this.ButtonAction=MP3PartInstaller.BUTTONACTION_INSTALL;
-				}
+        if (dr.Equals(DialogResult.No))
+        {
+          //skip installation, go to next.
+          this.DoInstallation = false;
+          this.panPackage.Enabled = false;
+          this.ButtonAction = BUTTONACTION_DONTINSTALL;
+        }
+        else if (dr.Equals(DialogResult.Yes))
+        {
+          //cancel...stop! remove first.
+          this.DoInstallation = true;
+          this.panPackage.Enabled = true;
+          // remove (delete directory)
+          Directory.Delete(this.UnZipToPath, true);
+          this.ButtonAction = BUTTONACTION_INSTALL;
+        }
+      }
+      else
+      {
+        this.DoInstallation = true;
+        this.panPackage.Enabled = true;
+        this.ButtonAction = BUTTONACTION_INSTALL;
+      }
+    }
 
-			} 
-			else
-			{
-				this.DoInstallation=true;
-				this.panPackage.Enabled=true;
-				this.ButtonAction=MP3PartInstaller.BUTTONACTION_INSTALL;
-			}
-
-		}
-		/// <summary>
-		/// calls when some one unchecks the box
-		/// </summary>
-		public override void UnCheckedToInstall()
-		{
-			this.ButtonAction=MP3PartInstaller.BUTTONACTION_NEXT;
-		}
-
-
-	}
+    /// <summary>
+    /// calls when some one unchecks the box
+    /// </summary>
+    public override void UnCheckedToInstall()
+    {
+      this.ButtonAction = BUTTONACTION_NEXT;
+    }
+  }
 }

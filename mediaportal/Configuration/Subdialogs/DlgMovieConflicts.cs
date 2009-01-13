@@ -24,34 +24,33 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Video.Database;
-using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>
   /// Summary description for DlgMovieConflicts.
   /// </summary>
-  public class DlgMovieConflicts : MediaPortal.UserInterface.Controls.MPConfigForm, IMDB.IProgress
+  public class DlgMovieConflicts : MPConfigForm, IMDB.IProgress
   {
-    private System.Windows.Forms.ListView listView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPButton button2;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTitle;
-    private MediaPortal.UserInterface.Controls.MPButton buttonFind;
+    private ListView listView1;
+    private ColumnHeader columnHeader1;
+    private MPButton button2;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPTextBox textBoxTitle;
+    private MPButton buttonFind;
     private DlgProgress progressDialog = new DlgProgress();
     private string newMovieToFind = string.Empty;
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public DlgMovieConflicts()
     {
@@ -84,15 +83,21 @@ namespace MediaPortal.Configuration.Sections
     {
       get
       {
-        if (listView1.SelectedIndices.Count <= 0) return 0;
+        if (listView1.SelectedIndices.Count <= 0)
+        {
+          return 0;
+        }
         return listView1.SelectedIndices[0];
       }
     }
+
     public void AddMovie(string movie)
     {
       listView1.Items.Add(movie);
     }
+
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -110,11 +115,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listView1
       // 
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+      this.listView1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                        {
+                                          this.columnHeader1
+                                        });
       this.listView1.Location = new System.Drawing.Point(8, 34);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(447, 281);
@@ -130,7 +139,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // button2
       // 
-      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.button2.Location = new System.Drawing.Point(399, 347);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(56, 23);
@@ -149,7 +160,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label2.Location = new System.Drawing.Point(7, 320);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(32, 17);
@@ -158,8 +171,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxTitle
       // 
-      this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTitle.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTitle.Location = new System.Drawing.Point(36, 320);
       this.textBoxTitle.Name = "textBoxTitle";
@@ -168,7 +183,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonFind
       // 
-      this.buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFind.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonFind.Location = new System.Drawing.Point(399, 319);
       this.buttonFind.Name = "buttonFind";
       this.buttonFind.Size = new System.Drawing.Size(56, 23);
@@ -194,24 +211,28 @@ namespace MediaPortal.Configuration.Sections
       this.Load += new System.EventHandler(this.DlgMovieConflicts_Load);
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void button2_Click(object sender, System.EventArgs e)
+    private void button2_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Close();
     }
 
-    private void buttonFind_Click(object sender, System.EventArgs e)
+    private void buttonFind_Click(object sender, EventArgs e)
     {
-      if (listView1.SelectedItems == null) return;
+      if (listView1.SelectedItems == null)
+      {
+        return;
+      }
       int index = 0;
       ListViewItem listItem = listView1.SelectedItems[0];
       if (textBoxTitle.Text == string.Empty)
       {
-        MessageBox.Show("Please select a movie", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
+        MessageBox.Show("Please select a movie", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        ;
         return;
       }
       progressDialog.Total = 1;
@@ -221,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       IMDBMovie movieDetails = new IMDBMovie();
       int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
       string path, filename;
-      MediaPortal.Util.Utils.Split(file, out path, out filename);
+      Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = textBoxTitle.Text;
@@ -249,28 +270,29 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (listView1.SelectedItems.Count > 0)
       {
         string strFileName = listView1.SelectedItems[0].Text;
         string strMovieName = string.Empty;
-        if (MediaPortal.Util.Utils.IsDVD(strFileName))
+        if (Util.Utils.IsDVD(strFileName))
         {
           //DVD
           string strDrive = strFileName.Substring(0, 2);
-          strMovieName = MediaPortal.Util.Utils.GetDriveName(strDrive);
+          strMovieName = Util.Utils.GetDriveName(strDrive);
         }
         else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
         {
           //DVD folder
           string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
-          strMovieName = System.IO.Path.GetFileName(dvdFolder);
+          strMovieName = Path.GetFileName(dvdFolder);
         }
         else
         {
           //Movie 
-          strMovieName = System.IO.Path.GetFileNameWithoutExtension(strFileName);
+          strMovieName = Path.GetFileNameWithoutExtension(strFileName);
         }
 
         textBoxTitle.Text = strMovieName;
@@ -282,6 +304,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region IMDB.IProgress
+
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -290,14 +313,18 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
       progressDialog.SetLine1(line1);
       progressDialog.SetLine2(line2);
       if (percent > 0)
+      {
         progressDialog.SetPercentage(percent);
+      }
       progressDialog.Update();
     }
+
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -307,6 +334,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       DialogResult result = progressDialog.ShowDialog(this);
@@ -317,6 +345,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -325,11 +354,13 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       MessageBox.Show("No IMDB info found!", fetcher.MovieName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       return false;
     }
+
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -339,6 +370,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       progressDialog.Instance = fetcher;
@@ -350,6 +382,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -358,6 +391,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -367,6 +401,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
       progressDialog.Instance = fetcher;
@@ -378,13 +413,16 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       return true;
     }
+
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      MessageBox.Show("Movie details could not be found.", fetcher.MovieName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      MessageBox.Show("Movie details could not be found.", fetcher.MovieName, MessageBoxButtons.OK,
+                      MessageBoxIcon.Exclamation);
       return true;
     }
 
@@ -403,7 +441,9 @@ namespace MediaPortal.Configuration.Sections
       DlgMovieList dlg = new DlgMovieList();
       dlg.Filename = fetcher.MovieName;
       for (int i = 0; i < fetcher.Count; ++i)
+      {
         dlg.AddMovie(fetcher[i].Title);
+      }
       DialogResult result = dlg.ShowDialog(this);
       this.Update();
       if (result == DialogResult.Cancel)
@@ -419,18 +459,22 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnScanStart(int total)
     {
       return true;
     }
+
     public bool OnScanEnd()
     {
       return true;
     }
+
     public bool OnScanIterating(int count)
     {
       return true;
     }
+
     public bool OnScanIterated(int count)
     {
       return true;
@@ -446,6 +490,5 @@ namespace MediaPortal.Configuration.Sections
         listView1.SelectedIndices.Add(0);
       }
     }
-
   }
 }

@@ -24,25 +24,25 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.ControlDevices;
 using System.Collections;
-using MediaPortal.InputDevices;
-using MediaPortal.Util;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ControlDevices
 {
   public static class ControlDevices
   {
     #region vars
-    private static System.Collections.Generic.List<IControlPlugin> _plugins;
-    private static System.Collections.Generic.List<IControlInput> _input;
-    private static System.Collections.Generic.List<IControlOutput> _output;
+
+    private static List<IControlPlugin> _plugins;
+    private static List<IControlInput> _input;
+    private static List<IControlOutput> _output;
 
     private static bool _initialized;
+
     #endregion
 
     #region Methods
@@ -65,15 +65,15 @@ namespace MediaPortal.ControlDevices
     private static void BuildControlStructure()
     {
       // Get all plugins
-      System.Collections.Generic.List<IControlPlugin> pluginInstances = PluginInstances();
+      List<IControlPlugin> pluginInstances = PluginInstances();
 
       // Initialize the arrays
-      _plugins = new System.Collections.Generic.List<IControlPlugin>();
-      _input = new System.Collections.Generic.List<IControlInput>();
-      _output = new System.Collections.Generic.List<IControlOutput>();
+      _plugins = new List<IControlPlugin>();
+      _input = new List<IControlInput>();
+      _output = new List<IControlOutput>();
 
       // Filter the ones that are enabled
-      System.Collections.Generic.IEnumerator<IControlPlugin> pluginIterator = pluginInstances.GetEnumerator();
+      IEnumerator<IControlPlugin> pluginIterator = pluginInstances.GetEnumerator();
       while (pluginIterator.MoveNext())
       {
         // Get the settings interface
@@ -81,7 +81,8 @@ namespace MediaPortal.ControlDevices
         IControlSettings settings = plugin.Settings;
         if (null == settings)
         {
-          Log.Error("ControlDevices: Error getting IControlSettings of {0} in {1}", ((Type)plugin).FullName, plugin.LibraryName);
+          Log.Error("ControlDevices: Error getting IControlSettings of {0} in {1}", ((Type) plugin).FullName,
+                    plugin.LibraryName);
           continue;
         }
         // Load the settings
@@ -94,7 +95,8 @@ namespace MediaPortal.ControlDevices
             IControlInput input = plugin.InputInterface;
             if (null == input)
             {
-              Log.Error("ControlDevices: Error getting IControlInput Interface of {0} in {1}", ((Type)plugin).FullName, plugin.LibraryName);
+              Log.Error("ControlDevices: Error getting IControlInput Interface of {0} in {1}", ((Type) plugin).FullName,
+                        plugin.LibraryName);
               continue;
             }
             _input.Add(input);
@@ -104,7 +106,8 @@ namespace MediaPortal.ControlDevices
             IControlOutput output = plugin.OutputInterface;
             if (null == output)
             {
-              Log.Error("ControlDevices: Error getting IControlOutput Interface of {0} in {1}", ((Type)plugin).FullName, plugin.LibraryName);
+              Log.Error("ControlDevices: Error getting IControlOutput Interface of {0} in {1}", ((Type) plugin).FullName,
+                        plugin.LibraryName);
               continue;
             }
             _output.Add(output);
@@ -124,7 +127,7 @@ namespace MediaPortal.ControlDevices
         DeInitialize();
       }
 
-      System.Collections.Generic.IEnumerator<IControlPlugin> pluginIterator = _plugins.GetEnumerator();
+      IEnumerator<IControlPlugin> pluginIterator = _plugins.GetEnumerator();
       while (pluginIterator.MoveNext())
       {
         // Get the settings interface
@@ -157,7 +160,7 @@ namespace MediaPortal.ControlDevices
         return;
       }
 
-      System.Collections.Generic.IEnumerator<IControlPlugin> pluginIterator = _plugins.GetEnumerator();
+      IEnumerator<IControlPlugin> pluginIterator = _plugins.GetEnumerator();
       while (pluginIterator.MoveNext())
       {
         // Get the settings interface
@@ -169,10 +172,10 @@ namespace MediaPortal.ControlDevices
 
     public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
-      System.Collections.Generic.IEnumerator<IControlInput> inputIterator = _input.GetEnumerator();
-      
+      IEnumerator<IControlInput> inputIterator = _input.GetEnumerator();
+
       action = null;
-      key = (char)0;
+      key = (char) 0;
       keyCode = Keys.Escape;
 
       while (inputIterator.MoveNext())
@@ -181,7 +184,7 @@ namespace MediaPortal.ControlDevices
         IControlInput input = inputIterator.Current;
         if (input.UseWndProc)
         {
-          if (input.WndProc(ref msg, out action, out  key, out keyCode))
+          if (input.WndProc(ref msg, out action, out key, out keyCode))
           {
             return true;
           }
@@ -194,12 +197,12 @@ namespace MediaPortal.ControlDevices
     /// Get an list of uninitialized controlplugins instances.
     /// </summary>
     /// <returns>list of uninitialized controlplugins instances</returns>
-    public static System.Collections.Generic.List<IControlPlugin> PluginInstances()
+    public static List<IControlPlugin> PluginInstances()
     {
       ArrayList cioPlugins = new ArrayList();
       cioPlugins.Add(Config.GetFile(Config.Dir.Base, "RemotePlugins.dll"));
 
-      System.Collections.Generic.List<IControlPlugin> pluginInstances = new System.Collections.Generic.List<IControlPlugin>();
+      List<IControlPlugin> pluginInstances = new List<IControlPlugin>();
 
       foreach (string plugin in cioPlugins)
       {
@@ -220,7 +223,9 @@ namespace MediaPortal.ControlDevices
               {
                 // an abstract class cannot be instanciated
                 if (type.IsAbstract)
+                {
                   continue;
+                }
 
                 // Try to locate the interface we're interested in
                 if (null != type.GetInterface("MediaPortal.ControlDevices.IControlPlugin"))
@@ -230,13 +235,15 @@ namespace MediaPortal.ControlDevices
                   instance = Activator.CreateInstance(type);
                   if (null == instance)
                   {
-                    Log.Error("ControlDevices: Error creating instance of {0} in control plugin {1}", type.FullName, pluginFileName);
+                    Log.Error("ControlDevices: Error creating instance of {0} in control plugin {1}", type.FullName,
+                              pluginFileName);
                     continue;
                   }
                   IControlPlugin controlPluginInterface = instance as IControlPlugin;
                   if (null == controlPluginInterface)
                   {
-                    Log.Error("ControlDevices: Error getting IControlPlugin of {0} in {1}", type.FullName, pluginFileName);
+                    Log.Error("ControlDevices: Error getting IControlPlugin of {0} in {1}", type.FullName,
+                              pluginFileName);
                     continue;
                   }
 
@@ -244,22 +251,25 @@ namespace MediaPortal.ControlDevices
                   pluginInstances.Add(controlPluginInterface);
                 }
               }
-              catch (Exception ex) 
+              catch (Exception ex)
               {
-                string message = String.Format("Plugin {0} is {1} incompatible with the current MediaPortal version!",type.FullName, pluginFileName);
-                MessageBox.Show(string.Format("An error occured while loading a plugin.\n\n{0}", message, "Control Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
+                string message = String.Format("Plugin {0} is {1} incompatible with the current MediaPortal version!",
+                                               type.FullName, pluginFileName);
+                MessageBox.Show(string.Format("An error occured while loading a plugin.\n\n{0}", message,
+                                              "Control Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
                 Log.Error("Remote: {0}", message);
                 Log.Error(ex);
                 continue;
               }
             }
           }
-
         }
         catch (Exception ex)
         {
-          string message = String.Format("Plugin file {0} broken or incompatible with the current MediaPortal version!", pluginFileName);
-          MessageBox.Show(string.Format("An error occured while loading a plugin.\n\n{0}", message, "Control Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
+          string message = String.Format(
+            "Plugin file {0} broken or incompatible with the current MediaPortal version!", pluginFileName);
+          MessageBox.Show(string.Format("An error occured while loading a plugin.\n\n{0}", message,
+                                        "Control Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
           Log.Error("Remote: {0}", message);
           Log.Error(ex);
         }
@@ -268,7 +278,6 @@ namespace MediaPortal.ControlDevices
       }
       return pluginInstances;
     }
-
 
     #endregion Methods
   }

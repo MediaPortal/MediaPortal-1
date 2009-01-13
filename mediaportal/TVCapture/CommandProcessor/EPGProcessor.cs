@@ -24,39 +24,25 @@
 #endregion
 
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
-using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
-  class EPGProcessor
+  internal class EPGProcessor
   {
-    bool _autoGrabEpg = false;
-    DateTime _epgTimer = DateTime.MinValue;
-    List<TVChannel> _tvChannelsList = new List<TVChannel>();
+    private bool _autoGrabEpg = false;
+    private DateTime _epgTimer = DateTime.MinValue;
+    private List<TVChannel> _tvChannelsList = new List<TVChannel>();
 
     public EPGProcessor()
     {
       TVDatabase.GetChannels(ref _tvChannelsList);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _autoGrabEpg = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
       }
@@ -64,9 +50,15 @@ namespace MediaPortal.TV.Recording
 
     public void Process(CommandProcessor handler)
     {
-      if (_autoGrabEpg == false) return;
+      if (_autoGrabEpg == false)
+      {
+        return;
+      }
       TimeSpan ts = DateTime.Now - _epgTimer;
-      if (ts.TotalSeconds < 60) return;
+      if (ts.TotalSeconds < 60)
+      {
+        return;
+      }
 
       //Log.WriteFile(LogType.EPG,"epg grabber process");
       bool isGrabbing = false;
@@ -74,8 +66,14 @@ namespace MediaPortal.TV.Recording
       {
         TVCaptureDevice card = handler.TVCards[counter];
         //card is empty
-        if (card.Network == NetworkType.Analog) continue;
-        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View) continue;
+        if (card.Network == NetworkType.Analog)
+        {
+          continue;
+        }
+        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View)
+        {
+          continue;
+        }
 
         if (card.IsEpgGrabbing)
         {
@@ -90,22 +88,40 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      if (isGrabbing) return;
+      if (isGrabbing)
+      {
+        return;
+      }
 
       for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         TVCaptureDevice card = handler.TVCards[i];
         //card is empty
-        if (card.Network == NetworkType.Analog) continue;
-        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View) continue;
+        if (card.Network == NetworkType.Analog)
+        {
+          continue;
+        }
+        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View)
+        {
+          continue;
+        }
         //      Log.Info("card :{0} idle", card.ID);
         foreach (TVChannel chan in _tvChannelsList)
         {
-          if (handler.IsBusy) break;
-          if (!chan.AutoGrabEpg) continue;
+          if (handler.IsBusy)
+          {
+            break;
+          }
+          if (!chan.AutoGrabEpg)
+          {
+            continue;
+          }
           if (handler.TVCards.Count != 1)
           {
-            if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) == false) continue;
+            if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) == false)
+            {
+              continue;
+            }
           }
 
           //Log.WriteFile(LogType.EPG, "  card:{0} ch:{1} epg hrs:{2} last:{3} {4} hrs:{5}", card.ID,chan.Name,chan.EpgHours, chan.LastDateTimeEpgGrabbed.ToShortDateString(), chan.LastDateTimeEpgGrabbed.ToLongTimeString(),ts.TotalHours);
@@ -117,10 +133,12 @@ namespace MediaPortal.TV.Recording
             if (ts.TotalHours > 2)
             {
               //grab the epg
-              Log.WriteFile(LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
-                          card.CommercialName,
-                          chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),
-                           chan.LastDateTimeEpgGrabbed.Date.ToShortDateString(), chan.LastDateTimeEpgGrabbed.Date.ToLongTimeString());
+              Log.WriteFile(LogType.EPG,
+                            "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
+                            card.CommercialName,
+                            chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),
+                            chan.LastDateTimeEpgGrabbed.Date.ToShortDateString(),
+                            chan.LastDateTimeEpgGrabbed.Date.ToLongTimeString());
               if (card.GrabEpg(chan))
               {
                 chan.LastDateTimeEpgGrabbed = DateTime.Now;

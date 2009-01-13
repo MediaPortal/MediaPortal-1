@@ -12,10 +12,12 @@ namespace MediaPortal.Configuration
     /// Specifies the column to be sorted
     /// </summary>
     private int ColumnToSort;
+
     /// <summary>
     /// Specifies the order in which to sort (i.e. 'Ascending').
     /// </summary>
     private SortOrder OrderOfSort;
+
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>
@@ -47,21 +49,23 @@ namespace MediaPortal.Configuration
       int compareResult;
 
       // Cast the objects to be compared to ListViewItem objects
-      ListViewItem listviewX = (ListViewItem)x;
-      ListViewItem listviewY = (ListViewItem)y;
+      ListViewItem listviewX = (ListViewItem) x;
+      ListViewItem listviewY = (ListViewItem) y;
 
       if (_isColumnNumeric)
       {
         string xStr = listviewX.SubItems[ColumnToSort].Text;
         string yStr = listviewY.SubItems[ColumnToSort].Text;
-        char[] delim = new char[] { '/' };
+        char[] delim = new char[] {'/'};
 
         if (xStr.IndexOf("/") != -1)
         {
           string[] split = xStr.Split(delim);
 
           if (split.Length > 0)
+          {
             xStr = split[split.Length - 1];
+          }
         }
 
         if (yStr.IndexOf("/") != -1)
@@ -69,7 +73,9 @@ namespace MediaPortal.Configuration
           string[] split = yStr.Split(delim);
 
           if (split.Length > 0)
+          {
             yStr = split[split.Length - 1];
+          }
         }
 
         try
@@ -92,7 +98,8 @@ namespace MediaPortal.Configuration
       }
       else
       {
-        compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
+        compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text,
+                                              listviewY.SubItems[ColumnToSort].Text);
       }
 
       // Calculate correct return value based on object comparison
@@ -118,14 +125,8 @@ namespace MediaPortal.Configuration
     /// </summary>
     public int SortColumn
     {
-      set
-      {
-        ColumnToSort = value;
-      }
-      get
-      {
-        return ColumnToSort;
-      }
+      set { ColumnToSort = value; }
+      get { return ColumnToSort; }
     }
 
     /// <summary>
@@ -133,14 +134,8 @@ namespace MediaPortal.Configuration
     /// </summary>
     public SortOrder Order
     {
-      set
-      {
-        OrderOfSort = value;
-      }
-      get
-      {
-        return OrderOfSort;
-      }
+      set { OrderOfSort = value; }
+      get { return OrderOfSort; }
     }
 
     public bool IsColumnNumeric
@@ -149,6 +144,6 @@ namespace MediaPortal.Configuration
       get { return _isColumnNumeric; }
     }
 
-    bool _isColumnNumeric = false;
+    private bool _isColumnNumeric = false;
   }
 }

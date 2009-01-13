@@ -24,23 +24,10 @@
 #endregion
 
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using MediaPortal.Radio.Database;
-#endregion
 
+using MediaPortal.GUI.Library;
+
+#endregion
 
 namespace MediaPortal.GUI.Radio
 {
@@ -49,11 +36,11 @@ namespace MediaPortal.GUI.Radio
   /// </summary>
   public class GUIRadioGuide : GUIRadioGuideBase
   {
-
     public GUIRadioGuide() : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_RADIO_GUIDE;
+      GetID = (int) Window.WINDOW_RADIO_GUIDE;
     }
+
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");
@@ -63,11 +50,11 @@ namespace MediaPortal.GUI.Radio
 
     protected override void OnPageLoad()
     {
-      base.OnPageLoad();    }
+      base.OnPageLoad();
+    }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-
       base.OnPageDestroy(newWindowId);
     }
   }

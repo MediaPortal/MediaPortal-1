@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings
@@ -36,7 +34,7 @@ namespace MediaPortal.GUI.Settings
   {
     public GUISettingsScreen()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_SCREEN;
+      GetID = (int) Window.WINDOW_SETTINGS_SCREEN;
     }
 
     public override bool Init()
@@ -61,7 +59,6 @@ namespace MediaPortal.GUI.Settings
     {
       switch (message.Message)
       {
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
@@ -72,10 +69,8 @@ namespace MediaPortal.GUI.Settings
           {
           }
           break;
-
       }
       return base.OnMessage(message);
     }
-
   }
 }

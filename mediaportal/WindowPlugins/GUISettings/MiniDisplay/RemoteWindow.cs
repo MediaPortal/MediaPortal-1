@@ -25,25 +25,20 @@
 
 using System;
 using System.IO;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class RemoteWindow : GUIWindow
   {
-    [SkinControlAttribute(40)]
-    protected GUILabelControl label1 = null;
-    [SkinControlAttribute(50)]
-    protected GUIToggleButtonControl btnDisableRemote = null;
-    [SkinControlAttribute(51)]
-    protected GUIToggleButtonControl btnDisableRepeat = null;
-    [SkinControlAttribute(52)]
-    protected GUISelectButtonControl btnRepeatDelay = null;
-    [SkinControlAttribute(53)]
-    protected GUIButtonControl btnRemoteMapping =null;
+    [SkinControl(40)] protected GUILabelControl label1 = null;
+    [SkinControl(50)] protected GUIToggleButtonControl btnDisableRemote = null;
+    [SkinControl(51)] protected GUIToggleButtonControl btnDisableRepeat = null;
+    [SkinControl(52)] protected GUISelectButtonControl btnRepeatDelay = null;
+    [SkinControl(53)] protected GUIButtonControl btnRemoteMapping = null;
 
     private VLSYS_Mplay.RemoteControl RCSettings = new VLSYS_Mplay.RemoteControl();
 
@@ -90,9 +85,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
             VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping();
           }
           new InputMappingForm("VLSYS_Mplay").ShowDialog();
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Info("VLSYS_AdvancedSetupForm.btnRemoteSetup_Click() CAUGHT EXCEPTION: {0}", new object[] { exception });
+          Log.Info("VLSYS_AdvancedSetupForm.btnRemoteSetup_Click() CAUGHT EXCEPTION: {0}", new object[] {exception});
         }
       }
       base.OnClicked(controlId, control, actionType);
@@ -151,7 +147,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     private void SetRepeatDelay()
     {
-      if (btnRepeatDelay !=null)
+      if (btnRepeatDelay != null)
       {
         GUIControl.ClearControl(this.GetID, this.btnRepeatDelay.GetID);
         GUIControl.AddItemLabelControl(this.GetID, this.btnRepeatDelay.GetID, "0");
@@ -190,4 +186,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

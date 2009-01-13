@@ -23,8 +23,9 @@
 
 #endregion
 
-using MediaPortal.Util;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.ControlDevices
 {
@@ -41,11 +42,13 @@ namespace MediaPortal.ControlDevices
     /// <summary>
     /// 
     /// </summary>
-    bool _verbose;
+    private bool _verbose;
 
-    private AbstractControlSettings() { }
+    private AbstractControlSettings()
+    {
+    }
 
-    public AbstractControlSettings(IControlPlugin plugin,string prefix)
+    public AbstractControlSettings(IControlPlugin plugin, string prefix)
     {
       _plugin = plugin;
       _prefix = prefix;
@@ -94,21 +97,21 @@ namespace MediaPortal.ControlDevices
       SetValueAsBool("verbose", _verbose);
     }
 
-    public abstract System.Windows.Forms.UserControl SettingsPanel { get; }
+    public abstract UserControl SettingsPanel { get; }
 
     public abstract void ShowAdvancedSettings();
 
     protected void SetValueAsBool(string name, bool val)
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         xmlwriter.SetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, val);
       }
     }
 
-    protected void SetValue(string name,object val)
+    protected void SetValue(string name, object val)
     {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         xmlwriter.SetValue(CONFIG_SECTION, _prefix + "_" + name, val);
       }
@@ -117,7 +120,7 @@ namespace MediaPortal.ControlDevices
 
     protected object GetValue(string name)
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         return xmlreader.GetValue(CONFIG_SECTION, _prefix + "_" + name);
       }
@@ -125,7 +128,7 @@ namespace MediaPortal.ControlDevices
 
     protected bool GetValueAsBool(string name, bool def)
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, CONFIG_FILE)))
       {
         return xmlreader.GetValueAsBool(CONFIG_SECTION, _prefix + "_" + name, def);
       }

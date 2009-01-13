@@ -24,14 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using MediaPortal.GUI.Library;
-using System.Windows.Forms;
 using System.Threading;
-
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using Timer=System.Threading.Timer;
 
 namespace ProcessPlugins.TvMovie
 {
@@ -40,7 +38,7 @@ namespace ProcessPlugins.TvMovie
   {
     private TvMovieDatabase _database;
     private TvMovieSchedules _schedules;
-    private System.Threading.Timer _epgImportTimer;
+    private Timer _epgImportTimer;
     private bool _isImporting = false;
 
     private void ImportThread()
@@ -104,7 +102,10 @@ namespace ProcessPlugins.TvMovie
         setup.ShowDialog();
       }
       else
-        MessageBox.Show("Can't find TV Movie Clickfinder database.\nPlease install TV Movie Clickfinder first.", "Error locating Clickfinder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      {
+        MessageBox.Show("Can't find TV Movie Clickfinder database.\nPlease install TV Movie Clickfinder first.",
+                        "Error locating Clickfinder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
 
     public bool CanEnable()
@@ -127,7 +128,8 @@ namespace ProcessPlugins.TvMovie
       return true;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = null;
       strButtonImage = null;
@@ -139,11 +141,11 @@ namespace ProcessPlugins.TvMovie
     #endregion
 
     #region IPlugin Members
-    
+
     public void Start()
     {
       TimerCallback timerCallBack = new TimerCallback(StartImportThread);
-      _epgImportTimer = new System.Threading.Timer(timerCallBack, null, 10000, 1800000);
+      _epgImportTimer = new Timer(timerCallBack, null, 10000, 1800000);
 
       _schedules = new TvMovieSchedules();
       _schedules.Start();
@@ -152,7 +154,9 @@ namespace ProcessPlugins.TvMovie
     public void Stop()
     {
       if (_database != null)
+      {
         _database.Canceled = true;
+      }
       _epgImportTimer.Dispose();
       _schedules.Stop();
     }

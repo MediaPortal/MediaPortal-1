@@ -26,13 +26,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Xml;
-
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using MediaPortal.EPG.config;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
+using MediaPortal.Util;
 using MediaPortal.WebEPG.Config.Grabber;
 
 namespace WindowPlugins.GUISettings.Epg
@@ -42,19 +45,14 @@ namespace WindowPlugins.GUISettings.Epg
   /// </summary>
   public class GUIEpgSelectBase : GUIWindow, IComparer<GUIListItem>
   {
-    [SkinControlAttribute(24)]
-    protected GUIListControl listGrabbers = null;
-    [SkinControlAttribute(2)]
-    protected GUILabelControl lblLine1 = null;
-    [SkinControlAttribute(3)]
-    protected GUILabelControl lblLine2 = null;
-    [SkinControlAttribute(27)]
-    protected GUIButtonControl btnManual = null;
+    [SkinControl(24)] protected GUIListControl listGrabbers = null;
+    [SkinControl(2)] protected GUILabelControl lblLine1 = null;
+    [SkinControl(3)] protected GUILabelControl lblLine2 = null;
+    [SkinControl(27)] protected GUIButtonControl btnManual = null;
 
     protected bool epgGrabberSelected = false;
     protected ChannelsList _channelList;
     protected List<ChannelGrabberInfo> _epgChannels;
-
 
 
     protected override void OnPageLoad()
@@ -80,7 +78,7 @@ namespace WindowPlugins.GUISettings.Epg
       {
         try
         {
-          System.Globalization.RegionInfo rInfo = new System.Globalization.RegionInfo(country[i]);
+          RegionInfo rInfo = new RegionInfo(country[i]);
           GUIListItem item = new GUIListItem();
           item.Label = rInfo.DisplayName;
           item.Path = country[i];
@@ -92,20 +90,25 @@ namespace WindowPlugins.GUISettings.Epg
           listGrabbers.Add(item);
         }
         catch (Exception)
-        { }
+        {
+        }
       }
 
       listGrabbers.Sort(this);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listGrabbers)
       {
         if (!epgGrabberSelected)
+        {
           OnChangeGrabber(listGrabbers.SelectedListItem);
+        }
         else
+        {
           OnMap();
+        }
       }
       if (control == btnManual)
       {
@@ -118,11 +121,13 @@ namespace WindowPlugins.GUISettings.Epg
     protected void OnChangeGrabber(GUIListItem item)
     {
       if (item == null)
+      {
         return;
+      }
 
       // Channel List
       _epgChannels = _channelList.GetChannelArrayList(item.Path);
-      string country =  GUIPropertyManager.GetProperty("#WizardCountryCode");
+      string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
 
       ShowChannelMappingList(country);
       epgGrabberSelected = true;
@@ -161,9 +166,9 @@ namespace WindowPlugins.GUISettings.Epg
           {
             if (String.Compare(data.DisplayName, ch.Label, true) == 0)
             {
-              for (int i=0; i < _epgChannels.Count;++i)
+              for (int i = 0; i < _epgChannels.Count; ++i)
               {
-                ChannelGrabberInfo info =(ChannelGrabberInfo)_epgChannels[i];
+                ChannelGrabberInfo info = (ChannelGrabberInfo) _epgChannels[i];
                 if (info.ChannelID == data.ChannelID)
                 {
                   ch.ItemId = i;
@@ -189,10 +194,13 @@ namespace WindowPlugins.GUISettings.Epg
 
     protected void MapChannels()
     {
-      if (epgGrabberSelected == false) return;
+      if (epgGrabberSelected == false)
+      {
+        return;
+      }
 
       EPGConfig config = new EPGConfig(@"webepg");
-      
+
 
       config.MaxGrab = 7;
 
@@ -217,7 +225,6 @@ namespace WindowPlugins.GUISettings.Epg
           //MessageBox.Show("Your mapping is invalid! Error code: " + i );
           Log.Error("GUIWizard: Invalid mapping!", ex);
         }
-
       }
       config.Save();
     }
@@ -225,11 +232,14 @@ namespace WindowPlugins.GUISettings.Epg
     protected void OnMap()
     {
       GUIListItem item = listGrabbers.SelectedListItem;
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
 
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+      dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
       dlg.ShowQuickNumbers = false;
 
       dlg.Add("Delete");
@@ -239,14 +249,20 @@ namespace WindowPlugins.GUISettings.Epg
       foreach (ChannelGrabberInfo chan in _epgChannels)
       {
         dlg.Add(chan.FullName);
-        if (chan.FullName == item.Label2) selected = count;
+        if (chan.FullName == item.Label2)
+        {
+          selected = count;
+        }
         count++;
       }
 
       dlg.SelectedLabel = selected;
       dlg.ShowQuickNumbers = false;
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= _epgChannels.Count + 1) return;
+      if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= _epgChannels.Count + 1)
+      {
+        return;
+      }
       if (dlg.SelectedLabel == 0)
       {
         item.Label2 = "";
@@ -254,7 +270,7 @@ namespace WindowPlugins.GUISettings.Epg
       }
       else
       {
-        ChannelGrabberInfo selChannel = (ChannelGrabberInfo)_epgChannels[dlg.SelectedLabel - 1];
+        ChannelGrabberInfo selChannel = (ChannelGrabberInfo) _epgChannels[dlg.SelectedLabel - 1];
         item.Label2 = selChannel.FullName;
         item.Path = selChannel.ChannelID;
         item.ItemId = dlg.SelectedLabel - 1;
@@ -263,7 +279,7 @@ namespace WindowPlugins.GUISettings.Epg
 
     protected void ShowError(string line1, string line2)
     {
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       pDlgOK.SetHeading(608);
       pDlgOK.SetLine(1, line1);
       pDlgOK.SetLine(2, line2);
@@ -275,13 +291,13 @@ namespace WindowPlugins.GUISettings.Epg
     protected void OnManual()
     {
       string _strTVGuideFile;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-        _strTVGuideFile = MediaPortal.Util.Utils.RemoveTrailingSlash(_strTVGuideFile);
+        _strTVGuideFile = Utils.RemoveTrailingSlash(_strTVGuideFile);
         _strTVGuideFile += @"\tvguide.xml";
       }
-      if (!System.IO.File.Exists(_strTVGuideFile))
+      if (!File.Exists(_strTVGuideFile))
       {
         ShowError("Unable to open tvguide.xml from", _strTVGuideFile);
         LoadGrabbers();
@@ -316,7 +332,9 @@ namespace WindowPlugins.GUISettings.Epg
           XmlNode nodeId = nodeChannel.Attributes.GetNamedItem("id");
           XmlNode nodeName = nodeChannel.SelectSingleNode("display-name");
           if (nodeName == null)
+          {
             nodeName = nodeChannel.SelectSingleNode("Display-Name");
+          }
           if (nodeName != null && nodeName.InnerText != null)
           {
             GUIListItem ch = new GUIListItem();
@@ -334,6 +352,7 @@ namespace WindowPlugins.GUISettings.Epg
         }
       }
     }
+
     #region IComparer Members
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -342,7 +361,6 @@ namespace WindowPlugins.GUISettings.Epg
       //			TVChannel ch2=(TVChannel)y;
       //			return String.Compare(ch1.Name,ch2.Name,true);
       return String.Compare(item1.Label, item2.Label, true);
-
     }
 
     #endregion

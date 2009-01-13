@@ -24,18 +24,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersInterVideoEncoder : MediaPortal.Configuration.SectionSettings
+  public class FiltersInterVideoEncoder : SectionSettings
   {
     private Int32 _regQuality;
     private Int32 _regMode;
@@ -44,31 +41,31 @@ namespace MediaPortal.Configuration.Sections
     private Int32 _regVideoBitRate;
     private Int32 _regVideoPeakBitRate;
     private int _regFrequecy;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrameRate;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel FrameRate;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAudioBitrate;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrequency;
-    private MediaPortal.UserInterface.Controls.MPLabel SampleFrequency;
-    private MediaPortal.UserInterface.Controls.MPLabel AudioBitrate;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAspectRatio;
-    private MediaPortal.UserInterface.Controls.MPLabel EncoderQuality;
-    private MediaPortal.UserInterface.Controls.MPLabel VideoFormat;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxEncoderQuality;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxVideoFormat;
-    private MediaPortal.UserInterface.Controls.MPLabel AspectRatio;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityGood;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityHigh;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeMono;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeDualChannel;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeJointStereo;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeStereo;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityLow;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityMedium;
-    private MediaPortal.UserInterface.Controls.MPGroupBox AudioQuality;
-    private MediaPortal.UserInterface.Controls.MPGroupBox AudioMode;
-    private System.ComponentModel.IContainer components = null;
+    private MPComboBox comboBoxFrameRate;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel FrameRate;
+    private MPGroupBox mpGroupBox2;
+    private MPComboBox comboBoxAudioBitrate;
+    private MPComboBox comboBoxFrequency;
+    private MPLabel SampleFrequency;
+    private MPLabel AudioBitrate;
+    private MPComboBox comboBoxAspectRatio;
+    private MPLabel EncoderQuality;
+    private MPLabel VideoFormat;
+    private MPComboBox comboBoxEncoderQuality;
+    private MPComboBox comboBoxVideoFormat;
+    private MPLabel AspectRatio;
+    private MPRadioButton radioButtonQualityGood;
+    private MPRadioButton radioButtonQualityHigh;
+    private MPRadioButton radioButtonModeMono;
+    private MPRadioButton radioButtonModeDualChannel;
+    private MPRadioButton radioButtonModeJointStereo;
+    private MPRadioButton radioButtonModeStereo;
+    private MPRadioButton radioButtonQualityLow;
+    private MPRadioButton radioButtonQualityMedium;
+    private MPGroupBox AudioQuality;
+    private MPGroupBox AudioMode;
+    private IContainer components = null;
 
     /// <summary>
     /// 
@@ -104,6 +101,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -194,7 +192,8 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonQualityMedium.TabStop = true;
       this.radioButtonQualityMedium.Text = "Medium";
       this.radioButtonQualityMedium.UseVisualStyleBackColor = true;
-      this.radioButtonQualityMedium.CheckedChanged += new System.EventHandler(this.radioButtonQualityMedium_CheckedChanged);
+      this.radioButtonQualityMedium.CheckedChanged +=
+        new System.EventHandler(this.radioButtonQualityMedium_CheckedChanged);
       // 
       // radioButtonQualityGood
       // 
@@ -245,11 +244,13 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxFrequency.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxFrequency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrequency.DropDownWidth = 125;
-      this.comboBoxFrequency.Items.AddRange(new object[] {
-            "From Source",
-            "44.1 kHz",
-            "48 kHz",
-            "32 kHz"});
+      this.comboBoxFrequency.Items.AddRange(new object[]
+                                              {
+                                                "From Source",
+                                                "44.1 kHz",
+                                                "48 kHz",
+                                                "32 kHz"
+                                              });
       this.comboBoxFrequency.Location = new System.Drawing.Point(62, 135);
       this.comboBoxFrequency.Name = "comboBoxFrequency";
       this.comboBoxFrequency.Size = new System.Drawing.Size(125, 21);
@@ -260,14 +261,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxAudioBitrate.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAudioBitrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxAudioBitrate.Items.AddRange(new object[] {
-            "128",
-            "160",
-            "192",
-            "224",
-            "256",
-            "320",
-            "384"});
+      this.comboBoxAudioBitrate.Items.AddRange(new object[]
+                                                 {
+                                                   "128",
+                                                   "160",
+                                                   "192",
+                                                   "224",
+                                                   "256",
+                                                   "320",
+                                                   "384"
+                                                 });
       this.comboBoxAudioBitrate.Location = new System.Drawing.Point(62, 57);
       this.comboBoxAudioBitrate.Name = "comboBoxAudioBitrate";
       this.comboBoxAudioBitrate.Size = new System.Drawing.Size(125, 21);
@@ -311,7 +314,8 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonModeDualChannel.TabStop = true;
       this.radioButtonModeDualChannel.Text = "Dual Channel";
       this.radioButtonModeDualChannel.UseVisualStyleBackColor = true;
-      this.radioButtonModeDualChannel.CheckedChanged += new System.EventHandler(this.radioButtonModeDualChannel_CheckedChanged);
+      this.radioButtonModeDualChannel.CheckedChanged +=
+        new System.EventHandler(this.radioButtonModeDualChannel_CheckedChanged);
       // 
       // radioButtonModeMono
       // 
@@ -337,7 +341,8 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonModeJointStereo.TabStop = true;
       this.radioButtonModeJointStereo.Text = "Joint Stereo";
       this.radioButtonModeJointStereo.UseVisualStyleBackColor = true;
-      this.radioButtonModeJointStereo.CheckedChanged += new System.EventHandler(this.radioButtonModeJointStereo_CheckedChanged);
+      this.radioButtonModeJointStereo.CheckedChanged +=
+        new System.EventHandler(this.radioButtonModeJointStereo_CheckedChanged);
       // 
       // mpGroupBox1
       // 
@@ -380,30 +385,36 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxEncoderQuality.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxEncoderQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxEncoderQuality.FormattingEnabled = true;
-      this.comboBoxEncoderQuality.Items.AddRange(new object[] {
-            "Low",
-            "Medium",
-            "High"});
+      this.comboBoxEncoderQuality.Items.AddRange(new object[]
+                                                   {
+                                                     "Low",
+                                                     "Medium",
+                                                     "High"
+                                                   });
       this.comboBoxEncoderQuality.Location = new System.Drawing.Point(296, 105);
       this.comboBoxEncoderQuality.Name = "comboBoxEncoderQuality";
       this.comboBoxEncoderQuality.Size = new System.Drawing.Size(121, 21);
       this.comboBoxEncoderQuality.TabIndex = 9;
-      this.comboBoxEncoderQuality.SelectedIndexChanged += new System.EventHandler(this.comboBoxEncoderQuality_SelectedIndexChanged);
+      this.comboBoxEncoderQuality.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxEncoderQuality_SelectedIndexChanged);
       // 
       // comboBoxVideoFormat
       // 
       this.comboBoxVideoFormat.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxVideoFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxVideoFormat.FormattingEnabled = true;
-      this.comboBoxVideoFormat.Items.AddRange(new object[] {
-            "NTSC",
-            "PAL",
-            "SECAM"});
+      this.comboBoxVideoFormat.Items.AddRange(new object[]
+                                                {
+                                                  "NTSC",
+                                                  "PAL",
+                                                  "SECAM"
+                                                });
       this.comboBoxVideoFormat.Location = new System.Drawing.Point(296, 51);
       this.comboBoxVideoFormat.Name = "comboBoxVideoFormat";
       this.comboBoxVideoFormat.Size = new System.Drawing.Size(121, 21);
       this.comboBoxVideoFormat.TabIndex = 8;
-      this.comboBoxVideoFormat.SelectedIndexChanged += new System.EventHandler(this.comboBoxVideoFormat_SelectedIndexChanged);
+      this.comboBoxVideoFormat.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxVideoFormat_SelectedIndexChanged);
       // 
       // AspectRatio
       // 
@@ -419,15 +430,18 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxAspectRatio.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAspectRatio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAspectRatio.FormattingEnabled = true;
-      this.comboBoxAspectRatio.Items.AddRange(new object[] {
-            "square",
-            "4 : 3",
-            "16 : 9"});
+      this.comboBoxAspectRatio.Items.AddRange(new object[]
+                                                {
+                                                  "square",
+                                                  "4 : 3",
+                                                  "16 : 9"
+                                                });
       this.comboBoxAspectRatio.Location = new System.Drawing.Point(62, 105);
       this.comboBoxAspectRatio.Name = "comboBoxAspectRatio";
       this.comboBoxAspectRatio.Size = new System.Drawing.Size(125, 21);
       this.comboBoxAspectRatio.TabIndex = 6;
-      this.comboBoxAspectRatio.SelectedIndexChanged += new System.EventHandler(this.comboBoxAspectRatio_SelectedIndexChanged);
+      this.comboBoxAspectRatio.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxAspectRatio_SelectedIndexChanged);
       // 
       // FrameRate
       // 
@@ -443,9 +457,11 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxFrameRate.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxFrameRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxFrameRate.FormattingEnabled = true;
-      this.comboBoxFrameRate.Items.AddRange(new object[] {
-            "25.00 fps",
-            "29.97 fps"});
+      this.comboBoxFrameRate.Items.AddRange(new object[]
+                                              {
+                                                "25.00 fps",
+                                                "29.97 fps"
+                                              });
       this.comboBoxFrameRate.Location = new System.Drawing.Point(62, 51);
       this.comboBoxFrameRate.Name = "comboBoxFrameRate";
       this.comboBoxFrameRate.Size = new System.Drawing.Size(125, 21);
@@ -467,8 +483,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void LoadSettings()
@@ -476,12 +492,14 @@ namespace MediaPortal.Configuration.Sections
       Int32 regValue;
 
       #region Video Settings
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Video"))
+      {
         if (subkey != null)
         {
           try
           {
-            regValue = (Int32)subkey.GetValue("VideoFrameRate", 3);
+            regValue = (Int32) subkey.GetValue("VideoFrameRate", 3);
             switch (regValue)
             {
               case 3:
@@ -497,7 +515,7 @@ namespace MediaPortal.Configuration.Sections
             // if (regValue == 3 || regValue == 4) comboBoxFrameRate.SelectedIndex = regValue - 3;
             // else comboBoxFrameRate.SelectedIndex = 0;
 
-            regValue = (Int32)subkey.GetValue("VideoAspectRatio", 2);
+            regValue = (Int32) subkey.GetValue("VideoAspectRatio", 2);
             switch (regValue)
             {
               case 1:
@@ -513,7 +531,7 @@ namespace MediaPortal.Configuration.Sections
             // if (regValue >= 1 && regValue <= 3) comboBoxAspectRatio.SelectedIndex = regValue - 1;
             // else comboBoxAspectRatio.SelectedIndex = 1;
 
-            regValue = (Int32)subkey.GetValue("VideoFormat", 1);
+            regValue = (Int32) subkey.GetValue("VideoFormat", 1);
             switch (regValue)
             {
               case 1:
@@ -534,7 +552,7 @@ namespace MediaPortal.Configuration.Sections
             //if (regValue == 3) comboBoxVideoFormat.SelectedIndex = 2;
             //else comboBoxVideoFormat.SelectedIndex = 1;
 
-            regValue = (Int32)subkey.GetValue("VideoBitRate", 1);
+            regValue = (Int32) subkey.GetValue("VideoBitRate", 1);
             switch (regValue)
             {
               case 2000:
@@ -559,15 +577,19 @@ namespace MediaPortal.Configuration.Sections
           {
           }
         }
+      }
+
       #endregion
 
       #region Audio Settings
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Audio"))
+      {
         if (subkey != null)
         {
           try
           {
-            switch ((Int32)subkey.GetValue("MPEGAudioBitRate", 2))
+            switch ((Int32) subkey.GetValue("MPEGAudioBitRate", 2))
             {
               case 128:
                 comboBoxAudioBitrate.SelectedIndex = 0;
@@ -595,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
 
-            Int32 regSamplingFreq = (Int32)subkey.GetValue("MPEGAudioSamplingFreq", 0);
+            Int32 regSamplingFreq = (Int32) subkey.GetValue("MPEGAudioSamplingFreq", 0);
             switch (regSamplingFreq)
             {
               case 0:
@@ -609,13 +631,13 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
 
-            Int32 regAudioQuality = (Int32)subkey.GetValue("MPEGAudioQuality", 75);
+            Int32 regAudioQuality = (Int32) subkey.GetValue("MPEGAudioQuality", 75);
             radioButtonQualityHigh.Checked = (regAudioQuality == 100);
             radioButtonQualityGood.Checked = (regAudioQuality == 75);
             radioButtonQualityMedium.Checked = (regAudioQuality == 50);
             radioButtonQualityLow.Checked = (regAudioQuality == 25);
 
-            Int32 regSystemMode = (Int32)subkey.GetValue("MPEGAudioSystemMode", 0);
+            Int32 regSystemMode = (Int32) subkey.GetValue("MPEGAudioSystemMode", 0);
             radioButtonModeStereo.Checked = (regSystemMode == 0);
             radioButtonModeJointStereo.Checked = (regSystemMode == 1);
             radioButtonModeDualChannel.Checked = (regSystemMode == 2);
@@ -625,13 +647,17 @@ namespace MediaPortal.Configuration.Sections
           {
           }
         }
+      }
+
       #endregion
     }
 
     public override void SaveSettings()
     {
       #region Video Settings
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Video"))
+      {
         if (subkey != null)
         {
           // Framerate - 25 or 29.97 fps
@@ -695,10 +721,14 @@ namespace MediaPortal.Configuration.Sections
             subkey.SetValue("VideoHeight", 576);
           }
         }
+      }
+
       #endregion
 
       #region Audio Settings
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Audio"))
+      {
         if (subkey != null)
         {
           // Audio BitRate - 128 - 384 kbit/s
@@ -759,31 +789,40 @@ namespace MediaPortal.Configuration.Sections
           subkey.SetValue("MPEGAudioRealtimeEncode", 1);
           subkey.SetValue("MPEGAudioForceNonRealtime", 0);
         }
+      }
+
       #endregion
 
       #region Mux
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Mux"))
+      {
         if (subkey != null)
         {
           // Here we just ensure the InterVideo Mux is set to MPEG2 & Realtime Encoding
           subkey.SetValue("MuxMpeg2Mode", 1);
           subkey.SetValue("MuxRealtimeEncode", 1);
         }
+      }
+
       #endregion
     }
 
     private void comboBoxFrameRate_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (comboBoxFrameRate.SelectedIndex == 0)
+      {
         _regFrameRate = 3;
+      }
 
       if (comboBoxFrameRate.SelectedIndex == 1)
+      {
         _regFrameRate = 4;
+      }
     }
 
     private void comboBoxVideoFormat_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     private void comboBoxAspectRatio_SelectedIndexChanged(object sender, EventArgs e)
@@ -821,43 +860,66 @@ namespace MediaPortal.Configuration.Sections
 
     private void radioButtonQualityHigh_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonQualityHigh.Checked) _regQuality = 100;
+      if (radioButtonQualityHigh.Checked)
+      {
+        _regQuality = 100;
+      }
     }
 
     private void radioButtonQualityGood_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonQualityGood.Checked) _regQuality = 75;
+      if (radioButtonQualityGood.Checked)
+      {
+        _regQuality = 75;
+      }
     }
 
     private void radioButtonQualityMedium_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonQualityMedium.Checked) _regQuality = 50;
+      if (radioButtonQualityMedium.Checked)
+      {
+        _regQuality = 50;
+      }
     }
 
     private void radioButtonQualityLow_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonQualityLow.Checked) _regQuality = 25;
+      if (radioButtonQualityLow.Checked)
+      {
+        _regQuality = 25;
+      }
     }
 
     private void radioButtonModeStereo_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonModeStereo.Checked) _regMode = 0;
+      if (radioButtonModeStereo.Checked)
+      {
+        _regMode = 0;
+      }
     }
 
     private void radioButtonModeJointStereo_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonModeJointStereo.Checked) _regMode = 1;
+      if (radioButtonModeJointStereo.Checked)
+      {
+        _regMode = 1;
+      }
     }
 
     private void radioButtonModeDualChannel_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonModeDualChannel.Checked) _regMode = 2;
+      if (radioButtonModeDualChannel.Checked)
+      {
+        _regMode = 2;
+      }
     }
 
     private void radioButtonModeMono_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonModeMono.Checked) _regMode = 3;
+      if (radioButtonModeMono.Checked)
+      {
+        _regMode = 3;
+      }
     }
-
   }
 }

@@ -24,25 +24,29 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
+using System.Net;
 using System.Threading;
+using AWS;
+using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using Image=System.Drawing.Image;
 
 namespace MediaPortal.Music.Amazon
 {
   public class AmazonWebservice
   {
     public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
+
     public event FindCoverArtProgressHandler FindCoverArtProgress;
 
     public delegate void FindCoverArtDoneHandler(AmazonWebservice aws, EventArgs e);
+
     public event FindCoverArtDoneHandler FindCoverArtDone;
     private const string _AWSAccessKeyID = "0XCDYPB7YGRYE8T6G302";
 
-    private int _MaxSearchResultItems = 8;  // The max number of matching results we want to grab (-1 = unlimited)
+    private int _MaxSearchResultItems = 8; // The max number of matching results we want to grab (-1 = unlimited)
     private bool _AbortGrab = false;
     //private bool _GrabberRunning = false;
 
@@ -59,7 +63,9 @@ namespace MediaPortal.Music.Amazon
       set
       {
         if (value < -1)
+        {
           value = -1;
+        }
 
         _MaxSearchResultItems = value;
       }
@@ -83,10 +89,7 @@ namespace MediaPortal.Music.Amazon
     public string ArtistName
     {
       get { return _ArtistName; }
-      set
-      {
-        _ArtistName = value;
-      }
+      set { _ArtistName = value; }
     }
 
     public string AlbumName
@@ -118,8 +121,8 @@ namespace MediaPortal.Music.Amazon
       //_GrabberRunning = true;
       _AbortGrab = false;
 
-      System.Threading.ThreadStart threadStart = new ThreadStart(InternalGetAlbumInfo);
-      System.Threading.Thread albumGrabberThread = new System.Threading.Thread(threadStart);
+      ThreadStart threadStart = new ThreadStart(InternalGetAlbumInfo);
+      Thread albumGrabberThread = new Thread(threadStart);
       albumGrabberThread.IsBackground = true;
       albumGrabberThread.Name = "AmazonGrabber";
       albumGrabberThread.Start();
@@ -133,9 +136,11 @@ namespace MediaPortal.Music.Amazon
     private void CheckForAppShutdown()
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+      {
         _AbortGrab = true;
+      }
     }
-    
+
     public bool GetAlbumInfo()
     {
       _AbortGrab = false;
@@ -147,24 +152,27 @@ namespace MediaPortal.Music.Amazon
         //bool validateFailed = false;
 
         if (_ArtistName.Length == 0 && _AlbumName.Length == 0)
-          return false; ;
+        {
+          return false;
+        }
+        ;
 
         DateTime startTime = DateTime.Now;
 
-        AWS.AWSECommerceService service = new AWS.AWSECommerceService();
-        AWS.ItemSearchRequest isr = new AWS.ItemSearchRequest();
+        AWSECommerceService service = new AWSECommerceService();
+        ItemSearchRequest isr = new ItemSearchRequest();
 
         isr.Artist = _ArtistName;
         isr.Title = _AlbumName;
         isr.SearchIndex = "Music";
 
-        string[] responseGroupString = new string[] { "Images", "Tracks", "ItemAttributes", "Large" };
+        string[] responseGroupString = new string[] {"Images", "Tracks", "ItemAttributes", "Large"};
         isr.ResponseGroup = responseGroupString;
 
-        AWS.ItemSearch search = new AWS.ItemSearch();
+        ItemSearch search = new ItemSearch();
         search.AWSAccessKeyId = _AWSAccessKeyID;
-        search.Request = new AWS.ItemSearchRequest[] { isr };
-        AWS.ItemSearchResponse response = service.ItemSearch(search);
+        search.Request = new ItemSearchRequest[] {isr};
+        ItemSearchResponse response = service.ItemSearch(search);
 
         int imgCount = 0;
         int totResults = 0;
@@ -176,36 +184,45 @@ namespace MediaPortal.Music.Amazon
           totResults = int.Parse(response.Items[0].TotalResults);
           totPages = int.Parse(response.Items[0].TotalPages);
 
-          Log.Info("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
+          Log.Info("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages,
+                   totResults);
         }
 
         //int grabPass = 0;
-        string recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving records...", totResults);
+        string recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving records...",
+                                            totResults);
 
         if (_MaxSearchResultItems > 0)
-          recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving first {1} records.", totResults, _MaxSearchResultItems);
+        {
+          recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving first {1} records.",
+                                       totResults, _MaxSearchResultItems);
+        }
 
-        for (int curPage = 1; curPage <= totPages; )
+        for (int curPage = 1; curPage <= totPages;)
         {
           // Yield thread...
-          System.Threading.Thread.Sleep(1);
+          Thread.Sleep(1);
           GUIWindowManager.Process();
 
           CheckForAppShutdown();
 
           if (resultsLimitExceeded || _AbortGrab)
+          {
             break;
+          }
 
           for (int y = 0; y < response.Items.Length; y++)
           {
             // Yield thread...
-            System.Threading.Thread.Sleep(1);
+            Thread.Sleep(1);
             GUIWindowManager.Process();
 
             CheckForAppShutdown();
 
             if (resultsLimitExceeded || _AbortGrab)
+            {
               break;
+            }
 
             int totalItemCount = response.Items[y].Item.Length;
 
@@ -220,9 +237,11 @@ namespace MediaPortal.Music.Amazon
               }
 
               if (_AbortGrab)
+              {
                 break;
+              }
 
-              AWS.Item item = null;
+              Item item = null;
 
               try
               {
@@ -245,10 +264,14 @@ namespace MediaPortal.Music.Amazon
               AWS.Image amazonImg = item.LargeImage;
 
               if (amazonImg == null)
+              {
                 amazonImg = item.MediumImage;
+              }
 
               if (amazonImg == null)
+              {
                 amazonImg = item.SmallImage;
+              }
 
               if (amazonImg == null)
               {
@@ -266,7 +289,7 @@ namespace MediaPortal.Music.Amazon
                 continue;
               }
 
-              AWS.ItemAttributes itemAttribs = item.ItemAttributes;
+              ItemAttributes itemAttribs = item.ItemAttributes;
 
               if (itemAttribs == null || itemAttribs.Artist == null)
               {
@@ -282,7 +305,9 @@ namespace MediaPortal.Music.Amazon
               string releaseDate = "";
 
               if (item.ItemAttributes.ReleaseDate != null)
+              {
                 releaseDate = item.ItemAttributes.ReleaseDate.Trim();
+              }
 
               AlbumInfo albumInfo = new AlbumInfo();
               albumInfo.Artist = GetArtists(item);
@@ -291,13 +316,16 @@ namespace MediaPortal.Music.Amazon
               albumInfo.Tracks = GetTracks(item);
               musicStyles = GetStyles(item);
 
-              albumInfo.Styles = musicStyles.Trim(new char[] { ',', ' ' }).Trim(); ;
+              albumInfo.Styles = musicStyles.Trim(new char[] {',', ' '}).Trim();
+              ;
 
               albumInfo.Review = editotialReview;
               albumInfo.Rating = 0;
 
               if (item.CustomerReviews != null)
-                albumInfo.Rating = Math.Max(0, (int)(item.CustomerReviews.AverageRating + (decimal).5));
+              {
+                albumInfo.Rating = Math.Max(0, (int) (item.CustomerReviews.AverageRating + (decimal) .5));
+              }
 
               albumInfo.Year = GetReleaseYear(item);
 
@@ -322,34 +350,49 @@ namespace MediaPortal.Music.Amazon
           isr.SearchIndex = "Music";
           isr.ResponseGroup = responseGroupString;
 
-          search.Request = new AWS.ItemSearchRequest[] { isr };
+          search.Request = new ItemSearchRequest[] {isr};
           response = service.ItemSearch(search);
         }
 
         string resultsText = "";
 
         if (_AbortGrab)
-          resultsText = string.Format("AWS album cover art grab aborted by user before completetion. Retreived {0}/{1} records", imgCount, totResults);
+        {
+          resultsText =
+            string.Format("AWS album cover art grab aborted by user before completetion. Retreived {0}/{1} records",
+                          imgCount, totResults);
+        }
 
         else if (resultsLimitExceeded)
-          resultsText = string.Format("AWS retreived {0}/{1} records (max search limit set to {2} images)", imgCount, totResults, _MaxSearchResultItems);
+        {
+          resultsText = string.Format("AWS retreived {0}/{1} records (max search limit set to {2} images)", imgCount,
+                                      totResults, _MaxSearchResultItems);
+        }
 
         else
+        {
           resultsText = string.Format("{0} records retrieved", imgCount);
+        }
 
         DateTime stopTime = DateTime.Now;
         TimeSpan elapsedTime = stopTime - startTime;
         double totSeconds = elapsedTime.TotalSeconds;
-        float secondsPerImage = (float)totSeconds / (float)imgCount;
+        float secondsPerImage = (float) totSeconds/(float) imgCount;
         string et = "";
 
         if (imgCount > 0)
         {
           if (_AbortGrab)
-            et = string.Format("{0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
+          {
+            et = string.Format("{0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours,
+                               elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
+          }
 
           else
-            et = string.Format("in {0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
+          {
+            et = string.Format("in {0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours,
+                               elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
+          }
 
           Log.Info("Cover art grabber:{0} {1}", resultsText, et);
         }
@@ -365,7 +408,9 @@ namespace MediaPortal.Music.Amazon
       //_GrabberRunning = false;
 
       if (FindCoverArtDone != null)
+      {
         FindCoverArtDone(this, EventArgs.Empty);
+      }
 
       return result;
     }
@@ -377,17 +422,21 @@ namespace MediaPortal.Music.Amazon
         int totalCovers = itemCount;
 
         if (_MaxSearchResultItems > 0)
+        {
           totalCovers = Math.Min(itemCount, _MaxSearchResultItems);
+        }
 
-        int progressPercent = (int)(((float)imgCount / (float)totalCovers) * 100f);
+        int progressPercent = (int) (((float) imgCount/(float) totalCovers)*100f);
         FindCoverArtProgress(this, progressPercent);
       }
     }
 
-    private string GetArtists(AWS.Item item)
+    private string GetArtists(Item item)
     {
       if (item.ItemAttributes.Artist == null)
+      {
         return "";
+      }
 
       string artistName = "";
 
@@ -396,72 +445,90 @@ namespace MediaPortal.Music.Amazon
         string curArtist = item.ItemAttributes.Artist[artistIndex];
 
         if (curArtist.Length > 0)
+        {
           artistName += curArtist + ", ";
+        }
       }
 
-      artistName = artistName.Trim(new char[] { ',', ' ' }).Trim();
+      artistName = artistName.Trim(new char[] {',', ' '}).Trim();
 
       return artistName.Trim();
     }
 
-    private string GetEditorialReview(AWS.Item item)
+    private string GetEditorialReview(Item item)
     {
       if (item.EditorialReviews == null)
+      {
         return string.Empty;
+      }
 
       string review = "";
 
       if (item.EditorialReviews.Length > 0)
+      {
         review = item.EditorialReviews[0].Content;
+      }
 
       //for(int i = 0; i < HtmlTags.Length; i++)
       //    review = review.Replace(HtmlTags[i], "");
 
       //return review.Trim();
 
-      return MediaPortal.Util.Utils.stripHTMLtags(review);
+      return Util.Utils.stripHTMLtags(review);
     }
 
-    private string GetTracks(AWS.Item item)
+    private string GetTracks(Item item)
     {
       if (item.Tracks == null || item.Tracks.Length == 0)
+      {
         return "";
+      }
 
       string tracks = "";
 
       for (int i = 0; i < item.Tracks[0].Track.Length; i++)
+      {
         tracks += string.Format("{0}@{1}@{2}|", item.Tracks[0].Track[i].Number, item.Tracks[0].Track[i].Value, 99);
+      }
 
-      return tracks.Trim(new char[] { '|' }).Trim();
+      return tracks.Trim(new char[] {'|'}).Trim();
     }
 
-    private string GetStyles(AWS.Item item)
+    private string GetStyles(Item item)
     {
       if (item.BrowseNodes == null)
+      {
         return "";
+      }
 
-      System.Collections.SortedList stylesList = new System.Collections.SortedList();
+      SortedList stylesList = new SortedList();
       string musicStyles = "";
 
       for (int i = 0; i < item.BrowseNodes.BrowseNode.Length; i++)
       {
         if (!stylesList.ContainsValue(item.BrowseNodes.BrowseNode[i].Name))
+        {
           stylesList[i] = item.BrowseNodes.BrowseNode[i].Name;
+        }
       }
 
       for (int i = 0; i < stylesList.Count; i++)
       {
         if (stylesList.ContainsKey(i))
-          musicStyles += string.Format("{0}, ", (string)stylesList[i]);
+        {
+          musicStyles += string.Format("{0}, ", (string) stylesList[i]);
+        }
       }
 
-      return musicStyles.Trim(new char[] { ',', ' ' }).Trim();
+      return musicStyles.Trim(new char[] {',', ' '}).Trim();
     }
 
-    private int GetReleaseYear(AWS.Item item)
+    private int GetReleaseYear(Item item)
     {
       if (item.ItemAttributes.ReleaseDate == null || item.ItemAttributes.ReleaseDate.Length == 0)
+      {
         return 0;
+      }
 
       int releaseYear = 0;
 
@@ -478,19 +545,21 @@ namespace MediaPortal.Music.Amazon
       return releaseYear;
     }
 
-    public static System.Drawing.Image GetImageFromURL(string sURL)
+    public static Image GetImageFromURL(string sURL)
     {
       if (sURL.Length == 0)
+      {
         return null;
+      }
 
-      System.Drawing.Image img = null;
+      Image img = null;
 
       try
       {
-        System.Net.WebRequest webReq = null;
-        webReq = System.Net.WebRequest.Create(sURL);
-        System.Net.WebResponse webResp = webReq.GetResponse();
-        img = System.Drawing.Image.FromStream(webResp.GetResponseStream());
+        WebRequest webReq = null;
+        webReq = WebRequest.Create(sURL);
+        WebResponse webResp = webReq.GetResponse();
+        img = Image.FromStream(webResp.GetResponseStream());
       }
 
       catch

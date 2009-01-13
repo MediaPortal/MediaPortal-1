@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
 {
@@ -7,9 +6,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
   public interface IMediaStatusSession
   {
     [DispId(1)]
-    void MediaStatusChange([In, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_I4)] MediaStatusPropertyTag[] tags, [In, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] object[] values);
+    void MediaStatusChange(
+      [In, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_I4)] MediaStatusPropertyTag[] tags,
+      [In, MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] object[] values);
+
     [DispId(2)]
     void Close();
   }
 }
-

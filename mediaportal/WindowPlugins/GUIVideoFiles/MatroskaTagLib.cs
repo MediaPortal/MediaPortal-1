@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2008 Team MediaPortal
+
 /*  Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -18,14 +19,16 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
-using System.Xml;
+using System;
 using System.IO;
+using System.Xml;
 
 namespace MediaPortal.GUI.Video
 {
-  class MatroskaTagInfo
+  internal class MatroskaTagInfo
   {
     public string title;
     public string description;
@@ -33,7 +36,7 @@ namespace MediaPortal.GUI.Video
     public string channelName;
   }
 
-  class MatroskaTagHandler
+  internal class MatroskaTagHandler
   {
     #region Private members
 
@@ -59,7 +62,9 @@ namespace MediaPortal.GUI.Video
       try
       {
         if (!File.Exists(filename))
+        {
           return null;
+        }
 
         XmlDocument doc = new XmlDocument();
         doc.Load(filename);
@@ -84,7 +89,9 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      catch (System.Exception) { } // loading the XML doc could fail
+      catch (Exception)
+      {
+      } // loading the XML doc could fail
       return info;
     }
 
@@ -93,7 +100,9 @@ namespace MediaPortal.GUI.Video
       try
       {
         if (!Directory.Exists(Path.GetDirectoryName(filename)))
+        {
           Directory.CreateDirectory(Path.GetDirectoryName(filename));
+        }
 
         XmlDocument doc = new XmlDocument();
         XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -108,7 +117,9 @@ namespace MediaPortal.GUI.Video
         doc.InsertBefore(xmldecl, tagsNode);
         doc.Save(filename);
       }
-      catch (System.Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
     #endregion

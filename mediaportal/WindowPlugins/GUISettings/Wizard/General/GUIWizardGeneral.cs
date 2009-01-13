@@ -23,10 +23,8 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings.Wizard
 {
@@ -35,28 +33,28 @@ namespace MediaPortal.GUI.Settings.Wizard
   /// </summary>
   public class GUIWizardGeneral : GUIWindow
   {
-	[SkinControlAttribute(4)]		protected GUICheckMarkControl cmInternetYes = null;
-	[SkinControlAttribute(5)]		protected GUICheckMarkControl cmInternetNo = null;
-	[SkinControlAttribute(6)]		protected GUICheckMarkControl cmDeadicatedPC = null;
-    [SkinControlAttribute(7)]       protected GUICheckMarkControl cmSharedPC = null;
+    [SkinControl(4)] protected GUICheckMarkControl cmInternetYes = null;
+    [SkinControl(5)] protected GUICheckMarkControl cmInternetNo = null;
+    [SkinControl(6)] protected GUICheckMarkControl cmDeadicatedPC = null;
+    [SkinControl(7)] protected GUICheckMarkControl cmSharedPC = null;
     //[SkinControlAttribute(8)]       protected GUICheckMarkControl cmAutoStartYes = null;
     //[SkinControlAttribute(9)]       protected GUICheckMarkControl cmAutoStartNo = null;
     //[SkinControlAttribute(6)]       protected GUICheckMarkControl cmDeadicatedYes = null;
     //[SkinControlAttribute(7)]       protected GUICheckMarkControl cmDeadicatedNo = null;
-	[SkinControlAttribute(26)]		protected GUIButtonControl    btnNext = null;
-    [SkinControlAttribute(25)]      protected GUIButtonControl    btnBack = null;
+    [SkinControl(26)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
     //[SkinControlAttribute(10)]		protected GUIImage				imgHTPC=null;
 
     public GUIWizardGeneral()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_GENERAL;
+      GetID = (int) Window.WINDOW_WIZARD_GENERAL;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\wizard_general.xml");
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -64,18 +62,36 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIControl.FocusControl(GetID, btnNext.GetID);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (cmInternetYes == control) OnInternetAccess(true);
-      if (cmInternetNo == control) OnInternetAccess(false);
-      if (cmDeadicatedPC == control) OnUsageType(true);
-      if (cmSharedPC == control) OnUsageType(false);
-      if (btnNext == control) OnNextPage();
-      if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
+      if (cmInternetYes == control)
+      {
+        OnInternetAccess(true);
+      }
+      if (cmInternetNo == control)
+      {
+        OnInternetAccess(false);
+      }
+      if (cmDeadicatedPC == control)
+      {
+        OnUsageType(true);
+      }
+      if (cmSharedPC == control)
+      {
+        OnUsageType(false);
+      }
+      if (btnNext == control)
+      {
+        OnNextPage();
+      }
+      if (btnBack == control)
+      {
+        GUIWindowManager.ShowPreviousWindow();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnUsageType(bool deadicated)
+    private void OnUsageType(bool deadicated)
     {
       if (deadicated)
       {
@@ -91,7 +107,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       }
     }
 
-    void OnInternetAccess(bool yes)
+    private void OnInternetAccess(bool yes)
     {
       if (yes)
       {
@@ -107,9 +123,9 @@ namespace MediaPortal.GUI.Settings.Wizard
       }
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         OnInternetAccess(xmlreader.GetValueAsBool("general", "internetaccess", true));
         OnUsageType(true);
@@ -118,9 +134,9 @@ namespace MediaPortal.GUI.Settings.Wizard
       }
     }
 
-    void OnNextPage()
+    private void OnNextPage()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "internetaccess", cmInternetYes.Selected);
 
@@ -161,13 +177,12 @@ namespace MediaPortal.GUI.Settings.Wizard
         xmlwriter.SetValueAsBool("general", "enableguisounds", enableguisounds);
         xmlwriter.SetValueAsBool("general", "screensaver", screensaver);
         xmlwriter.SetValueAsBool("general", "exclusivemode", exclusivemode);
-
       }
 
       GUIPropertyManager.SetProperty("#Wizard.General.Done", "yes");
       GUIPropertyManager.SetProperty("#InternetAccess", cmInternetYes.Selected.ToString());
 
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_REMOTE);
+      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_REMOTE);
     }
   }
 }

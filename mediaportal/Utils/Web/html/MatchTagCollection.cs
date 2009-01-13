@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Web;
-using System.Text;
 using System.Collections;
 
 namespace MediaPortal.Utils.Web
@@ -33,17 +30,21 @@ namespace MediaPortal.Utils.Web
   public class MatchTagCollection : CollectionBase
   {
     #region Properties
+
     public virtual MatchTag this[int Index]
     {
-      get { return (MatchTag)this.List[Index]; }
+      get { return (MatchTag) this.List[Index]; }
     }
+
     #endregion
 
     #region Public Methods
+
     public virtual void Add(MatchTag value)
     {
       this.List.Add(value);
     }
+
     #endregion
   }
 }

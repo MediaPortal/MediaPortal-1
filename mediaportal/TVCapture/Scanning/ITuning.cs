@@ -23,8 +23,8 @@
 
 #endregion
 
-using System;
 using MediaPortal.TV.Recording;
+
 namespace MediaPortal.TV.Scanning
 {
   /// <summary>
@@ -46,11 +46,13 @@ namespace MediaPortal.TV.Scanning
     void OnNewChannel();
 
     void OnSignal(int quality, int strength);
+
     /// <summary>
     /// Shows current status of the tuning progress
     /// </summary>
     /// <param name="description"></param>
     void OnStatus(string description);
+
     /// <summary>
     /// Shows current status of the tuning progress
     /// </summary>
@@ -80,6 +82,7 @@ namespace MediaPortal.TV.Scanning
     void Start();
     void Next();
     bool IsFinished();
+
     /// <summary>
     /// This method should do all auto-tuning for TV
     /// It should locate & find all tv channels for the card specified and store them in the database
@@ -103,6 +106,5 @@ namespace MediaPortal.TV.Scanning
     /// The method should store all info for the current tuned channel in the database
     /// </summary>
     int MapToChannel(string channel);
-
   }
 }

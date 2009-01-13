@@ -51,8 +51,10 @@ namespace MediaPortal.Configuration
       get { return activatedResourceName; }
       set
       {
-        if (value==null)
+        if (value == null)
+        {
           throw new ArgumentNullException("ActivatedResourceName");
+        }
         activatedResourceName = value;
       }
     }
@@ -63,7 +65,9 @@ namespace MediaPortal.Configuration
       set
       {
         if (value == null)
+        {
           throw new ArgumentNullException("DeactivatedResourceName");
+        }
         deactivatedResourceName = value;
       }
     }

@@ -24,25 +24,25 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal
 {
   /// <summary>
   /// Summary description for editName.
   /// </summary>
-  public class editName : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class editName : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
+    private MPLabel label1;
+    private MPTextBox textBoxName;
+    private MPButton buttonOK;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public editName()
     {
@@ -72,6 +72,7 @@ namespace MediaPortal
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -123,11 +124,11 @@ namespace MediaPortal
       this.Text = "Enter a name for this channel";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void editName_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    private void editName_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter && textBoxName.Text != string.Empty)
       {
@@ -135,7 +136,7 @@ namespace MediaPortal
       }
     }
 
-    private void btnOk_Click(object sender, System.EventArgs e)
+    private void btnOk_Click(object sender, EventArgs e)
     {
       this.Close();
     }

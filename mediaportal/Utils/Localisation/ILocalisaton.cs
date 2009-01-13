@@ -23,13 +23,7 @@
 
 #endregion
 
-using System;
-using System.IO;
 using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 
 namespace MediaPortal.Localisation
 {
@@ -43,7 +37,7 @@ namespace MediaPortal.Localisation
     /// </summary>
     /// <param name="cultureName">Name of the culture.</param>
     void ChangeLanguage(string cultureName);
-    
+
     /// <summary>
     /// Get the translation for a given id and format the sting with
     /// the given parameters

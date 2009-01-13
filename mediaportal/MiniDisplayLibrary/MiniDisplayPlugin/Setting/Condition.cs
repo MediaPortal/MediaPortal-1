@@ -4,11 +4,11 @@ using System.Xml.Serialization;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
-  [Serializable, XmlInclude(typeof(IsNullCondition)), XmlInclude(typeof(AndCondition)), XmlInclude(typeof(OrCondition)), XmlInclude(typeof(NotNullCondition))]
+  [Serializable, XmlInclude(typeof (IsNullCondition)), XmlInclude(typeof (AndCondition)),
+   XmlInclude(typeof (OrCondition)), XmlInclude(typeof (NotNullCondition))]
   public abstract class Condition
   {
-    [XmlIgnore]
-    protected MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Property Property;
+    [XmlIgnore] protected Property Property;
 
     protected Condition()
     {
@@ -27,11 +27,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         }
         return this.Property.value;
       }
-      set
-      {
-        this.Property = new MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Property(value);
-      }
+      set { this.Property = new Property(value); }
     }
   }
 }
-

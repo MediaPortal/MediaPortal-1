@@ -26,8 +26,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 #endregion
 
@@ -56,19 +54,18 @@ namespace MediaPortal.Threading
 
     public void SetResult<T>(T result)
     {
-      resultType = typeof(T);
+      resultType = typeof (T);
       this.result = result;
     }
 
     public T GetResult<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (t == resultType)
       {
-        return (T)result;
+        return (T) result;
       }
       return default(T);
     }
   }
-
 }

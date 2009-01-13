@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
@@ -85,15 +86,16 @@ namespace MediaPortal.Configuration
     /// </summary>
     public bool isStopped()
     {
-        return (frm == null);
+      return (frm == null);
     }
+
     /// <summary>
     /// Set the contents of the information label of the splash screen
     /// </summary>
     /// <param name="information">the information to set</param>
     public void SetInformation(string information)
     {
-        info = information;
+      info = information;
     }
 
     /// <summary>
@@ -103,7 +105,7 @@ namespace MediaPortal.Configuration
     /// This method is started in a background thread by the <see cref="Run"/> method.</remarks>
     private void DoRun()
     {
-      string oldInfo=null;
+      string oldInfo = null;
       frm = new SplashForm();
       frm.SetVersion(Version);
       frm.Show();
@@ -113,7 +115,7 @@ namespace MediaPortal.Configuration
       {
         if (_allowOverlay == true && _hintForm != null) // Allow other Windows to Overlay the splashscreen
         {
-          if (_hintForm.Visible)  // prepare everything to let the Outdated skin message appear
+          if (_hintForm.Visible) // prepare everything to let the Outdated skin message appear
           {
             if (frm.Focused)
             {
@@ -137,7 +139,7 @@ namespace MediaPortal.Configuration
         Thread.Sleep(25);
       }
       frm.FadeOut();
-      frm.Close();  //closes, and disposes the form
+      frm.Close(); //closes, and disposes the form
       frm = null;
     }
 
@@ -153,7 +155,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>
-    private class SplashForm : MediaPortal.UserInterface.Controls.MPConfigForm
+    private class SplashForm : MPConfigForm
     {
       private Panel panel1;
       private Label versionLabel;
@@ -248,7 +250,7 @@ namespace MediaPortal.Configuration
         this.versionLabel = new System.Windows.Forms.Label();
         this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.panel1.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
         this.SuspendLayout();
         // 
         // panel1
@@ -273,7 +275,7 @@ namespace MediaPortal.Configuration
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
         this.informationLabel.Font =
           new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte)(0)));
+                                  ((byte) (0)));
         this.informationLabel.Location = new System.Drawing.Point(15, 107);
         this.informationLabel.Name = "informationLabel";
         this.informationLabel.Size = new System.Drawing.Size(358, 16);
@@ -290,7 +292,7 @@ namespace MediaPortal.Configuration
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
         this.versionLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                  ((byte)(0)));
+                                  ((byte) (0)));
         this.versionLabel.Location = new System.Drawing.Point(267, 79);
         this.versionLabel.Name = "versionLabel";
         this.versionLabel.Size = new System.Drawing.Size(100, 16);
@@ -324,14 +326,11 @@ namespace MediaPortal.Configuration
         this.Text = "SplashScreen";
         this.TopMost = true;
         this.panel1.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+        ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
         this.ResumeLayout(false);
       }
 
       #endregion
     }
-
   }
-
-
- }
+}

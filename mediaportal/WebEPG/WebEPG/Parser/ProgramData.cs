@@ -24,14 +24,13 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using MediaPortal.Services;
-using MediaPortal.Utils.Web;
-using MediaPortal.Utils.Time;
 using MediaPortal.TV.Database;
+using MediaPortal.Utils.Time;
+using MediaPortal.Utils.Web;
 using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG.Parser
@@ -42,6 +41,7 @@ namespace MediaPortal.WebEPG.Parser
   public class ProgramData : IParserData
   {
     #region Variables
+
     private string _channelId = string.Empty;
     private string _title = string.Empty;
     private string _subTitle = string.Empty;
@@ -57,9 +57,11 @@ namespace MediaPortal.WebEPG.Parser
     private int _season = 0;
     private bool _repeat = false;
     private bool _subtitles = false;
+
     #endregion
 
     #region Constructors/Destructors
+
     public ProgramData()
     {
     }
@@ -76,9 +78,11 @@ namespace MediaPortal.WebEPG.Parser
       //  }
       //}
     }
+
     #endregion
 
     #region Properties
+
     // Public Properties
     public DataPreference Preference
     {
@@ -140,9 +144,11 @@ namespace MediaPortal.WebEPG.Parser
       get { return _endTime; }
       set { _endTime = value; }
     }
+
     #endregion
 
     #region Public Methods
+
     public bool IsRemoved(List<ModifyInfo> actions)
     {
       for (int i = 0; i < actions.Count; i++)
@@ -154,7 +160,9 @@ namespace MediaPortal.WebEPG.Parser
             string fieldText = GetElement(actions[i].field);
 
             if (fieldText != null && fieldText.Contains(actions[i].search))
+            {
               return true;
+            }
           }
         }
       }
@@ -189,55 +197,69 @@ namespace MediaPortal.WebEPG.Parser
       {
         // Preference not yet set?
         if (this._preference == null)
+        {
           this._preference = new DataPreference();
+        }
 
         if (data._preference == null)
+        {
           data._preference = new DataPreference();
+        }
 
         // Merge values with Preference
         if (data._title != string.Empty &&
-          (this._title == string.Empty || data._preference.Title > this._preference.Title))
+            (this._title == string.Empty || data._preference.Title > this._preference.Title))
         {
           this._title = data._title;
           this._preference.Title = data._preference.Title;
         }
 
         if (data._subTitle != string.Empty &&
-          (this._subTitle == string.Empty || data._preference.Subtitle > this._preference.Subtitle))
+            (this._subTitle == string.Empty || data._preference.Subtitle > this._preference.Subtitle))
         {
           this._subTitle = data._subTitle;
           this._preference.Subtitle = data._preference.Subtitle;
         }
 
         if (data._description != string.Empty &&
-          (this._description == string.Empty || data._preference.Description > this._preference.Description))
+            (this._description == string.Empty || data._preference.Description > this._preference.Description))
         {
           this._description = data._description;
           this._preference.Description = data._preference.Description;
         }
 
         if (data._genre != string.Empty &&
-          (this._genre == string.Empty || data._preference.Genre > this._preference.Genre))
+            (this._genre == string.Empty || data._preference.Genre > this._preference.Genre))
         {
           this._genre = data._genre;
           this._preference.Genre = data._preference.Genre;
         }
 
         if (data._repeat)
+        {
           this._repeat = data._repeat;
+        }
 
         if (data._subtitles)
+        {
           this._subtitles = data._subtitles;
+        }
 
         if (data._episode > 0)
+        {
           this._episode = data._episode;
+        }
 
         if (data._season > 0)
+        {
           this._season = data._season;
+        }
 
         // Merge values without pPreference
         if (data._channelId != string.Empty && this._channelId == string.Empty)
+        {
           this._channelId = data._channelId;
+        }
 
         // Do not merge Date/Time ... causes
         //if (data._startTime != null && this._startTime == null)
@@ -259,13 +281,21 @@ namespace MediaPortal.WebEPG.Parser
       program.Description = _description;
       program.Start = _startTime.ToLocalLongDateTime();
       if (_episode > 0)
+      {
         program.EpisodeNum = _episode.ToString();
+      }
       if (_season > 0)
+      {
         program.SeriesNum = _season.ToString();
+      }
       if (_repeat)
+      {
         program.Repeat = "Repeat";
+      }
       if (_endTime != null)
+      {
         program.End = _endTime.ToLocalLongDateTime();
+      }
 
       return program;
     }
@@ -273,13 +303,17 @@ namespace MediaPortal.WebEPG.Parser
     public bool HasSublink()
     {
       if (_sublink != null)
+      {
         return true;
+      }
 
       return false;
     }
+
     #endregion
 
     #region Private Methods
+
     private string GetElement(string tag)
     {
       switch (tag)
@@ -356,10 +390,13 @@ namespace MediaPortal.WebEPG.Parser
     private int GetMonth(string strMonth)
     {
       if (_months == null)
+      {
         return int.Parse(strMonth);
+      }
       else
-
+      {
         return _months[strMonth];
+      }
     }
 
     private List<string> GetActors(string strActors)
@@ -368,7 +405,7 @@ namespace MediaPortal.WebEPG.Parser
 
       int index = 0;
       int start;
-      char[] delimitors = new char[2] { ',', '\n' };
+      char[] delimitors = new char[2] {',', '\n'};
       while ((start = strActors.IndexOfAny(delimitors, index)) != -1)
       {
         string actor = strActors.Substring(index, start - index);
@@ -423,7 +460,9 @@ namespace MediaPortal.WebEPG.Parser
     private void GetDate(string element)
     {
       if (_startTime == null)
+      {
         _startTime = new WorldDateTime();
+      }
 
       int pos = 0;
       if ((pos = element.IndexOf("/")) != -1)
@@ -455,9 +494,11 @@ namespace MediaPortal.WebEPG.Parser
 
       return value;
     }
+
     #endregion
 
     #region IParserData Implementations
+
     public void SetElement(string tag, string element)
     {
       try
@@ -473,14 +514,18 @@ namespace MediaPortal.WebEPG.Parser
           case "#START":
             BasicTime startTime = GetTime(element);
             if (_startTime == null)
+            {
               _startTime = new WorldDateTime();
+            }
             _startTime.Hour = startTime.Hour;
             _startTime.Minute = startTime.Minute;
             break;
           case "#END":
             BasicTime endTime = GetTime(element);
             if (_endTime == null)
+            {
               _endTime = new WorldDateTime();
+            }
             _endTime.Hour = endTime.Hour;
             _endTime.Minute = endTime.Minute;
             break;
@@ -489,18 +534,26 @@ namespace MediaPortal.WebEPG.Parser
             break;
           case "#DAY":
             if (_startTime == null)
+            {
               _startTime = new WorldDateTime();
+            }
             _startTime.Day = int.Parse(element);
             break;
           case "#DESCRIPTION":
             if (_description == string.Empty)
+            {
               _description = element.Trim(' ', '\n', '\t');
+            }
             else
+            {
               _description = _description + "\n" + element.Trim(' ', '\n', '\t');
+            }
             break;
           case "#MONTH":
             if (_startTime == null)
+            {
               _startTime = new WorldDateTime();
+            }
             _startTime.Month = GetMonth(element.Trim(' ', '\n', '\t'));
             break;
           case "#TITLE":
@@ -523,11 +576,15 @@ namespace MediaPortal.WebEPG.Parser
             break;
           case "#REPEAT":
             if (element.ToLower().IndexOf("false") == -1)
+            {
               _repeat = true;
+            }
             break;
           case "#SUBTITLES":
             if (element.ToLower().IndexOf("false") == -1)
+            {
               _subtitles = true;
+            }
             break;
           default:
             break;
@@ -538,6 +595,7 @@ namespace MediaPortal.WebEPG.Parser
         GlobalServiceProvider.Instance.Get<ILog>().Error(LogType.WebEPG, "Parsing error {0} : {1}", tag, element);
       }
     }
+
     #endregion
   }
 }

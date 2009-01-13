@@ -1,11 +1,9 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Globalization;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace OsDetection
 {
-
   //-----------------------------------------------------------------------------
   // Enums
 
@@ -64,7 +62,6 @@ namespace OsDetection
 
   public class OSVersionInfo : IComparable, ICloneable
   {
-
     //-----------------------------------------------------------------------------
     // Constants
 
@@ -84,7 +81,9 @@ namespace OsDetection
       public const int Vista = WinNT6;
       public const int Win2008 = WinNT6;
 
-      private MajorVersionConst() { }
+      private MajorVersionConst()
+      {
+      }
     }
 
     private class MinorVersionConst
@@ -101,40 +100,111 @@ namespace OsDetection
       public const int Vista = 0;
       public const int Win2008 = 0;
 
-      private MinorVersionConst() { }
+      private MinorVersionConst()
+      {
+      }
     }
 
     //-----------------------------------------------------------------------------
     // Static Fields
 
-    private static readonly OSVersionInfo _Win32s = new OSVersionInfo(OsDetection.OSPlatformId.Win32s, MajorVersionConst.Win32s, MinorVersionConst.Win32s, true);
-    private static readonly OSVersionInfo _Win95 = new OSVersionInfo(OsDetection.OSPlatformId.Win32Windows, MajorVersionConst.Win95, MinorVersionConst.Win95, true);
-    private static readonly OSVersionInfo _Win98 = new OSVersionInfo(OsDetection.OSPlatformId.Win32Windows, MajorVersionConst.Win98, MinorVersionConst.Win98, true);
-    private static readonly OSVersionInfo _WinME = new OSVersionInfo(OsDetection.OSPlatformId.Win32Windows, MajorVersionConst.WinME, MinorVersionConst.WinME, true);
-    private static readonly OSVersionInfo _WinNT351 = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.WinNT351, MinorVersionConst.WinNT351, true);
-    private static readonly OSVersionInfo _WinNT4 = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.WinNT4, MinorVersionConst.WinNT4, true);
-    private static readonly OSVersionInfo _Win2000 = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.Win2000, MinorVersionConst.Win2000, true);
-    private static readonly OSVersionInfo _WinXP = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.WinXP, MinorVersionConst.WinXP, true);
-    private static readonly OSVersionInfo _Win2003 = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.Win2003, MinorVersionConst.Win2003, true);
-    private static readonly OSVersionInfo _WinCE = new OSVersionInfo(OsDetection.OSPlatformId.WinCE, true); // TODO: WinCE version
-    private static readonly OSVersionInfo _Vista = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.Vista, MinorVersionConst.Vista, true);
-    private static readonly OSVersionInfo _Win2008 = new OSVersionInfo(OsDetection.OSPlatformId.Win32NT, MajorVersionConst.Win2008, MinorVersionConst.Win2008, true);
+    private static readonly OSVersionInfo _Win32s = new OSVersionInfo(OSPlatformId.Win32s, MajorVersionConst.Win32s,
+                                                                      MinorVersionConst.Win32s, true);
+
+    private static readonly OSVersionInfo _Win95 = new OSVersionInfo(OSPlatformId.Win32Windows, MajorVersionConst.Win95,
+                                                                     MinorVersionConst.Win95, true);
+
+    private static readonly OSVersionInfo _Win98 = new OSVersionInfo(OSPlatformId.Win32Windows, MajorVersionConst.Win98,
+                                                                     MinorVersionConst.Win98, true);
+
+    private static readonly OSVersionInfo _WinME = new OSVersionInfo(OSPlatformId.Win32Windows, MajorVersionConst.WinME,
+                                                                     MinorVersionConst.WinME, true);
+
+    private static readonly OSVersionInfo _WinNT351 = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.WinNT351,
+                                                                        MinorVersionConst.WinNT351, true);
+
+    private static readonly OSVersionInfo _WinNT4 = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.WinNT4,
+                                                                      MinorVersionConst.WinNT4, true);
+
+    private static readonly OSVersionInfo _Win2000 = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.Win2000,
+                                                                       MinorVersionConst.Win2000, true);
+
+    private static readonly OSVersionInfo _WinXP = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.WinXP,
+                                                                     MinorVersionConst.WinXP, true);
+
+    private static readonly OSVersionInfo _Win2003 = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.Win2003,
+                                                                       MinorVersionConst.Win2003, true);
+
+    private static readonly OSVersionInfo _WinCE = new OSVersionInfo(OSPlatformId.WinCE, true); // TODO: WinCE version
+
+    private static readonly OSVersionInfo _Vista = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.Vista,
+                                                                     MinorVersionConst.Vista, true);
+
+    private static readonly OSVersionInfo _Win2008 = new OSVersionInfo(OSPlatformId.Win32NT, MajorVersionConst.Win2008,
+                                                                       MinorVersionConst.Win2008, true);
 
     //-----------------------------------------------------------------------------
     // Static Properties
 
-    public static OSVersionInfo Win32s { get { return _Win32s; } }
-    public static OSVersionInfo Win95 { get { return _Win95; } }
-    public static OSVersionInfo Win98 { get { return _Win98; } }
-    public static OSVersionInfo WinME { get { return _WinME; } }
-    public static OSVersionInfo WinNT351 { get { return _WinNT351; } }
-    public static OSVersionInfo WinNT4 { get { return _WinNT4; } }
-    public static OSVersionInfo Win2000 { get { return _Win2000; } }
-    public static OSVersionInfo WinXP { get { return _WinXP; } }
-    public static OSVersionInfo Win2003 { get { return _Win2003; } }
-    public static OSVersionInfo WinCE { get { return _WinCE; } }
-    public static OSVersionInfo Vista { get { return _Vista; } }
-    public static OSVersionInfo Win2008 { get { return _Win2008; } }
+    public static OSVersionInfo Win32s
+    {
+      get { return _Win32s; }
+    }
+
+    public static OSVersionInfo Win95
+    {
+      get { return _Win95; }
+    }
+
+    public static OSVersionInfo Win98
+    {
+      get { return _Win98; }
+    }
+
+    public static OSVersionInfo WinME
+    {
+      get { return _WinME; }
+    }
+
+    public static OSVersionInfo WinNT351
+    {
+      get { return _WinNT351; }
+    }
+
+    public static OSVersionInfo WinNT4
+    {
+      get { return _WinNT4; }
+    }
+
+    public static OSVersionInfo Win2000
+    {
+      get { return _Win2000; }
+    }
+
+    public static OSVersionInfo WinXP
+    {
+      get { return _WinXP; }
+    }
+
+    public static OSVersionInfo Win2003
+    {
+      get { return _Win2003; }
+    }
+
+    public static OSVersionInfo WinCE
+    {
+      get { return _WinCE; }
+    }
+
+    public static OSVersionInfo Vista
+    {
+      get { return _Vista; }
+    }
+
+    public static OSVersionInfo Win2008
+    {
+      get { return _Win2008; }
+    }
 
     //-----------------------------------------------------------------------------
     // Static methods
@@ -143,20 +213,33 @@ namespace OsDetection
     {
       switch (v)
       {
-        case OSVersion.Win32s: return Win32s;
-        case OSVersion.Win95: return Win95;
-        case OSVersion.Win98: return Win98;
-        case OSVersion.WinME: return WinME;
-        case OSVersion.WinNT351: return WinNT351;
-        case OSVersion.WinNT4: return WinNT4;
-        case OSVersion.Win2000: return Win2000;
-        case OSVersion.WinXP: return WinXP;
-        case OSVersion.Win2003: return Win2003;
-        case OSVersion.WinCE: return WinCE;
-        case OSVersion.Vista: return Vista;
-        case OSVersion.Win2008: return Win2008;
+        case OSVersion.Win32s:
+          return Win32s;
+        case OSVersion.Win95:
+          return Win95;
+        case OSVersion.Win98:
+          return Win98;
+        case OSVersion.WinME:
+          return WinME;
+        case OSVersion.WinNT351:
+          return WinNT351;
+        case OSVersion.WinNT4:
+          return WinNT4;
+        case OSVersion.Win2000:
+          return Win2000;
+        case OSVersion.WinXP:
+          return WinXP;
+        case OSVersion.Win2003:
+          return Win2003;
+        case OSVersion.WinCE:
+          return WinCE;
+        case OSVersion.Vista:
+          return Vista;
+        case OSVersion.Win2008:
+          return Win2008;
 
-        default: throw new InvalidOperationException();
+        default:
+          throw new InvalidOperationException();
       }
     }
 
@@ -190,7 +273,7 @@ namespace OsDetection
     //-----------------------------------------------------------------------------
     // Normal Properties
 
-    public OsDetection.OSPlatformId OSPlatformId
+    public OSPlatformId OSPlatformId
     {
       get { return _OSPlatformId; }
 
@@ -265,7 +348,7 @@ namespace OsDetection
     //-----------------------------------------------------------------------------
     // Extended Properties
 
-    public OsDetection.OSSuites OSSuiteFlags
+    public OSSuites OSSuiteFlags
     {
       get
       {
@@ -282,7 +365,7 @@ namespace OsDetection
       }
     }
 
-    public OsDetection.OSProductType OSProductType
+    public OSProductType OSProductType
     {
       get
       {
@@ -389,7 +472,7 @@ namespace OsDetection
 
     public int Platform
     {
-      get { return (int)_OSPlatformId; }
+      get { return (int) _OSPlatformId; }
     }
 
     public int SuiteMask
@@ -398,7 +481,7 @@ namespace OsDetection
       {
         CheckExtendedProperty("SuiteMask");
 
-        return (int)_OSSuiteFlags;
+        return (int) _OSSuiteFlags;
       }
     }
 
@@ -408,22 +491,26 @@ namespace OsDetection
       {
         CheckExtendedProperty("ProductType");
 
-        return (byte)_OSProductType;
+        return (byte) _OSProductType;
       }
     }
 
     //-----------------------------------------------------------------------------
     // Calculated Properties
 
-    public System.Version Version
+    public Version Version
     {
       get
       {
         if (OSMajorVersion < 0 || OSMinorVersion < 0)
+        {
           return new Version();
+        }
 
         if (BuildNumber < 0)
+        {
           return new Version(OSMajorVersion, OSMinorVersion);
+        }
 
         return new Version(OSMajorVersion, OSMinorVersion, BuildNumber);
       }
@@ -431,10 +518,7 @@ namespace OsDetection
 
     public string VersionString
     {
-      get
-      {
-        return Version.ToString();
-      }
+      get { return Version.ToString(); }
     }
 
     public string OSPlatformIdString
@@ -443,12 +527,17 @@ namespace OsDetection
       {
         switch (OSPlatformId)
         {
-          case OsDetection.OSPlatformId.Win32s: return "Windows 32s";
-          case OsDetection.OSPlatformId.Win32Windows: return "Windows 32";
-          case OsDetection.OSPlatformId.Win32NT: return "Windows NT";
-          case OsDetection.OSPlatformId.WinCE: return "Windows CE";
+          case OSPlatformId.Win32s:
+            return "Windows 32s";
+          case OSPlatformId.Win32Windows:
+            return "Windows 32";
+          case OSPlatformId.Win32NT:
+            return "Windows NT";
+          case OSPlatformId.WinCE:
+            return "Windows CE";
 
-          default: throw new InvalidOperationException("Invalid OSPlatformId: " + OSPlatformId);
+          default:
+            throw new InvalidOperationException("Invalid OSPlatformId: " + OSPlatformId);
         }
       }
     }
@@ -458,20 +547,27 @@ namespace OsDetection
       get
       {
         // No Service Pack Installed
-        if (String.IsNullOrEmpty(_CSDVersion)) return 0;
+        if (String.IsNullOrEmpty(_CSDVersion))
+        {
+          return 0;
+        }
 
         string[] words = _CSDVersion.Split('.');
 
         if (words.Length == 2)
+        {
           // ex. "Service Pack 3, v.3311": 1="Service Pack 3, v." , 2="3311"
           return Convert.ToInt16(words[1]);
+        }
         else
+        {
           // ex. "Service Pack 3": 1="Service Pack 3"
           return 0;
+        }
       }
     }
 
-    public static bool OSSuiteFlag(OsDetection.OSSuites flags, OsDetection.OSSuites test)
+    public static bool OSSuiteFlag(OSSuites flags, OSSuites test)
     {
       return ((flags & test) > 0);
     }
@@ -482,48 +578,76 @@ namespace OsDetection
       {
         string s = String.Empty;
 
-        OsDetection.OSSuites flags = OSSuiteFlags;
+        OSSuites flags = OSSuiteFlags;
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.SmallBusiness))
+        if (OSSuiteFlag(flags, OSSuites.SmallBusiness))
+        {
           OSSuiteStringAdd(ref s, "Small Business");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Enterprise))
+        if (OSSuiteFlag(flags, OSSuites.Enterprise))
+        {
           switch (OSVersion)
           {
-            case OsDetection.OSVersion.WinNT4: OSSuiteStringAdd(ref s, "Enterprise"); break;
-            case OsDetection.OSVersion.Win2000: OSSuiteStringAdd(ref s, "Advanced"); break;
-            case OsDetection.OSVersion.Win2003: OSSuiteStringAdd(ref s, "Enterprise"); break;
+            case OSVersion.WinNT4:
+              OSSuiteStringAdd(ref s, "Enterprise");
+              break;
+            case OSVersion.Win2000:
+              OSSuiteStringAdd(ref s, "Advanced");
+              break;
+            case OSVersion.Win2003:
+              OSSuiteStringAdd(ref s, "Enterprise");
+              break;
           }
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.BackOffice))
+        if (OSSuiteFlag(flags, OSSuites.BackOffice))
+        {
           OSSuiteStringAdd(ref s, "BackOffice");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Communications))
+        if (OSSuiteFlag(flags, OSSuites.Communications))
+        {
           OSSuiteStringAdd(ref s, "Communications");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Terminal))
+        if (OSSuiteFlag(flags, OSSuites.Terminal))
+        {
           OSSuiteStringAdd(ref s, "Terminal Services");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.SmallBusinessRestricted))
+        if (OSSuiteFlag(flags, OSSuites.SmallBusinessRestricted))
+        {
           OSSuiteStringAdd(ref s, "Small Business Restricted");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.EmbeddedNT))
+        if (OSSuiteFlag(flags, OSSuites.EmbeddedNT))
+        {
           OSSuiteStringAdd(ref s, "Embedded");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Datacenter))
+        if (OSSuiteFlag(flags, OSSuites.Datacenter))
+        {
           OSSuiteStringAdd(ref s, "Datacenter");
+        }
 
         //				if ( OSSuiteFlag( flags, OsDetection.OSSuites.SingleUserTS ) )
         //					OSSuiteStringAdd( ref s, "Single User Terminal Services" );
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Personal))
+        if (OSSuiteFlag(flags, OSSuites.Personal))
+        {
           OSSuiteStringAdd(ref s, "Home Edition");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.Blade))
+        if (OSSuiteFlag(flags, OSSuites.Blade))
+        {
           OSSuiteStringAdd(ref s, "Web Edition");
+        }
 
-        if (OSSuiteFlag(flags, OsDetection.OSSuites.EmbeddedRestricted))
+        if (OSSuiteFlag(flags, OSSuites.EmbeddedRestricted))
+        {
           OSSuiteStringAdd(ref s, "Embedded Restricted");
+        }
 
         return s;
       }
@@ -531,7 +655,10 @@ namespace OsDetection
 
     private static void OSSuiteStringAdd(ref string s, string suite)
     {
-      if (s.Length > 0) s += ", ";
+      if (s.Length > 0)
+      {
+        s += ", ";
+      }
 
       s += suite;
     }
@@ -542,118 +669,159 @@ namespace OsDetection
       {
         switch (OSProductType)
         {
-          case OsDetection.OSProductType.Workstation:
+          case OSProductType.Workstation:
 
             switch (OSVersion)
             {
-              case OsDetection.OSVersion.Win32s: return String.Empty;
-              case OsDetection.OSVersion.Win95: return String.Empty;
-              case OsDetection.OSVersion.Win98: return String.Empty;
-              case OsDetection.OSVersion.WinME: return String.Empty;
-              case OsDetection.OSVersion.WinNT351: return String.Empty;
-              case OsDetection.OSVersion.WinNT4: return "Workstation";
-              case OsDetection.OSVersion.Win2000: return "Professional";
+              case OSVersion.Win32s:
+                return String.Empty;
+              case OSVersion.Win95:
+                return String.Empty;
+              case OSVersion.Win98:
+                return String.Empty;
+              case OSVersion.WinME:
+                return String.Empty;
+              case OSVersion.WinNT351:
+                return String.Empty;
+              case OSVersion.WinNT4:
+                return "Workstation";
+              case OSVersion.Win2000:
+                return "Professional";
 
-              case OsDetection.OSVersion.WinXP:
+              case OSVersion.WinXP:
 
-                if (OSSuiteFlag(OSSuiteFlags, OsDetection.OSSuites.Personal))
+                if (OSSuiteFlag(OSSuiteFlags, OSSuites.Personal))
+                {
                   return "Home Edition";
+                }
                 else
+                {
                   return "Professional";
+                }
 
-              case OsDetection.OSVersion.Win2003: return String.Empty;
-              case OsDetection.OSVersion.WinCE: return String.Empty;
-              case OsDetection.OSVersion.Vista:
+              case OSVersion.Win2003:
+                return String.Empty;
+              case OSVersion.WinCE:
+                return String.Empty;
+              case OSVersion.Vista:
 
-                if (OSSuiteFlag(OSSuiteFlags, OsDetection.OSSuites.Personal))
+                if (OSSuiteFlag(OSSuiteFlags, OSSuites.Personal))
+                {
                   return "Home Premium / Home Basic";
+                }
                 else
+                {
                   return "Business / Professional / Ultimate";
+                }
 
-              case OsDetection.OSVersion.Win2008: return string.Empty;
+              case OSVersion.Win2008:
+                return string.Empty;
 
-              default: throw new InvalidOperationException("Invalid OSVersion: " + OSVersion);
+              default:
+                throw new InvalidOperationException("Invalid OSVersion: " + OSVersion);
             }
 
-          case OsDetection.OSProductType.DomainController:
+          case OSProductType.DomainController:
             {
               string s = OSSuiteString;
 
-              if (s.Length > 0) s += " ";
+              if (s.Length > 0)
+              {
+                s += " ";
+              }
 
               return s + "Domain Controller";
             }
 
-          case OsDetection.OSProductType.Server:
+          case OSProductType.Server:
             {
               string s = OSSuiteString;
 
-              if (s.Length > 0) s += " ";
+              if (s.Length > 0)
+              {
+                s += " ";
+              }
 
               return s + "Server";
             }
 
-          default: throw new InvalidOperationException("Invalid OSProductType: " + OSProductType);
+          default:
+            throw new InvalidOperationException("Invalid OSProductType: " + OSProductType);
         }
       }
     }
 
-    public OsDetection.OSVersion OSVersion
+    public OSVersion OSVersion
     {
       get
       {
         switch (OSPlatformId)
         {
-          case OsDetection.OSPlatformId.Win32s: return OsDetection.OSVersion.Win32s;
+          case OSPlatformId.Win32s:
+            return OSVersion.Win32s;
 
-          case OsDetection.OSPlatformId.Win32Windows:
+          case OSPlatformId.Win32Windows:
 
             switch (OSMinorVersion)
             {
-              case MinorVersionConst.Win95: return OsDetection.OSVersion.Win95;
-              case MinorVersionConst.Win98: return OsDetection.OSVersion.Win98;
-              case MinorVersionConst.WinME: return OsDetection.OSVersion.WinME;
+              case MinorVersionConst.Win95:
+                return OSVersion.Win95;
+              case MinorVersionConst.Win98:
+                return OSVersion.Win98;
+              case MinorVersionConst.WinME:
+                return OSVersion.WinME;
 
-              default: throw new InvalidOperationException("Invalid Win32Windows MinorVersion: " + OSMinorVersion);
+              default:
+                throw new InvalidOperationException("Invalid Win32Windows MinorVersion: " + OSMinorVersion);
             }
 
-          case OsDetection.OSPlatformId.Win32NT:
+          case OSPlatformId.Win32NT:
 
             switch (OSMajorVersion)
             {
-              case MajorVersionConst.WinNT351: return OsDetection.OSVersion.WinNT351;
-              case MajorVersionConst.WinNT4: return OsDetection.OSVersion.WinNT4;
+              case MajorVersionConst.WinNT351:
+                return OSVersion.WinNT351;
+              case MajorVersionConst.WinNT4:
+                return OSVersion.WinNT4;
 
               case MajorVersionConst.WinNT5:
 
                 switch (OSMinorVersion)
                 {
-                  case MinorVersionConst.Win2000: return OsDetection.OSVersion.Win2000;
-                  case MinorVersionConst.WinXP: return OsDetection.OSVersion.WinXP;
-                  case MinorVersionConst.Win2003: return OsDetection.OSVersion.Win2003;
+                  case MinorVersionConst.Win2000:
+                    return OSVersion.Win2000;
+                  case MinorVersionConst.WinXP:
+                    return OSVersion.WinXP;
+                  case MinorVersionConst.Win2003:
+                    return OSVersion.Win2003;
 
-                  default: throw new InvalidOperationException("Invalid Win32NT WinNT5 MinorVersion: " + OSMinorVersion);
+                  default:
+                    throw new InvalidOperationException("Invalid Win32NT WinNT5 MinorVersion: " + OSMinorVersion);
                 }
 
               case MajorVersionConst.WinNT6:
                 switch (OSProductType)
                 {
-                  case OSProductType.Workstation: return OsDetection.OSVersion.Vista;
+                  case OSProductType.Workstation:
+                    return OSVersion.Vista;
                   case OSProductType.Server:
                   case OSProductType.DomainController:
-                    return OsDetection.OSVersion.Win2008;
+                    return OSVersion.Win2008;
 
-                  default: throw new InvalidOperationException("Invalid Win32NT WinTN6 ProductType: " + OSProductType);
+                  default:
+                    throw new InvalidOperationException("Invalid Win32NT WinTN6 ProductType: " + OSProductType);
                 }
 
-              default: throw new InvalidOperationException("Invalid Win32NT MajorVersion: " + OSMajorVersion);
+              default:
+                throw new InvalidOperationException("Invalid Win32NT MajorVersion: " + OSMajorVersion);
             }
 
-          case OsDetection.OSPlatformId.WinCE: return OsDetection.OSVersion.WinCE;
+          case OSPlatformId.WinCE:
+            return OSVersion.WinCE;
 
-          default: throw new InvalidOperationException("Invalid OSPlatformId: " + OSPlatformId);
+          default:
+            throw new InvalidOperationException("Invalid OSPlatformId: " + OSPlatformId);
         }
-
       }
     }
 
@@ -661,8 +829,7 @@ namespace OsDetection
     {
       get
       {
-
-        if (OSPlatformId == OsDetection.OSPlatformId.Win32s)
+        if (OSPlatformId == OSPlatformId.Win32s)
         {
           switch (OSMajorVersion)
           {
@@ -688,15 +855,25 @@ namespace OsDetection
             case 4:
               return "Windows NT";
             case 5:
-              if (OSMinorVersion == 0) return "Windows 2000";
-              if (OSMinorVersion == 2 && OSProductType != OsDetection.OSProductType.Workstation) return "Windows 2003";
+              if (OSMinorVersion == 0)
+              {
+                return "Windows 2000";
+              }
+              if (OSMinorVersion == 2 && OSProductType != OSProductType.Workstation)
+              {
+                return "Windows 2003";
+              }
               // XP 32bit = 5.1, XP 64bit = 5.2 + OSproductType.Workstation
               return "Windows XP";
             case 6:
-              if (OSProductType == OsDetection.OSProductType.Workstation)
+              if (OSProductType == OSProductType.Workstation)
+              {
                 return "Windows Vista";
+              }
               else
+              {
                 return "Windows 2008";
+              }
           }
         }
         throw new InvalidOperationException("Invalid OSVersion: " + OSVersion);
@@ -712,7 +889,10 @@ namespace OsDetection
       set { _ExtendedPropertiesAreSet = value; }
     }
 
-    public bool IsLocked { get { return _Locked; } }
+    public bool IsLocked
+    {
+      get { return _Locked; }
+    }
 
     public void Lock()
     {
@@ -724,14 +904,20 @@ namespace OsDetection
 
     private void CheckExtendedProperty(string property)
     {
-      if (_ExtendedPropertiesAreSet) return;
+      if (_ExtendedPropertiesAreSet)
+      {
+        return;
+      }
 
       throw new InvalidOperationException("'" + property + "' is not set");
     }
 
     private void CheckLock(string property)
     {
-      if (!_Locked) return;
+      if (!_Locked)
+      {
+        return;
+      }
 
       throw new InvalidOperationException("Cannot set '" + property + "' on locked instance");
     }
@@ -739,7 +925,9 @@ namespace OsDetection
     //-----------------------------------------------------------------------------
     // Constructors
 
-    public OSVersionInfo() { }
+    public OSVersionInfo()
+    {
+    }
 
     public OSVersionInfo(
       OSPlatformId osPlatformId)
@@ -833,7 +1021,10 @@ namespace OsDetection
     {
       OSVersionInfo p = o as OSVersionInfo;
 
-      if (p != null) return (this == p);
+      if (p != null)
+      {
+        return (this == p);
+      }
 
       return base.Equals(o);
     }
@@ -847,9 +1038,15 @@ namespace OsDetection
     {
       string s = OSVersionString;
 
-      if (ExtendedPropertiesAreSet) s += " " + OSProductTypeString;
+      if (ExtendedPropertiesAreSet)
+      {
+        s += " " + OSProductTypeString;
+      }
 
-      if (OSCSDVersion.Length > 0) s += " " + OSCSDVersion;
+      if (OSCSDVersion.Length > 0)
+      {
+        s += " " + OSCSDVersion;
+      }
 
       s += " v" + VersionString;
 
@@ -861,26 +1058,62 @@ namespace OsDetection
 
     public static bool operator ==(OSVersionInfo o, OSVersionInfo p)
     {
-      if (o.OSPlatformId != p.OSPlatformId) return false;
+      if (o.OSPlatformId != p.OSPlatformId)
+      {
+        return false;
+      }
 
-      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0) goto hell;
-      if (o.OSMajorVersion != p.OSMajorVersion) return false;
+      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMajorVersion != p.OSMajorVersion)
+      {
+        return false;
+      }
 
-      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0) goto hell;
-      if (o.OSMinorVersion != p.OSMinorVersion) return false;
+      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMinorVersion != p.OSMinorVersion)
+      {
+        return false;
+      }
 
-      if (o.BuildNumber < 0 || p.BuildNumber < 0) goto hell;
-      if (o.BuildNumber != p.BuildNumber) return false;
+      if (o.BuildNumber < 0 || p.BuildNumber < 0)
+      {
+        goto hell;
+      }
+      if (o.BuildNumber != p.BuildNumber)
+      {
+        return false;
+      }
 
-      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet)) goto hell;
+      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet))
+      {
+        goto hell;
+      }
 
-      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0) goto hell;
-      if (o.OSServicePackMajor != p.OSServicePackMajor) return false;
+      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMajor != p.OSServicePackMajor)
+      {
+        return false;
+      }
 
-      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0) goto hell;
-      if (o.OSServicePackMinor != p.OSServicePackMinor) return false;
+      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMinor != p.OSServicePackMinor)
+      {
+        return false;
+      }
 
-    hell:
+      hell:
 
       return true;
     }
@@ -892,64 +1125,172 @@ namespace OsDetection
 
     public static bool operator <(OSVersionInfo o, OSVersionInfo p)
     {
-      if (o.OSPlatformId < p.OSPlatformId) return true;
-      if (o.OSPlatformId > p.OSPlatformId) return false;
+      if (o.OSPlatformId < p.OSPlatformId)
+      {
+        return true;
+      }
+      if (o.OSPlatformId > p.OSPlatformId)
+      {
+        return false;
+      }
 
-      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0) goto hell;
-      if (o.OSMajorVersion < p.OSMajorVersion) return true;
-      if (o.OSMajorVersion > p.OSMajorVersion) return false;
+      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMajorVersion < p.OSMajorVersion)
+      {
+        return true;
+      }
+      if (o.OSMajorVersion > p.OSMajorVersion)
+      {
+        return false;
+      }
 
-      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0) goto hell;
-      if (o.OSMinorVersion < p.OSMinorVersion) return true;
-      if (o.OSMinorVersion > p.OSMinorVersion) return false;
+      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMinorVersion < p.OSMinorVersion)
+      {
+        return true;
+      }
+      if (o.OSMinorVersion > p.OSMinorVersion)
+      {
+        return false;
+      }
 
-      if (o.BuildNumber < 0 || p.BuildNumber < 0) goto hell;
-      if (o.BuildNumber < p.BuildNumber) return true;
-      if (o.BuildNumber > p.BuildNumber) return false;
+      if (o.BuildNumber < 0 || p.BuildNumber < 0)
+      {
+        goto hell;
+      }
+      if (o.BuildNumber < p.BuildNumber)
+      {
+        return true;
+      }
+      if (o.BuildNumber > p.BuildNumber)
+      {
+        return false;
+      }
 
-      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet)) goto hell;
+      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet))
+      {
+        goto hell;
+      }
 
-      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0) goto hell;
-      if (o.OSServicePackMajor < p.OSServicePackMajor) return true;
-      if (o.OSServicePackMajor > p.OSServicePackMajor) return false;
+      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMajor < p.OSServicePackMajor)
+      {
+        return true;
+      }
+      if (o.OSServicePackMajor > p.OSServicePackMajor)
+      {
+        return false;
+      }
 
-      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0) goto hell;
-      if (o.OSServicePackMinor < p.OSServicePackMinor) return true;
-      if (o.OSServicePackMinor > p.OSServicePackMinor) return false;
+      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMinor < p.OSServicePackMinor)
+      {
+        return true;
+      }
+      if (o.OSServicePackMinor > p.OSServicePackMinor)
+      {
+        return false;
+      }
 
-    hell:
+      hell:
 
       return false;
     }
 
     public static bool operator >(OSVersionInfo o, OSVersionInfo p)
     {
-      if (o.OSPlatformId < p.OSPlatformId) return false;
-      if (o.OSPlatformId > p.OSPlatformId) return true;
+      if (o.OSPlatformId < p.OSPlatformId)
+      {
+        return false;
+      }
+      if (o.OSPlatformId > p.OSPlatformId)
+      {
+        return true;
+      }
 
-      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0) goto hell;
-      if (o.OSMajorVersion < p.OSMajorVersion) return false;
-      if (o.OSMajorVersion > p.OSMajorVersion) return true;
+      if (o.OSMajorVersion < 0 || p.OSMajorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMajorVersion < p.OSMajorVersion)
+      {
+        return false;
+      }
+      if (o.OSMajorVersion > p.OSMajorVersion)
+      {
+        return true;
+      }
 
-      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0) goto hell;
-      if (o.OSMinorVersion < p.OSMinorVersion) return false;
-      if (o.OSMinorVersion > p.OSMinorVersion) return true;
+      if (o.OSMinorVersion < 0 || p.OSMinorVersion < 0)
+      {
+        goto hell;
+      }
+      if (o.OSMinorVersion < p.OSMinorVersion)
+      {
+        return false;
+      }
+      if (o.OSMinorVersion > p.OSMinorVersion)
+      {
+        return true;
+      }
 
-      if (o.BuildNumber < 0 || p.BuildNumber < 0) goto hell;
-      if (o.BuildNumber < p.BuildNumber) return false;
-      if (o.BuildNumber > p.BuildNumber) return true;
+      if (o.BuildNumber < 0 || p.BuildNumber < 0)
+      {
+        goto hell;
+      }
+      if (o.BuildNumber < p.BuildNumber)
+      {
+        return false;
+      }
+      if (o.BuildNumber > p.BuildNumber)
+      {
+        return true;
+      }
 
-      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet)) goto hell;
+      if ((!o.ExtendedPropertiesAreSet) || (!p.ExtendedPropertiesAreSet))
+      {
+        goto hell;
+      }
 
-      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0) goto hell;
-      if (o.OSServicePackMajor < p.OSServicePackMajor) return false;
-      if (o.OSServicePackMajor > p.OSServicePackMajor) return true;
+      if (o.OSServicePackMajor < 0 || p.OSServicePackMajor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMajor < p.OSServicePackMajor)
+      {
+        return false;
+      }
+      if (o.OSServicePackMajor > p.OSServicePackMajor)
+      {
+        return true;
+      }
 
-      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0) goto hell;
-      if (o.OSServicePackMinor < p.OSServicePackMinor) return false;
-      if (o.OSServicePackMinor > p.OSServicePackMinor) return true;
+      if (o.OSServicePackMinor < 0 || p.OSServicePackMinor < 0)
+      {
+        goto hell;
+      }
+      if (o.OSServicePackMinor < p.OSServicePackMinor)
+      {
+        return false;
+      }
+      if (o.OSServicePackMinor > p.OSServicePackMinor)
+      {
+        return true;
+      }
 
-    hell:
+      hell:
 
       return false;
     }
@@ -966,18 +1307,29 @@ namespace OsDetection
 
     public virtual int CompareTo(object o)
     {
-      if (o == null) throw new InvalidOperationException("CompareTo( object o ): 'o' is null");
+      if (o == null)
+      {
+        throw new InvalidOperationException("CompareTo( object o ): 'o' is null");
+      }
 
       OSVersionInfo p = o as OSVersionInfo;
-      if (p == null) throw new InvalidOperationException("CompareTo( object o ): 'o' is not an OSVersionInfo");
+      if (p == null)
+      {
+        throw new InvalidOperationException("CompareTo( object o ): 'o' is not an OSVersionInfo");
+      }
 
-      if (this == p) return 0;
-      if (this > p) return 1;
+      if (this == p)
+      {
+        return 0;
+      }
+      if (this > p)
+      {
+        return 1;
+      }
       return -1;
     }
 
     //-----------------------------------------------------------------------------
-
   } // OSVersionInfo
 
   //-----------------------------------------------------------------------------
@@ -985,7 +1337,6 @@ namespace OsDetection
 
   public class OperatingSystemVersion : OSVersionInfo
   {
-
     //-----------------------------------------------------------------------------
     // Interop Types
 
@@ -997,8 +1348,7 @@ namespace OsDetection
       public int MinorVersion;
       public int BuildNumber;
       public int PlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x80)]
-      public string CSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x80)] public string CSDVersion;
 
       public OSVERSIONINFO()
       {
@@ -1023,8 +1373,7 @@ namespace OsDetection
       public int MinorVersion;
       public int BuildNumber;
       public int PlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x80)]
-      public string CSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x80)] public string CSDVersion;
       public Int16 ServicePackMajor;
       public Int16 ServicePackMinor;
       public UInt16 SuiteMask;
@@ -1061,7 +1410,9 @@ namespace OsDetection
       public const Int32 Win32NT = 2;
       public const Int32 WinCE = 3;
 
-      private VerPlatformId() { }
+      private VerPlatformId()
+      {
+      }
     }
 
     private class VerSuiteMask
@@ -1082,7 +1433,9 @@ namespace OsDetection
       public const UInt16 VER_SUITE_BLADE = 0x00000400;
       public const UInt16 VER_SUITE_EMBEDDED_RESTRICTED = 0x00000800;
 
-      private VerSuiteMask() { }
+      private VerSuiteMask()
+      {
+      }
     }
 
     private class VerProductType
@@ -1091,7 +1444,9 @@ namespace OsDetection
       public const byte VER_NT_DOMAIN_CONTROLLER = 0x00000002;
       public const byte VER_NT_SERVER = 0x00000003;
 
-      private VerProductType() { }
+      private VerProductType()
+      {
+      }
     }
 
     //-----------------------------------------------------------------------------
@@ -1099,19 +1454,21 @@ namespace OsDetection
 
     private class NativeMethods
     {
-      private NativeMethods() { }
+      private NativeMethods()
+      {
+      }
 
       [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
       public static extern bool GetVersionEx
         (
-          [In, Out] OSVERSIONINFO osVersionInfo
-       );
+        [In, Out] OSVERSIONINFO osVersionInfo
+        );
 
       [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
       public static extern bool GetVersionEx
         (
-          [In, Out] OSVERSIONINFOEX osVersionInfoEx
-       );
+        [In, Out] OSVERSIONINFOEX osVersionInfoEx
+        );
 
       //			[ DllImport( "kernel32.dll", SetLastError = true ) ]
       //			public static extern bool VerifyVersionInfo
@@ -1130,9 +1487,13 @@ namespace OsDetection
       OSVERSIONINFO osVersionInfo = new OSVERSIONINFO();
 
       if (!UseOSVersionInfoEx(osVersionInfo))
+      {
         InitOsVersionInfo(osVersionInfo);
+      }
       else
+      {
         InitOsVersionInfoEx();
+      }
 
       //			Lock();
     }
@@ -1151,14 +1512,29 @@ namespace OsDetection
           error.ToString("8X", CultureInfo.CurrentCulture));
       }
 
-      if (info.MajorVersion < 4) return false;
-      if (info.MajorVersion > 4) return true;
+      if (info.MajorVersion < 4)
+      {
+        return false;
+      }
+      if (info.MajorVersion > 4)
+      {
+        return true;
+      }
 
-      if (info.MinorVersion < 0) return false;
-      if (info.MinorVersion > 0) return true;
+      if (info.MinorVersion < 0)
+      {
+        return false;
+      }
+      if (info.MinorVersion > 0)
+      {
+        return true;
+      }
 
       // TODO: CSDVersion for NT4 SP6
-      if (info.CSDVersion == "Service Pack 6") return true;
+      if (info.CSDVersion == "Service Pack 6")
+      {
+        return true;
+      }
 
       return false;
     }
@@ -1209,40 +1585,47 @@ namespace OsDetection
       ExtendedPropertiesAreSet = true;
     }
 
-    private static OsDetection.OSPlatformId GetOSPlatformId(int platformId)
+    private static OSPlatformId GetOSPlatformId(int platformId)
     {
       switch (platformId)
       {
-        case VerPlatformId.Win32s: return OsDetection.OSPlatformId.Win32s;
-        case VerPlatformId.Win32Windows: return OsDetection.OSPlatformId.Win32Windows;
-        case VerPlatformId.Win32NT: return OsDetection.OSPlatformId.Win32NT;
-        case VerPlatformId.WinCE: return OsDetection.OSPlatformId.WinCE;
+        case VerPlatformId.Win32s:
+          return OSPlatformId.Win32s;
+        case VerPlatformId.Win32Windows:
+          return OSPlatformId.Win32Windows;
+        case VerPlatformId.Win32NT:
+          return OSPlatformId.Win32NT;
+        case VerPlatformId.WinCE:
+          return OSPlatformId.WinCE;
 
-        default: throw new InvalidOperationException("Invalid PlatformId: " + platformId);
+        default:
+          throw new InvalidOperationException("Invalid PlatformId: " + platformId);
       }
     }
 
-    private static OsDetection.OSSuites GetOSSuiteFlags(UInt16 suiteMask)
+    private static OSSuites GetOSSuiteFlags(UInt16 suiteMask)
     {
-      return (OsDetection.OSSuites)suiteMask;
+      return (OSSuites) suiteMask;
     }
 
-    private static OsDetection.OSProductType GetOSProductType(byte productType)
+    private static OSProductType GetOSProductType(byte productType)
     {
       switch (productType)
       {
-        case VerProductType.VER_NT_WORKSTATION: return OsDetection.OSProductType.Workstation;
-        case VerProductType.VER_NT_DOMAIN_CONTROLLER: return OsDetection.OSProductType.DomainController;
-        case VerProductType.VER_NT_SERVER: return OsDetection.OSProductType.Server;
+        case VerProductType.VER_NT_WORKSTATION:
+          return OSProductType.Workstation;
+        case VerProductType.VER_NT_DOMAIN_CONTROLLER:
+          return OSProductType.DomainController;
+        case VerProductType.VER_NT_SERVER:
+          return OSProductType.Server;
 
-        default: throw new InvalidOperationException("Invalid ProductType: " + productType);
+        default:
+          throw new InvalidOperationException("Invalid ProductType: " + productType);
       }
     }
 
     //-----------------------------------------------------------------------------
-
   } // OperatingSystemVersion
 
   //-----------------------------------------------------------------------------
-
 }

@@ -25,10 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
@@ -48,7 +44,8 @@ namespace MediaPortal.MPInstaller
       _struct.SetupGroups.Clear();
       for (int i = 0; i < group_listView.Items.Count; i++)
       {
-        _struct.SetupGroups.Add(new GroupString(group_listView.Items[i].SubItems[0].Text, group_listView.Items[i].SubItems[1].Text));
+        _struct.SetupGroups.Add(new GroupString(group_listView.Items[i].SubItems[0].Text,
+                                                group_listView.Items[i].SubItems[1].Text));
       }
       this.Close();
     }
@@ -57,7 +54,7 @@ namespace MediaPortal.MPInstaller
     {
       update_listview1(textBox1.Text, textBox2.Text);
     }
-    
+
     private void update_listview1(string wid, string wval)
     {
       for (int i = 0; i < group_listView.Items.Count; i++)
@@ -70,7 +67,7 @@ namespace MediaPortal.MPInstaller
       }
       ListViewItem item1 = new ListViewItem(wid, 0);
       item1.SubItems.Add(wval);
-      group_listView.Items.AddRange(new ListViewItem[] { item1 });
+      group_listView.Items.AddRange(new ListViewItem[] {item1});
       group_listView.Sort();
     }
 
@@ -96,7 +93,6 @@ namespace MediaPortal.MPInstaller
         textBox2.Text = group_listView.SelectedItems[0].SubItems[1].Text;
         group_listView.Items.Remove(group_listView.SelectedItems[0]);
       }
-
     }
 
     private void GroupForm_Load(object sender, EventArgs e)
@@ -115,13 +111,14 @@ namespace MediaPortal.MPInstaller
       listView3.Items.Clear();
       for (int i = 0; i < group_listView.Items.Count; i++)
       {
-        comboBox1.Items.Add(new GroupString(group_listView.Items[i].SubItems[0].Text, group_listView.Items[i].SubItems[1].Text));
+        comboBox1.Items.Add(new GroupString(group_listView.Items[i].SubItems[0].Text,
+                                            group_listView.Items[i].SubItems[1].Text));
       }
       foreach (MPIFileList fl in _struct.FileList)
       {
         ListViewItem item1 = new ListViewItem(fl.FileName, 0);
         //item1.SubItems.Add(fl.FileName);
-        listView2.Items.AddRange(new ListViewItem[] { item1 });
+        listView2.Items.AddRange(new ListViewItem[] {item1});
       }
     }
 
@@ -131,17 +128,17 @@ namespace MediaPortal.MPInstaller
       listView3.Items.Clear();
       foreach (MPIFileList fl in _struct.FileList)
       {
-        if (_struct.FindFileInGroup(((GroupString)comboBox1.SelectedItem).Id, fl.FileName))
+        if (_struct.FindFileInGroup(((GroupString) comboBox1.SelectedItem).Id, fl.FileName))
         {
           ListViewItem item1 = new ListViewItem(fl.FileName, 0);
           //item1.SubItems.Add(fl.FileName);
-          listView3.Items.AddRange(new ListViewItem[] { item1 });
+          listView3.Items.AddRange(new ListViewItem[] {item1});
         }
         else
         {
           ListViewItem item1 = new ListViewItem(fl.FileName, 0);
           //item1.SubItems.Add(fl.FileName);
-          listView2.Items.AddRange(new ListViewItem[] { item1 });
+          listView2.Items.AddRange(new ListViewItem[] {item1});
         }
       }
     }
@@ -201,7 +198,9 @@ namespace MediaPortal.MPInstaller
       foreach (GroupStringMapping mp in _struct.SetupGroupsMappig)
       {
         if (mp.Id == id)
+        {
           tmpl.Add(mp);
+        }
       }
 
       foreach (GroupStringMapping mp in tmpl)
@@ -214,24 +213,25 @@ namespace MediaPortal.MPInstaller
     {
       for (int i = 0; i < _struct.SetupGroupsMappig.Count; i++)
       {
-        if (_struct.SetupGroupsMappig[i].Id == ((GroupString)comboBox1.SelectedItem).Id)
+        if (_struct.SetupGroupsMappig[i].Id == ((GroupString) comboBox1.SelectedItem).Id)
+        {
           _struct.SetupGroupsMappig.RemoveAt(i);
+        }
       }
 
       for (int i = 0; i < listView3.Items.Count; i++)
       {
-        _struct.SetupGroupsMappig.Add(new GroupStringMapping(((GroupString)comboBox1.SelectedItem).Id, listView3.Items[i].Text));
+        _struct.SetupGroupsMappig.Add(new GroupStringMapping(((GroupString) comboBox1.SelectedItem).Id,
+                                                             listView3.Items[i].Text));
       }
     }
 
     private void button5_Click(object sender, EventArgs e)
     {
-
     }
 
     private void button_delete_group_Click(object sender, EventArgs e)
     {
-
       if (group_listView.SelectedItems.Count > 0)
       {
         remove_group(group_listView.SelectedItems[0].SubItems[0].Text);
@@ -273,9 +273,13 @@ namespace MediaPortal.MPInstaller
       {
         // Determine what the last sort order was and change it.
         if (group_listView.Sorting == SortOrder.Ascending)
+        {
           group_listView.Sorting = SortOrder.Descending;
+        }
         else
+        {
           group_listView.Sorting = SortOrder.Ascending;
+        }
       }
 
       // Call the sort method to manually sort.

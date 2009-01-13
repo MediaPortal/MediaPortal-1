@@ -24,34 +24,26 @@
 #endregion
 
 using System;
-using System.IO;
+using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
-using MediaPortal.Util;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_DVBTTV : Wizard_ScanBase
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
+    private MPGroupBox groupBox1;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPComboBox cbCountry;
 
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MPLabel label3;
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel3;
 
     public Wizard_DVBTTV()
       : this("DVBT TV")
@@ -61,7 +53,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBTTV(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       _card = null;
@@ -70,13 +61,15 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_DVBTTV));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (Wizard_DVBTTV));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.lblStatus2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -96,9 +89,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.lblStatus2);
       this.groupBox1.Controls.Add(this.mpLabel3);
       this.groupBox1.Controls.Add(this.progressBarQuality);
@@ -122,9 +117,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblStatus2
       // 
-      this.lblStatus2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus2.Location = new System.Drawing.Point(16, 202);
       this.lblStatus2.Name = "lblStatus2";
       this.lblStatus2.Size = new System.Drawing.Size(440, 22);
@@ -140,8 +138,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(144, 138);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(280, 16);
@@ -166,8 +166,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarStrength
       // 
-      this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarStrength.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarStrength.Location = new System.Drawing.Point(144, 117);
       this.progressBarStrength.Name = "progressBarStrength";
       this.progressBarStrength.Size = new System.Drawing.Size(280, 16);
@@ -176,8 +178,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 264);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(440, 56);
@@ -186,9 +190,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblStatus
       // 
-      this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                    System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus.Location = new System.Drawing.Point(16, 169);
       this.lblStatus.Name = "lblStatus";
       this.lblStatus.Size = new System.Drawing.Size(440, 23);
@@ -196,8 +203,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarProgress
       // 
-      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarProgress.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarProgress.Location = new System.Drawing.Point(144, 95);
       this.progressBarProgress.Name = "progressBarProgress";
       this.progressBarProgress.Size = new System.Drawing.Size(280, 16);
@@ -205,7 +214,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonScan
       // 
-      this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonScan.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonScan.Location = new System.Drawing.Point(384, 67);
       this.buttonScan.Name = "button1";
       this.buttonScan.Size = new System.Drawing.Size(72, 22);
@@ -224,8 +235,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbCountry
       // 
-      this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbCountry.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCountry.Location = new System.Drawing.Point(144, 68);
       this.cbCountry.Name = "cbCountry";
@@ -234,8 +247,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
@@ -249,79 +264,79 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(545, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
-    #endregion
 
+    #endregion
 
     public override void OnSectionActivated()
     {
-        base.OnSectionActivated();
-        if (_card == null)
+      base.OnSectionActivated();
+      if (_card == null)
+      {
+        TVCaptureCards cards = new TVCaptureCards();
+        cards.LoadCaptureCards();
+        foreach (TVCaptureDevice dev in cards.captureCards)
         {
-            TVCaptureCards cards = new TVCaptureCards();
-            cards.LoadCaptureCards();
-            foreach (TVCaptureDevice dev in cards.captureCards)
-            {
-                if (dev.Network == NetworkType.DVBT)
-                {
-                    _card = dev;
-                    break;
-                }
-            }
+          if (dev.Network == NetworkType.DVBT)
+          {
+            _card = dev;
+            break;
+          }
         }
-        XmlDocument doc = new XmlDocument();
-        doc.Load(Config.GetFile(Config.Dir.Base, @"Tuningparameters\dvbt.xml"));
-        XPathNavigator nav = doc.CreateNavigator();
+      }
+      XmlDocument doc = new XmlDocument();
+      doc.Load(Config.GetFile(Config.Dir.Base, @"Tuningparameters\dvbt.xml"));
+      XPathNavigator nav = doc.CreateNavigator();
 
-        // Ensure we are at the root node
-        nav.MoveToRoot();
-        XPathExpression expr = nav.Compile("/dvbt/country");
-        // Add an XSLT based sort
-        expr.AddSort("@name", XmlSortOrder.Ascending, XmlCaseOrder.None, "", XmlDataType.Text);
-        IEnumerator enumerator = nav.Select(expr).GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            XPathNavigator nodeCountry = (XPathNavigator)enumerator.Current;
-            XPathNavigator nameNode = nodeCountry.SelectSingleNode("@name");
-            string name = nameNode.Value;
-            cbCountry.Items.Add(name);
-        }
-        if (cbCountry.Items.Count > 0)
-            cbCountry.SelectedIndex = 0;
-        this.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-        this.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+      // Ensure we are at the root node
+      nav.MoveToRoot();
+      XPathExpression expr = nav.Compile("/dvbt/country");
+      // Add an XSLT based sort
+      expr.AddSort("@name", XmlSortOrder.Ascending, XmlCaseOrder.None, "", XmlDataType.Text);
+      IEnumerator enumerator = nav.Select(expr).GetEnumerator();
+      while (enumerator.MoveNext())
+      {
+        XPathNavigator nodeCountry = (XPathNavigator) enumerator.Current;
+        XPathNavigator nameNode = nodeCountry.SelectSingleNode("@name");
+        string name = nameNode.Value;
+        cbCountry.Items.Add(name);
+      }
+      if (cbCountry.Items.Count > 0)
+      {
+        cbCountry.SelectedIndex = 0;
+      }
+      this.OnScanFinished += new ScanFinishedHandler(this.dlg_OnScanFinished);
+      this.OnScanStarted += new ScanStartedHandler(this.dlg_OnScanStarted);
     }
 
     protected override String[] GetScanParameters()
     {
-        String[] parameters = new String[1];
-        string countryName = (string)cbCountry.SelectedItem;
-        parameters[0] = countryName;
-        return parameters;
-    }
-    void dlg_OnScanFinished(object sender, EventArgs args)
-    {
-        cbCountry.Enabled = true;
-        WizardForm wizard = WizardForm.Form;
-        if (wizard != null)
-        {
-            wizard.DisableBack(false);
-            wizard.DisableNext(false);
-        }
+      String[] parameters = new String[1];
+      string countryName = (string) cbCountry.SelectedItem;
+      parameters[0] = countryName;
+      return parameters;
     }
 
-    void dlg_OnScanStarted(object sender, EventArgs args)
+    private void dlg_OnScanFinished(object sender, EventArgs args)
     {
-        cbCountry.Enabled = false;
-        WizardForm wizard = WizardForm.Form; 
-        if ( wizard != null)
-        {
-            wizard.DisableBack(true);
-            wizard.DisableNext(true);
-        }
+      cbCountry.Enabled = true;
+      WizardForm wizard = WizardForm.Form;
+      if (wizard != null)
+      {
+        wizard.DisableBack(false);
+        wizard.DisableNext(false);
+      }
     }
 
+    private void dlg_OnScanStarted(object sender, EventArgs args)
+    {
+      cbCountry.Enabled = false;
+      WizardForm wizard = WizardForm.Form;
+      if (wizard != null)
+      {
+        wizard.DisableBack(true);
+        wizard.DisableNext(true);
+      }
+    }
   }
 }
-

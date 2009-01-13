@@ -27,15 +27,16 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Services;
-using MediaPortal.Util;
 
 namespace MediaPortal.MusicShareWatcher
 {
   /// <summary>
   /// This is a Process Plugin for the Music Share Watcher
   /// </summary>
-  [PluginIcons("ProcessPlugins.MusicShareWatcher.MusicShareWatcher.gif", "ProcessPlugins.MusicShareWatcher.MusicShareWatcher_deactivated.gif")]
+  [PluginIcons("ProcessPlugins.MusicShareWatcher.MusicShareWatcher.gif",
+    "ProcessPlugins.MusicShareWatcher.MusicShareWatcher_deactivated.gif")]
   public class MusicShareWatcherPlugin : IPluginReceiver, ISetupForm
   {
     private const string _version = "0.3";
@@ -56,9 +57,10 @@ namespace MediaPortal.MusicShareWatcher
     }
 
     #region Interface IPluginReceiver
+
     public void Start()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _monitor = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
       }
@@ -75,11 +77,13 @@ namespace MediaPortal.MusicShareWatcher
     public void Stop()
     {
       if (_monitor)
+      {
         Log.Info("MusicShareWatcher Plugin {0} stopping.", _version);
+      }
       return;
     }
 
-    public bool WndProc(ref System.Windows.Forms.Message msg)
+    public bool WndProc(ref Message msg)
     {
       try
       {
@@ -106,11 +110,14 @@ namespace MediaPortal.MusicShareWatcher
       }
       return false; // false = all other processes will handle the msg
     }
+
     #endregion
 
     #region Private Methods
+
     //called when windows wakes up again
-    static object syncResume = new object();
+    private static object syncResume = new object();
+
     private void OnResume()
     {
       lock (syncResume)
@@ -122,13 +129,15 @@ namespace MediaPortal.MusicShareWatcher
 
         if (watcher != null)
         {
-          Log.Info(LogType.MusicShareWatcher, "Windows has resumed from standby/hibernate mode: Reenabling FilesystemWatcher");
+          Log.Info(LogType.MusicShareWatcher,
+                   "Windows has resumed from standby/hibernate mode: Reenabling FilesystemWatcher");
           watcher.StartMonitor();
         }
 
         _suspended = false;
       }
     }
+
     #endregion
 
     #region ISetupForm Members
@@ -153,7 +162,8 @@ namespace MediaPortal.MusicShareWatcher
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = string.Empty;
       strButtonImage = string.Empty;

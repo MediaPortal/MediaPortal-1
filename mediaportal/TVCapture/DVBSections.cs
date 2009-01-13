@@ -24,17 +24,12 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
-using System.Threading;
 using System.Text;
-using DShowNET;
-using DShowNET.Helper;
+using System.Windows.Forms;
 using DirectShowLib;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording
 {
@@ -46,206 +41,219 @@ namespace MediaPortal.TV.Recording
     #region imports
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetSectionPtr(int section, ref IntPtr dataPointer, ref int len, ref int header, ref int tableExtId, ref int version, ref int secNum, ref int lastSecNum);
+    private static extern bool GetSectionPtr(int section, ref IntPtr dataPointer, ref int len, ref int header,
+                                             ref int tableExtId, ref int version, ref int secNum, ref int lastSecNum);
+
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern bool ReleaseSectionsBuffer();
+
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetSectionData(DirectShowLib.IBaseFilter filter, int pid, int tid, ref int sectionCount, int tableSection, int timeout);
+    private static extern bool GetSectionData(IBaseFilter filter, int pid, int tid, ref int sectionCount,
+                                              int tableSection, int timeout);
+
     // globals
+
     #endregion
 
     #region variables
-    TPList[] transp;
-    static ArrayList m_sectionsList;
-    int m_diseqc = 0;
-    int m_lnb0 = 0;
-    int m_lnb1 = 0;
-    int m_lnbsw = 0;
-    int m_lnbkhz = 0;
-    int m_lnbfreq = 0;
-    int m_selKhz = 0;
-    int m_timeoutMS = 1000; // the timeout in milliseconds
-    // two skystar2 specific globals
-    bool m_setPid = false;
-    object m_dataCtrl = null;
-    static DVBDemuxer m_streamDemuxer;
-    static object m_syncRelease = false;
 
-    static string[] m_langCodes = new string[]{
-													"abk","ace","ach","ada","aar",
-													"afh","afr","afa","aka","akk",
-													"alb","sqi","ale","alg","tut",
-													"amh","apa","ara","arc","arp",
-													"arn","arw","arm","hye","art",
-													"asm","ath","map","ava","ave",
-													"awa","aym","aze","nah","ban",
-													"bat","bal","bam","bai","bad",
-													"bnt","bas","bak","baq","eus",
-													"bej","bem","ben","ber","bho",
-													"bih","bik","bin","bis","bra",
-													"bre","bug","bul","bua","bur",
-													"mya","bel","cad","car","cat",
-													"cau","ceb","cel","cai","chg",
-													"cha","che","chr","chy","chb",
-													"chi","zho","chn","cho","chu",
-													"chv","cop","cor","cos","cre",
-													"mus","crp","cpe","cpf","cpp",
-													"cus","ces","cze","dak","dan",
-													"del","din","div","doi","dra",
-													"dua","dut","nla","dum","dyu",
-													"dzo","efi","egy","eka","elx",
-													"eng","enm","ang","esk","epo",
-													"est","ewe","ewo","fan","fat",
-													"fao","fij","fin","fiu","fon",
-													"fra","fre","frm","fro","fry",
-													"ful","gaa","gae","gdh","glg",
-													"lug","gay","gez","geo","kat",
-													"deu","ger","gmh","goh","gem",
-													"gil","gon","got","grb","grc",
-													"ell","gre","kal","grn","guj",
-													"hai","hau","haw","heb","her",
-													"hil","him","hin","hmo","hun",
-													"hup","iba","ice","isl","ibo",
-													"ijo","ilo","inc","ine","ind",
-													"ina","ine","iku","ipk","ira",
-													"gai","iri","sga","mga","iro",
-													"ita","jpn","jav","jaw","jrb",
-													"jpr","kab","kac","kam","kan",
-													"kau","kaa","kar","kas","kaw",
-													"kaz","kha","khm","khi","kho",
-													"kik","kin","kir","kom","kon",
-													"kok","kor","kpe","kro","kua",
-													"kum","kur","kru","kus","kut",
-													"lad","lah","lam","oci","lao",
-													"lat","lav","ltz","lez","lin",
-													"lit","loz","lub","lui","lun",
-													"luo","mac","mak","mad","mag",
-													"mai","mak","mlg","may","msa",
-													"mal","mlt","man","mni","mno",
-													"max","mao","mri","mar","chm",
-													"mah","mwr","mas","myn","men",
-													"mic","min","mis","moh","mol",
-													"mkh","lol","mon","mos","mul",
-													"mun","nau","nav","nde","nbl",
-													"ndo","nep","new","nic","ssa",
-													"niu","non","nai","nor","nno",
-													"nub","nym","nya","nyn","nyo",
-													"nzi","oji","ori","orm","osa",
-													"oss","oto","pal","pau","pli",
-													"pam","pag","pan","pap","paa",
-													"fas","per","peo","phn","pol",
-													"pon","por","pra","pro","pus",
-													"que","roh","raj","rar","roa",
-													"ron","rum","rom","run","rus",
-													"sal","sam","smi","smo","sad",
-													"sag","san","srd","sco","sel",
-													"sem","scr","srr","shn","sna",
-													"sid","bla","snd","sin","sit",
-													"sio","sla","ssw","slk","slo",
-													"slv","sog","som","son","wen",
-													"nso","sot","sai","esl","spa",
-													"suk","sux","sun","sus","swa",
-													"ssw","sve","swe","syr","tgl",
-													"tah","tgk","tmh","tam","tat",
-													"tel","ter","tha","bod","tib",
-													"tig","tir","tem","tiv","tli",
-													"tog","ton","tru","tsi","tso",
-													"tsn","tum","tur","ota","tuk",
-													"tyv","twi","uga","uig","ukr",
-													"umb","und","urd","uzb","vai",
-													"ven","vie","vol","vot","wak",
-													"wal","war","was","cym","wel",
-													"wol","xho","sah","yao","yap",
-													"yid","yor","zap","zen","zha","zul"};
-    static string[] m_langLanguage = new string[]{
-													   "Abkhazian","Achinese","Acoli","Adangme","Afar",
-													   "Afrihili","Afrikaans","Afro-Asiatic","Akan",
-													   "Akkadian","Albanian","Albanian","Aleut","Algonquian",
-													   "Altaic","Amharic","Apache","Arabic","Aramaic",
-													   "Arapaho","Araucanian","Arawak","Armenian","Armenian",
-													   "Artificial","Assamese","Athapascan","Austronesian",
-													   "Avaric","Avestan","Awadhi","Aymara","Azerbaijani",
-													   "Aztec","Balinese","Baltic","Baluchi","Bambara",
-													   "Bamileke","Banda","Bantu","Basa","Bashkir","Basque",
-													   "Basque","Beja","Bemba","Bengali","Berber","Bhojpuri",
-													   "Bihari","Bikol","Bini","Bislama","Braj","Breton",
-													   "Buginese","Bulgarian","Buriat","Burmese","Burmese",
-													   "Byelorussian","Caddo","Carib","Catalan","Caucasian",
-													   "Cebuano","Celtic","Central-American(Indian)","Chagatai",
-													   "Chamorro","Chechen","Cherokee","Cheyenne","Chibcha",
-													   "Chinese","Chinese","Chinook","Choctaw","Church","Chuvash",
-													   "Coptic","Cornish","Corsican","Cree","Creek",
-													   "Creoles(Pidgins)","Creoles(Pidgins)","Creoles(Pidgins)",
-													   "Creoles(Pidgins)","Cushitic","Czech","Czech","Dakota",
-													   "Danish","Delaware","Dinka","Divehi","Dogri","Dravidian",
-													   "Duala","Dutch","Dutch","Dutch-Middle","Dyula","Dzongkha",
-													   "Efik","Egyptian","Ekajuk","Elamite","English",
-													   "English-Middle","English-Old","Eskimo","Esperanto",
-													   "Estonian","Ewe","Ewondo","Fang","Fanti","Faroese",
-													   "Fijian","Finnish","Finno-Ugrian","Fon","French",
-													   "French","French-Middle","French-Old","Frisian",
-													   "Fulah","Ga","Gaelic","Gaelic","Gallegan","Ganda",
-													   "Gayo","Geez","Georgian","Georgian","German","German",
-													   "German-Middle","German-Old","Germanic","Gilbertese",
-													   "Gondi","Gothic","Grebo","Greek-Ancient","Greek",
-													   "Greek","Greenlandic","Guarani","Gujarati","Haida",
-													   "Hausa","Hawaiian","Hebrew","Herero","Hiligaynon",
-													   "Himachali","Hindi","Hiri","Hungarian","Hupa","Iban",
-													   "Icelandic","Icelandic","Igbo","Ijo","Iloko","Indic",
-													   "Indo-European","Indonesian","Interlingua","Interlingue",
-													   "Inuktitut","Inupiak","Iranian","Irish","Irish",
-													   "Irish-Old","Irish-Middle","Iroquoian","Italian",
-													   "Japanese","Javanese","Javanese","Judeo-Arabic",
-													   "Judeo-Persian","Kabyle","Kachin","Kamba","Kannada",
-													   "Kanuri","Kara-Kalpak","Karen","Kashmiri","Kawi",
-													   "Kazakh","Khasi","Khmer","Khoisan","Khotanese","Kikuyu",
-													   "Kinyarwanda","Kirghiz","Komi","Kongo","Konkani",
-													   "Korean","Kpelle","Kru","Kuanyama","Kumyk","Kurdish",
-													   "Kurukh","Kusaie","Kutenai","Ladino","Lahnda","Lamba",
-													   "Langue","Lao","Latin","Latvian","Letzeburgesch",
-													   "Lezghian","Lingala","Lithuanian","Lozi","Luba-Katanga",
-													   "Luiseno","Lunda","Luo","Macedonian","Macedonian",
-													   "Madurese","Magahi","Maithili","Makasar","Malagasy",
-													   "Malay","Malay","Malayalam","Maltese","Mandingo",
-													   "Manipuri","Manobo","Manx","Maori","Maori","Marathi",
-													   "Mari","Marshall","Marwari","Masai","Mayan","Mende",
-													   "Micmac","Minangkabau","Miscellaneous","Mohawk",
-													   "Moldavian","Mon-Kmer","Mongo","Mongolian","Mossi",
-													   "Multiple","Munda","Nauru","Navajo","Ndebele-North",
-													   "Ndebele-South","Ndongo","Nepali","Newari",
-													   "Niger-Kordofanian","Nilo-Saharan","Niuean",
-													   "Norse-Old","North-American(Indian)","Norwegian",
-													   "Norwegian","Nubian","Nyamwezi","Nyanja","Nyankole",
-													   "Nyoro","Nzima","Ojibwa","Oriya","Oromo","Osage",
-													   "Ossetic","Otomian","Pahlavi","Palauan","Pali",
-													   "Pampanga","Pangasinan","Panjabi","Papiamento",
-													   "Papuan-Australian","Persian","Persian","Persian-Old",
-													   "Phoenician","Polish","Ponape","Portuguese","Prakrit",
-													   "Provencal-Old","Pushto","Quechua","Rhaeto-Romance",
-													   "Rajasthani","Rarotongan","Romance","Romanian","Romanian",
-													   "Romany","Rundi","Russian","Salishan","Samaritan(Aramaic)",
-													   "Sami","Samoan","Sandawe","Sango","Sanskrit","Sardinian",
-													   "Scots","Selkup","Semitic","Serbo-Croatian","Serer","Shan",
-													   "Shona","Sidamo","Siksika","Sindhi","Singhalese",
-													   "Sino-Tibetan","Siouan","Slavic","Siswant","Slovak",
-													   "Slovak","Slovenian","Sogdian","Somali","Songhai","Sorbian",
-													   "Sotho-Northern","Sotho-Southern","South-American(Indian)",
-													   "Spanish","Spanish","Sukuma","Sumerian","Sudanese","Susu",
-													   "Swahili","Swazi","Swedish","Swedish","Syriac","Tagalog",
-													   "Tahitian","Tajik","Tamashek","Tamil","Tatar","Telugu",
-													   "Tereno","Thai","Tibetan","Tibetan","Tigre","Tigrinya",
-													   "Timne","Tivi","Tlingit","Tonga","Tonga(Tonga-Islands)",
-													   "Truk","Tsimshian","Tsonga","Tswana","Tumbuka","Turkish",
-													   "Turkish-Ottoman","Turkmen","Tuvinian","Twi","Ugaritic",
-													   "Uighur","Ukrainian","Umbundu","Undetermined","Urdu",
-													   "Uzbek","Vai","Venda","Vietnamese","Volapük","Votic",
-													   "Wakashan","Walamo","Waray","Washo","Welsh","Welsh",
-													   "Wolof","Xhosa","Yakut","Yao","Yap","Yiddish","Yoruba",
-													   "Zapotec","Zenaga","Zhuang","Zulu"};
+    private TPList[] transp;
+    private static ArrayList m_sectionsList;
+    private int m_diseqc = 0;
+    private int m_lnb0 = 0;
+    private int m_lnb1 = 0;
+    private int m_lnbsw = 0;
+    private int m_lnbkhz = 0;
+    private int m_lnbfreq = 0;
+    private int m_selKhz = 0;
+    private int m_timeoutMS = 1000; // the timeout in milliseconds
+    // two skystar2 specific globals
+    private bool m_setPid = false;
+    private object m_dataCtrl = null;
+    private static DVBDemuxer m_streamDemuxer;
+    private static object m_syncRelease = false;
+
+    private static string[] m_langCodes = new string[]
+                                            {
+                                              "abk", "ace", "ach", "ada", "aar",
+                                              "afh", "afr", "afa", "aka", "akk",
+                                              "alb", "sqi", "ale", "alg", "tut",
+                                              "amh", "apa", "ara", "arc", "arp",
+                                              "arn", "arw", "arm", "hye", "art",
+                                              "asm", "ath", "map", "ava", "ave",
+                                              "awa", "aym", "aze", "nah", "ban",
+                                              "bat", "bal", "bam", "bai", "bad",
+                                              "bnt", "bas", "bak", "baq", "eus",
+                                              "bej", "bem", "ben", "ber", "bho",
+                                              "bih", "bik", "bin", "bis", "bra",
+                                              "bre", "bug", "bul", "bua", "bur",
+                                              "mya", "bel", "cad", "car", "cat",
+                                              "cau", "ceb", "cel", "cai", "chg",
+                                              "cha", "che", "chr", "chy", "chb",
+                                              "chi", "zho", "chn", "cho", "chu",
+                                              "chv", "cop", "cor", "cos", "cre",
+                                              "mus", "crp", "cpe", "cpf", "cpp",
+                                              "cus", "ces", "cze", "dak", "dan",
+                                              "del", "din", "div", "doi", "dra",
+                                              "dua", "dut", "nla", "dum", "dyu",
+                                              "dzo", "efi", "egy", "eka", "elx",
+                                              "eng", "enm", "ang", "esk", "epo",
+                                              "est", "ewe", "ewo", "fan", "fat",
+                                              "fao", "fij", "fin", "fiu", "fon",
+                                              "fra", "fre", "frm", "fro", "fry",
+                                              "ful", "gaa", "gae", "gdh", "glg",
+                                              "lug", "gay", "gez", "geo", "kat",
+                                              "deu", "ger", "gmh", "goh", "gem",
+                                              "gil", "gon", "got", "grb", "grc",
+                                              "ell", "gre", "kal", "grn", "guj",
+                                              "hai", "hau", "haw", "heb", "her",
+                                              "hil", "him", "hin", "hmo", "hun",
+                                              "hup", "iba", "ice", "isl", "ibo",
+                                              "ijo", "ilo", "inc", "ine", "ind",
+                                              "ina", "ine", "iku", "ipk", "ira",
+                                              "gai", "iri", "sga", "mga", "iro",
+                                              "ita", "jpn", "jav", "jaw", "jrb",
+                                              "jpr", "kab", "kac", "kam", "kan",
+                                              "kau", "kaa", "kar", "kas", "kaw",
+                                              "kaz", "kha", "khm", "khi", "kho",
+                                              "kik", "kin", "kir", "kom", "kon",
+                                              "kok", "kor", "kpe", "kro", "kua",
+                                              "kum", "kur", "kru", "kus", "kut",
+                                              "lad", "lah", "lam", "oci", "lao",
+                                              "lat", "lav", "ltz", "lez", "lin",
+                                              "lit", "loz", "lub", "lui", "lun",
+                                              "luo", "mac", "mak", "mad", "mag",
+                                              "mai", "mak", "mlg", "may", "msa",
+                                              "mal", "mlt", "man", "mni", "mno",
+                                              "max", "mao", "mri", "mar", "chm",
+                                              "mah", "mwr", "mas", "myn", "men",
+                                              "mic", "min", "mis", "moh", "mol",
+                                              "mkh", "lol", "mon", "mos", "mul",
+                                              "mun", "nau", "nav", "nde", "nbl",
+                                              "ndo", "nep", "new", "nic", "ssa",
+                                              "niu", "non", "nai", "nor", "nno",
+                                              "nub", "nym", "nya", "nyn", "nyo",
+                                              "nzi", "oji", "ori", "orm", "osa",
+                                              "oss", "oto", "pal", "pau", "pli",
+                                              "pam", "pag", "pan", "pap", "paa",
+                                              "fas", "per", "peo", "phn", "pol",
+                                              "pon", "por", "pra", "pro", "pus",
+                                              "que", "roh", "raj", "rar", "roa",
+                                              "ron", "rum", "rom", "run", "rus",
+                                              "sal", "sam", "smi", "smo", "sad",
+                                              "sag", "san", "srd", "sco", "sel",
+                                              "sem", "scr", "srr", "shn", "sna",
+                                              "sid", "bla", "snd", "sin", "sit",
+                                              "sio", "sla", "ssw", "slk", "slo",
+                                              "slv", "sog", "som", "son", "wen",
+                                              "nso", "sot", "sai", "esl", "spa",
+                                              "suk", "sux", "sun", "sus", "swa",
+                                              "ssw", "sve", "swe", "syr", "tgl",
+                                              "tah", "tgk", "tmh", "tam", "tat",
+                                              "tel", "ter", "tha", "bod", "tib",
+                                              "tig", "tir", "tem", "tiv", "tli",
+                                              "tog", "ton", "tru", "tsi", "tso",
+                                              "tsn", "tum", "tur", "ota", "tuk",
+                                              "tyv", "twi", "uga", "uig", "ukr",
+                                              "umb", "und", "urd", "uzb", "vai",
+                                              "ven", "vie", "vol", "vot", "wak",
+                                              "wal", "war", "was", "cym", "wel",
+                                              "wol", "xho", "sah", "yao", "yap",
+                                              "yid", "yor", "zap", "zen", "zha", "zul"
+                                            };
+
+    private static string[] m_langLanguage = new string[]
+                                               {
+                                                 "Abkhazian", "Achinese", "Acoli", "Adangme", "Afar",
+                                                 "Afrihili", "Afrikaans", "Afro-Asiatic", "Akan",
+                                                 "Akkadian", "Albanian", "Albanian", "Aleut", "Algonquian",
+                                                 "Altaic", "Amharic", "Apache", "Arabic", "Aramaic",
+                                                 "Arapaho", "Araucanian", "Arawak", "Armenian", "Armenian",
+                                                 "Artificial", "Assamese", "Athapascan", "Austronesian",
+                                                 "Avaric", "Avestan", "Awadhi", "Aymara", "Azerbaijani",
+                                                 "Aztec", "Balinese", "Baltic", "Baluchi", "Bambara",
+                                                 "Bamileke", "Banda", "Bantu", "Basa", "Bashkir", "Basque",
+                                                 "Basque", "Beja", "Bemba", "Bengali", "Berber", "Bhojpuri",
+                                                 "Bihari", "Bikol", "Bini", "Bislama", "Braj", "Breton",
+                                                 "Buginese", "Bulgarian", "Buriat", "Burmese", "Burmese",
+                                                 "Byelorussian", "Caddo", "Carib", "Catalan", "Caucasian",
+                                                 "Cebuano", "Celtic", "Central-American(Indian)", "Chagatai",
+                                                 "Chamorro", "Chechen", "Cherokee", "Cheyenne", "Chibcha",
+                                                 "Chinese", "Chinese", "Chinook", "Choctaw", "Church", "Chuvash",
+                                                 "Coptic", "Cornish", "Corsican", "Cree", "Creek",
+                                                 "Creoles(Pidgins)", "Creoles(Pidgins)", "Creoles(Pidgins)",
+                                                 "Creoles(Pidgins)", "Cushitic", "Czech", "Czech", "Dakota",
+                                                 "Danish", "Delaware", "Dinka", "Divehi", "Dogri", "Dravidian",
+                                                 "Duala", "Dutch", "Dutch", "Dutch-Middle", "Dyula", "Dzongkha",
+                                                 "Efik", "Egyptian", "Ekajuk", "Elamite", "English",
+                                                 "English-Middle", "English-Old", "Eskimo", "Esperanto",
+                                                 "Estonian", "Ewe", "Ewondo", "Fang", "Fanti", "Faroese",
+                                                 "Fijian", "Finnish", "Finno-Ugrian", "Fon", "French",
+                                                 "French", "French-Middle", "French-Old", "Frisian",
+                                                 "Fulah", "Ga", "Gaelic", "Gaelic", "Gallegan", "Ganda",
+                                                 "Gayo", "Geez", "Georgian", "Georgian", "German", "German",
+                                                 "German-Middle", "German-Old", "Germanic", "Gilbertese",
+                                                 "Gondi", "Gothic", "Grebo", "Greek-Ancient", "Greek",
+                                                 "Greek", "Greenlandic", "Guarani", "Gujarati", "Haida",
+                                                 "Hausa", "Hawaiian", "Hebrew", "Herero", "Hiligaynon",
+                                                 "Himachali", "Hindi", "Hiri", "Hungarian", "Hupa", "Iban",
+                                                 "Icelandic", "Icelandic", "Igbo", "Ijo", "Iloko", "Indic",
+                                                 "Indo-European", "Indonesian", "Interlingua", "Interlingue",
+                                                 "Inuktitut", "Inupiak", "Iranian", "Irish", "Irish",
+                                                 "Irish-Old", "Irish-Middle", "Iroquoian", "Italian",
+                                                 "Japanese", "Javanese", "Javanese", "Judeo-Arabic",
+                                                 "Judeo-Persian", "Kabyle", "Kachin", "Kamba", "Kannada",
+                                                 "Kanuri", "Kara-Kalpak", "Karen", "Kashmiri", "Kawi",
+                                                 "Kazakh", "Khasi", "Khmer", "Khoisan", "Khotanese", "Kikuyu",
+                                                 "Kinyarwanda", "Kirghiz", "Komi", "Kongo", "Konkani",
+                                                 "Korean", "Kpelle", "Kru", "Kuanyama", "Kumyk", "Kurdish",
+                                                 "Kurukh", "Kusaie", "Kutenai", "Ladino", "Lahnda", "Lamba",
+                                                 "Langue", "Lao", "Latin", "Latvian", "Letzeburgesch",
+                                                 "Lezghian", "Lingala", "Lithuanian", "Lozi", "Luba-Katanga",
+                                                 "Luiseno", "Lunda", "Luo", "Macedonian", "Macedonian",
+                                                 "Madurese", "Magahi", "Maithili", "Makasar", "Malagasy",
+                                                 "Malay", "Malay", "Malayalam", "Maltese", "Mandingo",
+                                                 "Manipuri", "Manobo", "Manx", "Maori", "Maori", "Marathi",
+                                                 "Mari", "Marshall", "Marwari", "Masai", "Mayan", "Mende",
+                                                 "Micmac", "Minangkabau", "Miscellaneous", "Mohawk",
+                                                 "Moldavian", "Mon-Kmer", "Mongo", "Mongolian", "Mossi",
+                                                 "Multiple", "Munda", "Nauru", "Navajo", "Ndebele-North",
+                                                 "Ndebele-South", "Ndongo", "Nepali", "Newari",
+                                                 "Niger-Kordofanian", "Nilo-Saharan", "Niuean",
+                                                 "Norse-Old", "North-American(Indian)", "Norwegian",
+                                                 "Norwegian", "Nubian", "Nyamwezi", "Nyanja", "Nyankole",
+                                                 "Nyoro", "Nzima", "Ojibwa", "Oriya", "Oromo", "Osage",
+                                                 "Ossetic", "Otomian", "Pahlavi", "Palauan", "Pali",
+                                                 "Pampanga", "Pangasinan", "Panjabi", "Papiamento",
+                                                 "Papuan-Australian", "Persian", "Persian", "Persian-Old",
+                                                 "Phoenician", "Polish", "Ponape", "Portuguese", "Prakrit",
+                                                 "Provencal-Old", "Pushto", "Quechua", "Rhaeto-Romance",
+                                                 "Rajasthani", "Rarotongan", "Romance", "Romanian", "Romanian",
+                                                 "Romany", "Rundi", "Russian", "Salishan", "Samaritan(Aramaic)",
+                                                 "Sami", "Samoan", "Sandawe", "Sango", "Sanskrit", "Sardinian",
+                                                 "Scots", "Selkup", "Semitic", "Serbo-Croatian", "Serer", "Shan",
+                                                 "Shona", "Sidamo", "Siksika", "Sindhi", "Singhalese",
+                                                 "Sino-Tibetan", "Siouan", "Slavic", "Siswant", "Slovak",
+                                                 "Slovak", "Slovenian", "Sogdian", "Somali", "Songhai", "Sorbian",
+                                                 "Sotho-Northern", "Sotho-Southern", "South-American(Indian)",
+                                                 "Spanish", "Spanish", "Sukuma", "Sumerian", "Sudanese", "Susu",
+                                                 "Swahili", "Swazi", "Swedish", "Swedish", "Syriac", "Tagalog",
+                                                 "Tahitian", "Tajik", "Tamashek", "Tamil", "Tatar", "Telugu",
+                                                 "Tereno", "Thai", "Tibetan", "Tibetan", "Tigre", "Tigrinya",
+                                                 "Timne", "Tivi", "Tlingit", "Tonga", "Tonga(Tonga-Islands)",
+                                                 "Truk", "Tsimshian", "Tsonga", "Tswana", "Tumbuka", "Turkish",
+                                                 "Turkish-Ottoman", "Turkmen", "Tuvinian", "Twi", "Ugaritic",
+                                                 "Uighur", "Ukrainian", "Umbundu", "Undetermined", "Urdu",
+                                                 "Uzbek", "Vai", "Venda", "Vietnamese", "Volapük", "Votic",
+                                                 "Wakashan", "Walamo", "Waray", "Washo", "Welsh", "Welsh",
+                                                 "Wolof", "Xhosa", "Yakut", "Yao", "Yap", "Yiddish", "Yoruba",
+                                                 "Zapotec", "Zenaga", "Zhuang", "Zulu"
+                                               };
 
     #endregion
 
     #region Helper Methods
+
     //
 
     //
@@ -259,12 +267,13 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
     public DVBSections()
     {
-
       m_sectionsList = new ArrayList();
       transp = new TPList[200];
     }
+
     //
     public int Timeout
     {
@@ -273,6 +282,7 @@ namespace MediaPortal.TV.Recording
     }
 
     #region tables
+
     // tables
 
 
@@ -311,6 +321,7 @@ namespace MediaPortal.TV.Recording
       public DateTime mhwStartTime;
       public bool isMHWEvent;
     }
+
     public struct EIT_Program_Info
     {
       public ArrayList eitList;
@@ -318,6 +329,7 @@ namespace MediaPortal.TV.Recording
       public bool scrambled;
       public int running_status;
     }
+
     // defines
     public struct TPList
     {
@@ -325,11 +337,13 @@ namespace MediaPortal.TV.Recording
       public int TPpol; // polarisation 0=hori, 1=vert
       public int TPsymb; // symbol rate
     }
+
     public struct AudioLanguage
     {
       public int AudioPid;
       public string AudioLanguageCode;
     }
+
     //
     //
     public struct Transponder
@@ -346,6 +360,7 @@ namespace MediaPortal.TV.Recording
       public string serviceName;
       public int serviceType;
     }
+
     //
     // nit structs
     public struct NITSatDescriptor
@@ -359,6 +374,7 @@ namespace MediaPortal.TV.Recording
       public int FECInner;
       public string NetworkName;
     }
+
     //
     public struct NITCableDescriptor
     {
@@ -369,6 +385,7 @@ namespace MediaPortal.TV.Recording
       public int FECInner;
       public string NetworkName;
     }
+
     //
     public struct NITTerrestrialDescriptor
     {
@@ -404,12 +421,12 @@ namespace MediaPortal.TV.Recording
       public bool eitSchedule;
       public bool eitPreFollow;
       public bool scrambled;
-      public int freq;// 12188
-      public int symb;// 27500
-      public int fec;// 6
-      public int diseqc;// 1
-      public int lnb01;// 10600
-      public int lnbkhz;// 1 = 22
+      public int freq; // 12188
+      public int symb; // 27500
+      public int fec; // 6
+      public int diseqc; // 1
+      public int lnb01; // 10600
+      public int lnbkhz; // 1 = 22
       public int pol; // 0 - h
       public int pcr_pid;
       public ArrayList pid_list;
@@ -422,6 +439,7 @@ namespace MediaPortal.TV.Recording
       public CaPMT caPMT;
       public int LCN;
     }
+
     //
     //
     public struct PMTData
@@ -439,7 +457,9 @@ namespace MediaPortal.TV.Recording
       public bool isDVBSubtitle;
       public string teletextLANG;
     }
+
     #endregion
+
     //
     //
     public ChannelInfo GetChannelInfo(IntPtr data)
@@ -495,7 +515,8 @@ namespace MediaPortal.TV.Recording
       pmt.elementary_PID = Marshal.ReadInt16(data, 18);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.data = "" + (char)Marshal.ReadByte(data, 20) + (char)Marshal.ReadByte(data, 21) + (char)Marshal.ReadByte(data, 22);
+      pmt.data = "" + (char) Marshal.ReadByte(data, 20) + (char) Marshal.ReadByte(data, 21) +
+                 (char) Marshal.ReadByte(data, 22);
       RemoveInvalidChars(ref pmt.data);
       ch.pid_list.Add(pmt);
       pmt = new PMTData();
@@ -504,7 +525,8 @@ namespace MediaPortal.TV.Recording
       pmt.elementary_PID = Marshal.ReadInt16(data, 24);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.data = "" + (char)Marshal.ReadByte(data, 26) + (char)Marshal.ReadByte(data, 27) + (char)Marshal.ReadByte(data, 28);
+      pmt.data = "" + (char) Marshal.ReadByte(data, 26) + (char) Marshal.ReadByte(data, 27) +
+                 (char) Marshal.ReadByte(data, 28);
       RemoveInvalidChars(ref pmt.data);
       ch.pid_list.Add(pmt);
       pmt = new PMTData();
@@ -513,7 +535,8 @@ namespace MediaPortal.TV.Recording
       pmt.elementary_PID = Marshal.ReadInt16(data, 30);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.data = "" + (char)Marshal.ReadByte(data, 32) + (char)Marshal.ReadByte(data, 33) + (char)Marshal.ReadByte(data, 34);
+      pmt.data = "" + (char) Marshal.ReadByte(data, 32) + (char) Marshal.ReadByte(data, 33) +
+                 (char) Marshal.ReadByte(data, 34);
       RemoveInvalidChars(ref pmt.data);
       ch.pid_list.Add(pmt);
       pmt = new PMTData();
@@ -546,12 +569,12 @@ namespace MediaPortal.TV.Recording
       pmt = new PMTData();
 
       byte[] d = new byte[255];
-      Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
+      Marshal.Copy((IntPtr) (((int) data) + 42), d, 0, 255);
       //Log.Info("service_name: {0} {1} {2}", d[0], d[1], d[2]);
       ch.service_name = DvbTextConverter.Convert(d, 255, "");
       //Log.Info("service_name: {0}", ch.service_name);
       //ch.service_name =  Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 42));
-      Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
+      Marshal.Copy((IntPtr) (((int) data) + 297), d, 0, 255);
       ch.service_provider_name = DvbTextConverter.Convert(d, 255, "");
       //Log.Info("service_provider_name: {0}", ch.service_provider_name);
       //ch.service_provider_name = Marshal.PtrToStringAnsi((IntPtr)(((int)data) + 297));
@@ -575,7 +598,8 @@ namespace MediaPortal.TV.Recording
       RemoveInvalidChars(ref ch.service_provider_name);
       return ch;
     }
-    void RemoveInvalidChars(ref string strTxt)
+
+    private void RemoveInvalidChars(ref string strTxt)
     {
       if (strTxt == null)
       {
@@ -588,31 +612,36 @@ namespace MediaPortal.TV.Recording
         return;
       }
       string strReturn = string.Empty;
-      for (int i = 0; i < (int)strTxt.Length; ++i)
+      for (int i = 0; i < (int) strTxt.Length; ++i)
       {
         char k = strTxt[i];
         if (k == '\'')
         {
           strReturn += "'";
         }
-        if ((byte)k == 0)// remove 0-bytes from the string
-          k = (char)32;
+        if ((byte) k == 0) // remove 0-bytes from the string
+        {
+          k = (char) 32;
+        }
 
         strReturn += k;
       }
       strReturn = strReturn.Trim();
       strTxt = strReturn;
     }
+
     public bool SetPidsForTechnisat
     {
       get { return m_setPid; }
       set { m_setPid = value; }
     }
+
     public object DataControl
     {
       get { return m_dataCtrl; }
       set { m_dataCtrl = value; }
     }
+
     //
     //
     public void SetLNBParams(int diseqc, int lnb0, int lnb1, int lnbsw, int lnbkhz, int selKhz, int lnbfreq)
@@ -624,57 +653,75 @@ namespace MediaPortal.TV.Recording
       m_lnbkhz = lnbkhz;
       m_lnbfreq = lnbfreq;
       m_selKhz = selKhz;
-
     }
 
-    int getUTC(int val)
+    private int getUTC(int val)
     {
       if ((val & 0xF0) >= 0xA0)
+      {
         return 0;
+      }
       if ((val & 0xF) >= 0xA)
+      {
         return 0;
-      return ((val & 0xF0) >> 4) * 10 + (val & 0xF);
+      }
+      return ((val & 0xF0) >> 4)*10 + (val & 0xF);
     }
 
     public ArrayList GetLanguages()
     {
       ArrayList langs = new ArrayList();
       foreach (string str in m_langLanguage)
+      {
         langs.Add(str);
+      }
       return langs;
     }
+
     //
     //
     public ArrayList GetLanguageCodes()
     {
       ArrayList langs = new ArrayList();
       foreach (string str in m_langCodes)
+      {
         langs.Add(str);
+      }
       return langs;
     }
+
     //
     //
     public static string GetLanguageFromCode(string code)
     {
       int n = 0;
       if (code == null)
+      {
         return Strings.Unknown;
+      }
       if (code == "")
+      {
         return Strings.Unknown;
+      }
       if (code.Length > 3)
+      {
         return code;
+      }
       foreach (string langCode in m_langCodes)
       {
         if (langCode.Equals(code))
+        {
           return m_langLanguage.GetValue(n).ToString();
+        }
         n++;
       }
       return code;
     }
+
     //
     //
     // iso 639 language codes
-    private bool MsGetStreamData(DirectShowLib.IBaseFilter filter, int pid, int tid, int tableSection, int timeout)
+    private bool MsGetStreamData(IBaseFilter filter, int pid, int tid, int tableSection, int timeout)
     {
       bool flag;
       int dataLen = 0;
@@ -692,19 +739,21 @@ namespace MediaPortal.TV.Recording
       flag = GetSectionData(filter, pid, tid, ref sectLast, tableSection, timeout);
       if (flag == false)
       {
-
-        Log.Info("DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        Log.Info("DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid,
+                 tableSection, timeout);
         return false;
       }
       if (sectLast <= 0)
       {
-        Log.Info("DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        Log.Info("DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid,
+                 tid, tableSection, timeout);
       }
       //Log.Info("sections:{0}",sectLast);
       int totalSections = sectLast;
       for (int n = 0; n < totalSections; n++)
       {
-        flag = GetSectionPtr(n, ref sectionBuffer, ref dataLen, ref header, ref tableExt, ref version, ref sectNum, ref sectLast);
+        flag = GetSectionPtr(n, ref sectionBuffer, ref dataLen, ref header, ref tableExt, ref version, ref sectNum,
+                             ref sectLast);
         //Log.Info(" get sect:{0} returned len:{1} ext:{2} num:{3} last:{4} version:{5}",flag,dataLen,tableExt,sectNum, sectLast,version);
         if (flag)
         {
@@ -721,17 +770,19 @@ namespace MediaPortal.TV.Recording
               m_sectionsList.Clear();
               break;
             }
-            arr[0] = (byte)tid;
-            arr[1] = (byte)((header >> 8) & 255);
-            arr[2] = (byte)(header & 255);
-            arr[3] = (byte)((tableExt >> 8) & 255);
-            arr[4] = (byte)(tableExt & 255);
-            arr[5] = (byte)version;
-            arr[6] = (byte)sectNum;
-            arr[7] = (byte)sectLast;
+            arr[0] = (byte) tid;
+            arr[1] = (byte) ((header >> 8) & 255);
+            arr[2] = (byte) (header & 255);
+            arr[3] = (byte) ((tableExt >> 8) & 255);
+            arr[4] = (byte) (tableExt & 255);
+            arr[5] = (byte) version;
+            arr[6] = (byte) sectNum;
+            arr[7] = (byte) sectLast;
             m_sectionsList.Add(arr);
             if (tableSection != 0)
+            {
               break;
+            }
           }
           else
           {
@@ -746,204 +797,374 @@ namespace MediaPortal.TV.Recording
               m_sectionsList.Clear();
               break;
             }
-            arr[0] = System.Convert.ToByte(tid);
-            arr[1] = System.Convert.ToByte((header >> 8) & 255);
-            arr[2] = System.Convert.ToByte(header & 255);
+            arr[0] = Convert.ToByte(tid);
+            arr[1] = Convert.ToByte((header >> 8) & 255);
+            arr[2] = Convert.ToByte(header & 255);
             m_sectionsList.Add(arr);
             if (tableSection != 0)
+            {
               break;
-          }// else
-
-        }// if(flag)
-      }//for
+            }
+          } // else
+        } // if(flag)
+      } //for
       ReleaseSectionsBuffer();
       return true;
     }
-    string DVB_GetLanguageFromISOCode(string code)
+
+    private string DVB_GetLanguageFromISOCode(string code)
     {
       return "";
     }
+
     public string GetNetworkProvider(int onid)
     {
       return DVB_GetNetworkProvider(onid);
     }
-    string DVB_GetNetworkProvider(int orgNetworkID)
+
+    private string DVB_GetNetworkProvider(int orgNetworkID)
     {
       switch (orgNetworkID)
       {
-        case 0x0000: return "Reserved";
-        case 0x0001: return "Astra 19,2°E";
-        case 0x0002: return "Astra 28,2°E";
-        case 0x0019: return "Astra";
-        case 0x001A: return "Quiero Televisión";
-        case 0x001B: return "RAI";
-        case 0x001F: return "Europe Online Networks";
-        case 0x0020: return "ASTRA";
-        case 0x0026: return "Hispasat Network";
-        case 0x0027: return "Hispasat 30°W";
-        case 0x0028: return "Hispasat 30°W";
-        case 0x0029: return "Hispasat 30°W";
-        case 0x002E: return "Xantic";
-        case 0x002F: return "TVNZ Digital";
-        case 0x0030: return "Canal+ Satellite Network";
-        case 0x0031: return "Hispasat - VIA DIGITAL";
-        case 0x0034: return "Hispasat Network";
-        case 0x0035: return "Nethold Main Mux System";
-        case 0x0036: return "TV Cabo";
-        case 0x0037: return "STENTOR";
-        case 0x0038: return "OTE";
-        case 0x0040: return "Croatian Post and Telecommunications";
-        case 0x0041: return "Mindport network";
-        case 0x0047: return "Telenor";
-        case 0x0048: return "STAR DIGITAL";
-        case 0x0049: return "Sentech";
-        case 0x0050: return "HRT Croatian Radio and Television";
-        case 0x0051: return "Havas";
-        case 0x0052: return "StarGuide Digital Networks";
-        case 0x0054: return "Teracom Satellite";
-        case 0x0055: return "Sirius (Teracom)";
-        case 0x0058: return "UBC Thailand";
-        case 0x005E: return "Sirius";
-        case 0x005F: return "Sirius";
-        case 0x0060: return "MSG MediaServices GmbH";
-        case 0x0069: return "Optus Communications";
-        case 0x0070: return "NTV+";
-        case 0x0073: return "PanAmSat 4 68.5°E";
-        case 0x007D: return "Skylogic";
-        case 0x007E: return "Eutelsat";
-        case 0x007F: return "Eutelsat";
-        case 0x0085: return "BetaTechnik";
-        case 0x0090: return "TDF";
-        case 0x00A0: return "News Datacom";
-        case 0x00A5: return "News Datacom";
-        case 0x00A6: return "ART";
-        case 0x00A7: return "Globecast";
-        case 0x00A8: return "Foxtel";
-        case 0x00A9: return "Sky New Zealand";
-        case 0x00B3: return "TPS";
-        case 0x00B4: return "Telesat 107.3°W | Telesat Canada";
-        case 0x00B5: return "Telesat 111.1°W";
-        case 0x00B6: return "Telstra Saturn";
-        case 0x00BA: return "Satellite Express 6 (80°E)";
-        case 0x00CD: return "Canal +";
-        case 0x00EB: return "Eurovision Network";
-        case 0x0100: return "ExpressVu";
-        case 0x010D: return "Skylogic Italia";
-        case 0x010E: return "Eutelsat 10°E";
-        case 0x010F: return "Eutelsat 10°E";
-        case 0x0110: return "Mediaset";
-        case 0x011F: return "visAvision Network";
-        case 0x013D: return "Skylogic Italia";
-        case 0x013E: return "Eutelsat 13°E";
-        case 0x013F: return "Eutelsat 13°E";
-        case 0x016D: return "Skylogic Italia";
-        case 0x016E: return "Eutelsat 16°E";
-        case 0x016F: return "Eutelsat 16°E";
-        case 0x01F4: return "MediaKabel B.V";
-        case 0x022D: return "Skylogic Italia";
-        case 0x022F: return "Eutelsat 21.5°E";
-        case 0x026D: return "Skylogic Italia";
-        case 0x026F: return "Eutelsat 25.5°E";
-        case 0x029D: return "Skylogic Italia";
-        case 0x029E: return "Eutelsat 29°E";
-        case 0x029F: return "Eutelsat 28.5°E";
-        case 0x02BE: return "Arabsat";
-        case 0x033D: return "Skylogic Italia";
-        case 0x033f: return "Eutelsat 33°E ";
-        case 0x036D: return "Skylogic Italia";
-        case 0x036E: return "Eutelsat 36°E";
-        case 0x036F: return "Eutelsat 36°E";
-        case 0x03E8: return "Telia, Sweden";
-        case 0x047D: return "Skylogic Italia";
-        case 0x047f: return "Eutelsat 12.5°W";
-        case 0x048D: return "Skylogic Italia";
-        case 0x048E: return "Eutelsat 48°E";
-        case 0x048F: return "Eutelsat 48°E";
-        case 0x052D: return "Skylogic Italia";
-        case 0x052f: return "Eutelsat 8°W";
-        case 0x055D: return "Skylogic Italia";
-        case 0x055f: return "Eutelsat";
-        case 0x0600: return "UPC Satellite";
-        case 0x0601: return "UPC Cable";
-        case 0x0602: return "Tevel";
-        case 0x071D: return "Skylogic Italia";
-        case 0x071f: return "Eutelsat 70.5°E";
-        case 0x0801: return "Nilesat 101";
-        case 0x0880: return "MEASAT 1, 91.5°E";
-        case 0x0882: return "MEASAT 2, 91.5°E";
-        case 0x0883: return "MEASAT 2, 148.0°E";
-        case 0x088F: return "MEASAT 3";
-        case 0x1000: return "Optus B3 156°E";
-        case 0x1001: return "DISH Network";
-        case 0x1002: return "Dish Network 61.5 W";
-        case 0x1003: return "Dish Network 83 W";
-        case 0x1004: return "Dish Network 119";
-        case 0x1005: return "Dish Network 121";
-        case 0x1006: return "Dish Network 148";
-        case 0x1007: return "Dish Network 175";
-        case 0x1008: return "Dish Network W";
-        case 0x1009: return "Dish Network X";
-        case 0x100A: return "Dish Network Y";
-        case 0x100B: return "Dish Network Z";
-        case 0x1010: return "ABC TV";
-        case 0x1011: return "SBS";
-        case 0x1012: return "Nine Network Australia";
-        case 0x1013: return "Seven Network Australia";
-        case 0x1014: return "Network TEN Australia";
-        case 0x1015: return "WIN Television Australia";
-        case 0x1016: return "Prime Television Australia";
-        case 0x1017: return "Southern Cross Broadcasting Australia";
-        case 0x1018: return "Telecasters Australia";
-        case 0x1019: return "NBN Australia";
-        case 0x101A: return "Imparja Television Australia";
-        case 0x101f: return "Reserved";
-        case 0x1100: return "GE Americom";
-        case 0x2000: return "Thiacom 1,2 78.5°E";
-        case 0x2024: return "Australian Digital Terrestrial Television";
-        case 0x2038: return "Belgian Digital Terrestrial Television";
-        case 0x20CB: return "Czech Republic Digital Terrestrial Television";
-        case 0x20D0: return "Danish Digital Terrestrial Television";
-        case 0x20E9: return "Estonian Digital Terrestrial Television";
-        case 0x20F6: return "Finnish Digital Terrestrial Television";
-        case 0x2114: return "German Digital Terrestrial Television DVB-T broadcasts";
-        case 0x2174: return "Irish Digital Terrestrial Television";
-        case 0x2178: return "Israeli Digital Terrestrial Television";
-        case 0x2210: return "Netherlands Digital Terrestrial Television";
-        case 0x22BE: return "Singapore Digital Terrestrial Television";
-        case 0x22D4: return "Spanish Digital Terrestrial Television";
-        case 0x22F1: return "Swedish Digital Terrestrial Television";
-        case 0x22F4: return "Swiss Digital Terrestrial Television";
-        case 0x233A: return "UK Digital Terrestrial Television";
-        case 0x3000: return "PanAmSat 4 68.5°E";
-        case 0x5000: return "Irdeto Mux System";
-        case 0x616D: return "BellSouth Entertainment";
-        case 0x6600: return "UPC Satellite";
-        case 0x6601: return "UPC Cable";
-        case 0xF000: return "Small Cable networks";
-        case 0xF001: return "Deutsche Telekom";
-        case 0xF010: return "Telefónica Cable";
-        case 0xF020: return "Cable and Wireless Communication ";
-        case 0xF100: return "Casema";
-        case 0xF750: return "Telewest Communications Cable Network";
-        case 0xF751: return "OMNE Communications";
-        case 0xFBFC: return "MATAV";
-        case 0xFBFD: return "Telia Kabel-TV";
-        case 0xFBFE: return "TPS";
-        case 0xFBFF: return "Sky Italia";
-        case 0xFC10: return "Rhône Vision Cable";
-        case 0xFC41: return "France Telecom Cable";
-        case 0xFD00: return "National Cable Network";
-        case 0xFE00: return "TeleDenmark Cable TV";
-        case 0xFEff: return "Network Interface Modules";
-        case 0xFFfe: return "ESTI Private";
-        default: return "Unknown Network Provider";
+        case 0x0000:
+          return "Reserved";
+        case 0x0001:
+          return "Astra 19,2°E";
+        case 0x0002:
+          return "Astra 28,2°E";
+        case 0x0019:
+          return "Astra";
+        case 0x001A:
+          return "Quiero Televisión";
+        case 0x001B:
+          return "RAI";
+        case 0x001F:
+          return "Europe Online Networks";
+        case 0x0020:
+          return "ASTRA";
+        case 0x0026:
+          return "Hispasat Network";
+        case 0x0027:
+          return "Hispasat 30°W";
+        case 0x0028:
+          return "Hispasat 30°W";
+        case 0x0029:
+          return "Hispasat 30°W";
+        case 0x002E:
+          return "Xantic";
+        case 0x002F:
+          return "TVNZ Digital";
+        case 0x0030:
+          return "Canal+ Satellite Network";
+        case 0x0031:
+          return "Hispasat - VIA DIGITAL";
+        case 0x0034:
+          return "Hispasat Network";
+        case 0x0035:
+          return "Nethold Main Mux System";
+        case 0x0036:
+          return "TV Cabo";
+        case 0x0037:
+          return "STENTOR";
+        case 0x0038:
+          return "OTE";
+        case 0x0040:
+          return "Croatian Post and Telecommunications";
+        case 0x0041:
+          return "Mindport network";
+        case 0x0047:
+          return "Telenor";
+        case 0x0048:
+          return "STAR DIGITAL";
+        case 0x0049:
+          return "Sentech";
+        case 0x0050:
+          return "HRT Croatian Radio and Television";
+        case 0x0051:
+          return "Havas";
+        case 0x0052:
+          return "StarGuide Digital Networks";
+        case 0x0054:
+          return "Teracom Satellite";
+        case 0x0055:
+          return "Sirius (Teracom)";
+        case 0x0058:
+          return "UBC Thailand";
+        case 0x005E:
+          return "Sirius";
+        case 0x005F:
+          return "Sirius";
+        case 0x0060:
+          return "MSG MediaServices GmbH";
+        case 0x0069:
+          return "Optus Communications";
+        case 0x0070:
+          return "NTV+";
+        case 0x0073:
+          return "PanAmSat 4 68.5°E";
+        case 0x007D:
+          return "Skylogic";
+        case 0x007E:
+          return "Eutelsat";
+        case 0x007F:
+          return "Eutelsat";
+        case 0x0085:
+          return "BetaTechnik";
+        case 0x0090:
+          return "TDF";
+        case 0x00A0:
+          return "News Datacom";
+        case 0x00A5:
+          return "News Datacom";
+        case 0x00A6:
+          return "ART";
+        case 0x00A7:
+          return "Globecast";
+        case 0x00A8:
+          return "Foxtel";
+        case 0x00A9:
+          return "Sky New Zealand";
+        case 0x00B3:
+          return "TPS";
+        case 0x00B4:
+          return "Telesat 107.3°W | Telesat Canada";
+        case 0x00B5:
+          return "Telesat 111.1°W";
+        case 0x00B6:
+          return "Telstra Saturn";
+        case 0x00BA:
+          return "Satellite Express 6 (80°E)";
+        case 0x00CD:
+          return "Canal +";
+        case 0x00EB:
+          return "Eurovision Network";
+        case 0x0100:
+          return "ExpressVu";
+        case 0x010D:
+          return "Skylogic Italia";
+        case 0x010E:
+          return "Eutelsat 10°E";
+        case 0x010F:
+          return "Eutelsat 10°E";
+        case 0x0110:
+          return "Mediaset";
+        case 0x011F:
+          return "visAvision Network";
+        case 0x013D:
+          return "Skylogic Italia";
+        case 0x013E:
+          return "Eutelsat 13°E";
+        case 0x013F:
+          return "Eutelsat 13°E";
+        case 0x016D:
+          return "Skylogic Italia";
+        case 0x016E:
+          return "Eutelsat 16°E";
+        case 0x016F:
+          return "Eutelsat 16°E";
+        case 0x01F4:
+          return "MediaKabel B.V";
+        case 0x022D:
+          return "Skylogic Italia";
+        case 0x022F:
+          return "Eutelsat 21.5°E";
+        case 0x026D:
+          return "Skylogic Italia";
+        case 0x026F:
+          return "Eutelsat 25.5°E";
+        case 0x029D:
+          return "Skylogic Italia";
+        case 0x029E:
+          return "Eutelsat 29°E";
+        case 0x029F:
+          return "Eutelsat 28.5°E";
+        case 0x02BE:
+          return "Arabsat";
+        case 0x033D:
+          return "Skylogic Italia";
+        case 0x033f:
+          return "Eutelsat 33°E ";
+        case 0x036D:
+          return "Skylogic Italia";
+        case 0x036E:
+          return "Eutelsat 36°E";
+        case 0x036F:
+          return "Eutelsat 36°E";
+        case 0x03E8:
+          return "Telia, Sweden";
+        case 0x047D:
+          return "Skylogic Italia";
+        case 0x047f:
+          return "Eutelsat 12.5°W";
+        case 0x048D:
+          return "Skylogic Italia";
+        case 0x048E:
+          return "Eutelsat 48°E";
+        case 0x048F:
+          return "Eutelsat 48°E";
+        case 0x052D:
+          return "Skylogic Italia";
+        case 0x052f:
+          return "Eutelsat 8°W";
+        case 0x055D:
+          return "Skylogic Italia";
+        case 0x055f:
+          return "Eutelsat";
+        case 0x0600:
+          return "UPC Satellite";
+        case 0x0601:
+          return "UPC Cable";
+        case 0x0602:
+          return "Tevel";
+        case 0x071D:
+          return "Skylogic Italia";
+        case 0x071f:
+          return "Eutelsat 70.5°E";
+        case 0x0801:
+          return "Nilesat 101";
+        case 0x0880:
+          return "MEASAT 1, 91.5°E";
+        case 0x0882:
+          return "MEASAT 2, 91.5°E";
+        case 0x0883:
+          return "MEASAT 2, 148.0°E";
+        case 0x088F:
+          return "MEASAT 3";
+        case 0x1000:
+          return "Optus B3 156°E";
+        case 0x1001:
+          return "DISH Network";
+        case 0x1002:
+          return "Dish Network 61.5 W";
+        case 0x1003:
+          return "Dish Network 83 W";
+        case 0x1004:
+          return "Dish Network 119";
+        case 0x1005:
+          return "Dish Network 121";
+        case 0x1006:
+          return "Dish Network 148";
+        case 0x1007:
+          return "Dish Network 175";
+        case 0x1008:
+          return "Dish Network W";
+        case 0x1009:
+          return "Dish Network X";
+        case 0x100A:
+          return "Dish Network Y";
+        case 0x100B:
+          return "Dish Network Z";
+        case 0x1010:
+          return "ABC TV";
+        case 0x1011:
+          return "SBS";
+        case 0x1012:
+          return "Nine Network Australia";
+        case 0x1013:
+          return "Seven Network Australia";
+        case 0x1014:
+          return "Network TEN Australia";
+        case 0x1015:
+          return "WIN Television Australia";
+        case 0x1016:
+          return "Prime Television Australia";
+        case 0x1017:
+          return "Southern Cross Broadcasting Australia";
+        case 0x1018:
+          return "Telecasters Australia";
+        case 0x1019:
+          return "NBN Australia";
+        case 0x101A:
+          return "Imparja Television Australia";
+        case 0x101f:
+          return "Reserved";
+        case 0x1100:
+          return "GE Americom";
+        case 0x2000:
+          return "Thiacom 1,2 78.5°E";
+        case 0x2024:
+          return "Australian Digital Terrestrial Television";
+        case 0x2038:
+          return "Belgian Digital Terrestrial Television";
+        case 0x20CB:
+          return "Czech Republic Digital Terrestrial Television";
+        case 0x20D0:
+          return "Danish Digital Terrestrial Television";
+        case 0x20E9:
+          return "Estonian Digital Terrestrial Television";
+        case 0x20F6:
+          return "Finnish Digital Terrestrial Television";
+        case 0x2114:
+          return "German Digital Terrestrial Television DVB-T broadcasts";
+        case 0x2174:
+          return "Irish Digital Terrestrial Television";
+        case 0x2178:
+          return "Israeli Digital Terrestrial Television";
+        case 0x2210:
+          return "Netherlands Digital Terrestrial Television";
+        case 0x22BE:
+          return "Singapore Digital Terrestrial Television";
+        case 0x22D4:
+          return "Spanish Digital Terrestrial Television";
+        case 0x22F1:
+          return "Swedish Digital Terrestrial Television";
+        case 0x22F4:
+          return "Swiss Digital Terrestrial Television";
+        case 0x233A:
+          return "UK Digital Terrestrial Television";
+        case 0x3000:
+          return "PanAmSat 4 68.5°E";
+        case 0x5000:
+          return "Irdeto Mux System";
+        case 0x616D:
+          return "BellSouth Entertainment";
+        case 0x6600:
+          return "UPC Satellite";
+        case 0x6601:
+          return "UPC Cable";
+        case 0xF000:
+          return "Small Cable networks";
+        case 0xF001:
+          return "Deutsche Telekom";
+        case 0xF010:
+          return "Telefónica Cable";
+        case 0xF020:
+          return "Cable and Wireless Communication ";
+        case 0xF100:
+          return "Casema";
+        case 0xF750:
+          return "Telewest Communications Cable Network";
+        case 0xF751:
+          return "OMNE Communications";
+        case 0xFBFC:
+          return "MATAV";
+        case 0xFBFD:
+          return "Telia Kabel-TV";
+        case 0xFBFE:
+          return "TPS";
+        case 0xFBFF:
+          return "Sky Italia";
+        case 0xFC10:
+          return "Rhône Vision Cable";
+        case 0xFC41:
+          return "France Telecom Cable";
+        case 0xFD00:
+          return "National Cable Network";
+        case 0xFE00:
+          return "TeleDenmark Cable TV";
+        case 0xFEff:
+          return "Network Interface Modules";
+        case 0xFFfe:
+          return "ESTI Private";
+        default:
+          return "Unknown Network Provider";
       }
     }
-
 
     #endregion
 
     #region tables
+
     private void decodeBATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
     {
       //  8------ 112-12-- -------- 16------ -------- 2-5----1 8------- 8------- 4---12-- --------
@@ -964,7 +1185,7 @@ namespace MediaPortal.TV.Recording
       int len = 0;
 
       Log.Info("DecodeBAT: desc length:{0} bouquet id:{1} tid:{2} sectionlen:{3}",
-            descriptor_length, bouquet_id, table_id, section_length);
+               descriptor_length, bouquet_id, table_id, section_length);
       while (len < descriptor_length)
       {
         int descriptor_tag = buf[start + len];
@@ -1024,7 +1245,7 @@ namespace MediaPortal.TV.Recording
       int last_section_number = buf[7];
 
       byte[] b = new byte[5];
-      loop = (section_length - 9) / 4;
+      loop = (section_length - 9)/4;
       //Log.WriteFile(LogType.Log,"dvbsections:decodePatTable() loop={0}", loop);
       if (loop < 1)
       {
@@ -1033,9 +1254,12 @@ namespace MediaPortal.TV.Recording
       }
       for (int count = 0; count < loop; count++)
       {
-        if (buf.Length < 8+(count*4)) break;
+        if (buf.Length < 8 + (count*4))
+        {
+          break;
+        }
         ChannelInfo ch = new ChannelInfo();
-        System.Array.Copy(buf, 8 + (count * 4), b, 0, 4);
+        Array.Copy(buf, 8 + (count*4), b, 0, 4);
         ch.transportStreamID = transport_stream_id;
         ch.program_number = (b[0] << 8) + b[1];
         ch.reserved = ((b[2] >> 5) & 7);
@@ -1061,7 +1285,9 @@ namespace MediaPortal.TV.Recording
       channelInfo.program_number = (buffer[3] << 8) + buffer[4];
 
       if (decodePMTTable(buffer, unused1, unused2, ref channelInfo) == 0)
+      {
         return false;
+      }
 
       return true;
     }
@@ -1074,6 +1300,7 @@ namespace MediaPortal.TV.Recording
       decodePMTTable(pmt, unused1, unused2, ref inf);
       return inf.caPMT;
     }
+
     /// <summary>
     /// The PMT table contains the audio/video/teletext pids for each program
     /// </summary>
@@ -1110,7 +1337,6 @@ namespace MediaPortal.TV.Recording
 
       if (pat.program_number != program_number)
       {
-
         Log.Info("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number, program_number);
         //return 0;
       }
@@ -1126,14 +1352,20 @@ namespace MediaPortal.TV.Recording
 
       while (len2 > 0)
       {
-        if (pointer + 2 > buf.Length) break;
+        if (pointer + 2 > buf.Length)
+        {
+          break;
+        }
         int indicator = buf[pointer];
         x = 0;
         x = buf[pointer + 1] + 2;
         byte[] data = new byte[x];
 
-        if (pointer + x > buf.Length) break;
-        System.Array.Copy(buf, pointer, data, 0, x);
+        if (pointer + x > buf.Length)
+        {
+          break;
+        }
+        Array.Copy(buf, pointer, data, 0, x);
         if (indicator == 0x9)
         {
           pat.caPMT.Descriptors.Add(data);
@@ -1152,7 +1384,10 @@ namespace MediaPortal.TV.Recording
       PMTData pmt;
       while (len1 > 4)
       {
-        if (pointer + 5 > section_length) break;
+        if (pointer + 5 > section_length)
+        {
+          break;
+        }
         pmt = new PMTData();
         //System.Array.Copy(buf, pointer, b, 0, 5);
         try
@@ -1168,7 +1403,7 @@ namespace MediaPortal.TV.Recording
         }
         switch (pmt.stream_type)
         {
-          case 0x1b://MPEG4
+          case 0x1b: //MPEG4
             pmt.isVideo = true;
             break;
           case 0x1:
@@ -1203,7 +1438,7 @@ namespace MediaPortal.TV.Recording
               if (x + pointer < buf.Length) // parse descriptor data
               {
                 byte[] data = new byte[x];
-                System.Array.Copy(buf, pointer, data, 0, x);
+                Array.Copy(buf, pointer, data, 0, x);
                 switch (indicator)
                 {
                   case 0x02: // video
@@ -1224,7 +1459,7 @@ namespace MediaPortal.TV.Recording
                     pmt.isTeletext = true;
                     pmt.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
-                  //case 0xc2:
+                    //case 0xc2:
                   case 0x59:
                     if (pmt.stream_type == 0x05 || pmt.stream_type == 0x06)
                     {
@@ -1236,7 +1471,6 @@ namespace MediaPortal.TV.Recording
                     pmt.data = "";
                     break;
                 }
-
               }
             }
             else
@@ -1274,7 +1508,6 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     private int decodeSDTTable(byte[] buf, TPList transponderInfo, ref Transponder tp, ref ChannelInfo pat)
     {
-
       //tableid syntax res res sectlen  tsid    res vers cni sectn lsectn onid    resv
       //8       1      1   2   4 + 8    8 + 8   2   5    1   8     8      8 + 8   8
       //[0]     [1..............] [2]  [3] [4] [5.........] [6]   [7]    [8] [9] [10]
@@ -1326,7 +1559,7 @@ namespace MediaPortal.TV.Recording
           x = 0;
           x = buf[pointer + 1] + 2;
           byte[] service = new byte[buf.Length - pointer + 1];
-          System.Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
+          Array.Copy(buf, pointer, service, 0, buf.Length - pointer);
           //Log.Info("indicator = {0:X}",indicator);
           if (indicator == 0x48)
           {
@@ -1363,22 +1596,24 @@ namespace MediaPortal.TV.Recording
             }
             //
             //tp.serviceData.Add(serviceData);
-
           }
           else
           {
             int st = indicator;
             if (st != 0x53 && st != 0x64)
+            {
               st = 1;
+            }
           }
           len2 -= x;
           pointer += x;
           len1 -= x;
         }
-
       }
       if (last_section_number > section_number)
+      {
         return last_section_number;
+      }
       return 0;
     }
 
@@ -1426,10 +1661,10 @@ namespace MediaPortal.TV.Recording
           int indicator = buf[pointer];
           x = buf[pointer + 1] + 2;
           byte[] service = new byte[x];
-          System.Array.Copy(buf, pointer, service, 0, x);
+          Array.Copy(buf, pointer, service, 0, x);
           if (indicator == 0x40)
           {
-            nit.NetworkName = System.Text.Encoding.ASCII.GetString(service, 2, x - 2);
+            nit.NetworkName = Encoding.ASCII.GetString(service, 2, x - 2);
           }
           l1 -= x;
           pointer += x;
@@ -1450,7 +1685,7 @@ namespace MediaPortal.TV.Recording
             int indicator = buf[pointer];
             x = buf[pointer + 1] + 2;
             byte[] service = new byte[x + 1];
-            System.Array.Copy(buf, pointer, service, 0, x);
+            Array.Copy(buf, pointer, service, 0, x);
             if (indicator == 0x43) // sat
             {
               NITSatDescriptor tp = new NITSatDescriptor();
@@ -1474,7 +1709,6 @@ namespace MediaPortal.TV.Recording
             l2 -= x;
             l1 -= x;
           }
-
         }
         x = 0;
       }
@@ -1529,7 +1763,7 @@ namespace MediaPortal.TV.Recording
           int indicator = buf[pointer];
           x = buf[pointer + 1] + 2;
           byte[] service = new byte[x];
-          System.Array.Copy(buf, pointer, service, 0, x);
+          Array.Copy(buf, pointer, service, 0, x);
           //					if(indicator==0x40)
           //					{
           //						nit.NetworkName=System.Text.Encoding.ASCII.GetString(service,2,x-2);
@@ -1572,7 +1806,7 @@ namespace MediaPortal.TV.Recording
             int indicator = buf[pointer];
             x = buf[pointer + 1] + 2;
             byte[] service = new byte[x + 1];
-            System.Array.Copy(buf, pointer, service, 0, x);
+            Array.Copy(buf, pointer, service, 0, x);
             //						if(indicator==0x43) // sat
             //						{
             //							NITSatDescriptor tp=new NITSatDescriptor();
@@ -1601,7 +1835,6 @@ namespace MediaPortal.TV.Recording
             l2 -= x;
             l1 -= x;
           }
-
         }
         x = 0;
       }
@@ -1611,7 +1844,6 @@ namespace MediaPortal.TV.Recording
       }
       return 0;
     }
-
 
 
     private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo, int lastSection, bool flag)
@@ -1670,7 +1902,7 @@ namespace MediaPortal.TV.Recording
         //
         while (len1 > 4)
         {
-          System.Windows.Forms.Application.DoEvents();
+          Application.DoEvents();
           EITDescr eit = new EITDescr();
           event_id = (buf[pointer] << 8) + buf[pointer + 1];
           start_time_MJD = (buf[pointer + 2] << 8) + buf[pointer + 3];
@@ -1693,7 +1925,7 @@ namespace MediaPortal.TV.Recording
             {
               try
               {
-                System.Array.Copy(buf, pointer, descrEIT, 0, x);
+                Array.Copy(buf, pointer, descrEIT, 0, x);
                 switch (indicator)
                 {
                   case 0x4E:
@@ -1707,7 +1939,6 @@ namespace MediaPortal.TV.Recording
                   case 0x54:
                     DVB_ContentDescription(descrEIT, ref eit);
                     break;
-
                 }
               }
               catch
@@ -1719,7 +1950,7 @@ namespace MediaPortal.TV.Recording
             {
               //Log.Error("dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
             }
-            System.Windows.Forms.Application.DoEvents();
+            Application.DoEvents();
 
             eit.section = section_number;
             eit.lastSection = last_section_number;
@@ -1733,21 +1964,21 @@ namespace MediaPortal.TV.Recording
             eit.starttime_m = 0;
             eit.event_id = event_id;
             eit.version = version_number;
-            eit.duration_hh = getUTC((int)((duration >> 16)) & 255);
-            eit.duration_mm = getUTC((int)((duration >> 8)) & 255);
-            eit.duration_ss = getUTC((int)(duration) & 255);
-            eit.starttime_hh = getUTC((int)((start_time_UTC >> 16)) & 255);
-            eit.starttime_mm = getUTC((int)((start_time_UTC >> 8)) & 255);
-            eit.starttime_ss = getUTC((int)(start_time_UTC) & 255);
+            eit.duration_hh = getUTC((int) ((duration >> 16)) & 255);
+            eit.duration_mm = getUTC((int) ((duration >> 8)) & 255);
+            eit.duration_ss = getUTC((int) (duration) & 255);
+            eit.starttime_hh = getUTC((int) ((start_time_UTC >> 16)) & 255);
+            eit.starttime_mm = getUTC((int) ((start_time_UTC >> 8)) & 255);
+            eit.starttime_ss = getUTC((int) (start_time_UTC) & 255);
 
 
             // convert the julian date
-            int year = (int)((start_time_MJD - 15078.2) / 365.25);
-            int month = (int)((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
-            int day = (int)(start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
+            int year = (int) ((start_time_MJD - 15078.2)/365.25);
+            int month = (int) ((start_time_MJD - 14956.1 - (int) (year*365.25))/30.6001);
+            int day = (int) (start_time_MJD - 14956 - (int) (year*365.25) - (int) (month*30.6001));
             int k = (month == 14 || month == 15) ? 1 : 0;
             year += 1900 + k; // start from year 1900, so add that here
-            month = month - 1 - k * 12;
+            month = month - 1 - k*12;
             eit.starttime_y = year;
             eit.starttime_m = month;
             eit.starttime_d = day;
@@ -1778,14 +2009,20 @@ namespace MediaPortal.TV.Recording
             len2 -= x;
           }
           if (eit.program_number > 0)
+          {
             eitInfo.eitList.Add(eit);
+          }
         }
         //eitInfo.evt_info_act_ts=eit;
-        System.Windows.Forms.Application.DoEvents();
+        Application.DoEvents();
         if (section_number == 0 && lastSection == last_section_number && flag == false)
-          return -1;// start grab
+        {
+          return -1; // start grab
+        }
         if (section_number == 0 && lastSection == last_section_number && flag == true)
-          return -2;// end grab
+        {
+          return -2; // end grab
+        }
       }
       catch
       {
@@ -1794,19 +2031,21 @@ namespace MediaPortal.TV.Recording
       return section_number; // normal grab
     }
 
-
     #endregion
 
     #region Descriptors
+
     //
     private void DVB_GetLogicalChannelNumber(byte[] b, ref ArrayList servicesArray)
     {
       try
       {
         // 32 bits per record
-        int n = b[1] / 4;
+        int n = b[1]/4;
         if (n < 1)
+        {
           return;
+        }
 
         // desc id, desc len, (service id, service number)
         byte[] descriptors = new byte[b[1]];
@@ -1819,13 +2058,13 @@ namespace MediaPortal.TV.Recording
           ServiceID = 0;
           LCN = 0;
           //Log.Info("loop count: {0}", i);
-          Array.Copy(descriptors, (i * 4), buf, 0, 4);
+          Array.Copy(descriptors, (i*4), buf, 0, 4);
           ServiceID = (buf[0] << 8) | (buf[1] & 0xff);
           LCN = (buf[2] & 0x03 << 8) | (buf[3] & 0xff);
           //Log.Info("Service {0} has channel number {1}", myService.SID, myService.LCN);
           for (int j = 0; j < servicesArray.Count; j++)
           {
-            ChannelInfo info = (ChannelInfo)servicesArray[j];
+            ChannelInfo info = (ChannelInfo) servicesArray[j];
             if (info.serviceID == ServiceID)
             {
               info.program_number = LCN;
@@ -1840,6 +2079,7 @@ namespace MediaPortal.TV.Recording
         Log.Error(ex);
       }
     }
+
     //
     private string DVB_GetTeletextDescriptor(byte[] b)
     {
@@ -1850,21 +2090,25 @@ namespace MediaPortal.TV.Recording
       int teletext_magazine_number;
       int teletext_page_number;
       int len;
-      if (b.Length < 2) return string.Empty;
+      if (b.Length < 2)
+      {
+        return string.Empty;
+      }
       descriptor_tag = b[0];
       descriptor_length = b[1];
 
       len = descriptor_length;
       byte[] bytes = new byte[len + 1];
       if (len < b.Length + 2)
+      {
         if (descriptor_tag == 0x56)
         {
           int pointer = 2;
 
           while (len > 0 && (pointer + 3 <= b.Length))
           {
-            System.Array.Copy(b, pointer, bytes, 0, 3);
-            ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
+            Array.Copy(b, pointer, bytes, 0, 3);
+            ISO_639_language_code += Encoding.ASCII.GetString(bytes, 0, 3);
             teletext_type = (bytes[3] >> 3) & 0x1F;
             teletext_magazine_number = bytes[3] & 7;
             teletext_page_number = bytes[4];
@@ -1872,36 +2116,47 @@ namespace MediaPortal.TV.Recording
             len -= 5;
           }
         }
+      }
       if (ISO_639_language_code.Length >= 3)
+      {
         return ISO_639_language_code.Substring(0, 3);
+      }
       return "";
     }
+
     // ca
     //
-    string DVB_CADescriptor(byte[] b)
+    private string DVB_CADescriptor(byte[] b)
     {
-
       int descriptor_tag;
       int descriptor_length;
       int CA_system_ID;
       int CA_PID;
       string CA_Text = "";
 
-      byte[] data = new byte[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+      byte[] data = new byte[10] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
       if (b == null)
+      {
         return "";
+      }
       if (b.Length == 0)
+      {
         return "";
+      }
       if (b[0] != 0x09)
+      {
         return "";
+      }
 
       int dataLen = b.Length;
 
       if (b.Length > 10)
+      {
         dataLen = 10;
+      }
 
-      System.Array.Copy(b, 0, data, 0, dataLen);
+      Array.Copy(b, 0, data, 0, dataLen);
 
       descriptor_tag = data[0];
       descriptor_length = data[1];
@@ -1911,12 +2166,11 @@ namespace MediaPortal.TV.Recording
       CA_Text = CA_PID.ToString() + "/" + CA_system_ID.ToString();
 
       return CA_Text;
-
     }
+
     //
     private string DVB_GetMPEGISO639Lang(byte[] b)
     {
-
       int descriptor_tag;
       int descriptor_length;
       string ISO_639_language_code = "";
@@ -1926,6 +2180,7 @@ namespace MediaPortal.TV.Recording
       descriptor_tag = b[0];
       descriptor_length = b[1];
       if (descriptor_length < b.Length)
+      {
         if (descriptor_tag == 0xa)
         {
           len = descriptor_length;
@@ -1935,20 +2190,23 @@ namespace MediaPortal.TV.Recording
 
           while (len > 0)
           {
-            System.Array.Copy(b, pointer, bytes, 0, len);
-            ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
+            Array.Copy(b, pointer, bytes, 0, len);
+            ISO_639_language_code += Encoding.ASCII.GetString(bytes, 0, 3);
             if (bytes.Length >= 4)
+            {
               audio_type = bytes[3];
+            }
             pointer += 4;
             len -= 4;
           }
         }
+      }
 
       return ISO_639_language_code;
     }
+
     private bool DVB_GetAC3Audio(byte[] b)
     {
-
       int descriptor_tag;
       int descriptor_length;
       int component_type_flag;
@@ -1961,7 +2219,6 @@ namespace MediaPortal.TV.Recording
       //			int      mainid_type=0;
       //			int      asvc_type=0;
       int len;
-
 
 
       descriptor_tag = b[0];
@@ -2003,12 +2260,14 @@ namespace MediaPortal.TV.Recording
         //				asvc_flag	= b[pointer];
         //				len--;
       }
-      if ((component_type & 0x4) != 0)// multichannel
+      if ((component_type & 0x4) != 0) // multichannel
+      {
         return true;
+      }
 
       return false;
-
     }
+
     //
     // cat
 
@@ -2024,7 +2283,7 @@ namespace MediaPortal.TV.Recording
 
       descriptor_tag = buf[0];
       descriptor_length = buf[1];
-      eit.seLanguageCode = System.Text.Encoding.ASCII.GetString(buf, 2, 3);
+      eit.seLanguageCode = Encoding.ASCII.GetString(buf, 2, 3);
       if (eit.seLanguageCode.Length > 0)
       {
         //Log.WriteFile(LogType.Log,"epg-grab: language={0}", eit.seLanguageCode);
@@ -2037,12 +2296,12 @@ namespace MediaPortal.TV.Recording
         int pointer = 6;
         try
         {
-          System.Array.Copy(buf, pointer, b, 0, event_name_length);
+          Array.Copy(buf, pointer, b, 0, event_name_length);
           eit.event_name = DvbTextConverter.Convert(b, event_name_length, eit.seLanguageCode);
           pointer += event_name_length;
           text_length = buf[pointer];
           pointer += 1;
-          System.Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
+          Array.Copy(buf, pointer, b, 0, buf.Length - pointer);
           eit.event_text = DvbTextConverter.Convert(b, text_length, eit.seLanguageCode);
         }
         catch (Exception)
@@ -2052,10 +2311,12 @@ namespace MediaPortal.TV.Recording
           eit.event_name = "";
         }
         if (eit.event_name.Length > 0 && eit.event_text.Length > 0)
+        {
           eit.shortEventComplete = true;
-
+        }
       }
     }
+
     private void DVB_ContentDescription(byte[] buf, ref EITDescr eit)
     {
       int descriptor_tag;
@@ -2077,10 +2338,10 @@ namespace MediaPortal.TV.Recording
       len = descriptor_length;
       int pointer = 2;
       if (descriptor_tag == 0x54)
+      {
         while (len > 0)
         {
-
-          System.Array.Copy(buf, pointer, b, 0, 2);
+          Array.Copy(buf, pointer, b, 0, 2);
           content_nibble_level_1 = (b[0] >> 4) & 0xF;
           content_nibble_level_2 = b[0] & 0xF;
           user_nibble_1 = (b[1] >> 4) & 0xF;
@@ -2092,134 +2353,345 @@ namespace MediaPortal.TV.Recording
           nibble = (content_nibble_level_1 << 8) | content_nibble_level_2;
           switch (nibble)
           {
-            case 0x0100: genereText = "movie/drama (general)"; break;
-            case 0x0101: genereText = "detective/thriller"; break;
-            case 0x0102: genereText = "adventure/western/war"; break;
-            case 0x0103: genereText = "science fiction/fantasy/horror"; break;
-            case 0x0104: genereText = "comedy"; break;
-            case 0x0105: genereText = "soap/melodram/folkloric"; break;
-            case 0x0106: genereText = "romance"; break;
-            case 0x0107: genereText = "serious/classical/religious/historical movie/drama"; break;
-            case 0x0108: genereText = "adult movie/drama"; break;
+            case 0x0100:
+              genereText = "movie/drama (general)";
+              break;
+            case 0x0101:
+              genereText = "detective/thriller";
+              break;
+            case 0x0102:
+              genereText = "adventure/western/war";
+              break;
+            case 0x0103:
+              genereText = "science fiction/fantasy/horror";
+              break;
+            case 0x0104:
+              genereText = "comedy";
+              break;
+            case 0x0105:
+              genereText = "soap/melodram/folkloric";
+              break;
+            case 0x0106:
+              genereText = "romance";
+              break;
+            case 0x0107:
+              genereText = "serious/classical/religious/historical movie/drama";
+              break;
+            case 0x0108:
+              genereText = "adult movie/drama";
+              break;
 
-            case 0x010E: genereText = "reserved"; break;
-            case 0x010F: genereText = "user defined"; break;
+            case 0x010E:
+              genereText = "reserved";
+              break;
+            case 0x010F:
+              genereText = "user defined";
+              break;
 
-            // News Current Affairs
-            case 0x0200: genereText = "news/current affairs (general)"; break;
-            case 0x0201: genereText = "news/weather report"; break;
-            case 0x0202: genereText = "news magazine"; break;
-            case 0x0203: genereText = "documentary"; break;
-            case 0x0204: genereText = "discussion/interview/debate"; break;
-            case 0x020E: genereText = "reserved"; break;
-            case 0x020F: genereText = "user defined"; break;
+              // News Current Affairs
+            case 0x0200:
+              genereText = "news/current affairs (general)";
+              break;
+            case 0x0201:
+              genereText = "news/weather report";
+              break;
+            case 0x0202:
+              genereText = "news magazine";
+              break;
+            case 0x0203:
+              genereText = "documentary";
+              break;
+            case 0x0204:
+              genereText = "discussion/interview/debate";
+              break;
+            case 0x020E:
+              genereText = "reserved";
+              break;
+            case 0x020F:
+              genereText = "user defined";
+              break;
 
-            // Show Games show
-            case 0x0300: genereText = "show/game show (general)"; break;
-            case 0x0301: genereText = "game show/quiz/contest"; break;
-            case 0x0302: genereText = "variety show"; break;
-            case 0x0303: genereText = "talk show"; break;
-            case 0x030E: genereText = "reserved"; break;
-            case 0x030F: genereText = "user defined"; break;
+              // Show Games show
+            case 0x0300:
+              genereText = "show/game show (general)";
+              break;
+            case 0x0301:
+              genereText = "game show/quiz/contest";
+              break;
+            case 0x0302:
+              genereText = "variety show";
+              break;
+            case 0x0303:
+              genereText = "talk show";
+              break;
+            case 0x030E:
+              genereText = "reserved";
+              break;
+            case 0x030F:
+              genereText = "user defined";
+              break;
 
-            // Sports
-            case 0x0400: genereText = "sports (general)"; break;
-            case 0x0401: genereText = "special events"; break;
-            case 0x0402: genereText = "sports magazine"; break;
-            case 0x0403: genereText = "football/soccer"; break;
-            case 0x0404: genereText = "tennis/squash"; break;
-            case 0x0405: genereText = "team sports"; break;
-            case 0x0406: genereText = "athletics"; break;
-            case 0x0407: genereText = "motor sport"; break;
-            case 0x0408: genereText = "water sport"; break;
-            case 0x0409: genereText = "winter sport"; break;
-            case 0x040A: genereText = "equestrian"; break;
-            case 0x040B: genereText = "martial sports"; break;
-            case 0x040E: genereText = "reserved"; break;
-            case 0x040F: genereText = "user defined"; break;
+              // Sports
+            case 0x0400:
+              genereText = "sports (general)";
+              break;
+            case 0x0401:
+              genereText = "special events";
+              break;
+            case 0x0402:
+              genereText = "sports magazine";
+              break;
+            case 0x0403:
+              genereText = "football/soccer";
+              break;
+            case 0x0404:
+              genereText = "tennis/squash";
+              break;
+            case 0x0405:
+              genereText = "team sports";
+              break;
+            case 0x0406:
+              genereText = "athletics";
+              break;
+            case 0x0407:
+              genereText = "motor sport";
+              break;
+            case 0x0408:
+              genereText = "water sport";
+              break;
+            case 0x0409:
+              genereText = "winter sport";
+              break;
+            case 0x040A:
+              genereText = "equestrian";
+              break;
+            case 0x040B:
+              genereText = "martial sports";
+              break;
+            case 0x040E:
+              genereText = "reserved";
+              break;
+            case 0x040F:
+              genereText = "user defined";
+              break;
 
-            // Children/Youth
-            case 0x0500: genereText = "childrens's/youth program (general)"; break;
-            case 0x0501: genereText = "pre-school children's program"; break;
-            case 0x0502: genereText = "entertainment (6-14 year old)"; break;
-            case 0x0503: genereText = "entertainment (10-16 year old)"; break;
-            case 0x0504: genereText = "information/education/school program"; break;
-            case 0x0505: genereText = "cartoon/puppets"; break;
-            case 0x050E: genereText = "reserved"; break;
-            case 0x050F: genereText = "user defined"; break;
+              // Children/Youth
+            case 0x0500:
+              genereText = "childrens's/youth program (general)";
+              break;
+            case 0x0501:
+              genereText = "pre-school children's program";
+              break;
+            case 0x0502:
+              genereText = "entertainment (6-14 year old)";
+              break;
+            case 0x0503:
+              genereText = "entertainment (10-16 year old)";
+              break;
+            case 0x0504:
+              genereText = "information/education/school program";
+              break;
+            case 0x0505:
+              genereText = "cartoon/puppets";
+              break;
+            case 0x050E:
+              genereText = "reserved";
+              break;
+            case 0x050F:
+              genereText = "user defined";
+              break;
 
-            case 0x0600: genereText = "music/ballet/dance (general)"; break;
-            case 0x0601: genereText = "rock/pop"; break;
-            case 0x0602: genereText = "serious music/classic music"; break;
-            case 0x0603: genereText = "folk/traditional music"; break;
-            case 0x0604: genereText = "jazz"; break;
-            case 0x0605: genereText = "musical/opera"; break;
-            case 0x0606: genereText = "ballet"; break;
-            case 0x060E: genereText = "reserved"; break;
-            case 0x060F: genereText = "user defined"; break;
+            case 0x0600:
+              genereText = "music/ballet/dance (general)";
+              break;
+            case 0x0601:
+              genereText = "rock/pop";
+              break;
+            case 0x0602:
+              genereText = "serious music/classic music";
+              break;
+            case 0x0603:
+              genereText = "folk/traditional music";
+              break;
+            case 0x0604:
+              genereText = "jazz";
+              break;
+            case 0x0605:
+              genereText = "musical/opera";
+              break;
+            case 0x0606:
+              genereText = "ballet";
+              break;
+            case 0x060E:
+              genereText = "reserved";
+              break;
+            case 0x060F:
+              genereText = "user defined";
+              break;
 
-            case 0x0700: genereText = "arts/culture (without music, general)"; break;
-            case 0x0701: genereText = "performing arts"; break;
-            case 0x0702: genereText = "fine arts"; break;
-            case 0x0703: genereText = "religion"; break;
-            case 0x0704: genereText = "popular culture/traditional arts"; break;
-            case 0x0705: genereText = "literature"; break;
-            case 0x0706: genereText = "film/cinema"; break;
-            case 0x0707: genereText = "experimental film/video"; break;
-            case 0x0708: genereText = "broadcasting/press"; break;
-            case 0x0709: genereText = "new media"; break;
-            case 0x070A: genereText = "arts/culture magazine"; break;
-            case 0x070B: genereText = "fashion"; break;
-            case 0x070E: genereText = "reserved"; break;
-            case 0x070F: genereText = "user defined"; break;
+            case 0x0700:
+              genereText = "arts/culture (without music, general)";
+              break;
+            case 0x0701:
+              genereText = "performing arts";
+              break;
+            case 0x0702:
+              genereText = "fine arts";
+              break;
+            case 0x0703:
+              genereText = "religion";
+              break;
+            case 0x0704:
+              genereText = "popular culture/traditional arts";
+              break;
+            case 0x0705:
+              genereText = "literature";
+              break;
+            case 0x0706:
+              genereText = "film/cinema";
+              break;
+            case 0x0707:
+              genereText = "experimental film/video";
+              break;
+            case 0x0708:
+              genereText = "broadcasting/press";
+              break;
+            case 0x0709:
+              genereText = "new media";
+              break;
+            case 0x070A:
+              genereText = "arts/culture magazine";
+              break;
+            case 0x070B:
+              genereText = "fashion";
+              break;
+            case 0x070E:
+              genereText = "reserved";
+              break;
+            case 0x070F:
+              genereText = "user defined";
+              break;
 
-            case 0x0800: genereText = "social/political issues/economics (general)"; break;
-            case 0x0801: genereText = "magazines/reports/documentary"; break;
-            case 0x0802: genereText = "economics/social advisory"; break;
-            case 0x0803: genereText = "remarkable people"; break;
-            case 0x080E: genereText = "reserved"; break;
-            case 0x080F: genereText = "user defined"; break;
+            case 0x0800:
+              genereText = "social/political issues/economics (general)";
+              break;
+            case 0x0801:
+              genereText = "magazines/reports/documentary";
+              break;
+            case 0x0802:
+              genereText = "economics/social advisory";
+              break;
+            case 0x0803:
+              genereText = "remarkable people";
+              break;
+            case 0x080E:
+              genereText = "reserved";
+              break;
+            case 0x080F:
+              genereText = "user defined";
+              break;
 
-            case 0x0900: genereText = "education/science/factual topics (general)"; break;
-            case 0x0901: genereText = "nature/animals/environment"; break;
-            case 0x0902: genereText = "technology/natural science"; break;
-            case 0x0903: genereText = "medicine/physiology/psychology"; break;
-            case 0x0904: genereText = "foreign countries/expeditions"; break;
-            case 0x0905: genereText = "social/spiritual science"; break;
-            case 0x0906: genereText = "further education"; break;
-            case 0x0907: genereText = "languages"; break;
-            case 0x090E: genereText = "reserved"; break;
-            case 0x090F: genereText = "user defined"; break;
-            case 0x0A00: genereText = "leisure hobbies (general)"; break;
-            case 0x0A01: genereText = "tourism/travel"; break;
-            case 0x0A02: genereText = "handicraft"; break;
-            case 0x0A03: genereText = "motoring"; break;
-            case 0x0A04: genereText = "fitness & health"; break;
-            case 0x0A05: genereText = "cooking"; break;
-            case 0x0A06: genereText = "advertisement/shopping"; break;
-            case 0x0A07: genereText = "gardening"; break;
-            case 0x0A0E: genereText = "reserved"; break;
-            case 0x0A0F: genereText = "user defined"; break;
+            case 0x0900:
+              genereText = "education/science/factual topics (general)";
+              break;
+            case 0x0901:
+              genereText = "nature/animals/environment";
+              break;
+            case 0x0902:
+              genereText = "technology/natural science";
+              break;
+            case 0x0903:
+              genereText = "medicine/physiology/psychology";
+              break;
+            case 0x0904:
+              genereText = "foreign countries/expeditions";
+              break;
+            case 0x0905:
+              genereText = "social/spiritual science";
+              break;
+            case 0x0906:
+              genereText = "further education";
+              break;
+            case 0x0907:
+              genereText = "languages";
+              break;
+            case 0x090E:
+              genereText = "reserved";
+              break;
+            case 0x090F:
+              genereText = "user defined";
+              break;
+            case 0x0A00:
+              genereText = "leisure hobbies (general)";
+              break;
+            case 0x0A01:
+              genereText = "tourism/travel";
+              break;
+            case 0x0A02:
+              genereText = "handicraft";
+              break;
+            case 0x0A03:
+              genereText = "motoring";
+              break;
+            case 0x0A04:
+              genereText = "fitness & health";
+              break;
+            case 0x0A05:
+              genereText = "cooking";
+              break;
+            case 0x0A06:
+              genereText = "advertisement/shopping";
+              break;
+            case 0x0A07:
+              genereText = "gardening";
+              break;
+            case 0x0A0E:
+              genereText = "reserved";
+              break;
+            case 0x0A0F:
+              genereText = "user defined";
+              break;
 
-            case 0x0B00: genereText = "original language"; break;
-            case 0x0B01: genereText = "black & white"; break;
-            case 0x0B02: genereText = "unpublished"; break;
-            case 0x0B03: genereText = "live broadcast"; break;
-            case 0x0B0E: genereText = "reserved"; break;
-            case 0x0B0F: genereText = "user defined"; break;
+            case 0x0B00:
+              genereText = "original language";
+              break;
+            case 0x0B01:
+              genereText = "black & white";
+              break;
+            case 0x0B02:
+              genereText = "unpublished";
+              break;
+            case 0x0B03:
+              genereText = "live broadcast";
+              break;
+            case 0x0B0E:
+              genereText = "reserved";
+              break;
+            case 0x0B0F:
+              genereText = "user defined";
+              break;
 
-            case 0x0E0F: genereText = "reserved"; break;
-            case 0x0F0F: genereText = "user defined"; break;
-
+            case 0x0E0F:
+              genereText = "reserved";
+              break;
+            case 0x0F0F:
+              genereText = "user defined";
+              break;
           }
           if (eit.genere_text == null)
+          {
             eit.genere_text = "";
+          }
           if (eit.genere_text == "")
+          {
             eit.genere_text = genereText;
+          }
         }
+      }
     }
+
     //
-    string DVB_SubtitleDescriptior(byte[] buf)
+    private string DVB_SubtitleDescriptior(byte[] buf)
     {
       int descriptor_tag;
       int descriptor_length;
@@ -2232,6 +2704,7 @@ namespace MediaPortal.TV.Recording
       descriptor_tag = buf[0];
       descriptor_length = buf[1];
       if (descriptor_length < buf.Length)
+      {
         if (descriptor_tag == 0x59)
         {
           len = descriptor_length;
@@ -2241,22 +2714,30 @@ namespace MediaPortal.TV.Recording
 
           while (len > 0)
           {
-            System.Array.Copy(buf, pointer, bytes, 0, len);
-            ISO_639_language_code += System.Text.Encoding.ASCII.GetString(bytes, 0, 3);
+            Array.Copy(buf, pointer, bytes, 0, len);
+            ISO_639_language_code += Encoding.ASCII.GetString(bytes, 0, 3);
             if (bytes.Length >= 4)
+            {
               subtitling_type = bytes[3];
+            }
             if (bytes.Length >= 6)
+            {
               composition_page_id = (bytes[4] << 8) + bytes[5];
+            }
             if (bytes.Length >= 8)
+            {
               ancillary_page_id = (bytes[6] << 8) + bytes[7];
+            }
 
             pointer += 8;
             len -= 8;
           }
         }
+      }
 
       return ISO_639_language_code;
     }
+
     //
     private object DVB_ExtendedEvent(byte[] buf, ref EITDescr eit)
     {
@@ -2279,13 +2760,13 @@ namespace MediaPortal.TV.Recording
       string item = "";
       try
       {
-        System.Array.Copy(buf, 0, data, 0, 7);
+        Array.Copy(buf, 0, data, 0, 7);
 
         descriptor_tag = data[0];
         descriptor_length = data[1];
         descriptor_number = (data[1] >> 4) & 0xF;
         last_descriptor_number = data[1] & 0xF;
-        eit.eeLanguageCode = System.Text.Encoding.ASCII.GetString(data, 3, 3);
+        eit.eeLanguageCode = Encoding.ASCII.GetString(data, 3, 3);
         length_of_items = data[6];
 
         if (eit.eeLanguageCode.Length > 0)
@@ -2298,26 +2779,28 @@ namespace MediaPortal.TV.Recording
 
         while (len1 > 0)
         {
-          System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+          Array.Copy(buf, pointer, b, 0, lenB - pointer);
           item_description_length = b[0];
           pointer += 1 + item_description_length;
-          System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+          Array.Copy(buf, pointer, b, 0, lenB - pointer);
           string testText = DvbTextConverter.Convert(b, item_description_length, eit.eeLanguageCode);
           if (testText == null)
+          {
             testText = "-not avail.-";
+          }
           //Log.WriteFile(LogType.Log,"dvbsections: item-description={0}",testText);
           item_length = b[0];
-          System.Array.Copy(buf, pointer + 1, b, 0, item_length);
+          Array.Copy(buf, pointer + 1, b, 0, item_length);
           item = DvbTextConverter.Convert(b, item_length, eit.eeLanguageCode);
           pointer += 1 + item_length;
           len1 -= (2 + item_description_length + item_length);
           lenB -= (2 + item_description_length + item_length);
         }
-        System.Array.Copy(buf, pointer, b, 0, 1);
+        Array.Copy(buf, pointer, b, 0, 1);
         text_length = b[0];
         pointer += 1;
         lenB -= 1;
-        System.Array.Copy(buf, pointer, b, 0, text_length);
+        Array.Copy(buf, pointer, b, 0, text_length);
         text = DvbTextConverter.Convert(b, text_length, eit.eeLanguageCode);
         eit.event_item += item;
         eit.event_item_text += text;
@@ -2327,12 +2810,18 @@ namespace MediaPortal.TV.Recording
         //Log.Error("dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
       }
       if (eit.event_item == null)
+      {
         eit.event_item = "";
+      }
       if (eit.event_item_text == null)
+      {
         eit.event_item_text = "";
+      }
 
       if (eit.event_item.Length > 0 && eit.event_item_text.Length > 0)
+      {
         eit.extendedEventComplete = true;
+      }
 
       return 0;
     }
@@ -2349,7 +2838,9 @@ namespace MediaPortal.TV.Recording
         tp.WestEastFlag = (b[8] & 0x80) >> 7;
         tp.Polarisation = (b[8] & 0x60) >> 5;
         if (tp.Polarisation > 1)
+        {
           tp.Polarisation -= 2;
+        }
         // polarisation
         // 0 - horizontal/left (linear/circluar)
         // 1 - vertical/right (linear/circluar)
@@ -2360,15 +2851,19 @@ namespace MediaPortal.TV.Recording
         string valString = "";
         valString = Convert.ToString(tp.Frequency, 16);
         if (valString.Length > 5)
+        {
           valString = valString.Substring(0, 5);
+        }
         tp.Frequency = Convert.ToInt32(valString);
         valString = Convert.ToString(tp.Symbolrate, 16);
         if (valString.Length > 5)
+        {
           valString = valString.Substring(0, 5);
+        }
         tp.Symbolrate = Convert.ToInt32(valString);
       }
-
     }
+
     private void DVB_GetCableDelivSys(byte[] b, ref NITCableDescriptor tp)
     {
       if (b[0] == 0x44 && b.Length >= 13)
@@ -2404,8 +2899,8 @@ namespace MediaPortal.TV.Recording
         // 6- 8/9 conv. code rate
         // 15- No conv. coding
       }
-
     }
+
     // terrestrial
     private void DVB_GetTerrestrialDelivSys(byte[] b, ref NITTerrestrialDescriptor tp)
     {
@@ -2454,8 +2949,7 @@ namespace MediaPortal.TV.Recording
         tp.OtherFrequencyFlag = (b[8] & 3);
         // 0 - no other frequency in use
       }
-
-    }		//
+    } //
 
     private ServiceData DVB_GetService(byte[] b)
     {
@@ -2471,28 +2965,29 @@ namespace MediaPortal.TV.Recording
       service_provider_name_length = b[3];
       pointer = 4;
       byte[] spn = new byte[b.Length - pointer + 1];
-      System.Array.Copy(b, pointer, spn, 0, b.Length - pointer);
+      Array.Copy(b, pointer, spn, 0, b.Length - pointer);
       serviceData.serviceProviderName = DvbTextConverter.Convert(spn, service_provider_name_length, "");
       pointer += service_provider_name_length;
       service_name_length = b[pointer];
       pointer += 1;
       byte[] sn = new byte[b.Length - pointer + 1];
-      System.Array.Copy(b, pointer, sn, 0, b.Length - pointer);
+      Array.Copy(b, pointer, sn, 0, b.Length - pointer);
       serviceData.serviceName = DvbTextConverter.Convert(sn, service_name_length, "");
       return serviceData;
     }
+
     public static string getString468A(byte[] b, int l1)
     {
       //			int in_emphasis = 0;
       int i = 0;
       char c;
-      char em_ON = (char)0x86;
-      char em_OFF = (char)0x87;
+      char em_ON = (char) 0x86;
+      char em_OFF = (char) 0x87;
       string text = "";
       //			char c1;
       do
       {
-        c = (char)b[i];
+        c = (char) b[i];
 
         if (Convert.ToInt16(c) >= 0x80 & Convert.ToInt16(c) <= 0x9F)
         {
@@ -2526,7 +3021,7 @@ namespace MediaPortal.TV.Recording
         }
 
         text = text + c;
-      @cont:
+        @cont:
         l1 -= 1;
         i += 1;
       } while (!(l1 <= 0));
@@ -2536,17 +3031,21 @@ namespace MediaPortal.TV.Recording
     //
     //
     //
+
     #endregion
 
-
-
     #region EPG
+
     public ArrayList GetEITSchedule(ArrayList epgData)
     {
       if (epgData == null)
+      {
         return null;
+      }
       if (epgData.Count < 1)
+      {
         return null;
+      }
 
       EIT_Program_Info eit = new EIT_Program_Info();
       eit.eitList = new ArrayList();
@@ -2556,16 +3055,16 @@ namespace MediaPortal.TV.Recording
 
       foreach (byte[] arr in epgData)
       {
-        System.Windows.Forms.Application.DoEvents();
-        System.Windows.Forms.Application.DoEvents();
+        Application.DoEvents();
+        Application.DoEvents();
         ret = decodeEITTable(arr, ref eit, ret, startFlag);
-        System.Windows.Forms.Application.DoEvents();
-        System.Windows.Forms.Application.DoEvents();
+        Application.DoEvents();
+        Application.DoEvents();
       }
       return eit.eitList;
     }
-    #endregion
 
+    #endregion
 
     #region IDisposable Members
 
@@ -2578,5 +3077,5 @@ namespace MediaPortal.TV.Recording
     }
 
     #endregion
-  }// class
-}// namespace
+  } // class
+} // namespace

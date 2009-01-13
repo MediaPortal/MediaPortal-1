@@ -24,12 +24,11 @@
 #endregion
 
 using System;
-
-using Microsoft.DirectX.Direct3D;
-
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Music
 {
@@ -38,53 +37,45 @@ namespace MediaPortal.GUI.Music
   /// </summary> 
   public class GUIMusicInfo : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(20)]
-    protected GUILabelControl lblAlbum = null;
-    [SkinControlAttribute(21)]
-    protected GUILabelControl lblArtist = null;
-    [SkinControlAttribute(22)]
-    protected GUILabelControl lblDate = null;
-    [SkinControlAttribute(23)]
-    protected GUILabelControl lblRating = null;
-    [SkinControlAttribute(24)]
-    protected GUILabelControl lblGenre = null;
-    [SkinControlAttribute(25)]
-    protected GUIFadeLabel lblTone = null;
-    [SkinControlAttribute(26)]
-    protected GUIFadeLabel lblStyles = null;
-    [SkinControlAttribute(3)]
-    protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(4)]
-    protected GUITextControl tbTextArea = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnTracks = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnRefresh = null;
+    [SkinControl(20)] protected GUILabelControl lblAlbum = null;
+    [SkinControl(21)] protected GUILabelControl lblArtist = null;
+    [SkinControl(22)] protected GUILabelControl lblDate = null;
+    [SkinControl(23)] protected GUILabelControl lblRating = null;
+    [SkinControl(24)] protected GUILabelControl lblGenre = null;
+    [SkinControl(25)] protected GUIFadeLabel lblTone = null;
+    [SkinControl(26)] protected GUIFadeLabel lblStyles = null;
+    [SkinControl(3)] protected GUIImage imgCoverArt = null;
+    [SkinControl(4)] protected GUITextControl tbTextArea = null;
+    [SkinControl(5)] protected GUIButtonControl btnTracks = null;
+    [SkinControl(6)] protected GUIButtonControl btnRefresh = null;
 
     #region Base Dialog Variables
-    bool m_bRunning = false;
-    bool needsRefresh = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
+
+    private bool m_bRunning = false;
+    private bool needsRefresh = false;
+    private int m_dwParentWindowID = 0;
+    private GUIWindow m_pParentWindow = null;
 
     #endregion
 
-    Texture coverArtTexture = null;
-    bool showReview = false;
-    MusicAlbumInfo albumInfo = null;
-    MusicTag m_tag = null;
-    int coverArtTextureWidth = 0;
-    int coverArtTextureHeight = 0;
-    bool _prevOverlay = false;
+    private Texture coverArtTexture = null;
+    private bool showReview = false;
+    private MusicAlbumInfo albumInfo = null;
+    private MusicTag m_tag = null;
+    private int coverArtTextureWidth = 0;
+    private int coverArtTextureHeight = 0;
+    private bool _prevOverlay = false;
 
     public GUIMusicInfo()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_INFO;
+      GetID = (int) Window.WINDOW_MUSIC_INFO;
     }
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogAlbumInfo.xml");
     }
+
     public override void PreInit()
     {
     }
@@ -116,12 +107,13 @@ namespace MediaPortal.GUI.Music
     }
 
     #region Base Dialog Members
+
     public void RenderDlg(float timePassed)
     {
       base.Render(timePassed);
     }
 
-    void Close()
+    private void Close()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
@@ -157,8 +149,8 @@ namespace MediaPortal.GUI.Music
       }
       GUILayerManager.UnRegisterLayer(this);
     }
-    #endregion
 
+    #endregion
 
     protected override void OnPageDestroy(int newWindowId)
     {
@@ -177,6 +169,7 @@ namespace MediaPortal.GUI.Music
       }
       base.OnPageDestroy(newWindowId);
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -185,14 +178,14 @@ namespace MediaPortal.GUI.Music
       Refresh();
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
         string imageFileName = albumInfo.ImageURL;
         string thumbNailFileName = Util.Utils.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
-        MediaPortal.Util.Utils.FileDelete(thumbNailFileName);
+        Util.Utils.FileDelete(thumbNailFileName);
         needsRefresh = true;
         Close();
         return;
@@ -211,9 +204,12 @@ namespace MediaPortal.GUI.Music
       set { albumInfo = value; }
     }
 
-    void Update()
+    private void Update()
     {
-      if (null == albumInfo) return;
+      if (null == albumInfo)
+      {
+        return;
+      }
       string strTmp;
       lblAlbum.Label = albumInfo.Title;
       lblArtist.Label = albumInfo.Artist;
@@ -221,13 +217,16 @@ namespace MediaPortal.GUI.Music
 
       string rating = string.Empty;
       if (albumInfo.Rating > 0)
+      {
         rating = String.Format("{0}/9", albumInfo.Rating);
+      }
       lblRating.Label = rating;
       lblGenre.Label = albumInfo.Genre;
 
       lblTone.Clear();
       lblTone.Add(albumInfo.Tones.Trim());
-      strTmp = albumInfo.Tones; strTmp.Trim();
+      strTmp = albumInfo.Tones;
+      strTmp.Trim();
 
       lblStyles.Clear();
       lblStyles.Add(albumInfo.Styles.Trim());
@@ -245,18 +244,20 @@ namespace MediaPortal.GUI.Music
         {
           MusicSong song = albumInfo.GetSong(i);
           string track = String.Format("{0}. {1}\n",
-                  song.Track,
-                  song.SongName);
+                                       song.Track,
+                                       song.SongName);
           line += track;
-        };
+        }
+        ;
 
         tbTextArea.Label = line;
 
         for (int i = 0; i < albumInfo.NumberOfSongs; ++i)
         {
           MusicSong song = albumInfo.GetSong(i);
-          line = MediaPortal.Util.Utils.SecondsToHMSString(song.Duration);
-          GUIMessage msg1 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL2_SET, GetID, 0, tbTextArea.GetID, i, 0, null);
+          line = Util.Utils.SecondsToHMSString(song.Duration);
+          GUIMessage msg1 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL2_SET, GetID, 0, tbTextArea.GetID, i, 0,
+                                           null);
           msg1.Label = (line);
           OnMessage(msg1);
         }
@@ -269,27 +270,32 @@ namespace MediaPortal.GUI.Music
     {
       RenderDlg(timePassed);
 
-      if (null == coverArtTexture) return;
+      if (null == coverArtTexture)
+      {
+        return;
+      }
 
       if (null != imgCoverArt)
       {
-        float x = (float)imgCoverArt.XPosition;
-        float y = (float)imgCoverArt.YPosition;
+        float x = (float) imgCoverArt.XPosition;
+        float y = (float) imgCoverArt.YPosition;
         int width;
         int height;
         GUIGraphicsContext.Correct(ref x, ref y);
 
         int maxWidth = imgCoverArt.Width;
         int maxHeight = imgCoverArt.Height;
-        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width, out height);
+        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width,
+                                         out height);
 
         GUIFontManager.Present();
-        MediaPortal.Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth, coverArtTextureHeight, 0, 0, true);
+        Util.Picture.RenderImage(coverArtTexture, (int) x, (int) y, width, height, coverArtTextureWidth,
+                                 coverArtTextureHeight, 0, 0, true);
       }
     }
 
 
-    void Refresh()
+    private void Refresh()
     {
       if (coverArtTexture != null)
       {
@@ -306,16 +312,17 @@ namespace MediaPortal.GUI.Music
         m_tag.Album = albumInfo.Title;
       }
       thumbNailFileName = Util.Utils.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
-      if (!System.IO.File.Exists(thumbNailFileName))
+      if (!File.Exists(thumbNailFileName))
       {
         //	Download image and save as 
         //	permanent thumb
-        MediaPortal.Util.Utils.DownLoadImage(imageFileName, thumbNailFileName);
+        Util.Utils.DownLoadImage(imageFileName, thumbNailFileName);
       }
 
-      if (System.IO.File.Exists(thumbNailFileName))
+      if (File.Exists(thumbNailFileName))
       {
-        coverArtTexture = MediaPortal.Util.Picture.Load(thumbNailFileName, 0, 128, 128, true, false, out coverArtTextureWidth, out coverArtTextureHeight);
+        coverArtTexture = Util.Picture.Load(thumbNailFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
+                                            out coverArtTextureHeight);
         //imgCoverArt.FreeResources();
         //imgCoverArt.AllocResources();
       }
@@ -335,6 +342,7 @@ namespace MediaPortal.GUI.Music
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -344,6 +352,7 @@ namespace MediaPortal.GUI.Music
     {
       Render(timePassed);
     }
+
     #endregion
   }
 }

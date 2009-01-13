@@ -24,11 +24,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using Microsoft.Win32;
 
 namespace MediaPortal.Utils.Time
 {

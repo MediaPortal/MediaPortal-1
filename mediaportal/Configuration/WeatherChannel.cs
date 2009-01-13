@@ -29,7 +29,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
-using System.Web;
 
 namespace MediaPortal.Configuration
 {
@@ -73,7 +72,7 @@ namespace MediaPortal.Configuration
 
         // Read data from the response stream
         Stream responseStream = response.GetResponseStream();
-        Encoding iso8859 = System.Text.Encoding.GetEncoding("iso-8859-1");
+        Encoding iso8859 = Encoding.GetEncoding("iso-8859-1");
         StreamReader streamReader = new StreamReader(responseStream, iso8859);
 
         // Fetch information from our stream
@@ -113,12 +112,12 @@ namespace MediaPortal.Configuration
       while (charValue != -1)
       {
         if (((charValue >= 48) && (charValue <= 57)) // 0-9
-          || ((charValue >= 65) && (charValue <= 90)) // A-Z
-          || ((charValue >= 97) && (charValue <= 122))) // a-z
+            || ((charValue >= 65) && (charValue <= 90)) // A-Z
+            || ((charValue >= 97) && (charValue <= 122))) // a-z
         {
-          strWtr.Write((char)charValue);
+          strWtr.Write((char) charValue);
         }
-        else if (charValue == 32)  // Space
+        else if (charValue == 32) // Space
         {
           strWtr.Write("+");
         }

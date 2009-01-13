@@ -61,7 +61,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       try
       {
-        vfd = new control(0x040b,0x7001);
+        vfd = new control(0x040b, 0x7001);
         vfd.initScreen();
       }
       catch (NotSupportedException ex)
@@ -110,7 +110,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     public void DrawImage(Bitmap bitmap)
-    {}
+    {
+    }
 
     public string ErrorMessage
     {
@@ -139,7 +140,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
-    {}
+    {
+    }
 
     /// <summary>
     /// Displays the message on the indicated line
@@ -159,7 +161,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         vfd.writeLine(line, RemoveDiacritics(message));
 
         //Volume calculation
-        int vol = VolumeHandler.Instance.Volume / 2730;
+        int vol = VolumeHandler.Instance.Volume/2730;
 
         // Display symbols
         // LiveTV, LiveRadio

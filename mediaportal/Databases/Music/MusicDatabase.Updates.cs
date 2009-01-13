@@ -23,34 +23,40 @@
 
 #endregion
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using MediaPortal.Configuration;
+using MediaPortal.Database;
+using MediaPortal.Profile;
+using MediaPortal.ServiceImplementations;
+using MediaPortal.TagReader;
+using MediaPortal.Util;
+using SQLite.NET;
+
 namespace MediaPortal.Music.Database
 {
   #region Usings
 
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Drawing;
-  using System.IO;
-  using SQLite.NET;
-  using MediaPortal.Configuration;
-  using MediaPortal.Database;
-  using MediaPortal.ServiceImplementations;
-  using MediaPortal.TagReader;
-  using MediaPortal.Util;
+  
 
   #endregion
 
   #region Reorg class
+
   public delegate void MusicDBReorgEventHandler(object sender, DatabaseReorgEventArgs e);
 
-  public class DatabaseReorgEventArgs : System.EventArgs
+  public class DatabaseReorgEventArgs : EventArgs
   {
     public int progress;
     // Provide one or more constructors, as well as fields and
     // accessors for the arguments.
     public string phase;
   }
+
   #endregion
 
   public partial class MusicDatabase
@@ -58,6 +64,7 @@ namespace MediaPortal.Music.Database
     private ArrayList _shares = new ArrayList();
 
     #region Reorg events
+
     // An event that clients can use to be notified whenever the
     // elements of the list change.
     public static event MusicDBReorgEventHandler DatabaseReorgChanged;
@@ -66,8 +73,11 @@ namespace MediaPortal.Music.Database
     protected virtual void OnDatabaseReorgChanged(DatabaseReorgEventArgs e)
     {
       if (DatabaseReorgChanged != null)
+      {
         DatabaseReorgChanged(this, e);
+      }
     }
+
     #endregion
 
     private enum Errors
@@ -94,21 +104,26 @@ namespace MediaPortal.Music.Database
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
-    private char[] trimChars = { ' ', '\x00', '|' };
+    private char[] trimChars = {' ', '\x00', '|'};
 
     #region Favorite / Ratings
+
     public void SetFavorite(Song aSong)
     {
       try
       {
         if (aSong.Id == -1)
+        {
           return;
+        }
 
         int iFavorite = 0;
         if (aSong.Favorite)
+        {
           iFavorite = 1;
+        }
         string strSQL = String.Format("UPDATE tracks SET iFavorite={0} WHERE idTrack={1}", iFavorite, aSong.Id);
-        MusicDatabase.DirectExecute(strSQL);
+        DirectExecute(strSQL);
         return;
       }
       catch (Exception ex)
@@ -121,7 +136,9 @@ namespace MediaPortal.Music.Database
     public void SetRating(string aFilename, int aRating)
     {
       if (string.IsNullOrEmpty(aFilename))
+      {
         return;
+      }
 
       try
       {
@@ -131,7 +148,7 @@ namespace MediaPortal.Music.Database
 
         strSQL = String.Format("UPDATE tracks SET iRating={0} WHERE strPath='{1}'", aRating, strFileName);
 
-        MusicDatabase.DirectExecute(strSQL);
+        DirectExecute(strSQL);
         return;
       }
       catch (Exception ex)
@@ -142,15 +159,17 @@ namespace MediaPortal.Music.Database
 
       return;
     }
+
     #endregion
 
     #region Top100
+
     public void ResetTop100()
     {
       try
       {
         string strSQL = String.Format("UPDATE tracks SET iTimesPlayed=0");
-        MusicDatabase.DirectExecute(strSQL);
+        DirectExecute(strSQL);
       }
       catch (Exception ex)
       {
@@ -171,13 +190,15 @@ namespace MediaPortal.Music.Database
 
         SQLiteResultSet results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
         int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
 
         strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0} where idTrack='{1}'", ++iTimesPlayed, idSong);
-        if (MusicDatabase.DirectExecute(strSQL).Rows.Count > 0)
+        if (DirectExecute(strSQL).Rows.Count > 0)
         {
           Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
           return true;
@@ -191,9 +212,11 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
+
     #endregion
 
     #region Album / Artist Info
+
     public void AddAlbumInfo(AlbumInfo aAlbumInfo)
     {
       string strSQL;
@@ -222,21 +245,26 @@ namespace MediaPortal.Music.Database
         //strTmp=album.Path  ;RemoveInvalidChars(ref strTmp);album.Path=strTmp;
 
         if (null == MusicDbClient)
+        {
           return;
+        }
 
-        strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album, album.Artist);
+        strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album,
+                               album.Artist);
         MusicDbClient.Execute(strSQL);
 
-        strSQL = String.Format("insert into albuminfo (strAlbum,strArtist, strTones,strStyles,strReview,strImage,iRating,iYear,strTracks) values('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},'{8}')",
-                            album.Album,
-                            album.Artist,
-                            album.Tones,
-                            album.Styles,
-                            album.Review,
-                            album.Image,
-                            album.Rating,
-                            album.Year,
-                            album.Tracks);
+        strSQL =
+          String.Format(
+            "insert into albuminfo (strAlbum,strArtist, strTones,strStyles,strReview,strImage,iRating,iYear,strTracks) values('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},'{8}')",
+            album.Album,
+            album.Artist,
+            album.Tones,
+            album.Styles,
+            album.Review,
+            album.Image,
+            album.Rating,
+            album.Year,
+            album.Tracks);
 
         MusicDbClient.Execute(strSQL);
 
@@ -297,26 +325,30 @@ namespace MediaPortal.Music.Database
         artist.Misc = strTmp == "unknown" ? "" : strTmp;
 
         if (null == MusicDbClient)
+        {
           return;
+        }
 
         strSQL = String.Format("delete from artistinfo where strArtist like '{0}%'", artist.Artist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
 
-        strSQL = String.Format("insert into artistinfo (strArtist,strBorn,strYearsActive,strGenres,strTones,strStyles,strInstruments,strImage,strAMGBio, strAlbums,strCompilations,strSingles,strMisc) values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}' )",
-          artist.Artist,
-          artist.Born,
-          artist.YearsActive,
-          artist.Genres,
-          artist.Tones,
-          artist.Styles,
-          artist.Instruments,
-          artist.Image,
-          artist.AMGBio,
-          artist.Albums,
-          artist.Compilations,
-          artist.Singles,
-          artist.Misc);
+        strSQL =
+          String.Format(
+            "insert into artistinfo (strArtist,strBorn,strYearsActive,strGenres,strTones,strStyles,strInstruments,strImage,strAMGBio, strAlbums,strCompilations,strSingles,strMisc) values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}' )",
+            artist.Artist,
+            artist.Born,
+            artist.YearsActive,
+            artist.Genres,
+            artist.Tones,
+            artist.Styles,
+            artist.Instruments,
+            artist.Image,
+            artist.AMGBio,
+            artist.Albums,
+            artist.Compilations,
+            artist.Singles,
+            artist.Misc);
 
         MusicDbClient.Execute(strSQL);
         return;
@@ -338,7 +370,8 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
       SQLiteResultSet results;
       results = MusicDbClient.Execute(strSQL);
-      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}%'", strAlbum, strArtist);
+      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}%'", strAlbum,
+                             strArtist);
       MusicDbClient.Execute(strSQL);
     }
 
@@ -347,11 +380,13 @@ namespace MediaPortal.Music.Database
       string strArtist = aArtistName;
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
       strSQL = String.Format("delete from artistinfo where strArtist like '{0}'", strArtist);
-      MusicDatabase.DirectExecute(strSQL);
+      DirectExecute(strSQL);
     }
+
     #endregion
 
     #region Lyrics
+
     public bool UpdateLyrics(string aFileName, string aLyrics)
     {
       try
@@ -365,12 +400,14 @@ namespace MediaPortal.Music.Database
 
         SQLiteResultSet results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
 
         strSQL = String.Format("UPDATE tracks SET strLyrics='{0}' where idTrack='{1}'", strLyrics, idSong);
-        if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+        if (DirectExecute(strSQL).Rows.Count == 0)
         {
           Log.Debug("MusicDatabase: Updated Lyrics for song {0}", aFileName);
           return true;
@@ -384,9 +421,11 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
+
     #endregion
 
     #region		Database rebuild
+
     public int MusicDatabaseReorg(ArrayList shares)
     {
       return MusicDatabaseReorg(shares, null);
@@ -397,7 +436,7 @@ namespace MediaPortal.Music.Database
       // Get the values from the Setting Object, which we received from the Config
       bool _updateSinceLastImport = false;
       bool _excludeHiddenFiles = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
         _excludeHiddenFiles = xmlreader.GetValueAsBool("musicfiles", "excludeHiddenFiles", false);
@@ -417,7 +456,9 @@ namespace MediaPortal.Music.Database
       }
 
       if (!_updateSinceLastImport)
+      {
         _lastImport = DateTime.MinValue;
+      }
 
       if (shares == null)
       {
@@ -425,7 +466,7 @@ namespace MediaPortal.Music.Database
       }
       else
       {
-        _shares = (ArrayList)shares.Clone();
+        _shares = (ArrayList) shares.Clone();
       }
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
@@ -463,13 +504,19 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
 
         if (_useFolderThumbs)
+        {
           CreateFolderThumbs(70, 75, _shares);
+        }
 
         if (_createArtistPreviews)
+        {
           CreateArtistThumbs(76, 85);
+        }
 
         if (_createGenrePreviews)
+        {
           CreateGenreThumbs(86, 90);
+        }
 
         if (_createMissingFolderThumbs)
         {
@@ -483,7 +530,8 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: Unhandled error {0} - scan aborted!\n{1}\n{2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("Musicdatabasereorg: Unhandled error {0} - scan aborted!\n{1}\n{2}", ex.Message, ex.Source,
+                  ex.StackTrace);
       }
       finally
       {
@@ -503,24 +551,28 @@ namespace MediaPortal.Music.Database
 
         DateTime stopTime = DateTime.Now;
         TimeSpan ts = stopTime - startTime;
-        float fSecsPerTrack = ((float)ts.TotalSeconds / (float)fileCount);
+        float fSecsPerTrack = ((float) ts.TotalSeconds/(float) fileCount);
         string trackPerSecSummary = "";
 
         if (fileCount > 0)
+        {
           trackPerSecSummary = string.Format(" ({0} seconds per track)", fSecsPerTrack);
+        }
 
-        Log.Info("Musicdatabasereorg: Music database reorganization done.  Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}",
-            fileCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
+        Log.Info(
+          "Musicdatabasereorg: Music database reorganization done.  Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}",
+          fileCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
 
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlreader.SetValue("musicfiles", "lastImport", startTime.ToString("yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture));
+          xmlreader.SetValue("musicfiles", "lastImport",
+                             startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture));
         }
 
         GC.Collect();
       }
-      return (int)Errors.ERROR_OK;
+      return (int) Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -531,15 +583,15 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        DatabaseUtility.CompactDatabase(MusicDatabase.Instance.DbConnection);
+        DatabaseUtility.CompactDatabase(Instance.DbConnection);
       }
       catch (Exception)
       {
         Log.Error("Musicdatabasereorg: vacuum failed");
-        return (int)Errors.ERROR_COMPRESSING;
+        return (int) Errors.ERROR_COMPRESSING;
       }
       Log.Info("Musicdatabasereorg: Compress completed");
-      return (int)Errors.ERROR_OK;
+      return (int) Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -548,12 +600,12 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int LoadShares()
     {
-      _shares.Clear();  // Clear the list of Shares to avoid duplicates on a rerun
+      _shares.Clear(); // Clear the list of Shares to avoid duplicates on a rerun
       string currentFolder = string.Empty;
       bool fileMenuEnabled = false;
       string fileMenuPinCode = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 
@@ -573,13 +625,16 @@ namespace MediaPortal.Music.Database
           string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
           if (SharePath.Length > 0)
+          {
             _shares.Add(SharePath);
+          }
         }
       }
       return 0;
     }
 
     #region Delete Song
+
     /// <summary>
     /// Remove songs, which are not existing anymore, because they have been moved, deleted.
     /// </summary>
@@ -590,39 +645,42 @@ namespace MediaPortal.Music.Database
       strSQL = String.Format("select idTrack, strPath from tracks");
       try
       {
-        results = MusicDatabase.DirectExecute(strSQL);
+        results = DirectExecute(strSQL);
         if (results == null)
-          return (int)Errors.ERROR_REORG_SONGS;
+        {
+          return (int) Errors.ERROR_REORG_SONGS;
+        }
       }
       catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs() {0}", ex.Message);
-        return (int)Errors.ERROR_REORG_SONGS;
+        Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs() {0}",
+                  ex.Message);
+        return (int) Errors.ERROR_REORG_SONGS;
       }
       int removed = 0;
-      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
+      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int) results.Rows.Count);
       for (int i = 0; i < results.Rows.Count; ++i)
       {
         string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
 
-        if (!System.IO.File.Exists(strFileName))
+        if (!File.Exists(strFileName))
         {
           /// song doesn't exist anymore, delete it
           /// We don't care about foreign keys at this moment. We'll just change this later.
           removed++;
           DeleteSong(strFileName, false);
-
         }
-        if ((i % 10) == 0)
+        if ((i%10) == 0)
         {
           DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
           MyArgs.progress = 4;
-          MyArgs.phase = String.Format("Removing non existing songs:{0}/{1} checked, {2} removed", i, results.Rows.Count, removed);
+          MyArgs.phase = String.Format("Removing non existing songs:{0}/{1} checked, {2} removed", i, results.Rows.Count,
+                                       removed);
           OnDatabaseReorgChanged(MyArgs);
         }
-      }//for (int i=0; i < results.Rows.Count;++i)
+      } //for (int i=0; i < results.Rows.Count;++i)
       Log.Info("Musicdatabasereorg: DeleteNonExistingSongs completed. Removed {0} non-existing songs", removed);
-      return (int)Errors.ERROR_OK;
+      return (int) Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -636,9 +694,11 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-        string strSQL = String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'", strFileName);
+        string strSQL =
+          String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'",
+                        strFileName);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count > 0)
         {
           int idTrack = DatabaseUtility.GetAsInt(results, 0, "tracks.idTrack");
@@ -648,8 +708,10 @@ namespace MediaPortal.Music.Database
 
           // Delete
           strSQL = String.Format("delete from tracks where idTrack={0}", idTrack);
-          if (MusicDatabase.DirectExecute(strSQL).Rows.Count > 0)
+          if (DirectExecute(strSQL).Rows.Count > 0)
+          {
             Log.Info("Musicdatabase: Deleted no longer existing or moved song {0}", strFileName);
+          }
 
           // Check if we have now Artists and Genres for which no song exists
           if (bCheck)
@@ -659,15 +721,15 @@ namespace MediaPortal.Music.Database
             foreach (string artist in artists)
             {
               strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
-              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+              if (DirectExecute(strSQL).Rows.Count == 0)
               {
                 // Delete artist with no songs
                 strSQL = String.Format("delete from artist where strArtist = '{0}'", artist.Trim());
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
 
                 // Delete artist info
                 strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
               }
             }
 
@@ -676,15 +738,15 @@ namespace MediaPortal.Music.Database
             foreach (string artist in albumartists)
             {
               strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
-              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+              if (DirectExecute(strSQL).Rows.Count == 0)
               {
                 // Delete artist with no songs
                 strSQL = String.Format("delete from albumartist where strAlbumArtist = '{0}'", artist.Trim());
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
 
                 // Delete artist info
                 strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
               }
             }
 
@@ -693,11 +755,11 @@ namespace MediaPortal.Music.Database
             foreach (string genre in genres)
             {
               strSQL = String.Format("select idTrack from tracks where strGenre like '%{0}%'", genre.Trim());
-              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+              if (DirectExecute(strSQL).Rows.Count == 0)
               {
                 // Delete genres with no songs
                 strSQL = String.Format("delete from genre where strGenre = '{0}'", genre.Trim());
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
               }
             }
           }
@@ -711,9 +773,11 @@ namespace MediaPortal.Music.Database
       }
       return;
     }
+
     #endregion
 
     #region Add / Update Song
+
     /// <summary>
     /// Scan the Music Shares and add all new songs found to the database.
     /// Update tags for Songs, which have been updated
@@ -722,7 +786,8 @@ namespace MediaPortal.Music.Database
     /// <param name="EndProgress"></param>
     /// <param name="fileCount"></param>
     /// <returns></returns>
-    private int GetAndAddOrUpdateFiles(bool aCheckForNewFiles, bool aExcludeHiddenFiles, int StartProgress, int EndProgress, ref int fileCount)
+    private int GetAndAddOrUpdateFiles(bool aCheckForNewFiles, bool aExcludeHiddenFiles, int StartProgress,
+                                       int EndProgress, ref int fileCount)
     {
       availableFiles = new List<string>(100000);
 
@@ -756,7 +821,7 @@ namespace MediaPortal.Music.Database
         }
       }
       TotalSongs = totalFiles;
-      Log.Info("Musicdatabasereorg: Found {0} files.", (int)totalFiles);
+      Log.Info("Musicdatabasereorg: Found {0} files.", (int) totalFiles);
       Log.Info("Musicdatabasereorg: Now check for new / updated files.");
 
       SQLiteResultSet results;
@@ -774,13 +839,13 @@ namespace MediaPortal.Music.Database
           if (results == null)
           {
             Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
-            return (int)Errors.ERROR_REORG_SONGS;
+            return (int) Errors.ERROR_REORG_SONGS;
           }
         }
         catch (Exception)
         {
           Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
-          return (int)Errors.ERROR_REORG_SONGS;
+          return (int) Errors.ERROR_REORG_SONGS;
         }
 
         if (results.Rows.Count == 0)
@@ -794,9 +859,9 @@ namespace MediaPortal.Music.Database
         }
         AddedCounter++;
 
-        if ((SongCounter % 10) == 0)
+        if ((SongCounter%10) == 0)
         {
-          NewProgress = StartProgress + ((ProgressRange * SongCounter) / TotalSongs);
+          NewProgress = StartProgress + ((ProgressRange*SongCounter)/TotalSongs);
           MyArgs.progress = Convert.ToInt32(NewProgress);
           MyArgs.phase = String.Format("Adding new files {0}/{1}", SongCounter, availableFiles.Count);
           OnDatabaseReorgChanged(MyArgs);
@@ -826,7 +891,7 @@ namespace MediaPortal.Music.Database
             foreach (string file in Directory.GetFiles(dir, "*.*"))
             {
               CheckFileForInclusion(aCheckForNewFiles, aExcludeHiddenFiles, file, ref totalFiles);
-              if ((totalFiles % 10) == 0)
+              if ((totalFiles%10) == 0)
               {
                 DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
                 MyArgs.progress = 4;
@@ -860,33 +925,49 @@ namespace MediaPortal.Music.Database
       {
         string ext = Path.GetExtension(file).ToLower();
         if (ext == ".m3u")
+        {
           return;
+        }
         if (ext == ".pls")
+        {
           return;
+        }
         if (ext == ".wpl")
+        {
           return;
+        }
         if (ext == ".b4s")
+        {
           return;
+        }
 
         // Provide an easy way to exclude problematic or unwanted files from the scan
         if (aExcludeHiddenFiles)
         {
           if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          {
             return;
+          }
         }
 
         // Only get files with the required extension
         if (_supportedExtensions.IndexOf(ext) == -1)
+        {
           return;
+        }
 
         // Only Add files to the list, if they have been Created / Updated after the Last Import date
         if (aCheckForNewFiles)
         {
           if (File.GetCreationTime(file) > _lastImport || File.GetLastWriteTime(file) > _lastImport)
+          {
             availableFiles.Add(file);
+          }
         }
         else
+        {
           availableFiles.Add(file);
+        }
       }
       catch (UnauthorizedAccessException)
       {
@@ -906,7 +987,7 @@ namespace MediaPortal.Music.Database
     /// <returns>A MusicTag with escaped chars formatted suiteable for insertion into the database</returns>
     public MusicTag GetTag(string strFileName)
     {
-      MusicTag tag = TagReader.ReadTag(strFileName);
+      MusicTag tag = TagReader.TagReader.ReadTag(strFileName);
       if (tag != null)
       {
         // Extract the Coverart first because else the quote string escape will result in double "'" for the coverart filenames
@@ -915,10 +996,10 @@ namespace MediaPortal.Music.Database
         string strTmp;
         strTmp = tag.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Album = strTmp;   // For Albums, we need the string unknown, in case they're empty
+        tag.Album = strTmp; // For Albums, we need the string unknown, in case they're empty
         strTmp = tag.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
-        tag.Genre = strTmp;   // We want to see unknown Genre
+        tag.Genre = strTmp; // We want to see unknown Genre
         strTmp = tag.Artist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Artist = strTmp == "unknown" ? "" : strTmp;
@@ -933,7 +1014,9 @@ namespace MediaPortal.Music.Database
         tag.Lyrics = strTmp == "unknown" ? "" : strTmp;
 
         if (!tag.HasAlbumArtist)
+        {
           tag.AlbumArtist = tag.Artist;
+        }
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
         // we will store them separeted by "|"
@@ -954,7 +1037,7 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     public string FormatMultipleEntry(string str, bool strip)
     {
-      string[] strSplit = str.Split(new char[] { ';', '|' });
+      string[] strSplit = str.Split(new char[] {';', '|'});
       // Can't use a simple String.Join as i need to trim all the elements 
       string strJoin = "| ";
       foreach (string strTmp in strSplit)
@@ -983,7 +1066,9 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-        strSQL = String.Format(@"insert into tracks (
+        strSQL =
+          String.Format(
+            @"insert into tracks (
                                strPath, strArtist, strAlbumArtist, strAlbum, strGenre, 
                                strTitle, iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
                                iResumeAt, iDisc, iNumDisc, iGainTrack, iPeakTrack, strLyrics, musicBrainzID, dateLastPlayed) 
@@ -991,17 +1076,17 @@ namespace MediaPortal.Music.Database
                                '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', 
                                {6}, {7}, {8}, {9}, {10}, {11}, {12}, 
                                {13}, {14}, {15}, {16}, {17}, '{18}', '{19}', '{20}' )",
-                               strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Title,
-                               tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-                               0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
-        );
+            strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Title,
+            tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
+            0, tag.DiscID, tag.DiscTotal, 0, 0, tag.Lyrics, "", DateTime.MinValue
+            );
         try
         {
-          SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+          SQLiteResultSet results = DirectExecute(strSQL);
           if (results == null)
           {
             Log.Info("Insert of song {0} failed", strFileName);
-            return (int)Errors.ERROR_REORG_SONGS;
+            return (int) Errors.ERROR_REORG_SONGS;
           }
 
           // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
@@ -1010,16 +1095,18 @@ namespace MediaPortal.Music.Database
           AddGenre(tag.Genre);
 
           if (_treatFolderAsAlbum)
+          {
             UpdateVariousArtist(tag);
+          }
         }
         catch (Exception)
         {
           Log.Error("Insert of song {0} failed", strFileName);
-          return (int)Errors.ERROR_REORG_SONGS;
+          return (int) Errors.ERROR_REORG_SONGS;
         }
-        return (int)Errors.ERROR_OK;
+        return (int) Errors.ERROR_OK;
       }
-      return (int)Errors.ERROR_OK;
+      return (int) Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -1034,19 +1121,21 @@ namespace MediaPortal.Music.Database
         string strSQL;
 
         // split up the artist, in case we've got multiple artists
-        string[] artists = strArtist.Split(new char[] { ';', '|' });
+        string[] artists = strArtist.Split(new char[] {';', '|'});
         foreach (string artist in artists)
         {
           if (artist.Trim() == string.Empty)
+          {
             continue;
+          }
 
           // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
           strSQL = String.Format("select idArtist from artist where strArtist like '{0}'", artist.Trim());
-          if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
+          if (DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Artist
             strSQL = String.Format("insert into artist (strArtist) values ('{0}')", artist.Trim());
-            MusicDatabase.DirectExecute(strSQL);
+            DirectExecute(strSQL);
           }
         }
         return;
@@ -1071,19 +1160,21 @@ namespace MediaPortal.Music.Database
         string strSQL;
 
         // split up the albumartist, in case we've got multiple albumartists
-        string[] artists = strAlbumArtist.Split(new char[] { ';', '|' });
+        string[] artists = strAlbumArtist.Split(new char[] {';', '|'});
         foreach (string artist in artists)
         {
           if (artist.Trim() == string.Empty)
+          {
             continue;
+          }
 
           // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
           strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist like '{0}'", artist.Trim());
-          if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
+          if (DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the AlbumArtist
             strSQL = String.Format("insert into albumartist (strAlbumArtist) values ('{0}')", artist.Trim());
-            MusicDatabase.DirectExecute(strSQL);
+            DirectExecute(strSQL);
           }
         }
         return;
@@ -1107,19 +1198,21 @@ namespace MediaPortal.Music.Database
         string strSQL;
 
         // split up the artist, in case we've got multiple artists
-        string[] genres = strGenre.Split(new char[] { ';', '|' });
+        string[] genres = strGenre.Split(new char[] {';', '|'});
         foreach (string genre in genres)
         {
           if (genre.Trim() == string.Empty)
+          {
             continue;
+          }
 
           // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
           strSQL = String.Format("select idGenre from genre where strGenre like '{0}'", genre.Trim());
-          if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
+          if (DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Genre
             strSQL = String.Format("insert into genre (strGenre) values ('{0}')", genre.Trim());
-            MusicDatabase.DirectExecute(strSQL);
+            DirectExecute(strSQL);
           }
         }
         return;
@@ -1146,21 +1239,23 @@ namespace MediaPortal.Music.Database
         {
           DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-          strSQL = String.Format(@"update tracks 
+          strSQL =
+            String.Format(
+              @"update tracks 
                                  set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
                                  strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
                                  iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
                                  strLyrics = '{12}' 
                                  where strPath = '{13}'",
-                                 tag.Artist, tag.AlbumArtist, tag.Album,
-                                 tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
-                                 tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
-                                 tag.Lyrics,
-                                 strFileName
-                                 );
+              tag.Artist, tag.AlbumArtist, tag.Album,
+              tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
+              tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
+              tag.Lyrics,
+              strFileName
+              );
           try
           {
-            MusicDatabase.DirectExecute(strSQL);
+            DirectExecute(strSQL);
 
             // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
             AddArtist(tag.Artist);
@@ -1168,7 +1263,9 @@ namespace MediaPortal.Music.Database
             AddGenre(tag.Genre);
 
             if (_treatFolderAsAlbum)
+            {
               UpdateVariousArtist(tag);
+            }
           }
           catch (Exception)
           {
@@ -1193,7 +1290,9 @@ namespace MediaPortal.Music.Database
       string formattedArtist = tag.Artist.Trim(trimChars);
       string formattedAlbum = tag.Album.Trim(trimChars);
       if (_stripArtistPrefixes)
+      {
         Util.Utils.StripArtistNamePrefix(ref formattedArtist, true);
+      }
 
       string tagAlbumName = string.Format("{0}-{1}", formattedArtist, formattedAlbum);
       string smallThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
@@ -1208,7 +1307,9 @@ namespace MediaPortal.Music.Database
           {
             bool extractFile = false;
             if (!File.Exists(smallThumbPath))
+            {
               extractFile = true;
+            }
             else
             {
               // Prevent creation of the thumbnail multiple times, when all songs of an album contain coverart <-- that's ugly (rtv)
@@ -1217,7 +1318,9 @@ namespace MediaPortal.Music.Database
                 DateTime fileDate = File.GetLastWriteTime(smallThumbPath);
                 TimeSpan span = _currentDate - fileDate;
                 if (span.Days > 0)
+                {
                   extractFile = true;
+                }
               }
               catch (Exception)
               {
@@ -1233,22 +1336,33 @@ namespace MediaPortal.Music.Database
 
                 if (!String.IsNullOrEmpty(mp3TagImage))
                 {
-                  if (!Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  if (
+                    !Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                                  (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  {
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                  if (!Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  }
+                  if (
+                    !Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                                  (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  {
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
+                  }
 
                   Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
               }
               catch (Exception)
               {
-                Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title, tag.FileName);
+                Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title,
+                         tag.FileName);
               }
             }
           }
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
 
       // Scan folders only one time per song
@@ -1281,19 +1395,28 @@ namespace MediaPortal.Music.Database
             else
             {
               sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
-              if (System.IO.File.Exists(sharefolderThumb))
+              if (File.Exists(sharefolderThumb))
+              {
                 foundThumb = true;
+              }
             }
 
             if (foundThumb)
             {
-              if (!Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+              if (
+                !Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                              (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+              {
                 Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-              if (!Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+              }
+              if (
+                !Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                              (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+              {
                 Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
+              }
             }
           }
-
         }
 
         // MP has an album cover in the thumb cache (maybe downloaded from last.fm) but no folder.jpg in the shares - create it
@@ -1306,22 +1429,29 @@ namespace MediaPortal.Music.Database
             {
               string sourceCover = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName, true);
               if (string.IsNullOrEmpty(sourceCover))
+              {
                 sourceCover = smallThumbPath;
+              }
               if (File.Exists(Util.Utils.ConvertToLargeCoverArt(sourceCover)))
+              {
                 sourceCover = Util.Utils.ConvertToLargeCoverArt(sourceCover);
+              }
               if (File.Exists(sourceCover))
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
                 //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
-                if (!Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                if (
+                  !Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int) Thumbs.ThumbLargeResolution,
+                                                (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                {
                   Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
-                System.Threading.Thread.Sleep(0);
+                }
+                Thread.Sleep(0);
               }
             }
           }
         }
       }
-
     }
 
     private void CreateFolderThumbs(int aProgressStart, int aProgressEnd, ArrayList aShareList)
@@ -1340,9 +1470,10 @@ namespace MediaPortal.Music.Database
             {
               //string displayPath = Path.GetDirectoryName(coverPath);
               //displayPath = displayPath.Remove(0, displayPath.LastIndexOf('\\'));
-              MyFolderArgs.phase = string.Format("Caching folder thumbs: {0}/{1}", Convert.ToString(i + 1), Convert.ToString(checkDirs.Length));
+              MyFolderArgs.phase = string.Format("Caching folder thumbs: {0}/{1}", Convert.ToString(i + 1),
+                                                 Convert.ToString(checkDirs.Length));
               // range = 80-89
-              int folderProgress = aProgressStart + (((i + 1) / checkDirs.Length) * (aProgressEnd - aProgressStart));
+              int folderProgress = aProgressStart + (((i + 1)/checkDirs.Length)*(aProgressEnd - aProgressStart));
               MyFolderArgs.progress = folderProgress;
               OnDatabaseReorgChanged(MyFolderArgs);
 
@@ -1357,30 +1488,43 @@ namespace MediaPortal.Music.Database
               {
                 sharefolderThumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(currentPath, true);
                 if (string.IsNullOrEmpty(sharefolderThumb))
+                {
                   Log.Debug("MusicDatabase: No useable folder images found in {0}", currentPath);
+                }
                 else
+                {
                   foundCover = true;
+                }
               }
               else
               {
                 sharefolderThumb = Util.Utils.GetFolderThumb(currentPath);
                 if (File.Exists(sharefolderThumb))
+                {
                   foundCover = true;
+                }
               }
 
               if (foundCover)
               {
-                if (!Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                if (
+                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int) Thumbs.ThumbResolution,
+                                                (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                {
                   Log.Info("MusicDatabase: Could not cache folder thumb from folder {0}", sharePath);
-                if (!Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                }
+                if (
+                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int) Thumbs.ThumbLargeResolution,
+                                                (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                {
                   Log.Info("MusicDatabase: Could not cache large folder thumb from folder {0}", sharePath);
+                }
               }
             }
             catch (Exception ex2)
             {
               Log.Error("MusicDatabase: Error caching folder thumb of {0} - {1}", coverPath, ex2.Message);
             }
-
           }
         }
         catch (Exception ex)
@@ -1404,9 +1548,10 @@ namespace MediaPortal.Music.Database
           string curArtist = allArtists[i].ToString();
           if (!string.IsNullOrEmpty(curArtist) && curArtist != "unknown")
           {
-            MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist, Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
+            MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist,
+                                               Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
             // range = 80-89
-            int artistProgress = aProgressStart + (((i + 1) / allArtists.Count) * (aProgressEnd - aProgressStart));
+            int artistProgress = aProgressStart + (((i + 1)/allArtists.Count)*(aProgressEnd - aProgressStart));
             MyArtistArgs.progress = artistProgress;
             OnDatabaseReorgChanged(MyArtistArgs);
 
@@ -1420,25 +1565,34 @@ namespace MediaPortal.Music.Database
                 for (int j = 0; j < groupedArtistSongs.Count; j++)
                 {
                   bool foundDup = false;
-                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName, true);
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedArtistSongs[j].FileName,
+                                                                                       true);
                   if (!string.IsNullOrEmpty(coverArt))
                   {
                     foreach (string dupCheck in imageTracks)
                     {
                       if (dupCheck == coverArt)
+                      {
                         foundDup = true;
+                      }
                     }
                     if (!foundDup)
+                    {
                       imageTracks.Add(coverArt);
+                    }
                   }
 
                   // we need a maximum of 4 covers for the preview
                   if (imageTracks.Count >= 4)
+                  {
                     break;
+                  }
                 }
 
                 if (Util.Utils.CreateFolderPreviewThumb(imageTracks, artistThumbPath))
+                {
                   Log.Info("MusicDatabase: Added artist thumb for {0}", curArtist);
+                }
               }
             }
           }
@@ -1461,8 +1615,9 @@ namespace MediaPortal.Music.Database
           string curGenre = allGenres[i].ToString();
           if (!string.IsNullOrEmpty(curGenre) && curGenre != "unknown")
           {
-            MyGenreArgs.phase = string.Format("Creating genre preview thumbs: {1}/{2} - {0}", curGenre, Convert.ToString(i + 1), Convert.ToString(allGenres.Count));
-            int genreProgress = aProgressStart + (((i + 1) / allGenres.Count) * (aProgressEnd - aProgressStart));
+            MyGenreArgs.phase = string.Format("Creating genre preview thumbs: {1}/{2} - {0}", curGenre,
+                                              Convert.ToString(i + 1), Convert.ToString(allGenres.Count));
+            int genreProgress = aProgressStart + (((i + 1)/allGenres.Count)*(aProgressEnd - aProgressStart));
             MyGenreArgs.progress = genreProgress;
             OnDatabaseReorgChanged(MyGenreArgs);
 
@@ -1476,28 +1631,37 @@ namespace MediaPortal.Music.Database
                 for (int j = 0; j < groupedGenreSongs.Count; j++)
                 {
                   bool foundDup = false;
-                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName, true);
+                  string coverArt = Util.Utils.TryEverythingToGetFolderThumbByFilename(groupedGenreSongs[j].FileName,
+                                                                                       true);
                   if (!string.IsNullOrEmpty(coverArt))
                   {
                     foreach (string dupCheck in imageTracks)
                     {
                       if (dupCheck == coverArt)
+                      {
                         foundDup = true;
+                      }
                     }
                     if (!foundDup)
+                    {
                       imageTracks.Add(coverArt);
+                    }
                   }
                   // we need a maximum of 4 covers for the preview
                   if (imageTracks.Count >= 4)
+                  {
                     break;
+                  }
                 }
 
                 if (Util.Utils.CreateFolderPreviewThumb(imageTracks, genreThumbPath))
+                {
                   Log.Info("MusicDatabase: Added genre thumb for {0}", curGenre);
+                }
               }
             }
           }
-        }  // for all genres
+        } // for all genres
       }
     }
 
@@ -1506,16 +1670,22 @@ namespace MediaPortal.Music.Database
       string currentDir = Path.GetDirectoryName(tag.FileName);
       // on first cal, set the directory name
       if (_previousDirectory == null)
+      {
         _previousDirectory = currentDir;
+      }
 
       if (_previousMusicTag == null)
+      {
         _previousMusicTag = tag;
+      }
 
       if (_previousDirectory.ToLowerInvariant() == currentDir.ToLowerInvariant())
       {
         // already have detected Various artists in this folder. no further checking needed
         if (_foundVariousArtist)
+        {
           return;
+        }
 
         // Is the Artist different and also no different AlbumArtist set?
         if (_previousMusicTag.Artist != tag.Artist && !tag.HasAlbumArtist)
@@ -1539,25 +1709,25 @@ namespace MediaPortal.Music.Database
           {
             int id = map.m_song.Id;
             strSQL = string.Format("update tracks set strAlbumArtist = '| Various Artists | ' where idTrack={0}", id);
-            MusicDatabase.DirectExecute(strSQL);
+            DirectExecute(strSQL);
 
             // Now we need to remove the Artist of the song from the AlbumArtist table,
             // if he's not an AlbumArtist in a different album
             Song song = map.m_song as Song;
-            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] { '|' });
+            string[] strAlbumArtistSplit = song.AlbumArtist.Split(new char[] {'|'});
             foreach (string strTmp in strAlbumArtistSplit)
             {
               string strAlbumArtist = strTmp.Trim(trimChars);
               DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
 
-              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%| {0} |%'", strAlbumArtist);
-              if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
+              strSQL = string.Format("select strAlbumArtist from tracks where strAlbumArtist like '%| {0} |%'",
+                                     strAlbumArtist);
+              if (DirectExecute(strSQL).Rows.Count < 1)
               {
                 // No AlbumArtist entry found, so let's remove this artist from albumartist
                 strSQL = String.Format("delete from albumartist where strAlbumArtist like '%{0}%'", strAlbumArtist);
-                MusicDatabase.DirectExecute(strSQL);
+                DirectExecute(strSQL);
               }
-
             }
           }
         }
@@ -1565,12 +1735,13 @@ namespace MediaPortal.Music.Database
         _previousMusicTag = tag;
         _previousDirectory = currentDir;
         _foundVariousArtist = false;
-
       }
     }
+
     #endregion
 
     #region Clean Up Foreign Keys
+
     /// <summary>
     /// When tags of a song have been updated, it might happen that we have entries in the Artist, AlbumArtist or Genre Table,
     /// for which no longer a song exists.
@@ -1590,7 +1761,7 @@ namespace MediaPortal.Music.Database
 
 
       strSQL = "select distinct rtrim(ltrim(strArtist, '| '), ' |') from tracks";
-      SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+      SQLiteResultSet results = DirectExecute(strSQL);
       for (int i = 0; i < results.Rows.Count; i++)
       {
         string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
@@ -1599,7 +1770,9 @@ namespace MediaPortal.Music.Database
           string strTmp = artist;
           DatabaseUtility.RemoveInvalidChars(ref strTmp);
           if (strTmp == "unknown")
+          {
             continue;
+          }
 
           strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
           MusicDbClient.Execute(strSQL);
@@ -1618,7 +1791,7 @@ namespace MediaPortal.Music.Database
 
 
       strSQL = "select distinct rtrim(ltrim(strAlbumArtist, '| '), ' |') from tracks";
-      results = MusicDatabase.DirectExecute(strSQL);
+      results = DirectExecute(strSQL);
       for (int i = 0; i < results.Rows.Count; i++)
       {
         string[] artists = DatabaseUtility.Get(results, i, 0).Split('|');
@@ -1627,7 +1800,9 @@ namespace MediaPortal.Music.Database
           string strTmp = artist;
           DatabaseUtility.RemoveInvalidChars(ref strTmp);
           if (strTmp == "unknown")
+          {
             continue;
+          }
 
           strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
           MusicDbClient.Execute(strSQL);
@@ -1646,7 +1821,7 @@ namespace MediaPortal.Music.Database
 
 
       strSQL = "select distinct rtrim(ltrim(strGenre, '| '), ' |') from tracks";
-      results = MusicDatabase.DirectExecute(strSQL);
+      results = DirectExecute(strSQL);
       for (int i = 0; i < results.Rows.Count; i++)
       {
         string[] genres = DatabaseUtility.Get(results, i, 0).Split('|');
@@ -1655,7 +1830,9 @@ namespace MediaPortal.Music.Database
           string strTmp = genre;
           DatabaseUtility.RemoveInvalidChars(ref strTmp);
           if (strTmp == "unknown")
+          {
             continue;
+          }
 
           strSQL = String.Format("insert into tbltmp values('{0}')", strTmp.Trim());
           MusicDbClient.Execute(strSQL);
@@ -1688,15 +1865,17 @@ namespace MediaPortal.Music.Database
       catch (Exception)
       {
         Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
-        return (int)Errors.ERROR_REORG_ARTIST;
+        return (int) Errors.ERROR_REORG_ARTIST;
       }
 
       Log.Info("Musicdatabasereorg: CleanupForeignKeys completed");
-      return (int)Errors.ERROR_OK;
+      return (int) Errors.ERROR_OK;
     }
+
     #endregion
 
     #region MusicShareWatcher
+
     /// <summary>
     /// Does a song exist in the database
     /// </summary>
@@ -1708,16 +1887,20 @@ namespace MediaPortal.Music.Database
 
       string strSQL;
       strSQL = String.Format("select idTrack from tracks where strPath like '{0}'",
-                     strFileName);
+                             strFileName);
 
       SQLiteResultSet results;
       results = MusicDbClient.Execute(strSQL);
       if (results.Rows.Count > 0)
+      {
         // Found
         return true;
+      }
       else
+      {
         // Not Found
         return false;
+      }
     }
 
     /// <summary>
@@ -1740,8 +1923,8 @@ namespace MediaPortal.Music.Database
 
           string strSQL;
           strSQL = String.Format("update tracks set strPath = '{0}' where strPath like '{1}'",
-                       strNewFileName,
-                       strOldFileName);
+                                 strNewFileName,
+                                 strOldFileName);
 
           SQLiteResultSet results;
           results = MusicDbClient.Execute(strSQL);
@@ -1763,7 +1946,7 @@ namespace MediaPortal.Music.Database
             string strSQL;
 
             strSQL = String.Format("select idTrack, strPath from tracks where strPath like '{0}%'",
-                    strOldFileName);
+                                   strOldFileName);
 
             results = MusicDbClient.Execute(strSQL);
             if (results.Rows.Count > 0)
@@ -1781,8 +1964,8 @@ namespace MediaPortal.Music.Database
                   strTmpPath = strPath;
                   DatabaseUtility.RemoveInvalidChars(ref strTmpPath);
                   strSQL = String.Format("update tracks set strPath='{0}' where idTrack={1}",
-                          strTmpPath,
-                          idTrack);
+                                         strTmpPath,
+                                         idTrack);
 
                   MusicDbClient.Execute(strSQL);
                 }
@@ -1822,7 +2005,7 @@ namespace MediaPortal.Music.Database
 
       string strSQL;
       strSQL = String.Format("delete from tracks where strPath like '{0}%'",
-              strPath);
+                             strPath);
 
       try
       {
@@ -1835,35 +2018,45 @@ namespace MediaPortal.Music.Database
       }
       return true;
     }
+
     #endregion
 
     #region Scrobble
+
     public int AddScrobbleUser(string userName_)
     {
       string strSQL;
       try
       {
         if (userName_ == null)
+        {
           return -1;
+        }
         if (userName_.Length == 0)
+        {
           return -1;
+        }
         string strUserName = userName_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
 
 
         strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
-          strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )", strUserName);
-          MusicDatabase.DirectExecute(strSQL);
-          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(MusicDbClient.LastInsertID()));
-          return MusicDatabase.Instance.DbConnection.LastInsertID();
+          strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )",
+                                 strUserName);
+          DirectExecute(strSQL);
+          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName,
+                   Convert.ToString(MusicDbClient.LastInsertID()));
+          return Instance.DbConnection.LastInsertID();
         }
         else
+        {
           return DatabaseUtility.GetAsInt(results, 0, "idScrobbleUser");
+        }
       }
       catch (Exception ex)
       {
@@ -1879,33 +2072,44 @@ namespace MediaPortal.Music.Database
       try
       {
         if (userPassword_ == null || userID_ == null)
+        {
           return string.Empty;
+        }
         if (userID_.Length == 0)
+        {
           return string.Empty;
+        }
         string strUserPassword = userPassword_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserPassword);
 
         SQLiteResultSet results;
         strSQL = String.Format("select * from scrobbleusers where idScrobbleUser = '{0}'", userID_);
-        results = MusicDatabase.DirectExecute(strSQL);
+        results = DirectExecute(strSQL);
         // user doesn't exist therefore no password to change
         if (results.Rows.Count == 0)
+        {
           return string.Empty;
+        }
 
         if (DatabaseUtility.Get(results, 0, "strPassword") == strUserPassword)
+        {
           // password didn't change
           return userPassword_;
-        // set new password
+        }
+          // set new password
         else
         {
           // if no password was given = fetch it
           if (userPassword_ == "")
+          {
             return DatabaseUtility.Get(results, 0, "strPassword");
+          }
           else
           {
-            strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'", strUserPassword, userID_);
-            MusicDatabase.DirectExecute(strSQL);
+            strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'",
+                                   strUserPassword, userID_);
+            DirectExecute(strSQL);
             return userPassword_;
           }
         }
@@ -1925,46 +2129,68 @@ namespace MediaPortal.Music.Database
       try
       {
         if (fieldName_ == null || userID_ == null || userID_ == "-1")
+        {
           return -1;
+        }
         if (userID_.Length == 0 || fieldName_.Length == 0)
+        {
           return -1;
+        }
 
         SQLiteResultSet results;
 
-        strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
-        results = MusicDatabase.DirectExecute(strSQL);
+        strSQL =
+          String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'",
+                        userID_);
+        results = DirectExecute(strSQL);
         currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
         //Log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
 
         // setting doesn't exist - add it
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
-          MusicDatabase.DirectExecute(strSQL);
-          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(MusicDbClient.LastInsertID()), userID_);
+          strSQL =
+            String.Format(
+              "insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ +
+              ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
+          DirectExecute(strSQL);
+          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}",
+                   Convert.ToString(MusicDbClient.LastInsertID()), userID_);
           if (fieldValue_ > -1)
-            return MusicDatabase.Instance.DbConnection.LastInsertID();
+          {
+            return Instance.DbConnection.LastInsertID();
+          }
           else
+          {
             return fieldValue_;
+          }
         }
         else
         {
-          strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'", currentSettingID);
-          results = MusicDatabase.DirectExecute(strSQL);
+          strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'",
+                                 currentSettingID);
+          results = DirectExecute(strSQL);
 
           if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
+          {
             // setting didn't change
             return fieldValue_;
-          // set new value
+          }
+            // set new value
           else
           {
             // if no value was given = fetch it
             if (fieldValue_ == -1)
+            {
               return DatabaseUtility.GetAsInt(results, 0, fieldName_);
+            }
             else
             {
-              strSQL = String.Format("update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'", fieldValue_, currentSettingID);
-              MusicDatabase.DirectExecute(strSQL);
+              strSQL =
+                String.Format(
+                  "update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'",
+                  fieldValue_, currentSettingID);
+              DirectExecute(strSQL);
               return fieldValue_;
             }
           }
@@ -1984,12 +2210,14 @@ namespace MediaPortal.Music.Database
       List<string> scrobbleUsers = new List<string>();
 
       strSQL = "select * from scrobbleusers";
-      results = MusicDatabase.DirectExecute(strSQL);
+      results = DirectExecute(strSQL);
 
       if (results.Rows.Count != 0)
       {
         for (int i = 0; i < results.Rows.Count; i++)
+        {
           scrobbleUsers.Add(DatabaseUtility.Get(results, i, "strUsername"));
+        }
       }
       // what else?
 
@@ -1999,7 +2227,9 @@ namespace MediaPortal.Music.Database
     public bool DeleteScrobbleUser(string userName_)
     {
       if (string.IsNullOrEmpty(userName_))
+      {
         return false;
+      }
 
       string strSQL;
       int strUserID;
@@ -2012,11 +2242,11 @@ namespace MediaPortal.Music.Database
         strUserID = AddScrobbleUser(strUserName);
 
         strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
 
         // setting removed now remove user
         strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
-        MusicDatabase.DirectExecute(strSQL);
+        DirectExecute(strSQL);
         return true;
       }
       catch (Exception ex)
@@ -2026,7 +2256,9 @@ namespace MediaPortal.Music.Database
       }
       return false;
     }
+
     #endregion
+
     #endregion
   }
 }

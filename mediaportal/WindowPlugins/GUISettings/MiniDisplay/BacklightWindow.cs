@@ -23,23 +23,18 @@
 
 #endregion
 
-using System;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.GUI.Library;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class BacklightWindow : GUIWindow
   {
     private MatrixGX.MOGX_Control BackLightOptions = new MatrixGX.MOGX_Control();
-    [SkinControlAttribute(65)]
-    protected GUISelectButtonControl btnRed = null;
-    [SkinControlAttribute(66)]
-    protected GUISelectButtonControl btnGreen = null;
-    [SkinControlAttribute(67)]
-    protected GUISelectButtonControl btnBlue = null;
-    [SkinControlAttribute(68)]
-    protected GUIToggleButtonControl btnInvert = null;
+    [SkinControl(65)] protected GUISelectButtonControl btnRed = null;
+    [SkinControl(66)] protected GUISelectButtonControl btnGreen = null;
+    [SkinControl(67)] protected GUISelectButtonControl btnBlue = null;
+    [SkinControl(68)] protected GUIToggleButtonControl btnInvert = null;
 
     public BacklightWindow()
     {
@@ -106,7 +101,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     private void SetBlue()
     {
-      Log.Info("MiniDisplay.GUI_SettingsBacklight.SetBlue(): setting Blue = {0}\n", new object[] { this.BackLightOptions.BackLightBlue });
+      Log.Info("MiniDisplay.GUI_SettingsBacklight.SetBlue(): setting Blue = {0}\n",
+               new object[] {this.BackLightOptions.BackLightBlue});
       GUIControl.ClearControl(this.GetID, this.btnBlue.GetID);
       for (int i = 0; i < 256; i++)
       {
@@ -144,4 +140,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

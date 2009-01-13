@@ -24,20 +24,14 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
 
 namespace ProcessPlugins.DiskSpace
 {
-  public class EpisodeManagement : IPlugin, ISetupForm 
+  public class EpisodeManagement : IPlugin, ISetupForm
   {
     public EpisodeManagement()
     {
@@ -76,14 +70,17 @@ namespace ProcessPlugins.DiskSpace
     private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       Log.Info("EpisodeManagement: recording {0} ended. type: {1} max episodes: {2}",
-                recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
+               recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
       CheckEpsiodesForRecording(recording);
     }
 
-    void CheckEpsiodesForRecording(TVRecording recording)
+    private void CheckEpsiodesForRecording(TVRecording recording)
     {
-      if (!recording.DoesUseEpisodeManagement) return;
+      if (!recording.DoesUseEpisodeManagement)
+      {
+        return;
+      }
 
       //check how many episodes we got
       while (true)
@@ -92,15 +89,21 @@ namespace ProcessPlugins.DiskSpace
         TVDatabase.GetRecordedTV(ref recordings);
 
         List<TVRecorded> episodes = GetEpisodes(recording.Title, recordings);
-        if (episodes.Count <= recording.EpisodesToKeep) return;
+        if (episodes.Count <= recording.EpisodesToKeep)
+        {
+          return;
+        }
 
         TVRecorded oldestEpisode = GetOldestEpisode(episodes);
-        if (oldestEpisode == null) return;
+        if (oldestEpisode == null)
+        {
+          return;
+        }
         Log.Info("EpisodeManagement: Delete episode {0} {1} {2} {3}",
-                             oldestEpisode.Channel,
-                             oldestEpisode.Title,
-                             oldestEpisode.StartTime.ToLongDateString(),
-                             oldestEpisode.StartTime.ToLongTimeString());
+                 oldestEpisode.Channel,
+                 oldestEpisode.Title,
+                 oldestEpisode.StartTime.ToLongDateString(),
+                 oldestEpisode.StartTime.ToLongTimeString());
 
         Recorder.DeleteRecording(oldestEpisode);
       }
@@ -112,12 +115,12 @@ namespace ProcessPlugins.DiskSpace
 
     public void Start()
     {
-      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
+      Recorder.OnTvRecordingEnded += new Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
     }
 
     public void Stop()
     {
-      Recorder.OnTvRecordingEnded -= new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
+      Recorder.OnTvRecordingEnded -= new Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
     }
 
     #endregion
@@ -145,7 +148,8 @@ namespace ProcessPlugins.DiskSpace
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add CallerIdPlugin.GetHome implementation
       strButtonText = null;

@@ -26,16 +26,17 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Web;
 using System.Net;
 using System.Text;
-using MediaPortal.GUI.Library;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Web;
 using System.Xml;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Rss;
-using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.RSS
 {
@@ -44,8 +45,7 @@ namespace MediaPortal.GUI.RSS
   /// </summary>
   public class GUIRSSFeed : GUIWindow
   {
-
-    class Site
+    private class Site
     {
       public string m_Name;
       public string m_URL;
@@ -54,15 +54,15 @@ namespace MediaPortal.GUI.RSS
       public string m_Encoding;
     }
 
-    struct feed_details
+    private struct feed_details
     {
       public string m_site;
       public string m_link;
       public string m_title;
       public string m_description;
-    };
+    } ;
 
-    enum Controls
+    private enum Controls
     {
       CONTROL_BACKGROUND = 1,
       CONTROL_BTNREFRESH = 2,
@@ -84,19 +84,19 @@ namespace MediaPortal.GUI.RSS
 
     public static string DEFAULT_NEWS_ICON = "news.png";
 
-    const int NUM_STORIES = 100;
-    ArrayList m_sites = new ArrayList();
-    string m_strSiteIcon = DEFAULT_NEWS_ICON;
-    string m_strSiteName = "";
-    string m_strSiteURL = "";
-    string m_strSiteEncoding = "ISO-8859-1";
-    string m_strDescription = "";
-    DateTime m_lRefreshTime = DateTime.Now.AddHours(-1);		//for autorefresh
-    feed_details[] m_feed_details = new feed_details[NUM_STORIES];
-    int m_iRSSRefresh = 15;
-    bool m_bRSSAutoRefresh = true;
+    private const int NUM_STORIES = 100;
+    private ArrayList m_sites = new ArrayList();
+    private string m_strSiteIcon = DEFAULT_NEWS_ICON;
+    private string m_strSiteName = "";
+    private string m_strSiteURL = "";
+    private string m_strSiteEncoding = "ISO-8859-1";
+    private string m_strDescription = "";
+    private DateTime m_lRefreshTime = DateTime.Now.AddHours(-1); //for autorefresh
+    private feed_details[] m_feed_details = new feed_details[NUM_STORIES];
+    private int m_iRSSRefresh = 15;
+    private bool m_bRSSAutoRefresh = true;
 
-    GUIImage m_pSiteImage = null;
+    private GUIImage m_pSiteImage = null;
 
     public GUIRSSFeed()
     {
@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.RSS
         m_feed_details[i].m_title = "";
         m_feed_details[i].m_description = "";
       }
-      GetID = (int)GUIRSSFeed.WINDOW_RSS;
+      GetID = (int) WINDOW_RSS;
     }
 
     public override bool Init()
@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.RSS
 
             base.OnMessage(message);
             LoadSettings();
-            m_pSiteImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGELOGO);
+            m_pSiteImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGELOGO);
 
             UpdateNews(true);
 
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.RSS
         case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int)Controls.CONTROL_LIST)
+            if (iControl == (int) Controls.CONTROL_LIST)
             {
               UpdateDetails();
             }
@@ -168,18 +168,18 @@ namespace MediaPortal.GUI.RSS
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int)Controls.CONTROL_BTNREFRESH)
+            if (iControl == (int) Controls.CONTROL_BTNREFRESH)
             {
               UpdateNews(true);
             }
 
-            if (iControl == (int)Controls.CONTROL_LIST)
+            if (iControl == (int) Controls.CONTROL_LIST)
             {
               String story = DownloadMainStory();
 
               if (story != null)
               {
-                GUIDialogText dlg = (GUIDialogText)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TEXT);
+                GUIDialogText dlg = (GUIDialogText) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_TEXT);
                 if (dlg != null)
                 {
                   dlg.Reset();
@@ -191,13 +191,12 @@ namespace MediaPortal.GUI.RSS
               }
             }
 
-            if (iControl == (int)Controls.CONTROL_BTNCHANNEL)
+            if (iControl == (int) Controls.CONTROL_BTNCHANNEL)
             {
               OnSelectFeed();
 
               return true;
             }
-
           }
           break;
       }
@@ -206,9 +205,11 @@ namespace MediaPortal.GUI.RSS
 
     private void OnSelectFeed()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(496); // menu
       foreach (Site loc in m_sites)
@@ -217,18 +218,20 @@ namespace MediaPortal.GUI.RSS
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
+      {
         return;
+      }
       int nSelected = dlg.SelectedLabel;
 
-      m_strSiteURL = ((Site)m_sites[nSelected]).m_URL;
-      m_strSiteName = ((Site)m_sites[nSelected]).m_Name;
-      m_strSiteIcon = ((Site)m_sites[nSelected]).m_Image;
-      m_strDescription = ((Site)m_sites[nSelected]).m_Description;
-      m_strSiteEncoding = ((Site)m_sites[nSelected]).m_Encoding;
+      m_strSiteURL = ((Site) m_sites[nSelected]).m_URL;
+      m_strSiteName = ((Site) m_sites[nSelected]).m_Name;
+      m_strSiteIcon = ((Site) m_sites[nSelected]).m_Image;
+      m_strDescription = ((Site) m_sites[nSelected]).m_Description;
+      m_strSiteEncoding = ((Site) m_sites[nSelected]).m_Encoding;
 
       if (m_strDescription == "")
       {
-        m_strDescription = ((Site)m_sites[nSelected]).m_Name;
+        m_strDescription = ((Site) m_sites[nSelected]).m_Name;
       }
 
       UpdateNews(true);
@@ -243,16 +246,17 @@ namespace MediaPortal.GUI.RSS
         m_lRefreshTime = DateTime.Now;
 
         // Check if we may refresh (only when not in the list or on the first item)
-        if (GetFocusControlId() != (int)Controls.CONTROL_LIST)
+        if (GetFocusControlId() != (int) Controls.CONTROL_LIST)
         {
           // Try refresh without warnings
           UpdateNews(false);
         }
         else
         {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0, null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
+                                          (int) Controls.CONTROL_LIST, 0, 0, null);
           OnMessage(msg);
-          if ((int)msg.Param1 < 1)
+          if ((int) msg.Param1 < 1)
           {
             // Try refresh without warnings
             UpdateNews(false);
@@ -263,17 +267,19 @@ namespace MediaPortal.GUI.RSS
     }
 
 
-    private void RefreshNews(object sender, System.EventArgs e)
+    private void RefreshNews(object sender, EventArgs e)
     {
     }
 
-    void UpdateNews(bool bShowWarning)
+    private void UpdateNews(bool bShowWarning)
     {
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      GUIDialogProgress dlgProgress =
+        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
 
       try
       {
-        if (m_strSiteURL.ToLower().StartsWith("http://") == false && m_strSiteURL.ToLower().StartsWith("file://") == false)
+        if (m_strSiteURL.ToLower().StartsWith("http://") == false &&
+            m_strSiteURL.ToLower().StartsWith("file://") == false)
         {
           m_strSiteURL = "http://" + m_strSiteURL;
         }
@@ -295,7 +301,9 @@ namespace MediaPortal.GUI.RSS
         // to eliminate the horrible flash of dialog before user can reed it
         long endTime = Environment.TickCount;
         if (endTime - startTime < 1000)
-          System.Threading.Thread.Sleep((int)(1000 - (endTime - startTime)));
+        {
+          Thread.Sleep((int) (1000 - (endTime - startTime)));
+        }
         dlgProgress.Close();
       }
       catch (Exception)
@@ -304,8 +312,8 @@ namespace MediaPortal.GUI.RSS
         if (bShowWarning)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
-          msg.Param1 = 9;//my news
-          msg.Param2 = 912;//Unable to download latest news
+          msg.Param1 = 9; //my news
+          msg.Param2 = 912; //Unable to download latest news
           msg.Param3 = 0;
           msg.Label3 = m_strSiteURL;
           GUIWindowManager.SendMessage(msg);
@@ -314,11 +322,12 @@ namespace MediaPortal.GUI.RSS
     }
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
       String firstSite = "";
       m_sites.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int i = 0; i < NUM_STORIES; i++)
         {
@@ -336,7 +345,10 @@ namespace MediaPortal.GUI.RSS
 
           if (strName.Length > 0 && strURL.Length > 0)
           {
-            if (strImage.Length == 0) strImage = DEFAULT_NEWS_ICON;
+            if (strImage.Length == 0)
+            {
+              strImage = DEFAULT_NEWS_ICON;
+            }
 
             if (firstSite == "")
             {
@@ -362,13 +374,16 @@ namespace MediaPortal.GUI.RSS
         m_iRSSRefresh = xmlreader.GetValueAsInt("rss", "iRefreshTime", 15);
         m_bRSSAutoRefresh = false;
         if (xmlreader.GetValueAsInt("rss", "bAutoRefresh", 0) != 0)
+        {
           m_bRSSAutoRefresh = true;
+        }
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
     }
+
     #endregion
 
     public void refreshFeeds()
@@ -385,10 +400,10 @@ namespace MediaPortal.GUI.RSS
       UpdateNews(true);
     }
 
-    void UpdateButtons()
+    private void UpdateButtons()
     {
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184));			//Refresh
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELCHANNEL, m_strDescription);			//Channel name label
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184)); //Refresh
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELCHANNEL, m_strDescription); //Channel name label
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(9) + @"/" + m_strSiteName);
 
       int posX = m_pSiteImage.XPosition;
@@ -401,7 +416,7 @@ namespace MediaPortal.GUI.RSS
       //			m_pSiteImage.Width = m_pSiteImage.TextureWidth;
       //			m_pSiteImage.Height = m_pSiteImage.TextureHeight;
 
-      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
+      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST);
 
       int iTotalItems = 0;
       foreach (feed_details feed in m_feed_details)
@@ -419,18 +434,18 @@ namespace MediaPortal.GUI.RSS
         item.ThumbnailImage = "";
         item.IconImage = "defaultMyNews.png";
 
-        GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
+        GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST, item);
         iTotalItems++;
       }
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
-      
-      GUIControl.FocusControl(GetID, (int)Controls.CONTROL_LIST);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
+
+      GUIControl.FocusControl(GetID, (int) Controls.CONTROL_LIST);
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
     }
 
-    bool Download(Uri location)
+    private bool Download(Uri location)
     {
       int i = 0;
       Uri uri = location;
@@ -445,7 +460,7 @@ namespace MediaPortal.GUI.RSS
       try
       {
         RssFeed feed = RssFeed.Read(location.ToString());
-        Rss.RssChannel channel = (Rss.RssChannel)feed.Channels[0];
+        RssChannel channel = (RssChannel) feed.Channels[0];
 
         // Download the image from the feed if available/needed
         if (channel.Image != null && m_strSiteIcon == DEFAULT_NEWS_ICON)
@@ -455,40 +470,41 @@ namespace MediaPortal.GUI.RSS
           if (strImage.Length > 0)
           {
             //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
-            m_strSiteIcon = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
-            if (!System.IO.File.Exists(m_strSiteIcon))
+            m_strSiteIcon = Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
+            if (!File.Exists(m_strSiteIcon))
             {
               string strExtension;
-              strExtension = System.IO.Path.GetExtension(strImage);
+              strExtension = Path.GetExtension(strImage);
               if (strExtension.Length > 0)
               {
                 string strTemp = "temp";
                 strTemp += strExtension;
                 strTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), strTemp);
-                
-                MediaPortal.Util.Utils.FileDelete(strTemp);
-                MediaPortal.Util.Utils.DownLoadImage(strImage, strTemp);
+
+                Util.Utils.FileDelete(strTemp);
+                Util.Utils.DownLoadImage(strImage, strTemp);
                 //MediaPortal.Util.Utils.DownLoadAndCacheImage(strImage, strTemp);
 
-                if (System.IO.File.Exists(strTemp))
+                if (File.Exists(strTemp))
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                  Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int) Thumbs.ThumbResolution,
+                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
                 }
 
-                MediaPortal.Util.Utils.FileDelete(strTemp);                
-              }//if ( strExtension.Length>0)
+                Util.Utils.FileDelete(strTemp);
+              } //if ( strExtension.Length>0)
               else
               {
                 Log.Info("image has no extension:{0}", strImage);
               }
-              m_strSiteIcon = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
+              m_strSiteIcon = Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
             }
             //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);            
           }
         }
 
         // Fill the items
-        foreach (Rss.RssItem item in channel.Items)
+        foreach (RssItem item in channel.Items)
         {
           // Check if there are HTML tags in the description, if so we need to "parse" the HTML
           // which is actually just stripping the tags.
@@ -501,7 +517,8 @@ namespace MediaPortal.GUI.RSS
             item.Description = Regex.Replace(item.Description, @"  +", "", RegexOptions.Multiline);
 
             // Replace <br/> with \n
-            item.Description = Regex.Replace(item.Description, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+            item.Description = Regex.Replace(item.Description, @"< *br */*>", "\n",
+                                             RegexOptions.IgnoreCase & RegexOptions.Multiline);
 
             // Remove remaining HTML tags
             item.Description = Regex.Replace(item.Description, @"<[^>]*>", "", RegexOptions.Multiline);
@@ -531,7 +548,9 @@ namespace MediaPortal.GUI.RSS
 
           i++;
           if (i >= NUM_STORIES)
+          {
             break;
+          }
         }
 
         UpdateButtons();
@@ -546,7 +565,7 @@ namespace MediaPortal.GUI.RSS
       return true;
     }
 
-    void GetString(XmlNode pRootElement, string strTagName, out string szValue, string strDefaultValue)
+    private void GetString(XmlNode pRootElement, string strTagName, out string szValue, string strDefaultValue)
     {
       szValue = "";
 
@@ -556,7 +575,9 @@ namespace MediaPortal.GUI.RSS
         if (node.InnerText != null)
         {
           if (node.InnerText != "-")
+          {
             szValue = node.InnerText;
+          }
         }
       }
       if (szValue.Length == 0)
@@ -565,7 +586,7 @@ namespace MediaPortal.GUI.RSS
       }
     }
 
-    void GetInteger(XmlNode pRootElement, string strTagName, out int iValue)
+    private void GetInteger(XmlNode pRootElement, string strTagName, out int iValue)
     {
       iValue = 0;
       XmlNode node = pRootElement.SelectSingleNode(strTagName);
@@ -584,41 +605,46 @@ namespace MediaPortal.GUI.RSS
       }
     }
 
-    GUIListItem GetSelectedItem()
+    private GUIListItem GetSelectedItem()
     {
       int iControl;
 
-      iControl = (int)Controls.CONTROL_LIST;
+      iControl = (int) Controls.CONTROL_LIST;
       GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
       return item;
     }
 
-    void UpdateDetails()
+    private void UpdateDetails()
     {
       GUIListItem item = GetSelectedItem();
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
 
-      feed_details feed = (feed_details)item.MusicTag;
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
+      feed_details feed = (feed_details) item.MusicTag;
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STORYTEXT, feed.m_description);
     }
 
-    string DownloadMainStory()
+    private string DownloadMainStory()
     {
       // Get the selected item
       GUIListItem item = GetSelectedItem();
       if (item == null)
+      {
         return null;
+      }
 
-      feed_details feed = (feed_details)item.MusicTag;
+      feed_details feed = (feed_details) item.MusicTag;
 
       // Download the story
       string text = null;
       try
       {
         string data = string.Empty;
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feed.m_link);
+        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(feed.m_link);
 
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        HttpWebResponse response = (HttpWebResponse) request.GetResponse();
         using (Stream stream = response.GetResponseStream())
         {
           Encoding enc;
@@ -643,14 +669,16 @@ namespace MediaPortal.GUI.RSS
       catch (Exception ex)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, 0, 0, 0, 0, 0, 0);
-        msg.Param1 = 9;//my news
-        msg.Param2 = 912;//Unable to download latest news
+        msg.Param1 = 9; //my news
+        msg.Param2 = 912; //Unable to download latest news
         msg.Param3 = 0;
 
         string errtxt = ex.Message;
         int pos = errtxt.IndexOf(":");
         if (pos != -1)
+        {
           errtxt = errtxt.Substring(pos + 1);
+        }
         msg.Label3 = String.Format("{0}\n\n({1})", m_strSiteURL, errtxt);
         GUIWindowManager.SendMessage(msg);
 

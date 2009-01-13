@@ -35,6 +35,7 @@ namespace MediaPortal.Utils.Web
   public class HtmlSectionParser
   {
     #region Private Structs
+
     private struct DataField
     {
       public MatchTag htmlTag;
@@ -46,9 +47,13 @@ namespace MediaPortal.Utils.Web
       public override string ToString()
       {
         if (htmlTag == null)
+        {
           return source;
+        }
         else
+        {
           return htmlTag.ToString();
+        }
       }
     }
 
@@ -66,15 +71,19 @@ namespace MediaPortal.Utils.Web
       public string start;
       public string end;
     }
+
     #endregion
 
     #region Variables
-    Sections _templateData;
-    HtmlSectionTemplate _template;
-    string _matchField;
+
+    private Sections _templateData;
+    private HtmlSectionTemplate _template;
+    private string _matchField;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HtmlSectionParser"/> class.
     /// </summary>
@@ -85,9 +94,11 @@ namespace MediaPortal.Utils.Web
       _template.Tags = template.Tags + "Z";
       _templateData = GetSections(template.Template);
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Parses the section.
     /// </summary>
@@ -102,56 +113,72 @@ namespace MediaPortal.Utils.Web
       int dataFound = 0;
 
       if (sourceData.dataFields.Count == 0)
+      {
         return false;
+      }
 
       if (sourceData.dataFields.Count > _templateData.minFields)
+      {
         hasOptional = true;
+      }
 
       int s = 0;
       for (int t = 0; t < _templateData.dataFields.Count; t++)
       {
-        DataField templateField = (DataField)_templateData.dataFields[t];
+        DataField templateField = (DataField) _templateData.dataFields[t];
 
         if (templateField.optional)
         {
           if (!hasOptional)
+          {
             continue;
+          }
         }
 
         if (s < sourceData.dataFields.Count)
         {
-          DataField sourceField = (DataField)sourceData.dataFields[s];
+          DataField sourceField = (DataField) sourceData.dataFields[s];
 
           if (!templateField.hasData &&
-            templateField.htmlTag != null &&
-            sourceField.htmlTag != null)
+              templateField.htmlTag != null &&
+              sourceField.htmlTag != null)
           {
             if (templateField.htmlTag.SameType(sourceField.htmlTag))
+            {
               s++;
+            }
           }
           else
           {
             if (templateField.source != string.Empty &&
-              templateField.hasData)
+                templateField.hasData)
             {
               int index = 0;
               for (int i = 0; i < templateField.dataElements.Count; i++)
               {
-                ElementData element = (ElementData)templateField.dataElements[i];
+                ElementData element = (ElementData) templateField.dataElements[i];
 
                 int startPos;
                 if (index < sourceField.source.Length)
                 {
                   if (element.start == string.Empty ||
-                    (startPos = sourceField.source.IndexOf(element.start, index, StringComparison.OrdinalIgnoreCase)) == -1)
+                      (startPos = sourceField.source.IndexOf(element.start, index, StringComparison.OrdinalIgnoreCase)) ==
+                      -1)
+                  {
                     startPos = index;
+                  }
                   else
+                  {
                     startPos = startPos + element.start.Length;
+                  }
 
                   int endPos;
                   if (element.end == string.Empty ||
-                    (endPos = sourceField.source.IndexOf(element.end, startPos, StringComparison.OrdinalIgnoreCase)) == -1)
+                      (endPos = sourceField.source.IndexOf(element.end, startPos, StringComparison.OrdinalIgnoreCase)) ==
+                      -1)
+                  {
                     endPos = sourceField.source.Length;
+                  }
 
                   string elementSource = sourceField.source.Substring(startPos, endPos - startPos);
 
@@ -167,7 +194,9 @@ namespace MediaPortal.Utils.Web
                       else
                       {
                         if (IsMatch(element.name, elementSource))
+                        {
                           hasMatched = true;
+                        }
                       }
                     }
                     else
@@ -176,8 +205,9 @@ namespace MediaPortal.Utils.Web
                     }
                     dataFound++;
                     if (dataFound == _templateData.dataTags)
+                    {
                       break;
-
+                    }
                   }
                   index = endPos + element.end.Length;
                 }
@@ -189,13 +219,17 @@ namespace MediaPortal.Utils.Web
       }
 
       if (dataFound == 0 && _templateData.dataTags > 0)
+      {
         return false;
+      }
 
       return true;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Strips the unwanted HTML tags.
     /// </summary>
@@ -267,7 +301,9 @@ namespace MediaPortal.Utils.Web
           zTag = true;
           isOptionalTag = true;
           if (tag.IsClose)
+          {
             isOptionalTag = false;
+          }
 
           //i++;
           //if (i < tags.Count)
@@ -282,25 +318,29 @@ namespace MediaPortal.Utils.Web
           DataField section;
           if (!zTag)
           {
-          // Add tag to array of fields
-          section = new DataField();
-          section.optional = isOptionalTag;
-          section.htmlTag = tag;
-          section.hasData = false;
-          section.source = tag.FullTag;
-          if (section.source.IndexOf("<#") != -1 || section.source.IndexOf("<*") != -1)
-          {
-            section.hasData = true;
-            if (isOptionalTag)
-              data.optionalData = true;
+            // Add tag to array of fields
+            section = new DataField();
+            section.optional = isOptionalTag;
+            section.htmlTag = tag;
+            section.hasData = false;
+            section.source = tag.FullTag;
+            if (section.source.IndexOf("<#") != -1 || section.source.IndexOf("<*") != -1)
+            {
+              section.hasData = true;
+              if (isOptionalTag)
+              {
+                data.optionalData = true;
+              }
 
-            section.dataElements = GetElements(section.source);
-            data.dataTags += section.dataElements.Count;
-          }
+              section.dataElements = GetElements(section.source);
+              data.dataTags += section.dataElements.Count;
+            }
 
             data.dataFields.Add(section);
             if (!isOptionalTag)
+            {
               data.minFields++;
+            }
           }
 
           // Add data between this tag and the next to field array
@@ -315,7 +355,9 @@ namespace MediaPortal.Utils.Web
               zTag = true;
               isOptionalTag = true;
               if (tag.IsClose)
+              {
                 isOptionalTag = false;
+              }
             }
 
             //  start = tag.Index + tag.Length;
@@ -343,14 +385,18 @@ namespace MediaPortal.Utils.Web
             {
               section.hasData = true;
               if (isOptionalTag)
+              {
                 data.optionalData = true;
+              }
 
               section.dataElements = GetElements(section.source);
               data.dataTags += section.dataElements.Count;
             }
             data.dataFields.Add(section);
             if (!isOptionalTag)
+            {
               data.minFields++;
+            }
           }
         }
       }
@@ -389,15 +435,19 @@ namespace MediaPortal.Utils.Web
             element.start = element.name.Substring(pos + 1, sepPos - pos - 1);
             element.end = element.name.Substring(sepPos + 1, element.name.Length - sepPos - 2);
           }
-          element.name = element.name.Substring(1, pos-1);
+          element.name = element.name.Substring(1, pos - 1);
         }
         else
         {
           if (i == 0 && tag.Index > 0)
+          {
             element.start = source.Substring(0, tag.Index);
+          }
 
           if (i + 1 == elementTags.Count && tag.Index + tag.Length != source.Length)
+          {
             element.end = source.Substring(tag.Index + tag.Length, source.Length - tag.Index - tag.Length);
+          }
 
           if (i + 1 < elementTags.Count)
           {
@@ -437,6 +487,7 @@ namespace MediaPortal.Utils.Web
 
       return false;
     }
+
     #endregion
   }
 }

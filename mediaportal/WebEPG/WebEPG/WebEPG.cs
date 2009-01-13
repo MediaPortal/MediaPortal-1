@@ -24,21 +24,15 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Net;
-using System.Web;
-using System.Text;
-using System.Xml.Serialization;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using MediaPortal.Services;
-using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.WebEPG;
-using MediaPortal.WebEPG.config;
-using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Web;
+using MediaPortal.WebEPG;
+using MediaPortal.WebEPG.config;
 
 namespace MediaPortal.EPG
 {
@@ -48,6 +42,7 @@ namespace MediaPortal.EPG
   public class WebEPG
   {
     #region Private Structs
+
     // hold information from config file.
     private struct grabInfo
     {
@@ -58,9 +53,11 @@ namespace MediaPortal.EPG
       public bool linked;
       public TimeRange linkTime;
     }
+
     #endregion
 
     #region Variables
+
     private WebListingGrabber _epgGrabber;
     private ILog _log;
     private string _configFile;
@@ -68,9 +65,11 @@ namespace MediaPortal.EPG
     private string _baseDirectory;
     private WebepgConfigFile _config;
     private Dictionary<string, List<grabInfo>> _grabList;
+
     #endregion
 
     #region Constructors/Destructors
+
     public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     {
       // get logging service
@@ -78,16 +77,20 @@ namespace MediaPortal.EPG
 
 
       _log.Info(LogType.WebEPG, "Assembly versions:");
-      _log.Info(LogType.WebEPG, this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
-      _log.Info(LogType.WebEPG, _log.GetType().Assembly.GetName().Name + " " + _log.GetType().Assembly.GetName().Version.ToString());
+      _log.Info(LogType.WebEPG,
+                this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
+      _log.Info(LogType.WebEPG,
+                _log.GetType().Assembly.GetName().Name + " " + _log.GetType().Assembly.GetName().Version.ToString());
       // set config directories and files.
       _configFile = configFile;
       _xmltvDirectory = xmltvDirectory;
       _baseDirectory = baseDirectory;
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Starts the importation process
     /// </summary>
@@ -95,11 +98,15 @@ namespace MediaPortal.EPG
     public bool Import()
     {
       if (!LoadConfig())
+      {
         return false;
+      }
 
       // Open XMLTV output file
       if (!Directory.Exists(_xmltvDirectory))
+      {
         Directory.CreateDirectory(_xmltvDirectory);
+      }
 
       XMLTVExport xmltv = new XMLTVExport(_xmltvDirectory);
       xmltv.Open();
@@ -174,7 +181,8 @@ namespace MediaPortal.EPG
               grab.merged = true;
               grab.linked = true;
               grab.linkTime = new TimeRange(merged.start, merged.end);
-              _log.Debug(LogType.WebEPG, "  Loading Merged Sub-channel: {0} Time range: {1}", merged.id, grab.linkTime.ToString());
+              _log.Debug(LogType.WebEPG, "  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
+                         grab.linkTime.ToString());
 
               if (!_grabList.ContainsKey(merged.id))
               {
@@ -189,7 +197,8 @@ namespace MediaPortal.EPG
             }
             else
             {
-              _log.Warn(LogType.WebEPG, "  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName, merged.id);
+              _log.Warn(LogType.WebEPG, "  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
+                        merged.id);
             }
           }
         }
@@ -220,14 +229,18 @@ namespace MediaPortal.EPG
         if (_grabList[channelid].Count > 0)
         {
           if (_grabList[channelid][0].grabber != grabberLast)
+          {
             initResult = _epgGrabber.Initalise(_grabList[channelid][0].grabber, _config.Info.GrabDays);
+          }
 
           grabberLast = _grabList[channelid][0].grabber;
 
 
           // Get channel lising
           if (initResult)
+          {
             programs = _epgGrabber.GetGuide(channelid, _grabList[channelid][0].linked, _grabList[channelid][0].linkTime);
+          }
 
           if (programs != null)
           {
@@ -242,12 +255,13 @@ namespace MediaPortal.EPG
                 for (int p = 0; p < programs.Count; p++)
                 {
                   if (grab.linkTime.IsInRange(programs[p].Start))
+                  {
                     xmltv.WriteProgram(programs[p], grab.name, true);
+                  }
                 }
               }
               else
               {
-
                 _log.Info(LogType.WebEPG, "WebEPG: Writing Channel to XMLTV: {0}", grab.name);
 
                 for (int p = 0; p < programs.Count; p++)
@@ -260,7 +274,9 @@ namespace MediaPortal.EPG
           else
           {
             foreach (grabInfo grab in _grabList[channelid])
+            {
               _log.Info(LogType.WebEPG, "WebEPG: Grabber failed for: {0}", grab.name);
+            }
           }
         }
       }
@@ -277,9 +293,11 @@ namespace MediaPortal.EPG
 
       return true;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Loads the config.
     /// </summary>
@@ -295,9 +313,9 @@ namespace MediaPortal.EPG
       _log.Info(LogType.WebEPG, "Loading Config File: {0}", _configFile);
       try
       {
-        XmlSerializer s = new XmlSerializer(typeof(WebepgConfigFile));
+        XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
         TextReader r = new StreamReader(_configFile);
-        _config = (WebepgConfigFile)s.Deserialize(r);
+        _config = (WebepgConfigFile) s.Deserialize(r);
         r.Close();
       }
       catch (InvalidOperationException ex)
@@ -407,6 +425,7 @@ namespace MediaPortal.EPG
 
       //return true;
     }
+
     #endregion
   }
 }

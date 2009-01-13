@@ -26,12 +26,8 @@
 #region usings
 
 using System;
-using System.Threading;
-using System.Text;
-using System.Collections.Generic;
-
-using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 
@@ -41,7 +37,6 @@ namespace MediaPortal.GUI.TV
 {
   public class GUITVCropManager
   {
-
     #region Ctor/Dtor
 
     public GUITVCropManager()
@@ -66,7 +61,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="card">Card number</param>
     /// <param name="device">TvCaptureDevice used for viewing</param>
-    void Recorder_OnTvViewingStarted(int card, TVCaptureDevice device)
+    private void Recorder_OnTvViewingStarted(int card, TVCaptureDevice device)
     {
       if (Recorder.IsViewing() && !Recorder.IsTimeShifting())
       {
@@ -81,15 +76,17 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="type"></param>
     /// <param name="filename"></param>
-    void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
+    private void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (Recorder.Running && Recorder.CommandProcessor!=null)
+      if (Recorder.Running && Recorder.CommandProcessor != null)
       {
-        Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV, g_Player.IsTimeShifting);
+        Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: media: {0} tv:{1} ts:{2}", type, g_Player.IsTV,
+                  g_Player.IsTimeShifting);
         if (type == g_Player.MediaType.TV && !g_Player.IsTVRecording)
         {
           // This is timeshifted TV
-          if (Recorder.CommandProcessor.CurrentCardIndex>=0 && Recorder.CommandProcessor.CurrentCardIndex < Recorder.Count)
+          if (Recorder.CommandProcessor.CurrentCardIndex >= 0 &&
+              Recorder.CommandProcessor.CurrentCardIndex < Recorder.Count)
           {
             SendCropMessage(Recorder.CommandProcessor.TVCards[Recorder.CommandProcessor.CurrentCardIndex]);
           }
@@ -105,7 +102,8 @@ namespace MediaPortal.GUI.TV
               TVCaptureDevice dev = Recorder.CommandProcessor.TVCards[i];
               if (dev.IsRecording && dev.RecordingFileName.Equals(filename))
               {
-                Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping in-progress recording:{0} card:{1}", filename, dev.CommercialName);
+                Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping in-progress recording:{0} card:{1}",
+                          filename, dev.CommercialName);
                 SendCropMessage(dev);
                 return;
               }
@@ -115,17 +113,21 @@ namespace MediaPortal.GUI.TV
           TVRecorded recording = new TVRecorded();
           if (TVDatabase.GetRecordedTVByFilename(filename, ref recording))
           {
-            if ((recording.RecordedCardIndex > 0) && (recording.RecordedCardIndex-1 < Recorder.CommandProcessor.TVCards.Count))
+            if ((recording.RecordedCardIndex > 0) &&
+                (recording.RecordedCardIndex - 1 < Recorder.CommandProcessor.TVCards.Count))
             {
               try
               {
                 TVCaptureDevice dev = Recorder.CommandProcessor.TVCards[recording.RecordedCardIndex - 1];
-                Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename, dev.CommercialName);
+                Log.Debug("GUITVCropManager.g_Player_PlackBackStarted: cropping recorded tv:{0} card:{1}", filename,
+                          dev.CommercialName);
                 SendCropMessage(dev);
               }
               catch (ArgumentOutOfRangeException)
               {
-                Log.Warn("GUITVCropManager.g_Player_PlackBackStarted: unable to find tvcard for recorded file:{0} with index:{1}", filename, recording.RecordedCardIndex);
+                Log.Warn(
+                  "GUITVCropManager.g_Player_PlackBackStarted: unable to find tvcard for recorded file:{0} with index:{1}",
+                  filename, recording.RecordedCardIndex);
               }
             }
           }
@@ -138,11 +140,10 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     /// <param name="card">current card index</param>
     /// <param name="device">current TvCaptureDevice</param>
-    void SendCropMessage(TVCaptureDevice device)
+    private void SendCropMessage(TVCaptureDevice device)
     {
       Log.Debug("GUITVCropManager.SendCropMessage: send message for card:{0}", device.CommercialName);
       device.SendCropMessage();
     }
-
   }
 }

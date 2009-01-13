@@ -24,48 +24,43 @@
 #endregion
 
 using System;
-using System.Security.AccessControl;
-using System.Security.Permissions;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersPureVideoDecoder : MediaPortal.Configuration.SectionSettings
+  public class FiltersPureVideoDecoder : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerSetup;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxHeadphones;
-    private MediaPortal.UserInterface.Controls.MPGroupBox AudioDecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox VideoDecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeInterlaceControl;
-    private MediaPortal.UserInterface.Controls.MPLabel DeinterlaceControl;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDxVA;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeInterlaceMode;
-    private MediaPortal.UserInterface.Controls.MPGroupBox DisplayType;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTAnamorphic;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTPan;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTLetterbox;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTDefault;
-    private MediaPortal.UserInterface.Controls.MPLabel DeinterlaceMode;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonHeadphones;
-    private MediaPortal.UserInterface.Controls.MPLabel ProLogicII;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxProLogicII;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonSpeakers;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDRC;
-    private MediaPortal.UserInterface.Controls.MPLabel DynamicRangeControl;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonReceiver;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
-    private MediaPortal.UserInterface.Controls.MPGroupBox SpeakerSetup;
-    private MediaPortal.UserInterface.Controls.MPLabel ColourScheme;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxColourScheme;
-    private System.ComponentModel.IContainer components = null;
+    private MPComboBox comboBoxSpeakerSetup;
+    private MPComboBox comboBoxHeadphones;
+    private MPGroupBox AudioDecoderSettings;
+    private MPGroupBox VideoDecoderSettings;
+    private MPComboBox comboBoxDeInterlaceControl;
+    private MPLabel DeinterlaceControl;
+    private MPCheckBox checkBoxDxVA;
+    private MPComboBox comboBoxDeInterlaceMode;
+    private MPGroupBox DisplayType;
+    private MPRadioButton radioButtonDTAnamorphic;
+    private MPRadioButton radioButtonDTPan;
+    private MPRadioButton radioButtonDTLetterbox;
+    private MPRadioButton radioButtonDTDefault;
+    private MPLabel DeinterlaceMode;
+    private MPRadioButton radioButtonHeadphones;
+    private MPLabel ProLogicII;
+    private MPComboBox comboBoxProLogicII;
+    private MPRadioButton radioButtonSpeakers;
+    private MPComboBox comboBoxDRC;
+    private MPLabel DynamicRangeControl;
+    private MPRadioButton radioButtonReceiver;
+    private MPComboBox comboBoxOutPutMode;
+    private MPGroupBox SpeakerSetup;
+    private MPLabel ColourScheme;
+    private MPComboBox comboBoxColourScheme;
+    private IContainer components = null;
 
     /// <summary>
     /// 
@@ -83,7 +78,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -102,6 +96,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -170,12 +165,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxColourScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxColourScheme.FormattingEnabled = true;
-      this.comboBoxColourScheme.Items.AddRange(new object[] {
-            "Default",
-            "Theater",
-            "Office",
-            "Airplane",
-            "Car"});
+      this.comboBoxColourScheme.Items.AddRange(new object[]
+                                                 {
+                                                   "Default",
+                                                   "Theater",
+                                                   "Office",
+                                                   "Airplane",
+                                                   "Car"
+                                                 });
       this.comboBoxColourScheme.Location = new System.Drawing.Point(256, 140);
       this.comboBoxColourScheme.Name = "comboBoxColourScheme";
       this.comboBoxColourScheme.Size = new System.Drawing.Size(198, 21);
@@ -256,11 +253,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxDeInterlaceMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceMode.FormattingEnabled = true;
-      this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
-            "VMR default",
-            "VMR pixel adaptive",
-            "VMR median filtering",
-            "VMR vertical stretch"});
+      this.comboBoxDeInterlaceMode.Items.AddRange(new object[]
+                                                    {
+                                                      "VMR default",
+                                                      "VMR pixel adaptive",
+                                                      "VMR median filtering",
+                                                      "VMR vertical stretch"
+                                                    });
       this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 90);
       this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
       this.comboBoxDeInterlaceMode.Size = new System.Drawing.Size(198, 21);
@@ -270,11 +269,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxDeInterlaceControl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceControl.FormattingEnabled = true;
-      this.comboBoxDeInterlaceControl.Items.AddRange(new object[] {
-            "Automatic",
-            "Film",
-            "Video",
-            "Smart"});
+      this.comboBoxDeInterlaceControl.Items.AddRange(new object[]
+                                                       {
+                                                         "Automatic",
+                                                         "Film",
+                                                         "Video",
+                                                         "Smart"
+                                                       });
       this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 41);
       this.comboBoxDeInterlaceControl.Name = "comboBoxDeInterlaceControl";
       this.comboBoxDeInterlaceControl.Size = new System.Drawing.Size(198, 21);
@@ -322,14 +323,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.FormattingEnabled = true;
-      this.comboBoxOutPutMode.Items.AddRange(new object[] {
-            "SPDIF Mode",
-            "Pro Logic Mode"});
+      this.comboBoxOutPutMode.Items.AddRange(new object[]
+                                               {
+                                                 "SPDIF Mode",
+                                                 "Pro Logic Mode"
+                                               });
       this.comboBoxOutPutMode.Location = new System.Drawing.Point(214, 104);
       this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
       this.comboBoxOutPutMode.Size = new System.Drawing.Size(183, 21);
       this.comboBoxOutPutMode.TabIndex = 12;
-      this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
+      this.comboBoxOutPutMode.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
       // 
       // DynamicRangeControl
       // 
@@ -353,12 +357,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxProLogicII.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProLogicII.FormattingEnabled = true;
-      this.comboBoxProLogicII.Items.AddRange(new object[] {
-            "Off",
-            "Pro Logic",
-            "Music Mode",
-            "Movie Mode",
-            "Matrix Mode"});
+      this.comboBoxProLogicII.Items.AddRange(new object[]
+                                               {
+                                                 "Off",
+                                                 "Pro Logic",
+                                                 "Music Mode",
+                                                 "Movie Mode",
+                                                 "Matrix Mode"
+                                               });
       this.comboBoxProLogicII.Location = new System.Drawing.Point(38, 167);
       this.comboBoxProLogicII.Name = "comboBoxProLogicII";
       this.comboBoxProLogicII.Size = new System.Drawing.Size(183, 21);
@@ -368,10 +374,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxDRC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDRC.FormattingEnabled = true;
-      this.comboBoxDRC.Items.AddRange(new object[] {
-            "Normal",
-            "Late Night",
-            "Theatre"});
+      this.comboBoxDRC.Items.AddRange(new object[]
+                                        {
+                                          "Normal",
+                                          "Late Night",
+                                          "Theatre"
+                                        });
       this.comboBoxDRC.Location = new System.Drawing.Point(262, 167);
       this.comboBoxDRC.Name = "comboBoxDRC";
       this.comboBoxDRC.Size = new System.Drawing.Size(192, 21);
@@ -379,33 +387,42 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerSetup
       // 
-      this.comboBoxSpeakerSetup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerSetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerSetup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerSetup.Items.AddRange(new object[] {
-            "Mono",
-            "Stereo",
-            "3 Speakers (2.1)",
-            "4 Speakers",
-            "5 Speakers",
-            "6 Speakers (6.1)"});
+      this.comboBoxSpeakerSetup.Items.AddRange(new object[]
+                                                 {
+                                                   "Mono",
+                                                   "Stereo",
+                                                   "3 Speakers (2.1)",
+                                                   "4 Speakers",
+                                                   "5 Speakers",
+                                                   "6 Speakers (6.1)"
+                                                 });
       this.comboBoxSpeakerSetup.Location = new System.Drawing.Point(214, 46);
       this.comboBoxSpeakerSetup.Name = "comboBoxSpeakerSetup";
       this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(183, 21);
       this.comboBoxSpeakerSetup.TabIndex = 1;
-      this.comboBoxSpeakerSetup.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
+      this.comboBoxSpeakerSetup.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
       // 
       // comboBoxHeadphones
       // 
-      this.comboBoxHeadphones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxHeadphones.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxHeadphones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxHeadphones.DropDownWidth = 183;
-      this.comboBoxHeadphones.Items.AddRange(new object[] {
-            "None",
-            "Dolby Headphone 1",
-            "Dolby Headphone 2",
-            "Dolby Headphone 3"});
+      this.comboBoxHeadphones.Items.AddRange(new object[]
+                                               {
+                                                 "None",
+                                                 "Dolby Headphone 1",
+                                                 "Dolby Headphone 2",
+                                                 "Dolby Headphone 3"
+                                               });
       this.comboBoxHeadphones.Location = new System.Drawing.Point(214, 76);
       this.comboBoxHeadphones.Name = "comboBoxHeadphones";
       this.comboBoxHeadphones.Size = new System.Drawing.Size(183, 21);
@@ -478,63 +495,100 @@ namespace MediaPortal.Configuration.Sections
       this.SpeakerSetup.ResumeLayout(false);
       this.SpeakerSetup.PerformLayout();
       this.ResumeLayout(false);
-
     }
-    #endregion
 
+    #endregion
 
     public override void LoadSettings()
     {
       #region Video Settings
+
       int iIndex = 0;
       Int32 regValue = 0;
 
       using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+      {
         if (subkey != null)
         {
           try
           {
-            regValue = (Int32)subkey.GetValue("DisplayType", 0);
+            regValue = (Int32) subkey.GetValue("DisplayType", 0);
             radioButtonDTDefault.Checked = (regValue == 0);
             radioButtonDTLetterbox.Checked = (regValue == 1);
             radioButtonDTPan.Checked = (regValue == 2);
             radioButtonDTAnamorphic.Checked = (regValue == 3);
 
-            regValue = (Int32)subkey.GetValue("EnableDXVA", 1);
-            if (regValue == 0) checkBoxDxVA.Checked = false;
-            if (regValue == 1) checkBoxDxVA.Checked = true;
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            regValue = (Int32) subkey.GetValue("EnableDXVA", 1);
+            if (regValue == 0)
+            {
+              checkBoxDxVA.Checked = false;
+            }
+            if (regValue == 1)
+            {
+              checkBoxDxVA.Checked = true;
+            }
+            using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
               xmlwriter.SetValue("videocodec", "nvidia", regValue);
             }
 
-            regValue = (Int32)subkey.GetValue("DeinterlaceControl", 0);
+            regValue = (Int32) subkey.GetValue("DeinterlaceControl", 0);
             comboBoxDeInterlaceControl.SelectedIndex = regValue;
 
-            regValue = (Int32)subkey.GetValue("DeinterlaceMode", 0);
-            Int32 regAdaptive = (Int32)subkey.GetValue("VMRDeinterlace", 2);
+            regValue = (Int32) subkey.GetValue("DeinterlaceMode", 0);
+            Int32 regAdaptive = (Int32) subkey.GetValue("VMRDeinterlace", 2);
             if (regValue >= 0)
             {
-              if (regValue == 0) comboBoxDeInterlaceMode.SelectedIndex = 0;
-              if (regValue == 5 && regAdaptive == 64) comboBoxDeInterlaceMode.SelectedIndex = 1;
-              if (regValue == 5 && regAdaptive == 4) comboBoxDeInterlaceMode.SelectedIndex = 2;
-              if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 3;
+              if (regValue == 0)
+              {
+                comboBoxDeInterlaceMode.SelectedIndex = 0;
+              }
+              if (regValue == 5 && regAdaptive == 64)
+              {
+                comboBoxDeInterlaceMode.SelectedIndex = 1;
+              }
+              if (regValue == 5 && regAdaptive == 4)
+              {
+                comboBoxDeInterlaceMode.SelectedIndex = 2;
+              }
+              if (regValue == 5 && regAdaptive == 2)
+              {
+                comboBoxDeInterlaceMode.SelectedIndex = 3;
+              }
             }
 
-            regValue = (Int32)subkey.GetValue("Brightness", 0);
-            if (regValue == 0) comboBoxColourScheme.SelectedIndex = 0;
-            if (regValue == -5) comboBoxColourScheme.SelectedIndex = 1;
-            if (regValue == -3) comboBoxColourScheme.SelectedIndex = 2;
-            if (regValue == 5) comboBoxColourScheme.SelectedIndex = 3;
-            if (regValue == 15) comboBoxColourScheme.SelectedIndex = 4;
+            regValue = (Int32) subkey.GetValue("Brightness", 0);
+            if (regValue == 0)
+            {
+              comboBoxColourScheme.SelectedIndex = 0;
+            }
+            if (regValue == -5)
+            {
+              comboBoxColourScheme.SelectedIndex = 1;
+            }
+            if (regValue == -3)
+            {
+              comboBoxColourScheme.SelectedIndex = 2;
+            }
+            if (regValue == 5)
+            {
+              comboBoxColourScheme.SelectedIndex = 3;
+            }
+            if (regValue == 15)
+            {
+              comboBoxColourScheme.SelectedIndex = 4;
+            }
           }
           catch (Exception)
           {
           }
-      #endregion
+
+          #endregion
         }
+      }
 
       #region Audio Settings
+
       Int32 regMaxOut = 0;
       Int32 regAC3Output = 0;
       Int32 regMonoOutput = 0;
@@ -546,97 +600,168 @@ namespace MediaPortal.Configuration.Sections
       Int32 regSPDIF = 0;
 
       using (RegistryKey subkey2 = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Audio"))
+      {
         if (subkey2 != null)
         {
-          regValue = (Int32)subkey2.GetValue("ConnectedDevicePropControl", 0);
-          regMaxOut = (Int32)subkey2.GetValue("MaxOutChannels", 2);
-          regAC3Output = (Int32)subkey2.GetValue("AC3OutputMode", -1);
-          regMonoOutput = (Int32)subkey2.GetValue("MonoOutput", -1);
-          regCenterPresent = (Int32)subkey2.GetValue("CenterPresent", -1);
-          regBackPresent = (Int32)subkey2.GetValue("BackPresent", -1);
-          regSubwooferPresent = (Int32)subkey2.GetValue("SubwooferPresent", -1);
-          regProLogic2Mode = (Int32)subkey2.GetValue("ProLogic2Mode", -1);
-          regDHProp = (Int32)subkey2.GetValue("DHPPropControl", -1);
-          regSPDIF = (Int32)subkey2.GetValue("EnableSPDIFPassThru", -1);
+          regValue = (Int32) subkey2.GetValue("ConnectedDevicePropControl", 0);
+          regMaxOut = (Int32) subkey2.GetValue("MaxOutChannels", 2);
+          regAC3Output = (Int32) subkey2.GetValue("AC3OutputMode", -1);
+          regMonoOutput = (Int32) subkey2.GetValue("MonoOutput", -1);
+          regCenterPresent = (Int32) subkey2.GetValue("CenterPresent", -1);
+          regBackPresent = (Int32) subkey2.GetValue("BackPresent", -1);
+          regSubwooferPresent = (Int32) subkey2.GetValue("SubwooferPresent", -1);
+          regProLogic2Mode = (Int32) subkey2.GetValue("ProLogic2Mode", -1);
+          regDHProp = (Int32) subkey2.GetValue("DHPPropControl", -1);
+          regSPDIF = (Int32) subkey2.GetValue("EnableSPDIFPassThru", -1);
           try
           {
             // Speakers Setup
             switch (regValue)
             {
-              // Computer Speakers
+                // Computer Speakers
               case 0:
+
                 #region Computer Speakers
+
                 radioButtonSpeakers.Checked = true;
                 comboBoxSpeakerSetup.Enabled = true;
-                if (regMonoOutput == 1) iIndex = 0;
-                if (regMaxOut == 2) iIndex = 1;
-                if (regMaxOut == 6 && regBackPresent == 0 && regSubwooferPresent == 1 && regCenterPresent == 0) iIndex = 2;
-                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 0 && regCenterPresent == 0) iIndex = 3;
-                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 0 && regCenterPresent == 1) iIndex = 4;
-                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 1 && regCenterPresent == 1) iIndex = 5;
-                if (iIndex <= 1) comboBoxProLogicII.Enabled = false;
+                if (regMonoOutput == 1)
+                {
+                  iIndex = 0;
+                }
+                if (regMaxOut == 2)
+                {
+                  iIndex = 1;
+                }
+                if (regMaxOut == 6 && regBackPresent == 0 && regSubwooferPresent == 1 && regCenterPresent == 0)
+                {
+                  iIndex = 2;
+                }
+                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 0 && regCenterPresent == 0)
+                {
+                  iIndex = 3;
+                }
+                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 0 && regCenterPresent == 1)
+                {
+                  iIndex = 4;
+                }
+                if (regMaxOut == 6 && regBackPresent == 1 && regSubwooferPresent == 1 && regCenterPresent == 1)
+                {
+                  iIndex = 5;
+                }
+                if (iIndex <= 1)
+                {
+                  comboBoxProLogicII.Enabled = false;
+                }
                 comboBoxSpeakerSetup.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
 
-              //Headphones                            
+                //Headphones                            
               case 1:
+
                 #region Headphones
+
                 radioButtonHeadphones.Checked = true;
                 comboBoxHeadphones.Enabled = true;
                 comboBoxHeadphones.SelectedIndex = regDHProp;
+
                 #endregion
+
                 break;
 
-              // Receiver
+                // Receiver
               case 2:
+
                 #region Receiver
+
                 radioButtonReceiver.Checked = true;
                 comboBoxOutPutMode.Enabled = true;
-                if (regSPDIF == 1) comboBoxOutPutMode.SelectedIndex = 0;
-                if (regSPDIF == 0) comboBoxOutPutMode.SelectedIndex = 1;
+                if (regSPDIF == 1)
+                {
+                  comboBoxOutPutMode.SelectedIndex = 0;
+                }
+                if (regSPDIF == 0)
+                {
+                  comboBoxOutPutMode.SelectedIndex = 1;
+                }
+
                 #endregion
+
                 break;
             }
             {
               // Dynamic Range Control
-              Int32 regDRC = (Int32)subkey2.GetValue("AC3CompressionMode", 2);
-              Int32 regAC3DRH = (Int32)subkey2.GetValue("AC3DynamicRangeHigh", 10000);
-              if (regDRC == 2 && regAC3DRH == 10000) comboBoxDRC.SelectedIndex = 0;
-              if (regDRC == 3) comboBoxDRC.SelectedIndex = 1;
-              if (regDRC == 2 && regAC3DRH == 0) comboBoxDRC.SelectedIndex = 2;
+              Int32 regDRC = (Int32) subkey2.GetValue("AC3CompressionMode", 2);
+              Int32 regAC3DRH = (Int32) subkey2.GetValue("AC3DynamicRangeHigh", 10000);
+              if (regDRC == 2 && regAC3DRH == 10000)
+              {
+                comboBoxDRC.SelectedIndex = 0;
+              }
+              if (regDRC == 3)
+              {
+                comboBoxDRC.SelectedIndex = 1;
+              }
+              if (regDRC == 2 && regAC3DRH == 0)
+              {
+                comboBoxDRC.SelectedIndex = 2;
+              }
 
               // Pro Logic II
-              Int32 regPL2Mode = (Int32)subkey2.GetValue("ProLogic2Mode", 0);
+              Int32 regPL2Mode = (Int32) subkey2.GetValue("ProLogic2Mode", 0);
               comboBoxProLogicII.SelectedIndex = regPL2Mode;
             }
           }
           catch (Exception)
           {
           }
-      #endregion
+
+          #endregion
         }
+      }
     }
 
     public override void SaveSettings()
     {
       #region Video Settings
+
       Int32 regValue = 0;
 
       using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+      {
         if (subkey != null)
         {
           // Display Type
-          if (radioButtonDTDefault.Checked) regValue = 0;
-          if (radioButtonDTLetterbox.Checked) regValue = 1;
-          if (radioButtonDTPan.Checked) regValue = 2;
-          if (radioButtonDTAnamorphic.Checked) regValue = 3;
+          if (radioButtonDTDefault.Checked)
+          {
+            regValue = 0;
+          }
+          if (radioButtonDTLetterbox.Checked)
+          {
+            regValue = 1;
+          }
+          if (radioButtonDTPan.Checked)
+          {
+            regValue = 2;
+          }
+          if (radioButtonDTAnamorphic.Checked)
+          {
+            regValue = 3;
+          }
           //else regValue = 0;
           subkey.SetValue("DisplayType", regValue);
 
           // Hardware Acceleration
-          if (checkBoxDxVA.Checked) regValue = 1;
-          else regValue = 0;
+          if (checkBoxDxVA.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("EnableDXVA", regValue);
 
           // De-Interlace Control
@@ -708,21 +833,34 @@ namespace MediaPortal.Configuration.Sections
             subkey.SetValue("Contrast", 50);
             subkey.SetValue("Saturation", 5);
           }
-      #endregion
+
+          #endregion
         }
+      }
 
       #region Audio Settings
+
       using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Audio"))
+      {
         if (subkey != null)
         {
           // Computer Speakers
-          if (radioButtonSpeakers.Checked) subkey.SetValue("ConnectedDevicePropControl", 0);
+          if (radioButtonSpeakers.Checked)
+          {
+            subkey.SetValue("ConnectedDevicePropControl", 0);
+          }
 
           // Headphones
-          if (radioButtonHeadphones.Checked) subkey.SetValue("ConnectedDevicePropControl", 1);
+          if (radioButtonHeadphones.Checked)
+          {
+            subkey.SetValue("ConnectedDevicePropControl", 1);
+          }
 
           // External Receiver
-          if (radioButtonReceiver.Checked) subkey.SetValue("ConnectedDevicePropControl", 2);
+          if (radioButtonReceiver.Checked)
+          {
+            subkey.SetValue("ConnectedDevicePropControl", 2);
+          }
 
           //Dynamic Range Control
           int DRC;
@@ -761,20 +899,26 @@ namespace MediaPortal.Configuration.Sections
           // Speaker Setup
           switch (comboBoxSpeakerSetup.SelectedIndex)
           {
-            //Mono
+              //Mono
             case 0:
+
               #region Mono
+
               regValue = 1;
               subkey.SetValue("MonoOutput", regValue);
               subkey.SetValue("MonoPropControl", regValue);
               regValue = 2;
               subkey.SetValue("NoiseTarget", regValue);
+
               #endregion
+
               break;
 
-            // Stereo
+              // Stereo
             case 1:
+
               #region Stereo
+
               regValue = 0;
               subkey.SetValue("CenterPresent", regValue);
               subkey.SetValue("BackPresent", regValue);
@@ -788,12 +932,16 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("FrontSpeakerSize", regValue);
               regValue = 2;
               subkey.SetValue("MaxOutChannels", regValue);
+
               #endregion
+
               break;
 
-            // 3 Speakers (2.1)
+              // 3 Speakers (2.1)
             case 2:
+
               #region 3 Speakers (2.1)
+
               regValue = 6;
               subkey.SetValue("MaxOutChannels", regValue);
               regValue = 0;
@@ -810,12 +958,16 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("AC3OutputMode", regValue);
               subkey.SetValue("CenterSpeakerSize", regValue);
               subkey.SetValue("RearSpeakerSize", regValue);
+
               #endregion
+
               break;
 
-            // 4 Speakers
+              // 4 Speakers
             case 3:
+
               #region 4 Speakers
+
               regValue = 6;
               subkey.SetValue("MaxOutChannels", regValue);
               subkey.SetValue("AC3OutputMode", regValue);
@@ -832,12 +984,16 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("RearSpeakerSize", regValue);
               regValue = 2;
               subkey.SetValue("CenterSpeakerSize", regValue);
+
               #endregion
+
               break;
 
-            // 5 Speakers
+              // 5 Speakers
             case 4:
+
               #region 5 Speakers
+
               regValue = 6;
               subkey.SetValue("MaxOutChannels", regValue);
               regValue = 7;
@@ -854,12 +1010,16 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("NoiseTarget", regValue);
               subkey.SetValue("SubwooferPresent", regValue);
               subkey.SetValue("AC3LfeOn", regValue);
+
               #endregion
+
               break;
 
-            // 6 Speakers (5.1)
+              // 6 Speakers (5.1)
             case 5:
+
               #region 6 Speakers (5.1)
+
               regValue = 6;
               subkey.SetValue("MaxOutChannels", regValue);
               regValue = 7;
@@ -876,7 +1036,9 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("CenterSpeakerSize", regValue);
               subkey.SetValue("FrontSpeakerSize", regValue);
               subkey.SetValue("RearSpeakerSize", regValue);
+
               #endregion
+
               break;
           }
 
@@ -903,16 +1065,24 @@ namespace MediaPortal.Configuration.Sections
             subkey.SetValue("SPDIFPropControl", 0);
             subkey.SetValue("SurroundPropControl", 1);
           }
-      #endregion
+
+          #endregion
         }
+      }
     }
 
     private void comboBoxSpeakerSetup_SelectedIndexChanged(object sender, EventArgs e)
     {
       int SpeakerChoice;
       SpeakerChoice = (comboBoxSpeakerSetup.SelectedIndex);
-      if (SpeakerChoice >= 2) comboBoxProLogicII.Enabled = true;
-      else comboBoxProLogicII.Enabled = false;
+      if (SpeakerChoice >= 2)
+      {
+        comboBoxProLogicII.Enabled = true;
+      }
+      else
+      {
+        comboBoxProLogicII.Enabled = false;
+      }
     }
 
     private void radioButtonReceiver_CheckedChanged(object sender, EventArgs e)
@@ -945,7 +1115,10 @@ namespace MediaPortal.Configuration.Sections
       comboBoxHeadphones.Enabled = false;
       comboBoxSpeakerSetup.Enabled = true;
       comboBoxDRC.Enabled = true;
-      if (comboBoxSpeakerSetup.SelectedIndex >= 2) comboBoxProLogicII.Enabled = true;
+      if (comboBoxSpeakerSetup.SelectedIndex >= 2)
+      {
+        comboBoxProLogicII.Enabled = true;
+      }
     }
 
     private void radioButtonHeadphones_CheckedChanged(object sender, EventArgs e)

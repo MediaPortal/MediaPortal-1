@@ -59,7 +59,7 @@ namespace MediaPortal.Hooks
 
     #region Methods
 
-    int InternalHookDelegate(int code, int wParam, IntPtr lParam)
+    private int InternalHookDelegate(int code, int wParam, IntPtr lParam)
     {
       if (code == 0)
       {
@@ -68,16 +68,20 @@ namespace MediaPortal.Hooks
         OnHookInvoked(e);
 
         if (e.Handled)
+        {
           return 1;
+        }
       }
 
       return NativeMethods.CallNextHookEx(_hookHandle, code, wParam, lParam);
     }
 
-    void OnHookInvoked(HookEventArgs e)
+    private void OnHookInvoked(HookEventArgs e)
     {
       if (HookInvoked != null)
+      {
         HookInvoked(this, e);
+      }
     }
 
     #endregion Methods
@@ -91,7 +95,10 @@ namespace MediaPortal.Hooks
       {
         if (value && _hookHandle == IntPtr.Zero)
         {
-          _hookHandle = NativeMethods.SetWindowsHookEx(_hookType, _hookDelegate, Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]), 0 /* AppDomain.GetCurrentThreadId() */);
+          _hookHandle = NativeMethods.SetWindowsHookEx(_hookType, _hookDelegate,
+                                                       Marshal.GetHINSTANCE(
+                                                         Assembly.GetExecutingAssembly().GetModules()[0]), 0
+            /* AppDomain.GetCurrentThreadId() */);
         }
         else if (value == false && _hookHandle != IntPtr.Zero)
         {
@@ -106,9 +113,9 @@ namespace MediaPortal.Hooks
 
     #region Fields
 
-    HookDelegate _hookDelegate = null;
-    IntPtr _hookHandle = IntPtr.Zero;
-    HookType _hookType;
+    private HookDelegate _hookDelegate = null;
+    private IntPtr _hookHandle = IntPtr.Zero;
+    private HookType _hookType;
 
     #endregion Fields
   }

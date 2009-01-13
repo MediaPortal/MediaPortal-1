@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
@@ -37,44 +36,29 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogExif : GUIDialogWindow
   {
-    [SkinControl(2)]
-    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(3)]
-    protected GUIImage imgPicture = null;
-    [SkinControlAttribute(20)]
-    protected GUILabelControl lblImgTitle = null;
-    [SkinControlAttribute(21)]
-    protected GUILabelControl lblImgDimensions = null;
-    [SkinControlAttribute(22)]
-    protected GUILabelControl lblResolutions = null;
-    [SkinControlAttribute(23)]
-    protected GUIFadeLabel lblFlash = null;
-    [SkinControlAttribute(24)]
-    protected GUIFadeLabel lblMeteringMode = null;
-    [SkinControlAttribute(25)]
-    protected GUIFadeLabel lblExposureCompensation = null;
-    [SkinControlAttribute(26)]
-    protected GUIFadeLabel lblShutterSpeed = null;
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblDateTakenLabel = null;
-    [SkinControlAttribute(28)]
-    protected GUILabelControl lblFstop = null;
-    [SkinControlAttribute(29)]
-    protected GUILabelControl lblExposureTime = null;
-    [SkinControlAttribute(30)]
-    protected GUIFadeLabel lblCameraModel = null;
-    [SkinControlAttribute(31)]
-    protected GUIFadeLabel lblEquipmentMake = null;
-    [SkinControlAttribute(32)]
-    protected GUILabelControl lblViewComments = null;
+    [SkinControl(2)] protected GUILabelControl lblHeading = null;
+    [SkinControl(3)] protected GUIImage imgPicture = null;
+    [SkinControl(20)] protected GUILabelControl lblImgTitle = null;
+    [SkinControl(21)] protected GUILabelControl lblImgDimensions = null;
+    [SkinControl(22)] protected GUILabelControl lblResolutions = null;
+    [SkinControl(23)] protected GUIFadeLabel lblFlash = null;
+    [SkinControl(24)] protected GUIFadeLabel lblMeteringMode = null;
+    [SkinControl(25)] protected GUIFadeLabel lblExposureCompensation = null;
+    [SkinControl(26)] protected GUIFadeLabel lblShutterSpeed = null;
+    [SkinControl(27)] protected GUILabelControl lblDateTakenLabel = null;
+    [SkinControl(28)] protected GUILabelControl lblFstop = null;
+    [SkinControl(29)] protected GUILabelControl lblExposureTime = null;
+    [SkinControl(30)] protected GUIFadeLabel lblCameraModel = null;
+    [SkinControl(31)] protected GUIFadeLabel lblEquipmentMake = null;
+    [SkinControl(32)] protected GUILabelControl lblViewComments = null;
 
-    int m_iTextureWidth, m_iTextureHeight;
-    string fileName;
-    Texture m_pTexture = null;
+    private int m_iTextureWidth, m_iTextureHeight;
+    private string fileName;
+    private Texture m_pTexture = null;
 
     public GUIDialogExif()
     {
-      GetID = (int)Window.WINDOW_DIALOG_EXIF;
+      GetID = (int) Window.WINDOW_DIALOG_EXIF;
     }
 
     public override bool Init()
@@ -93,18 +77,21 @@ namespace MediaPortal.Dialogs
             return true;
           }
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-        {
-          if (m_pTexture != null) m_pTexture.Dispose();
-          m_pTexture = null;
-          base.OnMessage(message);
-          // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
-          Restore();
-          return true;
-        }
+          {
+            if (m_pTexture != null)
+            {
+              m_pTexture.Dispose();
+            }
+            m_pTexture = null;
+            base.OnMessage(message);
+            // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
+            Restore();
+            return true;
+          }
       }
       return base.OnMessage(message);
     }
-        
+
     public void SetHeading(string strLine)
     {
       LoadSkin();
@@ -116,8 +103,14 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(string.Empty);
-      else SetHeading(GUILocalizeStrings.Get(iString));
+      if (iString == 0)
+      {
+        SetHeading(string.Empty);
+      }
+      else
+      {
+        SetHeading(GUILocalizeStrings.Get(iString));
+      }
     }
 
 
@@ -127,9 +120,12 @@ namespace MediaPortal.Dialogs
       set { fileName = value; }
     }
 
-    void Update()
+    private void Update()
     {
-      if (m_pTexture != null) m_pTexture.Dispose();
+      if (m_pTexture != null)
+      {
+        m_pTexture.Dispose();
+      }
 
       int iRotate = PictureDatabase.GetRotation(FileName);
 
@@ -174,7 +170,10 @@ namespace MediaPortal.Dialogs
     public override void Render(float timePassed)
     {
       base.Render(timePassed);
-      if (null == m_pTexture) return;
+      if (null == m_pTexture)
+      {
+        return;
+      }
       float x = imgPicture.XPosition;
       float y = imgPicture.YPosition;
       int width;
@@ -182,8 +181,10 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.Correct(ref x, ref y);
 
       GUIFontManager.Present();
-      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width, out height);
-      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
+      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width,
+                                       out height);
+      Util.Picture.RenderImage(m_pTexture, (int) x, (int) y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0,
+                               true);
     }
   }
 }

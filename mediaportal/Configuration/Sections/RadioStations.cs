@@ -24,15 +24,17 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
-using System.Windows.Forms;
-#pragma warning disable 108
+using System.ComponentModel;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Configuration;
+using MediaPortal.UserInterface.Controls;
+#pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -43,45 +45,47 @@ namespace MediaPortal.Configuration.Sections
       public string FriendlyName;
       public string VideoDevice;
       public int ID;
+
       public override string ToString()
       {
         return String.Format("{0} - {1}", FriendlyName, VideoDevice);
       }
-    };
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
-    private MediaPortal.UserInterface.Controls.MPButton editButton;
-    private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private MediaPortal.UserInterface.Controls.MPListView stationsListView;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
-    private System.Windows.Forms.ColumnHeader columnHeader6;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPButton upButton;
-    private MediaPortal.UserInterface.Controls.MPButton downButton;
+    } ;
+
+    private ColumnHeader columnHeader3;
+    private MPButton deleteButton;
+    private MPButton editButton;
+    private MPButton addButton;
+    private MPListView stationsListView;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private ColumnHeader columnHeader4;
+    private ColumnHeader columnHeader5;
+    private ColumnHeader columnHeader6;
+    private IContainer components = null;
+    private MPButton upButton;
+    private MPButton downButton;
 
     //
     // Private members
     //
     //bool isDirty = false;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
-    private MediaPortal.UserInterface.Controls.MPButton btnMapChannelToCard;
-    private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
-    private System.Windows.Forms.ColumnHeader columnHeader10;
-    private System.Windows.Forms.ColumnHeader columnHeader11;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCard;
-    private System.Windows.Forms.ListView listviewCardChannels;
-    private System.Windows.Forms.ListView listViewRadioChannels;
-    ListViewItem currentlyCheckedItem = null;
-    static bool reloadList = false;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
+    private MPTabControl tabControl1;
+    private MPTabPage tabPage1;
+    private MPTabPage tabPage2;
+    private MPButton btnMapChannelToCard;
+    private MPButton btnUnmapChannelFromCard;
+    private ColumnHeader columnHeader10;
+    private ColumnHeader columnHeader11;
+    private MPLabel label6;
+    private MPComboBox comboBoxCard;
+    private ListView listviewCardChannels;
+    private ListView listViewRadioChannels;
+    private ListViewItem currentlyCheckedItem = null;
+    private static bool reloadList = false;
+    private MPButton mpButtonClear;
     private Label lblCheckedHint;
-    ListViewColumnSorter _columnSorter;
+    private ListViewColumnSorter _columnSorter;
 
 
     public RadioStations()
@@ -96,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Disable if TVE3
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         this.Enabled = false;
       }
@@ -119,12 +123,10 @@ namespace MediaPortal.Configuration.Sections
 
     public override void OnSectionActivated()
     {
-
-
     }
 
-
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -168,7 +170,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // upButton
       // 
-      this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.upButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.upButton.Enabled = false;
       this.upButton.Location = new System.Drawing.Point(222, 334);
       this.upButton.Name = "upButton";
@@ -180,7 +184,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // downButton
       // 
-      this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.downButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.downButton.Enabled = false;
       this.downButton.Location = new System.Drawing.Point(222, 357);
       this.downButton.Name = "downButton";
@@ -192,7 +198,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(94, 357);
       this.deleteButton.Name = "deleteButton";
@@ -204,7 +212,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // editButton
       // 
-      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.editButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
       this.editButton.Location = new System.Drawing.Point(94, 334);
       this.editButton.Name = "editButton";
@@ -216,7 +226,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Location = new System.Drawing.Point(16, 334);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -229,17 +241,21 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.stationsListView.AllowDrop = true;
       this.stationsListView.AllowRowReorder = true;
-      this.stationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.stationsListView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.stationsListView.CheckBoxes = true;
-      this.stationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.columnHeader6});
+      this.stationsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                               {
+                                                 this.columnHeader1,
+                                                 this.columnHeader2,
+                                                 this.columnHeader3,
+                                                 this.columnHeader4,
+                                                 this.columnHeader5,
+                                                 this.columnHeader6
+                                               });
       this.stationsListView.FullRowSelect = true;
       this.stationsListView.HideSelection = false;
       this.stationsListView.Location = new System.Drawing.Point(16, 37);
@@ -251,7 +267,8 @@ namespace MediaPortal.Configuration.Sections
       this.stationsListView.DoubleClick += new System.EventHandler(this.stationsListView_DoubleClick);
       this.stationsListView.SelectedIndexChanged += new System.EventHandler(this.stationsListView_SelectedIndexChanged);
       this.stationsListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.stationsListView_ItemCheck);
-      this.stationsListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.stationsListView_ColumnClick);
+      this.stationsListView.ColumnClick +=
+        new System.Windows.Forms.ColumnClickEventHandler(this.stationsListView_ColumnClick);
       // 
       // columnHeader1
       // 
@@ -280,9 +297,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -311,7 +330,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonClear.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonClear.Location = new System.Drawing.Point(16, 357);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(72, 22);
@@ -359,10 +380,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listviewCardChannels
       // 
-      this.listviewCardChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listviewCardChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader10});
+      this.listviewCardChannels.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.listviewCardChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                                   {
+                                                     this.columnHeader10
+                                                   });
       this.listviewCardChannels.Location = new System.Drawing.Point(272, 56);
       this.listviewCardChannels.Name = "listviewCardChannels";
       this.listviewCardChannels.Size = new System.Drawing.Size(176, 304);
@@ -377,10 +402,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listViewRadioChannels
       // 
-      this.listViewRadioChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
-      this.listViewRadioChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader11});
+      this.listViewRadioChannels.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewRadioChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                                    {
+                                                      this.columnHeader11
+                                                    });
       this.listViewRadioChannels.Location = new System.Drawing.Point(16, 56);
       this.listViewRadioChannels.Name = "listViewRadioChannels";
       this.listViewRadioChannels.Size = new System.Drawing.Size(176, 304);
@@ -403,8 +432,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxCard
       // 
-      this.comboBoxCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCard.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCard.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
       this.comboBoxCard.Name = "comboBoxCard";
@@ -431,8 +462,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private void addButton_Click(object sender, EventArgs e)
@@ -449,7 +480,6 @@ namespace MediaPortal.Configuration.Sections
 
       if (dialogResult == DialogResult.OK)
       {
-
         MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
         station.Scrambled = false;
         station.Name = editStation.Station.Name;
@@ -458,15 +488,19 @@ namespace MediaPortal.Configuration.Sections
         station.URL = editStation.Station.URL;
         station.Frequency = editStation.Station.Frequency.Hertz;
         if (station.Frequency < 1000)
+        {
           station.Frequency *= 1000000L;
+        }
 
-        ListViewItem listItem = new ListViewItem(new string[] { editStation.Station.Type, 
-																																editStation.Station.Name,
-																																editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz),
-																																editStation.Station.Genre, 
-																																editStation.Station.Bitrate.ToString(),
-																																editStation.Station.URL 
-																															});
+        ListViewItem listItem = new ListViewItem(new string[]
+                                                   {
+                                                     editStation.Station.Type,
+                                                     editStation.Station.Name,
+                                                     editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz),
+                                                     editStation.Station.Genre,
+                                                     editStation.Station.Bitrate.ToString(),
+                                                     editStation.Station.URL
+                                                   });
 
 
         listItem.Tag = editStation.Station;
@@ -476,7 +510,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void editButton_Click(object sender, System.EventArgs e)
+    private void editButton_Click(object sender, EventArgs e)
     {
       //			isDirty = true;
 
@@ -495,7 +529,9 @@ namespace MediaPortal.Configuration.Sections
           // Remove URL if we have a normal radio station
           //
           if (editStation.Station.Type.Equals("Radio"))
+          {
             editStation.Station.URL = string.Empty;
+          }
 
           listItem.SubItems[0].Text = editStation.Station.Type;
           listItem.SubItems[1].Text = editStation.Station.Name;
@@ -513,14 +549,16 @@ namespace MediaPortal.Configuration.Sections
           station.URL = editStation.Station.URL;
           station.Frequency = editStation.Station.Frequency.Hertz;
           if (station.Frequency < 1000)
+          {
             station.Frequency *= 1000000L;
+          }
           station.Channel = listItem.Index;
           RadioDatabase.UpdateStation(station);
         }
       }
     }
 
-    private void deleteButton_Click(object sender, System.EventArgs e)
+    private void deleteButton_Click(object sender, EventArgs e)
     {
       //			isDirty = true;
 
@@ -546,7 +584,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void SaveRadioStations()
     {
-
       //
       // Start by removing the currently available stations from the database
       //
@@ -560,7 +597,7 @@ namespace MediaPortal.Configuration.Sections
           strDefaultStation = radioStation.Name;
         }
       }
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("myradio", "default", strDefaultStation);
       }
@@ -571,7 +608,7 @@ namespace MediaPortal.Configuration.Sections
       stationsListView.Items.Clear();
       string defaultStation = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
       }
@@ -592,13 +629,15 @@ namespace MediaPortal.Configuration.Sections
         radioStation.URL = station.URL;
         radioStation.Scrambled = station.Scrambled;
 
-        ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
-																		radioStation.Name,
-																		radioStation.Frequency.ToString(Frequency.Format.MegaHertz),
-																		radioStation.Genre,
-																		radioStation.Bitrate.ToString(),
-																		radioStation.URL
-																	  });
+        ListViewItem listItem = new ListViewItem(new string[]
+                                                   {
+                                                     radioStation.Type,
+                                                     radioStation.Name,
+                                                     radioStation.Frequency.ToString(Frequency.Format.MegaHertz),
+                                                     radioStation.Genre,
+                                                     radioStation.Bitrate.ToString(),
+                                                     radioStation.URL
+                                                   });
 
         //
         // Check default station
@@ -611,7 +650,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void stationsListView_DoubleClick(object sender, System.EventArgs e)
+    private void stationsListView_DoubleClick(object sender, EventArgs e)
     {
       editButton_Click(sender, e);
     }
@@ -666,22 +705,23 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void upButton_Click(object sender, System.EventArgs e)
+    private void upButton_Click(object sender, EventArgs e)
     {
       MoveSelectionUp();
     }
 
-    private void downButton_Click(object sender, System.EventArgs e)
+    private void downButton_Click(object sender, EventArgs e)
     {
       MoveSelectionDown();
     }
 
-    private void stationsListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void stationsListView_SelectedIndexChanged(object sender, EventArgs e)
     {
-      deleteButton.Enabled = editButton.Enabled = upButton.Enabled = downButton.Enabled = (stationsListView.SelectedItems.Count > 0);
+      deleteButton.Enabled =
+        editButton.Enabled = upButton.Enabled = downButton.Enabled = (stationsListView.SelectedItems.Count > 0);
     }
 
-    private void stationsListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    private void stationsListView_ItemCheck(object sender, ItemCheckEventArgs e)
     {
       //      isDirty = true;
 
@@ -696,7 +736,9 @@ namespace MediaPortal.Configuration.Sections
           // We have a new selection
           //
           if (currentlyCheckedItem != null)
+          {
             currentlyCheckedItem.Checked = false;
+          }
           currentlyCheckedItem = stationsListView.Items[e.Index];
         }
       }
@@ -714,27 +756,32 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    private void btnMapChannelToCard_Click(object sender, System.EventArgs e)
+    private void btnMapChannelToCard_Click(object sender, EventArgs e)
     {
-      if (listViewRadioChannels.SelectedItems == null) return;
+      if (listViewRadioChannels.SelectedItems == null)
+      {
+        return;
+      }
       int card = 1;
       int index = comboBoxCard.SelectedIndex;
       if (index >= 0)
       {
-        ComboCard combo = (ComboCard)comboBoxCard.Items[index];
+        ComboCard combo = (ComboCard) comboBoxCard.Items[index];
         card = combo.ID;
       }
 
       for (int i = 0; i < listViewRadioChannels.SelectedItems.Count; ++i)
       {
         ListViewItem listItem = listViewRadioChannels.SelectedItems[i];
-        MediaPortal.Radio.Database.RadioStation chan = (MediaPortal.Radio.Database.RadioStation)listItem.Tag;
+        MediaPortal.Radio.Database.RadioStation chan = (MediaPortal.Radio.Database.RadioStation) listItem.Tag;
 
-        listItem = new ListViewItem(new string[] { chan.Name });
+        listItem = new ListViewItem(new string[] {chan.Name});
         listItem.Tag = chan;
         listviewCardChannels.Items.Add(listItem);
         if (chan != null)
+        {
           RadioDatabase.MapChannelToCard(chan.ID, card);
+        }
       }
 
       for (int i = listViewRadioChannels.SelectedItems.Count - 1; i >= 0; i--)
@@ -745,22 +792,25 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void btnUnmapChannelFromCard_Click(object sender, System.EventArgs e)
+    private void btnUnmapChannelFromCard_Click(object sender, EventArgs e)
     {
       int card = 1;
       int index = comboBoxCard.SelectedIndex;
       if (index >= 0)
       {
-        ComboCard combo = (ComboCard)comboBoxCard.Items[index];
+        ComboCard combo = (ComboCard) comboBoxCard.Items[index];
         card = combo.ID;
       }
-      if (listviewCardChannels.SelectedItems == null) return;
+      if (listviewCardChannels.SelectedItems == null)
+      {
+        return;
+      }
       for (int i = 0; i < listviewCardChannels.SelectedItems.Count; ++i)
       {
         ListViewItem listItem = listviewCardChannels.SelectedItems[i];
-        MediaPortal.Radio.Database.RadioStation chan = (MediaPortal.Radio.Database.RadioStation)listItem.Tag;
+        MediaPortal.Radio.Database.RadioStation chan = (MediaPortal.Radio.Database.RadioStation) listItem.Tag;
 
-        listItem = new ListViewItem(new string[] { chan.Name });
+        listItem = new ListViewItem(new string[] {chan.Name});
         listItem.Tag = chan;
         listViewRadioChannels.Items.Add(listItem);
       }
@@ -770,24 +820,26 @@ namespace MediaPortal.Configuration.Sections
         ListViewItem listItem = listviewCardChannels.SelectedItems[i];
         MediaPortal.Radio.Database.RadioStation channel = listItem.Tag as MediaPortal.Radio.Database.RadioStation;
         if (channel != null)
+        {
           RadioDatabase.UnmapChannelFromCard(channel, card);
+        }
         listviewCardChannels.Items.Remove(listItem);
       }
     }
 
-    private void comboBoxCard_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
     {
-
       FillInChannelCardMappings();
     }
 
-    void LoadCards()
+    private void LoadCards()
     {
-
-			comboBoxCard.Items.Clear();
+      comboBoxCard.Items.Clear();
       if (File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (
+          FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open,
+                                                 FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
@@ -800,18 +852,17 @@ namespace MediaPortal.Configuration.Sections
             // Serialize
             //
             ArrayList captureCards = new ArrayList();
-            captureCards = (ArrayList)formatter.Deserialize(fileStream);
+            captureCards = (ArrayList) formatter.Deserialize(fileStream);
             for (int i = 0; i < captureCards.Count; i++)
             {
-              ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
+              ((TVCaptureDevice) captureCards[i]).ID = (i + 1);
 
-              TVCaptureDevice device = (TVCaptureDevice)captureCards[i];
+              TVCaptureDevice device = (TVCaptureDevice) captureCards[i];
               ComboCard combo = new ComboCard();
               combo.FriendlyName = device.FriendlyName;
               combo.VideoDevice = device.VideoDevice;
               combo.ID = device.ID;
               comboBoxCard.Items.Add(combo);
-
             }
             //
             // Finally close our file stream
@@ -820,25 +871,29 @@ namespace MediaPortal.Configuration.Sections
           }
           catch
           {
-            MessageBox.Show("Failed to load previously configured capture card(s), you will need to re-configure your device(s).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						Log.Error("Recorder: LoadCards()");
+            MessageBox.Show(
+              "Failed to load previously configured capture card(s), you will need to re-configure your device(s).",
+              "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Log.Error("Recorder: LoadCards()");
           }
         }
       }
 
 
       if (comboBoxCard.Items.Count != 0)
+      {
         comboBoxCard.SelectedIndex = 0;
+      }
       FillInChannelCardMappings();
     }
 
-    void FillInChannelCardMappings()
+    private void FillInChannelCardMappings()
     {
       int card = 1;
       int index = comboBoxCard.SelectedIndex;
       if (index >= 0)
       {
-        ComboCard combo = (ComboCard)comboBoxCard.Items[index];
+        ComboCard combo = (ComboCard) comboBoxCard.Items[index];
         card = combo.ID;
       }
 
@@ -882,7 +937,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
       LoadCards();
     }
@@ -891,6 +946,7 @@ namespace MediaPortal.Configuration.Sections
     {
       reloadList = true;
     }
+
     protected override void OnPaint(PaintEventArgs e)
     {
       if (reloadList)
@@ -902,10 +958,12 @@ namespace MediaPortal.Configuration.Sections
       base.OnPaint(e);
     }
 
-    private void stationsListView_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+    private void stationsListView_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (_columnSorter == null)
+      {
         stationsListView.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+      }
 
       // Determine if clicked column is already the column that is being sorted.
       if (e.Column == _columnSorter.SortColumn)
@@ -929,6 +987,4 @@ namespace MediaPortal.Configuration.Sections
       RadioDatabase.ClearAll();
     }
   }
-
-  
 }

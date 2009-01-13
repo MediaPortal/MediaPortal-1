@@ -24,10 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
-
 
 namespace MediaPortal.Utils.Web
 {
@@ -37,7 +34,7 @@ namespace MediaPortal.Utils.Web
   public class CheckConnections
   {
     [Flags]
-    enum ConnectionState : int
+    private enum ConnectionState : int
     {
       INTERNET_CONNECTION_MODEM = 0x1,
       INTERNET_CONNECTION_LAN = 0x2,
@@ -52,13 +49,13 @@ namespace MediaPortal.Utils.Web
 
     // check connectivity http://www.developerfusion.co.uk/show/5346/
     [DllImport("wininet.dll", CharSet = CharSet.Auto)]
-    static extern bool InternetGetConnectedState(ref ConnectionState lpdwFlags, int dwReserved);
+    private static extern bool InternetGetConnectedState(ref ConnectionState lpdwFlags, int dwReserved);
 
     /// <summary>
     /// This method gets the status of the computer's networking devices
     /// </summary>
     /// <returns>true if computer is connected to the internet</returns>
-    bool CheckInternetConnection()
+    private bool CheckInternetConnection()
     {
       ConnectionState Description = 0;
       string connState = InternetGetConnectedState(ref Description, 0).ToString();
@@ -74,10 +71,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public bool Connected
     {
-      get
-      {
-        return CheckInternetConnection();
-      }
+      get { return CheckInternetConnection(); }
     }
 
     /// <summary>
@@ -90,9 +84,13 @@ namespace MediaPortal.Utils.Web
         CheckInternetConnection();
         string flaggedState = _currentState.ToString();
         if (flaggedState.Contains("INTERNET_CONNECTION_PROXY"))
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
 
@@ -106,9 +104,13 @@ namespace MediaPortal.Utils.Web
         CheckInternetConnection();
         string flaggedState = _currentState.ToString();
         if (flaggedState.Contains("INTERNET_CONNECTION_LAN"))
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
 
@@ -122,9 +124,13 @@ namespace MediaPortal.Utils.Web
         CheckInternetConnection();
         string flaggedState = _currentState.ToString();
         if (flaggedState.Contains("INTERNET_CONNECTION_MODEM"))
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
   }

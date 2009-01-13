@@ -25,23 +25,19 @@
 
 using System;
 using System.IO;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class KeyPadWindow : GUIWindow
   {
-    [SkinControlAttribute(50)]
-    protected GUILabelControl label1 = null;
-    [SkinControlAttribute(60)]
-    protected GUIToggleButtonControl btnEnableKeyPad = null;
-    [SkinControlAttribute(61)]
-    protected GUIToggleButtonControl btnEnableCustom = null;
-    [SkinControlAttribute(62)]
-    protected GUIButtonControl btnKeyPadMapping = null;
+    [SkinControl(50)] protected GUILabelControl label1 = null;
+    [SkinControl(60)] protected GUIToggleButtonControl btnEnableKeyPad = null;
+    [SkinControl(61)] protected GUIToggleButtonControl btnEnableCustom = null;
+    [SkinControl(62)] protected GUIButtonControl btnKeyPadMapping = null;
     private MatrixMX.KeyPadControl KPSettings = new MatrixMX.KeyPadControl();
 
     public KeyPadWindow()
@@ -82,9 +78,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
             MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping();
           }
           new InputMappingForm("MatrixMX_Keypad").ShowDialog();
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Info("VLSYS_AdvancedSetupForm.btnRemoteSetup_Click() CAUGHT EXCEPTION: {0}", new object[] { exception });
+          Log.Info("VLSYS_AdvancedSetupForm.btnRemoteSetup_Click() CAUGHT EXCEPTION: {0}", new object[] {exception});
         }
       }
       base.OnClicked(controlId, control, actionType);
@@ -148,8 +145,5 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
       btnKeyPadMapping.Visible = layout.KeyPadMapping;
       label1.Visible = layout.Label1;
     }
-
-
   }
 }
-

@@ -24,18 +24,21 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Ripper;
-using MediaPortal.Music.Database;
-using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
-using Yeti.MMedia.Mp3;
-using Yeti.Lame;
-using WaveLib;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Ripper;
+using MediaPortal.TagReader;
 using Roger.ID3;
+using WaveLib;
+using Yeti.Lame;
+using Yeti.MMedia.Mp3;
 
 namespace MediaPortal.MusicImport
 {
@@ -60,8 +63,8 @@ namespace MediaPortal.MusicImport
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
     private static Queue importQueue = new Queue();
     private static int GetID;
-    string format;
-    static bool importUnknown = true;
+    private string format;
+    private static bool importUnknown = true;
 
     //private static iTunesLib.IiTunes iTunesApp = null;
 
@@ -70,7 +73,7 @@ namespace MediaPortal.MusicImport
       public string TempFileName;
       public string TargetFileName;
       public string TargetDir;
-      public MediaPortal.TagReader.MusicTag MusicTag;
+      public MusicTag MusicTag;
       public int TrackCount;
       public GUIListItem Item;
     }
@@ -80,12 +83,11 @@ namespace MediaPortal.MusicImport
       get { return m_Ripping; }
     }
 
-    Thread EncodeThread;
+    private Thread EncodeThread;
 
     public MusicImport()
     {
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mp3VBR = xmlreader.GetValueAsBool("musicimport", "mp3vbr", true);
         mp3MONO = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -103,12 +105,12 @@ namespace MediaPortal.MusicImport
       }
       Rates = Mpeg1BitRates.Split(',');
 
-      EncodeThread = new Thread(new ThreadStart(MusicImport.ThreadEncodeTrack));
+      EncodeThread = new Thread(new ThreadStart(ThreadEncodeTrack));
       EncodeThread.Name = "CD Import";
       EncodeThread.IsBackground = true;
-      EncodeThread.Priority = (ThreadPriority)mp3Priority;
+      EncodeThread.Priority = (ThreadPriority) mp3Priority;
 
-      dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      dlgProgress = (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 
       if (dlgProgress != null)
       {
@@ -123,17 +125,21 @@ namespace MediaPortal.MusicImport
     public static void WriteWaveData(object sender, DataReadEventArgs ea)
     {
       if (m_Writer != null)
-        m_Writer.Write(ea.Data, 0, (int)ea.DataSize);
+      {
+        m_Writer.Write(ea.Data, 0, (int) ea.DataSize);
+      }
     }
 
     private static void CdReadProgress(object sender, ReadProgressEventArgs ea)
     {
-      ulong Percent = ((ulong)ea.BytesRead * 100) / ea.Bytes2Read;
+      ulong Percent = ((ulong) ea.BytesRead*100)/ea.Bytes2Read;
       if (!mp3Background)
       {
-        dlgProgress.SetPercentage((int)Percent);
+        dlgProgress.SetPercentage((int) Percent);
         if (dlgProgress.IsCanceled)
+        {
           m_CancelRipping = true;
+        }
       }
       ea.CancelRead |= m_CancelRipping;
     }
@@ -149,31 +155,35 @@ namespace MediaPortal.MusicImport
       if (File.Exists(Config.GetFile(Config.Dir.Base, "lame_enc.dll")))
       {
         // Release the drives first for CDDRIVE to be able to open them
-        MediaPortal.Player.BassMusicPlayer.ReleaseCDDrives();
+        BassMusicPlayer.ReleaseCDDrives();
         GUIListItem item = facadeView.SelectedListItem;
         char[] Drives = CDDrive.GetCDDriveLetters();
         if ((!item.IsFolder) && (Array.IndexOf(Drives, item.Path[0]) > -1))
         {
           TrackInfo trackInfo = new TrackInfo();
-          if ((TagReader.MusicTag)item.MusicTag == null)
+          if ((MusicTag) item.MusicTag == null)
           {
-            TagReader.MusicTag musicTag = new TagReader.MusicTag();
+            MusicTag musicTag = new MusicTag();
             musicTag.Artist = "Unknown Artist";
             musicTag.Album = "Unknown Album";
             musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
             musicTag.Title = string.Format("Track {0:00}", musicTag.Track);
             item.MusicTag = musicTag;
           }
-          trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
+          trackInfo.MusicTag = (MusicTag) item.MusicTag;
           trackInfo.TrackCount = facadeView.Count - 1;
           trackInfo.Item = item;
 
           if (item.Label != "..")
+          {
             try
             {
               EncodeTrack(trackInfo);
             }
-            catch { }
+            catch
+            {
+            }
+          }
         }
       }
     }
@@ -184,7 +194,7 @@ namespace MediaPortal.MusicImport
       if (File.Exists(Config.GetFile(Config.Dir.Base, "lame_enc.dll")))
       {
         // Release the drives first for CDDRIVE to be able to open them
-        MediaPortal.Player.BassMusicPlayer.ReleaseCDDrives();
+        BassMusicPlayer.ReleaseCDDrives();
         char[] Drives = CDDrive.GetCDDriveLetters();
         for (int i = 1; i < facadeView.Count; ++i)
         {
@@ -192,16 +202,16 @@ namespace MediaPortal.MusicImport
           if ((!item.IsFolder) && (Array.IndexOf(Drives, item.Path[0]) > -1))
           {
             TrackInfo trackInfo = new TrackInfo();
-            if ((TagReader.MusicTag)item.MusicTag == null)
+            if ((MusicTag) item.MusicTag == null)
             {
-              TagReader.MusicTag musicTag = new TagReader.MusicTag();
+              MusicTag musicTag = new MusicTag();
               musicTag.Artist = "Unknown Artist";
               musicTag.Album = "Unknown Album";
               musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
               musicTag.Title = string.Format("Track {0:00}", musicTag.Track);
               item.MusicTag = musicTag;
             }
-            trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
+            trackInfo.MusicTag = (MusicTag) item.MusicTag;
             trackInfo.TrackCount = facadeView.Count - 1;
             trackInfo.Item = item;
 
@@ -209,7 +219,9 @@ namespace MediaPortal.MusicImport
             {
               EncodeTrack(trackInfo);
             }
-            catch { }
+            catch
+            {
+            }
           }
         }
       }
@@ -219,18 +231,25 @@ namespace MediaPortal.MusicImport
     {
       string strInput = string.Empty;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         strInput = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
+      }
 
       string fileFormat = string.Empty;
       string dirFormat = string.Empty;
 
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%artist%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Artist), "Unknown Artist");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Title), string.Format("Track {0:00}", trackInfo.MusicTag.Track));
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%album%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Album), "Unknown Album");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%track%", MediaPortal.Util.Utils.MakeFileName(string.Format("{0:00}", trackInfo.MusicTag.Track)), "");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%year%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Year.ToString()), "0");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Genre), "");
+      strInput = Util.Utils.ReplaceTag(strInput, "%artist%", Util.Utils.MakeFileName(trackInfo.MusicTag.Artist),
+                                       "Unknown Artist");
+      strInput = Util.Utils.ReplaceTag(strInput, "%title%", Util.Utils.MakeFileName(trackInfo.MusicTag.Title),
+                                       string.Format("Track {0:00}", trackInfo.MusicTag.Track));
+      strInput = Util.Utils.ReplaceTag(strInput, "%album%", Util.Utils.MakeFileName(trackInfo.MusicTag.Album),
+                                       "Unknown Album");
+      strInput = Util.Utils.ReplaceTag(strInput, "%track%",
+                                       Util.Utils.MakeFileName(string.Format("{0:00}", trackInfo.MusicTag.Track)), "");
+      strInput = Util.Utils.ReplaceTag(strInput, "%year%", Util.Utils.MakeFileName(trackInfo.MusicTag.Year.ToString()),
+                                       "0");
+      strInput = Util.Utils.ReplaceTag(strInput, "%genre%", Util.Utils.MakeFileName(trackInfo.MusicTag.Genre), "");
 
       string strName = string.Empty;
       string strDirectory = string.Empty;
@@ -242,24 +261,32 @@ namespace MediaPortal.MusicImport
         strName = strInput.Substring(index + 1);
       }
       else
+      {
         strName = strInput;
+      }
 
       if (strDirectory != string.Empty)
       {
-        strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
+        strDirectory = Util.Utils.MakeDirectoryPath(strDirectory);
         if (!Directory.Exists(mp3ImportDir + "\\" + strDirectory))
+        {
           Directory.CreateDirectory(mp3ImportDir + "\\" + strDirectory);
+        }
       }
 
       if (strName.Trim() == string.Empty)
-        strName = string.Format("{0:00} " + MediaPortal.Util.Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
+      {
+        strName = string.Format("{0:00} " + Util.Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
+      }
 
-      strName = MediaPortal.Util.Utils.MakeFileName(strName);
+      strName = Util.Utils.MakeFileName(strName);
       if (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + ".mp3") && !mp3ReplaceExisting)
       {
         int i = 1;
         while (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + ".mp3"))
+        {
           ++i;
+        }
         strName += "_" + i.ToString();
       }
       strName += ".mp3";
@@ -273,23 +300,33 @@ namespace MediaPortal.MusicImport
       if (dlgProgress != null)
       {
         if (importQueue.Count > 1)
-          dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count));
+        {
+          dlgProgress.SetHeading(
+            string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")",
+                          importQueue.Count));
+        }
         else
+        {
           dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
+        }
       }
 
       if (!m_Ripping)
+      {
         EncodeThread.Start();
+      }
     }
 
-    static GUIDialogProgress dlgProgress;
+    private static GUIDialogProgress dlgProgress;
 
-    static void ThreadEncodeTrack()
+    private static void ThreadEncodeTrack()
     {
       m_Ripping = true;
 
       if (mp3Background)
+      {
         GUIWaitCursor.Show();
+      }
       else if (dlgProgress != null)
       {
         dlgProgress.Reset();
@@ -301,18 +338,26 @@ namespace MediaPortal.MusicImport
 
       while (importQueue.Count > 0)
       {
-        TrackInfo trackInfo = (TrackInfo)importQueue.Dequeue();
+        TrackInfo trackInfo = (TrackInfo) importQueue.Dequeue();
         if ((dlgProgress != null) && !mp3Background)
         {
           if (importQueue.Count > 0)
-            dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count + 1));
+          {
+            dlgProgress.SetHeading(
+              string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")",
+                            importQueue.Count + 1));
+          }
           else
+          {
             dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
+          }
 
           //dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
           dlgProgress.SetLine(2, trackInfo.TempFileName);
           if (dlgProgress.IsCanceled)
+          {
             m_CancelRipping = true;
+          }
         }
 
         if (!m_CancelRipping)
@@ -322,6 +367,7 @@ namespace MediaPortal.MusicImport
           if (File.Exists(trackInfo.TempFileName) && !m_CancelRipping)
           {
             #region Tagging
+
             try
             {
               Tags tags = Tags.FromFile(trackInfo.TempFileName);
@@ -331,28 +377,44 @@ namespace MediaPortal.MusicImport
               tags["TIT2"] = trackInfo.MusicTag.Title;
               tags["TCON"] = trackInfo.MusicTag.Genre;
               if (trackInfo.MusicTag.Year > 0)
+              {
                 tags["TYER"] = trackInfo.MusicTag.Year.ToString();
+              }
               tags["TENC"] = "MediaPortal / Lame";
               tags.Save(trackInfo.TempFileName);
             }
-            catch { }
+            catch
+            {
+            }
+
             #endregion
+
             #region Database
+
             try
             {
               if (!Directory.Exists(trackInfo.TargetDir))
+              {
                 Directory.CreateDirectory(trackInfo.TargetDir);
+              }
 
               if (File.Exists(trackInfo.TargetFileName))
+              {
                 if (mp3ReplaceExisting)
+                {
                   File.Delete(trackInfo.TargetFileName);
+                }
+              }
 
               if (!File.Exists(trackInfo.TargetFileName))
+              {
                 File.Move(trackInfo.TempFileName, trackInfo.TargetFileName);
+              }
 
               if (File.Exists(trackInfo.TargetFileName) && mp3Database)
               {
-                if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
+                if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") ||
+                    (trackInfo.MusicTag.Album != "Unknown Album"))
                 {
                   MusicDatabase dbs = MusicDatabase.Instance;
                   dbs.AddSong(trackInfo.TargetFileName);
@@ -361,16 +423,22 @@ namespace MediaPortal.MusicImport
             }
             catch
             {
-              Log.Info("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
+              Log.Info("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName,
+                       trackInfo.TargetFileName);
             }
+
             #endregion
           }
         }
       }
       if (mp3Background)
+      {
         GUIWaitCursor.Hide();
+      }
       else
+      {
         dlgProgress.Close();
+      }
       m_CancelRipping = false;
       m_Ripping = false;
     }
@@ -379,7 +447,9 @@ namespace MediaPortal.MusicImport
     {
       string targetFileName = trackInfo.MusicTag.Title;
       if (!Directory.Exists("temp"))
+      {
         Directory.CreateDirectory("temp");
+      }
 
       if (m_Drive.Open(trackInfo.Item.Path[0]))
       {
@@ -390,8 +460,11 @@ namespace MediaPortal.MusicImport
           {
             m_Drive.LockCD();
             if (dlgProgress.IsCanceled)
+            {
               m_CancelRipping = true;
+            }
             if (!m_CancelRipping)
+            {
               try
               {
                 try
@@ -402,9 +475,13 @@ namespace MediaPortal.MusicImport
                   {
                     mp3Config.format.lhv1.bEnableVBR = 1;
                     if (mp3FastMode)
+                    {
                       mp3Config.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_NEW;
+                    }
                     else
+                    {
                       mp3Config.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_DEFAULT;
+                    }
                     mp3Config.format.lhv1.nVBRQuality = mp3Quality;
                   }
                   else if (mp3CBR)
@@ -418,29 +495,38 @@ namespace MediaPortal.MusicImport
                     mp3Config.format.lhv1.bEnableVBR = 1;
                     mp3Config.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_ABR;
                     uint ConToKbwVbrAbr_bps = Convert.ToUInt16(Rates[mp3BitRate]);
-                    mp3Config.format.lhv1.dwVbrAbr_bps = ConToKbwVbrAbr_bps * 1000;
+                    mp3Config.format.lhv1.dwVbrAbr_bps = ConToKbwVbrAbr_bps*1000;
                   }
 
                   if (mp3MONO)
+                  {
                     mp3Config.format.lhv1.nMode = MpegMode.MONO;
+                  }
 
                   mp3Config.format.lhv1.bWriteVBRHeader = 1;
 
                   Stream WaveFile = new FileStream(trackInfo.TempFileName, FileMode.Create, FileAccess.Write);
                   m_Writer = new Mp3Writer(WaveFile, Format, mp3Config);
-                  if (!m_CancelRipping) try
+                  if (!m_CancelRipping)
+                  {
+                    try
                     {
                       Log.Info("CDIMP: Processing track {0}", trackInfo.MusicTag.Track);
 
                       DateTime InitTime = DateTime.Now;
-                      if (m_Drive.ReadTrack(trackInfo.MusicTag.Track, new CdDataReadEventHandler(WriteWaveData), new CdReadProgressEventHandler(CdReadProgress)) > 0)
+                      if (
+                        m_Drive.ReadTrack(trackInfo.MusicTag.Track, new CdDataReadEventHandler(WriteWaveData),
+                                          new CdReadProgressEventHandler(CdReadProgress)) > 0)
                       {
                         if (dlgProgress.IsCanceled)
+                        {
                           m_CancelRipping = true;
+                        }
                         if (!m_CancelRipping)
                         {
                           TimeSpan Duration = DateTime.Now - InitTime;
-                          double Speed = m_Drive.TrackSize(trackInfo.MusicTag.Track) / Duration.TotalSeconds / Format.nAvgBytesPerSec;
+                          double Speed = m_Drive.TrackSize(trackInfo.MusicTag.Track)/Duration.TotalSeconds/
+                                         Format.nAvgBytesPerSec;
                           Log.Info("CDIMP: Done reading track {0} at {1:0.00}x speed", trackInfo.MusicTag.Track, Speed);
                         }
                       }
@@ -450,11 +536,15 @@ namespace MediaPortal.MusicImport
                         m_Writer.Close();
                         WaveFile.Close();
                         if (File.Exists(trackInfo.TempFileName))
+                        {
                           try
                           {
                             File.Delete(trackInfo.TempFileName);
                           }
-                          catch { }
+                          catch
+                          {
+                          }
+                        }
                         //progressBar1.Value = 0;
                       }
                     }
@@ -463,16 +553,19 @@ namespace MediaPortal.MusicImport
                       m_Writer.Close();
                       m_Writer = null;
                       WaveFile.Close();
-                      Yeti.Lame.Lame_encDll.beWriteVBRHeader(trackInfo.TempFileName);
+                      Lame_encDll.beWriteVBRHeader(trackInfo.TempFileName);
                     }
+                  }
                 }
                 finally
-                { }
+                {
+                }
               }
               finally
               {
                 m_Drive.Close();
               }
+            }
           }
           finally
           {
@@ -480,15 +573,18 @@ namespace MediaPortal.MusicImport
           }
         }
         if (dlgProgress.IsCanceled)
+        {
           m_CancelRipping = true;
+        }
         if (m_CancelRipping)
         {
           if (File.Exists(trackInfo.TempFileName))
+          {
             File.Delete(trackInfo.TempFileName);
+          }
           m_Drive.Close();
         }
       }
     }
-
   }
 }

@@ -24,11 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using ProcessPlugins.DiskSpace;
 using MediaPortal.TV.Database;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Disk
 {
@@ -43,6 +40,7 @@ namespace MediaPortal.Tests.Disk
       rec.KeepRecordingMethod = TVRecorded.KeepMethod.Always;
       Assert.IsFalse(rec.ShouldBeDeleted);
     }
+
     [Test]
     public void DontDeleteRecordingsWithMethodSpace()
     {
@@ -50,6 +48,7 @@ namespace MediaPortal.Tests.Disk
       rec.KeepRecordingMethod = TVRecorded.KeepMethod.UntilSpaceNeeded;
       Assert.IsFalse(rec.ShouldBeDeleted);
     }
+
     [Test]
     public void DontDeleteRecordingsWithMethodWatched()
     {
@@ -57,6 +56,7 @@ namespace MediaPortal.Tests.Disk
       rec.KeepRecordingMethod = TVRecorded.KeepMethod.UntilWatched;
       Assert.IsFalse(rec.ShouldBeDeleted);
     }
+
     [Test]
     public void DontDeleteRecordingsBeforeEndDate()
     {
@@ -65,6 +65,7 @@ namespace MediaPortal.Tests.Disk
       rec.KeepRecordingTill = DateTime.Now.AddDays(+5);
       Assert.IsFalse(rec.ShouldBeDeleted);
     }
+
     [Test]
     public void DeleteRecordingsAfterEndDate()
     {
@@ -73,6 +74,5 @@ namespace MediaPortal.Tests.Disk
       rec.KeepRecordingTill = DateTime.Now.AddDays(-5);
       Assert.IsTrue(rec.ShouldBeDeleted);
     }
-
   }
 }

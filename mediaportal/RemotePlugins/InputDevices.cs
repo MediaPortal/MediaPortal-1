@@ -52,7 +52,7 @@ namespace MediaPortal.InputDevices
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-      IrTrans.Init(GUIGraphicsContext.ActiveForm);      
+      IrTrans.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -77,23 +77,33 @@ namespace MediaPortal.InputDevices
     public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
-      key = (char)0;
+      key = (char) 0;
       keyCode = Keys.A;
 
       if (CentareaRemote.WndProc(ref msg))
+      {
         return true;
+      }
 
       if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
+      {
         return true;
+      }
 
       if (HCWRemote.WndProc(msg))
+      {
         return true;
+      }
 
-      if (FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+      if (FireDTVRemote.WndProc(ref msg, out action, out key, out keyCode))
+      {
         return true;
+      }
 
       if (MCE2005Remote.WndProc(msg))
+      {
         return true;
+      }
 
       return false;
     }
@@ -105,7 +115,11 @@ namespace MediaPortal.InputDevices
     internal static AppCommands LastHidRequest
     {
       get { return _lastHidRequest; }
-      set { _lastHidRequest = value; _lastHidRequestTick = Environment.TickCount; }
+      set
+      {
+        _lastHidRequest = value;
+        _lastHidRequestTick = Environment.TickCount;
+      }
     }
 
     internal static int LastHidRequestTick
@@ -126,9 +140,9 @@ namespace MediaPortal.InputDevices
     private static FireDTVRemote FireDTVRemote = new FireDTVRemote();
     private static CentareaRemote CentareaRemote = new CentareaRemote();
     private static AppCommands _lastHidRequest;
-    
-    static int _lastHidRequestTick;
-    static bool _initialized = false;
+
+    private static int _lastHidRequestTick;
+    private static bool _initialized = false;
 
     #endregion Fields
   }

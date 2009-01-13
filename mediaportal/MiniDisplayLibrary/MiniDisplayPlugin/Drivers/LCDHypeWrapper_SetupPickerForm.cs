@@ -7,7 +7,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class LCDHypeWrapper_SetupPickerForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class LCDHypeWrapper_SetupPickerForm : MPConfigForm
   {
     private MPButton btnMiniDisplay;
     private MPButton btnLCDHype;
@@ -51,61 +51,59 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.btnMiniDisplay = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnLCDHype = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBox1 = new MPGroupBox();
+      this.btnMiniDisplay = new MPButton();
+      this.btnLCDHype = new MPButton();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                 | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnMiniDisplay);
       this.groupBox1.Controls.Add(this.btnLCDHype);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(12, 6);
+      this.groupBox1.FlatStyle = FlatStyle.Popup;
+      this.groupBox1.Location = new Point(12, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(372, 72);
+      this.groupBox1.Size = new Size(372, 72);
       this.groupBox1.TabIndex = 4;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = " Select the Advanced Configuration you wish to use ";
       // 
       // btnMiniDisplay
       // 
-      this.btnMiniDisplay.Location = new System.Drawing.Point(190, 19);
+      this.btnMiniDisplay.Location = new Point(190, 19);
       this.btnMiniDisplay.Name = "btnMiniDisplay";
-      this.btnMiniDisplay.Size = new System.Drawing.Size(176, 47);
+      this.btnMiniDisplay.Size = new Size(176, 47);
       this.btnMiniDisplay.TabIndex = 110;
       this.btnMiniDisplay.Text = "MiniDisplay Plugin";
       this.btnMiniDisplay.UseVisualStyleBackColor = true;
-      this.btnMiniDisplay.Click += new System.EventHandler(this.btnMiniDisplay_Click);
+      this.btnMiniDisplay.Click += new EventHandler(this.btnMiniDisplay_Click);
       // 
       // btnLCDHype
       // 
-      this.btnLCDHype.Location = new System.Drawing.Point(6, 19);
+      this.btnLCDHype.Location = new Point(6, 19);
       this.btnLCDHype.Name = "btnLCDHype";
-      this.btnLCDHype.Size = new System.Drawing.Size(176, 47);
+      this.btnLCDHype.Size = new Size(176, 47);
       this.btnLCDHype.TabIndex = 111;
       this.btnLCDHype.Text = "LCDHype Driver";
       this.btnLCDHype.UseVisualStyleBackColor = true;
-      this.btnLCDHype.Click += new System.EventHandler(this.btnLCDHype_Click);
+      this.btnLCDHype.Click += new EventHandler(this.btnLCDHype_Click);
       // 
       // LCDHypeWrapper_SetupPickerForm
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(396, 90);
+      this.AutoScaleDimensions = new SizeF(6F, 13F);
+      this.AutoScaleMode = AutoScaleMode.Font;
+      this.ClientSize = new Size(396, 90);
       this.Controls.Add(this.groupBox1);
       this.Name = "LCDHypeWrapper_SetupPickerForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.StartPosition = FormStartPosition.CenterParent;
       this.Tag = "";
       this.Text = "MiniDisplay - Setup - Configuration Type Select";
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
   }
 }
-

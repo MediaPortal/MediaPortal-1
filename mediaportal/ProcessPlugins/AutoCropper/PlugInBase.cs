@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.AutoCropper
 {
@@ -33,9 +31,8 @@ namespace ProcessPlugins.AutoCropper
   /// Handles the plug part of the autocropper, except Start and Stop
   /// which are left to the AutoCropper class which extends PlugInBase.
   /// </summary>
-  public abstract class PlugInBase : MediaPortal.GUI.Library.IPlugin, MediaPortal.GUI.Library.ISetupForm
+  public abstract class PlugInBase : IPlugin, ISetupForm
   {
-
     public abstract void Stop();
     public abstract void Start();
 
@@ -80,9 +77,13 @@ namespace ProcessPlugins.AutoCropper
       return true;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
-      strButtonText = null; strButtonImage = null; strButtonImageFocus = null; strPictureImage = null;
+      strButtonText = null;
+      strButtonImage = null;
+      strButtonImageFocus = null;
+      strPictureImage = null;
 
       return false;
     }

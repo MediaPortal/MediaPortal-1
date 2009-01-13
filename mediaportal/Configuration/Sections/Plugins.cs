@@ -31,12 +31,12 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-
 using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class Plugins : SectionSettings
@@ -57,7 +57,7 @@ namespace MediaPortal.Configuration.Sections
     private DataGrid dataGrid1;
     private ArrayList loadedPlugins = new ArrayList();
     private DataSet ds = new DataSet();
-    bool isLoaded = false;
+    private bool isLoaded = false;
 
     public Plugins()
       : this("Plugins")
@@ -67,7 +67,6 @@ namespace MediaPortal.Configuration.Sections
     public Plugins(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -120,14 +119,13 @@ namespace MediaPortal.Configuration.Sections
       dataGrid1.TableStyles.Add(ts1);
 
       ds.Tables.Add("Customers");
-      ds.Tables[0].Columns.Add("bool1", typeof(bool));
-      ds.Tables[0].Columns.Add("bool2", typeof(bool));
-      ds.Tables[0].Columns.Add("bool3", typeof(bool));
-      ds.Tables[0].Columns.Add("Name", typeof(string));
-      ds.Tables[0].Columns.Add("Author", typeof(string));
-      ds.Tables[0].Columns.Add("Description", typeof(string));
-      ds.Tables[0].Columns.Add("tag", typeof(ItemTag));
-
+      ds.Tables[0].Columns.Add("bool1", typeof (bool));
+      ds.Tables[0].Columns.Add("bool2", typeof (bool));
+      ds.Tables[0].Columns.Add("bool3", typeof (bool));
+      ds.Tables[0].Columns.Add("Name", typeof (string));
+      ds.Tables[0].Columns.Add("Author", typeof (string));
+      ds.Tables[0].Columns.Add("Description", typeof (string));
+      ds.Tables[0].Columns.Add("tag", typeof (ItemTag));
     }
 
     /// <summary>
@@ -137,7 +135,11 @@ namespace MediaPortal.Configuration.Sections
     {
       foreach (ItemTag tag in loadedPlugins)
       {
-        ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
+        ds.Tables[0].Rows.Add(new object[]
+                                {
+                                  true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(),
+                                  tag.SetupForm.Description(), tag
+                                });
       }
       ds.Tables[0].DefaultView.AllowNew = false;
       ds.Tables[0].DefaultView.AllowDelete = false;
@@ -233,10 +235,10 @@ namespace MediaPortal.Configuration.Sections
               {
                 if (t.IsClass)
                 {
-                  if (t.IsSubclassOf(typeof(GUIWindow)))
+                  if (t.IsSubclassOf(typeof (GUIWindow)))
                   {
                     object newObj = Activator.CreateInstance(t);
-                    GUIWindow win = (GUIWindow)newObj;
+                    GUIWindow win = (GUIWindow) newObj;
 
                     foreach (ItemTag tag in loadedPlugins)
                     {
@@ -272,18 +274,25 @@ namespace MediaPortal.Configuration.Sections
 
     public string GetPluginDescription(string name)
     {
-      if (!isLoaded) { this.LoadAll(); }
+      if (!isLoaded)
+      {
+        this.LoadAll();
+      }
       foreach (ItemTag tag in loadedPlugins)
       {
-        if (tag.SetupForm.PluginName() == name) return tag.SetupForm.Description();
+        if (tag.SetupForm.PluginName() == name)
+        {
+          return tag.SetupForm.Description();
+        }
       }
       return string.Empty;
     }
+
     public override void LoadSettings()
     {
       try
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
@@ -293,7 +302,8 @@ namespace MediaPortal.Configuration.Sections
             {
               if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
               {
-                row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+                row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(),
+                                                        itemTag.SetupForm.DefaultEnabled());
               }
               else
               {
@@ -318,7 +328,9 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
 
@@ -327,15 +339,15 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       try
       {
-        using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
             ItemTag itemTag = row["tag"] as ItemTag;
 
-            bool bEnabled = (bool)row["bool1"];
-            bool bHome = (bool)row["bool2"];
-            bool bPlugins = (bool)row["bool3"];
+            bool bEnabled = (bool) row["bool1"];
+            bool bHome = (bool) row["bool2"];
+            bool bPlugins = (bool) row["bool3"];
             if (itemTag.SetupForm != null)
             {
               if (itemTag.SetupForm.DefaultEnabled() && !itemTag.SetupForm.CanEnable())
@@ -358,7 +370,9 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
 
@@ -389,14 +403,16 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.setupButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.dataGrid1);
       this.groupBox1.Controls.Add(this.setupButton);
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
@@ -407,9 +423,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dataGrid1
       // 
-      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGrid1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.DataMember = "";
       this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
       this.dataGrid1.Location = new System.Drawing.Point(16, 24);
@@ -419,7 +437,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // setupButton
       // 
-      this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.setupButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.setupButton.Location = new System.Drawing.Point(384, 376);
       this.setupButton.Name = "setupButton";
       this.setupButton.Size = new System.Drawing.Size(72, 22);
@@ -433,23 +453,22 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Plugins";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.dataGrid1)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion
 
     private void setupButton_Click(object sender, EventArgs e)
     {
-      CurrencyManager cm = (CurrencyManager)this.BindingContext[dataGrid1.DataSource, dataGrid1.DataMember];
-      DataRow row = ((DataRowView)cm.Current).Row;
-      if (((bool)row["bool1"]) == false)
+      CurrencyManager cm = (CurrencyManager) this.BindingContext[dataGrid1.DataSource, dataGrid1.DataMember];
+      DataRow row = ((DataRowView) cm.Current).Row;
+      if (((bool) row["bool1"]) == false)
       {
         MessageBox.Show("Selected plugin is not enabled");
         return;
       }
-      ItemTag tag = (ItemTag)row["tag"];
+      ItemTag tag = (ItemTag) row["tag"];
       if (tag.SetupForm != null)
       {
         if (tag.SetupForm.HasSetup())
@@ -466,7 +485,8 @@ namespace MediaPortal.Configuration.Sections
       base.OnSectionActivated();
       LoadAll();
     }
-    void LoadAll()
+
+    private void LoadAll()
     {
       if (!isLoaded)
       {
@@ -488,7 +508,6 @@ namespace MediaPortal.Configuration.Sections
         //
         PopulateDatagrid();
         LoadSettings();
-
       }
     }
 
@@ -501,14 +520,14 @@ namespace MediaPortal.Configuration.Sections
         {
           for (int i = 0; i < loadedPlugins.Count; i++)
           {
-            ItemTag item = (ItemTag)loadedPlugins[i];
+            ItemTag item = (ItemTag) loadedPlugins[i];
             if (item.SetupForm.PluginName().Equals("PowerScheduler") &&
                 item.SetupForm.Author().Equals("Bavarian"))
             {
               loadedPlugins.RemoveAt(i);
               Log.Info("Hiding inbuild PowerScheduler");
               return;
-            } 
+            }
           }
         }
       }

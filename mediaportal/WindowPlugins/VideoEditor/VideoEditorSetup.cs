@@ -23,11 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -62,7 +59,8 @@ namespace WindowPlugins.VideoEditor
       return "This plugin is able to cut .mpg, .dvr-ms and .ts files";
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(2090);
       strButtonImage = string.Empty;
@@ -73,7 +71,7 @@ namespace WindowPlugins.VideoEditor
 
     public int GetWindowId()
     {
-      return (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR;
+      return (int) GUIWindow.Window.WINDOW_VIDEO_EDITOR;
     }
 
     public bool HasSetup()

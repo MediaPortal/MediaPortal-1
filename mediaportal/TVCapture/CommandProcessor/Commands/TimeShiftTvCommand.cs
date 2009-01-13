@@ -24,33 +24,19 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
   public class TimeShiftTvCommand : CardCommand
   {
-    string _channelName;
+    private string _channelName;
 
     public string TvChannel
     {
@@ -61,9 +47,13 @@ namespace MediaPortal.TV.Recording
     public TimeShiftTvCommand(string channelName)
     {
       if (channelName == null)
+      {
         throw new ArgumentNullException("channelname");
+      }
       if (channelName.Length == 0)
+      {
         throw new ArgumentException("channelname is empty");
+      }
       TvChannel = channelName;
     }
 
@@ -74,7 +64,7 @@ namespace MediaPortal.TV.Recording
 
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); // "No tuner cards installed";
         Succeeded = false;
         return;
       }
@@ -103,7 +93,7 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
-      }//for (int i=0; i < handler.TVCards.Count;++i)
+      } //for (int i=0; i < handler.TVCards.Count;++i)
 
       if (cardNo >= 0)
       {
@@ -111,11 +101,13 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(LogType.Recorder, "Recorder:  Found card:{0}", dev.CommercialName);
 
         string fileName = dev.TimeShiftFullFileName;
-        ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fileName);
-        if (freeSpace < (1024L * 1024L * 1024L) )// 1 GB
+        ulong freeSpace = Util.Utils.GetFreeDiskSpace(fileName);
+        if (freeSpace < (1024L*1024L*1024L)) // 1 GB
         {
-          Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", fileName[0]);
-          ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
+          Log.WriteFile(LogType.Recorder, true,
+                        "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace",
+                        fileName[0]);
+          ErrorMessage = GUILocalizeStrings.Get(765); // "Not enough free diskspace";
           Succeeded = false;
           return;
         }
@@ -132,11 +124,11 @@ namespace MediaPortal.TV.Recording
 
         if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
         {
-
           Log.WriteFile(LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
           if (dev.StartTimeShifting(_channelName) == false)
           {
-            ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());//"Failed to start timeshifting";
+            ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());
+              //"Failed to start timeshifting";
             Succeeded = false;
             return;
           }
@@ -152,7 +144,7 @@ namespace MediaPortal.TV.Recording
         handler.ResetTimeshiftTimer();
         Succeeded = true;
         return;
-      }//if (cardNo>=0)
+      } //if (cardNo>=0)
 
       Log.WriteFile(LogType.Recorder, "Recorder:  find free card");
 
@@ -183,10 +175,10 @@ namespace MediaPortal.TV.Recording
       {
         Succeeded = false;
 
-        ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
+        ErrorMessage = GUILocalizeStrings.Get(757); // "All tuners are busy";
         if (cardCanViewChannel == false)
         {
-          ErrorMessage = String.Format(GUILocalizeStrings.Get(756), _channelName);//No tuner can receive:{0}
+          ErrorMessage = String.Format(GUILocalizeStrings.Get(756), _channelName); //No tuner can receive:{0}
         }
         Log.WriteFile(LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
@@ -198,7 +190,8 @@ namespace MediaPortal.TV.Recording
       handler.TVChannelName = _channelName;
       dev = handler.TVCards[handler.CurrentCardIndex];
 
-      Log.WriteFile(LogType.Recorder, "Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority, dev.Graph.CommercialName);
+      Log.WriteFile(LogType.Recorder, "Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority,
+                    dev.Graph.CommercialName);
 
       //do we want to use timeshifting ?
       // yep, then turn timeshifting on
@@ -206,18 +199,21 @@ namespace MediaPortal.TV.Recording
       // yes, does card support it?
       if (!dev.SupportsTimeShifting)
       {
-        ErrorMessage = GUILocalizeStrings.Get(760);// "No tuner available for timeshifting";
+        ErrorMessage = GUILocalizeStrings.Get(760); // "No tuner available for timeshifting";
         Succeeded = false;
         return;
       }
-      if (MediaPortal.Util.Utils.GetFreeDiskSpace(dev.TimeShiftFullFileName) < (1024L * 1024L * 1024L))// 1 GB
+      if (Util.Utils.GetFreeDiskSpace(dev.TimeShiftFullFileName) < (1024L*1024L*1024L)) // 1 GB
       {
-        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", dev.TimeShiftFullFileName[0]);
-        ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
+        Log.WriteFile(LogType.Recorder, true,
+                      "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace",
+                      dev.TimeShiftFullFileName[0]);
+        ErrorMessage = GUILocalizeStrings.Get(765); // "Not enough free diskspace";
         Succeeded = false;
         return;
       }
-      Log.WriteFile(LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
+      Log.WriteFile(LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName,
+                    _channelName);
 
       if (dev.IsTimeShifting)
       {
@@ -227,7 +223,8 @@ namespace MediaPortal.TV.Recording
       if (dev.StartTimeShifting(_channelName) == false)
       {
         Succeeded = false;
-        ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());//"Failed to start timeshifting";
+        ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());
+          //"Failed to start timeshifting";
         return;
       }
       handler.TuneExternalChannel(_channelName, true);
@@ -237,7 +234,7 @@ namespace MediaPortal.TV.Recording
       Succeeded = true;
     }
 
-    void TurnTvOff(CommandProcessor handler, int exceptCard)
+    private void TurnTvOff(CommandProcessor handler, int exceptCard)
     {
       StopTvCommand cmd = new StopTvCommand(exceptCard);
       cmd.Execute(handler);

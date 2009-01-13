@@ -24,13 +24,13 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -38,21 +38,21 @@ namespace MediaPortal.GUI.Alarm
   /// Summary description for SetupForm.
   /// </summary>
   [PluginIcons("WindowPlugins.GUIAlarm.Alarm.gif", "WindowPlugins.GUIAlarm.Alarm_disabled.gif")]
-  public class AlarmSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IShowPlugin
+  public class AlarmSetupForm : MPConfigForm, ISetupForm, IShowPlugin
   {
-    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private MediaPortal.UserInterface.Controls.MPButton btnOk;
-    private MediaPortal.UserInterface.Controls.MPGroupBox grpSounds;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.Windows.Forms.NumericUpDown RepeatCount;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private System.Windows.Forms.NumericUpDown RepeatSeconds;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton btnAlarmSoundsFolder;
-    private MediaPortal.UserInterface.Controls.MPTextBox txtAlarmSoundsFolder;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MPButton btnCancel;
+    private FolderBrowserDialog folderBrowserDialog;
+    private MPButton btnOk;
+    private MPGroupBox grpSounds;
+    private MPLabel label6;
+    private NumericUpDown RepeatCount;
+    private MPLabel label3;
+    private MPLabel label4;
+    private NumericUpDown RepeatSeconds;
+    private MPLabel label2;
+    private MPButton btnAlarmSoundsFolder;
+    private MPTextBox txtAlarmSoundsFolder;
+    private MPLabel label1;
     private GroupBox grpAlarmTimeout;
     private NumericUpDown NUDAlarmTimeout;
     private Label lblAlarmTimeout;
@@ -65,10 +65,11 @@ namespace MediaPortal.GUI.Alarm
     private Label lblAlarmVol3;
     private Label lblAlarmVol4;
     private Button cmdAlarmVolTest;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public AlarmSetupForm()
     {
@@ -94,6 +95,7 @@ namespace MediaPortal.GUI.Alarm
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -126,17 +128,19 @@ namespace MediaPortal.GUI.Alarm
       this.NUDAlarmVol = new System.Windows.Forms.NumericUpDown();
       this.chkEnableDefaultVol = new System.Windows.Forms.CheckBox();
       this.grpSounds.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.RepeatCount)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.RepeatSeconds)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.RepeatCount)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.RepeatSeconds)).BeginInit();
       this.grpAlarmTimeout.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmTimeout)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.NUDAlarmTimeout)).BeginInit();
       this.grpAlarmVol.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmVol)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.NUDAlarmVol)).BeginInit();
       this.SuspendLayout();
       // 
       // btnOk
       // 
-      this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOk.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOk.Location = new System.Drawing.Point(245, 286);
       this.btnOk.Name = "btnOk";
       this.btnOk.Size = new System.Drawing.Size(75, 23);
@@ -147,7 +151,9 @@ namespace MediaPortal.GUI.Alarm
       // 
       // btnCancel
       // 
-      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.btnCancel.Location = new System.Drawing.Point(325, 286);
       this.btnCancel.Name = "btnCancel";
@@ -159,8 +165,10 @@ namespace MediaPortal.GUI.Alarm
       // 
       // grpSounds
       // 
-      this.grpSounds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.grpSounds.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.grpSounds.Controls.Add(this.label6);
       this.grpSounds.Controls.Add(this.RepeatCount);
       this.grpSounds.Controls.Add(this.label3);
@@ -190,25 +198,31 @@ namespace MediaPortal.GUI.Alarm
       // RepeatCount
       // 
       this.RepeatCount.Location = new System.Drawing.Point(48, 71);
-      this.RepeatCount.Maximum = new decimal(new int[] {
-            59,
-            0,
-            0,
-            0});
-      this.RepeatCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.RepeatCount.Maximum = new decimal(new int[]
+                                               {
+                                                 59,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
+      this.RepeatCount.Minimum = new decimal(new int[]
+                                               {
+                                                 1,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
       this.RepeatCount.Name = "RepeatCount";
       this.RepeatCount.Size = new System.Drawing.Size(40, 20);
       this.RepeatCount.TabIndex = 3;
       this.RepeatCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this.RepeatCount.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+      this.RepeatCount.Value = new decimal(new int[]
+                                             {
+                                               5,
+                                               0,
+                                               0,
+                                               0
+                                             });
       // 
       // label3
       // 
@@ -231,25 +245,31 @@ namespace MediaPortal.GUI.Alarm
       // RepeatSeconds
       // 
       this.RepeatSeconds.Location = new System.Drawing.Point(136, 47);
-      this.RepeatSeconds.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-      this.RepeatSeconds.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.RepeatSeconds.Maximum = new decimal(new int[]
+                                                 {
+                                                   120,
+                                                   0,
+                                                   0,
+                                                   0
+                                                 });
+      this.RepeatSeconds.Minimum = new decimal(new int[]
+                                                 {
+                                                   1,
+                                                   0,
+                                                   0,
+                                                   0
+                                                 });
       this.RepeatSeconds.Name = "RepeatSeconds";
       this.RepeatSeconds.Size = new System.Drawing.Size(48, 20);
       this.RepeatSeconds.TabIndex = 2;
       this.RepeatSeconds.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this.RepeatSeconds.Value = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
+      this.RepeatSeconds.Value = new decimal(new int[]
+                                               {
+                                                 120,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
       // 
       // label2
       // 
@@ -262,7 +282,9 @@ namespace MediaPortal.GUI.Alarm
       // 
       // btnAlarmSoundsFolder
       // 
-      this.btnAlarmSoundsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAlarmSoundsFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAlarmSoundsFolder.Location = new System.Drawing.Point(312, 19);
       this.btnAlarmSoundsFolder.Name = "btnAlarmSoundsFolder";
       this.btnAlarmSoundsFolder.Size = new System.Drawing.Size(64, 23);
@@ -273,8 +295,10 @@ namespace MediaPortal.GUI.Alarm
       // 
       // txtAlarmSoundsFolder
       // 
-      this.txtAlarmSoundsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtAlarmSoundsFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtAlarmSoundsFolder.BorderColor = System.Drawing.Color.Empty;
       this.txtAlarmSoundsFolder.Location = new System.Drawing.Point(88, 19);
       this.txtAlarmSoundsFolder.Name = "txtAlarmSoundsFolder";
@@ -292,8 +316,10 @@ namespace MediaPortal.GUI.Alarm
       // 
       // grpAlarmTimeout
       // 
-      this.grpAlarmTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.grpAlarmTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.grpAlarmTimeout.Controls.Add(this.LblRadioOnlyMsg);
       this.grpAlarmTimeout.Controls.Add(this.NUDAlarmTimeout);
       this.grpAlarmTimeout.Controls.Add(this.lblAlarmTimeout);
@@ -316,24 +342,30 @@ namespace MediaPortal.GUI.Alarm
       // NUDAlarmTimeout
       // 
       this.NUDAlarmTimeout.Location = new System.Drawing.Point(107, 36);
-      this.NUDAlarmTimeout.Maximum = new decimal(new int[] {
-            300,
-            0,
-            0,
-            0});
-      this.NUDAlarmTimeout.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+      this.NUDAlarmTimeout.Maximum = new decimal(new int[]
+                                                   {
+                                                     300,
+                                                     0,
+                                                     0,
+                                                     0
+                                                   });
+      this.NUDAlarmTimeout.Minimum = new decimal(new int[]
+                                                   {
+                                                     5,
+                                                     0,
+                                                     0,
+                                                     0
+                                                   });
       this.NUDAlarmTimeout.Name = "NUDAlarmTimeout";
       this.NUDAlarmTimeout.Size = new System.Drawing.Size(65, 20);
       this.NUDAlarmTimeout.TabIndex = 0;
-      this.NUDAlarmTimeout.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+      this.NUDAlarmTimeout.Value = new decimal(new int[]
+                                                 {
+                                                   5,
+                                                   0,
+                                                   0,
+                                                   0
+                                                 });
       // 
       // lblAlarmTimeout
       // 
@@ -346,8 +378,10 @@ namespace MediaPortal.GUI.Alarm
       // 
       // grpAlarmVol
       // 
-      this.grpAlarmVol.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.grpAlarmVol.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.grpAlarmVol.Controls.Add(this.cmdAlarmVolTest);
       this.grpAlarmVol.Controls.Add(this.lblAlarmVol4);
       this.grpAlarmVol.Controls.Add(this.lblAlarmVol3);
@@ -445,17 +479,17 @@ namespace MediaPortal.GUI.Alarm
       this.Load += new System.EventHandler(this.AlarmSetupFrom_Load);
       this.grpSounds.ResumeLayout(false);
       this.grpSounds.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.RepeatCount)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.RepeatSeconds)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.RepeatCount)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.RepeatSeconds)).EndInit();
       this.grpAlarmTimeout.ResumeLayout(false);
       this.grpAlarmTimeout.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmTimeout)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.NUDAlarmTimeout)).EndInit();
       this.grpAlarmVol.ResumeLayout(false);
       this.grpAlarmVol.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmVol)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.NUDAlarmVol)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     #region ISetupFormEx Members
@@ -480,7 +514,8 @@ namespace MediaPortal.GUI.Alarm
       return 5000;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(850); //My Alarm
       strButtonImage = "";
@@ -521,12 +556,13 @@ namespace MediaPortal.GUI.Alarm
     #endregion
 
     #region Button Events
+
     /// <summary>
     /// Opens a folder dialog for the alarm sounds
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnAlarmSoundsFolder_Click(object sender, System.EventArgs e)
+    private void btnAlarmSoundsFolder_Click(object sender, EventArgs e)
     {
       using (folderBrowserDialog = new FolderBrowserDialog())
       {
@@ -547,7 +583,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnCancel_Click(object sender, System.EventArgs e)
+    private void btnCancel_Click(object sender, EventArgs e)
     {
       this.Close();
     }
@@ -557,7 +593,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void btnOk_Click(object sender, System.EventArgs e)
+    private void btnOk_Click(object sender, EventArgs e)
     {
       SaveSettings();
       this.Close();
@@ -589,7 +625,7 @@ namespace MediaPortal.GUI.Alarm
     /// <param name="e"></param>
     private void cmdAlarmVolTest_Click(object sender, EventArgs e)
     {
-      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+      VolumeHandler volumeHandler = new VolumeHandler();
 
       //convert the volume percentage into real value
       int realVolume;
@@ -604,36 +640,40 @@ namespace MediaPortal.GUI.Alarm
 
       //play windows sound
       const string testAudioFilePath = @"C:\windows\Media\chimes.wav";
-      if (System.IO.File.Exists(testAudioFilePath))
+      if (File.Exists(testAudioFilePath))
       {
-        MediaPortal.Util.Utils.PlaySound(testAudioFilePath, true, true);
+        Util.Utils.PlaySound(testAudioFilePath, true, true);
       }
       else
       {
-        MessageBox.Show("Cannot find the file " + testAudioFilePath + "." + Environment.NewLine + Environment.NewLine + "Try using another program to play something now - the current volume setting is the alarm volume setting. Pressing OK now will revert the volume to the previous setting.");
+        MessageBox.Show("Cannot find the file " + testAudioFilePath + "." + Environment.NewLine + Environment.NewLine +
+                        "Try using another program to play something now - the current volume setting is the alarm volume setting. Pressing OK now will revert the volume to the previous setting.");
       }
 
       //revert the volume setting to the previous one
       volumeHandler.Volume = existingVolume;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Form Load method
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void AlarmSetupFrom_Load(object sender, System.EventArgs e)
+    private void AlarmSetupFrom_Load(object sender, EventArgs e)
     {
       LoadSettings();
     }
+
     /// <summary>
     /// Saves my alarm settings to the profile xml.
     /// </summary>
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("alarm", "alarmSoundsFolder", txtAlarmSoundsFolder.Text);
         xmlwriter.SetValue("alarm", "alarmTimeout", NUDAlarmTimeout.Value);
@@ -651,7 +691,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         txtAlarmSoundsFolder.Text = xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", string.Empty);
         NUDAlarmTimeout.Value = xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);
@@ -659,7 +699,7 @@ namespace MediaPortal.GUI.Alarm
         RepeatCount.Value = xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
         chkEnableDefaultVol.Checked = xmlreader.GetValueAsBool("alarm", "alarmAlarmVolEnable", false);
         //make sure the button states are correct
-        chkEnableDefaultVol_CheckedChanged(this, new System.EventArgs());
+        chkEnableDefaultVol_CheckedChanged(this, new EventArgs());
 
         //convert real volume value to percentage first
         NUDAlarmVol.Value = ConvertRealVolumeToPercentage(xmlreader.GetValueAsInt("alarm", "alarmAlarmVol", 0));
@@ -674,11 +714,11 @@ namespace MediaPortal.GUI.Alarm
     private int ConvertRealVolumeToPercentage(decimal realVolume)
     {
       decimal tmpVolume;
-      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+      VolumeHandler volumeHandler = new VolumeHandler();
       tmpVolume = realVolume;
-      tmpVolume = tmpVolume / (volumeHandler.Maximum - volumeHandler.Minimum);
-      tmpVolume = tmpVolume * 100;
-      return (int)System.Math.Round(tmpVolume, 0);
+      tmpVolume = tmpVolume/(volumeHandler.Maximum - volumeHandler.Minimum);
+      tmpVolume = tmpVolume*100;
+      return (int) Math.Round(tmpVolume, 0);
     }
 
     /// <summary>
@@ -688,15 +728,15 @@ namespace MediaPortal.GUI.Alarm
     /// <returns></returns>
     private int ConvertPercentageToRealVolume(decimal percentVolume)
     {
-      MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+      VolumeHandler volumeHandler = new VolumeHandler();
 
       decimal tmpVolume;
       tmpVolume = percentVolume;
-      tmpVolume = tmpVolume / 100;
-      tmpVolume = tmpVolume * (volumeHandler.Maximum - volumeHandler.Minimum);
+      tmpVolume = tmpVolume/100;
+      tmpVolume = tmpVolume*(volumeHandler.Maximum - volumeHandler.Minimum);
       tmpVolume = tmpVolume + volumeHandler.Minimum;
 
-      return (int)System.Math.Round(tmpVolume, 0);
+      return (int) Math.Round(tmpVolume, 0);
     }
 
     #endregion

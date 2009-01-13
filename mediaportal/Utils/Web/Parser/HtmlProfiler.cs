@@ -24,9 +24,7 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
@@ -36,22 +34,27 @@ namespace MediaPortal.Utils.Web
   public class HtmlProfiler
   {
     #region Private Struct
+
     private struct Profile
     {
       public MatchTagCollection tags;
       public string tagMap;
     }
+
     #endregion
 
     #region Variables
-    Profile _template;
-    Profile _page;
-    HtmlSectionTemplate _sectionTemplate;
-    string _pageSource;
-    MatchCollection _matches;
+
+    private Profile _template;
+    private Profile _page;
+    private HtmlSectionTemplate _sectionTemplate;
+    private string _pageSource;
+    private MatchCollection _matches;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HtmlProfiler"/> class.
     /// </summary>
@@ -61,9 +64,11 @@ namespace MediaPortal.Utils.Web
       _sectionTemplate = template;
       _template = BuildProfile(_sectionTemplate.Template);
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Get the number of matches.
     /// </summary>
@@ -79,7 +84,7 @@ namespace MediaPortal.Utils.Web
         Regex templateMap = new Regex(_template.tagMap);
         _matches = templateMap.Matches(_page.tagMap);
       }
-      catch (System.ArgumentException)// ex)
+      catch (ArgumentException) // ex)
       {
         return 0;
       }
@@ -101,21 +106,21 @@ namespace MediaPortal.Utils.Web
         Match sub = _matches[index];
         if (sub.Length != 0)
         {
-          MatchTag start = (MatchTag)_page.tags[sub.Index];
+          MatchTag start = (MatchTag) _page.tags[sub.Index];
 
           int tagIndex = sub.Index + sub.Length;
           int sourceLength;
-          
+
           if (_page.tags.Count > tagIndex)
           {
             // get source data until the start of the next tag
-            MatchTag end = (MatchTag)_page.tags[tagIndex];
+            MatchTag end = (MatchTag) _page.tags[tagIndex];
             sourceLength = end.Index - start.Index;
           }
           else
           {
             // If last tag, get source data until the end of the current tag
-            MatchTag end = (MatchTag)_page.tags[tagIndex - 1];
+            MatchTag end = (MatchTag) _page.tags[tagIndex - 1];
             sourceLength = end.Index + end.Length - start.Index;
           }
 
@@ -125,9 +130,11 @@ namespace MediaPortal.Utils.Web
 
       return source;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Builds the profile.
     /// </summary>
@@ -137,7 +144,9 @@ namespace MediaPortal.Utils.Web
     {
       Profile build = new Profile();
       if (source == null || source.Length == 0)
+      {
         return build;
+      }
 
       MatchTagCollection tags = HtmlString.TagList(source);
       build.tags = new MatchTagCollection();
@@ -155,18 +164,24 @@ namespace MediaPortal.Utils.Web
         }
 
         if (_sectionTemplate.Tags.IndexOf(tagStart) != -1 &&
-          tag.TagName != "br")
+            tag.TagName != "br")
         {
           if (tagStart == 'T')
           {
             if (char.ToUpper(tag.TagName[1]) != 'A')
+            {
               tagStart = char.ToUpper(tag.TagName[1]);
+            }
           }
 
           if (tag.IsClose)
+          {
             build.tagMap += tagStart;
+          }
           else
+          {
             build.tagMap += char.ToLower(tagStart);
+          }
 
           build.tags.Add(tag);
         }
@@ -174,6 +189,7 @@ namespace MediaPortal.Utils.Web
 
       return build;
     }
+
     #endregion
   }
 }

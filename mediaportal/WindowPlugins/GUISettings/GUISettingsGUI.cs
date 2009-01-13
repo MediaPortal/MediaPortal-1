@@ -24,9 +24,8 @@
 #endregion
 
 using System;
-
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -35,21 +34,21 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUISettingsGUI : GUIWindow
   {
-    enum Controls
+    private enum Controls
     {
       CONTROL_SPEED_HORIZONTAL = 2,
       CONTROL_SPEED_VERTICAL = 4,
       CONTROL_FPS = 3,
       CONTROL_EXAMPLE = 25,
       CONTROL_EXAMPLE2 = 26,
-    };
+    } ;
 
-    int m_iSpeedHorizontal = 5;
-    int m_iSpeedVertical = 5;
+    private int m_iSpeedHorizontal = 5;
+    private int m_iSpeedVertical = 5;
 
     public GUISettingsGUI()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_GUI;
+      GetID = (int) Window.WINDOW_SETTINGS_GUI;
     }
 
     public override bool Init()
@@ -81,33 +80,32 @@ namespace MediaPortal.GUI.Settings
     {
       switch (message.Message)
       {
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
             LoadSettings();
-            GUISpinControl cntl = (GUISpinControl)GetControl((int)Controls.CONTROL_FPS);
+            GUISpinControl cntl = (GUISpinControl) GetControl((int) Controls.CONTROL_FPS);
             cntl.ShowRange = false;
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPEED_HORIZONTAL);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL);
             for (int i = 1; i <= 10; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_SPEED_HORIZONTAL, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_SPEED_HORIZONTAL, m_iSpeedHorizontal - 1);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL, m_iSpeedHorizontal - 1);
 
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPEED_VERTICAL);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_SPEED_VERTICAL);
             for (int i = 1; i <= 10; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_SPEED_VERTICAL, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_SPEED_VERTICAL, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_SPEED_VERTICAL, m_iSpeedVertical - 1);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_SPEED_VERTICAL, m_iSpeedVertical - 1);
 
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_FPS);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_FPS);
             for (int i = 10; i <= 100; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_FPS, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_FPS, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_FPS, GUIGraphicsContext.MaxFPS - 10);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_FPS, GUIGraphicsContext.MaxFPS - 10);
 
             ResetExampleLabels();
 
@@ -123,64 +121,63 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int)Controls.CONTROL_SPEED_HORIZONTAL)
+            if (iControl == (int) Controls.CONTROL_SPEED_HORIZONTAL)
             {
               string strLabel = message.Label;
               m_iSpeedHorizontal = Int32.Parse(strLabel);
               GUIGraphicsContext.ScrollSpeedHorizontal = m_iSpeedHorizontal;
               ResetExampleLabels();
             }
-            if (iControl == (int)Controls.CONTROL_SPEED_VERTICAL)
+            if (iControl == (int) Controls.CONTROL_SPEED_VERTICAL)
             {
               string strLabel = message.Label;
               m_iSpeedVertical = Int32.Parse(strLabel);
               GUIGraphicsContext.ScrollSpeedVertical = m_iSpeedVertical;
               ResetExampleLabels();
             }
-            if (iControl == (int)Controls.CONTROL_FPS)
+            if (iControl == (int) Controls.CONTROL_FPS)
             {
               string strLabel = message.Label;
               int fps = Int32.Parse(strLabel);
               GUIGraphicsContext.MaxFPS = fps;
             }
-
           }
           break;
-
       }
       return base.OnMessage(message);
     }
 
-    void ResetExampleLabels()
+    private void ResetExampleLabels()
     {
-      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_EXAMPLE);
-      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_EXAMPLE2);
-      string strTmp = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-      GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_EXAMPLE, strTmp);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_EXAMPLE2, strTmp);
+      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_EXAMPLE);
+      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_EXAMPLE2);
+      string strTmp =
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+      GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_EXAMPLE, strTmp);
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_EXAMPLE2, strTmp);
     }
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "scrollspeedhorizontal", 8);
         m_iSpeedVertical = xmlreader.GetValueAsInt("general", "scrollspeedvertical", 2);
       }
-
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("general", "scrollspeedhorizontal", m_iSpeedHorizontal.ToString());
         xmlwriter.SetValue("general", "scrollspeedvertical", m_iSpeedVertical.ToString());
         xmlwriter.SetValue("screen", "maxguifps", GUIGraphicsContext.MaxFPS);
       }
     }
-    #endregion
 
+    #endregion
   }
 }

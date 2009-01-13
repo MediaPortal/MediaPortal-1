@@ -25,12 +25,11 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
-
-using Microsoft.DirectX.Direct3D;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Music
 {
@@ -39,38 +38,38 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicArtistInfo : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(20)]    protected GUILabelControl lblArtist = null;
-    [SkinControlAttribute(21)]    protected GUILabelControl lblArtistName = null;
-    [SkinControlAttribute(22)]    protected GUILabelControl lblBorn = null;
-    [SkinControlAttribute(23)]    protected GUILabelControl lblYearsActive = null;
-    [SkinControlAttribute(24)]    protected GUILabelControl lblGenre = null;
-    [SkinControlAttribute(25)]    protected GUIFadeLabel lblTones = null;
-    [SkinControlAttribute(26)]    protected GUIFadeLabel lblStyles = null;
-    [SkinControlAttribute(27)]    protected GUILabelControl lblInstruments = null;
-    [SkinControlAttribute(3)]     protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(4)]     protected GUITextControl tbReview = null;
-    [SkinControlAttribute(5)]     protected GUIButtonControl btnBio = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnRefresh = null;
-
+    [SkinControl(20)] protected GUILabelControl lblArtist = null;
+    [SkinControl(21)] protected GUILabelControl lblArtistName = null;
+    [SkinControl(22)] protected GUILabelControl lblBorn = null;
+    [SkinControl(23)] protected GUILabelControl lblYearsActive = null;
+    [SkinControl(24)] protected GUILabelControl lblGenre = null;
+    [SkinControl(25)] protected GUIFadeLabel lblTones = null;
+    [SkinControl(26)] protected GUIFadeLabel lblStyles = null;
+    [SkinControl(27)] protected GUILabelControl lblInstruments = null;
+    [SkinControl(3)] protected GUIImage imgCoverArt = null;
+    [SkinControl(4)] protected GUITextControl tbReview = null;
+    [SkinControl(5)] protected GUIButtonControl btnBio = null;
+    [SkinControl(6)] protected GUIButtonControl btnRefresh = null;
 
     #region Base Dialog Variables
-    bool m_bRunning = false;
-    bool m_bRefresh = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
+
+    private bool m_bRunning = false;
+    private bool m_bRefresh = false;
+    private int m_dwParentWindowID = 0;
+    private GUIWindow m_pParentWindow = null;
 
     #endregion
 
-    Texture coverArtTexture = null;
-    bool viewBio = false;
-    MusicArtistInfo artistInfo = null;
-    int coverArtTextureWidth = 0;
-    int coverArtTextureHeight = 0;
-    bool _prevOverlay = false;
+    private Texture coverArtTexture = null;
+    private bool viewBio = false;
+    private MusicArtistInfo artistInfo = null;
+    private int coverArtTextureWidth = 0;
+    private int coverArtTextureHeight = 0;
+    private bool _prevOverlay = false;
 
     public GUIMusicArtistInfo()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_ARTIST_INFO;
+      GetID = (int) Window.WINDOW_ARTIST_INFO;
     }
 
     public override bool Init()
@@ -109,12 +108,13 @@ namespace MediaPortal.GUI.Music
     }
 
     #region Base Dialog Members
+
     public void RenderDlg(float timePassed)
     {
       base.Render(timePassed);
     }
 
-    void Close()
+    private void Close()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
@@ -149,6 +149,7 @@ namespace MediaPortal.GUI.Music
       }
       GUILayerManager.UnRegisterLayer(this);
     }
+
     #endregion
 
     protected override void OnPageDestroy(int newWindowId)
@@ -170,14 +171,17 @@ namespace MediaPortal.GUI.Music
       Refresh();
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
         string coverArtUrl = artistInfo.ImageURL;
         string coverArtFileName = GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
-        if (coverArtFileName != string.Empty) MediaPortal.Util.Utils.FileDelete(coverArtFileName);
+        if (coverArtFileName != string.Empty)
+        {
+          Util.Utils.FileDelete(coverArtFileName);
+        }
         m_bRefresh = true;
         Close();
         return;
@@ -195,13 +199,18 @@ namespace MediaPortal.GUI.Music
       set { artistInfo = value; }
     }
 
-    void Update()
+    private void Update()
     {
-      if (null == artistInfo) return;
+      if (null == artistInfo)
+      {
+        return;
+      }
       string tmpLine;
       string nameAKA = artistInfo.Artist;
       if (artistInfo.Aka != null && artistInfo.Aka.Length > 0)
+      {
         nameAKA += "(" + artistInfo.Aka + ")";
+      }
       lblArtist.Label = artistInfo.Artist;
       lblArtistName.Label = nameAKA;
       lblBorn.Label = artistInfo.Born;
@@ -252,14 +261,15 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[])list[i];
+            string[] listInfo = (string[]) list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
-              listInfo[0],  // year 
-              listInfo[1],  // title
-              listInfo[2]); // label
+                                    listInfo[0], // year 
+                                    listInfo[1], // title
+                                    listInfo[2]); // label
             strLine.Append(tmpLine);
             strLine2.Append(tmpLine);
-          };
+          }
+          ;
           strLine.Append('\n');
           artistInfo.Albums = strLine2.ToString();
         }
@@ -280,14 +290,15 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[])list[i];
+            string[] listInfo = (string[]) list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
-              listInfo[0],  // year 
-              listInfo[1],  // title
-              listInfo[2]); // label
+                                    listInfo[0], // year 
+                                    listInfo[1], // title
+                                    listInfo[2]); // label
             strLine.Append(tmpLine);
             strLine2.Append(tmpLine);
-          };
+          }
+          ;
           strLine.Append('\n');
           artistInfo.Compilations = strLine2.ToString();
         }
@@ -308,14 +319,15 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[])list[i];
+            string[] listInfo = (string[]) list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
-              listInfo[0],  // year 
-              listInfo[1],  // title
-              listInfo[2]); // label
+                                    listInfo[0], // year 
+                                    listInfo[1], // title
+                                    listInfo[2]); // label
             strLine.Append(tmpLine);
             strLine2.Append(tmpLine);
-          };
+          }
+          ;
           strLine.Append('\n');
           artistInfo.Singles = strLine2.ToString();
         }
@@ -336,14 +348,15 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[])list[i];
+            string[] listInfo = (string[]) list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
-              listInfo[0],  // year 
-              listInfo[1],  // title
-              listInfo[2]); // label
+                                    listInfo[0], // year 
+                                    listInfo[1], // title
+                                    listInfo[2]); // label
             strLine.Append(tmpLine);
             strLine2.Append(tmpLine);
-          };
+          }
+          ;
           strLine.Append('\n');
           artistInfo.Misc = strLine2.ToString();
         }
@@ -352,31 +365,37 @@ namespace MediaPortal.GUI.Music
         btnBio.Label = GUILocalizeStrings.Get(689);
       }
     }
+
     public override void Render(float timePassed)
     {
       RenderDlg(timePassed);
 
-      if (null == coverArtTexture) return;
+      if (null == coverArtTexture)
+      {
+        return;
+      }
 
       if (null != imgCoverArt)
       {
-        float x = (float)imgCoverArt.XPosition;
-        float y = (float)imgCoverArt.YPosition;
+        float x = (float) imgCoverArt.XPosition;
+        float y = (float) imgCoverArt.YPosition;
         int width;
         int height;
         GUIGraphicsContext.Correct(ref x, ref y);
 
         int maxWidth = imgCoverArt.Width;
         int maxHeight = imgCoverArt.Height;
-        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width, out height);
+        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width,
+                                         out height);
 
         GUIFontManager.Present();
-        MediaPortal.Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth, coverArtTextureHeight, 0, 0, true);
+        Util.Picture.RenderImage(coverArtTexture, (int) x, (int) y, width, height, coverArtTextureWidth,
+                                 coverArtTextureHeight, 0, 0, true);
       }
     }
 
 
-    void Refresh()
+    private void Refresh()
     {
       if (coverArtTexture != null)
       {
@@ -391,12 +410,13 @@ namespace MediaPortal.GUI.Music
       {
         //	Download image and save as 
         //	permanent thumb
-        MediaPortal.Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
+        Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
       }
 
-      if (System.IO.File.Exists(coverArtFileName))
+      if (File.Exists(coverArtFileName))
       {
-        coverArtTexture = MediaPortal.Util.Picture.Load(coverArtFileName, 0, 128, 128, true, false, out coverArtTextureWidth, out coverArtTextureHeight);
+        coverArtTexture = Util.Picture.Load(coverArtFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
+                                            out coverArtTextureHeight);
       }
       Update();
     }
@@ -408,6 +428,7 @@ namespace MediaPortal.GUI.Music
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -417,6 +438,7 @@ namespace MediaPortal.GUI.Music
     {
       Render(timePassed);
     }
+
     #endregion
   }
 }

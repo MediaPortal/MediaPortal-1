@@ -24,54 +24,43 @@
 #endregion
 
 #region usings
+
 using System;
-using System.Threading;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+using System.ComponentModel;
+using System.Threading;
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
 using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
-using TVCapture;
+using MediaPortal.TV.Database;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
-
   public class CommandProcessor : MultiCardBase, IDisposable
   {
     #region variables
+
     // recorder state
-    BackgroundWorker _processThread;
+    private BackgroundWorker _processThread;
 
 
     // list of all recorder commands which the processthread should process
-    List<CardCommand> _listCommands = new List<CardCommand>();
-    EPGProcessor _epgProcessor;
-    Scheduler _scheduler;
-    bool _isRunning;
-    bool _isStopped;
-    bool _isPaused;
-    DateTime _startTimeShiftTimer = DateTime.MinValue;
-    TvCardCollection _tvcards;
-    AutoResetEvent _waitMutex;
-    bool _controlTimeShifting = true;
+    private List<CardCommand> _listCommands = new List<CardCommand>();
+    private EPGProcessor _epgProcessor;
+    private Scheduler _scheduler;
+    private bool _isRunning;
+    private bool _isStopped;
+    private bool _isPaused;
+    private DateTime _startTimeShiftTimer = DateTime.MinValue;
+    private TvCardCollection _tvcards;
+    private AutoResetEvent _waitMutex;
+    private bool _controlTimeShifting = true;
+
     #endregion
 
     #region ctor
+
     public CommandProcessor()
       : base()
     {
@@ -81,7 +70,6 @@ namespace MediaPortal.TV.Recording
       _epgProcessor = new EPGProcessor();
       _scheduler = new Scheduler();
       _waitMutex = new AutoResetEvent(true);
-
     }
 
     //start the processing thread
@@ -92,19 +80,19 @@ namespace MediaPortal.TV.Recording
       _processThread = new BackgroundWorker();
       _processThread.DoWork += new DoWorkEventHandler(ProcessThread);
       _processThread.RunWorkerAsync();
-
     }
 
     #endregion
 
     #region public members
+
     public void Execute(CardCommand command)
     {
       AddCommand(command);
       while (!command.Finished)
       {
         GUIWindowManager.DispatchThreadMessages();
-        System.Threading.Thread.Sleep(100);
+        Thread.Sleep(100);
       }
     }
 
@@ -125,7 +113,10 @@ namespace MediaPortal.TV.Recording
     /// <returns>filename of the timeshifting file</returns>
     public string GetTimeShiftFileName(int card)
     {
-      if (card < 0 || card >= _tvcards.Count) return string.Empty;
+      if (card < 0 || card >= _tvcards.Count)
+      {
+        return string.Empty;
+      }
       TVCaptureDevice dev = _tvcards[card];
       string fileName = dev.TimeShiftFullFileName;
       return fileName;
@@ -140,7 +131,10 @@ namespace MediaPortal.TV.Recording
     public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
       card = -1;
-      if (rec == null) return false;
+      if (rec == null)
+      {
+        return false;
+      }
       //check all cards
       for (int i = 0; i < _tvcards.Count; ++i)
       {
@@ -160,16 +154,21 @@ namespace MediaPortal.TV.Recording
           if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && rec.EndTime >= rec.StartTime)
           {
             // do everytime on ... specific stuff
-            if (rec.StartTime < DateTime.Now && DateTime.Now < rec.EndTime // make sure we will get the right next program
-              && (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel // only needed
-              || rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)) // for "every..." types
+            if (rec.StartTime < DateTime.Now && DateTime.Now < rec.EndTime
+                // make sure we will get the right next program
+                && (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel // only needed
+                    || rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)) // for "every..." types
             {
               // we need to know if we want to record 2 back 2 back  programs with same title 
               // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
               TVChannel recChannel = new TVChannel(rec.Channel);
               TVProgram nextProg = recChannel.GetProgramAt(rec.EndTime.AddMinutes(1));
               bool isRecordingNextProgram = false;
-              if (nextProg != null) isRecordingNextProgram = rec.IsRecordingProgramAtTime(nextProg.StartTime.AddMinutes(1), nextProg, rec.PreRecord, rec.PostRecord);
+              if (nextProg != null)
+              {
+                isRecordingNextProgram = rec.IsRecordingProgramAtTime(nextProg.StartTime.AddMinutes(1), nextProg,
+                                                                      rec.PreRecord, rec.PostRecord);
+              }
               if (isRecordingNextProgram)
               {
                 // clone the currentrec and set its start end to next program ones
@@ -193,7 +192,7 @@ namespace MediaPortal.TV.Recording
         }
       }
       return false;
-    }//public static bool IsRecordingSchedule(TVRecording rec, out int card)
+    } //public static bool IsRecordingSchedule(TVRecording rec, out int card)
 
     public bool IsBusy
     {
@@ -205,12 +204,13 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
     public virtual void WaitTillFinished()
     {
       while (IsBusy)
       {
         GUIWindowManager.Process();
-        System.Threading.Thread.Sleep(100);
+        Thread.Sleep(100);
       }
     }
 
@@ -219,19 +219,19 @@ namespace MediaPortal.TV.Recording
       get { return _isPaused; }
       set
       {
-        if (_isPaused == value) return;
+        if (_isPaused == value)
+        {
+          return;
+        }
         _isPaused = value;
-
       }
     }
 
     public Scheduler scheduler
     {
-      get
-      {
-        return _scheduler;
-      }
+      get { return _scheduler; }
     }
+
     public TvCardCollection TVCards
     {
       get { return _tvcards; }
@@ -275,14 +275,16 @@ namespace MediaPortal.TV.Recording
 
       if (g_Player.Playing)
       {
-        Log.Info("Commandprocessor: Currently playing: {0} pos: {0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition, g_Player.Duration);
+        Log.Info("Commandprocessor: Currently playing: {0} pos: {0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition,
+                 g_Player.Duration);
       }
     }
 
     #endregion
 
     #region private members
-    void ProcessThread(object sender, DoWorkEventArgs e)
+
+    private void ProcessThread(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "CommandProcessor";
       Log.Info("Commandprocessor: Starting");
@@ -300,14 +302,17 @@ namespace MediaPortal.TV.Recording
       }
       Log.Debug("Commandprocessor: Running");
 
-      Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;      
+      Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
 
       while (_isRunning)
       {
         try
         {
           _waitMutex.WaitOne(500, true);
-          if (_isPaused) continue;
+          if (_isPaused)
+          {
+            continue;
+          }
 
           ProcessCommands();
           ProcessCards();
@@ -334,11 +339,15 @@ namespace MediaPortal.TV.Recording
     {
       _scheduler.Process(this);
     }
+
     public void ProcessCommands()
     {
       while (true)
       {
-        if (!IsBusy) return;
+        if (!IsBusy)
+        {
+          return;
+        }
         CardCommand cmd;
         lock (_listCommands)
         {
@@ -348,7 +357,7 @@ namespace MediaPortal.TV.Recording
         DateTime dtStart = DateTime.Now;
         try
         {
-          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Highest;
+          Thread.CurrentThread.Priority = ThreadPriority.Highest;
           cmd.Execute(this);
         }
         catch (Exception ex)
@@ -358,11 +367,12 @@ namespace MediaPortal.TV.Recording
         }
         finally
         {
-          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+          Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
           TimeSpan ts = DateTime.Now - dtStart;
           if (cmd.Succeeded == false)
           {
-            Log.Info("Commandprocessor: {0} failed reason: {1} time: {2} msec", cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
+            Log.Info("Commandprocessor: {0} failed reason: {1} time: {2} msec", cmd.ToString(), cmd.ErrorMessage,
+                     ts.TotalMilliseconds);
           }
           else
           {
@@ -378,7 +388,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    void StopAllCards()
+    private void StopAllCards()
     {
       Log.Info("Commandprocessor: Stopping all tuners");
       for (int i = 0; i < TVCards.Count; ++i)
@@ -393,6 +403,7 @@ namespace MediaPortal.TV.Recording
       _killTimeshiftingTimer = DateTime.Now;
       _startTimeShiftTimer = DateTime.MinValue;
     }
+
     public void ProcessCards()
     {
       //process all cards
@@ -449,7 +460,6 @@ namespace MediaPortal.TV.Recording
           {
             if (CurrentCardIndex == i)
             {
-
               //player not playing?
               if (!g_Player.Playing && !g_Player.Starting)
               {
@@ -468,7 +478,6 @@ namespace MediaPortal.TV.Recording
               {
                 _killTimeshiftingTimer = DateTime.Now;
               }
-
             }
             else
             {
@@ -478,10 +487,12 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-    }//void ProcessCards()
+    } //void ProcessCards()
+
     #endregion
 
     #region IDisposable
+
     public void Dispose()
     {
       if (_processThread != null)
@@ -489,12 +500,13 @@ namespace MediaPortal.TV.Recording
         _isRunning = false;
         while (_isStopped == false)
         {
-          System.Threading.Thread.Sleep(100);
+          Thread.Sleep(100);
         }
         _processThread.Dispose();
         _processThread = null;
       }
     }
+
     #endregion
   }
 }

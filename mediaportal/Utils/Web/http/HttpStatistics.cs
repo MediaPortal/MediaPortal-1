@@ -34,19 +34,24 @@ namespace MediaPortal.Utils.Web
   public class HttpStatistics : IHttpStatistics
   {
     #region Variables
+
     private Dictionary<string, SiteStatistics> _siteList;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HttpStats"/> class.
     /// </summary>
     public HttpStatistics()
     {
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the number of sites for which statistics are stored.
     /// </summary>
@@ -56,14 +61,20 @@ namespace MediaPortal.Utils.Web
       get
       {
         if (_siteList != null)
+        {
           return _siteList.Count;
+        }
         else
+        {
           return 0;
+        }
       }
     }
+
     #endregion
 
     #region <IHttpStatistics> Implementations
+
     /// <summary>
     /// Getbies the index.
     /// </summary>
@@ -75,7 +86,9 @@ namespace MediaPortal.Utils.Web
 
       listEnumerator.MoveNext();
       for (int i = 0; i < index; i++)
+      {
         listEnumerator.MoveNext();
+      }
 
       return listEnumerator.Current.Value;
     }
@@ -108,7 +121,6 @@ namespace MediaPortal.Utils.Web
         //_siteList.Remove(site);
         SiteStatistics stats = _siteList[site];
         stats.Clear();
-
       }
     }
 
@@ -123,7 +135,9 @@ namespace MediaPortal.Utils.Web
       SiteStatistics stats;
 
       if (_siteList == null)
+      {
         _siteList = new Dictionary<string, SiteStatistics>();
+      }
 
       if (_siteList.ContainsKey(site))
       {
@@ -137,6 +151,7 @@ namespace MediaPortal.Utils.Web
         _siteList.Add(site, stats);
       }
     }
+
     #endregion
   }
 }

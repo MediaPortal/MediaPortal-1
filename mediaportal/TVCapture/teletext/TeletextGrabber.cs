@@ -25,7 +25,6 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Teletext;
 using MediaPortal.TV.Recording;
 
 namespace MediaPortal.TV.Teletext
@@ -35,17 +34,16 @@ namespace MediaPortal.TV.Teletext
   /// </summary>
   public class TeletextGrabber
   {
-    static DVBTeletext _teletextDecoder;
-    static bool _grabbing = false;
-    static TVCaptureDevice _device;
+    private static DVBTeletext _teletextDecoder;
+    private static bool _grabbing = false;
+    private static TVCaptureDevice _device;
 
     static TeletextGrabber()
     {
-
       _teletextDecoder = new DVBTeletext();
-      Recorder.OnTvViewingStarted += new MediaPortal.TV.Recording.Recorder.OnTvViewHandler(OnTvViewingStarted);
-      Recorder.OnTvViewingStopped += new MediaPortal.TV.Recording.Recorder.OnTvViewHandler(OnTvViewingStopped);
-      Recorder.OnTvChannelChanged += new MediaPortal.TV.Recording.Recorder.OnTvChannelChangeHandler(OnTvChannelChanged);
+      Recorder.OnTvViewingStarted += new Recorder.OnTvViewHandler(OnTvViewingStarted);
+      Recorder.OnTvViewingStopped += new Recorder.OnTvViewHandler(OnTvViewingStopped);
+      Recorder.OnTvChannelChanged += new Recorder.OnTvChannelChangeHandler(OnTvChannelChanged);
     }
 
     private static void OnTvViewingStarted(int card, TVCaptureDevice device)
@@ -73,20 +71,20 @@ namespace MediaPortal.TV.Teletext
     {
       _teletextDecoder.SaveData(dataPtr);
     }
+
     public static void SaveAnalogData(IntPtr dataPtr, int len)
     {
       _teletextDecoder.SaveAnalogData(dataPtr, len);
     }
+
     public static DVBTeletext TeletextCache
     {
       get { return _teletextDecoder; }
     }
+
     public static bool Grab
     {
-      get
-      {
-        return _grabbing;
-      }
+      get { return _grabbing; }
       set
       {
         _grabbing = value;
@@ -94,13 +92,17 @@ namespace MediaPortal.TV.Teletext
         {
           _teletextDecoder.ClearBuffer();
           if (_device != null)
+          {
             _device.GrabTeletext(false);
+          }
         }
         else
         {
           _teletextDecoder.ClearBuffer();
           if (_device != null)
+          {
             _device.GrabTeletext(true);
+          }
         }
       }
     }

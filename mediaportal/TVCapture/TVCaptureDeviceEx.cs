@@ -26,28 +26,26 @@
 #if (UseCaptureCardDefinitions)
 
 #region usings
+
 using System;
-using System.IO;
-using System.Management;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using MediaPortal.Services;
-using Microsoft.Win32;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Player;
-using DShowNET;
-using DShowNET.Helper;
+using System.Drawing;
+using System.IO;
 using DirectShowLib;
+using DShowNET.Helper;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Radio.Database;
+using MediaPortal.Services;
+using MediaPortal.TV.Database;
+using MediaPortal.Video.Database;
+using Toub.MediaCenter.Dvrms.Metadata;
 using TVCapture;
 //using DirectX.Capture;
-using Toub.MediaCenter.Dvrms.Metadata;
-using System.Threading;
-using MediaPortal.Configuration;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -64,55 +62,70 @@ namespace MediaPortal.TV.Recording
   /// </summary>
 
   #region RecordingFileInfo class
+
   public class RecordingFileInfo : IComparable<RecordingFileInfo>
   {
     public string filename;
     public FileInfo info;
     public TVRecorded record;
+
     #region IComparable Members
 
     public int CompareTo(RecordingFileInfo fi)
     {
-      if (info.CreationTime < fi.info.CreationTime) return -1;
-      if (info.CreationTime > fi.info.CreationTime) return 1;
+      if (info.CreationTime < fi.info.CreationTime)
+      {
+        return -1;
+      }
+      if (info.CreationTime > fi.info.CreationTime)
+      {
+        return 1;
+      }
       return 0;
     }
 
     #endregion
   }
+
   #endregion
 
   [Serializable]
   public class TVCaptureDevice
   {
-
     #region consts
-    const string recEngineExt = ".dvr-ms";  // Change extension here when switching to TS enginge!!!
 
-    class RecordingFinished
+    private const string recEngineExt = ".dvr-ms"; // Change extension here when switching to TS enginge!!!
+
+    private class RecordingFinished
     {
       public string fileName = string.Empty;
     }
+
     #endregion
 
     #region variables
-    string _videoCaptureDevice = string.Empty;
-    string _videoCaptureMoniker = string.Empty;//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
-    string _commercialName = string.Empty;
-    string _deviceId = string.Empty;
-    string _captureName = string.Empty;
-    bool _useForRecording = false;
-    bool _useForTv = false;
-    string _friendlyName = string.Empty;
-    int _cardPriority = 1;
-    string _recordingPath = string.Empty;
-    CardTypes _cardType;
-    bool _supportsTv;
-    bool _supportsRadio;
 
-    int _defaultRecordingQuality = -1;
-    DateTime _lastChannelChange = DateTime.Now;
-    enum State
+    private string _videoCaptureDevice = string.Empty;
+
+    private string _videoCaptureMoniker = string.Empty;
+                   //@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
+
+    private string _commercialName = string.Empty;
+    private string _deviceId = string.Empty;
+    private string _captureName = string.Empty;
+    private bool _useForRecording = false;
+    private bool _useForTv = false;
+    private string _friendlyName = string.Empty;
+    private int _cardPriority = 1;
+    private string _recordingPath = string.Empty;
+    private CardTypes _cardType;
+    private bool _supportsTv;
+    private bool _supportsRadio;
+
+    private int _defaultRecordingQuality = -1;
+    private DateTime _lastChannelChange = DateTime.Now;
+
+    private enum State
     {
       None,
       Initialized,
@@ -127,42 +140,24 @@ namespace MediaPortal.TV.Recording
 
     private bool _isAnalogCable;
     private int _defaultCountryCode;
-    [NonSerialized]
-    private int _cardId = -1;
-    [NonSerialized]
-    private State _currentGraphState = State.None;
-    [NonSerialized]
-    private TVRecording _currentTvRecording = null;
-    [NonSerialized]
-    private TVProgram _currentTvProgramRecording = null;
-    [NonSerialized]
-    private string _currentTvChannelName = string.Empty;
-    [NonSerialized]
-    private int _preRecordInterval = 0;		// In minutes
-    [NonSerialized]
-    private int _postRecordInterval = 0;		// In minutes
-    [NonSerialized]
-    private IGraph _currentGraph = null;
-    [NonSerialized]
-    private TVRecorded _recordedTvObject = null;
-    [NonSerialized]
-    private bool _isCardAllocated = false;
-    [NonSerialized]
-    private DateTime _timeRecordingStarted;
-    [NonSerialized]
-    private DateTime _timeTimeshiftingStarted;
-    [NonSerialized]
-    private string _currentRadioStationName = string.Empty;
-    [NonSerialized]
-    private int _radioSensitivity = 1;
-    [NonSerialized]
-    DateTime _epgTimeOutTimer = DateTime.Now;
-    [NonSerialized]
-    private GraphHelper _graphHelper = null;
-    [NonSerialized]
-    static Hashtable _devices = new Hashtable();
-    [NonSerialized]
-    private CropSettings _cropSettings;
+    [NonSerialized] private int _cardId = -1;
+    [NonSerialized] private State _currentGraphState = State.None;
+    [NonSerialized] private TVRecording _currentTvRecording = null;
+    [NonSerialized] private TVProgram _currentTvProgramRecording = null;
+    [NonSerialized] private string _currentTvChannelName = string.Empty;
+    [NonSerialized] private int _preRecordInterval = 0; // In minutes
+    [NonSerialized] private int _postRecordInterval = 0; // In minutes
+    [NonSerialized] private IGraph _currentGraph = null;
+    [NonSerialized] private TVRecorded _recordedTvObject = null;
+    [NonSerialized] private bool _isCardAllocated = false;
+    [NonSerialized] private DateTime _timeRecordingStarted;
+    [NonSerialized] private DateTime _timeTimeshiftingStarted;
+    [NonSerialized] private string _currentRadioStationName = string.Empty;
+    [NonSerialized] private int _radioSensitivity = 1;
+    [NonSerialized] private DateTime _epgTimeOutTimer = DateTime.Now;
+    [NonSerialized] private GraphHelper _graphHelper = null;
+    [NonSerialized] private static Hashtable _devices = new Hashtable();
+    [NonSerialized] private CropSettings _cropSettings;
 
     /// <summary>
     /// #MW#
@@ -171,20 +166,26 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region events
+
     public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
+
     public event OnTvRecordingHandler OnTvRecordingEnded = null;
     public event OnTvRecordingHandler OnTvRecordingStarted = null;
+
     #endregion
 
     public static TVCaptureDevice GetTVCaptureDevice(int cardId)
     {
-      return (TVCaptureDevice)_devices[cardId];
+      return (TVCaptureDevice) _devices[cardId];
     }
+
     public static Hashtable GetTVCaptureDevices()
     {
       return _devices;
     }
+
     #region ctor
+
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -194,21 +195,26 @@ namespace MediaPortal.TV.Recording
       string tunerInput = "Antenna";
 
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
         countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
       }
 
       bool isCableInput = false;
-      if (!tunerInput.Equals("Antenna")) isCableInput = true;
+      if (!tunerInput.Equals("Antenna"))
+      {
+        isCableInput = true;
+      }
 
       this.IsCableInput = isCableInput;
       this.DefaultCountryCode = countryCode;
     }
+
     #endregion
 
     #region properties
+
     public GraphHelper Graph
     {
       get
@@ -223,33 +229,26 @@ namespace MediaPortal.TV.Recording
         return _graphHelper;
       }
     }
+
     public CardTypes CardType
     {
       get { return _cardType; }
       set { _cardType = value; }
     }
+
     public string CommercialName
     {
-      get
-      {
-        return _commercialName;
-      }
-      set
-      {
-        _commercialName = value;
-      }
+      get { return _commercialName; }
+      set { _commercialName = value; }
     }
+
     public string DeviceId
     {
-      get
-      {
-        return _deviceId;
-      }
-      set
-      {
-        _deviceId = value;
-      }
-    }/*
+      get { return _deviceId; }
+      set { _deviceId = value; }
+    }
+
+    /*
     public string CaptureName
     {
       get
@@ -266,11 +265,11 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        _recordingPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_recordingPath);
+        _recordingPath = Util.Utils.RemoveTrailingSlash(_recordingPath);
         if (_recordingPath == null || _recordingPath.Length == 0)
         {
-          _recordingPath = System.IO.Directory.GetCurrentDirectory();
-          _recordingPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_recordingPath);
+          _recordingPath = Directory.GetCurrentDirectory();
+          _recordingPath = Util.Utils.RemoveTrailingSlash(_recordingPath);
         }
         return _recordingPath;
       }
@@ -281,7 +280,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraph == null) return 0;
+        if (_currentGraph == null)
+        {
+          return 0;
+        }
         return _currentGraph.SignalQuality();
       }
     }
@@ -290,10 +292,14 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraph == null) return 0;
+        if (_currentGraph == null)
+        {
+          return 0;
+        }
         return _currentGraph.SignalStrength();
       }
     }
+
     public int Quality
     {
       get { return _defaultRecordingQuality; }
@@ -311,7 +317,6 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// #MW#
     /// </summary>
-
     /// <summary>
     /// Will return the filtername of the capture device
     /// </summary>
@@ -370,6 +375,7 @@ namespace MediaPortal.TV.Recording
       get { return _videoCaptureDevice; }
       set { _videoCaptureDevice = value; }
     }
+
     /// <summary>
     /// Property to get/set the (graphedit) monikername name of the TV capture card 
     /// </summary>
@@ -387,7 +393,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (Allocated) return false;
+        if (Allocated)
+        {
+          return false;
+        }
         return _useForTv;
       }
       set { _useForTv = value; }
@@ -400,10 +409,7 @@ namespace MediaPortal.TV.Recording
     public bool Allocated
     {
       get { return _isCardAllocated; }
-      set
-      {
-        _isCardAllocated = value;
-      }
+      set { _isCardAllocated = value; }
     }
 
     /// <summary>
@@ -413,7 +419,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (Allocated) return false;
+        if (Allocated)
+        {
+          return false;
+        }
         return _useForRecording;
       }
       set { _useForRecording = value; }
@@ -450,9 +459,18 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraphState == State.PreRecording) return true;
-        if (_currentGraphState == State.Recording) return true;
-        if (_currentGraphState == State.PostRecording) return true;
+        if (_currentGraphState == State.PreRecording)
+        {
+          return true;
+        }
+        if (_currentGraphState == State.Recording)
+        {
+          return true;
+        }
+        if (_currentGraphState == State.PostRecording)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -464,9 +482,14 @@ namespace MediaPortal.TV.Recording
     public bool IsRecordingAt(int minutes)
     {
       if (_currentTvRecording == null)
+      {
         return false;
-      if (_currentTvRecording.IsRecordingAtTime(DateTime.Now.AddMinutes(minutes), _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
+      }
+      if (_currentTvRecording.IsRecordingAtTime(DateTime.Now.AddMinutes(minutes), _currentTvProgramRecording,
+                                                _preRecordInterval, _postRecordInterval))
+      {
         return true;
+      }
       return false;
     }
 
@@ -477,7 +500,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraph == null) return false;
+        if (_currentGraph == null)
+        {
+          return false;
+        }
         return _currentGraph.HasTeletext();
       }
     }
@@ -495,6 +521,7 @@ namespace MediaPortal.TV.Recording
         return result;
       }
     }
+
     public bool IsEpgFinished
     {
       get
@@ -504,7 +531,10 @@ namespace MediaPortal.TV.Recording
           return true;
         }
         TimeSpan ts = DateTime.Now - _epgTimeOutTimer;
-        if (ts.TotalMinutes >= 10) return true;
+        if (ts.TotalMinutes >= 10)
+        {
+          return true;
+        }
         bool result = _currentGraph.IsEpgDone();
         return result;
       }
@@ -517,9 +547,18 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (IsRecording) return true;
-        if (_currentGraphState == State.Timeshifting) return true;
-        if (_currentGraphState == State.RadioTimeshifting) return true;
+        if (IsRecording)
+        {
+          return true;
+        }
+        if (_currentGraphState == State.Timeshifting)
+        {
+          return true;
+        }
+        if (_currentGraphState == State.RadioTimeshifting)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -533,13 +572,13 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (!IsRecording) return null;
+        if (!IsRecording)
+        {
+          return null;
+        }
         return _currentTvRecording;
       }
-      set
-      {
-        _currentTvRecording = value;
-      }
+      set { _currentTvRecording = value; }
     }
 
     /// <summary>
@@ -551,7 +590,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (!IsRecording) return null;
+        if (!IsRecording)
+        {
+          return null;
+        }
         return _currentTvProgramRecording;
       }
     }
@@ -565,12 +607,10 @@ namespace MediaPortal.TV.Recording
     {
       get { return _currentGraphState == State.PostRecording; }
     }
+
     public bool IsRadio
     {
-      get
-      {
-        return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting);
-      }
+      get { return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting); }
     }
 
     /// <summary>
@@ -583,13 +623,19 @@ namespace MediaPortal.TV.Recording
       get { return _currentTvChannelName; }
       set
       {
-
         if (value == null)
+        {
           value = GetFirstChannel();
+        }
         else if (value != null && value.Length == 0)
+        {
           value = GetFirstChannel();
+        }
 
-        if (value.Equals(_currentTvChannelName)) return;//nothing todo
+        if (value.Equals(_currentTvChannelName))
+        {
+          return; //nothing todo
+        }
 
         Log.Info("TVCapture: change channel to :{0}", value);
         if (IsTimeShifting || IsRecording)
@@ -623,8 +669,8 @@ namespace MediaPortal.TV.Recording
             {
               _timeTimeshiftingStarted = DateTime.Now;
             }
-          }//if (_currentGraph != null)
-        }//if (!IsRecording)
+          } //if (_currentGraph != null)
+        } //if (!IsRecording)
       }
     }
 
@@ -634,15 +680,15 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public bool View
     {
-      get
-      {
-        return (_currentGraphState == State.Viewing);
-      }
+      get { return (_currentGraphState == State.Viewing); }
     }
+
     public bool StopViewing()
     {
-
-      if (_currentGraphState != State.Viewing) return false;
+      if (_currentGraphState != State.Viewing)
+      {
+        return false;
+      }
       bool result = false;
       StopEpgGrabbing();
       if (_currentGraphState == State.Viewing)
@@ -653,13 +699,18 @@ namespace MediaPortal.TV.Recording
       }
       _currentGraphState = State.Initialized;
       return result;
-
     }
 
     public bool StopEpgGrabbing()
     {
-      if (!IsEpgGrabbing) return false;
-      if (_currentGraph == null) return false;
+      if (!IsEpgGrabbing)
+      {
+        return false;
+      }
+      if (_currentGraph == null)
+      {
+        return false;
+      }
       bool result = _currentGraph.StopEpgGrabbing();
       _currentGraphState = State.Initialized;
       return result;
@@ -667,7 +718,6 @@ namespace MediaPortal.TV.Recording
 
     public bool StartViewing(string channelName)
     {
-
       if (channelName == null || channelName.Length == 0)
       {
         Log.Error("TVCapture.Start Viewing channel name is empty");
@@ -681,7 +731,10 @@ namespace MediaPortal.TV.Recording
         TVChannel = channelName;
         return true;
       }
-      if (IsRecording) return false;
+      if (IsRecording)
+      {
+        return false;
+      }
       //DeleteGraph();TESTTEST
 
       if (CreateGraph())
@@ -709,7 +762,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraph == null) return null;
+        if (_currentGraph == null)
+        {
+          return null;
+        }
         return _currentGraph.PropertyPages();
       }
     }
@@ -728,6 +784,7 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.Network();
       }
     }
+
     /// <summary>
     /// Property indiciating if the card supports timeshifting
     /// </summary>
@@ -740,7 +797,10 @@ namespace MediaPortal.TV.Recording
         if (_currentGraph == null)
         {
           _currentGraph = GraphFactory.CreateGraph(this);
-          if (_currentGraph == null) return false;
+          if (_currentGraph == null)
+          {
+            return false;
+          }
           result = _currentGraph.SupportsTimeshifting();
           _currentGraph = null;
         }
@@ -759,9 +819,13 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (!IsRecording)
+        {
           return string.Empty;
+        }
         if (_recordedTvObject == null)
+        {
           return string.Empty;
+        }
         return _recordedTvObject.FileName;
       }
     }
@@ -771,25 +835,23 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (_currentRadioStationName == null)
+        {
           return string.Empty;
+        }
         return _currentRadioStationName;
       }
     }
+
     /// <summary>
     /// Property to set Radio tuning sensitivity.
     /// sensitivity range from 1MHz for value 1 to 0.1MHZ for value 10
     /// </summary>
     public int RadioSensitivity
     {
-      get
-      {
-        return _radioSensitivity;
-      }
-      set
-      {
-        _radioSensitivity = value;
-      }
+      get { return _radioSensitivity; }
+      set { _radioSensitivity = value; }
     }
+
     public string TimeShiftFileName
     {
       get
@@ -797,55 +859,71 @@ namespace MediaPortal.TV.Recording
         if (_currentGraph != null)
         {
           if (IsRadio)
+          {
             return _currentGraph.RadioTimeshiftFileName();
+          }
           else
+          {
             return _currentGraph.TvTimeshiftFileName();
+          }
         }
         else
         {
           IGraph g = GraphFactory.CreateGraph(this);
           if (IsRadio)
+          {
             return g.RadioTimeshiftFileName();
+          }
           else
+          {
             return g.TvTimeshiftFileName();
+          }
         }
       }
     }
+
     public string TimeShiftFilePath
     {
-      get
-      {
-        return String.Format(@"{0}\card{1}", RecordingPath, ID);
-      }
+      get { return String.Format(@"{0}\card{1}", RecordingPath, ID); }
     }
+
     public string TimeShiftFullFileName
     {
-      get
-      {
-        return String.Format(@"{0}\{1}", TimeShiftFilePath, TimeShiftFileName);
-      }
+      get { return String.Format(@"{0}\{1}", TimeShiftFilePath, TimeShiftFileName); }
     }
+
     public IBaseFilter AudiodeviceFilter
     {
       get
       {
-        if (_currentGraph == null) return null;
+        if (_currentGraph == null)
+        {
+          return null;
+        }
         return _currentGraph.AudiodeviceFilter();
       }
     }
+
     public bool SupportsCamSelection
     {
       get
       {
-        if (_currentGraph == null) return false;
+        if (_currentGraph == null)
+        {
+          return false;
+        }
         return _currentGraph.SupportsCamSelection();
       }
     }
+
     public bool SupportsHardwarePidFiltering
     {
       get
       {
-        if (_currentGraph == null) return false;
+        if (_currentGraph == null)
+        {
+          return false;
+        }
         return _currentGraph.SupportsHardwarePidFiltering();
       }
     }
@@ -854,7 +932,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_currentGraph == null) return false;
+        if (_currentGraph == null)
+        {
+          return false;
+        }
         return _currentGraph.Supports5vAntennae();
       }
     }
@@ -864,6 +945,7 @@ namespace MediaPortal.TV.Recording
       get { return _supportsTv; }
       set { _supportsTv = value; }
     }
+
     public bool SupportsRadio
     {
       get { return _supportsRadio; }
@@ -888,13 +970,15 @@ namespace MediaPortal.TV.Recording
 
     #region public members
 
-
     /// <summary>
     /// Property which returns the available audio languages
     /// </summary>
     public ArrayList GetAudioLanguageList()
     {
-      if (_currentGraph == null) return null;
+      if (_currentGraph == null)
+      {
+        return null;
+      }
       return _currentGraph.GetAudioLanguageList();
     }
 
@@ -903,7 +987,10 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public int GetAudioLanguage()
     {
-      if (_currentGraph == null) return -1;
+      if (_currentGraph == null)
+      {
+        return -1;
+      }
       return _currentGraph.GetAudioLanguage();
     }
 
@@ -912,7 +999,10 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void SetAudioLanguage(int audioPid)
     {
-      if (_currentGraph == null) return;
+      if (_currentGraph == null)
+      {
+        return;
+      }
       _currentGraph.SetAudioLanguage(audioPid);
     }
 
@@ -921,14 +1011,20 @@ namespace MediaPortal.TV.Recording
     {
       foreach (FilterDefinition fd in Graph.TvFilterDefinitions)
       {
-        if (String.Compare(fd.Category, filterCategory, true) == 0) return fd;
+        if (String.Compare(fd.Category, filterCategory, true) == 0)
+        {
+          return fd;
+        }
       }
       return null;
     }
 
     public bool GrabEpg(TVChannel channel)
     {
-      if (CreateGraph() == false) return false;
+      if (CreateGraph() == false)
+      {
+        return false;
+      }
       bool result = _currentGraph.GrabEpg(channel);
       _epgTimeOutTimer = DateTime.Now;
       return result;
@@ -946,16 +1042,19 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void StopRecording()
     {
-      if (!IsRecording) return;
+      if (!IsRecording)
+      {
+        return;
+      }
 
       Log.Info("TVCapture.StopRecording() Card:{0}", ID);
       // todo : stop recorder
       _currentGraph.StopRecording();
 
-      _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+      _recordedTvObject.End = Util.Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool addMovieToDatabase = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         if (addMovieToDatabase)
@@ -1001,7 +1100,7 @@ namespace MediaPortal.TV.Recording
         StopTimeShifting();
         return;
       }
-    }//StopRecording()
+    } //StopRecording()
 
     /// <summary>
     /// This method can be used to start a new recording
@@ -1020,7 +1119,6 @@ namespace MediaPortal.TV.Recording
     /// <seealso>MediaPortal.TV.Database.TVProgram</seealso>
     public void Record(TVRecording recording, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
     {
-
       if (_currentGraphState != State.Initialized && _currentGraphState != State.Timeshifting)
       {
         //DeleteGraph();TESTTEST
@@ -1029,17 +1127,23 @@ namespace MediaPortal.TV.Recording
 
       StopRadio();
       StopEpgGrabbing();
-      if (!UseForRecording) return;
+      if (!UseForRecording)
+      {
+        return;
+      }
 
       if (currentProgram != null)
+      {
         _currentTvProgramRecording = currentProgram.Clone();
+      }
       //Log.Info("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
       _currentTvRecording = new TVRecording(recording);
       _preRecordInterval = iPreRecordInterval;
       _postRecordInterval = iPostRecordInterval;
       _currentTvChannelName = recording.Channel;
 
-      Log.Info("TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
+      Log.Info("TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName,
+               recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
@@ -1074,19 +1178,20 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Process()
     {
-
       // set postrecording status
       if (IsRecording)
       {
         if (_currentTvRecording != null)
         {
-          if (_currentTvRecording.IsRecordingAtTime(DateTime.Now, _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
+          if (_currentTvRecording.IsRecordingAtTime(DateTime.Now, _currentTvProgramRecording, _preRecordInterval,
+                                                    _postRecordInterval))
           {
             if (!_currentTvRecording.IsRecordingAtTime(DateTime.Now, _currentTvProgramRecording, _preRecordInterval, 0))
             {
               _currentGraphState = State.PostRecording;
             }
-            else if (!_currentTvRecording.IsRecordingAtTime(DateTime.Now, _currentTvProgramRecording, 0, _postRecordInterval))
+            else if (
+              !_currentTvRecording.IsRecordingAtTime(DateTime.Now, _currentTvProgramRecording, 0, _postRecordInterval))
             {
               _currentGraphState = State.PreRecording;
             }
@@ -1098,7 +1203,8 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            Log.Info("TVCapture.Process() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
+            Log.Info(
+              "TVCapture.Process() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1121,7 +1227,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-
       Log.Info("TVCapture.Stop() Card:{0}", ID);
       StopRecording();
       StopTimeShifting();
@@ -1139,7 +1244,8 @@ namespace MediaPortal.TV.Recording
           dvbGraph.CardProperties.Dispose();
         }
         catch (Exception)
-        { }
+        {
+        }
       }
       DeleteGraph();
     }
@@ -1150,22 +1256,31 @@ namespace MediaPortal.TV.Recording
     /// <returns>bool indicating if graph is created or not</returns>
     public bool CreateGraph()
     {
-
-      if (Allocated) return false;
+      if (Allocated)
+      {
+        return false;
+      }
       if (_currentGraph == null)
       {
         LoadContrastGammaBrightnessSettings();
         LoadCropSettings();
         Log.Info("TVCapture.CreateGraph() Card:{0}", ID);
         _currentGraph = GraphFactory.CreateGraph(this);
-        if (_currentGraph == null) return false;
+        if (_currentGraph == null)
+        {
+          return false;
+        }
         return _currentGraph.CreateGraph(Quality);
       }
       return true;
     }
+
     public string GetLastError()
     {
-      if (_currentGraph == null) return string.Empty;
+      if (_currentGraph == null)
+      {
+        return string.Empty;
+      }
       return _currentGraph.LastError();
     }
 
@@ -1177,7 +1292,6 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool DeleteGraph()
     {
-
       if (_currentGraph != null)
       {
         SaveContrastGammaBrightnessSettings();
@@ -1199,13 +1313,14 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartTimeShifting(string channelName)
     {
-
       StopEpgGrabbing();
       StopRadio();
       if (IsRecording)
       {
         if (channelName != _currentTvChannelName)
+        {
           return false;
+        }
         return true;
       }
       Log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
@@ -1225,14 +1340,17 @@ namespace MediaPortal.TV.Recording
             _currentTvChannelName = channelName;
             return true;
           }
-          // Broceliande: Mantis 788 fix test 
+            // Broceliande: Mantis 788 fix test 
           else
           {
             RebuildGraph();
             return true;
           }
         }
-        else return true;
+        else
+        {
+          return true;
+        }
       }
 
 
@@ -1244,8 +1362,10 @@ namespace MediaPortal.TV.Recording
       {
         //DeleteGraph();TESTTEST
       }
-      if (!CreateGraph()) return false;
-
+      if (!CreateGraph())
+      {
+        return false;
+      }
 
 
       string strFileName = TimeShiftFullFileName;
@@ -1271,13 +1391,16 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StopTimeShifting()
     {
-      if (!IsTimeShifting) return false;
+      if (!IsTimeShifting)
+      {
+        return false;
+      }
 
       //stopping timeshifting will also remove the live.tv file 
       Log.Info("TVCapture.StopTimeShifting() Card:{0}", ID);
       bool result = _currentGraph.StopTimeShifting();
       string fileName = TimeShiftFullFileName;
-      MediaPortal.Util.Utils.FileDelete(fileName);
+      Util.Utils.FileDelete(fileName);
       _currentTvChannelName = "";
       _timeTimeshiftingStarted = DateTime.MinValue;
       _currentGraphState = State.Initialized;
@@ -1286,7 +1409,10 @@ namespace MediaPortal.TV.Recording
 
     public void Tune(TVChannel channel)
     {
-      if (_currentGraphState != State.Viewing) return;
+      if (_currentGraphState != State.Viewing)
+      {
+        return;
+      }
 
       Log.Info("TVCapture.Tune({0}", channel.Name);
       _currentGraph.TuneChannel(channel);
@@ -1297,23 +1423,31 @@ namespace MediaPortal.TV.Recording
 
     public long VideoFrequency()
     {
-      if (_currentGraph == null) return 0;
+      if (_currentGraph == null)
+      {
+        return 0;
+      }
       return _currentGraph.VideoFrequency();
     }
 
     public bool SignalPresent()
     {
-      if (_currentGraph == null) return false;
+      if (_currentGraph == null)
+      {
+        return false;
+      }
       return _currentGraph.SignalPresent();
     }
 
     public bool ViewChannel(TVChannel channel)
     {
-
       StopEpgGrabbing();
       if (_currentGraph == null)
       {
-        if (!CreateGraph()) return false;
+        if (!CreateGraph())
+        {
+          return false;
+        }
       }
       bool result = _currentGraph.StartViewing(channel);
       SetTvSettings();
@@ -1323,25 +1457,44 @@ namespace MediaPortal.TV.Recording
 
     public bool SupportsFrameSize(Size framesize)
     {
-      if (_currentGraph == null) return false;
+      if (_currentGraph == null)
+      {
+        return false;
+      }
       return _currentGraph.SupportsFrameSize(framesize);
     }
 
 
     public void Tune(object tuningObject, int disecqNo)
     {
-      if (_currentGraph == null) return;
+      if (_currentGraph == null)
+      {
+        return;
+      }
       _currentGraph.Tune(tuningObject, disecqNo);
     }
-    public void StoreTunedChannels(bool radio, bool tv, ref int newTvChannels, ref int updatedTvChannels, ref int newRadioChannels, ref int updatedRadioChannels)
+
+    public void StoreTunedChannels(bool radio, bool tv, ref int newTvChannels, ref int updatedTvChannels,
+                                   ref int newRadioChannels, ref int updatedRadioChannels)
     {
-      if (_currentGraph == null) return;
-      _currentGraph.StoreChannels(ID, radio, tv, ref newTvChannels, ref updatedTvChannels, ref newRadioChannels, ref updatedRadioChannels);
+      if (_currentGraph == null)
+      {
+        return;
+      }
+      _currentGraph.StoreChannels(ID, radio, tv, ref newTvChannels, ref updatedTvChannels, ref newRadioChannels,
+                                  ref updatedRadioChannels);
     }
+
     public void StopRadio()
     {
-      if (!IsRadio) return;
-      if (_currentGraph == null) return;
+      if (!IsRadio)
+      {
+        return;
+      }
+      if (_currentGraph == null)
+      {
+        return;
+      }
 
       _currentGraph.StopRadio();
       _currentGraphState = State.Initialized;
@@ -1351,15 +1504,18 @@ namespace MediaPortal.TV.Recording
     {
       get { return _currentGraph; }
     }
+
     public void StartRadio(RadioStation station)
     {
       if (!IsRadio)
       {
-
         StopEpgGrabbing();
         StopTimeShifting();
         StopViewing();
-        if (!CreateGraph()) return;
+        if (!CreateGraph())
+        {
+          return;
+        }
         _currentGraphState = State.Radio;
         _currentGraph.StartRadio(station);
         if (_currentGraph.IsTimeShifting())
@@ -1373,6 +1529,7 @@ namespace MediaPortal.TV.Recording
       }
       _currentRadioStationName = station.Name;
     }
+
     public void TuneRadioChannel(RadioStation station)
     {
       if (!IsRadio)
@@ -1385,6 +1542,7 @@ namespace MediaPortal.TV.Recording
       }
       _currentRadioStationName = station.Name;
     }
+
     public void TuneRadioFrequency(int frequency)
     {
       if (!IsRadio)
@@ -1418,6 +1576,7 @@ namespace MediaPortal.TV.Recording
         DeleteGraph();
       }
     }
+
     public void TVChannelMinMax(out int chanmin, out int chanmax)
     {
       bool deleteGraph = false;
@@ -1438,22 +1597,34 @@ namespace MediaPortal.TV.Recording
         DeleteGraph();
       }
     }
+
     public void GrabTeletext(bool yesNo)
     {
-      if (_currentGraph == null) return;
+      if (_currentGraph == null)
+      {
+        return;
+      }
       _currentGraph.GrabTeletext(yesNo);
     }
+
     public bool CanViewTimeShiftFile()
     {
-      if (_currentGraph == null) return false;
-      if (!IsTimeShifting && !IsRecording) return false;
+      if (_currentGraph == null)
+      {
+        return false;
+      }
+      if (!IsTimeShifting && !IsRecording)
+      {
+        return false;
+      }
       return _currentGraph.CanViewTimeShiftFile();
     }
 
     #endregion
 
     #region private members
-    void RebuildGraph()
+
+    private void RebuildGraph()
     {
       Log.Info("TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
@@ -1462,7 +1633,10 @@ namespace MediaPortal.TV.Recording
       {
         if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
         {
-          if (Recorder.CommandProcessor != null) Recorder.CommandProcessor.StopPlayer();
+          if (Recorder.CommandProcessor != null)
+          {
+            Recorder.CommandProcessor.StopPlayer();
+          }
         }
         //Log.Info("TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();
@@ -1492,41 +1666,59 @@ namespace MediaPortal.TV.Recording
       // Log.Info("Card:{0} rebuild graph done", ID);
     }
 
-    string StripIllegalChars(string recordingAttribute)
+    private string StripIllegalChars(string recordingAttribute)
     {
-      if (recordingAttribute == null) return string.Empty;
-      if (recordingAttribute.Length == 0) return string.Empty;
+      if (recordingAttribute == null)
+      {
+        return string.Empty;
+      }
+      if (recordingAttribute.Length == 0)
+      {
+        return string.Empty;
+      }
       recordingAttribute = recordingAttribute.Replace(":", " ");
       recordingAttribute = recordingAttribute.Replace(";", " ");
       return recordingAttribute;
     }
-    Hashtable GetRecordingAttributes()
+
+    private Hashtable GetRecordingAttributes()
     {
       // set the meta data in the dvr-ms or .wmv file
       TimeSpan ts = (_recordedTvObject.EndTime - _recordedTvObject.StartTime);
       Hashtable propsToSet = new Hashtable();
 
-      propsToSet.Add("channel", new MetadataItem("channel", StripIllegalChars(_recordedTvObject.Channel), MetadataItemType.String));
+      propsToSet.Add("channel",
+                     new MetadataItem("channel", StripIllegalChars(_recordedTvObject.Channel), MetadataItemType.String));
 
       propsToSet.Add("recordedby", new MetadataItem("recordedby", "MediaPortal", MetadataItemType.String));
 
       if (_recordedTvObject.Title != null && _recordedTvObject.Title.Length > 0)
-        propsToSet.Add("title", new MetadataItem("title", StripIllegalChars(_recordedTvObject.Title), MetadataItemType.String));
+      {
+        propsToSet.Add("title",
+                       new MetadataItem("title", StripIllegalChars(_recordedTvObject.Title), MetadataItemType.String));
+      }
 
       if (_recordedTvObject.Genre != null && _recordedTvObject.Genre.Length > 0)
-        propsToSet.Add("genre", new MetadataItem("genre", StripIllegalChars(_recordedTvObject.Genre), MetadataItemType.String));
+      {
+        propsToSet.Add("genre",
+                       new MetadataItem("genre", StripIllegalChars(_recordedTvObject.Genre), MetadataItemType.String));
+      }
 
       if (_recordedTvObject.Description != null && _recordedTvObject.Description.Length > 0)
-        propsToSet.Add("description", new MetadataItem("details", StripIllegalChars(_recordedTvObject.Description), MetadataItemType.String));
+      {
+        propsToSet.Add("description",
+                       new MetadataItem("details", StripIllegalChars(_recordedTvObject.Description),
+                                        MetadataItemType.String));
+      }
 
-      propsToSet.Add("id", new MetadataItem("id", (uint)_recordedTvObject.ID, MetadataItemType.Dword));
-      propsToSet.Add("cardno", new MetadataItem("cardno", (uint)this.ID, MetadataItemType.Dword));
-      propsToSet.Add("duration", new MetadataItem("seconds", (uint)ts.TotalSeconds, MetadataItemType.Dword));
+      propsToSet.Add("id", new MetadataItem("id", (uint) _recordedTvObject.ID, MetadataItemType.Dword));
+      propsToSet.Add("cardno", new MetadataItem("cardno", (uint) this.ID, MetadataItemType.Dword));
+      propsToSet.Add("duration", new MetadataItem("seconds", (uint) ts.TotalSeconds, MetadataItemType.Dword));
       propsToSet.Add("start", new MetadataItem("start", _recordedTvObject.Start.ToString(), MetadataItemType.String));
       propsToSet.Add("end", new MetadataItem("end", _recordedTvObject.End.ToString(), MetadataItemType.String));
 
       return propsToSet;
-    }//void GetRecordingAttributes()
+    } //void GetRecordingAttributes()
 
 
     /// <summary>
@@ -1545,7 +1737,7 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the start of the current tv program till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(TVRecording recording)
+    private bool StartRecording(TVRecording recording)
     {
       Log.Info("TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
 
@@ -1554,7 +1746,9 @@ namespace MediaPortal.TV.Recording
 
       //for reference recordings, find program which runs now
       if (!recording.IsContentRecording)
+      {
         dtNow = DateTime.Now;
+      }
 
       TVProgram currentRunningProgram = null;
       List<TVChannel> channels = new List<TVChannel>();
@@ -1567,7 +1761,10 @@ namespace MediaPortal.TV.Recording
           break;
         }
       }
-      if (prog != null) currentRunningProgram = prog.Clone();
+      if (prog != null)
+      {
+        currentRunningProgram = prog.Clone();
+      }
 
 
       DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
@@ -1581,36 +1778,77 @@ namespace MediaPortal.TV.Recording
         string recDirFormat = string.Empty;
         bool isMovie = false;
         if (recording.RecType == TVRecording.RecordingType.Once)
+        {
           isMovie = true;
+        }
 
         timeProgStart = currentRunningProgram.StartTime;
 
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
           if (isMovie)
+          {
             strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
+          }
           else
+          {
             strInput = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
+          }
+        }
 
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%channel%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Channel), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Title), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%name%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Episode), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%series%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.SeriesNum), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%episode%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%part%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EpisodePart), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%date%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%start%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%end%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.Genre), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startday%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmonth%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%starthh%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmm%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endday%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmonth%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endhh%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmm%", MediaPortal.Util.Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%channel%", Util.Utils.MakeFileName(currentRunningProgram.Channel),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%title%", Util.Utils.MakeFileName(currentRunningProgram.Title),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%name%", Util.Utils.MakeFileName(currentRunningProgram.Episode),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%series%", Util.Utils.MakeFileName(currentRunningProgram.SeriesNum),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%episode%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%part%", Util.Utils.MakeFileName(currentRunningProgram.EpisodePart),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%date%",
+                                         Util.Utils.MakeFileName(
+                                           currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%start%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%end%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%genre%", Util.Utils.MakeFileName(currentRunningProgram.Genre),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startday%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startmonth%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startyear%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%starthh%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startmm%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endday%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endmonth%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startyear%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endhh%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endmm%",
+                                         Util.Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()),
+                                         "unknown");
 
         int index = strInput.LastIndexOf('\\');
         if (index != -1)
@@ -1619,33 +1857,39 @@ namespace MediaPortal.TV.Recording
           fileName = strInput.Substring(index + 1).Trim();
         }
         else
+        {
           fileName = strInput.Trim();
+        }
 
 
         if (subDirectory != string.Empty)
         {
-          subDirectory = MediaPortal.Util.Utils.RemoveTrailingSlash(subDirectory);
-          subDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(subDirectory);
+          subDirectory = Util.Utils.RemoveTrailingSlash(subDirectory);
+          subDirectory = Util.Utils.MakeDirectoryPath(subDirectory);
           fullPath = RecordingPath + "\\" + subDirectory;
           if (!Directory.Exists(fullPath))
+          {
             Directory.CreateDirectory(fullPath);
+          }
         }
         if (fileName == string.Empty)
         {
           DateTime dt = currentRunningProgram.StartTime;
           fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                    currentRunningProgram.Channel, currentRunningProgram.Title,
-                                    dt.Year, dt.Month, dt.Day,
-                                    dt.Hour,
-                                    dt.Minute,
-                                    DateTime.Now.Minute, DateTime.Now.Second);
+                                   currentRunningProgram.Channel, currentRunningProgram.Title,
+                                   dt.Year, dt.Month, dt.Day,
+                                   dt.Hour,
+                                   dt.Minute,
+                                   DateTime.Now.Minute, DateTime.Now.Second);
         }
-        fileName = MediaPortal.Util.Utils.MakeFileName(fileName);
+        fileName = Util.Utils.MakeFileName(fileName);
         if (File.Exists(fullPath + "\\" + fileName + recEngineExt))
         {
           int i = 1;
           while (File.Exists(fullPath + "\\" + fileName + "_" + i.ToString() + recEngineExt))
+          {
             ++i;
+          }
           fileName += "_" + i.ToString();
         }
         fileName += recEngineExt;
@@ -1654,18 +1898,20 @@ namespace MediaPortal.TV.Recording
       {
         DateTime dt = DateTime.Now;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}",
-          _currentTvChannelName, _currentTvRecording.Title,
-          dt.Year, dt.Month, dt.Day,
-          dt.Hour,
-          dt.Minute,
-          DateTime.Now.Minute, DateTime.Now.Second,
-          recEngineExt);
+                                 _currentTvChannelName, _currentTvRecording.Title,
+                                 dt.Year, dt.Month, dt.Day,
+                                 dt.Hour,
+                                 dt.Minute,
+                                 DateTime.Now.Minute, DateTime.Now.Second,
+                                 recEngineExt);
       }
-      string fullFileName = String.Format(@"{0}\{1}", fullPath, MediaPortal.Util.Utils.MakeFileName(fileName));
-      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fullFileName);
-      if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
+      string fullFileName = String.Format(@"{0}\{1}", fullPath, Util.Utils.MakeFileName(fileName));
+      ulong freeSpace = Util.Utils.GetFreeDiskSpace(fullFileName);
+      if (freeSpace < (1024L*1024L*1024L)) // 1 GB
       {
-        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
+        Log.WriteFile(LogType.Recorder, true,
+                      "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace",
+                      fullFileName[0]);
         return false;
       }
       Log.Info("Recorder: recording to {0}", fullFileName);
@@ -1673,7 +1919,7 @@ namespace MediaPortal.TV.Recording
       TVChannel channel = GetChannel(_currentTvChannelName);
 
       _recordedTvObject = new TVRecorded();
-      _recordedTvObject.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+      _recordedTvObject.Start = Util.Utils.datetolong(DateTime.Now);
       _recordedTvObject.Channel = _currentTvChannelName;
       _recordedTvObject.FileName = fullFileName;
       _recordedTvObject.KeepRecordingMethod = recording.KeepRecordingMethod;
@@ -1691,13 +1937,17 @@ namespace MediaPortal.TV.Recording
         _recordedTvObject.Title = string.Empty;
         _recordedTvObject.Genre = string.Empty;
         _recordedTvObject.Description = string.Empty;
-        _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(2));
+        _recordedTvObject.End = Util.Utils.datetolong(DateTime.Now.AddHours(2));
       }
 
       Hashtable attribtutes = GetRecordingAttributes();
-      if (timeProgStart < _lastChannelChange) 
+      if (timeProgStart < _lastChannelChange)
+      {
         timeProgStart = _lastChannelChange;
-      if (!_currentGraph.StartRecording(attribtutes, recording, channel, ref fullFileName, recording.IsContentRecording, timeProgStart))
+      }
+      if (
+        !_currentGraph.StartRecording(attribtutes, recording, channel, ref fullFileName, recording.IsContentRecording,
+                                      timeProgStart))
       {
         Log.Info("Recorder: StartRecording FAILED");
         return false;
@@ -1715,13 +1965,16 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
-    string GetFirstChannel()
+    private string GetFirstChannel()
     {
       List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
-        if (chan.Number < (int)ExternalInputs.svhs) return chan.Name;
+        if (chan.Number < (int) ExternalInputs.svhs)
+        {
+          return chan.Name;
+        }
       }
       foreach (TVChannel chan in channels)
       {
@@ -1729,6 +1982,7 @@ namespace MediaPortal.TV.Recording
       }
       return string.Empty;
     }
+
     /// <summary>
     /// Returns the channel number for a channel name
     /// </summary>
@@ -1737,7 +1991,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Channel names and numbers are stored in the TVDatabase
     /// </remarks>
-    TVChannel GetChannel(string strChannelName)
+    private TVChannel GetChannel(string strChannelName)
     {
       TVChannel retChannel = new TVChannel();
       retChannel.Number = 0;
@@ -1753,27 +2007,32 @@ namespace MediaPortal.TV.Recording
         if (String.Compare(strChannelName, chan.Name, true) == 0)
         {
           if (chan.Country <= 0)
+          {
             chan.Country = _defaultCountryCode;
+          }
           return chan;
         }
       }
       return retChannel;
     }
-    void SetTvSettings()
+
+    private void SetTvSettings()
     {
       int gamma = GUIGraphicsContext.Gamma;
       GUIGraphicsContext.Gamma = -2;
       GUIGraphicsContext.Gamma = -1;
       if (gamma >= 0)
+      {
         GUIGraphicsContext.Gamma = gamma;
+      }
     }
 
-    void LoadContrastGammaBrightnessSettings()
+    private void LoadContrastGammaBrightnessSettings()
     {
       try
       {
         string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _friendlyName));
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+        using (Settings xmlreader = new Settings(filename))
         {
           int contrast = xmlreader.GetValueAsInt("tv", "contrast", -1);
           int brightness = xmlreader.GetValueAsInt("tv", "brightness", -1);
@@ -1788,15 +2047,16 @@ namespace MediaPortal.TV.Recording
         }
       }
       catch (Exception)
-      { }
+      {
+      }
     }
-    void SaveContrastGammaBrightnessSettings()
+
+    private void SaveContrastGammaBrightnessSettings()
     {
       if (_friendlyName != null && _friendlyName != string.Empty)
       {
-
         string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
-        using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
+        using (Settings xmlWriter = new Settings(filename))
         {
           xmlWriter.SetValue("tv", "contrast", GUIGraphicsContext.Contrast);
           xmlWriter.SetValue("tv", "brightness", GUIGraphicsContext.Brightness);
@@ -1810,34 +2070,35 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Loads stored crop settings for this capture device
     /// </summary>
-    void LoadCropSettings()
+    private void LoadCropSettings()
     {
       try
       {
         string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _friendlyName));
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+        using (Settings xmlreader = new Settings(filename))
         {
           _cropSettings = new CropSettings(
-                                           xmlreader.GetValueAsInt("tv", "croptop", 0),
-                                           xmlreader.GetValueAsInt("tv", "cropbottom", 0),
-                                           xmlreader.GetValueAsInt("tv", "cropleft", 0),
-                                           xmlreader.GetValueAsInt("tv", "cropright", 0)
-                                          );
+            xmlreader.GetValueAsInt("tv", "croptop", 0),
+            xmlreader.GetValueAsInt("tv", "cropbottom", 0),
+            xmlreader.GetValueAsInt("tv", "cropleft", 0),
+            xmlreader.GetValueAsInt("tv", "cropright", 0)
+            );
         }
       }
       catch (Exception)
-      { }
+      {
+      }
     }
 
     /// <summary>
     /// Saves crop settings for this capture device
     /// </summary>
-    void SaveCropSettings()
+    private void SaveCropSettings()
     {
       if (_friendlyName != null && _friendlyName != string.Empty)
       {
         string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
-        using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
+        using (Settings xmlWriter = new Settings(filename))
         {
           xmlWriter.SetValue("tv", "croptop", _cropSettings.Top);
           xmlWriter.SetValue("tv", "cropbottom", _cropSettings.Bottom);
@@ -1852,14 +2113,15 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void SendCropMessage()
     {
-      Log.Info("TvCaptureDevice.SendCropMessage(): {0}, {1}, {2}, {3}", _cropSettings.Top, _cropSettings.Bottom, _cropSettings.Left, _cropSettings.Right);
+      Log.Info("TvCaptureDevice.SendCropMessage(): {0}, {1}, {2}, {3}", _cropSettings.Top, _cropSettings.Bottom,
+               _cropSettings.Left, _cropSettings.Right);
       GUIWindowManager.SendThreadMessage(
         new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP, 0, 0, 0, 0, 0, _cropSettings)
         );
     }
 
     #endregion
-
   }
 }
+
 #endif

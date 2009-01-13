@@ -24,19 +24,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 //using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
 namespace MediaPortal.TvNotifies
 {
-  public partial class NotifySetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class NotifySetupForm : MPConfigForm
   {
     public NotifySetupForm()
     {
@@ -45,9 +40,10 @@ namespace MediaPortal.TvNotifies
     }
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         textBoxPreNotify.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300));
         textBoxNotifyTimeoutVal.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15));
@@ -55,15 +51,16 @@ namespace MediaPortal.TvNotifies
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "notifyTVBefore", textBoxPreNotify.Text);
         xmlwriter.SetValue("movieplayer", "notifyTVTimeout", textBoxNotifyTimeoutVal.Text);
         xmlwriter.SetValueAsBool("movieplayer", "notifybeep", checkBoxNotifyPlaySound.Checked);
       }
     }
+
     #endregion
 
     private void buttonCancel_Click(object sender, EventArgs e)

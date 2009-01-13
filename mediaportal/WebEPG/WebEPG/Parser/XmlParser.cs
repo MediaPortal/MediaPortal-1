@@ -24,11 +24,8 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Xml;
-using MediaPortal.Services;
 using MediaPortal.Utils.Web;
-using MediaPortal.Webepg.TV.Database;
 using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.WebEPG.Parser
@@ -39,35 +36,42 @@ namespace MediaPortal.WebEPG.Parser
   public class XmlParser : IParser
   {
     #region Variables
-    XmlParserTemplate _data;
+
+    private XmlParserTemplate _data;
     //XmlDocument _xmlDoc;
-    XmlNodeList _nodeList;
-    HTTPRequest _page;
-    string _source;
-    string _channelName;
-    Type _dataType;
+    private XmlNodeList _nodeList;
+    private HTTPRequest _page;
+    private string _source;
+    private string _channelName;
+    private Type _dataType;
     //  ILog _log;
+
     #endregion
 
     #region Constructors/Destructors
+
     public XmlParser(XmlParserTemplate data)
     {
       //ServiceProvider services = GlobalServiceProvider.Instance;
       //_log = services.Get<ILog>();
       _page = null;
       _data = data;
-      _dataType = typeof(ProgramData);
+      _dataType = typeof (ProgramData);
     }
+
     #endregion
 
     #region Public Methods
+
     public void SetChannel(string name)
     {
       _channelName = name;
     }
+
     #endregion
 
     #region IParser Implementations
+
     public int ParseUrl(HTTPRequest page)
     {
       int count = 0;
@@ -79,30 +83,37 @@ namespace MediaPortal.WebEPG.Parser
         _page = new HTTPRequest(page);
       }
 
-        XmlDocument _xmlDoc = new XmlDocument();
-        try
+      XmlDocument _xmlDoc = new XmlDocument();
+      try
+      {
+        _xmlDoc.LoadXml(_source);
+        if (_data.Channel != string.Empty)
         {
-          _xmlDoc.LoadXml(_source);
-          if (_data.Channel != string.Empty)
-            _nodeList = _xmlDoc.DocumentElement.SelectNodes(_data.XPath + "[@" + _data.Channel + "=\"" + _channelName + "\"]");
-          else
-            _nodeList = _xmlDoc.DocumentElement.SelectNodes(_data.XPath);
+          _nodeList =
+            _xmlDoc.DocumentElement.SelectNodes(_data.XPath + "[@" + _data.Channel + "=\"" + _channelName + "\"]");
         }
-        catch (System.Xml.XmlException) // ex)
+        else
         {
-          //_log.Error("WebEPG: XML failed");
-          return count;
+          _nodeList = _xmlDoc.DocumentElement.SelectNodes(_data.XPath);
         }
+      }
+      catch (XmlException) // ex)
+      {
+        //_log.Error("WebEPG: XML failed");
+        return count;
+      }
 
-        if (_nodeList != null)
-          count = _nodeList.Count;
+      if (_nodeList != null)
+      {
+        count = _nodeList.Count;
+      }
 
       return count;
     }
 
     public IParserData GetData(int index)
     {
-      IParserData xmlData = (IParserData)Activator.CreateInstance(_dataType);
+      IParserData xmlData = (IParserData) Activator.CreateInstance(_dataType);
 
       XmlNode progNode = _nodeList.Item(index);
       if (progNode != null)
@@ -113,9 +124,13 @@ namespace MediaPortal.WebEPG.Parser
 
           XmlNode node;
           if ((node = progNode.SelectSingleNode(field.XmlName)) != null)
+          {
             xmlData.SetElement(field.FieldName, node.InnerText);
+          }
           if ((node = progNode.Attributes.GetNamedItem(field.XmlName)) != null)
+          {
             xmlData.SetElement(field.FieldName, node.InnerText);
+          }
         }
       }
 
@@ -161,6 +176,7 @@ namespace MediaPortal.WebEPG.Parser
     //      }
     //    }
     //  }
+
     #endregion
   }
 }

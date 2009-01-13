@@ -29,112 +29,117 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.HCWBlaster
 {
-	/// <summary>
-	/// Summary description for HCWIRBlaster.
-	/// </summary>
-	public class HCWIRBlaster
-	{
+  /// <summary>
+  /// Summary description for HCWIRBlaster.
+  /// </summary>
+  public class HCWIRBlaster
+  {
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr LoadLibraryEx(string fileName, IntPtr dummy, int flags);
 
-		[DllImport("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern IntPtr LoadLibraryEx(string fileName, IntPtr dummy, int flags);
+    [DllImport("hcwIRblast.dll")]
+    private static extern int UIR_Close();
 
-		[DllImport("hcwIRblast.dll")]
-		private static extern int UIR_Close();
+    [DllImport("hcwIRblast.dll")]
+    private static extern int UIR_GetConfig(int device, int codeset, ref UIR_CFG cfgPtr);
 
-		[DllImport("hcwIRblast.dll")]
-		private static extern int UIR_GetConfig(int device, int codeset, ref UIR_CFG cfgPtr);
+    [DllImport("hcwIRblast.dll")]
+    private static extern int UIR_GotoChannel(int device, int codeset, int channel);
 
-		[DllImport("hcwIRblast.dll")]
-		private static extern int UIR_GotoChannel(int device, int codeset, int channel);
+    [DllImport("hcwIRblast.dll")]
+    private static extern ushort UIR_Open(uint bVerbose, ushort wIRPort);
 
-		[DllImport("hcwIRblast.dll")]
-		private static extern ushort UIR_Open(uint bVerbose, ushort wIRPort);
+    private static int HCWRetVal;
+    private static UIR_CFG HCWIRConfig;
 
-		private static int     HCWRetVal;
-		private static UIR_CFG HCWIRConfig;
-
-		[StructLayout(LayoutKind.Sequential, Pack=8)]
-			public struct UIR_CFG
-		{
-			public int a;   // 0x38;
-			public int b;
-			public int c;   //Region 
-			public int d;   //Device
-			public int e;   //Vendor
-			public int f;   //Code Set
-			public int g;
-			public int h;
-			public int i;   //Minimum Digits
-			public int j;   //Digit Delay
-			public int k;   //Need Enter
-			public int l;   //Enter Delay
-			public int m;   //Tune Delay
-			public int n;   //One Digit Delay
-		}
-
-
-		public HCWIRBlaster()
-		{
-		}
-
-		static HCWIRBlaster()
-		{
-			HCWIRBlaster.HCWRetVal = 0;
-			HCWIRBlaster.HCWIRConfig = new UIR_CFG();
-		}
+    [StructLayout(LayoutKind.Sequential, Pack = 8)]
+    public struct UIR_CFG
+    {
+      public int a; // 0x38;
+      public int b;
+      public int c; //Region 
+      public int d; //Device
+      public int e; //Vendor
+      public int f; //Code Set
+      public int g;
+      public int h;
+      public int i; //Minimum Digits
+      public int j; //Digit Delay
+      public int k; //Need Enter
+      public int l; //Enter Delay
+      public int m; //Tune Delay
+      public int n; //One Digit Delay
+    }
 
 
-		public void blast(string channel_data, bool ExLogging)
-		{
-			if (ExLogging == true)
-				Log.Info("HCWBlaster: Changing channels: {0}", channel_data );
+    public HCWIRBlaster()
+    {
+    }
 
-			int iChannel = Convert.ToInt32(channel_data.ToString());
+    static HCWIRBlaster()
+    {
+      HCWRetVal = 0;
+      HCWIRConfig = new UIR_CFG();
+    }
 
-			if (HCWIRBlaster.HCWRetVal == 0)
-			{
-                
-				HCWIRBlaster.HCWRetVal = HCWIRBlaster.UIR_Open(0, 0);
-				if (HCWIRBlaster.HCWRetVal == 0)
-				{
-					Log.Info("HCWBlaster: Failed to get Blaster Handle");
-					return;
-				}
-                
-				HCWIRBlaster.HCWIRConfig.a = 0x38;
-				int RetCfg = HCWIRBlaster.UIR_GetConfig(-1, -1, ref HCWIRBlaster.HCWIRConfig);
-				if (RetCfg == 0)
-				{
-					string devset1 = "Device       : " + HCWIRBlaster.HCWIRConfig.d.ToString() + "    Vendor        : " + HCWIRBlaster.HCWIRConfig.e.ToString();
-					string devset2 = "Region       : " + HCWIRBlaster.HCWIRConfig.c.ToString() + "    Code set      : " + HCWIRBlaster.HCWIRConfig.f.ToString();
-					string devset3 = "Digit Delay  : " + HCWIRBlaster.HCWIRConfig.j.ToString() + "    Minimum Digits: " + HCWIRBlaster.HCWIRConfig.i.ToString();
-					string devset4 = "OneDigitDelay: " + HCWIRBlaster.HCWIRConfig.n.ToString() + "    Tune Delay    : " + HCWIRBlaster.HCWIRConfig.m.ToString();
-					string devset5 = "Need Enter   : " + HCWIRBlaster.HCWIRConfig.k.ToString() + "    Enter Delay   : " + HCWIRBlaster.HCWIRConfig.l.ToString();
 
-					if (ExLogging == true) 
-					{
-						Log.Info("HCWBlaster: " + devset1);
-						Log.Info("HCWBlaster: " + devset2);
-						Log.Info("HCWBlaster: " + devset3);
-						Log.Info("HCWBlaster: " + devset4);
-						Log.Info("HCWBlaster: " + devset5);
-					}
+    public void blast(string channel_data, bool ExLogging)
+    {
+      if (ExLogging == true)
+      {
+        Log.Info("HCWBlaster: Changing channels: {0}", channel_data);
+      }
 
-				}
-				else
-				{
-					HCWIRBlaster.UIR_Close();
-					HCWIRBlaster.HCWRetVal = 0;
-				}
-			}
-			int RetChg = HCWIRBlaster.UIR_GotoChannel(HCWIRBlaster.HCWIRConfig.d, HCWIRBlaster.HCWIRConfig.f, iChannel);
-			if (RetChg != 0)
-			{
-				Log.Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg.ToString());
-			}
-			if (ExLogging == true)
-				Log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data );
-		}
+      int iChannel = Convert.ToInt32(channel_data.ToString());
 
-	}
+      if (HCWRetVal == 0)
+      {
+        HCWRetVal = UIR_Open(0, 0);
+        if (HCWRetVal == 0)
+        {
+          Log.Info("HCWBlaster: Failed to get Blaster Handle");
+          return;
+        }
+
+        HCWIRConfig.a = 0x38;
+        int RetCfg = UIR_GetConfig(-1, -1, ref HCWIRConfig);
+        if (RetCfg == 0)
+        {
+          string devset1 = "Device       : " + HCWIRConfig.d.ToString() + "    Vendor        : " +
+                           HCWIRConfig.e.ToString();
+          string devset2 = "Region       : " + HCWIRConfig.c.ToString() + "    Code set      : " +
+                           HCWIRConfig.f.ToString();
+          string devset3 = "Digit Delay  : " + HCWIRConfig.j.ToString() + "    Minimum Digits: " +
+                           HCWIRConfig.i.ToString();
+          string devset4 = "OneDigitDelay: " + HCWIRConfig.n.ToString() + "    Tune Delay    : " +
+                           HCWIRConfig.m.ToString();
+          string devset5 = "Need Enter   : " + HCWIRConfig.k.ToString() + "    Enter Delay   : " +
+                           HCWIRConfig.l.ToString();
+
+          if (ExLogging == true)
+          {
+            Log.Info("HCWBlaster: " + devset1);
+            Log.Info("HCWBlaster: " + devset2);
+            Log.Info("HCWBlaster: " + devset3);
+            Log.Info("HCWBlaster: " + devset4);
+            Log.Info("HCWBlaster: " + devset5);
+          }
+        }
+        else
+        {
+          UIR_Close();
+          HCWRetVal = 0;
+        }
+      }
+      int RetChg = UIR_GotoChannel(HCWIRConfig.d, HCWIRConfig.f, iChannel);
+      if (RetChg != 0)
+      {
+        Log.Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg.ToString());
+      }
+      if (ExLogging == true)
+      {
+        Log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data);
+      }
+    }
+  }
 }

@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Xml.Serialization;
 using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG.Parser;
-using MediaPortal.WebEPG;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
@@ -38,27 +34,25 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class ListingInfo
   {
     #region Enums
+
     public enum Type
     {
       Html,
       Data,
       Xml
     }
+
     #endregion
 
     #region Variables
-    [XmlAttribute("type")]
-    public Type listingType;
-    [XmlElement("Site")]
-    public HTTPRequest Request;
-    [XmlElement("Search")]
-    public RequestData SearchParameters;
-    [XmlElement("Html")]
-    public WebParserTemplate HtmlTemplate;
-    [XmlElement("Xml")]
-    public XmlParserTemplate XmlTemplate;
-    [XmlElement("Data")]
-    public DataParserTemplate DataTemplate;
+
+    [XmlAttribute("type")] public Type listingType;
+    [XmlElement("Site")] public HTTPRequest Request;
+    [XmlElement("Search")] public RequestData SearchParameters;
+    [XmlElement("Html")] public WebParserTemplate HtmlTemplate;
+    [XmlElement("Xml")] public XmlParserTemplate XmlTemplate;
+    [XmlElement("Data")] public DataParserTemplate DataTemplate;
+
     #endregion
   }
 }

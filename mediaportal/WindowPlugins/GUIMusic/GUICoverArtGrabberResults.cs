@@ -24,33 +24,36 @@
 #endregion
 
 using System;
-
-using Microsoft.DirectX.Direct3D;
-
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
-using MediaPortal.Music.Amazon;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Music
 {
   public class GUICoverArtGrabberResults : GUIWindow, IRenderLayer
   {
     public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
+
     public event FindCoverArtProgressHandler FindCoverArtProgress;
 
     public delegate void FindCoverArtDoneHandler(AmazonWebservice aws, EventArgs e);
+
     public event FindCoverArtDoneHandler FindCoverArtDone;
 
-    public delegate void AlbumNotFoundRetryingFilteredHandler(AmazonWebservice aws, string origAlbumName, string filteredAlbumName);
+    public delegate void AlbumNotFoundRetryingFilteredHandler(
+      AmazonWebservice aws, string origAlbumName, string filteredAlbumName);
+
     public event AlbumNotFoundRetryingFilteredHandler AlbumNotFoundRetryingFiltered;
 
     public enum SearchDepthMode
     {
       Album = 0,
       Share = 2,
-    };
+    } ;
 
     private enum ControlIDs
     {
@@ -66,35 +69,25 @@ namespace MediaPortal.GUI.Music
       IMG_AMAZON = 30,
     }
 
-    [SkinControlAttribute((int)ControlIDs.LIST_ALBUM)]
-    protected GUIListControl listView = null;
+    [SkinControl((int) ControlIDs.LIST_ALBUM)] protected GUIListControl listView = null;
 
-    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
-    protected GUIImage imgCoverArt = null;
+    [SkinControl((int) ControlIDs.IMG_COVERART)] protected GUIImage imgCoverArt = null;
 
-    [SkinControlAttribute((int)ControlIDs.LBL_COVER)]
-    protected GUILabelControl lblCoverLabel = null;
+    [SkinControl((int) ControlIDs.LBL_COVER)] protected GUILabelControl lblCoverLabel = null;
 
-    [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]
-    protected GUIFadeLabel lblArtistName = null;
+    [SkinControl((int) ControlIDs.LBL_ARTIST_NAME)] protected GUIFadeLabel lblArtistName = null;
 
-    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]
-    protected GUIFadeLabel lblAlbumName = null;
+    [SkinControl((int) ControlIDs.LBL_ALBUM_NAME)] protected GUIFadeLabel lblAlbumName = null;
 
-    [SkinControlAttribute((int)ControlIDs.LBL_RELEASE_YEAR)]
-    protected GUILabelControl lblReleaseYear = null;
+    [SkinControl((int) ControlIDs.LBL_RELEASE_YEAR)] protected GUILabelControl lblReleaseYear = null;
 
-    [SkinControlAttribute((int)ControlIDs.LBL_NO_MATCHES_FOUND)]
-    protected GUILabelControl lblNoMatches = null;
+    [SkinControl((int) ControlIDs.LBL_NO_MATCHES_FOUND)] protected GUILabelControl lblNoMatches = null;
 
-    [SkinControlAttribute((int)ControlIDs.BTN_SKIP)]
-    protected GUIButtonControl btnSkip = null;
+    [SkinControl((int) ControlIDs.BTN_SKIP)] protected GUIButtonControl btnSkip = null;
 
-    [SkinControlAttribute((int)ControlIDs.BTN_CANCEL)]
-    protected GUIButtonControl btnCancel = null;
+    [SkinControl((int) ControlIDs.BTN_CANCEL)] protected GUIButtonControl btnCancel = null;
 
-    [SkinControlAttribute((int)ControlIDs.IMG_AMAZON)]
-    protected GUIImage imgAmazon = null;
+    [SkinControl((int) ControlIDs.IMG_AMAZON)] protected GUIImage imgAmazon = null;
 
     #region Base Dialog Variables
 
@@ -109,19 +102,20 @@ namespace MediaPortal.GUI.Music
 
     private const int MAX_UNFILTERED_SEARCH_ITEMS = 40;
     private const int MAX_SEARCH_ITEMS = 12;
+
     private string[] DiskSetSubstrings = new string[]
-            {
-                "-disk",
-                "- disk",
-                "(disk",
-                "( disk",
-                "-disc",
-                "- disc",
-                "(disc",
-                "( disc",
-                "-vol",
-                "- vol",
-            };
+                                           {
+                                             "-disk",
+                                             "- disk",
+                                             "(disk",
+                                             "( disk",
+                                             "-disc",
+                                             "- disc",
+                                             "(disc",
+                                             "( disc",
+                                             "-vol",
+                                             "- vol",
+                                           };
 
 
     private string _ThumbPath = string.Empty;
@@ -172,7 +166,7 @@ namespace MediaPortal.GUI.Music
 
     public GUICoverArtGrabberResults()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
+      GetID = (int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
     }
 
     public override bool Init()
@@ -195,9 +189,9 @@ namespace MediaPortal.GUI.Music
       base.OnAction(action);
     }
 
-
     #region Base Dialog Members
-    void Close()
+
+    private void Close()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
@@ -263,29 +257,31 @@ namespace MediaPortal.GUI.Music
       coverArtTexture = null;
       Reset();
 
-      listView.NavigateRight = (int)ControlIDs.LIST_ALBUM;
+      listView.NavigateRight = (int) ControlIDs.LIST_ALBUM;
 
       if (_SearchMode == SearchDepthMode.Album)
       {
-        btnCancel.NavigateUp = (int)ControlIDs.BTN_CANCEL;
-        listView.NavigateLeft = (int)ControlIDs.BTN_CANCEL;
+        btnCancel.NavigateUp = (int) ControlIDs.BTN_CANCEL;
+        listView.NavigateLeft = (int) ControlIDs.BTN_CANCEL;
       }
 
       else
       {
-        btnCancel.NavigateUp = (int)ControlIDs.BTN_SKIP;
-        listView.NavigateLeft = (int)ControlIDs.BTN_SKIP;
+        btnCancel.NavigateUp = (int) ControlIDs.BTN_SKIP;
+        listView.NavigateLeft = (int) ControlIDs.BTN_SKIP;
       }
-      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4515)));
+      GUIPropertyManager.SetProperty("#currentmodule",
+                                     String.Format("{0}/{1}", GUILocalizeStrings.Get(100005),
+                                                   GUILocalizeStrings.Get(4515)));
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
       switch (controlId)
       {
-        case (int)ControlIDs.LIST_ALBUM:
+        case (int) ControlIDs.LIST_ALBUM:
           {
             int selectedItem = listView.SelectedListItemIndex;
 
@@ -299,12 +295,12 @@ namespace MediaPortal.GUI.Music
               return;
             }
 
-            _SelectedAlbum = (AlbumInfo)amazonWS.AlbumInfoList[selectedItem];
+            _SelectedAlbum = (AlbumInfo) amazonWS.AlbumInfoList[selectedItem];
             this.Close();
             break;
           }
 
-        case (int)ControlIDs.BTN_SKIP:
+        case (int) ControlIDs.BTN_SKIP:
           {
             Log.Info("Cover art grabber:[{0}-{1}] skipped by user", _Artist, _Album);
 
@@ -314,7 +310,7 @@ namespace MediaPortal.GUI.Music
             break;
           }
 
-        case (int)ControlIDs.BTN_CANCEL:
+        case (int) ControlIDs.BTN_CANCEL:
           {
             Log.Info("Cover art grabber:user cancelled out of grab results");
 
@@ -366,13 +362,16 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID, bool checkForCompilationAlbum)
+    public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID,
+                               bool checkForCompilationAlbum)
     {
       _SelectedAlbum = null;
       IsCompilationAlbum = false;
 
       if (checkForCompilationAlbum)
+      {
         IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+      }
 
       _Artist = artist;
       _Album = album;
@@ -381,7 +380,9 @@ namespace MediaPortal.GUI.Music
       string filteredAlbumFormatString = GUILocalizeStrings.Get(4518);
 
       if (filteredAlbumFormatString.Length == 0)
+      {
         filteredAlbumFormatString = "Album title not found\r\nTrying: {0}";
+      }
 
       _ThumbPath = GetCoverArtThumbPath(artist, album, strPath);
       amazonWS = new AmazonWebservice();
@@ -406,7 +407,9 @@ namespace MediaPortal.GUI.Music
       }
 
       else
+      {
         InternalGetAlbumCovers(_Artist, _Album, string.Empty);
+      }
 
       // Did we fail to find any albums?
       if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
@@ -421,7 +424,9 @@ namespace MediaPortal.GUI.Music
           amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
 
           if (AlbumNotFoundRetryingFiltered != null)
+          {
             AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+          }
 
           Log.Info("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
 
@@ -435,9 +440,12 @@ namespace MediaPortal.GUI.Music
           amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
 
           if (AlbumNotFoundRetryingFiltered != null)
+          {
             AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+          }
 
-          Log.Info("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+          Log.Info("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist,
+                   _Album, cleanAlbumName);
 
           string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
           origAlbumName = _Album;
@@ -451,7 +459,9 @@ namespace MediaPortal.GUI.Music
         amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
 
         if (AlbumNotFoundRetryingFiltered != null)
+        {
           AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, GUILocalizeStrings.Get(4506));
+        }
 
         string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(483), " ");
         string filter = string.Format(filteredAlbumFormatString, filterString);
@@ -465,7 +475,8 @@ namespace MediaPortal.GUI.Music
       // be displayed so we need to close it...
       if (SearchMode == SearchDepthMode.Album)
       {
-        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        GUIDialogProgress dlgProgress =
+          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
         if (dlgProgress != null)
         {
           dlgProgress.SetPercentage(100);
@@ -486,12 +497,16 @@ namespace MediaPortal.GUI.Music
       thumbPath = Util.Utils.GetAlbumThumbName(artist, album);
 
       // If it doesn't exist look for it in the album folder
-      if (!System.IO.File.Exists(thumbPath))
-        thumbPath = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(albumPath));
+      if (!File.Exists(thumbPath))
+      {
+        thumbPath = String.Format(@"{0}\folder.jpg", Util.Utils.RemoveTrailingSlash(albumPath));
+      }
 
       // If it still doesn't exist use the missing_coverart image
-      if (!System.IO.File.Exists(thumbPath))
+      if (!File.Exists(thumbPath))
+      {
         thumbPath = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+      }
 
       return thumbPath;
     }
@@ -500,16 +515,20 @@ namespace MediaPortal.GUI.Music
     {
       MusicDatabase dbMusic = null;
 
-      System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(path);
-      System.IO.FileInfo[] files = null;
+      DirectoryInfo di = new DirectoryInfo(path);
+      FileInfo[] files = null;
 
       if (di == null)
+      {
         return false;
+      }
 
       files = di.GetFiles();
 
       if (files == null || files.Length == 0)
+      {
         return false;
+      }
 
       dbMusic = MusicDatabase.Instance;
 
@@ -520,10 +539,14 @@ namespace MediaPortal.GUI.Music
       int checkCount = 0;
 
       if (numFilesToCheck == -1)
+      {
         checkCount = files.Length;
+      }
 
       else
+      {
         Math.Min(files.Length, numFilesToCheck);
+      }
 
       MusicTag tag = null;
       Song song = null;
@@ -532,8 +555,10 @@ namespace MediaPortal.GUI.Music
       {
         string curTrackPath = files[i].FullName;
 
-        if (!MediaPortal.Util.Utils.IsAudio(curTrackPath))
+        if (!Util.Utils.IsAudio(curTrackPath))
+        {
           continue;
+        }
 
         song = new Song();
 
@@ -546,7 +571,9 @@ namespace MediaPortal.GUI.Music
           }
 
           if (artist.ToLower().CompareTo(song.Artist.ToLower()) != 0)
+          {
             difArtistCount++;
+          }
         }
 
         else
@@ -562,13 +589,17 @@ namespace MediaPortal.GUI.Music
             }
 
             if (artist.ToLower().CompareTo(tag.Artist.ToLower()) != 0)
+            {
               difArtistCount++;
+            }
           }
         }
       }
 
       if (difArtistCount > 0)
+      {
         IsCompilationAlbum = true;
+      }
 
       return IsCompilationAlbum;
     }
@@ -576,7 +607,9 @@ namespace MediaPortal.GUI.Music
     private bool InternalGetAlbumCovers(string artist, string album, string filteredAlbumText)
     {
       if (amazonWS.AbortGrab)
+      {
         return false;
+      }
 
       amazonWS.ArtistName = artist;
       amazonWS.AlbumName = album;
@@ -584,7 +617,8 @@ namespace MediaPortal.GUI.Music
 
       if (SearchMode == SearchDepthMode.Album)
       {
-        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        GUIDialogProgress dlgProgress =
+          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
         if (dlgProgress != null)
         {
           dlgProgress.SetHeading(185);
@@ -602,16 +636,19 @@ namespace MediaPortal.GUI.Music
       }
 
       else
+      {
         result = amazonWS.GetAlbumInfo();
+      }
 
       return result;
     }
 
-    void amazonWS_GetAlbumInfoProgress(AmazonWebservice aws, int progressPercent)
+    private void amazonWS_GetAlbumInfoProgress(AmazonWebservice aws, int progressPercent)
     {
       if (SearchMode == SearchDepthMode.Album)
       {
-        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        GUIDialogProgress dlgProgress =
+          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
 
         if (dlgProgress != null)
         {
@@ -625,20 +662,26 @@ namespace MediaPortal.GUI.Music
       {
         // The GUICoverArtGrabberProgress window will manage showing cover art grabber progress
         if (FindCoverArtProgress != null)
+        {
           FindCoverArtProgress(amazonWS, progressPercent);
+        }
       }
     }
 
-    void amazonWS_FindCoverArtDone(AmazonWebservice aws, EventArgs e)
+    private void amazonWS_FindCoverArtDone(AmazonWebservice aws, EventArgs e)
     {
       if (FindCoverArtDone != null)
+      {
         FindCoverArtDone(amazonWS, e);
+      }
     }
 
     private void UpdateAlbumCoverList()
     {
       if (listView == null)
+      {
         return;
+      }
 
       listView.Clear();
 
@@ -651,7 +694,7 @@ namespace MediaPortal.GUI.Music
       {
         for (int i = 0; i < amazonWS.AlbumCount; i++)
         {
-          AlbumInfo albuminfo = (AlbumInfo)amazonWS.AlbumInfoList[i];
+          AlbumInfo albuminfo = (AlbumInfo) amazonWS.AlbumInfoList[i];
           GUIListItem item = new GUIListItem(albuminfo.Album);
           item.Label2 = albuminfo.Artist;
           item.IconImageBig = albuminfo.Image;
@@ -683,7 +726,9 @@ namespace MediaPortal.GUI.Music
       int pos = temp.IndexOf("(");
 
       if (pos > 0)
+      {
         cleanAlbumName = temp.Substring(0, pos).Trim();
+      }
 
       return pos > 0;
     }
@@ -698,7 +743,6 @@ namespace MediaPortal.GUI.Music
         origAlbumName = origAlbumName.Replace("  ", " ");
         replaced = origAlbumName.CompareTo(temp) != 0;
         temp = origAlbumName;
-
       } while (replaced);
 
       string testSting = origAlbumName.ToLower();
@@ -712,7 +756,9 @@ namespace MediaPortal.GUI.Music
         nPos = testSting.IndexOf(s);
 
         if (nPos > 0)
+        {
           break;
+        }
       }
 
       if (nPos != -1)
@@ -727,7 +773,9 @@ namespace MediaPortal.GUI.Music
     private void Reset()
     {
       if (amazonWS == null)
+      {
         return;
+      }
 
       listView.Clear();
       listView.KeepAspectRatio = false;
@@ -737,7 +785,9 @@ namespace MediaPortal.GUI.Music
       string noMatches = GUILocalizeStrings.Get(4516);
 
       if (noMatches.Length == 0)
+      {
         noMatches = "No cover art found";
+      }
 
       lblNoMatches.Label = noMatches;
       lblAlbumName.Label = _Album;
@@ -745,20 +795,28 @@ namespace MediaPortal.GUI.Music
       string coverArtText = GUILocalizeStrings.Get(4519);
 
       if (coverArtText.Length == 0)
+      {
         coverArtText = "Current cover art";
+      }
 
       lblCoverLabel.Label = coverArtText;
 
       if (IsCompilationAlbum && _Artist.Length == 0)
+      {
         lblArtistName.Label = GUILocalizeStrings.Get(340);
+      }
 
       else
+      {
         lblArtistName.Label = _Artist;
+      }
 
       lblReleaseYear.Label = "";
 
       if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
+      {
         ShowNoMatchesText();
+      }
 
       lblAlbumName.AllowScrolling = false;
       lblArtistName.AllowScrolling = false;
@@ -770,8 +828,8 @@ namespace MediaPortal.GUI.Music
       lblNoMatches.Visible = true;
     }
 
-
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -781,6 +839,7 @@ namespace MediaPortal.GUI.Music
     {
       Render(timePassed);
     }
+
     #endregion
   }
 }

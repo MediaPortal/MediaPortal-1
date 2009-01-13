@@ -24,12 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using MediaPortal.WebEPG;
-using System.IO;
 using MediaPortal.WebEPG.Parser;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.WebEPG
 {

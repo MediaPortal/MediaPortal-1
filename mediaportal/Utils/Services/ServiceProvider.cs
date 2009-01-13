@@ -31,10 +31,13 @@ namespace MediaPortal.Services
   public class ServiceProvider
   {
     #region Variables
+
     private Dictionary<Type, object> services;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ServiceProvider"/> class.
     /// </summary>
@@ -42,9 +45,11 @@ namespace MediaPortal.Services
     {
       services = new Dictionary<Type, object>();
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Determines whether this instance is registered.
     /// </summary>
@@ -53,7 +58,7 @@ namespace MediaPortal.Services
     /// </returns>
     public bool IsRegistered<T>()
     {
-      return services.ContainsKey(typeof(T));
+      return services.ContainsKey(typeof (T));
     }
 
     /// <summary>
@@ -65,7 +70,7 @@ namespace MediaPortal.Services
     public void Add<T>(T service)
     {
       // Make sure service implements type
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         object o = services[t];
@@ -86,7 +91,7 @@ namespace MediaPortal.Services
     /// <param name="callback">The <see cref="ServiceCreatorCallback<T>"/> to call to get to the service instance.</param>
     public void Add<T>(ServiceCreatorCallback<T> callback)
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         throw new ArgumentException(string.Format("A service of type {0} is already present", t.ToString()));
@@ -101,7 +106,7 @@ namespace MediaPortal.Services
     /// <returns>The service implementation.</returns>
     public T Get<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         object o = services[t];
@@ -126,7 +131,7 @@ namespace MediaPortal.Services
     /// <typeparam name="T">The type of the service to remove.</typeparam>
     public void Remove<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         services.Remove(t);
@@ -154,6 +159,7 @@ namespace MediaPortal.Services
       Remove<T>();
       Add<T>(callback);
     }
+
     #endregion
   }
 }

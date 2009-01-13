@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
   [Serializable]
   public class Line
   {
-    [XmlAttribute]
-    public MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment Alignment;
-    [XmlElement("PerformanceCounter", typeof(PerformanceCounter)), XmlElement("TextProgressBar", typeof(TextProgressBar)), XmlElement("Parse", typeof(Parse)), XmlElement("Property", typeof(Property)), XmlElement("Text", typeof(Text))]
-    public List<Value> values;
+    [XmlAttribute] public Alignment Alignment;
+
+    [XmlElement("PerformanceCounter", typeof (PerformanceCounter)),
+     XmlElement("TextProgressBar", typeof (TextProgressBar)), XmlElement("Parse", typeof (Parse)),
+     XmlElement("Property", typeof (Property)), XmlElement("Text", typeof (Text))] public List<Value> values;
 
     public Line()
     {
@@ -31,13 +31,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       this.values.Add(new Parse(value));
     }
 
-    public Line(Value value, MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment alignment)
+    public Line(Value value, Alignment alignment)
       : this(value)
     {
       this.Alignment = alignment;
     }
 
-    public Line(string value, MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment alignment)
+    public Line(string value, Alignment alignment)
       : this(value)
     {
       this.Alignment = alignment;
@@ -58,4 +58,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     }
   }
 }
-

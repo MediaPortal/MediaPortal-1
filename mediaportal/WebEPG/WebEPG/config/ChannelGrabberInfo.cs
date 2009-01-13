@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using MediaPortal.WebEPG.Config.Grabber;
 

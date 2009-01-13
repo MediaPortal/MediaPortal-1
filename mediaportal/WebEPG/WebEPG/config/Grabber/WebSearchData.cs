@@ -23,24 +23,21 @@
 
 #endregion
 
-using System;
-using MediaPortal.Utils.Web;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
-	/// <summary>
-	/// Search data
-	/// </summary>
-	public class WebSearchData
-	{
+  /// <summary>
+  /// Search data
+  /// </summary>
+  public class WebSearchData
+  {
     #region Variables
-    [XmlAttribute("match")]
-    public string Match;
-    [XmlAttribute("field")]
-    public string Field;
-    [XmlAttribute("remove")]
-    public bool Remove;
+
+    [XmlAttribute("match")] public string Match;
+    [XmlAttribute("field")] public string Field;
+    [XmlAttribute("remove")] public bool Remove;
+
     #endregion
   }
 }

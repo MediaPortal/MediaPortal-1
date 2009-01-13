@@ -31,7 +31,7 @@ namespace WindowPlugins.GUIMusic
   {
     public GUIMusicMenu()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_MENU; // 8888
+      GetID = (int) Window.WINDOW_MUSIC_MENU; // 8888
     }
 
     public override bool Init()
@@ -46,7 +46,7 @@ namespace WindowPlugins.GUIMusic
       if (ctl != null)
       {
         ctl.Focus = false;
-        ctl.Focus = true;   // this will update the skin property #highlightedbutton
+        ctl.Focus = true; // this will update the skin property #highlightedbutton
       }
       base.OnPageLoad();
     }

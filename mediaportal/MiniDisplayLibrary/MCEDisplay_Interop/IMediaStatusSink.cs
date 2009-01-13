@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
 {
@@ -8,9 +7,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
   {
     [DispId(1)]
     void Initialize();
+
     [return: MarshalAs(UnmanagedType.Interface)]
     [DispId(2)]
     IMediaStatusSession CreateSession();
   }
 }
-

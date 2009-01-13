@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Net;
 
 namespace MediaPortal.Utils.Web
@@ -49,4 +47,3 @@ namespace MediaPortal.Utils.Web
     void Add(string site, NetworkCredential login);
   }
 }
-

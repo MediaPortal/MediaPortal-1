@@ -24,31 +24,30 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Pictures : MediaPortal.Configuration.SectionSettings
+  public class Pictures : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox durationTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox transitionTextBox;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonRandom;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonXFade;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonKenBurns;
-    private MediaPortal.UserInterface.Controls.MPTextBox kenburnsTextBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox repeatSlideshowCheckBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPTextBox durationTextBox;
+    private MPTextBox transitionTextBox;
+    private MPRadioButton radioButtonRandom;
+    private MPRadioButton radioButtonXFade;
+    private MPLabel label3;
+    private MPRadioButton radioButtonKenBurns;
+    private MPTextBox kenburnsTextBox;
+    private MPCheckBox autoShuffleCheckBox;
+    private MPCheckBox repeatSlideshowCheckBox;
+    private MPGroupBox groupBox2;
+    private IContainer components = null;
 
     public Pictures()
       : this("Pictures")
@@ -64,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         durationTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "speed", 3));
         transitionTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("pictures", "transition", 15));
@@ -80,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("pictures", "speed", durationTextBox.Text);
         xmlwriter.SetValue("pictures", "transition", transitionTextBox.Text);
@@ -108,6 +107,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -133,8 +133,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.kenburnsTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.transitionTextBox);
@@ -153,8 +155,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // kenburnsTextBox
       // 
-      this.kenburnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.kenburnsTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
       this.kenburnsTextBox.Size = new System.Drawing.Size(288, 20);
@@ -171,8 +175,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // transitionTextBox
       // 
-      this.transitionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.transitionTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
       this.transitionTextBox.Size = new System.Drawing.Size(288, 20);
@@ -180,8 +186,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // durationTextBox
       // 
-      this.durationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.durationTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
       this.durationTextBox.Size = new System.Drawing.Size(288, 20);
@@ -229,8 +237,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
@@ -286,9 +296,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }
-

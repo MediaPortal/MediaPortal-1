@@ -23,37 +23,36 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using System.Runtime.InteropServices;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
-using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class DVDCodec : MediaPortal.Configuration.SectionSettings
+  public class DVDCodec : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel audioRendererLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel audioCodecLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel videoCodecLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel dvdNavigatorLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox dvdNavigatorComboBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDXVA;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    bool _init = false;
+    private MPGroupBox groupBox1;
+    private MPLabel audioRendererLabel;
+    private MPLabel audioCodecLabel;
+    private MPLabel videoCodecLabel;
+    private MPLabel dvdNavigatorLabel;
+    private MPComboBox audioRendererComboBox;
+    private MPComboBox audioCodecComboBox;
+    private MPComboBox videoCodecComboBox;
+    private MPComboBox dvdNavigatorComboBox;
+    private MPCheckBox checkBoxAC3;
+    private MPCheckBox checkBoxDXVA;
+    private IContainer components = null;
+    private MPLabel mpLabel1;
+    private bool _init = false;
+
     /// <summary>
     /// 
     /// </summary>
@@ -80,17 +79,41 @@ namespace MediaPortal.Configuration.Sections
         // Fetch available DirectShow filters
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         //Remove Muxer's from the list to avoid confusion.
-        while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
-        while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
-        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder")) availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableVideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         //Remove Muxer's from Audio decoder list to avoid confusion.
-        while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
-        while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
-        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder")) availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableAudioFilters.Sort();
         // Fetch available DVD navigators
         ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
@@ -111,9 +134,12 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      if (_init == false) return;
+      if (_init == false)
+      {
+        return;
+      }
       Log.Info("load dvd");
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
         string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
@@ -130,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
           {
             bool Mpeg2DecFilterFound = true;
             bool DScalerFilterFound = true;
-            audioCodec = (string)availableAudioFilters[0];
+            audioCodec = (string) availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
               if (filter.Equals("MPA Decoder Filter"))
@@ -142,8 +168,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) audioCodec = "MPA Decoder Filter";
-            else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              audioCodec = "MPA Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              audioCodec = "DScaler Audio Decoder";
+            }
           }
         }
         if (videoCodec == string.Empty)
@@ -153,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
           bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
-            videoCodec = (string)availableVideoFilters[0];
+            videoCodec = (string) availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
               if (filter.Equals("MPV Decoder Filter"))
@@ -165,8 +197,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) videoCodec = "MPV Decoder Filter";
-            else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              videoCodec = "MPV Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              videoCodec = "DScaler Mpeg2 Video Decoder";
+            }
           }
         }
         audioCodecComboBox.Text = audioCodec;
@@ -180,8 +218,11 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "videocodec", videoCodecComboBox.Text);
@@ -208,6 +249,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -231,8 +273,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.mpLabel1);
       this.groupBox1.Controls.Add(this.checkBoxDXVA);
       this.groupBox1.Controls.Add(this.audioRendererLabel);
@@ -282,8 +326,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 118);
@@ -301,8 +347,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 70);
@@ -323,8 +371,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dvdNavigatorComboBox
       // 
-      this.dvdNavigatorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dvdNavigatorComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.dvdNavigatorComboBox.BorderColor = System.Drawing.Color.Empty;
       this.dvdNavigatorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.dvdNavigatorComboBox.Location = new System.Drawing.Point(168, 25);
@@ -334,8 +384,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 94);
@@ -367,8 +419,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }

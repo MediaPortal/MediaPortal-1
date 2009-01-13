@@ -27,34 +27,34 @@
 
 using System;
 using System.Threading;
-
+using System.Windows.Forms;
 using MediaPortal.Configuration;
-using MediaPortal.Profile;
-using MediaPortal.Services;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
+using MediaPortal.Profile;
+using MediaPortal.Services;
 using MediaPortal.Threading;
+
 #endregion
 
 namespace MediaPortal.ProcessPlugins.MusicDBReorg
 {
   public class MusicDBReorg : IPlugin, IWakeable, ISetupForm
   {
-
     #region vars
 
-    bool _reorgRunning;
-    bool _run;
-    int _runHours = 0;
-    int _runMinutes = 0;
-    bool _runMondays = false;
-    bool _runTuesdays = false;
-    bool _runWednesdays = false;
-    bool _runThursdays = false;
-    bool _runFridays = false;
-    bool _runSaturdays = false;
-    bool _runSundays = false;
-    MusicDatabase mDB = null;
+    private bool _reorgRunning;
+    private bool _run;
+    private int _runHours = 0;
+    private int _runMinutes = 0;
+    private bool _runMondays = false;
+    private bool _runTuesdays = false;
+    private bool _runWednesdays = false;
+    private bool _runThursdays = false;
+    private bool _runFridays = false;
+    private bool _runSaturdays = false;
+    private bool _runSundays = false;
+    private MusicDatabase mDB = null;
 
     #endregion
 
@@ -63,7 +63,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     public MusicDBReorg()
     {
       // load settings
-      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         _runMondays = reader.GetValueAsBool("musicdbreorg", "monday", false);
         _runTuesdays = reader.GetValueAsBool("musicdbreorg", "tuesday", false);
@@ -89,7 +89,9 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     public void Start()
     {
       Log.Info("MusicDBReorg: schedule: {0}:{1}", _runHours, _runMinutes);
-      Log.Info("MusicDBReorg: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}", _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
+      Log.Info(
+        "MusicDBReorg: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}",
+        _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
 
       // Establish Handler to catch reorg events, when the reorg is from within the Settings GUI
       MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(ReorgStatusChange);
@@ -115,13 +117,12 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
 
     #region Implementation
 
-
     /// <summary>
     /// When the Reorg is run from inside the GUI Settings, we are notified here and prevent shutdown, while the import is running 
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void ReorgStatusChange(object sender, DatabaseReorgEventArgs e)
+    private void ReorgStatusChange(object sender, DatabaseReorgEventArgs e)
     {
       switch (e.progress)
       {
@@ -160,7 +161,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
           }
 
           // store last run
-          using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+          using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
           {
             writer.SetValue("musicdbreorg", "lastrun", DateTime.Now.Day);
           }
@@ -204,7 +205,8 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       {
         if (DateTime.Now.Minute == _runMinutes)
         {
-          Log.Info("MusicDBReorg.ShouldRunSchedule: schedule {0}:{1} is due: {2}:{3}", _runHours, _runMinutes, DateTime.Now.Hour, DateTime.Now.Minute);
+          Log.Info("MusicDBReorg.ShouldRunSchedule: schedule {0}:{1} is due: {2}:{3}", _runHours, _runMinutes,
+                   DateTime.Now.Hour, DateTime.Now.Minute);
           return true;
         }
       }
@@ -218,7 +220,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private bool HasRunToday()
     {
       int lastRunDay;
-      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         lastRunDay = reader.GetValueAsInt("musicdbreorg", "lastrun", 0);
       }
@@ -239,25 +241,46 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       switch (dow)
       {
         case DayOfWeek.Monday:
-          if (!_runMondays) return false;
+          if (!_runMondays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Tuesday:
-          if (!_runTuesdays) return false;
+          if (!_runTuesdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Wednesday:
-          if (!_runWednesdays) return false;
+          if (!_runWednesdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Thursday:
-          if (!_runThursdays) return false;
+          if (!_runThursdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Friday:
-          if (!_runFridays) return false;
+          if (!_runFridays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Saturday:
-          if (!_runSaturdays) return false;
+          if (!_runSaturdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Sunday:
-          if (!_runSundays) return false;
+          if (!_runSundays)
+          {
+            return false;
+          }
           break;
         default:
           return false;
@@ -291,7 +314,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
         }
         if (DateTime.Now.DayOfWeek == nextRun.DayOfWeek)
         {
-          MediaPortal.GUI.Library.Log.Error("MusicDBReorg.GetNextEvent: no valid next run day found!");
+          Log.Error("MusicDBReorg.GetNextEvent: no valid next run day found!");
           nextRun = nextRun.AddYears(1);
         }
       }
@@ -333,7 +356,8 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
 
     public string Description()
     {
-      return "Run MusicDB Reorg inside MediaPortal, preventing standby when active and resuming from standby when schedule is due";
+      return
+        "Run MusicDB Reorg inside MediaPortal, preventing standby when active and resuming from standby when schedule is due";
     }
 
     public bool GetHome(out string buttonText, out string buttonImage, out string imageFocus, out string pictureImage)
@@ -357,11 +381,10 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form f = new MusicDBReorgSettings();
-      System.Windows.Forms.DialogResult result = f.ShowDialog();
+      Form f = new MusicDBReorgSettings();
+      DialogResult result = f.ShowDialog();
     }
 
     #endregion
-
   }
 }

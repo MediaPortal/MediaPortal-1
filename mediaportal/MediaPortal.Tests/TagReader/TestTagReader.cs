@@ -23,15 +23,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using NUnit.Framework;
-using MediaPortal.TagReader;
-using MediaPortal.Util;
 using MediaPortal.Services;
+using MediaPortal.TagReader;
 using MediaPortal.Tests.MockObjects;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.TagReader
 {
@@ -111,23 +107,23 @@ namespace MediaPortal.Tests.TagReader
     }
 
 
-    void GetTag(string filename)
+    private void GetTag(string filename)
     {
       MusicTag tag;
       string expectedArtist = Path.GetExtension(filename).ToLower();
       tag = MediaPortal.TagReader.TagReader.ReadTag(filename);
       Assert.IsNotNull(tag, string.Format("Failed to read tag from file: {0}", filename));
-      Assert.AreNotEqual(expectedArtist,tag.Artist);
+      Assert.AreNotEqual(expectedArtist, tag.Artist);
     }
 
-    void GetUnsupportedFile(string filename)
+    private void GetUnsupportedFile(string filename)
     {
       MusicTag tag;
       tag = MediaPortal.TagReader.TagReader.ReadTag(filename);
       Assert.IsNull(tag);
     }
 
-    void GetFileWithoutTag(string filename)
+    private void GetFileWithoutTag(string filename)
     {
       MusicTag tag;
       tag = MediaPortal.TagReader.TagReader.ReadTag(filename);

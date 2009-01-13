@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -36,13 +34,11 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class XmlParserTemplate
   {
     #region Variables
-    [XmlAttribute("xpath")]
-    public string XPath;
-    [XmlAttribute("channel")]
-    public string Channel;
-    [XmlArray("Fields")]
-    [XmlArrayItem("Field")]
-    public List<XmlField> Fields;
+
+    [XmlAttribute("xpath")] public string XPath;
+    [XmlAttribute("channel")] public string Channel;
+    [XmlArray("Fields")] [XmlArrayItem("Field")] public List<XmlField> Fields;
+
     #endregion
   }
 }

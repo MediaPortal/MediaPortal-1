@@ -23,19 +23,21 @@
 
 #endregion
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using MediaPortal.Database;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
+using SQLite.NET;
+
 namespace MediaPortal.Music.Database
 {
   #region Usings
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Text.RegularExpressions;
 
-  using SQLite.NET;
+  
 
-  using MediaPortal.Database;
-  using MediaPortal.GUI.Library;
-  using MediaPortal.Util;
   #endregion
 
   public partial class MusicDatabase
@@ -43,7 +45,9 @@ namespace MediaPortal.Music.Database
     public bool AssignAllSongFieldsFromResultSet(ref Song aSong, SQLiteResultSet aResult, int aRow)
     {
       if (aSong == null || aResult == null || aResult.Rows.Count < 1)
+      {
         return false;
+      }
 
       aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.idTrack");
       aSong.FileName = DatabaseUtility.Get(aResult, aRow, "tracks.strPath");
@@ -84,7 +88,7 @@ namespace MediaPortal.Music.Database
       {
         int NumOfSongs;
         strSQL = String.Format("SELECT count(*) FROM tracks WHERE iFavorite > 0");
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         SQLiteResultSet.Row row = results.Rows[0];
         NumOfSongs = Int32.Parse(results.Rows[0].fields[0]);
 
@@ -104,7 +108,7 @@ namespace MediaPortal.Music.Database
       {
         int NumOfSongs;
         strSQL = String.Format("SELECT count(idTrack) FROM tracks");
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         SQLiteResultSet.Row row = results.Rows[0];
         NumOfSongs = Int32.Parse(results.Rows[0].fields[0]);
 
@@ -123,7 +127,9 @@ namespace MediaPortal.Music.Database
       try
       {
         if (string.IsNullOrEmpty(aArtist))
+        {
           return 0;
+        }
 
         string strSQL;
         string strArtist = aArtist;
@@ -131,10 +137,10 @@ namespace MediaPortal.Music.Database
         double AVGPlayCount;
 
         strSQL = String.Format("select avg(iTimesPlayed) from tracks where strArtist like '%| {0} |%'", strArtist);
-        SQLiteResultSet result = MusicDatabase.DirectExecute(strSQL);
-        
-        Double.TryParse(result.Rows[0].fields[0], System.Globalization.NumberStyles.Number, new System.Globalization.CultureInfo("en-US"), out AVGPlayCount);
-        
+        SQLiteResultSet result = DirectExecute(strSQL);
+
+        Double.TryParse(result.Rows[0].fields[0], NumberStyles.Number, new CultureInfo("en-US"), out AVGPlayCount);
+
         return AVGPlayCount;
       }
       catch (Exception ex)
@@ -152,29 +158,30 @@ namespace MediaPortal.Music.Database
         aSong.Clear();
 
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
-        
+
         int maxIDSong, rndIDSong;
         string strSQL = String.Format("SELECT max(idTrack) FROM tracks");
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
 
         maxIDSong = DatabaseUtility.GetAsInt(results, 0, 0);
         rndIDSong = rand.Next(0, maxIDSong);
 
         strSQL = String.Format("SELECT * FROM tracks WHERE idTrack={0}", rndIDSong);
 
-        results = MusicDatabase.DirectExecute(strSQL);
+        results = DirectExecute(strSQL);
         if (results.Rows.Count > 0)
         {
           if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+          {
             return true;
+          }
         }
         else
         {
           GetRandomSong(ref aSong);
           return true;
         }
-
       }
       catch (Exception ex)
       {
@@ -193,23 +200,23 @@ namespace MediaPortal.Music.Database
       //  return;
       try
       {
-        SQLiteResultSet results = MusicDatabase.DirectExecute(aSQL);
+        SQLiteResultSet results = DirectExecute(aSQL);
         Song song = null;
 
-        for (int i = 0 ; i < results.Rows.Count ; i++)
+        for (int i = 0; i < results.Rows.Count; i++)
         {
           song = new Song();
           SQLiteResultSet.Row fields = results.Rows[i];
           int columnIndex = 0;
           if (filter == "artist")
           {
-            columnIndex = (int)results.ColumnIndices["strArtist"];
+            columnIndex = (int) results.ColumnIndices["strArtist"];
             song.Artist = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "albumartist")
           {
-            columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);                        
+            columnIndex = (int) results.ColumnIndices["strAlbumArtist"];
+            song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "album")
           {
@@ -218,8 +225,8 @@ namespace MediaPortal.Music.Database
           if (filter == "genre")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
-            columnIndex = (int)results.ColumnIndices["strGenre"];
-            song.Genre = fields.fields[columnIndex].Trim(trimChars);            
+            columnIndex = (int) results.ColumnIndices["strGenre"];
+            song.Genre = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "tracks")
           {
@@ -237,20 +244,20 @@ namespace MediaPortal.Music.Database
 
     public void GetSongsByIndex(string aSQL, out List<Song> aSongs, int aLevel, string filter)
     {
-      Log.Debug("MusicDatabase: GetSongsByIndex - SQL: {0}, Level: {1}, Filter: {2}", aSQL, aLevel, filter);      
+      Log.Debug("MusicDatabase: GetSongsByIndex - SQL: {0}, Level: {1}, Filter: {2}", aSQL, aLevel, filter);
       aSongs = new List<Song>();
       try
       {
-        SQLiteResultSet results = MusicDatabase.DirectExecute(aSQL);
+        SQLiteResultSet results = DirectExecute(aSQL);
         Song song;
 
         int specialCharCount = 0;
         bool appendedSpecialChar = false;
 
-        for (int i = 0 ; i < results.Rows.Count ; i++)
+        for (int i = 0; i < results.Rows.Count; i++)
         {
           SQLiteResultSet.Row fields = results.Rows[i];
-          
+
           // Check for special characters to group them on Level 0 of a list
           if (aLevel == 0)
           {
@@ -267,7 +274,9 @@ namespace MediaPortal.Music.Database
             }
 
             if (founddSpecialChar && i < results.Rows.Count - 1)
+            {
               continue;
+            }
 
             // Now we've looped through all Chars < A let's add the song
             if (!appendedSpecialChar)
@@ -343,16 +352,21 @@ namespace MediaPortal.Music.Database
 
         string strSQL = String.Format("SELECT * FROM tracks WHERE strPath = '{0}'", strFileName);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
-        Log.Error("MusicDatabase: Lookups: GetSongByFileName failed - strFileName: {2} - err:{0} stack:{1}", ex.Message, ex.StackTrace, strFileName);
+        Log.Error("MusicDatabase: Lookups: GetSongByFileName failed - strFileName: {2} - err:{0} stack:{1}", ex.Message,
+                  ex.StackTrace, strFileName);
         Open();
       }
 
@@ -368,42 +382,57 @@ namespace MediaPortal.Music.Database
       if (!string.IsNullOrEmpty(aArtist) && !string.IsNullOrEmpty(aAlbum) && !string.IsNullOrEmpty(aTitle))
       {
         if (GetSongByArtistAlbumTitle(aArtist, aAlbum, aTitle, ref aSong))
+        {
           return true;
-        else
-          if (!inexactFallback)
-            return false;
+        }
+        else if (!inexactFallback)
+        {
+          return false;
+        }
       }
 
       // An artist may have the same title in different versions (e.g. live, EP) on different discs - therefore this is the 2nd best option
       if (!string.IsNullOrEmpty(aAlbum) && !string.IsNullOrEmpty(aTitle))
       {
         if (GetSongByAlbumTitle(aAlbum, aTitle, ref aSong))
+        {
           return true;
-        else
-          if (!inexactFallback)
-            return false;
+        }
+        else if (!inexactFallback)
+        {
+          return false;
+        }
       }
 
       // Maybe the album was spelled different on last.fm or is mistagged in the local collection
       if (!string.IsNullOrEmpty(aArtist) && !string.IsNullOrEmpty(aTitle))
       {
         if (GetSongByArtistTitle(aArtist, aTitle, ref aSong))
+        {
           return true;
-        else
-          if (!inexactFallback)
-            return false;
+        }
+        else if (!inexactFallback)
+        {
+          return false;
+        }
       }
 
       // Make sure we get at least one / some usable results
       if (!string.IsNullOrEmpty(aTitle))
       {
         if (GetSongByTitle(aTitle, ref aSong))
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
 
-      Log.Debug("MusicDatabase: GetSongByMusicTagInfo did not get usable params! Artist: {0}, Album: {1}, Title: {2}, Nearest Match: {3}", aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
+      Log.Debug(
+        "MusicDatabase: GetSongByMusicTagInfo did not get usable params! Artist: {0}, Album: {1}, Title: {2}, Nearest Match: {3}",
+        aArtist, aAlbum, aTitle, Convert.ToString(inexactFallback));
       return false;
     }
 
@@ -419,17 +448,28 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}'", strArtist, strAlbum, strTitle);
+        string strSQL =
+          String.Format(
+            "SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}%' AND strTitle LIKE '{2}'",
+            strArtist, strAlbum, strTitle);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         if (results.Rows.Count > 1)
-          Log.Debug("MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0} - {1} - {2}", strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+        {
+          Log.Debug(
+            "MusicDatabase: Lookups: GetSongByArtistAlbumTitle found multiple results ({3}) for {0} - {1} - {2}",
+            strArtist, strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+        }
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -450,17 +490,25 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strAlbum LIKE '{0}' AND strTitle LIKE '{1}'", strAlbum, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strAlbum LIKE '{0}' AND strTitle LIKE '{1}'", strAlbum,
+                                      strTitle);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         if (results.Rows.Count > 1)
-          Log.Debug("MusicDatabase: Lookups: GetSongByAlbumTitle found multiple results ({2}) for {0} - {1}", strAlbum, strTitle, Convert.ToString(results.Rows.Count));
+        {
+          Log.Debug("MusicDatabase: Lookups: GetSongByAlbumTitle found multiple results ({2}) for {0} - {1}", strAlbum,
+                    strTitle, Convert.ToString(results.Rows.Count));
+        }
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -481,17 +529,25 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strTitle LIKE '{1}'", strArtist, strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' AND strTitle LIKE '{1}'",
+                                      strArtist, strTitle);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         if (results.Rows.Count > 1)
-          Log.Debug("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0} - {1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
+        {
+          Log.Debug("MusicDatabase: Lookups: GetSongByArtistTitle found multiple results ({2}) for {0} - {1}", strArtist,
+                    strTitle, Convert.ToString(results.Rows.Count));
+        }
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -512,15 +568,22 @@ namespace MediaPortal.Music.Database
 
         string strSQL = String.Format("SELECT * FROM tracks WHERE strTitle LIKE '{0}'", strTitle);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         if (results.Rows.Count > 1)
-          Log.Debug("MusicDatabase: Lookups: GetSongByTitle found multiple results ({0}) for {1}", Convert.ToString(results.Rows.Count), strTitle);
+        {
+          Log.Debug("MusicDatabase: Lookups: GetSongByTitle found multiple results ({0}) for {1}",
+                    Convert.ToString(results.Rows.Count), strTitle);
+        }
 
         if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -544,26 +607,38 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
         aSongList.Clear();
-        
+
         string strSQL = string.Empty;
         if (aGroupAlbum)
-          strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
+        {
+          strSQL =
+            String.Format(
+              "SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strArtist);
+        }
         else
+        {
           strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%| {0} |%' ORDER BY strArtist", strArtist);
+        }
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           Song song = new Song();
 
           if (AssignAllSongFieldsFromResultSet(ref song, results, i))
+          {
             aSongList.Add(song);
+          }
         }
         if (aSongList.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -582,11 +657,13 @@ namespace MediaPortal.Music.Database
         aSongList.Clear();
 
         if (string.IsNullOrEmpty(aPath))
+        {
           return false;
+        }
 
         string strPath = aPath;
         //	musicdatabase always stores directories without a slash at the end
-        strPath = Utils.RemoveTrailingSlash(strPath);
+        strPath = Util.Utils.RemoveTrailingSlash(strPath);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
 
         // The underscore is treated as special symbol in a like clause, which produces wrong results
@@ -594,12 +671,14 @@ namespace MediaPortal.Music.Database
         strPath = strPath.Replace("_", "\x0001_");
 
         strSQL = String.Format("select * from tracks where strPath like '{0}%' escape '\x0001'", strPath);
-        
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
-        if (results.Rows.Count == 0)
-          return false;
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        SQLiteResultSet results = DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           SongMap songmap = new SongMap();
           Song song = new Song();
@@ -616,7 +695,8 @@ namespace MediaPortal.Music.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MusicDatabase: Lookups: GetSongsByPath failed: {0} exception err: {1} stack: {2}", strSQL, ex.Message, ex.StackTrace);
+        Log.Error("MusicDatabase: Lookups: GetSongsByPath failed: {0} exception err: {1} stack: {2}", strSQL, ex.Message,
+                  ex.StackTrace);
         Open();
       }
 
@@ -635,9 +715,12 @@ namespace MediaPortal.Music.Database
         // Get the id of "Various Artists"
         string variousArtists = GUILocalizeStrings.Get(340);
         if (variousArtists.Length == 0)
+        {
           variousArtists = "Various Artists";
+        }
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' ORDER BY strAlbum asc", strAlbumArtist);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' ORDER BY strAlbum asc",
+                                   strAlbumArtist);
         GetSongsByFilter(sql, out aSongList, "tracks");
         return true;
       }
@@ -661,7 +744,10 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
+        string sql =
+          string.Format(
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iTrack asc",
+            strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
@@ -691,13 +777,21 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         if (aGroupAlbums)
-          sql = string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC", strGenre);
+        {
+          sql =
+            string.Format("SELECT * FROM tracks WHERE strGenre LIKE '%| {0} |%' GROUP BY strAlbum ORDER BY iYear DESC",
+                          strGenre);
+        }
         else
+        {
           sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%| {0} |%' ORDER BY strTitle ASC", strGenre);
+        }
         GetSongsByFilter(sql, out aSongList, "genre");
 
         if (aSongList.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -717,17 +811,21 @@ namespace MediaPortal.Music.Database
         string sql = string.Format("SELECT * FROM tracks WHERE iYear='{0}' order by strTitle asc", aYear);
 
         Song song;
-        SQLiteResultSet results = MusicDatabase.DirectExecute(sql);
+        SQLiteResultSet results = DirectExecute(sql);
 
-        for (int i = 0 ; i < results.Rows.Count ; i++)
+        for (int i = 0; i < results.Rows.Count; i++)
         {
           song = new Song();
           if (AssignAllSongFieldsFromResultSet(ref song, results, i))
+          {
             aSongList.Add(song);
+          }
         }
 
         if (aSongList.Count > 0)
+        {
           return true;
+        }
       }
 
       catch (Exception ex)
@@ -750,19 +848,25 @@ namespace MediaPortal.Music.Database
 
         string strSQL = String.Format("SELECT * FROM tracks WHERE strAlbum like '{0}'", strAlbum);
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           Song song = new Song();
           if (AssignAllSongFieldsFromResultSet(ref song, results, i))
+          {
             songs.Add(song);
+          }
         }
 
         if (songs.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -807,27 +911,31 @@ namespace MediaPortal.Music.Database
             return false;
         }
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           string strFileName = DatabaseUtility.Get(results, i, "strPath");
           GUIListItem item = new GUIListItem();
           item.IsFolder = false;
-          item.Label = MediaPortal.Util.Utils.GetFilename(strFileName);
+          item.Label = Util.Utils.GetFilename(strFileName);
           item.Label2 = string.Empty;
           item.Label3 = string.Empty;
           item.Path = strFileName;
           item.FileInfo = new FileInformation(strFileName, item.IsFolder);
-          MediaPortal.Util.Utils.SetDefaultIcons(item);
-          MediaPortal.Util.Utils.SetThumbnails(ref item);
+          Util.Utils.SetDefaultIcons(item);
+          Util.Utils.SetThumbnails(ref item);
           aListOfListitemSongs.Add(item);
         }
 
         if (aListOfListitemSongs.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -880,18 +988,22 @@ namespace MediaPortal.Music.Database
             return false;
         }
 
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           string addArtist = DatabaseUtility.Get(results, i, "strArtist");
           aArtistArray.Add(addArtist);
         }
 
         if (aArtistArray.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -909,18 +1021,22 @@ namespace MediaPortal.Music.Database
         aArtistArray.Clear();
 
         string strSQL = String.Format("SELECT DISTINCT strArtist FROM artist ORDER BY strArtist");
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           string strArtist = DatabaseUtility.Get(results, i, "strArtist");
           aArtistArray.Add(strArtist.Trim(trimChars));
         }
 
         if (aArtistArray.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -938,23 +1054,29 @@ namespace MediaPortal.Music.Database
         aAlbumInfoList.Clear();
 
         string strSQL;
-        strSQL = String.Format("SELECT strAlbum, strAlbumArtist, strArtist, iYear FROM tracks GROUP BY strAlbum ORDER BY strAlbumArtist, strAlbum, iYear");
-        
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
-        if (results.Rows.Count == 0)
-          return false;
+        strSQL =
+          String.Format(
+            "SELECT strAlbum, strAlbumArtist, strArtist, iYear FROM tracks GROUP BY strAlbum ORDER BY strAlbumArtist, strAlbum, iYear");
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        SQLiteResultSet results = DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
           album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
           album.Artist = DatabaseUtility.Get(results, i, "strArtist");
-          
+
           aAlbumInfoList.Add(album);
         }
         if (aAlbumInfoList.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -993,12 +1115,14 @@ namespace MediaPortal.Music.Database
             return false;
         }
         strSQL += " GROUP BY strAlbum";
-       
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
-        if (results.Rows.Count == 0)
-          return false;
 
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
+        SQLiteResultSet results = DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
@@ -1008,7 +1132,9 @@ namespace MediaPortal.Music.Database
           aAlbumArray.Add(album);
         }
         if (aAlbumArray.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -1030,7 +1156,8 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
         string strSQL;
-        strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", strArtist, strAlbum);
+        strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", strArtist,
+                               strAlbum);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)
@@ -1096,24 +1223,29 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
-    
+
     [Obsolete]
     public int GetArtistId(string aArtist)
     {
       try
       {
         if (MusicDbClient == null)
+        {
           return -1;
+        }
 
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
         string strSQL;
-        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'", strArtist);
+        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist LIKE '{0}'",
+                               strArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return -1;
+        }
 
         return DatabaseUtility.GetAsInt(results, 0, "artist.idArtist");
       }
@@ -1134,9 +1266,11 @@ namespace MediaPortal.Music.Database
         genres.Clear();
         string strSQL;
         strSQL = String.Format("SELECT * FROM genre ORDER BY strGenre");
-        SQLiteResultSet results= MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
@@ -1145,7 +1279,9 @@ namespace MediaPortal.Music.Database
         }
 
         if (genres.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {
@@ -1181,18 +1317,24 @@ namespace MediaPortal.Music.Database
           default:
             return false;
         }
-        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        SQLiteResultSet results = DirectExecute(strSQL);
         if (results.Rows.Count == 0)
+        {
           return false;
+        }
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
           string tmpGenre = DatabaseUtility.Get(results, i, "strGenre");
           if (!string.IsNullOrEmpty(tmpGenre))
+          {
             aGenreArray.Add(tmpGenre);
+          }
         }
         if (aGenreArray.Count > 0)
+        {
           return true;
+        }
       }
       catch (Exception ex)
       {

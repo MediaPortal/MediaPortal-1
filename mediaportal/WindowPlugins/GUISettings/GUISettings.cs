@@ -23,10 +23,8 @@
 
 #endregion
 
-using System;
-
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 
 namespace MediaPortal.GUI.Settings
@@ -37,12 +35,11 @@ namespace MediaPortal.GUI.Settings
   [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
   public class GUISettings : GUIWindow, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(11)]
-    protected GUIButtonControl btnMiniDisplay = null;
+    [SkinControl(11)] protected GUIButtonControl btnMiniDisplay = null;
 
     public GUISettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS;
+      GetID = (int) Window.WINDOW_SETTINGS;
     }
 
     public override bool Init()
@@ -67,7 +64,6 @@ namespace MediaPortal.GUI.Settings
     {
       switch (message.Message)
       {
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
@@ -80,7 +76,6 @@ namespace MediaPortal.GUI.Settings
           {
           }
           break;
-
       }
       return base.OnMessage(message);
     }
@@ -112,7 +107,8 @@ namespace MediaPortal.GUI.Settings
       return GetID;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(5);
       strButtonImage = "";

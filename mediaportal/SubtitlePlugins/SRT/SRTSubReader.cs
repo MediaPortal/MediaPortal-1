@@ -29,74 +29,86 @@ using System.Text;
 
 namespace MediaPortal.Subtitle
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class SRTSubReader:ISubtitleReader
-	{
-    SubTitles m_subs=new SubTitles();
-		public SRTSubReader()
-		{
-			// 
-			// TODO: Add constructor logic here
-			//
-		}
+  /// <summary>
+  /// 
+  /// </summary>
+  public class SRTSubReader : ISubtitleReader
+  {
+    private SubTitles m_subs = new SubTitles();
+
+    public SRTSubReader()
+    {
+      // 
+      // TODO: Add constructor logic here
+      //
+    }
+
     public override bool SupportsFile(string strFileName)
     {
-      string strExt=System.IO.Path.GetExtension(strFileName).ToLower();
-      if (strExt==".srt") return true;
+      string strExt = Path.GetExtension(strFileName).ToLower();
+      if (strExt == ".srt")
+      {
+        return true;
+      }
       return false;
     }
 
-    public override  bool ReadSubtitles(string strFileName)
+    public override bool ReadSubtitles(string strFileName)
     {
       try
       {
         m_subs.Clear();
-        using (StreamReader oRead = new StreamReader(strFileName,System.Text.Encoding.GetEncoding(1252)))
+        using (StreamReader oRead = new StreamReader(strFileName, Encoding.GetEncoding(1252)))
         {
-          while (oRead.Peek() >= 0) 
+          while (oRead.Peek() >= 0)
           {
             string s = oRead.ReadLine();
             string sText = "";
             string StartTime = "";
             string EndTime = "";
 
-            if(s != null && s.Trim() != "")
+            if (s != null && s.Trim() != "")
             {
-              if(s.Trim().IndexOf(":") > 0)
+              if (s.Trim().IndexOf(":") > 0)
               {
-                StartTime = s.Trim().Substring(0,12);
+                StartTime = s.Trim().Substring(0, 12);
                 EndTime = s.Substring(17).Trim();
-  								
-                while(s.Trim()!="")
+
+                while (s.Trim() != "")
                 {
                   s = oRead.ReadLine();
-                  if(s == null) 
-                    break;
-                  if(s.Trim() != "")
+                  if (s == null)
                   {
-                    if(sText!="")
+                    break;
+                  }
+                  if (s.Trim() != "")
+                  {
+                    if (sText != "")
+                    {
                       sText += "\n\r";
+                    }
 
-                    sText += s.Replace("\\N","\n\r").Replace("\\N","\n\r");
+                    sText += s.Replace("\\N", "\n\r").Replace("\\N", "\n\r");
                   }
                 }
 
 
-                SubTitles.Line newLine =new SubTitles.Line();
-                newLine.StartTime=GetSamiTime(StartTime.Replace(":","").Replace(",",""));
-                newLine.Text=sText;
-                newLine.EndTime=GetSamiTime(EndTime.Replace(":","").Replace(",",""));
+                SubTitles.Line newLine = new SubTitles.Line();
+                newLine.StartTime = GetSamiTime(StartTime.Replace(":", "").Replace(",", ""));
+                newLine.Text = sText;
+                newLine.EndTime = GetSamiTime(EndTime.Replace(":", "").Replace(",", ""));
                 m_subs.Add(newLine);
               }
             }
           }
-          if (m_subs.Count>0) return true;
+          if (m_subs.Count > 0)
+          {
+            return true;
+          }
           return false;
         }
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
 
@@ -117,28 +129,28 @@ namespace MediaPortal.Subtitle
       Int32 S = 0;
       Int32 Mil = 0;
 
-      if(HHMMSSmmm.Length == 7)
+      if (HHMMSSmmm.Length == 7)
       {
-        M = Convert.ToInt32(HHMMSSmmm.Substring(0,2));
-        S = Convert.ToInt32(HHMMSSmmm.Substring(2,2));
+        M = Convert.ToInt32(HHMMSSmmm.Substring(0, 2));
+        S = Convert.ToInt32(HHMMSSmmm.Substring(2, 2));
         Mil = Convert.ToInt32(HHMMSSmmm.Substring(4));
       }
-      else if(HHMMSSmmm.Length == 9)
+      else if (HHMMSSmmm.Length == 9)
       {
-        H = Convert.ToInt32(HHMMSSmmm.Substring(0,2));
-        M = Convert.ToInt32(HHMMSSmmm.Substring(2,2));
-        S = Convert.ToInt32(HHMMSSmmm.Substring(4,2));
+        H = Convert.ToInt32(HHMMSSmmm.Substring(0, 2));
+        M = Convert.ToInt32(HHMMSSmmm.Substring(2, 2));
+        S = Convert.ToInt32(HHMMSSmmm.Substring(4, 2));
         Mil = Convert.ToInt32(HHMMSSmmm.Substring(6));
       }
 
-      Int32 SamiTime = (((H * 3600) + (M * 60) +  S) * 1000) + Mil;
+      Int32 SamiTime = (((H*3600) + (M*60) + S)*1000) + Mil;
       return SamiTime;
     }
 
 
-    public override  SubTitles Subs
+    public override SubTitles Subs
     {
-      get { return m_subs;}
+      get { return m_subs; }
     }
-	}
+  }
 }

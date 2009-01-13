@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2006 Team MediaPortal - CoolHammer, mPod, diehard2
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal - Author: CoolHammer, mPod, diehard2
  *	http://www.team-mediaportal.com
@@ -23,12 +24,12 @@
 #endregion
 
 using System;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using X10;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using X10;
 
 namespace MediaPortal.InputDevices
 {
@@ -36,31 +37,32 @@ namespace MediaPortal.InputDevices
   /// This class initializes the x10 remotes and implements a sink to catch commands. A delegate is provided
   /// so that external classes can be made aware of events - mainly useful for learning.
   /// </summary>
-  public class X10Remote: _DIX10InterfaceEvents
+  public class X10Remote : _DIX10InterfaceEvents
   {
     #region Member Variables
 
-    X10Interface X10Inter = null;
-    IConnectionPointContainer icpc = null;
-    IConnectionPoint icp = null;
-    int cookie = 0;
-  
-    InputHandler _inputHandler = null;
-    bool _controlEnabled = false;
-    bool _logVerbose = false;
-    bool _x10Medion = true;
-    bool _x10Ati = false;
-    bool _x10Firefly = false;
-    bool _x10UseChannelControl = false;
-    int _x10Channel = 0;
+    private X10Interface X10Inter = null;
+    private IConnectionPointContainer icpc = null;
+    private IConnectionPoint icp = null;
+    private int cookie = 0;
+
+    private InputHandler _inputHandler = null;
+    private bool _controlEnabled = false;
+    private bool _logVerbose = false;
+    private bool _x10Medion = true;
+    private bool _x10Ati = false;
+    private bool _x10Firefly = false;
+    private bool _x10UseChannelControl = false;
+    private int _x10Channel = 0;
     public bool _remotefound = false;
-    
+
     #endregion
 
     #region Callback
 
     //Sets up callback so that other forms can catch a key press
     public delegate void X10Event(int keypress);
+
     public event X10Event X10KeyPressed;
 
     #endregion
@@ -68,14 +70,16 @@ namespace MediaPortal.InputDevices
     #region Constructor
 
     public X10Remote()
-    { }
-   
+    {
+    }
+
     #endregion
 
     #region Init method
+
     public void Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
         _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
@@ -102,13 +106,13 @@ namespace MediaPortal.InputDevices
 
           //Bind the interface using a connection point
 
-          icpc = (IConnectionPointContainer)X10Inter;
-          Guid IID_InterfaceEvents = typeof(_DIX10InterfaceEvents).GUID;
+          icpc = (IConnectionPointContainer) X10Inter;
+          Guid IID_InterfaceEvents = typeof (_DIX10InterfaceEvents).GUID;
           icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
           icp.Advise(this, out cookie);
         }
       }
-      catch (System.Runtime.InteropServices.COMException cex)
+      catch (COMException cex)
       {
         Log.Info("X10 Debug: Com error - " + cex.ToString());
       }
@@ -116,16 +120,28 @@ namespace MediaPortal.InputDevices
       if (_inputHandler == null)
       {
         if (_controlEnabled)
+        {
           if (_x10Medion)
+          {
             _inputHandler = new InputHandler("Medion X10");
+          }
           else if (_x10Ati)
+          {
             _inputHandler = new InputHandler("ATI X10");
+          }
           else if (_x10Firefly)
+          {
             _inputHandler = new InputHandler("Firefly X10");
+          }
           else
+          {
             _inputHandler = new InputHandler("Other X10");
+          }
+        }
         else
+        {
           return;
+        }
 
         if (!_inputHandler.IsLoaded)
         {
@@ -137,31 +153,40 @@ namespace MediaPortal.InputDevices
         if (_logVerbose)
         {
           if (_x10Medion)
+          {
             Log.Info("X10Remote: Start Medion");
+          }
           else if (_x10Ati)
+          {
             Log.Info("X10Remote: Start ATI");
+          }
           else if (_x10Firefly)
+          {
             Log.Info("X10Remote: Start Firefly");
+          }
           else
+          {
             Log.Info("X10Remote: Start Other");
+          }
         }
-
       }
     }
+
     #endregion
 
     #region _DIX10InterfaceEvents Members
 
-    public void X10Command(string bszCommand, EX10Command eCommand, int lAddress, EX10Key EKeyState, int lSequence, EX10Comm eCommandType, object varTimestamp)
+    public void X10Command(string bszCommand, EX10Command eCommand, int lAddress, EX10Key EKeyState, int lSequence,
+                           EX10Comm eCommandType, object varTimestamp)
     {
-      if ((EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT) && lSequence != 2)
+      if ((EKeyState == EX10Key.X10KEY_ON || EKeyState == EX10Key.X10KEY_REPEAT) && lSequence != 2)
       {
-        if (_x10UseChannelControl && (lAddress != ((_x10Channel-1)*16)))
+        if (_x10UseChannelControl && (lAddress != ((_x10Channel - 1)*16)))
         {
-            return;
+          return;
         }
 
-        int keypress = (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString());
+        int keypress = (int) Enum.Parse(typeof (EX10Command), eCommand.ToString());
         if (X10KeyPressed != null)
         {
           X10KeyPressed(keypress);
@@ -169,20 +194,19 @@ namespace MediaPortal.InputDevices
         if (_inputHandler != null)
         {
           _inputHandler.MapAction(keypress);
-
         }
 
         if (_logVerbose)
         {
-            Log.Info("X10Remote: Command Start --------------------------------------------");
-            Log.Info("X10Remote: bszCommand   = {0}", bszCommand.ToString());
-            Log.Info("X10Remote: eCommand     = {0} - {1}", keypress, eCommand.ToString());
-            Log.Info("X10Remote: eCommandType = {0}", eCommandType.ToString());
-            Log.Info("X10Remote: eKeyState    = {0}", EKeyState.ToString());
-            Log.Info("X10Remote: lAddress     = {0}", lAddress.ToString());
-            Log.Info("X10Remote: lSequence    = {0}", lSequence.ToString());
-            Log.Info("X10Remote: varTimestamp = {0}", varTimestamp.ToString());
-            Log.Info("X10Remote: Command End ----------------------------------------------");
+          Log.Info("X10Remote: Command Start --------------------------------------------");
+          Log.Info("X10Remote: bszCommand   = {0}", bszCommand.ToString());
+          Log.Info("X10Remote: eCommand     = {0} - {1}", keypress, eCommand.ToString());
+          Log.Info("X10Remote: eCommandType = {0}", eCommandType.ToString());
+          Log.Info("X10Remote: eKeyState    = {0}", EKeyState.ToString());
+          Log.Info("X10Remote: lAddress     = {0}", lAddress.ToString());
+          Log.Info("X10Remote: lSequence    = {0}", lSequence.ToString());
+          Log.Info("X10Remote: varTimestamp = {0}", varTimestamp.ToString());
+          Log.Info("X10Remote: Command End ----------------------------------------------");
         }
       }
     }
@@ -193,6 +217,5 @@ namespace MediaPortal.InputDevices
     }
 
     #endregion
-
   }
 }

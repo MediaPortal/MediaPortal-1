@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Text;
 using MediaPortal.Utils.Web;
 using MediaPortal.WebEPG.Config.Grabber;
 
@@ -36,21 +35,26 @@ namespace MediaPortal.WebEPG.Parser
   public class DataParser : IParser
   {
     #region Variables
-    DataRows _rows;
-    DataRowParser _parser;
-    Type _dataType;
+
+    private DataRows _rows;
+    private DataRowParser _parser;
+    private Type _dataType;
+
     #endregion
 
     #region Constructors/Destructors
+
     public DataParser(DataParserTemplate template)
     {
       _rows = new DataRows(template.rowDelimiter);
       _parser = new DataRowParser(template.Template, template.dataDelimiter);
-      _dataType = typeof(ProgramData);
+      _dataType = typeof (ProgramData);
     }
+
     #endregion
 
     #region Private Methods
+
     private void ProfilerStart()
     {
       //if (_strSource.Length == 0)
@@ -104,9 +108,11 @@ namespace MediaPortal.WebEPG.Parser
       //  _subProfile[index, 1] = subProfilePos[index, 1];
       //}
     }
+
     #endregion
 
     #region IParser Implementations
+
     public int ParseUrl(HTTPRequest site)
     {
       HTMLPage webPage = new HTMLPage(site);
@@ -117,12 +123,13 @@ namespace MediaPortal.WebEPG.Parser
     {
       string rowSource = _rows.GetSource(index);
 
-      IParserData rowData = (IParserData)Activator.CreateInstance(_dataType);
+      IParserData rowData = (IParserData) Activator.CreateInstance(_dataType);
 
       _parser.ParseRow(rowSource, ref rowData);
 
       return rowData;
     }
+
     #endregion
   }
 }

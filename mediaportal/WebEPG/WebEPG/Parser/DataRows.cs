@@ -23,10 +23,7 @@
 
 #endregion
 
-using System;
-using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG.Parser
 {
@@ -36,19 +33,24 @@ namespace MediaPortal.WebEPG.Parser
   public class DataRows
   {
     #region Variables
-    MatchCollection _rows;
-    string _source;
-    string _rowDelimiter;
+
+    private MatchCollection _rows;
+    private string _source;
+    private string _rowDelimiter;
+
     #endregion
 
     #region Constructors/Destructors
+
     public DataRows(string delimiter)
     {
       _rowDelimiter = delimiter;
     }
+
     #endregion
 
     #region Public Methods
+
     public int RowCount(string source)
     {
       Regex rowRegex = new Regex(_rowDelimiter);
@@ -63,7 +65,9 @@ namespace MediaPortal.WebEPG.Parser
 
       int start;
       if (index == 0)
+      {
         start = 0;
+      }
       else
       {
         Match last = _rows[index - 1];
@@ -74,6 +78,7 @@ namespace MediaPortal.WebEPG.Parser
 
       return _source.Substring(start, end - start);
     }
+
     #endregion
   }
 }

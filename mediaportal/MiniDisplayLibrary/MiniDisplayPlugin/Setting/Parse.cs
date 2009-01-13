@@ -1,14 +1,13 @@
-﻿using MediaPortal.GUI.Library;
-using System;
+﻿using System;
 using System.Xml.Serialization;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
 {
   [Serializable]
   public class Parse : Value
   {
-    [XmlAttribute("Value")]
-    public string value;
+    [XmlAttribute("Value")] public string value;
 
     public Parse()
     {
@@ -33,4 +32,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     }
   }
 }
-

@@ -26,12 +26,16 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class BaseShares : MediaPortal.Configuration.SectionSettings
+  public class BaseShares : SectionSettings
   {
     public class ShareData
     {
@@ -42,6 +46,7 @@ namespace MediaPortal.Configuration.Sections
         BigIcons,
         Filmstrip
       }
+
       public string Name;
       public string Folder;
       public string PinCode;
@@ -70,17 +75,17 @@ namespace MediaPortal.Configuration.Sections
 
     protected const int MaximumShares = 128;
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
-    private MediaPortal.UserInterface.Controls.MPButton editButton;
-    private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private MediaPortal.UserInterface.Controls.MPListView sharesListView;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRemember;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAddOpticalDiskDrives;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private MPButton deleteButton;
+    private MPButton editButton;
+    private MPButton addButton;
+    private MPListView sharesListView;
+    private ColumnHeader columnHeader3;
+    private MPCheckBox checkBoxRemember;
+    private MPCheckBox checkBoxAddOpticalDiskDrives;
+    private IContainer components = null;
 
     public BaseShares()
       : base("<Unknown>")
@@ -116,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -137,9 +143,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxAddOpticalDiskDrives);
       this.groupBox1.Controls.Add(this.checkBoxRemember);
       this.groupBox1.Controls.Add(this.deleteButton);
@@ -155,7 +163,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxRemember
       // 
-      this.checkBoxRemember.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxRemember.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxRemember.AutoSize = true;
       this.checkBoxRemember.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRemember.Location = new System.Drawing.Point(16, 334);
@@ -167,7 +177,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(384, 331);
       this.deleteButton.Name = "deleteButton";
@@ -179,7 +191,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // editButton
       // 
-      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.editButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
       this.editButton.Location = new System.Drawing.Point(304, 331);
       this.editButton.Name = "editButton";
@@ -191,7 +205,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Location = new System.Drawing.Point(224, 331);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -204,14 +220,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.sharesListView.AllowDrop = true;
       this.sharesListView.AllowRowReorder = true;
-      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.sharesListView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
-      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader3,
-            this.columnHeader2});
+      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                             {
+                                               this.columnHeader1,
+                                               this.columnHeader3,
+                                               this.columnHeader2
+                                             });
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
@@ -239,7 +259,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAddOpticalDiskDrives
       // 
-      this.checkBoxAddOpticalDiskDrives.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxAddOpticalDiskDrives.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxAddOpticalDiskDrives.AutoSize = true;
       this.checkBoxAddOpticalDiskDrives.Checked = true;
       this.checkBoxAddOpticalDiskDrives.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -259,13 +281,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    ListViewItem currentlyCheckedItem = null;
+    private ListViewItem currentlyCheckedItem = null;
 
-    private void addButton_Click(object sender, System.EventArgs e)
+    private void addButton_Click(object sender, EventArgs e)
     {
       EditShareForm editShare = new EditShareForm();
 
@@ -281,7 +303,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.Port = editShare.Port;
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
-        shareData.DefaultView = (ShareData.Views)editShare.View;
+        shareData.DefaultView = (ShareData.Views) editShare.View;
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -289,20 +311,29 @@ namespace MediaPortal.Configuration.Sections
 
     protected void AddShare(ShareData shareData, bool check)
     {
-      ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder, shareData.ActiveConnection ? "Yes" : "No" });
+      ListViewItem listItem =
+        new ListViewItem(new string[]
+                           {
+                             shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder,
+                             shareData.ActiveConnection ? "Yes" : "No"
+                           });
 
       if (shareData.IsRemote)
       {
-        listItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port, shareData.RemoteFolder);
+        listItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
+                                                  shareData.RemoteFolder);
       }
       listItem.Tag = shareData;
       listItem.Checked = check;
-      if (check) currentlyCheckedItem = listItem;
+      if (check)
+      {
+        currentlyCheckedItem = listItem;
+      }
 
       sharesListView.Items.Add(listItem);
     }
 
-    private void editButton_Click(object sender, System.EventArgs e)
+    private void editButton_Click(object sender, EventArgs e)
     {
       foreach (ListViewItem selectedItem in sharesListView.SelectedItems)
       {
@@ -323,7 +354,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
-          editShare.View = (int)shareData.DefaultView;
+          editShare.View = (int) shareData.DefaultView;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -340,21 +371,24 @@ namespace MediaPortal.Configuration.Sections
             shareData.Port = editShare.Port;
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
-            shareData.DefaultView = (ShareData.Views)editShare.View;
-            
+            shareData.DefaultView = (ShareData.Views) editShare.View;
+
             selectedItem.Tag = shareData;
 
             selectedItem.SubItems[0].Text = shareData.Name;
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
-            if (shareData.IsRemote) selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port, shareData.RemoteFolder);
-
+            if (shareData.IsRemote)
+            {
+              selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
+                                                            shareData.RemoteFolder);
+            }
           }
         }
       }
     }
 
-    private void deleteButton_Click(object sender, System.EventArgs e)
+    private void deleteButton_Click(object sender, EventArgs e)
     {
       int selectedItems = sharesListView.SelectedIndices.Count;
 
@@ -364,7 +398,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void sharesListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    private void sharesListView_ItemCheck(object sender, ItemCheckEventArgs e)
     {
       if (e.NewValue == CheckState.Checked)
       {
@@ -377,7 +411,9 @@ namespace MediaPortal.Configuration.Sections
           // We have a new selection
           //
           if (currentlyCheckedItem != null)
+          {
             currentlyCheckedItem.Checked = false;
+          }
           currentlyCheckedItem = sharesListView.Items[e.Index];
         }
       }
@@ -396,42 +432,24 @@ namespace MediaPortal.Configuration.Sections
 
     public ListView.ListViewItemCollection CurrentShares
     {
-      get
-      {
-        return sharesListView.Items;
-      }
+      get { return sharesListView.Items; }
     }
 
     public ListViewItem DefaultShare
     {
-      get
-      {
-        return currentlyCheckedItem;
-      }
+      get { return currentlyCheckedItem; }
     }
 
     public bool RememberLastFolder
     {
-      get
-      {
-        return checkBoxRemember.Checked;
-      }
-      set
-      {
-        checkBoxRemember.Checked = value;
-      }
+      get { return checkBoxRemember.Checked; }
+      set { checkBoxRemember.Checked = value; }
     }
 
     public bool AddOpticalDiskDrives
     {
-      get
-      {
-        return checkBoxAddOpticalDiskDrives.Checked;
-      }
-      set
-      {
-        checkBoxAddOpticalDiskDrives.Checked = value;
-      }
+      get { return checkBoxAddOpticalDiskDrives.Checked; }
+      set { checkBoxAddOpticalDiskDrives.Checked = value; }
     }
 
     public enum DriveType
@@ -450,7 +468,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string drive in drives)
       {
-        if (Util.Utils.getDriveType(drive) == (int)driveType)
+        if (Util.Utils.getDriveType(drive) == (int) driveType)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
@@ -503,7 +521,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void sharesListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void sharesListView_SelectedIndexChanged(object sender, EventArgs e)
     {
       editButton.Enabled = deleteButton.Enabled = (sharesListView.SelectedItems.Count > 0);
     }
@@ -530,7 +548,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void LoadSettings(string section, string defaultSharePath)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string defaultShare = xmlreader.GetValueAsString(section, "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
@@ -552,12 +570,12 @@ namespace MediaPortal.Configuration.Sections
 
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
-          string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
+          string sharePinData = Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, sharePin, ""));
 
           // provide default shares
           if (index == 0 && shareNameData == string.Empty)
           {
-            shareNameData = Util.VirtualDirectory.GetShareNameDefault(defaultSharePath);
+            shareNameData = VirtualDirectory.GetShareNameDefault(defaultSharePath);
             sharePathData = defaultSharePath;
             sharePinData = string.Empty;
 
@@ -570,7 +588,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
-          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int)ShareData.Views.List);
+          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int) ShareData.Views.List);
 
           if (shareNameData != null && shareNameData.Length > 0)
           {
@@ -581,22 +599,26 @@ namespace MediaPortal.Configuration.Sections
             newShare.PassWord = sharePwdData;
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
-            newShare.DefaultView = (ShareData.Views)shareView;
+            newShare.DefaultView = (ShareData.Views) shareView;
 
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
         }
         if (AddOpticalDiskDrives)
+        {
           AddStaticShares(DriveType.DVD, "DVD");
+        }
       }
     }
 
     protected void SaveSettings(string section)
     {
       if (AddOpticalDiskDrives)
+      {
         AddStaticShares(DriveType.DVD, "DVD");
+      }
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string defaultShare = string.Empty;
 
@@ -624,7 +646,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = string.Empty;
           int sharePortData = 21;
           string shareRemotePathData = string.Empty;
-          int shareView = (int)ShareData.Views.List;
+          int shareView = (int) ShareData.Views.List;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
@@ -642,15 +664,17 @@ namespace MediaPortal.Configuration.Sections
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
               shareRemotePathData = shareData.RemoteFolder;
-              shareView = (int)shareData.DefaultView;
+              shareView = (int) shareData.DefaultView;
 
               if (CurrentShares[index] == DefaultShare)
+              {
                 defaultShare = shareNameData;
+              }
             }
           }
           xmlwriter.SetValue(section, shareName, shareNameData);
           xmlwriter.SetValue(section, sharePath, sharePathData);
-          xmlwriter.SetValue(section, sharePin, MediaPortal.Util.Utils.EncryptPin(sharePinData));
+          xmlwriter.SetValue(section, sharePin, Util.Utils.EncryptPin(sharePinData));
 
           xmlwriter.SetValueAsBool(section, shareType, shareTypeData);
           xmlwriter.SetValue(section, shareServer, shareServerData);
@@ -664,6 +688,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
         xmlwriter.SetValueAsBool(section, "AddOpticalDiskDrives", AddOpticalDiskDrives);
       }
-    }    
+    }
   }
 }

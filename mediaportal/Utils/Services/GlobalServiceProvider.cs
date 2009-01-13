@@ -24,6 +24,7 @@
 #endregion
 
 using MediaPortal.ServiceImplementations;
+using MediaPortal.Threading;
 
 namespace MediaPortal.Services
 {
@@ -37,20 +38,25 @@ namespace MediaPortal.Services
   public static class GlobalServiceProvider
   {
     #region Variables
+
     private static readonly ServiceProvider _instance;
+
     #endregion
 
     #region Constructors/Destructors
+
     static GlobalServiceProvider()
     {
       _instance = new ServiceProvider();
       _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
-      _instance.Add<MediaPortal.Threading.IThreadPool>(
-        new ServiceCreatorCallback<MediaPortal.Threading.IThreadPool>(ThreadPoolServiceRequested));
+      _instance.Add<IThreadPool>(
+        new ServiceCreatorCallback<IThreadPool>(ThreadPoolServiceRequested));
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the ServiceProvider instance.
     /// </summary>
@@ -59,9 +65,11 @@ namespace MediaPortal.Services
     {
       get { return _instance; }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets the implementation of the requested service type.
     /// </summary>
@@ -100,9 +108,11 @@ namespace MediaPortal.Services
     {
       return _instance.IsRegistered<T>();
     }
+
     #endregion
 
     #region Private Methods
+
     private static ILog LogServiceRequested(ServiceProvider services)
     {
       ILog log = new LogImpl();
@@ -110,16 +120,17 @@ namespace MediaPortal.Services
       return log;
     }
 
-    private static MediaPortal.Threading.IThreadPool ThreadPoolServiceRequested(ServiceProvider services)
+    private static IThreadPool ThreadPoolServiceRequested(ServiceProvider services)
     {
-      MediaPortal.Threading.ThreadPool pool = new MediaPortal.Threading.ThreadPool();
-      pool.ErrorLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Error);
-      pool.WarnLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Warn);
-      pool.InfoLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Info);
-      pool.DebugLog += new MediaPortal.Threading.LoggerDelegate(_instance.Get<ILog>().Debug);
-      services.Add<MediaPortal.Threading.IThreadPool>(pool);
+      ThreadPool pool = new ThreadPool();
+      pool.ErrorLog += new LoggerDelegate(_instance.Get<ILog>().Error);
+      pool.WarnLog += new LoggerDelegate(_instance.Get<ILog>().Warn);
+      pool.InfoLog += new LoggerDelegate(_instance.Get<ILog>().Info);
+      pool.DebugLog += new LoggerDelegate(_instance.Get<ILog>().Debug);
+      services.Add<IThreadPool>(pool);
       return pool;
     }
+
     #endregion
   }
 }

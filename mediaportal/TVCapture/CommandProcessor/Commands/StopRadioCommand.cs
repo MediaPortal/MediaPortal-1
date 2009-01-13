@@ -24,26 +24,11 @@
 #endregion
 
 #region usings
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
 using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+using MediaPortal.Services;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -60,14 +45,14 @@ namespace MediaPortal.TV.Recording
       {
         handler.StopPlayer();
       }
-      
+
       if (handler.TVCards.Count == 0)
       {
         ErrorMessage = GUILocalizeStrings.Get(753); //"No tuner cards installed";
         Succeeded = false;
         return;
       }
-      for (int i=0; i < handler.TVCards.Count;++i)
+      for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = handler.TVCards[i];
         if (dev.IsRadio)

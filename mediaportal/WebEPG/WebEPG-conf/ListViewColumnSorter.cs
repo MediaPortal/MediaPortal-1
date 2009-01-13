@@ -12,10 +12,12 @@ namespace WebEPG_conf
     /// Specifies the column to be sorted
     /// </summary>
     private int ColumnToSort;
+
     /// <summary>
     /// Specifies the order in which to sort (i.e. 'Ascending').
     /// </summary>
     private SortOrder OrderOfSort;
+
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>
@@ -48,8 +50,8 @@ namespace WebEPG_conf
       ListViewItem listviewX, listviewY;
 
       // Cast the objects to be compared to ListViewItem objects
-      listviewX = (ListViewItem)x;
-      listviewY = (ListViewItem)y;
+      listviewX = (ListViewItem) x;
+      listviewY = (ListViewItem) y;
 
       // Compare the two items
       compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
@@ -77,14 +79,8 @@ namespace WebEPG_conf
     /// </summary>
     public int SortColumn
     {
-      set
-      {
-        ColumnToSort = value;
-      }
-      get
-      {
-        return ColumnToSort;
-      }
+      set { ColumnToSort = value; }
+      get { return ColumnToSort; }
     }
 
     /// <summary>
@@ -92,16 +88,8 @@ namespace WebEPG_conf
     /// </summary>
     public SortOrder Order
     {
-      set
-      {
-        OrderOfSort = value;
-      }
-      get
-      {
-        return OrderOfSort;
-      }
+      set { OrderOfSort = value; }
+      get { return OrderOfSort; }
     }
-
   }
-	
 }

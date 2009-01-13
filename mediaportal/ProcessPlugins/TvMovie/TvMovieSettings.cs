@@ -24,36 +24,32 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Collections;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using MediaPortal.TV.Database;
-using System.Collections;
 using System.Xml;
-using System.IO;
-using Microsoft.Win32;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
 
 namespace ProcessPlugins.TvMovie
 {
   public partial class TvMovieSettings : Form
   {
-
     #region Membervariables
 
-    string _xmlFile; 
+    private string _xmlFile;
+
     #endregion
 
-    class ChannelInfo
+    private class ChannelInfo
     {
-      string _start = "00:00";
-      string _end = "00:00";
-      string _name = string.Empty;
+      private string _start = "00:00";
+      private string _end = "00:00";
+      private string _name = string.Empty;
 
       public string Start
       {
@@ -81,7 +77,6 @@ namespace ProcessPlugins.TvMovie
     }
 
     #region Form Methods
-
 
     /// <summary>
     /// Constructor
@@ -132,27 +127,37 @@ namespace ProcessPlugins.TvMovie
 
     private void maskedTextBoxTimeStart_Validated(object sender, EventArgs e)
     {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      ChannelInfo channelInfo = (ChannelInfo) treeViewChannels.SelectedNode.Tag;
       channelInfo.Start = CleanInput(maskedTextBoxTimeStart.Text);
       maskedTextBoxTimeStart.Text = CleanInput(maskedTextBoxTimeStart.Text);
       treeViewChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+      {
+        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start,
+                                                           channelInfo.End);
+      }
       else
+      {
         treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+      }
     }
 
 
     private void maskedTextBoxTimeEnd_Validated(object sender, EventArgs e)
     {
-      ChannelInfo channelInfo = (ChannelInfo)treeViewChannels.SelectedNode.Tag;
+      ChannelInfo channelInfo = (ChannelInfo) treeViewChannels.SelectedNode.Tag;
       channelInfo.End = CleanInput(maskedTextBoxTimeEnd.Text);
       maskedTextBoxTimeEnd.Text = CleanInput(maskedTextBoxTimeEnd.Text);
       treeViewChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+      {
+        treeViewChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start,
+                                                           channelInfo.End);
+      }
       else
+      {
         treeViewChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
+      }
     }
 
 
@@ -170,7 +175,9 @@ namespace ProcessPlugins.TvMovie
     private void checkBoxAdditionalInfo_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxAdditionalInfo.Checked)
+      {
         checkBoxUseShortDesc.Checked = false;
+      }
     }
 
 
@@ -182,20 +189,18 @@ namespace ProcessPlugins.TvMovie
         return;
       }
       panelTimeSpan.Visible = true;
-      ChannelInfo channelInfo = (ChannelInfo)e.Node.Tag;
+      ChannelInfo channelInfo = (ChannelInfo) e.Node.Tag;
       maskedTextBoxTimeStart.Text = channelInfo.Start;
       maskedTextBoxTimeEnd.Text = channelInfo.End;
     }
-
 
     #endregion
 
     #region Implementation
 
-
     private void LoadOptions()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
         checkBoxAdditionalInfo.Checked = xmlreader.GetValueAsBool("tvmovie", "extenddescription", false);
@@ -208,7 +213,7 @@ namespace ProcessPlugins.TvMovie
 
     private void SaveOptions()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
         xmlwriter.SetValueAsBool("tvmovie", "extenddescription", checkBoxAdditionalInfo.Checked);
@@ -256,7 +261,8 @@ namespace ProcessPlugins.TvMovie
       }
       catch (Exception)
       {
-        MessageBox.Show("Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Please make sure TV Movie Clickfinder has been installed and licensed locally.",
+                        "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 
@@ -268,15 +274,23 @@ namespace ProcessPlugins.TvMovie
     {
       TreeNode selectedChannel = treeViewChannels.SelectedNode;
       if (selectedChannel == null)
+      {
         return;
+      }
       while (selectedChannel.Parent != null)
+      {
         selectedChannel = selectedChannel.Parent;
+      }
 
-      TreeNode selectedStation = (TreeNode)treeViewStations.SelectedNode.Clone();
+      TreeNode selectedStation = (TreeNode) treeViewStations.SelectedNode.Clone();
 
       foreach (TreeNode stationNode in selectedChannel.Nodes)
+      {
         if (stationNode.Text == selectedStation.Text)
+        {
           return;
+        }
+      }
 
       if (selectedChannel.Nodes.Count > 0)
       {
@@ -284,7 +298,9 @@ namespace ProcessPlugins.TvMovie
         selectedStation.ForeColor = Color.Green;
       }
       else
+      {
         selectedStation.ForeColor = Color.Blue;
+      }
 
       selectedChannel.Nodes.Add(selectedStation);
       selectedChannel.Expand();
@@ -298,7 +314,9 @@ namespace ProcessPlugins.TvMovie
     {
       TreeNode selectedChannel = treeViewChannels.SelectedNode;
       if (selectedChannel == null)
+      {
         return;
+      }
       if (selectedChannel.Parent != null)
       {
         if (selectedChannel.Parent.Nodes.Count == 2)
@@ -309,7 +327,9 @@ namespace ProcessPlugins.TvMovie
         selectedChannel.Remove();
       }
       else
+      {
         selectedChannel.Nodes.Clear();
+      }
     }
 
 
@@ -318,10 +338,10 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     private void SaveMapping()
     {
-      XmlTextWriter writer = new XmlTextWriter(_xmlFile, System.Text.Encoding.UTF8);
+      XmlTextWriter writer = new XmlTextWriter(_xmlFile, Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
-      writer.IndentChar = (char)9;
+      writer.IndentChar = (char) 9;
       writer.WriteStartDocument(true);
       writer.WriteStartElement("channellist"); // <channellist>
       writer.WriteAttributeString("version", "1");
@@ -332,7 +352,7 @@ namespace ProcessPlugins.TvMovie
         writer.WriteAttributeString("name", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {
-          ChannelInfo channelInfo = (ChannelInfo)station.Tag;
+          ChannelInfo channelInfo = (ChannelInfo) station.Tag;
           writer.WriteStartElement("station"); // <station>
           writer.WriteAttributeString("name", channelInfo.Name);
           writer.WriteStartElement("timesharing"); // <timesharing>
@@ -370,7 +390,7 @@ namespace ProcessPlugins.TvMovie
         XmlNodeList listChannels = doc.DocumentElement.SelectNodes("//channellist/channel");
         foreach (XmlNode channel in listChannels)
         {
-          string channelName = (string)channel.Attributes["name"].Value;
+          string channelName = (string) channel.Attributes["name"].Value;
           TreeNode channelNode = FindChannel(channelName);
           if (channelNode != null)
           {
@@ -378,10 +398,10 @@ namespace ProcessPlugins.TvMovie
 
             foreach (XmlNode station in listStations)
             {
-              string stationName = (string)station.Attributes["name"].Value;
+              string stationName = (string) station.Attributes["name"].Value;
               if (FindStation(stationName) != null)
               {
-                TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+                TreeNode stationNode = (TreeNode) FindStation(stationName).Clone();
                 ChannelInfo channelInfo = new ChannelInfo();
                 if (stationNode != null)
                 {
@@ -395,9 +415,13 @@ namespace ProcessPlugins.TvMovie
                   }
 
                   if (start != "00:00" || end != "00:00")
+                  {
                     stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                  }
                   else
+                  {
                     stationNode.Text = string.Format("{0}", stationName);
+                  }
 
                   channelInfo.Start = start;
                   channelInfo.End = end;
@@ -406,20 +430,26 @@ namespace ProcessPlugins.TvMovie
                   stationNode.Tag = channelInfo;
 
                   if (listStations.Count > 1)
+                  {
                     stationNode.ForeColor = Color.Green;
+                  }
                   else
+                  {
                     stationNode.ForeColor = Color.Blue;
+                  }
                   channelNode.Nodes.Add(stationNode);
                   channelNode.Expand();
                 }
               }
               else
+              {
                 Log.Warn("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+              }
             }
           }
         }
       }
-      catch (System.Xml.XmlException ex)
+      catch (XmlException ex)
       {
         Log.Info("TVMovie: The mapping file \"{0}\" seems to be corrupt", _xmlFile);
         Log.Info("TVMovie: {0}", ex.Message);
@@ -431,8 +461,12 @@ namespace ProcessPlugins.TvMovie
     private TreeNode FindChannel(string channelName)
     {
       foreach (TreeNode channel in treeViewChannels.Nodes)
+      {
         if (channel.Text == channelName)
+        {
           return channel;
+        }
+      }
 
       return null;
     }
@@ -441,9 +475,15 @@ namespace ProcessPlugins.TvMovie
     private TreeNode FindStation(string stationName)
     {
       foreach (TreeNode station in treeViewStations.Nodes)
+      {
         if (station.Tag != null)
-          if (((ChannelInfo)station.Tag).Name == stationName)
+        {
+          if (((ChannelInfo) station.Tag).Name == stationName)
+          {
             return station;
+          }
+        }
+      }
 
       return null;
     }
@@ -458,28 +498,34 @@ namespace ProcessPlugins.TvMovie
     }
 
 
-    string CleanInput(string input)
+    private string CleanInput(string input)
     {
       int hours = 0;
       int minutes = 0;
       input = input.Trim();
       int index = input.IndexOf(':');
       if (index > 0)
+      {
         hours = Convert.ToInt16(input.Substring(0, index));
+      }
       if (index + 1 < input.Length)
+      {
         minutes = Convert.ToInt16(input.Substring(index + 1));
+      }
 
       if (hours > 23)
+      {
         hours = 0;
+      }
 
       if (minutes > 59)
+      {
         minutes = 0;
+      }
 
       return string.Format("{0:00}:{1:00}", hours, minutes);
     }
 
-
     #endregion
-
   }
 }

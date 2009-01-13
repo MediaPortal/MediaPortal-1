@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
-using MediaPortal.GUI.Library;
+﻿using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -714,7 +710,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       layout.Label1 = true;
       return layout;
-
     }
 
     public static MainMenuLayout GetMainMenuLayout()
@@ -937,4 +932,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

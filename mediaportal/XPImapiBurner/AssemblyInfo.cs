@@ -1,13 +1,16 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
+
 [assembly: AssemblyTitle("XPBurn component")]
-[assembly: AssemblyDescription("Component used to create data CDs without invoking the Windows XP wizard UI.  This component requires Windows XP or Windows 2003 Server.")]
+[assembly:
+  AssemblyDescription(
+    "Component used to create data CDs without invoking the Windows XP wizard UI.  This component requires Windows XP or Windows 2003 Server."
+    )]
 
 
 //
@@ -22,4 +25,4 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.0.*")]
-[assembly: AssemblyFileVersionAttribute("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

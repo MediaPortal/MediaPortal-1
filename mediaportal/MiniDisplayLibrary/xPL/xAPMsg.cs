@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -41,11 +40,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public string Content
     {
-      get
-      {
-        return this.xAP_Raw;
-      }
+      get { return this.xAP_Raw; }
     }
   }
 }
-

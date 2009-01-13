@@ -26,12 +26,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
+using System.IO;
 using MediaPortal.Dialogs;
-using MediaPortal.Services;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Services;
+using MediaPortal.Util;
 using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Service class to display DVD selection dialog
   /// </summary>
-  class SelectDVDHandler : ISelectDVDHandler
+  internal class SelectDVDHandler : ISelectDVDHandler
   {
     public string ShowSelectDVDDialog(int parentId)
     {
@@ -50,12 +50,12 @@ namespace MediaPortal.GUI.Video
 
       for (int i = rootDrives.Count - 1; i >= 0; i--)
       {
-        GUIListItem item = (GUIListItem)rootDrives[i];
+        GUIListItem item = (GUIListItem) rootDrives[i];
         if (Util.Utils.getDriveType(item.Path) == 5) //cd or dvd drive
         {
           string driverLetter = item.Path.Substring(0, 1);
           string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-          if (!System.IO.File.Exists(fileName))
+          if (!File.Exists(fileName))
           {
             rootDrives.RemoveAt(i);
           }
@@ -72,24 +72,25 @@ namespace MediaPortal.GUI.Video
         {
           if (rootDrives.Count == 1)
           {
-            GUIListItem ritem = (GUIListItem)rootDrives[0];
+            GUIListItem ritem = (GUIListItem) rootDrives[0];
             return ritem.Path; // Only one DVD available, play it!
           }
           SetIMDBThumbs(rootDrives, false, true);
           // Display a dialog with all drives to select from
-          GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+          GUIDialogSelect2 dlgSel =
+            (GUIDialogSelect2) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_SELECT2);
           if (null == dlgSel)
           {
             Log.Info("SelectDVDHandler: Could not open dialog, defaulting to first drive found");
-            GUIListItem ritem = (GUIListItem)rootDrives[0];
+            GUIListItem ritem = (GUIListItem) rootDrives[0];
             return ritem.Path;
           }
           dlgSel.Reset();
-					dlgSel.SetHeading(196); // Choose movie
+          dlgSel.SetHeading(196); // Choose movie
           for (int i = 0; i < rootDrives.Count; i++)
           {
             GUIListItem dlgItem = new GUIListItem();
-            dlgItem = (GUIListItem)rootDrives[i];
+            dlgItem = (GUIListItem) rootDrives[i];
             Log.Debug("SelectDVDHandler: adding list item of possible playback location - {0}", dlgItem.Path);
             dlgSel.Add(dlgItem);
           }
@@ -111,9 +112,9 @@ namespace MediaPortal.GUI.Video
         }
       }
       //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3);//my videos
-      dlgOk.SetLine(1, 219);//no disc
+      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+      dlgOk.SetHeading(3); //my videos
+      dlgOk.SetLine(1, 219); //no disc
       dlgOk.DoModal(parentId);
       Log.Info("SelectDVDHandler: did not find a movie");
       return null;
@@ -145,7 +146,7 @@ namespace MediaPortal.GUI.Video
         {
           return false;
         }
-        if (System.IO.File.Exists(fileName))
+        if (File.Exists(fileName))
         {
           IMDBMovie movieDetails = new IMDBMovie();
           VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
@@ -159,19 +160,29 @@ namespace MediaPortal.GUI.Video
             //Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
             if (timeMovieStopped > 0)
             {
-              string title = System.IO.Path.GetFileName(fileName);
+              string title = Path.GetFileName(fileName);
               VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-              if (movieDetails.Title != string.Empty) title = movieDetails.Title;
+              if (movieDetails.Title != string.Empty)
+              {
+                title = movieDetails.Title;
+              }
 
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null == dlgYesNo) return false;
+              GUIDialogYesNo dlgYesNo =
+                (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              if (null == dlgYesNo)
+              {
+                return false;
+              }
               dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
               dlgYesNo.SetLine(1, title);
-              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + MediaPortal.Util.Utils.SecondsToHMSString(timeMovieStopped));
+              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + Util.Utils.SecondsToHMSString(timeMovieStopped));
               dlgYesNo.SetDefaultToYes(true);
               dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
-              if (!dlgYesNo.IsConfirmed) timeMovieStopped = 0;
+              if (!dlgYesNo.IsConfirmed)
+              {
+                timeMovieStopped = 0;
+              }
             }
           }
 
@@ -192,9 +203,9 @@ namespace MediaPortal.GUI.Video
         }
       }
       //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3);//my videos
-      dlgOk.SetLine(1, 219);//no disc
+      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+      dlgOk.SetHeading(3); //my videos
+      dlgOk.SetLine(1, 219); //no disc
       dlgOk.DoModal(parentId);
       return false;
     }
@@ -208,36 +219,42 @@ namespace MediaPortal.GUI.Video
       {
         string strThumb = string.Empty;
         string strLargeThumb = string.Empty;
-        pItem = (GUIListItem)items[x];
+        pItem = (GUIListItem) items[x];
         string file = string.Empty;
         bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
 
         if (pItem.IsFolder)
         {
           if (pItem.Label == "..")
+          {
             continue;
+          }
 
           if (isFolderPinProtected)
           {
             // hide maybe rated content
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            Util.Utils.SetDefaultIcons(pItem);
             continue;
           }
 
-          // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
+            // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
           else
           {
             if (eachMovieHasDedicatedFolder)
+            {
               file = GetFolderVideoFile(pItem.Path);
+            }
           }
-
         }
-        else if (!pItem.IsFolder || (pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
+        else if (!pItem.IsFolder ||
+                 (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
         {
           file = pItem.Path;
         }
         else
+        {
           continue;
+        }
 
 
         if (!string.IsNullOrEmpty(file))
@@ -249,14 +266,16 @@ namespace MediaPortal.GUI.Video
 
           if (id >= 0)
           {
-            if (MediaPortal.Util.Utils.IsDVD(pItem.Path))
+            if (Util.Utils.IsDVD(pItem.Path))
             {
               pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
             }
-            strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
 
             if (movieDetails.Watched > 0 && markWatchedFiles)
+            {
               foundWatched = true;
+            }
           }
           // do not double check
           if (!foundWatched && markWatchedFiles)
@@ -264,24 +283,33 @@ namespace MediaPortal.GUI.Video
             if (fileId >= 0)
             {
               if (VideoDatabase.GetMovieStopTime(fileId) > 0)
+              {
                 foundWatched = true;
+              }
               else
               {
                 int stops = VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
                 if (resumeData != null || stops > 0)
+                {
                   foundWatched = true;
+                }
               }
             }
           }
           if (!pItem.IsFolder)
-            pItem.IsPlayed = foundWatched;
-
-
-          if (!System.IO.File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
           {
-            strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle, Util.Utils.MakeFileName(Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(file, ".jpg"))));
-            if (!System.IO.File.Exists(strThumb))
+            pItem.IsPlayed = foundWatched;
+          }
+
+
+          if (!File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
+          {
+            strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
+                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
+            if (!File.Exists(strThumb))
+            {
               continue;
+            }
           }
 
           pItem.ThumbnailImage = strThumb;
@@ -289,9 +317,10 @@ namespace MediaPortal.GUI.Video
           pItem.IconImage = strThumb;
 
           strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-          if (System.IO.File.Exists(strThumb))
+          if (File.Exists(strThumb))
+          {
             pItem.ThumbnailImage = strThumb;
-
+          }
         } // <-- file == empty
       } // of for (int x = 0; x < items.Count; ++x)
     }
@@ -305,7 +334,7 @@ namespace MediaPortal.GUI.Video
     public string GetFolderVideoFile(string path)
     {
       // IFind first movie file in folder
-      string strExtension = System.IO.Path.GetExtension(path).ToLower();
+      string strExtension = Path.GetExtension(path).ToLower();
       if (VirtualDirectory.IsImageFile(strExtension))
       {
         return path;
@@ -323,7 +352,7 @@ namespace MediaPortal.GUI.Video
         string[] strDirs = null;
         try
         {
-          strDirs = System.IO.Directory.GetDirectories(path, "video_ts");
+          strDirs = Directory.GetDirectories(path, "video_ts");
         }
         catch (Exception)
         {
@@ -339,7 +368,7 @@ namespace MediaPortal.GUI.Video
         string[] strFiles = null;
         try
         {
-          strFiles = System.IO.Directory.GetFiles(path);
+          strFiles = Directory.GetFiles(path);
         }
         catch (Exception)
         {
@@ -348,7 +377,7 @@ namespace MediaPortal.GUI.Video
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string extensionension = System.IO.Path.GetExtension(strFiles[i]);
+            string extensionension = Path.GetExtension(strFiles[i]);
             if (VirtualDirectory.IsImageFile(extensionension))
             {
               if (DaemonTools.IsEnabled)
@@ -357,10 +386,10 @@ namespace MediaPortal.GUI.Video
               }
               continue;
             }
-            if (VirtualDirectory.IsValidExtension(strFiles[i], MediaPortal.Util.Utils.VideoExtensions, false))
+            if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
             {
               // Skip hidden files
-              if ((System.IO.File.GetAttributes(strFiles[i]) & System.IO.FileAttributes.Hidden) == System.IO.FileAttributes.Hidden)
+              if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
               {
                 continue;
               }
@@ -371,6 +400,5 @@ namespace MediaPortal.GUI.Video
       }
       return string.Empty;
     }
-
   }
 }

@@ -24,18 +24,17 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Web;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
-
+using System.Web;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
+using MediaPortal.Profile;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -43,7 +42,7 @@ namespace MediaPortal.FoobarPlugin
   /// Foobar plugin class
   /// </summary>
   [PluginIcons("ExternalPlayers.Foobar.foobarlogo.png", "ExternalPlayers.Foobar.foobarlogodisabled.png")]
-  public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
+  public class FoobarPlugin : IExternalPlayer
   {
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern IntPtr FindWindow(
@@ -51,7 +50,7 @@ namespace MediaPortal.FoobarPlugin
       [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
 
     [StructLayout(LayoutKind.Sequential)]
-    struct COPYDATASTRUCT
+    private struct COPYDATASTRUCT
     {
       public IntPtr dwData;
       public int cbData;
@@ -59,12 +58,12 @@ namespace MediaPortal.FoobarPlugin
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
-      [In()] ref COPYDATASTRUCT lParam);
+    private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
+                                          [In()] ref COPYDATASTRUCT lParam);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam,
-      int lParam);
+    private static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam,
+                                           int lParam);
 
     private const int WM_HTTPSERVER_MSG_CMD = 0x8898;
     private const int WM_HTTPSERVER_MSG_GETSTATE = 0x00;
@@ -77,17 +76,17 @@ namespace MediaPortal.FoobarPlugin
     private const int WM_HTTPSERVER_MSG_SEEK = 0x07;
     private const int WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST = 0x08;
     private const int WM_HTTPSERVER_MSG_CLEARPLAYLIST = 0x09;
-    const int WM_COPYDATA = 0x004a;
+    private const int WM_COPYDATA = 0x004a;
 
     [DllImport("User32")]
     private static extern int SetForegroundWindow(IntPtr hwnd);
 
     // Activates a window
-    [DllImportAttribute("User32.DLL")]
+    [DllImport("User32.DLL")]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("user32.dll")]
-    static extern IntPtr GetActiveWindow();
+    private static extern IntPtr GetActiveWindow();
 
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
@@ -168,12 +167,14 @@ namespace MediaPortal.FoobarPlugin
         newProcess.Start();
 
         IntPtr httpPluginWindow;
-        for (int i = 0; i < (2 * 6); i++) // wait 6 seconds for Foobar2k to start.
+        for (int i = 0; i < (2*6); i++) // wait 6 seconds for Foobar2k to start.
         {
           Thread.Sleep(500);
           httpPluginWindow = FindWindow("foo_httpserver_ctrl", null);
           if (httpPluginWindow.ToInt32() > 0) // window handle was found
+          {
             break;
+          }
         }
         m_foobarProcess = newProcess;
       }
@@ -195,7 +196,7 @@ namespace MediaPortal.FoobarPlugin
       string windowName = null;
       string startupparameter = null;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // extensions to play by this player
         strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", "");
@@ -208,11 +209,12 @@ namespace MediaPortal.FoobarPlugin
         // what's the window name of the program
         windowName = xmlreader.GetValueAsString("foobarplugin", "windowname", "");
         // additional startup options
-        startupparameter = xmlreader.GetValueAsString("foobarplugin", "startupparameter", " /hide /command:\"Playback/ReplayGain/Album\"");
+        startupparameter = xmlreader.GetValueAsString("foobarplugin", "startupparameter",
+                                                      " /hide /command:\"Playback/ReplayGain/Album\"");
       }
       if (strExt != null && strExt.Length > 0)
       {
-        m_supportedExtensions = strExt.Split(new char[] { ',' });
+        m_supportedExtensions = strExt.Split(new char[] {','});
       }
       if (execPath != null && execPath.Length > 0)
       {
@@ -228,7 +230,9 @@ namespace MediaPortal.FoobarPlugin
         {
           m_port = Convert.ToInt32(port);
         }
-        catch { }
+        catch
+        {
+        }
       }
       if (startupparameter != null && startupparameter.Length > 0)
       {
@@ -308,7 +312,7 @@ namespace MediaPortal.FoobarPlugin
       Stream ReceiveStream = myResponse.GetResponseStream();
 
       // 1252 is encoding for Windows format
-      Encoding encode = System.Text.Encoding.GetEncoding(1252);
+      Encoding encode = Encoding.GetEncoding(1252);
       StreamReader sr = new StreamReader(ReceiveStream, encode);
       retval = sr.ReadToEnd();
 
@@ -327,11 +331,18 @@ namespace MediaPortal.FoobarPlugin
     /// <returns></returns>
     private string ExecuteCommand(string command, string param1, string param2)
     {
-      if (command == null || command.Length == 0) return "";
-      if (m_execPath == null || m_execPath.Length == 0) return "ERROR: MP plugin not configured";
+      if (command == null || command.Length == 0)
+      {
+        return "";
+      }
+      if (m_execPath == null || m_execPath.Length == 0)
+      {
+        return "ERROR: MP plugin not configured";
+      }
 
       string retval = null;
-      string url = "http://" + m_hostname + ":" + m_port + "/?cmd=" + command + "&param1=" + param1 + "&param2=" + param2;
+      string url = "http://" + m_hostname + ":" + m_port + "/?cmd=" + command + "&param1=" + param1 + "&param2=" +
+                   param2;
       string response = GetHTTP(url);
 
       // the command is good and was executed correctly
@@ -387,10 +398,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override string AuthorName
     {
-      get
-      {
-        return m_author;
-      }
+      get { return m_author; }
     }
 
 
@@ -399,10 +407,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override string PlayerName
     {
-      get
-      {
-        return m_player;
-      }
+      get { return m_player; }
     }
 
     /// <summary>
@@ -410,10 +415,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override string VersionNumber
     {
-      get
-      {
-        return m_version;
-      }
+      get { return m_version; }
     }
 
     /// <summary>
@@ -426,22 +428,29 @@ namespace MediaPortal.FoobarPlugin
     {
       readConfig();
       string ext = null;
-      int dot = filename.LastIndexOf(".");    // couldn't find the dot to get the extension
-      if (dot == -1) return false;
+      int dot = filename.LastIndexOf("."); // couldn't find the dot to get the extension
+      if (dot == -1)
+      {
+        return false;
+      }
 
       ext = filename.Substring(dot).Trim();
-      if (ext.Length == 0) return false;   // no extension so return false;
+      if (ext.Length == 0)
+      {
+        return false; // no extension so return false;
+      }
 
       ext = ext.ToLower();
 
       for (int i = 0; i < m_supportedExtensions.Length; i++)
       {
         if (m_supportedExtensions[i].Equals(ext))
+        {
           return true;
+        }
       }
       // could not match the extension, so return false;
       return false;
-
     }
 
     /// <summary>
@@ -452,9 +461,11 @@ namespace MediaPortal.FoobarPlugin
     public override bool Play(string strFile)
     {
       // stop other media which might be active until now.
-      if (g_Player.Playing)      
+      if (g_Player.Playing)
+      {
         g_Player.Stop();
-      
+      }
+
 
       _isCDA = false;
       if (strFile.IndexOf(".cda") >= 0)
@@ -484,7 +495,7 @@ namespace MediaPortal.FoobarPlugin
 
         string playListName = "MPPlaylist";
         COPYDATASTRUCT cds;
-        cds.dwData = (IntPtr)1;  // find/create playlist
+        cds.dwData = (IntPtr) 1; // find/create playlist
         cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
         cds.cbData = playListName.Length + 1;
 
@@ -499,11 +510,11 @@ namespace MediaPortal.FoobarPlugin
         SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
 
 
-        Encoding encode = System.Text.Encoding.Default;
+        Encoding encode = Encoding.Default;
         // Let's encode the filename so any extended ASCII character is played correctly
         // by the Foobar Plugin
         byte[] byData = encode.GetBytes(HttpUtility.UrlEncode(strFile).Replace("+", "%20"));
-        cds.dwData = (IntPtr)0;  // Play song
+        cds.dwData = (IntPtr) 0; // Play song
         cds.lpData = Marshal.AllocCoTaskMem(byData.Length + 1);
         cds.cbData = byData.Length + 1;
         // write all the bytes to the lpData byte by byte
@@ -512,7 +523,7 @@ namespace MediaPortal.FoobarPlugin
           Marshal.WriteByte(cds.lpData, i, byData[i]);
         }
         // write the end of string '\0'
-        Marshal.WriteByte(cds.lpData, byData.Length, (byte)0);
+        Marshal.WriteByte(cds.lpData, byData.Length, (byte) 0);
         if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
         {
           Marshal.FreeCoTaskMem(cds.lpData);
@@ -539,10 +550,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override double Duration
     {
-      get
-      {
-        return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYLENGTH, 0);
-      }
+      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYLENGTH, 0); }
     }
 
     /// <summary>
@@ -550,10 +558,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override double CurrentPosition
     {
-      get
-      {
-        return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYBACKTIME, 0);
-      }
+      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYBACKTIME, 0); }
     }
 
 
@@ -596,7 +601,10 @@ namespace MediaPortal.FoobarPlugin
     {
       get
       {
-        if (m_bStoppedManualy) return false;
+        if (m_bStoppedManualy)
+        {
+          return false;
+        }
 
         int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 2);
@@ -611,7 +619,10 @@ namespace MediaPortal.FoobarPlugin
     {
       get
       {
-        if (!m_bStoppedManualy) return false;
+        if (!m_bStoppedManualy)
+        {
+          return false;
+        }
         int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 2);
       }
@@ -643,14 +654,8 @@ namespace MediaPortal.FoobarPlugin
     public override int Volume
     {
       // GetVolume
-      get
-      {
-        return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETVOLUME, 0);
-      }
-      set
-      {
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETVOLUME, value);
-      }
+      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETVOLUME, 0); }
+      set { SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETVOLUME, value); }
     }
 
     /// <summary>
@@ -663,13 +668,18 @@ namespace MediaPortal.FoobarPlugin
       {
         double dCurTime = CurrentPosition;
         dTime = dCurTime + dTime;
-        if (dTime < 0.0d) dTime = 0.0d;
+        if (dTime < 0.0d)
+        {
+          dTime = 0.0d;
+        }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) dTime);
         }
       }
-      catch { }
+      catch
+      {
+      }
     }
 
     /// <summary>
@@ -681,10 +691,13 @@ namespace MediaPortal.FoobarPlugin
       try
       {
         // seek
-        if (dTime < 0.0d) dTime = 0.0d;
+        if (dTime < 0.0d)
+        {
+          dTime = 0.0d;
+        }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) dTime);
         }
       }
       catch
@@ -701,16 +714,19 @@ namespace MediaPortal.FoobarPlugin
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
-      double fOnePercent = Duration / 100.0d;
-      fCurPercent = fCurPercent + (double)iPercentage;
+      double fCurPercent = (dCurrentPos/Duration)*100.0d;
+      double fOnePercent = Duration/100.0d;
+      fCurPercent = fCurPercent + (double) iPercentage;
       fCurPercent *= fOnePercent;
-      if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+      if (fCurPercent < 0.0d)
+      {
+        fCurPercent = 0.0d;
+      }
       if (fCurPercent < Duration)
       {
         try
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fCurPercent);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) fCurPercent);
         }
         catch
         {
@@ -724,13 +740,19 @@ namespace MediaPortal.FoobarPlugin
     /// <param name="iPercentage">percentage amount</param>
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (iPercentage < 0) iPercentage = 0;
-      if (iPercentage >= 100) iPercentage = 100;
-      double fPercent = Duration / 100.0f;
-      fPercent *= (double)iPercentage;
+      if (iPercentage < 0)
+      {
+        iPercentage = 0;
+      }
+      if (iPercentage >= 100)
+      {
+        iPercentage = 100;
+      }
+      double fPercent = Duration/100.0f;
+      fPercent *= (double) iPercentage;
       try
       {
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fPercent);
+        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) fPercent);
       }
       catch
       {
@@ -742,7 +764,7 @@ namespace MediaPortal.FoobarPlugin
     /// The main entry point for testing this class stand alone.
     /// </summary>
     [STAThread]
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       //
       // TODO: Add code to start application here
@@ -754,7 +776,9 @@ namespace MediaPortal.FoobarPlugin
     public override void Process()
     {
       if (!Playing)
+      {
         return;
+      }
 
       if (_notifyPlaying && CurrentPosition >= 10.0)
       {
@@ -767,11 +791,7 @@ namespace MediaPortal.FoobarPlugin
 
     public override bool IsCDA
     {
-      get
-      {
-        return _isCDA;
-      }
+      get { return _isCDA; }
     }
-
   } // public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
 }

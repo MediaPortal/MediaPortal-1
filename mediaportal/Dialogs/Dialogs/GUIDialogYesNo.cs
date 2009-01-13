@@ -24,10 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Drawing;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 
 namespace MediaPortal.Dialogs
 {
@@ -36,19 +33,19 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogYesNo : GUIDialogWindow
   {
-    [SkinControlAttribute(10)]    protected GUIButtonControl btnNo = null;
-    [SkinControlAttribute(11)]    protected GUIButtonControl btnYes = null;
+    [SkinControl(10)] protected GUIButtonControl btnNo = null;
+    [SkinControl(11)] protected GUIButtonControl btnYes = null;
 
-    bool m_bConfirmed = false;
-    bool m_DefaultYes = false;
-    int iYesKey = -1;
-    int iNoKey = -1;
+    private bool m_bConfirmed = false;
+    private bool m_DefaultYes = false;
+    private int iYesKey = -1;
+    private int iNoKey = -1;
     //bool needRefresh = false;
-    DateTime vmr7UpdateTimer = DateTime.Now;
+    private DateTime vmr7UpdateTimer = DateTime.Now;
 
     public GUIDialogYesNo()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO;
+      GetID = (int) Window.WINDOW_DIALOG_YES_NO;
     }
 
     public override bool Init()
@@ -112,8 +109,8 @@ namespace MediaPortal.Dialogs
             {
               GUIControl.FocusControl(GetID, btnYes.GetID);
             }
-            iYesKey = (int)btnYes.Label.ToLower()[0];
-            iNoKey = (int)btnNo.Label.ToLower()[0];
+            iYesKey = (int) btnYes.Label.ToLower()[0];
+            iNoKey = (int) btnNo.Label.ToLower()[0];
           }
           return true;
 
@@ -173,13 +170,22 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(string.Empty);
-      else SetHeading(GUILocalizeStrings.Get(iString));
+      if (iString == 0)
+      {
+        SetHeading(string.Empty);
+      }
+      else
+      {
+        SetHeading(GUILocalizeStrings.Get(iString));
+      }
     }
 
     public void SetLine(int iLine, string strLine)
     {
-      if (iLine <= 0) return;
+      if (iLine <= 0)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1 + iLine, 0, 0, null);
       msg.Label = strLine;
       OnMessage(msg);
@@ -187,15 +193,23 @@ namespace MediaPortal.Dialogs
 
     public void SetLine(int iLine, int iString)
     {
-      if (iLine <= 0) return;
-      if (iString == 0) SetLine(iLine, string.Empty);
-      else SetLine(iLine, GUILocalizeStrings.Get(iString));
+      if (iLine <= 0)
+      {
+        return;
+      }
+      if (iString == 0)
+      {
+        SetLine(iLine, string.Empty);
+      }
+      else
+      {
+        SetLine(iLine, GUILocalizeStrings.Get(iString));
+      }
     }
 
     public void SetDefaultToYes(bool bYesNo)
     {
       m_DefaultYes = bYesNo;
     }
-
   }
 }

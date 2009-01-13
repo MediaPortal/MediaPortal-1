@@ -11,7 +11,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     void Initialize();
     void SetCustomCharacters(int[][] customCharacters);
     void SetLine(int line, string message);
-    void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit);
+
+    void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
+               int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit);
 
     string Description { get; }
 
@@ -26,4 +28,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     bool SupportsText { get; }
   }
 }
-

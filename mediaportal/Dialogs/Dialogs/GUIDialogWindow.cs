@@ -28,12 +28,12 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Dialogs
 {
-
   public abstract class GUIDialogWindow : GUIWindow, IRenderLayer
   {
     #region Variables
+
     // Private Variables
-    private Object thisLock = new Object();      // used in PageDestroy
+    private Object thisLock = new Object(); // used in PageDestroy
     // Protected Variables
     protected int _selectedLabel = -1;
     protected GUIWindow _parentWindow = null;
@@ -42,26 +42,33 @@ namespace MediaPortal.Dialogs
     protected bool _running = false;
     protected IRenderLayer _prevLayer = null;
     // Public Variables
+
     #endregion
 
     #region Properties
+
     // Public Properties
     public virtual int SelectedLabel
     {
       get { return _selectedLabel; }
       set { _selectedLabel = value; }
     }
+
     #endregion
 
     #region Public Methods
+
     public virtual void PageLoad(int ParentID)
     {
       if (GUIWindowManager.IsRouted)
       {
         GUIDialogWindow win = (GUIDialogWindow) GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
-        if (win != null) win.PageDestroy();
+        if (win != null)
+        {
+          win.PageDestroy();
+        }
       }
-      
+
       _parentWindowID = ParentID;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
       if (_parentWindow == null)
@@ -73,36 +80,47 @@ namespace MediaPortal.Dialogs
       lock (thisLock)
       {
         GUIWindowManager.RouteToWindow(GetID);
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, _parentWindowID, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, _parentWindowID, 0,
+                                        null);
         OnMessage(msg);
         _running = true;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-   }
+    }
 
     public virtual void PageDestroy()
     {
-      if (_running == false) return;
+      if (_running == false)
+      {
+        return;
+      }
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (thisLock)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, _parentWindowID, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, _parentWindowID, 0,
+                                        null);
         OnMessage(msg);
-        if (GUIWindowManager.RoutedWindow == GetID) GUIWindowManager.UnRoute();  // only unroute if we still the routed window
+        if (GUIWindowManager.RoutedWindow == GetID)
+        {
+          GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+        }
         _parentWindow = null;
         _running = false;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-      while (IsAnimating(AnimationType.WindowClose) && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      while (IsAnimating(AnimationType.WindowClose) &&
+             GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
-
     }
 
     public virtual void Reset()
     {
-      if (_running) PageDestroy();
+      if (_running)
+      {
+        PageDestroy();
+      }
       LoadSkin();
       AllocResources();
       InitControls();
@@ -111,14 +129,23 @@ namespace MediaPortal.Dialogs
 
     public virtual void DoModal(int ParentID)
     {
-      if (!_running) PageLoad(ParentID);
-      
-      while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      if (!_running)
       {
-        if (ProcessDoModal() == false) break;
+        PageLoad(ParentID);
       }
 
-      if (_running) PageDestroy();
+      while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        if (ProcessDoModal() == false)
+        {
+          break;
+        }
+      }
+
+      if (_running)
+      {
+        PageDestroy();
+      }
     }
 
     public virtual bool ProcessDoModal()
@@ -126,10 +153,11 @@ namespace MediaPortal.Dialogs
       GUIWindowManager.Process();
       return true;
     }
+
     #endregion
 
     #region Protected Methods
-    
+
     protected void SetControlLabel(int WindowID, int ControlID, string LabelText)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, WindowID, 0, ControlID, 0, 0, null);
@@ -160,28 +188,34 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, WindowID, 0, ControlID, 0, 0, null);
       OnMessage(msg);
     }
-    
+
     #endregion
 
     #region <Base class> Overloads
+
     #region SupportsDelayedLoad
+
     public override bool SupportsDelayedLoad
     {
       get { return true; }
     }
+
     #endregion
 
     #region PreInit
+
     public override void PreInit()
     {
     }
+
     #endregion
 
     #region OnAction
+
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || 
-          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || 
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||
+          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU ||
           action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
         PageDestroy();
@@ -189,9 +223,11 @@ namespace MediaPortal.Dialogs
       }
       base.OnAction(action);
     }
+
     #endregion
 
     #region OnMessage
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -202,16 +238,17 @@ namespace MediaPortal.Dialogs
             _prevOverlay = GUIGraphicsContext.Overlay;
             GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-            
+
             GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             Log.Debug("DialogWindow: {0} init", this.ToString());
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
+                                            null);
             OnMessage(msg);
-            
+
             OnPageLoad();
- 
+
             return true;
           }
 
@@ -231,11 +268,15 @@ namespace MediaPortal.Dialogs
       }
       return base.OnMessage(message);
     }
+
     #endregion
+
     #endregion
 
     #region <Interface> Implementations
+
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       //return true;
@@ -246,8 +287,9 @@ namespace MediaPortal.Dialogs
     {
       Render(timePassed);
     }
+
     #endregion
+
     #endregion
   }
-
 }

@@ -13,7 +13,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     {
       for (int i = 0; i < this.m_Conditions.Count; i++)
       {
-        if (((Condition)this.m_Conditions[i]).Evaluate())
+        if (((Condition) this.m_Conditions[i]).Evaluate())
         {
           return true;
         }
@@ -21,14 +21,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       return false;
     }
 
-    [XmlArray, XmlArrayItem(typeof(Condition))]
+    [XmlArray, XmlArrayItem(typeof (Condition))]
     public IList Conditions
     {
-      get
-      {
-        return this.m_Conditions;
-      }
+      get { return this.m_Conditions; }
     }
   }
 }
-

@@ -23,81 +23,75 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
-using MediaPortal.Util;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicViews : MediaPortal.Configuration.Sections.BaseViews
+  public class MusicViews : BaseViews
   {
     private string[] selections = new string[]
-      {
-        "album",
-        "artist",
-        "albumartist",
-        "title",
-        "genre",
-        "year",
-        "track",
-        "timesplayed",
-        "rating",
-        "favorites",
-        "recently added"
-      };
+                                    {
+                                      "album",
+                                      "artist",
+                                      "albumartist",
+                                      "title",
+                                      "genre",
+                                      "year",
+                                      "track",
+                                      "timesplayed",
+                                      "rating",
+                                      "favorites",
+                                      "recently added"
+                                    };
 
     private string[] sqloperators = new string[]
-      {
-        "",
-        "=",
-        ">",
-        "<",
-        ">=",
-        "<=",
-        "<>",
-        "like",
-        "not like",
-        "group",
-      };
+                                      {
+                                        "",
+                                        "=",
+                                        ">",
+                                        "<",
+                                        ">=",
+                                        "<=",
+                                        "<>",
+                                        "like",
+                                        "not like",
+                                        "group",
+                                      };
 
     private string[] viewsAs = new string[]
-			{
-				"List",
-				"Icons",
-				"Big Icons",
-				"Filmstrip",
-        "Albums",
-		  };
+                                 {
+                                   "List",
+                                   "Icons",
+                                   "Big Icons",
+                                   "Filmstrip",
+                                   "Albums",
+                                 };
 
     private string[] sortBy = new string[]
-			{
-        "Name",
-        "Date",
-        "Year",
-        "Size",
-        "Track",
-        "Duration",
-        "Title",
-        "Artist",
-        "Album",
-        "Filename",
-        "Rating"
-      };
+                                {
+                                  "Name",
+                                  "Date",
+                                  "Year",
+                                  "Size",
+                                  "Track",
+                                  "Duration",
+                                  "Title",
+                                  "Artist",
+                                  "Album",
+                                  "Filename",
+                                  "Rating"
+                                };
 
     public MusicViews()
-      : this("Music Views") { }
+      : this("Music Views")
+    {
+    }
 
     public MusicViews(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {

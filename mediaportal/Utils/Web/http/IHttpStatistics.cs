@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace MediaPortal.Utils.Web
 {
@@ -34,17 +33,17 @@ namespace MediaPortal.Utils.Web
   public interface IHttpStatistics
   {
     #region Properties
+
     /// <summary>
     /// Gets the number of sites for which statistics are stored.
     /// </summary>
     /// <value>The count.</value>
-    int Count
-    {
-      get;
-    }
+    int Count { get; }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Getbies the index.
     /// </summary>
@@ -73,6 +72,7 @@ namespace MediaPortal.Utils.Web
     /// <param name="bytes">The bytes.</param>
     /// <param name="rate">The rate.</param>
     void Add(string site, int pages, int bytes, TimeSpan time);
+
     #endregion
   }
 }

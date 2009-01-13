@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using MediaPortal.Util;
 using MediaPortal.Playlists;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Playlists
 {
@@ -45,7 +41,7 @@ namespace MediaPortal.Tests.Core.Playlists
     {
       PlayList playlist = new PlayList();
       IPlayListIO loader = new PlayListWPLIO();
-      Assert.IsTrue(loader.Load(playlist,"Core\\Playlists\\TestData\\exampleList.wpl"));
+      Assert.IsTrue(loader.Load(playlist, "Core\\Playlists\\TestData\\exampleList.wpl"));
 
       string lastName = playlist[playlist.Count - 1].FileName;
       Assert.IsTrue(playlist[0].FileName.EndsWith("01-chant_down_babylon-rev.mp3"));

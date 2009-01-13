@@ -24,75 +24,76 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using MediaPortal.Util;
+using DShowNET;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using DShowNET;
+using MediaPortal.Profile;
+
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
-	/// <summary>
-	/// Summary description for GUIWizardAnalogCountry2.
-	/// </summary>
-	public class GUIWizardAnalogCountry2:GUIWindow, IComparer<GUIListItem>
-	{
-		[SkinControlAttribute(24)]			protected GUIListControl listCountries=null;
-		public GUIWizardAnalogCountry2()
-		{
-			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE;
-		}
-    
-		public override bool Init()
-		{
-			return Load (GUIGraphicsContext.Skin+@"\wizard_tvcard_analog_country2.xml");
-		}
-		protected override void OnPageLoad()
-		{
-			base.OnPageLoad ();
-			LoadCountries();
-		}
+  /// <summary>
+  /// Summary description for GUIWizardAnalogCountry2.
+  /// </summary>
+  public class GUIWizardAnalogCountry2 : GUIWindow, IComparer<GUIListItem>
+  {
+    [SkinControl(24)] protected GUIListControl listCountries = null;
 
-		void LoadCountries()
-		{
-			listCountries.Clear();
-			for (int i=0; i < TunerCountries.Countries.Length;++i)
-			{
-				GUIListItem item = new GUIListItem();
-				item.IsFolder=false;
-				item.Label=TunerCountries.Countries[i].Country;
-				item.ItemId=TunerCountries.Countries[i].Id;
-				listCountries.Add(item);
-			}
-			listCountries.Sort(this);
-		}
+    public GUIWizardAnalogCountry2()
+    {
+      GetID = (int) Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE;
+    }
 
-		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
-		{
-			if (control==listCountries)
-			{
-				GUIListItem item=listCountries.SelectedListItem;
-				DoScan(item.Label,item.ItemId);
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE);
-				return;
-			}
-			base.OnClicked (controlId, control, actionType);
-		}
+    public override bool Init()
+    {
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_country2.xml");
+    }
 
-		void DoScan(string country, int id)
-		{
-			GUIPropertyManager.SetProperty("#WizardCountry",country);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				xmlwriter.SetValue("capture", "countryname", country);
-				xmlwriter.SetValue("capture", "country", id.ToString());
-			}
-		}
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+      LoadCountries();
+    }
+
+    private void LoadCountries()
+    {
+      listCountries.Clear();
+      for (int i = 0; i < TunerCountries.Countries.Length; ++i)
+      {
+        GUIListItem item = new GUIListItem();
+        item.IsFolder = false;
+        item.Label = TunerCountries.Countries[i].Country;
+        item.ItemId = TunerCountries.Countries[i].Id;
+        listCountries.Add(item);
+      }
+      listCountries.Sort(this);
+    }
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if (control == listCountries)
+      {
+        GUIListItem item = listCountries.SelectedListItem;
+        DoScan(item.Label, item.ItemId);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_ANALOG_TUNE);
+        return;
+      }
+      base.OnClicked(controlId, control, actionType);
+    }
+
+    private void DoScan(string country, int id)
+    {
+      GUIPropertyManager.SetProperty("#WizardCountry", country);
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("capture", "countryname", country);
+        xmlwriter.SetValue("capture", "country", id.ToString());
+      }
+    }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
-		{
-			return String.Compare(item1.Label,item2.Label);
-		}
-	}
+    {
+      return String.Compare(item1.Label, item2.Label);
+    }
+  }
 }

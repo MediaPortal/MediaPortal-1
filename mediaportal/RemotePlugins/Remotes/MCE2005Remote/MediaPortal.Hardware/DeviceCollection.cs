@@ -43,7 +43,9 @@ namespace MediaPortal.Hardware
     public void Add(Device device)
     {
       if (device == null)
+      {
         throw new ArgumentNullException("device");
+      }
 
       List.Add(device);
     }
@@ -51,7 +53,9 @@ namespace MediaPortal.Hardware
     public bool Contains(Device device)
     {
       if (device == null)
+      {
         throw new ArgumentNullException("device");
+      }
 
       return List.Contains(device);
     }
@@ -59,7 +63,9 @@ namespace MediaPortal.Hardware
     public void CopyTo(Device[] array, int arrayIndex)
     {
       if (array == null)
+      {
         throw new ArgumentNullException("array");
+      }
 
       List.CopyTo(array, arrayIndex);
     }
@@ -67,7 +73,9 @@ namespace MediaPortal.Hardware
     public int IndexOf(Device device)
     {
       if (device == null)
+      {
         throw new ArgumentNullException("device");
+      }
 
       return List.IndexOf(device);
     }
@@ -75,7 +83,9 @@ namespace MediaPortal.Hardware
     public void Insert(int index, Device device)
     {
       if (device == null)
+      {
         throw new ArgumentNullException("device");
+      }
 
       List.Insert(index, device);
     }
@@ -83,10 +93,14 @@ namespace MediaPortal.Hardware
     public bool Remove(Device device)
     {
       if (device == null)
+      {
         throw new ArgumentNullException("device");
+      }
 
       if (List.Contains(device) == false)
+      {
         return false;
+      }
 
       List.Remove(device);
 
@@ -99,7 +113,7 @@ namespace MediaPortal.Hardware
 
     public Device this[int index]
     {
-      get { return (Device)List[index]; }
+      get { return (Device) List[index]; }
       set { List[index] = value; }
     }
 

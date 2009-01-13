@@ -23,37 +23,25 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.GUI.Library;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class DisplayOptionsWindow : GUIWindow
   {
-    [SkinControlAttribute(30)]
-    protected GUIToggleButtonControl btnVolume = null;
-    [SkinControlAttribute(31)]
-    protected GUIToggleButtonControl btnProgress = null;
-    [SkinControlAttribute(32)]
-    protected GUIToggleButtonControl btnDiskIcon = null;
-    [SkinControlAttribute(33)]
-    protected GUIToggleButtonControl btnMediaStatus = null;
-    [SkinControlAttribute(34)]
-    protected GUIToggleButtonControl btnDiskStatus = null;
-    [SkinControlAttribute(35)]
-    protected GUIToggleButtonControl btnCustomFont = null;
-    [SkinControlAttribute(36)]
-    protected GUIToggleButtonControl btnLargeIcons = null;
-    [SkinControlAttribute(37)]
-    protected GUIToggleButtonControl btnCustomIcons = null;
-    [SkinControlAttribute(38)]
-    protected GUIToggleButtonControl btnInvertIcons = null;
-    [SkinControlAttribute(39)]
-    protected GUIButtonControl btnFontEditor = null;
-    [SkinControlAttribute(40)]
-    protected GUIButtonControl btnIconEditor = null;
+    [SkinControl(30)] protected GUIToggleButtonControl btnVolume = null;
+    [SkinControl(31)] protected GUIToggleButtonControl btnProgress = null;
+    [SkinControl(32)] protected GUIToggleButtonControl btnDiskIcon = null;
+    [SkinControl(33)] protected GUIToggleButtonControl btnMediaStatus = null;
+    [SkinControl(34)] protected GUIToggleButtonControl btnDiskStatus = null;
+    [SkinControl(35)] protected GUIToggleButtonControl btnCustomFont = null;
+    [SkinControl(36)] protected GUIToggleButtonControl btnLargeIcons = null;
+    [SkinControl(37)] protected GUIToggleButtonControl btnCustomIcons = null;
+    [SkinControl(38)] protected GUIToggleButtonControl btnInvertIcons = null;
+    [SkinControl(39)] protected GUIButtonControl btnFontEditor = null;
+    [SkinControl(40)] protected GUIButtonControl btnIconEditor = null;
     private DisplayOptions DisplayOptions = new DisplayOptions();
 
     public DisplayOptionsWindow()
@@ -227,4 +215,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Hooks
 {
   public delegate void HookEventHandler(object sender, HookEventArgs e);

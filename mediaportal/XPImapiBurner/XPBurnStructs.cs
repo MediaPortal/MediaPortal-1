@@ -1,5 +1,3 @@
-using System;
-
 namespace XPBurn
 {
   /// <summary>
@@ -12,14 +10,17 @@ namespace XPBurn
     /// Indicates the CD in the active recorder is blank.
     /// </summary>
     public bool isBlank;
+
     /// <summary>
     /// Indicates that the CD in the active recorder is both readable and writable.
     /// </summary>
     public bool isReadWrite;
+
     /// <summary>
     /// Indicates that the CD in the active recorder is writable.
     /// </summary>
     public bool isWritable;
+
     /// <summary>
     /// Indicates that the CD in the active recorder is usable.
     /// </summary>

@@ -24,54 +24,51 @@
 #endregion
 
 using System;
-using System.Xml;
-using System.Xml.XPath;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.TV.Database;
+using System.Xml;
+using System.Xml.XPath;
+using DShowNET;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using DShowNET;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_AnalogRadio : Wizard_ScanBase
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
+    private MPGroupBox groupBox1;
+    private MPGroupBox groupBox2;
+    private MPGroupBox groupBox3;
+    private MPGroupBox groupBox4;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPComboBox cbCountry;
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbInput;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
-    private MediaPortal.UserInterface.Controls.MPButton buttonImport;
-    private MediaPortal.UserInterface.Controls.MPComboBox sensitivityComboBox;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel3;
+    private MPLabel mpLabel4;
+    private MPLabel mpLabel5;
+    private MPLabel mpLabel6;
+    private MPComboBox cbInput;
+    private MPComboBox cbCities;
+    private MPButton buttonImport;
+    private MPComboBox sensitivityComboBox;
 
-    private MediaPortal.UserInterface.Controls.MPListView listView1;
+    private MPListView listView1;
     private ColumnHeader columnHeader1;
     private ColumnHeader columnHeader2;
     private ColumnHeader columnHeader3;
     private ImageList imageList1;
 
 
-    bool _groupBox2Enabled = true;
-    bool _loadingInfo = false;
-    XmlDocument docSetup;
+    private bool _groupBox2Enabled = true;
+    private bool _loadingInfo = false;
+    private XmlDocument docSetup;
 
 
     public Wizard_AnalogRadio()
@@ -82,7 +79,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_AnalogRadio(string name)
       : base(name)
     {
-
       Radio = true;
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -90,8 +86,8 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -99,7 +95,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogRadio));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (Wizard_AnalogRadio));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -136,9 +133,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.listView1);
       this.groupBox1.Controls.Add(this.lblStatus2);
       this.groupBox1.Controls.Add(this.mpLabel3);
@@ -162,10 +161,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listView1
       // 
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                        {
+                                          this.columnHeader1,
+                                          this.columnHeader2,
+                                          this.columnHeader3
+                                        });
       this.listView1.Location = new System.Drawing.Point(16, 205);
       this.listView1.MultiSelect = false;
       this.listView1.Name = "listView1";
@@ -197,15 +198,19 @@ namespace MediaPortal.Configuration.Sections
       // imageList1
       // 
 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.ImageStream =
+        ((System.Windows.Forms.ImageListStreamer) (resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
       this.imageList1.Images.SetKeyName(0, "");
       // 
       // lblStatus2
       // 
-      this.lblStatus2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus2.Location = new System.Drawing.Point(16, 185);
       this.lblStatus2.Name = "lblStatus2";
       this.lblStatus2.Size = new System.Drawing.Size(415, 17);
@@ -221,7 +226,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
+      this.progressBarQuality.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
       this.progressBarQuality.Location = new System.Drawing.Point(114, 140);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(325, 16);
@@ -246,7 +253,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarStrength
       // 
-      this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
+      this.progressBarStrength.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
       this.progressBarStrength.Location = new System.Drawing.Point(114, 121);
       this.progressBarStrength.Name = "progressBarStrength";
       this.progressBarStrength.Size = new System.Drawing.Size(325, 16);
@@ -255,9 +264,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblStatus
       // 
-      this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                    System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus.Location = new System.Drawing.Point(16, 161);
       this.lblStatus.Name = "lblStatus";
       this.lblStatus.Size = new System.Drawing.Size(415, 17);
@@ -265,7 +277,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarProgress
       // 
-      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
+      this.progressBarProgress.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
       this.progressBarProgress.Location = new System.Drawing.Point(114, 100);
       this.progressBarProgress.Name = "progressBarProgress";
       this.progressBarProgress.Size = new System.Drawing.Size(325, 16);
@@ -273,21 +287,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 16);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(510, 32);
       this.label1.TabIndex = 0;
       this.label1.Text = "Select your country and input source and press \"Scan\" to scan for Radio Stations. Or" +
-          " select your city and press \"Download\" to import Radio Stations from MediaPortal We" +
-          "b Site.";
+                         " select your city and press \"Download\" to import Radio Stations from MediaPortal We" +
+                         "b Site.";
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.cbCities);
       this.groupBox2.Controls.Add(this.mpLabel5);
       this.groupBox2.Controls.Add(this.buttonImport);
@@ -302,11 +320,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbCities
       // 
-      this.cbCities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbCities.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbCities.Items.AddRange(new object[] {
-            "Loading..."});
+      this.cbCities.Items.AddRange(new object[]
+                                     {
+                                       "Loading..."
+                                     });
       this.cbCities.Location = new System.Drawing.Point(5, 45);
       this.cbCities.Name = "cbCities";
       this.cbCities.Size = new System.Drawing.Size(111, 21);
@@ -322,7 +344,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonImport
       // 
-      this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonImport.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonImport.Location = new System.Drawing.Point(5, 72);
       this.buttonImport.Name = "buttonImport";
       this.buttonImport.Size = new System.Drawing.Size(72, 22);
@@ -333,8 +357,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left))));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left))));
       this.groupBox3.Controls.Add(this.cbCountry);
       this.groupBox3.Controls.Add(this.mpLabel4);
       this.groupBox3.Controls.Add(this.label2);
@@ -350,7 +376,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbCountry
       // 
-      this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+      this.cbCountry.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
       this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCountry.Location = new System.Drawing.Point(76, 16);
       this.cbCountry.Name = "cbCountry";
@@ -376,11 +404,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbInput
       // 
-      this.cbInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
+      this.cbInput.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
       this.cbInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbInput.Items.AddRange(new object[] {
-            "Antenna",
-            "Cable"});
+      this.cbInput.Items.AddRange(new object[]
+                                    {
+                                      "Antenna",
+                                      "Cable"
+                                    });
       this.cbInput.Location = new System.Drawing.Point(301, 17);
       this.cbInput.Name = "cbInput";
       this.cbInput.Size = new System.Drawing.Size(113, 21);
@@ -389,7 +421,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+      this.groupBox4.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
       this.groupBox4.Controls.Add(this.buttonScan);
       this.groupBox4.Controls.Add(this.mpLabel6);
       this.groupBox4.Controls.Add(this.sensitivityComboBox);
@@ -404,7 +438,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonScan
       // 
-      this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+      this.buttonScan.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
       this.buttonScan.Location = new System.Drawing.Point(5, 14);
       this.buttonScan.Name = "buttonScan";
       this.buttonScan.Size = new System.Drawing.Size(72, 22);
@@ -423,18 +459,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // sensitivityComboBox
       // 
-      this.sensitivityComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+      this.sensitivityComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
       this.sensitivityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.sensitivityComboBox.Items.AddRange(new object[] {
-            "High",
-            "Medium",
-            "Low"});
+      this.sensitivityComboBox.Items.AddRange(new object[]
+                                                {
+                                                  "High",
+                                                  "Medium",
+                                                  "Low"
+                                                });
       this.sensitivityComboBox.SelectedIndex = 0;
       this.sensitivityComboBox.Location = new System.Drawing.Point(5, 68);
       this.sensitivityComboBox.Name = "sensitivityComboBox";
       this.sensitivityComboBox.Size = new System.Drawing.Size(72, 21);
       this.sensitivityComboBox.TabIndex = 3;
-      this.sensitivityComboBox.SelectedIndexChanged += new System.EventHandler(this.sensitivityComboBox_SelectedIndexChanged);
+      this.sensitivityComboBox.SelectedIndexChanged +=
+        new System.EventHandler(this.sensitivityComboBox_SelectedIndexChanged);
       // 
       // Wizard_AnalogTV
       // 
@@ -446,10 +487,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
-    #endregion
 
+    #endregion
 
     public override void OnSectionActivated()
     {
@@ -460,7 +500,7 @@ namespace MediaPortal.Configuration.Sections
         IEnumerator enumerator = devices.Values.GetEnumerator();
         while (enumerator.MoveNext())
         {
-          TVCaptureDevice dev = (TVCaptureDevice)enumerator.Current;
+          TVCaptureDevice dev = (TVCaptureDevice) enumerator.Current;
           if ((dev.Network == NetworkType.Analog) && (dev.SupportsRadio))
           {
             _card = dev;
@@ -488,14 +528,16 @@ namespace MediaPortal.Configuration.Sections
       LoadSettings();
       UpdateList();
       DownloadCities();
-      this.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-      this.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+      this.OnScanFinished += new ScanFinishedHandler(this.dlg_OnScanFinished);
+      this.OnScanStarted += new ScanStartedHandler(this.dlg_OnScanStarted);
     }
+
     protected override String[] GetScanParameters()
     {
       return null;
     }
-    void dlg_OnScanFinished(object sender, EventArgs args)
+
+    private void dlg_OnScanFinished(object sender, EventArgs args)
     {
       groupBox3.Enabled = true;
       listView1.Enabled = true;
@@ -509,7 +551,7 @@ namespace MediaPortal.Configuration.Sections
       MapRadioToOtherCards(_card.ID);
     }
 
-    void dlg_OnScanStarted(object sender, EventArgs args)
+    private void dlg_OnScanStarted(object sender, EventArgs args)
     {
       groupBox3.Enabled = false;
       _groupBox2Enabled = groupBox2.Enabled;
@@ -523,7 +565,10 @@ namespace MediaPortal.Configuration.Sections
       }
       _card.DefaultCountryCode = countryId;
       Boolean isCableInput = false;
-      if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
+      if (!cbInput.Text.Equals("Antenna"))
+      {
+        isCableInput = true;
+      }
       _card.IsCableInput = isCableInput;
       int Sensitivity = 1;
       switch (sensitivityComboBox.Text)
@@ -550,20 +595,23 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void DownloadCities()
+    private void DownloadCities()
     {
       Thread thread = new Thread(new ThreadStart(LoadXml));
       thread.IsBackground = true;
       thread.Start();
     }
-    void LoadXml()
+
+    private void LoadXml()
     {
       try
       {
         _loadingInfo = true;
         this.cbCities.Items.Clear();
-        this.cbCities.Items.AddRange(new object[] {
-                "Loading..."});
+        this.cbCities.Items.AddRange(new object[]
+                                       {
+                                         "Loading..."
+                                       });
         cbCities.SelectedIndex = 0;
         cbCities.Update();
         docSetup = new XmlDocument();
@@ -574,18 +622,21 @@ namespace MediaPortal.Configuration.Sections
       catch (Exception)
       {
         this.cbCities.Items.Clear();
-        this.cbCities.Items.AddRange(new object[] {
-                "No info available"});
+        this.cbCities.Items.AddRange(new object[]
+                                       {
+                                         "No info available"
+                                       });
         cbCities.SelectedIndex = 0;
         cbCities.Update();
         docSetup = null;
-        MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         return;
       }
     }
-    void FillInCities()
-    {
 
+    private void FillInCities()
+    {
       if (docSetup == null)
       {
         if (!_loadingInfo)
@@ -611,7 +662,7 @@ namespace MediaPortal.Configuration.Sections
       if (countryNav != null)
       {
         cbCities.Items.Clear();
-        XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
+        XmlNode nodeCountry = ((IHasXmlNode) countryNav).GetNode();
         XmlNodeList listCities = nodeCountry.SelectNodes("city");
         foreach (XmlNode nodeCity in listCities)
         {
@@ -619,7 +670,9 @@ namespace MediaPortal.Configuration.Sections
           cbCities.Items.Add(listCitiesName.Value);
         }
         if (cbCities.Items.Count > 0 && cbCities.SelectedIndex < 0)
+        {
           cbCities.SelectedIndex = 0;
+        }
         if (this.Scanning)
         {
           _groupBox2Enabled = true;
@@ -638,10 +691,10 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonImport_Click_1(object sender, System.EventArgs e)
+    private void buttonImport_Click_1(object sender, EventArgs e)
     {
       string country = cbCountry.SelectedItem.ToString();
-      string city = (string)cbCities.SelectedItem;
+      string city = (string) cbCities.SelectedItem;
       XPathNavigator nav = docSetup.CreateNavigator();
       // Ensure we are at the root node
       nav.MoveToRoot();
@@ -649,7 +702,7 @@ namespace MediaPortal.Configuration.Sections
       XPathNavigator cityNav = nav.SelectSingleNode(expr);
       if (cityNav != null)
       {
-        XmlNode nodeCity = ((IHasXmlNode)cityNav).GetNode();
+        XmlNode nodeCity = ((IHasXmlNode) cityNav).GetNode();
         XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
         int newRadioChannels;
         int updatedRadioChannels;
@@ -657,7 +710,8 @@ namespace MediaPortal.Configuration.Sections
         Cursor.Current = Cursors.WaitCursor;
         buttonImport.Enabled = false;
         ImportAnalogChannels(nodeAnalog.InnerText, out newRadioChannels, out updatedRadioChannels);
-        OnStatus2(String.Format("Imported {0} new radio stations, {1} updated radio stations", newRadioChannels, updatedRadioChannels));
+        OnStatus2(String.Format("Imported {0} new radio stations, {1} updated radio stations", newRadioChannels,
+                                updatedRadioChannels));
         MapRadioToOtherCards(_card.ID);
         buttonImport.Enabled = true;
         Cursor.Current = Cursors.Default;
@@ -669,7 +723,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void ImportAnalogChannels(string xmlFile, out int newRadioChannels, out int updatedRadioChannels)
+    private void ImportAnalogChannels(string xmlFile, out int newRadioChannels, out int updatedRadioChannels)
     {
       newRadioChannels = 0;
       updatedRadioChannels = 0;
@@ -689,7 +743,9 @@ namespace MediaPortal.Configuration.Sections
           {
             stationFrequency = ConvertToFrequency(frequency.Value);
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
 
           MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
           if (!RadioDatabase.GetStation(stationName, out station))
@@ -705,7 +761,8 @@ namespace MediaPortal.Configuration.Sections
             int id = RadioDatabase.AddStation(ref station);
             if (id < 0)
             {
-              Log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+              Log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name,
+                        station.Frequency);
             }
             newRadioChannels++;
           }
@@ -722,10 +779,12 @@ namespace MediaPortal.Configuration.Sections
       }
       catch (Exception)
       {
-        MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
       }
     }
-    int GetUniqueNumber()
+
+    private int GetUniqueNumber()
     {
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStations(ref stations);
@@ -752,24 +811,34 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    long ConvertToFrequency(string frequency)
+    private long ConvertToFrequency(string frequency)
     {
-      if (frequency.Trim() == string.Empty) return 0;
+      if (frequency.Trim() == string.Empty)
+      {
+        return 0;
+      }
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
-      if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
-      if (usage.IndexOf(",") >= 0) frequency = frequency.Replace(".", ",");
+      if (usage.IndexOf(".") >= 0)
+      {
+        frequency = frequency.Replace(",", ".");
+      }
+      if (usage.IndexOf(",") >= 0)
+      {
+        frequency = frequency.Replace(".", ",");
+      }
       double freqValue = Convert.ToDouble(frequency);
       freqValue *= 1000000;
-      return (long)(freqValue);
+      return (long) (freqValue);
     }
-    private void cbCountries_SelectedIndexChanged_1(object sender, System.EventArgs e)
+
+    private void cbCountries_SelectedIndexChanged_1(object sender, EventArgs e)
     {
       if ((cbCountry.SelectedItem != null) && (_card != null))
       {
         TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
         _card.DefaultCountryCode = tunerCountry.Id;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
@@ -787,14 +856,18 @@ namespace MediaPortal.Configuration.Sections
       }
       FillInCities();
     }
-    private void cbInput_SelectedIndexChanged_1(object sender, System.EventArgs e)
+
+    private void cbInput_SelectedIndexChanged_1(object sender, EventArgs e)
     {
       if ((cbInput.SelectedItem != null) && (_card != null))
       {
         Boolean isCableInput = false;
-        if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
+        if (!cbInput.Text.Equals("Antenna"))
+        {
+          isCableInput = true;
+        }
         _card.IsCableInput = isCableInput;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         }
@@ -811,7 +884,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void sensitivityComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void sensitivityComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       if ((sensitivityComboBox.SelectedItem != null) && (_card != null))
       {
@@ -834,7 +907,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if ((listView1.SelectedIndices.Count > 0) && (_card != null))
       {
@@ -851,6 +924,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     private void listView1_KeyUp(Object o, KeyEventArgs e)
     {
       if ((listView1.SelectedIndices.Count > 0) && (_card != null))
@@ -878,7 +952,8 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-    private void listView1_ItemActivate(object sender, System.EventArgs e)
+
+    private void listView1_ItemActivate(object sender, EventArgs e)
     {
       if ((listView1.SelectedIndices.Count > 0) && (_card != null))
       {
@@ -906,7 +981,9 @@ namespace MediaPortal.Configuration.Sections
             // Remove URL if we have a normal radio station
             //
             if (editStation.Station.Type.Equals("Radio"))
+            {
               editStation.Station.URL = string.Empty;
+            }
 
             listItem.SubItems[0].Text = editStation.Station.Name;
             listItem.SubItems[1].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz);
@@ -920,7 +997,9 @@ namespace MediaPortal.Configuration.Sections
             long currentTunedFrequency = station.Frequency;
             station.Frequency = editStation.Station.Frequency.Hertz;
             if (station.Frequency < 1000)
+            {
               station.Frequency *= 1000000L;
+            }
             RadioDatabase.UpdateStation(station);
             listView1.Update();
             if (station.Frequency != currentTunedFrequency)
@@ -933,7 +1012,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void MapRadioToOtherCards(int id)
+    private void MapRadioToOtherCards(int id)
     {
       ArrayList radiochannels = new ArrayList();
       RadioDatabase.GetStationsForCard(ref radiochannels, id);
@@ -950,9 +1029,10 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "radiotuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
@@ -970,7 +1050,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)
@@ -985,7 +1065,10 @@ namespace MediaPortal.Configuration.Sections
     public override void UpdateList()
     {
       listView1.Items.Clear();
-      if (_card == null) return;
+      if (_card == null)
+      {
+        return;
+      }
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStationsForCard(ref stations, _card.ID);
       foreach (MediaPortal.Radio.Database.RadioStation station in stations)
@@ -995,7 +1078,7 @@ namespace MediaPortal.Configuration.Sections
         //                  if (station.Scrambled)
         //                    item.ImageIndex = 1;
         item.Text = station.Name;
-        float frequency = ((float)station.Frequency) / 1000000;
+        float frequency = ((float) station.Frequency)/1000000;
         string description = String.Format("{0:###.##} MHz.", frequency);
         item.SubItems.Add(description);
         item.SubItems.Add(station.Channel.ToString());
@@ -1003,7 +1086,5 @@ namespace MediaPortal.Configuration.Sections
       }
       RadioStations.UpdateList();
     }
-
   }
 }
-

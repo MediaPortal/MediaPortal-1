@@ -24,36 +24,37 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Video.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>
   /// Summary description for DlgProgress.
   /// </summary>
-  public class DlgProgress : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class DlgProgress : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPButton button2;
-      private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private  System.Windows.Forms.ProgressBar progressBar;
+    private MPButton button2;
+    private MPLabel label1;
+    private MPLabel label2;
+    private ProgressBar progressBar;
     private Object instance;
-      private ProgressBar progressBar1;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-      private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private ProgressBar progressBar1;
+    private MPLabel mpLabel1;
+    private MPButton mpButton1;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
-      private int count = 0;
-      private int total = 0;
-      private bool cancelScan = false;
-      public DlgProgress()
+    private Container components = null;
+
+    private int count = 0;
+    private int total = 0;
+    private bool cancelScan = false;
+
+    public DlgProgress()
     {
       //
       // Required for Windows Form Designer support
@@ -81,6 +82,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -98,7 +100,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // button2
       // 
-      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.button2.Location = new System.Drawing.Point(326, 114);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(56, 23);
@@ -125,8 +129,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar
       // 
-      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar.Location = new System.Drawing.Point(12, 46);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(370, 15);
@@ -134,8 +140,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(12, 91);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(370, 15);
@@ -143,7 +151,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel1
       // 
-      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpLabel1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel1.Location = new System.Drawing.Point(12, 73);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(351, 16);
@@ -152,7 +162,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButton1
       // 
-      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButton1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButton1.Location = new System.Drawing.Point(239, 114);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(82, 23);
@@ -180,100 +192,111 @@ namespace MediaPortal.Configuration.Sections
       this.Text = "Searching IMDB...";
       this.Load += new System.EventHandler(this.DlgProgress_Load);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-
-    private void button2_Click(object sender, System.EventArgs e)
+    private void button2_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Hide();
     }
-      public void CloseProgress()
-      {
-          this.ResetProgress();
-          this.DialogResult = DialogResult.OK;
-          this.Hide();
-      }
-      public void ResetProgress()
-      {
-          SetLine1("");
-          SetLine2("");
-          SetPercentage(0);
-          SetHeading("");
-          button2.Enabled = true;
-      }
-      public void DisableCancel()
-      {
-          button2.Enabled = false;
-      }
-      public void SetHeading(string label)
-      {
-          this.Text = label;
-      }
-      public void SetLine1(string label)
-      {
-          this.label1.Text = label;
-      }
-      public void SetLine2(string label)
-      {
-          this.label2.Text = label;
-      }
-      public void SetPercentage(int percent)
-      {
-          this.progressBar.Value = percent;
-      }
-      public bool IsInstance(Object obj)
-      {
-          return (this.instance == obj);
-      }
-      public Object Instance
-      {
-          set { this.instance = value; }
-      }
-      public int Total
-      {
-          get { return this.Total; }
-          set { 
-              this.total = value;
-              this.progressBar1.Maximum = total;
-          }
-      }
-      public int Count
-      {
-          get { return this.count; }
-          set { 
-              this.count = value;
-              this.mpLabel1.Text = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(189), this.count, this.total);
-              this.progressBar1.Value = count; 
-          }
-      }
-      public bool CancelScan
-      {
-          get { return this.cancelScan; }
-      }
 
-      private void mpButton1_Click(object sender, EventArgs e)
+    public void CloseProgress()
+    {
+      this.ResetProgress();
+      this.DialogResult = DialogResult.OK;
+      this.Hide();
+    }
+
+    public void ResetProgress()
+    {
+      SetLine1("");
+      SetLine2("");
+      SetPercentage(0);
+      SetHeading("");
+      button2.Enabled = true;
+    }
+
+    public void DisableCancel()
+    {
+      button2.Enabled = false;
+    }
+
+    public void SetHeading(string label)
+    {
+      this.Text = label;
+    }
+
+    public void SetLine1(string label)
+    {
+      this.label1.Text = label;
+    }
+
+    public void SetLine2(string label)
+    {
+      this.label2.Text = label;
+    }
+
+    public void SetPercentage(int percent)
+    {
+      this.progressBar.Value = percent;
+    }
+
+    public bool IsInstance(Object obj)
+    {
+      return (this.instance == obj);
+    }
+
+    public Object Instance
+    {
+      set { this.instance = value; }
+    }
+
+    public int Total
+    {
+      get { return this.Total; }
+      set
       {
-          this.cancelScan = true;
-          this.DialogResult = DialogResult.Cancel;
-          this.Hide();
-
+        this.total = value;
+        this.progressBar1.Maximum = total;
       }
+    }
 
-      private void DlgProgress_Load(object sender, EventArgs e)
+    public int Count
+    {
+      get { return this.count; }
+      set
       {
-          if (this.total > 1)
-          {
-              this.mpButton1.Visible = true;
-          }
-          else
-          {
-              this.mpButton1.Visible = false;
-          }
-          this.cancelScan = false;
+        this.count = value;
+        this.mpLabel1.Text = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(189), this.count, this.total);
+        this.progressBar1.Value = count;
       }
+    }
 
+    public bool CancelScan
+    {
+      get { return this.cancelScan; }
+    }
+
+    private void mpButton1_Click(object sender, EventArgs e)
+    {
+      this.cancelScan = true;
+      this.DialogResult = DialogResult.Cancel;
+      this.Hide();
+    }
+
+    private void DlgProgress_Load(object sender, EventArgs e)
+    {
+      if (this.total > 1)
+      {
+        this.mpButton1.Visible = true;
+      }
+      else
+      {
+        this.mpButton1.Visible = false;
+      }
+      this.cancelScan = false;
+    }
   }
 }

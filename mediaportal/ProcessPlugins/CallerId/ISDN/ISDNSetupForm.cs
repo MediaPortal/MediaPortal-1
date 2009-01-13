@@ -24,33 +24,33 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace ProcessPlugins.CallerId
 {
   /// <summary>
   /// Summary description for ISDNSetupForm.
   /// </summary>
-  public class ISDNSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class ISDNSetupForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStopMedia;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIncomingCall;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonManualResume;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAutoResume;
-    private System.Windows.Forms.NumericUpDown numericUpDownTimeOut;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTimeOut;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOutlook;
+    private MPCheckBox checkBoxStopMedia;
+    private MPGroupBox groupBoxIncomingCall;
+    private MPButton okButton;
+    private MPButton cancelButton;
+    private MPRadioButton radioButtonManualResume;
+    private MPRadioButton radioButtonAutoResume;
+    private NumericUpDown numericUpDownTimeOut;
+    private MPCheckBox checkBoxTimeOut;
+    private MPCheckBox checkBoxOutlook;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public ISDNSetupForm()
     {
@@ -62,7 +62,7 @@ namespace ProcessPlugins.CallerId
       //
       // TODO: Add any constructor code after InitializeComponent call
       //
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxOutlook.Checked = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         checkBoxTimeOut.Checked = (xmlreader.GetValueAsInt("isdn", "timeout", 0) > 0);
@@ -92,6 +92,7 @@ namespace ProcessPlugins.CallerId
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -108,7 +109,7 @@ namespace ProcessPlugins.CallerId
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxIncomingCall.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOut)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownTimeOut)).BeginInit();
       this.SuspendLayout();
       // 
       // checkBoxStopMedia
@@ -125,9 +126,11 @@ namespace ProcessPlugins.CallerId
       // 
       // groupBoxIncomingCall
       // 
-      this.groupBoxIncomingCall.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxIncomingCall.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxIncomingCall.Controls.Add(this.checkBoxOutlook);
       this.groupBoxIncomingCall.Controls.Add(this.numericUpDownTimeOut);
       this.groupBoxIncomingCall.Controls.Add(this.checkBoxTimeOut);
@@ -156,11 +159,13 @@ namespace ProcessPlugins.CallerId
       // numericUpDownTimeOut
       // 
       this.numericUpDownTimeOut.Location = new System.Drawing.Point(224, 48);
-      this.numericUpDownTimeOut.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
+      this.numericUpDownTimeOut.Maximum = new decimal(new int[]
+                                                        {
+                                                          3600,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
       this.numericUpDownTimeOut.Name = "numericUpDownTimeOut";
       this.numericUpDownTimeOut.Size = new System.Drawing.Size(48, 20);
       this.numericUpDownTimeOut.TabIndex = 1;
@@ -203,7 +208,9 @@ namespace ProcessPlugins.CallerId
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(186, 181);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -214,7 +221,9 @@ namespace ProcessPlugins.CallerId
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(267, 181);
       this.cancelButton.Name = "cancelButton";
@@ -238,49 +247,55 @@ namespace ProcessPlugins.CallerId
       this.Text = "ISDN Caller-ID - Setup";
       this.groupBoxIncomingCall.ResumeLayout(false);
       this.groupBoxIncomingCall.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOut)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownTimeOut)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void okButton_Click(object sender, System.EventArgs e)
+    private void okButton_Click(object sender, EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("isdn", "useoutlook", checkBoxOutlook.Checked);
         xmlwriter.SetValueAsBool("isdn", "stopmedia", checkBoxStopMedia.Checked);
         xmlwriter.SetValueAsBool("isdn", "autoresume", radioButtonAutoResume.Checked);
         if (checkBoxTimeOut.Checked)
+        {
           xmlwriter.SetValue("isdn", "timeout", numericUpDownTimeOut.Value);
+        }
         else
+        {
           xmlwriter.SetValue("isdn", "timeout", 0);
+        }
       }
       this.Close();
     }
 
-    private void checkBoxStopMedia_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxStopMedia_CheckedChanged(object sender, EventArgs e)
     {
       radioButtonManualResume.Enabled = checkBoxStopMedia.Checked;
       radioButtonAutoResume.Enabled = checkBoxStopMedia.Checked;
       numericUpDownTimeOut.Enabled = (checkBoxStopMedia.Checked) && (radioButtonAutoResume.Checked);
     }
 
-    private void checkBoxTimeOut_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxTimeOut_CheckedChanged(object sender, EventArgs e)
     {
       numericUpDownTimeOut.Enabled = checkBoxTimeOut.Checked;
       radioButtonAutoResume.Enabled = (checkBoxTimeOut.Checked && (numericUpDownTimeOut.Value > 0));
     }
 
-    private void numericUpDownTimeOut_ValueChanged(object sender, System.EventArgs e)
+    private void numericUpDownTimeOut_ValueChanged(object sender, EventArgs e)
     {
       radioButtonAutoResume.Enabled = (numericUpDownTimeOut.Value > 0);
     }
 
-    private void radioButtonAutoResume_EnabledChanged(object sender, System.EventArgs e)
+    private void radioButtonAutoResume_EnabledChanged(object sender, EventArgs e)
     {
       if (!radioButtonAutoResume.Enabled)
+      {
         radioButtonManualResume.Checked = true;
+      }
     }
   }
 }

@@ -24,25 +24,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG.Config.Grabber
 {
-	/// <summary>
-	/// Sublink information.
-	/// </summary>
+  /// <summary>
+  /// Sublink information.
+  /// </summary>
   [Serializable]
   public class SublinkInfo
   {
     #region Variables
-    [XmlAttribute("search")]
-    public string search;
-    [XmlAttribute("template")]
-    public string template;
-    [XmlElement("Link")]
-    public HTTPRequest url;
+
+    [XmlAttribute("search")] public string search;
+    [XmlAttribute("template")] public string template;
+    [XmlElement("Link")] public HTTPRequest url;
+
     #endregion
   }
 }

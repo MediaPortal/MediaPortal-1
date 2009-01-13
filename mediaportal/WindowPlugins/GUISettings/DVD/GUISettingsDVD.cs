@@ -26,66 +26,60 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace WindowPlugins.GUISettings.TV
 {
-	/// <summary>
-	/// Summary description for GUISettingsDVD.
-	/// </summary>
-	public class GUISettingsDVD : GUIWindow
-	{
-    [SkinControlAttribute(21)]
-    protected GUIButtonControl btnDVDNavigator = null;
-    [SkinControlAttribute(22)]
-    protected GUIToggleButtonControl btnEnableSubtitles = null;
-    [SkinControlAttribute(23)]
-    protected GUIToggleButtonControl btnDXVA = null;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnVideoCodec=null;
-		[SkinControlAttribute(25)]
-    protected GUIButtonControl btnAudioCodec=null;
-		[SkinControlAttribute(27)]
-    protected GUIButtonControl btnAudioRenderer=null;
-		[SkinControlAttribute(28)]
-    protected GUIButtonControl btnAspectRatio=null;
-		[SkinControlAttribute(29)]
-    protected GUIButtonControl btnSubtitle=null;
-		[SkinControlAttribute(30)]
-    protected GUIButtonControl btnAudioLanguage=null;
+  /// <summary>
+  /// Summary description for GUISettingsDVD.
+  /// </summary>
+  public class GUISettingsDVD : GUIWindow
+  {
+    [SkinControl(21)] protected GUIButtonControl btnDVDNavigator = null;
+    [SkinControl(22)] protected GUIToggleButtonControl btnEnableSubtitles = null;
+    [SkinControl(23)] protected GUIToggleButtonControl btnDXVA = null;
+    [SkinControl(24)] protected GUIButtonControl btnVideoCodec = null;
+    [SkinControl(25)] protected GUIButtonControl btnAudioCodec = null;
+    [SkinControl(27)] protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControl(28)] protected GUIButtonControl btnAspectRatio = null;
+    [SkinControl(29)] protected GUIButtonControl btnSubtitle = null;
+    [SkinControl(30)] protected GUIButtonControl btnAudioLanguage = null;
 
-    bool dxvaSetting;
-    bool subtitleSettings;
-    bool settingsLoaded = false;
+    private bool dxvaSetting;
+    private bool subtitleSettings;
+    private bool settingsLoaded = false;
 
-		class CultureComparer :IComparer
-		{
-			#region IComparer Members
-			public int Compare(object x, object y)
-			{
-				CultureInfo info1=(CultureInfo)x;
-				CultureInfo info2=(CultureInfo)y;
-				return String.Compare(info1.EnglishName,info2.EnglishName,true);
-			}
-			#endregion
-		}
+    private class CultureComparer : IComparer
+    {
+      #region IComparer Members
 
-		public GUISettingsDVD()
-		{
-			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_DVD;
-		}
-    
-		public override bool Init()
-		{
-			bool bResult = Load (GUIGraphicsContext.Skin+@"\settings_dvd.xml");
+      public int Compare(object x, object y)
+      {
+        CultureInfo info1 = (CultureInfo) x;
+        CultureInfo info2 = (CultureInfo) y;
+        return String.Compare(info1.EnglishName, info2.EnglishName, true);
+      }
+
+      #endregion
+    }
+
+    public GUISettingsDVD()
+    {
+      GetID = (int) Window.WINDOW_SETTINGS_DVD;
+    }
+
+    public override bool Init()
+    {
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\settings_dvd.xml");
       return bResult;
-		}
+    }
 
     protected override void OnPageLoad()
     {
@@ -93,139 +87,208 @@ namespace WindowPlugins.GUISettings.TV
       LoadSettings();
     }
 
-		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
-		{
-      if (control == btnDVDNavigator) OnDVDNavigator();
-      if (control == btnVideoCodec) OnVideoCodec();
-			if (control == btnAudioCodec) OnAudioCodec();
-			if (control == btnAspectRatio) OnAspectRatio();
-			if (control == btnAudioRenderer) OnAudioRenderer();
-			if (control == btnSubtitle) OnSubtitle();
-			if (control == btnAudioLanguage) OnAudioLanguage();
-      if (control == btnDXVA) OnDXVA();
-      if (control == btnEnableSubtitles) OnSubtitleOnOff();
-			base.OnClicked (controlId, control, actionType);
-		}
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if (control == btnDVDNavigator)
+      {
+        OnDVDNavigator();
+      }
+      if (control == btnVideoCodec)
+      {
+        OnVideoCodec();
+      }
+      if (control == btnAudioCodec)
+      {
+        OnAudioCodec();
+      }
+      if (control == btnAspectRatio)
+      {
+        OnAspectRatio();
+      }
+      if (control == btnAudioRenderer)
+      {
+        OnAudioRenderer();
+      }
+      if (control == btnSubtitle)
+      {
+        OnSubtitle();
+      }
+      if (control == btnAudioLanguage)
+      {
+        OnAudioLanguage();
+      }
+      if (control == btnDXVA)
+      {
+        OnDXVA();
+      }
+      if (control == btnEnableSubtitles)
+      {
+        OnSubtitleOnOff();
+      }
+      base.OnClicked(controlId, control, actionType);
+    }
 
-    void OnDVDNavigator()
+    private void OnDVDNavigator()
     {
       string strDVDNavigator = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strDVDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
       }
       ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
       availableDVDNavigators.Sort();
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
         int selected = 0;
         int count = 0;
         foreach (string codec in availableDVDNavigators)
         {
           dlg.Add(codec);
           if (codec == strDVDNavigator)
+          {
             selected = count;
+          }
           count++;
         }
         dlg.SelectedLabel = selected;
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (dlg.SelectedLabel < 0)
       {
-        xmlwriter.SetValue("dvdplayer", "navigator", (string)availableDVDNavigators[dlg.SelectedLabel]);
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("dvdplayer", "navigator", (string) availableDVDNavigators[dlg.SelectedLabel]);
       }
     }
 
-		void OnVideoCodec()
-		{
-			string strVideoCodec="";
-			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				strVideoCodec=xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
-			}
-			ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-      //Remove Muxer's from the list to avoid confusion.
-      while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
-      while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
-      while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
-      while (availableVideoFilters.Contains("Nero Mpeg2 Encoder")) availableVideoFilters.Remove("Nero Mpeg2 Encoder");
-      availableVideoFilters.Sort();
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				int selected=0;
-				int count=0;
-				foreach (string codec in availableVideoFilters)
-				{
-					dlg.Add(codec);//delete
-					if (codec==strVideoCodec)
-						selected=count;
-					count++;
-				}
-				dlg.SelectedLabel=selected;
-			}
-			dlg.DoModal(GetID);
-			if (dlg.SelectedLabel<0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				xmlwriter.SetValue("dvdplayer","videocodec",(string)availableVideoFilters[dlg.SelectedLabel]);
-			}
-		}
-
-		void OnAudioCodec()
-		{
-			string strAudioCodec="";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
-			}
-			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-      //Remove Muxer's from Audio decoder list to avoid confusion.
-      while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
-      while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
-      while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
-      while (availableAudioFilters.Contains("Nero Mpeg2 Encoder")) availableAudioFilters.Remove("Nero Mpeg2 Encoder");
-      availableAudioFilters.Sort();
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				int selected=0;
-				int count=0;
-				foreach (string codec in availableAudioFilters)
-				{
-					dlg.Add(codec);//delete
-					if (codec==strAudioCodec)
-						selected=count;
-					count++;
-				}
-				dlg.SelectedLabel=selected;
-			}
-			dlg.DoModal(GetID);
-			if (dlg.SelectedLabel<0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				xmlwriter.SetValue("dvdplayer","audiocodec",(string)availableAudioFilters[dlg.SelectedLabel]);
-			}
-		}
-
-    void OnAspectRatio()
+    private void OnVideoCodec()
     {
-      MediaPortal.GUI.Library.Geometry.Type aspectRatio = Geometry.Type.Normal;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      string strVideoCodec = "";
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
+      }
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      //Remove Muxer's from the list to avoid confusion.
+      while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableVideoFilters.Remove("CyberLink MPEG Muxer");
+      }
+      while (availableVideoFilters.Contains("Ulead MPEG Muxer"))
+      {
+        availableVideoFilters.Remove("Ulead MPEG Muxer");
+      }
+      while (availableVideoFilters.Contains("PDR MPEG Muxer"))
+      {
+        availableVideoFilters.Remove("PDR MPEG Muxer");
+      }
+      while (availableVideoFilters.Contains("Nero Mpeg2 Encoder"))
+      {
+        availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+      }
+      availableVideoFilters.Sort();
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableVideoFilters)
+        {
+          dlg.Add(codec); //delete
+          if (codec == strVideoCodec)
+          {
+            selected = count;
+          }
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("dvdplayer", "videocodec", (string) availableVideoFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    private void OnAudioCodec()
+    {
+      string strAudioCodec = "";
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strAudioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
+      }
+      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+      //Remove Muxer's from Audio decoder list to avoid confusion.
+      while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableAudioFilters.Remove("CyberLink MPEG Muxer");
+      }
+      while (availableAudioFilters.Contains("Ulead MPEG Muxer"))
+      {
+        availableAudioFilters.Remove("Ulead MPEG Muxer");
+      }
+      while (availableAudioFilters.Contains("PDR MPEG Muxer"))
+      {
+        availableAudioFilters.Remove("PDR MPEG Muxer");
+      }
+      while (availableAudioFilters.Contains("Nero Mpeg2 Encoder"))
+      {
+        availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+      }
+      availableAudioFilters.Sort();
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableAudioFilters)
+        {
+          dlg.Add(codec); //delete
+          if (codec == strAudioCodec)
+          {
+            selected = count;
+          }
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("dvdplayer", "audiocodec", (string) availableAudioFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    private void OnAspectRatio()
+    {
+      Geometry.Type aspectRatio = Geometry.Type.Normal;
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string aspectRatioText = xmlreader.GetValueAsString("dvdplayer", "defaultar", "normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
       }
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(941); // Change aspect ratio
       dlg.AddLocalizedString(942); // Stretch
@@ -236,154 +299,170 @@ namespace WindowPlugins.GUISettings.TV
       dlg.AddLocalizedString(947); // Zoom
       dlg.AddLocalizedString(1190); // Zoom 14:9
       // set the focus to currently used mode
-      dlg.SelectedLabel = (int)aspectRatio;
+      dlg.SelectedLabel = (int) aspectRatio;
       // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
       aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
         xmlwriter.SetValue("dvdplayer", "defaultar", aspectRatioText);
       }
     }
 
-		void OnAudioRenderer()
-		{
-			string strAudioRenderer="";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				strAudioRenderer=xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
-			}
-			ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				int selected=0;
-				int count=0;
-				foreach (string codec in availableAudioFilters)
-				{
-					dlg.Add(codec);//delete
-					if (codec==strAudioRenderer)
-						selected=count;
-					count++;
-				}
-				dlg.SelectedLabel=selected;
-			}
-			dlg.DoModal(GetID);
-			if (dlg.SelectedLabel<0) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				xmlwriter.SetValue("dvdplayer","audiorenderer",(string)availableAudioFilters[dlg.SelectedLabel]);
-			}
-		}
-
-		void OnSubtitle()
-		{
-			string defaultSubtitleLanguage="";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				defaultSubtitleLanguage= xmlreader.GetValueAsString("dvdplayer","subtitlelanguage", "English");
-			}
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				dlg.ShowQuickNumbers=false;
-				int selected=0;
-				ArrayList cultures = new ArrayList();
-				CultureInfo[] culturesInfos=CultureInfo.GetCultures(CultureTypes.NeutralCultures);
-				for (int i=0; i < culturesInfos.Length;++i)
-				{
-					cultures.Add(culturesInfos[i]);
-				}
-				cultures.Sort( new CultureComparer());
-				for (int i=0; i < cultures.Count;++i)
-				{
-					CultureInfo info = (CultureInfo)cultures[i];
-					if(info.EnglishName.Equals(defaultSubtitleLanguage))
-					{
-						selected=i;
-					}
-					dlg.Add(info.EnglishName);
-				}
-				dlg.SelectedLabel=selected;
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel<0) return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-				{
-					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
-					xmlwriter.SetValue("dvdplayer", "subtitlelanguage", info.EnglishName);
-				}
-			}
-		}
-
-		void OnAudioLanguage()
-		{
-			string defaultAudioLanguage="";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				defaultAudioLanguage= xmlreader.GetValueAsString("dvdplayer","audiolanguage", "English");
-			}
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				dlg.ShowQuickNumbers=false;
-				int selected=0;
-				ArrayList cultures = new ArrayList();
-				CultureInfo[] culturesInfos=CultureInfo.GetCultures(CultureTypes.NeutralCultures);
-				for (int i=0; i < culturesInfos.Length;++i)
-				{
-					cultures.Add(culturesInfos[i]);
-				}
-				cultures.Sort( new CultureComparer());
-				for (int i=0; i < cultures.Count;++i)
-				{
-					CultureInfo info = (CultureInfo)cultures[i];
-					if(info.EnglishName.Equals(defaultAudioLanguage))
-					{
-						selected=i;
-					}
-					dlg.Add(info.EnglishName);
-				}
-				dlg.SelectedLabel=selected;
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel<0) return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-				{
-					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
-					xmlwriter.SetValue("dvdplayer", "audiolanguage", info.EnglishName);
-				}
-			}
-		}
-
-    void OnDXVA()
+    private void OnAudioRenderer()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      string strAudioRenderer = "";
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strAudioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
+      }
+      ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableAudioFilters)
+        {
+          dlg.Add(codec); //delete
+          if (codec == strAudioRenderer)
+          {
+            selected = count;
+          }
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("dvdplayer", "audiorenderer", (string) availableAudioFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    private void OnSubtitle()
+    {
+      string defaultSubtitleLanguage = "";
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "English");
+      }
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+        dlg.ShowQuickNumbers = false;
+        int selected = 0;
+        ArrayList cultures = new ArrayList();
+        CultureInfo[] culturesInfos = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+        for (int i = 0; i < culturesInfos.Length; ++i)
+        {
+          cultures.Add(culturesInfos[i]);
+        }
+        cultures.Sort(new CultureComparer());
+        for (int i = 0; i < cultures.Count; ++i)
+        {
+          CultureInfo info = (CultureInfo) cultures[i];
+          if (info.EnglishName.Equals(defaultSubtitleLanguage))
+          {
+            selected = i;
+          }
+          dlg.Add(info.EnglishName);
+        }
+        dlg.SelectedLabel = selected;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel < 0)
+        {
+          return;
+        }
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
+          xmlwriter.SetValue("dvdplayer", "subtitlelanguage", info.EnglishName);
+        }
+      }
+    }
+
+    private void OnAudioLanguage()
+    {
+      string defaultAudioLanguage = "";
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "English");
+      }
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+        dlg.ShowQuickNumbers = false;
+        int selected = 0;
+        ArrayList cultures = new ArrayList();
+        CultureInfo[] culturesInfos = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+        for (int i = 0; i < culturesInfos.Length; ++i)
+        {
+          cultures.Add(culturesInfos[i]);
+        }
+        cultures.Sort(new CultureComparer());
+        for (int i = 0; i < cultures.Count; ++i)
+        {
+          CultureInfo info = (CultureInfo) cultures[i];
+          if (info.EnglishName.Equals(defaultAudioLanguage))
+          {
+            selected = i;
+          }
+          dlg.Add(info.EnglishName);
+        }
+        dlg.SelectedLabel = selected;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel < 0)
+        {
+          return;
+        }
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          CultureInfo info = (CultureInfo) cultures[dlg.SelectedLabel];
+          xmlwriter.SetValue("dvdplayer", "audiolanguage", info.EnglishName);
+        }
+      }
+    }
+
+    private void OnDXVA()
+    {
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("dvdplayer", "turnoffdxva", btnDXVA.Selected);
       }
     }
 
-    void OnSubtitleOnOff()
+    private void OnSubtitleOnOff()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", btnEnableSubtitles.Selected);
       }
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
       if (settingsLoaded)
+      {
         return;
+      }
       settingsLoaded = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         subtitleSettings = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
         btnEnableSubtitles.Selected = subtitleSettings;
@@ -391,5 +470,5 @@ namespace WindowPlugins.GUISettings.TV
         btnDXVA.Selected = dxvaSetting;
       }
     }
-	}
+  }
 }

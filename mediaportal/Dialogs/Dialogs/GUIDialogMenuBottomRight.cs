@@ -33,16 +33,15 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogMenuBottomRight : GUIDialogMenu
   {
-    [SkinControl(6)]
-    protected GUILabelControl lblHeading3 = null;
+    [SkinControl(6)] protected GUILabelControl lblHeading3 = null;
 
-    int timeoutInSeconds = -1;
-    bool timedOut = false;
-    DateTime startTime = DateTime.Now;
+    private int timeoutInSeconds = -1;
+    private bool timedOut = false;
+    private DateTime startTime = DateTime.Now;
 
     public GUIDialogMenuBottomRight()
     {
-      GetID = (int)Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT;
+      GetID = (int) Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT;
     }
 
     public override bool Init()
@@ -50,7 +49,6 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\DialogMenuBottomRight.xml");
     }
 
-   
     #region Base Dialog Members
 
     public override void DoModal(int dwParentId)
@@ -58,7 +56,7 @@ namespace MediaPortal.Dialogs
       startTime = DateTime.Now;
       base.DoModal(dwParentId);
     }
-    
+
     public override bool ProcessDoModal()
     {
       base.ProcessDoModal();
@@ -74,7 +72,7 @@ namespace MediaPortal.Dialogs
     }
 
     #endregion
-    
+
     public override void Reset()
     {
       base.Reset();
@@ -84,7 +82,7 @@ namespace MediaPortal.Dialogs
       timedOut = true;
       timeoutInSeconds = -1;
     }
- 
+
     public override void SetHeading(string strLine)
     {
       LoadSkin();
@@ -93,6 +91,7 @@ namespace MediaPortal.Dialogs
 
       lblHeading.Label = strLine;
     }
+
     public void SetHeadingRow2(string strLine)
     {
       LoadSkin();
@@ -100,8 +99,11 @@ namespace MediaPortal.Dialogs
       InitControls();
 
       if (lblHeading2 != null)
+      {
         lblHeading2.Label = strLine;
+      }
     }
+
     public void SetHeadingRow3(string strLine)
     {
       LoadSkin();
@@ -109,7 +111,9 @@ namespace MediaPortal.Dialogs
       InitControls();
 
       if (lblHeading3 != null)
+      {
         lblHeading3.Label = strLine;
+      }
     }
 
     public void SetHeadingRow2(int iString)
@@ -131,10 +135,10 @@ namespace MediaPortal.Dialogs
       get { return timeoutInSeconds; }
       set { timeoutInSeconds = value; }
     }
+
     public bool TimedOut
     {
       get { return timedOut; }
     }
-     
   }
 }

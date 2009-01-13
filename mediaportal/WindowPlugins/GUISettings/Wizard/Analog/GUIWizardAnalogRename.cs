@@ -25,15 +25,14 @@
 
 using System;
 using System.Collections;
-using System.Xml;
-using System.Threading;
+using System.IO;
 using MediaPortal.Dialogs;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Settings.Wizard;
+using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Util;
-using MediaPortal.GUI.Settings.Wizard;
-using DShowNET;
+
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
   /// <summary>
@@ -41,21 +40,18 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
   /// </summary>
   public class GUIWizardAnalogRename : GUIWindow
   {
-    [SkinControlAttribute(24)]
-    protected GUIListControl listChannelsFound = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnBack = null;
-    TVCaptureDevice captureCard = null;
+    [SkinControl(24)] protected GUIListControl listChannelsFound = null;
+    [SkinControl(5)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+
+    private TVCaptureDevice captureCard = null;
 
     protected ArrayList listTvChannels = new ArrayList();
 
 
     public GUIWizardAnalogRename()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_RENAME;
+      GetID = (int) Window.WINDOW_WIZARD_ANALOG_RENAME;
     }
 
     public override bool Init()
@@ -79,18 +75,19 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       UpdateList();
       if (listChannelsFound.Count == 0)
       {
-        OnNextPage();		// no channels found skip renaming
+        OnNextPage(); // no channels found skip renaming
       }
       else
       {
         if (captureCard != null)
         {
-          TVChannel chan = (TVChannel)listTvChannels[0];
+          TVChannel chan = (TVChannel) listTvChannels[0];
           captureCard.StartViewing(chan.Name);
           captureCard.Tune(chan);
         }
       }
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       if (captureCard != null)
@@ -101,7 +98,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       base.OnPageDestroy(newWindowId);
     }
 
-    void UpdateList()
+    private void UpdateList()
     {
       int selectedItem = listChannelsFound.SelectedListItemIndex;
       listChannelsFound.Clear();
@@ -110,8 +107,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         GUIListItem item = new GUIListItem();
         item.Label = chan.Name;
         item.IsFolder = false;
-        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-        if (!System.IO.File.Exists(strLogo))
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -119,11 +116,13 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         item.IconImage = strLogo;
         item.IconImageBig = strLogo;
         item.MusicTag = chan;
-        item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         listChannelsFound.Add(item);
       }
       while (selectedItem > 0 && selectedItem >= listTvChannels.Count)
+      {
         selectedItem--;
+      }
       listChannelsFound.SelectedListItemIndex = selectedItem;
       GUIListItem selitem = listChannelsFound.SelectedListItem;
       if (selitem != null)
@@ -135,9 +134,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
           captureCard.Tune(ch);
         }
       }
-
     }
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (listChannelsFound == control)
       {
@@ -150,7 +149,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       }
       base.OnClicked(controlId, control, actionType);
     }
-    void OnNextPage()
+
+    private void OnNextPage()
     {
       ArrayList listChannels = new ArrayList();
       TVDatabase.GetChannels(ref listChannels);
@@ -164,7 +164,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
             listChan.Number = ch.Number;
             TVDatabase.UpdateChannel(listChan, listChan.Sort);
             if (captureCard != null)
+            {
               TVDatabase.MapChannelToCard(listChan.ID, captureCard.ID);
+            }
             found = true;
           }
         }
@@ -172,42 +174,46 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         {
           TVDatabase.AddChannel(ch);
           if (captureCard != null)
+          {
             TVDatabase.MapChannelToCard(ch.ID, captureCard.ID);
+          }
         }
       }
       if (captureCard != null)
       {
         MapTvToOtherCards(captureCard.ID);
       }
-			if (captureCard.SupportsRadio)
-			{
-				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_SCAN_RADIO);
-			}
-			else
-			{
-				GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
-				GUIWizardCardsDetected.ScanNextCardType();
-			}
-
+      if (captureCard.SupportsRadio)
+      {
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_ANALOG_SCAN_RADIO);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
+        GUIWizardCardsDetected.ScanNextCardType();
+      }
     }
 
     protected override void OnShowContextMenu()
     {
       GUIListItem item = listChannelsFound.SelectedListItem;
-      if (item == null) return;
-      TVChannel chan = (TVChannel)item.MusicTag;
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (item == null)
+      {
+        return;
+      }
+      TVChannel chan = (TVChannel) item.MusicTag;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
-        dlg.AddLocalizedString(117);//delete
-        dlg.AddLocalizedString(118);//rename
+        dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
+        dlg.AddLocalizedString(117); //delete
+        dlg.AddLocalizedString(118); //rename
       }
       dlg.DoModal(GetID);
       switch (dlg.SelectedId)
       {
-        case 117://delete
+        case 117: //delete
           foreach (TVChannel ch in listTvChannels)
           {
             if (ch.Number == chan.Number)
@@ -219,9 +225,12 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
           UpdateList();
           break;
 
-        case 118://rename
-          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard) return;
+        case 118: //rename
+          VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard)
+          {
+            return;
+          }
           keyboard.Reset();
           keyboard.Text = chan.Name;
           keyboard.DoModal(GetID);
@@ -243,15 +252,15 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      TVChannel chan = (TVChannel)item.MusicTag;
+      TVChannel chan = (TVChannel) item.MusicTag;
       if (captureCard != null)
       {
         captureCard.StartViewing(chan.Name);
         captureCard.Tune(chan);
-
       }
     }
-    void MapTvToOtherCards(int id)
+
+    private void MapTvToOtherCards(int id)
     {
       ArrayList tvchannels = new ArrayList();
       TVDatabase.GetChannelsForCard(ref tvchannels, id);
@@ -267,6 +276,5 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         }
       }
     }
-
   }
 }

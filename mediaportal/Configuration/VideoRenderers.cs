@@ -23,20 +23,18 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for VideoRenderers.
-	/// </summary>
-	public class VideoRenderers
-	{
-		public static string[] List = new string[] { "VMR 7", "Video Mixing Renderer 9 - Renderless"};
-	}
+  /// <summary>
+  /// Summary description for VideoRenderers.
+  /// </summary>
+  public class VideoRenderers
+  {
+    public static string[] List = new string[] {"VMR 7", "Video Mixing Renderer 9 - Renderless"};
+  }
 
   public class VideoRenderersShort
   {
-    public static string[] List = new string[] { "VMR 7", "Video Mixing Renderer 9 - Renderless" };
+    public static string[] List = new string[] {"VMR 7", "Video Mixing Renderer 9 - Renderless"};
   }
 }

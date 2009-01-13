@@ -33,36 +33,37 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUISettingsMovieCalibration : GUIWindow
   {
-    enum Controls
+    private enum Controls
     {
       CONTROL_LABEL_ROW1 = 2
       ,
       CONTROL_LABEL_ROW2 = 3
-    ,
+      ,
       CONTROL_TOP_LEFT = 8
-    ,
+      ,
       CONTROL_BOTTOM_RIGHT = 9
-    ,
+      ,
       CONTROL_SUBTITLES = 10
-    ,
+      ,
       CONTROL_PIXEL_RATIO = 11
-    ,
+      ,
       CONTROL_VIDEO = 20
-    , CONTROL_OSD = 12
-    };
+      ,
+      CONTROL_OSD = 12
+    } ;
 
-    int m_iCountU = 0;
-    int m_iCountD = 0;
-    int m_iCountL = 0;
-    int m_iCountR = 0;
-    int m_iSpeed = 0;
-    long m_dwLastTime = 0;
-    int m_iControl = 0;
-    float m_fPixelRatioBoxHeight = 0.0f;
+    private int m_iCountU = 0;
+    private int m_iCountD = 0;
+    private int m_iCountL = 0;
+    private int m_iCountR = 0;
+    private int m_iSpeed = 0;
+    private long m_dwLastTime = 0;
+    private int m_iControl = 0;
+    private float m_fPixelRatioBoxHeight = 0.0f;
 
     public GUISettingsMovieCalibration()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION;
+      GetID = (int) Window.WINDOW_MOVIE_CALIBRATION;
     }
 
     public override bool Init()
@@ -73,7 +74,7 @@ namespace MediaPortal.GUI.Settings
 
     public override void OnAction(Action action)
     {
-      if ((DateTime.Now.Ticks / 10000) - m_dwLastTime > 500)
+      if ((DateTime.Now.Ticks/10000) - m_dwLastTime > 500)
       {
         m_iSpeed = 1;
         m_iCountU = 0;
@@ -81,38 +82,40 @@ namespace MediaPortal.GUI.Settings
         m_iCountL = 0;
         m_iCountR = 0;
       }
-      m_dwLastTime = (DateTime.Now.Ticks / 10000);
+      m_dwLastTime = (DateTime.Now.Ticks/10000);
 
       int x, y;
-      if (m_iControl == (int)Controls.CONTROL_TOP_LEFT)
+      if (m_iControl == (int) Controls.CONTROL_TOP_LEFT)
       {
         x = GUIGraphicsContext.OverScanLeft;
         y = GUIGraphicsContext.OverScanTop;
       }
-      else if (m_iControl == (int)Controls.CONTROL_BOTTOM_RIGHT)
+      else if (m_iControl == (int) Controls.CONTROL_BOTTOM_RIGHT)
       {
         x = GUIGraphicsContext.OverScanWidth + GUIGraphicsContext.OverScanLeft;
         y = GUIGraphicsContext.OverScanHeight + GUIGraphicsContext.OverScanTop;
       }
-      else if (m_iControl == (int)Controls.CONTROL_SUBTITLES)
+      else if (m_iControl == (int) Controls.CONTROL_SUBTITLES)
       {
         x = 0;
         y = GUIGraphicsContext.Subtitles;
       }
-      else if (m_iControl == (int)Controls.CONTROL_OSD)
+      else if (m_iControl == (int) Controls.CONTROL_OSD)
       {
         x = 0;
         y = (GUIGraphicsContext.Height + GUIGraphicsContext.OSDOffset);
-
       }
       else // (m_iControl == (int)Controls.CONTROL_PIXEL_RATIO)
       {
         y = 256;
-        x = (int)(256.0f / GUIGraphicsContext.PixelRatio);
+        x = (int) (256.0f/GUIGraphicsContext.PixelRatio);
       }
 
       float fPixelRatio = GUIGraphicsContext.PixelRatio;
-      if (m_iSpeed > 10) m_iSpeed = 10; // Speed limit for accellerated cursors
+      if (m_iSpeed > 10)
+      {
+        m_iSpeed = 10; // Speed limit for accellerated cursors
+      }
 
       switch (action.wID)
       {
@@ -124,7 +127,10 @@ namespace MediaPortal.GUI.Settings
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           {
-            if (m_iCountL == 0) m_iSpeed = 1;
+            if (m_iCountL == 0)
+            {
+              m_iSpeed = 1;
+            }
             x -= m_iSpeed;
             m_iCountL++;
             if (m_iCountL > 5 && m_iSpeed < 10)
@@ -135,13 +141,19 @@ namespace MediaPortal.GUI.Settings
             m_iCountU = 0;
             m_iCountD = 0;
             m_iCountR = 0;
-            if (m_iControl == (int)Controls.CONTROL_PIXEL_RATIO) fPixelRatio -= 0.01f;
+            if (m_iControl == (int) Controls.CONTROL_PIXEL_RATIO)
+            {
+              fPixelRatio -= 0.01f;
+            }
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           {
-            if (m_iCountR == 0) m_iSpeed = 1;
+            if (m_iCountR == 0)
+            {
+              m_iSpeed = 1;
+            }
             x += m_iSpeed;
             m_iCountR++;
             if (m_iCountR > 5 && m_iSpeed < 10)
@@ -152,13 +164,19 @@ namespace MediaPortal.GUI.Settings
             m_iCountU = 0;
             m_iCountD = 0;
             m_iCountL = 0;
-            if (m_iControl == (int)Controls.CONTROL_PIXEL_RATIO) fPixelRatio += 0.01f;
+            if (m_iControl == (int) Controls.CONTROL_PIXEL_RATIO)
+            {
+              fPixelRatio += 0.01f;
+            }
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
           {
-            if (m_iCountU == 0) m_iSpeed = 1;
+            if (m_iCountU == 0)
+            {
+              m_iSpeed = 1;
+            }
             y -= m_iSpeed;
             m_iCountU++;
             if (m_iCountU > 5 && m_iSpeed < 10)
@@ -169,13 +187,19 @@ namespace MediaPortal.GUI.Settings
             m_iCountD = 0;
             m_iCountL = 0;
             m_iCountR = 0;
-            if (m_iControl == (int)Controls.CONTROL_PIXEL_RATIO) fPixelRatio -= 0.05f;
+            if (m_iControl == (int) Controls.CONTROL_PIXEL_RATIO)
+            {
+              fPixelRatio -= 0.05f;
+            }
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
           {
-            if (m_iCountD == 0) m_iSpeed = 1;
+            if (m_iCountD == 0)
+            {
+              m_iSpeed = 1;
+            }
             y += m_iSpeed;
             m_iCountD++;
             if (m_iCountD > 5 && m_iSpeed < 10)
@@ -186,14 +210,19 @@ namespace MediaPortal.GUI.Settings
             m_iCountU = 0;
             m_iCountL = 0;
             m_iCountR = 0;
-            if (m_iControl == (int)Controls.CONTROL_PIXEL_RATIO) fPixelRatio += 0.05f;
+            if (m_iControl == (int) Controls.CONTROL_PIXEL_RATIO)
+            {
+              fPixelRatio += 0.05f;
+            }
           }
           break;
 
         case Action.ActionType.ACTION_CALIBRATE_SWAP_ARROWS:
           m_iControl++;
-          if (m_iControl > (int)Controls.CONTROL_OSD)
-            m_iControl = (int)Controls.CONTROL_TOP_LEFT;
+          if (m_iControl > (int) Controls.CONTROL_OSD)
+          {
+            m_iControl = (int) Controls.CONTROL_TOP_LEFT;
+          }
           m_iSpeed = 1;
           m_iCountU = 0;
           m_iCountD = 0;
@@ -234,42 +263,72 @@ namespace MediaPortal.GUI.Settings
 
 
         case Action.ActionType.ACTION_ANALOG_MOVE:
-          x += (int)(2 * action.fAmount1);
-          y -= (int)(2 * action.fAmount2);
+          x += (int) (2*action.fAmount1);
+          y -= (int) (2*action.fAmount2);
           break;
       }
       // do the movement
       switch (m_iControl)
       {
-        case (int)Controls.CONTROL_TOP_LEFT:
-          if (x < 0) x = 0;
-          if (y < 0) y = 0;
-          if (x > 128) x = 128;
-          if (y > 128) y = 128;
+        case (int) Controls.CONTROL_TOP_LEFT:
+          if (x < 0)
+          {
+            x = 0;
+          }
+          if (y < 0)
+          {
+            y = 0;
+          }
+          if (x > 128)
+          {
+            x = 128;
+          }
+          if (y > 128)
+          {
+            y = 128;
+          }
           GUIGraphicsContext.OverScanWidth += GUIGraphicsContext.OverScanLeft - x;
           GUIGraphicsContext.OverScanHeight += GUIGraphicsContext.OverScanTop - y;
           GUIGraphicsContext.OverScanLeft = x;
           GUIGraphicsContext.OverScanTop = y;
           break;
-        case (int)Controls.CONTROL_BOTTOM_RIGHT:
-          if (x > GUIGraphicsContext.Width) x = GUIGraphicsContext.Width;
-          if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-          if (x < GUIGraphicsContext.Width - 128) x = GUIGraphicsContext.Width - 128;
-          if (y < GUIGraphicsContext.Height - 128) y = GUIGraphicsContext.Height - 128;
+        case (int) Controls.CONTROL_BOTTOM_RIGHT:
+          if (x > GUIGraphicsContext.Width)
+          {
+            x = GUIGraphicsContext.Width;
+          }
+          if (y > GUIGraphicsContext.Height)
+          {
+            y = GUIGraphicsContext.Height;
+          }
+          if (x < GUIGraphicsContext.Width - 128)
+          {
+            x = GUIGraphicsContext.Width - 128;
+          }
+          if (y < GUIGraphicsContext.Height - 128)
+          {
+            y = GUIGraphicsContext.Height - 128;
+          }
           GUIGraphicsContext.OverScanWidth = x - GUIGraphicsContext.OverScanLeft;
           GUIGraphicsContext.OverScanHeight = y - GUIGraphicsContext.OverScanTop;
           break;
-        case (int)Controls.CONTROL_SUBTITLES:
-          if (y > GUIGraphicsContext.Height) y = GUIGraphicsContext.Height;
-          if (y < GUIGraphicsContext.Height - 128) y = GUIGraphicsContext.Height - 128;
+        case (int) Controls.CONTROL_SUBTITLES:
+          if (y > GUIGraphicsContext.Height)
+          {
+            y = GUIGraphicsContext.Height;
+          }
+          if (y < GUIGraphicsContext.Height - 128)
+          {
+            y = GUIGraphicsContext.Height - 128;
+          }
           GUIGraphicsContext.Subtitles = y;
           break;
-        case (int)Controls.CONTROL_OSD:
+        case (int) Controls.CONTROL_OSD:
           GUIGraphicsContext.OSDOffset = (y - GUIGraphicsContext.Height);
-          GUIWindow window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
+          GUIWindow window = GUIWindowManager.GetWindow((int) Window.WINDOW_OSD);
           window.ResetAllControls();
           break;
-        case (int)Controls.CONTROL_PIXEL_RATIO:
+        case (int) Controls.CONTROL_PIXEL_RATIO:
           GUIGraphicsContext.PixelRatio = fPixelRatio;
           break;
       }
@@ -297,7 +356,7 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            m_iControl = (int)Controls.CONTROL_TOP_LEFT;
+            m_iControl = (int) Controls.CONTROL_TOP_LEFT;
             m_iSpeed = 1;
             m_iCountU = 0;
             m_iCountD = 0;
@@ -307,27 +366,26 @@ namespace MediaPortal.GUI.Settings
             // Inform the player so we can update the resolution
 
             // disable the UI calibration for our controls...
-            GUIImage pControl = (GUIImage)GetControl((int)Controls.CONTROL_BOTTOM_RIGHT);
+            GUIImage pControl = (GUIImage) GetControl((int) Controls.CONTROL_BOTTOM_RIGHT);
             if (null != pControl)
             {
               pControl.CalibrationEnabled = false;
-              pControl = (GUIImage)GetControl((int)Controls.CONTROL_TOP_LEFT);
+              pControl = (GUIImage) GetControl((int) Controls.CONTROL_TOP_LEFT);
               pControl.CalibrationEnabled = false;
-              pControl = (GUIImage)GetControl((int)Controls.CONTROL_SUBTITLES);
+              pControl = (GUIImage) GetControl((int) Controls.CONTROL_SUBTITLES);
               pControl.CalibrationEnabled = false;
-              pControl = (GUIImage)GetControl((int)Controls.CONTROL_PIXEL_RATIO);
+              pControl = (GUIImage) GetControl((int) Controls.CONTROL_PIXEL_RATIO);
               pControl.CalibrationEnabled = false;
-              pControl = (GUIImage)GetControl((int)Controls.CONTROL_OSD);
+              pControl = (GUIImage) GetControl((int) Controls.CONTROL_OSD);
               pControl.CalibrationEnabled = false;
-              m_fPixelRatioBoxHeight = (float)pControl.Height;
+              m_fPixelRatioBoxHeight = (float) pControl.Height;
             }
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-            GUIWindow window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
-            window.OnMessage(msg);	// Send an init msg to the OSD
+            GUIWindow window = GUIWindowManager.GetWindow((int) Window.WINDOW_OSD);
+            window.OnMessage(msg); // Send an init msg to the OSD
             return true;
           }
-
       }
       return base.OnMessage(message);
     }
@@ -335,31 +393,41 @@ namespace MediaPortal.GUI.Settings
     public override void Render(float timePassed)
     {
       // hide all our controls
-      GUIImage pControl = (GUIImage)GetControl((int)Controls.CONTROL_BOTTOM_RIGHT);
+      GUIImage pControl = (GUIImage) GetControl((int) Controls.CONTROL_BOTTOM_RIGHT);
       if (null != pControl)
+      {
         pControl.IsVisible = false;
-      pControl = (GUIImage)GetControl((int)Controls.CONTROL_SUBTITLES);
+      }
+      pControl = (GUIImage) GetControl((int) Controls.CONTROL_SUBTITLES);
       if (null != pControl)
+      {
         pControl.IsVisible = false;
-      pControl = (GUIImage)GetControl((int)Controls.CONTROL_TOP_LEFT);
+      }
+      pControl = (GUIImage) GetControl((int) Controls.CONTROL_TOP_LEFT);
       if (null != pControl)
+      {
         pControl.IsVisible = false;
-      pControl = (GUIImage)GetControl((int)Controls.CONTROL_PIXEL_RATIO);
+      }
+      pControl = (GUIImage) GetControl((int) Controls.CONTROL_PIXEL_RATIO);
       if (null != pControl)
+      {
         pControl.IsVisible = false;
-      pControl = (GUIImage)GetControl((int)Controls.CONTROL_OSD);
+      }
+      pControl = (GUIImage) GetControl((int) Controls.CONTROL_OSD);
       if (null != pControl)
+      {
         pControl.IsVisible = false;
+      }
 
       int iXOff, iYOff;
       string strStatus = "";
       switch (m_iControl)
       {
-        case (int)Controls.CONTROL_TOP_LEFT:
+        case (int) Controls.CONTROL_TOP_LEFT:
           {
             iXOff = GUIGraphicsContext.OverScanLeft;
             iYOff = GUIGraphicsContext.OverScanTop;
-            pControl = (GUIImage)GetControl((int)Controls.CONTROL_TOP_LEFT);
+            pControl = (GUIImage) GetControl((int) Controls.CONTROL_TOP_LEFT);
             if (null != pControl)
             {
               pControl.IsVisible = true;
@@ -369,16 +437,16 @@ namespace MediaPortal.GUI.Settings
             }
             string strMode = GUILocalizeStrings.Get(272);
             strStatus = String.Format("{0} ({1},{2})", strMode, iXOff, iYOff);
-            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(276));
+            GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(276));
           }
           break;
-        case (int)Controls.CONTROL_BOTTOM_RIGHT:
+        case (int) Controls.CONTROL_BOTTOM_RIGHT:
           {
             iXOff = GUIGraphicsContext.OverScanLeft;
             iYOff = GUIGraphicsContext.OverScanTop;
             iXOff += GUIGraphicsContext.OverScanWidth;
             iYOff += GUIGraphicsContext.OverScanHeight;
-            pControl = (GUIImage)GetControl((int)Controls.CONTROL_BOTTOM_RIGHT);
+            pControl = (GUIImage) GetControl((int) Controls.CONTROL_BOTTOM_RIGHT);
             if (null != pControl)
             {
               pControl.IsVisible = true;
@@ -391,18 +459,18 @@ namespace MediaPortal.GUI.Settings
               int iYOff1 = GUIGraphicsContext.Height - iYOff;
               string strMode = GUILocalizeStrings.Get(273);
               strStatus = String.Format("{0} ({1},{2})", strMode, iXOff1, iYOff1);
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(276));
+              GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(276));
             }
           }
           break;
-        case (int)Controls.CONTROL_SUBTITLES:
+        case (int) Controls.CONTROL_SUBTITLES:
           {
             iXOff = GUIGraphicsContext.OverScanLeft;
             iYOff = GUIGraphicsContext.Subtitles;
 
             int iScreenWidth = GUIGraphicsContext.OverScanWidth;
 
-            pControl = (GUIImage)GetControl((int)Controls.CONTROL_SUBTITLES);
+            pControl = (GUIImage) GetControl((int) Controls.CONTROL_SUBTITLES);
             if (null != pControl)
             {
               pControl.IsVisible = true;
@@ -411,37 +479,37 @@ namespace MediaPortal.GUI.Settings
 
               pControl.Height = pControl.TextureHeight;
               pControl.Width = pControl.TextureWidth;
-              pControl.SetPosition(iXOff + (iScreenWidth - iTextureWidth) / 2, iYOff - iTextureHeight);
+              pControl.SetPosition(iXOff + (iScreenWidth - iTextureWidth)/2, iYOff - iTextureHeight);
               string strMode = GUILocalizeStrings.Get(274);
               strStatus = String.Format("{0} ({1})", strMode, iYOff);
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(277));
+              GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(277));
             }
           }
           break;
-        case (int)Controls.CONTROL_PIXEL_RATIO:
+        case (int) Controls.CONTROL_PIXEL_RATIO:
           {
-            float fSqrtRatio = (float)Math.Sqrt(GUIGraphicsContext.PixelRatio);
-            pControl = (GUIImage)GetControl((int)Controls.CONTROL_PIXEL_RATIO);
+            float fSqrtRatio = (float) Math.Sqrt(GUIGraphicsContext.PixelRatio);
+            pControl = (GUIImage) GetControl((int) Controls.CONTROL_PIXEL_RATIO);
             if (null != pControl)
             {
               pControl.IsVisible = true;
-              int iControlHeight = (int)(m_fPixelRatioBoxHeight * fSqrtRatio);
-              int iControlWidth = (int)(m_fPixelRatioBoxHeight / fSqrtRatio);
+              int iControlHeight = (int) (m_fPixelRatioBoxHeight*fSqrtRatio);
+              int iControlWidth = (int) (m_fPixelRatioBoxHeight/fSqrtRatio);
               pControl.Width = iControlWidth;
               pControl.Height = iControlHeight;
               iXOff = GUIGraphicsContext.OverScanLeft;
               iYOff = GUIGraphicsContext.OverScanTop;
               int iScreenWidth = GUIGraphicsContext.OverScanWidth;
               int iScreenHeight = GUIGraphicsContext.OverScanHeight;
-              pControl.SetPosition(iXOff + (iScreenWidth - iControlWidth) / 2, iYOff + (iScreenHeight - iControlHeight) / 2);
+              pControl.SetPosition(iXOff + (iScreenWidth - iControlWidth)/2, iYOff + (iScreenHeight - iControlHeight)/2);
               string strMode = GUILocalizeStrings.Get(275);
               strStatus = String.Format("{0} ({1:#.##})", strMode, GUIGraphicsContext.PixelRatio);
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(278));
+              GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(278));
             }
           }
           break;
 
-        case (int)Controls.CONTROL_OSD:
+        case (int) Controls.CONTROL_OSD:
           {
             iXOff = GUIGraphicsContext.OverScanLeft;
             iYOff = GUIGraphicsContext.Subtitles;
@@ -449,19 +517,18 @@ namespace MediaPortal.GUI.Settings
 
             int iScreenWidth = GUIGraphicsContext.OverScanWidth;
 
-            pControl = (GUIImage)GetControl((int)Controls.CONTROL_OSD);
+            pControl = (GUIImage) GetControl((int) Controls.CONTROL_OSD);
             if (null != pControl)
             {
               //pControl.IsVisible=true;
               int iTextureWidth = pControl.TextureWidth;
               int iTextureHeight = pControl.TextureHeight;
 
-              pControl.SetPosition(iXOff + (iScreenWidth - iTextureWidth) / 2, iYOff - iTextureHeight);
+              pControl.SetPosition(iXOff + (iScreenWidth - iTextureWidth)/2, iYOff - iTextureHeight);
               string strMode = GUILocalizeStrings.Get(469);
               strStatus = String.Format("{0} ({1}, Offset={2})", strMode, iYOff, GUIGraphicsContext.OSDOffset);
-              GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(468));
+              GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW2, GUILocalizeStrings.Get(468));
             }
-
           }
           break;
       }
@@ -469,7 +536,7 @@ namespace MediaPortal.GUI.Settings
       string strText;
 
       strText = String.Format("{0}x{1} | {2}", GUIGraphicsContext.Width, GUIGraphicsContext.Height, strStatus);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABEL_ROW1, strText);
+      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABEL_ROW1, strText);
 
       base.Render(timePassed);
 
@@ -490,16 +557,16 @@ namespace MediaPortal.GUI.Settings
 
       }*/
 
-      if (m_iControl == (int)Controls.CONTROL_OSD)
+      if (m_iControl == (int) Controls.CONTROL_OSD)
       {
-        GUIWindow window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
+        GUIWindow window = GUIWindowManager.GetWindow((int) Window.WINDOW_OSD);
         window.Render(timePassed);
       }
     }
+
     public override int GetFocusControlId()
     {
       return 1;
     }
-
   }
 }

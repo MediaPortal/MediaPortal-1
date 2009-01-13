@@ -23,16 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Xml;
-using System.Threading;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
-using MediaPortal.Util;
-using MediaPortal.GUI.Settings.Wizard;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBC
 {
@@ -41,10 +33,9 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
   /// </summary>
   public class GUIWizardDVBCScan : GUIWizardScanBase
   {
-
     public GUIWizardDVBCScan()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_DVBC_SCAN;
+      GetID = (int) Window.WINDOW_WIZARD_DVBC_SCAN;
     }
 
     public override bool Init()
@@ -56,6 +47,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
     {
       GUIPropertyManager.SetProperty("#Wizard.DVBC.Done", "yes");
     }
+
     protected override NetworkType Network()
     {
       return NetworkType.DVBC;

@@ -26,6 +26,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace PostSetup
 {
@@ -43,11 +44,12 @@ namespace PostSetup
     {
       InitializeComponent();
     }
+
     private void InitializeComponent()
     {
-      this.rdStandard = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.rdSSE = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.rdSSE2 = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.rdStandard = new MPRadioButton();
+      this.rdSSE = new MPRadioButton();
+      this.rdSSE2 = new MPRadioButton();
       this.panPackage.SuspendLayout();
       // 
       // panPackage
@@ -64,37 +66,37 @@ namespace PostSetup
       // 
       this.rdStandard.Checked = true;
       this.rdStandard.Enabled = false;
-      this.rdStandard.Location = new System.Drawing.Point(96, 120);
+      this.rdStandard.Location = new Point(96, 120);
       this.rdStandard.Name = "rdStandard";
       this.rdStandard.TabIndex = 18;
       this.rdStandard.TabStop = true;
       this.rdStandard.Text = "Standard";
-      this.rdStandard.CheckedChanged += new System.EventHandler(this.rdStandard_CheckedChanged);
+      this.rdStandard.CheckedChanged += new EventHandler(this.rdStandard_CheckedChanged);
       // 
       // rdSSE
       // 
       this.rdSSE.Enabled = false;
-      this.rdSSE.Location = new System.Drawing.Point(200, 120);
+      this.rdSSE.Location = new Point(200, 120);
       this.rdSSE.Name = "rdSSE";
       this.rdSSE.TabIndex = 19;
       this.rdSSE.Text = "SSE";
-      this.rdSSE.CheckedChanged += new System.EventHandler(this.rdSSE_CheckedChanged);
+      this.rdSSE.CheckedChanged += new EventHandler(this.rdSSE_CheckedChanged);
       // 
       // rdSSE2
       // 
       this.rdSSE2.Enabled = false;
-      this.rdSSE2.Location = new System.Drawing.Point(312, 120);
+      this.rdSSE2.Location = new Point(312, 120);
       this.rdSSE2.Name = "rdSSE2";
       this.rdSSE2.TabIndex = 18;
       this.rdSSE2.Text = "SSE2";
-      this.rdSSE2.CheckedChanged += new System.EventHandler(this.rdSSE2_CheckedChanged);
+      this.rdSSE2.CheckedChanged += new EventHandler(this.rdSSE2_CheckedChanged);
       // 
       // MP3PartFFDShow
       // 
       this.Name = "MP3PartFFDShow";
       this.panPackage.ResumeLayout(false);
-
     }
+
     /// <summary>
     /// called when some one checks the box
     /// </summary>
@@ -103,7 +105,8 @@ namespace PostSetup
       string programfilesdir = Environment.GetEnvironmentVariable("ProgramFiles");
       // HKEY_LOCAL_MACHINE\SOFTWARE\GNU\ffdshow 
       this.Title = "ffdshow";
-      this.Description = "ffdshow is a decoding filter which can process several media formats such as DivX, Xvid and MPEG1." +
+      this.Description =
+        "ffdshow is a decoding filter which can process several media formats such as DivX, Xvid and MPEG1." +
         "It also includes VobSub, which is a directshow filter which can show subtitles in movies.\n\n" +
         "ffdshow is available in three versions: Standard, SSE and SSE2.\n" +
         "The SSE and SSE2 versions have been compiled to take advantage of special CPU instructions available in later processors.\n" +
@@ -119,16 +122,19 @@ namespace PostSetup
       this.Dock = DockStyle.Top;
       this.Visible = true;
     }
+
     /// <summary>
     /// called when some one unchecks the box
     /// </summary>
-
     public override void CheckedToInstall()
     {
       // HKEY_LOCAL_MACHINE\SOFTWARE\GNU\ffdshow
       if (this.RegistryKeyExists(@"SOFTWARE\GNU\ffdshow"))
       {
-        DialogResult dr = MessageBox.Show("MediaPortal has detected that ffdshow is already installed. \nTo re-install ffdshow, press Cancel and use the Add/Remove applet in Control Panel before trying again. \nTo continue the installation with your existing ffdshow setup press OK", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        DialogResult dr =
+          MessageBox.Show(
+            "MediaPortal has detected that ffdshow is already installed. \nTo re-install ffdshow, press Cancel and use the Add/Remove applet in Control Panel before trying again. \nTo continue the installation with your existing ffdshow setup press OK",
+            "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
 
         if (dr.Equals(DialogResult.OK))
@@ -138,8 +144,7 @@ namespace PostSetup
           this.rdStandard.Enabled = false;
           this.rdSSE.Enabled = false;
           this.rdSSE2.Enabled = false;
-          this.ButtonAction = MP3PartInstaller.BUTTONACTION_NEXT;
-
+          this.ButtonAction = BUTTONACTION_NEXT;
         }
         else if (dr.Equals(DialogResult.Cancel))
         {
@@ -150,9 +155,8 @@ namespace PostSetup
           this.rdSSE2.Enabled = true;
           // uninstall old version!, popping up controlpanel-add/remove programs.
           CallControlPanelApplet("APPWIZ.CPL");
-          this.ButtonAction = MP3PartInstaller.BUTTONACTION_INSTALL;
+          this.ButtonAction = BUTTONACTION_INSTALL;
         }
-
       }
       else
       {
@@ -160,32 +164,31 @@ namespace PostSetup
         this.rdStandard.Enabled = true;
         this.rdSSE.Enabled = true;
         this.rdSSE2.Enabled = true;
-        this.ButtonAction = MP3PartInstaller.BUTTONACTION_INSTALL;
+        this.ButtonAction = BUTTONACTION_INSTALL;
       }
-
     }
+
     public override void UnCheckedToInstall()
     {
       this.rdStandard.Enabled = false;
       this.rdSSE.Enabled = false;
       this.rdSSE2.Enabled = false;
-      this.ButtonAction = MP3PartInstaller.BUTTONACTION_NEXT;
+      this.ButtonAction = BUTTONACTION_NEXT;
     }
 
     private void rdStandard_CheckedChanged(object sender, EventArgs e)
     {
-      this.DownloadUrls = new string[] { "http://www.free-codecs.com/download_soft.php?d=372&s=50" };
+      this.DownloadUrls = new string[] {"http://www.free-codecs.com/download_soft.php?d=372&s=50"};
     }
 
     private void rdSSE_CheckedChanged(object sender, EventArgs e)
     {
-      this.DownloadUrls = new string[] { "http://www.free-codecs.com/download_soft.php?d=374&s=50" };
+      this.DownloadUrls = new string[] {"http://www.free-codecs.com/download_soft.php?d=374&s=50"};
     }
 
     private void rdSSE2_CheckedChanged(object sender, EventArgs e)
     {
-      this.DownloadUrls = new string[] { "http://www.free-codecs.com/download_soft.php?d=373&s=50" };
+      this.DownloadUrls = new string[] {"http://www.free-codecs.com/download_soft.php?d=373&s=50"};
     }
-
   }
 }

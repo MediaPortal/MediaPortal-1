@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,13 +13,13 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class DebugForm : MediaPortal.UserInterface.Controls.MPForm, IDisplay, IDisposable
+  public class DebugForm : MPForm, IDisplay, IDisposable
   {
     private Thread _displayThread;
     private bool _IsDisplayOff;
@@ -65,7 +64,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.InitializeComponent();
         base.Size = new Size(Settings.Instance.GraphicWidth + 6, Settings.Instance.GraphicHeight + 0x18);
         this.DoRefresh();
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         this.isDisabled = true;
         this.errorMessage = exception.Message;
@@ -78,7 +78,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.DisplayLines(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout });
+          Log.Info("DebugForm.DisplayLines(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
+                   new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
         }
         if (this.DisplaySettings.BlankDisplayWhenIdle)
         {
@@ -90,7 +91,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
           }
-          if (!this._IsDisplayOff && ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+          if (!this._IsDisplayOff &&
+              ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
           {
             if (this.DoDebug)
             {
@@ -139,7 +141,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             Log.Info("DebugForm.DisplayEQ(): called", new object[0]);
           }
-          this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq) ? ((int)bounds.Height) : ((int)bounds.Width);
+          this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
+                                              ? ((int) bounds.Height)
+                                              : ((int) bounds.Width);
           this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
           MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
           Monitor.Enter(obj3 = DWriteMutex);
@@ -151,11 +155,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               RectangleF ef2;
               if (this.DoDebug)
               {
-                Log.Info("DebugForm.DisplayEQ(): Rendering {0} band {1} = {2}", new object[] { this.EQSettings.UseNormalEq ? "Normal EQ" : (this.EQSettings.UseStereoEq ? "Stereo EQ" : (this.EQSettings.UseVUmeter ? "VU Meter" : "VU Meter 2")), i, this.EQSettings.UseNormalEq ? this.EQSettings.EqArray[1 + i].ToString() : (this.EQSettings.UseStereoEq ? (this.EQSettings.EqArray[1 + i].ToString() + " : " + this.EQSettings.EqArray[9 + i].ToString()) : (this.EQSettings.EqArray[1 + i].ToString() + " : " + this.EQSettings.EqArray[2 + i].ToString())) });
+                Log.Info("DebugForm.DisplayEQ(): Rendering {0} band {1} = {2}",
+                         new object[]
+                           {
+                             this.EQSettings.UseNormalEq
+                               ? "Normal EQ"
+                               : (this.EQSettings.UseStereoEq
+                                    ? "Stereo EQ"
+                                    : (this.EQSettings.UseVUmeter ? "VU Meter" : "VU Meter 2")), i,
+                             this.EQSettings.UseNormalEq
+                               ? this.EQSettings.EqArray[1 + i].ToString()
+                               : (this.EQSettings.UseStereoEq
+                                    ? (this.EQSettings.EqArray[1 + i].ToString() + " : " +
+                                       this.EQSettings.EqArray[9 + i].ToString())
+                                    : (this.EQSettings.EqArray[1 + i].ToString() + " : " +
+                                       this.EQSettings.EqArray[2 + i].ToString()))
+                           });
               }
               if (this.EQSettings.UseNormalEq)
               {
-                ef2 = new RectangleF((bounds.X + (i * (((int)bounds.Width) / this.EQSettings.Render_BANDS))) + 1f, bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]), (float)((((int)bounds.Width) / this.EQSettings.Render_BANDS) - 2), (float)this.EQSettings.EqArray[1 + i]);
+                ef2 = new RectangleF((bounds.X + (i*(((int) bounds.Width)/this.EQSettings.Render_BANDS))) + 1f,
+                                     bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                     (float) ((((int) bounds.Width)/this.EQSettings.Render_BANDS) - 2),
+                                     (float) this.EQSettings.EqArray[1 + i]);
                 this.tGraphics.FillRectangle(Brushes.Black, ef2);
               }
               else
@@ -164,28 +186,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 RectangleF ef3;
                 if (this.EQSettings.UseStereoEq)
                 {
-                  int num4 = (((int)bounds.Width) / 2) / this.EQSettings.Render_BANDS;
-                  num2 = i * num4;
-                  int num3 = (i + this.EQSettings.Render_BANDS) * num4;
-                  ef2 = new RectangleF((bounds.X + num2) + 1f, bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]), (float)(num4 - 2), (float)this.EQSettings.EqArray[1 + i]);
-                  ef3 = new RectangleF((bounds.X + num3) + 1f, bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[9 + i]), (float)(num4 - 2), (float)this.EQSettings.EqArray[9 + i]);
+                  int num4 = (((int) bounds.Width)/2)/this.EQSettings.Render_BANDS;
+                  num2 = i*num4;
+                  int num3 = (i + this.EQSettings.Render_BANDS)*num4;
+                  ef2 = new RectangleF((bounds.X + num2) + 1f,
+                                       bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                       (float) (num4 - 2), (float) this.EQSettings.EqArray[1 + i]);
+                  ef3 = new RectangleF((bounds.X + num3) + 1f,
+                                       bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[9 + i]),
+                                       (float) (num4 - 2), (float) this.EQSettings.EqArray[9 + i]);
                   this.tGraphics.FillRectangle(Brushes.Black, ef2);
                   this.tGraphics.FillRectangle(Brushes.Black, ef3);
                 }
                 else if (this.EQSettings.UseVUmeter | this.EQSettings.UseVUmeter2)
                 {
-                  ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float)this.EQSettings.EqArray[1 + i], (float)(((int)(bounds.Height / 2f)) - 2));
-                  num2 = this.EQSettings.UseVUmeter ? 0 : (((int)bounds.Width) - this.EQSettings.EqArray[2 + i]);
-                  ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height / 2f)) + 1f, (float)this.EQSettings.EqArray[2 + i], (float)(((int)(bounds.Height / 2f)) - 2));
+                  ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float) this.EQSettings.EqArray[1 + i],
+                                       (float) (((int) (bounds.Height/2f)) - 2));
+                  num2 = this.EQSettings.UseVUmeter ? 0 : (((int) bounds.Width) - this.EQSettings.EqArray[2 + i]);
+                  ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height/2f)) + 1f,
+                                       (float) this.EQSettings.EqArray[2 + i], (float) (((int) (bounds.Height/2f)) - 2));
                   this.tGraphics.FillRectangle(Brushes.Black, ef2);
                   this.tGraphics.FillRectangle(Brushes.Black, ef3);
                 }
               }
             }
             this.graphicDisplay.Image = this.tBitmap;
-          } catch (Exception exception)
+          }
+          catch (Exception exception)
           {
-            Log.Info("DebugForm.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] { exception });
+            Log.Info("DebugForm.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] {exception});
             if (exception.Message.Contains("ThreadAbortException"))
             {
             }
@@ -204,11 +233,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) < this.DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
+              this.DisplaySettings._DisplayControlTimeout)
           {
             if (this.DoDebug)
             {
-              Log.Info("DebugForm.DisplayOff(): DisplayControlAction Timer = {0}.", new object[] { DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction });
+              Log.Info("DebugForm.DisplayOff(): DisplayControlAction Timer = {0}.",
+                       new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
             }
             return;
           }
@@ -274,7 +305,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
         this.Check_Idle_State();
-        if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
+        if (((!this.MPStatus.MediaPlayer_Active | !this.MPStatus.MediaPlayer_Playing) &
+             this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
         {
           this.DisplayOn();
         }
@@ -285,7 +317,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.GetEQ();
             this.DisplayEQ();
           }
-          if (this.DisplaySettings.BlankDisplayWithVideo & (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) || this.MPStatus.Media_IsTVRecording))
+          if (this.DisplaySettings.BlankDisplayWithVideo &
+              (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) ||
+               this.MPStatus.Media_IsTVRecording))
           {
             if (this.DoDebug)
             {
@@ -344,7 +378,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (this.DoDebug)
       {
-        Log.Info("DebugForm.DrawImage(): EQ DATA = {0}, Display Off = {1}", new object[] { this.EQSettings._EqDataAvailable, this._IsDisplayOff });
+        Log.Info("DebugForm.DrawImage(): EQ DATA = {0}, Display Off = {1}",
+                 new object[] {this.EQSettings._EqDataAvailable, this._IsDisplayOff});
       }
       if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
       {
@@ -373,12 +408,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 Log.Info("DebugForm.DrawImage():  called", new object[0]);
               }
-              BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+              BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size),
+                                                      ImageLockMode.ReadOnly, bitmap.PixelFormat);
               try
               {
                 if (this.bitmapData == null)
                 {
-                  this.bitmapData = new byte[bitmapdata.Stride * this.gLines];
+                  this.bitmapData = new byte[bitmapdata.Stride*this.gLines];
                 }
                 Marshal.Copy(bitmapdata.Scan0, this.bitmapData, 0, this.bitmapData.Length);
               }
@@ -427,7 +463,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!_message.Equals(this.LastText[_line]))
         {
           this.LastText[_line] = _message;
-          RectangleF rect = new RectangleF(0f, (float)(this.tLineHeight * _line), (float)this.tWidth, (float)this.tLineHeight);
+          RectangleF rect = new RectangleF(0f, (float) (this.tLineHeight*_line), (float) this.tWidth,
+                                           (float) this.tLineHeight);
           this.tGraphics.SmoothingMode = SmoothingMode.None;
           this.tGraphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
           this.tGraphics.FillRectangle(Brushes.White, rect);
@@ -459,12 +496,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("DebugForm.DrawTextImage():  completed", new object[0]);
         }
-        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
+                                                bitmap.PixelFormat);
         try
         {
           if (this.bitmapData == null)
           {
-            this.bitmapData = new byte[bitmapdata.Stride * this.gLines];
+            this.bitmapData = new byte[bitmapdata.Stride*this.gLines];
           }
           Marshal.Copy(bitmapdata.Scan0, this.bitmapData, 0, this.bitmapData.Length);
         }
@@ -542,79 +580,104 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.graphicDisplay = new System.Windows.Forms.PictureBox();
-      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).BeginInit();
+      this.graphicDisplay = new PictureBox();
+      ((ISupportInitialize) (this.graphicDisplay)).BeginInit();
       this.SuspendLayout();
       // 
       // graphicDisplay
       // 
-      this.graphicDisplay.BackColor = System.Drawing.Color.Lime;
-      this.graphicDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.graphicDisplay.Location = new System.Drawing.Point(0, 0);
+      this.graphicDisplay.BackColor = Color.Lime;
+      this.graphicDisplay.Dock = DockStyle.Fill;
+      this.graphicDisplay.Location = new Point(0, 0);
       this.graphicDisplay.Name = "graphicDisplay";
-      this.graphicDisplay.Size = new System.Drawing.Size(360, 82);
+      this.graphicDisplay.Size = new Size(360, 82);
       this.graphicDisplay.TabIndex = 0;
       this.graphicDisplay.TabStop = false;
       this.graphicDisplay.WaitOnLoad = true;
       // 
       // DebugForm
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 21F);
-      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-      this.ClientSize = new System.Drawing.Size(360, 82);
+      this.AutoScaleDimensions = new SizeF(13F, 21F);
+      this.BackColor = Color.FromArgb(((int) (((byte) (128)))), ((int) (((byte) (255)))), ((int) (((byte) (128)))));
+      this.ClientSize = new Size(360, 82);
       this.Controls.Add(this.graphicDisplay);
-      this.Font = new System.Drawing.Font("Lucida Console", 16F);
+      this.Font = new Font("Lucida Console", 16F);
       this.Name = "DebugForm";
       this.Text = "MiniDisplay - Debug (Preview)";
       this.TopMost = true;
-      ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).EndInit();
+      ((ISupportInitialize) (this.graphicDisplay)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     private void InitializeDriver()
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       Log.Info("DebugForm.InitializeDriver(): started.", new object[0]);
-      Log.Info("DebugForm.InitializeDriver(): DebugForm Driver - {0}", new object[] { this.Description });
-      Log.Info("DebugForm.InitializeDriver(): Called by \"{0}\".", new object[] { Assembly.GetEntryAssembly().FullName });
+      Log.Info("DebugForm.InitializeDriver(): DebugForm Driver - {0}", new object[] {this.Description});
+      Log.Info("DebugForm.InitializeDriver(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
       FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
       if (this.DoDebug)
       {
-        Log.Info("DebugForm.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )", new object[] { info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime() });
+        Log.Info("DebugForm.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )",
+                 new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
       }
       if (this.DoDebug)
       {
-        Log.Info("DebugForm.InitializeDriver(): Platform: {0}", new object[] { Environment.OSVersion.VersionString });
+        Log.Info("DebugForm.InitializeDriver(): Platform: {0}", new object[] {Environment.OSVersion.VersionString});
       }
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.LoadAdvancedSettings();
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Force Graphic Text: {0}", new object[] { Settings.Instance.ForceGraphicText });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Equalizer Display: {0}", new object[] { this.EQSettings.UseEqDisplay });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Normal Equalizer Display: {0}", new object[] { this.EQSettings.UseNormalEq });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Stereo Equalizer Display: {0}", new object[] { this.EQSettings.UseStereoEq });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   VU Meter Display: {0}", new object[] { this.EQSettings.UseVUmeter });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   VU Meter Style 2 Display: {0}", new object[] { this.EQSettings.UseVUmeter2 });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Use VU Channel indicators: {0}", new object[] { this.EQSettings._useVUindicators });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Restrict EQ Update Rate: {0}", new object[] { this.EQSettings.RestrictEQ });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Restricted EQ Update Rate: {0} updates per second", new object[] { this.EQSettings._EQ_Restrict_FPS });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Delay EQ Startup: {0}", new object[] { this.EQSettings.DelayEQ });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Delay EQ Startup Time: {0} seconds", new object[] { this.EQSettings._DelayEQTime });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Smooth EQ Amplitude Decay: {0}", new object[] { this.EQSettings.SmoothEQ });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Show Track Info with EQ display: {0}", new object[] { this.EQSettings.EQTitleDisplay });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Show Track Info Interval: {0} seconds", new object[] { this.EQSettings._EQTitleDisplayTime });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Show Track Info duration: {0} seconds", new object[] { this.EQSettings._EQTitleShowTime });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Blank display with video: {0}", new object[] { this.DisplaySettings.BlankDisplayWithVideo });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Enable Display on Action: {0}", new object[] { this.DisplaySettings.EnableDisplayAction });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Enable display for: {0} seconds", new object[] { this.DisplaySettings.DisplayActionTime });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Blank display when idle: {0}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options -     blank display after: {0} seconds", new object[] { this.DisplaySettings._BlankIdleTimeout / 0xf4240L });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 1: {0}", new object[] { this.DisplaySettings._Shutdown1 });
-      Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 2: {0}", new object[] { this.DisplaySettings._Shutdown2 });
-      Log.Info("DebugForm.InitializeDriver(): Setting - Audio using ASIO: {0}", new object[] { this.EQSettings._AudioUseASIO });
-      Log.Info("DebugForm.InitializeDriver(): Setting - Audio using Mixer: {0}", new object[] { this.EQSettings._AudioIsMixing });
-      Log.Info("DebugForm.InitializeDriver(): Extensive logging: {0}", new object[] { this.DoDebug });
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Force Graphic Text: {0}",
+               new object[] {Settings.Instance.ForceGraphicText});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseEqDisplay});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Normal Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseNormalEq});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Stereo Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseStereoEq});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   VU Meter Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   VU Meter Style 2 Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter2});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Use VU Channel indicators: {0}",
+               new object[] {this.EQSettings._useVUindicators});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Restrict EQ Update Rate: {0}",
+               new object[] {this.EQSettings.RestrictEQ});
+      Log.Info(
+        "DebugForm.InitializeDriver(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
+        new object[] {this.EQSettings._EQ_Restrict_FPS});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Delay EQ Startup: {0}",
+               new object[] {this.EQSettings.DelayEQ});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Delay EQ Startup Time: {0} seconds",
+               new object[] {this.EQSettings._DelayEQTime});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Smooth EQ Amplitude Decay: {0}",
+               new object[] {this.EQSettings.SmoothEQ});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Show Track Info with EQ display: {0}",
+               new object[] {this.EQSettings.EQTitleDisplay});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Show Track Info Interval: {0} seconds",
+               new object[] {this.EQSettings._EQTitleDisplayTime});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Show Track Info duration: {0} seconds",
+               new object[] {this.EQSettings._EQTitleShowTime});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Blank display with video: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -   Enable Display on Action: {0}",
+               new object[] {this.DisplaySettings.EnableDisplayAction});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     Enable display for: {0} seconds",
+               new object[] {this.DisplaySettings.DisplayActionTime});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Blank display when idle: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options -     blank display after: {0} seconds",
+               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 1: {0}",
+               new object[] {this.DisplaySettings._Shutdown1});
+      Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 2: {0}",
+               new object[] {this.DisplaySettings._Shutdown2});
+      Log.Info("DebugForm.InitializeDriver(): Setting - Audio using ASIO: {0}",
+               new object[] {this.EQSettings._AudioUseASIO});
+      Log.Info("DebugForm.InitializeDriver(): Setting - Audio using Mixer: {0}",
+               new object[] {this.EQSettings._AudioIsMixing});
+      Log.Info("DebugForm.InitializeDriver(): Extensive logging: {0}", new object[] {this.DoDebug});
       Log.Info("DebugForm.InitializeDriver(): completed.", new object[0]);
     }
 
@@ -635,16 +698,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings.EQTitleDisplay = this.AdvSettings.EQTitleDisplay;
       this.EQSettings._EQTitleShowTime = this.AdvSettings.EQTitleShowTime;
       this.EQSettings._EQTitleDisplayTime = this.AdvSettings.EQTitleDisplayTime;
-      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0) ? 0 : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) - (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
+      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
+                                         ? 0
+                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
       this.DisplaySettings.BlankDisplayWithVideo = this.AdvSettings.BlankDisplayWithVideo;
       this.DisplaySettings.EnableDisplayAction = this.AdvSettings.EnableDisplayAction;
       this.DisplaySettings.DisplayActionTime = this.AdvSettings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = this.AdvSettings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = this.AdvSettings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -656,7 +722,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("DebugForm.OnExternalAction(): received action {0}", new object[] { action.wID.ToString() });
+          Log.Info("DebugForm.OnExternalAction(): received action {0}", new object[] {action.wID.ToString()});
         }
         Action.ActionType wID = action.wID;
         if (wID <= Action.ActionType.ACTION_SHOW_OSD)
@@ -666,7 +732,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
         }
-        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) && (wID != Action.ActionType.ACTION_MOUSE_CLICK))
+        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) &&
+                 (wID != Action.ActionType.ACTION_MOUSE_CLICK))
         {
           return;
         }
@@ -707,7 +774,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       if (base.InvokeRequired)
       {
         Log.Info("DebugForm.SetLine() - Invoke required", new object[0]);
-        base.Invoke(new SetLineDelegate(this.SetLine), new object[] { _line, _message });
+        base.Invoke(new SetLineDelegate(this.SetLine), new object[] {_line, _message});
       }
       else
       {
@@ -716,7 +783,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit)
+    public void Setup(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight,
+                      int backLightLevel, bool contrast, int contrastLevel, bool BlankOnExit)
     {
       this.InitializeDriver();
       this.tLines = lines;
@@ -738,11 +806,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.tGraphics = Graphics.FromImage(this.tBitmap);
         this.tGraphics.SmoothingMode = SmoothingMode.None;
         this.tGraphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
-        this.tLineHeight = ((int)this.tGraphics.MeasureString("Zg", this.UseFont).Height) + 2;
-        this.tWidth = ((int)this.tGraphics.MeasureString("M", this.UseFont).Width) * this.tCols;
-        this.tHeight = (((int)this.tGraphics.MeasureString("Zg", this.UseFont).Height) * this.tLines) + (2 * (this.tLines - 1));
+        this.tLineHeight = ((int) this.tGraphics.MeasureString("Zg", this.UseFont).Height) + 2;
+        this.tWidth = ((int) this.tGraphics.MeasureString("M", this.UseFont).Width)*this.tCols;
+        this.tHeight = (((int) this.tGraphics.MeasureString("Zg", this.UseFont).Height)*this.tLines) +
+                       (2*(this.tLines - 1));
         base.ShowInTaskbar = false;
-        base.Size = new Size(((int)(this.tWidth * 0.7f)) + 6, this.tHeight + 0x18);
+        base.Size = new Size(((int) (this.tWidth*0.7f)) + 6, this.tHeight + 0x18);
         this.tGraphics.Dispose();
         this.tBitmap.Dispose();
         this.tBitmap = new Bitmap(this.tWidth, this.tHeight);
@@ -806,50 +875,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     string IDisplay.Name
     {
-      get
-      {
-        return "DebugForm";
-      }
+      get { return "DebugForm"; }
     }
 
     public string Description
     {
-      get
-      {
-        return "Debug (Preview) Form 04_24_2008";
-      }
+      get { return "Debug (Preview) Form 04_24_2008"; }
     }
 
     public string ErrorMessage
     {
-      get
-      {
-        return this.errorMessage;
-      }
+      get { return this.errorMessage; }
     }
 
     public bool IsDisabled
     {
-      get
-      {
-        return this.isDisabled;
-      }
+      get { return this.isDisabled; }
     }
 
     public bool SupportsGraphics
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     public bool SupportsText
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     [Serializable]
@@ -867,7 +918,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private bool m_EQTitleDisplay;
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
-      private static DebugForm.AdvancedSettings m_Instance;
+      private static AdvancedSettings m_Instance;
       private bool m_NormalEQ = true;
       private bool m_RestrictEQ;
       private bool m_SmoothEQ;
@@ -878,7 +929,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public static event OnSettingsChangedHandler OnSettingsChanged;
 
-      private static void Default(DebugForm.AdvancedSettings _settings)
+      private static void Default(AdvancedSettings _settings)
       {
         _settings.EqDisplay = false;
         _settings.NormalEQ = true;
@@ -901,22 +952,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _settings.BlankIdleTime = 30;
       }
 
-      public static DebugForm.AdvancedSettings Load()
+      public static AdvancedSettings Load()
       {
-        DebugForm.AdvancedSettings settings;
+        AdvancedSettings settings;
         Log.Debug("DebugForm.AdvancedSettings.Load() started", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml")))
         {
           Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from XML file", new object[0]);
-          XmlSerializer serializer = new XmlSerializer(typeof(DebugForm.AdvancedSettings));
+          XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"));
-          settings = (DebugForm.AdvancedSettings)serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
         {
           Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from defaults", new object[0]);
-          settings = new DebugForm.AdvancedSettings();
+          settings = new AdvancedSettings();
           Default(settings);
         }
         Log.Debug("DebugForm.AdvancedSettings.Load() completed", new object[0]);
@@ -936,14 +987,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Save(Instance);
       }
 
-      public static void Save(DebugForm.AdvancedSettings ToSave)
+      public static void Save(AdvancedSettings ToSave)
       {
         Log.Debug("DebugForm.AdvancedSettings.Save() Saving settings to XML file", new object[0]);
-        XmlSerializer serializer = new XmlSerializer(typeof(DebugForm.AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"), Encoding.UTF8);
+        XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"),
+                                                 Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter)writer, ToSave);
+        serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
         Log.Debug("DebugForm.AdvancedSettings.Save() completed", new object[0]);
       }
@@ -956,160 +1008,88 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool BlankDisplayWhenIdle
       {
-        get
-        {
-          return this.m_BlankDisplayWhenIdle;
-        }
-        set
-        {
-          this.m_BlankDisplayWhenIdle = value;
-        }
+        get { return this.m_BlankDisplayWhenIdle; }
+        set { this.m_BlankDisplayWhenIdle = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWithVideo
       {
-        get
-        {
-          return this.m_BlankDisplayWithVideo;
-        }
-        set
-        {
-          this.m_BlankDisplayWithVideo = value;
-        }
+        get { return this.m_BlankDisplayWithVideo; }
+        set { this.m_BlankDisplayWithVideo = value; }
       }
 
       [XmlAttribute]
       public int BlankIdleTime
       {
-        get
-        {
-          return this.m_BlankIdleTime;
-        }
-        set
-        {
-          this.m_BlankIdleTime = value;
-        }
+        get { return this.m_BlankIdleTime; }
+        set { this.m_BlankIdleTime = value; }
       }
 
       [XmlAttribute]
       public bool DelayEQ
       {
-        get
-        {
-          return this.m_DelayEQ;
-        }
-        set
-        {
-          this.m_DelayEQ = value;
-        }
+        get { return this.m_DelayEQ; }
+        set { this.m_DelayEQ = value; }
       }
 
       [XmlAttribute]
       public int DelayEqTime
       {
-        get
-        {
-          return this.m_DelayEqTime;
-        }
-        set
-        {
-          this.m_DelayEqTime = value;
-        }
+        get { return this.m_DelayEqTime; }
+        set { this.m_DelayEqTime = value; }
       }
 
       [XmlAttribute]
       public bool EnableDisplayAction
       {
-        get
-        {
-          return this.m_EnableDisplayAction;
-        }
-        set
-        {
-          this.m_EnableDisplayAction = value;
-        }
+        get { return this.m_EnableDisplayAction; }
+        set { this.m_EnableDisplayAction = value; }
       }
 
       [XmlAttribute]
       public int EnableDisplayActionTime
       {
-        get
-        {
-          return this.m_EnableDisplayActionTime;
-        }
-        set
-        {
-          this.m_EnableDisplayActionTime = value;
-        }
+        get { return this.m_EnableDisplayActionTime; }
+        set { this.m_EnableDisplayActionTime = value; }
       }
 
       [XmlAttribute]
       public bool EqDisplay
       {
-        get
-        {
-          return this.m_EqDisplay;
-        }
-        set
-        {
-          this.m_EqDisplay = value;
-        }
+        get { return this.m_EqDisplay; }
+        set { this.m_EqDisplay = value; }
       }
 
       [XmlAttribute]
       public int EqRate
       {
-        get
-        {
-          return this.m_EqRate;
-        }
-        set
-        {
-          this.m_EqRate = value;
-        }
+        get { return this.m_EqRate; }
+        set { this.m_EqRate = value; }
       }
 
       [XmlAttribute]
       public bool EQTitleDisplay
       {
-        get
-        {
-          return this.m_EQTitleDisplay;
-        }
-        set
-        {
-          this.m_EQTitleDisplay = value;
-        }
+        get { return this.m_EQTitleDisplay; }
+        set { this.m_EQTitleDisplay = value; }
       }
 
       [XmlAttribute]
       public int EQTitleDisplayTime
       {
-        get
-        {
-          return this.m_EQTitleDisplayTime;
-        }
-        set
-        {
-          this.m_EQTitleDisplayTime = value;
-        }
+        get { return this.m_EQTitleDisplayTime; }
+        set { this.m_EQTitleDisplayTime = value; }
       }
 
       [XmlAttribute]
       public int EQTitleShowTime
       {
-        get
-        {
-          return this.m_EQTitleShowTime;
-        }
-        set
-        {
-          this.m_EQTitleShowTime = value;
-        }
+        get { return this.m_EQTitleShowTime; }
+        set { this.m_EQTitleShowTime = value; }
       }
 
-      public static DebugForm.AdvancedSettings Instance
+      public static AdvancedSettings Instance
       {
         get
         {
@@ -1119,101 +1099,56 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           return m_Instance;
         }
-        set
-        {
-          m_Instance = value;
-        }
+        set { m_Instance = value; }
       }
 
       [XmlAttribute]
       public bool NormalEQ
       {
-        get
-        {
-          return this.m_NormalEQ;
-        }
-        set
-        {
-          this.m_NormalEQ = value;
-        }
+        get { return this.m_NormalEQ; }
+        set { this.m_NormalEQ = value; }
       }
 
       [XmlAttribute]
       public bool RestrictEQ
       {
-        get
-        {
-          return this.m_RestrictEQ;
-        }
-        set
-        {
-          this.m_RestrictEQ = value;
-        }
+        get { return this.m_RestrictEQ; }
+        set { this.m_RestrictEQ = value; }
       }
 
       [XmlAttribute]
       public bool SmoothEQ
       {
-        get
-        {
-          return this.m_SmoothEQ;
-        }
-        set
-        {
-          this.m_SmoothEQ = value;
-        }
+        get { return this.m_SmoothEQ; }
+        set { this.m_SmoothEQ = value; }
       }
 
       [XmlAttribute]
       public bool StereoEQ
       {
-        get
-        {
-          return this.m_StereoEQ;
-        }
-        set
-        {
-          this.m_StereoEQ = value;
-        }
+        get { return this.m_StereoEQ; }
+        set { this.m_StereoEQ = value; }
       }
 
       [XmlAttribute]
       public bool VUindicators
       {
-        get
-        {
-          return this.m_VUindicators;
-        }
-        set
-        {
-          this.m_VUindicators = value;
-        }
+        get { return this.m_VUindicators; }
+        set { this.m_VUindicators = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter
       {
-        get
-        {
-          return this.m_VUmeter;
-        }
-        set
-        {
-          this.m_VUmeter = value;
-        }
+        get { return this.m_VUmeter; }
+        set { this.m_VUmeter = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter2
       {
-        get
-        {
-          return this.m_VUmeter2;
-        }
-        set
-        {
-          this.m_VUmeter2 = value;
-        }
+        get { return this.m_VUmeter2; }
+        set { this.m_VUmeter2 = value; }
       }
 
       public delegate void OnSettingsChangedHandler();
@@ -1222,4 +1157,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public delegate void SetLineDelegate(int _line, string message);
   }
 }
-

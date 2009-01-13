@@ -23,14 +23,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
-using NUnit.Framework;
 using MediaPortal.WebEPG.Parser;
-using System.IO;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.WebEPG.Parser
 {
@@ -57,13 +53,13 @@ namespace MediaPortal.Tests.WebEPG.Parser
       Assert.IsTrue(testData.StartTime.Hour == 0);
       Assert.IsTrue(testData.StartTime.Minute == 30);
 
-      testData.SetElement("#END", "0:30");            // Only one test on endTime
-      Assert.IsTrue(testData.EndTime.Hour == 0);        // is enough
-      Assert.IsTrue(testData.EndTime.Minute == 30);     // as it exactly behaves as StartTime do
+      testData.SetElement("#END", "0:30"); // Only one test on endTime
+      Assert.IsTrue(testData.EndTime.Hour == 0); // is enough
+      Assert.IsTrue(testData.EndTime.Minute == 30); // as it exactly behaves as StartTime do
 
-      testData.SetElement("#END", "(02:30)");            
-      Assert.IsTrue(testData.EndTime.Hour == 2);       
-      Assert.IsTrue(testData.EndTime.Minute == 30);     
+      testData.SetElement("#END", "(02:30)");
+      Assert.IsTrue(testData.EndTime.Hour == 2);
+      Assert.IsTrue(testData.EndTime.Minute == 30);
 
       testData.SetElement("#START", "10h30");
       Assert.IsTrue(testData.StartTime.Hour == 10);
@@ -119,7 +115,6 @@ namespace MediaPortal.Tests.WebEPG.Parser
       // <#DESCRIPTION> 
       testData.SetElement("#DESCRIPTION", "   This is description, isn't it?   ");
       Assert.IsTrue(testData.Description == "This is description, isn't it?");
-
     }
   }
 }

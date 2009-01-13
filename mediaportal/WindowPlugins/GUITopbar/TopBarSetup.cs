@@ -23,9 +23,9 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Topbar
 {
@@ -63,10 +63,11 @@ namespace MediaPortal.Topbar
 
     public int GetWindowId()
     {
-      return (int)GUIWindow.Window.WINDOW_TOPBAR;
+      return (int) GUIWindow.Window.WINDOW_TOPBAR;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = "";
       strButtonImage = "";
@@ -87,7 +88,7 @@ namespace MediaPortal.Topbar
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form setup = new TopBarSetupForm();
+      Form setup = new TopBarSetupForm();
       setup.ShowDialog();
     }
 
@@ -97,7 +98,7 @@ namespace MediaPortal.Topbar
 
     public bool ShowDefaultHome()
     {
-      return true;  // not relevant, see CanShowInMenu()
+      return true; // not relevant, see CanShowInMenu()
     }
 
     public bool CanShowInMenu()

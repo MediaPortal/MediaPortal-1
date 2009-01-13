@@ -23,38 +23,36 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class EncoderFiltersSection : MediaPortal.Configuration.SectionSettings
-	{
-        private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-		//private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		//private MediaPortal.UserInterface.Controls.MPLabel label4;
-		//private System.ComponentModel.IContainer components = null;
+  public class EncoderFiltersSection : SectionSettings
+  {
+    private MPLabel mpLabel1;
+    //private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    //private MediaPortal.UserInterface.Controls.MPLabel label4;
+    //private System.ComponentModel.IContainer components = null;
 
-		public EncoderFiltersSection() : this("Encoder Filters")
-		{
-		}
+    public EncoderFiltersSection() : this("Encoder Filters")
+    {
+    }
 
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EncoderFiltersSection));
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      ComponentResourceManager resources = new ComponentResourceManager(typeof (EncoderFiltersSection));
+      this.mpLabel1 = new MPLabel();
       this.SuspendLayout();
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(42, 51);
-      this.mpLabel1.MaximumSize = new System.Drawing.Size(400, 0);
+      this.mpLabel1.Location = new Point(42, 51);
+      this.mpLabel1.MaximumSize = new Size(400, 0);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(385, 52);
+      this.mpLabel1.Size = new Size(385, 52);
       this.mpLabel1.TabIndex = 0;
       this.mpLabel1.Text = resources.GetString("mpLabel1.Text");
       // 
@@ -62,16 +60,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.mpLabel1);
       this.Name = "EncoderFiltersSection";
-      this.Size = new System.Drawing.Size(472, 408);
+      this.Size = new Size(472, 408);
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
-		public EncoderFiltersSection(string name) : base(name)
-		{
-
-		}
-	}
+    public EncoderFiltersSection(string name) : base(name)
+    {
+    }
+  }
 }
-

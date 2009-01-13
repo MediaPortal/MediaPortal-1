@@ -24,17 +24,12 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Text;
-using System.Xml;
 using System.Collections;
-using System.Reflection;
+using System.IO;
 //using MediaPortal.GUI.Library;
-using System.Globalization;
 
 namespace MediaPortal.Profile
 {
-
   public class Settings : IDisposable
   {
     public Settings(string fileName)
@@ -44,7 +39,7 @@ namespace MediaPortal.Profile
 
     public Settings(string fileName, bool isCached)
     {
-      xmlFileName = System.IO.Path.GetFileName(fileName);
+      xmlFileName = Path.GetFileName(fileName);
 
       _isCached = isCached;
 
@@ -52,7 +47,7 @@ namespace MediaPortal.Profile
       {
         foreach (ISettingsProvider doc in xmlCache)
         {
-          string xmlName = System.IO.Path.GetFileName(doc.FileName);
+          string xmlName = Path.GetFileName(doc.FileName);
           if (String.Compare(xmlName, xmlFileName, true) == 0)
           {
             xmlDoc = doc;
@@ -66,48 +61,84 @@ namespace MediaPortal.Profile
         xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
 
         if (_isCached)
+        {
           xmlCache.Add(xmlDoc);
+        }
       }
     }
 
     public string GetValue(string section, string entry)
     {
       object value = xmlDoc.GetValue(section, entry);
-      if (value == null) return string.Empty;
+      if (value == null)
+      {
+        return string.Empty;
+      }
 
       string strValue = value.ToString();
-      if (strValue.Length == 0) return string.Empty;
+      if (strValue.Length == 0)
+      {
+        return string.Empty;
+      }
       return strValue;
     }
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
       object obj = xmlDoc.GetValue(section, entry);
-      if (obj == null) return strDefault;
+      if (obj == null)
+      {
+        return strDefault;
+      }
       string strValue = obj.ToString();
-      if (strValue == null) return strDefault;
-      if (strValue.Length == 0) return strDefault;
+      if (strValue == null)
+      {
+        return strDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return strDefault;
+      }
       return strValue;
     }
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-      string strValue = (string)xmlDoc.GetValue(section, entry);
-      if (strValue == null) return bDefault;
-      if (strValue.Length == 0) return bDefault;
-      if (strValue.ToLower() == "yes") return true;
+      string strValue = (string) xmlDoc.GetValue(section, entry);
+      if (strValue == null)
+      {
+        return bDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return bDefault;
+      }
+      if (strValue.ToLower() == "yes")
+      {
+        return true;
+      }
       return false;
     }
+
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
       object obj = xmlDoc.GetValue(section, entry);
-      if (obj == null) return iDefault;
+      if (obj == null)
+      {
+        return iDefault;
+      }
       string strValue = obj.ToString();
-      if (strValue == null) return iDefault;
-      if (strValue.Length == 0) return iDefault;
+      if (strValue == null)
+      {
+        return iDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return iDefault;
+      }
       try
       {
-        int iRet = System.Int32.Parse(strValue);
+        int iRet = Int32.Parse(strValue);
         return iRet;
       }
       catch (Exception)
@@ -150,9 +181,13 @@ namespace MediaPortal.Profile
     public void SetValueAsBool(string section, string entry, bool bValue)
     {
       string strValue = "yes";
-      if (!bValue) strValue = "no";
+      if (!bValue)
+      {
+        strValue = "no";
+      }
       SetValue(section, entry, strValue);
     }
+
     public void RemoveEntry(string section, string entry)
     {
       xmlDoc.RemoveEntry(section, entry);
@@ -162,12 +197,15 @@ namespace MediaPortal.Profile
     {
       xmlCache = new ArrayList();
     }
+
     #region IDisposable Members
 
     public void Dispose()
     {
       if (_isCached == false)
+      {
         xmlDoc.Save();
+      }
     }
 
     public void Clear()
@@ -181,14 +219,15 @@ namespace MediaPortal.Profile
         doc.Save();
       }
     }
+
     #endregion
 
     #region Fields
 
-    bool _isCached;
-    static ArrayList xmlCache = new ArrayList();
-    string xmlFileName;
-    ISettingsProvider xmlDoc;
+    private bool _isCached;
+    private static ArrayList xmlCache = new ArrayList();
+    private string xmlFileName;
+    private ISettingsProvider xmlDoc;
 
     #endregion Fields
   }

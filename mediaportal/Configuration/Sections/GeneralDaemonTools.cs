@@ -24,32 +24,31 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using MediaPortal.Util;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class GeneralDaemonTools : MediaPortal.Configuration.SectionSettings
+  public class GeneralDaemonTools : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDaemonTools;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDaemonTools;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectFolder;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDrive;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboDriveNo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAskBeforePlaying;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxExtensions;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox2;
+    private MPCheckBox checkBoxDaemonTools;
+    private MPTextBox textBoxDaemonTools;
+    private MPButton buttonSelectFolder;
+    private MPLabel label1;
+    private MPLabel label3;
+    private MPComboBox comboBoxDrive;
+    private MPLabel label4;
+    private MPComboBox comboDriveNo;
+    private MPCheckBox checkBoxAskBeforePlaying;
+    private MPTextBox textBoxExtensions;
+    private MPLabel mpLabel1;
+    private IContainer components = null;
 
     public GeneralDaemonTools()
       : this("Daemon Tools")
@@ -61,7 +60,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
 
@@ -79,16 +77,18 @@ namespace MediaPortal.Configuration.Sections
       }
       base.Dispose(disposing);
     }
+
     /// <summary>
     /// 
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
-        textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", ".cue, .bin, .iso, .ccd, .bwt, .mds,. cdi, .nrg, .pdi, .b5t, .img");
+        textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions",
+                                                            ".cue, .bin, .iso, .ccd, .bwt, .mds,. cdi, .nrg, .pdi, .b5t, .img");
         comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
@@ -99,29 +99,39 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components\5DF1C3B1C87EFD376582F3A8B81F52D4"))
+          using (
+            RegistryKey subkey =
+              Registry.LocalMachine.OpenSubKey(
+                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components\5DF1C3B1C87EFD376582F3A8B81F52D4")
+            )
+          {
             if (subkey != null)
-              textBoxDaemonTools.Text = (string)subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
+            {
+              textBoxDaemonTools.Text = (string) subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
+            }
+          }
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);
         xmlwriter.SetValue("daemon", "extensions", textBoxExtensions.Text);
-        xmlwriter.SetValue("daemon", "drive", (string)comboBoxDrive.SelectedItem);
-        xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string)comboDriveNo.SelectedItem));
+        xmlwriter.SetValue("daemon", "drive", (string) comboBoxDrive.SelectedItem);
+        xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string) comboDriveNo.SelectedItem));
         xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", checkBoxAskBeforePlaying.Checked);
       }
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -145,8 +155,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.textBoxExtensions);
       this.groupBox2.Controls.Add(this.mpLabel1);
       this.groupBox2.Controls.Add(this.buttonSelectFolder);
@@ -168,8 +180,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxExtensions
       // 
-      this.textBoxExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExtensions.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxExtensions.Location = new System.Drawing.Point(168, 118);
       this.textBoxExtensions.Name = "textBoxExtensions";
@@ -187,7 +201,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonSelectFolder
       // 
-      this.buttonSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectFolder.Location = new System.Drawing.Point(384, 43);
       this.buttonSelectFolder.Name = "buttonSelectFolder";
       this.buttonSelectFolder.Size = new System.Drawing.Size(72, 22);
@@ -198,15 +214,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboDriveNo
       // 
-      this.comboDriveNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboDriveNo.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboDriveNo.BorderColor = System.Drawing.Color.Empty;
       this.comboDriveNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboDriveNo.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3"});
+      this.comboDriveNo.Items.AddRange(new object[]
+                                         {
+                                           "0",
+                                           "1",
+                                           "2",
+                                           "3"
+                                         });
       this.comboDriveNo.Location = new System.Drawing.Point(168, 92);
       this.comboDriveNo.Name = "comboDriveNo";
       this.comboDriveNo.Size = new System.Drawing.Size(288, 21);
@@ -214,34 +234,38 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDrive
       // 
-      this.comboBoxDrive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDrive.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDrive.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDrive.Items.AddRange(new object[] {
-            "D:",
-            "E:",
-            "F:",
-            "G:",
-            "H:",
-            "I:",
-            "J:",
-            "K:",
-            "L:",
-            "M:",
-            "N:",
-            "O:",
-            "P:",
-            "Q:",
-            "R:",
-            "S:",
-            "T:",
-            "U:",
-            "V:",
-            "W:",
-            "X:",
-            "Y:",
-            "Z:"});
+      this.comboBoxDrive.Items.AddRange(new object[]
+                                          {
+                                            "D:",
+                                            "E:",
+                                            "F:",
+                                            "G:",
+                                            "H:",
+                                            "I:",
+                                            "J:",
+                                            "K:",
+                                            "L:",
+                                            "M:",
+                                            "N:",
+                                            "O:",
+                                            "P:",
+                                            "Q:",
+                                            "R:",
+                                            "S:",
+                                            "T:",
+                                            "U:",
+                                            "V:",
+                                            "W:",
+                                            "X:",
+                                            "Y:",
+                                            "Z:"
+                                          });
       this.comboBoxDrive.Location = new System.Drawing.Point(168, 68);
       this.comboBoxDrive.Name = "comboBoxDrive";
       this.comboBoxDrive.Size = new System.Drawing.Size(288, 21);
@@ -249,8 +273,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxDaemonTools
       // 
-      this.textBoxDaemonTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDaemonTools.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDaemonTools.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDaemonTools.Location = new System.Drawing.Point(168, 44);
       this.textBoxDaemonTools.Name = "textBoxDaemonTools";
@@ -317,11 +343,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void buttonSelectFolder_Click(object sender, System.EventArgs e)
+    private void buttonSelectFolder_Click(object sender, EventArgs e)
     {
       using (OpenFileDialog openFileDialog = new OpenFileDialog())
       {
@@ -341,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void checkBoxDaemonTools_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxDaemonTools_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxDaemonTools.Checked)
       {
@@ -362,4 +388,3 @@ namespace MediaPortal.Configuration.Sections
     }
   }
 }
-

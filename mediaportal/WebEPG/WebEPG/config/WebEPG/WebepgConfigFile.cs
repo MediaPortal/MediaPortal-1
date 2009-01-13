@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.config
@@ -34,14 +32,11 @@ namespace MediaPortal.WebEPG.config
   public class WebepgConfigFile
   {
     #region Variables
-    [XmlElement("Info")]
-    public WebepgInfo Info;
-    [XmlArray("ChannelMap")]
-    [XmlArrayItem("Channel")]
-    public List<ChannelMap> Channels;
-    [XmlArray("Authentication")]
-    [XmlArrayItem("Site")]
-    public List<SiteAuth> Sites;
+
+    [XmlElement("Info")] public WebepgInfo Info;
+    [XmlArray("ChannelMap")] [XmlArrayItem("Channel")] public List<ChannelMap> Channels;
+    [XmlArray("Authentication")] [XmlArrayItem("Site")] public List<SiteAuth> Sites;
+
     #endregion
   }
 }

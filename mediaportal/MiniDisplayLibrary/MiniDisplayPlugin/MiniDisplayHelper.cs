@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
-using Un4seen.Bass;
 using DShowNET.AudioMixer;
-using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Profile;
 using MediaPortal.TV.Recording;
+using Un4seen.Bass;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -37,7 +28,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static bool GetEQ(ref EQControl EQSETTINGS)
     {
-      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = (EQSETTINGS.UseStereoEq | EQSETTINGS.UseVUmeter) | EQSETTINGS.UseVUmeter2;
       if (g_Player.Player != null)
       {
@@ -54,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
           {
             EQSETTINGS._EQDisplayTitle = false;
-            EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
+            EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks/1000);
             return false;
           }
           if (EQSETTINGS.EQTitleDisplay)
@@ -63,29 +54,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               EQSETTINGS._EQDisplayTitle = false;
             }
-            if (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) > (EQSETTINGS._EQTitleDisplayTime * 10000))
+            if (((DateTime.Now.Ticks/1000) - EQSETTINGS._LastEQTitle) > (EQSETTINGS._EQTitleDisplayTime*10000))
             {
-              EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
+              EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks/1000);
               EQSETTINGS._EQDisplayTitle = !EQSETTINGS._EQDisplayTitle;
             }
-            if (EQSETTINGS._EQDisplayTitle & (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) < (EQSETTINGS._EQTitleShowTime * 10000)))
+            if (EQSETTINGS._EQDisplayTitle &
+                (((DateTime.Now.Ticks/1000) - EQSETTINGS._LastEQTitle) < (EQSETTINGS._EQTitleShowTime*10000)))
             {
               return false;
             }
           }
-        } catch
+        }
+        catch
         {
           EQSETTINGS._EQDisplayTitle = false;
-          EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
+          EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks/1000);
           return false;
         }
         int handle = -1;
         try
         {
           handle = g_Player.Player.CurrentAudioStream;
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] { exception });
+          Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] {exception});
           return false;
         }
         if ((handle != 0) & (handle != -1))
@@ -93,7 +87,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           int num2;
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}", new object[] { handle });
+            Log.Info("MiniDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}",
+                     new object[] {handle});
           }
           try
           {
@@ -106,12 +101,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               num3 = -2147483646;
             }
-            num2 = Un4seen.Bass.Bass.BASS_ChannelGetData(handle, ref EQSETTINGS.EqFftData[0], num3);
-          } catch
+            num2 = Bass.BASS_ChannelGetData(handle, ref EQSETTINGS.EqFftData[0], num3);
+          }
+          catch
           {
             if (extensiveLogging)
             {
-              Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] { handle });
+              Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
             }
             return false;
           }
@@ -161,9 +157,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           CurrentStatus.Media_Duration = g_Player.Duration;
           CurrentStatus.Media_Speed = g_Player.Speed;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-          Log.Debug("GetSystemStatus(): unable to update g_player properties (playback stop in progress?): " + ex.Message);
+          Log.Debug("GetSystemStatus(): unable to update g_player properties (playback stop in progress?): " +
+                    ex.Message);
         }
       }
     }
@@ -178,7 +175,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           try
           {
             CurrentStatus.SystemVolumeLevel = AudioMixerHelper.GetVolume();
-          } catch
+          }
+          catch
           {
           }
           if (CurrentStatus.SystemVolumeLevel < 0)
@@ -186,7 +184,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             try
             {
               CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
-            } catch
+            }
+            catch
             {
             }
           }
@@ -198,14 +197,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             CurrentStatus.SystemVolumeLevel = g_Player.Volume;
             return;
-          } catch
+          }
+          catch
           {
             CurrentStatus.SystemVolumeLevel = 0;
             return;
           }
         }
         CurrentStatus.SystemVolumeLevel = 0;
-      } catch
+      }
+      catch
       {
         CurrentStatus.SystemVolumeLevel = 0;
         CurrentStatus.IsMuted = false;
@@ -266,7 +267,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       EQSettings._EQ_Restrict_FPS = 10;
       EQSettings._EqUpdateDelay = 0;
       EQSettings._DelayEQTime = 0;
-      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         EQSettings._AudioIsMixing = settings.GetValueAsBool("audioplayer", "mixing", false);
         EQSettings._AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
@@ -277,7 +278,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       lock (StatusMutex)
       {
-        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           CurrentStatus._AudioIsMixing = settings.GetValueAsBool("audioplayer", "mixing", false);
           CurrentStatus._AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
@@ -311,7 +312,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if (UseTVServer)
       {
-        return (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        return
+          (bool)
+          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
+                                  "IsAnyCardRecording", null);
       }
       return Recorder.IsAnyCardRecording();
     }
@@ -320,7 +324,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if (UseTVServer)
       {
-        bool flag = (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        bool flag =
+          (bool)
+          DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer",
+                                  "IsAnyCardRecording", null);
         return (((flag | Recorder.IsViewing()) | Recorder.IsTimeShifting()) | Recorder.IsRadio());
       }
       return ((Recorder.IsViewing() | Recorder.IsTimeShifting()) | Recorder.IsRadio());
@@ -334,23 +341,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static string PluginIconsToAudioFormat(ulong IconMask)
     {
       string str = string.Empty;
-      if ((IconMask & ((ulong)0x8000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x8000000000L)) > 0L)
       {
         str = str + " ICON_WMA2";
       }
-      if ((IconMask & ((ulong)0x4000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x4000000000L)) > 0L)
       {
         str = str + " ICON_WAV";
       }
-      if ((IconMask & ((ulong)0x4000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x4000000L)) > 0L)
       {
         str = str + " ICON_WMA";
       }
-      if ((IconMask & ((ulong)0x2000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x2000000L)) > 0L)
       {
         str = str + " ICON_MP3";
       }
-      if ((IconMask & ((ulong)0x1000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x1000000L)) > 0L)
       {
         str = str + " ICON_OGG";
       }
@@ -360,83 +367,83 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public static string PluginIconsToString(ulong IconMask)
     {
       string str = string.Empty;
-      if ((IconMask & ((ulong)0x100000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x100000000000L)) > 0L)
       {
         str = str + " ICON_Play";
       }
-      if ((IconMask & ((ulong)0x80000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x80000000000L)) > 0L)
       {
         str = str + " ICON_Pause";
       }
-      if ((IconMask & ((ulong)0x40000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x40000000000L)) > 0L)
       {
         str = str + " ICON_Stop";
       }
-      if ((IconMask & ((ulong)0x20000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x20000000000L)) > 0L)
       {
         str = str + " ICON_FFWD";
       }
-      if ((IconMask & ((ulong)0x10000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x10000000000L)) > 0L)
       {
         str = str + " ICON_FRWD";
       }
-      if ((IconMask & ((ulong)0x400000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x400000000L)) > 0L)
       {
         str = str + " ICON_Rec";
       }
-      if ((IconMask & ((ulong)0x200000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x200000000L)) > 0L)
       {
         str = str + " ICON_Vol";
       }
-      if ((IconMask & ((ulong)0x100000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x100000000L)) > 0L)
       {
         str = str + " ICON_Time";
       }
-      if ((IconMask & ((ulong)0x80L)) > 0L)
+      if ((IconMask & ((ulong) 0x80L)) > 0L)
       {
         str = str + " ICON_Music";
       }
-      if ((IconMask & ((ulong)0x40L)) > 0L)
+      if ((IconMask & ((ulong) 0x40L)) > 0L)
       {
         str = str + " ICON_Movie";
       }
-      if ((IconMask & ((ulong)0x20L)) > 0L)
+      if ((IconMask & ((ulong) 0x20L)) > 0L)
       {
         str = str + " ICON_Photo";
       }
-      if ((IconMask & ((ulong)8L)) > 0L)
+      if ((IconMask & ((ulong) 8L)) > 0L)
       {
         str = str + " ICON_TV";
       }
-      if ((IconMask & ((ulong)0x10L)) > 0L)
+      if ((IconMask & ((ulong) 0x10L)) > 0L)
       {
         str = str + " ICON_CD_DVD";
       }
-      if ((IconMask & ((ulong)0x200000L)) > 0L)
+      if ((IconMask & ((ulong) 0x200000L)) > 0L)
       {
         str = str + " ICON_TV_2";
       }
-      if ((IconMask & ((ulong)0x100000L)) > 0L)
+      if ((IconMask & ((ulong) 0x100000L)) > 0L)
       {
         str = str + " ICON_HDTV";
       }
-      if ((IconMask & ((ulong)0x8000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x8000000000L)) > 0L)
       {
         str = str + " ICON_WMA2";
       }
-      if ((IconMask & ((ulong)0x4000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x4000000000L)) > 0L)
       {
         str = str + " ICON_WAV";
       }
-      if ((IconMask & ((ulong)0x4000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x4000000L)) > 0L)
       {
         str = str + " ICON_WMA";
       }
-      if ((IconMask & ((ulong)0x2000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x2000000L)) > 0L)
       {
         str = str + " ICON_MP3";
       }
-      if ((IconMask & ((ulong)0x1000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x1000000L)) > 0L)
       {
         str = str + " ICON_OGG";
       }
@@ -444,99 +451,99 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         str = str + " ICON_xVid";
       }
-      if ((IconMask & ((ulong)0x40000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x40000000L)) > 0L)
       {
         str = str + " ICON_WMV";
       }
-      if ((IconMask & ((ulong)0x20000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x20000000L)) > 0L)
       {
         str = str + " ICON_MPG2";
       }
-      if ((IconMask & ((ulong)0x20000L)) > 0L)
+      if ((IconMask & ((ulong) 0x20000L)) > 0L)
       {
         str = str + " ICON_MPG";
       }
-      if ((IconMask & ((ulong)0x10000L)) > 0L)
+      if ((IconMask & ((ulong) 0x10000L)) > 0L)
       {
         str = str + " ICON_DivX";
       }
-      if ((IconMask & ((ulong)1L)) > 0L)
+      if ((IconMask & ((ulong) 1L)) > 0L)
       {
         str = str + " SPKR_FL";
       }
-      if ((IconMask & ((ulong)0x8000L)) > 0L)
+      if ((IconMask & ((ulong) 0x8000L)) > 0L)
       {
         str = str + " SPKR_FC";
       }
-      if ((IconMask & ((ulong)0x4000L)) > 0L)
+      if ((IconMask & ((ulong) 0x4000L)) > 0L)
       {
         str = str + " SPKR_FR";
       }
-      if ((IconMask & ((ulong)0x400L)) > 0L)
+      if ((IconMask & ((ulong) 0x400L)) > 0L)
       {
         str = str + " SPKR_RL";
       }
-      if ((IconMask & ((ulong)0x100L)) > 0L)
+      if ((IconMask & ((ulong) 0x100L)) > 0L)
       {
         str = str + " SPKR_RR";
       }
-      if ((IconMask & ((ulong)0x2000L)) > 0L)
+      if ((IconMask & ((ulong) 0x2000L)) > 0L)
       {
         str = str + " SPKR_SL";
       }
-      if ((IconMask & ((ulong)0x800L)) > 0L)
+      if ((IconMask & ((ulong) 0x800L)) > 0L)
       {
         str = str + " SPKR_SR";
       }
-      if ((IconMask & ((ulong)0x1000L)) > 0L)
+      if ((IconMask & ((ulong) 0x1000L)) > 0L)
       {
         str = str + " SPKR_LFE";
       }
-      if ((IconMask & ((ulong)0x200L)) > 0L)
+      if ((IconMask & ((ulong) 0x200L)) > 0L)
       {
         str = str + " ICON_SPDIF";
       }
-      if ((IconMask & ((ulong)0x10000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x10000000L)) > 0L)
       {
         str = str + " ICON_AC3";
       }
-      if ((IconMask & ((ulong)0x8000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x8000000L)) > 0L)
       {
         str = str + " ICON_DTS";
       }
-      if ((IconMask & ((ulong)0x2000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x2000000000L)) > 0L)
       {
         str = str + " ICON_REF";
       }
-      if ((IconMask & ((ulong)0x1000000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x1000000000L)) > 0L)
       {
         str = str + " ICON_SFL";
       }
-      if ((IconMask & ((ulong)0x800000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x800000000L)) > 0L)
       {
         str = str + " ICON_Alarm";
       }
-      if ((IconMask & ((ulong)0x800000L)) > 0L)
+      if ((IconMask & ((ulong) 0x800000L)) > 0L)
       {
         str = str + " ICON_SRC";
       }
-      if ((IconMask & ((ulong)0x400000L)) > 0L)
+      if ((IconMask & ((ulong) 0x400000L)) > 0L)
       {
         str = str + " ICON_FIT";
       }
-      if ((IconMask & ((ulong)0x80000L)) > 0L)
+      if ((IconMask & ((ulong) 0x80000L)) > 0L)
       {
         str = str + " ICON_SCR1";
       }
-      if ((IconMask & ((ulong)0x40000L)) > 0L)
+      if ((IconMask & ((ulong) 0x40000L)) > 0L)
       {
         str = str + " ICON_SCR2";
       }
-      if ((IconMask & ((ulong)4L)) > 0L)
+      if ((IconMask & ((ulong) 4L)) > 0L)
       {
         str = str + " ICON_WebCast";
       }
-      if ((IconMask & ((ulong)2L)) > 0L)
+      if ((IconMask & ((ulong) 2L)) > 0L)
       {
         str = str + " ICON_News";
       }
@@ -550,19 +557,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         str = str + " ICON_xVid";
       }
-      if ((IconMask & ((ulong)0x40000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x40000000L)) > 0L)
       {
         str = str + " ICON_WMV";
       }
-      if ((IconMask & ((ulong)0x20000000L)) > 0L)
+      if ((IconMask & ((ulong) 0x20000000L)) > 0L)
       {
         str = str + " ICON_MPG2";
       }
-      if ((IconMask & ((ulong)0x20000L)) > 0L)
+      if ((IconMask & ((ulong) 0x20000L)) > 0L)
       {
         str = str + " ICON_MPG";
       }
-      if ((IconMask & ((ulong)0x10000L)) > 0L)
+      if ((IconMask & ((ulong) 0x10000L)) > 0L)
       {
         str = str + " ICON_DivX";
       }
@@ -571,10 +578,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static void ProcessEqData(ref EQControl EQSettings)
     {
-      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       if (extensiveLogging)
       {
-        Log.Info("MiniDisplay.ProcessEqData(): called... MaxValue = {0}, BANDS = {1}", new object[] { EQSettings.Render_MaxValue, EQSettings.Render_BANDS });
+        Log.Info("MiniDisplay.ProcessEqData(): called... MaxValue = {0}, BANDS = {1}",
+                 new object[] {EQSettings.Render_MaxValue, EQSettings.Render_BANDS});
       }
       if ((EQSettings.UseStereoEq || EQSettings.UseVUmeter) || EQSettings.UseVUmeter2)
       {
@@ -587,7 +595,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             float num7 = 0f;
             float num8 = 0f;
-            int num10 = (int)Math.Pow(2.0, (i * 10.0) / ((double)(num2 - 1)));
+            int num10 = (int) Math.Pow(2.0, (i*10.0)/((double) (num2 - 1)));
             if (num10 > 0x3ff)
             {
               num10 = 0x3ff;
@@ -599,31 +607,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             int num9 = (10 + num10) - num3;
             while (num3 < num10)
             {
-              num7 += EQSettings.EqFftData[2 + (num3 * 2)];
-              num8 += EQSettings.EqFftData[(2 + (num3 * 2)) + 1];
+              num7 += EQSettings.EqFftData[2 + (num3*2)];
+              num8 += EQSettings.EqFftData[(2 + (num3*2)) + 1];
               num3++;
             }
-            int num4 = (int)((Math.Sqrt(((double)num7) / Math.Log10((double)num9)) * 1.7) * num);
-            int num5 = (int)((Math.Sqrt(((double)num8) / Math.Log10((double)num9)) * 1.7) * num);
+            int num4 = (int) ((Math.Sqrt(((double) num7)/Math.Log10((double) num9))*1.7)*num);
+            int num5 = (int) ((Math.Sqrt(((double) num8)/Math.Log10((double) num9))*1.7)*num);
             if (extensiveLogging)
             {
-              Log.Info("MiniDisplay.ProcessEqData(): Processing StereoEQ band {0}: L = {1}, R = {2}", new object[] { i, num4, num5 });
+              Log.Info("MiniDisplay.ProcessEqData(): Processing StereoEQ band {0}: L = {1}, R = {2}",
+                       new object[] {i, num4, num5});
             }
             num4 = Math.Min(num, num4);
-            EQSettings.EqArray[1 + i] = (byte)num4;
+            EQSettings.EqArray[1 + i] = (byte) num4;
             num5 = Math.Min(num, num5);
-            EQSettings.EqArray[9 + i] = (byte)num5;
+            EQSettings.EqArray[9 + i] = (byte) num5;
             if (EQSettings.SmoothEQ)
             {
               if (EQSettings.EqArray[1 + i] < EQSettings.LastEQ[1 + i])
               {
                 int num11 = EQSettings.LastEQ[1 + i];
-                num11 = EQSettings.LastEQ[1 + i] - ((int)0.5);
+                num11 = EQSettings.LastEQ[1 + i] - ((int) 0.5);
                 if (num11 < 0)
                 {
                   num11 = 0;
                 }
-                EQSettings.EqArray[1 + i] = (byte)num11;
+                EQSettings.EqArray[1 + i] = (byte) num11;
                 EQSettings.LastEQ[1 + i] = num11;
               }
               else
@@ -633,12 +642,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               if (EQSettings.EqArray[9 + i] < EQSettings.LastEQ[9 + i])
               {
                 int num12 = EQSettings.LastEQ[9 + i];
-                num12 = EQSettings.LastEQ[9 + i] - ((int)0.5);
+                num12 = EQSettings.LastEQ[9 + i] - ((int) 0.5);
                 if (num12 < 0)
                 {
                   num12 = 0;
                 }
-                EQSettings.EqArray[9 + i] = (byte)num12;
+                EQSettings.EqArray[9 + i] = (byte) num12;
                 EQSettings.LastEQ[9 + i] = num12;
               }
               else
@@ -648,7 +657,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             if (extensiveLogging)
             {
-              Log.Info("MiniDisplay.ProcessEqData.(): Processed StereoEQ mode {0} byte {1}: L = {2}, R = {3}.", new object[] { EQSettings.EqArray[0], i, EQSettings.EqArray[1 + (i * 2)].ToString(), EQSettings.EqArray[2 + (i * 2)].ToString() });
+              Log.Info("MiniDisplay.ProcessEqData.(): Processed StereoEQ mode {0} byte {1}: L = {2}, R = {3}.",
+                       new object[]
+                         {
+                           EQSettings.EqArray[0], i, EQSettings.EqArray[1 + (i*2)].ToString(),
+                           EQSettings.EqArray[2 + (i*2)].ToString()
+                         });
             }
           }
         }
@@ -665,37 +679,38 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             int num21 = (10 + num22) - num15;
             while (num15 < num22)
             {
-              if (EQSettings.EqFftData[2 + (num15 * 2)] > num19)
+              if (EQSettings.EqFftData[2 + (num15*2)] > num19)
               {
-                num19 = EQSettings.EqFftData[2 + (num15 * 2)];
+                num19 = EQSettings.EqFftData[2 + (num15*2)];
               }
-              if (EQSettings.EqFftData[(2 + (num15 * 2)) + 1] > num20)
+              if (EQSettings.EqFftData[(2 + (num15*2)) + 1] > num20)
               {
-                num20 = EQSettings.EqFftData[(2 + (num15 * 2)) + 1];
+                num20 = EQSettings.EqFftData[(2 + (num15*2)) + 1];
               }
               num15++;
             }
-            int num16 = (int)((Math.Sqrt(((double)num19) / Math.Log10((double)num21)) * 1.7) * num13);
-            int num17 = (int)((Math.Sqrt(((double)num20) / Math.Log10((double)num21)) * 1.7) * num13);
+            int num16 = (int) ((Math.Sqrt(((double) num19)/Math.Log10((double) num21))*1.7)*num13);
+            int num17 = (int) ((Math.Sqrt(((double) num20)/Math.Log10((double) num21))*1.7)*num13);
             if (extensiveLogging)
             {
-              Log.Info("MiniDisplay.ProcessEqData(): Processing VUmeter band {0}: L = {1}, R = {2}", new object[] { j, num16, num17 });
+              Log.Info("MiniDisplay.ProcessEqData(): Processing VUmeter band {0}: L = {1}, R = {2}",
+                       new object[] {j, num16, num17});
             }
             num16 = Math.Min(num13, num16);
-            EQSettings.EqArray[1 + (j * 2)] = (byte)num16;
+            EQSettings.EqArray[1 + (j*2)] = (byte) num16;
             num17 = Math.Min(num13, num17);
-            EQSettings.EqArray[2 + (j * 2)] = (byte)num17;
+            EQSettings.EqArray[2 + (j*2)] = (byte) num17;
             if (EQSettings.SmoothEQ)
             {
               if (EQSettings.EqArray[1] < EQSettings.LastEQ[1])
               {
                 int num23 = EQSettings.LastEQ[1];
-                num23 = EQSettings.LastEQ[1] - ((int)0.5);
+                num23 = EQSettings.LastEQ[1] - ((int) 0.5);
                 if (num23 < 0)
                 {
                   num23 = 0;
                 }
-                EQSettings.EqArray[1] = (byte)num23;
+                EQSettings.EqArray[1] = (byte) num23;
                 EQSettings.LastEQ[1] = num23;
               }
               else
@@ -705,12 +720,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               if (EQSettings.EqArray[2] < EQSettings.LastEQ[2])
               {
                 int num24 = EQSettings.LastEQ[2];
-                num24 = EQSettings.LastEQ[2] - ((int)0.5);
+                num24 = EQSettings.LastEQ[2] - ((int) 0.5);
                 if (num24 < 0)
                 {
                   num24 = 0;
                 }
-                EQSettings.EqArray[2] = (byte)num24;
+                EQSettings.EqArray[2] = (byte) num24;
                 EQSettings.LastEQ[2] = num24;
               }
               else
@@ -720,7 +735,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             if (extensiveLogging)
             {
-              Log.Info("MiniDisplay.ProcessEqData(): Processed VUmeter byte {0}: L = {1}, R = {2}.", new object[] { j, EQSettings.EqArray[1 + (j * 2)].ToString(), EQSettings.EqArray[2 + (j * 2)].ToString() });
+              Log.Info("MiniDisplay.ProcessEqData(): Processed VUmeter byte {0}: L = {1}, R = {2}.",
+                       new object[]
+                         {j, EQSettings.EqArray[1 + (j*2)].ToString(), EQSettings.EqArray[2 + (j*2)].ToString()});
             }
           }
         }
@@ -733,7 +750,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         for (int k = 0; k < num26; k++)
         {
           float num30 = 0f;
-          int num32 = (int)Math.Pow(2.0, (k * 10.0) / ((double)(num26 - 1)));
+          int num32 = (int) Math.Pow(2.0, (k*10.0)/((double) (num26 - 1)));
           if (num32 > 0x3ff)
           {
             num32 = 0x3ff;
@@ -748,24 +765,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             num30 += EQSettings.EqFftData[1 + num27];
             num27++;
           }
-          int num28 = (int)((Math.Sqrt(((double)num30) / Math.Log10((double)num31)) * 1.7) * num25);
+          int num28 = (int) ((Math.Sqrt(((double) num30)/Math.Log10((double) num31))*1.7)*num25);
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.ProcessEqData(): Processing EQ band {0} = {1}", new object[] { k, num28 });
+            Log.Info("MiniDisplay.ProcessEqData(): Processing EQ band {0} = {1}", new object[] {k, num28});
           }
           num28 = Math.Min(num25, num28);
-          EQSettings.EqArray[1 + k] = (byte)num28;
+          EQSettings.EqArray[1 + k] = (byte) num28;
           if (EQSettings.SmoothEQ)
           {
             if (EQSettings.EqArray[1 + k] < EQSettings.LastEQ[1 + k])
             {
               int num33 = EQSettings.LastEQ[1 + k];
-              num33 = EQSettings.LastEQ[1 + k] - ((int)0.5);
+              num33 = EQSettings.LastEQ[1 + k] - ((int) 0.5);
               if (num33 < 0)
               {
                 num33 = 0;
               }
-              EQSettings.EqArray[1 + k] = (byte)num33;
+              EQSettings.EqArray[1 + k] = (byte) num33;
               EQSettings.LastEQ[1 + k] = num33;
             }
             else
@@ -775,7 +792,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.ProcessEqData(): Processed EQ mode {0} byte {1} = {2}.", new object[] { EQSettings.EqArray[0], k, EQSettings.EqArray[1 + k].ToString() });
+            Log.Info("MiniDisplay.ProcessEqData(): Processed EQ mode {0} byte {1} = {2}.",
+                     new object[] {EQSettings.EqArray[0], k, EQSettings.EqArray[1 + k].ToString()});
           }
         }
       }
@@ -801,6 +819,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       return _IdleTimeout;
     }
+
     public static ulong SetPluginIcons()
     {
       string[] strArray;
@@ -820,22 +839,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       MPStatus.Media_IsVideo = false;
       if (IsCaptureCardRecording())
       {
-        num |= (ulong)0x400000000L;
+        num |= (ulong) 0x400000000L;
         MPStatus.Media_IsRecording = true;
       }
       else if (IsCaptureCardViewing())
       {
-        num |= (ulong)8L;
+        num |= (ulong) 8L;
         MPStatus.Media_IsTV = true;
       }
       if (g_Player.Player == null)
       {
-        return (num | ((ulong)0x40000000000L));
+        return (num | ((ulong) 0x40000000000L));
       }
       MPStatus.MediaPlayer_Active = true;
       if (!g_Player.Playing)
       {
-        num |= (ulong)0x40000000000L;
+        num |= (ulong) 0x40000000000L;
         MPStatus.MediaPlayer_Active = false;
         MPStatus.MediaPlayer_Paused = false;
         MPStatus.MediaPlayer_Playing = false;
@@ -846,51 +865,51 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         MPStatus.MediaPlayer_Playing = true;
         if (g_Player.Speed > 1)
         {
-          num |= (ulong)0x20000000000L;
+          num |= (ulong) 0x20000000000L;
         }
         else if (g_Player.Speed < 0)
         {
-          num |= (ulong)0x10000000000L;
+          num |= (ulong) 0x10000000000L;
         }
         else
         {
-          num |= (ulong)0x100000000000L;
+          num |= (ulong) 0x100000000000L;
         }
       }
       else
       {
         MPStatus.MediaPlayer_Paused = true;
-        num |= (ulong)0x80000000000L;
+        num |= (ulong) 0x80000000000L;
       }
       if (g_Player.IsMusic)
       {
         MPStatus.Media_IsMusic = true;
-        num |= (ulong)0x80L;
+        num |= (ulong) 0x80L;
         property = GUIPropertyManager.GetProperty("#Play.Current.File");
         if (property.Length > 0)
         {
           string str2;
-          strArray = property.Split(new char[] { '.' });
+          strArray = property.Split(new char[] {'.'});
           if ((strArray.Length > 1) && ((str2 = strArray[1]) != null))
           {
             if (!(str2 == "mp3"))
             {
               if (str2 == "ogg")
               {
-                num |= (ulong)0x1000000L;
+                num |= (ulong) 0x1000000L;
               }
               else if (str2 == "wma")
               {
-                num |= (ulong)0x4000000L;
+                num |= (ulong) 0x4000000L;
               }
               else if (str2 == "wav")
               {
-                num |= (ulong)0x4000000000L;
+                num |= (ulong) 0x4000000000L;
               }
             }
             else
             {
-              num |= (ulong)0x2000000L;
+              num |= (ulong) 0x2000000L;
             }
           }
         }
@@ -905,7 +924,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           MPStatus.Media_IsTVRecording = true;
         }
-        num |= (ulong)8L;
+        num |= (ulong) 8L;
       }
       if (g_Player.IsDVD || g_Player.IsCDA)
       {
@@ -913,29 +932,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           MPStatus.Media_IsDVD = true;
           MPStatus.Media_IsVideo = true;
-          num |= (ulong)0x40L;
+          num |= (ulong) 0x40L;
         }
         else if (g_Player.IsCDA & !g_Player.IsVideo)
         {
           MPStatus.Media_IsCD = true;
           MPStatus.Media_IsMusic = true;
-          num |= (ulong)0x80L;
+          num |= (ulong) 0x80L;
         }
-        num |= (ulong)0x10L;
+        num |= (ulong) 0x10L;
       }
       if (!(g_Player.IsVideo & !g_Player.IsDVD))
       {
         return num;
       }
       MPStatus.Media_IsVideo = true;
-      num |= (ulong)0x40L;
+      num |= (ulong) 0x40L;
       property = GUIPropertyManager.GetProperty("#Play.Current.File");
       if (property.Length <= 0)
       {
         return num;
       }
-      num |= (ulong)0x80L;
-      strArray = property.Split(new char[] { '.' });
+      num |= (ulong) 0x80L;
+      strArray = property.Split(new char[] {'.'});
       if ((strArray.Length <= 1) || ((str3 = strArray[1].ToLower()) == null))
       {
         return num;
@@ -946,7 +965,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (str3 == "divx")
           {
-            return (num | ((ulong)0x10000L));
+            return (num | ((ulong) 0x10000L));
           }
           if (str3 != "xvid")
           {
@@ -957,9 +976,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       else
       {
-        return (num | ((ulong)0x20000L));
+        return (num | ((ulong) 0x20000L));
       }
-      return (num | ((ulong)0x40000000L));
+      return (num | ((ulong) 0x40000000L));
     }
 
     public static void ShowSystemStatus(ref SystemStatus CurrentStatus)
@@ -1023,10 +1042,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static string Plugin_Version
     {
-      get
-      {
-        return "MiniDisplay Plugin v05_07_2008";
-      }
+      get { return "MiniDisplay Plugin v05_07_2008"; }
     }
 
     public static bool IsSetupAvailable()
@@ -1036,7 +1052,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         return false;
       }
-      if (str == null || (str != "DebugForm" && str != "iMONLCDg" && str != "MatrixMX" && str != "MatrixGX" && str != "VLSYS_Mplay"))
+      if (str == null ||
+          (str != "DebugForm" && str != "iMONLCDg" && str != "MatrixMX" && str != "MatrixGX" && str != "VLSYS_Mplay"))
       {
         return false;
       }
@@ -1045,7 +1062,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         return false;
       }
       bool enabled = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         enabled = xmlreader.GetValueAsBool("plugins", "MiniDisplay", false);
       }
@@ -1053,4 +1070,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

@@ -1,10 +1,9 @@
-using System;
 using System.Windows.Forms;
 
 namespace XPBurn
 {
-	internal class XPBurnMessageQueue: UserControl
-	{
+  internal class XPBurnMessageQueue : UserControl
+  {
     private XPBurnCD fXPBurnCD;
 
     public bool Cancel
@@ -12,13 +11,15 @@ namespace XPBurn
       get { return fXPBurnCD.fCancel; }
     }
 
-		public XPBurnMessageQueue(XPBurnCD xpBurnCD)
-		{      
+    public XPBurnMessageQueue(XPBurnCD xpBurnCD)
+    {
       if (!IsHandleCreated)
+      {
         CreateHandle();
+      }
 
       fXPBurnCD = xpBurnCD;
-		}
+    }
 
     internal void OnRecorderChange()
     {
@@ -59,5 +60,5 @@ namespace XPBurn
     {
       fXPBurnCD.OnEraseComplete(status);
     }
-	}
+  }
 }

@@ -34,12 +34,14 @@ namespace MediaPortal.GUI.NumberPlace
   public class Grid : ICloneable
   {
     private int blocksAcross;
+
     public int BlocksAcross
     {
       get { return blocksAcross; }
     }
 
     private int cellsInRow;
+
     public int CellsInRow
     {
       get { return cellsInRow; }
@@ -77,8 +79,8 @@ namespace MediaPortal.GUI.NumberPlace
     public void Resize(int blocksAcross)
     {
       this.blocksAcross = blocksAcross;
-      cellsInRow = blocksAcross * blocksAcross;
-      cells = new int[cellsInRow, cellsInRow];
+      cellsInRow = blocksAcross*blocksAcross;
+      cells = new int[cellsInRow,cellsInRow];
     }
 
     public bool IsCellEmpty(int row, int column)
@@ -123,7 +125,7 @@ namespace MediaPortal.GUI.NumberPlace
         return false;
       }
 
-      Grid grid = (Grid)obj;
+      Grid grid = (Grid) obj;
       if (blocksAcross != grid.blocksAcross)
       {
         return false;
@@ -173,10 +175,10 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
 
-        int startRow = blocksAcross * (row / blocksAcross);
+        int startRow = blocksAcross*(row/blocksAcross);
         for (int rowIndex = startRow; rowIndex < (startRow + blocksAcross); rowIndex++)
         {
-          int startColumn = blocksAcross * (column / blocksAcross);
+          int startColumn = blocksAcross*(column/blocksAcross);
           for (int columnIndex = startColumn; columnIndex < (startColumn + blocksAcross); columnIndex++)
           {
             int value = cells[rowIndex, columnIndex];
@@ -203,10 +205,10 @@ namespace MediaPortal.GUI.NumberPlace
     {
       bool[] values = new bool[cellsInRow];
 
-      int startRow = blocksAcross * blockRow;
+      int startRow = blocksAcross*blockRow;
       for (int row = startRow; row < (startRow + blocksAcross); row++)
       {
-        int startColumn = blocksAcross * blockColumn;
+        int startColumn = blocksAcross*blockColumn;
         for (int column = startColumn; column < (startColumn + blocksAcross); column++)
         {
           int value = cells[row, column];
@@ -288,7 +290,7 @@ namespace MediaPortal.GUI.NumberPlace
         {
           return false;
         }
-        else if (!IsBlockValid(index % blocksAcross, index / blocksAcross))
+        else if (!IsBlockValid(index%blocksAcross, index/blocksAcross))
         {
           return false;
         }
@@ -319,7 +321,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     public void resetUniqueCandidates()
     {
-      uniqueCandidates = new int[cellsInRow, cellsInRow];
+      uniqueCandidates = new int[cellsInRow,cellsInRow];
     }
   }
 }

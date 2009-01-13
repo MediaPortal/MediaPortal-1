@@ -72,66 +72,81 @@ namespace Rss
     private string etag = RssDefault.String;
     private string url = RssDefault.String;
     private Encoding encoding = null;
+
     /// <summary>Initialize a new instance of the RssFeed class.</summary>
-    public RssFeed() { }
+    public RssFeed()
+    {
+    }
+
     /// <summary>Initialize a new instance of the RssFeed class with a specified encoding.</summary>
     public RssFeed(Encoding encoding)
     {
       this.encoding = encoding;
     }
+
     /// <summary>Returns a string representation of the current Object.</summary>
     /// <returns>The Url of the feed</returns>
     public override string ToString()
     {
       return url;
     }
+
     /// <summary>The channels that are contained in the feed.</summary>
     public RssChannelCollection Channels
     {
       get { return channels; }
     }
+
     /// <summary>The modules that the feed adhears to.</summary>
     public RssModuleCollection Modules
     {
       get { return modules; }
     }
+
     /// <summary>A collection of all exceptions encountered during the reading of the feed.</summary>
     public ExceptionCollection Exceptions
     {
       get { return exceptions == null ? new ExceptionCollection() : exceptions; }
     }
+
     /// <summary>The Version of the feed.</summary>
     public RssVersion Version
     {
       get { return rssVersion; }
       set { rssVersion = value; }
     }
+
     /// <summary>The server generated hash of the feed.</summary>
     public string ETag
     {
       get { return etag; }
     }
+
     /// <summary>The server generated last modfified date and time of the feed.</summary>
     public DateTime LastModified
     {
       get { return lastModified; }
     }
+
     /// <summary>Indicates this feed has not been changed on the server, and the local copy was returned.</summary>
     public bool Cached
     {
       get { return cached; }
     }
+
     /// <summary>Location of the feed</summary>
     public string Url
     {
       get { return url; }
     }
+
     /// <summary>Encoding of the feed</summary>
     public Encoding Encoding
     {
       get { return encoding; }
       set { encoding = value; }
     }
+
     /// <summary>Reads the specified RSS feed</summary>
     /// <param name="url">The url or filename of the RSS feed</param>
     /// <returns>The contents of the feed</returns>
@@ -139,6 +154,7 @@ namespace Rss
     {
       return read(url, null, null);
     }
+
     /// <summary>Reads the specified RSS feed</summary>
     /// <param name="Request">The specified way to connect to the web server</param>
     /// <returns>The contents of the feed</returns>
@@ -146,6 +162,7 @@ namespace Rss
     {
       return read(Request.RequestUri.ToString(), Request, null);
     }
+
     /// <summary>Reads the specified RSS feed</summary>
     /// <param name="oldFeed">The cached version of the feed</param>
     /// <returns>The current contents of the feed</returns>
@@ -154,6 +171,7 @@ namespace Rss
     {
       return read(oldFeed.url, null, oldFeed);
     }
+
     /// <summary>Reads the specified RSS feed</summary>
     /// <param name="Request">The specified way to connect to the web server</param>
     /// <param name="oldFeed">The cached version of the feed</param>
@@ -163,6 +181,7 @@ namespace Rss
     {
       return read(oldFeed.url, Request, oldFeed);
     }
+
     private static RssFeed read(string url, HttpWebRequest request, RssFeed oldFeed)
     {
       // ***** Marked for substantial improvement
@@ -188,7 +207,7 @@ namespace Rss
         case "http":
           if (request == null)
           {
-            request = (HttpWebRequest)WebRequest.Create(uri);
+            request = (HttpWebRequest) WebRequest.Create(uri);
           }
           if (oldFeed != null)
           {
@@ -197,15 +216,19 @@ namespace Rss
           }
           try
           {
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebResponse response = (HttpWebResponse) request.GetResponse();
             feed.lastModified = response.LastModified;
             feed.etag = response.Headers["ETag"];
             try
             {
               if (response.ContentEncoding != "")
+              {
                 feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
+              }
             }
-            catch { }
+            catch
+            {
+            }
             stream = response.GetResponseStream();
           }
           catch (WebException we)
@@ -216,7 +239,9 @@ namespace Rss
               return oldFeed;
             }
             else
+            {
               throw we; // bad
+            }
           }
           break;
       }
@@ -231,9 +256,10 @@ namespace Rss
           {
             element = reader.Read();
             if (element is RssChannel)
-              feed.Channels.Add((RssChannel)element);
-          }
-          while (element != null);
+            {
+              feed.Channels.Add((RssChannel) element);
+            }
+          } while (element != null);
           feed.rssVersion = reader.Version;
         }
         finally
@@ -243,10 +269,13 @@ namespace Rss
         }
       }
       else
+      {
         throw new ApplicationException("Not a valid Url");
+      }
 
       return feed;
     }
+
     /// <summary>Writes the RSS feed to the specified stream.</summary>
     /// <param name="stream">specified Stream</param>
     /// <exception cref="ArgumentException">The Stream cannot be written to.</exception>
@@ -257,11 +286,16 @@ namespace Rss
       RssWriter writer;
 
       if (encoding == null)
+      {
         writer = new RssWriter(stream);
+      }
       else
+      {
         writer = new RssWriter(stream, encoding);
+      }
       write(writer);
     }
+
     /// <summary>Writes the RSS feed to the specified file.</summary>
     /// <remarks>The encoding is ISO-8859-1.</remarks>
     /// <exception cref="ArgumentException">The filename is empty, contains only white space, or contains one or more invalid characters.</exception>
@@ -278,12 +312,15 @@ namespace Rss
       RssWriter writer = new RssWriter(fileName);
       write(writer);
     }
+
     private void write(RssWriter writer)
     {
       try
       {
         if (channels.Count == 0)
+        {
           throw new InvalidOperationException("Feed must contain at least one channel.");
+        }
 
         writer.Version = rssVersion;
 
@@ -292,7 +329,9 @@ namespace Rss
         foreach (RssChannel channel in channels)
         {
           if (channel.Items.Count == 0)
+          {
             throw new InvalidOperationException("Channel must contain at least one item.");
+          }
 
           writer.Write(channel);
         }
@@ -300,7 +339,9 @@ namespace Rss
       finally
       {
         if (writer != null)
+        {
           writer.Close();
+        }
       }
     }
   }

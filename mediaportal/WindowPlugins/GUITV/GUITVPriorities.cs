@@ -26,38 +26,38 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.IO;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.TV
 {
   public class GUITVPriorities : GUIWindow
   {
-
     #region variables, ctor/dtor
-    [SkinControlAttribute(10)]
-    protected GUIListControl listPriorities = null;
 
-    int m_iSelectedItem = 0;
-    TVUtil util = null;
+    [SkinControl(10)] protected GUIListControl listPriorities = null;
+
+    private int m_iSelectedItem = 0;
+    private TVUtil util = null;
 
     public GUITVPriorities()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES;
+      GetID = (int) Window.WINDOW_TV_SCHEDULER_PRIORITIES;
     }
+
     ~GUITVPriorities()
     {
     }
 
     #endregion
 
-
     #region overrides
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvpriorities.xml");
@@ -72,6 +72,7 @@ namespace MediaPortal.GUI.TV
       //}
       base.OnAction(action);
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -82,10 +83,13 @@ namespace MediaPortal.GUI.TV
 
       LoadDirectory();
 
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+      {
+        m_iSelectedItem--;
+      }
       GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
-
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
@@ -105,39 +109,42 @@ namespace MediaPortal.GUI.TV
       }
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == listPriorities)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(iItem);
         }
       }
-
     }
 
     protected override void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listPriorities)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         OnMoveUp(iItem);
       }
     }
+
     protected override void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listPriorities)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         OnMoveDown(iItem);
       }
     }
@@ -152,42 +159,49 @@ namespace MediaPortal.GUI.TV
       }
       return base.OnMessage(message);
     }
+
     protected override void OnShowContextMenu()
     {
       OnClick(GetSelectedItemNo());
     }
 
-
     #endregion
 
     #region list management
-    GUIListItem GetSelectedItem()
+
+    private GUIListItem GetSelectedItem()
     {
       return listPriorities.SelectedListItem;
     }
 
-    GUIListItem GetItem(int index)
+    private GUIListItem GetItem(int index)
     {
-      if (index < 0 || index >= listPriorities.Count) return null;
+      if (index < 0 || index >= listPriorities.Count)
+      {
+        return null;
+      }
       return listPriorities[index];
     }
 
-    int GetSelectedItemNo()
+    private int GetSelectedItemNo()
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listPriorities.GetID, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listPriorities.GetID, 0, 0,
+                                      null);
       OnMessage(msg);
-      int iItem = (int)msg.Param1;
+      int iItem = (int) msg.Param1;
       return iItem;
     }
-    int GetItemCount()
+
+    private int GetItemCount()
     {
       return listPriorities.Count;
     }
+
     #endregion
 
-
     #region scheduled tv methods
-    void LoadDirectory()
+
+    private void LoadDirectory()
     {
       GUIWaitCursor.Show();
       GUIControl.ClearControl(GetID, listPriorities.GetID);
@@ -201,8 +215,8 @@ namespace MediaPortal.GUI.TV
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.Title);
         item.TVTag = rec;
-        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
-        if (!System.IO.File.Exists(strLogo))
+        string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -210,9 +224,13 @@ namespace MediaPortal.GUI.TV
         if (Recorder.IsRecordingSchedule(rec, out card))
         {
           if (rec.RecType != TVRecording.RecordingType.Once)
+          {
             item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          }
           else
+          {
             item.PinImage = Thumbs.TvRecordingIcon;
+          }
         }
         else if (ConflictManager.IsConflict(rec))
         {
@@ -231,24 +249,24 @@ namespace MediaPortal.GUI.TV
       GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
       GUIWaitCursor.Hide();
     }
-    void SetLabels()
-    {
 
+    private void SetLabels()
+    {
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
-        TVRecording rec = (TVRecording)item.TVTag;
+        TVRecording rec = (TVRecording) item.TVTag;
 
         switch (rec.Status)
         {
           case TVRecording.RecordingStatus.Waiting:
-            item.Label3 = GUILocalizeStrings.Get(681);//waiting
+            item.Label3 = GUILocalizeStrings.Get(681); //waiting
             break;
           case TVRecording.RecordingStatus.Finished:
-            item.Label3 = GUILocalizeStrings.Get(683);//Finished
+            item.Label3 = GUILocalizeStrings.Get(683); //Finished
             break;
           case TVRecording.RecordingStatus.Canceled:
-            item.Label3 = GUILocalizeStrings.Get(684);//Canceled
+            item.Label3 = GUILocalizeStrings.Get(684); //Canceled
             break;
         }
 
@@ -256,11 +274,15 @@ namespace MediaPortal.GUI.TV
         int card;
         if (Recorder.IsRecordingSchedule(rec, out card))
         {
-          item.Label3 = GUILocalizeStrings.Get(682);//Recording
+          item.Label3 = GUILocalizeStrings.Get(682); //Recording
           if (rec.RecType != TVRecording.RecordingType.Once)
+          {
             item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          }
           else
+          {
             item.PinImage = Thumbs.TvRecordingIcon;
+          }
         }
         else if (ConflictManager.IsConflict(rec))
         {
@@ -274,41 +296,42 @@ namespace MediaPortal.GUI.TV
         string strType = string.Empty;
         item.Label = rec.Title;
         string strTime = String.Format("{0} {1} - {2}",
-          rec.StartTime.ToShortDateString(),
-          rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       rec.StartTime.ToShortDateString(),
+                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         switch (rec.RecType)
         {
           case TVRecording.RecordingType.Once:
             item.Label2 = String.Format("{0} {1} - {2}",
-              MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
-              rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-              rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
+                                        Util.Utils.GetShortDayString(rec.StartTime),
+                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            ;
             break;
           case TVRecording.RecordingType.Daily:
             strTime = String.Format("{0}-{1}",
-              rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-              rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                    rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                    rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
             item.Label2 = String.Format("{0} {1}", strType, strTime);
             break;
 
           case TVRecording.RecordingType.WeekDays:
             strTime = String.Format("{0}-{1} {2}-{3}",
-              GUILocalizeStrings.Get(657),//657=Mon
-              GUILocalizeStrings.Get(661),//661=Fri
-              rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-              rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                    GUILocalizeStrings.Get(657), //657=Mon
+                                    GUILocalizeStrings.Get(661), //661=Fri
+                                    rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                    rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
             item.Label2 = String.Format("{0} {1}", strType, strTime);
             break;
 
           case TVRecording.RecordingType.WeekEnds:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                GUILocalizeStrings.Get(662),//662=Sat
-                GUILocalizeStrings.Get(663),//6613Sun
-                rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                    GUILocalizeStrings.Get(662), //662=Sat
+                                    GUILocalizeStrings.Get(663), //6613Sun
+                                    rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                    rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
             item.Label2 = String.Format("{0} {1}", strType, strTime);
             break;
@@ -317,24 +340,38 @@ namespace MediaPortal.GUI.TV
             string day;
             switch (rec.StartTime.DayOfWeek)
             {
-              case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
-              case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
-              case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
-              case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
-              case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
-              case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
-              default: day = GUILocalizeStrings.Get(17); break;
+              case DayOfWeek.Monday:
+                day = GUILocalizeStrings.Get(11);
+                break;
+              case DayOfWeek.Tuesday:
+                day = GUILocalizeStrings.Get(12);
+                break;
+              case DayOfWeek.Wednesday:
+                day = GUILocalizeStrings.Get(13);
+                break;
+              case DayOfWeek.Thursday:
+                day = GUILocalizeStrings.Get(14);
+                break;
+              case DayOfWeek.Friday:
+                day = GUILocalizeStrings.Get(15);
+                break;
+              case DayOfWeek.Saturday:
+                day = GUILocalizeStrings.Get(16);
+                break;
+              default:
+                day = GUILocalizeStrings.Get(17);
+                break;
             }
 
             strTime = String.Format("{0}-{1}",
-              rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-              rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                    rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                    rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
             item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
             break;
           case TVRecording.RecordingType.EveryTimeOnThisChannel:
             item.Label = rec.Title;
-            item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.Channel });
+            item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.Channel});
             break;
           case TVRecording.RecordingType.EveryTimeOnEveryChannel:
             item.Label = rec.Title;
@@ -344,28 +381,34 @@ namespace MediaPortal.GUI.TV
       }
     }
 
-    void OnClick(int iItem)
+    private void OnClick(int iItem)
     {
       m_iSelectedItem = GetSelectedItemNo();
       GUIListItem item = GetItem(iItem);
-      if (item == null) return;
-      TVRecording rec = (TVRecording)item.TVTag;
+      if (item == null)
+      {
+        return;
+      }
+      TVRecording rec = (TVRecording) item.TVTag;
 
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
 
       dlg.Reset();
       dlg.SetHeading(rec.Title);
 
       if (rec.Series == false)
       {
-        dlg.AddLocalizedString(618);//delete
+        dlg.AddLocalizedString(618); //delete
       }
       else
       {
-        dlg.AddLocalizedString(981);//Delete this recording
-        dlg.AddLocalizedString(982);//Delete series recording
-        dlg.AddLocalizedString(888);//Episodes management
+        dlg.AddLocalizedString(981); //Delete this recording
+        dlg.AddLocalizedString(982); //Delete series recording
+        dlg.AddLocalizedString(888); //Episodes management
       }
       int card;
       if (Recorder.IsRecordingSchedule(rec, out card))
@@ -375,15 +418,17 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        dlg.AddLocalizedString(882);//Quality settings
+        dlg.AddLocalizedString(882); //Quality settings
       }
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
       switch (dlg.SelectedId)
       {
-
-        case 888:////Episodes management
+        case 888: ////Episodes management
           OnSetEpisodesToKeep(rec);
           break;
         case 882:
@@ -394,27 +439,27 @@ namespace MediaPortal.GUI.TV
           {
             if (Recorder.IsRecordingSchedule(rec, out card))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
-                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
-                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
                 dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
                 if (dlgYesNo.IsConfirmed)
                 {
                   Recorder.StopRecording(rec);
-                  rec.CanceledSeries.Add(MediaPortal.Util.Utils.datetolong(rec.StartTime));
-                  TVDatabase.AddCanceledSerie(rec, MediaPortal.Util.Utils.datetolong(rec.StartTime));
+                  rec.CanceledSeries.Add(Util.Utils.datetolong(rec.StartTime));
+                  TVDatabase.AddCanceledSerie(rec, Util.Utils.datetolong(rec.StartTime));
                 }
               }
             }
             else
             {
-              rec.CanceledSeries.Add(MediaPortal.Util.Utils.datetolong(rec.StartTime));
-              TVDatabase.AddCanceledSerie(rec, MediaPortal.Util.Utils.datetolong(rec.StartTime));
+              rec.CanceledSeries.Add(Util.Utils.datetolong(rec.StartTime));
+              TVDatabase.AddCanceledSerie(rec, Util.Utils.datetolong(rec.StartTime));
             }
             LoadDirectory();
           }
@@ -427,13 +472,13 @@ namespace MediaPortal.GUI.TV
           {
             if (Recorder.IsRecordingSchedule(rec, out card))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
-                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
-                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+                dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
                 dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
 
                 if (dlgYesNo.IsConfirmed)
@@ -461,7 +506,7 @@ namespace MediaPortal.GUI.TV
           g_Player.SeekAbsolute(0);
           if (Recorder.IsViewing())
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+            GUIWindowManager.ActivateWindow((int) Window.WINDOW_TVFULLSCREEN);
             return;
           }
           break;
@@ -475,22 +520,25 @@ namespace MediaPortal.GUI.TV
             {
               g_Player.SeekAsolutePercentage(99);
             }
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+            GUIWindowManager.ActivateWindow((int) Window.WINDOW_TVFULLSCREEN);
             return;
           }
           break;
       }
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+      {
+        m_iSelectedItem--;
+      }
       GUIControl.SelectItemControl(GetID, listPriorities.GetID, m_iSelectedItem);
     }
 
-    void ChangeType(TVRecording rec)
+    private void ChangeType(TVRecording rec)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(616));//616=Select Recording type
+        dlg.SetHeading(GUILocalizeStrings.Get(616)); //616=Select Recording type
         //611=Record once
         //612=Record everytime on this channel
         //613=Record everytime on every channel
@@ -500,8 +548,8 @@ namespace MediaPortal.GUI.TV
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
-        dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun 
+        dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
+        dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun 
         switch (rec.RecType)
         {
           case TVRecording.RecordingType.Once:
@@ -527,48 +575,52 @@ namespace MediaPortal.GUI.TV
             break;
         }
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+        {
+          return;
+        }
         switch (dlg.SelectedLabel)
         {
-          case 0://once
+          case 0: //once
             rec.RecType = TVRecording.RecordingType.Once;
             rec.Canceled = 0;
             break;
-          case 1://everytime, this channel
+          case 1: //everytime, this channel
             rec.RecType = TVRecording.RecordingType.EveryTimeOnThisChannel;
             rec.Canceled = 0;
             break;
-          case 2://everytime, all channels
+          case 2: //everytime, all channels
             rec.RecType = TVRecording.RecordingType.EveryTimeOnEveryChannel;
             rec.Canceled = 0;
             break;
-          case 3://weekly
+          case 3: //weekly
             rec.RecType = TVRecording.RecordingType.Weekly;
             rec.Canceled = 0;
             break;
-          case 4://daily
+          case 4: //daily
             rec.RecType = TVRecording.RecordingType.Daily;
             rec.Canceled = 0;
             break;
-          case 5://Mo-Fi
+          case 5: //Mo-Fi
             rec.RecType = TVRecording.RecordingType.WeekDays;
             rec.Canceled = 0;
             break;
-          case 6://Sat-Sun
+          case 6: //Sat-Sun
             rec.RecType = TVRecording.RecordingType.WeekEnds;
             rec.Canceled = 0;
             break;
         }
         TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
         LoadDirectory();
-
       }
     }
 
-    void OnMoveDown(int item)
+    private void OnMoveDown(int item)
     {
-
-      if (item == GetItemCount() - 1) return;
+      if (item == GetItemCount() - 1)
+      {
+        return;
+      }
       m_iSelectedItem = item + 1;
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)
@@ -576,7 +628,10 @@ namespace MediaPortal.GUI.TV
         return;
       }
       TVRecording rec = pItem.TVTag as TVRecording;
-      if (rec == null) return;
+      if (rec == null)
+      {
+        return;
+      }
       GUIListItem tmpItem;
       TVRecording tmprec;
       //0
@@ -610,9 +665,12 @@ namespace MediaPortal.GUI.TV
       LoadDirectory();
     }
 
-    void OnMoveUp(int item)
+    private void OnMoveUp(int item)
     {
-      if (item == 0) return;
+      if (item == 0)
+      {
+        return;
+      }
       m_iSelectedItem = item - 1;
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)
@@ -620,7 +678,10 @@ namespace MediaPortal.GUI.TV
         return;
       }
       TVRecording rec = pItem.TVTag as TVRecording;
-      if (rec == null) return;
+      if (rec == null)
+      {
+        return;
+      }
       GUIListItem tmpItem;
       TVRecording tmprec;
 
@@ -633,7 +694,10 @@ namespace MediaPortal.GUI.TV
       }
       for (int i = item - 1; i < GetItemCount(); ++i)
       {
-        if (item == i) continue;
+        if (item == i)
+        {
+          continue;
+        }
         tmpItem = GetItem(i);
         tmprec = tmpItem.TVTag as TVRecording;
         tmprec.Priority = TVRecording.HighestPriority - i - 1;
@@ -645,7 +709,7 @@ namespace MediaPortal.GUI.TV
       LoadDirectory();
     }
 
-    void UpdateDescription()
+    private void UpdateDescription()
     {
       TVRecording rec = new TVRecording();
       rec.SetProperties(null);
@@ -655,67 +719,114 @@ namespace MediaPortal.GUI.TV
         return;
       }
       rec = pItem.TVTag as TVRecording;
-      if (rec == null) return;
+      if (rec == null)
+      {
+        return;
+      }
       TVProgram prog = TVDatabase.GetProgramByTime(rec.Channel, rec.StartTime.AddMinutes(1));
       rec.SetProperties(prog);
     }
 
     public static void OnSetEpisodesToKeep(TVRecording rec)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
-      dlg.SetHeading(887);//quality settings
+      dlg.SetHeading(887); //quality settings
       dlg.ShowQuickNumbers = false;
-      dlg.AddLocalizedString(889);//All episodes
+      dlg.AddLocalizedString(889); //All episodes
       for (int i = 1; i < 40; ++i)
+      {
         dlg.Add(i.ToString() + " " + GUILocalizeStrings.Get(874));
+      }
       if (rec.EpisodesToKeep == Int32.MaxValue)
+      {
         dlg.SelectedLabel = 0;
+      }
       else
+      {
         dlg.SelectedLabel = rec.EpisodesToKeep;
+      }
 
       dlg.DoModal(GUIWindowManager.ActiveWindow);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
 
-      if (dlg.SelectedLabel == 0) rec.EpisodesToKeep = Int32.MaxValue;
-      else rec.EpisodesToKeep = dlg.SelectedLabel;
+      if (dlg.SelectedLabel == 0)
+      {
+        rec.EpisodesToKeep = Int32.MaxValue;
+      }
+      else
+      {
+        rec.EpisodesToKeep = dlg.SelectedLabel;
+      }
       TVDatabase.SetRecordingEpisodesToKeep(rec);
     }
 
     public static void OnSetQuality(TVRecording rec)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
 
       dlg.Reset();
-      dlg.SetHeading(882);//quality settings
-      dlg.AddLocalizedString(886);//Default
-      dlg.AddLocalizedString(893);//Portable
-      dlg.AddLocalizedString(883);//Low
-      dlg.AddLocalizedString(884);//Medium
-      dlg.AddLocalizedString(885);//High
+      dlg.SetHeading(882); //quality settings
+      dlg.AddLocalizedString(886); //Default
+      dlg.AddLocalizedString(893); //Portable
+      dlg.AddLocalizedString(883); //Low
+      dlg.AddLocalizedString(884); //Medium
+      dlg.AddLocalizedString(885); //High
       switch (rec.Quality)
       {
-        case TVRecording.QualityType.NotSet: dlg.SelectedLabel = 0; break;
-        case TVRecording.QualityType.Portable: dlg.SelectedLabel = 1; break;
-        case TVRecording.QualityType.Low: dlg.SelectedLabel = 2; break;
-        case TVRecording.QualityType.Medium: dlg.SelectedLabel = 3; break;
-        case TVRecording.QualityType.High: dlg.SelectedLabel = 4; break;
-
+        case TVRecording.QualityType.NotSet:
+          dlg.SelectedLabel = 0;
+          break;
+        case TVRecording.QualityType.Portable:
+          dlg.SelectedLabel = 1;
+          break;
+        case TVRecording.QualityType.Low:
+          dlg.SelectedLabel = 2;
+          break;
+        case TVRecording.QualityType.Medium:
+          dlg.SelectedLabel = 3;
+          break;
+        case TVRecording.QualityType.High:
+          dlg.SelectedLabel = 4;
+          break;
       }
       dlg.DoModal(GUIWindowManager.ActiveWindow);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
       switch (dlg.SelectedId)
       {
-        case 886: rec.Quality = TVRecording.QualityType.NotSet; break;
-        case 893: rec.Quality = TVRecording.QualityType.Portable; break;
-        case 883: rec.Quality = TVRecording.QualityType.Low; break;
-        case 884: rec.Quality = TVRecording.QualityType.Medium; break;
-        case 885: rec.Quality = TVRecording.QualityType.High; break;
+        case 886:
+          rec.Quality = TVRecording.QualityType.NotSet;
+          break;
+        case 893:
+          rec.Quality = TVRecording.QualityType.Portable;
+          break;
+        case 883:
+          rec.Quality = TVRecording.QualityType.Low;
+          break;
+        case 884:
+          rec.Quality = TVRecording.QualityType.Medium;
+          break;
+        case 885:
+          rec.Quality = TVRecording.QualityType.High;
+          break;
       }
       TVDatabase.SetRecordingQuality(rec);
     }
+
     #endregion
   }
 }

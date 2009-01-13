@@ -24,10 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Diagnostics;
 
 namespace MediaPortal.Support
 {
@@ -39,21 +36,29 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      string logPath=Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+"\\Team MediaPortal\\MediaPortal TV Server\\log";
+      string logPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                       "\\Team MediaPortal\\MediaPortal TV Server\\log";
       if (!Directory.Exists(logPath))
+      {
         return;
-      DirectoryInfo dir=new DirectoryInfo(logPath);
+      }
+      DirectoryInfo dir = new DirectoryInfo(logPath);
       FileInfo[] logFiles = dir.GetFiles("*.log");
       foreach (FileInfo logFile in logFiles)
-        logFile.CopyTo(destinationFolder+"\\tvserver_"+logFile.Name,true);
-      
+      {
+        logFile.CopyTo(destinationFolder + "\\tvserver_" + logFile.Name, true);
+      }
+
       FileInfo[] bakfiles = dir.GetFiles("*.bak");
       foreach (FileInfo bakFile in bakfiles)
-        bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);      
+      {
+        bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);
+      }
     }
 
     public string ActionMessage
     {
-      get { return "Gathering TvServer log information if any..."; }    }
+      get { return "Gathering TvServer log information if any..."; }
+    }
   }
 }

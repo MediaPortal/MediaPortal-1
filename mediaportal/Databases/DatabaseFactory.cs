@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Databases.Folders;
 using Databases.Folders.SqlServer;
 using MediaPortal.Picture.Database;
@@ -36,38 +33,54 @@ namespace MediaPortal.Database
 {
   public class DatabaseFactory
   {
-    static bool UseADO = false;
+    private static bool UseADO = false;
 
     public static IFolderSettings GetFolderDatabase()
     {
       if (UseADO)
+      {
         return new FolderSettingAdo();
+      }
       else
+      {
         return new FolderSettingsSqlLite();
+      }
     }
 
     public static IPictureDatabase GetPictureDatabase()
     {
       if (UseADO)
+      {
         return new PictureDatabaseADO();
+      }
       else
+      {
         return new PictureDatabaseSqlLite();
+      }
     }
 
     public static IRadioDatabase GetRadioDatabase()
     {
       if (UseADO)
+      {
         return new RadioDatabaseADO();
+      }
       else
+      {
         return new RadioDatabaseSqlLite();
+      }
     }
 
     public static IVideoDatabase GetVideoDatabase()
     {
       if (UseADO)
+      {
         return null;
+      }
       else
+      {
         return new VideoDatabaseSqlLite();
+      }
     }
   }
 }

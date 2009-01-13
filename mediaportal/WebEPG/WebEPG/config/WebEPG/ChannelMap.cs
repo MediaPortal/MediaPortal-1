@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.config
@@ -33,16 +31,14 @@ namespace MediaPortal.WebEPG.config
   public class ChannelMap
   {
     #region Variables
-    [XmlAttribute("id")]
-    public string id;
-    [XmlAttribute("displayName")]
-    public string displayName;
+
+    [XmlAttribute("id")] public string id;
+    [XmlAttribute("displayName")] public string displayName;
     //[XmlAttribute("country")]
     //public string country;
-    [XmlAttribute("grabber")]
-    public string grabber;
-    [XmlArrayItem("merged")]
-    public List<MergedChannel> merged;
+    [XmlAttribute("grabber")] public string grabber;
+    [XmlArrayItem("merged")] public List<MergedChannel> merged;
+
     #endregion
   }
 }

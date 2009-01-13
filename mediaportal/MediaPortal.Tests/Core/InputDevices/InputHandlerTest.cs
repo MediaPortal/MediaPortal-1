@@ -23,10 +23,10 @@
 
 #endregion
 
+using System.Xml;
+using MediaPortal.Configuration;
 using MediaPortal.InputDevices;
 using NUnit.Framework;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
 
 namespace MediaPortal.Tests.Core.InputDevices
 {
@@ -60,11 +60,12 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestFallbackVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"),
+                      inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
-    [ExpectedException(typeof(System.Xml.XmlException))]
+    [ExpectedException(typeof (XmlException))]
     public void CorruptXml()
     {
       string xmlFile = "TestCorrupt";
@@ -85,7 +86,8 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestFallbackVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"),
+                      inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -124,27 +126,28 @@ namespace MediaPortal.Tests.Core.InputDevices
     [Test]
     public void MappingConstructor()
     {
-      int    layer       = 0;
-      string condition   = "*";
+      int layer = 0;
+      string condition = "*";
       string conProperty = "-1";
-      string command     = "ACTION";
+      string command = "ACTION";
       string cmdProperty = "93";
-      int    cmdKeyChar  = 48;
-      int    cmdKeyCode  = 0;
-      string sound       = "cursor.wav";
-      bool   focus       = true;
+      int cmdKeyChar = 48;
+      int cmdKeyCode = 0;
+      string sound = "cursor.wav";
+      bool focus = true;
 
-      InputHandler.Mapping mapTest = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
+      InputHandler.Mapping mapTest = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty,
+                                                              cmdKeyChar, cmdKeyCode, sound, focus);
 
-      Assert.AreEqual(layer      , mapTest.Layer);
-      Assert.AreEqual(condition  , mapTest.Condition);
+      Assert.AreEqual(layer, mapTest.Layer);
+      Assert.AreEqual(condition, mapTest.Condition);
       Assert.AreEqual(conProperty, mapTest.ConProperty);
-      Assert.AreEqual(command    , mapTest.Command);
+      Assert.AreEqual(command, mapTest.Command);
       Assert.AreEqual(cmdProperty, mapTest.CmdProperty);
-      Assert.AreEqual(cmdKeyChar , mapTest.CmdKeyChar);
-      Assert.AreEqual(cmdKeyCode , mapTest.CmdKeyCode);
-      Assert.AreEqual(sound      , mapTest.Sound);
-      Assert.AreEqual(focus      , mapTest.Focus);
+      Assert.AreEqual(cmdKeyChar, mapTest.CmdKeyChar);
+      Assert.AreEqual(cmdKeyCode, mapTest.CmdKeyCode);
+      Assert.AreEqual(sound, mapTest.Sound);
+      Assert.AreEqual(focus, mapTest.Focus);
     }
 
     [Test]
@@ -153,28 +156,29 @@ namespace MediaPortal.Tests.Core.InputDevices
       string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile);
 
-      int    layer       = 0;
-      string condition   = "*";
+      int layer = 0;
+      string condition = "*";
       string conProperty = "-1";
-      string command     = "ACTION";
+      string command = "ACTION";
       string cmdProperty = "93";
-      int    cmdKeyChar  = 48;
-      int    cmdKeyCode  = 0;
-      string sound       = "cursor.wav";
-      bool   focus       = true;
+      int cmdKeyChar = 48;
+      int cmdKeyCode = 0;
+      string sound = "cursor.wav";
+      bool focus = true;
 
-      InputHandler.Mapping mapExpected = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
+      InputHandler.Mapping mapExpected = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty,
+                                                                  cmdKeyChar, cmdKeyCode, sound, focus);
       InputHandler.Mapping mapTest = inputHandler.GetMapping("0");
 
-      Assert.AreEqual(mapExpected.Layer      , mapTest.Layer);
-      Assert.AreEqual(mapExpected.Condition  , mapTest.Condition);
+      Assert.AreEqual(mapExpected.Layer, mapTest.Layer);
+      Assert.AreEqual(mapExpected.Condition, mapTest.Condition);
       Assert.AreEqual(mapExpected.ConProperty, mapTest.ConProperty);
-      Assert.AreEqual(mapExpected.Command    , mapTest.Command);
+      Assert.AreEqual(mapExpected.Command, mapTest.Command);
       Assert.AreEqual(mapExpected.CmdProperty, mapTest.CmdProperty);
-      Assert.AreEqual(mapExpected.CmdKeyChar , mapTest.CmdKeyChar);
-      Assert.AreEqual(mapExpected.CmdKeyCode , mapTest.CmdKeyCode);
-      Assert.AreEqual(mapExpected.Sound      , mapTest.Sound);
-      Assert.AreEqual(mapExpected.Focus      , mapTest.Focus);
+      Assert.AreEqual(mapExpected.CmdKeyChar, mapTest.CmdKeyChar);
+      Assert.AreEqual(mapExpected.CmdKeyCode, mapTest.CmdKeyCode);
+      Assert.AreEqual(mapExpected.Sound, mapTest.Sound);
+      Assert.AreEqual(mapExpected.Focus, mapTest.Focus);
     }
 
     [Test]
@@ -193,6 +197,5 @@ namespace MediaPortal.Tests.Core.InputDevices
       InputHandler inputHandler = new InputHandler(xmlFile);
       inputHandler.MapAction(newCommand);
     }
-
   }
 }

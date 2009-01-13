@@ -25,23 +25,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using MediaPortal.GUI.Library;
-using System.Drawing.Imaging;
-using MediaPortal.Player;
 using System.Threading;
+using MediaPortal;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.TV.Recording;
 using WindowPlugins.AutoCropper;
-using System.Collections;
-using MediaPortal;
 
 namespace ProcessPlugins.AutoCropper
 {
   /// <summary>
   /// Provides autocropping functionality by using FrameAnalyzer to analyze grabbes frames.
   /// </summary>
-  public class AutoCropper : ProcessPlugins.AutoCropper.PlugInBase, MediaPortal.Player.IAutoCrop
+  public class AutoCropper : PlugInBase, IAutoCrop
   {
     private Mode mode = Mode.OFF;
     private int sampleInterval = 500; // in milliseconds
@@ -63,12 +62,12 @@ namespace ProcessPlugins.AutoCropper
     private bool useForMyVideos = false;
     private bool verboseLog = false;
     private bool stopWorkerThread = false;
-    private MediaPortal.FrameGrabber grabber = FrameGrabber.GetInstance();
+    private FrameGrabber grabber = FrameGrabber.GetInstance();
 
-    enum Mode // Enum for cropping modes
+    private enum Mode // Enum for cropping modes
     {
       MANUAL = 1, // "Manual", only on user request
-      OFF = 2,    // disabled
+      OFF = 2, // disabled
       DYNAMIC = 3 // poll at specific interval
     }
 
@@ -81,13 +80,12 @@ namespace ProcessPlugins.AutoCropper
     /// <returns>A string to display to the user</returns>
     public string ToggleMode()
     {
-
       Log.Debug(allowedModes.ToString());
       for (int i = 0; i < allowedModes.Count; i++)
       {
         if (allowedModes[i] == mode)
         {
-          mode = allowedModes[(i + 1) % allowedModes.Count];
+          mode = allowedModes[(i + 1)%allowedModes.Count];
           break;
         }
       }
@@ -116,13 +114,19 @@ namespace ProcessPlugins.AutoCropper
     /// <returns>A string to display to the user</returns>
     public string Crop()
     {
-      if (verboseLog) Log.Debug("AutoCropper: Performing manual crop");
+      if (verboseLog)
+      {
+        Log.Debug("AutoCropper: Performing manual crop");
+      }
       if (mode == Mode.MANUAL)
       {
         workerEvent.Set();
         return "Cropping";
       }
-      else return "N/A";
+      else
+      {
+        return "N/A";
+      }
     }
 
     /// <summary>
@@ -132,7 +136,10 @@ namespace ProcessPlugins.AutoCropper
     /// <param name="dev"></param>
     public void OnTVStarted(int j, TVCaptureDevice dev)
     {
-      if (verboseLog) Log.Debug("AutoCropper: On TV Playback Started");
+      if (verboseLog)
+      {
+        Log.Debug("AutoCropper: On TV Playback Started");
+      }
       if (mode == Mode.DYNAMIC)
       {
         workerEvent.Set();
@@ -144,14 +151,18 @@ namespace ProcessPlugins.AutoCropper
     /// </summary>
     /// <param name="type"></param>
     /// <param name="s"></param>
-
     public void OnVideoStarted(g_Player.MediaType type, string s)
     {
       // do not handle e.g. visualization window, last.fm player, etc
       if (type == g_Player.MediaType.Music)
+      {
         return;
+      }
 
-      if (verboseLog) Log.Debug("AutoCropper: On Video Started");
+      if (verboseLog)
+      {
+        Log.Debug("AutoCropper: On Video Started");
+      }
       if (mode == Mode.DYNAMIC)
       {
         workerEvent.Set();
@@ -164,7 +175,7 @@ namespace ProcessPlugins.AutoCropper
     /// <returns></returns>
     private bool IsPlaying()
     {
-      return g_Player.Playing || MediaPortal.TV.Recording.Recorder.IsViewing();
+      return g_Player.Playing || Recorder.IsViewing();
     }
 
     /// <summary>
@@ -175,7 +186,10 @@ namespace ProcessPlugins.AutoCropper
     {
       while (true)
       {
-        if (verboseLog) Log.Debug("AutoCropper: Mode : " + mode + " IsPlaying : " + IsPlaying());
+        if (verboseLog)
+        {
+          Log.Debug("AutoCropper: Mode : " + mode + " IsPlaying : " + IsPlaying());
+        }
         if (stopWorkerThread)
         {
           stopWorkerThread = false;
@@ -203,7 +217,10 @@ namespace ProcessPlugins.AutoCropper
         }
         else
         {
-          if (verboseLog) Log.Debug("AutoCropper: Worker halting, waiting for worker event");
+          if (verboseLog)
+          {
+            Log.Debug("AutoCropper: Worker halting, waiting for worker event");
+          }
           ResetDynamic();
           workerEvent.WaitOne(); // reset automatically
         }
@@ -216,16 +233,23 @@ namespace ProcessPlugins.AutoCropper
     /// <returns>False if the autocropper has no allowed modes and true otherwise</returns>
     private bool LoadSettings()
     {
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //bool enabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.enableAutoCropSetting, false);
-        verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog, false);
-        useForMyVideos = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmUseForMyVideos, false);
-        autoEnabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.enableAutoModeSetting, false);
-        manualEnabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.enableManualModeSetting, true);
-        bottomMemLength = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomMemoryLength, 100);
-        topMemLength = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopMemoryLength, 50);
-        sampleInterval = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmSampleInterval, 500);
+        verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog,
+                                           false);
+        useForMyVideos = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName,
+                                               AutoCropperConfig.parmUseForMyVideos, false);
+        autoEnabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName,
+                                            AutoCropperConfig.enableAutoModeSetting, false);
+        manualEnabled = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName,
+                                              AutoCropperConfig.enableManualModeSetting, true);
+        bottomMemLength = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName,
+                                               AutoCropperConfig.parmBottomMemoryLength, 100);
+        topMemLength = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopMemoryLength,
+                                            50);
+        sampleInterval = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName,
+                                              AutoCropperConfig.parmSampleInterval, 500);
 
         allowedModes = new List<Mode>();
         allowedModes.Add(Mode.OFF);
@@ -264,26 +288,33 @@ namespace ProcessPlugins.AutoCropper
     public override void Start()
     {
       Log.Debug("AutoCropper: Start()");
-      AutoCropper.instance = this;
+      instance = this;
 
       analyzer = new FrameAnalyzer();
 
       // Load settings, if returns false,
       // none of autocropper modes are allowed
       // so we dont do anything
-      if (!LoadSettings()) return;
+      if (!LoadSettings())
+      {
+        return;
+      }
 
       GUIGraphicsContext.autoCropper = this;
 
       lastSettings = new CropSettings(0, 0, 0, 0);
-      int topMemLengthInFrames = (int)(topMemLength / (sampleInterval / 1000.0f));
-      int bottomMemLengthInFrames = (int)(bottomMemLength / (sampleInterval / 1000.0f));
-      int leftMemLengthInFrames = (int)(leftMemLength / (sampleInterval / 1000.0f));
-      int rightMemLengthInFrames = (int)(rightMemLength / (sampleInterval / 1000.0f));
-      Log.Debug("AutoCropper: Top memory is " + topMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + topMemLength);
-      Log.Debug("AutoCropper: Bottom memory is " + bottomMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + bottomMemLength);
-      Log.Debug("AutoCropper: Left memory is " + leftMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + leftMemLength);
-      Log.Debug("AutoCropper: Right memory is " + rightMemLengthInFrames + " sampleinterval " + sampleInterval + " mem length " + rightMemLength);
+      int topMemLengthInFrames = (int) (topMemLength/(sampleInterval/1000.0f));
+      int bottomMemLengthInFrames = (int) (bottomMemLength/(sampleInterval/1000.0f));
+      int leftMemLengthInFrames = (int) (leftMemLength/(sampleInterval/1000.0f));
+      int rightMemLengthInFrames = (int) (rightMemLength/(sampleInterval/1000.0f));
+      Log.Debug("AutoCropper: Top memory is " + topMemLengthInFrames + " sampleinterval " + sampleInterval +
+                " mem length " + topMemLength);
+      Log.Debug("AutoCropper: Bottom memory is " + bottomMemLengthInFrames + " sampleinterval " + sampleInterval +
+                " mem length " + bottomMemLength);
+      Log.Debug("AutoCropper: Left memory is " + leftMemLengthInFrames + " sampleinterval " + sampleInterval +
+                " mem length " + leftMemLength);
+      Log.Debug("AutoCropper: Right memory is " + rightMemLengthInFrames + " sampleinterval " + sampleInterval +
+                " mem length " + rightMemLength);
       topCropAvg = new MovingAverage(topMemLengthInFrames, 0);
       bottomCropAvg = new MovingAverage(bottomMemLengthInFrames, 0);
       leftCropAvg = new MovingAverage(leftMemLengthInFrames, 0);
@@ -321,11 +352,14 @@ namespace ProcessPlugins.AutoCropper
     /// <summary>
     /// Uses the static cropping system to execute the cropping
     /// </summary>
-    private void RequestCrop(MediaPortal.Player.CropSettings cropSettings)
+    private void RequestCrop(CropSettings cropSettings)
     {
-      if (verboseLog) Log.Debug("AutoCropper: RequestCrop");
+      if (verboseLog)
+      {
+        Log.Debug("AutoCropper: RequestCrop");
+      }
       // Send message to planescene with crop
-      MediaPortal.GUI.Library.GUIMessage msg = new GUIMessage();
+      GUIMessage msg = new GUIMessage();
       msg.Message = GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP;
       msg.Object = cropSettings;
       GUIWindowManager.SendMessage(msg);
@@ -348,26 +382,36 @@ namespace ProcessPlugins.AutoCropper
     }
 
 
-
-
     /// <summary>
     ///      Crops dynamically based on previous history
     /// </summary>
     private void DynamicCrop()
     {
-      if (verboseLog) Log.Debug("DynamicCrop");
+      if (verboseLog)
+      {
+        Log.Debug("DynamicCrop");
+      }
       Bitmap frame = GetFrame();
-      if (frame == null) return;
+      if (frame == null)
+      {
+        return;
+      }
       Rectangle bounds = new Rectangle();
 
-      if (!analyzer.FindBounds(frame, ref bounds)) return;
+      if (!analyzer.FindBounds(frame, ref bounds))
+      {
+        return;
+      }
 
       int topCrop = bounds.Top;
       int bottomCrop = frame.Height - bounds.Height - topCrop;
       int leftCrop = bounds.Left;
       int rightCrop = frame.Width - bounds.Width - leftCrop;
 
-      if (bottomCrop < 0) Log.Error("bottomCrop <0");
+      if (bottomCrop < 0)
+      {
+        Log.Error("bottomCrop <0");
+      }
       //MinDynamicCrop(topCrop, bottomCrop);
       AvgDynamicCrop(topCrop, bottomCrop, leftCrop, rightCrop);
 
@@ -392,7 +436,11 @@ namespace ProcessPlugins.AutoCropper
     {
       if (firstDynamicCrop)
       {
-        if (verboseLog) Log.Debug("First dynamic crop, resetting to top {0}, bottom {1}, left {2}, right {3}", topCrop, bottomCrop, leftCrop, rightCrop);
+        if (verboseLog)
+        {
+          Log.Debug("First dynamic crop, resetting to top {0}, bottom {1}, left {2}, right {3}", topCrop, bottomCrop,
+                    leftCrop, rightCrop);
+        }
         topCropAvg.Reset(topCrop);
         bottomCropAvg.Reset(bottomCrop);
         leftCropAvg.Reset(leftCrop);
@@ -407,17 +455,18 @@ namespace ProcessPlugins.AutoCropper
         rightCropAvg.Add(rightCrop);
       }
 
-      int topMin = (int)topCropAvg.GetMin();
-      int bottomMin = (int)bottomCropAvg.GetMin();
-      int leftMin = (int)leftCropAvg.GetMin();
-      int rightMin = (int)rightCropAvg.GetMin();
+      int topMin = (int) topCropAvg.GetMin();
+      int bottomMin = (int) bottomCropAvg.GetMin();
+      int leftMin = (int) leftCropAvg.GetMin();
+      int rightMin = (int) rightCropAvg.GetMin();
 
       if (verboseLog)
       {
         Log.Debug("Current topMin {0}, bottomMin {1}, leftMin {2}, rightMin {3}", topMin, bottomMin, leftMin, rightMin);
       }
 
-      if (Math.Abs(topMin - lastSettings.Top) > 2 || Math.Abs(bottomMin - lastSettings.Bottom) > 2 || Math.Abs(leftMin - lastSettings.Left) > 2 || Math.Abs(rightMin - lastSettings.Right) > 2)
+      if (Math.Abs(topMin - lastSettings.Top) > 2 || Math.Abs(bottomMin - lastSettings.Bottom) > 2 ||
+          Math.Abs(leftMin - lastSettings.Left) > 2 || Math.Abs(rightMin - lastSettings.Right) > 2)
       {
         CropSettings newSettings = new CropSettings();
         newSettings.Top = topMin;
@@ -455,7 +504,10 @@ namespace ProcessPlugins.AutoCropper
       // If the image area has increase immediatly reset to this larger size
       if (topCrop < lastSettings.Top || firstDynamicCrop)
       {
-        if (verboseLog) Log.Debug("Top of image has increased");
+        if (verboseLog)
+        {
+          Log.Debug("Top of image has increased");
+        }
         update = true;
         topCropAvg.Reset(topCrop);
         newSettings.Top = topCrop;
@@ -468,7 +520,10 @@ namespace ProcessPlugins.AutoCropper
       // If the image area has increase immediatly reset to this larger size
       if (bottomCrop < lastSettings.Bottom || firstDynamicCrop)
       {
-        if (verboseLog) Log.Debug("Bottom of image has increased");
+        if (verboseLog)
+        {
+          Log.Debug("Bottom of image has increased");
+        }
         bottomCropAvg.Reset(bottomCrop);
         newSettings.Bottom = bottomCrop;
         update = true;
@@ -477,59 +532,73 @@ namespace ProcessPlugins.AutoCropper
       {
         bottomCropAvg.Add(bottomCrop);
       }
-      
+
       // If the image area has increase immediatly reset to this larger size
       if (leftCrop < lastSettings.Left || firstDynamicCrop)
       {
-          if (verboseLog) Log.Debug("Left side of image has increased");
-          leftCropAvg.Reset(leftCrop);
-          newSettings.Left = leftCrop;
-          update = true;
+        if (verboseLog)
+        {
+          Log.Debug("Left side of image has increased");
+        }
+        leftCropAvg.Reset(leftCrop);
+        newSettings.Left = leftCrop;
+        update = true;
       }
       else
       {
-          leftCropAvg.Add(leftCrop);
+        leftCropAvg.Add(leftCrop);
       }
-        
+
       // If the image area has increase immediatly reset to this larger size
       if (rightCrop < lastSettings.Right || firstDynamicCrop)
       {
-          if (verboseLog) Log.Debug("Right side of image has increased");
-          rightCropAvg.Reset(rightCrop);
-          newSettings.Right = rightCrop;
-          update = true;
+        if (verboseLog)
+        {
+          Log.Debug("Right side of image has increased");
+        }
+        rightCropAvg.Reset(rightCrop);
+        newSettings.Right = rightCrop;
+        update = true;
       }
       else
       {
-          rightCropAvg.Add(rightCrop);
+        rightCropAvg.Add(rightCrop);
       }
-      
+
       firstDynamicCrop = false;
 
-      if (verboseLog) Log.Debug("Current cropping settings (Top/Bottom Left/Right):   This Frames: {0}/{1} {6}/{7}, Avg: {4}/{5} {8}/{9}, Current Crop: {2}/{3} {10}/{11}", topCrop, bottomCrop, lastSettings.Top, lastSettings.Bottom, topCropAvg.Average, bottomCropAvg.Average, leftCrop, rightCrop, leftCropAvg.Average, rightCropAvg.Average, lastSettings.Left, lastSettings.Right);
+      if (verboseLog)
+      {
+        Log.Debug(
+          "Current cropping settings (Top/Bottom Left/Right):   This Frames: {0}/{1} {6}/{7}, Avg: {4}/{5} {8}/{9}, Current Crop: {2}/{3} {10}/{11}",
+          topCrop, bottomCrop, lastSettings.Top, lastSettings.Bottom, topCropAvg.Average, bottomCropAvg.Average,
+          leftCrop, rightCrop, leftCropAvg.Average, rightCropAvg.Average, lastSettings.Left, lastSettings.Right);
+      }
 
       if (topCropAvg.Average - lastSettings.Top > 4 && Math.Abs(topCropAvg.Average - topCrop) < 2)
       {
-        newSettings.Top = (int)topCropAvg.Average;
+        newSettings.Top = (int) topCropAvg.Average;
         update = true;
       }
       if (bottomCropAvg.Average - lastSettings.Bottom > 4 && Math.Abs(bottomCropAvg.Average - bottomCrop) < 2)
       {
-        newSettings.Bottom = (int)bottomCropAvg.Average;
+        newSettings.Bottom = (int) bottomCropAvg.Average;
         update = true;
       }
       if (leftCropAvg.Average - lastSettings.Left > 4 && Math.Abs(leftCropAvg.Average - leftCrop) < 2)
       {
-          newSettings.Left = (int)leftCropAvg.Average;
-          update = true;
+        newSettings.Left = (int) leftCropAvg.Average;
+        update = true;
       }
       if (rightCropAvg.Average - lastSettings.Right > 4 && Math.Abs(rightCropAvg.Average - rightCrop) < 2)
       {
-          newSettings.Right = (int)rightCropAvg.Average;
-          update = true;
+        newSettings.Right = (int) rightCropAvg.Average;
+        update = true;
       }
 
-      if (update && (newSettings.Top != lastSettings.Top || newSettings.Bottom != lastSettings.Bottom || newSettings.Left != lastSettings.Left || newSettings.Right != lastSettings.Right))
+      if (update &&
+          (newSettings.Top != lastSettings.Top || newSettings.Bottom != lastSettings.Bottom ||
+           newSettings.Left != lastSettings.Left || newSettings.Right != lastSettings.Right))
       {
         RequestCrop(newSettings);
       }
@@ -553,7 +622,10 @@ namespace ProcessPlugins.AutoCropper
     private void SingleCrop()
     {
       // are we viewing video?
-      if (!IsPlaying()) return;
+      if (!IsPlaying())
+      {
+        return;
+      }
 
       Bitmap frame = GetFrame();
 
@@ -580,6 +652,5 @@ namespace ProcessPlugins.AutoCropper
       frame.Dispose();
       frame = null;
     }
-
   }
 }

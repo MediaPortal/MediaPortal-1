@@ -26,22 +26,24 @@
 #region Usings
 
 using System;
-using System.Text;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 #endregion
 
 namespace MediaPortal.Threading
 {
+
   #region Delegates
+
   /// <summary>
   /// General delegate for delegating informational, warning, error and debug logging to a different class
   /// </summary>
   /// <param name="format">message to log</param>
   /// <param name="args">objects to format into the message</param>
   public delegate void LoggerDelegate(string format, params object[] args);
+
   #endregion
 
   public class ThreadPool : IThreadPool
@@ -98,14 +100,17 @@ namespace MediaPortal.Threading
     /// Logging delegate for information log messages
     /// </summary>
     public LoggerDelegate InfoLog;
+
     /// <summary>
     /// Logging delegate for warning log messages
     /// </summary>
     public LoggerDelegate WarnLog;
+
     /// <summary>
     /// Logging delegate for error log messages
     /// </summary>
     public LoggerDelegate ErrorLog;
+
     /// <summary>
     /// Logging delegate for debug log messages
     /// </summary>
@@ -184,7 +189,7 @@ namespace MediaPortal.Threading
     /// <param name="work">DoWorkHandler which contains the work to perform</param>
     /// <param name="threadPriority">System.Threading.ThreadPriority for this work</param>
     /// <returns>IWork reference to work object</returns>
-    public IWork Add(DoWorkHandler work, System.Threading.ThreadPriority threadPriority)
+    public IWork Add(DoWorkHandler work, ThreadPriority threadPriority)
     {
       IWork w = new Work(work, threadPriority);
       Add(w);
@@ -246,7 +251,8 @@ namespace MediaPortal.Threading
     /// <param name="threadPriority">System.Threading.ThreadPriority for this work</param>
     /// <param name="workCompletedHandler">WorkEventHandler to be called on completion</param>
     /// <returns>IWork reference to work object</returns>
-    public IWork Add(DoWorkHandler work, string description, QueuePriority queuePriority, ThreadPriority threadPriority, WorkEventHandler workCompletedHandler)
+    public IWork Add(DoWorkHandler work, string description, QueuePriority queuePriority, ThreadPriority threadPriority,
+                     WorkEventHandler workCompletedHandler)
     {
       IWork w = new Work(work, description, threadPriority, workCompletedHandler);
       Add(w, queuePriority);
@@ -261,12 +267,18 @@ namespace MediaPortal.Threading
     public void Add(Work work)
     {
       if (work == null)
+      {
         throw new ArgumentNullException("work", "cannot be null");
+      }
       IWork w = work as IWork;
       if (w != null)
+      {
         Add(w);
+      }
       else
+      {
         throw new InvalidOperationException("Work does not implement IWork interface");
+      }
     }
 
     /// <summary>
@@ -278,12 +290,18 @@ namespace MediaPortal.Threading
     public void Add(Work work, QueuePriority queuePriority)
     {
       if (work == null)
+      {
         throw new ArgumentNullException("work", "cannot be null");
+      }
       IWork w = work as IWork;
       if (w != null)
+      {
         Add(w, queuePriority);
+      }
       else
+      {
         throw new InvalidOperationException("Work does not implement IWork interface");
+      }
     }
 
     /// <summary>
@@ -338,18 +356,24 @@ namespace MediaPortal.Threading
       _run = false;
       _cancelWaitHandle.Set();
       foreach (IWorkInterval iWrk in _intervalBasedWork)
+      {
         iWrk.OnThreadPoolStopped();
+      }
     }
 
     public void AddIntervalWork(IWorkInterval intervalWork, bool runNow)
     {
       if (intervalWork == null)
+      {
         throw new ArgumentNullException("intervalWork", "cannot be null");
+      }
       lock (_intervalBasedWork)
       {
         _intervalBasedWork.Add(intervalWork);
         if (runNow)
+        {
           RunIntervalBasedWork(intervalWork);
+        }
       }
     }
 
@@ -358,12 +382,14 @@ namespace MediaPortal.Threading
       lock (_intervalBasedWork)
       {
         if (_intervalBasedWork.Contains(intervalWork))
+        {
           _intervalBasedWork.Remove(intervalWork);
+        }
       }
     }
 
     #endregion
-    
+
     #region Private methods
 
     #region Initialization
@@ -381,7 +407,9 @@ namespace MediaPortal.Threading
       _inUseThreads = 0;
       _itemsProcessed = 0;
       if (!_startInfo.DelayedInit)
+      {
         StartThreads(GetOptimalThreadCount());
+      }
     }
 
     #endregion
@@ -405,9 +433,13 @@ namespace MediaPortal.Threading
     {
       int inUse;
       if (increment)
+      {
         inUse = Interlocked.Increment(ref _inUseThreads);
+      }
       else
+      {
         inUse = Interlocked.Decrement(ref _inUseThreads);
+      }
       //LogDebug("ThreadPool.HandleInUseThreadCount() : in use threads: {0} max: {1} increment: {2}", inUse, _startInfo.MaximumThreads, increment);
     }
 
@@ -420,7 +452,9 @@ namespace MediaPortal.Threading
     {
       // Don't start threads on shutdown
       if (!_run)
+      {
         return;
+      }
 
       lock (_threads.SyncRoot)
       {
@@ -428,7 +462,9 @@ namespace MediaPortal.Threading
         {
           // Make sure maximum thread count never exceeds
           if (_threads.Count >= _startInfo.MaximumThreads)
+          {
             return;
+          }
 
           Thread t = new Thread(new ThreadStart(ProcessQueue));
           t.IsBackground = true;
@@ -450,15 +486,21 @@ namespace MediaPortal.Threading
     private void CheckThreadIncrementRequired()
     {
       if (!_run)
+      {
         return;
+      }
       bool incrementRequired = false;
       lock (_threads.SyncRoot)
       {
         // check if all threads are in use
         if (_inUseThreads == _threads.Count)
+        {
           // check if maximum number of threads hasn't been reached
           if (_threads.Count < _startInfo.MaximumThreads)
+          {
             incrementRequired = true;
+          }
+        }
       }
       if (incrementRequired)
       {
@@ -504,7 +546,9 @@ namespace MediaPortal.Threading
                   LogDebug("ThreadPool.ProcessQueue() : quitting (inUse:{0}, total:{1})", _inUseThreads, _threads.Count);
                   // remove thread from the pool
                   if (_threads.Contains(Thread.CurrentThread))
+                  {
                     _threads.Remove(Thread.CurrentThread);
+                  }
                   break;
                 }
               }
@@ -532,7 +576,8 @@ namespace MediaPortal.Threading
           }
           catch (Exception e)
           {
-            LogWarn("ThreadPool.ProcessQueue() {0} : exception during processing work {1}: {2}", Thread.CurrentThread.Name, work.Description, e.Message);
+            LogWarn("ThreadPool.ProcessQueue() {0} : exception during processing work {1}: {2}",
+                    Thread.CurrentThread.Name, work.Description, e.Message);
             work.State = WorkState.ERROR;
             work.Exception = e;
           }
@@ -563,7 +608,9 @@ namespace MediaPortal.Threading
       finally
       {
         if (_threads.Contains(Thread.CurrentThread))
+        {
           _threads.Remove(Thread.CurrentThread);
+        }
       }
     }
 
@@ -571,19 +618,27 @@ namespace MediaPortal.Threading
     {
       // check if last check was at least 1 second ago
       if (DateTime.Now.AddSeconds(-1) < _lastIntervalCheck)
+      {
         return;
+      }
       lock (_intervalBasedWork)
       {
         // doublecheck
         if (DateTime.Now.AddSeconds(-1) < _lastIntervalCheck)
+        {
           return;
+        }
 //        LogDebug("ThreadPool.CheckForIntervalBasedWork()");
         // search for any interval which is due and not running already
         foreach (IWorkInterval iWrk in _intervalBasedWork)
         {
           if (iWrk.LastRun.AddTicks(iWrk.WorkInterval.Ticks) <= DateTime.Now)
+          {
             if (!iWrk.Running)
+            {
               RunIntervalBasedWork(iWrk);
+            }
+          }
         }
         _lastIntervalCheck = DateTime.Now;
       }
@@ -595,7 +650,8 @@ namespace MediaPortal.Threading
     /// <param name="intervalWork">IWorkInterval to run</param>
     private void RunIntervalBasedWork(IWorkInterval intervalWork)
     {
-      LogDebug("ThreadPool.RunIntervalBasedWork() : running interval based work ({0}) interval:{1}", intervalWork.Work.Description, intervalWork.WorkInterval);
+      LogDebug("ThreadPool.RunIntervalBasedWork() : running interval based work ({0}) interval:{1}",
+               intervalWork.Work.Description, intervalWork.WorkInterval);
       intervalWork.ResetWorkState();
       intervalWork.LastRun = DateTime.Now;
       intervalWork.Running = true;
@@ -609,31 +665,39 @@ namespace MediaPortal.Threading
     private void LogInfo(string format, params object[] args)
     {
       if (InfoLog != null)
+      {
         InfoLog(format, args);
+      }
     }
 
     private void LogWarn(string format, params object[] args)
     {
       if (WarnLog != null)
+      {
         WarnLog(format, args);
+      }
     }
 
     private void LogError(string format, params object[] args)
     {
       if (ErrorLog != null)
+      {
         ErrorLog(format, args);
+      }
     }
 
     private void LogDebug(string format, params object[] args)
     {
       if (DebugLog != null)
+      {
         DebugLog(format, args);
+      }
     }
 
     #endregion
 
     #endregion
-    
+
     #region Properties
 
     /// <summary>
@@ -684,11 +748,16 @@ namespace MediaPortal.Threading
         {
           ThreadPoolStartInfo.Validate(tpsi);
           if (value > _startInfo.MinimumThreads)
+          {
             StartThreads(value - _startInfo.MinimumThreads);
+          }
           _startInfo.MinimumThreads = value;
           tpsi = null;
         }
-        catch { throw; }
+        catch
+        {
+          throw;
+        }
       }
     }
 
@@ -711,7 +780,10 @@ namespace MediaPortal.Threading
           CheckThreadIncrementRequired();
           tpsi = null;
         }
-        catch { throw; }
+        catch
+        {
+          throw;
+        }
       }
     }
 

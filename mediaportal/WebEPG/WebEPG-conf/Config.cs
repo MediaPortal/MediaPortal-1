@@ -26,32 +26,16 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Globalization;
-using System.Drawing;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
-using MediaPortal.Services;
-using MediaPortal.TV.Database;
-using MediaPortal.Util;
-using MediaPortal.WebEPG.Config.Grabber;
-using MediaPortal.WebEPG.config;
-using MediaPortal.EPG.config;
-using MediaPortal.Configuration;
 using System.Threading;
-using TvDatabase;
-using ChannelMap = MediaPortal.WebEPG.config.ChannelMap;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
 
 namespace WebEPG_conf
 {
   /// <summary>
   /// Summary description for Form1.
   /// </summary>
-  public class fChannels : System.Windows.Forms.Form
+  public class fChannels : Form
   {
     private Panel panelSettings;
     private WebEPGConfigControl _settingsControl;
@@ -67,7 +51,7 @@ namespace WebEPG_conf
 
       _settingsControl = new WebEPGConfigControl();
       panelSettings.Controls.Add(_settingsControl);
-  }
+    }
 
     /// <summary>
     /// Clean up any resources being used.
@@ -85,6 +69,7 @@ namespace WebEPG_conf
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -96,9 +81,11 @@ namespace WebEPG_conf
       // 
       // panel
       // 
-      this.panelSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.panelSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.panelSettings.Location = new System.Drawing.Point(8, 12);
       this.panelSettings.Name = "panel";
       this.panelSettings.Size = new System.Drawing.Size(720, 500);
@@ -113,22 +100,24 @@ namespace WebEPG_conf
       this.Name = "fChannels";
       this.Text = "WebEPG Config";
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     #region Main
+
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main()
+    private static void Main()
     {
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
 
       Application.Run(new fChannels());
     }
+
     #endregion
   }
 }

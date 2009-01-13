@@ -24,12 +24,15 @@
 #endregion
 
 #region usings
+
 using System;
 using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Services;
-using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace MediaPortal.ProcessPlugins.WebEPG
@@ -38,19 +41,19 @@ namespace MediaPortal.ProcessPlugins.WebEPG
   {
     #region vars
 
-    bool _grabberRunning;
-    bool _run;
-    int _runHours = 0;
-    int _runMinutes = 0;
-    bool _runMondays = false;
-    bool _runTuesdays = false;
-    bool _runWednesdays = false;
-    bool _runThursdays = false;
-    bool _runFridays = false;
-    bool _runSaturdays = false;
-    bool _runSundays = false;
-    Thread _thread;
-    ILog _epgLog;
+    private bool _grabberRunning;
+    private bool _run;
+    private int _runHours = 0;
+    private int _runMinutes = 0;
+    private bool _runMondays = false;
+    private bool _runTuesdays = false;
+    private bool _runWednesdays = false;
+    private bool _runThursdays = false;
+    private bool _runFridays = false;
+    private bool _runSaturdays = false;
+    private bool _runSundays = false;
+    private Thread _thread;
+    private ILog _epgLog;
 
     #endregion
 
@@ -63,7 +66,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       _epgLog = services.Get<ILog>();
 
       // load settings
-      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         _runMondays = reader.GetValueAsBool("webepggrabber", "monday", true);
         _runTuesdays = reader.GetValueAsBool("webepggrabber", "tuesday", true);
@@ -76,8 +79,11 @@ namespace MediaPortal.ProcessPlugins.WebEPG
         _runMinutes = reader.GetValueAsInt("webepggrabber", "minutes", 0);
       }
       Log.Info("WebEPGGrabber: schedule: {0}:{1}", _runHours, _runMinutes);
-      Log.Info("WebEPGGrabber: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}", _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
+      Log.Info(
+        "WebEPGGrabber: run on: monday:{0}, tuesday:{1}, wednesday:{2}, thursday:{3}, friday:{4}, saturday:{5}, sunday:{6}",
+        _runMondays, _runTuesdays, _runWednesdays, _runThursdays, _runFridays, _runSaturdays, _runSundays);
     }
+
     #endregion
 
     #region IPlugin members
@@ -115,7 +121,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     /// </summary>
     private void Run()
     {
-      MediaPortal.GUI.Library.Log.Debug("WebEPGGrabber.Run: thread started");
+      Log.Debug("WebEPGGrabber.Run: thread started");
       while (_run)
       {
         if (ShouldRunSchedule())
@@ -126,7 +132,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 
           string configFile = Config.GetFile(Config.Dir.Config, "WebEPG", "WebEPG.xml");
           string xmltvDirectory = Config.GetSubFolder(Config.Dir.Config, @"xmltv\");
-          MediaPortal.EPG.WebEPG grabber = new MediaPortal.EPG.WebEPG(configFile, xmltvDirectory, Config.GetFolder(Config.Dir.Base));
+          EPG.WebEPG grabber = new EPG.WebEPG(configFile, xmltvDirectory, Config.GetFolder(Config.Dir.Base));
           try
           {
             Log.Info("WebEPGGrabber.Run: run grabber");
@@ -141,7 +147,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
           _epgLog.Info(LogType.WebEPG, "WebEPG: Finished");
 
           // store last run
-          using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+          using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
           {
             writer.SetValue("webepggrabber", "lastrun", DateTime.Now.Day);
           }
@@ -185,7 +191,8 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       {
         if (DateTime.Now.Minute >= _runMinutes)
         {
-          Log.Info("WebEPGGrabber.ShouldRunSchedule: schedule {0}:{1} is due: {2}:{3}", _runHours, _runMinutes, DateTime.Now.Hour, DateTime.Now.Minute);
+          Log.Info("WebEPGGrabber.ShouldRunSchedule: schedule {0}:{1} is due: {2}:{3}", _runHours, _runMinutes,
+                   DateTime.Now.Hour, DateTime.Now.Minute);
           return true;
         }
       }
@@ -199,7 +206,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private bool HasRunToday()
     {
       int lastRunDay;
-      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         lastRunDay = reader.GetValueAsInt("webepggrabber", "lastrun", 0);
       }
@@ -220,25 +227,46 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       switch (dow)
       {
         case DayOfWeek.Monday:
-          if (!_runMondays) return false;
+          if (!_runMondays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Tuesday:
-          if (!_runTuesdays) return false;
+          if (!_runTuesdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Wednesday:
-          if (!_runWednesdays) return false;
+          if (!_runWednesdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Thursday:
-          if (!_runThursdays) return false;
+          if (!_runThursdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Friday:
-          if (!_runFridays) return false;
+          if (!_runFridays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Saturday:
-          if (!_runSaturdays) return false;
+          if (!_runSaturdays)
+          {
+            return false;
+          }
           break;
         case DayOfWeek.Sunday:
-          if (!_runSundays) return false;
+          if (!_runSundays)
+          {
+            return false;
+          }
           break;
         default:
           return false;
@@ -272,7 +300,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
         }
         if (DateTime.Now.DayOfWeek == nextRun.DayOfWeek)
         {
-          MediaPortal.GUI.Library.Log.Error("WebEPGGrabber.GetNextEvent: no valid next run day found!");
+          Log.Error("WebEPGGrabber.GetNextEvent: no valid next run day found!");
           nextRun = nextRun.AddYears(1);
         }
       }
@@ -289,7 +317,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     }
 
     #endregion
-    
+
     #region ISetupForm members
 
     public string PluginName()
@@ -314,7 +342,8 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 
     public string Description()
     {
-      return "Run WebEPG inside MediaPortal, preventing standby when active and resuming from standby when schedule is due";
+      return
+        "Run WebEPG inside MediaPortal, preventing standby when active and resuming from standby when schedule is due";
     }
 
     public bool GetHome(out string buttonText, out string buttonImage, out string imageFocus, out string pictureImage)
@@ -338,8 +367,8 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form f = new WebEPGGrabberSettings();
-      System.Windows.Forms.DialogResult result = f.ShowDialog();
+      Form f = new WebEPGGrabberSettings();
+      DialogResult result = f.ShowDialog();
     }
 
     #endregion

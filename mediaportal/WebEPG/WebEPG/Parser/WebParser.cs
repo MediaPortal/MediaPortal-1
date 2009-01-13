@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using MediaPortal.Utils.Web;
 using MediaPortal.WebEPG.Config.Grabber;
@@ -36,16 +35,19 @@ namespace MediaPortal.WebEPG.Parser
   public class WebParser : IParser
   {
     #region Variables
-    HtmlParser _listingParser;
-    HtmlParser _sublinkParser;
-    string _sublinkMatch;
-    HTTPRequest _sublinkRequest;
-    WebParserTemplate _template;
-    DataPreference _listingPreference;
-    DataPreference _sublinkPreference;
+
+    private HtmlParser _listingParser;
+    private HtmlParser _sublinkParser;
+    private string _sublinkMatch;
+    private HTTPRequest _sublinkRequest;
+    private WebParserTemplate _template;
+    private DataPreference _listingPreference;
+    private DataPreference _sublinkPreference;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WebParser"/> class.
     /// </summary>
@@ -68,13 +70,14 @@ namespace MediaPortal.WebEPG.Parser
         monthsDict = new Dictionary<string, int>();
         for (int i = 0; i < _template.months.Length; i++)
         {
-          monthsDict.Add(_template.months[i], i + 1); ;
+          monthsDict.Add(_template.months[i], i + 1);
+          ;
         }
       }
 
 
       // create new Html Parser using default template
-      _listingParser = new HtmlParser(listingTemplate, typeof(ProgramData), monthsDict);
+      _listingParser = new HtmlParser(listingTemplate, typeof (ProgramData), monthsDict);
 
       // setup sublink parser if template and config exists
       _sublinkParser = null;
@@ -89,15 +92,17 @@ namespace MediaPortal.WebEPG.Parser
         if (sublinkTemplate != null)
         {
           // create sublink parser using template
-          _sublinkParser = new HtmlParser(sublinkTemplate, typeof(ProgramData));
+          _sublinkParser = new HtmlParser(sublinkTemplate, typeof (ProgramData));
           _sublinkMatch = sublink.search;
           _sublinkRequest = sublink.url;
         }
       }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets the data from a linked page
     /// </summary>
@@ -114,7 +119,7 @@ namespace MediaPortal.WebEPG.Parser
         if (count > 0)
         {
           // get first match -> only the first match is supported for sublink templates
-          ProgramData subdata = (ProgramData)_sublinkParser.GetData(0);
+          ProgramData subdata = (ProgramData) _sublinkParser.GetData(0);
           if (subdata != null)
           {
             subdata.Preference = _sublinkPreference;
@@ -127,9 +132,11 @@ namespace MediaPortal.WebEPG.Parser
       }
       return false;
     }
+
     #endregion
 
     #region IParser Implementations
+
     /// <summary>
     /// Parses a site for a given URL.
     /// </summary>
@@ -138,7 +145,9 @@ namespace MediaPortal.WebEPG.Parser
     public int ParseUrl(HTTPRequest site)
     {
       if (_sublinkParser != null && _sublinkRequest == null)
+      {
         _sublinkRequest = new HTTPRequest(site);
+      }
       return _listingParser.ParseUrl(site);
     }
 
@@ -161,12 +170,14 @@ namespace MediaPortal.WebEPG.Parser
           WebSearchData search = _template.searchList[i];
           string result = _listingParser.SearchRegex(index, search.Match, search.Remove);
           if (result != null)
+          {
             searchData.SetElement(search.Field, result);
+          }
         }
       }
 
       // Get the parsed data at index
-      ProgramData data = ((ProgramData)_listingParser.GetData(index));
+      ProgramData data = ((ProgramData) _listingParser.GetData(index));
       if (data != null)
       {
         // Set the data preference -> important for merging data (eg data from sublink page)
@@ -174,7 +185,9 @@ namespace MediaPortal.WebEPG.Parser
 
         // If search data exists merge.
         if (searchData != null)
+        {
           data.Merge(searchData);
+        }
 
         // If there is a sublink parser, check for a matching sublink
         // sublink is not parsed here, because that may not be required 
@@ -183,13 +196,18 @@ namespace MediaPortal.WebEPG.Parser
         {
           HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);
           if (sublinkRequest.Delay < 500)
+          {
             sublinkRequest.Delay = 500;
+          }
           if (_listingParser.GetHyperLink(index, _sublinkMatch, ref sublinkRequest))
+          {
             data.SublinkRequest = sublinkRequest;
+          }
         }
       }
       return data;
     }
+
     #endregion
   }
 }

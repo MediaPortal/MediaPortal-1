@@ -24,27 +24,18 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
-using MediaPortal.Configuration;
+using TVCapture;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -52,7 +43,9 @@ namespace MediaPortal.TV.Recording
   public class TvCardCollection
   {
     public delegate void OnTvChannelChangeHandler(string tvChannelName);
+
     public delegate void OnTvRecordingChangedHandler();
+
     public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
 
     //event which happens when the state of a recording changes (like started or stopped)
@@ -69,21 +62,23 @@ namespace MediaPortal.TV.Recording
 
     public TvCardCollection()
     {
-      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Plugins, "windows\\tvplugin.dll")))
+      if (File.Exists(Config.GetFile(Config.Dir.Plugins, "windows\\tvplugin.dll")))
       {
         Log.Info("TvCardCollection: TVPlugin detected -> no TVE2 card setup");
         _tvcards = new List<TVCaptureDevice>();
         return;
       }
-    
-      if (System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
+
+      if (File.Exists(Config.GetFile(Config.Dir.Config, "capturecards.xml")))
       {
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (
+          FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open,
+                                                 FileAccess.Read, FileShare.ReadWrite))
         {
           try
           {
             SoapFormatter c = new SoapFormatter();
-            ArrayList cards = (ArrayList)c.Deserialize(fileStream);
+            ArrayList cards = (ArrayList) c.Deserialize(fileStream);
             foreach (TVCaptureDevice dev in cards)
             {
               _tvcards.Add(dev);
@@ -109,10 +104,10 @@ namespace MediaPortal.TV.Recording
       {
         TVCaptureDevice card = _tvcards[i];
         card.ID = (i + 1);
-        card.OnTvRecordingEnded += new MediaPortal.TV.Recording.TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingEnded);
-        card.OnTvRecordingStarted += new MediaPortal.TV.Recording.TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingStarted);
+        card.OnTvRecordingEnded += new TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingEnded);
+        card.OnTvRecordingStarted += new TVCaptureDevice.OnTvRecordingHandler(card_OnTvRecordingStarted);
         Log.WriteFile(LogType.Recorder, "Recorder:    card:{0} video device:{1} TV:{2}  record:{3} priority:{4}",
-                              card.ID, card.VideoDevice, card.UseForTV, card.UseForRecording, card.Priority);
+                      card.ID, card.VideoDevice, card.UseForTV, card.UseForRecording, card.Priority);
       }
       //clean up any old leftover timeshifting files from the last time
       for (int i = 0; i < _tvcards.Count; ++i)
@@ -121,19 +116,21 @@ namespace MediaPortal.TV.Recording
         {
           TVCaptureDevice dev = _tvcards[i];
           string dir = String.Format(@"{0}\card{1}", dev.RecordingPath, i + 1);
-          System.IO.Directory.CreateDirectory(dir);
-          MediaPortal.Util.Utils.DeleteOldTimeShiftFiles(dir);
+          Directory.CreateDirectory(dir);
+          Util.Utils.DeleteOldTimeShiftFiles(dir);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
-
     }
+
     public TVCaptureDevice AddDummyCard(string name)
     {
       TVCaptureDevice dev = new TVCaptureDevice();
       dev.CommercialName = name;
       dev.FriendlyName = name;
-      dev.CardType = TVCapture.CardTypes.Dummy;
+      dev.CardType = CardTypes.Dummy;
       dev.ID = _tvcards.Count + 1;
       dev.RecordingPath = @"C:";
       dev.UseForRecording = true;
@@ -155,20 +152,34 @@ namespace MediaPortal.TV.Recording
 
     private void card_OnTvRecordingEnded(string recordingFileName, TVRecording recording, TVProgram program)
     {
-      Log.WriteFile(LogType.Recorder, "Recorder: recording ended '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}", recording.Title, recording.Channel, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString(), recording.ID, recording.Priority, recording.Quality.ToString());
+      Log.WriteFile(LogType.Recorder,
+                    "Recorder: recording ended '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",
+                    recording.Title, recording.Channel, recording.StartTime.ToLongTimeString(),
+                    recording.EndTime.ToLongTimeString(), recording.ID, recording.Priority, recording.Quality.ToString());
       if (OnTvRecordingEnded != null)
+      {
         OnTvRecordingEnded(recordingFileName, recording, program);
+      }
       if (OnTvRecordingChanged != null)
+      {
         OnTvRecordingChanged();
+      }
     }
+
     private void card_OnTvRecordingStarted(string recordingFileName, TVRecording recording, TVProgram program)
     {
-      Log.WriteFile(LogType.Recorder, "Recorder: recording started '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}", recording.Title, recording.Channel, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString(), recording.ID, recording.Priority, recording.Quality.ToString());
+      Log.WriteFile(LogType.Recorder,
+                    "Recorder: recording started '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",
+                    recording.Title, recording.Channel, recording.StartTime.ToLongTimeString(),
+                    recording.EndTime.ToLongTimeString(), recording.ID, recording.Priority, recording.Quality.ToString());
       if (OnTvRecordingStarted != null)
+      {
         OnTvRecordingStarted(recordingFileName, recording, program);
+      }
       if (OnTvRecordingChanged != null)
+      {
         OnTvRecordingChanged();
-
+      }
     }
   }
 }

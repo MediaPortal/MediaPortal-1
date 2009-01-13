@@ -23,19 +23,16 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Xml;
-using System.Reflection;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
+using System.Xml;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace ProcessPlugins.CallerId
 {
@@ -49,23 +46,23 @@ namespace ProcessPlugins.CallerId
   /// </summary>
   public class CallerIdISDN : ISetupForm, IPlugin
   {
-    const string ERR_FAILED_TO_FIND_AREACODE_XML = "ISDN: Area code XML file cannot be found";
-    const string SUCCESS_LOADED_AREACODE_XML = "ISDN: Area code XML file loaded";
-    const string ERR_FAILED_TO_FIND_COUNTRYCODE_XML = "ISDN: Country code XML file cannot be found";
-    const string SUCCESS_LOADED_COUNTRYCODE_XML = "ISDN: Country code XML file loaded";
+    private const string ERR_FAILED_TO_FIND_AREACODE_XML = "ISDN: Area code XML file cannot be found";
+    private const string SUCCESS_LOADED_AREACODE_XML = "ISDN: Area code XML file loaded";
+    private const string ERR_FAILED_TO_FIND_COUNTRYCODE_XML = "ISDN: Country code XML file cannot be found";
+    private const string SUCCESS_LOADED_COUNTRYCODE_XML = "ISDN: Country code XML file loaded";
 
-    static Hashtable areaCodeLookup;
-    static Hashtable countryCodeLookup;
-    static Hashtable countryTranslator;
-    static string myCountryCode;
-    static string myAreaCode;
-    bool useOutlook = true;
-    bool ISDNdisabled = false;
-    bool stopMedia = true;
-    bool autoResume = false;
-    int resumeTimeOut = -1;
+    private static Hashtable areaCodeLookup;
+    private static Hashtable countryCodeLookup;
+    private static Hashtable countryTranslator;
+    private static string myCountryCode;
+    private static string myAreaCode;
+    private bool useOutlook = true;
+    private bool ISDNdisabled = false;
+    private bool stopMedia = true;
+    private bool autoResume = false;
+    private int resumeTimeOut = -1;
 
-    ISDNWatch ISDNWatch;
+    private ISDNWatch ISDNWatch;
 
 
     private static Hashtable AreaCodeLookup
@@ -86,12 +83,12 @@ namespace ProcessPlugins.CallerId
             XmlNodeList areaCodeNodes = source.SelectNodes("/codes/area");
 
             XmlNode areaCodeNode;
-            areaTable.Add("000", SUCCESS_LOADED_AREACODE_XML);	// slot 000 reserved for hashtable status
+            areaTable.Add("000", SUCCESS_LOADED_AREACODE_XML); // slot 000 reserved for hashtable status
 
-            for (int i = 0; i < areaCodeNodes.Count; i++)  // Loop through, pulling areacode and location
+            for (int i = 0; i < areaCodeNodes.Count; i++) // Loop through, pulling areacode and location
             {
               areaCodeNode = areaCodeNodes[i];
-              if (areaCodeNode.Attributes["iso"].Value == (string)CountryCodeLookup[myCountryCode])
+              if (areaCodeNode.Attributes["iso"].Value == (string) CountryCodeLookup[myCountryCode])
               {
                 areaCode = areaCodeNode.Attributes["areacode"].Value;
                 location = areaCodeNode.Attributes["location"].Value;
@@ -103,10 +100,10 @@ namespace ProcessPlugins.CallerId
               }
             }
           }
-          else  // the file doesn't exist; put something in the lookup table to indicate it wasn't.
+          else // the file doesn't exist; put something in the lookup table to indicate it wasn't.
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
-            areaTable.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML);  // slot 000 reserved for hashtable status
+            areaTable.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML); // slot 000 reserved for hashtable status
             Log.Error("ISDN: Cannot load area codes from " + areaCodeXMLFile, "error");
           }
 
@@ -135,9 +132,9 @@ namespace ProcessPlugins.CallerId
             XmlNodeList countryCodeNodes = source.SelectNodes("/codes/country");
 
             XmlNode countryCodeNode;
-            countryTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
+            countryTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML); // slot 000 reserved for hashtable status
 
-            for (int i = 0; i < countryCodeNodes.Count; i++)  // Loop through, pulling countrycode and country
+            for (int i = 0; i < countryCodeNodes.Count; i++) // Loop through, pulling countrycode and country
             {
               countryCodeNode = countryCodeNodes[i];
               countryCode = countryCodeNode.Attributes["code"].Value;
@@ -149,10 +146,10 @@ namespace ProcessPlugins.CallerId
               }
             }
           }
-          else  // the file doesn't exist; put something in the lookup table to indicate it wasn't.
+          else // the file doesn't exist; put something in the lookup table to indicate it wasn't.
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
-            countryTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
+            countryTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML); // slot 000 reserved for hashtable status
             Log.Error("ISDN: Cannot load country codes from " + countryCodeXMLFile, "error");
           }
           countryCodeLookup = countryTable;
@@ -179,9 +176,9 @@ namespace ProcessPlugins.CallerId
             XmlNodeList translatorNodes = source.SelectNodes("/codes/country");
 
             XmlNode translatorNode;
-            translatorTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML);	// slot 000 reserved for hashtable status
+            translatorTable.Add("000", SUCCESS_LOADED_COUNTRYCODE_XML); // slot 000 reserved for hashtable status
 
-            for (int i = 0; i < translatorNodes.Count; i++)  // Loop through, pulling areacode and location
+            for (int i = 0; i < translatorNodes.Count; i++) // Loop through, pulling areacode and location
             {
               translatorNode = translatorNodes[i];
               countryShort = translatorNode.Attributes["iso"].Value;
@@ -193,10 +190,10 @@ namespace ProcessPlugins.CallerId
               }
             }
           }
-          else  // the file doesn't exist; put something in the lookup table to indicate it wasn't.
+          else // the file doesn't exist; put something in the lookup table to indicate it wasn't.
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
-            translatorTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML);  // slot 000 reserved for hashtable status
+            translatorTable.Add("000", ERR_FAILED_TO_FIND_COUNTRYCODE_XML); // slot 000 reserved for hashtable status
             Log.Error("ISDN: Cannot load translator codes from " + translatorXMLFile, "error");
           }
           countryTranslator = translatorTable;
@@ -231,7 +228,8 @@ namespace ProcessPlugins.CallerId
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = null;
       strButtonImage = null;
@@ -271,21 +269,28 @@ namespace ProcessPlugins.CallerId
       {
         if (useOutlook)
         {
-          OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
+          OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");
+            // First Outlook-lookup might take some time, so let's do this here
         }
 
         ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
         myCountryCode = "+" + locationInfo.CountryCode;
-        string myCountry = (string)CountryCodeLookup[myCountryCode];
+        string myCountry = (string) CountryCodeLookup[myCountryCode];
         if (myCountry == null)
+        {
           myCountry = Strings.Unknown;
-        string myCountryLong = (string)CountryTranslator[myCountry];
+        }
+        string myCountryLong = (string) CountryTranslator[myCountry];
         myAreaCode = locationInfo.AreaCode;
-        string myArea = (string)AreaCodeLookup[myAreaCode];
+        string myArea = (string) AreaCodeLookup[myAreaCode];
         if (myArea == null)
+        {
           myArea = Strings.Unknown;
+        }
         if (myAreaCode != "")
+        {
           Log.Info("ISDN: Home location: {0} ({1}), {2} ({3})", myArea, myAreaCode, myCountryLong, myCountryCode);
+        }
 
         ISDNWatch = new ISDNWatch();
         ISDNWatch.Start();
@@ -297,26 +302,30 @@ namespace ProcessPlugins.CallerId
         Log.Info("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
       }
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useOutlook = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         stopMedia = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
         autoResume = xmlreader.GetValueAsBool("isdn", "autoresume", false);
         resumeTimeOut = xmlreader.GetValueAsInt("isdn", "timeout", -1);
         if (resumeTimeOut == 0)
+        {
           resumeTimeOut = -1;
+        }
       }
     }
 
     public void Stop()
     {
       if (!ISDNdisabled)
+      {
         ISDNWatch.Stop();
+      }
     }
 
     #endregion
 
-    void ProcessCallerId(string callerId)
+    private void ProcessCallerId(string callerId)
     {
       string notifyHeading = GUILocalizeStrings.Get(1023); // 1023 Incoming call
       string notifyText = "";
@@ -336,7 +345,7 @@ namespace ProcessPlugins.CallerId
           while (country == null)
           {
             posCountryCode++;
-            country = (string)CountryCodeLookup[callerId.Substring(0, posCountryCode)];
+            country = (string) CountryCodeLookup[callerId.Substring(0, posCountryCode)];
           }
           countryCode = callerId.Substring(0, posCountryCode);
           callerId = callerId.Remove(0, posCountryCode);
@@ -344,55 +353,78 @@ namespace ProcessPlugins.CallerId
         else
         {
           // Home country caller
-          country = (string)CountryCodeLookup[myCountryCode];
+          country = (string) CountryCodeLookup[myCountryCode];
           countryCode = myCountryCode;
         }
         if (country == null)
+        {
           country = "";
+        }
 
         // Parse area code
         int posAreaCode = callerId.Length;
         string location = null;
         while (location == null)
         {
-          location = (string)AreaCodeLookup[callerId.Substring(0, posAreaCode)];
+          location = (string) AreaCodeLookup[callerId.Substring(0, posAreaCode)];
           if (location == null)
+          {
             posAreaCode--;
+          }
         }
 
         string areaCode = callerId.Substring(0, posAreaCode);
         string phoneNumber = callerId.Remove(0, posAreaCode);
         if (location != Strings.Unknown)
+        {
           outlookQuery = countryCode + " (" + areaCode + ") " + phoneNumber;
+        }
         else
+        {
           outlookQuery = countryCode + "  (I) " + phoneNumber;
+        }
         OutlookHelper.Caller caller = new OutlookHelper.Caller();
         if (useOutlook)
+        {
           caller = OutlookHelper.OutlookLookup(outlookQuery);
+        }
 
         if (caller.Name != string.Empty)
-          Log.Info("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location, (string)CountryTranslator[country], outlookQuery);
+        {
+          Log.Info("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location,
+                   (string) CountryTranslator[country], outlookQuery);
+        }
         else
-          Log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
+        {
+          Log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string) CountryTranslator[country], outlookQuery);
+        }
 
 
         if (country != Strings.Unknown)
         {
-          notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " + (string)CountryTranslator[country]; // 1024 from
+          notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " +
+                          (string) CountryTranslator[country]; // 1024 from
           if (caller.Name != null)
           {
             notifyText = caller.Name + "\n\n(" + caller.Type + ")";
             if (caller.HasPicture)
+            {
               notifyImage = Thumbs.Yac + @"\ContactPicture.jpg";
+            }
             else
+            {
               notifyImage = Thumbs.Yac + @"\private-number.jpg";
+            }
           }
           else
+          {
             notifyText = outlookQuery;
+          }
         }
         else
         {
-          notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026); // 1025 An error occurred. 1026 See the log files for details.
+          notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026);
+            // 1025 An error occurred. 1026 See the log files for details.
         }
       }
       else
@@ -402,11 +434,14 @@ namespace ProcessPlugins.CallerId
       }
 
       // Notify window popup
-      GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify dialogNotify =
+        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dialogNotify != null)
       {
         if (g_Player.Playing && !g_Player.Paused && stopMedia)
+        {
           g_Player.Pause();
+        }
 
         dialogNotify.SetHeading(notifyHeading);
         dialogNotify.SetText(notifyText);
@@ -415,10 +450,14 @@ namespace ProcessPlugins.CallerId
         dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
 
         if (g_Player.Playing && g_Player.Paused && stopMedia)
+        {
           g_Player.Pause();
+        }
       }
       else
+      {
         Log.Error("ISDN: Failed to create dialog");
+      }
     }
   }
 }

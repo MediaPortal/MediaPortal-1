@@ -27,7 +27,6 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 
-
 namespace MediaPortal.Dialogs
 {
   /// <summary>
@@ -35,53 +34,40 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogDateTime : GUIDialogWindow
   {
-    readonly int[] months = new int[] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    private readonly int[] months = new int[] {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    [SkinControlAttribute(1)]
-    protected GUISpinControl spinChannel = null;
-    [SkinControlAttribute(2)]
-    protected GUISpinControl spinStartHour = null;
-    [SkinControlAttribute(3)]
-    protected GUISpinControl spinStartMinute = null;
-    [SkinControlAttribute(4)]
-    protected GUISpinControl spinStartDay = null;
-    [SkinControlAttribute(5)]
-    protected GUISpinControl spinStartMonth = null;
-    [SkinControlAttribute(6)]
-    protected GUISpinControl spinStartYear = null;
-    [SkinControlAttribute(7)]
-    protected GUISpinControl spinEndHour = null;
-    [SkinControlAttribute(8)]
-    protected GUISpinControl spinEndMinute = null;
-    [SkinControlAttribute(9)]
-    protected GUISpinControl spinEndDay = null;
-    [SkinControlAttribute(10)]
-    protected GUISpinControl spinEndMonth = null;
-    [SkinControlAttribute(11)]
-    protected GUISpinControl spinEndYear = null;
-    [SkinControlAttribute(12)]
-    protected GUIButtonControl btnOK = null;
-    [SkinControlAttribute(13)]
-    protected GUILabelControl lblHeading = null;
+    [SkinControl(1)] protected GUISpinControl spinChannel = null;
+    [SkinControl(2)] protected GUISpinControl spinStartHour = null;
+    [SkinControl(3)] protected GUISpinControl spinStartMinute = null;
+    [SkinControl(4)] protected GUISpinControl spinStartDay = null;
+    [SkinControl(5)] protected GUISpinControl spinStartMonth = null;
+    [SkinControl(6)] protected GUISpinControl spinStartYear = null;
+    [SkinControl(7)] protected GUISpinControl spinEndHour = null;
+    [SkinControl(8)] protected GUISpinControl spinEndMinute = null;
+    [SkinControl(9)] protected GUISpinControl spinEndDay = null;
+    [SkinControl(10)] protected GUISpinControl spinEndMonth = null;
+    [SkinControl(11)] protected GUISpinControl spinEndYear = null;
+    [SkinControl(12)] protected GUIButtonControl btnOK = null;
+    [SkinControl(13)] protected GUILabelControl lblHeading = null;
 
-    bool _confirmed = false;
-    string channel = string.Empty;
-    bool enableEditStartTime = true;
-    bool enableEditChannel = true;
-    DateTime startDateTime = DateTime.Now;
-    DateTime endDateTime = DateTime.Now;
-    ArrayList itemList = new ArrayList();
+    private bool _confirmed = false;
+    private string channel = string.Empty;
+    private bool enableEditStartTime = true;
+    private bool enableEditChannel = true;
+    private DateTime startDateTime = DateTime.Now;
+    private DateTime endDateTime = DateTime.Now;
+    private ArrayList itemList = new ArrayList();
 
     public GUIDialogDateTime()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_DATETIME;
+      GetID = (int) Window.WINDOW_DIALOG_DATETIME;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogDateTime.xml");
     }
-    
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
@@ -153,9 +139,13 @@ namespace MediaPortal.Dialogs
             spinStartMinute.Value = startDateTime.Minute;
 
             if (DateTime.IsLeapYear(startDateTime.Year) && startDateTime.Month == 2)
+            {
               spinStartDay.SetRange(1, 29);
+            }
             else
+            {
               spinStartDay.SetRange(1, months[startDateTime.Month]);
+            }
             spinStartDay.Value = startDateTime.Day;
 
             spinStartMonth.SetRange(1, 12);
@@ -177,7 +167,9 @@ namespace MediaPortal.Dialogs
               i++;
             }
             if (iSel >= 0)
+            {
               SelectItemControl(GetID, spinChannel.GetID, iSel);
+            }
 
             spinEndHour.SetRange(0, 23);
             spinEndHour.Value = endDateTime.Hour;
@@ -186,9 +178,13 @@ namespace MediaPortal.Dialogs
             spinEndMinute.Value = endDateTime.Minute;
 
             if (DateTime.IsLeapYear(endDateTime.Year) && endDateTime.Month == 2)
+            {
               spinEndDay.SetRange(1, 29);
+            }
             else
+            {
               spinEndDay.SetRange(1, months[endDateTime.Month]);
+            }
             spinEndDay.Value = endDateTime.Day;
 
 
@@ -218,9 +214,10 @@ namespace MediaPortal.Dialogs
       get { return _confirmed; }
     }
 
-    void SelectItemControl(int iWindowId, int iControlId,int iItem)
+    private void SelectItemControl(int iWindowId, int iControlId, int iItem)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId, 0, iControlId, iItem, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId, 0, iControlId, iItem, 0,
+                                      null);
       OnMessage(msg);
     }
 
@@ -234,15 +231,18 @@ namespace MediaPortal.Dialogs
       get { return startDateTime; }
       set { startDateTime = value; }
     }
+
     public DateTime EndDateTime
     {
       get { return endDateTime; }
       set { endDateTime = value; }
     }
+
     public void SetHeading(int iString)
     {
       SetHeading(GUILocalizeStrings.Get(iString));
     }
+
     public void SetHeading(string line)
     {
       LoadSkin();
@@ -251,16 +251,19 @@ namespace MediaPortal.Dialogs
 
       lblHeading.Label = line;
     }
+
     public string Channel
     {
       get { return channel; }
       set { channel = value; }
     }
+
     public bool EnableStartTime
     {
       get { return enableEditStartTime; }
       set { enableEditStartTime = value; }
     }
+
     public bool EnableChannel
     {
       get { return enableEditChannel; }

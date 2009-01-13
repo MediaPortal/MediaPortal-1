@@ -23,28 +23,27 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class PictureShares : MediaPortal.Configuration.Sections.BaseShares
+  public class PictureShares : BaseShares
   {
     public PictureShares()
-      : this("Picture Folders") { }
+      : this("Picture Folders")
+    {
+    }
 
     public PictureShares(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {
-      base.LoadSettings("pictures", Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES));
+      base.LoadSettings("pictures", Win32API.GetFolderPath(Win32API.CSIDL_MYPICTURES));
     }
 
     public override void SaveSettings()

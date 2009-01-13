@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Text;
-using MediaPortal.Utils.Web;
 using MediaPortal.Utils.Time;
 using MediaPortal.WebEPG.Parser;
 
@@ -37,15 +35,18 @@ namespace MediaPortal.WebEPG
   public class ListingTimeControl
   {
     #region Enums
+
     private enum Expect
     {
       Start,
       BeforeMidday,
       AfterMidday
     }
+
     #endregion
 
     #region Variables
+
     private int _lastTime;
     private DateTime _startTime;
     private Expect _expectedTime;
@@ -54,9 +55,11 @@ namespace MediaPortal.WebEPG
     private bool _newDay;
     private bool _nextDay;
     private int _programCount;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ListingTimeControl"/> class.
     /// </summary>
@@ -69,9 +72,11 @@ namespace MediaPortal.WebEPG
       _grabDay = 0;
       _newDay = true;
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the current grab day.
     /// </summary>
@@ -80,9 +85,11 @@ namespace MediaPortal.WebEPG
     {
       get { return _grabDay; }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Checks and adjusts the start and end times for a program.
     /// </summary>
@@ -97,7 +104,7 @@ namespace MediaPortal.WebEPG
       // Check if the start time day value is set
       if (guideStartTime.Day == 0)
       {
-        guideStartTime.Day = _startTime.Day;    // Set program day to start day
+        guideStartTime.Day = _startTime.Day; // Set program day to start day
       }
       else
       {
@@ -115,18 +122,24 @@ namespace MediaPortal.WebEPG
 
       // Check and set month and year
       if (guideStartTime.Year == 0)
+      {
         guideStartTime.Year = _startTime.Year;
+      }
       if (guideStartTime.Month == 0)
+      {
         guideStartTime.Month = _startTime.Month;
+      }
 
 
       // State loop Start, BeforeMidday and AfterMidday
       switch (_expectedTime)
       {
-        // Start of a new day - need to work out if the listings start in the morning or afternoon
+          // Start of a new day - need to work out if the listings start in the morning or afternoon
         case Expect.Start:
           if (OnPerviousDay(guideStartTime.Hour))
-            return false;				// Guide starts on pervious day ignore these listings.
+          {
+            return false; // Guide starts on pervious day ignore these listings.
+          }
 
           if (_newDay)
           {
@@ -145,9 +158,9 @@ namespace MediaPortal.WebEPG
           }
 
           _expectedTime = Expect.BeforeMidday;
-          goto case Expect.BeforeMidday;      // Pass into BeforeMidday Code
+          goto case Expect.BeforeMidday; // Pass into BeforeMidday Code
 
-        // Before Midday
+          // Before Midday
         case Expect.BeforeMidday:
           if (_lastTime > guideStartTime.Hour)
           {
@@ -157,24 +170,25 @@ namespace MediaPortal.WebEPG
           else
           {
             if (guideStartTime.Hour <= 12)
-              break;						// Time is before midday -> Do nothing
+            {
+              break; // Time is before midday -> Do nothing
+            }
           }
 
           // Pass into AfterMidday Code
           goto case Expect.AfterMidday;
 
-        // After midday
+          // After midday
         case Expect.AfterMidday:
           bool adjusted = false;
-          if (guideStartTime.Hour < 12)		// Site doesn't have correct time
+          if (guideStartTime.Hour < 12) // Site doesn't have correct time
           {
-            guideStartTime.Hour += 12;    // starts again at 1:00 without "pm"
+            guideStartTime.Hour += 12; // starts again at 1:00 without "pm"
             adjusted = true;
           }
 
           if (_lastTime > guideStartTime.Hour)
           {
-
             if (_nextDay)
             {
               _addDays++;
@@ -187,10 +201,14 @@ namespace MediaPortal.WebEPG
             }
 
             if (adjusted)
+            {
               guideStartTime.Hour -= 12;
+            }
 
             if (guideStartTime.Hour < 12)
+            {
               _expectedTime = Expect.BeforeMidday;
+            }
           }
 
           break;
@@ -207,31 +225,45 @@ namespace MediaPortal.WebEPG
       {
         // set Day, Month and Year is not set
         if (guideEndTime.Year == 0)
+        {
           guideEndTime.Year = guideStartTime.Year;
+        }
         if (guideEndTime.Month == 0)
+        {
           guideEndTime.Month = guideStartTime.Month;
+        }
         if (guideEndTime.Day == 0)
+        {
           guideEndTime.Day = guideStartTime.Day;
+        }
 
         // correct date if required
         if (_nextDay)
         {
           if (guideStartTime.Hour > guideEndTime.Hour)
+          {
             // start before midnight end after
             guideEndTime = guideEndTime.AddDays(_addDays + 1);
+          }
           else
+          {
             guideEndTime = guideEndTime.AddDays(_addDays);
+          }
         }
         else
         {
           if (guideStartTime.Hour > guideEndTime.Hour)
+          {
             guideEndTime = guideEndTime.AddDays(_addDays);
+          }
         }
       }
 
       // if next day -> correct start date
       if (_nextDay)
+      {
         guideStartTime = guideStartTime.AddDays(_addDays);
+      }
 
       //_log.Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
 
@@ -261,9 +293,11 @@ namespace MediaPortal.WebEPG
     {
       _programCount = count;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Tests if program is on pervious day
     /// </summary>
@@ -277,13 +311,16 @@ namespace MediaPortal.WebEPG
         // program starts after grab time -> site filters programs based on current time
         // and less then 1 program per hour 
         if (_startTime.Hour >= 21 && _programCount <= 6)
+        {
           return false;
+        }
 
         return true;
       }
 
       return false;
     }
+
     #endregion
   }
 }

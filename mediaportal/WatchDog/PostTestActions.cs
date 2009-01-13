@@ -24,18 +24,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using System.Data;
-using System.Threading;
-using System.Reflection;
-using System.Collections;
-using System.Diagnostics;
-using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Support;
-using System.Collections.Generic;
-using ProgressDialog=WatchDog.ProgressDialog;
 
 namespace WatchDog
 {
@@ -46,19 +38,20 @@ namespace WatchDog
   {
     private int totalActions;
 
-    private string _tmpDir; 
+    private string _tmpDir;
     private string _zipFile;
 
     // Constructor
-    public PostTestActions(string tmpDir,string zipFile)
+    public PostTestActions(string tmpDir, string zipFile)
     {
       _tmpDir = tmpDir;
       _zipFile = zipFile;
     }
+
     private void updateProgress(int subActions)
     {
-      int actionAmount = 100 / totalActions;
-      int subActionAmount = actionAmount / subActions;
+      int actionAmount = 100/totalActions;
+      int subActionAmount = actionAmount/subActions;
       base.setProgress(base.getProgress() + subActionAmount);
     }
 
@@ -68,7 +61,7 @@ namespace WatchDog
     {
       StreamWriter sw = new StreamWriter(_tmpDir + "\\index.html");
       sw.WriteLine("<html><head><title>MediaPortal Test Tool -- LogReport</title></head><body>");
-      sw.WriteLine("<h1>MediaPortal Test Tool<br>Logs created at "+DateTime.Now.ToString()+"</h1>");
+      sw.WriteLine("<h1>MediaPortal Test Tool<br>Logs created at " + DateTime.Now.ToString() + "</h1>");
       sw.WriteLine("<table border=0><tr>");
       // System infos
       sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>System infos</strong>");
@@ -92,7 +85,9 @@ namespace WatchDog
       sw.WriteLine("<li><a href=Error.log>Error.log</a></li>");
       sw.WriteLine("<li><a href=Recorder.log>Recorder.log</a></li>");
       if (File.Exists(_tmpDir + "\\TsReader.log"))
+      {
         sw.WriteLine("<li><a href=tsreader.log>TsReader.log</a></li>");
+      }
       sw.WriteLine("<li><a href=vmr9.log>vmr9.log</a></li>");
       sw.WriteLine("</ul></td></ul></td><td width=10></td>");
       // TvServer logs
@@ -109,10 +104,13 @@ namespace WatchDog
         sw.WriteLine("</ul></td>");
       }
       else
+      {
         sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>TvServer logs <i>(not available)</i></strong></td>");
+      }
       sw.WriteLine("</tr></table></body></html>");
       sw.Close();
     }
+
     public bool PerformActions()
     {
       List<ILogCreator> logs = CreateLoggers();
@@ -121,7 +119,9 @@ namespace WatchDog
 
 
       if (!Directory.Exists(_tmpDir))
+      {
         Directory.CreateDirectory(_tmpDir);
+      }
 
       foreach (ILogCreator logCreator in logs)
       {
@@ -137,9 +137,13 @@ namespace WatchDog
       try
       {
         if (File.Exists(_zipFile))
+        {
           File.Delete(_zipFile);
+        }
         using (Archiver archiver = new Archiver(_zipFile))
+        {
           archiver.AddDirectory(_tmpDir);
+        }
         Directory.Delete(_tmpDir, true);
       }
       catch (Exception ex)

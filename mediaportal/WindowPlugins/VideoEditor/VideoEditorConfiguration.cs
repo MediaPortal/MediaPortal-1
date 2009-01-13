@@ -24,19 +24,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using DShowNET;
-using DirectShowLib;
 using System.Diagnostics;
+using System.IO;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace WindowPlugins.VideoEditor
 {
-  public partial class VideoEditorConfiguration : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class VideoEditorConfiguration : MPConfigForm
   {
     public VideoEditorConfiguration()
     {
@@ -50,13 +47,15 @@ namespace WindowPlugins.VideoEditor
       diag.Filter = "exe-File (*.exe)|*.exe";
       try
       {
-        diag.InitialDirectory = System.IO.Path.GetDirectoryName(mencoderPath.Text);
+        diag.InitialDirectory = Path.GetDirectoryName(mencoderPath.Text);
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       if (diag.ShowDialog() == DialogResult.OK)
       {
-        if (System.IO.File.Exists(diag.FileName))
+        if (File.Exists(diag.FileName))
         {
           mencoderPath.Text = diag.FileName;
         }
@@ -72,7 +71,7 @@ namespace WindowPlugins.VideoEditor
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("VideoEditor", "mencoder", mencoderPath.Text);
       }
@@ -80,7 +79,7 @@ namespace WindowPlugins.VideoEditor
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mencoderPath.Text = xmlreader.GetValueAsString("VideoEditor", "mencoder", String.Empty);
       }
@@ -99,7 +98,9 @@ namespace WindowPlugins.VideoEditor
       {
         Process.Start("http://www.mplayerhq.hu");
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
   }
 }

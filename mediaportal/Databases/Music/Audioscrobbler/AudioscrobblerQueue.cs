@@ -24,20 +24,17 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Security.Cryptography;
 using System.Collections;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Web;
 using System.Xml;
-using System.Runtime.CompilerServices;
 
 namespace MediaPortal.Music.Database
 {
-  class AudioscrobblerQueue
+  internal class AudioscrobblerQueue
   {
-    class QueuedTrack
+    private class QueuedTrack
     {
       #region public getters
 
@@ -48,14 +45,15 @@ namespace MediaPortal.Music.Database
         this.start_time = track.getQueueTime(true);
         this.source = track.getSourceParam();
         this.rating = track.getRateActionParam();
-        this.duration = (int)track.Duration;
+        this.duration = (int) track.Duration;
         this.album = track.Album;
         this.tracknr = track.Track;
         this.mbtrackid = track.MusicBrainzID;
         this.auth = track.AuthToken;
       }
 
-      public QueuedTrack(string artist, string title, string start_time, string source, string rateaction, int duration, string album, int tracknr, string mbtrackid, string auth)
+      public QueuedTrack(string artist, string title, string start_time, string source, string rateaction, int duration,
+                         string album, int tracknr, string mbtrackid, string auth)
       {
         this.artist = artist;
         this.title = title;
@@ -73,38 +71,47 @@ namespace MediaPortal.Music.Database
       {
         get { return artist; }
       }
+
       public string Title
       {
         get { return title; }
       }
+
       public string StartTime
       {
         get { return start_time; }
       }
+
       public string Source
       {
         get { return source; }
       }
+
       public string Rating
       {
         get { return rating; }
       }
+
       public int Duration
       {
         get { return duration; }
       }
+
       public string Album
       {
         get { return album; }
       }
+
       public int TrackNr
       {
         get { return tracknr; }
       }
+
       public string MbTrackId
       {
         get { return mbtrackid; }
       }
+
       public string Auth
       {
         get { return auth; }
@@ -112,21 +119,21 @@ namespace MediaPortal.Music.Database
 
       #endregion
 
-      string artist;
-      string title;
-      string start_time;
-      string source;
-      string rating;
-      int duration;
-      string album;
-      int tracknr;
-      string mbtrackid;
-      string auth;
+      private string artist;
+      private string title;
+      private string start_time;
+      private string source;
+      private string rating;
+      private int duration;
+      private string album;
+      private int tracknr;
+      private string mbtrackid;
+      private string auth;
     }
 
-    ArrayList queue;
-    string xml_path;
-    bool dirty;
+    private ArrayList queue;
+    private string xml_path;
+    private bool dirty;
 
     /// <summary>
     /// ctor
@@ -144,7 +151,9 @@ namespace MediaPortal.Music.Database
     public void Save()
     {
       if (!dirty)
+      {
         return;
+      }
 
       using (XmlTextWriter writer = new XmlTextWriter(xml_path, Encoding.UTF8))
       {
@@ -264,9 +273,11 @@ namespace MediaPortal.Music.Database
       {
         /* we queue a maximum of 10 tracks per request */
         if (i == 9)
+        {
           break;
+        }
 
-        QueuedTrack track = (QueuedTrack)queue[i];
+        QueuedTrack track = (QueuedTrack) queue[i];
 
         //s=<sessionID>
         //a[0]=<artist>
@@ -282,18 +293,18 @@ namespace MediaPortal.Music.Database
         string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : String.Empty;
 
         sb.AppendFormat(
-             "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
-             i, // number of queued items = 0
-             AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)), // artist = 1
-             System.Web.HttpUtility.UrlEncode(track.Title), // track = 2
-             track.StartTime, // time = 3
-             track.Source, // source = 4
-             track.Rating, // rating = 5
-             track.Duration.ToString(), // secs = 6
-             AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
-             trackNr, // tracknumber = 8
-             track.MbTrackId // mb-trackid = 9
-             );
+          "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
+          i, // number of queued items = 0
+          AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(track.Artist)), // artist = 1
+          HttpUtility.UrlEncode(track.Title), // track = 2
+          track.StartTime, // time = 3
+          track.Source, // source = 4
+          track.Rating, // rating = 5
+          track.Duration.ToString(), // secs = 6
+          AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
+          trackNr, // tracknumber = 8
+          track.MbTrackId // mb-trackid = 9
+          );
       }
 
       num_tracks = i;
@@ -317,5 +328,4 @@ namespace MediaPortal.Music.Database
       get { return queue.Count; }
     }
   }
-
 }

@@ -31,116 +31,121 @@ namespace MediaPortal.Music.Database
   /// 
   /// </summary>
   [Serializable()]
-  public class ArtistInfo 
+  public class ArtistInfo
   {
-    string m_strArtist="";
-    string m_strBorn="";
-    string m_strYearsActive="";
-    string m_strGenres="";
-    string m_strTones="" ;
-    string m_strStyles="" ;
-    string m_strInstruments="" ;
-    string m_strAMGBio="" ;
-    string m_strImage ="";
-    string m_strAlbums ="";
-    string m_strCompilations ="";
-    string m_strSingles ="";
-    string m_strMisc ="";
-		
+    private string m_strArtist = "";
+    private string m_strBorn = "";
+    private string m_strYearsActive = "";
+    private string m_strGenres = "";
+    private string m_strTones = "";
+    private string m_strStyles = "";
+    private string m_strInstruments = "";
+    private string m_strAMGBio = "";
+    private string m_strImage = "";
+    private string m_strAlbums = "";
+    private string m_strCompilations = "";
+    private string m_strSingles = "";
+    private string m_strMisc = "";
+
     public ArtistInfo()
     {
     }
-    
+
     public ArtistInfo Clone()
     {
       ArtistInfo newartist = new ArtistInfo();
-      newartist.Artist=Artist;
-      newartist.Born=Born;
-      newartist.YearsActive=YearsActive;
-      newartist.Genres=Genres;
-      newartist.Tones=Tones;
-      newartist.Styles=Styles;
-      newartist.Image=Image;
-      newartist.Instruments=Instruments;
-      newartist.AMGBio=AMGBio;
-      newartist.Albums=Albums;
-      newartist.Compilations=Compilations;
-      newartist.Singles=Singles;
-      newartist.Misc=Misc;
+      newartist.Artist = Artist;
+      newartist.Born = Born;
+      newartist.YearsActive = YearsActive;
+      newartist.Genres = Genres;
+      newartist.Tones = Tones;
+      newartist.Styles = Styles;
+      newartist.Image = Image;
+      newartist.Instruments = Instruments;
+      newartist.AMGBio = AMGBio;
+      newartist.Albums = Albums;
+      newartist.Compilations = Compilations;
+      newartist.Singles = Singles;
+      newartist.Misc = Misc;
       return newartist;
     }
 
     public string Born
     {
-      get { return m_strBorn;}
-      set { m_strBorn=value;}
+      get { return m_strBorn; }
+      set { m_strBorn = value; }
     }
+
     public string YearsActive
     {
-      get { return m_strYearsActive;}
-      set { m_strYearsActive=value;}
+      get { return m_strYearsActive; }
+      set { m_strYearsActive = value; }
     }
+
     public string Image
     {
-      get { return m_strImage;}
-      set { m_strImage=value;}
+      get { return m_strImage; }
+      set { m_strImage = value; }
     }
+
     public string AMGBio
     {
-      get { return m_strAMGBio;}
-      set { m_strAMGBio=value;}
+      get { return m_strAMGBio; }
+      set { m_strAMGBio = value; }
     }
+
     public string Styles
     {
-      get { return m_strStyles;}
-      set { m_strStyles=value;}
+      get { return m_strStyles; }
+      set { m_strStyles = value; }
     }
+
     public string Tones
     {
-      get { return m_strTones;}
-      set { m_strTones=value;}
+      get { return m_strTones; }
+      set { m_strTones = value; }
     }
+
     public string Genres
     {
-      get { return m_strGenres;}
-      set { m_strGenres=value;}
+      get { return m_strGenres; }
+      set { m_strGenres = value; }
     }
+
     public string Artist
     {
-      get { return m_strArtist;}
-      set { m_strArtist=value;}
+      get { return m_strArtist; }
+      set { m_strArtist = value; }
     }
 
     public string Albums
     {
-      get { return m_strAlbums;}
-      set { m_strAlbums=value;}
+      get { return m_strAlbums; }
+      set { m_strAlbums = value; }
     }
+
     public string Compilations
     {
-      get { return m_strCompilations;}
-      set { m_strCompilations=value;}
+      get { return m_strCompilations; }
+      set { m_strCompilations = value; }
     }
+
     public string Singles
     {
-      get { return m_strSingles;}
-      set { m_strSingles=value;}
+      get { return m_strSingles; }
+      set { m_strSingles = value; }
     }
+
     public string Misc
     {
-      get { return m_strMisc;}
-      set { m_strMisc=value;}
+      get { return m_strMisc; }
+      set { m_strMisc = value; }
     }
+
     public string Instruments
     {
-      get
-      {
-        return m_strInstruments;
-      }
-      set 
-      {
-        m_strInstruments=value;
-      }
+      get { return m_strInstruments; }
+      set { m_strInstruments = value; }
     }
   }
 }

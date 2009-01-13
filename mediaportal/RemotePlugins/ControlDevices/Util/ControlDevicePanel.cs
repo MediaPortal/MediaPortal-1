@@ -24,13 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using MediaPortal.ControlDevices;
 
 namespace MediaPortal.ControlDevices
 {
@@ -60,7 +54,9 @@ namespace MediaPortal.ControlDevices
     protected void OnSelectionChanged()
     {
       if (null == _plugin)
+      {
         return;
+      }
 
       // ...
       if (true == ctrlInput.Checked)
@@ -85,8 +81,6 @@ namespace MediaPortal.ControlDevices
         ctrlAdvanced.Enabled = false;
         ctrlVerbose.Enabled = false;
       }
-
-
     }
 
     private void ctrlInput_CheckedChanged(object sender, EventArgs e)
@@ -101,18 +95,18 @@ namespace MediaPortal.ControlDevices
 
     private void ctrlVerbose_CheckedChanged(object sender, EventArgs e)
     {
-
     }
 
     private void ctrlMapping_Click(object sender, EventArgs e)
     {
-
     }
 
     private void ctrlAdvanced_Click(object sender, EventArgs e)
     {
       if (null == _plugin)
+      {
         return;
+      }
 
       IControlSettings settings = _plugin.Settings;
       settings.ShowAdvancedSettings();
@@ -120,7 +114,6 @@ namespace MediaPortal.ControlDevices
 
     private void ctrlDefaults_Click(object sender, EventArgs e)
     {
-
     }
   }
 }

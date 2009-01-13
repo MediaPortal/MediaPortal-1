@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.WebEPG.config;
 
@@ -14,7 +9,7 @@ namespace WebEPG_conf
     private fSelection _selection;
     private TreeNode _tGrabbers;
 
-    public MergedChannelDetails(TreeNode grabbers, MergedChannel channel, System.EventHandler ok_click)
+    public MergedChannelDetails(TreeNode grabbers, MergedChannel channel, EventHandler ok_click)
     {
       InitializeComponent();
 
@@ -53,7 +48,7 @@ namespace WebEPG_conf
       _selection = new fSelection(_tGrabbers, true, this.DoSelect);
       _selection.MinimizeBox = false;
       _selection.Text = "Merge Selection";
-      _selection.Closed += new System.EventHandler(this.CloseSelect);
+      _selection.Closed += new EventHandler(this.CloseSelect);
       _selection.Show();
     }
 
@@ -83,7 +78,9 @@ namespace WebEPG_conf
     private void CloseSelect(Object source, EventArgs e)
     {
       if (source == _selection)
+      {
         _selection = null;
+      }
     }
   }
 }

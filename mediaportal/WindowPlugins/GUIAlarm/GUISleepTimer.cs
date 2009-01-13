@@ -24,13 +24,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Windows.Forms;
-
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Player;
-
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -45,13 +41,16 @@ namespace MediaPortal.GUI.Alarm
     public const int WindowSleepTimer = 5002;
 
     #region Private Variables
+
     private Timer _SleepTimer = new Timer();
     private long _SleepCount;
     private int _PreviousgPlayerVolume = 0;
+
     #endregion
 
     #region Skin control IDs
-    enum Controls
+
+    private enum Controls
     {
       EnableButton = 3,
       Minutes = 4,
@@ -60,24 +59,28 @@ namespace MediaPortal.GUI.Alarm
       ResetButton = 7
     }
 
-    [SkinControlAttribute(3)]    protected GUIToggleButtonControl btnEnabled = null;
-    [SkinControlAttribute(4)]    protected GUISpinControl ctlMinutes = null;
-    [SkinControlAttribute(5)]    protected GUICheckMarkControl chkFadeVolume = null;
-    [SkinControlAttribute(6)]    protected GUICheckMarkControl btnReturnHome = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnReset = null;
+    [SkinControl(3)] protected GUIToggleButtonControl btnEnabled = null;
+    [SkinControl(4)] protected GUISpinControl ctlMinutes = null;
+    [SkinControl(5)] protected GUICheckMarkControl chkFadeVolume = null;
+    [SkinControl(6)] protected GUICheckMarkControl btnReturnHome = null;
+    [SkinControl(7)] protected GUIButtonControl btnReset = null;
+
     #endregion
 
     #region Constructor
+
     public GUISleepTimer()
     {
       _SleepTimer.Tick += new EventHandler(OnTimer);
       _SleepTimer.Interval = 1000; //second	
       this.SleepTimerElapsed += new SleepTimerElapsedEventHandler(GUISleepTimer_SleepTimerElapsed);
-      GetID = (int)GUISleepTimer.WindowSleepTimer;
+      GetID = (int) WindowSleepTimer;
     }
+
     #endregion
 
     #region Overrides
+
     public override bool Init()
     {
       GUIPropertyManager.SetProperty("#currentsleeptime", "00:00");
@@ -117,11 +120,13 @@ namespace MediaPortal.GUI.Alarm
                 GUIPropertyManager.SetProperty("#currentsleeptime", "00:00");
                 //revert volume to original volume
                 if (_PreviousgPlayerVolume > 0)
+                {
                   g_Player.Volume = _PreviousgPlayerVolume;
+                }
               }
               else
               {
-                _SleepCount = ctlMinutes.Value * 60;
+                _SleepCount = ctlMinutes.Value*60;
                 if (ctlMinutes.Value > 0)
                 {
                   _SleepTimer.Enabled = true;
@@ -136,7 +141,7 @@ namespace MediaPortal.GUI.Alarm
 
             if (controlId == btnReset.GetID)
             {
-              _SleepCount = ctlMinutes.Value * 60;
+              _SleepCount = ctlMinutes.Value*60;
               GUIPropertyManager.SetProperty("#currentsleeptime", ConvertToTime(_SleepCount));
             }
           }
@@ -149,6 +154,7 @@ namespace MediaPortal.GUI.Alarm
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Executes on the interval of the timer object.
     /// </summary>
@@ -170,12 +176,15 @@ namespace MediaPortal.GUI.Alarm
         if (chkFadeVolume.Selected && MinuteLeft)
         {
           if (g_Player.Volume > 0)
+          {
             g_Player.Volume--;
+          }
         }
       }
 
       GUIPropertyManager.SetProperty("#currentsleeptime", ConvertToTime(_SleepCount));
     }
+
     /// <summary>
     /// Converts tick counts to a formated time string 00:00
     /// </summary>
@@ -185,13 +194,16 @@ namespace MediaPortal.GUI.Alarm
     {
       // tickcount is in seconds, convert to a minutes: seconds string
       long seconds = tickCount;
-      string val = (seconds / 60).ToString("00") + ":" + (seconds % 60).ToString("00");
+      string val = (seconds/60).ToString("00") + ":" + (seconds%60).ToString("00");
       return val;
     }
 
     protected virtual void OnSleepTimerElapsed(EventArgs e)
     {
-      if (SleepTimerElapsed != null) SleepTimerElapsed(this, e);
+      if (SleepTimerElapsed != null)
+      {
+        SleepTimerElapsed(this, e);
+      }
     }
 
     /// <summary>
@@ -206,14 +218,19 @@ namespace MediaPortal.GUI.Alarm
 
       //revert volume to original volume
       if (_PreviousgPlayerVolume > 0)
+      {
         g_Player.Volume = _PreviousgPlayerVolume;
+      }
 
       //returns to the home screen so powerscheduler plugin can suspend the pc
       if (btnReturnHome.Selected)
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      {
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_HOME);
+      }
 
       //Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
     }
+
     #endregion
 
     #region IDisposable Members

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Xml.Serialization;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
@@ -53,10 +52,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute("CategoryName")]
     public string CategoryName
     {
-      get
-      {
-        return this.categoryName;
-      }
+      get { return this.categoryName; }
       set
       {
         this.categoryName = value;
@@ -67,10 +63,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute("CounterName")]
     public string CounterName
     {
-      get
-      {
-        return this.counterName;
-      }
+      get { return this.counterName; }
       set
       {
         this.counterName = value;
@@ -81,23 +74,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     [XmlAttribute("Format")]
     public string Format
     {
-      get
-      {
-        return this.format;
-      }
-      set
-      {
-        this.format = value;
-      }
+      get { return this.format; }
+      set { this.format = value; }
     }
 
     [XmlAttribute("InstanceName")]
     public string InstanceName
     {
-      get
-      {
-        return this.instanceName;
-      }
+      get { return this.instanceName; }
       set
       {
         this.instanceName = value;
@@ -106,4 +90,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     }
   }
 }
-

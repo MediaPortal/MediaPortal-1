@@ -24,10 +24,8 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using Microsoft.Win32;
 
 namespace MediaPortal.Utils.Time
@@ -38,6 +36,7 @@ namespace MediaPortal.Utils.Time
   public class WorldTimeZone : TimeZone
   {
     #region Variables
+
     //private const string VALUE_INDEX = "Index";
     private const string VALUE_DISPLAY_NAME = "Display";
     private const string VALUE_STANDARD_NAME = "Std";
@@ -47,9 +46,11 @@ namespace MediaPortal.Utils.Time
     private const int LENGTH_DWORD = 4;
     private const int LENGTH_WORD = 2;
     private const int LENGTH_SYSTEMTIME = 16;
-    private static string[] REG_KEYS_TIME_ZONES = { 
-          "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
-          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones" };
+
+    private static string[] REG_KEYS_TIME_ZONES = {
+                                                    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
+                                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones"
+                                                  };
 
     private static Dictionary<string, TimeZoneInfo> _TimeZoneList = null;
     private static Dictionary<string, string> _TimeZoneNames = null;
@@ -57,6 +58,7 @@ namespace MediaPortal.Utils.Time
     private TimeZoneInfo _TimeZone;
 
     private bool _bHasDlt;
+
     #endregion
 
     //#region Structs
@@ -85,6 +87,7 @@ namespace MediaPortal.Utils.Time
     //#endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WorldTimeZone"/> class.
     /// </summary>
@@ -92,23 +95,33 @@ namespace MediaPortal.Utils.Time
     public WorldTimeZone(string TimeZone)
     {
       if (TimeZone == string.Empty)
+      {
         throw new ArgumentException("TimeZone Not valid");
+      }
 
       string TimeZoneName = string.Empty;
 
       if (_TimeZoneList == null)
+      {
         LoadRegistryTimeZones();
+      }
 
       if (_TimeZoneNames.ContainsKey(TimeZone))
+      {
         TimeZoneName = _TimeZoneNames[TimeZone];
+      }
 
       if (_TimeZoneList.ContainsKey(TimeZone))
+      {
         TimeZoneName = TimeZone;
+      }
 
       if (TimeZoneName == string.Empty)
+      {
         throw new ArgumentException("TimeZone Not valid");
+      }
 
-      _TimeZone = (TimeZoneInfo)_TimeZoneList[TimeZoneName];
+      _TimeZone = (TimeZoneInfo) _TimeZoneList[TimeZoneName];
 
       _bHasDlt = true;
       if (_TimeZone.DltDate.Month == 0)
@@ -119,12 +132,16 @@ namespace MediaPortal.Utils.Time
       {
         if (_TimeZone.DltDate.WeekOfMonth < 0
             || _TimeZone.DltDate.WeekOfMonth > 4)
+        {
           _bHasDlt = false;
+        }
       }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Determines whether [is local time zone].
     /// </summary>
@@ -133,8 +150,10 @@ namespace MediaPortal.Utils.Time
     /// </returns>
     public bool IsLocalTimeZone()
     {
-      if (TimeZone.CurrentTimeZone.StandardName == this.StandardName)
+      if (CurrentTimeZone.StandardName == this.StandardName)
+      {
         return true;
+      }
 
       return false;
     }
@@ -147,26 +166,34 @@ namespace MediaPortal.Utils.Time
     public DateTime FromLocalTime(DateTime time)
     {
       if (time.Kind != DateTimeKind.Unspecified)
+      {
         time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
+      }
 
-      return time.Add(GetUtcOffset(time) - System.TimeZone.CurrentTimeZone.GetUtcOffset(time));
+      return time.Add(GetUtcOffset(time) - CurrentTimeZone.GetUtcOffset(time));
     }
 
     public static List<TimeZoneInfo> GetTimeZones()
     {
       if (_TimeZoneList == null)
+      {
         LoadRegistryTimeZones();
+      }
 
       List<TimeZoneInfo> timezonelist = new List<TimeZoneInfo>();
 
       foreach (TimeZoneInfo timezone in _TimeZoneList.Values)
+      {
         timezonelist.Add(timezone);
+      }
 
       return timezonelist;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Gets the date time.
     /// </summary>
@@ -183,32 +210,40 @@ namespace MediaPortal.Utils.Time
         int LastDay = DateTime.DaysInMonth(year, TimeChange.Month);
         ChangeDay = new DateTime(year, TimeChange.Month, LastDay);
 
-        int MonthEnd = (int)ChangeDay.DayOfWeek;
-        int WeekDay = (int)TimeChange.DayOfWeek;
+        int MonthEnd = (int) ChangeDay.DayOfWeek;
+        int WeekDay = (int) TimeChange.DayOfWeek;
 
         if (MonthEnd != WeekDay)
         {
           if (MonthEnd > WeekDay)
+          {
             MonthOffset = 0 - (MonthEnd - WeekDay);
+          }
           else
+          {
             MonthOffset = 0 - (MonthEnd + 7 - WeekDay);
+          }
         }
       }
       else
       {
         ChangeDay = new DateTime(year, TimeChange.Month, 1);
 
-        int MonthStart = (int)ChangeDay.DayOfWeek;
-        int WeekDay = (int)TimeChange.DayOfWeek;
+        int MonthStart = (int) ChangeDay.DayOfWeek;
+        int WeekDay = (int) TimeChange.DayOfWeek;
 
         if (MonthStart != WeekDay)
         {
           if (WeekDay > MonthStart)
+          {
             MonthOffset = WeekDay - MonthStart;
+          }
           else
+          {
             MonthOffset = WeekDay + 7 - MonthStart;
+          }
         }
-        MonthOffset += 7 * TimeChange.WeekOfMonth;
+        MonthOffset += 7*TimeChange.WeekOfMonth;
       }
       ChangeDay = ChangeDay.AddDays(MonthOffset);
       ChangeDay = ChangeDay.Add(TimeChange.TimeOfDay);
@@ -227,9 +262,13 @@ namespace MediaPortal.Utils.Time
       {
         RegKeyRoot = Registry.LocalMachine.OpenSubKey(currentRegKey);
         if (RegKeyRoot != null)
+        {
           break;
+        }
         else
+        {
           RegKeyRoot.Close();
+        }
       }
 
       if (RegKeyRoot != null)
@@ -243,15 +282,16 @@ namespace MediaPortal.Utils.Time
           try
           {
             using (RegistryKey TZKey = RegKeyRoot.OpenSubKey(timeZoneKeys[i]))
+            {
               if (TZKey != null && TZKey.ValueCount > 0)
               {
                 TimeZoneInfo TZInfo = new TimeZoneInfo();
 
                 //TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
-                TZInfo.Display = (string)TZKey.GetValue(VALUE_DISPLAY_NAME);
-                TZInfo.StdName = (string)TZKey.GetValue(VALUE_STANDARD_NAME);
-                TZInfo.DltName = (string)TZKey.GetValue(VALUE_DAYLIGHT_NAME);
-                byte[] timeZoneData = (byte[])TZKey.GetValue(VALUE_ZONE_INFO);
+                TZInfo.Display = (string) TZKey.GetValue(VALUE_DISPLAY_NAME);
+                TZInfo.StdName = (string) TZKey.GetValue(VALUE_STANDARD_NAME);
+                TZInfo.DltName = (string) TZKey.GetValue(VALUE_DAYLIGHT_NAME);
+                byte[] timeZoneData = (byte[]) TZKey.GetValue(VALUE_ZONE_INFO);
 
                 if (timeZoneData != null)
                 {
@@ -269,10 +309,12 @@ namespace MediaPortal.Utils.Time
                   _TimeZoneList.Add(timeZoneKeys[i], TZInfo);
 
                   if (!_TimeZoneNames.ContainsKey(TZInfo.StdName))
+                  {
                     _TimeZoneNames.Add(TZInfo.StdName, timeZoneKeys[i]);
+                  }
                 }
-
               }
+            }
           }
           catch (Exception)
           {
@@ -297,7 +339,7 @@ namespace MediaPortal.Utils.Time
       TimeChange.Month = BitConverter.ToInt16(bytes, index);
 
       index += LENGTH_WORD;
-      TimeChange.DayOfWeek = (DayOfWeek)BitConverter.ToInt16(bytes, index);
+      TimeChange.DayOfWeek = (DayOfWeek) BitConverter.ToInt16(bytes, index);
 
       index += LENGTH_WORD;
       TimeChange.WeekOfMonth = BitConverter.ToInt16(bytes, index) - 1;
@@ -318,9 +360,11 @@ namespace MediaPortal.Utils.Time
 
       return TimeChange;
     }
+
     #endregion
 
     #region TimeZone Overloads
+
     /// <summary>
     /// Gets the daylight saving time zone name.
     /// </summary>
@@ -351,20 +395,26 @@ namespace MediaPortal.Utils.Time
     /// </returns>
     public override bool IsDaylightSavingTime(DateTime time)
     {
-      if (_TimeZone.DltDate.Month == 0)   // Never Dlt time;
+      if (_TimeZone.DltDate.Month == 0) // Never Dlt time;
+      {
         return false;
+      }
 
       DaylightTime DLTime = GetDaylightChanges(time.Year);
 
       if (DLTime.Start > DLTime.End)
       {
         if (time >= DLTime.Start || time < DLTime.End)
+        {
           return true;
+        }
       }
       else
       {
         if (time >= DLTime.Start && time < DLTime.End)
+        {
           return true;
+        }
       }
       return false;
     }
@@ -414,9 +464,11 @@ namespace MediaPortal.Utils.Time
     public override DateTime ToLocalTime(DateTime time)
     {
       if (time.Kind != DateTimeKind.Unspecified)
+      {
         time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
+      }
 
-      return time.Add(System.TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
+      return time.Add(CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
     }
 
     /// <summary>
@@ -431,10 +483,13 @@ namespace MediaPortal.Utils.Time
       int UtcOffset = _TimeZone.Offset;
 
       if (IsDaylightSavingTime(time))
+      {
         UtcOffset += _TimeZone.DltOffset;
+      }
 
       return new TimeSpan(0, -UtcOffset, 0);
     }
+
     #endregion
   }
 }

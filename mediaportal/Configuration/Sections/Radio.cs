@@ -24,27 +24,26 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using DShowNET;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Radio : MediaPortal.Configuration.SectionSettings
+  public class Radio : SectionSettings
   {
-    protected MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    protected MediaPortal.UserInterface.Controls.MPTextBox folderNameTextBox;
-    protected MediaPortal.UserInterface.Controls.MPLabel folderNameLabel;
-    protected MediaPortal.UserInterface.Controls.MPButton browseFolderButton;
-    protected System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    protected System.Windows.Forms.OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    protected System.ComponentModel.IContainer components = null;
+    protected MPGroupBox groupBox2;
+    protected MPTextBox folderNameTextBox;
+    protected MPLabel folderNameLabel;
+    protected MPButton browseFolderButton;
+    protected FolderBrowserDialog folderBrowserDialog;
+    protected OpenFileDialog openFileDialog;
+    private MPLabel label2;
+    protected IContainer components = null;
 
     public Radio()
       : this("Radio")
@@ -58,7 +57,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Disable if TVE3
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         this.Enabled = false;
       }
@@ -80,6 +79,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -98,8 +98,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.browseFolderButton);
       this.groupBox2.Controls.Add(this.folderNameTextBox);
       this.groupBox2.Controls.Add(this.folderNameLabel);
@@ -112,7 +114,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // browseFolderButton
       // 
-      this.browseFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browseFolderButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.browseFolderButton.Location = new System.Drawing.Point(384, 19);
       this.browseFolderButton.Name = "browseFolderButton";
       this.browseFolderButton.Size = new System.Drawing.Size(72, 22);
@@ -122,8 +126,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderNameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.Location = new System.Drawing.Point(168, 20);
       this.folderNameTextBox.Name = "folderNameTextBox";
       this.folderNameTextBox.Size = new System.Drawing.Size(208, 20);
@@ -152,33 +158,32 @@ namespace MediaPortal.Configuration.Sections
       this.Load += new System.EventHandler(this.Radio_Load);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void OnSectionActivated()
     {
-
     }
+
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         folderNameTextBox.Text = xmlreader.GetValueAsString("radio", "folder", "");
-
       }
     }
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("radio", "folder", folderNameTextBox.Text);
       }
     }
 
 
-    protected void browseFolderButton_Click(object sender, System.EventArgs e)
+    protected void browseFolderButton_Click(object sender, EventArgs e)
     {
       using (folderBrowserDialog = new FolderBrowserDialog())
       {
@@ -195,10 +200,8 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-    private void Radio_Load(object sender, System.EventArgs e)
+    private void Radio_Load(object sender, EventArgs e)
     {
-
     }
   }
 }
-

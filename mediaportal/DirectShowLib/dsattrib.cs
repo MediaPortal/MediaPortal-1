@@ -24,51 +24,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace DirectShowLib.BDA
 {
-    #region Declarations
-    #endregion
 
-    #region Interfaces
+  #region Declarations
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("583ec3cc-4960-4857-982b-41a33ea0a006"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAttributeSet
-    {
-        [PreserveSig]
-        int SetAttrib(
-          [In] Guid guidAttribute,
-          [In] IntPtr pbAttribute,
-          [In] int dwAttributeLength
-          );
-    }
+  #endregion
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("52dbd1ec-e48f-4528-9232-f442a68f0ae1"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAttributeGet
-    {
-        [PreserveSig]
-        int GetCount([Out] out int plCount);
+  #region Interfaces
 
-        [PreserveSig]
-        int GetAttribIndexed(
-          [In] int lIndex,
-          [Out] out Guid guidAttribute,
-          [In, Out] IntPtr pbAttribute,
-          [In, Out] ref int dwAttributeLength
-          );
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("583ec3cc-4960-4857-982b-41a33ea0a006"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAttributeSet
+  {
+    [PreserveSig]
+    int SetAttrib(
+      [In] Guid guidAttribute,
+      [In] IntPtr pbAttribute,
+      [In] int dwAttributeLength
+      );
+  }
 
-        [PreserveSig]
-        int GetAttrib(
-          [In] Guid guidAttribute,
-          [In, Out] IntPtr pbAttribute,
-          [In, Out] ref int dwAttributeLength
-          );
-    }
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("52dbd1ec-e48f-4528-9232-f442a68f0ae1"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAttributeGet
+  {
+    [PreserveSig]
+    int GetCount([Out] out int plCount);
 
-    #endregion
+    [PreserveSig]
+    int GetAttribIndexed(
+      [In] int lIndex,
+      [Out] out Guid guidAttribute,
+      [In, Out] IntPtr pbAttribute,
+      [In, Out] ref int dwAttributeLength
+      );
 
+    [PreserveSig]
+    int GetAttrib(
+      [In] Guid guidAttribute,
+      [In, Out] IntPtr pbAttribute,
+      [In, Out] ref int dwAttributeLength
+      );
+  }
+
+  #endregion
 }

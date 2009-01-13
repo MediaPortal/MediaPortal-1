@@ -24,12 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
@@ -50,9 +44,13 @@ namespace MediaPortal.MPInstaller
       label3.Text = info_pk._intalerStruct.Version;
       pictureBox1.Image = info_pk._intalerStruct.Logo;
       if (!String.IsNullOrEmpty(info_pk._intalerStruct.Description.Trim()))
+      {
         textBox1.Text = info_pk._intalerStruct.Description.Trim();
+      }
       else
+      {
         textBox1.Visible = false;
+      }
       linkLabel1.Text = info_pk._intalerStruct.ProiectProperties.ForumURL;
       linkLabel2.Text = info_pk._intalerStruct.ProiectProperties.WebURL;
       label4.Text = info_pk._intalerStruct.ProiectProperties.CreationDate.ToLongDateString();

@@ -24,17 +24,16 @@
 #endregion
 
 #region Usings
+
 using System;
-using System.IO;
 using System.Drawing;
-using System.Collections;
-using MediaPortal.GUI.Library;
+using System.IO;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Topbar;
-using MediaPortal.Configuration;
+
 #endregion
 
 namespace MediaPortal.GUI.Home
@@ -46,28 +45,24 @@ namespace MediaPortal.GUI.Home
   {
     #region Properties (Skin)
 
-    [SkinControlAttribute(200)]
-    protected GUILabelControl lblDate = null;
-    [SkinControlAttribute(201)]
-    protected GUILabelControl lblTime = null;
-    [SkinControlAttribute(50)]
-    protected GUIMenuControl menuMain = null;
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl videoWindow = null;
+    [SkinControl(200)] protected GUILabelControl lblDate = null;
+    [SkinControl(201)] protected GUILabelControl lblTime = null;
+    [SkinControl(50)] protected GUIMenuControl menuMain = null;
+    [SkinControl(99)] protected GUIVideoControl videoWindow = null;
 
     #endregion
 
     #region Variables
 
     protected bool _useMyPlugins = true;
-    protected bool _fixedScroll = true;  // fix scrollbar in the middle of menu
+    protected bool _fixedScroll = true; // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
     protected DateTime _updateTimer = DateTime.MinValue;
     protected int _notifyTVTimeout = 15;
     protected bool _playNotifyBeep = true;
     protected int _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
-    static bool _addedGlobalMessageHandler = false;
+    private static bool _addedGlobalMessageHandler = false;
 
     #endregion
 
@@ -90,10 +85,10 @@ namespace MediaPortal.GUI.Home
 
     protected virtual void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true);		      // fix scrollbar in the middle of menu
-        _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true);		    // use previous menu handling
+        _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true); // fix scrollbar in the middle of menu
+        _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true); // use previous menu handling
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
         if (!File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
         {
@@ -136,7 +131,8 @@ namespace MediaPortal.GUI.Home
       //set video window position
       if (videoWindow != null)
       {
-        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width,
+                                                       videoWindow.Height);
       }
     }
 
@@ -149,8 +145,14 @@ namespace MediaPortal.GUI.Home
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");
-          if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
+          if (lblDate != null)
+          {
+            lblDate.Label = GUIPropertyManager.GetProperty("#date");
+          }
+          if (lblTime != null)
+          {
+            lblTime.Label = GUIPropertyManager.GetProperty("#time");
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
@@ -167,8 +169,14 @@ namespace MediaPortal.GUI.Home
       if (DateTime.Now.Second != _updateTimer.Second)
       {
         _updateTimer = DateTime.Now;
-        if (lblDate != null) lblDate.Label = GUIPropertyManager.GetProperty("#date");
-        if (lblTime != null) lblTime.Label = GUIPropertyManager.GetProperty("#time");
+        if (lblDate != null)
+        {
+          lblDate.Label = GUIPropertyManager.GetProperty("#date");
+        }
+        if (lblTime != null)
+        {
+          lblTime.Label = GUIPropertyManager.GetProperty("#time");
+        }
       }
     }
 
@@ -178,13 +186,19 @@ namespace MediaPortal.GUI.Home
 
     public string GetFocusTextureFileName(string FileName)
     {
-      if (!FileName.ToLower().Contains("button_")) FileName = "button_" + FileName;
+      if (!FileName.ToLower().Contains("button_"))
+      {
+        FileName = "button_" + FileName;
+      }
       return GetMediaFileName(FileName);
     }
 
     public string GetNonFocusTextureFileName(string FileName)
     {
-      if (!FileName.ToLower().Contains("buttonnf_")) FileName = "buttonnf_" + FileName;
+      if (!FileName.ToLower().Contains("buttonnf_"))
+      {
+        FileName = "buttonnf_" + FileName;
+      }
       return GetMediaFileName(FileName);
     }
 
@@ -192,8 +206,14 @@ namespace MediaPortal.GUI.Home
     {
       string name = Path.GetFileName(FileName);
       string dir = Path.GetDirectoryName(FileName);
-      if (dir.Length > 0) dir = dir + "\\";
-      if (!name.ToLower().Contains("hover_")) FileName = dir + "hover_" + name;
+      if (dir.Length > 0)
+      {
+        dir = dir + "\\";
+      }
+      if (!name.ToLower().Contains("hover_"))
+      {
+        FileName = dir + "hover_" + name;
+      }
       return GetMediaFileName(FileName);
     }
 
@@ -201,8 +221,14 @@ namespace MediaPortal.GUI.Home
     {
       string name = Path.GetFileName(FileName);
       string dir = Path.GetDirectoryName(FileName);
-      if (dir.Length > 0) dir = dir + "\\";
-      if (!name.ToLower().Contains("nonfocushover_")) FileName = dir + "nonfocushover_" + name;
+      if (dir.Length > 0)
+      {
+        dir = dir + "\\";
+      }
+      if (!name.ToLower().Contains("nonfocushover_"))
+      {
+        FileName = dir + "nonfocushover_" + name;
+      }
       return GetMediaFileName(FileName);
     }
 
@@ -212,19 +238,34 @@ namespace MediaPortal.GUI.Home
       {
         name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
       }
-      if ((Path.HasExtension(name)) && (File.Exists(name))) return Path.GetFileName(name);
+      if ((Path.HasExtension(name)) && (File.Exists(name)))
+      {
+        return Path.GetFileName(name);
+      }
 
       string filename = Path.ChangeExtension(name, ".png");
-      if (File.Exists(filename)) return Path.GetFileName(filename);
+      if (File.Exists(filename))
+      {
+        return Path.GetFileName(filename);
+      }
 
       filename = Path.ChangeExtension(name, ".gif");
-      if (File.Exists(filename)) return Path.GetFileName(filename);
+      if (File.Exists(filename))
+      {
+        return Path.GetFileName(filename);
+      }
 
       filename = Path.ChangeExtension(name, ".bmp");
-      if (File.Exists(filename)) return Path.GetFileName(filename);
+      if (File.Exists(filename))
+      {
+        return Path.GetFileName(filename);
+      }
 
       filename = Path.ChangeExtension(name, ".xml");
-      if (File.Exists(filename)) return "media\\" + Path.GetFileName(filename);
+      if (File.Exists(filename))
+      {
+        return "media\\" + Path.GetFileName(filename);
+      }
 
       return string.Empty;
     }
@@ -239,20 +280,29 @@ namespace MediaPortal.GUI.Home
       {
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           //if (GUIGraphicsContext.IsFullScreenVideo) return;
-          GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          GUIDialogNotify dialogNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
           TVProgram notify = message.Object as TVProgram;
-          if (notify == null) return;
-          int minUntilStart = _preNotifyConfig / 60;
+          if (notify == null)
+          {
+            return;
+          }
+          int minUntilStart = _preNotifyConfig/60;
           if (minUntilStart > 1)
+          {
             dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
+          }
           else
+          {
             dialogNotify.SetHeading(1019); // Program is about to begin
+          }
           dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-          string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+          string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
           dialogNotify.SetImage(strLogo);
           dialogNotify.TimeOut = _notifyTVTimeout;
           if (_playNotifyBeep)
-            MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
+          {
+            Util.Utils.PlaySound("notify.wav", false, true);
+          }
           dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
           break;
 
@@ -261,37 +311,87 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head = "", Line1 = "", Line2 = "", Line3 = ""; ;
-          if (message.Param1 != 0) Head = GUILocalizeStrings.Get(message.Param1);
-          else if (message.Label != string.Empty) Head = message.Label;
-          if (message.Param2 != 0) Line1 = GUILocalizeStrings.Get(message.Param2);
-          else if (message.Label2 != string.Empty) Line1 = message.Label2;
-          if (message.Param3 != 0) Line2 = GUILocalizeStrings.Get(message.Param3);
-          else if (message.Label3 != string.Empty) Line2 = message.Label3;
-          if (message.Param4 != 0) Line3 = GUILocalizeStrings.Get(message.Param4);
-          else if (message.Label4 != string.Empty) Line3 = message.Label4;
+          string Head = "", Line1 = "", Line2 = "", Line3 = "";
+          ;
+          if (message.Param1 != 0)
+          {
+            Head = GUILocalizeStrings.Get(message.Param1);
+          }
+          else if (message.Label != string.Empty)
+          {
+            Head = message.Label;
+          }
+          if (message.Param2 != 0)
+          {
+            Line1 = GUILocalizeStrings.Get(message.Param2);
+          }
+          else if (message.Label2 != string.Empty)
+          {
+            Line1 = message.Label2;
+          }
+          if (message.Param3 != 0)
+          {
+            Line2 = GUILocalizeStrings.Get(message.Param3);
+          }
+          else if (message.Label3 != string.Empty)
+          {
+            Line2 = message.Label3;
+          }
+          if (message.Param4 != 0)
+          {
+            Line3 = GUILocalizeStrings.Get(message.Param4);
+          }
+          else if (message.Label4 != string.Empty)
+          {
+            Line3 = message.Label4;
+          }
           if (AskYesNo(Head, Line1, Line2, Line3))
+          {
             message.Param1 = 1;
+          }
           else
+          {
             message.Param1 = 0;
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
           {
             string strHead = "", strLine1 = "", strLine2 = "";
-            if (message.Param1 != 0) strHead = GUILocalizeStrings.Get(message.Param1);
-            else if (message.Label != string.Empty) strHead = message.Label;
-            if (message.Param2 != 0) strLine1 = GUILocalizeStrings.Get(message.Param2);
-            else if (message.Label2 != string.Empty) strLine2 = message.Label2;
-            if (message.Param3 != 0) strLine2 = GUILocalizeStrings.Get(message.Param3);
-            else if (message.Label3 != string.Empty) strLine2 = message.Label3;
+            if (message.Param1 != 0)
+            {
+              strHead = GUILocalizeStrings.Get(message.Param1);
+            }
+            else if (message.Label != string.Empty)
+            {
+              strHead = message.Label;
+            }
+            if (message.Param2 != 0)
+            {
+              strLine1 = GUILocalizeStrings.Get(message.Param2);
+            }
+            else if (message.Label2 != string.Empty)
+            {
+              strLine2 = message.Label2;
+            }
+            if (message.Param3 != 0)
+            {
+              strLine2 = GUILocalizeStrings.Get(message.Param3);
+            }
+            else if (message.Label3 != string.Empty)
+            {
+              strLine2 = message.Label3;
+            }
             ShowInfo(strHead, strLine1, strLine2);
           }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GET_STRING:
-          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard) return;
+          VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard)
+          {
+            return;
+          }
           keyboard.Reset();
           keyboard.Text = message.Label;
           keyboard.DoModal(GUIWindowManager.ActiveWindow);
@@ -299,12 +399,18 @@ namespace MediaPortal.GUI.Home
           {
             message.Label = keyboard.Text;
           }
-          else message.Label = "";
+          else
+          {
+            message.Label = "";
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
-          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard2) return;
+          VirtualKeyboard keyboard2 = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard2)
+          {
+            return;
+          }
           keyboard2.Reset();
           keyboard2.Password = true;
           keyboard2.Text = message.Label;
@@ -313,17 +419,23 @@ namespace MediaPortal.GUI.Home
           {
             message.Label = keyboard2.Text;
           }
-          else message.Label = "";
+          else
+          {
+            message.Label = "";
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"))
+            )
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
               if (dlgYesNo == null)
+              {
                 return;
+              }
               dlgYesNo.SetHeading(771); // The entered PIN could not be accepted
               dlgYesNo.SetLine(1, 772); // Do you want to try again?
               dlgYesNo.SetDefaultToYes(true);
@@ -331,7 +443,9 @@ namespace MediaPortal.GUI.Home
               message.Object = dlgYesNo.IsConfirmed;
             }
             else
+            {
               message.Object = false;
+            }
           }
           break;
       }
@@ -339,7 +453,7 @@ namespace MediaPortal.GUI.Home
 
     private void ShowInfo(string strHeading, string strLine1, string strLine2)
     {
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow(2002);
       pDlgOK.SetHeading(strHeading);
       pDlgOK.SetLine(1, strLine1);
       pDlgOK.SetLine(2, strLine2);
@@ -349,7 +463,7 @@ namespace MediaPortal.GUI.Home
 
     private void ShowNotify(string strHeading, string description, string imgFileName)
     {
-      GUIDialogNotify dlgYesNo = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify dlgYesNo = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetText(description);
       dlgYesNo.SetImage(imgFileName);
@@ -358,7 +472,7 @@ namespace MediaPortal.GUI.Home
 
     private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
     {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1, strLine1);
       dlgYesNo.SetLine(2, strLine2);

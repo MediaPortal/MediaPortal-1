@@ -24,21 +24,22 @@
 #endregion
 
 using System;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.InputDevices
 {
-	/// <summary>
-	/// Summary description for MameDevice.
-	/// </summary>
-	public class MameDevice : ISetupForm, IPluginReceiver
-	{
-    const int WM_KEYDOWN             = 0x0100;
-    const int WM_SYSKEYDOWN          = 0x0104;
+  /// <summary>
+  /// Summary description for MameDevice.
+  /// </summary>
+  public class MameDevice : ISetupForm, IPluginReceiver
+  {
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_SYSKEYDOWN = 0x0104;
 
-    InputHandler _inputHandler;
+    private InputHandler _inputHandler;
 
-		public MameDevice()
+    public MameDevice()
     {
     }
 
@@ -64,7 +65,8 @@ namespace MediaPortal.InputDevices
       return 0;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = null;
       strButtonImage = null;
@@ -98,20 +100,22 @@ namespace MediaPortal.InputDevices
 
     #region IPluginReceiver Members
 
-    public bool WndProc(ref System.Windows.Forms.Message msg)
+    public bool WndProc(ref Message msg)
     {
-			if (!_inputHandler.IsLoaded)
+      if (!_inputHandler.IsLoaded)
+      {
         return false;
+      }
 
       if ((msg.Msg == WM_KEYDOWN) || (msg.Msg == WM_SYSKEYDOWN))
       {
-				//disabled: following code produces a stack overflow exception
-				//when i start MP and simply press the cursor up arrow
+        //disabled: following code produces a stack overflow exception
+        //when i start MP and simply press the cursor up arrow
 
-        Log.Info("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
+        Log.Info("WM_KEYDOWN: wParam {0}", (int) msg.WParam);
         try
         {
-          _inputHandler.MapAction((int)msg.WParam);
+          _inputHandler.MapAction((int) msg.WParam);
         }
         catch (ApplicationException)
         {
@@ -119,7 +123,6 @@ namespace MediaPortal.InputDevices
         }
         msg.Result = IntPtr.Zero;
         return true;
-
       }
       return false;
     }
@@ -132,7 +135,9 @@ namespace MediaPortal.InputDevices
     {
       _inputHandler = new InputHandler("MameDevice");
       if (!_inputHandler.IsLoaded)
+      {
         Log.Info("MameDevice: Error loading default mapping file - please reinstall MediaPortal");
+      }
     }
 
     public void Stop()

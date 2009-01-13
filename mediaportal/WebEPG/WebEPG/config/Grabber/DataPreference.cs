@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -34,19 +33,17 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class DataPreference
   {
     #region Variables
-    [XmlAttribute("template")]
-    public string Template;
-    [XmlAttribute("title")]
-    public int Title = 0;
-    [XmlAttribute("subtitle")]
-    public int Subtitle = 0;
-    [XmlAttribute("genre")]
-    public int Genre = 0;
-    [XmlAttribute("description")]
-    public int Description = 0;
+
+    [XmlAttribute("template")] public string Template;
+    [XmlAttribute("title")] public int Title = 0;
+    [XmlAttribute("subtitle")] public int Subtitle = 0;
+    [XmlAttribute("genre")] public int Genre = 0;
+    [XmlAttribute("description")] public int Description = 0;
+
     #endregion
 
     #region Constructors/Destructors
+
     public DataPreference()
     {
     }
@@ -62,6 +59,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
         Description = preference.Description;
       }
     }
+
     #endregion
   }
 }

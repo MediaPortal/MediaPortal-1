@@ -23,15 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using MediaPortal.GUI.Library;
-
 namespace WindowPlugins.VideoEditor
 {
-	/*class MpegModifier
+  /*class MpegModifier
 	{
 		
 		System.Timers.Timer cutProgresstime;

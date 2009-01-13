@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 
 namespace MediaPortal.Support
@@ -61,8 +59,10 @@ namespace MediaPortal.Support
     public virtual void Run()
     {
       if (executable == null)
+      {
         throw new ArgumentNullException("executable");
-      
+      }
+
       Process pr = new Process();
       pr.StartInfo.FileName = executable;
       pr.StartInfo.Arguments = arguments;

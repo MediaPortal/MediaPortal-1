@@ -3,14 +3,12 @@ using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
@@ -53,13 +51,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
-      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight, Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
+                 Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
+                 Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+                 Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
       this.Initialize();
     }
 
     public void CleanUp()
     {
-      AdvancedSettings.OnSettingsChanged -= new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged -=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
         while (this._EqThread.IsAlive)
@@ -74,7 +76,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
       this.MOD.ClearDisplay();
-      if (!this._BlankDisplayOnExit && ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
+      if (!this._BlankDisplayOnExit &&
+          ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
       {
         this.MOD.SetLine(0, this.DisplaySettings._Shutdown1);
         this.MOD.SetLine(1, this.DisplaySettings._Shutdown2);
@@ -101,11 +104,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void DisplayEQ()
     {
-      if ((this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable) && !(this.EQSettings.RestrictEQ & ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
+      if ((this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable) &&
+          !(this.EQSettings.RestrictEQ &
+            ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
       {
         if (this.DoDebug)
         {
-          Log.Info("\nMODisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.", new object[] { this.EQSettings.EqFftData.Length / 2 });
+          Log.Info("\nMODisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
+                   new object[] {this.EQSettings.EqFftData.Length/2});
         }
         if (this.EQSettings.UseVUmeter || this.EQSettings.UseVUmeter2)
         {
@@ -140,11 +146,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) < this.DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
+              this.DisplaySettings._DisplayControlTimeout)
           {
             if (this.DoDebug)
             {
-              Log.Info("MODisplay.DisplayOff(): DisplayControlAction Timer = {0}.", new object[] { DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction });
+              Log.Info("MODisplay.DisplayOff(): DisplayControlAction Timer = {0}.",
+                       new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
             }
             return;
           }
@@ -224,7 +232,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
           MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
+          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) &
+              (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
           }
@@ -235,7 +244,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this.GetEQ();
               this.DisplayEQ();
             }
-            if (this.DisplaySettings.BlankDisplayWithVideo & (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) || this.MPStatus.Media_IsTVRecording))
+            if (this.DisplaySettings.BlankDisplayWithVideo &
+                (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) ||
+                 this.MPStatus.Media_IsTVRecording))
             {
               if (this.DoDebug)
               {
@@ -300,8 +311,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.EQSettings.UseVUmeter = settings.VUmeter;
@@ -317,32 +328,59 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings.EQTitleDisplay = settings.EQTitleDisplay;
       this.EQSettings._EQTitleDisplayTime = settings.EQTitleDisplayTime;
       this.EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
-      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0) ? 0 : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) - (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Extensive Logging: {0}", new object[] { Settings.Instance.ExtensiveLogging });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Device Port: {0}", new object[] { Settings.Instance.Port });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Enable Keypad: {0}", new object[] { this.KPSettings.EnableKeyPad });
-      Log.Info("MatrixMX.LoadAdvancedSettings():   Use Custom KeypadMap: {0}", new object[] { this.KPSettings.EnableCustom });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}", new object[] { this.DisplaySettings._Shutdown1 });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}", new object[] { this.DisplaySettings._Shutdown2 });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Equalizer Display: {0}", new object[] { this.EQSettings.UseEqDisplay });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Stereo Equalizer Display: {0}", new object[] { this.EQSettings.UseStereoEq });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   VU Meter Display: {0}", new object[] { this.EQSettings.UseVUmeter });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   VU Meter Style 2 Display: {0}", new object[] { this.EQSettings.UseVUmeter2 });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Use VU Channel indicators: {0}", new object[] { this.EQSettings._useVUindicators });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Restrict EQ Update Rate: {0}", new object[] { this.EQSettings.RestrictEQ });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Restricted EQ Update Rate: {0} updates per second", new object[] { this.EQSettings._EQ_Restrict_FPS });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Delay EQ Startup: {0}", new object[] { this.EQSettings.DelayEQ });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Delay EQ Startup Time: {0} seconds", new object[] { this.EQSettings._DelayEQTime });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Smooth EQ Amplitude Decay: {0}", new object[] { this.EQSettings.SmoothEQ });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Show Track Info with EQ display: {0}", new object[] { this.EQSettings.EQTitleDisplay });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Show Track Info Interval: {0} seconds", new object[] { this.EQSettings._EQTitleDisplayTime });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Show Track Info duration: {0} seconds", new object[] { this.EQSettings._EQTitleShowTime });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}", new object[] { this.DisplaySettings.BlankDisplayWithVideo });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}", new object[] { this.DisplaySettings.EnableDisplayAction });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds", new object[] { this.DisplaySettings._DisplayControlTimeout });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds", new object[] { this.DisplaySettings._BlankIdleTimeout / 0xf4240L });
-      Log.Info("MatrixMX.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}", new object[] { this.EQSettings._AudioUseASIO });
+      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
+                                         ? 0
+                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Extensive Logging: {0}",
+               new object[] {Settings.Instance.ExtensiveLogging});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Enable Keypad: {0}", new object[] {this.KPSettings.EnableKeyPad});
+      Log.Info("MatrixMX.LoadAdvancedSettings():   Use Custom KeypadMap: {0}",
+               new object[] {this.KPSettings.EnableCustom});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}",
+               new object[] {this.DisplaySettings._Shutdown1});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}",
+               new object[] {this.DisplaySettings._Shutdown2});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseEqDisplay});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Stereo Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseStereoEq});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   VU Meter Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   VU Meter Style 2 Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter2});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Use VU Channel indicators: {0}",
+               new object[] {this.EQSettings._useVUindicators});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Restrict EQ Update Rate: {0}",
+               new object[] {this.EQSettings.RestrictEQ});
+      Log.Info(
+        "MatrixMX.LoadAdvancedSettings(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
+        new object[] {this.EQSettings._EQ_Restrict_FPS});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Delay EQ Startup: {0}",
+               new object[] {this.EQSettings.DelayEQ});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Delay EQ Startup Time: {0} seconds",
+               new object[] {this.EQSettings._DelayEQTime});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Smooth EQ Amplitude Decay: {0}",
+               new object[] {this.EQSettings.SmoothEQ});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Show Track Info with EQ display: {0}",
+               new object[] {this.EQSettings.EQTitleDisplay});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Show Track Info Interval: {0} seconds",
+               new object[] {this.EQSettings._EQTitleDisplayTime});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Show Track Info duration: {0} seconds",
+               new object[] {this.EQSettings._EQTitleShowTime});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}",
+               new object[] {this.DisplaySettings.EnableDisplayAction});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds",
+               new object[] {this.DisplaySettings._DisplayControlTimeout});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
+               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+      Log.Info("MatrixMX.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
+               new object[] {this.EQSettings._AudioUseASIO});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Completed", new object[0]);
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
@@ -355,7 +393,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("MODisplay.OnExternalAction(): received action {0}", new object[] { action.wID.ToString() });
+          Log.Info("MODisplay.OnExternalAction(): received action {0}", new object[] {action.wID.ToString()});
         }
         Action.ActionType wID = action.wID;
         if (wID <= Action.ActionType.ACTION_SHOW_OSD)
@@ -365,7 +403,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
         }
-        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) && (wID != Action.ActionType.ACTION_MOUSE_CLICK))
+        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) &&
+                 (wID != Action.ActionType.ACTION_MOUSE_CLICK))
         {
           return;
         }
@@ -483,7 +522,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("MatrixMX.SetLine(): Line {0} - Message = \"{1}\"", new object[] { line, message });
+            Log.Info("MatrixMX.SetLine(): Line {0} - Message = \"{1}\"", new object[] {line, message});
           }
           this.MOD.SetLine(line, message);
           if (this.DoDebug)
@@ -495,7 +534,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("MatrixMX.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout });
+            Log.Info("MatrixMX.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
+                     new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
           }
           if (this.DisplaySettings.BlankDisplayWhenIdle)
           {
@@ -507,7 +547,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
-            if (!this._IsDisplayOff && ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+            if (!this._IsDisplayOff &&
+                ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
             {
               if (this.DoDebug)
               {
@@ -533,10 +574,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG, bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel, bool _blankOnExit)
+    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+                      bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel,
+                      bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
-      Log.Info("{0}", new object[] { this.Description });
+      Log.Info("{0}", new object[] {this.Description});
       Log.Info("MatrixMX.Setup(): called", new object[0]);
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
@@ -572,10 +615,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._IsOpen = false;
       try
       {
-        this._IsOpen = this.MOD.OpenDisplay(_port, _useBackLight, _useBackLightLevel, _useContrast, _useContrastLevel, this._UseKeypad);
-      } catch (Exception exception)
+        this._IsOpen = this.MOD.OpenDisplay(_port, _useBackLight, _useBackLightLevel, _useContrast, _useContrastLevel,
+                                            this._UseKeypad);
+      }
+      catch (Exception exception)
       {
-        Log.Info("MatrixMX.Setup() - CAUGHT EXCEPTION opening display port!: {0}", new object[] { exception });
+        Log.Info("MatrixMX.Setup() - CAUGHT EXCEPTION opening display port!: {0}", new object[] {exception});
       }
       if (this._IsOpen)
       {
@@ -602,7 +647,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("MatrixMX.Setup(): EQ_Update() FAILED TO START", new object[0]);
         }
       }
-      AdvancedSettings.OnSettingsChanged += new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged +=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       Log.Info("MatrixMX.Setup(): completed", new object[0]);
     }
 
@@ -635,50 +681,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string Description
     {
-      get
-      {
-        return "Matrix Orbital Character LCD driver v03_09_2008b";
-      }
+      get { return "Matrix Orbital Character LCD driver v03_09_2008b"; }
     }
 
     public string ErrorMessage
     {
-      get
-      {
-        return this._ErrorMessage;
-      }
+      get { return this._ErrorMessage; }
     }
 
     public bool IsDisabled
     {
-      get
-      {
-        return this._IsDisabled;
-      }
+      get { return this._IsDisabled; }
     }
 
     public string Name
     {
-      get
-      {
-        return "MatrixMX";
-      }
+      get { return "MatrixMX"; }
     }
 
     public bool SupportsGraphics
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     public bool SupportsText
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     [Serializable]
@@ -698,7 +726,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private bool m_EQTitleDisplay;
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
-      private static MatrixMX.AdvancedSettings m_Instance;
+      private static AdvancedSettings m_Instance;
       private bool m_NormalEQ;
       private int m_RepeatDelay;
       private bool m_RestrictEQ;
@@ -718,8 +746,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string str = "MatrixMX_Keypad";
         try
         {
-          Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file", new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"), Encoding.UTF8);
+          Log.Info(
+            "MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file",
+            new object[0]);
+          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+                                                   Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;
           writer.IndentChar = '\t';
@@ -866,16 +897,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.Close();
           flag = true;
           Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created", new object[0]);
-        } catch
+        }
+        catch
         {
-          Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): Error saving remote mapping to XML file", new object[0]);
+          Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): Error saving remote mapping to XML file",
+                   new object[0]);
           flag = false;
         }
         Log.Info("MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): completed", new object[0]);
         return flag;
       }
 
-      private static void Default(MatrixMX.AdvancedSettings _settings)
+      private static void Default(AdvancedSettings _settings)
       {
         Log.Info("MatrixMX.AdvancedSettings.Default(): called", new object[0]);
         _settings.EnableKeypad = false;
@@ -903,22 +936,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("MatrixMX.AdvancedSettings.Default(): completed", new object[0]);
       }
 
-      public static MatrixMX.AdvancedSettings Load()
+      public static AdvancedSettings Load()
       {
-        MatrixMX.AdvancedSettings settings;
+        AdvancedSettings settings;
         Log.Info("MatrixMX.AdvancedSettings.Load(): started", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml")))
         {
           Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
-          XmlSerializer serializer = new XmlSerializer(typeof(MatrixMX.AdvancedSettings));
+          XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"));
-          settings = (MatrixMX.AdvancedSettings)serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
         {
           Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
-          settings = new MatrixMX.AdvancedSettings();
+          settings = new AdvancedSettings();
           Default(settings);
         }
         Log.Info("MatrixMX.AdvancedSettings.Load(): completed", new object[0]);
@@ -938,14 +971,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Save(Instance);
       }
 
-      public static void Save(MatrixMX.AdvancedSettings ToSave)
+      public static void Save(AdvancedSettings ToSave)
       {
         Log.Info("MatrixMX.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
-        XmlSerializer serializer = new XmlSerializer(typeof(MatrixMX.AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"), Encoding.UTF8);
+        XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"),
+                                                 Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter)writer, ToSave);
+        serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
         Log.Info("MatrixMX.AdvancedSettings.Save(): completed", new object[0]);
       }
@@ -958,186 +992,102 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool BlankDisplayWhenIdle
       {
-        get
-        {
-          return this.m_BlankDisplayWhenIdle;
-        }
-        set
-        {
-          this.m_BlankDisplayWhenIdle = value;
-        }
+        get { return this.m_BlankDisplayWhenIdle; }
+        set { this.m_BlankDisplayWhenIdle = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWithVideo
       {
-        get
-        {
-          return this.m_BlankDisplayWithVideo;
-        }
-        set
-        {
-          this.m_BlankDisplayWithVideo = value;
-        }
+        get { return this.m_BlankDisplayWithVideo; }
+        set { this.m_BlankDisplayWithVideo = value; }
       }
 
       [XmlAttribute]
       public int BlankIdleTime
       {
-        get
-        {
-          return this.m_BlankIdleTime;
-        }
-        set
-        {
-          this.m_BlankIdleTime = value;
-        }
+        get { return this.m_BlankIdleTime; }
+        set { this.m_BlankIdleTime = value; }
       }
 
       [XmlAttribute]
       public bool DelayEQ
       {
-        get
-        {
-          return this.m_DelayEQ;
-        }
-        set
-        {
-          this.m_DelayEQ = value;
-        }
+        get { return this.m_DelayEQ; }
+        set { this.m_DelayEQ = value; }
       }
 
       [XmlAttribute]
       public int DelayEqTime
       {
-        get
-        {
-          return this.m_DelayEqTime;
-        }
-        set
-        {
-          this.m_DelayEqTime = value;
-        }
+        get { return this.m_DelayEqTime; }
+        set { this.m_DelayEqTime = value; }
       }
 
       [XmlAttribute]
       public bool DisableRepeat
       {
-        get
-        {
-          return this.m_DisableRepeat;
-        }
-        set
-        {
-          this.m_DisableRepeat = value;
-        }
+        get { return this.m_DisableRepeat; }
+        set { this.m_DisableRepeat = value; }
       }
 
       [XmlAttribute]
       public bool EnableDisplayAction
       {
-        get
-        {
-          return this.m_EnableDisplayAction;
-        }
-        set
-        {
-          this.m_EnableDisplayAction = value;
-        }
+        get { return this.m_EnableDisplayAction; }
+        set { this.m_EnableDisplayAction = value; }
       }
 
       [XmlAttribute]
       public int EnableDisplayActionTime
       {
-        get
-        {
-          return this.m_EnableDisplayActionTime;
-        }
-        set
-        {
-          this.m_EnableDisplayActionTime = value;
-        }
+        get { return this.m_EnableDisplayActionTime; }
+        set { this.m_EnableDisplayActionTime = value; }
       }
 
       [XmlAttribute]
       public bool EnableKeypad
       {
-        get
-        {
-          return this.m_EnableKeypad;
-        }
-        set
-        {
-          this.m_EnableKeypad = value;
-        }
+        get { return this.m_EnableKeypad; }
+        set { this.m_EnableKeypad = value; }
       }
 
       [XmlAttribute]
       public bool EqDisplay
       {
-        get
-        {
-          return this.m_EqDisplay;
-        }
-        set
-        {
-          this.m_EqDisplay = value;
-        }
+        get { return this.m_EqDisplay; }
+        set { this.m_EqDisplay = value; }
       }
 
       [XmlAttribute]
       public int EqRate
       {
-        get
-        {
-          return this.m_EqRate;
-        }
-        set
-        {
-          this.m_EqRate = value;
-        }
+        get { return this.m_EqRate; }
+        set { this.m_EqRate = value; }
       }
 
       [XmlAttribute]
       public bool EQTitleDisplay
       {
-        get
-        {
-          return this.m_EQTitleDisplay;
-        }
-        set
-        {
-          this.m_EQTitleDisplay = value;
-        }
+        get { return this.m_EQTitleDisplay; }
+        set { this.m_EQTitleDisplay = value; }
       }
 
       [XmlAttribute]
       public int EQTitleDisplayTime
       {
-        get
-        {
-          return this.m_EQTitleDisplayTime;
-        }
-        set
-        {
-          this.m_EQTitleDisplayTime = value;
-        }
+        get { return this.m_EQTitleDisplayTime; }
+        set { this.m_EQTitleDisplayTime = value; }
       }
 
       [XmlAttribute]
       public int EQTitleShowTime
       {
-        get
-        {
-          return this.m_EQTitleShowTime;
-        }
-        set
-        {
-          this.m_EQTitleShowTime = value;
-        }
+        get { return this.m_EQTitleShowTime; }
+        set { this.m_EQTitleShowTime = value; }
       }
 
-      public static MatrixMX.AdvancedSettings Instance
+      public static AdvancedSettings Instance
       {
         get
         {
@@ -1147,127 +1097,70 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           return m_Instance;
         }
-        set
-        {
-          m_Instance = value;
-        }
+        set { m_Instance = value; }
       }
 
       [XmlAttribute]
       public bool NormalEQ
       {
-        get
-        {
-          return this.m_NormalEQ;
-        }
-        set
-        {
-          this.m_NormalEQ = value;
-        }
+        get { return this.m_NormalEQ; }
+        set { this.m_NormalEQ = value; }
       }
 
       [XmlAttribute]
       public int RepeatDelay
       {
-        get
-        {
-          return this.m_RepeatDelay;
-        }
-        set
-        {
-          this.m_RepeatDelay = value;
-        }
+        get { return this.m_RepeatDelay; }
+        set { this.m_RepeatDelay = value; }
       }
 
       [XmlAttribute]
       public bool RestrictEQ
       {
-        get
-        {
-          return this.m_RestrictEQ;
-        }
-        set
-        {
-          this.m_RestrictEQ = value;
-        }
+        get { return this.m_RestrictEQ; }
+        set { this.m_RestrictEQ = value; }
       }
 
       [XmlAttribute]
       public bool SmoothEQ
       {
-        get
-        {
-          return this.m_SmoothEQ;
-        }
-        set
-        {
-          this.m_SmoothEQ = value;
-        }
+        get { return this.m_SmoothEQ; }
+        set { this.m_SmoothEQ = value; }
       }
 
       [XmlAttribute]
       public bool StereoEQ
       {
-        get
-        {
-          return this.m_StereoEQ;
-        }
-        set
-        {
-          this.m_StereoEQ = value;
-        }
+        get { return this.m_StereoEQ; }
+        set { this.m_StereoEQ = value; }
       }
 
       [XmlAttribute]
       public bool UseCustomKeypadMap
       {
-        get
-        {
-          return this.m_UseCustomKeypadMap;
-        }
-        set
-        {
-          this.m_UseCustomKeypadMap = value;
-        }
+        get { return this.m_UseCustomKeypadMap; }
+        set { this.m_UseCustomKeypadMap = value; }
       }
 
       [XmlAttribute]
       public bool VUindicators
       {
-        get
-        {
-          return this.m_VUindicators;
-        }
-        set
-        {
-          this.m_VUindicators = value;
-        }
+        get { return this.m_VUindicators; }
+        set { this.m_VUindicators = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter
       {
-        get
-        {
-          return this.m_VUmeter;
-        }
-        set
-        {
-          this.m_VUmeter = value;
-        }
+        get { return this.m_VUmeter; }
+        set { this.m_VUmeter = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter2
       {
-        get
-        {
-          return this.m_VUmeter2;
-        }
-        set
-        {
-          this.m_VUmeter2 = value;
-        }
+        get { return this.m_VUmeter2; }
+        set { this.m_VUmeter2 = value; }
       }
 
       public delegate void OnSettingsChangedHandler();
@@ -1296,7 +1189,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 70 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 70}, 0, 2);
         }
       }
 
@@ -1309,7 +1202,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x42, (byte)MinutesTillOff }, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x42, (byte) MinutesTillOff}, 0, 3);
         }
       }
 
@@ -1317,7 +1210,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x58 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x58}, 0, 2);
         }
       }
 
@@ -1344,7 +1237,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             this._isOpen = false;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Error(exception);
         }
@@ -1354,7 +1248,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x47, (byte)column, (byte)row }, 0, 4);
+          this.commPort.Write(new byte[] {0xfe, 0x47, (byte) column, (byte) row}, 0, 4);
         }
       }
 
@@ -1377,7 +1271,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x7c, (byte)column, (byte)row, (byte)direction, (byte)length }, 0, 6);
+          this.commPort.Write(new byte[] {0xfe, 0x7c, (byte) column, (byte) row, (byte) direction, (byte) length}, 0, 6);
         }
       }
 
@@ -1385,7 +1279,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x3d, (byte)column, (byte)height }, 0, 4);
+          this.commPort.Write(new byte[] {0xfe, 0x3d, (byte) column, (byte) height}, 0, 4);
         }
       }
 
@@ -1405,12 +1299,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (extensiveLogging)
           {
-            Log.Info("MatrixMX.FireKeypadEvent(): No button mapping for Keypad button = {0}", new object[] { EventCode.ToString("x00") });
+            Log.Info("MatrixMX.FireKeypadEvent(): No button mapping for Keypad button = {0}",
+                     new object[] {EventCode.ToString("x00")});
           }
         }
         else if (extensiveLogging)
         {
-          Log.Info("MatrixMX.FireKeypadEvent(): fired event for Keypad button = {0}", new object[] { EventCode.ToString("x00") });
+          Log.Info("MatrixMX.FireKeypadEvent(): fired event for Keypad button = {0}",
+                   new object[] {EventCode.ToString("x00")});
         }
         if (extensiveLogging)
         {
@@ -1422,7 +1318,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x68 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x68}, 0, 2);
         }
       }
 
@@ -1430,7 +1326,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x73 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x73}, 0, 2);
         }
       }
 
@@ -1438,7 +1334,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x76 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x76}, 0, 2);
         }
       }
 
@@ -1446,7 +1342,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x7e, (byte)_mode }, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x7e, (byte) _mode}, 0, 3);
         }
       }
 
@@ -1454,7 +1350,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x41 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x41}, 0, 2);
         }
       }
 
@@ -1462,7 +1358,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x45 }, 0, 2);
+          this.commPort.Write(new byte[] {0xfe, 0x45}, 0, 2);
         }
       }
 
@@ -1470,11 +1366,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x55, (byte)_time }, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x55, (byte) _time}, 0, 3);
         }
       }
 
-      public bool OpenDisplay(string _port, bool _useBacklight, int _backlightLevel, bool _useContrast, int _contrastLevel, bool EnableKeypad)
+      public bool OpenDisplay(string _port, bool _useBacklight, int _backlightLevel, bool _useContrast,
+                              int _contrastLevel, bool EnableKeypad)
       {
         try
         {
@@ -1500,7 +1397,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.commPort.DiscardInBuffer();
           this._isOpen = true;
           this._IsDisplayOff = false;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Info("MatrixMX.MODisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display!", new object[0]);
           this._isOpen = false;
@@ -1512,7 +1410,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) | !this._UseBacklight))
         {
-          this.commPort.Write(new byte[] { 0xfe, 0x99, (byte)brightness }, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x99, (byte) brightness}, 0, 3);
         }
       }
 
@@ -1520,7 +1418,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) | !this._UseContrast))
         {
-          this.commPort.Write(new byte[] { 0xfe, 80, (byte)contrast }, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 80, (byte) contrast}, 0, 3);
         }
       }
 
@@ -1543,11 +1441,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (i < _message.Length)
             {
-              this.commPort.Write(new byte[] { (byte)_message[i] }, 0, 1);
+              this.commPort.Write(new byte[] {(byte) _message[i]}, 0, 1);
             }
             else
             {
-              this.commPort.Write(new byte[] { 0x20 }, 0, 1);
+              this.commPort.Write(new byte[] {0x20}, 0, 1);
             }
           }
         }
@@ -1565,15 +1463,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")) < 3)
           {
-            Log.Info("MatrixMX.MODisplay.SetupKeypad(): Deleting MatrixMX_Keypad mapping file with the wrong version stamp.", new object[0]);
+            Log.Info(
+              "MatrixMX.MODisplay.SetupKeypad(): Deleting MatrixMX_Keypad mapping file with the wrong version stamp.",
+              new object[0]);
             File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml"));
           }
           if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")))
           {
             Log.Info("MatrixMX.Setup(): Creating default MatrixMX_Keypad mapping file", new object[0]);
-            if (!MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping())
+            if (!AdvancedSettings.CreateDefaultKeyPadMapping())
             {
-              Log.Info("MatrixMX.MODisplay.SetupKeypad(): ERROR Creating default MatrixMX_Keypad mapping file", new object[0]);
+              Log.Info("MatrixMX.MODisplay.SetupKeypad(): ERROR Creating default MatrixMX_Keypad mapping file",
+                       new object[0]);
               flag2 = false;
             }
             else
@@ -1585,9 +1486,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             flag2 = true;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Info("MatrixMX.MODisplay.SetupKeypad(): CAUGHT EXCEPTION while loading InputHander - {0}", new object[] { exception });
+          Log.Info("MatrixMX.MODisplay.SetupKeypad(): CAUGHT EXCEPTION while loading InputHander - {0}",
+                   new object[] {exception});
           flag2 = false;
           flag = false;
         }
@@ -1595,7 +1498,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("MatrixMX.MODisplay.SetupKeypad(): Loading InputHandler", new object[0]);
           this._inputHandler = new InputHandler("MatrixMX_Keypad");
-          Log.Info("MatrixMX.MODisplay.SetupKeypad(): InputHandler loaded = {0}", new object[] { this._inputHandler.IsLoaded });
+          Log.Info("MatrixMX.MODisplay.SetupKeypad(): InputHandler loaded = {0}",
+                   new object[] {this._inputHandler.IsLoaded});
           if (this._inputHandler.IsLoaded)
           {
             flag = true;
@@ -1603,7 +1507,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             flag = false;
-            Log.Info("MatrixMX.MODisplay.SetupKeypad(): error loading InputHandler - remote support disabled", new object[0]);
+            Log.Info("MatrixMX.MODisplay.SetupKeypad(): error loading InputHandler - remote support disabled",
+                     new object[0]);
           }
         }
         else
@@ -1615,7 +1520,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return flag;
         }
-        Log.Info("MatrixMX.MODisplay.SetupKeypad(): Error loading Keypad mapping file - Keypad support disabled", new object[0]);
+        Log.Info("MatrixMX.MODisplay.SetupKeypad(): Error loading Keypad mapping file - Keypad support disabled",
+                 new object[0]);
         return false;
       }
 
@@ -1632,7 +1538,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
       {
-        byte eventCode = (byte)this.commPort.ReadByte();
+        byte eventCode = (byte) this.commPort.ReadByte();
         if (!this._useCustomKeypadMapping)
         {
           Action action;
@@ -1640,48 +1546,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           switch (eventCode)
           {
             case 0x4b:
-              Log.Info("MODisplay: received KeyPad event - Cursor Up {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - Cursor Up {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_UP, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x4c:
-              Log.Info("MODisplay: received KeyPad event - Cursor Down {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - Cursor Down {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_DOWN, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x52:
-              Log.Info("MODisplay: received KeyPad event - Cursor Left{0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - Cursor Left{0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_LEFT, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 70:
-              Log.Info("MODisplay: received KeyPad event - Cursor Right{0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - Cursor Right{0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_RIGHT, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x4a:
-              Log.Info("MODisplay: received KeyPad event - Enter {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - Enter {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_SELECT_ITEM, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 80:
-              Log.Info("MODisplay: received KeyPad event - F1 {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - F1 {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_STEP_BACK, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x51:
-              Log.Info("MODisplay: received KeyPad event - F2 {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("MODisplay: received KeyPad event - F2 {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
           }
-          Log.Info("MODisplay: received KeyPad event - received byte {0} Unknown Key", new object[] { eventCode.ToString("x00") });
+          Log.Info("MODisplay: received KeyPad event - received byte {0} Unknown Key",
+                   new object[] {eventCode.ToString("x00")});
         }
         else
         {
@@ -1702,4 +1609,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
   }
 }
-

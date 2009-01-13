@@ -38,7 +38,7 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class MusicInfoScraper
   {
-    List<MusicAlbumInfo> _albumList = new List<MusicAlbumInfo>();
+    private List<MusicAlbumInfo> _albumList = new List<MusicAlbumInfo>();
 
     public MusicInfoScraper()
     {
@@ -46,12 +46,12 @@ namespace MediaPortal.Music.Database
 
     public int Count
     {
-      get { return _albumList.Count;}
+      get { return _albumList.Count; }
     }
 
     public MusicAlbumInfo this[int index]
     {
-      get { return _albumList[index];}
+      get { return _albumList[index]; }
     }
 
     public bool FindAlbuminfo(string strAlbum, string artistName, int releaseYear)
@@ -64,110 +64,126 @@ namespace MediaPortal.Music.Database
       // type is 
       // http://www.allmusic.com/cg/amg.dll?P=amg&SQL=escapolygy&OPT1=2
 
-      HTMLUtil  util=new HTMLUtil();
-      string postData=String.Format("P=amg&SQL={0}&OPT1=2", HttpUtility.UrlEncode(strAlbum) );
-		
-      string html=PostHTTP("http://www.allmusic.com/cg/amg.dll", postData);
-      if (html.Length==0) return false;
+      HTMLUtil util = new HTMLUtil();
+      string postData = String.Format("P=amg&SQL={0}&OPT1=2", HttpUtility.UrlEncode(strAlbum));
+
+      string html = PostHTTP("http://www.allmusic.com/cg/amg.dll", postData);
+      if (html.Length == 0)
+      {
+        return false;
+      }
 
       // check if this is an album
       MusicAlbumInfo newAlbum = new MusicAlbumInfo();
-      newAlbum.AlbumURL="http://www.allmusic.com/cg/amg.dll?"+postData;
-      if ( newAlbum.Parse(html) )
+      newAlbum.AlbumURL = "http://www.allmusic.com/cg/amg.dll?" + postData;
+      if (newAlbum.Parse(html))
       {
         _albumList.Add(newAlbum);
         return true;
       }
 
-      string htmlLow=html;
-      htmlLow=htmlLow.ToLower();
-      int startOfTable=htmlLow.IndexOf("id=\"expansiontable1\"");
-      if (startOfTable< 0) return false;
-      startOfTable=htmlLow.LastIndexOf("<table",startOfTable);
-      if (startOfTable < 0) return false;
-      
-      HTMLTable table=new HTMLTable();
-      string strTable=html.Substring(startOfTable);
+      string htmlLow = html;
+      htmlLow = htmlLow.ToLower();
+      int startOfTable = htmlLow.IndexOf("id=\"expansiontable1\"");
+      if (startOfTable < 0)
+      {
+        return false;
+      }
+      startOfTable = htmlLow.LastIndexOf("<table", startOfTable);
+      if (startOfTable < 0)
+      {
+        return false;
+      }
+
+      HTMLTable table = new HTMLTable();
+      string strTable = html.Substring(startOfTable);
       table.Parse(strTable);
 
-      for (int i=1; i < table.Rows; ++i)
+      for (int i = 1; i < table.Rows; ++i)
       {
-        HTMLTable.HTMLRow row=table.GetRow(i);
-        string albumName="";
-        string albumUrl="";
+        HTMLTable.HTMLRow row = table.GetRow(i);
+        string albumName = "";
+        string albumUrl = "";
         string nameOfAlbum = "";
         string nameOfArtist = "";
-        for (int iCol=0; iCol < row.Columns; ++iCol)
+        for (int iCol = 0; iCol < row.Columns; ++iCol)
         {
-          string column=row.GetColumValue(iCol);
-          if (iCol==1 && (column.Length!=0)) albumName="("+column+")";
-          if (iCol==2)
+          string column = row.GetColumValue(iCol);
+          if (iCol == 1 && (column.Length != 0))
+          {
+            albumName = "(" + column + ")";
+          }
+          if (iCol == 2)
           {
             nameOfArtist = column;
             util.RemoveTags(ref nameOfArtist);
             if (!column.Equals("&nbsp;"))
+            {
               albumName = String.Format("- {0} {1}", nameOfArtist, albumName);
+            }
           }
-          if (iCol==4)
+          if (iCol == 4)
           {
-            string tempAlbum=column;
+            string tempAlbum = column;
             util.RemoveTags(ref tempAlbum);
-            albumName=String.Format("{0} {1}",tempAlbum,albumName);
+            albumName = String.Format("{0} {1}", tempAlbum, albumName);
             nameOfAlbum = tempAlbum;
           }
-          if (iCol==4 && column.IndexOf("<a href=\"") >= 0)
+          if (iCol == 4 && column.IndexOf("<a href=\"") >= 0)
           {
-            int pos1=column.IndexOf("<a href=\"") ;
-            pos1+=+"<a href=\"".Length;
-            int iPos2=column.IndexOf("\">",pos1);
+            int pos1 = column.IndexOf("<a href=\"");
+            pos1 += +"<a href=\"".Length;
+            int iPos2 = column.IndexOf("\">", pos1);
             if (iPos2 >= 0)
             {
-                if (nameOfAlbum.Length == 0)
-                  nameOfAlbum = albumName;
+              if (nameOfAlbum.Length == 0)
+              {
+                nameOfAlbum = albumName;
+              }
 
-                // full album url:
-                // http://www.allmusic.com/cg/amg.dll?p=amg&token=&sql=10:66jieal64xs7
-                string url=column.Substring(pos1, iPos2-pos1);                
-                string albumNameStripped;
-                albumUrl=String.Format("http://www.allmusic.com{0}", url);
-                MusicAlbumInfo newAlbumInfo = new MusicAlbumInfo();
-                util.ConvertHTMLToAnsi(albumName, out albumNameStripped);
-                newAlbumInfo.Title2=albumNameStripped;
-                newAlbumInfo.AlbumURL = util.ConvertHTMLToAnsi(albumUrl);
-                newAlbumInfo.Artist = util.ConvertHTMLToAnsi(nameOfArtist);
-                newAlbumInfo.Title = util.ConvertHTMLToAnsi(nameOfAlbum);
-                _albumList.Add(newAlbumInfo);
-            
+              // full album url:
+              // http://www.allmusic.com/cg/amg.dll?p=amg&token=&sql=10:66jieal64xs7
+              string url = column.Substring(pos1, iPos2 - pos1);
+              string albumNameStripped;
+              albumUrl = String.Format("http://www.allmusic.com{0}", url);
+              MusicAlbumInfo newAlbumInfo = new MusicAlbumInfo();
+              util.ConvertHTMLToAnsi(albumName, out albumNameStripped);
+              newAlbumInfo.Title2 = albumNameStripped;
+              newAlbumInfo.AlbumURL = util.ConvertHTMLToAnsi(albumUrl);
+              newAlbumInfo.Artist = util.ConvertHTMLToAnsi(nameOfArtist);
+              newAlbumInfo.Title = util.ConvertHTMLToAnsi(nameOfAlbum);
+              _albumList.Add(newAlbumInfo);
             }
           }
         }
       }
-	
+
       // now sort
-      _albumList.Sort(new AlbumSort(strAlbum,  artistName,  releaseYear));
+      _albumList.Sort(new AlbumSort(strAlbum, artistName, releaseYear));
       return true;
     }
-        
-    string PostHTTP(string url, string strData)
+
+    private string PostHTTP(string url, string strData)
     {
       try
       {
         string strBody;
 
         string strUri = String.Format("{0}?{1}", url, strData);
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUri);
+        HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUri);
         req.ProtocolVersion = HttpVersion.Version11;
-        req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
-        HttpWebResponse result = (HttpWebResponse)req.GetResponse();
+        req.UserAgent =
+          "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
+        HttpWebResponse result = (HttpWebResponse) req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
 
         // 1252 is encoding for Windows format
-        Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+        Encoding encode = Encoding.GetEncoding("utf-8");
         StreamReader sr = new StreamReader(ReceiveStream, encode);
         strBody = sr.ReadToEnd();
         return strBody;
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
       return "";

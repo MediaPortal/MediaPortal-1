@@ -1,21 +1,29 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.Core.Transcoding;
+using MediaPortal.Profile;
 
 namespace WindowPlugins.VideoEditor
 {
-  class Converter
+  internal class Converter
   {
-    bool hasMencoder = false;
-    string mencoderPath;
-    EditSettings settings;
-    System.Diagnostics.ProcessStartInfo mencoderProcessInfo;
-    System.Diagnostics.Process mencoderProcess;
-    System.IO.StreamReader consoleReader;
+    private bool hasMencoder = false;
+    private string mencoderPath;
+    private EditSettings settings;
+    private ProcessStartInfo mencoderProcessInfo;
+    private Process mencoderProcess;
+    private StreamReader consoleReader;
+
     public delegate void Finished();
+
     public event Finished OnFinished;
+
     public delegate void Progress(int percentage);
+
     public event Progress OnProgress;
 
 
@@ -27,36 +35,38 @@ namespace WindowPlugins.VideoEditor
 
     public bool CheckHasMencoder()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mencoderPath = xmlreader.GetValueAsString("VideoEditor", "mencoder", "");
       }
-      hasMencoder = System.IO.File.Exists(mencoderPath);
+      hasMencoder = File.Exists(mencoderPath);
       if (!hasMencoder)
       {
-        hasMencoder = System.IO.File.Exists(System.Windows.Forms.Application.StartupPath + @"\mencoder.exe");
+        hasMencoder = File.Exists(Application.StartupPath + @"\mencoder.exe");
         if (hasMencoder)
-          mencoderPath = System.Windows.Forms.Application.StartupPath + @"\mencoder.exe";
+        {
+          mencoderPath = Application.StartupPath + @"\mencoder.exe";
+        }
       }
       return hasMencoder;
     }
 
-    public void Convert(MediaPortal.Core.Transcoding.VideoFormat format)
+    public void Convert(VideoFormat format)
     {
       switch (format)
       {
-        case MediaPortal.Core.Transcoding.VideoFormat.Divx:
+        case VideoFormat.Divx:
           Thread convert = new Thread(new ThreadStart(ConvertToDivx));
           convert.Priority = ThreadPriority.BelowNormal;
           convert.Name = "DivxConverter";
           convert.Start();
           //ConvertToDivx();
           break;
-        case MediaPortal.Core.Transcoding.VideoFormat.Mpeg2:
+        case VideoFormat.Mpeg2:
           break;
-        case MediaPortal.Core.Transcoding.VideoFormat.Wmv:
+        case VideoFormat.Wmv:
           break;
-        case MediaPortal.Core.Transcoding.VideoFormat.MP4:
+        case VideoFormat.MP4:
           break;
         default:
           break;
@@ -72,16 +82,21 @@ namespace WindowPlugins.VideoEditor
           if (settings.Settings is CompressionSettings)
           {
             CompressionSettings compressSettings = settings.Settings as CompressionSettings;
-            mencoderProcessInfo = new System.Diagnostics.ProcessStartInfo(mencoderPath);
-            mencoderProcessInfo.Arguments = "-ffourcc DX50 -oac lavc -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=" + compressSettings.videoQuality.ToString() + ":acodec=mp3:abitrate=" + compressSettings.audioQuality.ToString() +
-                    " -vf scale=" + compressSettings.resolutionX.ToString() + ":" + compressSettings.resolutionY.ToString() + " -o \"" + settings.FileName.Replace(System.IO.Path.GetExtension(settings.FileName), ".avi") + "\" \"" + settings.FileName + "\"";
+            mencoderProcessInfo = new ProcessStartInfo(mencoderPath);
+            mencoderProcessInfo.Arguments = "-ffourcc DX50 -oac lavc -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=" +
+                                            compressSettings.videoQuality.ToString() + ":acodec=mp3:abitrate=" +
+                                            compressSettings.audioQuality.ToString() +
+                                            " -vf scale=" + compressSettings.resolutionX.ToString() + ":" +
+                                            compressSettings.resolutionY.ToString() + " -o \"" +
+                                            settings.FileName.Replace(Path.GetExtension(settings.FileName), ".avi") +
+                                            "\" \"" + settings.FileName + "\"";
             mencoderProcessInfo.CreateNoWindow = true;
             mencoderProcessInfo.RedirectStandardOutput = true;
-            mencoderProcess = new System.Diagnostics.Process();
+            mencoderProcess = new Process();
             mencoderProcessInfo.UseShellExecute = false;
             mencoderProcess.StartInfo = mencoderProcessInfo;
             mencoderProcess.Start();
-            mencoderProcess.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+            mencoderProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
             consoleReader = mencoderProcess.StandardOutput;
 
             string line;
@@ -99,7 +114,9 @@ namespace WindowPlugins.VideoEditor
                   for (int i = 0; i < percent.Length; i++)
                   {
                     if (percent[i] >= '\x39' || percent[i] <= '\x30')
+                    {
                       percent = percent.Remove(i, 1);
+                    }
                   }
                   percent.Trim();
                   try
@@ -110,33 +127,38 @@ namespace WindowPlugins.VideoEditor
                       {
                         lastPerc = System.Convert.ToInt32(percent);
                         if (OnProgress != null)
+                        {
                           OnProgress(lastPerc);
+                        }
                       }
                     }
                   }
-                  catch { }
-                  System.Threading.Thread.Sleep(20);
+                  catch
+                  {
+                  }
+                  Thread.Sleep(20);
                 }
               }
             }
           }
         }
         if (OnFinished != null)
+        {
           OnFinished();
+        }
         if (OnProgress != null)
+        {
           OnProgress(100);
+        }
       }
       catch (Exception)
       {
-
       }
     }
+
     public bool HasMencoder
     {
-      get
-      {
-        return hasMencoder;
-      }
+      get { return hasMencoder; }
     }
   }
 }

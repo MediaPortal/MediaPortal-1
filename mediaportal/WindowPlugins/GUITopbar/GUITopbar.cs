@@ -24,10 +24,9 @@
 #endregion
 
 using System;
-using System.Xml;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Topbar
 {
@@ -36,30 +35,30 @@ namespace MediaPortal.Topbar
   /// </summary>
   public class GUITopbar : GUIOverlayWindow, IRenderLayer
   {
-    const int HIDE_SPEED = 8;
+    private const int HIDE_SPEED = 8;
 
-    bool m_bFocused = false;
-    bool m_bEnabled = false;
-    bool m_bTopBarAutoHide = false;
+    private bool m_bFocused = false;
+    private bool m_bEnabled = false;
+    private bool m_bTopBarAutoHide = false;
 
-    bool m_bTopBarEffect = false;
-    bool m_bTopBarHide = false;
-    bool m_bTopBarHidden = false;
-    bool m_bOverrideSkinAutoHide = false;
-    static bool useTopBarSub = false;
-    int m_iMoveUp = 0;
-    int m_iTopbarRegion = 10;
-    int m_iAutoHideTimeOut = 15;
+    private bool m_bTopBarEffect = false;
+    private bool m_bTopBarHide = false;
+    private bool m_bTopBarHidden = false;
+    private bool m_bOverrideSkinAutoHide = false;
+    private static bool useTopBarSub = false;
+    private int m_iMoveUp = 0;
+    private int m_iTopbarRegion = 10;
+    private int m_iAutoHideTimeOut = 15;
 
     public GUITopbar()
     {
       // 
       // TODO: Add constructor logic here
       //
-      GetID = (int)GUIWindow.Window.WINDOW_TOPBAR;
+      GetID = (int) Window.WINDOW_TOPBAR;
     }
 
-    public bool UseTopBarSub	// Use top Bar in Submenu. 
+    public bool UseTopBarSub // Use top Bar in Submenu. 
     {
       get { return useTopBarSub; }
       set { useTopBarSub = value; }
@@ -68,15 +67,18 @@ namespace MediaPortal.Topbar
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\topbar.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TOPBAR;
+      GetID = (int) Window.WINDOW_TOPBAR;
       m_bEnabled = PluginManager.IsPluginNameEnabled("Topbar");
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iAutoHideTimeOut = xmlreader.GetValueAsInt("TopBar", "autohidetimeout", 15);
 
         m_bOverrideSkinAutoHide = false;
-        if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1) m_bOverrideSkinAutoHide = true;
+        if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1)
+        {
+          m_bOverrideSkinAutoHide = true;
+        }
 
         GUIGraphicsContext.DefaultTopBarHide = this.AutoHideTopbar; // default autohide option
         m_bTopBarAutoHide = this.AutoHideTopbar; // Get topbar skin setting
@@ -85,7 +87,10 @@ namespace MediaPortal.Topbar
         if (m_bOverrideSkinAutoHide)
         {
           m_bTopBarAutoHide = false;
-          if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1) m_bTopBarAutoHide = true;
+          if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1)
+          {
+            m_bTopBarAutoHide = true;
+          }
           GUIGraphicsContext.TopBarHidden = m_bTopBarAutoHide;
         }
       }
@@ -93,12 +98,16 @@ namespace MediaPortal.Topbar
       // Topbar region
       foreach (CPosition pos in _listPositions)
       {
-        if ((pos.YPos + pos.control.Height) > m_iTopbarRegion) m_iTopbarRegion = pos.YPos + pos.control.Height;
+        if ((pos.YPos + pos.control.Height) > m_iTopbarRegion)
+        {
+          m_iTopbarRegion = pos.YPos + pos.control.Height;
+        }
       }
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
       return bResult;
     }
+
     public override bool SupportsDelayedLoad
     {
       get { return false; }
@@ -109,6 +118,7 @@ namespace MediaPortal.Topbar
       base.PreInit();
       AllocResources();
     }
+
     public override void Render(float timePassed)
     {
     }
@@ -131,15 +141,39 @@ namespace MediaPortal.Topbar
 
     public override bool DoesPostRender()
     {
-      if (!m_bEnabled) return false;
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
-      if (GUIGraphicsContext.DisableTopBar) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME && useTopBarSub == true) return true;
-      if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_HOME)
+      if (!m_bEnabled)
+      {
+        return false;
+      }
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        return false;
+      }
+      if (GUIGraphicsContext.DisableTopBar)
+      {
+        return false;
+      }
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_WEBBROWSER)
+      {
+        return false;
+      }
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MOVIE_CALIBRATION)
+      {
+        return false;
+      }
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_UI_CALIBRATION)
+      {
+        return false;
+      }
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_SLIDESHOW)
+      {
+        return false;
+      }
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_HOME && useTopBarSub == true)
+      {
+        return true;
+      }
+      if (GUIWindowManager.ActiveWindow != (int) Window.WINDOW_HOME)
       {
         return true;
       }
@@ -148,8 +182,14 @@ namespace MediaPortal.Topbar
 
     public override void PostRender(float timePassed, int iLayer)
     {
-      if (!m_bEnabled) return;
-      if (iLayer != 1) return;
+      if (!m_bEnabled)
+      {
+        return;
+      }
+      if (iLayer != 1)
+      {
+        return;
+      }
       CheckFocus();
 
       // Check auto hide topbar
@@ -161,12 +201,15 @@ namespace MediaPortal.Topbar
         m_bTopBarEffect = false;
 
         m_iMoveUp = 0;
-        if (m_bTopBarHidden) m_iMoveUp = m_iTopbarRegion;
+        if (m_bTopBarHidden)
+        {
+          m_iMoveUp = m_iTopbarRegion;
+        }
         foreach (CPosition pos in _listPositions)
         {
-          int y = (int)pos.YPos - m_iMoveUp;
+          int y = (int) pos.YPos - m_iMoveUp;
           //y += GUIGraphicsContext.OverScanTop;     // already done
-          pos.control.SetPosition((int)pos.XPos, y);
+          pos.control.SetPosition((int) pos.XPos, y);
         }
       }
       else if (m_bTopBarHidden != m_bTopBarHide)
@@ -212,14 +255,17 @@ namespace MediaPortal.Topbar
 
           foreach (CPosition pos in _listPositions)
           {
-            int y = (int)pos.YPos - m_iMoveUp;
+            int y = (int) pos.YPos - m_iMoveUp;
             //y += GUIGraphicsContext.OverScanTop;  // already done
-            pos.control.SetPosition((int)pos.XPos, y);
+            pos.control.SetPosition((int) pos.XPos, y);
           }
         }
       }
 
-      if (GUIGraphicsContext.TopBarHidden) return;
+      if (GUIGraphicsContext.TopBarHidden)
+      {
+        return;
+      }
 
       GUIFontManager.Present();
       base.Render(timePassed);
@@ -240,7 +286,8 @@ namespace MediaPortal.Topbar
             m_bTopBarHide = false;
           }
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
+                                          null);
           OnMessage(msg);
         }
         else
@@ -272,13 +319,13 @@ namespace MediaPortal.Topbar
         {
           bool bFocus = control.Focus;
           int id;
-          if (control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus))
+          if (control.HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out bFocus))
           {
             if (!bFocus)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, id, 0, 0, null);
               OnMessage(msg);
-              control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus);
+              control.HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out bFocus);
             }
             control.OnAction(action);
             m_bFocused = true;
@@ -295,12 +342,16 @@ namespace MediaPortal.Topbar
       if (action.wID == Action.ActionType.ACTION_MOVE_DOWN)
       {
         // reset autohide timer
-        if (GUIGraphicsContext.AutoHideTopBar) GUIGraphicsContext.TopBarTimeOut = DateTime.Now;
+        if (GUIGraphicsContext.AutoHideTopBar)
+        {
+          GUIGraphicsContext.TopBarTimeOut = DateTime.Now;
+        }
         Focused = false;
       }
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return DoesPostRender();
@@ -313,6 +364,7 @@ namespace MediaPortal.Topbar
         PostRender(timePassed, 1);
       }
     }
+
     #endregion
   }
 }

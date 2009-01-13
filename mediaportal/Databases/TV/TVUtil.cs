@@ -24,9 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using MediaPortal.Util;
 
 namespace MediaPortal.TV.Database
 {
@@ -37,7 +35,8 @@ namespace MediaPortal.TV.Database
   /// </summary>
   public class TVUtil
   {
-    int _days;
+    private int _days;
+
     public TVUtil()
     {
       _days = 1;
@@ -48,13 +47,9 @@ namespace MediaPortal.TV.Database
       _days = days;
     }
 
-
     #region IDisposable Members
 
-
     #endregion
-
-
 
     public List<TVRecording> GetRecordingTimes(TVRecording rec)
     {
@@ -73,17 +68,27 @@ namespace MediaPortal.TV.Database
         {
           TVRecording recNew = new TVRecording(rec);
           recNew.RecType = TVRecording.RecordingType.Once;
-          recNew.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+          recNew.Start =
+            Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour,
+                                               rec.StartTime.Minute, 0));
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(1);
-          recNew.End = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+          }
+          recNew.End =
+            Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute,
+                                               0));
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(-1);
+          }
           recNew.Series = true;
           if (recNew.StartTime >= DateTime.Now)
           {
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.Start;
+            }
             recordings.Add(recNew);
           }
           dtDay = dtDay.AddDays(1);
@@ -99,15 +104,25 @@ namespace MediaPortal.TV.Database
           {
             TVRecording recNew = new TVRecording(rec);
             recNew.RecType = TVRecording.RecordingType.Once;
-            recNew.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+            recNew.Start =
+              Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour,
+                                                 rec.StartTime.Minute, 0));
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
-            recNew.End = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+            }
+            recNew.End =
+              Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour,
+                                                 rec.EndTime.Minute, 0));
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.Start;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -121,24 +136,26 @@ namespace MediaPortal.TV.Database
       if (rec.RecType == TVRecording.RecordingType.WeekEnds)
       {
         List<TVProgram> progList = new List<TVProgram>();
-        TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref progList, 3, rec.Title, rec.Channel);
+        TVDatabase.SearchMinimalPrograms(Util.Utils.datetolong(dtDay), Util.Utils.datetolong(dtDay.AddDays(_days)),
+                                         ref progList, 3, rec.Title, rec.Channel);
 
         foreach (TVProgram prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-                      (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+              (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
           {
             TVRecording recNew = new TVRecording(rec);
             recNew.RecType = TVRecording.RecordingType.Once;
-            recNew.Start = MediaPortal.Util.Utils.datetolong(prog.StartTime);
-            recNew.End = MediaPortal.Util.Utils.datetolong(prog.EndTime);
+            recNew.Start = Util.Utils.datetolong(prog.StartTime);
+            recNew.End = Util.Utils.datetolong(prog.EndTime);
             recNew.Series = true;
 
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.Start;
+            }
             recordings.Add(recNew);
           }
-
         }
         return recordings;
       }
@@ -150,15 +167,25 @@ namespace MediaPortal.TV.Database
           {
             TVRecording recNew = new TVRecording(rec);
             recNew.RecType = TVRecording.RecordingType.Once;
-            recNew.Start = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+            recNew.Start =
+              Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour,
+                                                 rec.StartTime.Minute, 0));
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
-            recNew.End = MediaPortal.Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+            }
+            recNew.End =
+              Util.Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour,
+                                                 rec.EndTime.Minute, 0));
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.Start;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -171,9 +198,15 @@ namespace MediaPortal.TV.Database
 
       List<TVProgram> programs = new List<TVProgram>();
       if (rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)
-        TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref programs, 3, rec.Title, rec.Channel);
+      {
+        TVDatabase.SearchMinimalPrograms(Util.Utils.datetolong(dtDay), Util.Utils.datetolong(dtDay.AddDays(_days)),
+                                         ref programs, 3, rec.Title, rec.Channel);
+      }
       else
-        TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref programs, 3, rec.Title, string.Empty);
+      {
+        TVDatabase.SearchMinimalPrograms(Util.Utils.datetolong(dtDay), Util.Utils.datetolong(dtDay.AddDays(_days)),
+                                         ref programs, 3, rec.Title, string.Empty);
+      }
       foreach (TVProgram prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))
@@ -181,11 +214,13 @@ namespace MediaPortal.TV.Database
           TVRecording recNew = new TVRecording(rec);
           recNew.RecType = TVRecording.RecordingType.Once;
           recNew.Channel = prog.Channel;
-          recNew.Start = MediaPortal.Util.Utils.datetolong(prog.StartTime);
-          recNew.End = MediaPortal.Util.Utils.datetolong(prog.EndTime);
+          recNew.Start = Util.Utils.datetolong(prog.StartTime);
+          recNew.End = Util.Utils.datetolong(prog.EndTime);
           recNew.Series = true;
           if (rec.IsSerieIsCanceled(recNew.StartTime))
+          {
             recNew.Canceled = recNew.Start;
+          }
           recordings.Add(recNew);
         }
       }

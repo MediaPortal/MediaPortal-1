@@ -24,29 +24,28 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.HCWBlaster
 {
   /// <summary>
   /// Summary description for HCWBlasterSetupForm.
   /// </summary>
-  public class HCWBlasterSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class HCWBlasterSetupForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPButton btnOK;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    private MPLabel label1;
+    private MPButton btnOK;
+    private MPCheckBox chkExtendedLog;
+    private MPGroupBox groupBox1;
+    private MPButton btnCancel;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public HCWBlasterSetupForm()
     {
@@ -63,7 +62,7 @@ namespace MediaPortal.HCWBlaster
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         this.chkExtendedLog.Checked = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
       }
@@ -71,7 +70,7 @@ namespace MediaPortal.HCWBlaster
 
     private bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("HCWBlaster", "ExtendedLogging", this.chkExtendedLog.Checked);
       }
@@ -94,6 +93,7 @@ namespace MediaPortal.HCWBlaster
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -115,11 +115,13 @@ namespace MediaPortal.HCWBlaster
       this.label1.Size = new System.Drawing.Size(224, 29);
       this.label1.TabIndex = 6;
       this.label1.Text = "To configure the IR Blaster, use the original Hauppauge IR configuration software" +
-          ".";
+                         ".";
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(130, 118);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(72, 22);
@@ -141,9 +143,11 @@ namespace MediaPortal.HCWBlaster
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.chkExtendedLog);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -155,7 +159,9 @@ namespace MediaPortal.HCWBlaster
       // 
       // btnCancel
       // 
-      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.btnCancel.Location = new System.Drawing.Point(208, 118);
       this.btnCancel.Name = "btnCancel";
@@ -181,11 +187,11 @@ namespace MediaPortal.HCWBlaster
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void btnOK_Click(object sender, System.EventArgs e)
+    private void btnOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
       this.Close();

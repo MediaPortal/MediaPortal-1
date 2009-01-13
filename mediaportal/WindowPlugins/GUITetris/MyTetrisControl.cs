@@ -23,12 +23,10 @@
 
 #endregion
 
-using System;
 using System.Drawing;
-
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Tetris;
-
 
 /// <summary>
 /// Written by Smirnuff (smirnuff@gmail.com)
@@ -46,12 +44,44 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
   #region Properties
 
-  public int Score { get { return (m_theGame != null) ? m_theGame.Score : 0; } }
-  public int Lines { get { return (m_theGame != null) ? m_theGame.Lines : 0; } }
-  public int Level { get { return (m_theGame != null) ? m_theGame.Level : 0; } }
-  public bool Music { get { return m_bMusic; } set { m_bMusic = value; } }
-  public bool Sound { get { return m_bSounds; } set { m_bSounds = value; } }
-  public State State { get { return (m_theGame != null) ? m_theGame.State : State.Stopped; } set { if (m_theGame != null) m_theGame.State = value; } }
+  public int Score
+  {
+    get { return (m_theGame != null) ? m_theGame.Score : 0; }
+  }
+
+  public int Lines
+  {
+    get { return (m_theGame != null) ? m_theGame.Lines : 0; }
+  }
+
+  public int Level
+  {
+    get { return (m_theGame != null) ? m_theGame.Level : 0; }
+  }
+
+  public bool Music
+  {
+    get { return m_bMusic; }
+    set { m_bMusic = value; }
+  }
+
+  public bool Sound
+  {
+    get { return m_bSounds; }
+    set { m_bSounds = value; }
+  }
+
+  public State State
+  {
+    get { return (m_theGame != null) ? m_theGame.State : State.Stopped; }
+    set
+    {
+      if (m_theGame != null)
+      {
+        m_theGame.State = value;
+      }
+    }
+  }
 
   #endregion Properties
 
@@ -61,8 +91,8 @@ public class MyTetrisControl : GUIControl, IHostTetris
   {
     if (nHint != 2)
     {
-      int nX = m_nBoardX + (int)(x * m_cxBlock);
-      int nY = m_nBoardY + (int)(y * m_cyBlock);
+      int nX = m_nBoardX + (int) (x*m_cxBlock);
+      int nY = m_nBoardY + (int) (y*m_cyBlock);
 
       int nImage = ColorToBlock(color);
 
@@ -89,7 +119,7 @@ public class MyTetrisControl : GUIControl, IHostTetris
   {
     if (m_bSounds)
     {
-      MediaPortal.Util.Utils.PlaySound(strFilePath, false, true);
+      Utils.PlaySound(strFilePath, false, true);
     }
   }
 
@@ -97,7 +127,7 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
   #region Implementation
 
-  void RenderTexture(float timePassed)
+  private void RenderTexture(float timePassed)
   {
     if (IsFocused)
     {
@@ -123,7 +153,7 @@ public class MyTetrisControl : GUIControl, IHostTetris
     }
   }
 
-  void RenderText()
+  private void RenderText()
   {
     if (m_Font == null)
     {
@@ -142,12 +172,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
           m_Font.GetTextExtent(m_strPaused, ref fW, ref fH);
 
-          m_cxPaused = (int)fW;
-          m_cyPaused = (int)fH;
+          m_cxPaused = (int) fW;
+          m_cyPaused = (int) fH;
         }
 
-        int x = _positionX + ((_width - m_cxPaused) / 2);
-        int y = _positionY + ((_height - m_cyPaused) / 2);
+        int x = _positionX + ((_width - m_cxPaused)/2);
+        int y = _positionY + ((_height - m_cyPaused)/2);
 
         m_Font.DrawText(x, y - m_cyPaused, m_dwTextColor, m_strPaused, Alignment.ALIGN_LEFT, -1);
       }
@@ -160,12 +190,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
           m_Font.GetTextExtent(m_strGameOver, ref fW, ref fH);
 
-          m_cxGameOver = (int)fW;
-          m_cyGameOver = (int)fH;
+          m_cxGameOver = (int) fW;
+          m_cyGameOver = (int) fH;
         }
 
-        int x = _positionX + ((_width - m_cxGameOver) / 2);
-        int y = _positionY + ((_height - m_cyGameOver) / 2);
+        int x = _positionX + ((_width - m_cxGameOver)/2);
+        int y = _positionY + ((_height - m_cyGameOver)/2);
 
         m_Font.DrawText(x, y - m_cyGameOver, m_dwTextColor, m_strGameOver, Alignment.ALIGN_LEFT, -1);
       }
@@ -179,26 +209,47 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
         m_Font.GetTextExtent(m_strStart, ref fW, ref fH);
 
-        m_cxPressToStart = (int)fW;
-        m_cyPressToStart = (int)fH;
+        m_cxPressToStart = (int) fW;
+        m_cyPressToStart = (int) fH;
       }
 
-      int x = _positionX + ((_width - m_cxPressToStart) / 2);
-      int y = _positionY + ((_height - m_cyPressToStart) / 2);
+      int x = _positionX + ((_width - m_cxPressToStart)/2);
+      int y = _positionY + ((_height - m_cyPressToStart)/2);
 
       m_Font.DrawText(x, y - m_cyPressToStart, m_dwTextColor, m_strStart, Alignment.ALIGN_LEFT, -1);
     }
   }
 
-  int ColorToBlock(Color color)
+  private int ColorToBlock(Color color)
   {
-    if (color == Color.Red) return 0;
-    if (color == Color.Blue) return 1;
-    if (color == Color.Gray) return 2;
-    if (color == Color.Yellow) return 3;
-    if (color == Color.Cyan) return 4;
-    if (color == Color.Orange) return 5;
-    if (color == Color.Green) return 6;
+    if (color == Color.Red)
+    {
+      return 0;
+    }
+    if (color == Color.Blue)
+    {
+      return 1;
+    }
+    if (color == Color.Gray)
+    {
+      return 2;
+    }
+    if (color == Color.Yellow)
+    {
+      return 3;
+    }
+    if (color == Color.Cyan)
+    {
+      return 4;
+    }
+    if (color == Color.Orange)
+    {
+      return 5;
+    }
+    if (color == Color.Green)
+    {
+      return 6;
+    }
 
     return 0;
   }
@@ -218,7 +269,7 @@ public class MyTetrisControl : GUIControl, IHostTetris
     {
       m_theGame.Start();
 
-      GUIControl.FocusControl(_parentControlId, _controlId);
+      FocusControl(_parentControlId, _controlId);
     }
   }
 
@@ -242,12 +293,14 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
     if (m_strTexture != "" && m_strTexture != "-")
     {
-      m_imgTexture = new GUIImage(_parentControlId, 9998, _positionX, _positionY, this.Width, this.Height, m_strTexture, m_dwColorDiffuse);
+      m_imgTexture = new GUIImage(_parentControlId, 9998, _positionX, _positionY, this.Width, this.Height, m_strTexture,
+                                  m_dwColorDiffuse);
     }
 
     if (m_strTextureFocused != "" && m_strTextureFocused != "-")
     {
-      m_imgTextureFocused = new GUIImage(_parentControlId, 9999, _positionX, _positionY, this.Width, this.Height, m_strTextureFocused, m_dwColorDiffuse);
+      m_imgTextureFocused = new GUIImage(_parentControlId, 9999, _positionX, _positionY, this.Width, this.Height,
+                                         m_strTextureFocused, m_dwColorDiffuse);
     }
 
     m_imgGuide = new GUIImage[2];
@@ -255,35 +308,55 @@ public class MyTetrisControl : GUIControl, IHostTetris
     m_nBoardWidth = (m_nBoardWidth == -99999) ? this.Width : m_nBoardWidth;
     m_nBoardHeight = (m_nBoardHeight == -99999) ? this.Height : m_nBoardHeight;
 
-    m_cyBlock = m_nBoardHeight / (Game.Height + 2);
+    m_cyBlock = m_nBoardHeight/(Game.Height + 2);
     m_cxBlock = m_cyBlock;
-    m_nBoardWidth = m_cxBlock * Game.Width;
+    m_nBoardWidth = m_cxBlock*Game.Width;
 
-    m_nBoardX = (m_nBoardX == -99999) ? _positionX + ((this.Width - (m_cxBlock * Game.Width)) / 2) : m_nBoardX;
-    m_nBoardY = (m_nBoardY == -99999) ? _positionY + ((this.Height - (m_cyBlock * Game.Height)) / 2) : m_nBoardY;
+    m_nBoardX = (m_nBoardX == -99999) ? _positionX + ((this.Width - (m_cxBlock*Game.Width))/2) : m_nBoardX;
+    m_nBoardY = (m_nBoardY == -99999) ? _positionY + ((this.Height - (m_cyBlock*Game.Height))/2) : m_nBoardY;
     m_nBoardY = m_nBoardY - m_cyBlock;
 
     m_imgBlocks = new GUIImage[]
-			{
-				new GUIImage(_parentControlId, 10001, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_red.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10002, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_blue.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10003, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_gray.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10004, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_yellow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10005, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_cyan.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10006, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_orange.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10007, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_green.png", m_dwColorDiffuse),
-			};
+                    {
+                      new GUIImage(_parentControlId, 10001, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_red.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10002, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_blue.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10003, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_gray.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10004, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_yellow.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10005, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_cyan.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10006, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_orange.png", m_dwColorDiffuse),
+                      new GUIImage(_parentControlId, 10007, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                   GUIGraphicsContext.Skin + @"\media\tetris\block_green.png", m_dwColorDiffuse),
+                    };
 
     m_imgBlocksGlow = new GUIImage[]
-			{
-				new GUIImage(_parentControlId, 10011, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_red_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10012, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_blue_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10013, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_gray_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10014, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_yellow_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10015, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_cyan_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10016, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_orange_glow.png", m_dwColorDiffuse),
-				new GUIImage(_parentControlId, 10017, _positionX, _positionY, m_cxBlock, m_cyBlock, GUIGraphicsContext.Skin + @"\media\tetris\block_green_glow.png", m_dwColorDiffuse),
-			};
+                        {
+                          new GUIImage(_parentControlId, 10011, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_red_glow.png", m_dwColorDiffuse),
+                          new GUIImage(_parentControlId, 10012, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_blue_glow.png", m_dwColorDiffuse)
+                          ,
+                          new GUIImage(_parentControlId, 10013, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_gray_glow.png", m_dwColorDiffuse)
+                          ,
+                          new GUIImage(_parentControlId, 10014, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_yellow_glow.png",
+                                       m_dwColorDiffuse),
+                          new GUIImage(_parentControlId, 10015, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_cyan_glow.png", m_dwColorDiffuse)
+                          ,
+                          new GUIImage(_parentControlId, 10016, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_orange_glow.png",
+                                       m_dwColorDiffuse),
+                          new GUIImage(_parentControlId, 10017, _positionX, _positionY, m_cxBlock, m_cyBlock,
+                                       GUIGraphicsContext.Skin + @"\media\tetris\block_green_glow.png", m_dwColorDiffuse)
+                          ,
+                        };
 
     m_strStart = GUILocalizeStrings.Get(19010);
     m_strPaused = GUILocalizeStrings.Get(19011);
@@ -293,37 +366,44 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
     if (m_strTextureO != "" && m_strTextureO != "-")
     {
-      m_imgBlocksNext[0] = new GUIImage(_parentControlId, 10021, _positionX, _positionY, 0, 0, m_strTextureO, m_dwColorDiffuse);
+      m_imgBlocksNext[0] = new GUIImage(_parentControlId, 10021, _positionX, _positionY, 0, 0, m_strTextureO,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureI != "" && m_strTextureI != "-")
     {
-      m_imgBlocksNext[1] = new GUIImage(_parentControlId, 10022, _positionX, _positionY, 0, 0, m_strTextureI, m_dwColorDiffuse);
+      m_imgBlocksNext[1] = new GUIImage(_parentControlId, 10022, _positionX, _positionY, 0, 0, m_strTextureI,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureS != "" && m_strTextureS != "-")
     {
-      m_imgBlocksNext[2] = new GUIImage(_parentControlId, 10023, _positionX, _positionY, 0, 0, m_strTextureS, m_dwColorDiffuse);
+      m_imgBlocksNext[2] = new GUIImage(_parentControlId, 10023, _positionX, _positionY, 0, 0, m_strTextureS,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureZ != "" && m_strTextureZ != "-")
     {
-      m_imgBlocksNext[3] = new GUIImage(_parentControlId, 10024, _positionX, _positionY, 0, 0, m_strTextureZ, m_dwColorDiffuse);
+      m_imgBlocksNext[3] = new GUIImage(_parentControlId, 10024, _positionX, _positionY, 0, 0, m_strTextureZ,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureL != "" && m_strTextureL != "-")
     {
-      m_imgBlocksNext[4] = new GUIImage(_parentControlId, 10025, _positionX, _positionY, 0, 0, m_strTextureL, m_dwColorDiffuse);
+      m_imgBlocksNext[4] = new GUIImage(_parentControlId, 10025, _positionX, _positionY, 0, 0, m_strTextureL,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureT != "" && m_strTextureT != "-")
     {
-      m_imgBlocksNext[5] = new GUIImage(_parentControlId, 10026, _positionX, _positionY, 0, 0, m_strTextureT, m_dwColorDiffuse);
+      m_imgBlocksNext[5] = new GUIImage(_parentControlId, 10026, _positionX, _positionY, 0, 0, m_strTextureT,
+                                        m_dwColorDiffuse);
     }
 
     if (m_strTextureJ != "" && m_strTextureJ != "-")
     {
-      m_imgBlocksNext[6] = new GUIImage(_parentControlId, 10027, _positionX, _positionY, 0, 0, m_strTextureJ, m_dwColorDiffuse);
+      m_imgBlocksNext[6] = new GUIImage(_parentControlId, 10027, _positionX, _positionY, 0, 0, m_strTextureJ,
+                                        m_dwColorDiffuse);
     }
 
     if (m_imgBlocksNext != null)
@@ -339,12 +419,14 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
     if (m_strTextureLeft != "" && m_strTextureLeft != "-")
     {
-      m_imgGuide[0] = new GUIImage(_parentControlId, 9996, _positionX, _positionY, 0, 0, m_strTextureLeft, m_dwColorDiffuse);
+      m_imgGuide[0] = new GUIImage(_parentControlId, 9996, _positionX, _positionY, 0, 0, m_strTextureLeft,
+                                   m_dwColorDiffuse);
     }
 
     if (m_strTextureRight != "" && m_strTextureRight != "-")
     {
-      m_imgGuide[1] = new GUIImage(_parentControlId, 9997, _positionX, _positionY, 0, 0, m_strTextureRight, m_dwColorDiffuse);
+      m_imgGuide[1] = new GUIImage(_parentControlId, 9997, _positionX, _positionY, 0, 0, m_strTextureRight,
+                                   m_dwColorDiffuse);
     }
   }
 
@@ -387,14 +469,16 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
     if (m_imgGuide[0] != null)
     {
-      m_imgGuide[0].Height = m_nBoardHeight - (m_cyBlock * 2);
-      m_imgGuide[0].SetPosition(m_nBoardX - (m_imgGuide[0].Width + 2), ((m_nBoardY + m_cyBlock) + (Game.Height * m_cyBlock)) - m_imgGuide[0].Height);
+      m_imgGuide[0].Height = m_nBoardHeight - (m_cyBlock*2);
+      m_imgGuide[0].SetPosition(m_nBoardX - (m_imgGuide[0].Width + 2),
+                                ((m_nBoardY + m_cyBlock) + (Game.Height*m_cyBlock)) - m_imgGuide[0].Height);
     }
 
     if (m_imgGuide[1] != null)
     {
-      m_imgGuide[1].Height = m_nBoardHeight - (m_cyBlock * 2);
-      m_imgGuide[1].SetPosition(m_nBoardX + m_nBoardWidth + 2, ((m_nBoardY + m_cyBlock) + (Game.Height * m_cyBlock)) - m_imgGuide[1].Height);
+      m_imgGuide[1].Height = m_nBoardHeight - (m_cyBlock*2);
+      m_imgGuide[1].SetPosition(m_nBoardX + m_nBoardWidth + 2,
+                                ((m_nBoardY + m_cyBlock) + (Game.Height*m_cyBlock)) - m_imgGuide[1].Height);
     }
 
     if (m_imgBlocksGlow != null)
@@ -420,15 +504,15 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
         if (m_nNextBlockAlign == Alignment.ALIGN_LEFT)
         {
-          image.SetPosition(nNextBlockX, nNextBlockY - (image.Height / 2));
+          image.SetPosition(nNextBlockX, nNextBlockY - (image.Height/2));
         }
         else if (m_nNextBlockAlign == Alignment.ALIGN_CENTER)
         {
-          image.SetPosition(nNextBlockX - (image.Width / 2), nNextBlockY - (image.Height / 2));
+          image.SetPosition(nNextBlockX - (image.Width/2), nNextBlockY - (image.Height/2));
         }
         else if (m_nNextBlockAlign == Alignment.ALIGN_RIGHT)
         {
-          image.SetPosition(nNextBlockX - image.Width, nNextBlockY - (image.Height / 2));
+          image.SetPosition(nNextBlockX - image.Width, nNextBlockY - (image.Height/2));
         }
       }
     }
@@ -437,7 +521,9 @@ public class MyTetrisControl : GUIControl, IHostTetris
   public override void Render(float timePassed)
   {
     if (GUIGraphicsContext.EditMode == false && IsVisible == false)
+    {
       return;
+    }
 
     if (m_theGame != null && m_theGame.State == State.Running && IsFocused == false)
     {
@@ -501,7 +587,8 @@ public class MyTetrisControl : GUIControl, IHostTetris
         base.OnAction(action);
       }
     }
-    else if (action.wID == Action.ActionType.ACTION_SELECT_ITEM || (action.wID == Action.ActionType.ACTION_KEY_PRESSED && action.m_key.KeyCode == 0x13))
+    else if (action.wID == Action.ActionType.ACTION_SELECT_ITEM ||
+             (action.wID == Action.ActionType.ACTION_KEY_PRESSED && action.m_key.KeyCode == 0x13))
     {
       if (m_theGame == null)
       {
@@ -584,95 +671,74 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
   #region Skin variables
 
-  [XMLSkinElement("font")]
-  protected string m_strFont = "font18";
+  [XMLSkinElement("font")] protected string m_strFont = "font18";
 
-  [XMLSkinElement("textcolor")]
-  protected long m_dwTextColor = 0xFFFFFFFF;
+  [XMLSkinElement("textcolor")] protected long m_dwTextColor = 0xFFFFFFFF;
 
-  [XMLSkinElement("colordiffuse")]
-  protected long m_dwColorDiffuse = 0xFFFFFFFF;
+  [XMLSkinElement("colordiffuse")] protected long m_dwColorDiffuse = 0xFFFFFFFF;
 
-  [XMLSkinElement("texturefocus")]
-  protected string m_strTextureFocused = @"tetris\background_focus.png";
+  [XMLSkinElement("texturefocus")] protected string m_strTextureFocused = @"tetris\background_focus.png";
 
-  [XMLSkinElement("texture")]
-  protected string m_strTexture = @"tetris\background.png";
+  [XMLSkinElement("texture")] protected string m_strTexture = @"tetris\background.png";
 
-  [XMLSkinElement("textureO")]
-  protected string m_strTextureO = @"tetris\block_O.png";
+  [XMLSkinElement("textureO")] protected string m_strTextureO = @"tetris\block_O.png";
 
-  [XMLSkinElement("textureI")]
-  protected string m_strTextureI = @"tetris\block_I.png";
+  [XMLSkinElement("textureI")] protected string m_strTextureI = @"tetris\block_I.png";
 
-  [XMLSkinElement("textureS")]
-  protected string m_strTextureS = @"tetris\block_S.png";
+  [XMLSkinElement("textureS")] protected string m_strTextureS = @"tetris\block_S.png";
 
-  [XMLSkinElement("textureZ")]
-  protected string m_strTextureZ = @"tetris\block_Z.png";
+  [XMLSkinElement("textureZ")] protected string m_strTextureZ = @"tetris\block_Z.png";
 
-  [XMLSkinElement("textureL")]
-  protected string m_strTextureL = @"tetris\block_L.png";
+  [XMLSkinElement("textureL")] protected string m_strTextureL = @"tetris\block_L.png";
 
-  [XMLSkinElement("textureT")]
-  protected string m_strTextureT = @"tetris\block_T.png";
+  [XMLSkinElement("textureT")] protected string m_strTextureT = @"tetris\block_T.png";
 
-  [XMLSkinElement("textureJ")]
-  protected string m_strTextureJ = @"tetris\block_J.png";
+  [XMLSkinElement("textureJ")] protected string m_strTextureJ = @"tetris\block_J.png";
 
-  [XMLSkinElement("nextblockx")]
-  protected int m_nNextBlockX = 60;
+  [XMLSkinElement("nextblockx")] protected int m_nNextBlockX = 60;
 
-  [XMLSkinElement("nextblocky")]
-  protected int m_nNextBlockY = 60;
+  [XMLSkinElement("nextblocky")] protected int m_nNextBlockY = 60;
 
-  [XMLSkinElement("nextblockalign")]
-  protected Alignment m_nNextBlockAlign = Alignment.ALIGN_CENTER;
+  [XMLSkinElement("nextblockalign")] protected Alignment m_nNextBlockAlign = Alignment.ALIGN_CENTER;
 
-  [XMLSkinElement("textureLeft")]
-  protected string m_strTextureLeft = @"tetris\guide.png";
+  [XMLSkinElement("textureLeft")] protected string m_strTextureLeft = @"tetris\guide.png";
 
-  [XMLSkinElement("textureRight")]
-  protected string m_strTextureRight = @"tetris\guide.png";
+  [XMLSkinElement("textureRight")] protected string m_strTextureRight = @"tetris\guide.png";
 
-  [XMLSkinElement("boardx")]
-  protected int m_nBoardX = -99999;
+  [XMLSkinElement("boardx")] protected int m_nBoardX = -99999;
 
-  [XMLSkinElement("boardy")]
-  protected int m_nBoardY = -99999;
+  [XMLSkinElement("boardy")] protected int m_nBoardY = -99999;
 
-  [XMLSkinElement("boardwidth")]
-  protected int m_nBoardWidth = -99999;
+  [XMLSkinElement("boardwidth")] protected int m_nBoardWidth = -99999;
 
-  [XMLSkinElement("boardheight")]
-  protected int m_nBoardHeight = -99999;
+  [XMLSkinElement("boardheight")] protected int m_nBoardHeight = -99999;
 
   #endregion
 
   #region Member variables
 
-  Game m_theGame = null;
-  GUIFont m_Font = null;
-  GUIImage m_imgTexture = null;
-  GUIImage m_imgTextureFocused = null;
-  int m_cxPaused = 0;
-  int m_cyPaused = 0;
-  int m_cxGameOver = 0;
-  int m_cyGameOver = 0;
-  int m_cxPressToStart = 0;
-  int m_cyPressToStart = 0;
-  string m_strStart;
-  string m_strPaused;
-  string m_strGameOver;
-  bool m_bWarpEnabled = false;
-  bool m_bSounds = true;
-  bool m_bMusic = false;
-  GUIImage[] m_imgBlocks;
-  GUIImage[] m_imgBlocksGlow;
-  GUIImage[] m_imgGuide;
-  GUIImage[] m_imgBlocksNext;
-  int m_cxBlock;
-  int m_cyBlock;
+  private Game m_theGame = null;
+  private GUIFont m_Font = null;
+  private GUIImage m_imgTexture = null;
+  private GUIImage m_imgTextureFocused = null;
+  private int m_cxPaused = 0;
+  private int m_cyPaused = 0;
+  private int m_cxGameOver = 0;
+  private int m_cyGameOver = 0;
+  private int m_cxPressToStart = 0;
+  private int m_cyPressToStart = 0;
+  private string m_strStart;
+  private string m_strPaused;
+  private string m_strGameOver;
+  private bool m_bWarpEnabled = false;
+  private bool m_bSounds = true;
+  private bool m_bMusic = false;
+  private GUIImage[] m_imgBlocks;
+  private GUIImage[] m_imgBlocksGlow;
+  private GUIImage[] m_imgGuide;
+  private GUIImage[] m_imgBlocksNext;
+  private int m_cxBlock;
+  private int m_cyBlock;
 
   #endregion Member variables
 }

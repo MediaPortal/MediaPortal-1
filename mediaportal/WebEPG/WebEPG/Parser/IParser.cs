@@ -23,16 +23,15 @@
 
 #endregion
 
-using System;
 using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG.Parser
 {
-	/// <summary>
-	/// Parser Interface
-	/// </summary>
-	public interface IParser
-	{
+  /// <summary>
+  /// Parser Interface
+  /// </summary>
+  public interface IParser
+  {
     int ParseUrl(HTTPRequest site);
 
     IParserData GetData(int index);

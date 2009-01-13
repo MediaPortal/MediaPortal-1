@@ -23,23 +23,19 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class FiltersSection : MediaPortal.Configuration.SectionSettings
-	{
-		//private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		//private MediaPortal.UserInterface.Controls.MPLabel label4;
-		//private System.ComponentModel.IContainer components = null;
+  public class FiltersSection : SectionSettings
+  {
+    //private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    //private MediaPortal.UserInterface.Controls.MPLabel label4;
+    //private System.ComponentModel.IContainer components = null;
 
-		public FiltersSection() : this("DirectShow Filter Control")
-		{
-		}
+    public FiltersSection() : this("DirectShow Filter Control")
+    {
+    }
 
     private void InitializeComponent()
     {
@@ -47,14 +43,11 @@ namespace MediaPortal.Configuration.Sections
       // FiltersSection
       // 
       this.Name = "FiltersSection";
-      this.Size = new System.Drawing.Size(472, 408);
-
+      this.Size = new Size(472, 408);
     }
 
-		public FiltersSection(string name) : base(name)
-		{
-
-		}
-	}
+    public FiltersSection(string name) : base(name)
+    {
+    }
+  }
 }
-

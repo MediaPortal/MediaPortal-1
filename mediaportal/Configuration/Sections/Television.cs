@@ -26,65 +26,69 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Television : MediaPortal.Configuration.SectionSettings
+  public class Television : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButton1;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAudioRenderer;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAudioDecoder;
-    private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel labelMPEG2Decoder;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTimeShiftBuffer;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox byIndexCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox showChannelNumberCheckBox;
-    private System.Windows.Forms.Label lblChanNumMaxLen;
-    private System.Windows.Forms.NumericUpDown channelNumberMaxLengthNumUpDn;
-    bool _init = false;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTimeShift;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gAllowedModes;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNormal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom149;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowOriginal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowZoom;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowLetterbox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowSmartStretch;
-    private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel labelH264Decoder;
-    string[] aspectRatio = {
-                            "normal", 
-                            "original",
-                            "zoom", 
-                            "zoom149",  
-                            "stretch",
-                            "smartstretch",
-                            "letterbox"
-                           };
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAutoFullscreen;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAACDecoder;
-    private MediaPortal.UserInterface.Controls.MPComboBox aacAudioCodecComboBox;
+    private MPGroupBox groupBox1;
+    private MPRadioButton radioButton1;
+    private MPComboBox audioCodecComboBox;
+    private MPLabel labelAudioRenderer;
+    private MPComboBox audioRendererComboBox;
+    private MPLabel labelAudioDecoder;
+    private MPComboBox videoCodecComboBox;
+    private MPLabel labelMPEG2Decoder;
+    private MPComboBox defaultZoomModeComboBox;
+    private MPLabel label6;
+    private IContainer components = null;
+    private MPGroupBox groupBox4;
+    private MPLabel label7;
+    private MPTextBox textBoxTimeShiftBuffer;
+    private MPLabel label8;
+    private MPComboBox cbDeinterlace;
+    private MPGroupBox groupBox3;
+    private MPCheckBox byIndexCheckBox;
+    private MPCheckBox showChannelNumberCheckBox;
+    private Label lblChanNumMaxLen;
+    private NumericUpDown channelNumberMaxLengthNumUpDn;
+    private bool _init = false;
+    private MPCheckBox cbTurnOnTimeShift;
+    private MPGroupBox groupBox5;
+    private MPCheckBox cbTurnOnTv;
+    private MPGroupBox gAllowedModes;
+    private MPCheckBox cbAllowNormal;
+    private MPCheckBox cbAllowZoom149;
+    private MPCheckBox cbAllowOriginal;
+    private MPCheckBox cbAllowZoom;
+    private MPCheckBox cbAllowLetterbox;
+    private MPCheckBox cbAllowStretch;
+    private MPCheckBox cbAllowSmartStretch;
+    private MPComboBox h264videoCodecComboBox;
+    private MPLabel labelH264Decoder;
+
+    private string[] aspectRatio = {
+                                     "normal",
+                                     "original",
+                                     "zoom",
+                                     "zoom149",
+                                     "stretch",
+                                     "smartstretch",
+                                     "letterbox"
+                                   };
+
+    private MPCheckBox cbAutoFullscreen;
+    private MPLabel labelAACDecoder;
+    private MPComboBox aacAudioCodecComboBox;
     public int pluginVersion;
 
     public Television()
@@ -109,19 +113,43 @@ namespace MediaPortal.Configuration.Sections
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         //Remove Muxer's from the Video decoder list to avoid confusion.
-        while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
-        while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
-        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder")) availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableVideoFilters.Sort();
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         availableH264VideoFilters.Sort();
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         //Remove Muxer's from Audio decoder list to avoid confusion.
-        while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
-        while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
-        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder")) availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableAudioFilters.Sort();
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
         availableAACAudioFilters.Sort();
@@ -153,6 +181,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -198,15 +227,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.channelNumberMaxLengthNumUpDn)).BeginInit();
       this.groupBox5.SuspendLayout();
       this.gAllowedModes.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
       this.groupBox1.Controls.Add(this.labelAACDecoder);
       this.groupBox1.Controls.Add(this.aacAudioCodecComboBox);
@@ -231,8 +262,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 63);
@@ -250,8 +283,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // aacAudioCodecComboBox
       // 
-      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.aacAudioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 87);
@@ -261,8 +296,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // h264videoCodecComboBox
       // 
-      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.h264videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 39);
@@ -280,15 +317,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDeinterlace
       // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDeinterlace.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.BorderColor = System.Drawing.Color.Empty;
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDeinterlace.Items.AddRange(new object[] {
-            "None",
-            "Bob",
-            "Weave",
-            "Best"});
+      this.cbDeinterlace.Items.AddRange(new object[]
+                                          {
+                                            "None",
+                                            "Bob",
+                                            "Weave",
+                                            "Best"
+                                          });
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 133);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
@@ -304,18 +345,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Zoom",
-            "14:9 Zoom",
-            "Stretch",
-            "Non-linear Smart Zoom",
-            "4:3 Letterbox"});
+      this.defaultZoomModeComboBox.Items.AddRange(new object[]
+                                                    {
+                                                      "Normal",
+                                                      "Original Source Format",
+                                                      "Zoom",
+                                                      "14:9 Zoom",
+                                                      "Stretch",
+                                                      "Non-linear Smart Zoom",
+                                                      "4:3 Letterbox"
+                                                    });
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 157);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
@@ -331,8 +376,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 16);
@@ -366,8 +413,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 110);
@@ -387,8 +436,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox4.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.cbTurnOnTimeShift);
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
@@ -414,8 +465,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxTimeShiftBuffer
       // 
-      this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTimeShiftBuffer.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 43);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
@@ -434,8 +487,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
@@ -474,24 +529,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.channelNumberMaxLengthNumUpDn.AutoSize = true;
       this.channelNumberMaxLengthNumUpDn.Location = new System.Drawing.Point(178, 66);
-      this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[]
+                                                                 {
+                                                                   5,
+                                                                   0,
+                                                                   0,
+                                                                   0
+                                                                 });
+      this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[]
+                                                                 {
+                                                                   1,
+                                                                   0,
+                                                                   0,
+                                                                   0
+                                                                 });
       this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
       this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
       this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
-      this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+      this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[]
+                                                               {
+                                                                 3,
+                                                                 0,
+                                                                 0,
+                                                                 0
+                                                               });
       // 
       // lblChanNumMaxLen
       // 
@@ -504,8 +565,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox5.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -647,23 +710,30 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.channelNumberMaxLengthNumUpDn)).EndInit();
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       this.gAllowedModes.ResumeLayout(false);
       this.gAllowedModes.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void LoadSettings()
     {
-      if (_init == false) return;
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      if (_init == false)
+      {
+        return;
+      }
+      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      {
         pluginVersion = 3;
+      }
       else
+      {
         pluginVersion = 2;
+      }
 
       //Add call to enable/disable objects. 
       // test call ony
@@ -690,7 +760,7 @@ namespace MediaPortal.Configuration.Sections
       }
       // end of test call. 
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         cbAllowNormal.Checked = xmlreader.GetValueAsBool("mytv", "allowarnormal", true);
         cbAllowOriginal.Checked = xmlreader.GetValueAsBool("mytv", "allowaroriginal", true);
@@ -714,7 +784,9 @@ namespace MediaPortal.Configuration.Sections
 
         int DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
         if (DeInterlaceMode < 0 || DeInterlaceMode > 3)
+        {
           DeInterlaceMode = 3;
+        }
         cbDeinterlace.SelectedIndex = DeInterlaceMode;
         //
         // Set codecs
@@ -732,7 +804,7 @@ namespace MediaPortal.Configuration.Sections
           {
             bool Mpeg2DecFilterFound = false;
             bool DScalerFilterFound = false;
-            audioCodec = (string)availableAudioFilters[0];
+            audioCodec = (string) availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
               if (filter.Equals("MPA Decoder Filter"))
@@ -744,8 +816,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) audioCodec = "MPA Decoder Filter";
-            else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              audioCodec = "MPA Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              audioCodec = "DScaler Audio Decoder";
+            }
           }
         }
         if (videoCodec == string.Empty)
@@ -755,7 +833,7 @@ namespace MediaPortal.Configuration.Sections
           bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
-            videoCodec = (string)availableVideoFilters[0];
+            videoCodec = (string) availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
               if (filter.Equals("MPV Decoder Filter"))
@@ -767,8 +845,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) videoCodec = "MPV Decoder Filter";
-            else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              videoCodec = "MPV Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              videoCodec = "DScaler Mpeg2 Video Decoder";
+            }
           }
         }
 
@@ -778,7 +862,7 @@ namespace MediaPortal.Configuration.Sections
           bool h264DecFilterFound = false;
           if (availableH264VideoFilters.Count > 0)
           {
-            h264videoCodec = (string)availableH264VideoFilters[0];
+            h264videoCodec = (string) availableH264VideoFilters[0];
             foreach (string filter in availableH264VideoFilters)
             {
               if (filter.Equals("CoreAVC Video Decoder"))
@@ -786,7 +870,10 @@ namespace MediaPortal.Configuration.Sections
                 h264DecFilterFound = true;
               }
             }
-            if (h264DecFilterFound) h264videoCodec = "CoreAVC Video Decoder";
+            if (h264DecFilterFound)
+            {
+              h264videoCodec = "CoreAVC Video Decoder";
+            }
           }
         }
 
@@ -796,7 +883,7 @@ namespace MediaPortal.Configuration.Sections
           if (availableAACAudioFilters.Count > 0)
           {
             bool MonogramAACFound = false;
-            aacaudioCodec = (string)availableAACAudioFilters[0];
+            aacaudioCodec = (string) availableAACAudioFilters[0];
             foreach (string filter in availableAACAudioFilters)
             {
               if (filter.Equals("MONOGRAM AAC Decoder"))
@@ -804,7 +891,10 @@ namespace MediaPortal.Configuration.Sections
                 MonogramAACFound = true;
               }
             }
-            if (MonogramAACFound) aacaudioCodec = "MONOGRAM AAC Decoder";
+            if (MonogramAACFound)
+            {
+              aacaudioCodec = "MONOGRAM AAC Decoder";
+            }
           }
         }
         audioCodecComboBox.Text = audioCodec;
@@ -831,11 +921,16 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (cbDeinterlace.SelectedIndex >= 0)
+        {
           xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
+        }
 
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
         xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
@@ -849,7 +944,9 @@ namespace MediaPortal.Configuration.Sections
           int buffer = Int32.Parse(textBoxTimeShiftBuffer.Text);
           xmlwriter.SetValue("capture", "timeshiftbuffer", buffer.ToString());
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         xmlwriter.SetValue("mytv", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
         //
         // Set codecs
@@ -885,7 +982,9 @@ namespace MediaPortal.Configuration.Sections
     private void cbAutoFullscreen_CheckedChanged(object sender, EventArgs e)
     {
       if (cbAutoFullscreen.Checked)
+      {
         cbTurnOnTv.Checked = true;
+      }
     }
   }
 }

@@ -23,12 +23,9 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal.GUI.TV
 {
@@ -37,26 +34,18 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITVCompressSettings : GUIWindow
   {
-    [SkinControlAttribute(3)]
-    protected GUISpinControl spinType = null;
-    [SkinControlAttribute(5)]
-    protected GUISpinControl spinQuality = null;
-    [SkinControlAttribute(7)]
-    protected GUISpinControl spinScreenSize = null;
-    [SkinControlAttribute(9)]
-    protected GUISpinControl spinFPS = null;
-    [SkinControlAttribute(11)]
-    protected GUISpinControl spinBitrate = null;
-    [SkinControlAttribute(13)]
-    protected GUISpinControl spinPriority = null;
-    [SkinControlAttribute(15)]
-    protected GUICheckMarkControl checkDeleteOriginal = null;
-    [SkinControlAttribute(17)]
-    protected GUISpinControl spinStandard = null;
+    [SkinControl(3)] protected GUISpinControl spinType = null;
+    [SkinControl(5)] protected GUISpinControl spinQuality = null;
+    [SkinControl(7)] protected GUISpinControl spinScreenSize = null;
+    [SkinControl(9)] protected GUISpinControl spinFPS = null;
+    [SkinControl(11)] protected GUISpinControl spinBitrate = null;
+    [SkinControl(13)] protected GUISpinControl spinPriority = null;
+    [SkinControl(15)] protected GUICheckMarkControl checkDeleteOriginal = null;
+    [SkinControl(17)] protected GUISpinControl spinStandard = null;
 
     public GUITVCompressSettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS;
+      GetID = (int) Window.WINDOW_TV_COMPRESS_SETTINGS;
     }
 
     public override bool Init()
@@ -70,9 +59,9 @@ namespace MediaPortal.GUI.TV
       LoadSettings();
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         spinType.Value = xmlreader.GetValueAsInt("compression", "type", 0);
         spinQuality.Value = xmlreader.GetValueAsInt("compression", "quality", 3);
@@ -86,9 +75,9 @@ namespace MediaPortal.GUI.TV
       UpdateButtons();
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("compression", "type", spinType.Value);
         xmlreader.SetValue("compression", "quality", spinQuality.Value);
@@ -106,18 +95,24 @@ namespace MediaPortal.GUI.TV
       base.OnAction(action);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == spinType)
+      {
         UpdateButtons();
+      }
       if (control == spinQuality)
+      {
         UpdateProfiles();
+      }
       if (control == spinStandard)
+      {
         UpdateProfiles();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
-    void UpdateButtons()
+    private void UpdateButtons()
     {
       bool isMpeg2 = (spinType.Value == 0);
       bool isWMV = (spinType.Value == 1);
@@ -146,11 +141,11 @@ namespace MediaPortal.GUI.TV
       }*/
     }
 
-    void UpdateProfiles()
+    private void UpdateProfiles()
     {
       switch (spinQuality.Value)
       {
-        case 0:  //Portable
+        case 0: //Portable
           spinBitrate.Value = 0; //100kbs
           if (spinStandard.Value == 0)
           {
@@ -168,7 +163,7 @@ namespace MediaPortal.GUI.TV
             spinScreenSize.Value = 1; //288x216 (PAL)
           }
           break;
-        case 1:  //Low
+        case 1: //Low
           if (spinStandard.Value == 0)
           {
             spinFPS.Value = 2; //23.97fps (Film)
@@ -186,7 +181,7 @@ namespace MediaPortal.GUI.TV
           }
           spinBitrate.Value = 1; //256kbs
           break;
-        case 2:  //Medium
+        case 2: //Medium
           spinBitrate.Value = 2; //384kbs
           spinScreenSize.Value = 4; //640x480
           if (spinStandard.Value == 0)
@@ -202,7 +197,7 @@ namespace MediaPortal.GUI.TV
             spinFPS.Value = 3; //25fps (PAL)
           }
           break;
-        case 3:  //High
+        case 3: //High
           spinBitrate.Value = 3; //768kbs
           if (spinStandard.Value == 0)
           {
@@ -220,7 +215,7 @@ namespace MediaPortal.GUI.TV
             spinScreenSize.Value = 6; //720x576 (PAL)
           }
           break;
-        case 4:  //Very High
+        case 4: //Very High
           spinBitrate.Value = 4; //1536kbs
           if (spinStandard.Value == 0)
           {
@@ -238,7 +233,7 @@ namespace MediaPortal.GUI.TV
             spinScreenSize.Value = 6; //720x576 (PAL)
           }
           break;
-        case 5:  //HiDef
+        case 5: //HiDef
           spinBitrate.Value = 5; //3072kbs
           if (spinStandard.Value == 0)
           {

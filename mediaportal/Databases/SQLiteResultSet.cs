@@ -23,94 +23,86 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
+
 namespace SQLite.NET
 {
-	public class SQLiteResultSet
-	{
+  public class SQLiteResultSet
+  {
     public class Row
     {
       public List<string> fields = new List<string>();
     }
 
-		// Fields
-		private Hashtable columnIndexes;
-		internal List<string> columnNames;
-		internal List<Row> rowData;
-		public string LastCommand;
+    // Fields
+    private Hashtable columnIndexes;
+    internal List<string> columnNames;
+    internal List<Row> rowData;
+    public string LastCommand;
 
-		// Methods
-		public SQLiteResultSet()
-		{
-			this.columnIndexes = new Hashtable();
+    // Methods
+    public SQLiteResultSet()
+    {
+      this.columnIndexes = new Hashtable();
       this.columnNames = new List<string>();
       this.rowData = new List<Row>();
-		}
- 
+    }
 
-		public ArrayList GetColumn(int columnIndex)
-		{
-			ArrayList list1 = new ArrayList();
-			if (this.columnNames.Count >= (columnIndex + 1))
-			{
-				foreach (Row list2 in this.rowData)
-				{
-					  list1.Add(list2.fields[columnIndex]);
-				}
-			}
-			return list1;
-		}
- 
 
-		public ArrayList GetColumn(string columnName)
-		{
-			if (this.columnIndexes.ContainsKey(columnName))
-			{
-				return this.GetColumn((int) this.columnIndexes[columnName]);
-			}
-			return new ArrayList();
-		}
- 
-		public string GetField(int rowIndex, int columnIndex)
-		{
-			if ((this.rowData.Count >= (rowIndex + 1)) && (this.ColumnNames.Count >= (columnIndex + 1)))
-			{
+    public ArrayList GetColumn(int columnIndex)
+    {
+      ArrayList list1 = new ArrayList();
+      if (this.columnNames.Count >= (columnIndex + 1))
+      {
+        foreach (Row list2 in this.rowData)
+        {
+          list1.Add(list2.fields[columnIndex]);
+        }
+      }
+      return list1;
+    }
+
+
+    public ArrayList GetColumn(string columnName)
+    {
+      if (this.columnIndexes.ContainsKey(columnName))
+      {
+        return this.GetColumn((int) this.columnIndexes[columnName]);
+      }
+      return new ArrayList();
+    }
+
+    public string GetField(int rowIndex, int columnIndex)
+    {
+      if ((this.rowData.Count >= (rowIndex + 1)) && (this.ColumnNames.Count >= (columnIndex + 1)))
+      {
         Row list1 = this.GetRow(rowIndex);
-				return list1.fields[columnIndex].ToString();
-			}
-			return "";
-		}
+        return list1.fields[columnIndex].ToString();
+      }
+      return "";
+    }
 
-		public Row GetRow(int rowIndex)
-		{
-			if (this.rowData.Count >= (rowIndex + 1))
-			{
-				return this.rowData[rowIndex];
-			}
-			return null;
-		}
- 
- 
+    public Row GetRow(int rowIndex)
+    {
+      if (this.rowData.Count >= (rowIndex + 1))
+      {
+        return this.rowData[rowIndex];
+      }
+      return null;
+    }
 
 
-		// Properties
-		public List<string> ColumnNames
-		{
-			get
-			{
-				return this.columnNames;
-			}
-		}
-		public Hashtable ColumnIndices
-		{
-			get
-			{
-				return this.columnIndexes;
-			}
-		}
+    // Properties
+    public List<string> ColumnNames
+    {
+      get { return this.columnNames; }
+    }
 
+    public Hashtable ColumnIndices
+    {
+      get { return this.columnIndexes; }
+    }
 
 
     public ArrayList RowsList
@@ -118,7 +110,7 @@ namespace SQLite.NET
       get
       {
         ArrayList rows = new ArrayList();
-        foreach(Row row in this.rowData)
+        foreach (Row row in this.rowData)
         {
           ArrayList cols = new ArrayList();
           foreach (string field in row.fields)
@@ -130,18 +122,11 @@ namespace SQLite.NET
         return rows;
       }
     }
- 
 
-		public List<Row> Rows
-		{
-			get
-			{
-				return this.rowData;
-			}
-		}
- 
 
-	}
- 
-
+    public List<Row> Rows
+    {
+      get { return this.rowData; }
+    }
+  }
 }

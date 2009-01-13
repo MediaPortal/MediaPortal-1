@@ -33,7 +33,6 @@ namespace MediaPortal.TV.Recording
   /// </summary>
   public class TSHelperTools
   {
-
     public struct TSHeader
     {
       public int SyncByte;
@@ -65,7 +64,9 @@ namespace MediaPortal.TV.Recording
       TSHeader header = new TSHeader();
       header.SyncByte = data[0]; // indicates header is not valid
       if (data[0] != 0x47)
-        return header;// no ts-header, return
+      {
+        return header; // no ts-header, return
+      }
       header.SyncByte = data[0];
       header.TransportError = (data[1] & 0x80) > 0 ? true : false;
       header.PayloadUnitStart = (data[1] & 0x40) > 0 ? true : false;
@@ -79,12 +80,15 @@ namespace MediaPortal.TV.Recording
       header.SectionLen = ((data[6] - 0x70) << 8) + data[7];
       return header;
     }
+
     public TSHeader GetHeader(byte[] data)
     {
       TSHeader header = new TSHeader();
       header.SyncByte = data[0]; // indicates header is not valid
       if (data[0] != 0x47)
-        return header;// no ts-header, return
+      {
+        return header; // no ts-header, return
+      }
       header.SyncByte = data[0];
       header.TransportError = (data[1] & 0x80) > 0 ? true : false;
       header.PayloadUnitStart = (data[1] & 0x40) > 0 ? true : false;

@@ -27,7 +27,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using CreateFlags = Microsoft.DirectX.Direct3D.CreateFlags;
 using Microsoft.DirectX.Direct3D;
 
 namespace WPFMediaKit.DirectX
@@ -35,10 +34,10 @@ namespace WPFMediaKit.DirectX
   [StructLayout(LayoutKind.Sequential)]
   public struct D3DDEVICE_CREATION_PARAMETERS
   {
-    uint AdapterOrdinal;
-    DeviceType DeviceType;
-    IntPtr hFocusWindow;
-    int BehaviorFlags;
+    private uint AdapterOrdinal;
+    private DeviceType DeviceType;
+    private IntPtr hFocusWindow;
+    private int BehaviorFlags;
   }
 
   public enum D3DSCANLINEORDERING
@@ -60,12 +59,12 @@ namespace WPFMediaKit.DirectX
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
-  Guid("02177241-69FC-400C-8FF1-93A44DF6861D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("02177241-69FC-400C-8FF1-93A44DF6861D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDirect3D9Ex : IDirect3D9
   {
     [PreserveSig]
-    new int RegisterSoftwareDevice([In, Out]IntPtr pInitializeFunction);
+    new int RegisterSoftwareDevice([In, Out] IntPtr pInitializeFunction);
 
     [PreserveSig]
     new int GetAdapterCount();
@@ -80,9 +79,10 @@ namespace WPFMediaKit.DirectX
     new int EnumAdapterModes(uint Adapter, D3DFORMAT Format, uint Mode, [Out] out D3DDISPLAYMODE pMode);
 
     [PreserveSig]
-    new int GetAdapterDisplayMode(ushort Adapter, [Out]out D3DFORMAT Format);
+    new int GetAdapterDisplayMode(ushort Adapter, [Out] out D3DFORMAT Format);
 
     #region Method Placeholders
+
     [PreserveSig]
     new int CheckDeviceType();
 
@@ -100,6 +100,7 @@ namespace WPFMediaKit.DirectX
 
     [PreserveSig]
     new int GetDeviceCaps();
+
     #endregion
 
     [PreserveSig]
@@ -107,12 +108,11 @@ namespace WPFMediaKit.DirectX
 
     [PreserveSig]
     new int CreateDevice(int Adapter,
-                      DeviceType DeviceType,
-                      IntPtr hFocusWindow,
-                      CreateFlags BehaviorFlags,
-                      [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters,
-                      [Out]out IntPtr ppReturnedDeviceInterface);
+                         DeviceType DeviceType,
+                         IntPtr hFocusWindow,
+                         CreateFlags BehaviorFlags,
+                         [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+                         [Out] out IntPtr ppReturnedDeviceInterface);
 
     [PreserveSig]
     uint GetAdapterModeCountEx();
@@ -125,14 +125,12 @@ namespace WPFMediaKit.DirectX
 
     [PreserveSig]
     int CreateDeviceEx(int Adapter,
-                      DeviceType DeviceType,
-                      IntPtr hFocusWindow,
-                      CreateFlags BehaviorFlags,
-                      [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters,
-                      [In, Out]
-                          IntPtr pFullscreenDisplayMode,
-                      [Out]out IntPtr ppReturnedDeviceInterface);
+                       DeviceType DeviceType,
+                       IntPtr hFocusWindow,
+                       CreateFlags BehaviorFlags,
+                       [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+                       [In, Out] IntPtr pFullscreenDisplayMode,
+                       [Out] out IntPtr ppReturnedDeviceInterface);
 
     int GetAdapterLUID();
 
@@ -141,12 +139,12 @@ namespace WPFMediaKit.DirectX
   }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
-  Guid("81BDCBCA-64D4-426d-AE8D-AD0147F4275C"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("81BDCBCA-64D4-426d-AE8D-AD0147F4275C"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDirect3D9
   {
     [PreserveSig]
-    int RegisterSoftwareDevice([In, Out]IntPtr pInitializeFunction);
+    int RegisterSoftwareDevice([In, Out] IntPtr pInitializeFunction);
 
     [PreserveSig]
     int GetAdapterCount();
@@ -161,9 +159,10 @@ namespace WPFMediaKit.DirectX
     int EnumAdapterModes(uint Adapter, D3DFORMAT Format, uint Mode, [Out] out D3DDISPLAYMODE pMode);
 
     [PreserveSig]
-    int GetAdapterDisplayMode(ushort Adapter, [Out]out D3DFORMAT Format);
+    int GetAdapterDisplayMode(ushort Adapter, [Out] out D3DFORMAT Format);
 
     #region Method Placeholders
+
     [PreserveSig]
     int CheckDeviceType();
 
@@ -181,6 +180,7 @@ namespace WPFMediaKit.DirectX
 
     [PreserveSig]
     int GetDeviceCaps();
+
     #endregion
 
     [PreserveSig]
@@ -188,12 +188,11 @@ namespace WPFMediaKit.DirectX
 
     [PreserveSig]
     int CreateDevice(int Adapter,
-                      DeviceType DeviceType,
-                      IntPtr hFocusWindow,
-                      CreateFlags BehaviorFlags,
-                      [In, Out]
-                          ref D3DPRESENT_PARAMETERS pPresentationParameters,
-                      [Out]out IntPtr ppReturnedDeviceInterface);
+                     DeviceType DeviceType,
+                     IntPtr hFocusWindow,
+                     CreateFlags BehaviorFlags,
+                     [In, Out] ref D3DPRESENT_PARAMETERS pPresentationParameters,
+                     [Out] out IntPtr ppReturnedDeviceInterface);
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -293,12 +292,12 @@ namespace WPFMediaKit.DirectX
   public class Direct3D
   {
     [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9", CallingConvention = CallingConvention.StdCall),
-    SuppressUnmanagedCodeSecurity]
+     SuppressUnmanagedCodeSecurity]
     [return: MarshalAs(UnmanagedType.Interface)]
     public static extern IDirect3D9 Direct3DCreate9(ushort SDKVersion);
 
     [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9Ex", CallingConvention = CallingConvention.StdCall),
-    SuppressUnmanagedCodeSecurity]
-    public static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out]out IDirect3D9Ex ex);
+     SuppressUnmanagedCodeSecurity]
+    public static extern int Direct3DCreate9Ex(ushort SDKVersion, [Out] out IDirect3D9Ex ex);
   }
 }

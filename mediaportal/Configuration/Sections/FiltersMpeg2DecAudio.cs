@@ -24,47 +24,44 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using DShowNET;
-using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersMPEG2DecAudio : MediaPortal.Configuration.SectionSettings
+  public class FiltersMPEG2DecAudio : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm16Bit;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm24Bit;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm32Bit;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonIeee;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNormalize;
-    private System.Windows.Forms.TrackBar trackBarBoost;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAc3Speakers;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAc3Spdif;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAc3DynamicRange;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAc3SpeakerConfig;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAc3Lfe;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDtsSpeakerConfig;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDtsDynamicRange;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDtsSpdif;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDtsSpeakers;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDtsLfe;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAacDownmix;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDtsDecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxFormat;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAc3DecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAacDecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBoost;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAacDynamic;
+    private MPRadioButton radioButtonPcm16Bit;
+    private MPRadioButton radioButtonPcm24Bit;
+    private MPRadioButton radioButtonPcm32Bit;
+    private MPRadioButton radioButtonIeee;
+    private MPCheckBox checkBoxNormalize;
+    private TrackBar trackBarBoost;
+    private MPLabel label2;
+    private MPRadioButton radioButtonAc3Speakers;
+    private MPRadioButton radioButtonAc3Spdif;
+    private MPCheckBox checkBoxAc3DynamicRange;
+    private MPComboBox comboBoxAc3SpeakerConfig;
+    private MPCheckBox checkBoxAc3Lfe;
+    private MPComboBox comboBoxDtsSpeakerConfig;
+    private MPCheckBox checkBoxDtsDynamicRange;
+    private MPRadioButton radioButtonDtsSpdif;
+    private MPRadioButton radioButtonDtsSpeakers;
+    private MPCheckBox checkBoxDtsLfe;
+    private MPCheckBox checkBoxAacDownmix;
+    private MPGroupBox groupBoxDtsDecoderSettings;
+    private MPGroupBox groupBoxFormat;
+    private MPGroupBox groupBoxAc3DecoderSettings;
+    private MPGroupBox groupBoxAacDecoderSettings;
+    private MPLabel labelBoost;
+    private MPCheckBox checkBoxAacDynamic;
     private Label labelBoostValue;
-    private System.ComponentModel.IContainer components = null;
+    private IContainer components = null;
 
 
     /// <summary>
@@ -81,7 +78,6 @@ namespace MediaPortal.Configuration.Sections
     public FiltersMPEG2DecAudio(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
     }
@@ -102,6 +98,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -135,22 +132,26 @@ namespace MediaPortal.Configuration.Sections
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxAc3DecoderSettings.SuspendLayout();
       this.groupBoxFormat.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarBoost)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarBoost)).BeginInit();
       this.groupBoxDtsDecoderSettings.SuspendLayout();
       this.groupBoxAacDecoderSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBoxAc3DecoderSettings
       // 
-      this.groupBoxAc3DecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAc3DecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAc3DecoderSettings.Controls.Add(this.radioButtonAc3Spdif);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.radioButtonAc3Speakers);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.checkBoxAc3Lfe);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.comboBoxAc3SpeakerConfig);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.checkBoxAc3DynamicRange);
       this.groupBoxAc3DecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAc3DecoderSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.groupBoxAc3DecoderSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                                     System.Drawing.FontStyle.Regular,
+                                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.groupBoxAc3DecoderSettings.Location = new System.Drawing.Point(0, 0);
       this.groupBoxAc3DecoderSettings.Name = "groupBoxAc3DecoderSettings";
       this.groupBoxAc3DecoderSettings.Size = new System.Drawing.Size(472, 104);
@@ -185,7 +186,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAc3Lfe
       // 
-      this.checkBoxAc3Lfe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxAc3Lfe.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxAc3Lfe.AutoSize = true;
       this.checkBoxAc3Lfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAc3Lfe.Location = new System.Drawing.Point(413, 24);
@@ -197,21 +200,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAc3SpeakerConfig
       // 
-      this.comboBoxAc3SpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAc3SpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAc3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxAc3SpeakerConfig.Items.AddRange(new object[] {
-            "Dual Mono",
-            "Mono",
-            "Stereo",
-            "3 Front",
-            "2 Front + 1 Rear",
-            "3 Front + 1 Rear",
-            "2 Front + 2 Rear",
-            "3 Front + 2 Rear",
-            "Channel 1",
-            "Channel 2",
-            "Dolby Stereo"});
+      this.comboBoxAc3SpeakerConfig.Items.AddRange(new object[]
+                                                     {
+                                                       "Dual Mono",
+                                                       "Mono",
+                                                       "Stereo",
+                                                       "3 Front",
+                                                       "2 Front + 1 Rear",
+                                                       "3 Front + 1 Rear",
+                                                       "2 Front + 2 Rear",
+                                                       "3 Front + 2 Rear",
+                                                       "Channel 1",
+                                                       "Channel 2",
+                                                       "Dolby Stereo"
+                                                     });
       this.comboBoxAc3SpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxAc3SpeakerConfig.Name = "comboBoxAc3SpeakerConfig";
       this.comboBoxAc3SpeakerConfig.Size = new System.Drawing.Size(240, 21);
@@ -230,8 +237,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxFormat
       // 
-      this.groupBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFormat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFormat.Controls.Add(this.labelBoostValue);
       this.groupBoxFormat.Controls.Add(this.labelBoost);
       this.groupBoxFormat.Controls.Add(this.radioButtonPcm16Bit);
@@ -250,7 +259,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelBoostValue
       // 
-      this.labelBoostValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelBoostValue.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelBoostValue.Location = new System.Drawing.Point(336, 51);
       this.labelBoostValue.Name = "labelBoostValue";
       this.labelBoostValue.Size = new System.Drawing.Size(26, 23);
@@ -325,8 +336,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarBoost
       // 
-      this.trackBarBoost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarBoost.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBoost.Location = new System.Drawing.Point(48, 52);
       this.trackBarBoost.Maximum = 100;
       this.trackBarBoost.Name = "trackBarBoost";
@@ -337,8 +350,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxDtsDecoderSettings
       // 
-      this.groupBoxDtsDecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDtsDecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDtsDecoderSettings.Controls.Add(this.radioButtonDtsSpdif);
       this.groupBoxDtsDecoderSettings.Controls.Add(this.radioButtonDtsSpeakers);
       this.groupBoxDtsDecoderSettings.Controls.Add(this.checkBoxDtsLfe);
@@ -379,7 +394,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxDtsLfe
       // 
-      this.checkBoxDtsLfe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxDtsLfe.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxDtsLfe.AutoSize = true;
       this.checkBoxDtsLfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDtsLfe.Location = new System.Drawing.Point(413, 24);
@@ -391,18 +408,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDtsSpeakerConfig
       // 
-      this.comboBoxDtsSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDtsSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDtsSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDtsSpeakerConfig.Items.AddRange(new object[] {
-            "Mono",
-            "Dual Mono",
-            "Stereo",
-            "3 Front",
-            "2 Front + 1 Rear",
-            "3 Front + 1 Rear",
-            "2 Front + 2 Rear",
-            "3 Front + 2 Rear"});
+      this.comboBoxDtsSpeakerConfig.Items.AddRange(new object[]
+                                                     {
+                                                       "Mono",
+                                                       "Dual Mono",
+                                                       "Stereo",
+                                                       "3 Front",
+                                                       "2 Front + 1 Rear",
+                                                       "3 Front + 1 Rear",
+                                                       "2 Front + 2 Rear",
+                                                       "3 Front + 2 Rear"
+                                                     });
       this.comboBoxDtsSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxDtsSpeakerConfig.Name = "comboBoxDtsSpeakerConfig";
       this.comboBoxDtsSpeakerConfig.Size = new System.Drawing.Size(240, 21);
@@ -421,8 +442,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAacDecoderSettings
       // 
-      this.groupBoxAacDecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAacDecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDynamic);
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDownmix);
       this.groupBoxAacDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -477,14 +500,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAc3DecoderSettings.PerformLayout();
       this.groupBoxFormat.ResumeLayout(false);
       this.groupBoxFormat.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarBoost)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarBoost)).EndInit();
       this.groupBoxDtsDecoderSettings.ResumeLayout(false);
       this.groupBoxDtsDecoderSettings.PerformLayout();
       this.groupBoxAacDecoderSettings.ResumeLayout(false);
       this.groupBoxAacDecoderSettings.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void OnSectionActivated()
@@ -496,43 +519,64 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder"))
+      {
         if (subkey != null)
         {
           try
           {
             int regValue;
 
-            regValue = (int)subkey.GetValue("AacSpeakerConfig");
+            regValue = (int) subkey.GetValue("AacSpeakerConfig");
             if (regValue == 1)
+            {
               checkBoxAacDownmix.Checked = true;
+            }
             else
+            {
               checkBoxAacDownmix.Checked = false;
+            }
 
-            regValue = (int)subkey.GetValue("AacDynamicRangeControl");
+            regValue = (int) subkey.GetValue("AacDynamicRangeControl");
             if (regValue == 1)
+            {
               checkBoxAacDynamic.Checked = true;
+            }
             else
+            {
               checkBoxAacDynamic.Checked = false;
+            }
 
-            regValue = (int)subkey.GetValue("Ac3DynamicRangeControl");
+            regValue = (int) subkey.GetValue("Ac3DynamicRangeControl");
             if (regValue == 1)
+            {
               checkBoxAc3DynamicRange.Checked = true;
+            }
             else
+            {
               checkBoxAc3DynamicRange.Checked = false;
+            }
 
-            regValue = (int)subkey.GetValue("DtsDynamicRangeControl");
+            regValue = (int) subkey.GetValue("DtsDynamicRangeControl");
             if (regValue == 1)
+            {
               checkBoxDtsDynamicRange.Checked = true;
+            }
             else
+            {
               checkBoxDtsDynamicRange.Checked = false;
+            }
 
-            regValue = (int)subkey.GetValue("Normalize");
+            regValue = (int) subkey.GetValue("Normalize");
             if (regValue == 1)
+            {
               checkBoxNormalize.Checked = true;
+            }
             else
+            {
               checkBoxNormalize.Checked = false;
+            }
 
-            regValue = (int)subkey.GetValue("Ac3SpeakerConfig");
+            regValue = (int) subkey.GetValue("Ac3SpeakerConfig");
             if (regValue < 27)
             {
               if (regValue > 11)
@@ -541,27 +585,31 @@ namespace MediaPortal.Configuration.Sections
                 checkBoxAc3Lfe.Checked = true;
               }
               else
+              {
                 checkBoxAc3Lfe.Checked = false;
+              }
 
               if (regValue > -1)
               {
-                comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
+                comboBoxAc3SpeakerConfig.SelectedIndex = (int) regValue;
                 radioButtonAc3Speakers.Checked = (regValue >= 0);
               }
               else
               {
-                regValue = (regValue * -1);
-                comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
+                regValue = (regValue*-1);
+                comboBoxAc3SpeakerConfig.SelectedIndex = (int) regValue;
                 radioButtonAc3Spdif.Checked = true;
               }
             }
             else
+            {
               radioButtonAc3Spdif.Checked = true;
+            }
 
             /// Evaluating DTS Settings
             /// If S/PDIF is enabled Gabest adds a negative sign to the speaker selection
             /// therefore he can "remember" which settings have been used earlier
-            regValue = (int)subkey.GetValue("DtsSpeakerConfig");
+            regValue = (int) subkey.GetValue("DtsSpeakerConfig");
             if (regValue < 139)
             {
               if (regValue > 11)
@@ -570,31 +618,47 @@ namespace MediaPortal.Configuration.Sections
                 checkBoxDtsLfe.Checked = true;
               }
               else
+              {
                 checkBoxDtsLfe.Checked = false;
+              }
 
               if (regValue > -1)
               {
-                if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
-                else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
+                if ((int) regValue < 3)
+                {
+                  comboBoxDtsSpeakerConfig.SelectedIndex = (int) regValue;
+                }
+                else
+                {
+                  comboBoxDtsSpeakerConfig.SelectedIndex = (int) regValue - 2;
+                }
                 radioButtonDtsSpeakers.Checked = (regValue >= 0);
               }
               else
               {
-                regValue = (regValue * -1);
-                if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
-                else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
+                regValue = (regValue*-1);
+                if ((int) regValue < 3)
+                {
+                  comboBoxDtsSpeakerConfig.SelectedIndex = (int) regValue;
+                }
+                else
+                {
+                  comboBoxDtsSpeakerConfig.SelectedIndex = (int) regValue - 2;
+                }
                 radioButtonDtsSpdif.Checked = true;
               }
             }
             else
+            {
               radioButtonDtsSpdif.Checked = true;
+            }
 
-            regValue = (int)subkey.GetValue("Boost");
-            trackBarBoost.Value = (int)regValue;
+            regValue = (int) subkey.GetValue("Boost");
+            trackBarBoost.Value = (int) regValue;
             labelBoostValue.Text = trackBarBoost.Value.ToString();
 
 
-            regValue = (int)subkey.GetValue("SampleFormat");
+            regValue = (int) subkey.GetValue("SampleFormat");
             switch (regValue)
             {
               case 0:
@@ -619,11 +683,13 @@ namespace MediaPortal.Configuration.Sections
             Log.Info("Exception while loading MPA settings: {0}", ex.Message);
           }
         }
+      }
     }
 
     public override void SaveSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder"))
+      {
         if (subkey != null)
         {
           try
@@ -631,47 +697,77 @@ namespace MediaPortal.Configuration.Sections
             Int32 regValue;
 
             if (checkBoxAacDownmix.Checked)
+            {
               regValue = 1;
+            }
             else
+            {
               regValue = 0;
+            }
             subkey.SetValue("AacSpeakerConfig", regValue, RegistryValueKind.DWord);
 
             if (checkBoxAacDynamic.Checked)
+            {
               regValue = 1;
+            }
             else
+            {
               regValue = 0;
+            }
             subkey.SetValue("AacDynamicRangeControl", regValue, RegistryValueKind.DWord);
 
             if (checkBoxAc3DynamicRange.Checked)
+            {
               regValue = 1;
+            }
             else
+            {
               regValue = 0;
+            }
             subkey.SetValue("Ac3DynamicRangeControl", regValue, RegistryValueKind.DWord);
 
             if (checkBoxDtsDynamicRange.Checked)
+            {
               regValue = 1;
+            }
             else
+            {
               regValue = 0;
+            }
             subkey.SetValue("DtsDynamicRangeControl", regValue, RegistryValueKind.DWord);
 
             if (checkBoxNormalize.Checked)
+            {
               regValue = 1;
+            }
             else
+            {
               regValue = 0;
+            }
             subkey.SetValue("Normalize", regValue, RegistryValueKind.DWord);
 
             /// not using unchecked leads to Registry ArgumentException as this is near UInt32.MaxValue
             /// but Gabest expects this and Windows doesn't moan ;-)
             if (radioButtonAc3Spdif.Checked)
-              subkey.SetValue("Ac3SpeakerConfig", unchecked((Int32)4294967289), RegistryValueKind.DWord);
+            {
+              subkey.SetValue("Ac3SpeakerConfig", unchecked((Int32) 4294967289), RegistryValueKind.DWord);
+            }
             else
             {
               if (comboBoxAc3SpeakerConfig.SelectedIndex == -1) // for missing first time defaults of MPA
+              {
                 comboBoxAc3SpeakerConfig.SelectedIndex = 2;
+              }
               if (checkBoxAc3Lfe.Checked)
-                subkey.SetValue("Ac3SpeakerConfig", (int)(comboBoxAc3SpeakerConfig.SelectedIndex + 16), RegistryValueKind.DWord);
+              {
+                subkey.SetValue("Ac3SpeakerConfig", (int) (comboBoxAc3SpeakerConfig.SelectedIndex + 16),
+                                RegistryValueKind.DWord);
+              }
               else
-                subkey.SetValue("Ac3SpeakerConfig", (int)comboBoxAc3SpeakerConfig.SelectedIndex, RegistryValueKind.DWord);
+              {
+                subkey.SetValue("Ac3SpeakerConfig", (int) comboBoxAc3SpeakerConfig.SelectedIndex,
+                                RegistryValueKind.DWord);
+              }
             }
 
 
@@ -679,43 +775,63 @@ namespace MediaPortal.Configuration.Sections
             int DTSRegValue;
             int DTSConfig = comboBoxDtsSpeakerConfig.SelectedIndex;
             if (DTSConfig < 3)
+            {
               DTSRegValue = DTSConfig;
+            }
             else
+            {
               DTSRegValue = (DTSConfig + 2);
+            }
 
             if (radioButtonDtsSpdif.Checked)
             {
               if (DTSRegValue >= 0)
-                DTSRegValue = (DTSRegValue * -1);
+              {
+                DTSRegValue = (DTSRegValue*-1);
+              }
               SPDIFSetting = Convert.ToSingle(DTSRegValue);
               //MediaPortal.GUI.Library.Log.Info("DEBUG: Write S/PDIF-DTSSpeakerConfig: {0}", SPDIFSetting.ToString());
               //This didn't work but Gabest uses a type overflow well knowing that the values subtract from MaxValue after this
               //subkey.SetValue("DtsSpeakerConfig", BitConverter.ToInt32(BitConverter.GetBytes(SPDIFSetting), 0), RegistryValueKind.DWord);
-              subkey.SetValue("DtsSpeakerConfig", unchecked((Int32)4294967287), RegistryValueKind.DWord);
+              subkey.SetValue("DtsSpeakerConfig", unchecked((Int32) 4294967287), RegistryValueKind.DWord);
             }
             else
             {
               if (DTSRegValue == -1) // for missing first time defaults of MPA
+              {
                 DTSRegValue = 2;
-              if (checkBoxDtsLfe.Checked)              
+              }
+              if (checkBoxDtsLfe.Checked)
+              {
                 subkey.SetValue("DtsSpeakerConfig", (DTSRegValue + 128), RegistryValueKind.DWord);
+              }
               else
+              {
                 subkey.SetValue("DtsSpeakerConfig", DTSRegValue, RegistryValueKind.DWord);
+              }
             }
 
             subkey.SetValue("Boost", trackBarBoost.Value);
 
             if (radioButtonPcm16Bit.Checked)
+            {
               regValue = 0;
+            }
 
             if (radioButtonPcm24Bit.Checked)
+            {
               regValue = 1;
+            }
 
             if (radioButtonPcm32Bit.Checked)
+            {
               regValue = 2;
+            }
 
             if (radioButtonIeee.Checked)
+            {
               regValue = 3;
+            }
 
             subkey.SetValue("SampleFormat", regValue, RegistryValueKind.DWord);
           }
@@ -725,11 +841,14 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         else
+        {
           Log.Info("Registry access error while trying to write MPA settings.");
+        }
+      }
     }
 
 
-    private void radioButtonAC3SPDIF_CheckedChanged(object sender, System.EventArgs e)
+    private void radioButtonAC3SPDIF_CheckedChanged(object sender, EventArgs e)
     {
       if (radioButtonAc3Spdif.Checked)
       {
@@ -741,10 +860,9 @@ namespace MediaPortal.Configuration.Sections
         comboBoxAc3SpeakerConfig.Enabled = true;
         checkBoxAc3Lfe.Enabled = true;
       }
-
     }
 
-    private void radioButtonDTSSPDIF_CheckedChanged(object sender, System.EventArgs e)
+    private void radioButtonDTSSPDIF_CheckedChanged(object sender, EventArgs e)
     {
       if (radioButtonDtsSpdif.Checked)
       {

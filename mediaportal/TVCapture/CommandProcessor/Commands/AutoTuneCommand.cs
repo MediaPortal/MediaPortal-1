@@ -28,6 +28,7 @@
 using System;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TV.Scanning;
 
 #endregion
@@ -75,7 +76,10 @@ namespace MediaPortal.TV.Recording
       dev = null;
       tuning = null;
       Succeeded = true;
-      if (_autoTuneCallback != null) _autoTuneCallback.OnEnded();
+      if (_autoTuneCallback != null)
+      {
+        _autoTuneCallback.OnEnded();
+      }
     }
 
 
@@ -98,19 +102,25 @@ namespace MediaPortal.TV.Recording
         case NetworkType.DVBS:
           int m_diseqcLoops = 1;
           string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", dev.FriendlyName));
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+          using (Settings xmlreader = new Settings(filename))
           {
             if (xmlreader.GetValueAsBool("dvbs", "useLNB2", false))
+            {
               m_diseqcLoops++;
+            }
             if (xmlreader.GetValueAsBool("dvbs", "useLNB3", false))
+            {
               m_diseqcLoops++;
+            }
             if (xmlreader.GetValueAsBool("dvbs", "useLNB4", false))
+            {
               m_diseqcLoops++;
+            }
           }
           string[] tplFiles = new string[m_diseqcLoops];
           for (int i = 0; i < m_diseqcLoops; ++i)
           {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+            using (Settings xmlreader = new Settings(filename))
             {
               string key = String.Format("sat{0}", i + 1);
               tplFiles[i] = xmlreader.GetValue("dvbs", key);

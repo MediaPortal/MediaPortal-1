@@ -23,39 +23,40 @@
 
 #endregion
 
-using System;
-using System.Globalization;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class DVD : MediaPortal.Configuration.SectionSettings
+  public class DVD : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultAudioLanguageComboBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox pixelRatioCheckBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox displayModeComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox aspectRatioComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel aspectRatioLabel;
-    private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel defaultAudioLanguagelabel;
-    private MediaPortal.UserInterface.Controls.MPLabel displayModeLabel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAutoPlay;
+    private MPGroupBox groupBox1;
+    private MPComboBox defaultSubtitleLanguageComboBox;
+    private MPComboBox defaultAudioLanguageComboBox;
+    private MPGroupBox mpGroupBox1;
+    private MPCheckBox pixelRatioCheckBox;
+    private MPComboBox displayModeComboBox;
+    private MPComboBox aspectRatioComboBox;
+    private MPLabel aspectRatioLabel;
+    private MPCheckBox showSubtitlesCheckBox;
+    private MPLabel label1;
+    private MPLabel defaultAudioLanguagelabel;
+    private MPLabel displayModeLabel;
+    private MPGroupBox mpGroupBox2;
+    private IContainer components = null;
+    private MPComboBox autoPlayComboBox;
+    private MPLabel labelAutoPlay;
 
-    string m_strDefaultRegionLanguage = "English";
+    private string m_strDefaultRegionLanguage = "English";
 
-    string[] autoPlayOptions = new string[] { "Autoplay, never ask", "Don't autoplay, never ask", "Ask every time a DVD is inserted" };
+    private string[] autoPlayOptions = new string[]
+                                         {
+                                           "Autoplay, never ask", "Don't autoplay, never ask",
+                                           "Ask every time a DVD is inserted"
+                                         };
 
     public DVD()
       : this("DVD")
@@ -69,11 +70,11 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo box with languages
-      m_strDefaultRegionLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
+      m_strDefaultRegionLanguage = Util.Utils.GetCultureRegionLanguage();
       defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
       defaultAudioLanguageComboBox.Text = m_strDefaultRegionLanguage;
-      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
-      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
 
       autoPlayComboBox.Items.Clear();
       autoPlayComboBox.Items.AddRange(autoPlayOptions);
@@ -99,10 +100,12 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", m_strDefaultRegionLanguage);
-        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", m_strDefaultRegionLanguage);
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage",
+                                                                               m_strDefaultRegionLanguage);
+        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage",
+                                                                                  m_strDefaultRegionLanguage);
 
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
         pixelRatioCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "pixelratiocorrection", false);
@@ -132,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("dvdplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
         xmlwriter.SetValue("dvdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
@@ -146,17 +149,24 @@ namespace MediaPortal.Configuration.Sections
         string autoPlayText;
 
         if (autoPlayComboBox.Text == autoPlayOptions[1])
+        {
           autoPlayText = "No";
+        }
         else if (autoPlayComboBox.Text == autoPlayOptions[2])
+        {
           autoPlayText = "Ask";
+        }
         else
+        {
           autoPlayText = "Yes";
+        }
 
         xmlwriter.SetValue("dvdplayer", "autoplay", autoPlayText);
       }
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -185,8 +195,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.defaultAudioLanguagelabel);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
@@ -220,8 +232,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 68);
@@ -232,8 +246,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 44);
@@ -255,8 +271,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.displayModeLabel);
       this.mpGroupBox1.Controls.Add(this.displayModeComboBox);
       this.mpGroupBox1.Controls.Add(this.aspectRatioComboBox);
@@ -281,15 +299,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // displayModeComboBox
       // 
-      this.displayModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.displayModeComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.displayModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.displayModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.displayModeComboBox.Items.AddRange(new object[] {
-            "Default",
-            "16:9",
-            "4:3 Pan Scan",
-            "4:3 Letterbox"});
+      this.displayModeComboBox.Items.AddRange(new object[]
+                                                {
+                                                  "Default",
+                                                  "16:9",
+                                                  "4:3 Pan Scan",
+                                                  "4:3 Letterbox"
+                                                });
       this.displayModeComboBox.Location = new System.Drawing.Point(168, 68);
       this.displayModeComboBox.Name = "displayModeComboBox";
       this.displayModeComboBox.Size = new System.Drawing.Size(288, 21);
@@ -297,15 +319,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // aspectRatioComboBox
       // 
-      this.aspectRatioComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.aspectRatioComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.aspectRatioComboBox.BorderColor = System.Drawing.Color.Empty;
       this.aspectRatioComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.aspectRatioComboBox.Items.AddRange(new object[] {
-            "Crop",
-            "Letterbox",
-            "Stretch",
-            "Follow stream"});
+      this.aspectRatioComboBox.Items.AddRange(new object[]
+                                                {
+                                                  "Crop",
+                                                  "Letterbox",
+                                                  "Stretch",
+                                                  "Follow stream"
+                                                });
       this.aspectRatioComboBox.Location = new System.Drawing.Point(168, 44);
       this.aspectRatioComboBox.Name = "aspectRatioComboBox";
       this.aspectRatioComboBox.Size = new System.Drawing.Size(288, 21);
@@ -333,8 +359,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -356,8 +384,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // autoPlayComboBox
       // 
-      this.autoPlayComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.autoPlayComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
       this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
@@ -379,9 +409,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }
-

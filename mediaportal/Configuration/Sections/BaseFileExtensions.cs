@@ -24,22 +24,24 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class BaseFileExtensions : MediaPortal.Configuration.SectionSettings
+  public class BaseFileExtensions : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton removeButton;
-    private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox extensionTextBox;
-    private System.Windows.Forms.ListBox extensionsListBox;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPButton removeButton;
+    private MPButton addButton;
+    private MPLabel label1;
+    private MPTextBox extensionTextBox;
+    private ListBox extensionsListBox;
+    private IContainer components = null;
 
     public string Extensions
     {
@@ -50,7 +52,9 @@ namespace MediaPortal.Configuration.Sections
         foreach (string extension in extensionsListBox.Items)
         {
           if (extensions.Length > 0)
+          {
             extensions += ",";
+          }
 
           extensions += extension;
         }
@@ -59,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
       }
       set
       {
-        string[] extensions = ((string)value).Split(',');
+        string[] extensions = ((string) value).Split(',');
         extensionsListBox.Items.AddRange(extensions);
       }
     }
@@ -98,6 +102,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -115,9 +120,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.removeButton);
@@ -131,8 +138,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
@@ -141,7 +150,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Location = new System.Drawing.Point(384, 64);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -151,7 +162,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // removeButton
       // 
-      this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.removeButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
       this.removeButton.Location = new System.Drawing.Point(384, 88);
       this.removeButton.Name = "removeButton";
@@ -162,9 +175,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // extensionsListBox
       // 
-      this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionsListBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
       this.extensionsListBox.Name = "extensionsListBox";
       this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
@@ -174,8 +189,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // extensionTextBox
       // 
-      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
       this.extensionTextBox.Size = new System.Drawing.Size(360, 20);
@@ -189,8 +206,8 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -198,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void addButton_Click(object sender, System.EventArgs e)
+    private void addButton_Click(object sender, EventArgs e)
     {
       string extension = extensionTextBox.Text;
 
@@ -246,7 +263,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void removeButton_Click(object sender, System.EventArgs e)
+    private void removeButton_Click(object sender, EventArgs e)
     {
       int itemsSelected = extensionsListBox.SelectedIndices.Count;
 
@@ -259,7 +276,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void extensionsListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void extensionsListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       removeButton.Enabled = (extensionsListBox.SelectedItems.Count > 0);
     }
@@ -277,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void LoadSettings(string section, string defaultExt)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         Extensions = xmlreader.GetValueAsString(section, "extensions", defaultExt);
       }
@@ -285,7 +302,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void SaveSettings(string section)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue(section, "extensions", Extensions);
       }

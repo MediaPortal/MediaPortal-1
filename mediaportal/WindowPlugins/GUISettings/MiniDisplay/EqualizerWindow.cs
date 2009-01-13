@@ -23,29 +23,20 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class EqualizerWindow : GUIWindow
   {
-    [SkinControlAttribute(20)]
-    protected GUIToggleButtonControl btnUseEqualizer = null;
-    [SkinControlAttribute(21)]
-    protected GUISelectButtonControl btnUseStyle = null;
-    [SkinControlAttribute(22)]
-    protected GUIToggleButtonControl btnSmothEQ = null;
-    [SkinControlAttribute(23)]
-    protected GUIToggleButtonControl btnDelayStart = null;
-    [SkinControlAttribute(24)]
-    protected GUISelectButtonControl btnDelayStartTime = null;
-    [SkinControlAttribute(25)]
-    protected GUIToggleButtonControl btnShowTitle = null;
-    [SkinControlAttribute(26)]
-    protected GUISelectButtonControl btnShowTitleTime = null;
-    [SkinControlAttribute(27)]
-    protected GUISelectButtonControl btnShowTitleFreq = null;
+    [SkinControl(20)] protected GUIToggleButtonControl btnUseEqualizer = null;
+    [SkinControl(21)] protected GUISelectButtonControl btnUseStyle = null;
+    [SkinControl(22)] protected GUIToggleButtonControl btnSmothEQ = null;
+    [SkinControl(23)] protected GUIToggleButtonControl btnDelayStart = null;
+    [SkinControl(24)] protected GUISelectButtonControl btnDelayStartTime = null;
+    [SkinControl(25)] protected GUIToggleButtonControl btnShowTitle = null;
+    [SkinControl(26)] protected GUISelectButtonControl btnShowTitleTime = null;
+    [SkinControl(27)] protected GUISelectButtonControl btnShowTitleFreq = null;
     private EQControl EQSettings = new EQControl();
 
     public EqualizerWindow()
@@ -233,7 +224,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     {
       if (this.btnUseStyle != null)
       {
-        int iItem = this.EQSettings.UseNormalEq ? 0 : (this.EQSettings.UseStereoEq ? 1 : (this.EQSettings.UseVUmeter ? 2 : 3));
+        int iItem = this.EQSettings.UseNormalEq
+                      ? 0
+                      : (this.EQSettings.UseStereoEq ? 1 : (this.EQSettings.UseVUmeter ? 2 : 3));
         GUIControl.ClearControl(this.GetID, this.btnUseStyle.GetID);
         GUIControl.AddItemLabelControl(this.GetID, this.btnUseStyle.GetID, GUILocalizeStrings.Get(9149));
         GUIControl.AddItemLabelControl(this.GetID, this.btnUseStyle.GetID, GUILocalizeStrings.Get(9150));
@@ -256,4 +249,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

@@ -24,14 +24,14 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Collections;
 using System.IO;
 using System.Net;
-using System.Web;
-using System.Collections;
+using System.Text.RegularExpressions;
 using System.Threading;
-using MediaPortal.Services; // for Service Framework
+using MediaPortal.Services;
+
+// for Service Framework
 
 namespace MediaPortal.Utils.Web
 {
@@ -49,18 +49,21 @@ namespace MediaPortal.Utils.Web
   public class HTTPTransaction
   {
     #region Variables
-    string _agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
-    string _postType = "application/x-www-form-urlencoded";
-    CookieCollection _cookies;
-    HttpWebResponse _response;
-    string _error = string.Empty;
-    int blockSize = 8196;
-    byte[] _data;
-    IHttpAuthentication _auth;
-    IHttpStatistics _stats;
+
+    private string _agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
+    private string _postType = "application/x-www-form-urlencoded";
+    private CookieCollection _cookies;
+    private HttpWebResponse _response;
+    private string _error = string.Empty;
+    private int blockSize = 8196;
+    private byte[] _data;
+    private IHttpAuthentication _auth;
+    private IHttpStatistics _stats;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HTTPTransaction"/> class.
     /// </summary>
@@ -78,9 +81,11 @@ namespace MediaPortal.Utils.Web
     {
       Transaction(request);
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Performs HTTPRequest
     /// </summary>
@@ -127,9 +132,11 @@ namespace MediaPortal.Utils.Web
     {
       return _data;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Performs HTTP transactions for the specified page request.
     /// </summary>
@@ -145,24 +152,30 @@ namespace MediaPortal.Utils.Web
       DateTime startTime = DateTime.Now;
 
       if (pageRequest.Delay > 0)
+      {
         Thread.Sleep(pageRequest.Delay);
+      }
 
       Uri pageUri = pageRequest.Uri;
       try
       {
         // Make the Webrequest
         // Create the request header
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
+        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(pageUri);
         request.UserAgent = _agent;
         request.AllowAutoRedirect = false;
         if (pageRequest.PostQuery == string.Empty)
         {
           // GET request
           if (_auth != null)
+          {
             request.Credentials = _auth.Get(pageUri.Host);
+          }
           request.CookieContainer = new CookieContainer();
           if (_cookies != null)
+          {
             request.CookieContainer.Add(_cookies);
+          }
         }
         else
         {
@@ -186,16 +199,16 @@ namespace MediaPortal.Utils.Web
           }
         }
 
-        _response = (HttpWebResponse)request.GetResponse();
+        _response = (HttpWebResponse) request.GetResponse();
 
         // Check for redirection
         if ((_response.StatusCode == HttpStatusCode.Found) ||
-                    (_response.StatusCode == HttpStatusCode.Redirect) ||
-                    (_response.StatusCode == HttpStatusCode.Moved) ||
-                    (_response.StatusCode == HttpStatusCode.MovedPermanently))
+            (_response.StatusCode == HttpStatusCode.Redirect) ||
+            (_response.StatusCode == HttpStatusCode.Moved) ||
+            (_response.StatusCode == HttpStatusCode.MovedPermanently))
         {
           Uri uri = new Uri(_response.Headers["Location"]);
-          HttpWebRequest redirect = (HttpWebRequest)WebRequest.Create(uri);
+          HttpWebRequest redirect = (HttpWebRequest) WebRequest.Create(uri);
           redirect.UserAgent = _agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();
@@ -212,9 +225,9 @@ namespace MediaPortal.Utils.Web
               reply.Domain = uri.Host;
               redirect.CookieContainer.Add(reply);
             }
-          } 
+          }
           //redirect.ContentType = "text/html"; 
-          _response = (HttpWebResponse)redirect.GetResponse();
+          _response = (HttpWebResponse) redirect.GetResponse();
         }
 
         if (request.CookieContainer != null)
@@ -244,11 +257,10 @@ namespace MediaPortal.Utils.Web
 
         for (int i = 0; i < Blocks.Count; i++)
         {
-          Block = (byte[])Blocks[i];
+          Block = (byte[]) Blocks[i];
           Block.CopyTo(_data, pos);
           pos += Block.Length;
         }
-
       }
       catch (WebException ex)
       {
@@ -266,6 +278,7 @@ namespace MediaPortal.Utils.Web
 
       return true;
     }
+
     #endregion
   }
 }

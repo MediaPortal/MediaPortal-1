@@ -24,30 +24,27 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersMonogramAACDecoder : MediaPortal.Configuration.SectionSettings
+  public class FiltersMonogramAACDecoder : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerOutput;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSpeakerOut;
-    private MediaPortal.UserInterface.Controls.MPLabel labelVolume;
+    private MPComboBox comboBoxSpeakerOutput;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel labelSpeakerOut;
+    private MPLabel labelVolume;
     private TrackBar volumeTrackBar;
     private PictureBox pictureBox1;
-    private MediaPortal.UserInterface.Controls.MPGradientLabel mpGradientLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private System.ComponentModel.IContainer components = null;
+    private MPGradientLabel mpGradientLabel1;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel1;
+    private IContainer components = null;
 
     /// <summary>
     /// Sets Monogram AAC decoder output & volume settings
@@ -83,13 +80,15 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersMonogramAACDecoder));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (FiltersMonogramAACDecoder));
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.mpGradientLabel1 = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -99,14 +98,14 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxSpeakerOutput = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.volumeTrackBar)).BeginInit();
       this.SuspendLayout();
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox1.Image")));
       this.pictureBox1.Location = new System.Drawing.Point(0, 2);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(472, 60);
@@ -123,7 +122,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGradientLabel1.Size = new System.Drawing.Size(472, 8);
       this.mpGradientLabel1.TabIndex = 4;
       this.mpGradientLabel1.TextColor = System.Drawing.SystemColors.ControlText;
-      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                               System.Drawing.FontStyle.Regular,
+                                                               System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       // 
       // mpGroupBox1
       // 
@@ -170,17 +171,21 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerOutput
       // 
-      this.comboBoxSpeakerOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerOutput.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerOutput.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerOutput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerOutput.Items.AddRange(new object[] {
-            "No channel mixing",
-            "Mix to mono (1 channel)",
-            "Mix to stereo (2 channels)",
-            "Mix to 2.1 (3 channels)",
-            "Mix to quadrophonic (4 channels)",
-            "Mix to 5.1 (6 channels)"});
+      this.comboBoxSpeakerOutput.Items.AddRange(new object[]
+                                                  {
+                                                    "No channel mixing",
+                                                    "Mix to mono (1 channel)",
+                                                    "Mix to stereo (2 channels)",
+                                                    "Mix to 2.1 (3 channels)",
+                                                    "Mix to quadrophonic (4 channels)",
+                                                    "Mix to 5.1 (6 channels)"
+                                                  });
       this.comboBoxSpeakerOutput.Location = new System.Drawing.Point(103, 50);
       this.comboBoxSpeakerOutput.Name = "comboBoxSpeakerOutput";
       this.comboBoxSpeakerOutput.Size = new System.Drawing.Size(316, 21);
@@ -211,12 +216,13 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "MonogramAACDecoderFilter";
       this.Size = new System.Drawing.Size(472, 408);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.volumeTrackBar)).EndInit();
       this.ResumeLayout(false);
     }
+
     #endregion
 
     /// <summary>
@@ -227,29 +233,33 @@ namespace MediaPortal.Configuration.Sections
       Int32 regSpeakerOut;
       Int32 regVolume;
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\MONOGRAM\MONOGRAM AAC Decoder"))
+      {
         if (subkey != null)
         {
           try
           {
-            regSpeakerOut = (Int32)subkey.GetValue("MixMode", 0);
-            regVolume = (Int32)subkey.GetValue("Volume", 0);
+            regSpeakerOut = (Int32) subkey.GetValue("MixMode", 0);
+            regVolume = (Int32) subkey.GetValue("Volume", 0);
             comboBoxSpeakerOutput.SelectedIndex = regSpeakerOut;
-            volumeTrackBar.Value = regVolume / 100;
+            volumeTrackBar.Value = regVolume/100;
           }
           catch (Exception)
           {
           }
         }
+      }
     }
 
     public override void SaveSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\MONOGRAM\MONOGRAM AAC Decoder"))
+      {
         if (subkey != null)
         {
-          subkey.SetValue("MixMode", (Int32)comboBoxSpeakerOutput.SelectedIndex);
-          subkey.SetValue("Volume", (Int32)volumeTrackBar.Value * 100);
+          subkey.SetValue("MixMode", (Int32) comboBoxSpeakerOutput.SelectedIndex);
+          subkey.SetValue("Volume", (Int32) volumeTrackBar.Value*100);
         }
+      }
     }
 
     /// <summary>
@@ -258,9 +268,13 @@ namespace MediaPortal.Configuration.Sections
     private void volumeTrackBar_ValueChanged(object sender, EventArgs e)
     {
       if (volumeTrackBar.Value > 0)
+      {
         labelVolume.Text = String.Format(" Volume: {0:+#0.0} dB", volumeTrackBar.Value);
+      }
       else
+      {
         labelVolume.Text = String.Format(" Volume: {0:#0.0} dB", volumeTrackBar.Value);
+      }
     }
   }
 }

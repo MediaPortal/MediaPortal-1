@@ -25,13 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using NUnit.Framework;
-
-using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
-using MediaPortal.GUI.Library;
+using MediaPortal.TV.Recording;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.TVCapture.Scheduler
 {
@@ -39,9 +36,9 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
   [Category("ConfictManager")]
   public class TestConflictManager
   {
-
     #region Test SetUp routines and Mock class
-    class CommandProcessorMock : CommandProcessor
+
+    private class CommandProcessorMock : CommandProcessor
     {
       public override void WaitTillFinished()
       {
@@ -51,33 +48,38 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
           ProcessScheduler();
         }
       }
-    };
+    } ;
 
-    bool backgroundWorkerFinished = false;
-  
-    void AddRecording(string Channel, DateTime Start, int Duration, string Title)
+    private bool backgroundWorkerFinished = false;
+
+    private void AddRecording(string Channel, DateTime Start, int Duration, string Title)
     {
       TVRecording rec = new TVRecording();
       rec.Channel = Channel;
-      rec.Start = MediaPortal.Util.Utils.datetolong(Start);
-      rec.End = MediaPortal.Util.Utils.datetolong(rec.StartTime.AddMinutes(Duration));
+      rec.Start = Util.Utils.datetolong(Start);
+      rec.End = Util.Utils.datetolong(rec.StartTime.AddMinutes(Duration));
       rec.Title = Title;
       rec.RecType = TVRecording.RecordingType.Once;
       TVDatabase.AddRecording(ref rec);
     }
 
-    void SetupDatabase()
+    private void SetupDatabase()
     {
       //delete all recordings
       TVDatabase.ClearAll();
       // create some channels
       TVChannel ch;
-      ch = new TVChannel("RTL1"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL2"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL3"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL4"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL5"); TVDatabase.AddChannel(ch);
-      
+      ch = new TVChannel("RTL1");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL2");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL3");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL4");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL5");
+      TVDatabase.AddChannel(ch);
+
       // insert some recordings
       DateTime dt = DateTime.Now.AddDays(1);
       // FirstRecording
@@ -93,17 +95,17 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
       // starts before FirstRecording, ends before FirstRecording ends
       AddRecording("RTL5", dt.AddMinutes(-90), 45, "test show 6");
       // starts after FirstRecording, ends after FirstRecording ends
-      AddRecording("RTL1", dt.AddMinutes(95), 60, "test show 7"); 
+      AddRecording("RTL1", dt.AddMinutes(95), 60, "test show 7");
     }
 
-    void SetupOneRecorder()
+    private void SetupOneRecorder()
     {
       CommandProcessorMock proc = new CommandProcessorMock();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       Recorder.Start(proc);
     }
 
-    void SetupThreeRecorder()
+    private void SetupThreeRecorder()
     {
       CommandProcessorMock proc = new CommandProcessorMock();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
@@ -116,6 +118,7 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
     {
       backgroundWorkerFinished = true;
     }
+
     #endregion
 
     [TestFixtureSetUp]
@@ -124,7 +127,8 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
       SetupDatabase();
       SetupOneRecorder();
       backgroundWorkerFinished = false;
-      ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+      ConflictManager.OnConflictsUpdated +=
+        new ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
       TVUtil u = ConflictManager.Util;
       int i = 0;
       while ((backgroundWorkerFinished == false) && (i < 25))
@@ -141,7 +145,7 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
       TVRecording[] conflicts;
       TVDatabase.GetRecordings(ref recordingList);
       Assert.AreEqual(7, recordingList.Count);
-      
+
       foreach (TVRecording rec in recordingList)
       {
         conflicts = null;
@@ -150,8 +154,13 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
         if (conflicts != null)
         {
           if ((rec.Title.Equals("test show 6")) || (rec.Title.Equals("test show 7")))
-               Assert.AreEqual(0, conflicts.Length, rec.Title);
-          else Assert.AreEqual(4, conflicts.Length, rec.Title);
+          {
+            Assert.AreEqual(0, conflicts.Length, rec.Title);
+          }
+          else
+          {
+            Assert.AreEqual(4, conflicts.Length, rec.Title);
+          }
         }
       }
     }
@@ -164,14 +173,19 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
       List<TVRecording> seriesList = new List<TVRecording>();
       TVDatabase.GetRecordings(ref recordingList);
       Assert.AreEqual(7, recordingList.Count);
-      
+
       foreach (TVRecording rec in recordingList)
       {
         seriesList.Clear();
         ConflictManager.GetConflictingSeries(rec, seriesList);
         if ((rec.Title.Equals("test show 6")) || (rec.Title.Equals("test show 7")))
-             Assert.AreEqual(0, seriesList.Count, rec.Title);
-        else Assert.AreEqual(1, seriesList.Count, rec.Title);
+        {
+          Assert.AreEqual(0, seriesList.Count, rec.Title);
+        }
+        else
+        {
+          Assert.AreEqual(1, seriesList.Count, rec.Title);
+        }
       }
     }
 
@@ -181,18 +195,19 @@ namespace MediaPortal.Tests.TVCapture.Scheduler
       List<TVRecording> recordingList = new List<TVRecording>();
       TVDatabase.GetRecordings(ref recordingList);
       Assert.AreEqual(7, recordingList.Count);
-            
+
       foreach (TVRecording rec in recordingList)
       {
         bool conflict = ConflictManager.IsConflict(rec);
         if ((rec.Title.Equals("test show 6")) || (rec.Title.Equals("test show 7")))
-             Assert.IsFalse(conflict, rec.Title);
-        else Assert.IsTrue(conflict, rec.Title);
+        {
+          Assert.IsFalse(conflict, rec.Title);
+        }
+        else
+        {
+          Assert.IsTrue(conflict, rec.Title);
+        }
       }
     }
-
-  
   }
-
-        
 }

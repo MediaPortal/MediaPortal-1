@@ -25,36 +25,40 @@
 
 using System;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-using MediaPortal.InputDevices;
-using MediaPortal.ServiceImplementations;
 using MediaPortal.Configuration;
-using MediaPortal.Hardware;
-
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using Log=MediaPortal.ServiceImplementations.Log;
 
 namespace MediaPortal.InputDevices
 {
   public class CentareaRemote
   {
-    const int WM_KEYDOWN = 0x0100;
-    const int WM_SYSKEYDOWN = 0x0104;
-    const int WM_APPCOMMAND = 0x0319;
-    const int WM_LBUTTONDOWN = 0x0201;
-    const int WM_RBUTTONDOWN = 0x0204;
-    const int WM_MOUSEMOVE = 0x0200;
-    const int WM_SETCURSOR = 0x0020;
+    private const int WM_KEYDOWN = 0x0100;
+    private const int WM_SYSKEYDOWN = 0x0104;
+    private const int WM_APPCOMMAND = 0x0319;
+    private const int WM_LBUTTONDOWN = 0x0201;
+    private const int WM_RBUTTONDOWN = 0x0204;
+    private const int WM_MOUSEMOVE = 0x0200;
+    private const int WM_SETCURSOR = 0x0020;
 
-    enum MouseDirection { Up, Right, Down, Left, None };
+    private enum MouseDirection
+    {
+      Up,
+      Right,
+      Down,
+      Left,
+      None
+    } ;
 
-    bool _remoteActive = false;   // Centarea Remote enabled and mapped
-    bool _verboseLogging = false; // Log key presses
-    bool _mapMouseButton = true;  // Interpret the joystick push as "ok" button
-    bool _mapJoystick = true;     // Map any mouse movement to cursor keys
-    int _lastMouseTick = 0;       // When did the last mouse action occur
-    int _ignoreDupMsg = 0;        // Offset to compensate the self-induced mouse movement
-    InputHandler _inputHandler;   // Input Mapper
+    private bool _remoteActive = false; // Centarea Remote enabled and mapped
+    private bool _verboseLogging = false; // Log key presses
+    private bool _mapMouseButton = true; // Interpret the joystick push as "ok" button
+    private bool _mapJoystick = true; // Map any mouse movement to cursor keys
+    private int _lastMouseTick = 0; // When did the last mouse action occur
+    private int _ignoreDupMsg = 0; // Offset to compensate the self-induced mouse movement
+    private InputHandler _inputHandler; // Input Mapper
 
     #region Constructor
 
@@ -72,7 +76,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       bool RemoteConfigured = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         RemoteConfigured = xmlreader.GetValueAsBool("remote", "Centarea", false);
         _verboseLogging = xmlreader.GetValueAsBool("remote", "CentareaVerbose", false);
@@ -80,7 +84,9 @@ namespace MediaPortal.InputDevices
         _mapJoystick = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
       }
       if (!RemoteConfigured)
+      {
         return;
+      }
 
       Log.Debug("Centarea: Initializing Centarea HID remote");
 
@@ -124,9 +130,10 @@ namespace MediaPortal.InputDevices
     {
       if (_remoteActive)
       {
-        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN || msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE)
+        if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN ||
+            msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE)
         {
-          switch ((Keys)msg.WParam)
+          switch ((Keys) msg.WParam)
           {
             case Keys.ControlKey:
               break;
@@ -135,17 +142,20 @@ namespace MediaPortal.InputDevices
             case Keys.Menu:
               break;
             default:
-              int keycode = (int)msg.WParam;
+              int keycode = (int) msg.WParam;
 
-              AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+              AppCommands appCommand = (AppCommands) ((msg.LParam.ToInt32() >> 16) & ~0xF000);
               // find out which request the MCE remote handled last
-              if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) && (appCommand != AppCommands.VolumeUp))
+              if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
+                  (appCommand != AppCommands.VolumeUp))
               {
-                if (Enum.IsDefined(typeof(AppCommands), InputDevices.LastHidRequest))
+                if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
                 {
                   // possible that it is the same request mapped to an app command?
                   if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+                  {
                     return true;
+                  }
                 }
               }
               InputDevices.LastHidRequest = appCommand;
@@ -156,29 +166,37 @@ namespace MediaPortal.InputDevices
                 if (msg.Msg == WM_LBUTTONDOWN)
                 {
                   if (_verboseLogging)
+                  {
                     Log.Debug("Centarea: Command \"{0}\" mapped for left mouse button", keycode);
+                  }
                   keycode = 13;
                 }
                 if (msg.Msg == WM_RBUTTONDOWN)
                 {
                   if (_verboseLogging)
+                  {
                     Log.Debug("Centarea: Command \"{0}\" mapped for right mouse button", keycode);
+                  }
                   keycode = 10069;
                 }
               }
               // Since mouse support is semi optimal we have this option to use the joystick like cursor keys
-              if (_mapJoystick && MediaPortal.GUI.Library.GUIGraphicsContext.Fullscreen)
+              if (_mapJoystick && GUIGraphicsContext.Fullscreen)
               {
                 if (msg.Msg == WM_MOUSEMOVE)
                 {
                   Point p = new Point(msg.LParam.ToInt32());
                   _ignoreDupMsg++;
                   // since our ResetCursor() triggers a mouse move MSG as well we ignore every second event
-                  if (_ignoreDupMsg % 2 == 0)
-                    MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
+                  if (_ignoreDupMsg%2 == 0)
+                  {
+                    GUIGraphicsContext.ResetCursor(false);
+                  }
                   // we ignore double actions for the configured time
                   if (Environment.TickCount - _lastMouseTick < 400)
+                  {
                     return false;
+                  }
 
                   MouseDirection mmove = OnMouseMoved(p);
                   _lastMouseTick = Environment.TickCount;
@@ -201,16 +219,27 @@ namespace MediaPortal.InputDevices
                   }
                   if (mmove != MouseDirection.None)
                   {
-                    MediaPortal.GUI.Library.GUIGraphicsContext.ResetCursor(false);
+                    GUIGraphicsContext.ResetCursor(false);
                     if (_verboseLogging)
+                    {
                       Log.Debug("Centarea: Command \"{0}\" mapped for mouse movement", mmove.ToString());
+                    }
                   }
                 }
               }
               // The Centarea Remote sends key combos. Therefore we use this trick to get a 1:1 mapping
-              if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) keycode += 1000;
-              if ((Control.ModifierKeys & Keys.Control) == Keys.Control) keycode += 10000;
-              if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt) keycode += 100000;
+              if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
+              {
+                keycode += 1000;
+              }
+              if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+              {
+                keycode += 10000;
+              }
+              if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+              {
+                keycode += 100000;
+              }
 
               try
               {
@@ -218,12 +247,16 @@ namespace MediaPortal.InputDevices
                 if (_inputHandler.MapAction(keycode))
                 {
                   if (_verboseLogging)
+                  {
                     Log.Debug("Centarea: Command \"{0}\" mapped", keycode);
+                  }
                 }
                 else
                 {
                   if (keycode > 0)
+                  {
                     Log.Debug("Centarea: Command \"{0}\" not mapped", keycode);
+                  }
                   return false;
                 }
               }
@@ -252,11 +285,15 @@ namespace MediaPortal.InputDevices
     /// <returns>The amount of pixels the cursor has moved. A negative value indicates left/up movement</returns>
     private int GetPointDeviation(bool aVerticalMove, int aNewPosition)
     {
-      int OldPos = aVerticalMove ? MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.Y : MediaPortal.GUI.Library.GUIGraphicsContext.OutputScreenCenter.X;
+      int OldPos = aVerticalMove ? GUIGraphicsContext.OutputScreenCenter.Y : GUIGraphicsContext.OutputScreenCenter.X;
       if (OldPos > aNewPosition)
-        return (OldPos - aNewPosition) * -1;
+      {
+        return (OldPos - aNewPosition)*-1;
+      }
       else
+      {
         return aNewPosition - OldPos;
+      }
     }
 
     /// <summary>
@@ -270,13 +307,18 @@ namespace MediaPortal.InputDevices
       int xMove = GetPointDeviation(false, p.X);
       int yMove = GetPointDeviation(true, p.Y);
       // using the pythagoras theorem to get the total movement length
-      double TotalWay = Math.Sqrt(((double)((Math.Abs(xMove) * Math.Abs(xMove))) + (double)((Math.Abs(yMove) * Math.Abs(yMove)))));
+      double TotalWay =
+        Math.Sqrt(((double) ((Math.Abs(xMove)*Math.Abs(xMove))) + (double) ((Math.Abs(yMove)*Math.Abs(yMove)))));
       // set a direction only if movement exceeds a minimum limit
       // usually pushing the joystick knob once results in a one pixel movement.      
       if (TotalWay > 0.9)
+      {
         direction = GetDirection(xMove, yMove);
+      }
       if (_verboseLogging)
+      {
         Log.Debug("Centarea: Mouse movement of {0} pixels heading {1}", TotalWay, direction);
+      }
       return direction;
     }
 
@@ -291,17 +333,25 @@ namespace MediaPortal.InputDevices
       if (ayMove <= 0) // up
       {
         if (axMove <= 0) // left
+        {
           // if we move the mouse more to the left than up the resulting direction is plain left.
           return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Left;
+        }
         else // right
+        {
           return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Up : MouseDirection.Right;
+        }
       }
       else // down
       {
         if (axMove <= 0) // left
+        {
           return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Left;
+        }
         else // right
+        {
           return (Math.Abs(axMove) <= Math.Abs(ayMove)) ? MouseDirection.Down : MouseDirection.Right;
+        }
       }
     }
 

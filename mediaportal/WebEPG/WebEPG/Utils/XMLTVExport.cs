@@ -23,12 +23,9 @@
 
 #endregion
 
-using System;
 using System.IO;
-using System.Collections;
-using System.Globalization;
+using System.Text;
 using System.Xml;
-using System.Net;
 using MediaPortal.TV.Database;
 
 namespace MediaPortal.WebEPG
@@ -38,9 +35,9 @@ namespace MediaPortal.WebEPG
   /// </summary>
   public class XMLTVExport
   {
-    XmlTextWriter _writer;
-    string _xmltvTempFile;
-    string _xmltvFile;
+    private XmlTextWriter _writer;
+    private string _xmltvTempFile;
+    private string _xmltvFile;
 
     public XMLTVExport(string dir)
     {
@@ -50,7 +47,7 @@ namespace MediaPortal.WebEPG
 
     public void Open()
     {
-      _writer = new XmlTextWriter(_xmltvTempFile, System.Text.Encoding.UTF8);
+      _writer = new XmlTextWriter(_xmltvTempFile, Encoding.UTF8);
       _writer.Formatting = Formatting.Indented;
       //Write the <xml version="1.0"> element
       _writer.WriteStartDocument();
@@ -64,8 +61,8 @@ namespace MediaPortal.WebEPG
       _writer.WriteEndElement();
       _writer.Flush();
       _writer.Close();
-      System.IO.File.Delete(_xmltvFile);
-      System.IO.File.Move(_xmltvTempFile, _xmltvFile);
+      File.Delete(_xmltvFile);
+      File.Move(_xmltvTempFile, _xmltvFile);
     }
 
     public void WriteChannel(string id, string name)
@@ -80,8 +77,10 @@ namespace MediaPortal.WebEPG
     public void WriteProgram(TVProgram program, string name, bool merged)
     {
       string channelid = program.Channel;
-      if(merged)
+      if (merged)
+      {
         channelid = "[Merged]";
+      }
 
       if (program.Start != 0 &&
           program.Channel != string.Empty &&
@@ -89,8 +88,10 @@ namespace MediaPortal.WebEPG
       {
         _writer.WriteStartElement("programme");
         _writer.WriteAttributeString("start", program.Start.ToString());
-        if(program.End != 0)
+        if (program.End != 0)
+        {
           _writer.WriteAttributeString("stop", program.End.ToString());
+        }
         _writer.WriteAttributeString("channel", name + "-" + channelid);
 
         _writer.WriteStartElement("title");
@@ -99,26 +100,40 @@ namespace MediaPortal.WebEPG
         _writer.WriteEndElement();
 
         if (program.Episode != string.Empty && program.Episode != "unknown")
+        {
           _writer.WriteElementString("sub-title", program.Episode);
+        }
 
         if (program.Description != string.Empty && program.Description != "unknown")
+        {
           _writer.WriteElementString("desc", program.Description);
+        }
 
         if (program.Genre != string.Empty && program.Genre != "-")
+        {
           _writer.WriteElementString("category", program.Genre);
+        }
 
         string episodeNum = string.Empty;
         if (program.EpisodeNum != string.Empty)
+        {
           episodeNum += program.EpisodeNum;
+        }
 
         if (program.SeriesNum != string.Empty)
+        {
           episodeNum += "." + program.SeriesNum;
+        }
 
-        if(episodeNum != string.Empty)
+        if (episodeNum != string.Empty)
+        {
           _writer.WriteElementString("episode-num", episodeNum);
+        }
 
         if (program.Repeat != string.Empty)
+        {
           _writer.WriteElementString("previously-shown", null);
+        }
 
         /*
           _writer.WriteStartElement("credits");

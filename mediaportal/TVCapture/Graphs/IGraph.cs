@@ -24,26 +24,25 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using System.Windows.Forms;
-using DShowNET;
-using DShowNET.Helper;
+using System.Drawing;
 using DirectShowLib;
-using MediaPortal.TV.Database;
+using DShowNET.Helper;
 using MediaPortal.Radio.Database;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording
 {
   public enum NetworkType
   {
     Unknown,
-    Analog,		// Analog TV
-    ATSC,			// ATSC
-    DVBC,			// DVB-cable
-    DVBS, 		// DVB-Sattelite
-    DVBT  		// DVB-Terrestial
+    Analog, // Analog TV
+    ATSC, // ATSC
+    DVBC, // DVB-cable
+    DVBS, // DVB-Sattelite
+    DVBT // DVB-Terrestial
   }
+
   /// <summary>
   /// Interface definition for graphbuilder objects
   /// A graphbuilder object supports one or more TVCapture cards and
@@ -90,7 +89,6 @@ namespace MediaPortal.TV.Recording
   ///     
   /// </summary>
   /// <seealso cref="MediaPortal.TV.Recording.GraphFactory"/>
-
   public interface IGraph
   {
     /// <summary>
@@ -148,7 +146,8 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
+    bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName,
+                        bool bContentRecording, DateTime timeProgStart);
 
 
     /// <summary>
@@ -264,7 +263,8 @@ namespace MediaPortal.TV.Recording
     void Tune(object tuningObject, int disecqNo);
 
     // scan radio/tv channels and store them in the database
-    void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels, ref int newRadioChannels, ref int updatedRadioChannels);
+    void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,
+                       ref int newRadioChannels, ref int updatedRadioChannels);
 
 
     // tune Start listening to radio

@@ -23,7 +23,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     {
       for (int i = 0; i < this.m_Conditions.Count; i++)
       {
-        if (!((Condition)this.m_Conditions[i]).Evaluate())
+        if (!((Condition) this.m_Conditions[i]).Evaluate())
         {
           return false;
         }
@@ -31,14 +31,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       return true;
     }
 
-    [XmlElement("Or", typeof(OrCondition)), XmlElement("IsNull", typeof(IsNullCondition)), XmlElement("NotNull", typeof(NotNullCondition)), XmlElement("And", typeof(AndCondition))]
+    [XmlElement("Or", typeof (OrCondition)), XmlElement("IsNull", typeof (IsNullCondition)),
+     XmlElement("NotNull", typeof (NotNullCondition)), XmlElement("And", typeof (AndCondition))]
     public IList Conditions
     {
-      get
-      {
-        return this.m_Conditions;
-      }
+      get { return this.m_Conditions; }
     }
   }
 }
-

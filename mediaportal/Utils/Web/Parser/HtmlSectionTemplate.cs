@@ -24,26 +24,23 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Utils.Web
 {
-	/// <summary>
+  /// <summary>
   /// Xml Serializable Class for SectionTemplate data.
-	/// </summary>
+  /// </summary>
   [Serializable]
-	public class HtmlSectionTemplate
-	{
+  public class HtmlSectionTemplate
+  {
     #region Variables
-    [XmlAttribute("tags")]
-    public string Tags;
-    [XmlElement("TemplateText")]
-    public string Template;
-    [XmlArray("MatchList")]
-    [XmlArrayItem("Match")]
-    public List<HtmlSectionMatch> MatchValues;
+
+    [XmlAttribute("tags")] public string Tags;
+    [XmlElement("TemplateText")] public string Template;
+    [XmlArray("MatchList")] [XmlArrayItem("Match")] public List<HtmlSectionMatch> MatchValues;
+
     #endregion
   }
 }

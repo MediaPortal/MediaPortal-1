@@ -37,7 +37,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
     public GUIWizardDVBSScan()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_DVBS_SCAN;
+      GetID = (int) Window.WINDOW_WIZARD_DVBS_SCAN;
     }
 
     public override bool Init()
@@ -49,6 +49,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
     {
       GUIPropertyManager.SetProperty("#Wizard.DVBS.Done", "yes");
     }
+
     protected override NetworkType Network()
     {
       return NetworkType.DVBS;

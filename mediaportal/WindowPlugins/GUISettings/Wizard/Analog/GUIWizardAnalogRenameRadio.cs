@@ -25,224 +25,233 @@
 
 using System;
 using System.Collections;
-using System.Xml;
-using System.Threading;
 using MediaPortal.Dialogs;
-using MediaPortal.Radio.Database;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Recording;
-using MediaPortal.Util;
 using MediaPortal.GUI.Settings.Wizard;
-using DShowNET;
+using MediaPortal.Radio.Database;
+using MediaPortal.TV.Recording;
+
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
-	/// <summary>
-	/// Summary description for GUIWizardAnalogRenameRadio.
-	/// </summary>
-	public class GUIWizardAnalogRenameRadio : GUIWindow
-	{
-		[SkinControlAttribute(24)]			protected GUIListControl  listChannelsFound=null;
-		[SkinControlAttribute(5)]			  protected GUIButtonControl  btnNext=null;
-		[SkinControlAttribute(25)]			protected GUIButtonControl  btnBack=null;
-		TVCaptureDevice captureCard=null;
+  /// <summary>
+  /// Summary description for GUIWizardAnalogRenameRadio.
+  /// </summary>
+  public class GUIWizardAnalogRenameRadio : GUIWindow
+  {
+    [SkinControl(24)] protected GUIListControl listChannelsFound = null;
+    [SkinControl(5)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+    private TVCaptureDevice captureCard = null;
 
-		public GUIWizardAnalogRenameRadio()
-		{
-			
-			GetID=(int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_RENAME_RADIO;
-		}
-    
-		public override bool Init()
-		{
-			return Load (GUIGraphicsContext.Skin+@"\wizard_tvcard_analog_rename.xml");
-		}
+    public GUIWizardAnalogRenameRadio()
+    {
+      GetID = (int) Window.WINDOW_WIZARD_ANALOG_RENAME_RADIO;
+    }
 
-		protected override void OnPageLoad()
-		{
-			base.OnPageLoad ();
+    public override bool Init()
+    {
+      return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_rename.xml");
+    }
 
-		    UpdateList();
-            if (listChannelsFound.Count == 0)
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+
+      UpdateList();
+      if (listChannelsFound.Count == 0)
+      {
+        OnNextPage(); // no channels found skip renaming
+      }
+      else
+      {
+        int card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
+        if (card >= 0 && card < Recorder.Count)
+        {
+          captureCard = Recorder.Get(card);
+          RadioStation chan = (RadioStation) GUIWizardAnalogTuneRadio.RadioStationsFound[0];
+          captureCard.StartRadio(chan);
+        }
+      }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (captureCard != null)
+      {
+        captureCard.DeleteGraph();
+        captureCard = null;
+      }
+      base.OnPageDestroy(newWindowId);
+    }
+
+    private void UpdateList()
+    {
+      int selectedItem = listChannelsFound.SelectedListItemIndex;
+      listChannelsFound.Clear();
+      foreach (RadioStation chan in GUIWizardAnalogTuneRadio.RadioStationsFound)
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = chan.Name;
+        item.IsFolder = false;
+        string strLogo = "DefaultMyradio.png";
+        item.ThumbnailImage = strLogo;
+        item.IconImage = strLogo;
+        item.IconImageBig = strLogo;
+        item.MusicTag = chan;
+        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        listChannelsFound.Add(item);
+      }
+      while (selectedItem > 0 && selectedItem >= GUIWizardAnalogTuneRadio.RadioStationsFound.Count)
+      {
+        selectedItem--;
+      }
+      listChannelsFound.SelectedListItemIndex = selectedItem;
+      GUIListItem selitem = listChannelsFound.SelectedListItem;
+      if (selitem != null)
+      {
+        RadioStation ch = selitem.MusicTag as RadioStation;
+        if (captureCard != null)
+        {
+          captureCard.StartRadio(ch);
+        }
+      }
+    }
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if (listChannelsFound == control)
+      {
+        OnShowContextMenu();
+      }
+      if (btnNext == control)
+      {
+        OnNextPage();
+        return;
+      }
+      base.OnClicked(controlId, control, actionType);
+    }
+
+    private void OnNextPage()
+    {
+      ArrayList listChannels = new ArrayList();
+      RadioDatabase.GetStations(ref listChannels);
+      foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
+      {
+        bool found = false;
+        foreach (RadioStation listChan in listChannels)
+        {
+          if (String.Compare(listChan.Name, ch.Name, true) == 0)
+          {
+            listChan.Frequency = ch.Frequency;
+            RadioDatabase.UpdateStation(listChan);
+            if (captureCard != null)
             {
-                OnNextPage();		// no channels found skip renaming
+              RadioDatabase.MapChannelToCard(listChan.ID, captureCard.ID);
             }
-            else
+            found = true;
+          }
+        }
+        if (!found)
+        {
+          RadioStation newStation = new RadioStation();
+          newStation.Name = ch.Name;
+          newStation.Frequency = ch.Frequency;
+          RadioDatabase.AddStation(ref newStation);
+          if (captureCard != null)
+          {
+            RadioDatabase.MapChannelToCard(ch.ID, captureCard.ID);
+          }
+        }
+      }
+      if (captureCard != null)
+      {
+        MapRadioToOtherCards(captureCard.ID);
+      }
+      GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
+      GUIWizardCardsDetected.ScanNextCardType();
+    }
+
+    protected override void OnShowContextMenu()
+    {
+      GUIListItem item = listChannelsFound.SelectedListItem;
+      if (item == null)
+      {
+        return;
+      }
+      RadioStation chan = (RadioStation) item.MusicTag;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
+        dlg.AddLocalizedString(117); //delete
+        dlg.AddLocalizedString(118); //rename
+      }
+      dlg.DoModal(GetID);
+      switch (dlg.SelectedId)
+      {
+        case 117: //delete
+          foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
+          {
+            if (ch.Frequency == chan.Frequency)
             {
-                int card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
-                if (card >= 0 && card < Recorder.Count)
-                {
-                    captureCard = Recorder.Get(card);
-                    RadioStation chan = (RadioStation)GUIWizardAnalogTuneRadio.RadioStationsFound[0];
-                    captureCard.StartRadio(chan);
-                }
+              GUIWizardAnalogTuneRadio.RadioStationsFound.Remove(ch);
+              break;
             }
-		}
-		protected override void OnPageDestroy(int newWindowId)
-		{
-			if (captureCard!=null)
-			{
-				captureCard.DeleteGraph();
-				captureCard=null;
-			}
-			base.OnPageDestroy (newWindowId);
-		}
+          }
+          UpdateList();
+          break;
 
-		void UpdateList()
-		{
-			int selectedItem=listChannelsFound.SelectedListItemIndex;
-			listChannelsFound.Clear();
-			foreach (RadioStation chan in GUIWizardAnalogTuneRadio.RadioStationsFound)
-			{
-				GUIListItem item = new GUIListItem();
-				item.Label=chan.Name;
-				item.IsFolder=false;
-				string strLogo="DefaultMyradio.png";
-				item.ThumbnailImage=strLogo;
-				item.IconImage=strLogo;
-				item.IconImageBig=strLogo;
-				item.MusicTag=chan;
-				item.OnItemSelected+=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-				listChannelsFound.Add(item);
-			}
-			while (selectedItem>0 && selectedItem>=GUIWizardAnalogTuneRadio.RadioStationsFound.Count)
-				selectedItem--;
-			listChannelsFound.SelectedListItemIndex=selectedItem;
-			GUIListItem selitem=listChannelsFound.SelectedListItem;
-			if (selitem!=null)
-			{
-				RadioStation ch = selitem.MusicTag as RadioStation;
-				if (captureCard!=null)
-				{
-					captureCard.StartRadio(ch);
-				}
-			}
+        case 118: //rename
+          VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard)
+          {
+            return;
+          }
+          keyboard.Reset();
+          keyboard.Text = chan.Name;
+          keyboard.DoModal(GetID);
+          if (keyboard.IsConfirmed)
+          {
+            chan.Name = keyboard.Text;
+            foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
+            {
+              if (ch.Frequency == chan.Frequency)
+              {
+                ch.Name = chan.Name;
+              }
+            }
+            UpdateList();
+          }
+          break;
+      }
+    }
 
-		}
-		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
-		{
-			if (listChannelsFound==control)
-			{
-				OnShowContextMenu();
-			}
-			if (btnNext==control)
-			{
-				OnNextPage();
-				return;
-			}
-			base.OnClicked (controlId, control, actionType);
-		}
-		void OnNextPage()
-		{
-			ArrayList listChannels =new ArrayList();
-			RadioDatabase.GetStations(ref listChannels);
-			foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
-			{
-				bool found=false;
-				foreach (RadioStation listChan in listChannels)
-				{
-					if (String.Compare(listChan.Name,ch.Name,true)==0)
-					{
-						listChan.Frequency=ch.Frequency;
-						RadioDatabase.UpdateStation(listChan);
-						if (captureCard!=null)
-							RadioDatabase.MapChannelToCard(listChan.ID,captureCard.ID);
-						found=true;
-					}
-				}
-				if (!found)
-				{
-					RadioStation newStation = new RadioStation();
-					newStation.Name=ch.Name;
-					newStation.Frequency=ch.Frequency;
-					RadioDatabase.AddStation(ref newStation);
-					if (captureCard!=null)
-						RadioDatabase.MapChannelToCard(ch.ID,captureCard.ID);
-				}
-			}
-			if (captureCard!=null)
-			{
-				MapRadioToOtherCards(captureCard.ID);
-			}
-			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","yes");
-			GUIWizardCardsDetected.ScanNextCardType();
-		}
+    private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      RadioStation chan = (RadioStation) item.MusicTag;
+      if (captureCard != null)
+      {
+        captureCard.StartRadio(chan);
+      }
+    }
 
-		protected override void OnShowContextMenu()
-		{
-			GUIListItem item = listChannelsFound.SelectedListItem;
-			if (item==null) return;
-			RadioStation chan = (RadioStation)item.MusicTag;
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
-				dlg.AddLocalizedString(117);//delete
-				dlg.AddLocalizedString(118);//rename
-			}
-			dlg.DoModal(GetID);
-			switch (dlg.SelectedId)
-			{
-				case 117://delete
-					foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
-					{
-						if (ch.Frequency==chan.Frequency)
-						{
-							GUIWizardAnalogTuneRadio.RadioStationsFound.Remove(ch);
-							break;
-						}
-					}
-					UpdateList();
-				break;
+    private void MapRadioToOtherCards(int id)
+    {
+      ArrayList radioChans = new ArrayList();
+      RadioDatabase.GetStationsForCard(ref radioChans, id);
+      for (int i = 0; i < Recorder.Count; ++i)
+      {
+        TVCaptureDevice dev = Recorder.Get(i);
 
-				case 118://rename
-					VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-					if (null == keyboard) return ;
-					keyboard.Reset();
-					keyboard.Text=chan.Name;
-					keyboard.DoModal(GetID);
-					if (keyboard.IsConfirmed)
-					{
-						chan.Name = keyboard.Text;
-						foreach (RadioStation ch in GUIWizardAnalogTuneRadio.RadioStationsFound)
-						{
-							if (ch.Frequency==chan.Frequency)
-							{
-								ch.Name=chan.Name;
-							}
-						}
-						UpdateList();
-					}
-					break;
-			}
-		}
-
-		private void item_OnItemSelected(GUIListItem item, GUIControl parent)
-		{
-			RadioStation chan = (RadioStation)item.MusicTag;
-			if (captureCard!=null)
-			{
-				captureCard.StartRadio(chan);
-
-			}
-		}
-		void MapRadioToOtherCards(int id)
-		{
-			ArrayList radioChans = new ArrayList();
-			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
-			for (int i=0; i < Recorder.Count;++i)
-			{
-				TVCaptureDevice dev = Recorder.Get(i);
-
-				if (dev.Network==NetworkType.Analog && dev.ID != id)
-				{
-					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-					{
-						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
-			}
-		}
-
-	}
+        if (dev.Network == NetworkType.Analog && dev.ID != id)
+        {
+          foreach (RadioStation chan in radioChans)
+          {
+            RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
+          }
+        }
+      }
+    }
+  }
 }

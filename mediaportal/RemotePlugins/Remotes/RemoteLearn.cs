@@ -25,30 +25,29 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.InputDevices
 {
-  public partial class RemoteLearn : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class RemoteLearn : MPConfigForm
   {
-
     #region Variables
 
-    string m_sRemoteModel;
-    string m_sRemoteClass;
-    bool m_bchangedsettings = false;
-    bool m_bLearn = false;
-    bool m_bInitialized = false;
-    object RemoteInterface = null;
-    XmlDocument doc;
-    ArrayList RemoteCommand;
-    ArrayList MPCommand;
+    private string m_sRemoteModel;
+    private string m_sRemoteClass;
+    private bool m_bchangedsettings = false;
+    private bool m_bLearn = false;
+    private bool m_bInitialized = false;
+    private object RemoteInterface = null;
+    private XmlDocument doc;
+    private ArrayList RemoteCommand;
+    private ArrayList MPCommand;
 
     #endregion
 
@@ -56,7 +55,6 @@ namespace MediaPortal.InputDevices
 
     public RemoteLearn(string RemoteClass, string Remotemodel, object Remote)
     {
-
       m_sRemoteModel = Remotemodel;
       m_sRemoteClass = RemoteClass;
       Log.Info("RemoteLearn: Loaded Remote Mapping");
@@ -81,8 +79,8 @@ namespace MediaPortal.InputDevices
         {
           try
           {
-            RemoteInterface = (X10Remote)Remote;
-            ((X10Remote)RemoteInterface).X10KeyPressed += new X10Remote.X10Event(CatchKeyPress);
+            RemoteInterface = (X10Remote) Remote;
+            ((X10Remote) RemoteInterface).X10KeyPressed += new X10Remote.X10Event(CatchKeyPress);
             this.Text = "Teach " + Remotemodel + " Remote Control";
             m_bInitialized = true;
           }
@@ -95,9 +93,8 @@ namespace MediaPortal.InputDevices
         {
           try
           {
-            
-            RemoteInterface = (HcwRemote)Remote;
-            ((HcwRemote)RemoteInterface).HCWKeyPressed += new HcwRemote.HCWEvent(CatchKeyPress);
+            RemoteInterface = (HcwRemote) Remote;
+            ((HcwRemote) RemoteInterface).HCWKeyPressed += new HcwRemote.HCWEvent(CatchKeyPress);
             this.Text = "Teach " + Remotemodel + " Remote Control";
             m_bInitialized = true;
           }
@@ -105,9 +102,6 @@ namespace MediaPortal.InputDevices
           {
             Log.Info("RemoteLearn: Could not cast to HCW object - {0}", ex.GetBaseException());
           }
-
-
-
         }
         else
         {
@@ -115,16 +109,13 @@ namespace MediaPortal.InputDevices
           m_bInitialized = false;
         }
       }
-
     }
 
     //Initialize the listview
 
     private void InitializeListView()
     {
-
       mpListView.FullRowSelect = true;
-
     }
 
     #endregion
@@ -135,7 +126,9 @@ namespace MediaPortal.InputDevices
     private void mpOK_Click(object sender, EventArgs e)
     {
       if (m_bchangedsettings)
+      {
         FindandReplaceNode();
+      }
       SaveMapping(m_sRemoteModel + ".xml");
 
       this.Close();
@@ -148,7 +141,6 @@ namespace MediaPortal.InputDevices
         FindandReplaceNode();
         SaveMapping(m_sRemoteModel + ".xml");
       }
-
     }
 
     private void mpCancel_Click(object sender, EventArgs e)
@@ -162,7 +154,6 @@ namespace MediaPortal.InputDevices
       mpListView.Select();
       mpListView.Items[0].Selected = true;
       m_bLearn = true;
-
     }
 
     private void ButtonEndLearn_Click(object sender, EventArgs e)
@@ -193,7 +184,6 @@ namespace MediaPortal.InputDevices
       mpListView.Select();
       mpListView.Focus();
       mpListView.Items[0].Selected = true;
-
     }
 
     private void RemoteLearn_Shown(object sender, EventArgs e)
@@ -203,20 +193,19 @@ namespace MediaPortal.InputDevices
         MessageBox.Show("Failed to get remote control interface");
         this.Close();
       }
-
     }
 
     #endregion
 
     #region Callback
 
-    void CatchKeyPress(int keypress)
+    private void CatchKeyPress(int keypress)
     {
       if (m_bLearn == true)
       {
         m_bchangedsettings = true;
         mpListView.Select();
-        
+
         mpListView.SelectedItems[0].SubItems[1].Text = keypress.ToString();
 
         int index = mpListView.SelectedItems[0].Index;
@@ -236,23 +225,20 @@ namespace MediaPortal.InputDevices
 
     #region Load and Save mappings
 
-    void FindandReplaceNode()
+    private void FindandReplaceNode()
     {
-
       XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
       int counter = 0;
 
       foreach (XmlNode nodeRemote in listRemotes)
       {
-        
         if (nodeRemote.Attributes["family"].Value.ToString() == mpRemotenumber.SelectedItem.ToString())
         {
           XmlNodeList listButtons = nodeRemote.SelectNodes("button");
 
           while (RemoteCommand.Count > counter)
           {
-
             foreach (XmlNode nodeButton in listButtons)
             {
               if (nodeButton.Attributes["name"].Value.ToString() == MPCommand[counter].ToString())
@@ -264,19 +250,16 @@ namespace MediaPortal.InputDevices
           }
         }
       }
-
     }
 
-    void LoadRemotes()
+    private void LoadRemotes()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-
         XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
         foreach (XmlNode nodeRemote in listRemotes)
         {
-
           mpRemotenumber.Items.Add(nodeRemote.Attributes["family"].Value.ToString());
         }
 
@@ -288,29 +271,33 @@ namespace MediaPortal.InputDevices
           mpRemotenumber.SelectedIndex = 0;
         }
         else if (Index == -1)
+        {
           mpRemotenumber.SelectedIndex = 0;
+        }
         else
+        {
           mpRemotenumber.SelectedIndex = Index;
-
+        }
       }
     }
 
-    void LoadMapping(string xmlFile, bool defaults)
+    private void LoadMapping(string xmlFile, bool defaults)
     {
       try
       {
-
         doc = new XmlDocument();
         string path = Config.GetFile(Config.Dir.CustomInputDefault, xmlFile);
 
         if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
         {
-            path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
-            Log.Info("RemoteLearning Path problem 1 - " + path);
+          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+          Log.Info("RemoteLearning Path problem 1 - " + path);
         }
         if (!File.Exists(path))
         {
-          MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(
+            "Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults",
+            "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
           Log.Info("RemoteLearning Path problem 2 - " + path);
           this.Close();
           return;
@@ -322,7 +309,9 @@ namespace MediaPortal.InputDevices
         string[] data = new string[2];
 
         if (mpRemotenumber.SelectedItem == null)
+        {
           LoadRemotes();
+        }
 
 
         foreach (XmlNode nodeRemote in listRemotes)
@@ -341,7 +330,6 @@ namespace MediaPortal.InputDevices
             }
           }
         }
-
       }
       catch (Exception ex)
       {
@@ -351,7 +339,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    bool SaveMapping(string xmlFile)
+    private bool SaveMapping(string xmlFile)
     {
       if (m_bchangedsettings == true)
       {
@@ -366,13 +354,13 @@ namespace MediaPortal.InputDevices
           Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
         }
       }
-      using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("remote", "remotenumberindex" + m_sRemoteClass, mpRemotenumber.SelectedIndex);
       }
       return true;
-
     }
+
     #endregion
   }
 }

@@ -30,8 +30,9 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 namespace PostSetup
 {
@@ -45,6 +46,7 @@ namespace PostSetup
     /// Required designer variable.
     /// </summary>
     private Container components = null;
+
     private Thread dt = null;
     private byte[] dataDownloaded = null;
     private Panel panDownload;
@@ -56,7 +58,7 @@ namespace PostSetup
     public Panel panPackage;
     private Label labInstallFrom;
     private bool cancelCalled = false;
-    private MediaPortal.UserInterface.Controls.MPTextBox txtDescription;
+    private MPTextBox txtDescription;
     private string mpTargetDir;
 
     /// <summary>
@@ -66,6 +68,7 @@ namespace PostSetup
     {
       InitializeComponent();
     }
+
     /// <summary>
     /// No impl.
     /// </summary>
@@ -75,7 +78,6 @@ namespace PostSetup
       this.mpTargetDir = mpTargetDir;
       this.Visible = true;
       this.Dock = DockStyle.Top;
-
     }
 
 
@@ -216,7 +218,6 @@ namespace PostSetup
       this.panDownload.ResumeLayout(false);
       this.panPackage.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -245,13 +246,12 @@ namespace PostSetup
 
         while (dt.IsAlive)
         {
-          System.Windows.Forms.Application.DoEvents();
+          Application.DoEvents();
           if (this.cancelCalled)
           {
             break;
           }
         }
-
       }
       catch (WebException e)
       {
@@ -261,7 +261,6 @@ namespace PostSetup
       {
         this.labProgressBytes.Text = "Error: " + e.ToString();
       }
-
     }
 
     /// <summary>
@@ -275,7 +274,7 @@ namespace PostSetup
         labProgressBytes.Text = "Cancel!";
         this.dt.Abort();
         this.dt = null;
-        System.Windows.Forms.Application.DoEvents();
+        Application.DoEvents();
         Thread.Sleep(200);
         progressBar.Visible = false;
         progressBar.Value = 0;
@@ -300,12 +299,13 @@ namespace PostSetup
         progressBar.Minimum = 0;
         progressBar.Maximum = totalBytes;
         progressBar.Value = bytesSoFar;
-        labProgressBytes.Text = (bytesSoFar / 1024).ToString("#,##0") + " of " + (totalBytes / 1024).ToString("#,##0") + " Kb.";
+        labProgressBytes.Text = (bytesSoFar/1024).ToString("#,##0") + " of " + (totalBytes/1024).ToString("#,##0") +
+                                " Kb.";
       }
       else
       {
         progressBar.Visible = false;
-        labProgressBytes.Text = (bytesSoFar / 1024).ToString("#,##0") + " Kb downloaded.";
+        labProgressBytes.Text = (bytesSoFar/1024).ToString("#,##0") + " Kb downloaded.";
       }
     }
 
@@ -323,7 +323,6 @@ namespace PostSetup
       }
       labProgressBytes.Text = "Download complete!";
       this.dataDownloaded = dataDownloaded;
-
     }
 
     /// <summary>
@@ -350,14 +349,18 @@ namespace PostSetup
         labProgressBytes.Text = "Unzipping...";
 
         if (!targetDirectory.EndsWith(@"\"))
+        {
           targetDirectory += @"\";
+        }
 
         //creates dir that dont exists.
         try
         {
           Directory.CreateDirectory(targetDirectory);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         ZipInputStream zis = new ZipInputStream(new MemoryStream(indata));
         ZipEntry theEntry;
 
@@ -376,7 +379,9 @@ namespace PostSetup
 
           // exlude some dirs.
           if (excludeDir != null && !excludeDir.Equals(""))
+          {
             cfile = cfile.Replace(@"\" + excludeDir, "");
+          }
 
           if (theEntry.IsDirectory)
           {
@@ -385,7 +390,9 @@ namespace PostSetup
             {
               Directory.CreateDirectory(cfile);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
           }
           else
           {
@@ -397,7 +404,6 @@ namespace PostSetup
               progressBar.Value = +nb;
             }
             fs.Close();
-
           }
         }
         zis.Close();
@@ -436,7 +442,7 @@ namespace PostSetup
       set
       {
         description = value;
-        txtDescription.Lines = description.Split(new char[] { '\n' });
+        txtDescription.Lines = description.Split(new char[] {'\n'});
       }
     }
 
@@ -511,8 +517,8 @@ namespace PostSetup
     }
 
 
-
     private bool doInstallation;
+
     public bool DoInstallation
     {
       get { return doInstallation; }
@@ -525,6 +531,7 @@ namespace PostSetup
 
 
     public delegate void ButtonActionHandler(int buttonAction);
+
     public event ButtonActionHandler ButtonAction_Changed;
     public const int BUTTONACTION_NEXT = 0;
     public const int BUTTONACTION_INSTALL = 1;
@@ -534,6 +541,7 @@ namespace PostSetup
     public const int BUTTONACTION_DONTINSTALL = 5;
 
     private int buttonAction;
+
     public int ButtonAction
     {
       get { return buttonAction; }
@@ -569,7 +577,6 @@ namespace PostSetup
         }
 
         ButtonAction_Changed(buttonAction);
-
       }
     }
 
@@ -612,7 +619,6 @@ namespace PostSetup
     /// </summary>
     public void Install()
     {
-
       ButtonAction = BUTTONACTION_CANCEL;
       if (this.cbDownloadUrls.Text != null && !this.cbDownloadUrls.Text.Equals(""))
       {
@@ -642,14 +648,14 @@ namespace PostSetup
           {
             Console.Write(ex);
             labProgressBytes.Text = "Unzip error!";
-            MessageBox.Show("A Error occur when unzipping package.\nException: " + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("A Error occur when unzipping package.\nException: " + ex.StackTrace, "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
             ButtonAction = BUTTONACTION_DONTINSTALL;
             return;
           }
 
           try
           {
-
             // if set, we will write the (unziped data) or (not unziped data) to disk.
             if (SaveAsFilename != null && !SaveAsFilename.Equals("") && SaveToPath != null && !SaveToPath.Equals(""))
             {
@@ -658,13 +664,13 @@ namespace PostSetup
               SaveFile(this.dataDownloaded, SaveToPath, SaveAsFilename);
               labProgressBytes.Text = "Saving done!";
             }
-
           }
           catch (Exception ex)
           {
             Console.Write(ex);
             labProgressBytes.Text = "Save file error!";
-            MessageBox.Show("A Error occur when saving file to disk.\nException: " + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("A Error occur when saving file to disk.\nException: " + ex.StackTrace, "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
             ButtonAction = BUTTONACTION_DONTINSTALL;
             return;
           }
@@ -680,7 +686,7 @@ namespace PostSetup
               proc.StartInfo.FileName = ExecCommand;
               proc.StartInfo.Arguments = ExecCmdArguments;
               proc.Start();
-              proc.WaitForExit(60000 * 3); // the exec got 3 min to finnish. (else error)
+              proc.WaitForExit(60000*3); // the exec got 3 min to finnish. (else error)
 
               if (proc.ExitCode == 0)
               {
@@ -694,7 +700,9 @@ namespace PostSetup
               else
               {
                 labProgressBytes.Text = "Exec error! (status!=0)";
-                MessageBox.Show("A Error occur when running 3-part-package installation.\nThe installation did not return status 0, could be a problem.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                  "A Error occur when running 3-part-package installation.\nThe installation did not return status 0, could be a problem.",
+                  "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ButtonAction = BUTTONACTION_DONTINSTALL;
               }
             }
@@ -703,17 +711,16 @@ namespace PostSetup
           {
             Console.Write(ex);
             labProgressBytes.Text = "Exec error!";
-            MessageBox.Show("A Error occur when 3-part-package installation.\nException: " + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("A Error occur when 3-part-package installation.\nException: " + ex.StackTrace, "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
             ButtonAction = BUTTONACTION_DONTINSTALL;
             return;
           }
 
           labProgressBytes.Text = "Installation done!";
           ButtonAction = BUTTONACTION_INSTALLED;
-
         }
       }
-
     }
 
     /// <summary>
@@ -731,18 +738,23 @@ namespace PostSetup
         {
           Directory.CreateDirectory(targetDirectory);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         //write byte to disk.
         FileStream fs = new FileStream(@targetDirectory + "/" + filename, FileMode.CreateNew);
         for (int i = 0; i < indata.Length; i++)
+        {
           fs.WriteByte(indata[i]);
+        }
         fs.Close();
-
       }
       catch (Exception e)
       {
         if (!e.Message.EndsWith("already exists."))
+        {
           throw e;
+        }
       }
     }
 
@@ -773,9 +785,13 @@ namespace PostSetup
         using (RegistryKey key = Registry.LocalMachine.OpenSubKey(hklmRegKey))
         {
           if (key == null)
+          {
             return false;
+          }
           else
+          {
             return true;
+          }
         }
       }
       catch (Exception)
@@ -791,7 +807,7 @@ namespace PostSetup
     /// <param name="e"></param>
     private void chkInstallThis_CheckedChanged(object sender, EventArgs e)
     {
-      if (((CheckBox)sender).Checked)
+      if (((CheckBox) sender).Checked)
       {
         cbDownloadUrls.Enabled = true;
         CheckedToInstall();
@@ -807,6 +823,7 @@ namespace PostSetup
     {
       // do something?!	
     }
+
     public virtual void UnCheckedToInstall()
     {
       // do something?!
@@ -829,7 +846,6 @@ namespace PostSetup
       // APPWIZ.CPL  0 Add/Remove Programs Properties 
       try
       {
-
         Process proc = new Process();
         proc.EnableRaisingEvents = false;
         proc.StartInfo.FileName = "Rundll32.exe";
@@ -841,12 +857,6 @@ namespace PostSetup
       {
         Console.Write(e1);
       }
-
-
-
-
     }
-
-
   }
 }

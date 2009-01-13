@@ -23,13 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using MediaPortal.Util;
-using MediaPortal.Playlists;
 using System.IO;
+using MediaPortal.Playlists;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Playlists
 {
@@ -61,7 +57,7 @@ namespace MediaPortal.Tests.Core.Playlists
       playlist.Add(new PlayListItem("mytuneOgg", "mytune.ogg", 123));
       playlist.Add(new PlayListItem("mytuneWav", "mytune.wav"));
       playlist.Add(new PlayListItem("mytuneWav", "mytune.wav", 666));
-      saver.Save(playlist,"test.b4s");
+      saver.Save(playlist, "test.b4s");
 
       string newXml;
       string oldXml;

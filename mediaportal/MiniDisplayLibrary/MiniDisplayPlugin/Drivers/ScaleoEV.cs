@@ -111,7 +111,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     public void DrawImage(Bitmap bitmap)
-    { }
+    {
+    }
 
     public string ErrorMessage
     {
@@ -140,7 +141,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
-    { }
+    {
+    }
 
     /// <summary>
     /// Displays the message on the indicated line
@@ -163,11 +165,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         int vol;
         if (VolumeHandler.Instance.Volume <= 13106)
         {
-          vol = VolumeHandler.Instance.Volume / 6553 * 4;
+          vol = VolumeHandler.Instance.Volume/6553*4;
         } //first 2 steps
         else
         {
-          vol = VolumeHandler.Instance.Volume / 6553 * 2 + 4;
+          vol = VolumeHandler.Instance.Volume/6553*2 + 4;
         }
 
         // Display symbols

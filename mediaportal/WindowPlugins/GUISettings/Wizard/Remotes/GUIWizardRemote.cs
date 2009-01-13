@@ -23,38 +23,27 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings.Wizard
 {
   public class GUIWizardRemote : GUIWindow
   {
-    [SkinControlAttribute(4)]
-    protected GUICheckMarkControl cmMicrosoftMCE = null;
-    [SkinControlAttribute(6)]
-    protected GUICheckMarkControl cmHauppauge = null;
-    [SkinControlAttribute(7)]
-    protected GUICheckMarkControl cmX10Medion = null;
-    [SkinControlAttribute(11)]
-    protected GUICheckMarkControl cmX10Ati = null;
-    [SkinControlAttribute(8)]
-    protected GUICheckMarkControl cmFireDTV = null;
-    [SkinControlAttribute(9)]
-    protected GUICheckMarkControl cmOther = null;
-    [SkinControlAttribute(26)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnBack = null;
-    [SkinControlAttribute(10)]
-    protected GUIImage imgRemote = null;
+    [SkinControl(4)] protected GUICheckMarkControl cmMicrosoftMCE = null;
+    [SkinControl(6)] protected GUICheckMarkControl cmHauppauge = null;
+    [SkinControl(7)] protected GUICheckMarkControl cmX10Medion = null;
+    [SkinControl(11)] protected GUICheckMarkControl cmX10Ati = null;
+    [SkinControl(8)] protected GUICheckMarkControl cmFireDTV = null;
+    [SkinControl(9)] protected GUICheckMarkControl cmOther = null;
+    [SkinControl(26)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+    [SkinControl(10)] protected GUIImage imgRemote = null;
 
 
     public GUIWizardRemote()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_REMOTE;
+      GetID = (int) Window.WINDOW_WIZARD_REMOTE;
     }
 
 
@@ -72,21 +61,45 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (cmMicrosoftMCE == control) OnMicrosoftMCE();
-      if (cmHauppauge == control) OnHauppauge();
-      if (cmX10Medion == control) OnX10Medion();
-      if (cmX10Ati == control) OnX10Ati();
-      if (cmFireDTV == control) OnFireDTV();
-      if (cmOther == control) OnOther();
-      if (btnNext == control) OnNextPage();
-      if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
+      if (cmMicrosoftMCE == control)
+      {
+        OnMicrosoftMCE();
+      }
+      if (cmHauppauge == control)
+      {
+        OnHauppauge();
+      }
+      if (cmX10Medion == control)
+      {
+        OnX10Medion();
+      }
+      if (cmX10Ati == control)
+      {
+        OnX10Ati();
+      }
+      if (cmFireDTV == control)
+      {
+        OnFireDTV();
+      }
+      if (cmOther == control)
+      {
+        OnOther();
+      }
+      if (btnNext == control)
+      {
+        OnNextPage();
+      }
+      if (btnBack == control)
+      {
+        GUIWindowManager.ShowPreviousWindow();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
 
-    void OnMicrosoftMCE()
+    private void OnMicrosoftMCE()
     {
       cmMicrosoftMCE.Selected = true;
       cmHauppauge.Selected = false;
@@ -99,7 +112,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnHauppauge()
+    private void OnHauppauge()
     {
       cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = true;
@@ -112,7 +125,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnX10Medion()
+    private void OnX10Medion()
     {
       cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
@@ -125,7 +138,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnX10Ati()
+    private void OnX10Ati()
     {
       cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
@@ -138,7 +151,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnFireDTV()
+    private void OnFireDTV()
     {
       cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
@@ -151,7 +164,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnOther()
+    private void OnOther()
     {
       cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
@@ -164,9 +177,9 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool useMicrosoft = xmlreader.GetValueAsBool("remote", "MCE", true);
         bool useHCW = xmlreader.GetValueAsBool("remote", "HCW", false);
@@ -175,19 +188,37 @@ namespace MediaPortal.GUI.Settings.Wizard
         bool useX10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         bool useFireDTV = xmlreader.GetValueAsBool("remote", "FireDTV", false);
 
-        if (useMicrosoft) OnMicrosoftMCE();
-        else if (useHCW) OnHauppauge();
-        else if (useX10 && useX10Medion) OnX10Medion();
-        else if (useX10 && useX10Ati) OnX10Ati();
-        else if (useFireDTV) OnFireDTV();
-        else OnOther();
+        if (useMicrosoft)
+        {
+          OnMicrosoftMCE();
+        }
+        else if (useHCW)
+        {
+          OnHauppauge();
+        }
+        else if (useX10 && useX10Medion)
+        {
+          OnX10Medion();
+        }
+        else if (useX10 && useX10Ati)
+        {
+          OnX10Ati();
+        }
+        else if (useFireDTV)
+        {
+          OnFireDTV();
+        }
+        else
+        {
+          OnOther();
+        }
       }
     }
 
 
-    void OnNextPage()
+    private void OnNextPage()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("remote", "MCE", cmMicrosoftMCE.Selected);
         xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
@@ -202,15 +233,19 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIGraphicsContext.SendMessage(msg);
 
       bool tvPluginInstalled;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         tvPluginInstalled = xmlreader.GetValueAsBool("pluginsdlls", "TvPlugin.dll", false);
       }
 
       if (tvPluginInstalled)
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
+      {
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_FINISHED);
+      }
       else
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_CARDS_DETECTED);   
-   }
+      {
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_CARDS_DETECTED);
+      }
+    }
   }
 }

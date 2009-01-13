@@ -25,23 +25,30 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using System.IO;
-using MediaPortal.GUI.Library;
-using MediaPortal.Video.Database;
-using MediaPortal.Util;
 using CSScriptLibrary;
-using System.Collections.Generic;
+using MediaPortal.Database;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class MovieDatabase : MediaPortal.Configuration.SectionSettings, IMDB.IProgress
+  public partial class MovieDatabase : SectionSettings, IMDB.IProgress
   {
     #region classes
+
     private class MovieTitleComparer : IComparer
     {
       #region IComparer Members
@@ -82,13 +89,16 @@ namespace MediaPortal.Configuration.Sections
       public string language;
       public string limit;
 
-      public ComboBoxItemDatabase() { }
+      public ComboBoxItemDatabase()
+      {
+      }
 
       public override string ToString()
       {
         return String.Format("{0}: {1} [{2}]", language, title, database);
       }
     }
+
     internal class ComboBoxItemMovie
     {
       public string Title;
@@ -99,11 +109,13 @@ namespace MediaPortal.Configuration.Sections
         this.Title = title;
         this.Movie = movie;
       }
+
       public override string ToString()
       {
         return Title;
       }
     }
+
     internal class ComboBoxArt
     {
       public string Title;
@@ -114,11 +126,13 @@ namespace MediaPortal.Configuration.Sections
         this.Title = title;
         this.URL = url;
       }
+
       public override string ToString()
       {
         return Title;
       }
     }
+
     #endregion
 
     // grabber index holds information/urls of available grabbers to download
@@ -135,24 +149,26 @@ namespace MediaPortal.Configuration.Sections
     // The LVI being edited
     private ListViewItem _editItem;
 
-    bool _scanning = false;
-    bool useLocalImage = false;
+    private bool _scanning = false;
+    private bool useLocalImage = false;
 
     private DlgProgress progressDialog = new DlgProgress();
     private string newMovieToFind = string.Empty;
 
-    bool _isFuzzyMatching = true;
+    private bool _isFuzzyMatching = true;
     //ArrayList extractedTags;
 
     private bool settingsLoaded = false;
 
-    ArrayList conflictFiles = new ArrayList();
-    
+    private ArrayList conflictFiles = new ArrayList();
+
     #region ctor
+
     public MovieDatabase()
       : this("Video Database")
     {
     }
+
     public MovieDatabase(string name)
       : base("Video Database")
     {
@@ -160,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
 
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://forum.team-mediaportal.com/movie-info-grabbers-287/");
     }
+
     #endregion
 
     private string[] Extensions
@@ -167,12 +184,13 @@ namespace MediaPortal.Configuration.Sections
       get { return extensions; }
       set { extensions = value; }
     }
-    string[] extensions = new string[] { ".avi" };
+
+    private string[] extensions = new string[] {".avi"};
 
     /// <summary> 
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.IContainer components = null;
+    private IContainer components = null;
 
     public override void OnSectionActivated()
     {
@@ -184,11 +202,11 @@ namespace MediaPortal.Configuration.Sections
       //
       // Load selected shares
       //
-      SectionSettings section = SectionSettings.GetSection("Video Folders");
+      SectionSettings section = GetSection("Video Folders");
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList)section.GetSetting("shares");
+        ArrayList shares = (ArrayList) section.GetSetting("shares");
 
         foreach (string share in shares)
         {
@@ -202,23 +220,25 @@ namespace MediaPortal.Configuration.Sections
       // Movie Folders
       // Fetch extensions
       //
-      section = SectionSettings.GetSection("Video Extensions");
+      section = GetSection("Video Extensions");
 
       if (section != null)
       {
-        string extensions = (string)section.GetSetting("extensions");
-        Extensions = extensions.Split(new char[] { ',' });
+        string extensions = (string) section.GetSetting("extensions");
+        Extensions = extensions.Split(new char[] {','});
       }
 
       UpdateControlStatus();
       LoadMovies(0);
       if (cbTitle.Items.Count > 0)
+      {
         cbTitle.SelectedIndex = 0;
+      }
     }
 
     #region Scan tab
 
-    private void sharesListBox_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
       UpdateControlStatus();
     }
@@ -236,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void sharesListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void sharesListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       UpdateControlStatus();
     }
@@ -246,12 +266,11 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void startButton_Click(object sender, System.EventArgs e)
+    private void startButton_Click(object sender, EventArgs e)
     {
       groupBox1.Enabled = false;
       RebuildDatabase();
       groupBox1.Enabled = true;
-
     }
 
     /// <summary>
@@ -262,16 +281,17 @@ namespace MediaPortal.Configuration.Sections
       ArrayList availablePaths = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
-        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
+        string path = sharesListBox.Items[(int) sharesListBox.CheckedIndices[index]].ToString();
         availablePaths.Add(path);
       }
       conflictFiles = new ArrayList();
       IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, actorsCheckBox.Checked);
     }
 
-    private void clearButton_Click(object sender, System.EventArgs e)
+    private void clearButton_Click(object sender, EventArgs e)
     {
-      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire video database?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire video database?",
+                                                  "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
       if (dialogResult == DialogResult.Yes)
       {
@@ -285,7 +305,8 @@ namespace MediaPortal.Configuration.Sections
           }
           catch (Exception)
           {
-            MessageBox.Show("Video database could not be cleared", "Video Database", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            MessageBox.Show("Video database could not be cleared", "Video Database", MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
             return;
           }
           finally
@@ -293,10 +314,13 @@ namespace MediaPortal.Configuration.Sections
             VideoDatabase.ReOpen();
           }
         }
-        MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
       }
     }
+
     #region IMDB.IProgress
+
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -305,14 +329,18 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
       progressDialog.SetLine1(line1);
       progressDialog.SetLine2(line2);
       if (percent > 0)
+      {
         progressDialog.SetPercentage(percent);
+      }
       progressDialog.Update();
     }
+
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -322,6 +350,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       DialogResult result = progressDialog.ShowDialog(this);
@@ -332,6 +361,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -340,6 +370,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       if (_scanning)
@@ -352,6 +383,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return false;
     }
+
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -361,6 +393,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       progressDialog.Instance = fetcher;
@@ -372,6 +405,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       if (progressDialog.IsInstance(fetcher))
@@ -380,6 +414,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       progressDialog.ResetProgress();
@@ -389,6 +424,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.Instance = fetcher;
       return true;
     }
+
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
       progressDialog.Instance = fetcher;
@@ -400,10 +436,12 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       return true;
     }
+
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       if (_scanning)
@@ -412,7 +450,8 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        MessageBox.Show("Movie details could not be found.", fetcher.MovieName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Movie details could not be found.", fetcher.MovieName, MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
       }
       return true;
     }
@@ -426,6 +465,7 @@ namespace MediaPortal.Configuration.Sections
       }
       return true;
     }
+
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
       if (_scanning)
@@ -439,7 +479,9 @@ namespace MediaPortal.Configuration.Sections
         DlgMovieList dlg = new DlgMovieList();
         dlg.Filename = fetcher.MovieName;
         for (int i = 0; i < fetcher.Count; ++i)
+        {
           dlg.AddMovie(fetcher[i].Title);
+        }
         DialogResult result = dlg.ShowDialog(this);
         this.Update();
         if (result == DialogResult.Cancel)
@@ -456,6 +498,7 @@ namespace MediaPortal.Configuration.Sections
         return true;
       }
     }
+
     public bool OnScanStart(int total)
     {
       _scanning = true;
@@ -463,6 +506,7 @@ namespace MediaPortal.Configuration.Sections
 
       return true;
     }
+
     public bool OnScanEnd()
     {
       if (conflictFiles.Count > 0)
@@ -470,7 +514,7 @@ namespace MediaPortal.Configuration.Sections
         DlgMovieConflicts dlg = new DlgMovieConflicts();
         for (int i = 0; i < this.conflictFiles.Count; ++i)
         {
-          IMDBMovie currentMovie = (IMDBMovie)conflictFiles[i];
+          IMDBMovie currentMovie = (IMDBMovie) conflictFiles[i];
           string strFileName = string.Empty;
           string path = currentMovie.Path;
           string filename = currentMovie.File;
@@ -499,11 +543,13 @@ namespace MediaPortal.Configuration.Sections
       _scanning = false;
       return true;
     }
+
     public bool OnScanIterating(int count)
     {
       progressDialog.Count = count;
       return true;
     }
+
     public bool OnScanIterated(int count)
     {
       progressDialog.Count = count;
@@ -518,7 +564,7 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    void LoadMovies(int id)
+    private void LoadMovies(int id)
     {
       cbTitle.Items.Clear();
       ArrayList movies = new ArrayList();
@@ -544,7 +590,7 @@ namespace MediaPortal.Configuration.Sections
       cbTitle.SelectedIndex = index;
     }
 
-    void UpdateEdit(IMDBMovie movie)
+    private void UpdateEdit(IMDBMovie movie)
     {
       listViewMovieActors.BeginUpdate();
       listViewGenres.BeginUpdate();
@@ -552,7 +598,9 @@ namespace MediaPortal.Configuration.Sections
       listViewAllActors.BeginUpdate();
       listViewFiles.BeginUpdate();
 
-      tbDiscNr.Text = (movie.DVDLabel.Length > 4 ? Convert.ToString(Convert.ToInt16(movie.DVDLabel.Substring(4))) : string.Empty);
+      tbDiscNr.Text = (movie.DVDLabel.Length > 4
+                         ? Convert.ToString(Convert.ToInt16(movie.DVDLabel.Substring(4)))
+                         : string.Empty);
       tbTitle.Text = movie.Title;
       tbTagline.Text = movie.TagLine;
       tbYear.Text = movie.Year.ToString();
@@ -578,9 +626,13 @@ namespace MediaPortal.Configuration.Sections
       tbDuration.Text = movie.RunTime.ToString();
 
       if (movie.Watched > 0)
+      {
         cbWatched.Checked = true;
+      }
       else
+      {
         cbWatched.Checked = false;
+      }
 
       if (pictureBox1.Image != null)
       {
@@ -606,9 +658,9 @@ namespace MediaPortal.Configuration.Sections
 
       if (movie.ID >= 0)
       {
-        string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
+        string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
 
-        if (System.IO.File.Exists(file))
+        if (File.Exists(file))
         {
           using (Image img = Image.FromFile(file))
           {
@@ -624,7 +676,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        char[] splitter = { '\n', ',' };
+        char[] splitter = {'\n', ','};
         string[] actors = movie.Cast.Split(splitter);
 
         if (actors.Length > 0)
@@ -666,7 +718,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList vecGenres = new ArrayList();
         if (szGenres.IndexOf("/") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new char[] { '/' });
+          Tokens f = new Tokens(szGenres, new char[] {'/'});
           foreach (string strGenre in f)
           {
             String strCurrentGenre = strGenre.Trim();
@@ -766,7 +818,7 @@ namespace MediaPortal.Configuration.Sections
       listViewFiles.EndUpdate();
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (tabControl1.SelectedTab == tabPage1)
       {
@@ -776,9 +828,12 @@ namespace MediaPortal.Configuration.Sections
 
     #region Editor tab
 
-    private void buttonMapGenre_Click(object sender, System.EventArgs e)
+    private void buttonMapGenre_Click(object sender, EventArgs e)
     {
-      if (listViewAllGenres.SelectedItems == null) return;
+      if (listViewAllGenres.SelectedItems == null)
+      {
+        return;
+      }
 
       for (int i = 0; i < listViewAllGenres.SelectedItems.Count; ++i)
       {
@@ -795,9 +850,12 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonUnmapGenre_Click(object sender, System.EventArgs e)
+    private void buttonUnmapGenre_Click(object sender, EventArgs e)
     {
-      if (listViewAllGenres.SelectedItems == null) return;
+      if (listViewAllGenres.SelectedItems == null)
+      {
+        return;
+      }
       for (int i = 0; i < listViewGenres.SelectedItems.Count; ++i)
       {
         ListViewItem listItem = listViewGenres.SelectedItems[i];
@@ -811,9 +869,12 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonMapActors_Click(object sender, System.EventArgs e)
+    private void buttonMapActors_Click(object sender, EventArgs e)
     {
-      if (listViewAllActors.SelectedItems == null) return;
+      if (listViewAllActors.SelectedItems == null)
+      {
+        return;
+      }
 
       for (int i = 0; i < listViewAllActors.SelectedItems.Count; ++i)
       {
@@ -832,9 +893,12 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonUnmapActors_Click(object sender, System.EventArgs e)
+    private void buttonUnmapActors_Click(object sender, EventArgs e)
     {
-      if (listViewMovieActors.SelectedItems == null) return;
+      if (listViewMovieActors.SelectedItems == null)
+      {
+        return;
+      }
       for (int i = 0; i < listViewMovieActors.SelectedItems.Count; ++i)
       {
         ListViewItem listItem = listViewMovieActors.SelectedItems[i];
@@ -848,12 +912,13 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonAddFile_Click(object sender, System.EventArgs e)
+    private void buttonAddFile_Click(object sender, EventArgs e)
     {
-      System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+      OpenFileDialog find_file = new OpenFileDialog();
       //find_file.RestoreDirectory = true;
       find_file.DefaultExt = "avi";
-      find_file.Filter = "Avi Files|*.avi|Recordings|*.dvr-ms|Mpeg files|*.mpeg|Mpeg files|*.mpg|Windows Media|*.wmv|All files|*.*";
+      find_file.Filter =
+        "Avi Files|*.avi|Recordings|*.dvr-ms|Mpeg files|*.mpeg|Mpeg files|*.mpg|Windows Media|*.wmv|All files|*.*";
       find_file.InitialDirectory = ".";
       find_file.Title = "Find files for " + tbTitle.Text;
       find_file.Multiselect = true;
@@ -867,9 +932,12 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonRemoveFile_Click(object sender, System.EventArgs e)
+    private void buttonRemoveFile_Click(object sender, EventArgs e)
     {
-      if (listViewFiles.SelectedItems == null) return;
+      if (listViewFiles.SelectedItems == null)
+      {
+        return;
+      }
       for (int i = listViewFiles.SelectedItems.Count - 1; i >= 0; --i)
       {
         ListViewItem listItem = listViewFiles.SelectedItems[i];
@@ -877,41 +945,54 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonDeleteActor_Click(object sender, System.EventArgs e)
+    private void buttonDeleteActor_Click(object sender, EventArgs e)
     {
-      if (listViewAllActors.SelectedItems == null) return;
-      if (MessageBox.Show("Are you sure you want to delete the selected actors?", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+      if (listViewAllActors.SelectedItems == null)
+      {
+        return;
+      }
+      if (
+        MessageBox.Show("Are you sure you want to delete the selected actors?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
       {
         for (int i = listViewAllActors.SelectedItems.Count - 1; i >= 0; --i)
         {
           ListViewItem listItem = listViewAllActors.SelectedItems[i];
           VideoDatabase.DeleteActor(listItem.Text);
           listViewAllActors.Items.Remove(listItem);
-          string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
-          if (System.IO.File.Exists(file))
+          string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
+          if (File.Exists(file))
           {
-            System.IO.File.Delete(file);
+            File.Delete(file);
           }
-          file = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
-          if (System.IO.File.Exists(file))
+          file = Util.Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
+          if (File.Exists(file))
           {
-            System.IO.File.Delete(file);
+            File.Delete(file);
           }
         }
       }
     }
 
-    private void buttonNewActor_Click(object sender, System.EventArgs e)
+    private void buttonNewActor_Click(object sender, EventArgs e)
     {
-      if (textBoxNewActor.Text.Length == 0) return;
+      if (textBoxNewActor.Text.Length == 0)
+      {
+        return;
+      }
       VideoDatabase.AddActor(textBoxNewActor.Text);
       listViewAllActors.Items.Add(textBoxNewActor.Text);
     }
 
-    private void btnDeleteGenre_Click(object sender, System.EventArgs e)
+    private void btnDeleteGenre_Click(object sender, EventArgs e)
     {
-      if (listViewAllGenres.SelectedItems == null) return;
-      if (MessageBox.Show("Are you sure you want to delete the selected genres?", "Are you sure?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+      if (listViewAllGenres.SelectedItems == null)
+      {
+        return;
+      }
+      if (
+        MessageBox.Show("Are you sure you want to delete the selected genres?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
       {
         for (int i = listViewAllGenres.SelectedItems.Count - 1; i >= 0; --i)
         {
@@ -922,25 +1003,29 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void buttonNewGenre_Click(object sender, System.EventArgs e)
+    private void buttonNewGenre_Click(object sender, EventArgs e)
     {
-      if (textBoxNewGenre.Text.Length == 0) return;
+      if (textBoxNewGenre.Text.Length == 0)
+      {
+        return;
+      }
       VideoDatabase.AddGenre(textBoxNewGenre.Text);
       listViewAllGenres.Items.Add(textBoxNewGenre.Text);
     }
 
-    private void buttonNewMovie_Click(object sender, System.EventArgs e)
+    private void buttonNewMovie_Click(object sender, EventArgs e)
     {
       cbTitle.SelectedItem = null;
       IMDBMovie details = new IMDBMovie();
       UpdateEdit(details);
     }
 
-    private void buttonLookupMovie_Click(object sender, System.EventArgs e)
+    private void buttonLookupMovie_Click(object sender, EventArgs e)
     {
       if (tbTitle.Text == string.Empty)
       {
-        MessageBox.Show("Please enter a movie title", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
+        MessageBox.Show("Please enter a movie title", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        ;
         return;
       }
       buttonLookupMovie.Enabled = false;
@@ -960,7 +1045,7 @@ namespace MediaPortal.Configuration.Sections
         file = tbTitle.Text;
       }
       string path, filename;
-      MediaPortal.Util.Utils.Split(file, out path, out filename);
+      Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = tbTitle.Text;
@@ -970,6 +1055,7 @@ namespace MediaPortal.Configuration.Sections
       tabControl2.Enabled = true;
       tabControl1.Enabled = true;
     }
+
     private void GetInfoFromIMDB(ref IMDBMovie movieDetails, bool fuzzyMatch)
     {
       string file, path, filename;
@@ -987,7 +1073,7 @@ namespace MediaPortal.Configuration.Sections
           filename = filename.Substring(1);
           movieDetails.File = filename;
         }
-        file = path + System.IO.Path.DirectorySeparatorChar + filename;
+        file = path + Path.DirectorySeparatorChar + filename;
       }
       else
       {
@@ -1000,18 +1086,21 @@ namespace MediaPortal.Configuration.Sections
         Log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+        dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
-          if (item.IsFolder) continue;
-          if (MediaPortal.Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
+          if (item.IsFolder)
+          {
+            continue;
+          }
+          if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
 
-            MediaPortal.Database.DatabaseUtility.Split(item.Path, out strPath, out strFileName);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strFileName);
+            DatabaseUtility.Split(item.Path, out strPath, out strFileName);
+            DatabaseUtility.RemoveInvalidChars(ref strPath);
+            DatabaseUtility.RemoveInvalidChars(ref strFileName);
             int pathId = VideoDatabase.AddPath(strPath);
             VideoDatabase.AddFile(id, pathId, strFileName);
           }
@@ -1028,9 +1117,9 @@ namespace MediaPortal.Configuration.Sections
           LoadMovies(movieDetails.ID);
         }
       }
-
     }
-    private void btnSave_Click(object sender, System.EventArgs e)
+
+    private void btnSave_Click(object sender, EventArgs e)
     {
       IMDBMovie details = CurrentMovie;
       if (details.ID >= 0)
@@ -1052,13 +1141,15 @@ namespace MediaPortal.Configuration.Sections
         }
         if (file == string.Empty)
         {
-          MessageBox.Show("Please enter a movie title or movie file", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          MessageBox.Show("Please enter a movie title or movie file", "Information", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
           return;
         }
         details.ID = VideoDatabase.AddMovieFile(file);
         if (details.ID == -1)
         {
-          MessageBox.Show("Could not save movie to database", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          MessageBox.Show("Could not save movie to database", "Information", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
           return;
         }
       }
@@ -1070,9 +1161,9 @@ namespace MediaPortal.Configuration.Sections
       {
         string strFileName;
 
-        MediaPortal.Database.DatabaseUtility.Split(item.Text, out strPath, out strFileName);
-        MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
-        MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strFileName);
+        DatabaseUtility.Split(item.Text, out strPath, out strFileName);
+        DatabaseUtility.RemoveInvalidChars(ref strPath);
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
         int pathId = VideoDatabase.AddPath(strPath);
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
@@ -1082,9 +1173,12 @@ namespace MediaPortal.Configuration.Sections
       {
         if (dvdLabel.Length > 0)
         {
-          if (!MediaPortal.Util.Utils.IsDVD(strPath))
+          if (!Util.Utils.IsDVD(strPath))
           {
-            if (MessageBox.Show("The file list suggests that this movie is not on disc and thus the label will not be shown. Store it anyway?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+            if (
+              MessageBox.Show(
+                "The file list suggests that this movie is not on disc and thus the label will not be shown. Store it anyway?",
+                "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
             {
               VideoDatabase.SetDVDLabel(details.ID, dvdLabel);
             }
@@ -1097,13 +1191,14 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        MessageBox.Show("Disc # is invalid and has not been stored. Enter an integer between 0 and 999", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("Disc # is invalid and has not been stored. Enter an integer between 0 and 999", "Information",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
 
       LoadMovies(details.ID);
     }
 
-    private void btnAmazon_Click(object sender, System.EventArgs e)
+    private void btnAmazon_Click(object sender, EventArgs e)
     {
       btnAmazon.Enabled = false;
       imagesListBox.Items.Clear();
@@ -1111,7 +1206,7 @@ namespace MediaPortal.Configuration.Sections
 
       string strFilename = string.Empty;
       string strPath = string.Empty;
-      MediaPortal.Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
+      Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
 
       DirectoryInfo di = new DirectoryInfo(strPath);
       FileInfo[] jpgFiles = di.GetFiles("*.jpg");
@@ -1172,40 +1267,44 @@ namespace MediaPortal.Configuration.Sections
       btnAmazon.Enabled = true;
     }
 
-    private void btnDelete_Click(object sender, System.EventArgs e)
+    private void btnDelete_Click(object sender, EventArgs e)
     {
       if (CurrentMovie.ID < 0)
       {
         return;
       }
-      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete this movie?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete this movie?", "Information",
+                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Question);
       if (dialogResult == DialogResult.Yes)
       {
         VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
-        string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
-        if (System.IO.File.Exists(file))
+        string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        if (File.Exists(file))
         {
-          System.IO.File.Delete(file);
+          File.Delete(file);
         }
-        file = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
-        if (System.IO.File.Exists(file))
+        file = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        if (File.Exists(file))
         {
-          System.IO.File.Delete(file);
+          File.Delete(file);
         }
         LoadMovies(0);
       }
     }
 
-    private void buttonImport_Click(object sender, System.EventArgs e)
+    private void buttonImport_Click(object sender, EventArgs e)
     {
       int id = 0;
-      System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
+      OpenFileDialog find_file = new OpenFileDialog();
       find_file.RestoreDirectory = true;
       find_file.DefaultExt = "xml";
       find_file.Filter = "DVD Profile|*.xml";
       find_file.InitialDirectory = ".";
       find_file.Title = "Select DVD Profiler database" + tbTitle.Text;
-      if (find_file.ShowDialog(this) != DialogResult.OK) return;
+      if (find_file.ShowDialog(this) != DialogResult.OK)
+      {
+        return;
+      }
       XmlDocument doc = new XmlDocument();
       doc.Load(find_file.FileName);
       XmlNodeList dvdList = doc.DocumentElement.SelectNodes("/Collection/DVD");
@@ -1224,7 +1323,10 @@ namespace MediaPortal.Configuration.Sections
           // added check to see if nodeGenre was valid
           if (nodeGenre != null && nodeGenre.InnerText != null)
           {
-            if (genre.Length > 0) genre += " / ";
+            if (genre.Length > 0)
+            {
+              genre += " / ";
+            }
             genre += nodeGenre.InnerText;
           }
         }
@@ -1238,9 +1340,18 @@ namespace MediaPortal.Configuration.Sections
           XmlNode nodeFirstName = nodeActor.SelectSingleNode("FirstName");
           XmlNode nodeLastName = nodeActor.SelectSingleNode("LastName");
           XmlNode nodeRole = nodeActor.SelectSingleNode("Role");
-          if (nodeFirstName != null && nodeFirstName.InnerText != null) firstname = nodeFirstName.InnerText;
-          if (nodeLastName != null && nodeLastName.InnerText != null) lastname = nodeLastName.InnerText;
-          if (nodeRole != null && nodeRole.InnerText != null) role = nodeRole.InnerText;
+          if (nodeFirstName != null && nodeFirstName.InnerText != null)
+          {
+            firstname = nodeFirstName.InnerText;
+          }
+          if (nodeLastName != null && nodeLastName.InnerText != null)
+          {
+            lastname = nodeLastName.InnerText;
+          }
+          if (nodeRole != null && nodeRole.InnerText != null)
+          {
+            role = nodeRole.InnerText;
+          }
           string line = String.Format("{0} {1} as {2}\n", firstname, lastname, role);
           cast += line;
         }
@@ -1255,9 +1366,18 @@ namespace MediaPortal.Configuration.Sections
           string lastname = string.Empty;
           XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
           XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
-          if (nodeFirstName != null && nodeFirstName.InnerText != null) firstname = nodeFirstName.InnerText;
-          if (nodeLastName != null && nodeLastName.InnerText != null) lastname = nodeLastName.InnerText;
-          if (credits.Length > 0) credits += " / ";
+          if (nodeFirstName != null && nodeFirstName.InnerText != null)
+          {
+            firstname = nodeFirstName.InnerText;
+          }
+          if (nodeLastName != null && nodeLastName.InnerText != null)
+          {
+            lastname = nodeLastName.InnerText;
+          }
+          if (credits.Length > 0)
+          {
+            credits += " / ";
+          }
           credits += String.Format("{0} {1}", firstname, lastname);
         }
 
@@ -1270,17 +1390,34 @@ namespace MediaPortal.Configuration.Sections
         movie.Genre = genre;
         movie.IMDBNumber = string.Empty;
         // Added check to validate rating
-        if (nodeRating != null && nodeRating.InnerText != null) movie.MPARating = nodeRating.InnerText;
-        else movie.MPARating = "NR";
+        if (nodeRating != null && nodeRating.InnerText != null)
+        {
+          movie.MPARating = nodeRating.InnerText;
+        }
+        else
+        {
+          movie.MPARating = "NR";
+        }
         movie.Path = string.Empty;
         // Added check to validate overview and duration
-        if (nodeOverview != null && nodeOverview.InnerText != null) movie.Plot = nodeOverview.InnerText;
-        else movie.Plot = string.Empty;
+        if (nodeOverview != null && nodeOverview.InnerText != null)
+        {
+          movie.Plot = nodeOverview.InnerText;
+        }
+        else
+        {
+          movie.Plot = string.Empty;
+        }
         movie.PlotOutline = string.Empty;
         movie.Rating = 0;
         if (nodeDuration != null && nodeDuration.InnerText != null)
+        {
           movie.RunTime = Int32.Parse(nodeDuration.InnerText);
-        else movie.RunTime = 0;
+        }
+        else
+        {
+          movie.RunTime = 0;
+        }
         movie.SearchString = string.Empty;
         movie.TagLine = string.Empty;
         movie.ThumbURL = string.Empty;
@@ -1290,24 +1427,30 @@ namespace MediaPortal.Configuration.Sections
         movie.Watched = 0;
         movie.WritingCredits = credits;
         // Added check to validate year
-        if (nodeYear != null && nodeYear != null) movie.Year = Int32.Parse(nodeYear.InnerText);
-        else movie.Year = 0;
+        if (nodeYear != null && nodeYear != null)
+        {
+          movie.Year = Int32.Parse(nodeYear.InnerText);
+        }
+        else
+        {
+          movie.Year = 0;
+        }
         id = VideoDatabase.AddMovie(movie.Title, true);
         movie.ID = id;
         VideoDatabase.SetMovieInfoById(id, ref movie);
-        System.Windows.Forms.Application.DoEvents();
+        Application.DoEvents();
       }
       LoadMovies(id);
     }
 
-    IMDBMovie CurrentMovie
+    private IMDBMovie CurrentMovie
     {
       get
       {
         IMDBMovie movie = new IMDBMovie();
         if (cbTitle.SelectedItem != null)
         {
-          ComboBoxItemMovie cbMovie = (ComboBoxItemMovie)cbTitle.SelectedItem;
+          ComboBoxItemMovie cbMovie = (ComboBoxItemMovie) cbTitle.SelectedItem;
           movie.ID = cbMovie.Movie.ID;
         }
         //movie.File=
@@ -1322,16 +1465,20 @@ namespace MediaPortal.Configuration.Sections
         unchecked
         {
           if (cbWatched.Checked)
+          {
             movie.Watched = 1;
+          }
           else
+          {
             movie.Watched = 0;
+          }
           movie.Title = tbTitle.Text;
           movie.Director = tbDirector.Text;
           movie.MPARating = tbMPAARating.Text;
           movie.RunTime = Int32.Parse(tbDuration.Text);
           movie.WritingCredits = tbWritingCredits.Text;
           movie.Plot = tbDescription.Text;
-          movie.Rating = (float)Double.Parse(tbRating.Text);
+          movie.Rating = (float) Double.Parse(tbRating.Text);
           movie.TagLine = tbTagline.Text;
           movie.Year = Int32.Parse(tbYear.Text);
           movie.ThumbURL = (useLocalImage ? "file://" + tbImageLocation.Text : tbImageLocation.Text);
@@ -1340,8 +1487,14 @@ namespace MediaPortal.Configuration.Sections
         }
         foreach (ListViewItem item in listViewGenres.Items)
         {
-          if (movie.Genre == string.Empty) movie.Genre = item.Text;
-          else movie.Genre += " / " + item.Text;
+          if (movie.Genre == string.Empty)
+          {
+            movie.Genre = item.Text;
+          }
+          else
+          {
+            movie.Genre += " / " + item.Text;
+          }
         }
 
         foreach (ListViewItem item in listViewMovieActors.Items)
@@ -1351,8 +1504,14 @@ namespace MediaPortal.Configuration.Sections
           {
             actor += " as " + item.SubItems[1].Text;
           }
-          if (movie.Cast == string.Empty) movie.Cast = actor;
-          else movie.Cast += "\n" + actor;
+          if (movie.Cast == string.Empty)
+          {
+            movie.Cast = actor;
+          }
+          else
+          {
+            movie.Cast += "\n" + actor;
+          }
         }
         return movie;
       }
@@ -1360,16 +1519,17 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private void OnFuzzyMatchingCheckedChanged(object sender, System.EventArgs e)
+    private void OnFuzzyMatchingCheckedChanged(object sender, EventArgs e)
     {
-      _isFuzzyMatching = ((CheckBox)sender).Checked;
+      _isFuzzyMatching = ((CheckBox) sender).Checked;
       SaveSettings();
     }
-    
+
     #region Persistance
+
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", true);
 
@@ -1408,11 +1568,15 @@ namespace MediaPortal.Configuration.Sections
 
       settingsLoaded = true;
     }
+
     public override void SaveSettings()
     {
-      if (!settingsLoaded) return;
+      if (!settingsLoaded)
+      {
+        return;
+      }
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("movies", "fuzzyMatching", _isFuzzyMatching);
         // Database
@@ -1422,10 +1586,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
         for (int i = 0; i < this.lvDatabase.Items.Count; i++)
         {
-          xmlwriter.SetValue("moviedatabase", "database" + i.ToString(), this.lvDatabase.Items[i].SubItems[chDatabaseDB.Index].Text);
-          xmlwriter.SetValue("moviedatabase", "title" + i.ToString(), this.lvDatabase.Items[i].SubItems[chDatabaseTitle.Index].Text);
-          xmlwriter.SetValue("moviedatabase", "language" + i.ToString(), this.lvDatabase.Items[i].SubItems[chDatabaseLanguage.Index].Text);
-          xmlwriter.SetValue("moviedatabase", "limit" + i.ToString(), this.lvDatabase.Items[i].SubItems[chDatabaseLimit.Index].Text);
+          xmlwriter.SetValue("moviedatabase", "database" + i.ToString(),
+                             this.lvDatabase.Items[i].SubItems[chDatabaseDB.Index].Text);
+          xmlwriter.SetValue("moviedatabase", "title" + i.ToString(),
+                             this.lvDatabase.Items[i].SubItems[chDatabaseTitle.Index].Text);
+          xmlwriter.SetValue("moviedatabase", "language" + i.ToString(),
+                             this.lvDatabase.Items[i].SubItems[chDatabaseLanguage.Index].Text);
+          xmlwriter.SetValue("moviedatabase", "limit" + i.ToString(),
+                             this.lvDatabase.Items[i].SubItems[chDatabaseLimit.Index].Text);
         }
         for (int i = this.lvDatabase.Items.Count; i < 4; i++)
         {
@@ -1436,11 +1604,12 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     #endregion
 
     #region grabber tab
 
-    private void bDatabaseDown_Click(object sender, System.EventArgs e)
+    private void bDatabaseDown_Click(object sender, EventArgs e)
     {
       // Moves the selected entry down
       // get the entry
@@ -1472,7 +1641,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void bDatabaseUp_Click(object sender, System.EventArgs e)
+    private void bDatabaseUp_Click(object sender, EventArgs e)
     {
       // Moves the selected entry up
       // get the entry
@@ -1506,7 +1675,10 @@ namespace MediaPortal.Configuration.Sections
 
     private void lvDatabase_DeleteSelectedItem()
     {
-      if (lvDatabase.SelectedIndices.Count <= 0) return;
+      if (lvDatabase.SelectedIndices.Count <= 0)
+      {
+        return;
+      }
 
       int index = lvDatabase.SelectedItems[0].Index;
       lvDatabase.Items.Remove(lvDatabase.SelectedItems[0]);
@@ -1537,7 +1709,10 @@ namespace MediaPortal.Configuration.Sections
     {
       Point pt = lvDatabase.PointToClient(Cursor.Position);
       ListViewItem item = lvDatabase.GetItemAt(pt.X, pt.Y);
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
 
       Rectangle lviBounds;
       int subItemX;
@@ -1553,7 +1728,8 @@ namespace MediaPortal.Configuration.Sections
         i++;
       }
 
-      subItemRect = new Rectangle(subItemX, lviBounds.Top, lvDatabase.Columns[chDatabaseLimit.Index].Width, lviBounds.Height);
+      subItemRect = new Rectangle(subItemX, lviBounds.Top, lvDatabase.Columns[chDatabaseLimit.Index].Width,
+                                  lviBounds.Height);
       if (subItemRect.X < 0)
       {
         // Left edge of SubItem not visible - adjust rectangle position and width
@@ -1579,7 +1755,7 @@ namespace MediaPortal.Configuration.Sections
 
       // Position and show editor
       mpNumericUpDownLimit.Bounds = subItemRect;
-      
+
       // if the value is not able to parse don't show the editor
       int limit;
       if (int.TryParse(item.SubItems[chDatabaseLimit.Index].Text, out limit))
@@ -1606,7 +1782,10 @@ namespace MediaPortal.Configuration.Sections
     private void mpButtonAdd_Click(object sender, EventArgs e)
     {
       ComboBoxItemDatabase database = mpComboBoxAvailableDatabases.SelectedItem as ComboBoxItemDatabase;
-      if (database == null) return;
+      if (database == null)
+      {
+        return;
+      }
 
       ListViewItem item = this.lvDatabase.Items.Add(database.database);
       item.SubItems.Add(database.title);
@@ -1620,7 +1799,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void mpButtonUpdateGrabber_Click(object sender, EventArgs e)
     {
-      if (!Util.Win32API.IsConnectedToInternet())
+      if (!Win32API.IsConnectedToInternet())
       {
         MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -1643,7 +1822,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // read index file
-      if (!System.IO.File.Exists(GrabberIndexFile))
+      if (!File.Exists(GrabberIndexFile))
       {
         MessageBox.Show("No GrabberIndexFile found.");
         progressDialog.CloseProgress();
@@ -1652,12 +1831,15 @@ namespace MediaPortal.Configuration.Sections
       XmlDocument doc = new XmlDocument();
       doc.Load(GrabberIndexFile);
       XmlNodeList sectionNodes = doc.SelectNodes("MovieInfoGrabber/grabber");
-      
+
       // download all grabbers
       progressDialog.Total = sectionNodes.Count;
       for (int i = 0; i < sectionNodes.Count; i++)
       {
-        if (progressDialog.DialogResult == DialogResult.Cancel) break;
+        if (progressDialog.DialogResult == DialogResult.Cancel)
+        {
+          break;
+        }
 
         string url = sectionNodes[i].Attributes["url"].Value;
         string id = Path.GetFileName(url);
@@ -1674,7 +1856,8 @@ namespace MediaPortal.Configuration.Sections
 
       // Ask to remove out of date grabbers
       if (MessageBox.Show("Do you want to delete all grabbers which are not supported anymore?", "Movie Info grabber",
-        MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                          MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) ==
+          DialogResult.Yes)
       {
         DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
         FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
@@ -1761,8 +1944,8 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
+          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber) script.CreateObject("Grabber");
 
           grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
         }
@@ -1834,25 +2017,30 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         if (File.Exists(GrabberTempFile))
+        {
           File.Delete(GrabberTempFile);
+        }
 
         Application.DoEvents();
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
         Application.DoEvents();
 
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
         {
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (System.IO.TextReader tin = new StreamReader( resStream, System.Text.Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
             {
-              using (System.IO.TextWriter tout = System.IO.File.CreateText(GrabberTempFile))
+              using (TextWriter tout = File.CreateText(GrabberTempFile))
               {
                 while (true)
                 {
                   string line = tin.ReadLine();
-                  if (line == null) break;
+                  if (line == null)
+                  {
+                    break;
+                  }
                   tout.WriteLine(line);
                 }
               }
@@ -1860,8 +2048,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        System.IO.File.Delete(filepath);
-        System.IO.File.Move(GrabberTempFile, filepath);
+        File.Delete(filepath);
+        File.Move(GrabberTempFile, filepath);
         return true;
       }
       catch (Exception ex)
@@ -1925,7 +2113,7 @@ namespace MediaPortal.Configuration.Sections
       {
         string strFilename = string.Empty;
         string strPath = string.Empty;
-        MediaPortal.Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
+        Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
         dlg.InitialDirectory = strPath;
       }
       else
@@ -1946,7 +2134,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (cbTitle.SelectedItem != null)
       {
-        ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+        ComboBoxItemMovie item = (ComboBoxItemMovie) cbTitle.SelectedItem;
         UpdateEdit(item.Movie);
       }
     }
@@ -1970,7 +2158,7 @@ namespace MediaPortal.Configuration.Sections
 
       while (left <= right)
       {
-        midPoint = (left + right) / 2;
+        midPoint = (left + right)/2;
         int comparisonValue = item.CompareTo(items[midPoint].Text);
 
         if (comparisonValue == 0)
@@ -1993,7 +2181,9 @@ namespace MediaPortal.Configuration.Sections
     private void UpdateActiveMovieImageAndThumbs(string strImageURL)
     {
       if (strImageURL == string.Empty)
+      {
         return;
+      }
 
       bool bIsURL = (strImageURL.Substring(0, 7) == @"http://");
 
@@ -2004,12 +2194,12 @@ namespace MediaPortal.Configuration.Sections
         pictureBox1.Image = null;
       }
 
-      string strThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
-      string LargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      string strThumb = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      string LargeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
 
       // Delete old thumbs
-      MediaPortal.Util.Utils.FileDelete(strThumb);
-      MediaPortal.Util.Utils.FileDelete(LargeThumb);
+      Util.Utils.FileDelete(strThumb);
+      Util.Utils.FileDelete(LargeThumb);
 
       if (bIsURL)
       {
@@ -2017,24 +2207,28 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        if (!System.IO.File.Exists(strImageURL))
+        if (!File.Exists(strImageURL))
+        {
           return;
+        }
       }
 
       // Create new thumbs
       try
       {
-        if (MediaPortal.Util.Picture.CreateThumbnail(strImageURL, strThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+        if (Util.Picture.CreateThumbnail(strImageURL, strThumb, (int) Thumbs.ThumbResolution,
+                                         (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
         {
-          MediaPortal.Util.Picture.CreateThumbnail(strImageURL, LargeThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          Util.Picture.CreateThumbnail(strImageURL, LargeThumb, (int) Thumbs.ThumbLargeResolution,
+                                       (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
       }
       catch (Exception)
       {
       }
 
-      string file = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
-      if (System.IO.File.Exists(file))
+      string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
+      if (File.Exists(file))
       {
         try
         {
@@ -2070,7 +2264,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start((string)e.Link.LinkData);
+      Process.Start((string) e.Link.LinkData);
     }
   }
 }

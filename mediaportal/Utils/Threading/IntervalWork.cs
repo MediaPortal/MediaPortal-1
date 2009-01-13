@@ -26,12 +26,8 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-#endregion
-
-using MediaPortal.Threading;
+  #endregion
 
 namespace MediaPortal.Threading
 {
@@ -39,9 +35,9 @@ namespace MediaPortal.Threading
   {
     #region Variables
 
-    TimeSpan _interval;
-    DateTime _lastRun = DateTime.Now;
-    bool _running = false;
+    private TimeSpan _interval;
+    private DateTime _lastRun = DateTime.Now;
+    private bool _running = false;
 
     #endregion
 
@@ -97,20 +93,29 @@ namespace MediaPortal.Threading
     {
       // don't perform canceled work
       if (State == WorkState.CANCELED)
+      {
         return;
+      }
       // don't perform work which is in an invalid state
       if (State != WorkState.INQUEUE)
-        throw new InvalidOperationException(String.Format("WorkState for work {0} not INQUEUE, but {1}", Description, State));
+      {
+        throw new InvalidOperationException(String.Format("WorkState for work {0} not INQUEUE, but {1}", Description,
+                                                          State));
+      }
       State = WorkState.INPROGRESS;
 
       // perform work 
       if (WorkLoad != null)
+      {
         WorkLoad();
+      }
 
       // mark work as finished and fire work completion delegate
       State = WorkState.FINISHED;
       if (WorkCompleted != null)
+      {
         WorkCompleted(EventArgs);
+      }
       _running = false;
     }
 

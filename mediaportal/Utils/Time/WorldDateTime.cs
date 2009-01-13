@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.Utils.Time
 {
@@ -34,7 +32,9 @@ namespace MediaPortal.Utils.Time
     /// <summary>
     /// Date Time with WorldTimeZone
     /// </summary>
+
     #region Variables
+
     //private DateTime _dt;
     private int _year;
     private int _month;
@@ -43,9 +43,11 @@ namespace MediaPortal.Utils.Time
     private int _minute;
     private int _second;
     private WorldTimeZone _timeZone;
+
     #endregion
 
     #region Constructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
     /// </summary>
@@ -106,7 +108,7 @@ namespace MediaPortal.Utils.Time
     {
       dateTimeGmt = dateTimeGmt.Trim();
       string longTime;
-      
+
 
       int timeEndPos = dateTimeGmt.IndexOf(' ');
       if (timeEndPos == -1)
@@ -117,7 +119,9 @@ namespace MediaPortal.Utils.Time
       else
       {
         if (timeEndPos != 12 && timeEndPos != 14)
+        {
           throw new ArgumentOutOfRangeException();
+        }
         longTime = dateTimeGmt.Substring(0, timeEndPos);
       }
 
@@ -151,6 +155,7 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the date time.
     /// </summary>
@@ -176,7 +181,7 @@ namespace MediaPortal.Utils.Time
     /// <value>The month.</value>
     public int Month
     {
-      set { _month = value;  }
+      set { _month = value; }
       get { return _month; }
     }
 
@@ -238,6 +243,7 @@ namespace MediaPortal.Utils.Time
     #endregion
 
     #region System.DateTime Methods
+
     //public TimeSpan Subtract(DateTime value)
     //{
     //  return _dt.Subtract(value);
@@ -268,9 +274,11 @@ namespace MediaPortal.Utils.Time
     //{
     //  return new WorldDateTime(_dt.AddHours(hours));
     //}
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Returns a date/time in xmltv format (yyyymmddhhmmss)
     /// </summary>
@@ -357,7 +365,9 @@ namespace MediaPortal.Utils.Time
     {
       DateTime dt = this.DateTime;
       if (_timeZone != null)
+      {
         return _timeZone.ToLocalTime(dt);
+      }
 
       return dt;
     }
@@ -366,13 +376,17 @@ namespace MediaPortal.Utils.Time
     {
       DateTime dt = this.DateTime;
       if (_timeZone != null)
+      {
         return _timeZone.ToUniversalTime(dt);
+      }
 
       return dt;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Sets from date time.
     /// </summary>
@@ -398,26 +412,50 @@ namespace MediaPortal.Utils.Time
       _second = 0;
       if (ldatetime > 10000000000000)
       {
-        _second = (int)(ldatetime % 100L); ldatetime /= 100L;
-        if (_second < 0 || _second > 59) throw new ArgumentOutOfRangeException();
+        _second = (int) (ldatetime%100L);
+        ldatetime /= 100L;
+        if (_second < 0 || _second > 59)
+        {
+          throw new ArgumentOutOfRangeException();
+        }
       }
 
-      _minute = (int)(ldatetime % 100L); ldatetime /= 100L;
-      _hour = (int)(ldatetime % 100L); ldatetime /= 100L;
-      _day = (int)(ldatetime % 100L); ldatetime /= 100L;
-      _month = (int)(ldatetime % 100L); ldatetime /= 100L;
-      _year = (int)ldatetime;
+      _minute = (int) (ldatetime%100L);
+      ldatetime /= 100L;
+      _hour = (int) (ldatetime%100L);
+      ldatetime /= 100L;
+      _day = (int) (ldatetime%100L);
+      ldatetime /= 100L;
+      _month = (int) (ldatetime%100L);
+      ldatetime /= 100L;
+      _year = (int) ldatetime;
 
-      if (_day < 0 || _day > 31) throw new ArgumentOutOfRangeException();
-      if (_month < 0 || _month > 12) throw new ArgumentOutOfRangeException();
-      if (_year < 1900 || _year > 2100) throw new ArgumentOutOfRangeException();
-      if (_minute < 0 || _minute > 59) throw new ArgumentOutOfRangeException();
+      if (_day < 0 || _day > 31)
+      {
+        throw new ArgumentOutOfRangeException();
+      }
+      if (_month < 0 || _month > 12)
+      {
+        throw new ArgumentOutOfRangeException();
+      }
+      if (_year < 1900 || _year > 2100)
+      {
+        throw new ArgumentOutOfRangeException();
+      }
+      if (_minute < 0 || _minute > 59)
+      {
+        throw new ArgumentOutOfRangeException();
+      }
       if (_hour < 0 || _hour > 23)
       {
         if (_hour == 24)
+        {
           _hour = 0;
+        }
         else
+        {
           throw new ArgumentOutOfRangeException();
+        }
       }
     }
 
@@ -428,7 +466,10 @@ namespace MediaPortal.Utils.Time
       // timezone can be in format:
       // GMT +0100 or GMT -0500
       // or just +0300
-      if (strTimeZone.Length == 0) return ts;
+      if (strTimeZone.Length == 0)
+      {
+        return ts;
+      }
       strTimeZone = strTimeZone.ToLower();
 
       // just ignore GMT offsets, since we're calculating everything from GMT anyway
@@ -445,14 +486,18 @@ namespace MediaPortal.Utils.Time
         try
         {
           int iOff = Int32.Parse(strOff);
-          int mintue = (iOff % 100);
+          int mintue = (iOff%100);
           iOff /= 100;
-          int hour = (iOff % 100);
+          int hour = (iOff%100);
           TimeSpan tsOff = new TimeSpan(hour, mintue, 0);
           if (strTimeZone[0] == '-')
+          {
             ts = ts.Subtract(tsOff);
+          }
           else
+          {
             ts = tsOff;
+          }
         }
         catch (Exception)
         {
@@ -460,9 +505,11 @@ namespace MediaPortal.Utils.Time
       }
       return ts;
     }
+
     #endregion
 
     #region Operators
+
     /// <summary>
     /// Operator &gt;=s the specified LHS.
     /// </summary>
@@ -494,9 +541,11 @@ namespace MediaPortal.Utils.Time
     {
       return lhs.DateTime < rhs.DateTime;
     }
+
     #endregion
 
     #region IComparable Members
+
     /// <summary>
     /// Compares the current instance with another object of the same type.
     /// </summary>
@@ -507,7 +556,7 @@ namespace MediaPortal.Utils.Time
     /// <exception cref="T:System.ArgumentException">obj is not the same type as this instance. </exception>
     public int CompareTo(object obj)
     {
-      WorldDateTime compareObj = (WorldDateTime)obj;
+      WorldDateTime compareObj = (WorldDateTime) obj;
       return (DateTime.CompareTo(compareObj.DateTime));
     }
 

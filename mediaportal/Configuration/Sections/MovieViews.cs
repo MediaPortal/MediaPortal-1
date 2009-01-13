@@ -23,72 +23,65 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
-using MediaPortal.Util;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class MovieViews : MediaPortal.Configuration.Sections.BaseViews
+  public class MovieViews : BaseViews
   {
-    string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
-    string customVideoViews = Config.GetFile(Config.Dir.Config, "Views.xml");
+    private string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
+    private string customVideoViews = Config.GetFile(Config.Dir.Config, "Views.xml");
 
     private string[] selections = new string[]
-      {
-        "watched",
-        "actor",
-        "title",
-        "genre",
-        "year",
-        "rating",
-      };
+                                    {
+                                      "watched",
+                                      "actor",
+                                      "title",
+                                      "genre",
+                                      "year",
+                                      "rating",
+                                    };
 
     private string[] sqloperators = new string[]
-      {
-        "",
-        "=",
-        ">",
-        "<",
-        ">=",
-        "<=",
-        "<>",
-        "like",
-      };
+                                      {
+                                        "",
+                                        "=",
+                                        ">",
+                                        "<",
+                                        ">=",
+                                        "<=",
+                                        "<>",
+                                        "like",
+                                      };
 
     private string[] viewsAs = new string[]
-			{
-				"List",
-				"Icons",
-				"Big Icons",
-				"Filmstrip",
-		  };
+                                 {
+                                   "List",
+                                   "Icons",
+                                   "Big Icons",
+                                   "Filmstrip",
+                                 };
 
     private string[] sortBy = new string[]
-			{
-        "Name",
-        "Date",
-        "Size",
-        "Year",
-        "Rating",
-        "Label",
-      };
+                                {
+                                  "Name",
+                                  "Date",
+                                  "Size",
+                                  "Year",
+                                  "Rating",
+                                  "Label",
+                                };
 
     public MovieViews()
-      : this("Video Views") { }
+      : this("Video Views")
+    {
+    }
 
     public MovieViews(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {

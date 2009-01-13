@@ -1,22 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Util;
 
 namespace ProcessPlugins.ComSkipLauncher
 {
-
   public class ComSkipLauncher : IPlugin, ISetupForm
   {
-
     #region Constants
 
     public static readonly string MPConfigFile = Config.GetFolder(Config.Dir.Config) + "\\MediaPortal.xml";
@@ -28,9 +23,9 @@ namespace ProcessPlugins.ComSkipLauncher
 
     #region Members
 
-    bool _runAtStart    = false;
-    string _program     = DefaultProgram;
-    string _parameters  = DefaultParameters;
+    private bool _runAtStart = false;
+    private string _program = DefaultProgram;
+    private string _parameters = DefaultParameters;
 
     #endregion Members
 
@@ -41,10 +36,11 @@ namespace ProcessPlugins.ComSkipLauncher
       Log.Info("ComSkipLauncher plugin: Start");
 
       LoadSettings();
-      
+
       Recorder.OnTvRecordingStarted += new Recorder.OnTvRecordingHandler(Recorder_OnTvRecordingStarted);
       Recorder.OnTvRecordingEnded += new Recorder.OnTvRecordingHandler(Recorder_OnTvRecordingEnded);
     }
+
     public void Stop()
     {
       Log.Info("ComSkipLauncher plugin: Stop");
@@ -57,47 +53,77 @@ namespace ProcessPlugins.ComSkipLauncher
 
     #region ISetupForm Members
 
-    public string Author()        { return "and-81"; }
-    public bool CanEnable()       { return true; }
-    public bool DefaultEnabled()  { return false; }
-    public string Description()   { return "Launches ComSkip on recordings."; }
-    public int GetWindowId()      { return 0; }
-    public bool HasSetup()        { return true; }
-    public string PluginName()    { return "ComSkip Launcher"; }
-    
+    public string Author()
+    {
+      return "and-81";
+    }
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
+
+    public string Description()
+    {
+      return "Launches ComSkip on recordings.";
+    }
+
+    public int GetWindowId()
+    {
+      return 0;
+    }
+
+    public bool HasSetup()
+    {
+      return true;
+    }
+
+    public string PluginName()
+    {
+      return "ComSkip Launcher";
+    }
+
     public void ShowPlugin()
     {
       LoadSettings();
 
       Configuration configuration = new Configuration();
-      configuration.RunAtStart    = _runAtStart;
-      configuration.Program       = _program;
-      configuration.Parameters    = _parameters;
+      configuration.RunAtStart = _runAtStart;
+      configuration.Program = _program;
+      configuration.Parameters = _parameters;
 
       if (configuration.ShowDialog() == DialogResult.OK)
       {
         _runAtStart = configuration.RunAtStart;
-        _program    = configuration.Program;
+        _program = configuration.Program;
         _parameters = configuration.Parameters;
 
         SaveSettings();
       }
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = strButtonImage = strButtonImageFocus = strPictureImage = "";
-      return false; 
+      return false;
     }
 
     #endregion
 
     #region Implementation
 
-    void Recorder_OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
+    private void Recorder_OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
     {
       if (!_runAtStart)
+      {
         return;
+      }
 
       Log.Debug("ComSkipLauncher plugin - Recorder_OnTvRecordingStarted(): \"{0}\"", recordingFilename);
 
@@ -111,7 +137,7 @@ namespace ProcessPlugins.ComSkipLauncher
           recording.Channel,
           _program,
           parameters
-        );
+          );
 
         LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
       }
@@ -120,10 +146,13 @@ namespace ProcessPlugins.ComSkipLauncher
         Log.Error("ComSkipLauncher plugin - Recorder_OnTvRecordingStarted(): {0}", ex.Message);
       }
     }
-    void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
+
+    private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       if (_runAtStart)
+      {
         return;
+      }
 
       Log.Debug("ComSkipLauncher plugin - Recorder_OnTvRecordingEnded(): \"{0}\"", recordingFilename);
 
@@ -137,7 +166,7 @@ namespace ProcessPlugins.ComSkipLauncher
           recording.Channel,
           _program,
           parameters
-        );
+          );
 
         LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
       }
@@ -147,11 +176,11 @@ namespace ProcessPlugins.ComSkipLauncher
       }
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
       try
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MPConfigFile))
+        using (Settings xmlreader = new Settings(MPConfigFile))
         {
           _runAtStart = xmlreader.GetValueAsBool("ComSkipLauncher", "RunAtStart", false);
           _program = xmlreader.GetValueAsString("ComSkipLauncher", "Program", DefaultProgram);
@@ -161,17 +190,18 @@ namespace ProcessPlugins.ComSkipLauncher
       catch (Exception ex)
       {
         _runAtStart = false;
-        _program    = DefaultProgram;
+        _program = DefaultProgram;
         _parameters = DefaultParameters;
 
         Log.Error("ComSkipLauncher plugin - LoadSettings(): {0}", ex.Message);
       }
     }
-    void SaveSettings()
+
+    private void SaveSettings()
     {
       try
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(MPConfigFile))
+        using (Settings xmlwriter = new Settings(MPConfigFile))
         {
           xmlwriter.SetValueAsBool("ComSkipLauncher", "RunAtStart", _runAtStart);
           xmlwriter.SetValue("ComSkipLauncher", "Program", _program);
@@ -191,15 +221,15 @@ namespace ProcessPlugins.ComSkipLauncher
       try
       {
         output = string.Format(
-          input,                                      // Format
-          fileName,                                   // {0} = Recorded filename (includes path)
-          Path.GetFileName(fileName),                 // {1} = Recorded filename (w/o path)
+          input, // Format
+          fileName, // {0} = Recorded filename (includes path)
+          Path.GetFileName(fileName), // {1} = Recorded filename (w/o path)
           Path.GetFileNameWithoutExtension(fileName), // {2} = Recorded filename (w/o path or extension)
-          Path.GetDirectoryName(fileName),            // {3} = Recorded file path
-          DateTime.Now.ToShortDateString(),           // {4} = Current date
-          DateTime.Now.ToShortTimeString(),           // {5} = Current time
-          channel                                     // {6} = Channel name
-        );
+          Path.GetDirectoryName(fileName), // {3} = Recorded file path
+          DateTime.Now.ToShortDateString(), // {4} = Current date
+          DateTime.Now.ToShortTimeString(), // {5} = Current time
+          channel // {6} = Channel name
+          );
       }
       catch (Exception ex)
       {
@@ -208,7 +238,9 @@ namespace ProcessPlugins.ComSkipLauncher
 
       return output;
     }
-    internal static void LaunchProcess(string program, string parameters, string workingFolder, ProcessWindowStyle windowStyle)
+
+    internal static void LaunchProcess(string program, string parameters, string workingFolder,
+                                       ProcessWindowStyle windowStyle)
     {
       try
       {
@@ -228,7 +260,5 @@ namespace ProcessPlugins.ComSkipLauncher
     }
 
     #endregion Implementation
-
   }
-
 }

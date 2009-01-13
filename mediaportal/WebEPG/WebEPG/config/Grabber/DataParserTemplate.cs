@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -36,12 +33,11 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class DataParserTemplate
   {
     #region Variables
-    [XmlAttribute("rowDelimitor")]
-    public string rowDelimiter;
-    [XmlAttribute("dataDelimitor")]
-    public string dataDelimiter;
-    [XmlText()]
-    public string Template;
+
+    [XmlAttribute("rowDelimitor")] public string rowDelimiter;
+    [XmlAttribute("dataDelimitor")] public string dataDelimiter;
+    [XmlText()] public string Template;
+
     #endregion
   }
 }

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.NumberPlace
@@ -34,33 +32,31 @@ namespace MediaPortal.GUI.NumberPlace
   /// </summary>
   public class CellControl : GUIButtonControl
   {
-    [XMLSkinElement("textcolor")]
-    //protected long m_dwNonEditableTextColor=0x770000FF;
-    protected static long m_dwCellIncorrectTextColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] //protected long m_dwNonEditableTextColor=0x770000FF;
+      protected static long m_dwCellIncorrectTextColor = 0xFFFFFFFF;
+
     protected static long m_dwTextColor = 0xFFFFFFFF;
     protected long m_dwDisabledColor = 0xFF000000;
     protected int m_iTextOffsetY = 2;
 
-    GUIImage m_imgFocus = null;
-    GUIImage m_imgNoFocus = null;
-    GUIImage _colorOverlay = null;
-    GUIImage[] m_imgOverlay = new GUIImage[9];
-    GUILabelControl m_label = null;
+    private GUIImage m_imgFocus = null;
+    private GUIImage m_imgNoFocus = null;
+    private GUIImage _colorOverlay = null;
+    private GUIImage[] m_imgOverlay = new GUIImage[9];
+    private GUILabelControl m_label = null;
 
-    bool[] _isCandidate = new bool[9];
-    bool _displayColourOverlay = false;
-    bool _showCandidates = false;
+    private bool[] _isCandidate = new bool[9];
+    private bool _displayColourOverlay = false;
+    private bool _showCandidates = false;
 
     public int SolutionValue = 0;
     public bool editable = true;
 
     private int cellValue = 0;
+
     public int CellValue
     {
-      get
-      {
-        return cellValue;
-      }
+      get { return cellValue; }
       set
       {
         if (editable)
@@ -72,23 +68,13 @@ namespace MediaPortal.GUI.NumberPlace
 
     public static long M_dwCellIncorrectTextColor
     {
-      get
-      {
-        return m_dwCellIncorrectTextColor;
-      }
-      set
-      {
-        m_dwCellIncorrectTextColor = value;
-      }
+      get { return m_dwCellIncorrectTextColor; }
+      set { m_dwCellIncorrectTextColor = value; }
     }
 
     public static long M_dwTextColor
     {
-      get
-      {
-        return m_dwTextColor;
-      }
-
+      get { return m_dwTextColor; }
     }
 
     public long M_dwDisabledColor
@@ -113,7 +99,8 @@ namespace MediaPortal.GUI.NumberPlace
     {
     }
 
-    public CellControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus)
+    public CellControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                       string strTextureFocus, string strTextureNoFocus)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus)
     {
     }
@@ -122,19 +109,23 @@ namespace MediaPortal.GUI.NumberPlace
     {
       base.AllocResources();
 
-      m_imgFocus = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height, "icon_empty_focus.png", 0xFFFFFFFF);
+      m_imgFocus = new GUIImage(GetID, GetID*10, _positionX, _positionY, this.Width, this.Height, "icon_empty_focus.png",
+                                0xFFFFFFFF);
       m_imgFocus.AllocResources();
-      m_imgNoFocus = new GUIImage(GetID, GetID * 100, _positionX, _positionY, this.Width, this.Height, "icon_empty_nofocus.png", 0xFFFFFFFF);
+      m_imgNoFocus = new GUIImage(GetID, GetID*100, _positionX, _positionY, this.Width, this.Height,
+                                  "icon_empty_nofocus.png", 0xFFFFFFFF);
       m_imgNoFocus.AllocResources();
       for (int i = 0; i < 9; i++)
       {
-        m_imgOverlay[i] = new GUIImage(GetID, GetID * 1000 + i, _positionX, _positionY, this.Width, this.Height, string.Format("icon_numberplace_overlay_{0}.png", i + 1), 0xFFFFFFFF);
+        m_imgOverlay[i] = new GUIImage(GetID, GetID*1000 + i, _positionX, _positionY, this.Width, this.Height,
+                                       string.Format("icon_numberplace_overlay_{0}.png", i + 1), 0xFFFFFFFF);
         m_imgOverlay[i].AllocResources();
       }
-      m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, "font18", string.Empty, 0xFFFFFFFF, GUIControl.Alignment.ALIGN_CENTER, false);
-      _colorOverlay = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height, "icon_numberplace_colouroverlay.png", 0xFFFFFFFF);
+      m_label = new GUILabelControl(GetID, GetID*1000, _positionX, _positionY, this.Width, this.Height, "font18",
+                                    string.Empty, 0xFFFFFFFF, Alignment.ALIGN_CENTER, false);
+      _colorOverlay = new GUIImage(GetID, GetID*10, _positionX, _positionY, this.Width, this.Height,
+                                   "icon_numberplace_colouroverlay.png", 0xFFFFFFFF);
       _colorOverlay.AllocResources();
-
     }
 
     public override void Render(float timePassed)
@@ -143,7 +134,10 @@ namespace MediaPortal.GUI.NumberPlace
       // Do not render if not visible.
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          return;
+        }
       }
 
       // The GUIButtonControl has the focus
@@ -191,14 +185,18 @@ namespace MediaPortal.GUI.NumberPlace
       if (_showCandidates)
       {
         if (_displayColourOverlay && editable && (m_label.Label == string.Empty))
+        {
           _colorOverlay.Render(timePassed);
+        }
 
         if (m_label.Label == string.Empty)
         {
           for (int i = 0; i < 9; i++)
           {
             if (_isCandidate[i])
+            {
               m_imgOverlay[i].Render(timePassed);
+            }
           }
         }
       }
@@ -245,7 +243,9 @@ namespace MediaPortal.GUI.NumberPlace
         _displayColourOverlay = true;
       }
       else
+      {
         _displayColourOverlay = false;
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 #region Copyright (C) 2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,12 +20,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Localisation.LanguageStrings
@@ -33,12 +32,11 @@ namespace MediaPortal.Localisation.LanguageStrings
   public class StringFile
   {
     #region Variables
-    [XmlAttribute("name")]
-    public string languageName;
-    [XmlAttribute("characters")]
-    public int characters;
-    [XmlElement("Section")]
-    public List<StringSection> sections;
+
+    [XmlAttribute("name")] public string languageName;
+    [XmlAttribute("characters")] public int characters;
+    [XmlElement("Section")] public List<StringSection> sections;
+
     #endregion
   }
 }

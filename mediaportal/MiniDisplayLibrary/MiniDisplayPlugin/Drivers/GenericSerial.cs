@@ -4,14 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
@@ -51,13 +49,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
-      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight, Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
+                 Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
+                 Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+                 Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
       this.Initialize();
     }
 
     public void CleanUp()
     {
-      AdvancedSettings.OnSettingsChanged -= new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged -=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       if (this.DisplaySettings.BlankDisplayWithVideo)
       {
         while (this._DisplayThread.IsAlive)
@@ -72,7 +74,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
       this.GSD.ClearDisplay();
-      if (!this._BlankDisplayOnExit && ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
+      if (!this._BlankDisplayOnExit &&
+          ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
       {
         this.GSD.SetLine(0, this.DisplaySettings._Shutdown1);
         this.GSD.SetLine(1, this.DisplaySettings._Shutdown2);
@@ -125,13 +128,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
           MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
+          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) &
+              (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
           }
           if (this.MPStatus.MediaPlayer_Playing)
           {
-            if (this.DisplaySettings.BlankDisplayWithVideo & (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) || this.MPStatus.Media_IsTVRecording))
+            if (this.DisplaySettings.BlankDisplayWithVideo &
+                (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) ||
+                 this.MPStatus.Media_IsTVRecording))
             {
               if (this.DoDebug)
               {
@@ -158,11 +164,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) < this.DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
+              this.DisplaySettings._DisplayControlTimeout)
           {
             if (this.DoDebug)
             {
-              Log.Info("GenericSerial.DisplayOff(): DisplayControlAction Timer = {0}.", new object[] { DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction });
+              Log.Info("GenericSerial.DisplayOff(): DisplayControlAction Timer = {0}.",
+                       new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
             }
             return;
           }
@@ -260,26 +268,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Extensive Logging: {0}", new object[] { Settings.Instance.ExtensiveLogging });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Port: {0}", new object[] { Settings.Instance.Port });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Baud Rate: {0}", new object[] { this.CommandSet.BaudRate });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Parity: {0}", new object[] { this.CommandSet.Parity });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Stop Bits: {0}", new object[] { this.CommandSet.StopBits });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Data Bits: {0}", new object[] { this.CommandSet.DataBits });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device RTS control: Assert RTS = {0}, Toggle RTS = {1}", new object[] { this.CommandSet.AssertRTS.ToString(), this.CommandSet.CMD_ToggleRTS.ToString() });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device DTR control: Assert DTR = {0}, Toggle DTR = {1}", new object[] { this.CommandSet.AssertDTR.ToString(), this.CommandSet.CMD_ToggleDTR.ToString() });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Home Position: ({0},{1})", new object[] { this.CommandSet.PositionBase, this.CommandSet.PositionBase });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}", new object[] { this.DisplaySettings._Shutdown1 });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}", new object[] { this.DisplaySettings._Shutdown2 });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}", new object[] { this.DisplaySettings.BlankDisplayWithVideo });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}", new object[] { this.DisplaySettings.EnableDisplayAction });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds", new object[] { this.DisplaySettings._DisplayControlTimeout });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle });
-      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds", new object[] { this.DisplaySettings._BlankIdleTimeout / 0xf4240L });
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Extensive Logging: {0}",
+               new object[] {Settings.Instance.ExtensiveLogging});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Baud Rate: {0}", new object[] {this.CommandSet.BaudRate});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Parity: {0}", new object[] {this.CommandSet.Parity});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Stop Bits: {0}", new object[] {this.CommandSet.StopBits});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Data Bits: {0}", new object[] {this.CommandSet.DataBits});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device RTS control: Assert RTS = {0}, Toggle RTS = {1}",
+               new object[] {this.CommandSet.AssertRTS.ToString(), this.CommandSet.CMD_ToggleRTS.ToString()});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device DTR control: Assert DTR = {0}, Toggle DTR = {1}",
+               new object[] {this.CommandSet.AssertDTR.ToString(), this.CommandSet.CMD_ToggleDTR.ToString()});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Device Home Position: ({0},{1})",
+               new object[] {this.CommandSet.PositionBase, this.CommandSet.PositionBase});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}",
+               new object[] {this.DisplaySettings._Shutdown1});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}",
+               new object[] {this.DisplaySettings._Shutdown2});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}",
+               new object[] {this.DisplaySettings.EnableDisplayAction});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds",
+               new object[] {this.DisplaySettings._DisplayControlTimeout});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+      Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
+               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
       Log.Info("GenericSerial.LoadAdvancedSettings(): Completed", new object[0]);
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
@@ -292,7 +311,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("GenericSerial.OnExternalAction(): received action {0}", new object[] { action.wID.ToString() });
+          Log.Info("GenericSerial.OnExternalAction(): received action {0}", new object[] {action.wID.ToString()});
         }
         Action.ActionType wID = action.wID;
         if (wID <= Action.ActionType.ACTION_SHOW_OSD)
@@ -302,7 +321,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
         }
-        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) && (wID != Action.ActionType.ACTION_MOUSE_CLICK))
+        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) &&
+                 (wID != Action.ActionType.ACTION_MOUSE_CLICK))
         {
           return;
         }
@@ -366,7 +386,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("GenericSerial.SetLine(): Line {0} - Message = \"{1}\"", new object[] { line, message });
+            Log.Info("GenericSerial.SetLine(): Line {0} - Message = \"{1}\"", new object[] {line, message});
           }
           this.GSD.SetLine(line, message);
           if (this.DoDebug)
@@ -378,7 +398,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("GenericSerial.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout });
+            Log.Info("GenericSerial.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
+                     new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
           }
           if (this.DisplaySettings.BlankDisplayWhenIdle)
           {
@@ -390,7 +411,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
-            if (!this._IsDisplayOff && ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+            if (!this._IsDisplayOff &&
+                ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
             {
               if (this.DoDebug)
               {
@@ -416,10 +438,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG, bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel, bool _blankOnExit)
+    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+                      bool _useBackLight, int _useBackLightLevel, bool _useContrast, int _useContrastLevel,
+                      bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
-      Log.Info("{0}", new object[] { this.Description });
+      Log.Info("{0}", new object[] {this.Description});
       Log.Info("GenericSerial.Setup(): called", new object[0]);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.InitCommandSet(ref this.CommandSet);
@@ -443,9 +467,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       try
       {
         this._IsOpen = this.GSD.OpenDisplay(_port, this._Trows, this._Tcols, this.CommandSet);
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
-        Log.Info("GenericSerial.Setup() - CAUGHT EXCEPTION opening serial port!: {0}", new object[] { exception });
+        Log.Info("GenericSerial.Setup() - CAUGHT EXCEPTION opening serial port!: {0}", new object[] {exception});
       }
       if (this._IsOpen)
       {
@@ -472,7 +497,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("GenericSerial.Setup(): Display_Update() FAILED TO START", new object[0]);
         }
       }
-      AdvancedSettings.OnSettingsChanged += new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged +=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       Log.Info("GenericSerial.Setup(): completed", new object[0]);
     }
 
@@ -505,50 +531,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string Description
     {
-      get
-      {
-        return "Generic Serial Character VFD/LCD driver v04_10_2008";
-      }
+      get { return "Generic Serial Character VFD/LCD driver v04_10_2008"; }
     }
 
     public string ErrorMessage
     {
-      get
-      {
-        return this._ErrorMessage;
-      }
+      get { return this._ErrorMessage; }
     }
 
     public bool IsDisabled
     {
-      get
-      {
-        return this._IsDisabled;
-      }
+      get { return this._IsDisabled; }
     }
 
     public string Name
     {
-      get
-      {
-        return "GenericSerial";
-      }
+      get { return "GenericSerial"; }
     }
 
     public bool SupportsGraphics
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     public bool SupportsText
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     [Serializable]
@@ -574,14 +582,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private string m_DataBits = string.Empty;
       private bool m_EnableDisplayAction;
       private int m_EnableDisplayActionTime = 5;
-      private static GenericSerial.AdvancedSettings m_Instance;
+      private static AdvancedSettings m_Instance;
       private string m_Parity = string.Empty;
       private bool m_PositionBase1;
       private string m_StopBits = string.Empty;
 
       public static event OnSettingsChangedHandler OnSettingsChanged;
 
-      private static void Default(GenericSerial.AdvancedSettings _settings)
+      private static void Default(AdvancedSettings _settings)
       {
         Log.Info("GenericSerial.AdvancedSettings.Default(): called", new object[0]);
         _settings.CMD_DisplayInit = string.Empty;
@@ -599,22 +607,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("GenericSerial.AdvancedSettings.Default(): completed", new object[0]);
       }
 
-      public static GenericSerial.AdvancedSettings Load()
+      public static AdvancedSettings Load()
       {
-        GenericSerial.AdvancedSettings settings;
+        AdvancedSettings settings;
         Log.Info("GenericSerial.AdvancedSettings.Load(): started", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml")))
         {
           Log.Info("GenericSerial.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
-          XmlSerializer serializer = new XmlSerializer(typeof(GenericSerial.AdvancedSettings));
+          XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"));
-          settings = (GenericSerial.AdvancedSettings)serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
         {
           Log.Info("GenericSerial.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
-          settings = new GenericSerial.AdvancedSettings();
+          settings = new AdvancedSettings();
           Default(settings);
         }
         Log.Info("GenericSerial.AdvancedSettings.Load(): completed", new object[0]);
@@ -634,14 +642,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Save(Instance);
       }
 
-      public static void Save(GenericSerial.AdvancedSettings ToSave)
+      public static void Save(AdvancedSettings ToSave)
       {
         Log.Info("GenericSerial.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
-        XmlSerializer serializer = new XmlSerializer(typeof(GenericSerial.AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"), Encoding.UTF8);
+        XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"),
+                                                 Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter)writer, ToSave);
+        serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
         Log.Info("GenericSerial.AdvancedSettings.Save(): completed", new object[0]);
       }
@@ -654,264 +663,144 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool AssertDTR
       {
-        get
-        {
-          return this.m_AssertDTR;
-        }
-        set
-        {
-          this.m_AssertDTR = value;
-        }
+        get { return this.m_AssertDTR; }
+        set { this.m_AssertDTR = value; }
       }
 
       [XmlAttribute]
       public bool AssertRTS
       {
-        get
-        {
-          return this.m_AssertRTS;
-        }
-        set
-        {
-          this.m_AssertRTS = value;
-        }
+        get { return this.m_AssertRTS; }
+        set { this.m_AssertRTS = value; }
       }
 
       [XmlAttribute]
       public string BaudRate
       {
-        get
-        {
-          return this.m_BaudRate;
-        }
-        set
-        {
-          this.m_BaudRate = value;
-        }
+        get { return this.m_BaudRate; }
+        set { this.m_BaudRate = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWhenIdle
       {
-        get
-        {
-          return this.m_BlankDisplayWhenIdle;
-        }
-        set
-        {
-          this.m_BlankDisplayWhenIdle = value;
-        }
+        get { return this.m_BlankDisplayWhenIdle; }
+        set { this.m_BlankDisplayWhenIdle = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWithVideo
       {
-        get
-        {
-          return this.m_BlankDisplayWithVideo;
-        }
-        set
-        {
-          this.m_BlankDisplayWithVideo = value;
-        }
+        get { return this.m_BlankDisplayWithVideo; }
+        set { this.m_BlankDisplayWithVideo = value; }
       }
 
       [XmlAttribute]
       public int BlankIdleTime
       {
-        get
-        {
-          return this.m_BlankIdleTime;
-        }
-        set
-        {
-          this.m_BlankIdleTime = value;
-        }
+        get { return this.m_BlankIdleTime; }
+        set { this.m_BlankIdleTime = value; }
       }
 
       [XmlAttribute]
       public string CMD_ClearDisplay
       {
-        get
-        {
-          return this.m_CMD_ClearDisplay;
-        }
-        set
-        {
-          this.m_CMD_ClearDisplay = value;
-        }
+        get { return this.m_CMD_ClearDisplay; }
+        set { this.m_CMD_ClearDisplay = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorDown
       {
-        get
-        {
-          return this.m_CMD_CursorDown;
-        }
-        set
-        {
-          this.m_CMD_CursorDown = value;
-        }
+        get { return this.m_CMD_CursorDown; }
+        set { this.m_CMD_CursorDown = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorHome
       {
-        get
-        {
-          return this.m_CMD_CursorHome;
-        }
-        set
-        {
-          this.m_CMD_CursorHome = value;
-        }
+        get { return this.m_CMD_CursorHome; }
+        set { this.m_CMD_CursorHome = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorLeft
       {
-        get
-        {
-          return this.m_CMD_CursorLeft;
-        }
-        set
-        {
-          this.m_CMD_CursorLeft = value;
-        }
+        get { return this.m_CMD_CursorLeft; }
+        set { this.m_CMD_CursorLeft = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorRight
       {
-        get
-        {
-          return this.m_CMD_CursorRight;
-        }
-        set
-        {
-          this.m_CMD_CursorRight = value;
-        }
+        get { return this.m_CMD_CursorRight; }
+        set { this.m_CMD_CursorRight = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorSet
       {
-        get
-        {
-          return this.m_CMD_CursorSet;
-        }
-        set
-        {
-          this.m_CMD_CursorSet = value;
-        }
+        get { return this.m_CMD_CursorSet; }
+        set { this.m_CMD_CursorSet = value; }
       }
 
       [XmlAttribute]
       public string CMD_CursorUp
       {
-        get
-        {
-          return this.m_CMD_CursorUp;
-        }
-        set
-        {
-          this.m_CMD_CursorUp = value;
-        }
+        get { return this.m_CMD_CursorUp; }
+        set { this.m_CMD_CursorUp = value; }
       }
 
       [XmlAttribute]
       public string CMD_DisplayClose
       {
-        get
-        {
-          return this.m_CMD_DisplayClose;
-        }
-        set
-        {
-          this.m_CMD_DisplayClose = value;
-        }
+        get { return this.m_CMD_DisplayClose; }
+        set { this.m_CMD_DisplayClose = value; }
       }
 
       [XmlAttribute]
       public string CMD_DisplayInit
       {
-        get
-        {
-          return this.m_CMD_DisplayInit;
-        }
-        set
-        {
-          this.m_CMD_DisplayInit = value;
-        }
+        get { return this.m_CMD_DisplayInit; }
+        set { this.m_CMD_DisplayInit = value; }
       }
 
       [XmlAttribute]
       public bool CMD_ToggleDTR
       {
-        get
-        {
-          return this.m_CMD_ToggleDTR;
-        }
-        set
-        {
-          this.m_CMD_ToggleDTR = value;
-        }
+        get { return this.m_CMD_ToggleDTR; }
+        set { this.m_CMD_ToggleDTR = value; }
       }
 
       [XmlAttribute]
       public bool CMD_ToggleRTS
       {
-        get
-        {
-          return this.m_CMD_ToggleRTS;
-        }
-        set
-        {
-          this.m_CMD_ToggleRTS = value;
-        }
+        get { return this.m_CMD_ToggleRTS; }
+        set { this.m_CMD_ToggleRTS = value; }
       }
 
       [XmlAttribute]
       public string DataBits
       {
-        get
-        {
-          return this.m_DataBits;
-        }
-        set
-        {
-          this.m_DataBits = value;
-        }
+        get { return this.m_DataBits; }
+        set { this.m_DataBits = value; }
       }
 
       [XmlAttribute]
       public bool EnableDisplayAction
       {
-        get
-        {
-          return this.m_EnableDisplayAction;
-        }
-        set
-        {
-          this.m_EnableDisplayAction = value;
-        }
+        get { return this.m_EnableDisplayAction; }
+        set { this.m_EnableDisplayAction = value; }
       }
 
       [XmlAttribute]
       public int EnableDisplayActionTime
       {
-        get
-        {
-          return this.m_EnableDisplayActionTime;
-        }
-        set
-        {
-          this.m_EnableDisplayActionTime = value;
-        }
+        get { return this.m_EnableDisplayActionTime; }
+        set { this.m_EnableDisplayActionTime = value; }
       }
 
-      public static GenericSerial.AdvancedSettings Instance
+      public static AdvancedSettings Instance
       {
         get
         {
@@ -921,49 +810,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           return m_Instance;
         }
-        set
-        {
-          m_Instance = value;
-        }
+        set { m_Instance = value; }
       }
 
       [XmlAttribute]
       public string Parity
       {
-        get
-        {
-          return this.m_Parity;
-        }
-        set
-        {
-          this.m_Parity = value;
-        }
+        get { return this.m_Parity; }
+        set { this.m_Parity = value; }
       }
 
       [XmlAttribute]
       public bool PositionBase1
       {
-        get
-        {
-          return this.m_PositionBase1;
-        }
-        set
-        {
-          this.m_PositionBase1 = value;
-        }
+        get { return this.m_PositionBase1; }
+        set { this.m_PositionBase1 = value; }
       }
 
       [XmlAttribute]
       public string StopBits
       {
-        get
-        {
-          return this.m_StopBits;
-        }
-        set
-        {
-          this.m_StopBits = value;
-        }
+        get { return this.m_StopBits; }
+        set { this.m_StopBits = value; }
       }
 
       public delegate void OnSettingsChangedHandler();
@@ -1034,7 +902,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("GenericSerial.GSDisplay.ClearDisplay(): using CMD_ClearDisplay to clear the display", new object[0]);
+              Log.Info("GenericSerial.GSDisplay.ClearDisplay(): using CMD_ClearDisplay to clear the display",
+                       new object[0]);
             }
             for (int i = 0; i < this.Commands.CMD_ClearDisplay.Length; i++)
             {
@@ -1046,7 +915,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_ClearDisplay[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_ClearDisplay[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1074,7 +943,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (_blankOnExit)
             {
-              Log.Info("GenericSerial.GSDisplay.CloseDisplay(): Clearing display due to _blankOnExit option", new object[0]);
+              Log.Info("GenericSerial.GSDisplay.CloseDisplay(): Clearing display due to _blankOnExit option",
+                       new object[0]);
               this.ClearDisplay();
             }
             if (this.Commands.CMD_DisplayClose != null)
@@ -1091,14 +961,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.RtsEnable = false;
               }
-              Log.Info("GenericSerial.GSDisplay.CloseDisplay(): Closing Comm Port {0}", new object[] { this.commPort.PortName });
+              Log.Info("GenericSerial.GSDisplay.CloseDisplay(): Closing Comm Port {0}",
+                       new object[] {this.commPort.PortName});
               this.commPort.Close();
             }
             this._isOpen = false;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Error("GenericSerial.GSDisplay.CloseDisplay(): CAUGHT EXCEPTION Closing Comm Port {0}\n{1}", new object[] { this.commPort.PortName, exception });
+          Log.Error("GenericSerial.GSDisplay.CloseDisplay(): CAUGHT EXCEPTION Closing Comm Port {0}\n{1}",
+                    new object[] {this.commPort.PortName, exception});
         }
       }
 
@@ -1108,7 +981,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return null;
         }
-        string[] strArray = CommandString.Trim().Split(new char[] { ' ' });
+        string[] strArray = CommandString.Trim().Split(new char[] {' '});
         if (strArray.Length == 0)
         {
           return null;
@@ -1199,7 +1072,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_CursorDown[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_CursorDown[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1238,7 +1111,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("GenericSerial.GSDisplay.CursorHome(): Using CMD_CursorHome to move cursor to home position", new object[0]);
+              Log.Info("GenericSerial.GSDisplay.CursorHome(): Using CMD_CursorHome to move cursor to home position",
+                       new object[0]);
             }
             for (int i = 0; i < this.Commands.CMD_CursorHome.Length; i++)
             {
@@ -1250,7 +1124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_CursorHome[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_CursorHome[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1319,7 +1193,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_CursorLeft[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_CursorLeft[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1350,7 +1224,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("GenericSerial.GSDisplay.CursorPositon(column = {0}, row = (1}): Called", new object[] { column, row });
+            Log.Info("GenericSerial.GSDisplay.CursorPositon(column = {0}, row = (1}): Called",
+                     new object[] {column, row});
           }
           if ((row != this._CurrentLine) || (column != this._CurrentColumn))
           {
@@ -1383,7 +1258,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               if (this.DoDebug)
               {
-                Log.Info("GenericSerial.GSDisplay.CursorPosition(): Moving cursor from {0},{1} to {2},{3}", new object[] { this._CurrentColumn, this._CurrentLine, column, row });
+                Log.Info("GenericSerial.GSDisplay.CursorPosition(): Moving cursor from {0},{1} to {2},{3}",
+                         new object[] {this._CurrentColumn, this._CurrentLine, column, row});
               }
               int num = column - this._CurrentColumn;
               if (num != 0)
@@ -1465,7 +1341,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               if (this.DoDebug)
               {
-                Log.Info("GenericSerial.GSDisplay.CursorRight(): Using CMD_CursorSet to move cursor right", new object[0]);
+                Log.Info("GenericSerial.GSDisplay.CursorRight(): Using CMD_CursorSet to move cursor right",
+                         new object[0]);
               }
               this._CurrentColumn++;
               if (this._CurrentColumn > (this._DisplayColumns - 1))
@@ -1484,7 +1361,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.DoDebug)
             {
-              Log.Info("GenericSerial.GSDisplay.CursorRight(): Using CMD_CursorRight to move cursor right", new object[0]);
+              Log.Info("GenericSerial.GSDisplay.CursorRight(): Using CMD_CursorRight to move cursor right",
+                       new object[0]);
             }
             for (int i = 0; i < this.Commands.CMD_CursorRight.Length; i++)
             {
@@ -1496,7 +1374,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_CursorRight[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_CursorRight[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1568,7 +1446,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DtrEnable = !this.commPort.DtrEnable;
               }
-              this.commPort.Write(new byte[] { this.Commands.CMD_CursorUp[i] }, 0, 1);
+              this.commPort.Write(new byte[] {this.Commands.CMD_CursorUp[i]}, 0, 1);
               Thread.Sleep(this.CommDelay);
               if (this.Commands.CMD_ToggleRTS)
               {
@@ -1606,7 +1484,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               str = str.Trim();
             }
           }
-          Log.Info("GenericSerial.GSDisplay.ShowCommand(): Command = {0}, Size = {1}, data = {2}", new object[] { cmdName, length.ToString(), str });
+          Log.Info("GenericSerial.GSDisplay.ShowCommand(): Command = {0}, Size = {1}, data = {2}",
+                   new object[] {cmdName, length.ToString(), str});
         }
       }
 
@@ -1620,7 +1499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this._IsDisplayOff = false;
       }
 
-      private bool InitCommandSet(GenericSerial.CommandStrings CommandStrings)
+      private bool InitCommandSet(CommandStrings CommandStrings)
       {
         this.Commands.CMD_DisplayInit = null;
         this.Commands.CMD_ClearDisplay = null;
@@ -1671,7 +1550,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           for (int i = 0; i < this.Commands.CMD_DisplayInit.Length; i++)
           {
-            this.commPort.Write(new byte[] { this.Commands.CMD_DisplayInit[i] }, 0, 1);
+            this.commPort.Write(new byte[] {this.Commands.CMD_DisplayInit[i]}, 0, 1);
             Thread.Sleep(this.CommDelay);
           }
           if (this.Commands.CMD_ToggleRTS)
@@ -1685,7 +1564,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
 
-      public bool OpenDisplay(string _port, int dRows, int dCols, GenericSerial.CommandStrings DefinedCommandStrings)
+      public bool OpenDisplay(string _port, int dRows, int dCols, CommandStrings DefinedCommandStrings)
       {
         this.DoDebug = Settings.Instance.ExtensiveLogging;
         Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Called", new object[0]);
@@ -1749,21 +1628,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           Parity even = Parity.Even;
           goto Label_0132;
-        Label_0120:
+          Label_0120:
           even = Parity.Mark;
           goto Label_0132;
-        Label_0124:
+          Label_0124:
           even = Parity.None;
           goto Label_0132;
-        Label_0128:
+          Label_0128:
           even = Parity.Odd;
           goto Label_0132;
-        Label_012C:
+          Label_012C:
           even = Parity.Space;
           goto Label_0132;
-        Label_0130:
+          Label_0130:
           even = Parity.None;
-        Label_0132:
+          Label_0132:
           if ((str2 = DefinedCommandStrings.StopBits) == null)
           {
             goto Label_0188;
@@ -1786,23 +1665,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           StopBits none = StopBits.None;
           goto Label_018A;
-        Label_017C:
+          Label_017C:
           none = StopBits.One;
           goto Label_018A;
-        Label_0180:
+          Label_0180:
           none = StopBits.OnePointFive;
           goto Label_018A;
-        Label_0184:
+          Label_0184:
           none = StopBits.Two;
           goto Label_018A;
-        Label_0188:
+          Label_0188:
           none = StopBits.None;
-        Label_018A:
+          Label_018A:
           ;
-          Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Opening display - Port = {0}, Baud = {1}, DataBits = {2}, Parity = {3}, StopBits = {4}, CommDelay = {5}", new object[] { _port, num.ToString(), num2.ToString(), even.ToString(), none.ToString(), this.CommDelay.ToString() });
+          Log.Info(
+            "GenericSerial.GSDisplay.OpenDisplay(): Opening display - Port = {0}, Baud = {1}, DataBits = {2}, Parity = {3}, StopBits = {4}, CommDelay = {5}",
+            new object[]
+              {_port, num.ToString(), num2.ToString(), even.ToString(), none.ToString(), this.CommDelay.ToString()});
           this.commPort = new SerialPort(_port, num, even, num2, none);
           this.commPort.Open();
-          Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Comm Port {0} opened", new object[] { _port });
+          Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Comm Port {0} opened", new object[] {_port});
           if (this.Commands.AssertRTS)
           {
             this.commPort.RtsEnable = true;
@@ -1815,16 +1697,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.ClearDisplay();
           this._IsDisplayOff = false;
           this._isOpen = true;
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Info("GenericSerial.GSDisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display! \n{0}", new object[] { exception });
+          Log.Info("GenericSerial.GSDisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display! \n{0}",
+                   new object[] {exception});
           if (this.commPort.IsOpen)
           {
             this.commPort.Close();
           }
           this._isOpen = false;
         }
-        Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Completed - Returning {0}", new object[] { this._isOpen.ToString() });
+        Log.Info("GenericSerial.GSDisplay.OpenDisplay(): Completed - Returning {0}",
+                 new object[] {this._isOpen.ToString()});
         return this._isOpen;
       }
 
@@ -1832,7 +1717,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] { (byte)charToSend }, 0, 1);
+          this.commPort.Write(new byte[] {(byte) charToSend}, 0, 1);
           this._CurrentColumn++;
           if (this._CurrentColumn > (this._DisplayColumns - 1))
           {
@@ -1864,7 +1749,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           switch (SendThisData[i])
           {
             case 0xfb:
-              buffer = new byte[] { (byte)((this._CurrentLine + this.Commands.PositionBase) + 0x30) };
+              buffer = new byte[] {(byte) ((this._CurrentLine + this.Commands.PositionBase) + 0x30)};
               goto Label_01DB;
 
             case 0xfc:
@@ -1873,35 +1758,40 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 break;
               }
-              buffer = new byte[] { (byte)(this._CurrentColumn + 0x30) };
+              buffer = new byte[] {(byte) (this._CurrentColumn + 0x30)};
               goto Label_0132;
 
             case 0xfd:
-              buffer = new byte[] { (byte)(this._CurrentLine + this.Commands.PositionBase) };
+              buffer = new byte[] {(byte) (this._CurrentLine + this.Commands.PositionBase)};
               goto Label_01DB;
 
             case 0xfe:
-              buffer = new byte[] { (byte)(this._CurrentColumn + this.Commands.PositionBase) };
+              buffer = new byte[] {(byte) (this._CurrentColumn + this.Commands.PositionBase)};
               goto Label_01DB;
 
             case 0xff:
-              buffer = new byte[] { (byte)(((this._CurrentLine * this._DisplayColumns) + this._CurrentColumn) + this.Commands.PositionBase) };
+              buffer = new byte[]
+                         {
+                           (byte)
+                           (((this._CurrentLine*this._DisplayColumns) + this._CurrentColumn) +
+                            this.Commands.PositionBase)
+                         };
               goto Label_01DB;
 
             default:
-              buffer = new byte[] { SendThisData[i] };
+              buffer = new byte[] {SendThisData[i]};
               goto Label_01DB;
           }
-          double num2 = Math.Floor((double)(((double)this._CurrentColumn) / 10.0));
-          double num3 = this._CurrentColumn - (num2 * 10.0);
-          buffer = new byte[] { (byte)(num2 + 48.0), (byte)num3 };
-        Label_0132:
+          double num2 = Math.Floor((double) (((double) this._CurrentColumn)/10.0));
+          double num3 = this._CurrentColumn - (num2*10.0);
+          buffer = new byte[] {(byte) (num2 + 48.0), (byte) num3};
+          Label_0132:
           this._CurrentColumn -= this.Commands.PositionBase;
-        Label_01DB:
+          Label_01DB:
           num4 = 0;
           while (num4 < buffer.Length)
           {
-            this.commPort.Write(new byte[] { buffer[num4] }, 0, 1);
+            this.commPort.Write(new byte[] {buffer[num4]}, 0, 1);
             Thread.Sleep(this.CommDelay);
             num4++;
           }
@@ -1956,4 +1846,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
   }
 }
-

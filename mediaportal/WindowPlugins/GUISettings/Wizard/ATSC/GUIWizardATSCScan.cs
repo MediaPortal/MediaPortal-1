@@ -23,16 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Xml;
-using System.Threading;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
-using MediaPortal.Util;
-using MediaPortal.GUI.Settings.Wizard;
+
 namespace WindowPlugins.GUISettings.Wizard.ATSC
 {
   /// <summary>
@@ -40,10 +33,9 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
   /// </summary>
   public class GUIWizardATSCScan : GUIWizardScanBase
   {
-    
     public GUIWizardATSCScan()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_ATSC_SCAN;
+      GetID = (int) Window.WINDOW_WIZARD_ATSC_SCAN;
     }
 
     public override bool Init()
@@ -55,6 +47,7 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
     {
       GUIPropertyManager.SetProperty("#Wizard.ATSC.Done", "yes");
     }
+
     protected override NetworkType Network()
     {
       return NetworkType.ATSC;

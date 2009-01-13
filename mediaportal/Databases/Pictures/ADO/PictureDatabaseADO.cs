@@ -24,18 +24,15 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Globalization;
-using System.IO;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using MediaPortal.Util;
+using System.Globalization;
+using MediaPortal.Configuration;
+using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
-using MediaPortal.Database;
-using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Picture.Database
 {
@@ -44,23 +41,25 @@ namespace MediaPortal.Picture.Database
   /// </summary>
   public class PictureDatabaseADO : IPictureDatabase, IDisposable
   {
-    SqlConnection _connection;
+    private SqlConnection _connection;
 
     public PictureDatabaseADO()
     {
-
       string connectionString;
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        connectionString = reader.GetValueAsString("database", "connectionstring", SqlServerUtility.DefaultConnectionString);
+        connectionString = reader.GetValueAsString("database", "connectionstring",
+                                                   SqlServerUtility.DefaultConnectionString);
       }
       _connection = new SqlConnection(connectionString);
       _connection.Open();
       CreateTables();
     }
-    void CreateTables()
+
+    private void CreateTables()
     {
-      SqlServerUtility.AddTable(_connection, "tblPicture", "CREATE TABLE tblPicture ( idPicture int IDENTITY(1,1) NOT NULL, strFile varchar(2048), iRotation int, strDateTaken datetime)");
+      SqlServerUtility.AddTable(_connection, "tblPicture",
+                                "CREATE TABLE tblPicture ( idPicture int IDENTITY(1,1) NOT NULL, strFile varchar(2048), iRotation int, strDateTaken datetime)");
       SqlServerUtility.AddPrimaryKey(_connection, "tblPicture", "idPicture");
     }
 
@@ -76,9 +75,15 @@ namespace MediaPortal.Picture.Database
 
     public int AddPicture(string strPicture, int iRotation)
     {
-      if (strPicture == null) return -1;
-      if (strPicture.Length == 0) return -1;
-      lock (typeof(PictureDatabase))
+      if (strPicture == null)
+      {
+        return -1;
+      }
+      if (strPicture.Length == 0)
+      {
+        return -1;
+      }
+      lock (typeof (PictureDatabase))
       {
         string strSQL = "";
         try
@@ -95,7 +100,7 @@ namespace MediaPortal.Picture.Database
             {
               if (reader.Read())
               {
-                int id = (int)reader["idPicture"];
+                int id = (int) reader["idPicture"];
                 reader.Close();
                 return id;
               }
@@ -122,7 +127,8 @@ namespace MediaPortal.Picture.Database
             //						if(iRotation == -1)
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
           }
-          strSQL = String.Format("insert into tblPicture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')", strPic, iRotation, dateTaken);
+          strSQL = String.Format("insert into tblPicture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')",
+                                 strPic, iRotation, dateTaken);
           return SqlServerUtility.InsertRecord(_connection, strSQL);
         }
         catch (Exception ex)
@@ -132,6 +138,7 @@ namespace MediaPortal.Picture.Database
         return -1;
       }
     }
+
     public void DeletePicture(string strPicture)
     {
       string strSQL = "";
@@ -141,20 +148,19 @@ namespace MediaPortal.Picture.Database
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
         strSQL = String.Format("delete from tblPicture where strFile like '{0}'", strPic);
-        SqlServerUtility.ExecuteNonQuery(_connection,strSQL);
+        SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
       }
       catch (Exception ex)
       {
         Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
-
       }
     }
+
     public int GetRotation(string strPicture)
     {
       string strSQL = "";
       try
       {
-        
         string strPic = strPicture;
         int iRotation;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
@@ -168,7 +174,7 @@ namespace MediaPortal.Picture.Database
           {
             if (reader.Read())
             {
-              iRotation = (int)reader["iRotation"];
+              iRotation = (int) reader["iRotation"];
               reader.Close();
               return iRotation;
             }
@@ -186,7 +192,6 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-
       }
       return 0;
     }
@@ -196,7 +201,6 @@ namespace MediaPortal.Picture.Database
       string strSQL = "";
       try
       {
-        
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
@@ -204,21 +208,20 @@ namespace MediaPortal.Picture.Database
         if (lPicId >= 0)
         {
           strSQL = String.Format("update tblPicture set iRotation={0} where strFile like '{1}'", iRotation, strPic);
-          SqlServerUtility.ExecuteNonQuery(_connection,strSQL);
+          SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
         }
       }
       catch (Exception ex)
       {
         Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-
       }
     }
+
     public DateTime GetDateTaken(string strPicture)
     {
       string strSQL = "";
       try
       {
-        
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
@@ -231,7 +234,7 @@ namespace MediaPortal.Picture.Database
           {
             if (reader.Read())
             {
-              DateTime dtDateTime = (DateTime)reader["strDateTaken"];
+              DateTime dtDateTime = (DateTime) reader["strDateTaken"];
               reader.Close();
               return dtDateTime;
             }
@@ -243,11 +246,11 @@ namespace MediaPortal.Picture.Database
         using (ExifMetadata extractor = new ExifMetadata())
         {
           ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-          strDateTime = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+          strDateTime = DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
         }
         if (strDateTime != string.Empty && strDateTime != "")
         {
-          DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
+          DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
           return dtDateTime;
         }
         else
@@ -264,42 +267,47 @@ namespace MediaPortal.Picture.Database
 
     public int EXIFOrientationToRotation(int orientation)
     {
-
       if (orientation == 6)
+      {
         return 1;
+      }
 
       if (orientation == 3)
+      {
         return 2;
+      }
 
       if (orientation == 8)
+      {
         return 3;
+      }
 
       return 0;
     }
 
-		public int ListYears(ref List<string> Years)
-		{
-			throw(new NotImplementedException("List Years not yet implemented for ADO Database"));
-		}
+    public int ListYears(ref List<string> Years)
+    {
+      throw (new NotImplementedException("List Years not yet implemented for ADO Database"));
+    }
 
-		public int ListMonths(string Year, ref List<string> Months)
-		{
-			throw (new NotImplementedException("List Months not yet implemented for ADO Database"));
-		}
+    public int ListMonths(string Year, ref List<string> Months)
+    {
+      throw (new NotImplementedException("List Months not yet implemented for ADO Database"));
+    }
 
-		public int ListDays(string Month, string Year, ref List<string> Days)
-		{
-			throw (new NotImplementedException("List Days not yet implemented for ADO Database"));
-		}
+    public int ListDays(string Month, string Year, ref List<string> Days)
+    {
+      throw (new NotImplementedException("List Days not yet implemented for ADO Database"));
+    }
 
-		public int ListPicsByDate(string Date, ref List<string> Pics)
-		{
-			throw (new NotImplementedException("List Pics by Date not yet implemented for ADO Database"));
-		}
+    public int ListPicsByDate(string Date, ref List<string> Pics)
+    {
+      throw (new NotImplementedException("List Pics by Date not yet implemented for ADO Database"));
+    }
 
-		public int CountPicsByDate(string Date)
-		{
-			throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
-		}
-	}
+    public int CountPicsByDate(string Date)
+    {
+      throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
+    }
+  }
 }

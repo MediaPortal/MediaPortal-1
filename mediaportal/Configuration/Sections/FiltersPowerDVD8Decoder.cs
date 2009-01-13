@@ -24,36 +24,33 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersPowerDVD8Decoder : MediaPortal.Configuration.SectionSettings
+  public class FiltersPowerDVD8Decoder : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerConfig;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeInterlace;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUIUseHVA;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxH264DeInterlace;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUIUseH264HVA;
-    private System.ComponentModel.IContainer components = null;
+    private MPComboBox comboBoxSpeakerConfig;
+    private MPComboBox comboBoxOutPutMode;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel2;
+    private MPGroupBox mpGroupBox2;
+    private MPComboBox comboBoxDeInterlace;
+    private MPLabel mpLabel4;
+    private MPLabel mpLabel3;
+    private MPCheckBox checkBoxUIUseHVA;
+    private MPComboBox comboBoxH264DeInterlace;
+    private MPLabel mpLabel6;
+    private MPGroupBox mpGroupBox3;
+    private MPLabel mpLabel5;
+    private MPCheckBox checkBoxUIUseH264HVA;
+    private IContainer components = null;
 
     /// <summary>
     /// 
@@ -89,6 +86,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -134,10 +132,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlace.FormattingEnabled = true;
-      this.comboBoxDeInterlace.Items.AddRange(new object[] {
-            "Auto-select",
-            "Force bob",
-            "Force weave"});
+      this.comboBoxDeInterlace.Items.AddRange(new object[]
+                                                {
+                                                  "Auto-select",
+                                                  "Force bob",
+                                                  "Force weave"
+                                                });
       this.comboBoxDeInterlace.Location = new System.Drawing.Point(52, 85);
       this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
       this.comboBoxDeInterlace.Size = new System.Drawing.Size(198, 21);
@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel3.Size = new System.Drawing.Size(256, 26);
       this.mpLabel3.TabIndex = 1;
       this.mpLabel3.Text = "Recommended to reduce CPU utilization. If selected De-Interlace options are contr" +
-          "olled by VMR9.";
+                           "olled by VMR9.";
       // 
       // checkBoxUIUseHVA
       // 
@@ -209,28 +209,35 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
-            "Headphones",
-            "S/PDIF Out",
-            "2 Speaker",
-            "4 Speaker",
-            "6 Speaker",
-            "7 Speaker",
-            "8 Speaker"});
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[]
+                                                  {
+                                                    "Headphones",
+                                                    "S/PDIF Out",
+                                                    "2 Speaker",
+                                                    "4 Speaker",
+                                                    "6 Speaker",
+                                                    "7 Speaker",
+                                                    "8 Speaker"
+                                                  });
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(52, 48);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(375, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
-      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
+      this.comboBoxSpeakerConfig.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // comboBoxOutPutMode
       // 
-      this.comboBoxOutPutMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxOutPutMode.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.DropDownWidth = 375;
@@ -258,10 +265,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxH264DeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxH264DeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxH264DeInterlace.FormattingEnabled = true;
-      this.comboBoxH264DeInterlace.Items.AddRange(new object[] {
-            "Auto-select",
-            "Force bob",
-            "Force weave"});
+      this.comboBoxH264DeInterlace.Items.AddRange(new object[]
+                                                    {
+                                                      "Auto-select",
+                                                      "Force bob",
+                                                      "Force weave"
+                                                    });
       this.comboBoxH264DeInterlace.Location = new System.Drawing.Point(52, 87);
       this.comboBoxH264DeInterlace.Name = "comboBoxH264DeInterlace";
       this.comboBoxH264DeInterlace.Size = new System.Drawing.Size(198, 21);
@@ -285,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.Size = new System.Drawing.Size(256, 26);
       this.mpLabel5.TabIndex = 4;
       this.mpLabel5.Text = "Recommended to reduce CPU utilization. If selected De-Interlace options are contr" +
-          "olled by VMR9.";
+                           "olled by VMR9.";
       // 
       // checkBoxUIUseH264HVA
       // 
@@ -313,8 +322,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void LoadSettings()
@@ -324,126 +333,233 @@ namespace MediaPortal.Configuration.Sections
       Int32 regAuDsDnmx;
       Int32 regAuDsChanExpand;
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLAud\MediaPortal"))
+      {
         if (subkey != null)
         {
           try
           {
-            regValue = (Int32)subkey.GetValue("AuDsInterface", 8);
-            regAuDsDnmx = (Int32)subkey.GetValue("AuDsDnmx", 2);
-            regAuDsChanExpand = (Int32)subkey.GetValue("AuDsChanExpand", -1);
+            regValue = (Int32) subkey.GetValue("AuDsInterface", 8);
+            regAuDsDnmx = (Int32) subkey.GetValue("AuDsDnmx", 2);
+            regAuDsChanExpand = (Int32) subkey.GetValue("AuDsChanExpand", -1);
             switch (regValue)
             {
-              // Headphones (comboBoxSpeakerConfig index 0)
+                // Headphones (comboBoxSpeakerConfig index 0)
               case 20000:
+
                 #region Headphones
+
                 comboBoxSpeakerConfig.SelectedIndex = 0;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "Stereo",
-                                                    "Dolby Surround Downmix",
-                                                    "Dolby Headphone",
-                                                    "TruSurroundXT Headphone",
-                                                    "CyberLink Headphone"});
-                if (regAuDsDnmx == 2) iIndex = 0;
-                if (regAuDsDnmx == 8) iIndex = 1;
-                if (regAuDsDnmx == 200) iIndex = 2;
-                if (regAuDsDnmx == 4000) iIndex = 3;
-                if (regAuDsDnmx == 8000) iIndex = 4;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "Stereo",
+                                                      "Dolby Surround Downmix",
+                                                      "Dolby Headphone",
+                                                      "TruSurroundXT Headphone",
+                                                      "CyberLink Headphone"
+                                                    });
+                if (regAuDsDnmx == 2)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsDnmx == 8)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsDnmx == 200)
+                {
+                  iIndex = 2;
+                }
+                if (regAuDsDnmx == 4000)
+                {
+                  iIndex = 3;
+                }
+                if (regAuDsDnmx == 8000)
+                {
+                  iIndex = 4;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
-              //SPDIF Out (comboBoxSpeakerConfig index 1)
+                //SPDIF Out (comboBoxSpeakerConfig index 1)
               case 4:
+
                 #region SPDIF
+
                 comboBoxSpeakerConfig.SelectedIndex = 1;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = false;
+
                 #endregion
+
                 break;
-              //2 Speaker (comboBoxSpeakerConfig index 2)
+                //2 Speaker (comboBoxSpeakerConfig index 2)
               case 8:
+
                 #region 2 Speaker
+
                 comboBoxSpeakerConfig.SelectedIndex = 2;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "Stereo",
-                                                    "Dolby Surround Compatible Downmix",
-                                                    "TruSurroundXT",
-                                                    "Dolby Virtual Speaker",
-                                                    "CyberLink Virtual Speaker"});
-                if (regAuDsDnmx == 2) iIndex = 0;
-                if (regAuDsDnmx == 8) iIndex = 1;
-                if (regAuDsDnmx == 400) iIndex = 2;
-                if (regAuDsDnmx == 2000) iIndex = 3;
-                if (regAuDsDnmx == 10000) iIndex = 4;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "Stereo",
+                                                      "Dolby Surround Compatible Downmix",
+                                                      "TruSurroundXT",
+                                                      "Dolby Virtual Speaker",
+                                                      "CyberLink Virtual Speaker"
+                                                    });
+                if (regAuDsDnmx == 2)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsDnmx == 8)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsDnmx == 400)
+                {
+                  iIndex = 2;
+                }
+                if (regAuDsDnmx == 2000)
+                {
+                  iIndex = 3;
+                }
+                if (regAuDsDnmx == 10000)
+                {
+                  iIndex = 4;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
-              //4 Speaker (comboBoxSpeakerConfig index 3)
+                //4 Speaker (comboBoxSpeakerConfig index 3)
               case 10:
+
                 #region 4 speaker
+
                 comboBoxSpeakerConfig.SelectedIndex = 3;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "No Effect",
-                                                    "Dolby Pro Logic IIx",
-                                                    "CLMEI-2"});
-                if (regAuDsChanExpand == 1) iIndex = 0;
-                if (regAuDsChanExpand == 2) iIndex = 1;
-                if (regAuDsChanExpand == 4) iIndex = 2;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "No Effect",
+                                                      "Dolby Pro Logic IIx",
+                                                      "CLMEI-2"
+                                                    });
+                if (regAuDsChanExpand == 1)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsChanExpand == 2)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsChanExpand == 4)
+                {
+                  iIndex = 2;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
-              //6 Speaker (comboBoxSpeakerConfig index 4)
+                //6 Speaker (comboBoxSpeakerConfig index 4)
               case 20:
+
                 #region 6 speaker
+
                 comboBoxSpeakerConfig.SelectedIndex = 4;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "No Effect",
-                                                    "Dolby Pro Logic IIx",
-                                                    "CLMEI-2"});
-                if (regAuDsChanExpand == 1) iIndex = 0;
-                if (regAuDsChanExpand == 2) iIndex = 1;
-                if (regAuDsChanExpand == 4) iIndex = 2;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "No Effect",
+                                                      "Dolby Pro Logic IIx",
+                                                      "CLMEI-2"
+                                                    });
+                if (regAuDsChanExpand == 1)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsChanExpand == 2)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsChanExpand == 4)
+                {
+                  iIndex = 2;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
-              //7 Speaker (comboBoxSpeakerConfig index 5)
+                //7 Speaker (comboBoxSpeakerConfig index 5)
               case 40:
+
                 #region 7 speaker
+
                 comboBoxSpeakerConfig.SelectedIndex = 5;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "No Effect",
-                                                    "Dolby Pro Logic IIx",
-                                                    "CLMEI-2"});
-                if (regAuDsChanExpand == 1) iIndex = 0;
-                if (regAuDsChanExpand == 2) iIndex = 1;
-                if (regAuDsChanExpand == 4) iIndex = 2;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "No Effect",
+                                                      "Dolby Pro Logic IIx",
+                                                      "CLMEI-2"
+                                                    });
+                if (regAuDsChanExpand == 1)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsChanExpand == 2)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsChanExpand == 4)
+                {
+                  iIndex = 2;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
-              //8 Speaker (comboBoxSpeakerConfig index 6)
+                //8 Speaker (comboBoxSpeakerConfig index 6)
               case 80:
+
                 #region 8 speaker
+
                 comboBoxSpeakerConfig.SelectedIndex = 6;
                 comboBoxOutPutMode.Items.Clear();
                 comboBoxOutPutMode.Enabled = true;
-                comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "No Effect",
-                                                    "Dolby Pro Logic IIx",
-                                                    "CLMEI-2"});
-                if (regAuDsChanExpand == 1) iIndex = 0;
-                if (regAuDsChanExpand == 2) iIndex = 1;
-                if (regAuDsChanExpand == 4) iIndex = 2;
+                comboBoxOutPutMode.Items.AddRange(new object[]
+                                                    {
+                                                      "No Effect",
+                                                      "Dolby Pro Logic IIx",
+                                                      "CLMEI-2"
+                                                    });
+                if (regAuDsChanExpand == 1)
+                {
+                  iIndex = 0;
+                }
+                if (regAuDsChanExpand == 2)
+                {
+                  iIndex = 1;
+                }
+                if (regAuDsChanExpand == 4)
+                {
+                  iIndex = 2;
+                }
                 comboBoxOutPutMode.SelectedIndex = iIndex;
+
                 #endregion
+
                 break;
             }
           }
@@ -451,44 +567,85 @@ namespace MediaPortal.Configuration.Sections
           {
           }
         }
-      
+      }
+
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+      {
         if (subkey != null)
         {
           try
           {
-            Int32 regUIUseHVA = (Int32)subkey.GetValue("UIUseHVA", 1);
-            if (regUIUseHVA == 1) checkBoxUIUseHVA.Checked = true;
-            else checkBoxUIUseHVA.Checked = false;
-            Int32 regUIVMode = (Int32)subkey.GetValue("UIVMode", 0);
-            if (regUIVMode == 1) comboBoxDeInterlace.SelectedIndex = 0;
-            if (regUIVMode == 2) comboBoxDeInterlace.SelectedIndex = 1;
-            if (regUIVMode == 3) comboBoxDeInterlace.SelectedIndex = 2;
-            else comboBoxDeInterlace.SelectedIndex = 0;
+            Int32 regUIUseHVA = (Int32) subkey.GetValue("UIUseHVA", 1);
+            if (regUIUseHVA == 1)
+            {
+              checkBoxUIUseHVA.Checked = true;
+            }
+            else
+            {
+              checkBoxUIUseHVA.Checked = false;
+            }
+            Int32 regUIVMode = (Int32) subkey.GetValue("UIVMode", 0);
+            if (regUIVMode == 1)
+            {
+              comboBoxDeInterlace.SelectedIndex = 0;
+            }
+            if (regUIVMode == 2)
+            {
+              comboBoxDeInterlace.SelectedIndex = 1;
+            }
+            if (regUIVMode == 3)
+            {
+              comboBoxDeInterlace.SelectedIndex = 2;
+            }
+            else
+            {
+              comboBoxDeInterlace.SelectedIndex = 0;
+            }
           }
           catch (Exception)
           {
           }
         }
+      }
 
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\cl264dec\MediaPortal"))
+      {
         if (subkey != null)
         {
           try
           {
-            Int32 regH264UIUseHVA = (Int32)subkey.GetValue("UIUseHVA", 1);
-            if (regH264UIUseHVA == 1) checkBoxUIUseH264HVA.Checked = true;
-            else checkBoxUIUseH264HVA.Checked = false;
-            Int32 regH264UIVMode = (Int32)subkey.GetValue("UIVMode", 0);
-            if (regH264UIVMode == 1) comboBoxH264DeInterlace.SelectedIndex = 0;
-            if (regH264UIVMode == 2) comboBoxH264DeInterlace.SelectedIndex = 1;
-            if (regH264UIVMode == 3) comboBoxH264DeInterlace.SelectedIndex = 2;
-            else comboBoxH264DeInterlace.SelectedIndex = 0;
+            Int32 regH264UIUseHVA = (Int32) subkey.GetValue("UIUseHVA", 1);
+            if (regH264UIUseHVA == 1)
+            {
+              checkBoxUIUseH264HVA.Checked = true;
+            }
+            else
+            {
+              checkBoxUIUseH264HVA.Checked = false;
+            }
+            Int32 regH264UIVMode = (Int32) subkey.GetValue("UIVMode", 0);
+            if (regH264UIVMode == 1)
+            {
+              comboBoxH264DeInterlace.SelectedIndex = 0;
+            }
+            if (regH264UIVMode == 2)
+            {
+              comboBoxH264DeInterlace.SelectedIndex = 1;
+            }
+            if (regH264UIVMode == 3)
+            {
+              comboBoxH264DeInterlace.SelectedIndex = 2;
+            }
+            else
+            {
+              comboBoxH264DeInterlace.SelectedIndex = 0;
+            }
           }
           catch (Exception)
           {
           }
         }
+      }
     }
 
     public override void SaveSettings()
@@ -496,13 +653,16 @@ namespace MediaPortal.Configuration.Sections
       Int32 regValue;
       int OutPutModeIndex;
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLAud\MediaPortal"))
+      {
         if (subkey != null)
         {
           switch (comboBoxSpeakerConfig.SelectedIndex)
           {
-            // Headphones
+              // Headphones
             case 0:
+
               #region Headphones
+
               regValue = 20000;
               subkey.SetValue("AuDsInterface", regValue);
               OutPutModeIndex = comboBoxOutPutMode.SelectedIndex;
@@ -533,20 +693,28 @@ namespace MediaPortal.Configuration.Sections
                 regValue = 8000;
                 subkey.SetValue("AuDsDnmx", regValue);
               }
+
               #endregion
+
               break;
-            // SPDIF Out 
+              // SPDIF Out 
             case 1:
+
               #region SPDIF
+
               regValue = 4;
               subkey.SetValue("AuDsInterface", regValue);
               regValue = 2;
               subkey.SetValue("AuDsDnmx", regValue);
+
               #endregion
+
               break;
-            //2 Speakers
+              //2 Speakers
             case 2:
+
               #region 2 Speakers
+
               regValue = 8;
               subkey.SetValue("AuDsInterface", regValue);
               OutPutModeIndex = comboBoxOutPutMode.SelectedIndex;
@@ -579,10 +747,13 @@ namespace MediaPortal.Configuration.Sections
               }
 
               #endregion
+
               break;
-            //4 Speakers
+              //4 Speakers
             case 3:
+
               #region 4 Speakers
+
               regValue = 10;
               subkey.SetValue("AuDsInterface", regValue);
               regValue = 40;
@@ -607,11 +778,15 @@ namespace MediaPortal.Configuration.Sections
                 regValue = 4;
                 subkey.SetValue("AuDsChanExpand", regValue);
               }
+
               #endregion
+
               break;
-            //6 Speakers
+              //6 Speakers
             case 4:
+
               #region 6 Speakers
+
               regValue = 20;
               subkey.SetValue("AuDsInterface", regValue);
               regValue = 80;
@@ -636,11 +811,15 @@ namespace MediaPortal.Configuration.Sections
                 regValue = 4;
                 subkey.SetValue("AuDsChanExpand", regValue);
               }
+
               #endregion
+
               break;
-            //7 Speakers
+              //7 Speakers
             case 5:
+
               #region 7 Speakers
+
               regValue = 40;
               subkey.SetValue("AuDsInterface", regValue);
               regValue = 800;
@@ -665,11 +844,15 @@ namespace MediaPortal.Configuration.Sections
                 regValue = 4;
                 subkey.SetValue("AuDsChanExpand", regValue);
               }
+
               #endregion
+
               break;
-            //8 Speakers
+              //8 Speakers
             case 6:
+
               #region 8 Speakers
+
               regValue = 80;
               subkey.SetValue("AuDsInterface", regValue);
               regValue = 1000;
@@ -694,19 +877,29 @@ namespace MediaPortal.Configuration.Sections
                 regValue = 4;
                 subkey.SetValue("AuDsChanExpand", regValue);
               }
+
               #endregion
+
               break;
           }
         }
+      }
 
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+      {
         if (subkey != null)
         {
           Int32 regUIUseHVA;
-          if (checkBoxUIUseHVA.Checked) regUIUseHVA = 1;
-          else regUIUseHVA = 0;
+          if (checkBoxUIUseHVA.Checked)
+          {
+            regUIUseHVA = 1;
+          }
+          else
+          {
+            regUIUseHVA = 0;
+          }
           subkey.SetValue("UIUseHVA", regUIUseHVA);
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValue("videocodec", "cyberlink", regUIUseHVA);
           }
@@ -729,13 +922,21 @@ namespace MediaPortal.Configuration.Sections
             subkey.SetValue("UIVMode", regDeInterlace);
           }
         }
+      }
 
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\cl264dec\MediaPortal"))
+      {
         if (subkey != null)
         {
           Int32 regH264UIUseHVA;
-          if (checkBoxUIUseH264HVA.Checked) regH264UIUseHVA = 1;
-          else regH264UIUseHVA = 0;
+          if (checkBoxUIUseH264HVA.Checked)
+          {
+            regH264UIUseHVA = 1;
+          }
+          else
+          {
+            regH264UIUseHVA = 0;
+          }
           subkey.SetValue("UIUseHVA", regH264UIUseHVA);
           int H264DeInterlace;
           Int32 regH264DeInterlace;
@@ -756,73 +957,107 @@ namespace MediaPortal.Configuration.Sections
             subkey.SetValue("UIVMode", regH264DeInterlace);
           }
         }
+      }
     }
 
-    private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, EventArgs e)
     {
       switch (comboBoxSpeakerConfig.SelectedIndex)
       {
-        // Headphones
+          // Headphones
         case 0:
+
           #region Headphones
+
           comboBoxOutPutMode.Items.Clear();
           comboBoxOutPutMode.Enabled = true;
-          comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "Stereo",
-                                                    "Dolby Surround Downmix",
-                                                    "Dolby Headphone",
-                                                    "TruSurroundXT Headphone",
-                                                    "CyberLink Headphone"});
+          comboBoxOutPutMode.Items.AddRange(new object[]
+                                              {
+                                                "Stereo",
+                                                "Dolby Surround Downmix",
+                                                "Dolby Headphone",
+                                                "TruSurroundXT Headphone",
+                                                "CyberLink Headphone"
+                                              });
 
           #endregion
+
           break;
-        // SPDIF Out 
+          // SPDIF Out 
         case 1:
+
           #region SPDIF
+
           comboBoxOutPutMode.Items.Clear();
           comboBoxOutPutMode.Enabled = false;
+
           #endregion
+
           break;
-        //2 Speaker
+          //2 Speaker
         case 2:
+
           #region 2 speakers
+
           comboBoxOutPutMode.Items.Clear();
           comboBoxOutPutMode.Enabled = true;
-          comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "Stereo",
-                                                    "Dolby Surround Compatible Downmix",
-                                                    "TruSurroundXT",
-                                                    "Dolby Virtual Speaker",
-                                                    "CyberLink Virtual Speaker"});
+          comboBoxOutPutMode.Items.AddRange(new object[]
+                                              {
+                                                "Stereo",
+                                                "Dolby Surround Compatible Downmix",
+                                                "TruSurroundXT",
+                                                "Dolby Virtual Speaker",
+                                                "CyberLink Virtual Speaker"
+                                              });
+
           #endregion
+
           break;
-        //4, 6, 7, 8 Speaker
+          //4, 6, 7, 8 Speaker
         case 3:
         case 4:
         case 5:
         case 6:
+
           #region 4,6,7 & 8
+
           comboBoxOutPutMode.Items.Clear();
           comboBoxOutPutMode.Enabled = true;
-          comboBoxOutPutMode.Items.AddRange(new object[] {
-                                                    "No Effect",
-                                                    "Dolby Pro Logic IIx",
-                                                    "CLMEI-2"});
+          comboBoxOutPutMode.Items.AddRange(new object[]
+                                              {
+                                                "No Effect",
+                                                "Dolby Pro Logic IIx",
+                                                "CLMEI-2"
+                                              });
+
           #endregion
+
           break;
       }
     }
 
     private void UIUseHVA_CheckedChanged(object sender, EventArgs e)
     {
-      if (checkBoxUIUseHVA.Checked == true) comboBoxDeInterlace.Enabled = false;
-      if (checkBoxUIUseHVA.Checked == false) comboBoxDeInterlace.Enabled = true;
+      if (checkBoxUIUseHVA.Checked == true)
+      {
+        comboBoxDeInterlace.Enabled = false;
+      }
+      if (checkBoxUIUseHVA.Checked == false)
+      {
+        comboBoxDeInterlace.Enabled = true;
+      }
     }
 
     private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
     {
-      if (checkBoxUIUseH264HVA.Checked == true) comboBoxH264DeInterlace.Enabled = false;
-      if (checkBoxUIUseH264HVA.Checked == false) comboBoxH264DeInterlace.Enabled = true;
+      if (checkBoxUIUseH264HVA.Checked == true)
+      {
+        comboBoxH264DeInterlace.Enabled = false;
+      }
+      if (checkBoxUIUseH264HVA.Checked == false)
+      {
+        comboBoxH264DeInterlace.Enabled = true;
+      }
     }
   }
 }

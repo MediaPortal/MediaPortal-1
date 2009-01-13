@@ -24,38 +24,33 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using DShowNET;
-using DirectShowLib;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersDScalerVideo : MediaPortal.Configuration.SectionSettings
+  public class FiltersDScalerVideo : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbVideoOffset;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAspectRatio;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbSmoothing;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDVBAR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbHardcodePal;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbIDCT;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbColorSpace;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAnalogBlanking;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPLabel label3;
+    private MPLabel label5;
+    private MPLabel label2;
+    private MPLabel label4;
+    private MPLabel label6;
+    private MPTextBox tbVideoOffset;
+    private MPCheckBox cbAspectRatio;
+    private MPCheckBox cbForcedSubtitles;
+    private MPComboBox cbDeinterlace;
+    private MPCheckBox cbSmoothing;
+    private MPComboBox cbDVBAR;
+    private MPCheckBox cbHardcodePal;
+    private MPComboBox cbIDCT;
+    private MPComboBox cbColorSpace;
+    private MPCheckBox cbAnalogBlanking;
+    private IContainer components = null;
 
     /// <summary>
     /// 
@@ -73,7 +68,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -92,6 +86,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -119,8 +114,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.cbAnalogBlanking);
       this.groupBox1.Controls.Add(this.cbColorSpace);
       this.groupBox1.Controls.Add(this.label6);
@@ -155,12 +152,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbColorSpace
       // 
-      this.cbColorSpace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbColorSpace.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbColorSpace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbColorSpace.Items.AddRange(new object[] {
-                                                      "YV12",
-                                                      "YUY2"});
+      this.cbColorSpace.Items.AddRange(new object[]
+                                         {
+                                           "YV12",
+                                           "YUY2"
+                                         });
       this.cbColorSpace.Location = new System.Drawing.Point(168, 92);
       this.cbColorSpace.Name = "cbColorSpace";
       this.cbColorSpace.Size = new System.Drawing.Size(288, 21);
@@ -176,13 +177,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbIDCT
       // 
-      this.cbIDCT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbIDCT.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbIDCT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbIDCT.Items.AddRange(new object[] {
-                                                "Reference",
-                                                "MMX only",
-                                                "Accelerated"});
+      this.cbIDCT.Items.AddRange(new object[]
+                                   {
+                                     "Reference",
+                                     "MMX only",
+                                     "Accelerated"
+                                   });
       this.cbIDCT.Location = new System.Drawing.Point(168, 68);
       this.cbIDCT.Name = "cbIDCT";
       this.cbIDCT.Size = new System.Drawing.Size(288, 21);
@@ -206,13 +211,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDVBAR
       // 
-      this.cbDVBAR.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDVBAR.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDVBAR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDVBAR.Items.AddRange(new object[] {
-                                                 "16:9 Display",
-                                                 "4:3 Display Center cut out",
-                                                 "4:3 Display Letterbox"});
+      this.cbDVBAR.Items.AddRange(new object[]
+                                    {
+                                      "16:9 Display",
+                                      "4:3 Display Center cut out",
+                                      "4:3 Display Letterbox"
+                                    });
       this.cbDVBAR.Location = new System.Drawing.Point(168, 44);
       this.cbDVBAR.Name = "cbDVBAR";
       this.cbDVBAR.Size = new System.Drawing.Size(288, 21);
@@ -228,8 +237,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbVideoOffset
       // 
-      this.tbVideoOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbVideoOffset.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tbVideoOffset.Location = new System.Drawing.Point(168, 252);
       this.tbVideoOffset.Name = "tbVideoOffset";
       this.tbVideoOffset.Size = new System.Drawing.Size(288, 20);
@@ -266,13 +277,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDeinterlace
       // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDeinterlace.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDeinterlace.Items.AddRange(new object[] {
-                                                       "Automatic",
-                                                       "Force Weave",
-                                                       "Force Bob"});
+      this.cbDeinterlace.Items.AddRange(new object[]
+                                          {
+                                            "Automatic",
+                                            "Force Weave",
+                                            "Force Bob"
+                                          });
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 20);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
@@ -303,98 +318,159 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public override void LoadSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\MpegVideo Filter"))
+      {
         if (subkey != null)
         {
           try
           {
-            Int32 regValue = (Int32)subkey.GetValue("3:2 playback smoothing");
-            if (regValue == 1) cbSmoothing.Checked = true;
-            else cbSmoothing.Checked = false;
+            Int32 regValue = (Int32) subkey.GetValue("3:2 playback smoothing");
+            if (regValue == 1)
+            {
+              cbSmoothing.Checked = true;
+            }
+            else
+            {
+              cbSmoothing.Checked = false;
+            }
 
-            regValue = (Int32)subkey.GetValue("Display Forced Subtitles");
-            if (regValue == 1) cbForcedSubtitles.Checked = true;
-            else cbForcedSubtitles.Checked = false;
+            regValue = (Int32) subkey.GetValue("Display Forced Subtitles");
+            if (regValue == 1)
+            {
+              cbForcedSubtitles.Checked = true;
+            }
+            else
+            {
+              cbForcedSubtitles.Checked = false;
+            }
 
-            regValue = (Int32)subkey.GetValue("Use accurate aspect ratios");
-            if (regValue == 1) cbAspectRatio.Checked = true;
-            else cbAspectRatio.Checked = false;
+            regValue = (Int32) subkey.GetValue("Use accurate aspect ratios");
+            if (regValue == 1)
+            {
+              cbAspectRatio.Checked = true;
+            }
+            else
+            {
+              cbAspectRatio.Checked = false;
+            }
 
-            regValue = (Int32)subkey.GetValue("Hardcode for PAL with ffdshow");
-            if (regValue == 1) cbHardcodePal.Checked = true;
-            else cbHardcodePal.Checked = false;
+            regValue = (Int32) subkey.GetValue("Hardcode for PAL with ffdshow");
+            if (regValue == 1)
+            {
+              cbHardcodePal.Checked = true;
+            }
+            else
+            {
+              cbHardcodePal.Checked = false;
+            }
 
-            regValue = (Int32)subkey.GetValue("Do Analog Blanking");
-            if (regValue == 1) cbAnalogBlanking.Checked = true;
-            else cbAnalogBlanking.Checked = false;
+            regValue = (Int32) subkey.GetValue("Do Analog Blanking");
+            if (regValue == 1)
+            {
+              cbAnalogBlanking.Checked = true;
+            }
+            else
+            {
+              cbAnalogBlanking.Checked = false;
+            }
 
-            regValue = (Int32)subkey.GetValue("Video Delay");
+            regValue = (Int32) subkey.GetValue("Video Delay");
             tbVideoOffset.Text = regValue.ToString();
 
-            regValue = (Int32)subkey.GetValue("Deinterlace Mode");
+            regValue = (Int32) subkey.GetValue("Deinterlace Mode");
             cbDeinterlace.SelectedIndex = regValue;
 
-            regValue = (Int32)subkey.GetValue("DVB Aspect Preferences");
+            regValue = (Int32) subkey.GetValue("DVB Aspect Preferences");
             cbDVBAR.SelectedIndex = regValue;
 
-            regValue = (Int32)subkey.GetValue("IDCT to Use");
+            regValue = (Int32) subkey.GetValue("IDCT to Use");
             cbIDCT.SelectedIndex = regValue;
 
-            regValue = (Int32)subkey.GetValue("Colour space to output");
+            regValue = (Int32) subkey.GetValue("Colour space to output");
             cbColorSpace.SelectedIndex = regValue;
-
           }
           catch (Exception)
           {
           }
         }
+      }
     }
 
     public override void SaveSettings()
     {
       using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\MpegVideo Filter"))
+      {
         if (subkey != null)
         {
           Int32 regValue;
-          if (cbSmoothing.Checked) regValue = 1;
-          else regValue = 0;
+          if (cbSmoothing.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("3:2 playback smoothing", regValue);
 
-          if (cbForcedSubtitles.Checked) regValue = 1;
-          else regValue = 0;
+          if (cbForcedSubtitles.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("Display Forced Subtitles", regValue);
 
-          if (cbAspectRatio.Checked) regValue = 1;
-          else regValue = 0;
+          if (cbAspectRatio.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("Use accurate aspect ratios", regValue);
 
-          if (cbHardcodePal.Checked) regValue = 1;
-          else regValue = 0;
+          if (cbHardcodePal.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("Hardcode for PAL with ffdshow", regValue);
 
-          if (cbAnalogBlanking.Checked) regValue = 1;
-          else regValue = 0;
+          if (cbAnalogBlanking.Checked)
+          {
+            regValue = 1;
+          }
+          else
+          {
+            regValue = 0;
+          }
           subkey.SetValue("Do Analog Blanking", regValue);
 
-          regValue = (Int32)Int32.Parse(tbVideoOffset.Text);
+          regValue = (Int32) Int32.Parse(tbVideoOffset.Text);
           subkey.SetValue("Video Delay", regValue);
 
-          subkey.SetValue("Deinterlace Mode", (Int32)cbDeinterlace.SelectedIndex);
+          subkey.SetValue("Deinterlace Mode", (Int32) cbDeinterlace.SelectedIndex);
 
-          subkey.SetValue("DVB Aspect Preferences", (Int32)cbDVBAR.SelectedIndex);
+          subkey.SetValue("DVB Aspect Preferences", (Int32) cbDVBAR.SelectedIndex);
 
-          subkey.SetValue("IDCT to Use", (Int32)cbIDCT.SelectedIndex);
+          subkey.SetValue("IDCT to Use", (Int32) cbIDCT.SelectedIndex);
 
-          subkey.SetValue("Colour space to output", (Int32)cbColorSpace.SelectedIndex);
+          subkey.SetValue("Colour space to output", (Int32) cbColorSpace.SelectedIndex);
         }
+      }
     }
-
   }
 }
-

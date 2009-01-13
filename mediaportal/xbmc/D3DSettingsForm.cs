@@ -24,8 +24,9 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Windows.Forms;
+using System.ComponentModel;
+using System.Text;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal
@@ -33,46 +34,46 @@ namespace MediaPortal
   /// <summary>
   /// A form to allow the user to change the current D3D settings.
   /// </summary>
-  public class D3DSettingsForm : MediaPortal.UserInterface.Controls.MPForm
+  public class D3DSettingsForm : MPForm
   {
     private D3DEnumeration enumeration;
     public D3DSettings settings; // Potential new D3D settings
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox adapterDeviceGroupBox;
-    private MediaPortal.UserInterface.Controls.MPLabel displayAdapterLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox adapterComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel deviceLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox deviceComboBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox modeSettingsGroupBox;
-    private MediaPortal.UserInterface.Controls.MPRadioButton windowedRadioButton;
-    private MediaPortal.UserInterface.Controls.MPRadioButton fullscreenRadioButton;
-    private MediaPortal.UserInterface.Controls.MPLabel adapterFormatLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox adapterFormatComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel resolutionLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox resolutionComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel refreshRateLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox refreshRateComboBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox otherSettingsGroupBox;
-    private MediaPortal.UserInterface.Controls.MPLabel backBufferFormatLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox backBufferFormatComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel depthStencilBufferLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox depthStencilBufferComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel multisampleLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox multisampleComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel vertexProcLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox vertexProcComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel presentIntervalLabel;
-    private MediaPortal.UserInterface.Controls.MPComboBox presentIntervalComboBox;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPComboBox multisampleQualityComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel multisampleQualityLabel;
+    private MPGroupBox adapterDeviceGroupBox;
+    private MPLabel displayAdapterLabel;
+    private MPComboBox adapterComboBox;
+    private MPLabel deviceLabel;
+    private MPComboBox deviceComboBox;
+    private MPGroupBox modeSettingsGroupBox;
+    private MPRadioButton windowedRadioButton;
+    private MPRadioButton fullscreenRadioButton;
+    private MPLabel adapterFormatLabel;
+    private MPComboBox adapterFormatComboBox;
+    private MPLabel resolutionLabel;
+    private MPComboBox resolutionComboBox;
+    private MPLabel refreshRateLabel;
+    private MPComboBox refreshRateComboBox;
+    private MPGroupBox otherSettingsGroupBox;
+    private MPLabel backBufferFormatLabel;
+    private MPComboBox backBufferFormatComboBox;
+    private MPLabel depthStencilBufferLabel;
+    private MPComboBox depthStencilBufferComboBox;
+    private MPLabel multisampleLabel;
+    private MPComboBox multisampleComboBox;
+    private MPLabel vertexProcLabel;
+    private MPComboBox vertexProcComboBox;
+    private MPLabel presentIntervalLabel;
+    private MPComboBox presentIntervalComboBox;
+    private MPButton okButton;
+    private MPButton cancelButton;
+    private MPComboBox multisampleQualityComboBox;
+    private MPLabel multisampleQualityLabel;
 
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
 
     /// <summary>
@@ -92,10 +93,14 @@ namespace MediaPortal
       {
         adapterComboBox.Items.Add(adapterInfo);
         if (adapterInfo.AdapterOrdinal == settings.AdapterOrdinal)
+        {
           adapterComboBox.SelectedItem = adapterInfo;
+        }
       }
       if (adapterComboBox.SelectedItem == null && adapterComboBox.Items.Count > 0)
+      {
         adapterComboBox.SelectedIndex = 0;
+      }
     }
 
 
@@ -106,11 +111,13 @@ namespace MediaPortal
     {
       base.Dispose(Disposing);
       if (components != null)
+      {
         components.Dispose();
+      }
     }
 
-
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -153,11 +160,13 @@ namespace MediaPortal
       // 
       // adapterDeviceGroupBox
       // 
-      this.adapterDeviceGroupBox.Controls.AddRange(new System.Windows.Forms.Control[] {
-                                                                                        this.deviceComboBox,
-                                                                                        this.deviceLabel,
-                                                                                        this.adapterComboBox,
-                                                                                        this.displayAdapterLabel});
+      this.adapterDeviceGroupBox.Controls.AddRange(new System.Windows.Forms.Control[]
+                                                     {
+                                                       this.deviceComboBox,
+                                                       this.deviceLabel,
+                                                       this.adapterComboBox,
+                                                       this.displayAdapterLabel
+                                                     });
       this.adapterDeviceGroupBox.Location = new System.Drawing.Point(16, 8);
       this.adapterDeviceGroupBox.Name = "adapterDeviceGroupBox";
       this.adapterDeviceGroupBox.Size = new System.Drawing.Size(400, 80);
@@ -219,19 +228,21 @@ namespace MediaPortal
       // 
       // otherSettingsGroupBox
       // 
-      this.otherSettingsGroupBox.Controls.AddRange(new System.Windows.Forms.Control[] {
-                                                                                        this.multisampleQualityComboBox,
-                                                                                        this.multisampleQualityLabel,
-                                                                                        this.multisampleComboBox,
-                                                                                        this.backBufferFormatComboBox,
-                                                                                        this.multisampleLabel,
-                                                                                        this.depthStencilBufferLabel,
-                                                                                        this.backBufferFormatLabel,
-                                                                                        this.depthStencilBufferComboBox,
-                                                                                        this.vertexProcComboBox,
-                                                                                        this.vertexProcLabel,
-                                                                                        this.presentIntervalComboBox,
-                                                                                        this.presentIntervalLabel});
+      this.otherSettingsGroupBox.Controls.AddRange(new System.Windows.Forms.Control[]
+                                                     {
+                                                       this.multisampleQualityComboBox,
+                                                       this.multisampleQualityLabel,
+                                                       this.multisampleComboBox,
+                                                       this.backBufferFormatComboBox,
+                                                       this.multisampleLabel,
+                                                       this.depthStencilBufferLabel,
+                                                       this.backBufferFormatLabel,
+                                                       this.depthStencilBufferComboBox,
+                                                       this.vertexProcComboBox,
+                                                       this.vertexProcLabel,
+                                                       this.presentIntervalComboBox,
+                                                       this.presentIntervalLabel
+                                                     });
       this.otherSettingsGroupBox.Location = new System.Drawing.Point(16, 264);
       this.otherSettingsGroupBox.Name = "otherSettingsGroupBox";
       this.otherSettingsGroupBox.Size = new System.Drawing.Size(400, 176);
@@ -309,7 +320,8 @@ namespace MediaPortal
       this.depthStencilBufferComboBox.Name = "depthStencilBufferComboBox";
       this.depthStencilBufferComboBox.Size = new System.Drawing.Size(232, 21);
       this.depthStencilBufferComboBox.TabIndex = 3;
-      this.depthStencilBufferComboBox.SelectedIndexChanged += new System.EventHandler(this.DepthStencilBufferFormatChanged);
+      this.depthStencilBufferComboBox.SelectedIndexChanged +=
+        new System.EventHandler(this.DepthStencilBufferFormatChanged);
       // 
       // vertexProcComboBox
       // 
@@ -412,15 +424,17 @@ namespace MediaPortal
       // 
       // modeSettingsGroupBox
       // 
-      this.modeSettingsGroupBox.Controls.AddRange(new System.Windows.Forms.Control[] {
-                                                                                       this.adapterFormatLabel,
-                                                                                       this.refreshRateLabel,
-                                                                                       this.resolutionComboBox,
-                                                                                       this.adapterFormatComboBox,
-                                                                                       this.resolutionLabel,
-                                                                                       this.refreshRateComboBox,
-                                                                                       this.windowedRadioButton,
-                                                                                       this.fullscreenRadioButton});
+      this.modeSettingsGroupBox.Controls.AddRange(new System.Windows.Forms.Control[]
+                                                    {
+                                                      this.adapterFormatLabel,
+                                                      this.refreshRateLabel,
+                                                      this.resolutionComboBox,
+                                                      this.adapterFormatComboBox,
+                                                      this.resolutionLabel,
+                                                      this.refreshRateComboBox,
+                                                      this.windowedRadioButton,
+                                                      this.fullscreenRadioButton
+                                                    });
       this.modeSettingsGroupBox.Location = new System.Drawing.Point(16, 96);
       this.modeSettingsGroupBox.Name = "modeSettingsGroupBox";
       this.modeSettingsGroupBox.Size = new System.Drawing.Size(400, 160);
@@ -445,12 +459,14 @@ namespace MediaPortal
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(438, 512);
-      this.Controls.AddRange(new System.Windows.Forms.Control[] {
-                                                                  this.cancelButton,
-                                                                  this.okButton,
-                                                                  this.adapterDeviceGroupBox,
-                                                                  this.modeSettingsGroupBox,
-                                                                  this.otherSettingsGroupBox});
+      this.Controls.AddRange(new System.Windows.Forms.Control[]
+                               {
+                                 this.cancelButton,
+                                 this.okButton,
+                                 this.adapterDeviceGroupBox,
+                                 this.modeSettingsGroupBox,
+                                 this.otherSettingsGroupBox
+                               });
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
       this.Name = "D3DSettingsForm";
@@ -459,19 +475,18 @@ namespace MediaPortal
       this.otherSettingsGroupBox.ResumeLayout(false);
       this.modeSettingsGroupBox.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
-    #endregion
 
+    #endregion
 
     /// <summary>
     /// Respond to a change of selected adapter by rebuilding the device 
     /// list.  Updating the selected device will trigger updates of the 
     /// rest of the dialog.
     /// </summary>
-    private void AdapterChanged(object sender, System.EventArgs e)
+    private void AdapterChanged(object sender, EventArgs e)
     {
-      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo)adapterComboBox.SelectedItem;
+      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo) adapterComboBox.SelectedItem;
       settings.AdapterInfo = adapterInfo;
 
       // Update device combo box
@@ -480,10 +495,14 @@ namespace MediaPortal
       {
         deviceComboBox.Items.Add(deviceInfo);
         if (deviceInfo.DevType == settings.DevType)
+        {
           deviceComboBox.SelectedItem = deviceInfo;
+        }
       }
       if (deviceComboBox.SelectedItem == null && deviceComboBox.Items.Count > 0)
+      {
         deviceComboBox.SelectedIndex = 0;
+      }
     }
 
 
@@ -492,10 +511,10 @@ namespace MediaPortal
     /// fullscreen/windowed radio buttons.  Updating these buttons
     /// will trigger updates of the rest of the dialog.
     /// </summary>
-    private void DeviceChanged(object sender, System.EventArgs e)
+    private void DeviceChanged(object sender, EventArgs e)
     {
-      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo)adapterComboBox.SelectedItem;
-      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo)deviceComboBox.SelectedItem;
+      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo) adapterComboBox.SelectedItem;
+      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo) deviceComboBox.SelectedItem;
 
       settings.DeviceInfo = deviceInfo;
 
@@ -505,9 +524,13 @@ namespace MediaPortal
       foreach (DeviceCombo deviceCombo in deviceInfo.DeviceComboList)
       {
         if (deviceCombo.IsWindowed)
+        {
           HasWindowedDeviceCombo = true;
+        }
         else
+        {
           HasFullscreenDeviceCombo = true;
+        }
       }
       windowedRadioButton.Enabled = HasWindowedDeviceCombo;
       fullscreenRadioButton.Enabled = HasFullscreenDeviceCombo;
@@ -529,10 +552,10 @@ namespace MediaPortal
     /// Updating the selected adapter format will trigger updates of the 
     /// rest of the dialog.
     /// </summary>
-    private void WindowedFullscreenChanged(object sender, System.EventArgs e)
+    private void WindowedFullscreenChanged(object sender, EventArgs e)
     {
-      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo)adapterComboBox.SelectedItem;
-      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo)deviceComboBox.SelectedItem;
+      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo) adapterComboBox.SelectedItem;
+      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo) deviceComboBox.SelectedItem;
 
       if (windowedRadioButton.Checked)
       {
@@ -549,7 +572,7 @@ namespace MediaPortal
         // Update resolution combo box
         resolutionComboBox.Items.Clear();
         resolutionComboBox.Items.Add(FormatResolution(settings.WindowedDisplayMode.Width,
-          settings.WindowedDisplayMode.Height));
+                                                      settings.WindowedDisplayMode.Height));
         resolutionComboBox.SelectedIndex = 0;
         resolutionComboBox.Enabled = false;
 
@@ -570,19 +593,25 @@ namespace MediaPortal
         foreach (DeviceCombo deviceCombo in deviceInfo.DeviceComboList)
         {
           if (deviceCombo.IsWindowed)
+          {
             continue;
+          }
           if (!adapterFormatComboBox.Items.Contains(deviceCombo.AdapterFormat))
           {
             adapterFormatComboBox.Items.Add(deviceCombo.AdapterFormat);
-            if (deviceCombo.AdapterFormat == (settings.IsWindowed ?
-              settings.WindowedDisplayMode.Format : settings.FullscreenDisplayMode.Format))
+            if (deviceCombo.AdapterFormat == (settings.IsWindowed
+                                                ?
+                                                  settings.WindowedDisplayMode.Format
+                                                : settings.FullscreenDisplayMode.Format))
             {
               adapterFormatComboBox.SelectedItem = deviceCombo.AdapterFormat;
             }
           }
         }
         if (adapterFormatComboBox.SelectedItem == null && adapterFormatComboBox.Items.Count > 0)
+        {
           adapterFormatComboBox.SelectedIndex = 0;
+        }
         adapterFormatComboBox.Enabled = true;
 
         // Update resolution combo box
@@ -599,7 +628,7 @@ namespace MediaPortal
     /// </summary>
     private string FormatResolution(int width, int height)
     {
-      System.Text.StringBuilder sb = new System.Text.StringBuilder(20);
+      StringBuilder sb = new StringBuilder(20);
       sb.AppendFormat("{0} by {1}", width, height);
       return sb.ToString();
     }
@@ -616,7 +645,7 @@ namespace MediaPortal
       }
       else
       {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder(20);
+        StringBuilder sb = new StringBuilder(20);
         sb.AppendFormat("{0} Hz", refreshRate);
         return sb.ToString();
       }
@@ -629,14 +658,14 @@ namespace MediaPortal
     /// resolution and back buffer format will trigger updates of the rest 
     /// of the dialog.
     /// </summary>
-    private void AdapterFormatChanged(object sender, System.EventArgs e)
+    private void AdapterFormatChanged(object sender, EventArgs e)
     {
       if (!windowedRadioButton.Checked)
       {
-        GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo)adapterComboBox.SelectedItem;
-        Format adapterFormat = (Format)adapterFormatComboBox.SelectedItem;
+        GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo) adapterComboBox.SelectedItem;
+        Format adapterFormat = (Format) adapterFormatComboBox.SelectedItem;
         settings.FullscreenDisplayMode.Format = adapterFormat;
-        System.Text.StringBuilder sb = new System.Text.StringBuilder(20);
+        StringBuilder sb = new StringBuilder(20);
 
         resolutionComboBox.Items.Clear();
         foreach (DisplayMode displayMode in adapterInfo.DisplayModeList)
@@ -648,7 +677,7 @@ namespace MediaPortal
             {
               resolutionComboBox.Items.Add(resolutionString);
               if (settings.FullscreenDisplayMode.Width == displayMode.Width &&
-                settings.FullscreenDisplayMode.Height == displayMode.Height)
+                  settings.FullscreenDisplayMode.Height == displayMode.Height)
               {
                 resolutionComboBox.SelectedItem = resolutionString;
               }
@@ -656,27 +685,33 @@ namespace MediaPortal
           }
         }
         if (resolutionComboBox.SelectedItem == null && resolutionComboBox.Items.Count > 0)
+        {
           resolutionComboBox.SelectedIndex = 0;
+        }
       }
 
       // Update backbuffer format combo box
-      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo)deviceComboBox.SelectedItem;
+      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo) deviceComboBox.SelectedItem;
       backBufferFormatComboBox.Items.Clear();
       foreach (DeviceCombo deviceCombo in deviceInfo.DeviceComboList)
       {
         if (deviceCombo.IsWindowed == settings.IsWindowed &&
-          deviceCombo.AdapterFormat == settings.DisplayMode.Format)
+            deviceCombo.AdapterFormat == settings.DisplayMode.Format)
         {
           if (!backBufferFormatComboBox.Items.Contains(deviceCombo.BackBufferFormat))
           {
             backBufferFormatComboBox.Items.Add(deviceCombo.BackBufferFormat);
             if (deviceCombo.BackBufferFormat == settings.BackBufferFormat)
+            {
               backBufferFormatComboBox.SelectedItem = deviceCombo.BackBufferFormat;
+            }
           }
         }
       }
       if (backBufferFormatComboBox.SelectedItem == null && backBufferFormatComboBox.Items.Count > 0)
+      {
         backBufferFormatComboBox.SelectedIndex = 0;
+      }
     }
 
 
@@ -684,15 +719,17 @@ namespace MediaPortal
     /// Respond to a change of selected resolution by rebuilding the
     /// refresh rate list.
     /// </summary>
-    private void ResolutionChanged(object sender, System.EventArgs e)
+    private void ResolutionChanged(object sender, EventArgs e)
     {
       if (settings.IsWindowed)
+      {
         return;
+      }
 
-      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo)adapterComboBox.SelectedItem;
+      GraphicsAdapterInfo adapterInfo = (GraphicsAdapterInfo) adapterComboBox.SelectedItem;
 
       // Update settings with new resolution
-      string resolution = (string)resolutionComboBox.SelectedItem;
+      string resolution = (string) resolutionComboBox.SelectedItem;
       string[] resolutionSplitStringArray = resolution.Split();
       int width = int.Parse(resolutionSplitStringArray[0]);
       int height = int.Parse(resolutionSplitStringArray[2]);
@@ -700,38 +737,44 @@ namespace MediaPortal
       settings.FullscreenDisplayMode.Height = height;
 
       // Update refresh rate list based on new resolution
-      Format adapterFormat = (Format)adapterFormatComboBox.SelectedItem;
+      Format adapterFormat = (Format) adapterFormatComboBox.SelectedItem;
       refreshRateComboBox.Items.Clear();
       foreach (DisplayMode displayMode in adapterInfo.DisplayModeList)
       {
         if (displayMode.Format == adapterFormat &&
-          displayMode.Width == width &&
-          displayMode.Height == height)
+            displayMode.Width == width &&
+            displayMode.Height == height)
         {
           string refreshRateString = FormatRefreshRate(displayMode.RefreshRate);
           if (!refreshRateComboBox.Items.Contains(refreshRateString))
           {
             refreshRateComboBox.Items.Add(refreshRateString);
             if (settings.FullscreenDisplayMode.RefreshRate == displayMode.RefreshRate)
+            {
               refreshRateComboBox.SelectedItem = refreshRateString;
+            }
           }
         }
       }
       if (refreshRateComboBox.SelectedItem == null && refreshRateComboBox.Items.Count > 0)
+      {
         refreshRateComboBox.SelectedIndex = refreshRateComboBox.Items.Count - 1;
+      }
     }
 
 
     /// <summary>
     /// Respond to a change of selected refresh rate.
     /// </summary>
-    private void RefreshRateChanged(object sender, System.EventArgs e)
+    private void RefreshRateChanged(object sender, EventArgs e)
     {
       if (settings.IsWindowed)
+      {
         return;
+      }
 
       // Update settings with new refresh rate
-      string refreshRateString = (string)refreshRateComboBox.SelectedItem;
+      string refreshRateString = (string) refreshRateComboBox.SelectedItem;
       int refreshRate = 0;
       if (refreshRateString != "Default Rate")
       {
@@ -747,17 +790,17 @@ namespace MediaPortal
     /// the depth/stencil format list, multisample type list, and vertex
     /// processing type list.
     /// </summary>
-    private void BackBufferFormatChanged(object sender, System.EventArgs e)
+    private void BackBufferFormatChanged(object sender, EventArgs e)
     {
-      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo)deviceComboBox.SelectedItem;
-      Format adapterFormat = (Format)adapterFormatComboBox.SelectedItem;
-      Format backBufferFormat = (Format)backBufferFormatComboBox.SelectedItem;
+      GraphicsDeviceInfo deviceInfo = (GraphicsDeviceInfo) deviceComboBox.SelectedItem;
+      Format adapterFormat = (Format) adapterFormatComboBox.SelectedItem;
+      Format backBufferFormat = (Format) backBufferFormatComboBox.SelectedItem;
 
       foreach (DeviceCombo deviceCombo in deviceInfo.DeviceComboList)
       {
         if (deviceCombo.IsWindowed == settings.IsWindowed &&
-          deviceCombo.AdapterFormat == adapterFormat &&
-          deviceCombo.BackBufferFormat == backBufferFormat)
+            deviceCombo.AdapterFormat == adapterFormat &&
+            deviceCombo.BackBufferFormat == backBufferFormat)
         {
           deviceCombo.BackBufferFormat = backBufferFormat;
           settings.DeviceCombo = deviceCombo;
@@ -769,10 +812,14 @@ namespace MediaPortal
             {
               depthStencilBufferComboBox.Items.Add(format);
               if (format == settings.DepthStencilBufferFormat)
+              {
                 depthStencilBufferComboBox.SelectedItem = format;
+              }
             }
             if (depthStencilBufferComboBox.SelectedItem == null && depthStencilBufferComboBox.Items.Count > 0)
+            {
               depthStencilBufferComboBox.SelectedIndex = 0;
+            }
           }
           else
           {
@@ -786,20 +833,28 @@ namespace MediaPortal
           {
             vertexProcComboBox.Items.Add(vpt);
             if (vpt == settings.VertexProcessingType)
+            {
               vertexProcComboBox.SelectedItem = vpt;
+            }
           }
           if (vertexProcComboBox.SelectedItem == null && vertexProcComboBox.Items.Count > 0)
+          {
             vertexProcComboBox.SelectedIndex = 0;
+          }
 
           presentIntervalComboBox.Items.Clear();
           foreach (PresentInterval pi in deviceCombo.PresentIntervalList)
           {
             presentIntervalComboBox.Items.Add(pi);
             if (pi == settings.PresentInterval)
+            {
               presentIntervalComboBox.SelectedItem = pi;
+            }
           }
           if (presentIntervalComboBox.SelectedItem == null && presentIntervalComboBox.Items.Count > 0)
+          {
             presentIntervalComboBox.SelectedIndex = 0;
+          }
 
           break;
         }
@@ -810,20 +865,23 @@ namespace MediaPortal
     /// <summary>
     /// Respond to a change of selected depth/stencil buffer format.
     /// </summary>
-    private void DepthStencilBufferFormatChanged(object sender, System.EventArgs e)
+    private void DepthStencilBufferFormatChanged(object sender, EventArgs e)
     {
       if (enumeration.AppUsesDepthBuffer)
-        settings.DepthStencilBufferFormat = (DepthFormat)depthStencilBufferComboBox.SelectedItem;
+      {
+        settings.DepthStencilBufferFormat = (DepthFormat) depthStencilBufferComboBox.SelectedItem;
+      }
 
       multisampleComboBox.Items.Clear();
       foreach (MultiSampleType msType in settings.DeviceCombo.MultiSampleTypeList)
       {
         // Check for DS/MS conflict
         bool conflictFound = false;
-        foreach (DepthStencilMultiSampleConflict DSMSConflict in settings.DeviceCombo.DepthStencilMultiSampleConflictList)
+        foreach (
+          DepthStencilMultiSampleConflict DSMSConflict in settings.DeviceCombo.DepthStencilMultiSampleConflictList)
         {
           if (DSMSConflict.DepthStencilFormat == settings.DepthStencilBufferFormat &&
-            DSMSConflict.MultiSampleType == msType)
+              DSMSConflict.MultiSampleType == msType)
           {
             conflictFound = true;
             break;
@@ -833,30 +891,33 @@ namespace MediaPortal
         {
           multisampleComboBox.Items.Add(msType);
           if (msType == settings.MultisampleType)
+          {
             multisampleComboBox.SelectedItem = msType;
+          }
         }
       }
       if (multisampleComboBox.SelectedItem == null && multisampleComboBox.Items.Count > 0)
+      {
         multisampleComboBox.SelectedIndex = 0;
-
+      }
     }
 
 
     /// <summary>
     /// Respond to a change of selected multisample type.
     /// </summary>
-    private void MultisampleTypeChanged(object sender, System.EventArgs e)
+    private void MultisampleTypeChanged(object sender, EventArgs e)
     {
-      settings.MultisampleType = (MultiSampleType)multisampleComboBox.SelectedItem;
+      settings.MultisampleType = (MultiSampleType) multisampleComboBox.SelectedItem;
 
       // Find current max multisample quality
       int maxQuality = 0;
       DeviceCombo deviceCombo = settings.DeviceCombo;
       for (int i = 0; i < deviceCombo.MultiSampleQualityList.Count; i++)
       {
-        if ((MultiSampleType)deviceCombo.MultiSampleTypeList[i] == settings.MultisampleType)
+        if ((MultiSampleType) deviceCombo.MultiSampleTypeList[i] == settings.MultisampleType)
         {
-          maxQuality = (int)deviceCombo.MultiSampleQualityList[i];
+          maxQuality = (int) deviceCombo.MultiSampleQualityList[i];
           break;
         }
       }
@@ -867,37 +928,41 @@ namespace MediaPortal
       {
         multisampleQualityComboBox.Items.Add(iLevel);
         if (settings.MultisampleQuality == iLevel)
+        {
           multisampleQualityComboBox.SelectedItem = iLevel;
+        }
       }
       if (multisampleQualityComboBox.SelectedItem == null && multisampleQualityComboBox.Items.Count > 0)
+      {
         multisampleQualityComboBox.SelectedIndex = 0;
+      }
     }
 
 
     /// <summary>
     /// Respond to a change of selected multisample quality.
     /// </summary>
-    private void MultisampleQualityChanged(object sender, System.EventArgs e)
+    private void MultisampleQualityChanged(object sender, EventArgs e)
     {
-      settings.MultisampleQuality = (int)multisampleQualityComboBox.SelectedItem;
+      settings.MultisampleQuality = (int) multisampleQualityComboBox.SelectedItem;
     }
 
 
     /// <summary>
     /// Respond to a change of selected vertex processing type.
     /// </summary>
-    private void VertexProcessingChanged(object sender, System.EventArgs e)
+    private void VertexProcessingChanged(object sender, EventArgs e)
     {
-      settings.VertexProcessingType = (VertexProcessingType)vertexProcComboBox.SelectedItem;
+      settings.VertexProcessingType = (VertexProcessingType) vertexProcComboBox.SelectedItem;
     }
 
 
     /// <summary>
     /// Respond to a change of selected vertex processing type.
     /// </summary>
-    private void PresentIntervalChanged(object sender, System.EventArgs e)
+    private void PresentIntervalChanged(object sender, EventArgs e)
     {
-      settings.PresentInterval = (PresentInterval)presentIntervalComboBox.SelectedItem;
+      settings.PresentInterval = (PresentInterval) presentIntervalComboBox.SelectedItem;
     }
   }
 
@@ -938,7 +1003,17 @@ namespace MediaPortal
     public GraphicsAdapterInfo AdapterInfo
     {
       get { return IsWindowed ? WindowedAdapterInfo : FullscreenAdapterInfo; }
-      set { if (IsWindowed) WindowedAdapterInfo = value; else FullscreenAdapterInfo = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedAdapterInfo = value;
+        }
+        else
+        {
+          FullscreenAdapterInfo = value;
+        }
+      }
     }
 
 
@@ -948,7 +1023,17 @@ namespace MediaPortal
     public GraphicsDeviceInfo DeviceInfo
     {
       get { return IsWindowed ? WindowedDeviceInfo : FullscreenDeviceInfo; }
-      set { if (IsWindowed) WindowedDeviceInfo = value; else FullscreenDeviceInfo = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedDeviceInfo = value;
+        }
+        else
+        {
+          FullscreenDeviceInfo = value;
+        }
+      }
     }
 
 
@@ -958,7 +1043,17 @@ namespace MediaPortal
     public DeviceCombo DeviceCombo
     {
       get { return IsWindowed ? WindowedDeviceCombo : FullscreenDeviceCombo; }
-      set { if (IsWindowed) WindowedDeviceCombo = value; else FullscreenDeviceCombo = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedDeviceCombo = value;
+        }
+        else
+        {
+          FullscreenDeviceCombo = value;
+        }
+      }
     }
 
 
@@ -995,7 +1090,17 @@ namespace MediaPortal
     public DisplayMode DisplayMode
     {
       get { return IsWindowed ? WindowedDisplayMode : FullscreenDisplayMode; }
-      set { if (IsWindowed) WindowedDisplayMode = value; else FullscreenDisplayMode = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedDisplayMode = value;
+        }
+        else
+        {
+          FullscreenDisplayMode = value;
+        }
+      }
     }
 
 
@@ -1005,7 +1110,17 @@ namespace MediaPortal
     public DepthFormat DepthStencilBufferFormat
     {
       get { return IsWindowed ? WindowedDepthStencilBufferFormat : FullscreenDepthStencilBufferFormat; }
-      set { if (IsWindowed) WindowedDepthStencilBufferFormat = value; else FullscreenDepthStencilBufferFormat = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedDepthStencilBufferFormat = value;
+        }
+        else
+        {
+          FullscreenDepthStencilBufferFormat = value;
+        }
+      }
     }
 
 
@@ -1015,7 +1130,17 @@ namespace MediaPortal
     public MultiSampleType MultisampleType
     {
       get { return IsWindowed ? WindowedMultisampleType : FullscreenMultisampleType; }
-      set { if (IsWindowed) WindowedMultisampleType = value; else FullscreenMultisampleType = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedMultisampleType = value;
+        }
+        else
+        {
+          FullscreenMultisampleType = value;
+        }
+      }
     }
 
 
@@ -1025,7 +1150,17 @@ namespace MediaPortal
     public int MultisampleQuality
     {
       get { return IsWindowed ? WindowedMultisampleQuality : FullscreenMultisampleQuality; }
-      set { if (IsWindowed) WindowedMultisampleQuality = value; else FullscreenMultisampleQuality = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedMultisampleQuality = value;
+        }
+        else
+        {
+          FullscreenMultisampleQuality = value;
+        }
+      }
     }
 
 
@@ -1035,7 +1170,17 @@ namespace MediaPortal
     public VertexProcessingType VertexProcessingType
     {
       get { return IsWindowed ? WindowedVertexProcessingType : FullscreenVertexProcessingType; }
-      set { if (IsWindowed) WindowedVertexProcessingType = value; else FullscreenVertexProcessingType = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedVertexProcessingType = value;
+        }
+        else
+        {
+          FullscreenVertexProcessingType = value;
+        }
+      }
     }
 
 
@@ -1045,7 +1190,17 @@ namespace MediaPortal
     public PresentInterval PresentInterval
     {
       get { return IsWindowed ? WindowedPresentInterval : FullscreenPresentInterval; }
-      set { if (IsWindowed) WindowedPresentInterval = value; else FullscreenPresentInterval = value; }
+      set
+      {
+        if (IsWindowed)
+        {
+          WindowedPresentInterval = value;
+        }
+        else
+        {
+          FullscreenPresentInterval = value;
+        }
+      }
     }
 
 
@@ -1054,7 +1209,7 @@ namespace MediaPortal
     /// </summary>
     public D3DSettings Clone()
     {
-      return (D3DSettings)MemberwiseClone();
+      return (D3DSettings) MemberwiseClone();
     }
   }
 }

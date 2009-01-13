@@ -27,8 +27,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Collections;
-using System.Reflection;
 using MediaPortal.Services;
 
 namespace MediaPortal.Webepg.Profile
@@ -44,10 +42,10 @@ namespace MediaPortal.Webepg.Profile
 
     private string _rootName = "profile";
     private Encoding _encoding = Encoding.UTF8;
-    XmlDocument _doc = null;
-    string _strFileName = "";
-    bool _bChanged = false;
-    ILog _log;
+    private XmlDocument _doc = null;
+    private string _strFileName = "";
+    private bool _bChanged = false;
+    private ILog _log;
 
     /// <summary>
     ///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to <see cref="Profile.DefaultName" />. </summary>
@@ -84,7 +82,6 @@ namespace MediaPortal.Webepg.Profile
     ///   or null if the file does not exist. </returns>
     private XmlDocument GetXmlDocument()
     {
-
       if (!File.Exists(_strFileName))
       {
         if (File.Exists(_strFileName + ".bak"))
@@ -98,7 +95,10 @@ namespace MediaPortal.Webepg.Profile
 
       XmlDocument doc = new XmlDocument();
       doc.Load(_strFileName);
-      if (doc != null && doc.DocumentElement != null && doc.DocumentElement.ChildNodes != null) return doc;
+      if (doc != null && doc.DocumentElement != null && doc.DocumentElement.ChildNodes != null)
+      {
+        return doc;
+      }
       if (File.Exists(_strFileName + ".bak"))
       {
         doc = new XmlDocument();
@@ -149,21 +149,38 @@ namespace MediaPortal.Webepg.Profile
     {
       if (_bChanged)
       {
-        lock (typeof(MediaPortal.Webepg.Profile.Xml))
+        lock (typeof (Xml))
         {
-          if (_doc == null) return;
-          if (_doc.DocumentElement == null) return;
-          if (_doc.ChildNodes.Count == 0) return;
-          if (_doc.DocumentElement.ChildNodes == null) return;
-          if (!_bChanged) return;
+          if (_doc == null)
+          {
+            return;
+          }
+          if (_doc.DocumentElement == null)
+          {
+            return;
+          }
+          if (_doc.ChildNodes.Count == 0)
+          {
+            return;
+          }
+          if (_doc.DocumentElement.ChildNodes == null)
+          {
+            return;
+          }
+          if (!_bChanged)
+          {
+            return;
+          }
           try
           {
             try
             {
-              System.IO.File.Delete(_strFileName + ".bak");
-              System.IO.File.Move(_strFileName, _strFileName + ".bak");
+              File.Delete(_strFileName + ".bak");
+              File.Move(_strFileName, _strFileName + ".bak");
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
 
             using (StreamWriter stream = new StreamWriter(_strFileName, false))
             {
@@ -185,7 +202,7 @@ namespace MediaPortal.Webepg.Profile
 
     public void SetValue(string section, string entry, object value)
     {
-      lock (typeof(Xml))
+      lock (typeof (Xml))
       {
         // If the value is null, remove the entry
         if (value == null)
@@ -210,7 +227,9 @@ namespace MediaPortal.Webepg.Profile
           writer.WriteStartElement("entry");
           writer.WriteAttributeString("name", null, entry);
           if (valueString != "")
+          {
             writer.WriteString(valueString);
+          }
           writer.WriteEndElement();
           writer.WriteEndElement();
           writer.WriteEndElement();
@@ -224,7 +243,10 @@ namespace MediaPortal.Webepg.Profile
         {
           _doc = GetXmlDocument();
         }
-        if (_doc == null) return;
+        if (_doc == null)
+        {
+          return;
+        }
 
         XmlElement root = _doc.DocumentElement;
 
@@ -259,28 +281,50 @@ namespace MediaPortal.Webepg.Profile
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
-      string strValue = (string)GetValue(section, entry);
-      if (strValue == null) return strDefault;
-      if (strValue.Length == 0) return strDefault;
+      string strValue = (string) GetValue(section, entry);
+      if (strValue == null)
+      {
+        return strDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return strDefault;
+      }
       return strValue;
     }
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-      string strValue = (string)GetValue(section, entry);
-      if (strValue == null) return bDefault;
-      if (strValue.Length == 0) return bDefault;
-      if (strValue == "yes") return true;
+      string strValue = (string) GetValue(section, entry);
+      if (strValue == null)
+      {
+        return bDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return bDefault;
+      }
+      if (strValue == "yes")
+      {
+        return true;
+      }
       return false;
     }
+
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
-      string strValue = (string)GetValue(section, entry);
-      if (strValue == null) return iDefault;
-      if (strValue.Length == 0) return iDefault;
+      string strValue = (string) GetValue(section, entry);
+      if (strValue == null)
+      {
+        return iDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return iDefault;
+      }
       try
       {
-        int iRet = System.Int32.Parse(strValue);
+        int iRet = Int32.Parse(strValue);
         return iRet;
       }
       catch (Exception)
@@ -291,12 +335,18 @@ namespace MediaPortal.Webepg.Profile
 
     public float GetValueAsFloat(string section, string entry, float fDefault)
     {
-      string strValue = (string)GetValue(section, entry);
-      if (strValue == null) return fDefault;
-      if (strValue.Length == 0) return fDefault;
+      string strValue = (string) GetValue(section, entry);
+      if (strValue == null)
+      {
+        return fDefault;
+      }
+      if (strValue.Length == 0)
+      {
+        return fDefault;
+      }
       try
       {
-        float fRet = (float)System.Double.Parse(strValue);
+        float fRet = (float) Double.Parse(strValue);
         return fRet;
       }
       catch (Exception)
@@ -304,12 +354,17 @@ namespace MediaPortal.Webepg.Profile
       }
       return fDefault;
     }
+
     public void SetValueAsBool(string section, string entry, bool bValue)
     {
       string strValue = "yes";
-      if (!bValue) strValue = "no";
+      if (!bValue)
+      {
+        strValue = "no";
+      }
       SetValue(section, entry, strValue);
     }
+
     /// <summary>
     ///   Retrieves the value of an entry inside a section. </summary>
     /// <param name="section">
@@ -321,22 +376,28 @@ namespace MediaPortal.Webepg.Profile
     /// <exception cref="ArgumentNullException">Either section or entry is null. </exception>
     /// <seealso cref="SetValue" />
     /// <seealso cref="Profile.HasEntry" />
-
     public object GetValue(string section, string entry)
     {
-      lock (typeof(Xml))
+      lock (typeof (Xml))
       {
-
         try
         {
           if (_doc == null)
+          {
             _doc = GetXmlDocument();
-          if (_doc == null) return null;
+          }
+          if (_doc == null)
+          {
+            return null;
+          }
 
           XmlElement root = _doc.DocumentElement;
 
           XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
-          if (entryNode == null) return null;
+          if (entryNode == null)
+          {
+            return null;
+          }
           return entryNode.InnerText;
         }
         catch
@@ -362,19 +423,23 @@ namespace MediaPortal.Webepg.Profile
     /// <seealso cref="RemoveSection" />
     public void RemoveEntry(string section, string entry)
     {
-
       // Verify the file exists
       if (_doc == null)
       {
         _doc = GetXmlDocument();
-        if (_doc == null) return;
+        if (_doc == null)
+        {
+          return;
+        }
       }
 
       // Get the entry's node, if it exists
       XmlElement root = _doc.DocumentElement;
       XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
       if (entryNode == null)
+      {
         return;
+      }
 
 
       entryNode.ParentNode.RemoveChild(entryNode);
@@ -395,23 +460,27 @@ namespace MediaPortal.Webepg.Profile
     /// <seealso cref="RemoveEntry" />
     public void RemoveSection(string section)
     {
-
       // Verify the file exists
       if (_doc == null)
       {
         _doc = GetXmlDocument();
         if (_doc == null)
+        {
           return;
+        }
       }
       // Get the section's node, if it exists
       XmlElement root = _doc.DocumentElement;
       XmlNode sectionNode = root.SelectSingleNode(GetSectionsPath(section));
       if (sectionNode == null)
+      {
         return;
+      }
 
       root.RemoveChild(sectionNode);
       _bChanged = true;
     }
+
     #region IDisposable Members
 
     public void Dispose()

@@ -23,28 +23,24 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
+using MediaPortal.Util;
+
 namespace WindowPlugins.GUISettings.TV
 {
   public class GUISettingsEpg : GUIWindow
   {
-    [SkinControlAttribute(10)]
-    protected GUICheckListControl listChannels = null;
+    [SkinControl(10)] protected GUICheckListControl listChannels = null;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnSelectAll = null;
+    [SkinControl(2)] protected GUIButtonControl btnSelectAll = null;
 
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnSelectNone = null;
+    [SkinControl(3)] protected GUIButtonControl btnSelectNone = null;
 
     public GUISettingsEpg()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG;
+      GetID = (int) Window.WINDOW_SETTINGS_TV_EPG;
     }
 
     public override bool Init()
@@ -57,7 +53,8 @@ namespace WindowPlugins.GUISettings.TV
       base.OnPageLoad();
       Update();
     }
-    void Update()
+
+    private void Update()
     {
       listChannels.Clear();
       List<TVChannel> channels = new List<TVChannel>();
@@ -69,16 +66,17 @@ namespace WindowPlugins.GUISettings.TV
           GUIListItem item = new GUIListItem();
           item.Label = chan.Name;
           item.IsFolder = false;
-          item.ThumbnailImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImageBig = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
           item.Selected = chan.AutoGrabEpg;
           item.TVTag = chan;
           listChannels.Add(item);
         }
       }
     }
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listChannels)
       {

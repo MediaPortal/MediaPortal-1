@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using NUnit.Framework;
 
@@ -100,7 +99,7 @@ namespace MediaPortal.Tests.Core.Util
     }
 
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof (ArgumentException))]
     public void TestInvalidFileName()
     {
       Config.GetFile(Config.Dir.Base, @"\file.ext");

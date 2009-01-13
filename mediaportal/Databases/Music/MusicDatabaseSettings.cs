@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Music.Database
 {
   /// <summary>
@@ -32,16 +30,16 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class MusicDatabaseSettings
   {
-    bool _treatFolderAsAlbum;
-    bool _extractEmbededCoverArt;
-    bool _useFolderThumbs;
-    bool _useAllImages;
-    bool _createArtistThumbs;
-    bool _createGenreThumbs;
-    bool _createMissingFolderThumbs;
-    bool _stripArtistPrefixes;
-    bool _useLastImportDate;
-    bool _excludeHiddenFiles;
+    private bool _treatFolderAsAlbum;
+    private bool _extractEmbededCoverArt;
+    private bool _useFolderThumbs;
+    private bool _useAllImages;
+    private bool _createArtistThumbs;
+    private bool _createGenreThumbs;
+    private bool _createMissingFolderThumbs;
+    private bool _stripArtistPrefixes;
+    private bool _useLastImportDate;
+    private bool _excludeHiddenFiles;
 
 
     public MusicDatabaseSettings()

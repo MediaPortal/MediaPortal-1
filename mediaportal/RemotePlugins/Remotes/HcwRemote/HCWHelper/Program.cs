@@ -24,47 +24,49 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices.HcwHelper
 {
-  static class Program
+  internal static class Program
   {
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main()
+    private static void Main()
     {
       Log.Info("HCWHelper: Starting up");
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
       if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
-        ((Process.GetProcessesByName("MediaPortal").Length > 0) || Process.GetProcessesByName("Configuration").Length > 0 ||
-        (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
+          ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
+           Process.GetProcessesByName("Configuration").Length > 0 ||
+           (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
       {
-    
-        System.Windows.Forms.Application.EnableVisualStyles();
-        System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
         Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-        System.Windows.Forms.Form hcwHelper = new HcwHelper();
+        Form hcwHelper = new HcwHelper();
         try
         {
           hcwHelper.ShowDialog();
         }
         catch (ObjectDisposedException)
-        { }
+        {
+        }
+      }
+      else if (Process.GetProcessesByName("HcwHelper").Length != 1)
+      {
+        Log.Info("HCWHelper: HCWHelper already running - exiting");
       }
       else
-        if (Process.GetProcessesByName("HcwHelper").Length != 1)
-          Log.Info("HCWHelper: HCWHelper already running - exiting");
-        else
-          Log.Info("HCWHelper: MediaPortal not running - exiting");
+      {
+        Log.Info("HCWHelper: MediaPortal not running - exiting");
+      }
       Log.Info("HCWHelper: Shutting down");
     }
   }

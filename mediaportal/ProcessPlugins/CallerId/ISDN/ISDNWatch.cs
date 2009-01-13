@@ -25,17 +25,16 @@
 
 using System;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
-using System.Threading;
-using Microsoft.Win32;
 using System.Text;
+using System.Threading;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.CallerId
 {
   public class ISDNWatch
   {
     [StructLayout(LayoutKind.Sequential)]
-    struct capiRequest
+    private struct capiRequest
     {
       public short Length;
       public short ApplicationId;
@@ -51,7 +50,7 @@ namespace ProcessPlugins.CallerId
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct capiMessageHeader
+    private struct capiMessageHeader
     {
       public ushort Length;
       public ushort ApplicationId;
@@ -61,19 +60,18 @@ namespace ProcessPlugins.CallerId
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct capiConnectInd
+    private struct capiConnectInd
     {
       public uint PLCI;
       public ushort CIP;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
-      public byte[] buffer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)] public byte[] buffer;
     }
 
     [DllImport("CAPI2032.DLL")]
-    static extern int CAPI_INSTALLED();
+    private static extern int CAPI_INSTALLED();
 
     [DllImport("CAPI2032.DLL")]
-    static extern int CAPI_REGISTER(
+    private static extern int CAPI_REGISTER(
       int MessageBufferSize,
       int MaxLogicalConnection,
       int MaxBDataBlocks,
@@ -81,49 +79,48 @@ namespace ProcessPlugins.CallerId
       ref int ApplicationId);
 
     [DllImport("CAPI2032.DLL")]
-    static extern int CAPI_RELEASE(
+    private static extern int CAPI_RELEASE(
       int ApplicationId);
 
     [DllImport("CAPI2032.DLL")]
-    static extern void CAPI_WAIT_FOR_SIGNAL(
+    private static extern void CAPI_WAIT_FOR_SIGNAL(
       int ApplicationId);
 
     [DllImport("CAPI2032.DLL")]
-    static extern int CAPI_PUT_MESSAGE(
+    private static extern int CAPI_PUT_MESSAGE(
       int ApplicationID,
       [MarshalAs(UnmanagedType.AsAny)] object CAPIMessage);
 
     [DllImport("CAPI2032.DLL")]
-    static extern int CAPI_GET_MESSAGE(
+    private static extern int CAPI_GET_MESSAGE(
       int ApplicationID,
       ref IntPtr CapiBufferPointer);
 
     [DllImport("kernel32")]
-    static extern void RtlMoveMemory(
+    private static extern void RtlMoveMemory(
       ref capiMessageHeader Destination,
       IntPtr Source,
       int Length);
 
     [DllImport("kernel32")]
-    static extern void RtlMoveMemory(
+    private static extern void RtlMoveMemory(
       ref capiConnectInd Destination,
       IntPtr Source,
       int Length);
 
     [DllImport("tapi32.dll")]
-    static extern int tapiGetLocationInfoW(
-      [MarshalAs(UnmanagedType.LPTStr)]
-      StringBuilder CountryCode,
-      [MarshalAs(UnmanagedType.LPTStr)]
-      StringBuilder AereaCode);
+    private static extern int tapiGetLocationInfoW(
+      [MarshalAs(UnmanagedType.LPTStr)] StringBuilder CountryCode,
+      [MarshalAs(UnmanagedType.LPTStr)] StringBuilder AereaCode);
 
     public delegate void EventHandler(string CallerId);
+
     public static event EventHandler CidReceiver = null;
 
-    bool stopThread = false;
-    const int HeaderLength = 8;
-    const int CAPI_CONNECT = 0x02;
-    const int CAPI_IND = 0x82;
+    private bool stopThread = false;
+    private const int HeaderLength = 8;
+    private const int CAPI_CONNECT = 0x02;
+    private const int CAPI_IND = 0x82;
 
     public ISDNWatch()
     {
@@ -155,9 +152,13 @@ namespace ProcessPlugins.CallerId
         }
 
         if (result == 0)
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
 
@@ -174,21 +175,23 @@ namespace ProcessPlugins.CallerId
       stopThread = true;
     }
 
-    void WatchThread()
+    private void WatchThread()
     {
       int applicationId = 0;
 
       // Registering with CAPI
       int capiResult = CAPI_REGISTER(3072, 2, 7, 2048, ref applicationId);
       if (capiResult != 0)
+      {
         Log.Info("ISDN: Application cannot register with CAPI");
+      }
       else
       {
         Log.Info("ISDN: Application registered with CAPI ({0})", applicationId);
 
         capiRequest capiRequest = new capiRequest();
         capiRequest.Length = 26;
-        capiRequest.ApplicationId = (short)applicationId;
+        capiRequest.ApplicationId = (short) applicationId;
         capiRequest.Command = 0x0005;
         capiRequest.SubCommand = 0x0080;
         capiRequest.MessageNumber = 1;
@@ -201,7 +204,9 @@ namespace ProcessPlugins.CallerId
         capiResult = CAPI_PUT_MESSAGE(applicationId, capiRequest);
 
         if (capiResult != 0)
+        {
           Log.Info("ISDN: CAPI signaling cannot be activated");
+        }
         else
         {
           Log.Info("ISDN: CAPI signaling activated");
@@ -219,21 +224,29 @@ namespace ProcessPlugins.CallerId
             {
               RtlMoveMemory(ref messageHeader, capiBufferPointer, HeaderLength);
 
-              Log.Info("ISDN: CAPI command: 0x{0} / 0x{1}", messageHeader.Command.ToString("X2"), messageHeader.SubCommand.ToString("X2"));
+              Log.Info("ISDN: CAPI command: 0x{0} / 0x{1}", messageHeader.Command.ToString("X2"),
+                       messageHeader.SubCommand.ToString("X2"));
 
               if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
-                RtlMoveMemory(ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength), (messageHeader.Length - HeaderLength));
+                RtlMoveMemory(ref ConnectInd, (IntPtr) (capiBufferPointer.ToInt32() + HeaderLength),
+                              (messageHeader.Length - HeaderLength));
 
                 for (int i = 99; i >= 0; i--)
+                {
                   if ((logBuffer.Length != 0) || (ConnectInd.buffer[i] != 0))
                   {
                     if ((ConnectInd.buffer[i] < 48) || (ConnectInd.buffer[i] > 57))
+                    {
                       logBuffer = "(" + ConnectInd.buffer[i] + ")" + logBuffer;
+                    }
                     else
-                      logBuffer = (char)ConnectInd.buffer[i] + logBuffer;
+                    {
+                      logBuffer = (char) ConnectInd.buffer[i] + logBuffer;
+                    }
                   }
+                }
 
                 Log.Info("ISDN: Buffer: {0}", logBuffer);
 
@@ -241,9 +254,13 @@ namespace ProcessPlugins.CallerId
                 int lengthCallerId = ConnectInd.buffer[lengthCalledId + 1];
 
                 for (int i = 2; i < (lengthCalledId + 1); i++)
-                  calledId = calledId + (char)ConnectInd.buffer[i];
+                {
+                  calledId = calledId + (char) ConnectInd.buffer[i];
+                }
                 for (int i = (lengthCalledId + 4); i < (lengthCallerId + lengthCalledId + 2); i++)
-                  callerId = callerId + (char)ConnectInd.buffer[i];
+                {
+                  callerId = callerId + (char) ConnectInd.buffer[i];
+                }
 
                 if (callerId != null)
                 {
@@ -251,8 +268,10 @@ namespace ProcessPlugins.CallerId
                   Log.Info("ISDN: stripped {0} leading zeros", lengthCallerId - callerId.Length - 2);
                 }
 
-                if (ConnectInd.buffer[lengthCalledId + 2] == 17)  // International call
+                if (ConnectInd.buffer[lengthCalledId + 2] == 17) // International call
+                {
                   callerId = "+" + callerId;
+                }
 
                 Log.Info("ISDN: CalledID: {0}", calledId);
                 Log.Info("ISDN: CallerID: {0}", callerId);
@@ -270,7 +289,9 @@ namespace ProcessPlugins.CallerId
             Log.Info("ISDN: CAPI released ({0})", applicationId);
           }
           else
+          {
             Log.Info("ISDN: CAPI cannot be released");
+          }
         }
       }
     }
@@ -285,13 +306,16 @@ namespace ProcessPlugins.CallerId
         locationInfo.CountryCode = countryCode.ToString();
         locationInfo.AreaCode = areaCode.ToString();
         if (locationInfo.AreaCode[0] == '0')
+        {
           locationInfo.AreaCode = locationInfo.AreaCode.Remove(0, 1);
+        }
       }
       else
+      {
         Log.Info("ISDN: Can't get TAPI location info!!!");
+      }
 
       return locationInfo;
     }
-
   }
 }

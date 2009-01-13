@@ -24,33 +24,28 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
-using DShowNET;
-using DShowNET.Helper;
-using DShowNET.MPSA;
+using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using DirectShowLib.SBE;
-using MediaPortal.Util;
+using DShowNET;
+using DShowNET.Helper;
+using DShowNET.MPSA;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.TV.Epg;
-using TVCapture;
-using System.Xml;
 //using DirectX.Capture;
-using MediaPortal.Radio.Database;
-using Toub.MediaCenter.Dvrms.Metadata;
-using MediaPortal.TV.BDA;
-using MediaPortal.Configuration;
+
 #endregion
+
 #pragma warning disable 618
 
 namespace MediaPortal.TV.Recording
@@ -58,49 +53,55 @@ namespace MediaPortal.TV.Recording
   public class DVBGraphTTPremium : DVBGraphBase
   {
     #region Types
+
     public enum TTNetworkType
     {
-	    Unkown,
-	    DVB_S,		
-	    DVB_C,				
-	    DVB_T
+      Unkown,
+      DVB_S,
+      DVB_C,
+      DVB_T
     }
 
     public enum TTModType
     {
-	    QAM_16   =  0,
-	    QAM_32   =  1,
-	    QAM_64   =  2,
-	    QAM_128  =  3,
-	    QAM_256  =  4,
+      QAM_16 = 0,
+      QAM_32 = 1,
+      QAM_64 = 2,
+      QAM_128 = 3,
+      QAM_256 = 4,
     }
 
     public enum TTBandwidthType
     {
-	    BW_6MHz  = 0,
-	    BW_7MHz  = 1,
-	    BW_8MHz  = 2,
-	    BW_NONE  = 4
+      BW_6MHz = 0,
+      BW_7MHz = 1,
+      BW_8MHz = 2,
+      BW_NONE = 4
     }
 
-#endregion
+    #endregion
 
     #region variables
+
     private string _cardType = "";
     private string _cardFilename = "";
 
     protected IBaseFilter _filterTTPremium = null;
     protected ITTPremiumSource _interfaceTTPremium = null;
 
-    protected static Guid IID_TTPremiumSource = new Guid(0x6aa08757, 0x7fa2, 0x48a2, 0xa9, 0xe5, 0x58, 0x91, 0x0e, 0x3f, 0xe8, 0xa7);
-    protected static Guid CLSID_TTPremiumSource = new Guid(0x22b8142, 0x946, 0x11cf, 0xbc, 0xb1, 0x44, 0x45, 0x53, 0x54, 0x0, 0x0);
+    protected static Guid IID_TTPremiumSource = new Guid(0x6aa08757, 0x7fa2, 0x48a2, 0xa9, 0xe5, 0x58, 0x91, 0x0e, 0x3f,
+                                                         0xe8, 0xa7);
+
+    protected static Guid CLSID_TTPremiumSource = new Guid(0x22b8142, 0x946, 0x11cf, 0xbc, 0xb1, 0x44, 0x45, 0x53, 0x54,
+                                                           0x0, 0x0);
 
     #endregion
 
     #region ITTPremiumSource
+
     [ComVisible(true), ComImport,
-      Guid("6aa08757-7fa2-48a2-a9e5-58910e3fe8a7"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("6aa08757-7fa2-48a2-a9e5-58910e3fe8a7"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ITTPremiumSource
     {
       [PreserveSig]
@@ -114,24 +115,25 @@ namespace MediaPortal.TV.Recording
 
       [PreserveSig]
       int Tune(Int32 frequency, Int32 symbolRate, Int32 polarity, Int32 LNBKhz,
-                   Int32 LNBFreq, bool LNBPower, Int32 diseq, TTModType modulation,
-                   TTBandwidthType bwType, bool specInv);
+               Int32 LNBFreq, bool LNBPower, Int32 diseq, TTModType modulation,
+               TTBandwidthType bwType, bool specInv);
 
       [PreserveSig]
       int GetSignalState(out bool locked, out Int32 quality, out Int32 level);
     }
+
     #endregion
 
     public DVBGraphTTPremium(TVCaptureDevice pCard)
       : base(pCard)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _cardType = xmlreader.GetValueAsString("DVBTTPremium", "cardtype", "");
         _cardFilename = xmlreader.GetValueAsString("dvb_ts_cards", "filename", "");
       }
       GetTunerCapabilities();
-      _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TTPremiumCards, _networkType);
+      _streamDemuxer.SetCardType((int) DVBEPG.EPGCard.TTPremiumCards, _networkType);
     }
 
     public override bool CreateGraph(int Quality)
@@ -168,9 +170,9 @@ namespace MediaPortal.TV.Recording
 
         // Make a new filter graph
         // Log.WriteFile(LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
 
-        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
 
         //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
@@ -184,7 +186,7 @@ namespace MediaPortal.TV.Recording
         // add the tt premium specific filters
         //=========================================================================================================
         Log.Info("DVBGraphTTPremium:CreateGraph() create TTPremium source filter");
-        _filterTTPremium = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TTPremiumSource, false));
+        _filterTTPremium = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TTPremiumSource, false));
         if (_filterTTPremium == null)
         {
           Log.Info("DVBGraphTTPremium:creategraph() _filterTTPremium not found");
@@ -277,8 +279,8 @@ namespace MediaPortal.TV.Recording
         //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
         mpegVideoOut.formatType = FormatType.Mpeg2Video;
         mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
-        mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
+        mpegVideoOut.formatPtr = Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
+        Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
         AMMediaType mpegAudioOut = new AMMediaType();
         mpegAudioOut.majorType = MediaType.Audio;
         mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
@@ -288,8 +290,8 @@ namespace MediaPortal.TV.Recording
         mpegAudioOut.unkPtr = IntPtr.Zero;
         mpegAudioOut.formatType = FormatType.WaveEx;
         mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
-        mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
-        System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+        mpegAudioOut.formatPtr = Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+        Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
 
         IPin filterMpeg2DemuxerVideoPin, filterMpeg2DemuxerAudioPin;
         hr = demuxer.CreateOutputPin(mpegVideoOut, "video", out filterMpeg2DemuxerVideoPin);
@@ -309,8 +311,9 @@ namespace MediaPortal.TV.Recording
         // add the stream analyzer
         //=========================================================================================================
         Log.Info("DVBGraphTTPremium: Add Stream Analyzer");
-        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
-        _analyzerInterface = (IStreamAnalyzer)_filterDvbAnalyzer;
+        _filterDvbAnalyzer =
+          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
+        _analyzerInterface = (IStreamAnalyzer) _filterDvbAnalyzer;
         _epgGrabberInterface = _filterDvbAnalyzer as IEPGGrabber;
         _mhwGrabberInterface = _filterDvbAnalyzer as IMHWGrabber;
         _atscGrabberInterface = _filterDvbAnalyzer as IATSCGrabber;
@@ -367,7 +370,7 @@ namespace MediaPortal.TV.Recording
         _pinDemuxerAudio = filterMpeg2DemuxerAudioPin;
         _pinDemuxerVideo = filterMpeg2DemuxerVideoPin;
         _pinDemuxerSections = pinSectionsOut;
-         
+
         //get the video/audio output pins of the mpeg2 demultiplexer
         if (_pinDemuxerVideo == null)
         {
@@ -397,8 +400,8 @@ namespace MediaPortal.TV.Recording
           mediaAC3.unkPtr = IntPtr.Zero;
           mediaAC3.formatType = FormatType.WaveEx;
           mediaAC3.formatSize = MPEG1AudioFormat.GetLength(0);
-          mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
+          mediaAC3.formatPtr = Marshal.AllocCoTaskMem(mediaAC3.formatSize);
+          Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
 
           hr = demuxer.CreateOutputPin(mediaAC3, "AC3", out _pinAC3Out);
           if (hr != 0 || _pinAC3Out == null)
@@ -415,8 +418,8 @@ namespace MediaPortal.TV.Recording
           mediaMPG1.unkPtr = IntPtr.Zero;
           mediaMPG1.formatType = FormatType.WaveEx;
           mediaMPG1.formatSize = MPEG1AudioFormat.GetLength(0);
-          mediaMPG1.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaMPG1.formatPtr, mediaMPG1.formatSize);
+          mediaMPG1.formatPtr = Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
+          Marshal.Copy(MPEG1AudioFormat, 0, mediaMPG1.formatPtr, mediaMPG1.formatSize);
 
           hr = demuxer.CreateOutputPin(mediaMPG1, "audioMpg1", out _pinMPG1Out);
           if (hr != 0 || _pinMPG1Out == null)
@@ -489,7 +492,7 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
-              Log.Error("DVBGraphTTPremium:FAILED to connect mpeg2 demux->stream analyzer");
+            Log.Error("DVBGraphTTPremium:FAILED to connect mpeg2 demux->stream analyzer");
           }
 
           hr = _graphBuilder.Connect(_pinDemuxerEPG, pinEPGIn);
@@ -512,10 +515,26 @@ namespace MediaPortal.TV.Recording
           }
           //Log.Info("DVBGraphTTPremium:Demuxer is setup");
 
-          if (pinMHW1In != null) DirectShowUtil.ReleaseComObject(pinMHW1In); pinMHW1In = null;
-          if (pinMHW2In != null) DirectShowUtil.ReleaseComObject(pinMHW2In); pinMHW2In = null;
-          if (pinEPGIn != null) DirectShowUtil.ReleaseComObject(pinEPGIn); pinEPGIn = null;
-          if (pinAnalyzerIn != null) DirectShowUtil.ReleaseComObject(pinAnalyzerIn); pinAnalyzerIn = null;
+          if (pinMHW1In != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinMHW1In);
+          }
+          pinMHW1In = null;
+          if (pinMHW2In != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinMHW2In);
+          }
+          pinMHW2In = null;
+          if (pinEPGIn != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinEPGIn);
+          }
+          pinEPGIn = null;
+          if (pinAnalyzerIn != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinAnalyzerIn);
+          }
+          pinAnalyzerIn = null;
 
           //setup teletext grabbing....
           if (GUIGraphicsContext.DX9Device != null)
@@ -530,8 +549,8 @@ namespace MediaPortal.TV.Recording
               return false;
             }
 
-            _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
-            _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
+            _filterSampleGrabber = (IBaseFilter) new SampleGrabber();
+            _sampleInterface = (ISampleGrabber) _filterSampleGrabber;
             _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
 
             IPin pinIn = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
@@ -564,7 +583,7 @@ namespace MediaPortal.TV.Recording
 
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
         //_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
-        _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TTPremiumCards, Network());
+        _streamDemuxer.SetCardType((int) DVBEPG.EPGCard.TTPremiumCards, Network());
         //_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
         if (_sampleInterface != null)
@@ -593,7 +612,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.Network = Network();
 
         //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Add graph to ROT table");
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
       }
       catch (Exception ex)
       {
@@ -630,7 +649,10 @@ namespace MediaPortal.TV.Recording
         }
 
         //Log.Info("DVBGraphTTPremium:stop graph");
-        if (_mediaControl != null) _mediaControl.Stop();
+        if (_mediaControl != null)
+        {
+          _mediaControl.Stop();
+        }
         _mediaControl = null;
         //Log.Info("DVBGraphTTPremium:graph stopped");
 
@@ -692,23 +714,41 @@ namespace MediaPortal.TV.Recording
         if (_interfaceTTPremium != null)
         {
           hr = _interfaceTTPremium.Close();
-          while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
+          }
           _interfaceTTPremium = null;
         }
 
         if (_filterTTPremium != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
+          }
           _filterTTPremium = null;
         }
 
         if (_filterDvbAnalyzer != null)
         {
           //Log.Info("free dvbanalyzer");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0) ;
-          if (hr != 0) Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterDvbAnalyzer)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
+          }
           _filterDvbAnalyzer = null;
         }
 #if USEMTSWRITER
@@ -722,8 +762,14 @@ namespace MediaPortal.TV.Recording
 #endif
         if (_filterSmartTee != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSmartTee):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSmartTee)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSmartTee):{0}", hr);
+          }
           _filterSmartTee = null;
         }
 
@@ -741,31 +787,55 @@ namespace MediaPortal.TV.Recording
         if (_filterSampleGrabber != null)
         {
           //Log.Info("DVBGraphTTPremium:free samplegrabber");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSampleGrabber):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterSampleGrabber)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterSampleGrabber):{0}", hr);
+          }
           _filterSampleGrabber = null;
         }
 
 
         if (m_IStreamBufferConfig != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferConfig)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
+          }
           m_IStreamBufferConfig = null;
         }
 
         if (m_IStreamBufferSink != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_IStreamBufferSink)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
+          }
           m_IStreamBufferSink = null;
         }
 
         if (m_StreamBufferSink != null)
         {
           //Log.Info("DVBGraphTTPremium:free streambuffersink");
-          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferSink):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferSink)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferSink):{0}", hr);
+          }
           m_StreamBufferSink = null;
         }
 
@@ -773,16 +843,28 @@ namespace MediaPortal.TV.Recording
         if (m_StreamBufferConfig != null)
         {
           //Log.Info("DVBGraphTTPremium:free streambufferconfig");
-          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(m_StreamBufferConfig)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(m_StreamBufferConfig):{0}", hr);
+          }
           m_StreamBufferConfig = null;
         }
 
         if (_filterMpeg2Demultiplexer != null)
         {
           //Log.Info("DVBGraphTTPremium:free demux");
-          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterMpeg2Demultiplexer)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterMpeg2Demultiplexer):{0}", hr);
+          }
           _filterMpeg2Demultiplexer = null;
         }
 
@@ -804,16 +886,28 @@ namespace MediaPortal.TV.Recording
         if (_captureGraphBuilderInterface != null)
         {
           //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          }
           _captureGraphBuilderInterface = null;
         }
 
         if (_graphBuilder != null)
         {
           //Log.Info("DVBGraphTTPremium:free graphbuilder");
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
-          if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
+          }
           _graphBuilder = null;
         }
 
@@ -825,7 +919,9 @@ namespace MediaPortal.TV.Recording
 				}
 #endif
 
-        GC.Collect(); GC.Collect(); GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
         _graphState = State.None;
 
         Thread.Sleep(200);
@@ -874,7 +970,7 @@ namespace MediaPortal.TV.Recording
 
       if (_networkType == NetworkType.DVBC || _networkType == NetworkType.DVBT)
       {
-        switch ((ModulationType)ch.Modulation)
+        switch ((ModulationType) ch.Modulation)
         {
           case ModulationType.Mod16Qam:
             mod = TTModType.QAM_16;
@@ -897,7 +993,8 @@ namespace MediaPortal.TV.Recording
             break;
 
           default:
-            Log.Error("DVBGraphTTPremium:SubmitTureRequest(), unsupported modulation type:{0}", (ModulationType)ch.Modulation);
+            Log.Error("DVBGraphTTPremium:SubmitTureRequest(), unsupported modulation type:{0}",
+                      (ModulationType) ch.Modulation);
             break;
         }
 
@@ -924,7 +1021,8 @@ namespace MediaPortal.TV.Recording
             break;
         }
 
-        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, ch.DiSEqC, mod, bw, false);
+        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency,
+                                          ch.LNBFrequency, true, ch.DiSEqC, mod, bw, false);
         if (hr != 0)
         {
           Log.Error("DVBGraphTTPremium:SubmitTureRequest(), filter tune request failed:{0}", hr);
@@ -935,13 +1033,17 @@ namespace MediaPortal.TV.Recording
         int diseq = 0;
         int low = 0;
         int high = 0;
-        int lnbKhzTone=0;
-        GetDisEqcSettings(ref ch, out low, out high,out  lnbKhzTone, out diseq);
+        int lnbKhzTone = 0;
+        GetDisEqcSettings(ref ch, out low, out high, out lnbKhzTone, out diseq);
         ch.LNBFrequency = low;
-        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, diseq, mod, bw, false);
+        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency,
+                                          ch.LNBFrequency, true, diseq, mod, bw, false);
         if (hr != 0)
         {
-          Log.Error("DVBGraphTTPremium:SubmitTuneRequest(), filter tune request failed:{0},{1},{2},{3},{4},{5},{6},{7},{8}", ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, diseq, mod, bw, false);
+          Log.Error(
+            "DVBGraphTTPremium:SubmitTuneRequest(), filter tune request failed:{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+            ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, diseq, mod, bw,
+            false);
           _signalPresent = false;
           _signalQuality = 0;
           _signalLevel = 0;
@@ -967,9 +1069,9 @@ namespace MediaPortal.TV.Recording
     protected override void SetupDiseqc(int disNo)
     {
       _currentTuningObject.DiSEqC = disNo;
-    }// SetupDiseqc()
+    } // SetupDiseqc()
 
-     protected void DeleteAllPids(int pinIndex)
+    protected void DeleteAllPids(int pinIndex)
     {
       // Get the index pin and delete any PIDs that are mapped to it
       IPin pin = DsFindPin.ByDirection(_filterTTPremium, PinDirection.Output, pinIndex);
@@ -987,9 +1089,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.Error("DVBGraphTTPremium:DeleteAllPids(), couldn't enumerate PIDs on pin:{0}, hr:{1}", pinIndex, hr);
       }
-      
+
       List<int> pids = new List<int>();
-      PIDMap []pidMap = new PIDMap[1];
+      PIDMap[] pidMap = new PIDMap[1];
 
       int count = 0;
       while (enumPid.Next(1, pidMap, out count) == 0)
@@ -1008,119 +1110,144 @@ namespace MediaPortal.TV.Recording
         Log.Error("DVBGraphTTPremium:DeleteAllPids(), couldn't delete PIDs on pin:{0}, hr:{1}", pinIndex, hr);
       }
     }
+
     private void GetTunerCapabilities()
     {
       try
+      {
+        // Make a new filter graph
+        // Log.WriteFile(LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
+
+        // Get the Capture Graph Builder
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
+
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+        int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
+        if (hr < 0)
         {
-          // Make a new filter graph
-          // Log.WriteFile(LogType.Log,"DVBGraphTTPremium:create new filter graph (IGraphBuilder)");
-          _graphBuilder = (IGraphBuilder)new FilterGraph();
+          Log.Error("DVBGraphTTPremium:FAILED link :0x{0:X}", hr);
+          return;
+        }
 
-          // Get the Capture Graph Builder
-          _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        //=========================================================================================================
+        // add the tt premium specific filters
+        //=========================================================================================================
+        Log.Info("DVBGraphTTPremium:CreateGraph() create TTPremium source filter");
+        _filterTTPremium = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TTPremiumSource, false));
+        if (_filterTTPremium == null)
+        {
+          Log.Info("DVBGraphTTPremium:creategraph() _filterTTPremium not found");
+          return;
+        }
+        // get interface
+        _interfaceTTPremium = _filterTTPremium as ITTPremiumSource;
+        if (_interfaceTTPremium == null)
+        {
+          Log.Info("DVBGraphTTPremium: cannot get ITTPremiumSource");
+          return;
+        }
 
-          //Log.WriteFile(LogType.Log,"DVBGraphTTPremium:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
-          int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
-          if (hr < 0)
+        //=========================================================================================================
+        // initialize tuner
+        //=========================================================================================================
+        Log.Info("DVBGraphTTPremium: Initialize Tuner()");
+        hr = _interfaceTTPremium.Init();
+        if (hr != 0)
+        {
+          Log.Info("DVBGraphTTPremium: Tuner initialize failed:0x{0:X}", hr);
+          return;
+        }
+
+        // Get network type (DVBS, DVBC, DVBT)
+        TTNetworkType nt;
+        hr = _interfaceTTPremium.GetNetworkType(out nt);
+        if (hr != 0)
+        {
+          Log.Info("DVBGraphTTPremium: Network Type failed:0x{0:X}", hr);
+          return;
+        }
+
+        switch (nt)
+        {
+          case TTNetworkType.DVB_S:
+            Log.Info("DVBGraphTTPremium: Network type=DVBS");
+            _networkType = NetworkType.DVBS;
+            break;
+          case TTNetworkType.DVB_C:
+            Log.Info("DVBGraphTTPremium: Network type=DVBC");
+            _networkType = NetworkType.DVBC;
+            break;
+          case TTNetworkType.DVB_T:
+            Log.Info("DVBGraphTTPremium: Network type=DVBT");
+            _networkType = NetworkType.DVBT;
+            break;
+          case TTNetworkType.Unkown:
+            Log.Info("DVBGraphTTPremium: Network type=unknown?");
+            _networkType = NetworkType.Unknown;
+            break;
+        }
+
+        if (_interfaceTTPremium != null)
+        {
+          hr = _interfaceTTPremium.Close();
+          while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0)
           {
-            Log.Error("DVBGraphTTPremium:FAILED link :0x{0:X}", hr);
-              return;
+            ;
           }
-
-          //=========================================================================================================
-          // add the tt premium specific filters
-          //=========================================================================================================
-          Log.Info("DVBGraphTTPremium:CreateGraph() create TTPremium source filter");
-          _filterTTPremium = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_TTPremiumSource, false));
-          if (_filterTTPremium == null)
-          {
-            Log.Info("DVBGraphTTPremium:creategraph() _filterTTPremium not found");
-              return;
-          }
-          // get interface
-          _interfaceTTPremium = _filterTTPremium as ITTPremiumSource;
-          if (_interfaceTTPremium == null)
-          {
-            Log.Info("DVBGraphTTPremium: cannot get ITTPremiumSource");
-              return;
-          }
-
-          //=========================================================================================================
-          // initialize tuner
-          //=========================================================================================================
-          Log.Info("DVBGraphTTPremium: Initialize Tuner()");
-          hr = _interfaceTTPremium.Init();
           if (hr != 0)
           {
-            Log.Info("DVBGraphTTPremium: Tuner initialize failed:0x{0:X}", hr);
-              return;
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
           }
+          _interfaceTTPremium = null;
+        }
 
-          // Get network type (DVBS, DVBC, DVBT)
-          TTNetworkType nt;
-          hr = _interfaceTTPremium.GetNetworkType(out nt);
+        if (_filterTTPremium != null)
+        {
+          while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0)
+          {
+            ;
+          }
           if (hr != 0)
           {
-            Log.Info("DVBGraphTTPremium: Network Type failed:0x{0:X}", hr);
-              return;
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
           }
-
-          switch (nt)
-          {
-            case TTNetworkType.DVB_S:
-              Log.Info("DVBGraphTTPremium: Network type=DVBS");
-              _networkType = NetworkType.DVBS;
-              break;
-            case TTNetworkType.DVB_C:
-              Log.Info("DVBGraphTTPremium: Network type=DVBC");
-              _networkType = NetworkType.DVBC;
-              break;
-            case TTNetworkType.DVB_T:
-              Log.Info("DVBGraphTTPremium: Network type=DVBT");
-              _networkType = NetworkType.DVBT;
-              break;
-            case TTNetworkType.Unkown:
-              Log.Info("DVBGraphTTPremium: Network type=unknown?");
-              _networkType = NetworkType.Unknown;
-              break;
-          }
-
-          if (_interfaceTTPremium != null)
-          {
-            hr = _interfaceTTPremium.Close();
-            while ((hr = DirectShowUtil.ReleaseComObject(_interfaceTTPremium)) > 0) ;
-            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_interfaceTTPremium):{0}", hr);
-            _interfaceTTPremium = null;
-          }
-
-          if (_filterTTPremium != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(_filterTTPremium)) > 0) ;
-            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_filterTTPremium):{0}", hr);
-            _filterTTPremium = null;
-          }
-
-          //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: remove graph");
-          if (_captureGraphBuilderInterface != null)
-          {
-            //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
-            while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
-            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
-            _captureGraphBuilderInterface = null;
-          }
-
-          if (_graphBuilder != null)
-          {
-            //Log.Info("DVBGraphTTPremium:free graphbuilder");
-            while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
-            if (hr != 0) Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
-            _graphBuilder = null;
-          }
+          _filterTTPremium = null;
         }
-        catch (Exception ex)
+
+        //Log.WriteFile(LogType.Log,"DVBGraphTTPremium: remove graph");
+        if (_captureGraphBuilderInterface != null)
         {
-            Log.Error(ex);
+          //Log.Info("DVBGraphTTPremium:free remove capturegraphbuilder");
+          while ((hr = DirectShowUtil.ReleaseComObject(_captureGraphBuilderInterface)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_captureGraphBuilderInterface):{0}", hr);
+          }
+          _captureGraphBuilderInterface = null;
         }
+
+        if (_graphBuilder != null)
+        {
+          //Log.Info("DVBGraphTTPremium:free graphbuilder");
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
+          if (hr != 0)
+          {
+            Log.Info("DVBGraphTTPremium:ReleaseComObject(_graphBuilder):{0}", hr);
+          }
+          _graphBuilder = null;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
     }
-}
+  }
 }

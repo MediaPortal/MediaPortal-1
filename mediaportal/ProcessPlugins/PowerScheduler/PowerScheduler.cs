@@ -27,22 +27,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-using MediaPortal.Player;
-using MediaPortal.Playlists;
-using MediaPortal.Ripper;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace MediaPortal.PowerScheduler
 {
-  [PluginIcons("ProcessPlugins.PowerScheduler.PowerScheduler.gif", "ProcessPlugins.PowerScheduler.PowerScheduler_disabled.gif")]
+  [PluginIcons("ProcessPlugins.PowerScheduler.PowerScheduler.gif",
+    "ProcessPlugins.PowerScheduler.PowerScheduler_disabled.gif")]
   public class PowerScheduler : IPluginReceiver, IWakeable, ISetupForm
   {
     #region Variables
+
     #region Private Variables
+
     private const int WM_POWERBROADCAST = 0x0218;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
     private const int PBT_APMQUERYSTANDBY = 0x0001;
@@ -58,48 +61,59 @@ namespace MediaPortal.PowerScheduler
     private const int PBT_APMOEMEVENT = 0x000B;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     private const string _version = "v0.1.1";
+
     #endregion
 
     #region Protected Variables
+
     // Shut Down Variables
-    protected int _shutDownInterval = 2;	               // idle minutes before shutdown(hibernate/standby)
+    protected int _shutDownInterval = 2; // idle minutes before shutdown(hibernate/standby)
     protected DateTime _shutDownTime = DateTime.MaxValue; // DateTime for the next shutDown
-    protected string _shutDownMode = "None";		         // mode to use for shutdown (Hibernate, Suspend, Shutdown, None)
-    protected bool _forceShutDown = false;             // force shutdown
-    protected bool _lastShutDownDisabled = false;             // ShutDown was last time disabled by a plugin -> recheck to start ShutDown once again
+    protected string _shutDownMode = "None"; // mode to use for shutdown (Hibernate, Suspend, Shutdown, None)
+    protected bool _forceShutDown = false; // force shutdown
+
+    protected bool _lastShutDownDisabled = false;
+                   // ShutDown was last time disabled by a plugin -> recheck to start ShutDown once again
+
     // Timer Variables
-    protected System.Windows.Forms.Timer _Timer = new System.Windows.Forms.Timer();
-    protected int _timerInterval = 30;                // intervall after the timer procedure gets called calls    
-    protected bool _rescanTVDatabase = false;             // true if the TVDatabase got some changes
-    protected bool _extensiveLogging = false;             // show more details on each OnTimer() call
+    protected Timer _Timer = new Timer();
+    protected int _timerInterval = 30; // intervall after the timer procedure gets called calls    
+    protected bool _rescanTVDatabase = false; // true if the TVDatabase got some changes
+    protected bool _extensiveLogging = false; // show more details on each OnTimer() call
     // Wake Up Variables
     private WaitableTimer _wakeupTimer = new WaitableTimer();
     protected DateTime _wakeupTime = DateTime.MaxValue; // Date/Time for the next wakeup
-    protected int _preRecordInterval = 2;	            	// Interval to start recording before entered starttime
-    protected int _wakeupInterval = 1;			            // 1 minute to give computer time to wakeup
-    protected bool _reinitRecorder = false;             // Re-init the Recorder when resuming
-    protected bool _onResumeRunning = false;						// avoid multible OnResume calls
+    protected int _preRecordInterval = 2; // Interval to start recording before entered starttime
+    protected int _wakeupInterval = 1; // 1 minute to give computer time to wakeup
+    protected bool _reinitRecorder = false; // Re-init the Recorder when resuming
+    protected bool _onResumeRunning = false; // avoid multible OnResume calls
     // TV Guide Variables
     protected DateTime _nextRecordingTime = DateTime.MaxValue; // Date/Time when the next recording takes place
     // Power Saving Options
     protected bool _preventMonitorPowerOff = true;
+
     #endregion
+
     // Public Variables
+
     #endregion
 
     #region Properties
+
     // Public Properties
     public DateTime EarliestStartTime
     {
       get { return DateTime.Now; }
     }
+
     #endregion
 
     #region events
+
     /// <summary>
     /// Recordings has been changed, flag for a rescan
     /// </summary>
-    void OnRecordingsChanged(TVDatabase.RecordingChange change)
+    private void OnRecordingsChanged(TVDatabase.RecordingChange change)
     {
       _rescanTVDatabase = true;
     }
@@ -107,12 +121,12 @@ namespace MediaPortal.PowerScheduler
     /// <summary>
     /// Programs has been changed, flag for a rescan
     /// </summary>
-    void OnProgramsChanged()
+    private void OnProgramsChanged()
     {
       _rescanTVDatabase = true;
     }
 
-    void OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
+    private void OnTvRecordingStarted(string recordingFilename, TVRecording recording, TVProgram program)
     {
       _rescanTVDatabase = true;
     }
@@ -120,6 +134,7 @@ namespace MediaPortal.PowerScheduler
     #endregion
 
     #region Constructors/Destructors
+
     public PowerScheduler()
     {
       LogExtensive("Init");
@@ -127,18 +142,20 @@ namespace MediaPortal.PowerScheduler
       PowerManager.OnPowerUp += new PowerManager.ResumeHandler(this.OnWakeupTimer);
       _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(PowerManager.OnResume);
       GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(OnActivateWindow);
-      TVDatabase.OnRecordingsChanged += new MediaPortal.TV.Database.TVDatabase.OnRecordingChangedHandler(this.OnRecordingsChanged);
-      TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
+      TVDatabase.OnRecordingsChanged += new TVDatabase.OnRecordingChangedHandler(this.OnRecordingsChanged);
+      TVDatabase.OnProgramsChanged += new TVDatabase.OnChangedHandler(this.OnProgramsChanged);
       Recorder.OnTvRecordingStarted += new Recorder.OnTvRecordingHandler(this.OnTvRecordingStarted);
     }
+
     #endregion
 
     #region Private Methods
 
     #region Settings
+
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _shutDownInterval = xmlreader.GetValueAsInt("powerscheduler", "shutdowninterval", 0);
         _shutDownMode = xmlreader.GetValueAsString("powerscheduler", "shutdownmode", "Suspend").ToLower();
@@ -152,12 +169,17 @@ namespace MediaPortal.PowerScheduler
         _preventMonitorPowerOff = xmlreader.GetValueAsBool("powerscheduler", "preventmonitorpowerdow", false);
 
         if (_shutDownInterval < 1)
-          ResetShutDown();   // be sure that we do no shutdown
+        {
+          ResetShutDown(); // be sure that we do no shutdown
+        }
 
         if (_shutDownInterval > 0)
         {
           if (_wakeupInterval >= _shutDownInterval)
-            _shutDownInterval = _wakeupInterval + 1;  // ensure that shutDownIntervall is longer then wakeUpIntervall -> to avoid shutdown before recordings starts        
+          {
+            _shutDownInterval = _wakeupInterval + 1;
+              // ensure that shutDownIntervall is longer then wakeUpIntervall -> to avoid shutdown before recordings starts        
+          }
         }
 
         if (_extensiveLogging)
@@ -172,9 +194,11 @@ namespace MediaPortal.PowerScheduler
         }
       }
     }
+
     #endregion
 
     #region ShutDown Timer routines
+
     /// <summary>
     /// This callback gets called by the window manager when user switches to another window (plugin)
     /// When the users enters the Home plugin we want to enable the shut down counter.
@@ -183,21 +207,27 @@ namespace MediaPortal.PowerScheduler
     /// <param name="windowId">id of the window which is about to be activated</param
     private void OnActivateWindow(int windowId)
     {
-      if ((windowId == (int)GUIWindow.Window.WINDOW_HOME) ||
-                (windowId == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+      if ((windowId == (int) GUIWindow.Window.WINDOW_HOME) ||
+          (windowId == (int) GUIWindow.Window.WINDOW_SECOND_HOME))
       {
         if (_shutDownInterval > 0)
-          SetShutDown();           // we are switching to home
+        {
+          SetShutDown(); // we are switching to home
+        }
 
         if (_preventMonitorPowerOff)
-          Util.Win32API.AllowMonitorPowerdown();  // Turn on Energy Saving Options
+        {
+          Win32API.AllowMonitorPowerdown(); // Turn on Energy Saving Options
+        }
       }
       else
       {
         if (_shutDownInterval > 0)
+        {
           ResetShutDown();
+        }
 
-        Util.Win32API.PreventMonitorPowerdown(); // Turn off Energy Saving Options
+        Win32API.PreventMonitorPowerdown(); // Turn off Energy Saving Options
       }
 
 
@@ -234,7 +264,9 @@ namespace MediaPortal.PowerScheduler
     private void ResetShutDown()
     {
       if (_shutDownTime == DateTime.MaxValue)
-        return;  // no display message
+      {
+        return; // no display message
+      }
       LogExtensive("ShutDownTimer disabled");
       _shutDownTime = DateTime.MaxValue;
     }
@@ -243,7 +275,7 @@ namespace MediaPortal.PowerScheduler
     {
       if (!_Timer.Enabled)
       {
-        _Timer.Interval = _timerInterval * 1000;  // interval in milliseconds
+        _Timer.Interval = _timerInterval*1000; // interval in milliseconds
         _Timer.Tick += new EventHandler(OnTimer);
         _Timer.Start();
         //LogExtensive("Timer started");
@@ -262,7 +294,7 @@ namespace MediaPortal.PowerScheduler
 
     private void OnTimer(Object sender, EventArgs e)
     {
-      PowerManager.SystemBusy();  // must be called periodically to tell windows that the system is required
+      PowerManager.SystemBusy(); // must be called periodically to tell windows that the system is required
 
       StopTimer();
       if (_extensiveLogging)
@@ -276,23 +308,23 @@ namespace MediaPortal.PowerScheduler
         Log.Info("   - WakeUp Time            = " + _wakeupTime.ToString());
       }
 
-      if (_lastShutDownDisabled)  // last Time ShutDown was disabled by a plugin -> recheck
+      if (_lastShutDownDisabled) // last Time ShutDown was disabled by a plugin -> recheck
       {
         if (!WakeAbleDisallowShutdown())
         {
           _lastShutDownDisabled = false;
-          OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed
+          OnActivateWindow(GUIWindowManager.ActiveWindow); // SetShutDown is called when needed
         }
       }
 
       if ((_wakeupTime < DateTime.Now) ||
-           ((_rescanTVDatabase) && (!TVDatabase.SupressEvents)))
+          ((_rescanTVDatabase) && (!TVDatabase.SupressEvents)))
       {
-        ResetShutDown();                                  // ensure that the assumptions about EarliestStartTime are true.
-        CheckNextRecoring();                              // checks when the next recording takes place 
+        ResetShutDown(); // ensure that the assumptions about EarliestStartTime are true.
+        CheckNextRecoring(); // checks when the next recording takes place 
         //       SetWakeUpTime();                                  // set the WakeUp Timer
         _rescanTVDatabase = false;
-        OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed 
+        OnActivateWindow(GUIWindowManager.ActiveWindow); // SetShutDown is called when needed 
       }
 
       SetWakeUpTime();
@@ -336,11 +368,11 @@ namespace MediaPortal.PowerScheduler
       {
         case "suspend":
           Log.Info("PowerScheduler: Suspend system -> WakeUp at {0}", _wakeupTime);
-          MediaPortal.Util.Utils.SuspendSystem(_forceShutDown);
+          Util.Utils.SuspendSystem(_forceShutDown);
           break;
         case "hibernate":
           Log.Info("PowerScheduler: Hibernate system -> WakeUp at {0}", _wakeupTime);
-          MediaPortal.Util.Utils.HibernateSystem(_forceShutDown);
+          Util.Utils.HibernateSystem(_forceShutDown);
           break;
         case "shutdown (no wakeup)":
           Log.Info("PowerScheduler: ShutDown system");
@@ -352,24 +384,28 @@ namespace MediaPortal.PowerScheduler
     #endregion
 
     #region Logging
-    void LogExtensive(string format, params object[] arg)
+
+    private void LogExtensive(string format, params object[] arg)
     {
       if (_extensiveLogging)
       {
         StackTrace st = new StackTrace();
         StackFrame sf = st.GetFrame(1);
-        MediaPortal.GUI.Library.Log.Info(PluginName() + "." + sf.GetMethod().Name + ": " + format, arg);
+        Log.Info(PluginName() + "." + sf.GetMethod().Name + ": " + format, arg);
       }
     }
 
     #endregion
 
     #region CheckNextRecording
-    void CheckNextRecoring()
+
+    private void CheckNextRecoring()
     {
       DateTime ealiestStartTime = EarliestStartTime;
       if (_shutDownTime < DateTime.MaxValue)
+      {
         ealiestStartTime = _shutDownTime;
+      }
       _nextRecordingTime = DateTime.MaxValue;
       DateTime nextRecTime = DateTime.MaxValue;
       TVRecording nextRec = null;
@@ -380,7 +416,9 @@ namespace MediaPortal.PowerScheduler
         foreach (TVRecording rec in recList)
         {
           if ((rec.Canceled > 0) || (rec.IsDone()))
+          {
             continue;
+          }
           LogExtensive("Recording: " + rec.ToString());
           List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
           foreach (TVRecording foundRec in recs)
@@ -404,7 +442,8 @@ namespace MediaPortal.PowerScheduler
     #endregion
 
     #region WakeUp/resume routines
-    void SetWakeUpTime()
+
+    private void SetWakeUpTime()
     {
       DateTime nextWakeUpTime = DateTime.MaxValue;
       DateTime ealiestStartTime = EarliestStartTime;
@@ -421,7 +460,7 @@ namespace MediaPortal.PowerScheduler
 
       if ((nextWakeUpTime > DateTime.Now) && (nextWakeUpTime < DateTime.Now.AddMonths(3)))
       {
-        if (nextWakeUpTime != _wakeupTime)      // only set it when it is different
+        if (nextWakeUpTime != _wakeupTime) // only set it when it is different
         {
           LogExtensive("WakeUp Timer set to {0}", nextWakeUpTime);
           _wakeupTime = nextWakeUpTime;
@@ -441,7 +480,7 @@ namespace MediaPortal.PowerScheduler
     /// <summary>
     /// The wakeup timer has expired
     /// </summary>
-    void OnWakeupTimer()
+    private void OnWakeupTimer()
     {
       LogExtensive("Wakeup timer expired");
       /* undo because of OnWakeUpTimer calls when user is not in home for the recording
@@ -454,14 +493,14 @@ namespace MediaPortal.PowerScheduler
        */
     }
 
-    void OnSuspend()
+    private void OnSuspend()
     {
       LogExtensive("OnSuspend->StopTimer");
       StopTimer();
       _onResumeRunning = false;
     }
 
-    void OnResume()
+    private void OnResume()
     {
       LogExtensive("OnResume");
       if (_reinitRecorder)
@@ -479,6 +518,7 @@ namespace MediaPortal.PowerScheduler
         }
       }
     }
+
     #endregion
 
     #endregion
@@ -493,11 +533,10 @@ namespace MediaPortal.PowerScheduler
     public void Start()
     {
       Log.Info(PluginName() + ".Start() - Version: " + _version);
-      OnActivateWindow(GUIWindowManager.ActiveWindow);  // SetShutDown is called when needed
-      CheckNextRecoring();                              // checks when the next recording takes place 
-      SetWakeUpTime();                                  // sets the next wakeup time 
+      OnActivateWindow(GUIWindowManager.ActiveWindow); // SetShutDown is called when needed
+      CheckNextRecoring(); // checks when the next recording takes place 
+      SetWakeUpTime(); // sets the next wakeup time 
       StartTimer();
-
     }
 
     /// <summary>
@@ -515,35 +554,35 @@ namespace MediaPortal.PowerScheduler
     /// This method will be called by mediaportal to send system messages to your process plugin,
     /// if the plugin implements WndProc (optional) / added by mPod
     /// </summary>
-    public bool WndProc(ref System.Windows.Forms.Message msg)
+    public bool WndProc(ref Message msg)
     {
       if (msg.Msg == WM_POWERBROADCAST)
       {
         LogExtensive("WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
         switch (msg.WParam.ToInt32())
         {
-          //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+            //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+            //An application that grants permission should carry out preparations for the suspension before returning.
+            //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
-          //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+            //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+            //An application that grants permission should carry out preparations for the suspension before returning.
+            //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSTANDBY:
           case PBT_APMSUSPEND:
             OnSuspend();
             break;
 
-          //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
-          //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
-          //For example, this event can be broadcast after a critical suspension caused by a failing battery.
+            //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+            //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+            //For example, this event can be broadcast after a critical suspension caused by a failing battery.
           case PBT_APMRESUMECRITICAL:
-          //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+            //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
           case PBT_APMRESUMESUSPEND:
-          //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
+            //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
           case PBT_APMRESUMESTANDBY:
-          //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
-          //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+            //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+            //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
           case PBT_APMRESUMEAUTOMATIC:
             if (!_onResumeRunning)
             {
@@ -565,21 +604,25 @@ namespace MediaPortal.PowerScheduler
     public DateTime GetNextEvent(DateTime earliestWakeuptime)
     {
       if (_wakeupInterval < 1)
-        return DateTime.MaxValue;   // function disabled
+      {
+        return DateTime.MaxValue; // function disabled
+      }
 
       DateTime recordingTime = _nextRecordingTime.AddMinutes(-_wakeupInterval);
       if (recordingTime < earliestWakeuptime)
-        recordingTime = DateTime.MaxValue;   // no recording planed
+      {
+        recordingTime = DateTime.MaxValue; // no recording planed
+      }
       return recordingTime;
     }
 
     public bool DisallowShutdown()
     {
-      if ((g_Player.Playing) ||                // are we playing something ? 
-          (Recorder.IsRadio()) ||              // are we playing analog or digital radio?    
-          (Recorder.IsAnyCardRecording()) ||   // are we recording something? 
-          (TVDatabase.SupressEvents) ||        // is there a DataBase update running?
-          (_shutDownTime > _wakeupTime))       // is shutdown killing the start of the recording
+      if ((g_Player.Playing) || // are we playing something ? 
+          (Recorder.IsRadio()) || // are we playing analog or digital radio?    
+          (Recorder.IsAnyCardRecording()) || // are we recording something? 
+          (TVDatabase.SupressEvents) || // is there a DataBase update running?
+          (_shutDownTime > _wakeupTime)) // is shutdown killing the start of the recording
       {
         Log.Info(" PowerScheduler.DisallowShutdown() = TRUE");
         Log.Info("   - Recorder.IsAnyCardRecording() = " + Recorder.IsAnyCardRecording().ToString());
@@ -622,7 +665,8 @@ namespace MediaPortal.PowerScheduler
       return 6039;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = "Power Scheduler";
       strButtonImage = "";
@@ -643,7 +687,7 @@ namespace MediaPortal.PowerScheduler
 
     public void ShowPlugin() // show the setup dialog
     {
-      System.Windows.Forms.Form setup = new MediaPortal.PowerScheduler.PowerSchedulerSetupForm();
+      Form setup = new PowerSchedulerSetupForm();
       setup.ShowDialog();
     }
 

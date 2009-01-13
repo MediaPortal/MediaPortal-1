@@ -1,11 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using WatchDog;
 
 namespace WatchDog
 {
@@ -17,7 +11,7 @@ namespace WatchDog
     {
       InitializeComponent();
       ticks = cancelDelay;
-      lDelay.Text = ticks.ToString()+" second(s)";
+      lDelay.Text = ticks.ToString() + " second(s)";
     }
 
     private void timer1_Tick(object sender, EventArgs e)

@@ -24,41 +24,43 @@
 #endregion
 
 using System;
+using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Video.Database;
 using MediaPortal.Player;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
-/// <summary>
-/// Container for preview window - also setting video properties like title, playtime, etc for skin access
-/// </summary>
+  /// <summary>
+  /// Container for preview window - also setting video properties like title, playtime, etc for skin access
+  /// </summary>
   public class GUIVideoOverlay : GUIOverlayWindow, IRenderLayer
   {
-    bool _isFocused = false;
-    string _fileName = "";
-    string _program = "";
+    private bool _isFocused = false;
+    private string _fileName = "";
+    private string _program = "";
 
-    [SkinControlAttribute(0)]    protected GUIImage _videoRectangle = null;
-    [SkinControlAttribute(1)]    protected GUIVideoControl _videoWindow = null;
-    [SkinControlAttribute(2)]    protected GUILabelControl _labelPlayTime = null;
-    [SkinControlAttribute(3)]    protected GUIImage _imagePlayLogo = null;
-    [SkinControlAttribute(4)]    protected GUIImage _imagePauseLogo = null;
-    [SkinControlAttribute(5)]    protected GUIFadeLabel _labelInfo = null;
-    [SkinControlAttribute(6)]    protected GUIImage _labelBigPlayTime = null;
-    [SkinControlAttribute(7)]    protected GUIImage _imageFastForward = null;
-    [SkinControlAttribute(8)]    protected GUIImage _imageRewind = null;
+    [SkinControl(0)] protected GUIImage _videoRectangle = null;
+    [SkinControl(1)] protected GUIVideoControl _videoWindow = null;
+    [SkinControl(2)] protected GUILabelControl _labelPlayTime = null;
+    [SkinControl(3)] protected GUIImage _imagePlayLogo = null;
+    [SkinControl(4)] protected GUIImage _imagePauseLogo = null;
+    [SkinControl(5)] protected GUIFadeLabel _labelInfo = null;
+    [SkinControl(6)] protected GUIImage _labelBigPlayTime = null;
+    [SkinControl(7)] protected GUIImage _imageFastForward = null;
+    [SkinControl(8)] protected GUIImage _imageRewind = null;
 
-    string _thumbLogo = "";
-    bool _didRenderLastTime = false;
+    private string _thumbLogo = "";
+    private bool _didRenderLastTime = false;
 
     public GUIVideoOverlay()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
+      GetID = (int) Window.WINDOW_VIDEO_OVERLAY;
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoChanged);
     }
+
     ~GUIVideoOverlay()
     {
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
@@ -67,7 +69,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\videoOverlay.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
+      GetID = (int) Window.WINDOW_VIDEO_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.VideoOverlay);
       return result;
     }
@@ -81,14 +83,13 @@ namespace MediaPortal.GUI.Video
     {
       base.PreInit();
       AllocResources();
-
     }
 
     public override void Render(float timePassed)
     {
     }
 
-    void OnUpdateState(bool render)
+    private void OnUpdateState(bool render)
     {
       if (_didRenderLastTime != render)
       {
@@ -99,7 +100,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-         QueueAnimation(AnimationType.WindowClose);
+          QueueAnimation(AnimationType.WindowClose);
         }
       }
     }
@@ -137,7 +138,9 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#Play.Current.Title", GUIPropertyManager.GetProperty("#TV.View.channel"));
         GUIPropertyManager.SetProperty("#Play.Current.Genre", _program);
         GUIPropertyManager.SetProperty("#Play.Current.Year", GUIPropertyManager.GetProperty("#TV.View.genre"));
-        GUIPropertyManager.SetProperty("#Play.Current.Director", GUIPropertyManager.GetProperty("#TV.View.start") + " - " + GUIPropertyManager.GetProperty("#TV.View.stop"));
+        GUIPropertyManager.SetProperty("#Play.Current.Director",
+                                       GUIPropertyManager.GetProperty("#TV.View.start") + " - " +
+                                       GUIPropertyManager.GetProperty("#TV.View.stop"));
       }
 
       if (GUIGraphicsContext.IsFullScreenVideo)
@@ -164,7 +167,10 @@ namespace MediaPortal.GUI.Video
 
     public override void PostRender(float timePassed, int iLayer)
     {
-      if (iLayer != 2) return;
+      if (iLayer != 2)
+      {
+        return;
+      }
       if (!base.IsAnimating(AnimationType.WindowClose))
       {
         if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
@@ -176,23 +182,35 @@ namespace MediaPortal.GUI.Video
         int speed = g_Player.Speed;
         double pos = g_Player.CurrentPosition;
         if (_imagePlayLogo != null)
+        {
           _imagePlayLogo.Visible = (g_Player.Paused == false);
+        }
 
         if (_imagePauseLogo != null)
-          _imagePauseLogo.Visible = false;// (g_Player.Paused == true);
+        {
+          _imagePauseLogo.Visible = false; // (g_Player.Paused == true);
+        }
 
         if (_imageFastForward != null)
+        {
           _imageFastForward.Visible = false; // (g_Player.Speed>1);
+        }
 
         if (_imageRewind != null)
+        {
           _imageRewind.Visible = false; // (g_Player.Speed<0);
+        }
 
         if (_videoRectangle != null)
         {
           if (g_Player.Playing)
+          {
             _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+          }
           else
+          {
             _videoRectangle.Visible = false;
+          }
         }
       }
       base.Render(timePassed);
@@ -202,18 +220,26 @@ namespace MediaPortal.GUI.Video
     private void OnVideoChanged()
     {
       if (_videoWindow == null)
-        return;
-
-      if (GUIGraphicsContext.Overlay == true && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)//&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
-        if (_videoWindow.Visible == false)
-          _videoWindow.Visible = true;
         return;
       }
-      if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)// && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+
+      if (GUIGraphicsContext.Overlay == true && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
+        //&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+      {
+        if (_videoWindow.Visible == false)
+        {
+          _videoWindow.Visible = true;
+        }
+        return;
+      }
+      if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
+        // && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
         if (_videoWindow.Visible == true)
+        {
           _videoWindow.Visible = false;
+        }
         return;
       }
     }
@@ -232,11 +258,11 @@ namespace MediaPortal.GUI.Video
     /// #Play.Current.Title, #Play.Current.Plot, #Play.Current.PlotOutline #Play.Current.File, #Play.Current.Thumb, #Play.Current.Year
     /// #Play.Current.Director, #cast, #dvdlabel, #imdbnumber, #Play.Current.Plot, #Play.Current.PlotOutline, #rating, #tagline, #votes, #credits
     /// </remarks>
-    void SetCurrentFile(string fileName)
+    private void SetCurrentFile(string fileName)
     {
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", "");
 
       if (g_Player.IsDVD)
@@ -245,16 +271,22 @@ namespace MediaPortal.GUI.Video
         // first strip the \video_ts\video_ts.ifo
         string lowPath = fileName.ToLower();
         int index = lowPath.IndexOf("video_ts/");
-        if (index < 0) index = lowPath.IndexOf(@"video_ts\");
+        if (index < 0)
+        {
+          index = lowPath.IndexOf(@"video_ts\");
+        }
         if (index >= 0)
         {
           fileName = fileName.Substring(0, index);
-          fileName = MediaPortal.Util.Utils.RemoveTrailingSlash(fileName);
+          fileName = Util.Utils.RemoveTrailingSlash(fileName);
 
           // get the name by stripping the first part : c:\media\movies
           string strName = fileName;
-          int pos = fileName.LastIndexOfAny(new char[] { '\\', '/' });
-          if (pos >= 0 && pos + 1 < fileName.Length - 1) strName = fileName.Substring(pos + 1);
+          int pos = fileName.LastIndexOfAny(new char[] {'\\', '/'});
+          if (pos >= 0 && pos + 1 < fileName.Length - 1)
+          {
+            strName = fileName.Substring(pos + 1);
+          }
           GUIPropertyManager.SetProperty("#Play.Current.Title", strName);
           GUIPropertyManager.SetProperty("#Play.Current.File", strName);
 
@@ -264,8 +296,9 @@ namespace MediaPortal.GUI.Video
       }
 
       bool isLive = g_Player.IsTimeShifting;
-      string extension = System.IO.Path.GetExtension(fileName).ToLower();
-      if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") || (extension.Equals(".ts") && !isLive || g_Player.IsTVRecording ))
+      string extension = Path.GetExtension(fileName).ToLower();
+      if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") ||
+          (extension.Equals(".ts") && !isLive || g_Player.IsTVRecording))
       {
         // this is a recorded movie.
         // check the TVDatabase for the description,genre,title,...
@@ -274,29 +307,30 @@ namespace MediaPortal.GUI.Video
         {
           TimeSpan ts = recording.EndTime - recording.StartTime;
           string time = String.Format("{0} {1} ",
-                                MediaPortal.Util.Utils.GetShortDayString(recording.StartTime),
-                                MediaPortal.Util.Utils.SecondsToHMString((int)ts.TotalSeconds));
+                                      Util.Utils.GetShortDayString(recording.StartTime),
+                                      Util.Utils.SecondsToHMString((int) ts.TotalSeconds));
           GUIPropertyManager.SetProperty("#Play.Current.Title", recording.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Plot", recording.Title + "\n" + recording.Description);
           GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", recording.Description);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", recording.Genre);
           GUIPropertyManager.SetProperty("#Play.Current.Year", time);
           GUIPropertyManager.SetProperty("#Play.Current.Channel", recording.Channel);
-          string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, recording.Channel);
-          if (!System.IO.File.Exists(logo))
+          string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, recording.Channel);
+          if (!File.Exists(logo))
           {
             logo = "defaultVideoBig.png";
           }
           GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
           _thumbLogo = logo;
           return;
-      }
-      else if (g_Player.currentTitle != "")
-      {
+        }
+        else if (g_Player.currentTitle != "")
+        {
           GUIPropertyManager.SetProperty("#Play.Current.Title", g_Player.currentTitle);
-          GUIPropertyManager.SetProperty("#Play.Current.Plot", g_Player.currentTitle + "\n" + g_Player.currentDescription);
+          GUIPropertyManager.SetProperty("#Play.Current.Plot",
+                                         g_Player.currentTitle + "\n" + g_Player.currentDescription);
           GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", g_Player.currentDescription);
-      }
+        }
       }
 
       /*if (fileName.Substring(0, 4) == "rtsp")
@@ -315,15 +349,15 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
         bMovieInfoFound = true;
       }
-      else if (System.IO.File.Exists(System.IO.Path.ChangeExtension(fileName,".xml")))
+      else if (File.Exists(Path.ChangeExtension(fileName, ".xml")))
       {
-        MatroskaTagInfo info = MatroskaTagHandler.Fetch(System.IO.Path.ChangeExtension(fileName, ".xml"));
+        MatroskaTagInfo info = MatroskaTagHandler.Fetch(Path.ChangeExtension(fileName, ".xml"));
         movieDetails.Title = info.title;
         movieDetails.Plot = info.description;
         movieDetails.Genre = info.genre;
         GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
-        string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
-        if (!System.IO.File.Exists(logo))
+        string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
+        if (!File.Exists(logo))
         {
           logo = "defaultVideoBig.png";
         }
@@ -345,7 +379,7 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = new GUIListItem();
         item.IsFolder = false;
         item.Path = fileName;
-        MediaPortal.Util.Utils.SetThumbnails(ref item);
+        Util.Utils.SetThumbnails(ref item);
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", item.ThumbnailImage);
       }
       _thumbLogo = GUIPropertyManager.GetProperty("#Play.Current.Thumb");
@@ -353,10 +387,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Focused
     {
-      get
-      {
-        return _isFocused;
-      }
+      get { return _isFocused; }
       set
       {
         _isFocused = value;
@@ -364,7 +395,8 @@ namespace MediaPortal.GUI.Video
         {
           if (_videoWindow != null)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)_videoWindow.GetID, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int) _videoWindow.GetID,
+                                            0, 0, null);
             OnMessage(msg);
           }
         }
@@ -394,6 +426,7 @@ namespace MediaPortal.GUI.Video
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return DoesPostRender();
@@ -403,6 +436,7 @@ namespace MediaPortal.GUI.Video
     {
       PostRender(timePassed, 2);
     }
+
     #endregion
   }
 }

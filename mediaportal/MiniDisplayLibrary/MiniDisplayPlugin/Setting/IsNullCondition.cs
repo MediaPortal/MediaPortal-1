@@ -21,4 +21,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     }
   }
 }
-

@@ -25,12 +25,11 @@
 
 using System;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Hardware;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.InputDevices
 {
@@ -39,9 +38,9 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class MCE2005Remote
   {
-    bool controlEnabled = false;  // MCE Remote enabled
-    bool logVerbose = false;      // Verbose logging
-    InputHandler _inputHandler;    // Input Mapper
+    private bool controlEnabled = false; // MCE Remote enabled
+    private bool logVerbose = false; // Verbose logging
+    private InputHandler _inputHandler; // Input Mapper
 
 
     /// <summary>
@@ -65,17 +64,22 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Initialize MCE Remote
     /// </summary>
-    void Init()
+    private void Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "MCE", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
       }
       if (!controlEnabled)
+      {
         return;
+      }
 
-      if (logVerbose) Log.Info("MCE: Initializing MCE remote");
+      if (logVerbose)
+      {
+        Log.Info("MCE: Initializing MCE remote");
+      }
 
       try
       {
@@ -96,7 +100,9 @@ namespace MediaPortal.InputDevices
       Process[] myProcesses;
       myProcesses = Process.GetProcesses();
       foreach (Process myProcess in myProcesses)
+      {
         if (myProcess.ProcessName.ToLower().Equals("ehtray"))
+        {
           try
           {
             Log.Info("MCE: Stopping Microsoft ehtray");
@@ -108,6 +114,8 @@ namespace MediaPortal.InputDevices
             DeInit();
             return;
           }
+        }
+      }
 
       _inputHandler = new InputHandler("Microsoft MCE");
       if (!_inputHandler.IsLoaded)
@@ -117,7 +125,9 @@ namespace MediaPortal.InputDevices
         return;
       }
       else
+      {
         Log.Info("MCE: MCE remote enabled");
+      }
     }
 
 
@@ -128,7 +138,10 @@ namespace MediaPortal.InputDevices
     {
       if (controlEnabled)
       {
-        if (logVerbose) Log.Info("MCE: Stopping MCE remote");
+        if (logVerbose)
+        {
+          Log.Info("MCE: Stopping MCE remote");
+        }
         Remote.Click -= new RemoteEventHandler(OnRemoteClick);
         Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
         Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
@@ -137,14 +150,14 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    void OnDeviceRemoval(object sender, EventArgs e)
+    private void OnDeviceRemoval(object sender, EventArgs e)
     {
       Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
       Remote.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
       Log.Info("MCE: MCE receiver has been unplugged");
     }
 
-    void OnDeviceArrival(object sender, EventArgs e)
+    private void OnDeviceArrival(object sender, EventArgs e)
     {
       Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
       Remote.Click -= new RemoteEventHandler(OnRemoteClick);
@@ -162,24 +175,34 @@ namespace MediaPortal.InputDevices
       if (controlEnabled && (msg.Msg == 0x0319))
       {
         int command = (msg.LParam.ToInt32() >> 16) & ~0xF000;
-        InputDevices.LastHidRequest = (AppCommands)command;
+        InputDevices.LastHidRequest = (AppCommands) command;
 
         RemoteButton button = RemoteButton.None;
 
-        if ((AppCommands)command == AppCommands.VolumeUp)
+        if ((AppCommands) command == AppCommands.VolumeUp)
+        {
           button = RemoteButton.VolumeUp;
+        }
 
-        if ((AppCommands)command == AppCommands.VolumeDown)
+        if ((AppCommands) command == AppCommands.VolumeDown)
+        {
           button = RemoteButton.VolumeDown;
+        }
 
         if (button != RemoteButton.None)
         {
           // Get & execute Mapping
-          if (_inputHandler.MapAction((int)button))
+          if (_inputHandler.MapAction((int) button))
           {
-            if (logVerbose) Log.Info("MCE: Command \"{0}\" mapped", button);
+            if (logVerbose)
+            {
+              Log.Info("MCE: Command \"{0}\" mapped", button);
+            }
           }
-          else if (logVerbose) Log.Info("MCE: Command \"{0}\" not mapped", button);
+          else if (logVerbose)
+          {
+            Log.Info("MCE: Command \"{0}\" not mapped", button);
+          }
         }
 
         return true;
@@ -192,11 +215,14 @@ namespace MediaPortal.InputDevices
     /// Evaluate button press from remote
     /// </summary>
     /// <param name="button">Remote Button</param>
-    void OnRemoteClick(object sender, RemoteEventArgs e)
-    //RemoteButton button)
+    private void OnRemoteClick(object sender, RemoteEventArgs e)
+      //RemoteButton button)
     {
       RemoteButton button = e.Button;
-      if (logVerbose) Log.Info("MCE: Incoming button command: {0}", button);
+      if (logVerbose)
+      {
+        Log.Info("MCE: Incoming button command: {0}", button);
+      }
 
       // Set LastHidRequest, otherwise the HID handler (if enabled) would react on some remote buttons (double execution of command)
       switch (button)
@@ -244,12 +270,17 @@ namespace MediaPortal.InputDevices
       }
 
       // Get & execute Mapping
-      if (_inputHandler.MapAction((int)button))
+      if (_inputHandler.MapAction((int) button))
       {
-        if (logVerbose) Log.Info("MCE: Command \"{0}\" mapped", button);
+        if (logVerbose)
+        {
+          Log.Info("MCE: Command \"{0}\" mapped", button);
+        }
       }
-      else if (logVerbose) Log.Info("MCE: Command \"{0}\" not mapped", button);
+      else if (logVerbose)
+      {
+        Log.Info("MCE: Command \"{0}\" not mapped", button);
+      }
     }
-
   }
 }

@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace MediaPortal.Utils.Web
 {
@@ -35,13 +33,16 @@ namespace MediaPortal.Utils.Web
   public class SiteStatistics
   {
     #region Variables
+
     private string _site;
     private int _pages;
     private int _bytes;
     private TimeSpan _totalTime;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SiteStats"/> class.
     /// </summary>
@@ -51,9 +52,11 @@ namespace MediaPortal.Utils.Web
       _site = site;
       Clear();
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets or sets the number of pages transfered since collecting statistics was started.
     /// </summary>
@@ -91,9 +94,11 @@ namespace MediaPortal.Utils.Web
     {
       get { return _site; }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Adds the specified pages and bytes to site statistics.
     /// </summary>
@@ -122,15 +127,21 @@ namespace MediaPortal.Utils.Web
     /// <returns>
     /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </returns>
-    new public string ToString()
+    public new string ToString()
     {
-      float rate = _bytes / (float) _totalTime.TotalSeconds;
+      float rate = _bytes/(float) _totalTime.TotalSeconds;
       if (rate > 1000)
-        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} KBps", _site, _pages, _bytes, _totalTime.ToString(), rate / 1000);
+      {
+        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} KBps", _site, _pages,
+                             _bytes, _totalTime.ToString(), rate/1000);
+      }
       else
-        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} Bps", _site, _pages, _bytes, _totalTime.ToString(), rate);
-
+      {
+        return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} Bps", _site, _pages,
+                             _bytes, _totalTime.ToString(), rate);
+      }
     }
+
     #endregion
   }
 }

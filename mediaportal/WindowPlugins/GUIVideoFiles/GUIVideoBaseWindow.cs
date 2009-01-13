@@ -26,16 +26,17 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-
+using System.IO;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Video.Database;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.View;
-using MediaPortal.Configuration;
 using MediaPortal.Services;
+using MediaPortal.Util;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
@@ -44,7 +45,6 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public abstract class GUIVideoBaseWindow : GUIWindow
   {
-
     #region enums
 
     public enum View
@@ -77,13 +77,13 @@ namespace MediaPortal.GUI.Video
 
     #region SkinControls
 
-    [SkinControlAttribute(50)] protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]  protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]  protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]  protected GUIButtonControl btnViews = null;
-    [SkinControlAttribute(6)]  protected GUIButtonControl btnPlayDVD = null;
-    [SkinControlAttribute(8)]  protected GUIButtonControl btnTrailers = null;
-    [SkinControlAttribute(9)]  protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(5)] protected GUIButtonControl btnViews = null;
+    [SkinControl(6)] protected GUIButtonControl btnPlayDVD = null;
+    [SkinControl(8)] protected GUIButtonControl btnTrailers = null;
+    [SkinControl(9)] protected GUIButtonControl btnSavedPlaylists = null;
 
     #endregion
 
@@ -94,7 +94,9 @@ namespace MediaPortal.GUI.Video
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
       if (handler == null)
+      {
         handler = new VideoViewHandler();
+      }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
     }
@@ -105,23 +107,25 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int defaultView = (int) View.List;
         int defaultSort = (int) VideoSort.SortMethod.Name;
         bool defaultAscending = true;
-        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) && (handler.View.Filters.Count > 0))
+        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
+            (handler.View.Filters.Count > 0))
         {
-          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
+          FilterDefinition def = (FilterDefinition) handler.View.Filters[0];
           defaultView = (int) GetViewNumber(def.DefaultView);
           defaultSort = (int) GetSortMethod(def.DefaultSort);
           defaultAscending = def.SortAscending;
         }
-        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
-        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
+        currentView = (View) xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
+        currentViewRoot = (View) xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
 
-        currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
-        currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
+        currentSortMethod = (VideoSort.SortMethod) xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
+        currentSortMethodRoot =
+          (VideoSort.SortMethod) xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
 
@@ -129,7 +133,7 @@ namespace MediaPortal.GUI.Video
         playListFolder += @"\My Playlists";
 
         m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
-        m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
+        m_strPlayListPath = Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
       }
 
       SwitchView();
@@ -139,14 +143,23 @@ namespace MediaPortal.GUI.Video
     {
       switch (s.Trim().ToLower())
       {
-        case "date": return VideoSort.SortMethod.Date;
-        case "label": return VideoSort.SortMethod.Label;
-        case "name": return VideoSort.SortMethod.Name;
-        case "rating": return VideoSort.SortMethod.Rating;
-        case "size": return VideoSort.SortMethod.Size;
-        case "year": return VideoSort.SortMethod.Year;
+        case "date":
+          return VideoSort.SortMethod.Date;
+        case "label":
+          return VideoSort.SortMethod.Label;
+        case "name":
+          return VideoSort.SortMethod.Name;
+        case "rating":
+          return VideoSort.SortMethod.Rating;
+        case "size":
+          return VideoSort.SortMethod.Size;
+        case "year":
+          return VideoSort.SortMethod.Year;
       }
-      if (!string.IsNullOrEmpty(s)) Log.Error("GUIVideoBaseWindow::GetSortMethod: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s))
+      {
+        Log.Error("GUIVideoBaseWindow::GetSortMethod: Unknown String - " + s);
+      }
       return VideoSort.SortMethod.Name;
     }
 
@@ -154,25 +167,34 @@ namespace MediaPortal.GUI.Video
     {
       switch (s.Trim().ToLower())
       {
-        case "list": return View.List;
-        case "icons": return View.Icons;
-        case "big icons": return View.LargeIcons;
-        case "largeicons": return View.LargeIcons;
-        case "filmstrip": return View.FilmStrip;
-        case "playlist": return View.PlayList;
+        case "list":
+          return View.List;
+        case "icons":
+          return View.Icons;
+        case "big icons":
+          return View.LargeIcons;
+        case "largeicons":
+          return View.LargeIcons;
+        case "filmstrip":
+          return View.FilmStrip;
+        case "playlist":
+          return View.PlayList;
       }
-      if (!string.IsNullOrEmpty(s)) Log.Error("GUIVideoBaseWindow::GetViewNumber: Unknown String - " + s);
+      if (!string.IsNullOrEmpty(s))
+      {
+        Log.Error("GUIVideoBaseWindow::GetViewNumber: Unknown String - " + s);
+      }
       return View.List;
     }
 
     protected virtual void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue(SerializeName, "view", (int)currentView);
-        xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
-        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
+        xmlwriter.SetValue(SerializeName, "view", (int) currentView);
+        xmlwriter.SetValue(SerializeName, "viewroot", (int) currentViewRoot);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int) currentSortMethod);
+        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int) currentSortMethodRoot);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
         xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
       }
@@ -183,7 +205,9 @@ namespace MediaPortal.GUI.Video
     protected virtual bool AllowView(View view)
     {
       if (view == View.PlayList)
+      {
         return false;
+      }
       return true;
     }
 
@@ -212,10 +236,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual string SerializeName
     {
-      get
-      {
-        return string.Empty;
-      }
+      get { return string.Empty; }
     }
 
     protected bool ViewByIcon
@@ -223,7 +244,9 @@ namespace MediaPortal.GUI.Video
       get
       {
         if (CurrentView != View.List)
+        {
           return true;
+        }
         return false;
       }
     }
@@ -233,7 +256,9 @@ namespace MediaPortal.GUI.Video
       get
       {
         if (CurrentView == View.LargeIcons)
+        {
           return true;
+        }
         return false;
       }
     }
@@ -242,7 +267,7 @@ namespace MediaPortal.GUI.Video
     {
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_PLAYLIST);
         return;
       }
       base.OnAction(action);
@@ -250,15 +275,18 @@ namespace MediaPortal.GUI.Video
 
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
     // the player is not playing)...
-    void OnNewAction(Action action)
+    private void OnNewAction(Action action)
     {
       if ((action.wID == Action.ActionType.ACTION_PLAY
-          || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+           || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
           && GUIWindowManager.ActiveWindow == GetID)
       {
         GUIListItem item = facadeView.SelectedListItem;
 
-        if (item == null || item.Label == "..") return;
+        if (item == null || item.Label == "..")
+        {
+          return;
+        }
 
         OnClick(-1);
       }
@@ -277,48 +305,68 @@ namespace MediaPortal.GUI.Video
             case View.List:
               CurrentView = View.PlayList;
               if (!AllowView(CurrentView) || facadeView.PlayListView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+              }
               break;
 
             case View.PlayList:
               CurrentView = View.Icons;
               if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+              }
               break;
 
             case View.Icons:
               CurrentView = View.LargeIcons;
               if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+              }
               break;
 
             case View.LargeIcons:
               CurrentView = View.FilmStrip;
               if (!AllowView(CurrentView) || facadeView.FilmstripView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+              }
               break;
 
             case View.FilmStrip:
               CurrentView = View.List;
               if (!AllowView(CurrentView) || facadeView.ListView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.List;
+              }
               break;
           }
         } while (shouldContinue);
         SelectCurrentItem();
         GUIControl.FocusControl(GetID, controlId);
         return;
-      }//if (control == btnViewAs)
+      } //if (control == btnViewAs)
 
       if (control == btnSortBy)
       {
@@ -359,7 +407,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SHOW_INFO)
         {
           OnInfo(iItem);
@@ -386,24 +434,30 @@ namespace MediaPortal.GUI.Video
 
       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_directory);
       if (_directory == m_strPlayListPath)
+      {
         itemlist.RemoveAt(0);
+      }
 
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(983); // Saved Playlists
 
       foreach (GUIListItem item in itemlist)
       {
-        MediaPortal.Util.Utils.SetDefaultIcons(item);
+        Util.Utils.SetDefaultIcons(item);
         dlg.Add(item);
       }
 
       dlg.DoModal(GetID);
 
       if (dlg.SelectedLabel == -1)
+      {
         return;
+      }
 
       GUIListItem selectItem = itemlist[dlg.SelectedLabel];
       if (selectItem.IsFolder)
@@ -430,9 +484,11 @@ namespace MediaPortal.GUI.Video
     protected virtual void UpdateButtonStates()
     {
       GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
-      if (GetID == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
+      if (GetID == (int) Window.WINDOW_VIDEO_TITLE)
       {
-        GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100006), handler.LocalizedCurrentView));
+        GUIPropertyManager.SetProperty("#currentmodule",
+                                       String.Format("{0}/{1}", GUILocalizeStrings.Get(100006),
+                                                     handler.LocalizedCurrentView));
       }
       else
       {
@@ -507,14 +563,18 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
-      GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
+      GUIVideoOverlay videoOverlay = (GUIVideoOverlay) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_OVERLAY);
       if ((videoOverlay != null) && (videoOverlay.Focused))
+      {
         videoOverlay.Focused = false;
+      }
 
       LoadSettings();
 
       if (btnSortBy != null)
+      {
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      }
 
       base.OnPageLoad();
     }
@@ -524,7 +584,7 @@ namespace MediaPortal.GUI.Video
       SaveSettings();
 
       // Save view
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
         xmlwriter.SetValue("movies", "startview", VideoState.View);
@@ -556,34 +616,57 @@ namespace MediaPortal.GUI.Video
         if (movie != null && movie.ID > 0 && !item.IsFolder)
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
-            item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
+          {
+            item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime*60);
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Year)
+          {
             item.Label2 = movie.Year.ToString();
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Rating)
+          {
             item.Label2 = movie.Rating.ToString();
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Label)
+          {
             item.Label2 = movie.DVDLabel.ToString();
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Size)
           {
             if (item.FileInfo != null)
-              item.Label2 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
+            {
+              item.Label2 = Util.Utils.GetSize(item.FileInfo.Length);
+            }
             else
-              item.Label2 = MediaPortal.Util.Utils.SecondsToHMString(movie.RunTime * 60);
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime*60);
+            }
           }
         }
         else
         {
           string strSize1 = string.Empty, strDate = string.Empty;
           if (item.FileInfo != null && !item.IsFolder)
-            strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
+          {
+            strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
+          }
           if (item.FileInfo != null && !item.IsFolder)
-            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          {
+            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                      item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          }
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
+          {
             item.Label2 = strSize1;
+          }
           else if (CurrentSortMethod == VideoSort.SortMethod.Date)
+          {
             item.Label2 = strDate;
+          }
           else
+          {
             item.Label2 = strSize1;
+          }
         }
       }
     }
@@ -591,7 +674,9 @@ namespace MediaPortal.GUI.Video
     protected void SwitchView()
     {
       if (facadeView == null)
+      {
         return;
+      }
       switch (CurrentView)
       {
         case View.List:
@@ -614,9 +699,11 @@ namespace MediaPortal.GUI.Video
 
     protected bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
+      {
         return false;
+      }
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GetID);
@@ -630,8 +717,11 @@ namespace MediaPortal.GUI.Video
 
     protected void OnShowViews()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(499); // Views menu
 
@@ -642,20 +732,27 @@ namespace MediaPortal.GUI.Video
       }
 
       // set the focus to currently used view
-      if (this.GetID == (int)GUIWindow.Window.WINDOW_VIDEOS)
+      if (this.GetID == (int) Window.WINDOW_VIDEOS)
+      {
         dlg.SelectedLabel = 0;
-      else if (this.GetID == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
+      }
+      else if (this.GetID == (int) Window.WINDOW_VIDEO_TITLE)
+      {
         dlg.SelectedLabel = handler.CurrentViewIndex + 1;
+      }
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
 
       switch (dlg.SelectedId)
       {
         case 134: // Shares
           {
-            int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
+            int nNewWindow = (int) Window.WINDOW_VIDEOS;
             VideoState.StartWindow = nNewWindow;
             if (nNewWindow != GetID)
             {
@@ -667,10 +764,10 @@ namespace MediaPortal.GUI.Video
 
         default: // a db view
           {
-            ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+            ViewDefinition selectedView = (ViewDefinition) handler.Views[dlg.SelectedLabel - 1];
             handler.CurrentView = selectedView.Name;
             VideoState.View = selectedView.Name;
-            int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
+            int nNewWindow = (int) Window.WINDOW_VIDEO_TITLE;
             if (GetID != nNewWindow)
             {
               VideoState.StartWindow = nNewWindow;
@@ -690,8 +787,11 @@ namespace MediaPortal.GUI.Video
 
     protected void OnShowSortOptions()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
 
@@ -703,11 +803,14 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(430); // label
 
       // set the focus to currently used sort method
-      dlg.SelectedLabel = (int)CurrentSortMethod;
+      dlg.SelectedLabel = (int) CurrentSortMethod;
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
 
       switch (dlg.SelectedId)
       {
@@ -746,7 +849,9 @@ namespace MediaPortal.GUI.Video
     {
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null)
+      {
         return;
+      }
       PlayList playlist = new PlayList();
 
       if (!loader.Load(playlist, strPlayList))
@@ -755,13 +860,13 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      playlistPlayer.CurrentPlaylistName = System.IO.Path.GetFileNameWithoutExtension(strPlayList);
+      playlistPlayer.CurrentPlaylistName = Path.GetFileNameWithoutExtension(strPlayList);
       if (playlist.Count == 1)
       {
         Log.Info("GUIVideoFiles: play single playlist item - {0}", playlist[0].FileName);
         if (g_Player.Play(playlist[0].FileName))
         {
-          if (MediaPortal.Util.Utils.IsVideo(playlist[0].FileName))
+          if (Util.Utils.IsVideo(playlist[0].FileName))
           {
             g_Player.ShowFullScreenWindow();
           }
@@ -794,14 +899,14 @@ namespace MediaPortal.GUI.Video
         // and activate the playlist window if its not activated yet
         if (GetID == GUIWindowManager.ActiveWindow)
         {
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
+          GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_PLAYLIST);
         }
       }
     }
 
     private void TellUserSomethingWentWrong()
     {
-      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       if (dlgOK != null)
       {
         dlgOK.SetHeading(6);
@@ -811,11 +916,11 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    void OnInfoFile(GUIListItem item)
+    private void OnInfoFile(GUIListItem item)
     {
     }
 
-    void OnInfoFolder(GUIListItem item)
+    private void OnInfoFolder(GUIListItem item)
     {
     }
 
@@ -828,7 +933,7 @@ namespace MediaPortal.GUI.Video
       if (!pItem.IsFolder)
       {
         //TODO
-        if (MediaPortal.Util.Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
+        if (Util.Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
           PlayListItem playlistItem = new PlayListItem();
           playlistItem.Type = PlayListItem.PlayListItemType.Video;
@@ -840,13 +945,13 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    void SortChanged(object sender, SortEventArgs e)
+    private void SortChanged(object sender, SortEventArgs e)
     {
-      CurrentSortAsc = e.Order != System.Windows.Forms.SortOrder.Descending;
+      CurrentSortAsc = e.Order != SortOrder.Descending;
 
       OnSort();
       //UpdateButtonStates();
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+      GUIControl.FocusControl(GetID, ((GUIControl) sender).GetID);
     }
   }
 }

@@ -110,7 +110,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void DrawImage(Bitmap bitmap) {}
+    public void DrawImage(Bitmap bitmap)
+    {
+    }
 
     public string ErrorMessage
     {
@@ -138,7 +140,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return "FICSpectra"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public void SetCustomCharacters(int[][] customCharacters)
+    {
+    }
 
     /// <summary>
     /// Displays the message on the indicated line

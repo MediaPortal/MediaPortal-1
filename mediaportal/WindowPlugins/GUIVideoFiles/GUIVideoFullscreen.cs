@@ -28,12 +28,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
-using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 using MediaPortal.Video.Database;
 
@@ -44,7 +43,7 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoFullscreen : GUIWindow, IRenderLayer
   {
-    class FullScreenState
+    private class FullScreenState
     {
       public int SeekStep = 1;
       public int Speed = 1;
@@ -60,7 +59,7 @@ namespace MediaPortal.GUI.Video
       public bool forbiddenVisible = false;
     }
 
-    enum Control
+    private enum Control
     {
       BLUE_BAR = 0,
       OSD_VIDEOPROGRESS = 1,
@@ -81,116 +80,142 @@ namespace MediaPortal.GUI.Video
       OSD_TIMEINFO = 100,
       PANEL1 = 101,
       PANEL2 = 150
-    };
+    } ;
 
-    [SkinControlAttribute(500)]     protected GUIImage imgVolumeMuteIcon;
-    [SkinControlAttribute(501)]     protected GUIVolumeBar imgVolumeBar;
-    [SkinControlAttribute(502)]     protected GUIImage imgActionForbiddenIcon;
+    [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
+    [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
+    [SkinControl(502)] protected GUIImage imgActionForbiddenIcon;
 
-    bool _isOsdVisible = false;
-    bool _showStep = false;
-    bool _showStatus = false;
-    bool _showTime = false;
-    bool _showSkipBar = false;
+    private bool _isOsdVisible = false;
+    private bool _showStep = false;
+    private bool _showStatus = false;
+    private bool _showTime = false;
+    private bool _showSkipBar = false;
 
-    DateTime m_dwTimeCodeTimeout;
-    string _timeStamp = "";
-    int _timeCodePosition = 0;
-    long _timeStatusShowTime = 0;
-    DateTime m_dwOSDTimeOut;
-    long m_iMaxTimeOSDOnscreen;
+    private DateTime m_dwTimeCodeTimeout;
+    private string _timeStamp = "";
+    private int _timeCodePosition = 0;
+    private long _timeStatusShowTime = 0;
+    private DateTime m_dwOSDTimeOut;
+    private long m_iMaxTimeOSDOnscreen;
     //FormOSD     m_form=null;
-    DateTime _updateTimer = DateTime.Now;
-    DateTime _vmr7UpdateTimer = DateTime.Now;
-    bool _IsDialogVisible = false;
-    bool _needToClearScreen = false;
-    bool _isVolumeVisible = false;
-    bool _isForbiddenVisible = false;
-    GUIDialogMenu dlg;
-    GUIVideoOSD _osdWindow = null;
-    bool NotifyDialogVisible = false;
-    int _notifyTVTimeout = 15;
-    bool _playNotifyBeep = true;
-    DateTime _volumeTimer = DateTime.MinValue;
-    DateTime _forbiddenTimer = DateTime.MinValue;
-    VMR9OSD _vmr9OSD = new VMR9OSD();
-    PlayListPlayer playlistPlayer;
-    const int SKIPBAR_PADDING = 10;
-    List<MediaPortal.GUI.Library.Geometry.Type> _allowedArModes = new List<MediaPortal.GUI.Library.Geometry.Type>();
-    FullScreenState screenState = new FullScreenState();
+    private DateTime _updateTimer = DateTime.Now;
+    private DateTime _vmr7UpdateTimer = DateTime.Now;
+    private bool _IsDialogVisible = false;
+    private bool _needToClearScreen = false;
+    private bool _isVolumeVisible = false;
+    private bool _isForbiddenVisible = false;
+    private GUIDialogMenu dlg;
+    private GUIVideoOSD _osdWindow = null;
+    private bool NotifyDialogVisible = false;
+    private int _notifyTVTimeout = 15;
+    private bool _playNotifyBeep = true;
+    private DateTime _volumeTimer = DateTime.MinValue;
+    private DateTime _forbiddenTimer = DateTime.MinValue;
+    private VMR9OSD _vmr9OSD = new VMR9OSD();
+    private PlayListPlayer playlistPlayer;
+    private const int SKIPBAR_PADDING = 10;
+    private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
+    private FullScreenState screenState = new FullScreenState();
 
     public GUIVideoFullscreen()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
+      GetID = (int) Window.WINDOW_FULLSCREEN_VIDEO;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoFullScreen.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
+      GetID = (int) Window.WINDOW_FULLSCREEN_VIDEO;
       return bResult;
     }
 
     #region settings serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
       string key = "movieplayer";
       if (g_Player.IsDVD)
-        key = "dvdplayer";
-      if (g_Player.IsTVRecording)
-        key = "mytv";
-
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
+        key = "dvdplayer";
+      }
+      if (g_Player.IsTVRecording)
+      {
+        key = "mytv";
+      }
+
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        m_iMaxTimeOSDOnscreen = 1000*xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
 
         string aspectRatioText = xmlreader.GetValueAsString(key, "defaultar", "normal");
-        GUIGraphicsContext.ARType = MediaPortal.Util.Utils.GetAspectRatio(aspectRatioText);
+        GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(aspectRatioText);
 
         if (xmlreader.GetValueAsBool("movies", "allowarzoom", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom);
+        {
+          _allowedArModes.Add(Geometry.Type.Zoom);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowarstretch", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Stretch);
+        {
+          _allowedArModes.Add(Geometry.Type.Stretch);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowarnormal", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Normal);
+        {
+          _allowedArModes.Add(Geometry.Type.Normal);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowaroriginal", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Original);
+        {
+          _allowedArModes.Add(Geometry.Type.Original);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowarletterbox", true))
-          _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.LetterBox43);
+        {
+          _allowedArModes.Add(Geometry.Type.LetterBox43);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowarpanscan", true))
-           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.SmartStretch);
+        {
+          _allowedArModes.Add(Geometry.Type.SmartStretch);
+        }
         if (xmlreader.GetValueAsBool("movies", "allowarzoom149", true))
-            _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
+        {
+          _allowedArModes.Add(Geometry.Type.Zoom14to9);
+        }
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strKey = "movieplayer";
         if (g_Player.IsDVD)
+        {
           strKey = "dvdplayer";
+        }
         if (g_Player.IsTVRecording)
+        {
           strKey = "mytv";
+        }
 
-        string aspectRatioText = MediaPortal.Util.Utils.GetAspectRatio(GUIGraphicsContext.ARType);
+        string aspectRatioText = Util.Utils.GetAspectRatio(GUIGraphicsContext.ARType);
         xmlwriter.SetValue(strKey, "defaultar", aspectRatioText);
       }
     }
+
     #endregion
 
-    void OnOsdAction(Action action)
+    private void OnOsdAction(Action action)
     {
-      if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) || (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)) && !_osdWindow.SubMenuVisible) // hide the OSD
+      if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) ||
+           (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)) && !_osdWindow.SubMenuVisible) // hide the OSD
       {
         lock (this)
         {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
+                                          null);
+          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
           _isOsdVisible = false;
           GUIWindowManager.IsOsdVisible = false;
         }
@@ -200,11 +225,11 @@ namespace MediaPortal.GUI.Video
         m_dwOSDTimeOut = DateTime.Now;
         if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE || action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
         {
-          int x = (int)action.fAmount1;
-          int y = (int)action.fAmount2;
+          int x = (int) action.fAmount1;
+          int y = (int) action.fAmount2;
           if (!GUIGraphicsContext.MouseSupport)
           {
-            _osdWindow.OnAction(action);	// route keys to OSD window
+            _osdWindow.OnAction(action); // route keys to OSD window
 
             return;
           }
@@ -212,7 +237,7 @@ namespace MediaPortal.GUI.Video
           {
             if (_osdWindow.InWindow(x, y))
             {
-              _osdWindow.OnAction(action);	// route keys to OSD window
+              _osdWindow.OnAction(action); // route keys to OSD window
 
               return;
             }
@@ -220,8 +245,9 @@ namespace MediaPortal.GUI.Video
             {
               if (!_osdWindow.SubMenuVisible)
               {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-                _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0,
+                                                GetID, 0, null);
+                _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
                 _isOsdVisible = false;
                 GUIWindowManager.IsOsdVisible = false;
               }
@@ -229,10 +255,10 @@ namespace MediaPortal.GUI.Video
           }
         }
         Action newAction = new Action();
-        if (action.wID != Action.ActionType.ACTION_KEY_PRESSED && ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_OSD, action.m_key, ref newAction))
+        if (action.wID != Action.ActionType.ACTION_KEY_PRESSED &&
+            ActionTranslator.GetAction((int) Window.WINDOW_OSD, action.m_key, ref newAction))
         {
-          _osdWindow.OnAction(newAction);	// route keys to OSD window
-
+          _osdWindow.OnAction(newAction); // route keys to OSD window
         }
         else
         {
@@ -244,7 +270,7 @@ namespace MediaPortal.GUI.Video
     }
 
     public override void OnAction(Action action)
-    {     
+    {
       _needToClearScreen = true;
       //switch back to menu on right-click
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
@@ -259,7 +285,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (_showSkipBar && action.MouseButton == MouseButtons.Left)
         {
-          GUIControl cntl = base.GetControl((int)Control.OSD_VIDEOPROGRESS);
+          GUIControl cntl = base.GetControl((int) Control.OSD_VIDEOPROGRESS);
           if (cntl != null && cntl.Visible)
           {
             double percentage = GetPercentage(action.fAmount1, action.fAmount2, cntl);
@@ -274,7 +300,7 @@ namespace MediaPortal.GUI.Video
               else
               {
                 Log.Debug("GUIVideoFullscreen.Mouse_Click - skipping");
-                g_Player.SeekAbsolute(g_Player.Duration * percentage);
+                g_Player.SeekAbsolute(g_Player.Duration*percentage);
               }
             }
           }
@@ -297,32 +323,32 @@ namespace MediaPortal.GUI.Video
       }
       else if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
       {
-        int y = (int)action.fAmount2;
+        int y = (int) action.fAmount2;
         if (y > GUIGraphicsContext.Height - 100)
         {
           m_dwOSDTimeOut = DateTime.Now;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0,
+                                          null);
+          _osdWindow.OnMessage(msg); // Send an init msg to the OSD
           _isOsdVisible = true;
           _showSkipBar = false;
-          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_OSD;
+          GUIWindowManager.VisibleOsd = Window.WINDOW_OSD;
         }
         else if (y < 50)
         {
           _showSkipBar = true;
-          _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+          _timeStatusShowTime = (DateTime.Now.Ticks/10000);
         }
         else
         {
           _showSkipBar = false;
         }
-
       }
 
       if (g_Player.IsDVD)
       {
         Action newAction = new Action();
-        if (ActionTranslator.GetAction((int)GUIWindow.Window.WINDOW_DVD, action.m_key, ref newAction))
+        if (ActionTranslator.GetAction((int) Window.WINDOW_DVD, action.m_key, ref newAction))
         {
           if (g_Player.OnAction(newAction))
           {
@@ -336,19 +362,18 @@ namespace MediaPortal.GUI.Video
 
         // route all unhandled actions to the dvd player
         g_Player.OnAction(action);
-
       }
 
       switch (action.wID)
       {
-        // previous : play previous song from playlist
+          // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
           {
             //g_playlistPlayer.PlayPrevious();
           }
           break;
 
-        // next : play next song from playlist
+          // next : play next song from playlist
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
             //g_playlistPlayer.PlayNext();
@@ -369,21 +394,27 @@ namespace MediaPortal.GUI.Video
             GUIGraphicsContext.IsFullScreenVideo = false;
             GUIWindowManager.ShowPreviousWindow();
             if (_vmr9OSD != null)
+            {
               _vmr9OSD.HideBitmap();
+            }
             return;
           }
         case Action.ActionType.ACTION_AUTOCROP:
           {
             Log.Debug("ACTION_AUTOCROP");
             _showStatus = true;
-            _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+            _timeStatusShowTime = (DateTime.Now.Ticks/10000);
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+                                            0, 0, null);
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
             if (cropper != null)
             {
               msg.Label = cropper.Crop();
-              if (msg.Label == null) msg.Label = "N/A";
+              if (msg.Label == null)
+              {
+                msg.Label = "N/A";
+              }
             }
             else
             {
@@ -397,10 +428,11 @@ namespace MediaPortal.GUI.Video
           {
             Log.Debug("ACTION_TOGGLE_AUTOCROP");
             _showStatus = true;
-            _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+            _timeStatusShowTime = (DateTime.Now.Ticks/10000);
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+                                            0, 0, null);
             msg.Label = "N/A";
 
             if (cropper != null)
@@ -410,36 +442,37 @@ namespace MediaPortal.GUI.Video
             OnMessage(msg);
             break;
           }
-      case Action.ActionType.ACTION_ASPECT_RATIO:
+        case Action.ActionType.ACTION_ASPECT_RATIO:
           {
-              _showStatus = true;
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              string status = "";
+            _showStatus = true;
+            _timeStatusShowTime = (DateTime.Now.Ticks/10000);
+            string status = "";
 
-              MediaPortal.GUI.Library.Geometry.Type arMode = GUIGraphicsContext.ARType;
+            Geometry.Type arMode = GUIGraphicsContext.ARType;
 
-              bool foundMode = false;
-              for (int i = 0; i < _allowedArModes.Count; i++)
+            bool foundMode = false;
+            for (int i = 0; i < _allowedArModes.Count; i++)
+            {
+              if (_allowedArModes[i] == arMode)
               {
-                  if (_allowedArModes[i] == arMode)
-                  {
-                      arMode = _allowedArModes[(i + 1) % _allowedArModes.Count]; // select next allowed mode
-                      foundMode = true;
-                      break;
-                  }
+                arMode = _allowedArModes[(i + 1)%_allowedArModes.Count]; // select next allowed mode
+                foundMode = true;
+                break;
               }
-              if (!foundMode && _allowedArModes.Count > 0)
-              {
-                  arMode = _allowedArModes[0];
-              }
+            }
+            if (!foundMode && _allowedArModes.Count > 0)
+            {
+              arMode = _allowedArModes[0];
+            }
 
-              GUIGraphicsContext.ARType = arMode;
-              status = MediaPortal.Util.Utils.GetAspectRatioLocalizedString(arMode);
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              msg.Label = status;
-              OnMessage(msg);
-              
-              SaveSettings();
+            GUIGraphicsContext.ARType = arMode;
+            status = Util.Utils.GetAspectRatioLocalizedString(arMode);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+                                            0, 0, null);
+            msg.Label = status;
+            OnMessage(msg);
+
+            SaveSettings();
           }
           break;
 
@@ -463,11 +496,12 @@ namespace MediaPortal.GUI.Video
                   UpdateGUI();
                 }
 
-                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                _timeStatusShowTime = (DateTime.Now.Ticks/10000);
                 _showStep = true;
                 g_Player.SeekStep(false);
                 string statusLine = g_Player.GetStepDescription();
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int) Control.LABEL_ROW1, 0, 0, null);
                 msg.Label = statusLine;
                 OnMessage(msg);
               }
@@ -477,7 +511,7 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
         case Action.ActionType.ACTION_STEP_FORWARD:
-          {            
+          {
             if (g_Player.CanSeek)
             {
               if (g_Player.IsDVD && g_Player.Paused)
@@ -487,18 +521,19 @@ namespace MediaPortal.GUI.Video
                 RenderForbidden(true);
               }
               else
-              {                                
+              {
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
                   ScreenStateChanged();
-                  UpdateGUI();                  
+                  UpdateGUI();
                 }
-                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                _timeStatusShowTime = (DateTime.Now.Ticks/10000);
                 _showStep = true;
                 g_Player.SeekStep(true);
                 string statusLine = g_Player.GetStepDescription();
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int) Control.LABEL_ROW1, 0, 0, null);
                 msg.Label = statusLine;
                 OnMessage(msg);
               }
@@ -528,16 +563,18 @@ namespace MediaPortal.GUI.Video
 
                 double currentpos = g_Player.CurrentPosition;
                 double duration = g_Player.Duration;
-                double percent = (currentpos / duration) * 100d;
+                double percent = (currentpos/duration)*100d;
                 percent -= 10d;
                 if (percent < 0)
+                {
                   percent = 0;
-                g_Player.SeekAsolutePercentage((int)percent);
+                }
+                g_Player.SeekAsolutePercentage((int) percent);
               }
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_MOVE_UP:
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
@@ -561,29 +598,32 @@ namespace MediaPortal.GUI.Video
 
                 double currentpos = g_Player.CurrentPosition;
                 double duration = g_Player.Duration;
-                double percent = (currentpos / duration) * 100d;
+                double percent = (currentpos/duration)*100d;
                 percent += 10d;
                 if (percent > 100d)
+                {
                   percent = 100d;
-                g_Player.SeekAsolutePercentage((int)percent);
+                }
+                g_Player.SeekAsolutePercentage((int) percent);
               }
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_SHOW_MPLAYER_OSD:
           //g_application.m_pPlayer.ToggleOSD();
           break;
 
-        case Action.ActionType.ACTION_SHOW_OSD:	// Show the OSD
+        case Action.ActionType.ACTION_SHOW_OSD: // Show the OSD
           {
             m_dwOSDTimeOut = DateTime.Now;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-            _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0,
+                                            null);
+            _osdWindow.OnMessage(msg); // Send an init msg to the OSD
             _isOsdVisible = true;
-            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_OSD;
+            GUIWindowManager.VisibleOsd = Window.WINDOW_OSD;
           }
           break;
 
@@ -599,10 +639,12 @@ namespace MediaPortal.GUI.Video
             if (g_Player.AudioStreams > 1)
             {
               _showStatus = true;
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              _timeStatusShowTime = (DateTime.Now.Ticks/10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int) Control.LABEL_ROW1, 0, 0, null);
               g_Player.SwitchToNextAudio();
-              msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream), g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream),
+                                        g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
               OnMessage(msg);
               Log.Info("GUIVideoFullscreen: switched audio to {0}", msg.Label);
             }
@@ -614,13 +656,19 @@ namespace MediaPortal.GUI.Video
             if (g_Player.SubtitleStreams > 0)
             {
               _showStatus = true;
-              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              _timeStatusShowTime = (DateTime.Now.Ticks/10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int) Control.LABEL_ROW1, 0, 0, null);
               g_Player.SwitchToNextSubtitle();
               if (g_Player.EnableSubtitle)
-                msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream), g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream),
+                                          g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+              }
               else
+              {
                 msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
+              }
               OnMessage(msg);
               Log.Info("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
             }
@@ -639,7 +687,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        // PAUSE action is handled globally in the Application class
+          // PAUSE action is handled globally in the Application class
         case Action.ActionType.ACTION_PAUSE:
           g_Player.Pause();
           ScreenStateChanged();
@@ -649,7 +697,7 @@ namespace MediaPortal.GUI.Video
             if ((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null))
             {
               VMR9Util.g_vmr9.SetRepaint();
-              VMR9Util.g_vmr9.Repaint();// repaint vmr9
+              VMR9Util.g_vmr9.Repaint(); // repaint vmr9
             }
           }
 
@@ -692,7 +740,9 @@ namespace MediaPortal.GUI.Video
               }
             }
             else
-              g_Player.Speed = MediaPortal.Util.Utils.GetNextRewindSpeed(g_Player.Speed);
+            {
+              g_Player.Speed = Util.Utils.GetNextRewindSpeed(g_Player.Speed);
+            }
           }
           break;
 
@@ -720,14 +770,16 @@ namespace MediaPortal.GUI.Video
               }
             }
             else
-              g_Player.Speed = MediaPortal.Util.Utils.GetNextForwardSpeed(g_Player.Speed);
+            {
+              g_Player.Speed = Util.Utils.GetNextForwardSpeed(g_Player.Speed);
+            }
           }
           break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {
-            char chKey = (char)action.m_key.KeyChar;
+            char chKey = (char) action.m_key.KeyChar;
             if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
             {
               if (g_Player.CanSeek)
@@ -749,7 +801,6 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_SMALL_STEP_BACK:
           {
-
             if (g_Player.CanSeek)
             {
               // seek back 5 sec
@@ -769,8 +820,9 @@ namespace MediaPortal.GUI.Video
             g_Player.StepNow();
             g_Player.Speed = 1;
             if (g_Player.Paused)
+            {
               g_Player.Pause();
-
+            }
           }
           break;
 
@@ -780,10 +832,9 @@ namespace MediaPortal.GUI.Video
       }
 
       base.OnAction(action);
-
     }
 
-    bool OnOsdMessage(GUIMessage message)
+    private bool OnOsdMessage(GUIMessage message)
     {
       switch (message.Message)
       {
@@ -794,24 +845,27 @@ namespace MediaPortal.GUI.Video
           m_dwOSDTimeOut = DateTime.Now;
           break;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
+                                          null);
+          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
           _isOsdVisible = false;
           GUIWindowManager.IsOsdVisible = false;
           return true;
       }
-      bool result = _osdWindow.OnMessage(message);	// route messages to OSD window
+      bool result = _osdWindow.OnMessage(message); // route messages to OSD window
       if (_osdWindow.NeedRefresh())
       {
         _needToClearScreen = true;
       }
       return result;
     }
+
     public override bool OnMessage(GUIMessage message)
     {
-
       _needToClearScreen = true;
+
       #region case GUI_MSG_NOTIFY_TV_PROGRAM
+
       //if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
       //{
       //  dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -828,6 +882,7 @@ namespace MediaPortal.GUI.Video
       //  dialogNotify.DoModal(GetID);
       //  NotifyDialogVisible = false;
       //}
+
       #endregion
 
       if (_isOsdVisible)
@@ -840,12 +895,12 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            _osdWindow = (GUIVideoOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD);
+            _osdWindow = (GUIVideoOSD) GUIWindowManager.GetWindow((int) Window.WINDOW_OSD);
 
-            HideControl(GetID, (int)Control.LABEL_ROW1);
-            HideControl(GetID, (int)Control.LABEL_ROW2);
-            HideControl(GetID, (int)Control.LABEL_ROW3);
-            HideControl(GetID, (int)Control.BLUE_BAR);
+            HideControl(GetID, (int) Control.LABEL_ROW1);
+            HideControl(GetID, (int) Control.LABEL_ROW2);
+            HideControl(GetID, (int) Control.LABEL_ROW3);
+            HideControl(GetID, (int) Control.BLUE_BAR);
 
             LoadSettings();
             GUIWindowManager.IsOsdVisible = false;
@@ -878,12 +933,16 @@ namespace MediaPortal.GUI.Video
             ScreenStateChanged();
             _needToClearScreen = true;
             UpdateGUI();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);            
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
             RenderVolume(false);
             RenderForbidden(false);
             if (!screenState.Paused)
-              for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
+            {
+              for (int i = (int) Control.PANEL1; i < (int) Control.PANEL2; ++i)
+              {
                 HideControl(GetID, i);
+              }
+            }
 
 
             return true;
@@ -895,8 +954,9 @@ namespace MediaPortal.GUI.Video
             {
               if (_isOsdVisible)
               {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-                _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0,
+                                                GetID, 0, null);
+                _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
               }
               _isOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
@@ -927,21 +987,29 @@ namespace MediaPortal.GUI.Video
 
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
           if (_isOsdVisible)
+          {
             return true;
-          if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+          }
+          if (message.SenderControlId != (int) Window.WINDOW_FULLSCREEN_VIDEO)
+          {
             return true;
+          }
           break;
       }
 
       return base.OnMessage(message);
     }
 
-    void ShowContextMenu()
+    private void ShowContextMenu()
     {
       if (dlg == null)
-        dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      {
+        dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      }
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
@@ -949,16 +1017,22 @@ namespace MediaPortal.GUI.Video
 
       // Audio stream selection, show only when more than one streams exists
       if (g_Player.AudioStreams > 1)
+      {
         dlg.AddLocalizedString(492);
+      }
 
       eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
-      if (dualMonoMode!=eAudioDualMonoMode.UNSUPPORTED)
+      if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
+      {
         dlg.AddLocalizedString(200059); // Audio dual mono mode menu
+      }
 
       // SubTitle stream selection, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
       if (g_Player.SubtitleStreams > 0)
+      {
         dlg.AddLocalizedString(462);
+      }
 
       dlg.AddLocalizedString(970); // Previous window
       if (g_Player.IsDVD)
@@ -974,17 +1048,21 @@ namespace MediaPortal.GUI.Video
       }
 
       if (g_Player.IsVideo)
+      {
         dlg.AddLocalizedString(1064); // Bookmarks
+      }
 
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
       if (dlg.SelectedId == -1)
+      {
         return;
+      }
       switch (dlg.SelectedId)
       {
-        // Add audio stream selection to be able to switch audio streams in .ts recordings
+          // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
           break;
@@ -1024,9 +1102,12 @@ namespace MediaPortal.GUI.Video
     }
 
     // Add audio stream selection to be able to switch audio streams in .ts recordings
-    void ShowAudioStreamsMenu()
+    private void ShowAudioStreamsMenu()
     {
-      if (dlg == null) return;
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(492); // Audio Streams
 
@@ -1037,9 +1118,13 @@ namespace MediaPortal.GUI.Video
       {
         string audioType = g_Player.AudioType(i);
         if (audioType == Strings.Unknown)
+        {
           dlg.Add(g_Player.AudioLanguage(i));
+        }
         else
+        {
           dlg.Add(String.Format("{0}:{1}", audioType, g_Player.AudioLanguage(i)));
+        }
       }
 
       // select/focus the audiostream, which is active atm
@@ -1050,13 +1135,22 @@ namespace MediaPortal.GUI.Video
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
       if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
+      {
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
+      }
     }
-    void ShowAudioDualMonoModeMenu(eAudioDualMonoMode dualMonoMode)
+
+    private void ShowAudioDualMonoModeMenu(eAudioDualMonoMode dualMonoMode)
     {
-      if (dlg == null) return;
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(200059); // audio dual mono mode 
 
@@ -1065,17 +1159,23 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
       dlg.AddLocalizedString(200063); //Mix both
 
-      dlg.SelectedLabel = (int)dualMonoMode;
+      dlg.SelectedLabel = (int) dualMonoMode;
 
       dlg.DoModal(GetID);
 
-      if (dlg.SelectedLabel < 0) return;
-      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode)dlg.SelectedLabel);
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
+      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode) dlg.SelectedLabel);
     }
 
-    void ShowSubtitleStreamsMenu()
+    private void ShowSubtitleStreamsMenu()
     {
-      if (dlg == null) return;
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(462); // SubTitle Streams
 
@@ -1090,72 +1190,119 @@ namespace MediaPortal.GUI.Video
         string strLang = g_Player.SubtitleLanguage(i);
         int ipos = strLang.IndexOf("(");
         if (ipos > 0)
+        {
           strLang = strLang.Substring(0, ipos);
+        }
 
         dlg.Add(strLang);
       }
 
       // select/focus the subtitle, which is active atm
       if (g_Player.EnableSubtitle)
+      {
         dlg.SelectedLabel = g_Player.CurrentSubtitleStream + 1;
+      }
       else
+      {
         dlg.SelectedLabel = 0;
+      }
 
       // show dialog and wait for result
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
       if (dlg.SelectedLabel == 0)
+      {
         g_Player.EnableSubtitle = false;
+      }
       else
       {
         if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
+        {
           g_Player.CurrentSubtitleStream = dlg.SelectedLabel - 1;
+        }
         g_Player.EnableSubtitle = true;
       }
     }
 
-    void ShowAspectRatioMenu()
+    private void ShowAspectRatioMenu()
     {
-      if (dlg == null) return;
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(941); // Change aspect ratio
 
-      if (_allowedArModes.Contains(Geometry.Type.Stretch)) dlg.AddLocalizedString(942); // Stretch
-      if (_allowedArModes.Contains(Geometry.Type.Normal)) dlg.AddLocalizedString(943); // Normal
-      if (_allowedArModes.Contains(Geometry.Type.Original)) dlg.AddLocalizedString(944); // Original
-      if (_allowedArModes.Contains(Geometry.Type.LetterBox43)) dlg.AddLocalizedString(945); // Letterbox
-      if (_allowedArModes.Contains(Geometry.Type.SmartStretch)) dlg.AddLocalizedString(946); // Smart stretch
-      if (_allowedArModes.Contains(Geometry.Type.Zoom)) dlg.AddLocalizedString(947); // Zoom
-      if (_allowedArModes.Contains(Geometry.Type.Zoom14to9)) dlg.AddLocalizedString(1190); //14:9
+      if (_allowedArModes.Contains(Geometry.Type.Stretch))
+      {
+        dlg.AddLocalizedString(942); // Stretch
+      }
+      if (_allowedArModes.Contains(Geometry.Type.Normal))
+      {
+        dlg.AddLocalizedString(943); // Normal
+      }
+      if (_allowedArModes.Contains(Geometry.Type.Original))
+      {
+        dlg.AddLocalizedString(944); // Original
+      }
+      if (_allowedArModes.Contains(Geometry.Type.LetterBox43))
+      {
+        dlg.AddLocalizedString(945); // Letterbox
+      }
+      if (_allowedArModes.Contains(Geometry.Type.SmartStretch))
+      {
+        dlg.AddLocalizedString(946); // Smart stretch
+      }
+      if (_allowedArModes.Contains(Geometry.Type.Zoom))
+      {
+        dlg.AddLocalizedString(947); // Zoom
+      }
+      if (_allowedArModes.Contains(Geometry.Type.Zoom14to9))
+      {
+        dlg.AddLocalizedString(1190); //14:9
+      }
 
       // set the focus to currently used mode
-      dlg.SelectedLabel = dlg.IndexOfItem(MediaPortal.Util.Utils.GetAspectRatioLocalizedString(GUIGraphicsContext.ARType));
+      dlg.SelectedLabel = dlg.IndexOfItem(Util.Utils.GetAspectRatioLocalizedString(GUIGraphicsContext.ARType));
       // show dialog and wait for result
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1) return;
-      _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      _timeStatusShowTime = (DateTime.Now.Ticks/10000);
 
       string strStatus = "";
 
-      GUIGraphicsContext.ARType = MediaPortal.Util.Utils.GetAspectRatioByLangID(dlg.SelectedId);
+      GUIGraphicsContext.ARType = Util.Utils.GetAspectRatioByLangID(dlg.SelectedId);
       strStatus = GUILocalizeStrings.Get(dlg.SelectedId);
       SaveSettings();
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
+                                      null);
       msg.Label = strStatus;
       OnMessage(msg);
     }
 
     public void ShowBookmarksMenu()
     {
-      if (dlg == null) dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      if (dlg == null)
+      {
+        dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      }
+      if (dlg == null)
+      {
+        return;
+      }
 
       dlg.Reset();
       dlg.SetHeading(1064); // Bookmarks
@@ -1165,38 +1312,45 @@ namespace MediaPortal.GUI.Video
       VideoDatabase.GetBookMarksForMovie(g_Player.CurrentFile, ref bookmarks);
       List<double> bookmarkList = new List<double>();
       for (int i = 0; i < bookmarks.Count; i++)
-        bookmarkList.Add((double)bookmarks[i]);
+      {
+        bookmarkList.Add((double) bookmarks[i]);
+      }
       bookmarkList.Sort();
 
       dlg.AddLocalizedString(294); // create Bookmark
       if (bookmarkList.Count > 0)
+      {
         dlg.AddLocalizedString(296); // clear Bookmarks
+      }
 
       // align the time right
       for (int i = 0; i < bookmarkList.Count; ++i)
       {
         GUIListItem item = new GUIListItem();
         item.Label = GUILocalizeStrings.Get(1065); // Jump to
-        item.Label2 = Util.Utils.SecondsToHMSString((int)bookmarkList[i]);
+        item.Label2 = Util.Utils.SecondsToHMSString((int) bookmarkList[i]);
 
         dlg.Add(item);
       }
       // show only the time on the left
       //for (int i = 0; i < bookmarkList.Count; ++i)
       //  dlg.Add(Util.Utils.SecondsToHMSString((int)bookmarkList[i]));
-      
+
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
 
       if (dlg.SelectedLabel == 0)
       {
         // get the current playing time position
         double dCurTime = g_Player.CurrentPosition;
         // add the current timestamp
-        VideoDatabase.AddBookMarkToMovie(g_Player.CurrentFile, (float)dCurTime);
+        VideoDatabase.AddBookMarkToMovie(g_Player.CurrentFile, (float) dCurTime);
       }
       else if (dlg.SelectedLabel == 1)
       {
@@ -1240,7 +1394,9 @@ namespace MediaPortal.GUI.Video
         updateGUI = true;
       }
       if (_isOsdVisible && _osdWindow.NeedRefresh())
+      {
         _needToClearScreen = true;
+      }
 
       if (_IsDialogVisible != screenState.ContextMenuVisible)
       {
@@ -1253,9 +1409,13 @@ namespace MediaPortal.GUI.Video
       if (step != screenState.SeekStep)
       {
         if (step != 0)
+        {
           _showStep = true;
+        }
         else
+        {
           _showStep = false;
+        }
         screenState.SeekStep = step;
         updateGUI = true;
       }
@@ -1293,140 +1453,152 @@ namespace MediaPortal.GUI.Video
       return updateGUI;
     }
 
-    void UpdateGUI()
+    private void UpdateGUI()
     {
       if ((_showStep || _showSkipBar || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
       {
         if (!_isOsdVisible)
         {
-          for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
+          for (int i = (int) Control.PANEL1; i < (int) Control.PANEL2; ++i)
+          {
             ShowControl(GetID, i);
-          ShowControl(GetID, (int)Control.OSD_TIMEINFO);
-          ShowControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
+          }
+          ShowControl(GetID, (int) Control.OSD_TIMEINFO);
+          ShowControl(GetID, (int) Control.OSD_VIDEOPROGRESS);
         }
         else
         {
-          for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
+          for (int i = (int) Control.PANEL1; i < (int) Control.PANEL2; ++i)
+          {
             HideControl(GetID, i);
-          HideControl(GetID, (int)Control.OSD_TIMEINFO);
-          HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
+          }
+          HideControl(GetID, (int) Control.OSD_TIMEINFO);
+          HideControl(GetID, (int) Control.OSD_VIDEOPROGRESS);
         }
       }
       else
       {
-        for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
+        for (int i = (int) Control.PANEL1; i < (int) Control.PANEL2; ++i)
+        {
           HideControl(GetID, i);
-        HideControl(GetID, (int)Control.OSD_TIMEINFO);
-        HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
+        }
+        HideControl(GetID, (int) Control.OSD_TIMEINFO);
+        HideControl(GetID, (int) Control.OSD_VIDEOPROGRESS);
       }
 
 
       if (g_Player.Paused && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
       {
-        ShowControl(GetID, (int)Control.IMG_PAUSE);
+        ShowControl(GetID, (int) Control.IMG_PAUSE);
       }
       else
       {
-        HideControl(GetID, (int)Control.IMG_PAUSE);
+        HideControl(GetID, (int) Control.IMG_PAUSE);
       }
 
       int iSpeed = g_Player.Speed;
-      HideControl(GetID, (int)Control.IMG_2X);
-      HideControl(GetID, (int)Control.IMG_4X);
-      HideControl(GetID, (int)Control.IMG_8X);
-      HideControl(GetID, (int)Control.IMG_16X);
-      HideControl(GetID, (int)Control.IMG_32X);
-      HideControl(GetID, (int)Control.IMG_MIN2X);
-      HideControl(GetID, (int)Control.IMG_MIN4X);
-      HideControl(GetID, (int)Control.IMG_MIN8X);
-      HideControl(GetID, (int)Control.IMG_MIN16X);
-      HideControl(GetID, (int)Control.IMG_MIN32X);
+      HideControl(GetID, (int) Control.IMG_2X);
+      HideControl(GetID, (int) Control.IMG_4X);
+      HideControl(GetID, (int) Control.IMG_8X);
+      HideControl(GetID, (int) Control.IMG_16X);
+      HideControl(GetID, (int) Control.IMG_32X);
+      HideControl(GetID, (int) Control.IMG_MIN2X);
+      HideControl(GetID, (int) Control.IMG_MIN4X);
+      HideControl(GetID, (int) Control.IMG_MIN8X);
+      HideControl(GetID, (int) Control.IMG_MIN16X);
+      HideControl(GetID, (int) Control.IMG_MIN32X);
 
       if (!_showStep)
       {
         switch (iSpeed)
         {
           case 2:
-            ShowControl(GetID, (int)Control.IMG_2X);
+            ShowControl(GetID, (int) Control.IMG_2X);
             break;
           case 4:
-            ShowControl(GetID, (int)Control.IMG_4X);
+            ShowControl(GetID, (int) Control.IMG_4X);
             break;
           case 8:
-            ShowControl(GetID, (int)Control.IMG_8X);
+            ShowControl(GetID, (int) Control.IMG_8X);
             break;
           case 16:
-            ShowControl(GetID, (int)Control.IMG_16X);
+            ShowControl(GetID, (int) Control.IMG_16X);
             break;
           case 32:
-            ShowControl(GetID, (int)Control.IMG_32X);
+            ShowControl(GetID, (int) Control.IMG_32X);
             break;
           case -2:
-            ShowControl(GetID, (int)Control.IMG_MIN2X);
+            ShowControl(GetID, (int) Control.IMG_MIN2X);
             break;
           case -4:
-            ShowControl(GetID, (int)Control.IMG_MIN4X);
+            ShowControl(GetID, (int) Control.IMG_MIN4X);
             break;
           case -8:
-            ShowControl(GetID, (int)Control.IMG_MIN8X);
+            ShowControl(GetID, (int) Control.IMG_MIN8X);
             break;
           case -16:
-            ShowControl(GetID, (int)Control.IMG_MIN16X);
+            ShowControl(GetID, (int) Control.IMG_MIN16X);
             break;
           case -32:
-            ShowControl(GetID, (int)Control.IMG_MIN32X);
+            ShowControl(GetID, (int) Control.IMG_MIN32X);
             break;
         }
       }
 
-      HideControl(GetID, (int)Control.LABEL_ROW1);
-      HideControl(GetID, (int)Control.LABEL_ROW2);
-      HideControl(GetID, (int)Control.LABEL_ROW3);
-      HideControl(GetID, (int)Control.BLUE_BAR);
+      HideControl(GetID, (int) Control.LABEL_ROW1);
+      HideControl(GetID, (int) Control.LABEL_ROW2);
+      HideControl(GetID, (int) Control.LABEL_ROW3);
+      HideControl(GetID, (int) Control.BLUE_BAR);
       if (screenState.SeekStep != 0)
       {
-        ShowControl(GetID, (int)Control.BLUE_BAR);
-        ShowControl(GetID, (int)Control.LABEL_ROW1);
+        ShowControl(GetID, (int) Control.BLUE_BAR);
+        ShowControl(GetID, (int) Control.LABEL_ROW1);
       }
       if (_showStatus)
       {
-        ShowControl(GetID, (int)Control.BLUE_BAR);
-        ShowControl(GetID, (int)Control.LABEL_ROW1);
+        ShowControl(GetID, (int) Control.BLUE_BAR);
+        ShowControl(GetID, (int) Control.LABEL_ROW1);
       }
       if (_showSkipBar && !g_Player.Paused) // If paused, this will already be shown, including LABEL_ROW1
       {
-        ShowControl(GetID, (int)Control.BLUE_BAR);
+        ShowControl(GetID, (int) Control.BLUE_BAR);
       }
       if (_showTime)
       {
-        ShowControl(GetID, (int)Control.BLUE_BAR);
-        ShowControl(GetID, (int)Control.LABEL_ROW1);
+        ShowControl(GetID, (int) Control.BLUE_BAR);
+        ShowControl(GetID, (int) Control.LABEL_ROW1);
       }
 
       RenderVolume(_isVolumeVisible);
       RenderForbidden(_isForbiddenVisible);
     }
 
-    void CheckTimeOuts()
+    private void CheckTimeOuts()
     {
       if (_vmr9OSD != null)
+      {
         _vmr9OSD.CheckTimeOuts();
+      }
 
       if (_isVolumeVisible)
       {
         TimeSpan ts = DateTime.Now - _volumeTimer;
         if (ts.TotalSeconds >= 3)
+        {
           RenderVolume(false);
+        }
       }
       if (_isForbiddenVisible)
       {
         TimeSpan ts = DateTime.Now - _forbiddenTimer;
         if (ts.TotalSeconds >= 1)
+        {
           RenderForbidden(false);
+        }
       }
       if (_showStatus || _showStep || _showSkipBar)
       {
-        long lTimeSpan = ((DateTime.Now.Ticks / 10000) - _timeStatusShowTime);
+        long lTimeSpan = ((DateTime.Now.Ticks/10000) - _timeStatusShowTime);
         if (lTimeSpan >= 3000)
         {
           _showStep = false;
@@ -1453,8 +1625,9 @@ namespace MediaPortal.GUI.Video
         if (ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
         {
           //yes, then remove osd offscreen
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
-          _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
+                                          null);
+          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
           _isOsdVisible = false;
           GUIWindowManager.IsOsdVisible = false;
           msg = null;
@@ -1474,12 +1647,14 @@ namespace MediaPortal.GUI.Video
       if (!g_Player.Playing)
       {
         if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC ||
-          playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+            playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
         {
           // Only stay in fullscreen if there are (still) items to play
           PlayList current = playlistPlayer.GetPlaylist(playlistPlayer.CurrentPlaylistType);
           if (current.Count > 0 && !current.AllPlayed())
+          {
             return;
+          }
         }
         _isOsdVisible = false;
         GUIWindowManager.IsOsdVisible = false;
@@ -1501,12 +1676,12 @@ namespace MediaPortal.GUI.Video
       else
       {
         if (screenState.ContextMenuVisible ||
-          screenState.OsdVisible ||
-          screenState.Paused ||
-          screenState.ShowStatusLine ||
-          screenState.ShowSkipBar ||
-          screenState.ShowTime || _needToClearScreen ||
-          g_Player.Speed != 1)
+            screenState.OsdVisible ||
+            screenState.Paused ||
+            screenState.ShowStatusLine ||
+            screenState.ShowSkipBar ||
+            screenState.ShowTime || _needToClearScreen ||
+            g_Player.Speed != 1)
         {
           TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
           if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
@@ -1544,12 +1719,12 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    bool OSDVisible()
+    private bool OSDVisible()
     {
       return _isOsdVisible;
     }
 
-    void ChangetheTimeCode(char chKey)
+    private void ChangetheTimeCode(char chKey)
     {
       _showTime = true;
       m_dwTimeCodeTimeout = DateTime.Now;
@@ -1567,23 +1742,24 @@ namespace MediaPortal.GUI.Video
       if (_timeCodePosition > 4)
       {
         int itotal, ih, im, lis = 0;
-        ih = (_timeStamp[0] - (char)'0') * 10;
-        ih += (_timeStamp[1] - (char)'0');
-        im = (_timeStamp[3] - (char)'0') * 10;
-        im += (_timeStamp[4] - (char)'0');
+        ih = (_timeStamp[0] - (char) '0')*10;
+        ih += (_timeStamp[1] - (char) '0');
+        im = (_timeStamp[3] - (char) '0')*10;
+        im += (_timeStamp[4] - (char) '0');
         im *= 60;
         ih *= 3600;
         itotal = ih + im + lis;
         if (itotal < g_Player.Duration)
         {
           Log.Debug("GUIVideoFullscreen.ChangetheTimeCode - skipping");
-          g_Player.SeekAbsolute((double)itotal);
+          g_Player.SeekAbsolute((double) itotal);
         }
         _timeStamp = "";
         _timeCodePosition = 0;
         _showTime = false;
       }
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
+                                      null);
       msg.Label = _timeStamp;
       OnMessage(msg);
     }
@@ -1591,7 +1767,9 @@ namespace MediaPortal.GUI.Video
     public void RenderForm(float timePassed)
     {
       if (!g_Player.Playing)
+      {
         return;
+      }
       else
       {
         if (_needToClearScreen)
@@ -1606,20 +1784,23 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
-    void RenderVolume(bool show)
+
+    private void RenderVolume(bool show)
     {
       if (imgVolumeBar == null)
+      {
         return;
+      }
 
       if (!show)
       {
         _isVolumeVisible = false;
         imgVolumeBar.Visible = false;
-        imgVolumeMuteIcon.Visible = false;        
+        imgVolumeMuteIcon.Visible = false;
         return;
       }
       else
-      {        
+      {
         if (VolumeHandler.Instance.IsMuted)
         {
           imgVolumeMuteIcon.Visible = true;
@@ -1629,7 +1810,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
-          imgVolumeBar.Current = VolumeHandler.Instance.Step;          
+          imgVolumeBar.Current = VolumeHandler.Instance.Step;
           imgVolumeMuteIcon.Visible = false;
           imgVolumeBar.Image1 = 2;
           imgVolumeBar.Image2 = 1;
@@ -1638,15 +1819,19 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    void RenderForbidden(bool show)
+    private void RenderForbidden(bool show)
     {
-      if (imgActionForbiddenIcon == null) return;
+      if (imgActionForbiddenIcon == null)
+      {
+        return;
+      }
       _isForbiddenVisible = show;
       imgActionForbiddenIcon.Visible = show;
     }
 
     #region helper functions
-    void HideControl(int senderId, int controlId)
+
+    private void HideControl(int senderId, int controlId)
     {
       GUIControl cntl = base.GetControl(controlId);
       if (cntl != null)
@@ -1655,7 +1840,8 @@ namespace MediaPortal.GUI.Video
       }
       cntl = null;
     }
-    void ShowControl(int senderId, int controlId)
+
+    private void ShowControl(int senderId, int controlId)
     {
       GUIControl cntl = base.GetControl(controlId);
       if (cntl != null)
@@ -1684,20 +1870,23 @@ namespace MediaPortal.GUI.Video
 
       return base.GetControl(iControlId);
     }
+
     private double GetPercentage(float x, float y, GUIControl cntl)
     {
       if (y < (cntl.YPosition + cntl.Height) && y > cntl.YPosition)
       {
         if (x > (cntl.XPosition + SKIPBAR_PADDING) && x < (cntl.XPosition + cntl.Width - SKIPBAR_PADDING))
         {
-          return (x - cntl.XPosition - SKIPBAR_PADDING) / (cntl.Width - 2 * SKIPBAR_PADDING);
+          return (x - cntl.XPosition - SKIPBAR_PADDING)/(cntl.Width - 2*SKIPBAR_PADDING);
         }
       }
       return -1;
     }
+
     #endregion
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -1708,6 +1897,7 @@ namespace MediaPortal.GUI.Video
       Render(timePassed);
       base.Render(timePassed);
     }
+
     #endregion
   }
 }

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -35,10 +33,10 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class ChannelInfo
   {
     #region Variables
-    [XmlAttribute("id")]
-    public string id;
-    [XmlAttribute("siteId")]
-    public string siteId;
+
+    [XmlAttribute("id")] public string id;
+    [XmlAttribute("siteId")] public string siteId;
+
     #endregion
   }
 }

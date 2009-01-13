@@ -23,11 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using MediaPortal.GUI.Library;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.guilib
 {
@@ -35,45 +32,41 @@ namespace MediaPortal.Tests.Core.guilib
   public class Layers
   {
     #region DummyLayer
-    class DummyLayer : IRenderLayer
+
+    private class DummyLayer : IRenderLayer
     {
-      bool _rendered = false;
-      string _name;
-      bool _render = true;
+      private bool _rendered = false;
+      private string _name;
+      private bool _render = true;
+
       public DummyLayer(string name)
       {
         _name = name;
       }
+
       public bool Render
       {
-        get
-        {
-          return _render;
-        }
-        set {
-          _render=value;
-        }
+        get { return _render; }
+        set { _render = value; }
       }
+
       public bool Rendered
       {
-        get
-        {
-          return _rendered;
-        }
-        set
-        {
-          _rendered = value;
-        }
+        get { return _rendered; }
+        set { _rendered = value; }
       }
-      public bool ShouldRenderLayer() 
-      { 
-        return Render; 
+
+      public bool ShouldRenderLayer()
+      {
+        return Render;
       }
-      public void RenderLayer(float timePassed) 
+
+      public void RenderLayer(float timePassed)
       {
         _rendered = true;
       }
     }
+
     #endregion
 
     [Test]
@@ -98,7 +91,9 @@ namespace MediaPortal.Tests.Core.guilib
       GUILayerManager.UnRegisterLayer(guiLayer);
       Assert.AreEqual(GUILayerManager.GetLayer(GUILayerManager.LayerType.Gui), null);
       Assert.AreEqual(GUILayerManager.GetLayer(GUILayerManager.LayerType.Video), videoLayer);
-    }/*
+    }
+
+    /*
     [Test]
     public void TestRender()
     {

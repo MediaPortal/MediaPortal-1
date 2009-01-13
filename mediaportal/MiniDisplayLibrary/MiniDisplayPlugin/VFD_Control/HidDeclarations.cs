@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -49,7 +50,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("hid.dll", SetLastError=true)]
+    [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_FlushQueue(int HidDeviceObject);
 
     [DllImport("hid.dll", SetLastError = true)]
@@ -112,7 +113,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public ushort InputReportByteLength;
       public ushort OutputReportByteLength;
       public ushort FeatureReportByteLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=17)] public ushort[] Reserved;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)] public ushort[] Reserved;
       public ushort NumberLinkCollectionNodes;
       public ushort NumberInputButtonCaps;
       public ushort NumberInputValueCaps;
@@ -142,7 +143,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public ushort LinkUsagePage;
       public int IsRange; // If IsRange is false, UsageMin is the Usage and UsageMax is unused.
       public int IsStringRange; // If IsStringRange is false, StringMin is the string index and StringMax is unused.
-      public int IsDesignatorRange; // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
+
+      public int IsDesignatorRange;
+                 // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
+
       public int IsAbsolute;
       public int HasNull;
       public byte Reserved;

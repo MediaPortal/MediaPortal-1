@@ -1,4 +1,5 @@
 #region Copyright (C) 2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,12 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Localisation.LanguageStrings
@@ -32,21 +30,24 @@ namespace MediaPortal.Localisation.LanguageStrings
   public class StringLocalised
   {
     #region Variables
+
     public string language;
-    [XmlAttribute("id")]
-    public int id;
-    [XmlAttribute("prefix")]
-    public string prefix;
-    [XmlText()]
-    public string text;
+    [XmlAttribute("id")] public int id;
+    [XmlAttribute("prefix")] public string prefix;
+    [XmlText()] public string text;
+
     #endregion
 
     public new string ToString()
     {
       if (prefix == null)
+      {
         return id.ToString() + " : " + text;
+      }
       else
+      {
         return id.ToString() + " : (" + prefix + ") " + text;
+      }
     }
   }
 }

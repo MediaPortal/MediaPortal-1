@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
 using System.Globalization;
+using DShowNET;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
-using DShowNET;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -38,23 +36,18 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUIWizardWelcome : GUIWindow
   {
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnLanguage = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnCountry = null;
-    [SkinControlAttribute(8)]
-    protected GUILabelControl lblLanguage = null;
-    [SkinControlAttribute(9)]
-    protected GUILabelControl lblCountry = null;
+    [SkinControl(5)] protected GUIButtonControl btnNext = null;
+    [SkinControl(6)] protected GUIButtonControl btnLanguage = null;
+    [SkinControl(7)] protected GUIButtonControl btnCountry = null;
+    [SkinControl(8)] protected GUILabelControl lblLanguage = null;
+    [SkinControl(9)] protected GUILabelControl lblCountry = null;
 
     public GUIWizardWelcome()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_WELCOME;
+      GetID = (int) Window.WINDOW_WIZARD_WELCOME;
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnNext)
       {
@@ -71,11 +64,11 @@ namespace MediaPortal.GUI.Settings
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnLanguage()
+    private void OnLanguage()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+      dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
       dlg.ShowQuickNumbers = false;
 
       string[] LanguageList = GUILocalizeStrings.SupportedLanguages();
@@ -89,15 +82,17 @@ namespace MediaPortal.GUI.Settings
       dlg.ShowQuickNumbers = false;
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= LanguageList.Length)
+      {
         return;
+      }
       lblLanguage.Label = LanguageList[dlg.SelectedLabel];
     }
 
-    void OnCountry()
+    private void OnCountry()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+      dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
       dlg.ShowQuickNumbers = false;
 
       int selected = 0;
@@ -110,16 +105,18 @@ namespace MediaPortal.GUI.Settings
       dlg.ShowQuickNumbers = false;
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= TunerCountries.Countries.Length)
+      {
         return;
+      }
       lblCountry.Label = TunerCountries.Countries[dlg.SelectedLabel].Country;
       lblCountry.Data = TunerCountries.Countries[dlg.SelectedLabel];
     }
 
-    void OnNextPage()
+    private void OnNextPage()
     {
-      TunerCountry country = (TunerCountry)lblCountry.Data;
+      TunerCountry country = (TunerCountry) lblCountry.Data;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("general", "country", country.CountryCode);
         xmlwriter.SetValue("capture", "countryname", country.Country);
@@ -132,7 +129,7 @@ namespace MediaPortal.GUI.Settings
       GUIPropertyManager.SetProperty("#WizardCountryCode", country.CountryCode);
       GUIPropertyManager.SetProperty("#WizardCountry", country.Country);
 
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_GENERAL);
+      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_GENERAL);
     }
 
     public override bool Init()
@@ -156,29 +153,32 @@ namespace MediaPortal.GUI.Settings
       LoadSettings();
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
       string countryCode = "";
       string language = "";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         countryCode = xmlreader.GetValueAsString("general", "country", "");
         language = xmlreader.GetValueAsString("skin", "language", "");
       }
 
       if (countryCode == "")
-        countryCode = System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName;
+      {
+        countryCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
+      }
 
       if (language == "")
+      {
         language = GUILocalizeStrings.LocalSupported();
+      }
 
       TunerCountry country = FindCountry(countryCode);
 
       lblCountry.Label = country.Country;
       lblCountry.Data = country;
       lblLanguage.Label = language;
-
     }
 
     private TunerCountry FindCountry(string ID)
@@ -186,7 +186,9 @@ namespace MediaPortal.GUI.Settings
       for (int i = 0; i < TunerCountries.Countries.Length; ++i)
       {
         if (TunerCountries.Countries[i].CountryCode == ID)
+        {
           return TunerCountries.Countries[i];
+        }
       }
       TunerCountry unknown = new TunerCountry(-1, "Unknown", "");
       return unknown;

@@ -24,12 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using NUnit.Framework;
-using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Utils.Time
 {

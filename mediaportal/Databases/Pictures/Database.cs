@@ -23,14 +23,7 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using SQLite.NET;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.Database;
 
 namespace MediaPortal.Picture.Database

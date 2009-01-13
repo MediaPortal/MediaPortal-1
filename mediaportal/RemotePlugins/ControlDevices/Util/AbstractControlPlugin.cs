@@ -24,7 +24,6 @@
 #endregion
 
 using MediaPortal.Services;
-using MediaPortal.ControlDevices;
 
 namespace MediaPortal.ControlDevices
 {
@@ -41,15 +40,14 @@ namespace MediaPortal.ControlDevices
       _log = services.Get<ILog>();
     }
 
-    public string LibraryName 
-    { 
+    public string LibraryName
+    {
       set { _libraryName = value; }
       get { return _libraryName; }
     }
 
-    public void Initialize() 
+    public void Initialize()
     {
     }
-
   }
 }

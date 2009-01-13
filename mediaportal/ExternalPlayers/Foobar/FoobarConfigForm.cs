@@ -24,43 +24,43 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Text;
 using System.IO;
-using Microsoft.Win32;
-using MediaPortal.Util;
+using System.Text;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 namespace MediaPortal.FoobarPlugin
 {
   /// <summary>
   /// Summary description for FoobarConfigForm.
   /// </summary>
-  public class FoobarConfigForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class FoobarConfigForm : MPConfigForm
   {
-    private System.Windows.Forms.LinkLabel linkLabelPluginSource;
+    private LinkLabel linkLabelPluginSource;
     private GroupBox groupBoxFoobarLocation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelPortNumber;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPortNumber;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxHostname;
-    private MediaPortal.UserInterface.Controls.MPButton buttonBrowseFoobarLoc;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFoobarPath;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHostname;
-    private MediaPortal.UserInterface.Controls.MPLabel labelLocation;
+    private MPLabel labelPortNumber;
+    private MPTextBox textBoxPortNumber;
+    private MPTextBox textBoxHostname;
+    private MPButton buttonBrowseFoobarLoc;
+    private MPTextBox textBoxFoobarPath;
+    private MPLabel labelHostname;
+    private MPLabel labelLocation;
     private GroupBox groupBoxFoobarSettings;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFoobarExtensions;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFoobarFileTypes;
+    private MPTextBox textBoxFoobarExtensions;
+    private MPLabel labelFoobarFileTypes;
     private LinkLabel linkLabelStartupParameter;
     private TextBox textBoxStartupParameter;
-    private MediaPortal.UserInterface.Controls.MPButton btnOK;
-    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    private MPButton btnOK;
+    private MPButton btnCancel;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public FoobarConfigForm()
     {
@@ -88,6 +88,7 @@ namespace MediaPortal.FoobarPlugin
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -116,23 +117,29 @@ namespace MediaPortal.FoobarPlugin
       // 
       // linkLabelPluginSource
       // 
-      this.linkLabelPluginSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabelPluginSource.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabelPluginSource.LinkArea = new System.Windows.Forms.LinkArea(37, 19);
       this.linkLabelPluginSource.Location = new System.Drawing.Point(12, 254);
       this.linkLabelPluginSource.Name = "linkLabelPluginSource";
       this.linkLabelPluginSource.Size = new System.Drawing.Size(392, 32);
       this.linkLabelPluginSource.TabIndex = 5;
       this.linkLabelPluginSource.TabStop = true;
-      this.linkLabelPluginSource.Text = "NOTE:  Remember to install and setup foo_httpserver_ctrl (version B1) in your foo" +
-          "bar\\components directory.";
+      this.linkLabelPluginSource.Text =
+        "NOTE:  Remember to install and setup foo_httpserver_ctrl (version B1) in your foo" +
+        "bar\\components directory.";
       this.linkLabelPluginSource.UseCompatibleTextRendering = true;
-      this.linkLabelPluginSource.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPluginSource_LinkClicked);
+      this.linkLabelPluginSource.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPluginSource_LinkClicked);
       // 
       // groupBoxFoobarLocation
       // 
-      this.groupBoxFoobarLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFoobarLocation.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFoobarLocation.Controls.Add(this.labelPortNumber);
       this.groupBoxFoobarLocation.Controls.Add(this.textBoxPortNumber);
       this.groupBoxFoobarLocation.Controls.Add(this.textBoxHostname);
@@ -149,7 +156,9 @@ namespace MediaPortal.FoobarPlugin
       // 
       // labelPortNumber
       // 
-      this.labelPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelPortNumber.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPortNumber.AutoSize = true;
       this.labelPortNumber.Location = new System.Drawing.Point(293, 57);
       this.labelPortNumber.Name = "labelPortNumber";
@@ -159,7 +168,9 @@ namespace MediaPortal.FoobarPlugin
       // 
       // textBoxPortNumber
       // 
-      this.textBoxPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPortNumber.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPortNumber.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPortNumber.Enabled = false;
       this.textBoxPortNumber.Location = new System.Drawing.Point(326, 54);
@@ -171,8 +182,10 @@ namespace MediaPortal.FoobarPlugin
       // 
       // textBoxHostname
       // 
-      this.textBoxHostname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxHostname.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxHostname.BorderColor = System.Drawing.Color.Empty;
       this.textBoxHostname.Enabled = false;
       this.textBoxHostname.Location = new System.Drawing.Point(92, 54);
@@ -183,7 +196,9 @@ namespace MediaPortal.FoobarPlugin
       // 
       // buttonBrowseFoobarLoc
       // 
-      this.buttonBrowseFoobarLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowseFoobarLoc.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonBrowseFoobarLoc.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonBrowseFoobarLoc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.buttonBrowseFoobarLoc.Location = new System.Drawing.Point(356, 19);
@@ -196,8 +211,10 @@ namespace MediaPortal.FoobarPlugin
       // 
       // textBoxFoobarPath
       // 
-      this.textBoxFoobarPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarPath.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFoobarPath.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFoobarPath.Enabled = false;
       this.textBoxFoobarPath.Location = new System.Drawing.Point(92, 21);
@@ -225,8 +242,10 @@ namespace MediaPortal.FoobarPlugin
       // 
       // groupBoxFoobarSettings
       // 
-      this.groupBoxFoobarSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFoobarSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFoobarSettings.Controls.Add(this.linkLabelStartupParameter);
       this.groupBoxFoobarSettings.Controls.Add(this.textBoxStartupParameter);
       this.groupBoxFoobarSettings.Controls.Add(this.textBoxFoobarExtensions);
@@ -249,12 +268,15 @@ namespace MediaPortal.FoobarPlugin
       this.linkLabelStartupParameter.TabStop = true;
       this.linkLabelStartupParameter.Text = "Startup parameter";
       this.linkLabelStartupParameter.UseCompatibleTextRendering = true;
-      this.linkLabelStartupParameter.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelStartupParameter_LinkClicked);
+      this.linkLabelStartupParameter.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelStartupParameter_LinkClicked);
       // 
       // textBoxStartupParameter
       // 
-      this.textBoxStartupParameter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxStartupParameter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxStartupParameter.Location = new System.Drawing.Point(13, 45);
       this.textBoxStartupParameter.Name = "textBoxStartupParameter";
       this.textBoxStartupParameter.Size = new System.Drawing.Size(367, 20);
@@ -263,8 +285,10 @@ namespace MediaPortal.FoobarPlugin
       // 
       // textBoxFoobarExtensions
       // 
-      this.textBoxFoobarExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarExtensions.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFoobarExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFoobarExtensions.Location = new System.Drawing.Point(13, 93);
       this.textBoxFoobarExtensions.Name = "textBoxFoobarExtensions";
@@ -322,18 +346,16 @@ namespace MediaPortal.FoobarPlugin
       this.groupBoxFoobarSettings.ResumeLayout(false);
       this.groupBoxFoobarSettings.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion
-
 
     /// <summary>
     /// This method is called whenever the browse button is clicked
     /// </summary>
     /// <param name="sender">the sender instance</param>
     /// <param name="e">the event.  In this case click!</param>
-    private void buttonBrowseFoobarLoc_Click(object sender, System.EventArgs e)
+    private void buttonBrowseFoobarLoc_Click(object sender, EventArgs e)
     {
       string curDir = Directory.GetCurrentDirectory();
       // The filter for the dialog window is foobar2000.exe
@@ -356,13 +378,15 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
+        textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions",
+                                                                  ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
         textBoxPortNumber.Text = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
         textBoxHostname.Text = xmlreader.GetValueAsString("foobarplugin", "host", "localhost");
         textBoxFoobarPath.Text = xmlreader.GetValueAsString("foobarplugin", "path", "");
-        textBoxStartupParameter.Text = xmlreader.GetValueAsString("foobarplugin", "startupparameter", "/hide /command:\"Playback/Order/Default\"");
+        textBoxStartupParameter.Text = xmlreader.GetValueAsString("foobarplugin", "startupparameter",
+                                                                  "/hide /command:\"Playback/Order/Default\"");
       }
       if (textBoxFoobarPath.Text.Equals(String.Empty))
       {
@@ -380,7 +404,9 @@ namespace MediaPortal.FoobarPlugin
             }
             else
             {
-              MessageBox.Show("Foobar2000 is not installed on your system!\r\nPlease install it first before actually trying to use this plugin!", "Foobar2000 plugin error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show(
+                "Foobar2000 is not installed on your system!\r\nPlease install it first before actually trying to use this plugin!",
+                "Foobar2000 plugin error", MessageBoxButtons.OK, MessageBoxIcon.Error);
               Close();
             }
           }
@@ -393,21 +419,25 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlWriter.SetValue("foobarplugin", "port", textBoxPortNumber.Text);
         xmlWriter.SetValue("foobarplugin", "host", textBoxHostname.Text);
         xmlWriter.SetValue("foobarplugin", "path", textBoxFoobarPath.Text);
         xmlWriter.SetValue("foobarplugin", "startupparameter", textBoxStartupParameter.Text);
         // make sure all the extensions starts with "."  If not, add it in...
-        string[] exts = textBoxFoobarExtensions.Text.Split(new char[] { ',' });
+        string[] exts = textBoxFoobarExtensions.Text.Split(new char[] {','});
         StringBuilder buff = new StringBuilder();
         foreach (string ext in exts)
         {
           if (buff.Length != 0)
+          {
             buff.Append(',');
+          }
           if (!ext.StartsWith("."))
+          {
             buff.Append('.');
+          }
           buff.Append(ext);
         }
         xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());
@@ -426,6 +456,7 @@ namespace MediaPortal.FoobarPlugin
       {
       }
     }
+
     /// <summary>
     /// The link will open the link on a browser to get the foobar plugin from the source
     /// </summary>
@@ -457,9 +488,3 @@ namespace MediaPortal.FoobarPlugin
     }
   }
 }
-
-
-
-
-
-

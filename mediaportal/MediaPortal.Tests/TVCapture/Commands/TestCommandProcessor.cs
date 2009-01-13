@@ -26,16 +26,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using ProcessPlugins.DiskSpace;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
+using MediaPortal.Playlists;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using System.IO;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Commands
 {
@@ -43,21 +40,28 @@ namespace MediaPortal.Tests.Commands
   public class TestCommandProcessor
   {
     #region dummy command
+
     public class DummyCommand : CardCommand
     {
-      bool _executed = false;
+      private bool _executed = false;
+
       public bool Executed
       {
         get { return _executed; }
       }
+
       public override void Execute(CommandProcessor handler)
       {
         _executed = true;
       }
     }
+
     #endregion
-    string _externalChannel;
+
+    private string _externalChannel;
+
     #region general tests
+
     [SetUp]
     public void Init()
     {
@@ -66,9 +70,18 @@ namespace MediaPortal.Tests.Commands
       RadioDatabase.ClearAll();
 
       // add 3 channels
-      ch = new TVChannel("RTL 4"); ch.External = true; ch.ExternalTunerChannel = "RTL 4";  TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL 5"); ch.External = true; ch.ExternalTunerChannel = "RTL 5"; TVDatabase.AddChannel(ch);
-      ch = new TVChannel("SBS 6"); ch.External = true; ch.ExternalTunerChannel = "SBS 6"; TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 4");
+      ch.External = true;
+      ch.ExternalTunerChannel = "RTL 4";
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 5");
+      ch.External = true;
+      ch.ExternalTunerChannel = "RTL 5";
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("SBS 6");
+      ch.External = true;
+      ch.ExternalTunerChannel = "SBS 6";
+      TVDatabase.AddChannel(ch);
 
       RadioStation station = new RadioStation();
       station.Name = "BBC Radio";
@@ -78,12 +91,13 @@ namespace MediaPortal.Tests.Commands
       station.Name = "RTL FM";
       RadioDatabase.AddStation(ref station);
       g_Player.Factory = new DummyPlayerFactory();
-      Playlists.PlayListPlayer.SingletonPlayer.InitTest();
+      PlayListPlayer.SingletonPlayer.InitTest();
       g_Player.Stop();
-      GUIWindowManager.OnThreadMessageHandler += new MediaPortal.GUI.Library.GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
+      GUIWindowManager.OnThreadMessageHandler +=
+        new GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
     }
 
-    void GUIWindowManager_OnThreadMessageHandler(object sender, MediaPortal.GUI.Library.GUIMessage message)
+    private void GUIWindowManager_OnThreadMessageHandler(object sender, GUIMessage message)
     {
       if (message.Message == GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL)
       {
@@ -98,6 +112,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.CurrentCardIndex, -1);
       Assert.AreEqual(proc.TVChannelName, string.Empty);
     }
+
     [Test]
     public void TestDummyCommand()
     {
@@ -132,14 +147,15 @@ namespace MediaPortal.Tests.Commands
       proc.ProcessCommands();
       Assert.IsFalse(proc.IsBusy);
     }
+
     #endregion
 
     #region test tv viewing
+
     [Test]
     [Category("view tv")]
     public void TestViewStartCommand()
     {
-      
       CommandProcessor proc = new CommandProcessor();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       WatchTv(proc, "RTL 4");
@@ -168,9 +184,11 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(g_Player.Playing);
       StopTv(proc);
     }
+
     #endregion
 
     #region test tv viewing with timeshifting on
+
     [Test]
     [Category("timeshift tv")]
     public void TestTimeShiftStartCommand()
@@ -196,9 +214,11 @@ namespace MediaPortal.Tests.Commands
       TimeShiftTv(proc, "RTL 5");
       Assert.IsTrue(g_Player.Playing);
     }
+
     #endregion
 
     #region test radio
+
     [Test]
     [Category("Radio")]
     public void TestRadio()
@@ -208,6 +228,7 @@ namespace MediaPortal.Tests.Commands
       StartRadio(proc, "BBC Radio");
       StopRadio(proc);
     }
+
     [Test]
     [Category("Radio Zapping")]
     public void TestRadioZapping()
@@ -237,6 +258,7 @@ namespace MediaPortal.Tests.Commands
 
       StartRadio(proc, "BBC Radio");
     }
+
     [Test]
     [Category("timeshift tv")]
     public void TestTimeShiftStopCommand()
@@ -249,11 +271,12 @@ namespace MediaPortal.Tests.Commands
       Assert.IsTrue(g_Player.Playing);
       //lets stop TV
       StopTv(proc);
-
     }
+
     #endregion
 
     #region test switch timeshift off/on
+
     [Test]
     [Category("switch timeshift on/off")]
     public void TestSwitchTimeShiftOnOff()
@@ -269,11 +292,12 @@ namespace MediaPortal.Tests.Commands
       WatchTv(proc, "RTL 4");
       Assert.IsFalse(g_Player.Playing);
       StopTv(proc);
-
     }
+
     #endregion
 
     #region test recording
+
     [Test]
     [Category("Recording")]
     public void TestStartRecording()
@@ -285,6 +309,7 @@ namespace MediaPortal.Tests.Commands
       StartRecord(proc, "RTL 4");
       Assert.IsFalse(g_Player.Playing);
     }
+
     [Test]
     [Category("Recording")]
     public void TestStopRecording()
@@ -299,6 +324,7 @@ namespace MediaPortal.Tests.Commands
       Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
     }
+
     [Test]
     [Category("Recording")]
     public void TestStartRecording2()
@@ -314,6 +340,7 @@ namespace MediaPortal.Tests.Commands
       StopRecord(proc);
       Assert.IsTrue(g_Player.Playing);
     }
+
     [Test]
     [Category("Recording")]
     public void TestStartRecording3()
@@ -329,6 +356,7 @@ namespace MediaPortal.Tests.Commands
       StopRecord(proc);
       Assert.IsTrue(g_Player.Playing);
     }
+
     [Test]
     [Category("Recording")]
     public void TestRecordingInPast()
@@ -339,6 +367,7 @@ namespace MediaPortal.Tests.Commands
       DoSchedule(proc);
       Assert.IsFalse(card1.IsRecording);
     }
+
     [Test]
     [Category("Recording")]
     public void TestRecordingInFuture()
@@ -349,6 +378,7 @@ namespace MediaPortal.Tests.Commands
       DoSchedule(proc);
       Assert.IsFalse(card1.IsRecording);
     }
+
     [Test]
     [Category("Recording")]
     public void TestPreRecording()
@@ -391,6 +421,7 @@ namespace MediaPortal.Tests.Commands
       StopRecord(proc);
       Assert.IsTrue(g_Player.Playing);
     }
+
     [Test]
     [Category("Recording")]
     public void TestTurnOffTimeshiftWhileRecording()
@@ -433,12 +464,14 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(g_Player.Playing);
 
       //switch channels
-      WatchTv(proc, "RTL 4",true);
+      WatchTv(proc, "RTL 4", true);
       Assert.IsTrue(g_Player.Playing);
     }
+
     #endregion
 
     #region test audio switching
+
     [Test]
     [Category("Audio stream selection")]
     public void TestGetAudioLanguageList()
@@ -448,10 +481,11 @@ namespace MediaPortal.Tests.Commands
       TimeShiftTv(proc, "RTL 4");
       ArrayList list = card1.GetAudioLanguageList();
       Assert.AreEqual(list.Count, 3);
-      Assert.AreEqual((int)list[0], 123);
-      Assert.AreEqual((int)list[1], 456);
-      Assert.AreEqual((int)list[2], 789);
+      Assert.AreEqual((int) list[0], 123);
+      Assert.AreEqual((int) list[1], 456);
+      Assert.AreEqual((int) list[2], 789);
     }
+
     [Test]
     [Category("Audio stream selection")]
     public void TestSwitchAudioStreamWithTimeShiftEnabled()
@@ -466,7 +500,6 @@ namespace MediaPortal.Tests.Commands
       proc.AddCommand(new SetAudioLanguageCommand(456));
       ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 456);
-
 
 
       proc.AddCommand(new SetAudioLanguageCommand(789));
@@ -490,15 +523,16 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(card1.GetAudioLanguage(), 456);
 
 
-
       proc.AddCommand(new SetAudioLanguageCommand(789));
       ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 789);
     }
+
     #endregion
 
     #region helper functions
-    void ProcessCommands(CommandProcessor proc)
+
+    private void ProcessCommands(CommandProcessor proc)
     {
       do
       {
@@ -506,7 +540,8 @@ namespace MediaPortal.Tests.Commands
         proc.ProcessCards();
       } while (proc.IsBusy);
     }
-    void DoSchedule(CommandProcessor proc)
+
+    private void DoSchedule(CommandProcessor proc)
     {
       proc.AddCommand(new CheckRecordingsCommand());
       do
@@ -517,7 +552,8 @@ namespace MediaPortal.Tests.Commands
         proc.ProcessCards();
       } while (proc.IsBusy);
     }
-    void StopRecord(CommandProcessor proc)
+
+    private void StopRecord(CommandProcessor proc)
     {
       DateTime dtNow = DateTime.Now;
       TVRecording rec = proc.TVCards[0].CurrentTVRecording;
@@ -541,36 +577,40 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(rec.Channel, recList[0].Channel);
       Assert.AreEqual(rec.Title, recList[0].Title);
     }
-    TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
+
+    private TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
     {
       DateTime startTime = dtStart;
       DateTime endTime = dtEnd;
       TVRecording rec = new TVRecording();
       rec.Channel = channelName;
       rec.Title = "unknown";
-      rec.Start = MediaPortal.Util.Utils.datetolong(startTime);
-      rec.End = MediaPortal.Util.Utils.datetolong(endTime);
+      rec.Start = Util.Utils.datetolong(startTime);
+      rec.End = Util.Utils.datetolong(endTime);
       rec.RecType = TVRecording.RecordingType.Once;
       TVDatabase.AddRecording(ref rec);
       return rec;
     }
-    void StartRecord(CommandProcessor proc, string channelName, DateTime dtStart, DateTime dtEnd)
+
+    private void StartRecord(CommandProcessor proc, string channelName, DateTime dtStart, DateTime dtEnd)
     {
       string chanName = proc.TVChannelName;
       int cardIndex = proc.CurrentCardIndex;
-      TVRecording rec=AddSchedule(channelName,  dtStart,  dtEnd);
+      TVRecording rec = AddSchedule(channelName, dtStart, dtEnd);
 
       //start recording it
       DoSchedule(proc);
 
       int cardNo;
-      bool result = proc.IsRecordingSchedule(rec, out  cardNo);
+      bool result = proc.IsRecordingSchedule(rec, out cardNo);
 
       Assert.IsTrue(result);
       Assert.AreEqual(cardNo, 0);
       Assert.AreEqual(proc.CurrentCardIndex, cardIndex);
-      if (cardIndex==0)
+      if (cardIndex == 0)
+      {
         Assert.AreEqual(proc.TVChannelName, channelName);
+      }
       Assert.AreEqual(proc.TVCards[0].TVChannel, rec.Channel);
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
@@ -587,12 +627,13 @@ namespace MediaPortal.Tests.Commands
       Assert.IsTrue(proc.TVCards[0].RecordingFileName.Length > 0);
       Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
-    void StartRecord(CommandProcessor proc, string channelName)
+
+    private void StartRecord(CommandProcessor proc, string channelName)
     {
       StartRecord(proc, channelName, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(+1));
     }
 
-    void StopTv(CommandProcessor proc)
+    private void StopTv(CommandProcessor proc)
     {
       proc.AddCommand(new StopTvCommand());
       ProcessCommands(proc);
@@ -605,7 +646,8 @@ namespace MediaPortal.Tests.Commands
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
       Assert.IsFalse(g_Player.Playing);
     }
-    void TimeShiftTv(CommandProcessor proc, string channelName)
+
+    private void TimeShiftTv(CommandProcessor proc, string channelName)
     {
       bool isTimeShifting = proc.TVCards[0].IsTimeShifting;
       //timeshift TV
@@ -630,7 +672,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
 
-    void WatchTv(CommandProcessor proc, string channelName)
+    private void WatchTv(CommandProcessor proc, string channelName)
     {
       //watch TV
       proc.AddCommand(new ViewTvCommand(channelName));
@@ -654,7 +696,8 @@ namespace MediaPortal.Tests.Commands
 
       Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
-    void WatchTv(CommandProcessor proc, string channelName,bool shouldBeTimeShifting)
+
+    private void WatchTv(CommandProcessor proc, string channelName, bool shouldBeTimeShifting)
     {
       //watch TV
       proc.AddCommand(new ViewTvCommand(channelName));
@@ -683,7 +726,8 @@ namespace MediaPortal.Tests.Commands
       }
       Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
-    void StartRadio(CommandProcessor proc, string stationName)
+
+    private void StartRadio(CommandProcessor proc, string stationName)
     {
       proc.AddCommand(new StartRadioCommand(stationName));
       ProcessCommands(proc);
@@ -694,7 +738,8 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
       Assert.IsFalse(g_Player.Playing);
     }
-    void StopRadio(CommandProcessor proc)
+
+    private void StopRadio(CommandProcessor proc)
     {
       proc.AddCommand(new StopRadioCommand());
       ProcessCommands(proc);
@@ -711,15 +756,17 @@ namespace MediaPortal.Tests.Commands
       }
       Assert.IsFalse(g_Player.Playing);
     }
-    void CompareDates(DateTime dt1, DateTime dt2)
+
+    private void CompareDates(DateTime dt1, DateTime dt2)
     {
       Assert.AreEqual(dt1.Year, dt2.Year);
       Assert.AreEqual(dt1.Month, dt2.Month);
       Assert.AreEqual(dt1.Day, dt2.Day);
       Assert.AreEqual(dt1.Hour, dt2.Hour);
       Assert.AreEqual(dt1.Minute, dt2.Minute);
-    // Assert.AreEqual(dt1.Second, dt2.Second);
+      // Assert.AreEqual(dt1.Second, dt2.Second);
     }
+
     #endregion
   }
 }

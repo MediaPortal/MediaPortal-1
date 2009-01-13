@@ -26,45 +26,40 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
-
-using SQLite.NET;
-
-using MediaPortal.Playlists;
-using MediaPortal.TagReader;
-using MediaPortal.Util;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Database;
 using MediaPortal.Music.Database;
+using MediaPortal.Profile;
+using MediaPortal.TagReader;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicDatabase : MediaPortal.Configuration.SectionSettings
+  public class MusicDatabase : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.CheckedListBox sharesListBox;
-    private MediaPortal.UserInterface.Controls.MPButton startButton;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.Windows.Forms.ProgressBar progressBar;
-    private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPCheckBox folderAsAlbumCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox monitorSharesCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUpdateSinceLastImport;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStripArtistPrefix;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbPrefixes;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxUseForThumbs;
-    private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseFolderThumb;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxUseAlbumThumbs;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateArtist;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateFolderThumb;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCreateGenre;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAllImages;
+    private MPGroupBox groupBox1;
+    private CheckedListBox sharesListBox;
+    private MPButton startButton;
+    private MPGroupBox groupBox2;
+    private ProgressBar progressBar;
+    private MPLabel fileLabel;
+    private IContainer components = null;
+    private MPCheckBox folderAsAlbumCheckBox;
+    private MPCheckBox monitorSharesCheckBox;
+    private MPCheckBox checkBoxUpdateSinceLastImport;
+    private MPCheckBox checkBoxStripArtistPrefix;
+    private MPTextBox tbPrefixes;
+    private MPGroupBox groupBoxUseForThumbs;
+    private MPCheckBox buildThumbsCheckBox;
+    private MPCheckBox checkBoxUseFolderThumb;
+    private MPGroupBox groupBoxUseAlbumThumbs;
+    private MPCheckBox checkBoxCreateArtist;
+    private MPCheckBox checkBoxCreateFolderThumb;
+    private MPCheckBox checkBoxCreateGenre;
+    private MPCheckBox checkBoxAllImages;
 
     public class MusicData
     {
@@ -78,7 +73,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
+    private MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
 
     public MusicDatabase()
       : this("Music Database")
@@ -99,7 +94,8 @@ namespace MediaPortal.Configuration.Sections
       get { return extensions; }
       set { extensions = value; }
     }
-    string[] extensions = new string[] { ".mp3" };
+
+    private string[] extensions = new string[] {".mp3"};
 
     public override void OnSectionActivated()
     {
@@ -111,11 +107,11 @@ namespace MediaPortal.Configuration.Sections
       //
       // Load selected shares
       //
-      SectionSettings section = SectionSettings.GetSection("Music Folders");
+      SectionSettings section = GetSection("Music Folders");
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList)section.GetSetting("shares");
+        ArrayList shares = (ArrayList) section.GetSetting("shares");
 
         foreach (string share in shares)
         {
@@ -129,12 +125,12 @@ namespace MediaPortal.Configuration.Sections
       //
       // Fetch extensions
       //
-      section = SectionSettings.GetSection("Music Extensions");
+      section = GetSection("Music Extensions");
 
       if (section != null)
       {
-        string extensions = (string)section.GetSetting("extensions");
-        Extensions = extensions.Split(new char[] { ',' });
+        string extensions = (string) section.GetSetting("extensions");
+        Extensions = extensions.Split(new char[] {','});
       }
 
       UpdateControlStatus();
@@ -145,18 +141,22 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
         checkBoxCreateArtist.Checked = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         checkBoxCreateGenre.Checked = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
         checkBoxUseFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
-        checkBoxAllImages.Checked = xmlreader.GetValueAsBool("musicfiles", "useAllImages", checkBoxUseFolderThumb.Checked);
+        checkBoxAllImages.Checked = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
+                                                             checkBoxUseFolderThumb.Checked);
         folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
-        checkBoxCreateFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", folderAsAlbumCheckBox.Checked);
+        checkBoxCreateFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs",
+                                                                     folderAsAlbumCheckBox.Checked);
         monitorSharesCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         checkBoxUpdateSinceLastImport.Checked = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
+                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
+                                                                                      "1900-01-01 00:00:00"));
         checkBoxStripArtistPrefix.Checked = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         tbPrefixes.Text = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
       }
@@ -167,7 +167,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("musicfiles", "extractthumbs", buildThumbsCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "createartistthumbs", checkBoxCreateArtist.Checked);
@@ -200,6 +200,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -233,9 +234,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
       this.groupBox1.Controls.Add(this.groupBoxUseForThumbs);
       this.groupBox1.Controls.Add(this.tbPrefixes);
@@ -410,7 +413,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.Location = new System.Drawing.Point(246, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
@@ -432,8 +437,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -446,8 +453,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 23);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
@@ -455,8 +464,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar
       // 
-      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar.Location = new System.Drawing.Point(16, 23);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
@@ -476,16 +487,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void sharesListBox_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
       UpdateControlStatus();
     }
 
-    private void sharesListBox_DoubleClick(object sender, System.EventArgs e)
+    private void sharesListBox_DoubleClick(object sender, EventArgs e)
     {
       UpdateControlStatus();
     }
@@ -503,7 +514,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void sharesListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void sharesListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       UpdateControlStatus();
     }
@@ -514,40 +525,45 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// 
-
-    void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+    private void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
     {
       progressBar.Value = e.progress;
       SetStatus(e.phase);
     }
 
-    private void startButton_Click(object sender, System.EventArgs e)
+    private void startButton_Click(object sender, EventArgs e)
     {
       ArrayList shares = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
-        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
+        string path = sharesListBox.Items[(int) sharesListBox.CheckedIndices[index]].ToString();
         if (Directory.Exists(path))
         {
           try
           {
             string driveName = path.Substring(0, 1);
             if (path.StartsWith(@"\\"))
+            {
               // we have the path in unc notation
               driveName = path;
+            }
 
-            ulong FreeBytesAvailable = MediaPortal.Util.Utils.GetFreeDiskSpace(driveName);
+            ulong FreeBytesAvailable = Util.Utils.GetFreeDiskSpace(driveName);
 
             if (FreeBytesAvailable > 0)
             {
-              ulong DiskSpace = FreeBytesAvailable / 1048576;
+              ulong DiskSpace = FreeBytesAvailable/1048576;
               if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
               {
-                Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path, DiskSpace.ToString());
+                Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path,
+                         DiskSpace.ToString());
                 shares.Add(path);
               }
               else
-                Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path, DiskSpace.ToString());
+              {
+                Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path,
+                         DiskSpace.ToString());
+              }
             }
           }
           catch (Exception)
@@ -556,7 +572,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged +=
+        new MusicDBReorgEventHandler(SetPercentDonebyEvent);
       groupBox1.Enabled = false;
       groupBox2.Enabled = true;
 
@@ -578,9 +595,11 @@ namespace MediaPortal.Configuration.Sections
       setting.ExcludeHiddenFiles = false;
 
       int appel = m_dbs.MusicDatabaseReorg(shares, setting);
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}", xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00"));
+        checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
+                                                           xmlreader.GetValueAsString("musicfiles", "lastImport",
+                                                                                      "1900-01-01 00:00:00"));
       }
       progressBar.Value = 100;
 
@@ -596,7 +615,7 @@ namespace MediaPortal.Configuration.Sections
     private void SetStatus(string status)
     {
       fileLabel.Text = status;
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
     }
 
     /// <summary>
@@ -604,22 +623,25 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void cancelButton_Click(object sender, System.EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
       //Not yet an option to stop rebuildin the database
       //stopRebuild = true;
     }
 
-    private void clearButton_Click(object sender, System.EventArgs e)
+    private void clearButton_Click(object sender, EventArgs e)
     {
-      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire music database?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+      DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire music database?",
+                                                  "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
       if (dialogResult == DialogResult.Yes)
       {
         string database = Config.GetFile(Config.Dir.Config, "MusicDatabaseV7.db3");
 
         if (File.Exists(database))
+        {
           File.Delete(database);
+        }
 
         MessageBox.Show("Music database has been cleared");
       }
@@ -628,7 +650,9 @@ namespace MediaPortal.Configuration.Sections
     private void folderAsAlbumCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       if (folderAsAlbumCheckBox.Checked)
+      {
         checkBoxCreateFolderThumb.Enabled = true;
+      }
       else
       {
         checkBoxCreateFolderThumb.Checked = false;
@@ -637,15 +661,16 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void checkBoxUseFolderThumb_CheckedChanged(object sender, EventArgs e)
-    {    
+    {
       if (checkBoxUseFolderThumb.Checked)
+      {
         checkBoxAllImages.Enabled = true;
+      }
       else
       {
         checkBoxAllImages.Checked = false;
         checkBoxAllImages.Enabled = false;
       }
     }
-
   }
 }

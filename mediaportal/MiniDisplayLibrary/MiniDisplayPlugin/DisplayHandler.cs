@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 using MediaPortal.GUI.Library;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
+using Image=MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -18,7 +19,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private int graphicTextHeight = -1;
     protected int heightInChars;
     private int heightInPixels;
-    private List<MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image> images;
+    private List<Image> images;
     protected Line[] lines;
     private readonly int pixelsToScroll;
     protected int[] pos;
@@ -42,7 +43,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.prevLines = new string[this.heightInChars];
       this.posSkips = new int[this.heightInChars];
       this.pos = new int[this.heightInChars];
-      font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
+      font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
       for (int i = 0; i < this.heightInChars; i++)
       {
         this.lines[i] = new Line();
@@ -66,9 +67,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           this.SendText();
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
-        Log.Error("MiniDisplayPlugin.DisplayHandler.DisplayLines(): CAUGHT EXCEPTION {0}\n\n{1}\n\n" + exception.Message, new object[] { exception.StackTrace });
+        Log.Error(
+          "MiniDisplayPlugin.DisplayHandler.DisplayLines(): CAUGHT EXCEPTION {0}\n\n{1}\n\n" + exception.Message,
+          new object[] {exception.StackTrace});
       }
     }
 
@@ -83,7 +87,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): No images to process", new object[0]);
       }
-      foreach (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image image in this.Images)
+      foreach (Image image in this.Images)
       {
         if (Settings.Instance.ExtensiveLogging)
         {
@@ -92,7 +96,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Bitmap bitmap = image.Bitmap;
         if (bitmap != null)
         {
-          graphics.DrawImage(bitmap, new RectangleF(new PointF((float)image.X, (float)image.Y), bitmap.PhysicalDimension));
+          graphics.DrawImage(bitmap,
+                             new RectangleF(new PointF((float) image.X, (float) image.Y), bitmap.PhysicalDimension));
         }
       }
     }
@@ -116,7 +121,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           goto Label_00E0;
         }
       }
-      if ((this.emptyBitmap.Width != Settings.Instance.GraphicWidth) || (this.emptyBitmap.Height != Settings.Instance.GraphicHeight))
+      if ((this.emptyBitmap.Width != Settings.Instance.GraphicWidth) ||
+          (this.emptyBitmap.Height != Settings.Instance.GraphicHeight))
       {
         this.emptyBitmap.Dispose();
         this.emptyBitmap = new Bitmap(this.widthInPixels, this.heightInPixels, PixelFormat.Format32bppArgb);
@@ -125,21 +131,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           graphics2.FillRectangle(this.graphicBrush, 0, 0, this.widthInPixels, this.heightInPixels);
         }
       }
-    Label_00E0:
-      return (Bitmap)this.emptyBitmap.Clone();
+      Label_00E0:
+      return (Bitmap) this.emptyBitmap.Clone();
     }
 
     protected string Process(int _line)
     {
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): Processing line #{0}", new object[] { _line });
+        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): Processing line #{0}", new object[] {_line});
       }
       Line line = this.lines[_line];
       string str = line.Process();
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): translated line #{0} to \"{2}\"", new object[] { _line, str });
+        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): translated line #{0} to \"{2}\"",
+                 new object[] {_line, str});
       }
       if ((str == null) || (str.Length == 0))
       {
@@ -157,24 +164,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.posSkips[_line] = 0;
           this.prevLines[_line] = str;
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
-        Log.Error("MiniDisplayPlugin.DisplayHandler.Process(): CAUGHT EXCEPTION - {0}\n\n{1}\n\n" + exception.Message, new object[] { exception.StackTrace });
+        Log.Error("MiniDisplayPlugin.DisplayHandler.Process(): CAUGHT EXCEPTION - {0}\n\n{1}\n\n" + exception.Message,
+                  new object[] {exception.StackTrace});
       }
       if (str.Length <= this.widthInChars)
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): final processing result: \"{0}\"", new object[] { str });
+          Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): final processing result: \"{0}\"", new object[] {str});
         }
         switch (line.Alignment)
         {
-          case MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered:
+          case Alignment.Centered:
             {
-              int count = (this.widthInChars - str.Length) / 2;
+              int count = (this.widthInChars - str.Length)/2;
               return (new string(' ', count) + str + new string(' ', (this.widthInChars - str.Length) - count));
             }
-          case MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Right:
+          case Alignment.Right:
             return string.Format("{0," + this.widthInChars + "}", str);
         }
         return string.Format("{0,-" + this.widthInChars + "}", str);
@@ -198,7 +207,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       if (Settings.Instance.ExtensiveLogging)
       {
-        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): final processing result: \"{0}\"", new object[] { str });
+        Log.Info("MiniDisplayPlugin.DisplayHandler.Process(): final processing result: \"{0}\"", new object[] {str});
       }
       return str;
     }
@@ -209,10 +218,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("MiniDisplayPlugin.DisplayHandler.ProcessG: Adjusting graphics Font size to {0}.", new object[] { Settings.Instance.FontSize });
+          Log.Debug("MiniDisplayPlugin.DisplayHandler.ProcessG: Adjusting graphics Font size to {0}.",
+                    new object[] {Settings.Instance.FontSize});
         }
         font.Dispose();
-        font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
+        font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
       }
       Line line = this.lines[_line];
       string str = line.Process();
@@ -230,14 +240,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.posSkips[_line] = 0;
             this.prevLines[_line] = str;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Error("MiniDisplayPlugin.DisplayHandler.ProcessG(): error - {0}" + exception.Message, new object[0]);
         }
         SizeF ef = _graphics.MeasureString(str, font);
         if (ef.Height > this.graphicTextHeight)
         {
-          this.graphicTextHeight = (int)(ef.Height + 0.5f);
+          this.graphicTextHeight = (int) (ef.Height + 0.5f);
         }
         if (ef.Width >= this.widthInPixels)
         {
@@ -246,7 +257,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.pos[_line] = 0;
           }
           str = str + " - " + str;
-          _graphics.DrawString(str, font, this.textBrush, new PointF((float)-this.pos[_line], (float)(_line * this.graphicTextHeight)));
+          _graphics.DrawString(str, font, this.textBrush,
+                               new PointF((float) -this.pos[_line], (float) (_line*this.graphicTextHeight)));
           if (this.posSkips[_line] > 2)
           {
             this.pos[_line] += this.pixelsToScroll;
@@ -265,11 +277,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           StringFormat format = new StringFormat();
           switch (line.Alignment)
           {
-            case MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered:
+            case Alignment.Centered:
               format.Alignment = StringAlignment.Center;
               break;
 
-            case MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Right:
+            case Alignment.Right:
               format.Alignment = StringAlignment.Far;
               break;
 
@@ -277,7 +289,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               format.Alignment = StringAlignment.Near;
               break;
           }
-          _graphics.DrawString(str, font, this.textBrush, new RectangleF(new PointF(0f, (float)(_line * this.graphicTextHeight)), new SizeF((float)this.widthInPixels, ef.Height)), format);
+          _graphics.DrawString(str, font, this.textBrush,
+                               new RectangleF(new PointF(0f, (float) (_line*this.graphicTextHeight)),
+                                              new SizeF((float) this.widthInPixels, ef.Height)), format);
         }
       }
     }
@@ -314,14 +328,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Called", new object[0]);
       Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Calling driver Setup() function", new object[0]);
-      this.display.Setup(Settings.Instance.Port, this.heightInChars, this.widthInChars, Settings.Instance.TextComDelay, this.heightInPixels, this.widthInPixels, Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight, Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+      this.display.Setup(Settings.Instance.Port, this.heightInChars, this.widthInChars, Settings.Instance.TextComDelay,
+                         this.heightInPixels, this.widthInPixels, Settings.Instance.GraphicComDelay,
+                         Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+                         Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
       if (font.SizeInPoints != Settings.Instance.FontSize)
       {
         font.Dispose();
-        font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
-        Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Forcing font size to {0}", new object[] { Settings.Instance.FontSize });
+        font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+        Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Forcing font size to {0}",
+                 new object[] {Settings.Instance.FontSize});
       }
-      if ((this.heightInPixels != Settings.Instance.GraphicHeight) || (this.widthInPixels != Settings.Instance.GraphicWidth))
+      if ((this.heightInPixels != Settings.Instance.GraphicHeight) ||
+          (this.widthInPixels != Settings.Instance.GraphicWidth))
       {
         this.heightInPixels = Settings.Instance.GraphicHeight;
         this.widthInPixels = Settings.Instance.GraphicWidth;
@@ -344,16 +363,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Log.Info("MiniDisplay.DisplayHandler.Stop(): completed", new object[0]);
     }
 
-    public List<MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image> Images
+    public List<Image> Images
     {
-      get
-      {
-        return this.images;
-      }
-      set
-      {
-        this.images = value;
-      }
+      get { return this.images; }
+      set { this.images = value; }
     }
 
     public List<Line> Lines
@@ -375,4 +388,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

@@ -23,10 +23,7 @@
 
 #endregion
 
-using System;
 using System.Web;
-using System.Text;
-using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
@@ -36,15 +33,18 @@ namespace MediaPortal.Utils.Web
   public class HtmlString
   {
     #region Constructors/Destructors
+
     /// <summary>
     /// Private constructor
     /// </summary>
     private HtmlString()
     {
     }
+
     #endregion
 
     #region Public Static Methods
+
     /// <summary>
     /// Tags the list.
     /// </summary>
@@ -64,9 +64,9 @@ namespace MediaPortal.Utils.Web
           // min lenght for a tag is 3 <x>
           // comments start <!-- 
           if (length >= 3 &&
-            (source[i + 1] == '/' || source[i + 1] == '!' ||
-            (source[i + 1] >= 'A' && source[i + 1] <= 'Z') ||
-            (source[i + 1] >= 'a' && source[i + 1] <= 'z')))
+              (source[i + 1] == '/' || source[i + 1] == '!' ||
+               (source[i + 1] >= 'A' && source[i + 1] <= 'Z') ||
+               (source[i + 1] >= 'a' && source[i + 1] <= 'z')))
           {
             MatchTag tag = new MatchTag(source, i, length);
             list.Add(tag);
@@ -105,11 +105,11 @@ namespace MediaPortal.Utils.Web
       stripped = HttpUtility.HtmlDecode(stripped);
 
       // replace unicode characters
-      stripped = stripped.Replace((char)145, '’');
-      stripped = stripped.Replace((char)146, '’');
-      stripped = stripped.Replace((char)148, '\"');
-      stripped = stripped.Replace((char)150, '-');
-      stripped = stripped.Replace((char)160, ' ');
+      stripped = stripped.Replace((char) 145, '’');
+      stripped = stripped.Replace((char) 146, '’');
+      stripped = stripped.Replace((char) 148, '\"');
+      stripped = stripped.Replace((char) 150, '-');
+      stripped = stripped.Replace((char) 160, ' ');
 
       return stripped;
     }
@@ -133,9 +133,11 @@ namespace MediaPortal.Utils.Web
 
       return stripped;
     }
+
     #endregion
 
     #region Private Static Methods
+
     /// <summary>
     /// Gets the length of a tag, give the source and start position
     /// </summary>
@@ -149,14 +151,20 @@ namespace MediaPortal.Utils.Web
       bool comment = false;
 
       if (strSource[StartPos] == '<')
+      {
         index++;
+      }
       if (strSource[StartPos + index] == '!')
+      {
         comment = true;
+      }
 
       while (StartPos + index < strSource.Length)
       {
         if (strSource[StartPos + index] == '<' && !comment)
+        {
           nesting++;
+        }
         if (strSource[StartPos + index] == '>')
         {
           if (comment && strSource[StartPos + index - 1] == '-')
@@ -182,11 +190,13 @@ namespace MediaPortal.Utils.Web
       }
 
       if (nesting > 0)
+      {
         return 0;
+      }
 
       return index;
-
     }
+
     #endregion
   }
 }

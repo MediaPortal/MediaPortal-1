@@ -24,30 +24,29 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
-using MediaPortal.InputDevices;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class RemoteWinLirc : MediaPortal.Configuration.SectionSettings
+  public class RemoteWinLirc : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel PathToWinlircLabel;
-    private MediaPortal.UserInterface.Controls.MPTextBox pathToWinlircTextBox;
-    private MediaPortal.UserInterface.Controls.MPButton browsePathToWinlircButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox infoTextBox;
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private MediaPortal.UserInterface.Controls.MPTextBox IRDelayTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel IRDelayLabel;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPCheckBox inputCheckBox;
+    private MPGroupBox groupBox2;
+    private MPLabel PathToWinlircLabel;
+    private MPTextBox pathToWinlircTextBox;
+    private MPButton browsePathToWinlircButton;
+    private MPTextBox infoTextBox;
+    private OpenFileDialog openFileDialog1;
+    private MPTextBox IRDelayTextBox;
+    private MPLabel IRDelayLabel;
+    private IContainer components = null;
 
     public RemoteWinLirc()
       : this("WINLIRC")
@@ -82,7 +81,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         inputCheckBox.Checked = xmlreader.GetValueAsBool("WINLIRC", "enabled", false);
         pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
@@ -98,12 +97,14 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("WINLIRC", "enabled", inputCheckBox.Checked);
         xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);
         if (IsInteger(IRDelayTextBox.Text) == false)
+        {
           IRDelayTextBox.Text = "300";
+        }
         xmlwriter.SetValue("WINLIRC", "delay", IRDelayTextBox.Text);
         //xmlwriter.SetValue("WINLIRC", "use_multiple_remotes", useMultipleCheckBox.Checked ? "true" : "false");
         //xmlwriter.SetValue("WINLIRC", "remote", remoteNameTextBox.Text);
@@ -112,8 +113,8 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -136,8 +137,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.IRDelayTextBox);
       this.groupBox1.Controls.Add(this.IRDelayLabel);
       this.groupBox1.Controls.Add(this.browsePathToWinlircButton);
@@ -153,8 +156,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // IRDelayTextBox
       // 
-      this.IRDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.IRDelayTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.IRDelayTextBox.Location = new System.Drawing.Point(168, 76);
       this.IRDelayTextBox.Name = "IRDelayTextBox";
       this.IRDelayTextBox.Size = new System.Drawing.Size(288, 20);
@@ -171,7 +176,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // browsePathToWinlircButton
       // 
-      this.browsePathToWinlircButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browsePathToWinlircButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.browsePathToWinlircButton.Location = new System.Drawing.Point(384, 51);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(72, 22);
@@ -181,8 +188,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pathToWinlircTextBox
       // 
-      this.pathToWinlircTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.pathToWinlircTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pathToWinlircTextBox.Location = new System.Drawing.Point(168, 52);
       this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
       this.pathToWinlircTextBox.Size = new System.Drawing.Size(208, 20);
@@ -208,9 +217,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.infoTextBox);
       this.groupBox2.Location = new System.Drawing.Point(0, 120);
       this.groupBox2.Name = "groupBox2";
@@ -221,9 +232,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.infoTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.infoTextBox.Location = new System.Drawing.Point(16, 24);
@@ -245,11 +258,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       UpdateForm();
     }
@@ -265,12 +278,11 @@ namespace MediaPortal.Configuration.Sections
       //remoteNameTextBox.Enabled  = inputCheckBox.Checked;
     }
 
-    private void WINLIRC_Load(object sender, System.EventArgs e)
+    private void WINLIRC_Load(object sender, EventArgs e)
     {
-
     }
 
-    private void browsePathToWinlircButton_Click(object sender, System.EventArgs e)
+    private void browsePathToWinlircButton_Click(object sender, EventArgs e)
     {
       using (openFileDialog1 = new OpenFileDialog())
       {
@@ -289,35 +301,38 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
     private void LoadInfo()
     {
       string[] lines = {
-												 "::Winlirc::\n",
-												 "> Winlirc must be installed on your PC",
-												 "> You should set-up Winlirc with the remote(s) you require.",
-												 "> To have Winlirc start when MP does, set the Path to WinLIRC.",
-												 "> You should use short names for remotes (like CABLE or AMP).",
-												 "> All remotes should be in 1 config file.",
-												 "",
-												 "::MediaPortal::",
-												 "Set-up your external channels in this format...",
-												 "  Remote1:Repeat:Code1[,Code2[,Code...]]|Remote2:Repeat:Code1[,Code2[,Code...]]",
-												 "Examples...",
-												 "  PACE4000:0:1,0,2,OK",
-												 "  PACE4000:0:1,0,2,OK|AMP:2:PowerOn",
-												 "  X10:8:dim_lounge|AMP:2:PowerOn|HIFI:0:mode_radio,3",
-												 "",
-												 "::ADDITIONAL::",
-												 "> Check out the remote configs @ http://lirc.sourceforge.net/remotes/"};
+                         "::Winlirc::\n",
+                         "> Winlirc must be installed on your PC",
+                         "> You should set-up Winlirc with the remote(s) you require.",
+                         "> To have Winlirc start when MP does, set the Path to WinLIRC.",
+                         "> You should use short names for remotes (like CABLE or AMP).",
+                         "> All remotes should be in 1 config file.",
+                         "",
+                         "::MediaPortal::",
+                         "Set-up your external channels in this format...",
+                         "  Remote1:Repeat:Code1[,Code2[,Code...]]|Remote2:Repeat:Code1[,Code2[,Code...]]",
+                         "Examples...",
+                         "  PACE4000:0:1,0,2,OK",
+                         "  PACE4000:0:1,0,2,OK|AMP:2:PowerOn",
+                         "  X10:8:dim_lounge|AMP:2:PowerOn|HIFI:0:mode_radio,3",
+                         "",
+                         "::ADDITIONAL::",
+                         "> Check out the remote configs @ http://lirc.sourceforge.net/remotes/"
+                       };
       infoTextBox.Lines = lines;
     }
+
     private bool IsInteger(object Expression)
     {
       bool isNum;
       double retNum;
-      isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+      isNum = Double.TryParse(Convert.ToString(Expression), NumberStyles.Integer, NumberFormatInfo.InvariantInfo,
+                              out retNum);
       return isNum;
     }
   }
 }
-

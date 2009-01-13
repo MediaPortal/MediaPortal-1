@@ -23,9 +23,10 @@
 
 #endregion
 
-using System;
 using System.Collections;
+using System.IO;
 using MediaPortal.Services;
+using MediaPortal.Webepg.Profile;
 
 namespace MediaPortal.EPG.config
 {
@@ -35,29 +36,34 @@ namespace MediaPortal.EPG.config
   public class EPGConfig
   {
     #region Variables
-    ArrayList _ConfigList;
-    int _MaxGrab;
-    string _strPath = "";
-    ILog _log;
+
+    private ArrayList _ConfigList;
+    private int _MaxGrab;
+    private string _strPath = "";
+    private ILog _log;
+
     #endregion
 
     #region Constructors/Destructors
+
     public EPGConfig(string path)
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-      _strPath=path;
+      _strPath = path;
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Property to get/set the maximum grab days
     /// </summary>
     public int MaxGrab
     {
-      get { return _MaxGrab;}
-      set { _MaxGrab=value;}
+      get { return _MaxGrab; }
+      set { _MaxGrab = value; }
     }
 
     public ArrayList GetAll()
@@ -69,27 +75,33 @@ namespace MediaPortal.EPG.config
     {
       _ConfigList = new ArrayList();
 
-      for(int i=0; i < configList.Count; i++)
+      for (int i = 0; i < configList.Count; i++)
       {
         EPGConfigData channel = (EPGConfigData) configList[i];
-        if(channel.ChannelID != null && channel.DisplayName != null && channel.PrimaryGrabberID != null)
+        if (channel.ChannelID != null && channel.DisplayName != null && channel.PrimaryGrabberID != null)
+        {
           _ConfigList.Add(channel);
+        }
       }
     }
 
     public EPGConfigData GetAt(int index)
     {
-      if(index < _ConfigList.Count)
+      if (index < _ConfigList.Count)
+      {
         return (EPGConfigData) _ConfigList[index];
+      }
       return null;
     }
 
     public int Add(EPGConfigData channel)
     {
-      if(channel.ChannelID != null && channel.DisplayName != null && channel.PrimaryGrabberID != null)
+      if (channel.ChannelID != null && channel.DisplayName != null && channel.PrimaryGrabberID != null)
       {
-        if ( _ConfigList == null)
+        if (_ConfigList == null)
+        {
           _ConfigList = new ArrayList();
+        }
         return _ConfigList.Add(channel);
       }
       return -1;
@@ -97,7 +109,8 @@ namespace MediaPortal.EPG.config
 
     public int UpdateAt(int index, EPGConfigData channel)
     {
-      if(index < _ConfigList.Count && channel.ChannelID != null && channel.DisplayName != null && channel.PrimaryGrabberID != null)
+      if (index < _ConfigList.Count && channel.ChannelID != null && channel.DisplayName != null &&
+          channel.PrimaryGrabberID != null)
       {
         _ConfigList.RemoveAt(index);
         return _ConfigList.Add(channel);
@@ -107,17 +120,21 @@ namespace MediaPortal.EPG.config
 
     public void RemoveAt(int index)
     {
-      if(index < _ConfigList.Count)
+      if (index < _ConfigList.Count)
+      {
         _ConfigList.RemoveAt(index);
+      }
     }
 
     public int IndexOf(string name)
     {
-      for(int i=0; i < _ConfigList.Count; i++)
+      for (int i = 0; i < _ConfigList.Count; i++)
       {
         EPGConfigData channel = (EPGConfigData) _ConfigList[i];
-        if(channel.DisplayName == name)
+        if (channel.DisplayName == name)
+        {
           return i;
+        }
       }
       return -1;
     }
@@ -127,11 +144,13 @@ namespace MediaPortal.EPG.config
       _ConfigList = new ArrayList();
 
       string configFile = _strPath + "\\WebEPG.xml";
-      if(!System.IO.File.Exists(configFile))
+      if (!File.Exists(configFile))
+      {
         return;
+      }
 
       _log.Info(LogType.WebEPG, "WebEPG Config: Loading Existing WebEPG.xml");
-      MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(configFile);
+      Xml xmlreader = new Xml(configFile);
       _MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
       int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
       for (int i = 1; i <= channelCount; i++)
@@ -141,12 +160,12 @@ namespace MediaPortal.EPG.config
         channel.DisplayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
 
         string GrabberID = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
-        if(GrabberID != "")
+        if (GrabberID != "")
         {
           int start = GrabberID.IndexOf("\\") + 1;
-          int end =  GrabberID.LastIndexOf(".");
+          int end = GrabberID.LastIndexOf(".");
 
-          string GrabberSite = GrabberID.Substring(start, end-start);
+          string GrabberSite = GrabberID.Substring(start, end - start);
           GrabberSite = GrabberSite.Replace("_", ".");
           channel.PrimaryGrabberName = GrabberSite;
           channel.PrimaryGrabberID = GrabberID;
@@ -156,7 +175,6 @@ namespace MediaPortal.EPG.config
 
           _ConfigList.Add(channel);
         }
-
       }
     }
 
@@ -165,19 +183,19 @@ namespace MediaPortal.EPG.config
       if (_ConfigList != null)
       {
         string confFile = _strPath + "\\WebEPG.xml";
-        if (System.IO.File.Exists(confFile))
+        if (File.Exists(confFile))
         {
-          System.IO.File.Delete(confFile.Replace(".xml", ".bak"));
-          System.IO.File.Move(confFile, confFile.Replace(".xml", ".bak"));
+          File.Delete(confFile.Replace(".xml", ".bak"));
+          File.Move(confFile, confFile.Replace(".xml", ".bak"));
         }
-        MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
+        Xml xmlwriter = new Xml(confFile);
 
         xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
         xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
 
         for (int i = 0; i < _ConfigList.Count; i++)
         {
-          EPGConfigData channel = (EPGConfigData)_ConfigList[i];
+          EPGConfigData channel = (EPGConfigData) _ConfigList[i];
           xmlwriter.SetValue((i + 1).ToString(), "ChannelID", channel.ChannelID);
           xmlwriter.SetValue((i + 1).ToString(), "DisplayName", channel.DisplayName);
           xmlwriter.SetValue((i + 1).ToString(), "Grabber1", channel.PrimaryGrabberID);
@@ -191,6 +209,7 @@ namespace MediaPortal.EPG.config
         xmlwriter.Save();
       }
     }
+
     #endregion
   }
 }

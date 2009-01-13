@@ -22,12 +22,9 @@
  */
 
 #endregion
-using System.ComponentModel;
-using System.ComponentModel.Design;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
+using System.ComponentModel;
 using System.Xml;
 
 namespace MediaPortal.MPInstaller
@@ -48,117 +45,67 @@ namespace MediaPortal.MPInstaller
     {
       Clear();
     }
+
     [Description("Minimum version of MediaPortal")]
     public string MPMinVersion
     {
-      set
-      {
-        mpminversion = value;
-      }
-      get
-      {
-        return mpminversion;
-      }
+      set { mpminversion = value; }
+      get { return mpminversion; }
     }
+
     [
-    Description("Maximum version of MediaPortal"),
+      Description("Maximum version of MediaPortal"),
     ]
     public string MPMaxVersion
     {
-      set
-      {
-        mpmaxversion = value;
-      }
-      get
-      {
-        return mpmaxversion;
-      }
+      set { mpmaxversion = value; }
+      get { return mpmaxversion; }
     }
 
     public string MinExtensionVersion
     {
-      set
-      {
-        minextensionversion = value;
-      }
-      get
-      {
-        return minextensionversion;
-      }
+      set { minextensionversion = value; }
+      get { return minextensionversion; }
     }
 
     public string MaxExtensionVersion
     {
-      set
-      {
-        maxextensionversion = value;
-      }
-      get
-      {
-        return maxextensionversion;
-      }
+      set { maxextensionversion = value; }
+      get { return maxextensionversion; }
     }
 
     public string ForumURL
     {
-      set
-      {
-        forumurl = value;
-      }
-      get
-      {
-        return forumurl;
-      }
+      set { forumurl = value; }
+      get { return forumurl; }
     }
 
     public string WebURL
     {
-      set
-      {
-        weburl = value;
-      }
-      get
-      {
-        return weburl;
-      }
+      set { weburl = value; }
+      get { return weburl; }
     }
 
     public DateTime CreationDate
     {
-      set
-      {
-        creationdate = value;
-      }
-      get
-      {
-        return creationdate;
-      }
+      set { creationdate = value; }
+      get { return creationdate; }
     }
+
     [Description("Used only when a grouping is specified. If is True alove select only one group")]
     public bool SingleGroupSelect
     {
-      set
-      {
-        singlegroupselect = value;
-      }
-      get
-      {
-        return singlegroupselect;
-      }
+      set { singlegroupselect = value; }
+      get { return singlegroupselect; }
     }
 
     [Description("If true clear the skin cache ")]
     public bool ClearSkinCache
     {
-      get
-      {
-        return clarskincache;
-      }
-      set
-      {
-        clarskincache = value;
-      }
+      get { return clarskincache; }
+      set { clarskincache = value; }
     }
+
     public void Save(XmlWriter writer)
     {
       writer.WriteElementString("MPMaxVersion", MPMaxVersion);
@@ -178,40 +125,59 @@ namespace MediaPortal.MPInstaller
         XmlNode node;
         node = basenode.SelectSingleNode("MPMaxVersion");
         if (node != null && node.InnerText != null)
+        {
           MPMaxVersion = node.InnerText;
+        }
         node = basenode.SelectSingleNode("MPMinVersion");
         if (node != null && node.InnerText != null)
+        {
           MPMinVersion = node.InnerText;
+        }
         node = basenode.SelectSingleNode("MinExtensionVersion");
         if (node != null && node.InnerText != null)
+        {
           MinExtensionVersion = node.InnerText;
+        }
         node = basenode.SelectSingleNode("MaxExtensionVersion");
         if (node != null && node.InnerText != null)
+        {
           MaxExtensionVersion = node.InnerText;
+        }
         node = basenode.SelectSingleNode("ForumURL");
         if (node != null && node.InnerText != null)
+        {
           ForumURL = node.InnerText;
+        }
         node = basenode.SelectSingleNode("WebURL");
         if (node != null && node.InnerText != null)
+        {
           WebURL = node.InnerText;
+        }
         node = basenode.SelectSingleNode("CreationDate");
         if (node != null && node.InnerText != null)
+        {
           try
           {
             CreationDate = DateTime.ParseExact(node.InnerText, "dd-MM-yy", null);
           }
-          catch (System.FormatException)
+          catch (FormatException)
           {
             CreationDate = DateTime.Now;
           }
+        }
         node = basenode.SelectSingleNode("SingleGroupSelect");
         if (node != null && node.InnerText != null)
+        {
           if (node.InnerText == "True")
+          {
             SingleGroupSelect = true;
-          else SingleGroupSelect = false;
-      
+          }
+          else
+          {
+            SingleGroupSelect = false;
+          }
+        }
       }
-
     }
 
     public void Clear()
@@ -229,55 +195,43 @@ namespace MediaPortal.MPInstaller
   {
     private string outputfilename;
     private bool defaultfile;
+
     public FilePropertiesClass()
     {
-
     }
 
     public string OutputFileName
     {
-      set
-      {
-        outputfilename = value;
-      }
-      get
-      {
-        return outputfilename;
-      }
+      set { outputfilename = value; }
+      get { return outputfilename; }
     }
 
-    public bool  DefaultFile
+    public bool DefaultFile
     {
-      set
-      {
-        defaultfile = value;
-      }
-      get
-      {
-        return defaultfile;
-      }
-
+      set { defaultfile = value; }
+      get { return defaultfile; }
     }
-    
+
     public void Clear()
     {
       OutputFileName = string.Empty;
       DefaultFile = false;
     }
-    
-    override public string ToString()
+
+    public override string ToString()
     {
-      string x_ret=string.Empty;;
-      x_ret += "OutputFileName" + "=" + OutputFileName+"|";
+      string x_ret = string.Empty;
+      ;
+      x_ret += "OutputFileName" + "=" + OutputFileName + "|";
       x_ret += "DefaultFile" + "=" + DefaultFile.ToString() + "|";
       return x_ret;
     }
-    
+
     public FilePropertiesClass Parse(string fullstring)
     {
       this.Clear();
       string[] temparray = fullstring.Split('|');
-      foreach(string s in temparray)
+      foreach (string s in temparray)
       {
         if (s.Contains("="))
         {
@@ -287,7 +241,7 @@ namespace MediaPortal.MPInstaller
               OutputFileName = s.Substring(s.IndexOf('=') + 1);
               break;
             case "DefaultFile":
-              DefaultFile = s.Substring(s.IndexOf('=') + 1).ToUpper()=="TRUE"?true :false;
+              DefaultFile = s.Substring(s.IndexOf('=') + 1).ToUpper() == "TRUE" ? true : false;
               break;
           }
         }

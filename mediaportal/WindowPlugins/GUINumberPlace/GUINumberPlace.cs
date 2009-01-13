@@ -26,14 +26,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using System.Timers;
+using System.Windows.Forms;
 using System.Xml.Serialization;
-
 using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using Timer=System.Timers.Timer;
 
 namespace MediaPortal.GUI.NumberPlace
 {
@@ -72,6 +73,7 @@ namespace MediaPortal.GUI.NumberPlace
         get { return name; }
         set { name = value; }
       }
+
       public int Score
       {
         get { return score; }
@@ -92,6 +94,7 @@ namespace MediaPortal.GUI.NumberPlace
         return item2.Score - item1.Score;
       }
     }
+
     #region Serialization
 
     [Serializable]
@@ -108,7 +111,7 @@ namespace MediaPortal.GUI.NumberPlace
       {
         m_bShow = false;
         m_bBlock = false;
-        m_bLevel = (int)LevelName.Easy;
+        m_bLevel = (int) LevelName.Easy;
         _filter = -1;
         _showCandidates = false;
       }
@@ -158,7 +161,7 @@ namespace MediaPortal.GUI.NumberPlace
 
       public void Load()
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           m_bShow = xmlreader.GetValueAsBool("NumberPlace", "showerrormoves", false);
           m_bBlock = xmlreader.GetValueAsBool("NumberPlace", "blockerrormoves", false);
@@ -170,14 +173,16 @@ namespace MediaPortal.GUI.NumberPlace
             string name = xmlreader.GetValueAsString("NumberPlace", "name" + i, string.Empty);
             int score = xmlreader.GetValueAsInt("NumberPlace", "score" + i, 0);
             if (!name.Equals(string.Empty))
+            {
               m_highScore.Add(new Highscore(name, score));
+            }
           }
         }
       }
 
       public void Save()
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValueAsBool("NumberPlace", "showerrormoves", m_bShow);
           xmlwriter.SetValueAsBool("NumberPlace", "blockerrormoves", m_bBlock);
@@ -197,22 +202,19 @@ namespace MediaPortal.GUI.NumberPlace
     private Grid grid = new Grid(3);
     private static Random random = new Random(DateTime.Now.Millisecond);
 
-    [SkinControlAttribute((int)SkinControlIDs.BTN_NEW_GAME)]
-    protected GUIButtonControl btnNewGame = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_HELP_ONCE)]
-    protected GUIButtonControl btnHelpOnce = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_RESET_GAME)]
-    protected GUIButtonControl btnResetGame = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_SOLVE)]
-    protected GUIButtonControl btnSolve = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)]
-    protected GUIToggleButtonControl btnBlockInvalidMoves = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)]
-    protected GUIToggleButtonControl btnShowInvalidMoves = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_LEVEL)]
-    protected GUIButtonControl btnLevel = null;
-    [SkinControlAttribute((int)SkinControlIDs.BTN_CLEAR)]
-    protected GUIButtonControl btnClear = null;
+    [SkinControl((int) SkinControlIDs.BTN_NEW_GAME)] protected GUIButtonControl btnNewGame = null;
+    [SkinControl((int) SkinControlIDs.BTN_HELP_ONCE)] protected GUIButtonControl btnHelpOnce = null;
+    [SkinControl((int) SkinControlIDs.BTN_RESET_GAME)] protected GUIButtonControl btnResetGame = null;
+    [SkinControl((int) SkinControlIDs.BTN_SOLVE)] protected GUIButtonControl btnSolve = null;
+
+    [SkinControl((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES)] protected GUIToggleButtonControl btnBlockInvalidMoves =
+      null;
+
+    [SkinControl((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES)] protected GUIToggleButtonControl btnShowInvalidMoves =
+      null;
+
+    [SkinControl((int) SkinControlIDs.BTN_LEVEL)] protected GUIButtonControl btnLevel = null;
+    [SkinControl((int) SkinControlIDs.BTN_CLEAR)] protected GUIButtonControl btnClear = null;
 
 
     private static readonly string pluginConfigFileName = "mynumberplace";
@@ -220,7 +222,7 @@ namespace MediaPortal.GUI.NumberPlace
     protected static long m_dwCellIncorrectTextColor = 0xFFFF0000;
     protected static long m_dwTextColor = 0xFFFFFFFF;
 
-    private System.Timers.Timer timer = new System.Timers.Timer();
+    private Timer timer = new Timer();
     private TimeSpan totalTime = new TimeSpan(1000);
     private DateTime startTime;
     private string strSeconds = "00";
@@ -232,23 +234,23 @@ namespace MediaPortal.GUI.NumberPlace
     private bool _nextNumberIsToggle = false;
     private bool _nextNumberIsFilter = false;
 
-    Settings _Settings = new Settings();
+    private Settings _Settings = new Settings();
 
     public GUINumberPlace()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_NUMBERPLACE;
+      GetID = (int) Window.WINDOW_NUMBERPLACE;
     }
 
 
     public override bool Init()
     {
       // pre-register the control class so that the factory knows how to create it
-      GUIControlFactory.RegisterControl("cell", typeof(CellControl));
+      GUIControlFactory.RegisterControl("cell", typeof (CellControl));
 
       // Create our skin xml file
       CreateSkinXML(GetWindowId(), GUIGraphicsContext.Skin);
 
-      this.timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimer_Tick);
+      this.timer.Elapsed += new ElapsedEventHandler(OnTimer_Tick);
 
       // Load the skin xml file
       return Load(GUIGraphicsContext.Skin + @"\" + pluginConfigFileName + ".xml");
@@ -294,7 +296,7 @@ namespace MediaPortal.GUI.NumberPlace
             int data = reader.ReadByte();
             while (data != -1)
             {
-              writer.WriteByte((byte)data);
+              writer.WriteByte((byte) data);
               data = reader.ReadByte();
             }
             writer.Flush();
@@ -314,20 +316,20 @@ namespace MediaPortal.GUI.NumberPlace
 
         if (_Settings.Show)
         {
-          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
+          GUIControl.SelectControl(GetID, ((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
+          GUIControl.DeSelectControl(GetID, ((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
 
         if (_Settings.Block)
         {
-          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
+          GUIControl.SelectControl(GetID, ((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
+          GUIControl.DeSelectControl(GetID, ((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
 
         for (int i = 1; i < 4; i++)
@@ -336,7 +338,9 @@ namespace MediaPortal.GUI.NumberPlace
           GUIPropertyManager.SetProperty("#numberplace.score" + i, " ");
         }
         if (gameRunning)
+        {
           ResumeTimer();
+        }
 
         UpdateButtonStates();
         base.OnPageLoad();
@@ -357,8 +361,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           cntlFoc.editable = true;
           cntlFoc.CellValue = 0;
           cntlFoc.SolutionValue = 0;
@@ -373,8 +377,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           cntlFoc.ClearCandidates();
           //if (cntlFoc.CellValue == 0)
           {
@@ -395,8 +399,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           cntlFoc.ClearCandidates();
         }
       }
@@ -409,21 +413,25 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           if (cntlFoc.CellValue == 0)
           {
             IList candidates = grid.Possibilities(row, column);
             for (int i = 1; i <= 9; i++)
-            //foreach (int candidate in candidates)
+              //foreach (int candidate in candidates)
             {
               if (!candidates.Contains(i))
+              {
                 cntlFoc.RemoveCandidate(i);
+              }
             }
             cntlFoc.HighlightCandidate(_Settings.Filter);
 
             if ((_Settings.Filter == 0) && (candidates.Count == 2))
+            {
               cntlFoc.Highlight = true;
+            }
 
             cntlFoc.ShowCandidates = _Settings.ShowCandidates;
           }
@@ -437,10 +445,12 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           if (cntlFoc.CellValue == 0)
+          {
             return false;
+          }
         }
       }
       return true;
@@ -449,9 +459,13 @@ namespace MediaPortal.GUI.NumberPlace
     private void ShowInvalid()
     {
       if (_Settings.Show)
+      {
         CellControl.M_dwCellIncorrectTextColor = m_dwCellIncorrectTextColor;
+      }
       else
+      {
         CellControl.M_dwCellIncorrectTextColor = m_dwTextColor;
+      }
     }
 
     private bool SolvedCorrect()
@@ -460,8 +474,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           if ((cntlFoc.CellValue != cntlFoc.SolutionValue) && cntlFoc.editable)
           {
             return false;
@@ -486,7 +500,9 @@ namespace MediaPortal.GUI.NumberPlace
         }
         if (i == 99)
         {
-          Log.Debug("GUINumberPlace: None of the generated games where hard enough - aborting with new game at rating: {0}", rating);
+          Log.Debug(
+            "GUINumberPlace: None of the generated games where hard enough - aborting with new game at rating: {0}",
+            rating);
           break;
         }
       }
@@ -497,7 +513,7 @@ namespace MediaPortal.GUI.NumberPlace
     private void UpdateButtonStates()
     {
       string textLine = GUILocalizeStrings.Get(19107); // Level:
-      switch ((LevelName)_Settings.Level)
+      switch ((LevelName) _Settings.Level)
       {
         case LevelName.Kids:
           textLine += GUILocalizeStrings.Get(19115); // kids
@@ -521,8 +537,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000 * (row + 1)) + column;
-          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+          int cellControlId = (1000*(row + 1)) + column;
+          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
           if (cntlFoc.editable)
           {
             cntlFoc.CellValue = 0;
@@ -535,12 +551,12 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void Result()
     {
-      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       if (SolvedCorrect())
       {
         StopTimer();
         gameRunning = false;
-        int score = (100000000 / gameRating) / (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds);
+        int score = (100000000/gameRating)/(totalTime.Hours*3600 + totalTime.Minutes*60 + totalTime.Seconds);
 
         dlg.SetHeading(GUILocalizeStrings.Get(19111)); // Game Over
         dlg.SetLine(1, GUILocalizeStrings.Get(19112)); // Congratulation!
@@ -561,7 +577,8 @@ namespace MediaPortal.GUI.NumberPlace
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }
 
-        Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}", (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds), score, gameRating);
+        Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}",
+                 (totalTime.Hours*3600 + totalTime.Minutes*60 + totalTime.Seconds), score, gameRating);
 
         //Utils.PlaySound("notify.wav", false, true);
       }
@@ -576,22 +593,31 @@ namespace MediaPortal.GUI.NumberPlace
     }
 
     #region Timer Functions
-    public void OnTimer_Tick(object sender, System.EventArgs e)
+
+    public void OnTimer_Tick(object sender, EventArgs e)
     {
       if (gameRunning)
+      {
         totalTime = DateTime.Now.Subtract(startTime);
+      }
 
       strSeconds = "";
       strMinutes = "";
       strHours = "";
       if (totalTime.Seconds < 10)
+      {
         strSeconds = "0";
+      }
       strSeconds += totalTime.Seconds;
       if (totalTime.Minutes < 10)
+      {
         strMinutes = "0";
+      }
       strMinutes += totalTime.Minutes;
       if (totalTime.Hours > 0)
+      {
         strHours = totalTime.Hours.ToString();
+      }
     }
 
     private void ResumeTimer()
@@ -610,25 +636,29 @@ namespace MediaPortal.GUI.NumberPlace
       strSeconds = "00";
       strMinutes = "00";
       strHours = "";
-
     }
 
     private void StopTimer()
     {
       timer.Enabled = false;
       OnTimer_Tick(null, null);
-
     }
+
     #endregion
 
     private string GetPlayerName()
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard) return null;
+      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return null;
+      }
       keyboard.Reset();
       keyboard.DoModal(GetID);
       if (keyboard.IsConfirmed)
+      {
         return keyboard.Text;
+      }
       return "unknown";
     }
 
@@ -644,8 +674,8 @@ namespace MediaPortal.GUI.NumberPlace
           {
             for (int column = 0; column < grid.CellsInRow; column++)
             {
-              int cellControlId = (1000 * (row + 1)) + column;
-              CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+              int cellControlId = (1000*(row + 1)) + column;
+              CellControl cntlFoc = (CellControl) GetControl(cellControlId);
               if (cntlFoc.editable)
               {
                 cntlFoc.CellValue = solution.cells[row, column];
@@ -655,7 +685,6 @@ namespace MediaPortal.GUI.NumberPlace
             }
           }
         }
-
       }
       else if (control == btnNewGame)
       {
@@ -665,7 +694,7 @@ namespace MediaPortal.GUI.NumberPlace
         int maxrating = 0;
         ClearGrid();
         Grid puzzle = new Grid();
-        switch ((LevelName)_Settings.Level)
+        switch ((LevelName) _Settings.Level)
         {
           case LevelName.Kids:
             minrating = 550;
@@ -688,23 +717,23 @@ namespace MediaPortal.GUI.NumberPlace
         gameRating = Solver.Rate(puzzle);
         //puzzle = Solver.Generate(3);
         Grid solution = Solver.Solve(puzzle);
-        if ((LevelName)_Settings.Level == LevelName.Easy)
+        if ((LevelName) _Settings.Level == LevelName.Easy)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 10);
           gameRating = Solver.Rate(puzzle);
         }
-        else if ((LevelName)_Settings.Level == LevelName.Kids)
+        else if ((LevelName) _Settings.Level == LevelName.Kids)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 20);
-          gameRating = Solver.Rate(puzzle) * 2;
+          gameRating = Solver.Rate(puzzle)*2;
         }
 
         for (int row = 0; row < grid.CellsInRow; row++)
         {
           for (int column = 0; column < grid.CellsInRow; column++)
           {
-            int cellControlId = (1000 * (row + 1)) + column;
-            CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+            int cellControlId = (1000*(row + 1)) + column;
+            CellControl cntlFoc = (CellControl) GetControl(cellControlId);
             cntlFoc.CellValue = puzzle.cells[row, column];
             if (cntlFoc.CellValue > 0)
             {
@@ -722,9 +751,13 @@ namespace MediaPortal.GUI.NumberPlace
         StartTimer();
         gameRunning = true;
         if (_Settings.Show || _Settings.Block)
+        {
           isScoreGame = false;
+        }
         else
+        {
           isScoreGame = true;
+        }
       }
       else if (control == btnBlockInvalidMoves)
       {
@@ -732,7 +765,9 @@ namespace MediaPortal.GUI.NumberPlace
         if (btnBlockInvalidMoves.Selected)
         {
           if (btnShowInvalidMoves.Selected)
+          {
             _Settings.Show = btnShowInvalidMoves.Selected = false;
+          }
           isScoreGame = false;
         }
         _Settings.Save();
@@ -748,7 +783,9 @@ namespace MediaPortal.GUI.NumberPlace
         if (btnShowInvalidMoves.Selected)
         {
           if (btnBlockInvalidMoves.Selected)
+          {
             _Settings.Block = btnBlockInvalidMoves.Selected = false;
+          }
           isScoreGame = false;
         }
         ShowInvalid();
@@ -756,19 +793,19 @@ namespace MediaPortal.GUI.NumberPlace
       }
       else if (control == btnLevel)
       {
-        switch ((LevelName)_Settings.Level)
+        switch ((LevelName) _Settings.Level)
         {
           case LevelName.Kids:
-            _Settings.Level = (int)LevelName.Easy;
+            _Settings.Level = (int) LevelName.Easy;
             break;
           case LevelName.Easy:
-            _Settings.Level = (int)LevelName.Medium;
+            _Settings.Level = (int) LevelName.Medium;
             break;
           case LevelName.Medium:
-            _Settings.Level = (int)LevelName.Hard;
+            _Settings.Level = (int) LevelName.Hard;
             break;
           case LevelName.Hard:
-            _Settings.Level = (int)LevelName.Kids;
+            _Settings.Level = (int) LevelName.Kids;
             break;
         }
         UpdateButtonStates();
@@ -784,8 +821,8 @@ namespace MediaPortal.GUI.NumberPlace
         {
           for (column = 0; column < 9 && m < candidateIndex; column++)
           {
-            int cellControlId = (1000 * (row + 1)) + column;
-            CellControl cntlFoc = (CellControl)GetControl(cellControlId);
+            int cellControlId = (1000*(row + 1)) + column;
+            CellControl cntlFoc = (CellControl) GetControl(cellControlId);
             if (cntlFoc.editable == true && cntlFoc.CellValue == 0)
             {
               m++;
@@ -809,25 +846,23 @@ namespace MediaPortal.GUI.NumberPlace
 
     public override void OnAction(Action action)
     {
-
       if (action.wID == Action.ActionType.ACTION_SELECT_ITEM || action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
       {
         int controlId = GetFocusControlId();
         if (controlId >= 1000 && controlId <= 9008)
         {
           // Show dialog
-          CellControl cntlFoc = (CellControl)GetControl(controlId);
-          int row = (controlId / 1000) - 1;
-          int column = controlId % 1000;
+          CellControl cntlFoc = (CellControl) GetControl(controlId);
+          int row = (controlId/1000) - 1;
+          int column = controlId%1000;
 
           if (cntlFoc.editable)
           {
-
-            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
             if (dlg != null)
             {
               dlg.Reset();
-              dlg.SetHeading(GUILocalizeStrings.Get(19116));  // Cell value
+              dlg.SetHeading(GUILocalizeStrings.Get(19116)); // Cell value
 
               for (int index = 1; index < 10; index++)
               {
@@ -855,7 +890,9 @@ namespace MediaPortal.GUI.NumberPlace
                     grid.cells[row, column] = dlg.SelectedId;
 
                     if (this.GridIsComplete())
+                    {
                       this.Result();
+                    }
                   }
                 }
               }
@@ -865,14 +902,14 @@ namespace MediaPortal.GUI.NumberPlace
         }
       }
       else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED ||
-            (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
+               (action.wID >= Action.ActionType.REMOTE_0 && action.wID <= Action.ActionType.REMOTE_9))
       {
         int controlId = GetFocusControlId();
         if (controlId >= 1000 && controlId <= 9008)
         {
-          CellControl cntlFoc = (CellControl)GetControl(controlId);
-          int row = (controlId / 1000) - 1;
-          int column = controlId % 1000;
+          CellControl cntlFoc = (CellControl) GetControl(controlId);
+          int row = (controlId/1000) - 1;
+          int column = controlId%1000;
 
           if (cntlFoc != null)
           {
@@ -883,11 +920,11 @@ namespace MediaPortal.GUI.NumberPlace
                 cntlFoc.CellValue = 0;
                 grid.cells[row, column] = 0;
               }
-              else if (action.m_key.KeyChar == 35)  // #
+              else if (action.m_key.KeyChar == 35) // #
               {
                 _nextNumberIsToggle = true;
               }
-              else if (action.m_key.KeyChar == 42)  // *
+              else if (action.m_key.KeyChar == 42) // *
               {
                 _nextNumberIsFilter = true;
               }
@@ -904,7 +941,9 @@ namespace MediaPortal.GUI.NumberPlace
                   grid.cells[row, column] = value;
 
                   if (this.GridIsComplete())
+                  {
                     this.Result();
+                  }
                 }
               }
               else if (_nextNumberIsToggle)
@@ -912,9 +951,13 @@ namespace MediaPortal.GUI.NumberPlace
                 if (value > 0)
                 {
                   if (cntlFoc.IsCandidate(value))
+                  {
                     cntlFoc.RemoveCandidate(value);
+                  }
                   else
+                  {
                     cntlFoc.SetCandidate(value);
+                  }
                 }
                 _nextNumberIsToggle = false;
               }
@@ -944,11 +987,13 @@ namespace MediaPortal.GUI.NumberPlace
       base.OnAction(action);
     }
 
-    void ShowFilterMenu()
+    private void ShowFilterMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(19120); // Filter Candidates
 
@@ -967,7 +1012,9 @@ namespace MediaPortal.GUI.NumberPlace
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
+      {
         return;
+      }
       switch (dlg.SelectedId)
       {
         case 10:
@@ -985,11 +1032,13 @@ namespace MediaPortal.GUI.NumberPlace
       CheckCandidates();
     }
 
-    void ShowToggleCandidatesMenu()
+    private void ShowToggleCandidatesMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(19133); // Add/Remove Candidate
 
@@ -1006,30 +1055,38 @@ namespace MediaPortal.GUI.NumberPlace
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
+      {
         return;
+      }
 
       int controlId = GetFocusControlId();
       if (controlId >= 1000 && controlId <= 9008)
       {
-        CellControl cntlFoc = (CellControl)GetControl(controlId);
+        CellControl cntlFoc = (CellControl) GetControl(controlId);
 
         if (cntlFoc != null)
         {
           if (cntlFoc.IsCandidate(dlg.SelectedId))
+          {
             cntlFoc.RemoveCandidate(dlg.SelectedId);
+          }
           else
+          {
             cntlFoc.SetCandidate(dlg.SelectedId);
+          }
         }
       }
 
       CheckCandidates();
     }
 
-    void ShowCandidatesMenu()
+    private void ShowCandidatesMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(19143); // Candidates
 
@@ -1041,7 +1098,7 @@ namespace MediaPortal.GUI.NumberPlace
       int controlId = GetFocusControlId();
       if (controlId >= 1000 && controlId <= 9008)
       {
-        CellControl cntlFoc = (CellControl)GetControl(controlId);
+        CellControl cntlFoc = (CellControl) GetControl(controlId);
         if (cntlFoc != null)
         {
           dlg.Add(GUILocalizeStrings.Get(19151)); // Add/remove candidates
@@ -1051,7 +1108,9 @@ namespace MediaPortal.GUI.NumberPlace
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
+      {
         return;
+      }
       switch (dlg.SelectedId)
       {
         case 1:
@@ -1075,11 +1134,13 @@ namespace MediaPortal.GUI.NumberPlace
       CheckCandidates();
     }
 
-    void ShowContextMenu()
+    private void ShowContextMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
+      {
         return;
+      }
       dlg.Reset();
       dlg.SetHeading(19148); // Assistance
 
@@ -1089,7 +1150,9 @@ namespace MediaPortal.GUI.NumberPlace
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
+      {
         return;
+      }
       switch (dlg.SelectedId)
       {
         case 1:
@@ -1107,13 +1170,20 @@ namespace MediaPortal.GUI.NumberPlace
       // Do not render if not visible.
       if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible) return;
+        if (!IsVisible)
+        {
+          return;
+        }
       }
 
       if (!String.IsNullOrEmpty(strHours))
+      {
         GUIPropertyManager.SetProperty("#numberplace.time", strHours + ":" + strMinutes + ":" + strSeconds);
+      }
       else
+      {
         GUIPropertyManager.SetProperty("#numberplace.time", strMinutes + ":" + strSeconds);
+      }
       //GUIPropertyManager.SetProperty("#selecteditem", strMinutes + ":" + strSeconds);
 
       for (int i = 0; i < _Settings.HighScore.Count; i++)
@@ -1165,9 +1235,10 @@ namespace MediaPortal.GUI.NumberPlace
       return false;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
-      strButtonText = GUILocalizeStrings.Get(19101);  // Sudoku
+      strButtonText = GUILocalizeStrings.Get(19101); // Sudoku
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
       strPictureImage = "hover_" + pluginConfigFileName + ".png";
@@ -1184,6 +1255,5 @@ namespace MediaPortal.GUI.NumberPlace
     }
 
     #endregion
-
   }
 }

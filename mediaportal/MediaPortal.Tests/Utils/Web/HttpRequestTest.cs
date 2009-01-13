@@ -23,8 +23,8 @@
 
 #endregion
 
-using NUnit.Framework;
 using MediaPortal.Utils.Web;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Utils.Web
 {
@@ -76,7 +76,6 @@ namespace MediaPortal.Tests.Utils.Web
 
       request.ReplaceTag("[POSTDATA]", "tagpostdata");
       Assert.IsTrue("tagpath?tagpostdata" == request.PostQuery);
-
     }
 
     [Test]

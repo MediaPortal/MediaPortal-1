@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.ControlDevices
 {
@@ -78,8 +76,5 @@ namespace MediaPortal.ControlDevices
     IControlSettings Settings { get; }
 
     void Initialize();
-
-    
-
   }
 }

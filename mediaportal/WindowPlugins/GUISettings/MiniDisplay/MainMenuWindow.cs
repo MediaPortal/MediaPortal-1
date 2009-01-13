@@ -23,36 +23,23 @@
 
 #endregion
 
-using System;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class MainMenuWindow : GUIWindow
   {
-    [SkinControlAttribute(3)]
-    protected GUILabelControl labelInfo1 = null;
-    [SkinControlAttribute(4)]
-    protected GUILabelControl labelInfo2 = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnKeyPad = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnDisplayOptions = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnDisplayControl = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnEqualizer = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnBacklight = null;
-    [SkinControlAttribute(10)]
-    protected GUIButtonControl btnRemote = null;
-    [SkinControlAttribute(11)]
-    protected GUIToggleButtonControl btnMonitorPower = null;
-    [SkinControlAttribute(12)]
-    protected GUISelectButtonControl btnContrast = null;
-    [SkinControlAttribute(13)]
-    protected GUISelectButtonControl btnBrightness = null;
+    [SkinControl(3)] protected GUILabelControl labelInfo1 = null;
+    [SkinControl(4)] protected GUILabelControl labelInfo2 = null;
+    [SkinControl(5)] protected GUIButtonControl btnKeyPad = null;
+    [SkinControl(6)] protected GUIButtonControl btnDisplayOptions = null;
+    [SkinControl(7)] protected GUIButtonControl btnDisplayControl = null;
+    [SkinControl(8)] protected GUIButtonControl btnEqualizer = null;
+    [SkinControl(9)] protected GUIButtonControl btnBacklight = null;
+    [SkinControl(10)] protected GUIButtonControl btnRemote = null;
+    [SkinControl(11)] protected GUIToggleButtonControl btnMonitorPower = null;
+    [SkinControl(12)] protected GUISelectButtonControl btnContrast = null;
+    [SkinControl(13)] protected GUISelectButtonControl btnBrightness = null;
 
     public MainMenuWindow()
     {
@@ -152,4 +139,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

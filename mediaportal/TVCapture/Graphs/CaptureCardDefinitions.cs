@@ -24,18 +24,20 @@
 #endregion
 
 using System;
-using System.Xml;
-using DShowNET;
-using DShowNET.Helper;
 using System.Collections;
 using System.Collections.Generic;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.IO;
+using System.Xml;
+using DirectShowLib;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace TVCapture
 {
+
   #region Data Classes
+
   public enum CardTypes
   {
     Digital_SS2,
@@ -45,12 +47,12 @@ namespace TVCapture
     Analog_MCE,
     Dummy,
   }
+
   public class CapabilityDefinition
   {
     public bool HasTv;
     public bool HasRadio;
     public CardTypes CardType;
-
   }
 
   public class FilterDefinition
@@ -59,8 +61,8 @@ namespace TVCapture
     public string FriendlyName;
     public bool CheckDevice;
     public string MonikerDisplayName;
-    public DirectShowLib.IBaseFilter DSFilter;
-  };
+    public IBaseFilter DSFilter;
+  } ;
 
   public class ConnectionDefinition
   {
@@ -68,7 +70,7 @@ namespace TVCapture
     public string SourcePinName;
     public string SinkCategory;
     public string SinkPinName;
-  };
+  } ;
 
   public class InterfaceDefinition
   {
@@ -95,17 +97,21 @@ namespace TVCapture
     public ArrayList ConnectionDefinitions;
     public InterfaceDefinition InterfaceDefinition;
   }
+
   #endregion
 
   public sealed class AvailableFilters
   {
     #region Private Members
+
     private static volatile AvailableFilters _mInstance;
     private static object _mSyncRoot = new Object();
     private static Dictionary<string, List<Filter>> _mAvailableFilters = new Dictionary<string, List<Filter>>();
+
     #endregion
 
     #region Constructors
+
     /// <summary>
     /// 
     /// </summary>
@@ -154,7 +160,8 @@ namespace TVCapture
           }
         }
         catch (Exception)
-        { }
+        {
+        }
       }
     }
 
@@ -173,26 +180,28 @@ namespace TVCapture
           lock (_mSyncRoot)
           {
             if (_mInstance == null)
+            {
               _mInstance = new AvailableFilters();
+            }
           }
         }
 
         return _mInstance;
       }
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Property that returns the list of filters
     /// </summary>
     public static Dictionary<string, List<Filter>> Filters
     {
-      get
-      {
-        return AvailableFilters._mAvailableFilters;
-      }
+      get { return _mAvailableFilters; }
     }
+
     #endregion
   }
 
@@ -202,14 +211,17 @@ namespace TVCapture
   public sealed class CaptureCardDefinitions
   {
     #region Private Members
+
     private static volatile CaptureCardDefinitions _mInstance;
     private static object _mSyncRoot = new Object();
 
     // Next list holds CaptureCardDefinition for all supported capture cards
     private static ArrayList _mCaptureCardDefinitions = new ArrayList();
+
     #endregion
 
     #region Constructors
+
     /// <summary>
     /// This Singleton based class contains the configuration of the supported capture cards
     /// It contains the filters and pin connections required to buid the graph upto and including the
@@ -281,7 +293,7 @@ namespace TVCapture
 
 
       XmlDocument doc = new XmlDocument();
-      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "CaptureCardDefinitions.xml")))
+      if (!File.Exists(Config.GetFile(Config.Dir.Config, "CaptureCardDefinitions.xml")))
       {
         Log.Info(" Error: CaptureCardDefinitions.xml file not found!");
         Log.Info("CaptureCardDefinitions:ctor OUT");
@@ -314,10 +326,10 @@ namespace TVCapture
             cardConfig.Tv = new DeviceDefinition();
             cardConfig.Radio = new DeviceDefinition();
             cardConfig.Tv.FilterDefinitions = new ArrayList();
-            cardConfig.Tv.ConnectionDefinitions = new System.Collections.ArrayList();
+            cardConfig.Tv.ConnectionDefinitions = new ArrayList();
             cardConfig.Tv.InterfaceDefinition = new InterfaceDefinition();
             cardConfig.Radio.FilterDefinitions = new ArrayList();
-            cardConfig.Radio.ConnectionDefinitions = new System.Collections.ArrayList();
+            cardConfig.Radio.ConnectionDefinitions = new ArrayList();
             cardConfig.Radio.InterfaceDefinition = new InterfaceDefinition();
 
             // Each card has some identification, partly unique, partly common
@@ -347,21 +359,27 @@ namespace TVCapture
             {
               //Log.Info("  Getting capabilities...");
               cardConfig.Capabilities.HasTv = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
-              cardConfig.Capabilities.HasRadio = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
+              cardConfig.Capabilities.HasRadio =
+                XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
               bool isBda = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
               bool isMce = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
               bool isMpeg2 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
               if (isBda)
+              {
                 cardConfig.Capabilities.CardType = CardTypes.Digital_BDA;
+              }
               else if (isMce)
+              {
                 cardConfig.Capabilities.CardType = CardTypes.Analog;
+              }
               else if (isMpeg2)
+              {
                 cardConfig.Capabilities.CardType = CardTypes.Analog;
+              }
 
               //Log.Info("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
               //					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
               //					cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
-
             }
             else
             {
@@ -398,10 +416,14 @@ namespace TVCapture
               }
 
               XmlNode filterInterface = tvNode.SelectSingleNode(@"interface");
-              cardConfig.Tv.InterfaceDefinition.FilterCategory = filterInterface.Attributes.GetNamedItem(@"cat").InnerText;
-              cardConfig.Tv.InterfaceDefinition.VideoPinName = filterInterface.Attributes.GetNamedItem(@"video").InnerText;
-              cardConfig.Tv.InterfaceDefinition.AudioPinName = filterInterface.Attributes.GetNamedItem(@"audio").InnerText;
-              cardConfig.Tv.InterfaceDefinition.Mpeg2PinName = filterInterface.Attributes.GetNamedItem(@"mpeg2").InnerText;
+              cardConfig.Tv.InterfaceDefinition.FilterCategory =
+                filterInterface.Attributes.GetNamedItem(@"cat").InnerText;
+              cardConfig.Tv.InterfaceDefinition.VideoPinName =
+                filterInterface.Attributes.GetNamedItem(@"video").InnerText;
+              cardConfig.Tv.InterfaceDefinition.AudioPinName =
+                filterInterface.Attributes.GetNamedItem(@"audio").InnerText;
+              cardConfig.Tv.InterfaceDefinition.Mpeg2PinName =
+                filterInterface.Attributes.GetNamedItem(@"mpeg2").InnerText;
               try
               {
                 cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = "";
@@ -409,7 +431,10 @@ namespace TVCapture
                 if (nodeatt != null)
                 {
                   if (nodeatt.InnerText != null)
-                    cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+                  {
+                    cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName =
+                      filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+                  }
                 }
               }
               catch
@@ -459,21 +484,20 @@ namespace TVCapture
 
               try
               {
-                interfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+                interfaceDefinition.SectionsAndTablesPinName =
+                  filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
               }
               catch
               {
                 interfaceDefinition.SectionsAndTablesPinName = "";
               }
-
-
             }
             //Log.Info("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
             //	cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
           }
         }
       }
-      catch (System.Exception ex)
+      catch (Exception ex)
       {
         Log.Error(ex);
       }
@@ -488,24 +512,32 @@ namespace TVCapture
           lock (_mSyncRoot)
           {
             if (_mInstance == null)
+            {
               _mInstance = new CaptureCardDefinitions();
+            }
           }
         }
 
         return _mInstance;
       }
     }
+
     #endregion Constructors
 
     #region Properties
+
     public static ArrayList CaptureCards
     {
       get
       {
-        if (CaptureCardDefinitions.Instance == null) { };
-        return CaptureCardDefinitions._mCaptureCardDefinitions;
+        if (Instance == null)
+        {
+        }
+        ;
+        return _mCaptureCardDefinitions;
       }
     }
+
     #endregion Properties
   }
 }

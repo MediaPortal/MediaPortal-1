@@ -24,16 +24,17 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 
 namespace WindowPlugins.GUISettings
 {
@@ -42,35 +43,34 @@ namespace WindowPlugins.GUISettings
   /// </summary>
   public class GUISettingsGeneral : GUIWindow
   {
-    [SkinControlAttribute(10)]    protected GUISelectButtonControl btnSkin = null;
-    [SkinControlAttribute(11)]    protected GUISelectButtonControl btnLanguage = null;
-    [SkinControlAttribute(12)]    protected GUIToggleButtonControl btnFullscreen = null;
-    [SkinControlAttribute(13)]    protected GUIToggleButtonControl btnScreenSaver = null;
-    [SkinControlAttribute(20)]    protected GUIImage imgSkinPreview = null;
+    [SkinControl(10)] protected GUISelectButtonControl btnSkin = null;
+    [SkinControl(11)] protected GUISelectButtonControl btnLanguage = null;
+    [SkinControl(12)] protected GUIToggleButtonControl btnFullscreen = null;
+    [SkinControl(13)] protected GUIToggleButtonControl btnScreenSaver = null;
+    [SkinControl(20)] protected GUIImage imgSkinPreview = null;
 
-    int selectedLangIndex;
-    int selectedSkinIndex;
-    bool selectedFullScreen;
-    bool selectedScreenSaver;
+    private int selectedLangIndex;
+    private int selectedSkinIndex;
+    private bool selectedFullScreen;
+    private bool selectedScreenSaver;
 
-    class CultureComparer : IComparer
+    private class CultureComparer : IComparer
     {
       #region IComparer Members
 
       public int Compare(object x, object y)
       {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
+        CultureInfo info1 = (CultureInfo) x;
+        CultureInfo info2 = (CultureInfo) y;
         return String.Compare(info1.EnglishName, info2.EnglishName, true);
       }
 
       #endregion
-
     }
 
     public GUISettingsGeneral()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_SKIN;
+      GetID = (int) Window.WINDOW_SETTINGS_SKIN;
     }
 
     public override bool Init()
@@ -79,13 +79,15 @@ namespace WindowPlugins.GUISettings
       return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnSkin)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
+        {
           return;
+        }
         dlg.Reset();
         dlg.SetHeading(166); // menu
 
@@ -99,7 +101,9 @@ namespace WindowPlugins.GUISettings
         dlg.SelectedLabel = btnSkin.SelectedItem;
         dlg.DoModal(GetID);
         if (dlg.SelectedId == -1)
+        {
           return;
+        }
         if (String.Compare(dlg.SelectedLabelText, btnSkin.SelectedLabel, true) != 0)
         {
           btnSkin.SelectedItem = dlg.SelectedLabel;
@@ -134,9 +138,9 @@ namespace WindowPlugins.GUISettings
       SaveSettings();
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "screensaver", btnScreenSaver.Selected);
@@ -145,29 +149,29 @@ namespace WindowPlugins.GUISettings
       }
     }
 
-    void SetFullScreen()
+    private void SetFullScreen()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool fullscreen = xmlreader.GetValueAsBool("general", "startfullscreen", false);
         btnFullscreen.Selected = fullscreen;
       }
     }
 
-    void SetScreenSaver()
+    private void SetScreenSaver()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool screensaver = xmlreader.GetValueAsBool("general", "screensaver", false);
         btnScreenSaver.Selected = screensaver;
       }
     }
 
-    void SetLanguages()
+    private void SetLanguages()
     {
       GUIControl.ClearControl(GetID, btnLanguage.GetID);
       string currentLanguage = string.Empty;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -186,15 +190,14 @@ namespace WindowPlugins.GUISettings
         }
         lang++;
       }
-
     }
 
-    void SetSkins()
+    private void SetSkins()
     {
       List<string> installedSkins = new List<string>();
       string currentSkin = "";
       int skinNo = 0;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
       }
@@ -228,7 +231,9 @@ namespace WindowPlugins.GUISettings
           {
             FileInfo refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml"));
             if (refFile.Exists)
+            {
               installedSkins.Add(skinDir.Name);
+            }
           }
         }
       }
@@ -239,7 +244,7 @@ namespace WindowPlugins.GUISettings
       return installedSkins;
     }
 
-    void BackupButtons()
+    private void BackupButtons()
     {
       selectedLangIndex = btnLanguage.SelectedItem;
       selectedSkinIndex = btnSkin.SelectedItem;
@@ -247,24 +252,27 @@ namespace WindowPlugins.GUISettings
       selectedScreenSaver = btnScreenSaver.Selected;
     }
 
-    void RestoreButtons()
+    private void RestoreButtons()
     {
       GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
       GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
       if (selectedFullScreen)
+      {
         GUIControl.SelectControl(GetID, btnFullscreen.GetID);
+      }
       if (selectedScreenSaver)
+      {
         GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
+      }
     }
 
-    void RefreshSkinPreview(object sender, EventArgs e)
+    private void RefreshSkinPreview(object sender, EventArgs e)
     {
       imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
     }
 
-    void OnSkinChanged()
+    private void OnSkinChanged()
     {
-
       // Backup the buttons, needed later
       BackupButtons();
 
@@ -283,7 +291,7 @@ namespace WindowPlugins.GUISettings
 
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
         bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
@@ -291,7 +299,7 @@ namespace WindowPlugins.GUISettings
         {
           try
           {
-            Form.ActiveForm.ClientSize = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            Form.ActiveForm.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
           }
           catch (Exception ex)
           {
@@ -306,7 +314,7 @@ namespace WindowPlugins.GUISettings
       }
     }
 
-    void OnLanguageChanged()
+    private void OnLanguageChanged()
     {
       // Backup the buttons, needed later
       BackupButtons();

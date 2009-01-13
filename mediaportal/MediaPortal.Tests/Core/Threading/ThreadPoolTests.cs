@@ -24,23 +24,29 @@
 #endregion
 
 #region Usings
-using System;
-using System.Text;
-using System.Collections.Generic;
 
-using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using MediaPortal.Threading;
+using NUnit.Framework;
+using ThreadPool=MediaPortal.Threading.ThreadPool;
+
 #endregion
 
 namespace MediaPortal.Tests.Core.Threading
 {
+
   #region TestFixture
+
   [TestFixture]
   public class ThreadPoolTest
   {
     #region Variables
-    ThreadPool _pool;
-    object _waitHandle = new object();
+
+    private ThreadPool _pool;
+    private object _waitHandle = new object();
+
     #endregion
 
     #region Tests
@@ -90,8 +96,8 @@ namespace MediaPortal.Tests.Core.Threading
       Console.Out.WriteLine("----=<TestMaxThreads>=----");
       for (int i = 0; i < 10; i++)
       {
-        _pool.Add(new DoWorkHandler(delegate() { System.Threading.Thread.Sleep(300); }));
-        System.Threading.Thread.Sleep(10);
+        _pool.Add(new DoWorkHandler(delegate() { Thread.Sleep(300); }));
+        Thread.Sleep(10);
       }
       // System.Threading.Thread.Sleep(600);
       Assert.AreEqual(5, _pool.BusyThreadCount, "Maximum number of 5 threads exceeded");
@@ -107,58 +113,68 @@ namespace MediaPortal.Tests.Core.Threading
       SetupLogging();
       for (int i = 0; i < 10; i++)
       {
-        _pool.Add(new DoWorkHandler(delegate() { System.Threading.Thread.Sleep(300); }), "TestDropBackToMinThreads" + i);
-        System.Threading.Thread.Sleep(10);
+        _pool.Add(new DoWorkHandler(delegate() { Thread.Sleep(300); }), "TestDropBackToMinThreads" + i);
+        Thread.Sleep(10);
       }
-      System.Threading.Thread.Sleep(600);
+      Thread.Sleep(600);
       Assert.AreEqual(0, _pool.BusyThreadCount);
       Assert.AreEqual(10, _pool.WorkItemsProcessed);
       Assert.AreEqual(2, _pool.ThreadCount, "Pool did not drop back down to 2 threads");
       _pool.Stop();
     }
 
-    Work _testStrongTypeCallbackWork;
-    List<int> _testStrongTypeCallbackResult;
+    private Work _testStrongTypeCallbackWork;
+    private List<int> _testStrongTypeCallbackResult;
 
     [Test]
     public void TestStrongTypeCallback()
     {
       Console.Out.WriteLine("----=<TestStrongTypeCallback>=----");
       Work w = _testStrongTypeCallbackWork = new Work();
-      w.ThreadPriority = System.Threading.ThreadPriority.Normal;
+      w.ThreadPriority = ThreadPriority.Normal;
       w.WorkLoad = new DoWorkHandler(delegate()
-      {
-        _testStrongTypeCallbackWork.State = WorkState.INPROGRESS;
-        List<int> result = new List<int>();
-        for (int i = 0; i < 10; i++)
-        {
-          result.Add(i);
-        }
-        _testStrongTypeCallbackWork.EventArgs.SetResult<List<int>>(result);
-        _testStrongTypeCallbackWork.State = WorkState.FINISHED;
-        _testStrongTypeCallbackWork.WorkCompleted(_testStrongTypeCallbackWork.EventArgs);
-      });
+                                       {
+                                         _testStrongTypeCallbackWork.State = WorkState.INPROGRESS;
+                                         List<int> result = new List<int>();
+                                         for (int i = 0; i < 10; i++)
+                                         {
+                                           result.Add(i);
+                                         }
+                                         _testStrongTypeCallbackWork.EventArgs.SetResult<List<int>>(result);
+                                         _testStrongTypeCallbackWork.State = WorkState.FINISHED;
+                                         _testStrongTypeCallbackWork.WorkCompleted(_testStrongTypeCallbackWork.EventArgs);
+                                       });
       w.WorkCompleted = new WorkEventHandler(delegate(WorkEventArgs args)
-      {
-        _testStrongTypeCallbackResult = args.GetResult<List<int>>();
-        lock (_waitHandle)
-          System.Threading.Monitor.Pulse(_waitHandle);
-      });
+                                               {
+                                                 _testStrongTypeCallbackResult = args.GetResult<List<int>>();
+                                                 lock (_waitHandle)
+                                                   Monitor.Pulse(_waitHandle);
+                                               });
 
       lock (_waitHandle)
       {
         _pool.Add(w);
-         System.Threading.Monitor.Wait(_waitHandle);
+        Monitor.Wait(_waitHandle);
       }
-      
+
       if (_testStrongTypeCallbackResult != null)
+      {
         if (_testStrongTypeCallbackResult.Count != 10)
+        {
           Assert.Fail("received {0} results instead of 10", _testStrongTypeCallbackResult.Count);
+        }
         else
+        {
           for (int i = 0; i < _testStrongTypeCallbackResult.Count; i++)
+          {
             Assert.AreEqual(i, _testStrongTypeCallbackResult[i]);
+          }
+        }
+      }
       else
+      {
         Assert.Fail("no results were received");
+      }
     }
 
     [Test]
@@ -188,21 +204,25 @@ namespace MediaPortal.Tests.Core.Threading
         _pool.Add(w);
         Assert.Fail("InvalidOperationException not thrown");
       }
-      catch (InvalidOperationException) { }
+      catch (InvalidOperationException)
+      {
+      }
     }
 
     [Test]
     public void TestAddWorkWhileStopped()
     {
       Console.Out.WriteLine("----=<TestAddWorkWhileStopped>=----");
-      Work w = new Work(new DoWorkHandler(delegate() { System.Threading.Thread.Sleep(300); }));
+      Work w = new Work(new DoWorkHandler(delegate() { Thread.Sleep(300); }));
       _pool.Stop();
       try
       {
         _pool.Add(w);
         Assert.Fail("InvalidOperationException not thrown");
       }
-      catch (InvalidOperationException) { }
+      catch (InvalidOperationException)
+      {
+      }
     }
 
     [Test]
@@ -222,18 +242,20 @@ namespace MediaPortal.Tests.Core.Threading
       Console.Out.WriteLine("----=<TestWorkItemsProcessed>=----");
       for (int i = 0; i < 10; i++)
       {
-        _pool.Add(new DoWorkHandler(delegate() { System.Threading.Thread.Sleep(300); }));
-        System.Threading.Thread.Sleep(10);
+        _pool.Add(new DoWorkHandler(delegate() { Thread.Sleep(300); }));
+        Thread.Sleep(10);
       }
       while (_pool.BusyThreadCount > 0)
-        System.Threading.Thread.Sleep(100);
+      {
+        Thread.Sleep(100);
+      }
       Assert.AreEqual(10, _pool.WorkItemsProcessed);
     }
 
     [Test]
     public void TestWorkQueueLengthBusyCountAndWorkCancellation()
     {
-      DoWorkHandler workHandler = new DoWorkHandler(delegate() { System.Threading.Thread.Sleep(300); });
+      DoWorkHandler workHandler = new DoWorkHandler(delegate() { Thread.Sleep(300); });
       Console.Out.WriteLine("----=<TestWorkItemsProcessed>=----");
       List<IWork> workList = new List<IWork>();
       ThreadPoolStartInfo tpsi = new ThreadPoolStartInfo(1, 1, 10);
@@ -241,22 +263,30 @@ namespace MediaPortal.Tests.Core.Threading
       SetupLogging();
 
       _pool.Add(workHandler);
-      System.Threading.Thread.Sleep(10);
+      Thread.Sleep(10);
       Assert.AreEqual(1, _pool.BusyThreadCount);
       for (int i = 0; i < 10; i++)
+      {
         workList.Add(_pool.Add(workHandler));
+      }
       Assert.AreEqual(10, _pool.QueueLength);
 
       foreach (IWork work in workList)
+      {
         work.State = WorkState.CANCELED;
+      }
       _pool.MinimumThreads = _pool.MaximumThreads = 10;
       _pool.MinimumThreads = 0;
 
       while (_pool.BusyThreadCount > 0)
-        System.Threading.Thread.Sleep(100);
+      {
+        Thread.Sleep(100);
+      }
 
       foreach (IWork work in workList)
+      {
         Assert.AreEqual(WorkState.CANCELED, work.State);
+      }
       Assert.AreEqual(0, _pool.QueueLength);
       Assert.AreEqual(0, _pool.BusyThreadCount);
     }
@@ -265,17 +295,19 @@ namespace MediaPortal.Tests.Core.Threading
     public void TestWorkWithException()
     {
       IWork work =
-        _pool.Add(new DoWorkHandler(delegate() { throw new ArgumentOutOfRangeException("test", 0, "testmessage"); } ));
+        _pool.Add(new DoWorkHandler(delegate() { throw new ArgumentOutOfRangeException("test", 0, "testmessage"); }));
       while (work.State < WorkState.FINISHED)
-        System.Threading.Thread.Sleep(100);
+      {
+        Thread.Sleep(100);
+      }
       Assert.AreEqual(WorkState.ERROR, work.State, "WorkState is not ERROR");
       Assert.IsTrue(work.Exception is ArgumentOutOfRangeException);
       ArgumentOutOfRangeException e = work.Exception as ArgumentOutOfRangeException;
       Assert.AreEqual("test", e.ParamName, "Expected \"test\" as ParamName");
-      Assert.AreEqual(0, (int)e.ActualValue, "Expected \"0\" as ActualValue");
+      Assert.AreEqual(0, (int) e.ActualValue, "Expected \"0\" as ActualValue");
     }
 
-    int TestIntervalWorkRuns = 0;
+    private int TestIntervalWorkRuns = 0;
 
     [Test]
     public void TestIntervalWork()
@@ -283,11 +315,14 @@ namespace MediaPortal.Tests.Core.Threading
       ThreadPoolStartInfo tpsi = new ThreadPoolStartInfo(2, 10, 1000);
       _pool = new ThreadPool(tpsi);
       SetupLogging();
-      IntervalWork iWork = new IntervalWork(new DoWorkHandler(delegate() { TestIntervalWorkRuns++; }), new TimeSpan(0, 0, 1));
+      IntervalWork iWork = new IntervalWork(new DoWorkHandler(delegate() { TestIntervalWorkRuns++; }),
+                                            new TimeSpan(0, 0, 1));
       iWork.Description = "TestIntervalWork";
       _pool.AddIntervalWork(iWork, true);
       while (TestIntervalWorkRuns < 2)
-        System.Threading.Thread.Sleep(100);
+      {
+        Thread.Sleep(100);
+      }
       _pool.RemoveIntervalWork(iWork);
       Assert.AreEqual(2, _pool.WorkItemsProcessed);
     }
@@ -307,7 +342,7 @@ namespace MediaPortal.Tests.Core.Threading
     }
 
     #endregion
-
   }
+
   #endregion
 }

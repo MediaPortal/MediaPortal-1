@@ -24,22 +24,16 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Text;
-using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
-using NUnit.Framework;
-using ProcessPlugins.DiskSpace;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
+using MediaPortal.Playlists;
+using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Radio.Database;
-using MediaPortal.Tests.TVCapture;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.TVCapture.Commands
 {
@@ -47,29 +41,38 @@ namespace MediaPortal.Tests.TVCapture.Commands
   public class TestMultiTunerStrategy
   {
     #region constants
-    const int HIGHEST = 1;
-    const int MEDIUM = 0;
-    const int LOWEST = 2;
+
+    private const int HIGHEST = 1;
+    private const int MEDIUM = 0;
+    private const int LOWEST = 2;
+
     #endregion
 
-    CommandProcessor _processor;
-    TVCaptureDevice[] _cards;
+    private CommandProcessor _processor;
+    private TVCaptureDevice[] _cards;
+
     [SetUp]
     public void Init()
     {
       TVChannel ch;
       TVDatabase.ClearAll();
       g_Player.Factory = new DummyPlayerFactory();
-      Playlists.PlayListPlayer.SingletonPlayer.InitTest();
+      PlayListPlayer.SingletonPlayer.InitTest();
       g_Player.Stop();
 
       // add 3 channels
-      ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL 5"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("SBS 6"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL 7"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("MTV"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("CNN"); TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 4");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 5");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("SBS 6");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 7");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("MTV");
+      TVDatabase.AddChannel(ch);
+      ch = new TVChannel("CNN");
+      TVDatabase.AddChannel(ch);
       List<TVChannel> channelList = new List<TVChannel>();
       TVDatabase.GetChannels(ref channelList);
       foreach (TVChannel chan in channelList)
@@ -89,7 +92,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       //setup priority for all cards from low-hi (2->0->1)
       _cards[HIGHEST].Priority = 10; //highest
       _cards[MEDIUM].Priority = 5;
-      _cards[LOWEST].Priority=1;
+      _cards[LOWEST].Priority = 1;
 
       //setup recording paths for all cards
       //Use C: drive because not everybody has D or E drives
@@ -97,7 +100,9 @@ namespace MediaPortal.Tests.TVCapture.Commands
       _cards[MEDIUM].RecordingPath = "c:";
       _cards[LOWEST].RecordingPath = "c:";
 
-      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (
+        FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Create,
+                                               FileAccess.Write, FileShare.Read))
       {
         SoapFormatter formatter = new SoapFormatter();
         formatter.Serialize(fileStream, _cards);
@@ -114,6 +119,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       RadioDatabase.AddStation(ref station);
       RadioDatabase.MapChannelToCard(station.ID, 2);
     }
+
     [Test]
     public void TestRadioOn2Tuners()
     {
@@ -122,7 +128,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       Assert.IsFalse(_processor.TVCards[0].IsRadio);
       Assert.IsTrue(_processor.TVCards[1].InternalGraph.IsRadio());
 
-      StartRadio("BBC Radio",0); // should be on card 1
+      StartRadio("BBC Radio", 0); // should be on card 1
       Assert.IsTrue(_processor.TVCards[0].IsRadio);
       Assert.IsFalse(_processor.TVCards[1].IsRadio);
       Assert.IsTrue(_processor.TVCards[0].InternalGraph.IsRadio());
@@ -134,8 +140,8 @@ namespace MediaPortal.Tests.TVCapture.Commands
       Assert.IsFalse(_processor.TVCards[0].IsRadio);
       Assert.IsTrue(_processor.TVCards[1].InternalGraph.IsRadio());
       Assert.IsFalse(_processor.TVCards[0].InternalGraph.IsRadio());
-
     }
+
     [Test]
     public void RecordOn2Tuners()
     {
@@ -152,7 +158,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
     [Test]
     public void RecordOn3Tuners()
     {
-      TVRecording rec=AddSchedule("RTL 4", DateTime.Now.AddMinutes(-10), DateTime.Now.AddMinutes(10));
+      TVRecording rec = AddSchedule("RTL 4", DateTime.Now.AddMinutes(-10), DateTime.Now.AddMinutes(10));
       DoSchedule();
       VerifyRecord(HIGHEST, rec);
 
@@ -227,7 +233,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       RecordOn3Tuners();
       Zap("SBS 6");
       Assert.IsTrue(g_Player.Playing);
-      
+
       StopRecord();
       VerifyNotRecording(LOWEST);
 
@@ -237,22 +243,23 @@ namespace MediaPortal.Tests.TVCapture.Commands
     }
 
     #region helper functions
-    void VerifyTimeShift(int card)
+
+    private void VerifyTimeShift(int card)
     {
       Assert.IsTrue(_cards[card].IsTimeShifting);
       Assert.IsTrue(_cards[card].InternalGraph.IsTimeShifting() || _cards[card].InternalGraph.IsRecording());
-      Assert.AreEqual(_processor.CurrentCardIndex ,card);
-      Assert.AreEqual(_processor.TVChannelName ,_cards[card].TVChannel);
+      Assert.AreEqual(_processor.CurrentCardIndex, card);
+      Assert.AreEqual(_processor.TVChannelName, _cards[card].TVChannel);
     }
 
-    void VerifyNotRecording(int card)
+    private void VerifyNotRecording(int card)
     {
       Assert.IsFalse(_cards[card].IsRecording);
       Assert.IsFalse(_cards[card].InternalGraph.IsRecording());
       Assert.AreEqual(_cards[card].CurrentTVRecording, null);
     }
 
-    void VerifyRecord(int card, TVRecording rec)
+    private void VerifyRecord(int card, TVRecording rec)
     {
       Assert.IsTrue(_cards[card].IsRecording);
       Assert.IsTrue(_cards[card].InternalGraph.IsRecording());
@@ -262,7 +269,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       Assert.AreEqual(_cards[card].CurrentTVRecording.Start, rec.Start);
     }
 
-    void Zap(string channelName)
+    private void Zap(string channelName)
     {
       _processor.AddCommand(new TimeShiftTvCommand(channelName));
       do
@@ -271,7 +278,8 @@ namespace MediaPortal.Tests.TVCapture.Commands
         _processor.ProcessCards();
       } while (_processor.IsBusy);
     }
-    void DoSchedule()
+
+    private void DoSchedule()
     {
       _processor.AddCommand(new CheckRecordingsCommand());
       do
@@ -281,7 +289,8 @@ namespace MediaPortal.Tests.TVCapture.Commands
         _processor.ProcessCards();
       } while (_processor.IsBusy);
     }
-    void StopRecord()
+
+    private void StopRecord()
     {
       _processor.AddCommand(new StopRecordingCommand());
       do
@@ -291,21 +300,21 @@ namespace MediaPortal.Tests.TVCapture.Commands
       } while (_processor.IsBusy);
     }
 
-    TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
+    private TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
     {
       DateTime startTime = dtStart;
       DateTime endTime = dtEnd;
       TVRecording rec = new TVRecording();
       rec.Channel = channelName;
       rec.Title = "unknown";
-      rec.Start = MediaPortal.Util.Utils.datetolong(startTime);
-      rec.End = MediaPortal.Util.Utils.datetolong(endTime);
+      rec.Start = Util.Utils.datetolong(startTime);
+      rec.End = Util.Utils.datetolong(endTime);
       rec.RecType = TVRecording.RecordingType.Once;
       TVDatabase.AddRecording(ref rec);
       return rec;
     }
 
-    void StartRadio(string stationName, int expectedCard)
+    private void StartRadio(string stationName, int expectedCard)
     {
       _processor.AddCommand(new StartRadioCommand(stationName));
       _processor.ProcessCommands();

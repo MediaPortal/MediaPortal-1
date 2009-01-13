@@ -56,33 +56,39 @@ using System;
 
 namespace Rss
 {
-	/// <summary>A reference to an attachment to the item</summary>
-	[@Serializable()]
-	public class RssEnclosure : RssElement
-	{
-		private Uri uri = RssDefault.Uri;
-		private int length = RssDefault.Int;
-		private string type = RssDefault.String;
-		/// <summary>Initialize a new instance of the RssEnclosure class.</summary>
-		public RssEnclosure() {}
-		/// <summary>Where the enclosure is located</summary>
-		public Uri Url
-		{
-			get { return uri; }
-			set { uri= RssDefault.Check(value); }
-		}
-		/// <summary>The size of the enclosure, in bytes</summary>
-		/// <remarks>-1 represents a null.</remarks>
-		public int Length
-		{
-			get { return length; }
-			set { length = RssDefault.Check(value); }
-		}
-		/// <summary>A standard Multipurpose Internet Mail Extensions (MIME) type</summary>
-		public string Type
-		{
-			get { return type; }
-			set { type = RssDefault.Check(value); }
-		}
-	}
+  /// <summary>A reference to an attachment to the item</summary>
+  [@Serializable()]
+  public class RssEnclosure : RssElement
+  {
+    private Uri uri = RssDefault.Uri;
+    private int length = RssDefault.Int;
+    private string type = RssDefault.String;
+
+    /// <summary>Initialize a new instance of the RssEnclosure class.</summary>
+    public RssEnclosure()
+    {
+    }
+
+    /// <summary>Where the enclosure is located</summary>
+    public Uri Url
+    {
+      get { return uri; }
+      set { uri = RssDefault.Check(value); }
+    }
+
+    /// <summary>The size of the enclosure, in bytes</summary>
+    /// <remarks>-1 represents a null.</remarks>
+    public int Length
+    {
+      get { return length; }
+      set { length = RssDefault.Check(value); }
+    }
+
+    /// <summary>A standard Multipurpose Internet Mail Extensions (MIME) type</summary>
+    public string Type
+    {
+      get { return type; }
+      set { type = RssDefault.Check(value); }
+    }
+  }
 }

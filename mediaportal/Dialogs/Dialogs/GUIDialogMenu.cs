@@ -34,10 +34,10 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogMenu : GUIDialogWindow, IDialogbox, IRenderLayer
   {
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(3)]    protected GUIListControl listView = null;
-    [SkinControlAttribute(4)]    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(5)]    protected GUILabelControl lblHeading2 = null;
+    [SkinControl(2)] protected GUIButtonControl btnClose = null;
+    [SkinControl(3)] protected GUIListControl listView = null;
+    [SkinControl(4)] protected GUILabelControl lblHeading = null;
+    [SkinControl(5)] protected GUILabelControl lblHeading2 = null;
 
     protected int selectedItemIndex = -1;
     protected int selectedId = -1;
@@ -49,7 +49,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogMenu()
     {
-      GetID = (int)Window.WINDOW_DIALOG_MENU;
+      GetID = (int) Window.WINDOW_DIALOG_MENU;
     }
 
     public override bool Init()
@@ -59,24 +59,28 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
-      char key = (char)0;
+      char key = (char) 0;
 
       // if we have a keypress or a remote button press
-      if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) || ((Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
+      if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) ||
+          ((Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
       {
         if (action.m_key != null)
         {
           if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            key = (char)action.m_key.KeyChar;
+            key = (char) action.m_key.KeyChar;
           }
         }
         else
         {
-          key = ((char)('0' + action.wID - Action.ActionType.REMOTE_0));
+          key = ((char) ('0' + action.wID - Action.ActionType.REMOTE_0));
         }
-        if (key == (char)0) return;
+        if (key == (char) 0)
+        {
+          return;
+        }
         keySelection += key;
         if (keySelection.Length == listItems.Count.ToString().Length)
         {
@@ -116,7 +120,10 @@ namespace MediaPortal.Dialogs
 
     public override void Process()
     {
-      if (keySelection == string.Empty) return;
+      if (keySelection == string.Empty)
+      {
+        return;
+      }
       TimeSpan ts = DateTime.Now - keyTimer;
       if (ts.TotalMilliseconds >= 1000)
       {
@@ -125,7 +132,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
@@ -134,7 +141,10 @@ namespace MediaPortal.Dialogs
         selectedItemIndex = listView.SelectedListItemIndex;
         selectedItemLabel = listView.SelectedListItem.Label;
         int pos = selectedItemLabel.IndexOf(" ");
-        if (pos > 0) selectedItemLabel = selectedItemLabel.Substring(pos + 1);
+        if (pos > 0)
+        {
+          selectedItemLabel = selectedItemLabel.Substring(pos + 1);
+        }
         selectedId = listView.SelectedListItem.ItemId;
         PageDestroy();
       }
@@ -152,7 +162,10 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             lblHeading.Label = string.Empty;
-            if (lblHeading2 != null) lblHeading2.Label = string.Empty;
+            if (lblHeading2 != null)
+            {
+              lblHeading2.Label = string.Empty;
+            }
 
             base.OnMessage(message);
             return true;
@@ -165,19 +178,19 @@ namespace MediaPortal.Dialogs
             listView.Clear();
             for (int i = 0; i < listItems.Count; i++)
             {
-              GUIListItem pItem = (GUIListItem)listItems[i];
+              GUIListItem pItem = (GUIListItem) listItems[i];
               listView.Add(pItem);
             }
 
             if (selectedItemIndex >= 0)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selectedItemIndex, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID,
+                                              selectedItemIndex, 0, null);
               OnMessage(msg);
             }
             selectedItemIndex = -1;
             selectedId = -1;
             string wszText = String.Format("{0} {1}", listItems.Count, GUILocalizeStrings.Get(127));
-
           }
           return true;
       }
@@ -201,16 +214,20 @@ namespace MediaPortal.Dialogs
       }
       base.DoModal(dwParentId);
     }
- 
+
 
     public void Add(string strLabel)
     {
       int iItemIndex = listItems.Count + 1;
       GUIListItem pItem = new GUIListItem();
       if (showQuickNumbers)
+      {
         pItem.Label = iItemIndex.ToString() + " " + strLabel;
+      }
       else
+      {
         pItem.Label = strLabel;
+      }
 
       pItem.ItemId = iItemIndex;
       listItems.Add(pItem);
@@ -220,9 +237,13 @@ namespace MediaPortal.Dialogs
     {
       int iItemIndex = listItems.Count + 1;
       if (showQuickNumbers)
+      {
         pItem.Label = iItemIndex.ToString() + " " + pItem.Label;
+      }
       else
+      {
         pItem.Label = pItem.Label;
+      }
 
       pItem.ItemId = iItemIndex;
       listItems.Add(pItem);
@@ -239,17 +260,21 @@ namespace MediaPortal.Dialogs
       int index = 0;
       foreach (GUIListItem pItem in listItems)
       {
-          if (showQuickNumbers)
+        if (showQuickNumbers)
+        {
+          int labelIndex = listItems.IndexOf(pItem) + 1;
+          if (pItem.Label.Equals(labelIndex.ToString() + " " + GUILocalizeStrings.Get(iLocalizedString)))
           {
-              int labelIndex = listItems.IndexOf(pItem) + 1;
-              if (pItem.Label.Equals(labelIndex.ToString()+ " " + GUILocalizeStrings.Get(iLocalizedString)))
-                  index = listItems.IndexOf(pItem);
+            index = listItems.IndexOf(pItem);
           }
-          else
+        }
+        else
+        {
+          if (pItem.Label.Equals(GUILocalizeStrings.Get(iLocalizedString)))
           {
-              if (pItem.Label.Equals(GUILocalizeStrings.Get(iLocalizedString)))
-                  index = listItems.IndexOf(pItem);
+            index = listItems.IndexOf(pItem);
           }
+        }
       }
       return index;
     }
@@ -259,17 +284,21 @@ namespace MediaPortal.Dialogs
       int index = 0;
       foreach (GUIListItem pItem in listItems)
       {
-          if (showQuickNumbers)
+        if (showQuickNumbers)
+        {
+          int labelIndex = listItems.IndexOf(pItem) + 1;
+          if (pItem.Label.Equals(labelIndex.ToString() + " " + strItemLable))
           {
-              int labelIndex = listItems.IndexOf(pItem) + 1;
-              if (pItem.Label.Equals(labelIndex.ToString() + " " + strItemLable))
-                  index = listItems.IndexOf(pItem);
+            index = listItems.IndexOf(pItem);
           }
-          else
+        }
+        else
+        {
+          if (pItem.Label.Equals(strItemLable))
           {
-              if (pItem.Label.Equals(strItemLable))
-                  index = listItems.IndexOf(pItem);
+            index = listItems.IndexOf(pItem);
           }
+        }
       }
       return index;
     }
@@ -320,9 +349,13 @@ namespace MediaPortal.Dialogs
       if (lblHeading2 != null)
       {
         if (strLine.Length < 1)
+        {
           lblHeading2.Label = string.Empty;
+        }
         else
+        {
           lblHeading2.Label = GUILocalizeStrings.Get(924);
+        }
       }
     }
 
@@ -332,6 +365,5 @@ namespace MediaPortal.Dialogs
       selectedItemIndex = -1;
       listItems.Clear();
     }
-
   }
 }

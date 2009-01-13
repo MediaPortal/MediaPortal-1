@@ -42,7 +42,8 @@ namespace MediaPortal.Support
     {
       try
       {
-        using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\UnInstall"))
+        using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\UnInstall")
+          )
         {
           foreach (string keyName in rk.GetSubKeyNames())
           {
@@ -58,7 +59,7 @@ namespace MediaPortal.Support
       }
     }
 
-    void ParseHotfixKey(RegistryKey rk)
+    private void ParseHotfixKey(RegistryKey rk)
     {
       HotfixItem item = new HotfixItem();
       item.Name = GetName(rk.Name);
@@ -90,15 +91,21 @@ namespace MediaPortal.Support
 
       hotfixes.Add(item.Name, item);
       if (!categories.ContainsKey(item.Category))
+      {
         categories.Add(item.Category, null);
+      }
     }
 
     private static string GetName(string name)
     {
       if (name.LastIndexOf(@"\") == -1)
+      {
         return name;
+      }
       else
+      {
         return name.Substring(name.LastIndexOf(@"\") + 1);
+      }
     }
 
     public string[] GetCategories()
@@ -113,13 +120,15 @@ namespace MediaPortal.Support
       foreach (KeyValuePair<string, HotfixItem> kvp in hotfixes)
       {
         if (kvp.Value.Category == category)
+        {
           yield return kvp.Value;
+        }
       }
     }
 
     public IEnumerator<HotfixItem> GetEnumerator()
     {
-      IEnumerator<HotfixItem> enumerator = ((IEnumerable<HotfixItem>)hotfixes.Values).GetEnumerator();
+      IEnumerator<HotfixItem> enumerator = ((IEnumerable<HotfixItem>) hotfixes.Values).GetEnumerator();
       return enumerator;
     }
 

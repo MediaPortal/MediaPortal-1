@@ -25,38 +25,45 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using DirectShowLib.SBE;
-using DirectShowLib;
-using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
-using DShowNET.Helper;
+using System.Drawing;
+using System.IO;
 using System.Threading;
+using System.Timers;
+using DirectShowLib.SBE;
+using DShowNET.Helper;
+using MediaPortal.Core.Transcoding;
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
+using Timer=System.Timers.Timer;
 
 namespace WindowPlugins.VideoEditor
 {
-  class DvrMsModifier
+  internal class DvrMsModifier
   {
-    IStreamBufferRecComp recCompcut = null;
-    System.Timers.Timer cutProgresstime;
-    System.Timers.Timer joinProgresstime;
-    System.Timers.Timer transcodeProgresstime;
-    System.Timers.Timer convertProgresstime;
+    private IStreamBufferRecComp recCompcut = null;
+    private Timer cutProgresstime;
+    private Timer joinProgresstime;
+    private Timer transcodeProgresstime;
+    private Timer convertProgresstime;
+
     public delegate void Finished();
+
     public event Finished OnFinished;
+
     public delegate void Progress(int percentage);
+
     public event Progress OnProgress;
-    int percent = 0;
-    int joinedFiles = 0;
-    double newDuration = 0;
-    System.IO.FileInfo inFilename;
-    List<TimeDomain> cutPoints;
-    List<System.IO.FileInfo> fileList;
-    MediaPortal.Core.Transcoding.Dvrms2Mpeg tompeg;
-    MediaPortal.Core.Transcoding.Dvrms2Divx toDivx;
+    private int percent = 0;
+    private int joinedFiles = 0;
+    private double newDuration = 0;
+    private FileInfo inFilename;
+    private List<TimeDomain> cutPoints;
+    private List<FileInfo> fileList;
+    private Dvrms2Mpeg tompeg;
+    private Dvrms2Divx toDivx;
     //string filetoConvert;
     //bool inDatabase;
-    MediaPortal.TV.Database.TVRecorded recInfo;
+    private TVRecorded recInfo;
 
     public DvrMsModifier()
     {
@@ -64,7 +71,7 @@ namespace WindowPlugins.VideoEditor
       //cutProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(CutProgresstime_Elapsed);
     }
 
-    public void CutDvr(System.IO.FileInfo inFilename, List<TimeDomain> cutPoints)
+    public void CutDvr(FileInfo inFilename, List<TimeDomain> cutPoints)
     {
       this.inFilename = inFilename;
       this.cutPoints = cutPoints;
@@ -77,12 +84,12 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        cutProgresstime = new System.Timers.Timer(1000);
-        cutProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(CutProgresstime_Elapsed);
-        recCompcut = (IStreamBufferRecComp)DShowNET.Helper.ClassId.CoCreateInstance(DShowNET.Helper.ClassId.RecComp);
+        cutProgresstime = new Timer(1000);
+        cutProgresstime.Elapsed += new ElapsedEventHandler(CutProgresstime_Elapsed);
+        recCompcut = (IStreamBufferRecComp) ClassId.CoCreateInstance(ClassId.RecComp);
         if (recCompcut != null)
         {
-          System.IO.FileInfo outFilename;
+          FileInfo outFilename;
           percent = 0;
           //CutProgressTime();
           cutProgresstime.Start();
@@ -91,7 +98,7 @@ namespace WindowPlugins.VideoEditor
           //TODO behavior if the renamed sourcefile (_original) exists
           inFilename.MoveTo(inFilename.FullName.Replace(inFilename.Extension, "_original" + inFilename.Extension));
           //to not to change the database the outputfile has the same name 
-          outFilename = new System.IO.FileInfo(outPath);
+          outFilename = new FileInfo(outPath);
           if (outFilename.Exists)
           {
             outFilename.Delete();
@@ -107,7 +114,8 @@ namespace WindowPlugins.VideoEditor
             //startCut = cutPoints[i].StartTime;
             //endCut = cutPoints[i].EndTime;
 
-            recCompcut.AppendEx(inFilename.FullName, (long)(cutPoints[i].StartTime * 10000000), (long)(cutPoints[i].EndTime * 10000000));
+            recCompcut.AppendEx(inFilename.FullName, (long) (cutPoints[i].StartTime*10000000),
+                                (long) (cutPoints[i].EndTime*10000000));
           }
           cutProgresstime.Stop();
           recCompcut.Close();
@@ -121,14 +129,15 @@ namespace WindowPlugins.VideoEditor
           }*/
 
           if (OnFinished != null)
+          {
             OnFinished();
+          }
           //cutFinished = true;
           //progressLbl.Label = "100";
           //progressBar.Percentage = 100;
           //MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , Finished !
           //progressBar.IsVisible = false;
           //progressLbl.IsVisible = false;
-
         }
       }
       catch (Exception ex)
@@ -137,7 +146,7 @@ namespace WindowPlugins.VideoEditor
       }
       finally
       {
-        DirectShowUtil.ReleaseComObject((object)recCompcut);
+        DirectShowUtil.ReleaseComObject((object) recCompcut);
         recCompcut = null;
         cutPoints = null;
         percent = 0;
@@ -146,12 +155,12 @@ namespace WindowPlugins.VideoEditor
       }
     }
 
-    public void JoinDvr(System.IO.FileInfo firstFile, System.IO.FileInfo secondFile)
+    public void JoinDvr(FileInfo firstFile, FileInfo secondFile)
     {
-      fileList = new List<System.IO.FileInfo>(2);
+      fileList = new List<FileInfo>(2);
       fileList.Add(firstFile);
       fileList.Add(secondFile);
-      System.Threading.Thread joinThread = new System.Threading.Thread(new System.Threading.ThreadStart(JoinDvr));
+      Thread joinThread = new Thread(new ThreadStart(JoinDvr));
       joinThread.Start();
       /*
       try
@@ -200,10 +209,10 @@ namespace WindowPlugins.VideoEditor
       }*/
     }
 
-    public void JoinDvr(List<System.IO.FileInfo> fileList)
+    public void JoinDvr(List<FileInfo> fileList)
     {
       this.fileList = fileList;
-      System.Threading.Thread joinThread = new System.Threading.Thread(new System.Threading.ThreadStart(JoinDvr));
+      Thread joinThread = new Thread(new ThreadStart(JoinDvr));
       joinThread.Start();
       //JoinDvr();
     }
@@ -212,12 +221,12 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        joinProgresstime = new System.Timers.Timer(1000);
-        joinProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(JoinProgresstime_Elapsed);
-        recCompcut = (IStreamBufferRecComp)DShowNET.Helper.ClassId.CoCreateInstance(DShowNET.Helper.ClassId.RecComp);
+        joinProgresstime = new Timer(1000);
+        joinProgresstime.Elapsed += new ElapsedEventHandler(JoinProgresstime_Elapsed);
+        recCompcut = (IStreamBufferRecComp) ClassId.CoCreateInstance(ClassId.RecComp);
         if (recCompcut != null)
         {
-          System.IO.FileInfo outFilename;
+          FileInfo outFilename;
           percent = 0;
           joinedFiles = 0;
           joinProgresstime.Start();
@@ -227,7 +236,7 @@ namespace WindowPlugins.VideoEditor
           //TODO behavior if the renamed sourcefile (_original) exists
           //inFilename.MoveTo(inFilename.FullName.Replace(".dvr-ms", "_original.dvr-ms"));
           //to not to change the database the outputfile has the same name 
-          outFilename = new System.IO.FileInfo(outPath);
+          outFilename = new FileInfo(outPath);
 
 
           if (outFilename.Exists)
@@ -235,7 +244,7 @@ namespace WindowPlugins.VideoEditor
             outFilename.Delete();
           }
           recCompcut.Initialize(outFilename.FullName, fileList[0].FullName);
-          foreach (System.IO.FileInfo file in fileList)
+          foreach (FileInfo file in fileList)
           {
             recCompcut.Append(file.FullName);
             joinedFiles++;
@@ -243,7 +252,9 @@ namespace WindowPlugins.VideoEditor
           recCompcut.Close();
           percent = 100;
           if (OnFinished != null)
+          {
             OnFinished();
+          }
         }
       }
       catch (Exception ex)
@@ -252,7 +263,7 @@ namespace WindowPlugins.VideoEditor
       }
       finally
       {
-        DirectShowUtil.ReleaseComObject((object)recCompcut);
+        DirectShowUtil.ReleaseComObject((object) recCompcut);
         recCompcut = null;
         cutPoints = null;
         percent = 0;
@@ -269,12 +280,16 @@ namespace WindowPlugins.VideoEditor
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void JoinProgresstime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void JoinProgresstime_Elapsed(object sender, ElapsedEventArgs e)
     {
       if (fileList.Count > 0)
-        percent = (100 / fileList.Count) * joinedFiles;
+      {
+        percent = (100/fileList.Count)*joinedFiles;
+      }
       if (OnProgress != null)
+      {
         OnProgress(percent);
+      }
     }
 
     /// <summary>
@@ -283,59 +298,71 @@ namespace WindowPlugins.VideoEditor
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void CutProgresstime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void CutProgresstime_Elapsed(object sender, ElapsedEventArgs e)
     {
       int progress = 0;
       if (recCompcut != null)
+      {
         recCompcut.GetCurrentLength(out progress);
-      percent = System.Convert.ToInt32((progress * 100) / newDuration);
+      }
+      percent = Convert.ToInt32((progress*100)/newDuration);
       if (OnProgress != null)
+      {
         OnProgress(percent);
+      }
     }
 
-    void TranscodeProgresstime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void TranscodeProgresstime_Elapsed(object sender, ElapsedEventArgs e)
     {
       if (tompeg.IsTranscoding())
       {
         if (OnProgress != null)
+        {
           OnProgress(tompeg.Percentage());
+        }
       }
       else if (tompeg.IsFinished())
       {
         transcodeProgresstime.Stop();
         tompeg.Stop();
         if (OnFinished != null)
+        {
           OnFinished();
-
+        }
       }
     }
 
-    void convertProgresstime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void convertProgresstime_Elapsed(object sender, ElapsedEventArgs e)
     {
       if (toDivx.IsTranscoding())
       {
         if (OnProgress != null)
+        {
           OnProgress(toDivx.Percentage());
+        }
       }
       else if (toDivx.IsFinished())
       {
         convertProgresstime.Stop();
         toDivx.Stop();
         if (OnProgress != null)
+        {
           OnProgress(100);
+        }
         if (OnFinished != null)
+        {
           OnFinished();
-
+        }
       }
     }
 
     #endregion
 
-    public void TranscodeToMpeg(System.IO.FileInfo inFilename, int duration)
+    public void TranscodeToMpeg(FileInfo inFilename, int duration)
     {
       this.inFilename = inFilename;
       newDuration = duration;
-      System.Threading.Thread transcodeThread = new System.Threading.Thread(new System.Threading.ThreadStart(TranscodeToMpeg));
+      Thread transcodeThread = new Thread(new ThreadStart(TranscodeToMpeg));
       transcodeThread.Start();
       //TranscodeToMpeg();
     }
@@ -344,19 +371,19 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        tompeg = new MediaPortal.Core.Transcoding.Dvrms2Mpeg();
-        recInfo = new MediaPortal.TV.Database.TVRecorded();
-        transcodeProgresstime = new System.Timers.Timer(1000);
-        transcodeProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(TranscodeProgresstime_Elapsed);
+        tompeg = new Dvrms2Mpeg();
+        recInfo = new TVRecorded();
+        transcodeProgresstime = new Timer(1000);
+        transcodeProgresstime.Elapsed += new ElapsedEventHandler(TranscodeProgresstime_Elapsed);
 
-        MediaPortal.Core.Transcoding.TranscodeInfo mpegInfo = new MediaPortal.Core.Transcoding.TranscodeInfo();
+        TranscodeInfo mpegInfo = new TranscodeInfo();
         mpegInfo.Author = "MediaPortal";
 
-        if (MediaPortal.TV.Database.TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
+        if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
         {
           mpegInfo.Channel = recInfo.Channel;
           mpegInfo.Description = recInfo.Description;
-          mpegInfo.Duration = (int)(recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
+          mpegInfo.Duration = (int) (recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
           mpegInfo.End = recInfo.EndTime;
           mpegInfo.file = recInfo.FileName;
           mpegInfo.Start = recInfo.StartTime;
@@ -367,7 +394,7 @@ namespace WindowPlugins.VideoEditor
           mpegInfo.Channel = "none";
           mpegInfo.Description = "none";
           //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-          mpegInfo.Duration = (int)newDuration;//(int)MediaPortal.Player.g_Player.Duration;
+          mpegInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
           //MediaPortal.Player.g_Player.Stop();
           mpegInfo.file = inFilename.FullName;
           mpegInfo.Start = DateTime.Now;
@@ -377,14 +404,13 @@ namespace WindowPlugins.VideoEditor
         transcodeProgresstime.Start();
         //filetoConvert = inFilename.FullName;
 
-        if (!tompeg.Transcode(mpegInfo, MediaPortal.Core.Transcoding.VideoFormat.Mpeg2, MediaPortal.Core.Transcoding.Quality.High, MediaPortal.Core.Transcoding.Standard.PAL))
+        if (!tompeg.Transcode(mpegInfo, VideoFormat.Mpeg2, Quality.High, Standard.PAL))
         {
           //	titelLbl.Label = "finished";
-
         }
         while (!tompeg.IsFinished())
         {
-          System.Threading.Thread.Sleep(500);
+          Thread.Sleep(500);
         }
       }
       catch (Exception ex)
@@ -397,13 +423,13 @@ namespace WindowPlugins.VideoEditor
       }
     }
 
-    public void ConvertToDivx(System.IO.FileInfo inFilename, int duration)
+    public void ConvertToDivx(FileInfo inFilename, int duration)
     {
       this.inFilename = inFilename;
       newDuration = duration;
-      System.Threading.Thread convertThread = new System.Threading.Thread(new System.Threading.ThreadStart(ConvertToDivx));
+      Thread convertThread = new Thread(new ThreadStart(ConvertToDivx));
       convertThread.IsBackground = true;
-      convertThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      convertThread.Priority = ThreadPriority.BelowNormal;
       convertThread.Start();
       //TranscodeToMpeg();
     }
@@ -412,18 +438,18 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        toDivx = new MediaPortal.Core.Transcoding.Dvrms2Divx();
-        recInfo = new MediaPortal.TV.Database.TVRecorded();
-        convertProgresstime = new System.Timers.Timer(1000);
-        convertProgresstime.Elapsed += new System.Timers.ElapsedEventHandler(convertProgresstime_Elapsed);
-        MediaPortal.Core.Transcoding.TranscodeInfo divxInfo = new MediaPortal.Core.Transcoding.TranscodeInfo();
+        toDivx = new Dvrms2Divx();
+        recInfo = new TVRecorded();
+        convertProgresstime = new Timer(1000);
+        convertProgresstime.Elapsed += new ElapsedEventHandler(convertProgresstime_Elapsed);
+        TranscodeInfo divxInfo = new TranscodeInfo();
         divxInfo.Author = "MediaPortal";
 
-        if (MediaPortal.TV.Database.TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
+        if (TVDatabase.GetRecordedTVByFilename(inFilename.FullName, ref recInfo))
         {
           divxInfo.Channel = recInfo.Channel;
           divxInfo.Description = recInfo.Description;
-          divxInfo.Duration = (int)(recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
+          divxInfo.Duration = (int) (recInfo.EndTime.Subtract(recInfo.StartTime)).Seconds;
           divxInfo.End = recInfo.EndTime;
           divxInfo.file = recInfo.FileName;
           divxInfo.Start = recInfo.StartTime;
@@ -434,7 +460,7 @@ namespace WindowPlugins.VideoEditor
           divxInfo.Channel = "none";
           divxInfo.Description = "none";
           //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-          divxInfo.Duration = (int)newDuration;//(int)MediaPortal.Player.g_Player.Duration;
+          divxInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
           //MediaPortal.Player.g_Player.Stop();
           divxInfo.file = inFilename.FullName;
           divxInfo.Start = DateTime.Now;
@@ -443,12 +469,12 @@ namespace WindowPlugins.VideoEditor
         }
 
         //filetoConvert = inFilename.FullName;
-        toDivx.CreateProfile(new System.Drawing.Size(360, 288), 2000, 25);
-        toDivx.Transcode(divxInfo, MediaPortal.Core.Transcoding.VideoFormat.Divx, MediaPortal.Core.Transcoding.Quality.Custom, MediaPortal.Core.Transcoding.Standard.PAL);
+        toDivx.CreateProfile(new Size(360, 288), 2000, 25);
+        toDivx.Transcode(divxInfo, VideoFormat.Divx, Quality.Custom, Standard.PAL);
         convertProgresstime.Start();
         while (!toDivx.IsFinished())
         {
-          System.Threading.Thread.Sleep(500);
+          Thread.Sleep(500);
         }
       }
       catch (Exception ex)
@@ -462,29 +488,16 @@ namespace WindowPlugins.VideoEditor
     }
 
 
-
-    public System.IO.FileInfo InFilename
+    public FileInfo InFilename
     {
-      get
-      {
-        return inFilename;
-      }
-      set
-      {
-        inFilename = value;
-      }
+      get { return inFilename; }
+      set { inFilename = value; }
     }
 
     public List<TimeDomain> CutPoints
     {
-      get
-      {
-        return cutPoints;
-      }
-      set
-      {
-        cutPoints = value;
-      }
+      get { return cutPoints; }
+      set { cutPoints = value; }
     }
   }
 }

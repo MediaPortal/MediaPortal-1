@@ -23,10 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using NUnit.Framework;
 using ProcessPlugins.CallerId;
 
@@ -47,6 +43,5 @@ namespace MediaPortal.Tests.Plugins.ProcessPlugins.CallerId.ISDN
       Assert.AreEqual("Testtype", caller.Type);
       Assert.IsTrue(caller.HasPicture);
     }
-
   }
 }

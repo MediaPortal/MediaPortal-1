@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -165,7 +166,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
                                                ref Capabilities.NumberInputValueCaps, PreparsedDataPointer);
 
           if (Settings.Instance.ExtensiveLogging)
+          {
             Log.Debug(Debugging.ResultOfAPICall("HidP_GetValueCaps"));
+          }
 
           // (To use this data, copy the ValueCaps byte array into an array of structures.)
           // ***
@@ -177,7 +180,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           HidApiDeclarations.HidD_FreePreparsedData(ref PreparsedDataPointer);
 
           if (Settings.Instance.ExtensiveLogging)
+          {
             Log.Debug(Debugging.ResultOfAPICall("HidD_FreePreparsedData"));
+          }
         }
       }
       catch (Exception ex)
@@ -597,7 +602,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           // individually.
           // ***
           if (Settings.Instance.ExtensiveLogging)
+          {
             Log.Debug("input report length = " + inputReportBuffer.Length);
+          }
 
           FileIOApiDeclarations.ReadFile(readHandle, ref inputReportBuffer[0], inputReportBuffer.Length,
                                          ref NumberOfBytesRead, ref HIDOverlapped);
@@ -629,14 +636,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
               // ReadFile has completed
               success = true;
               if (Settings.Instance.ExtensiveLogging)
+              {
                 Log.Debug("ReadFile completed successfully.");
+              }
               break;
 
             case FileIOApiDeclarations.WAIT_TIMEOUT:
               // Cancel the operation on timeout
               CancelTransfer(readHandle, hidHandle);
               if (Settings.Instance.ExtensiveLogging)
+              {
                 Log.Debug("Readfile timeout");
+              }
               success = false;
               myDeviceDetected = false;
               break;
@@ -645,7 +656,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
               // Cancel the operation on other error.
               CancelTransfer(readHandle, hidHandle);
               if (Settings.Instance.ExtensiveLogging)
+              {
                 Log.Debug("Readfile undefined error");
+              }
               success = false;
               myDeviceDetected = false;
               break;
@@ -690,7 +703,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
             HidApiDeclarations.HidD_GetInputReport(hidHandle, ref inputReportBuffer[0], inputReportBuffer.Length);
 
           if (Settings.Instance.ExtensiveLogging)
+          {
             Log.Debug(Debugging.ResultOfAPICall("ReadFile"));
+          }
         }
         catch (Exception ex)
         {

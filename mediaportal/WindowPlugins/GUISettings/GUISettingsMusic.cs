@@ -23,16 +23,12 @@
 
 #endregion
 
-using System;
 using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Music.Database;
-using MediaPortal.Dialogs;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Threading;
-
 
 namespace MediaPortal.GUI.Settings
 {
@@ -41,7 +37,7 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUISettingsMusic : GUIWindow
   {
-    enum Controls
+    private enum Controls
     {
       CONTROL_AUTOSHUFFLE = 2,
       CONTROL_VISUALISATION = 4,
@@ -55,28 +51,28 @@ namespace MediaPortal.GUI.Settings
       CONTROL_USEPLAYLIST = 15,
       CONTROL_AUTOSWITCH = 16,
       CONTROL_AUTOSWITCHBIG = 17
-    };
+    } ;
 
-    bool m_bAutoShuffle;
-    bool m_bUseID3;
+    private bool m_bAutoShuffle;
+    private bool m_bUseID3;
+
     public GUISettingsMusic()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC;
+      GetID = (int) Window.WINDOW_SETTINGS_MUSIC;
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", m_bUseID3);
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValueAsBool("musicfiles", "autoshuffle", m_bAutoShuffle);
         xmlreader.SetValueAsBool("musicfiles", "showid3", m_bUseID3);
@@ -87,6 +83,7 @@ namespace MediaPortal.GUI.Settings
     {
       return Load(GUIGraphicsContext.Skin + @"\SettingsMyMusic.xml");
     }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -104,7 +101,6 @@ namespace MediaPortal.GUI.Settings
     {
       switch (message.Message)
       {
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
@@ -112,11 +108,11 @@ namespace MediaPortal.GUI.Settings
 
             if (m_bAutoShuffle)
             {
-              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_AUTOSHUFFLE);
+              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_AUTOSHUFFLE);
             }
             if (m_bUseID3)
             {
-              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_ENABLEID3);
+              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_ENABLEID3);
             }
             return true;
           }
@@ -131,29 +127,29 @@ namespace MediaPortal.GUI.Settings
           {
             int iControl = message.SenderControlId;
 
-            if (iControl == (int)Controls.CONTROL_AUTOSHUFFLE)
+            if (iControl == (int) Controls.CONTROL_AUTOSHUFFLE)
             {
               m_bAutoShuffle = !m_bAutoShuffle;
             }
-            if (iControl == (int)Controls.CONTROL_ENABLEID3)
+            if (iControl == (int) Controls.CONTROL_ENABLEID3)
             {
               m_bUseID3 = !m_bUseID3;
             }
 
-            if (iControl == (int)Controls.CONTROL_BTNDELALBUMINFO)
+            if (iControl == (int) Controls.CONTROL_BTNDELALBUMINFO)
             {
               MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
               dbreorg.DeleteAlbumInfo();
             }
-            if (iControl == (int)Controls.CONTROL_BTNDELALBUM)
+            if (iControl == (int) Controls.CONTROL_BTNDELALBUM)
             {
               MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
               dbreorg.DeleteSingleAlbum();
             }
 
-            if (iControl == (int)Controls.CONTROL_BTNREORGDB)
+            if (iControl == (int) Controls.CONTROL_BTNREORGDB)
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
                 dlgYesNo.SetHeading(333);

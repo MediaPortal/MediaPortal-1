@@ -24,9 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.GUI.Library;
+
 namespace WindowPlugins.AutoCropper
 {
   /// <summary>
@@ -34,15 +33,16 @@ namespace WindowPlugins.AutoCropper
   /// over a sliding window of data. (Note: minimum is implemented naively
   /// and thus takes time linear in the window length). 
   /// </summary>
-  class MovingAverage
+  internal class MovingAverage
   {
     private int sum = 0;
     private int length = 0;
     private int[] list = null;
     private int next = 0;
+
     public float Average
     {
-      get { return sum / ((float)length); }
+      get { return sum/((float) length); }
     }
 
     public MovingAverage(int length, int startValue)
@@ -55,14 +55,14 @@ namespace WindowPlugins.AutoCropper
       {
         list[i] = startValue;
       }
-      sum = startValue * length;
+      sum = startValue*length;
     }
 
     public void Add(int v)
     {
       int outValue = list[next];
       list[next] = v;
-      next = (next + 1) % length;
+      next = (next + 1)%length;
       sum += v - outValue;
     }
 
@@ -90,9 +90,7 @@ namespace WindowPlugins.AutoCropper
       {
         list[i] = startValue;
       }
-      sum = startValue * length;
+      sum = startValue*length;
     }
-
-
   }
 }

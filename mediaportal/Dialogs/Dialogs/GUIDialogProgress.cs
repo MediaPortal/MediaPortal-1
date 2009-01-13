@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Dialogs
@@ -31,17 +30,20 @@ namespace MediaPortal.Dialogs
   /// <summary>
   ///  This is a MediaPortal Class.
   /// </summary>
-  public class GUIDialogProgress : GUIDialogWindow 
+  public class GUIDialogProgress : GUIDialogWindow
   {
     #region Enums
-    protected enum Controls 
+
+    protected enum Controls
     {
       CancelButton = 10,
       ProgressBar = 20
-    };
+    } ;
+
     #endregion
 
     #region Variables
+
     // Private Variables
     // Protected Variables
     protected bool _showWaitCursor = false;
@@ -50,16 +52,20 @@ namespace MediaPortal.Dialogs
     private bool _canceled = false;
     private WaitCursor cursor = null;
     // Public Variables
+
     #endregion
 
     #region Constructors/Destructors
+
     public GUIDialogProgress()
     {
-      GetID = (int)Window.WINDOW_DIALOG_PROGRESS;
+      GetID = (int) Window.WINDOW_DIALOG_PROGRESS;
     }
+
     #endregion
 
     #region Properties
+
     // Public Properties
     public int Percentage
     {
@@ -67,15 +73,17 @@ namespace MediaPortal.Dialogs
       set
       {
         if (Percentage != value)
-        _percentage = value;
-        GUIProgressControl progress = (GUIProgressControl)GetControl((int)Controls.ProgressBar);
+        {
+          _percentage = value;
+        }
+        GUIProgressControl progress = (GUIProgressControl) GetControl((int) Controls.ProgressBar);
         if (progress != null)
         {
           progress.Percentage = _percentage;
         }
       }
     }
-     
+
     public bool DisplayProgressBar
     {
       get { return _showProgressBar; }
@@ -84,7 +92,8 @@ namespace MediaPortal.Dialogs
         if (_showProgressBar != value)
         {
           _showProgressBar = value;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int) Controls.ProgressBar, 0, 0, null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int) Controls.ProgressBar,
+                                          0, 0, null);
           if (!_showProgressBar)
           {
             msg.Message = GUIMessage.MessageType.GUI_MSG_HIDDEN;
@@ -119,11 +128,14 @@ namespace MediaPortal.Dialogs
     }
 
     public bool IsCanceled
-    { get { return _canceled; } }
+    {
+      get { return _canceled; }
+    }
 
     #endregion
 
     #region Public Methods
+
     public void SetHeading(string HeadingLine)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
@@ -139,10 +151,16 @@ namespace MediaPortal.Dialogs
 
     public void SetLine(int LineNr, string Line)
     {
-      if (LineNr < 1) return;
+      if (LineNr < 1)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1 + LineNr, 0, 0, null);
       msg.Label = Line;
-      if ((msg.Label == string.Empty) || (msg.Label == ""))msg.Label = "  ";
+      if ((msg.Label == string.Empty) || (msg.Label == ""))
+      {
+        msg.Label = "  ";
+      }
       OnMessage(msg);
     }
 
@@ -150,9 +168,11 @@ namespace MediaPortal.Dialogs
     {
       SetLine(LineNr, GUILocalizeStrings.Get(LocalizeID));
     }
+
     #endregion
 
     #region Old routines -> to be deleted
+
     // REFACTOR THIS ONE
 
     public void SetPercentage(int NewPercentage)
@@ -177,23 +197,23 @@ namespace MediaPortal.Dialogs
 
     public void ProgressKeys()
     {
-      
     }
 
-     public void DisableCancel(bool bOnOff)
-     {
+    public void DisableCancel(bool bOnOff)
+    {
       if (bOnOff)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, (int)Controls.CancelButton, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, (int) Controls.CancelButton,
+                                        0, 0, null);
         OnMessage(msg);
-
       }
       else
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, (int)Controls.CancelButton, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, (int) Controls.CancelButton, 0,
+                                        0, null);
         OnMessage(msg);
       }
-     }
+    }
 
     public void Close()
     {
@@ -201,15 +221,19 @@ namespace MediaPortal.Dialogs
     }
 
     //------------------------------------------------------
+
     #endregion
-    
+
     #region Protected Methods
+
     #endregion
-    
+
     #region Private Methods
+
     #endregion
 
     #region <Base class> Overloads
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogProgress.xml");
@@ -226,7 +250,7 @@ namespace MediaPortal.Dialogs
       SetLine(2, "");
       SetLine(3, "");
     }
-    
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -257,12 +281,10 @@ namespace MediaPortal.Dialogs
           return _parentWindow.OnMessage(message);
         }
       }
-      
+
       return base.OnMessage(message);
     }
 
-
     #endregion
-
   }
 }

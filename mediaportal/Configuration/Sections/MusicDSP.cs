@@ -26,26 +26,25 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
+using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using Un4seen.Bass;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass.AddOn.Vst;
-using Un4seen.Bass.AddOn.Fx;
-using Un4seen.Bass.AddOn.Wa;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Player.DSP;
-using MediaPortal.Util;
+using MediaPortal.UserInterface.Controls;
+using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.AddOn.Vst;
+using Un4seen.Bass.AddOn.Wa;
+using Un4seen.Bass.Misc;
 
 namespace MediaPortal.Configuration.Sections
 {
   public partial class MusicDSP : SectionSettings
   {
     #region Variables
+
     // Private Variables
     private string pluginPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
     private int _stream;
@@ -72,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Constructors/Destructors
+
     public MusicDSP()
       : this("Music DSP")
     {
@@ -85,10 +85,11 @@ namespace MediaPortal.Configuration.Sections
       // Init DSP specific vars
       BassWa.BASS_WADSP_Init(this.Handle);
     }
+
     #endregion
 
-
     #region Private Methods
+
     /// <summary>
     /// Set the Tooltip and strings for the about page, when loading the control
     /// </summary>
@@ -103,12 +104,15 @@ namespace MediaPortal.Configuration.Sections
       toolTip.SetToolTip(checkBoxDAmp, "Applies dynamic Amplification with the selected Preset.");
       toolTip.SetToolTip(trackBarGain, "Changes the db value for the Amplification.");
       toolTip.SetToolTip(textBoxGainDBValue, "Enter the Gain Value in db.");
-      toolTip.SetToolTip(groupBoxCompressor, "Compressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
-      toolTip.SetToolTip(checkBoxCompressor, "Turn on the Compressor.\r\nCompressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
+      toolTip.SetToolTip(groupBoxCompressor,
+                         "Compressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
+      toolTip.SetToolTip(checkBoxCompressor,
+                         "Turn on the Compressor.\r\nCompressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
       toolTip.SetToolTip(trackBarCompressor, "Changes the threshold for the Compressor.");
       // VST / Winamp Page
       toolTip.SetToolTip(listBoxFoundPlugins, "Lists all VST / Winamp compatible plugins found in the Plugin directory.");
-      toolTip.SetToolTip(listBoxSelectedPlugins, "Lists all enabled VST /Winamp plugins.\r\nDouble click to open the Config dialogue.\r\n(If the plugin offers one)");
+      toolTip.SetToolTip(listBoxSelectedPlugins,
+                         "Lists all enabled VST /Winamp plugins.\r\nDouble click to open the Config dialogue.\r\n(If the plugin offers one)");
     }
 
     /// <summary>
@@ -137,11 +141,15 @@ namespace MediaPortal.Configuration.Sections
       if (File.Exists(textBoxMusicFile.Text))
       {
         // Init BASS
-        MediaPortal.Player.BassAudioEngine bassEngine = MediaPortal.Player.BassMusicPlayer.Player;
+        BassAudioEngine bassEngine = BassMusicPlayer.Player;
         if (bassEngine.BassFreed)
+        {
           bassEngine.InitBass();
+        }
 
-        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0, BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE | BASSStream.BASS_SAMPLE_SOFTWARE);
+        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0,
+                                             BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE |
+                                             BASSStream.BASS_SAMPLE_SOFTWARE);
         if (_stream != 0)
         {
           // Attach the BASS DSP Effects to the stream
@@ -211,7 +219,9 @@ namespace MediaPortal.Configuration.Sections
       btStop.Enabled = false;
       // Stop the DSP Stacker
       if (_stacker != null)
+      {
         _stacker.Stop();
+      }
 
       foreach (DSPPluginInfo dsp in listBoxSelectedPlugins.Items)
       {
@@ -251,7 +261,7 @@ namespace MediaPortal.Configuration.Sections
             double gainDB = double.Parse(value);
             SetDSPGain(gainDB);
             textBoxGainDBValue.Text = value;
-            trackBarGain.Value = (int)(gainDB * 1000d);
+            trackBarGain.Value = (int) (gainDB*1000d);
           }
           break;
 
@@ -275,6 +285,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region VST / Winamp Plugins
+
     /// <summary>
     /// Add the selected VST plugin(s) to the Selected Plugin Listbox
     /// </summary>
@@ -282,10 +293,12 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void buttonPluginAdd_Click(object sender, EventArgs e)
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxFoundPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxFoundPlugins.SelectedItem;
 
       if (pluginInfo == null)
+      {
         return;
+      }
 
       if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
       {
@@ -328,10 +341,12 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void buttonPluginRemove_Click(object sender, EventArgs e)
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxSelectedPlugins.SelectedItem;
 
       if (pluginInfo == null)
+      {
         return;
+      }
 
       if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
       {
@@ -356,10 +371,12 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void ShowConfigWindow()
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxSelectedPlugins.SelectedItem;
 
       if (pluginInfo == null)
+      {
         return;
+      }
 
       if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
       {
@@ -371,7 +388,7 @@ namespace MediaPortal.Configuration.Sections
           _vstProc = new VSTPROC(vstEditorCallBack);
           BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, 0);
           // create a new System.Windows.Forms.Form
-          Form f = new MediaPortal.UserInterface.Controls.MPConfigForm();
+          Form f = new MPConfigForm();
           f.Width = vstInfo.editorWidth + 4;
           f.Height = vstInfo.editorHeight + 34;
           f.Closing += new CancelEventHandler(f_Closing);
@@ -416,7 +433,7 @@ namespace MediaPortal.Configuration.Sections
     {
       switch (action)
       {
-        case (int)BASSVSTAction.BASS_VST_PARAM_CHANGED:
+        case (int) BASSVSTAction.BASS_VST_PARAM_CHANGED:
           // Some slider has been changed in the editor
           BASS_VST_PARAM_INFO paramInfo = new BASS_VST_PARAM_INFO();
           for (int i = BassVst.BASS_VST_GetParamCount(vstEditor) - 1; i >= 0; i--)
@@ -425,10 +442,10 @@ namespace MediaPortal.Configuration.Sections
             BassVst.BASS_VST_GetParamInfo(_vstHandle, i, paramInfo);
           }
           break;
-        case (int)BASSVSTAction.BASS_VST_EDITOR_RESIZED:
+        case (int) BASSVSTAction.BASS_VST_EDITOR_RESIZED:
           // the editor window requests a new size,
           break;
-        case (int)BASSVSTAction.BASS_VST_AUDIO_MASTER:
+        case (int) BASSVSTAction.BASS_VST_AUDIO_MASTER:
           break;
       }
       return 0;
@@ -448,42 +465,56 @@ namespace MediaPortal.Configuration.Sections
     {
       ShowConfigWindow();
     }
+
     #endregion
 
-     #region DSP Gain
-    private void buttonSetGain_Click(object sender, System.EventArgs e)
+    #region DSP Gain
+
+    private void buttonSetGain_Click(object sender, EventArgs e)
     {
       if (_gain == null)
+      {
         _gain = new DSP_Gain();
+      }
 
       try
       {
         double gainDB = double.Parse(this.textBoxGainDBValue.Text);
-        trackBarGain.Value = (int)(gainDB * 1000d);
+        trackBarGain.Value = (int) (gainDB*1000d);
         SetDSPGain(gainDB);
       }
-      catch { }
+      catch
+      {
+      }
     }
 
-    private void trackBarGain_ValueChanged(object sender, System.EventArgs e)
+    private void trackBarGain_ValueChanged(object sender, EventArgs e)
     {
       if (_gain == null)
+      {
         _gain = new DSP_Gain();
+      }
 
-      this.textBoxGainDBValue.Text = Convert.ToString(trackBarGain.Value / 1000d);
+      this.textBoxGainDBValue.Text = Convert.ToString(trackBarGain.Value/1000d);
       buttonSetGain_Click(this, EventArgs.Empty);
     }
 
     private void SetDSPGain(double gainDB)
     {
       if (_stacker == null)
+      {
         _stacker = new DSP_Stacker();
+      }
 
       if (_gain == null)
+      {
         _gain = new DSP_Gain();
+      }
 
       if (gainDB == 0.0)
+      {
         _gain.SetBypass(true);
+      }
       else
       {
         _gain.SetBypass(false);
@@ -492,19 +523,27 @@ namespace MediaPortal.Configuration.Sections
 
       // Do we have the gain already in the stacker?
       if (_stacker.IndexOf(_gain) == -1)
+      {
         _stacker.Add(_gain);
+      }
     }
+
     #endregion DSP Gain
 
     #region Dynamic Amplification
-    private void checkBoxDAmp_CheckedChanged(object sender, System.EventArgs e)
+
+    private void checkBoxDAmp_CheckedChanged(object sender, EventArgs e)
     {
       comboBoxDynamicAmplification.Enabled = checkBoxDAmp.Checked;
       if (comboBoxDynamicAmplification.SelectedIndex == -1)
+      {
         comboBoxDynamicAmplification.SelectedIndex = 0;
+      }
 
       if (_stream == 0)
+      {
         return;
+      }
 
       if (checkBoxDAmp.Checked)
       {
@@ -521,7 +560,9 @@ namespace MediaPortal.Configuration.Sections
     private void SetDAmpPreset(int preset)
     {
       if (_damp == null)
+      {
         _damp = new BASS_FX_DSPDAMP();
+      }
 
       switch (preset)
       {
@@ -536,24 +577,28 @@ namespace MediaPortal.Configuration.Sections
           break;
       }
     }
+
     #endregion Dynamic Amplification
 
     #region Compressor
 
-    private void checkBoxCompressor_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxCompressor_CheckedChanged(object sender, EventArgs e)
     {
       if (_comp == null)
+      {
         _comp = new BASS_FX_DSPCOMPRESSOR();
+      }
 
       if (_stream == 0)
+      {
         return;
+      }
 
       if (checkBoxCompressor.Checked)
       {
         _comp.Preset_Medium();
         BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR, _compPrio);
         BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
-
       }
       else
       {
@@ -561,36 +606,40 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void trackBarCompressor_ValueChanged(object sender, System.EventArgs e)
+    private void trackBarCompressor_ValueChanged(object sender, EventArgs e)
     {
-      labelCompThreshold.Text = String.Format("Threshold: {0:#0.0} dB", trackBarCompressor.Value / 10d);
+      labelCompThreshold.Text = String.Format("Threshold: {0:#0.0} dB", trackBarCompressor.Value/10d);
 
       if (_stream == 0)
+      {
         return;
+      }
 
-      _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(trackBarCompressor.Value / 10d, 1.0);
+      _comp.fThreshold = (float) Un4seen.Bass.Utils.DBToLevel(trackBarCompressor.Value/10d, 1.0);
       BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
     }
 
     #endregion Compressor
+
     #endregion
 
     #region SectionSettings Overloads
+
     public override void OnSectionActivated()
     {
       //
       // Disable the complete Tab Page, when the Music Player is not the BASS engine
       //
-      SectionSettings section = SectionSettings.GetSection("Music");
+      SectionSettings section = GetSection("Music");
 
       if (section != null)
       {
-        string player = (string)section.GetSetting("audioPlayer");
+        string player = (string) section.GetSetting("audioPlayer");
         if (player.IndexOf("BASS") == -1)
         {
           MusicDSPTabCtl.Enabled = false;
           MessageBox.Show(this, "DSP effects are only available with the BASS music player selected.",
-              "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                          "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         else
         {
@@ -626,11 +675,16 @@ namespace MediaPortal.Configuration.Sections
           // When Handle > 0 this Vst Plugin is a DSP Plugin
           if (_vstHandle > 0)
           {
-            DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, vstplugin.FullName, vstplugin.Name);
+            DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, vstplugin.FullName,
+                                                         vstplugin.Name);
             if (pluginInfo.IsBlackListed)
+            {
               Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", vstplugin.Name);
+            }
             else
+            {
               listBoxFoundPlugins.Items.Add(pluginInfo);
+            }
           }
           BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandle);
         }
@@ -654,14 +708,15 @@ namespace MediaPortal.Configuration.Sections
           // Set all parameters for the plugin
           foreach (VSTPluginParm paramter in plugins.Parameter)
           {
-            System.Globalization.NumberFormatInfo format = new System.Globalization.NumberFormatInfo();
+            NumberFormatInfo format = new NumberFormatInfo();
             format.NumberDecimalSeparator = ".";
             try
             {
               BassVst.BASS_VST_SetParam(_vstHandle, paramter.Index, float.Parse(paramter.Value));
             }
             catch (Exception)
-            { }
+            {
+            }
           }
         }
         else
@@ -674,7 +729,7 @@ namespace MediaPortal.Configuration.Sections
       {
         for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
         {
-          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
+          DSPPluginInfo dsp = (DSPPluginInfo) listBoxFoundPlugins.Items[i];
           if (dsp.DSPPluginType == DSPPluginInfo.PluginType.VST && dsp.Name == plugins.PluginDll)
           {
             listBoxFoundPlugins.Items.RemoveAt(i);
@@ -688,18 +743,23 @@ namespace MediaPortal.Configuration.Sections
       WINAMP_DSP[] dsps = BassWa.BASS_WADSP_FindPlugins(pluginPath);
       foreach (WINAMP_DSP winampPlugin in dsps)
       {
-        DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.file, winampPlugin.description);
+        DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.file,
+                                                     winampPlugin.description);
         if (pluginInfo.IsBlackListed)
+        {
           Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", pluginInfo.FilePath);
+        }
         else
+        {
           listBoxFoundPlugins.Items.Add(pluginInfo);
+        }
       }
       // Now remove those already selected from the found listbox
       foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
       {
         for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
         {
-          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
+          DSPPluginInfo dsp = (DSPPluginInfo) listBoxFoundPlugins.Items[i];
           if (dsp.DSPPluginType == DSPPluginInfo.PluginType.Winamp && dsp.FilePath == plugins.PluginDll)
           {
             listBoxFoundPlugins.Items.RemoveAt(i);
@@ -810,12 +870,14 @@ namespace MediaPortal.Configuration.Sections
         BassWa.BASS_WADSP_Free();
       }
       catch
-      { }
+      {
+      }
       Bass.BASS_Stop();
       Bass.BASS_Free();
 
       base.Dispose(disposing);
     }
+
     #endregion
   }
 }

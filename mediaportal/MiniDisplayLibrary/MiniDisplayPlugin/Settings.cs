@@ -6,10 +6,10 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -48,30 +48,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private int m_TextWidth = 0x10;
     private string[] m_TranslateFrom;
     private string[] m_TranslateTo;
-    [XmlElement("Message", typeof(Message))]
-    public List<Message> Messages = new List<Message>();
-    [XmlAttribute]
-    public string Type;
+    [XmlElement("Message", typeof (Message))] public List<Message> Messages = new List<Message>();
+    [XmlAttribute] public string Type;
 
     private static void Default(Settings _settings)
     {
       _settings.DisableGUISetup = false;
-      _settings.TranslateFrom = new string[] { "\x00a9", "\x00ae", "\x00e9", "\x00e8", "\x00ea", "\x00fc", "\x00e4", "\x00f6", "\x00dc", "\x00c4", "\x00d6", "\x00df" };
-      _settings.TranslateTo = new string[] { "(c)", "(R)", "e", "e", "e", "ue", "ae", "oe", "Ue", "Ae", "Oe", "ss" };
+      _settings.TranslateFrom = new string[]
+                                  {
+                                    "\x00a9", "\x00ae", "\x00e9", "\x00e8", "\x00ea", "\x00fc", "\x00e4", "\x00f6",
+                                    "\x00dc", "\x00c4", "\x00d6", "\x00df"
+                                  };
+      _settings.TranslateTo = new string[] {"(c)", "(R)", "e", "e", "e", "ue", "ae", "oe", "Ue", "Ae", "Oe", "ss"};
       _settings.BackLightControl = false;
       _settings.Backlight = 0x7f;
       _settings.ContrastControl = false;
       _settings.Contrast = 0x7f;
-      _settings.CustomCharacters = new int[][] { new int[] { 12, 30, 30, 30, 30, 30, 30, 12 }, new int[] { 0x66, 0xff, 0xff, 0xf6, 240, 240, 240, 0x60 } };
+      _settings.CustomCharacters = new int[][]
+                                     {
+                                       new int[] {12, 30, 30, 30, 30, 30, 30, 12},
+                                       new int[] {0x66, 0xff, 0xff, 0xf6, 240, 240, 240, 0x60}
+                                     };
       Message item = new Message();
       item.Status = Status.Idle;
-      item.Lines.Add(new Line(new Text("MediaPortal"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
-      item.Lines.Add(new Line(new Property("#time"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Text("MediaPortal"), Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#time"), Alignment.Centered));
       _settings.Messages.Add(item);
       item = new Message();
       item.Status = Status.Dialog;
-      item.Lines.Add(new Line(new Property("#DialogLabel"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
-      item.Lines.Add(new Line(new Property("#DialogItem"), MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#DialogLabel"), Alignment.Centered));
+      item.Lines.Add(new Line(new Property("#DialogItem"), Alignment.Centered));
       _settings.Messages.Add(item);
       item = new Message();
       item.Status = Status.Action;
@@ -140,7 +146,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       item.Lines.Add(new Line(new Property("#TV.View.channel")));
       line = new Line();
       line.values.Add(new Parse("#TV.View.title (#TV.View.start->#TV.View.stop)", new NotNullCondition("#TV.View.title")));
-      line.values.Add(new Text(" (#112)", new AndCondition(new Condition[] { new NotNullCondition("#paused"), new NotNullCondition("#TV.View.title") })));
+      line.values.Add(new Text(" (#112)",
+                               new AndCondition(new Condition[]
+                                                  {
+                                                    new NotNullCondition("#paused"),
+                                                    new NotNullCondition("#TV.View.title")
+                                                  })));
       line.values.Add(new Text(": #736", new IsNullCondition("#TV.View.title")));
       item.Lines.Add(line);
       _settings.Messages.Add(item);
@@ -193,9 +204,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
         Log.Info("MiniDisplay.Settings.Load() - Loading settings from configuration file", new object[0]);
-        XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+        XmlSerializer serializer = new XmlSerializer(typeof (Settings));
         XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"));
-        settings = (Settings)serializer.Deserialize(xmlReader);
+        settings = (Settings) serializer.Deserialize(xmlReader);
         xmlReader.Close();
         settings.IdleMessage = FindIdleMessage(settings);
         return settings;
@@ -298,7 +309,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (this.ExtensiveLogging)
           {
-            Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] { info2.FullName });
+            Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] {info2.FullName});
           }
           list.Add(new LCDHypeWrapper(info2.FullName));
         }
@@ -318,129 +329,75 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static void Save()
     {
-      XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+      XmlSerializer serializer = new XmlSerializer(typeof (Settings));
       XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 2;
-      serializer.Serialize((XmlWriter)writer, Instance);
+      serializer.Serialize((XmlWriter) writer, Instance);
       writer.Close();
     }
 
     [XmlAttribute]
     public int Backlight
     {
-      get
-      {
-        return this.m_Backlight;
-      }
-      set
-      {
-        this.m_Backlight = value;
-      }
+      get { return this.m_Backlight; }
+      set { this.m_Backlight = value; }
     }
 
     [XmlAttribute]
     public bool BackLightControl
     {
-      get
-      {
-        return this.m_BackLightControl;
-      }
-      set
-      {
-        this.m_BackLightControl = value;
-      }
+      get { return this.m_BackLightControl; }
+      set { this.m_BackLightControl = value; }
     }
 
     [XmlAttribute]
     public bool BlankOnExit
     {
-      get
-      {
-        return this.m_BlankOnExit;
-      }
-      set
-      {
-        this.m_BlankOnExit = value;
-      }
+      get { return this.m_BlankOnExit; }
+      set { this.m_BlankOnExit = value; }
     }
 
     [XmlAttribute]
     public int CharsToScroll
     {
-      get
-      {
-        return this.m_CharsToScroll;
-      }
-      set
-      {
-        this.m_CharsToScroll = value;
-      }
+      get { return this.m_CharsToScroll; }
+      set { this.m_CharsToScroll = value; }
     }
 
     [XmlAttribute]
     public int Contrast
     {
-      get
-      {
-        return this.m_Contrast;
-      }
-      set
-      {
-        this.m_Contrast = value;
-      }
+      get { return this.m_Contrast; }
+      set { this.m_Contrast = value; }
     }
 
     [XmlAttribute]
     public bool ContrastControl
     {
-      get
-      {
-        return this.m_ContrastControl;
-      }
-      set
-      {
-        this.m_ContrastControl = value;
-      }
+      get { return this.m_ContrastControl; }
+      set { this.m_ContrastControl = value; }
     }
 
     [XmlAttribute]
     public bool ControlScreenSaver
     {
-      get
-      {
-        return this.m_ControlScreenSaver;
-      }
-      set
-      {
-        this.m_ControlScreenSaver = value;
-      }
+      get { return this.m_ControlScreenSaver; }
+      set { this.m_ControlScreenSaver = value; }
     }
 
     [XmlArrayItem("CustomCharacter"), XmlArray]
     public int[][] CustomCharacters
     {
-      get
-      {
-        return this.m_CustomCharacters;
-      }
-      set
-      {
-        this.m_CustomCharacters = value;
-      }
+      get { return this.m_CustomCharacters; }
+      set { this.m_CustomCharacters = value; }
     }
 
     [XmlAttribute]
     public bool DisableGUISetup
     {
-      get
-      {
-        return this.m_DisableGUISetup;
-      }
-      set
-      {
-        this.m_DisableGUISetup = value;
-      }
+      get { return this.m_DisableGUISetup; }
+      set { this.m_DisableGUISetup = value; }
     }
 
     [XmlIgnore]
@@ -459,39 +416,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     [XmlAttribute]
     public bool EnableLCDHype
     {
-      get
-      {
-        return this.m_EnableLCDHype;
-      }
-      set
-      {
-        this.m_EnableLCDHype = value;
-      }
+      get { return this.m_EnableLCDHype; }
+      set { this.m_EnableLCDHype = value; }
     }
 
     [XmlAttribute]
     public bool ExtensiveLogging
     {
-      get
-      {
-        return this.m_ExtensiveLogging;
-      }
-      set
-      {
-        this.m_ExtensiveLogging = value;
-      }
+      get { return this.m_ExtensiveLogging; }
+      set { this.m_ExtensiveLogging = value; }
     }
 
     [XmlAttribute]
     public string Font
     {
-      get
-      {
-        return this.m_Font;
-      }
+      get { return this.m_Font; }
       set
       {
-        System.Drawing.Font font = new System.Drawing.Font(value, (float)this.FontSize);
+        Font font = new Font(value, (float) this.FontSize);
         this.m_Font = font.Name;
         font.Dispose();
       }
@@ -500,13 +442,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     [XmlAttribute]
     public int FontSize
     {
-      get
-      {
-        return this.m_FontSize;
-      }
+      get { return this.m_FontSize; }
       set
       {
-        new System.Drawing.Font(this.Font, (float)value).Dispose();
+        new Font(this.Font, (float) value).Dispose();
         this.m_FontSize = value;
       }
     }
@@ -522,49 +461,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         return this.m_ForceGraphicText;
       }
-      set
-      {
-        this.m_ForceGraphicText = value;
-      }
+      set { this.m_ForceGraphicText = value; }
     }
 
     [XmlAttribute]
     public int GraphicComDelay
     {
-      get
-      {
-        return this.m_GraphicComDelay;
-      }
-      set
-      {
-        this.m_GraphicComDelay = value;
-      }
+      get { return this.m_GraphicComDelay; }
+      set { this.m_GraphicComDelay = value; }
     }
 
     [XmlAttribute]
     public int GraphicHeight
     {
-      get
-      {
-        return this.m_GraphicHeight;
-      }
-      set
-      {
-        this.m_GraphicHeight = value;
-      }
+      get { return this.m_GraphicHeight; }
+      set { this.m_GraphicHeight = value; }
     }
 
     [XmlAttribute]
     public int GraphicWidth
     {
-      get
-      {
-        return this.m_GraphicWidth;
-      }
-      set
-      {
-        this.m_GraphicWidth = value;
-      }
+      get { return this.m_GraphicWidth; }
+      set { this.m_GraphicWidth = value; }
     }
 
     [XmlIgnore]
@@ -622,14 +540,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public string IdleMessage
     {
-      get
-      {
-        return this.m_IdleMessage;
-      }
-      set
-      {
-        this.m_IdleMessage = value;
-      }
+      get { return this.m_IdleMessage; }
+      set { this.m_IdleMessage = value; }
     }
 
     public static Settings Instance
@@ -657,13 +569,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (this.ExtensiveLogging)
           {
-            Log.Debug("MiniDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...", new object[0]);
+            Log.Debug(
+              "MiniDisplay.Settings.LCDType: Completed - Requested type was NULL.  Returning first type found...",
+              new object[0]);
           }
           return this.Drivers[0];
         }
         if (this.ExtensiveLogging)
         {
-          Log.Info("MiniDisplay.Settings.LCDType: Configured for display type: {0}", new object[] { this.Type });
+          Log.Info("MiniDisplay.Settings.LCDType: Configured for display type: {0}", new object[] {this.Type});
         }
         foreach (IDisplay display in this.Drivers)
         {
@@ -678,171 +592,95 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         if (this.ExtensiveLogging)
         {
-          Log.Error("MiniDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] { this.Type });
+          Log.Error("MiniDisplay.Settings.LCDType: Confleted - Requested type {0} NOT FOUND.", new object[] {this.Type});
         }
         return this.Drivers[0];
       }
-      set
-      {
-        this.Type = value.Name;
-      }
+      set { this.Type = value.Name; }
     }
 
     [XmlAttribute]
     public int PixelsToScroll
     {
-      get
-      {
-        return this.m_PixelsToScroll;
-      }
-      set
-      {
-        this.m_PixelsToScroll = value;
-      }
+      get { return this.m_PixelsToScroll; }
+      set { this.m_PixelsToScroll = value; }
     }
 
     [XmlAttribute]
     public string Port
     {
-      get
-      {
-        return this.m_Port;
-      }
-      set
-      {
-        this.m_Port = value;
-      }
+      get { return this.m_Port; }
+      set { this.m_Port = value; }
     }
 
     [XmlAttribute]
     public string PrefixChar
     {
-      get
-      {
-        return this.m_PrefixChar;
-      }
-      set
-      {
-        this.m_PrefixChar = value;
-      }
+      get { return this.m_PrefixChar; }
+      set { this.m_PrefixChar = value; }
     }
 
     [XmlAttribute]
     public int ScrollDelay
     {
-      get
-      {
-        return this.m_ScrollDelay;
-      }
-      set
-      {
-        this.m_ScrollDelay = value;
-      }
+      get { return this.m_ScrollDelay; }
+      set { this.m_ScrollDelay = value; }
     }
 
     [XmlAttribute]
     public bool ShowPropertyBrowser
     {
-      get
-      {
-        return this.m_ShowPropertyBrowser;
-      }
-      set
-      {
-        this.m_ShowPropertyBrowser = value;
-      }
+      get { return this.m_ShowPropertyBrowser; }
+      set { this.m_ShowPropertyBrowser = value; }
     }
 
     [XmlAttribute]
     public string Shutdown1
     {
-      get
-      {
-        return this.m_Shutdown1;
-      }
-      set
-      {
-        this.m_Shutdown1 = value;
-      }
+      get { return this.m_Shutdown1; }
+      set { this.m_Shutdown1 = value; }
     }
 
     [XmlAttribute]
     public string Shutdown2
     {
-      get
-      {
-        return this.m_Shutdown2;
-      }
-      set
-      {
-        this.m_Shutdown2 = value;
-      }
+      get { return this.m_Shutdown2; }
+      set { this.m_Shutdown2 = value; }
     }
 
     [XmlAttribute]
     public int TextComDelay
     {
-      get
-      {
-        return this.m_TextComDelay;
-      }
-      set
-      {
-        this.m_TextComDelay = value;
-      }
+      get { return this.m_TextComDelay; }
+      set { this.m_TextComDelay = value; }
     }
 
     [XmlAttribute]
     public int TextHeight
     {
-      get
-      {
-        return this.m_TextHeight;
-      }
-      set
-      {
-        this.m_TextHeight = value;
-      }
+      get { return this.m_TextHeight; }
+      set { this.m_TextHeight = value; }
     }
 
     [XmlAttribute]
     public int TextWidth
     {
-      get
-      {
-        return this.m_TextWidth;
-      }
-      set
-      {
-        this.m_TextWidth = value;
-      }
+      get { return this.m_TextWidth; }
+      set { this.m_TextWidth = value; }
     }
 
     [XmlArray]
     public string[] TranslateFrom
     {
-      get
-      {
-        return this.m_TranslateFrom;
-      }
-      set
-      {
-        this.m_TranslateFrom = value;
-      }
+      get { return this.m_TranslateFrom; }
+      set { this.m_TranslateFrom = value; }
     }
 
     [XmlArray]
     public string[] TranslateTo
     {
-      get
-      {
-        return this.m_TranslateTo;
-      }
-      set
-      {
-        this.m_TranslateTo = value;
-      }
+      get { return this.m_TranslateTo; }
+      set { this.m_TranslateTo = value; }
     }
   }
 }
-

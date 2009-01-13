@@ -24,10 +24,9 @@
 #endregion
 
 using System;
-
-using MediaPortal.Video.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal.GUI.Video
 {
@@ -36,35 +35,35 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoArtistInfo : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(3)]     protected GUIToggleButtonControl btnBiography = null;
-    [SkinControlAttribute(4)]     protected GUIToggleButtonControl btnMovies = null;
-    [SkinControlAttribute(20)]    protected GUITextScrollUpControl tbPlotArea = null;
-    [SkinControlAttribute(21)]    protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(22)]    protected GUITextControl tbTextArea = null;
+    [SkinControl(3)] protected GUIToggleButtonControl btnBiography = null;
+    [SkinControl(4)] protected GUIToggleButtonControl btnMovies = null;
+    [SkinControl(20)] protected GUITextScrollUpControl tbPlotArea = null;
+    [SkinControl(21)] protected GUIImage imgCoverArt = null;
+    [SkinControl(22)] protected GUITextControl tbTextArea = null;
 
-    enum ViewMode
+    private enum ViewMode
     {
       Biography,
       Movies,
     }
 
     #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
+
+    private bool m_bRunning = false;
+    private int m_dwParentWindowID = 0;
+    private GUIWindow m_pParentWindow = null;
 
     #endregion
 
+    private ViewMode viewmode = ViewMode.Biography;
 
-    ViewMode viewmode = ViewMode.Biography;
-
-    IMDBActor currentActor = null;
-    bool _prevOverlay = false;
-    string imdbCoverArtUrl = string.Empty;
+    private IMDBActor currentActor = null;
+    private bool _prevOverlay = false;
+    private string imdbCoverArtUrl = string.Empty;
 
     public GUIVideoArtistInfo()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO;
+      GetID = (int) Window.WINDOW_VIDEO_ARTIST_INFO;
     }
 
     public override bool Init()
@@ -104,7 +103,7 @@ namespace MediaPortal.GUI.Video
 
     #region Base Dialog Members 
 
-    void Close()
+    private void Close()
     {
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
@@ -146,6 +145,7 @@ namespace MediaPortal.GUI.Video
       }
       GUILayerManager.UnRegisterLayer(this);
     }
+
     #endregion
 
     protected override void OnPageLoad()
@@ -153,6 +153,7 @@ namespace MediaPortal.GUI.Video
       base.OnPageLoad();
       Update();
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       if (m_bRunning)
@@ -168,7 +169,7 @@ namespace MediaPortal.GUI.Video
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
@@ -183,16 +184,19 @@ namespace MediaPortal.GUI.Video
         Update();
       }
     }
-    
+
     public IMDBActor Actor
     {
       get { return currentActor; }
       set { currentActor = value; }
     }
 
-    void Update()
+    private void Update()
     {
-      if (currentActor == null) return;
+      if (currentActor == null)
+      {
+        return;
+      }
 
       //cast->image
       if (viewmode == ViewMode.Movies)
@@ -211,13 +215,12 @@ namespace MediaPortal.GUI.Video
         imgCoverArt.IsVisible = true;
         btnBiography.Selected = true;
         btnMovies.Selected = false;
-
       }
       GUIPropertyManager.SetProperty("#Actor.Name", currentActor.Name);
       GUIPropertyManager.SetProperty("#Actor.DateOfBirth", currentActor.DateOfBirth);
       GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", currentActor.PlaceOfBirth);
       string biography = currentActor.Biography;
-      if ((biography == string.Empty) || ( biography == Strings.Unknown))
+      if ((biography == string.Empty) || (biography == Strings.Unknown))
       {
         biography = currentActor.MiniBiography;
         if (biography == Strings.Unknown)
@@ -229,23 +232,23 @@ namespace MediaPortal.GUI.Video
       string movies = "";
       for (int i = 0; i < currentActor.Count; ++i)
       {
-        string line = String.Format("{0}. {1} ({2})\n            {3}\n", i + 1, currentActor[i].MovieTitle, currentActor[i].Year, currentActor[i].Role);
+        string line = String.Format("{0}. {1} ({2})\n            {3}\n", i + 1, currentActor[i].MovieTitle,
+                                    currentActor[i].Year, currentActor[i].Role);
         movies += line;
       }
       GUIPropertyManager.SetProperty("#Actor.Movies", movies);
 
-      string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, currentActor.Name);
+      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, currentActor.Name);
       if (imgCoverArt != null)
       {
         imgCoverArt.FreeResources();
         imgCoverArt.SetFileName(largeCoverArtImage);
         imgCoverArt.AllocResources();
       }
-
     }
 
- 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -255,6 +258,7 @@ namespace MediaPortal.GUI.Video
     {
       Render(timePassed);
     }
+
     #endregion
   }
 }

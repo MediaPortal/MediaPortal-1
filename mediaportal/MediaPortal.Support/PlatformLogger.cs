@@ -24,10 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -43,14 +40,15 @@ namespace MediaPortal.Support
       for (int i = 0; i < subKeys.Length; i++)
       {
         RegistryKey key = mainKey.OpenSubKey(subKeys[i]);
-        string cpuType = (string)key.GetValue("ProcessorNameString", "<unknown>");
-        int cpuSpeed = (int)key.GetValue("~MHz", 0);
+        string cpuType = (string) key.GetValue("ProcessorNameString", "<unknown>");
+        int cpuSpeed = (int) key.GetValue("~MHz", 0);
         cpuInfos += cpuType + " running at ~" + cpuSpeed + " MHz.<br>";
         key.Close();
       }
       mainKey.Close();
       return cpuInfos;
     }
+
     public PlatformLogger()
     {
     }
@@ -62,8 +60,9 @@ namespace MediaPortal.Support
       sw.WriteLine("<tr><td><b>Operating system</b></td><td>" + Environment.OSVersion.VersionString + "</td></tr>");
       sw.WriteLine("<tr><td><b>Hostname</b></td><td>" + Environment.MachineName + "</td></tr>");
       sw.WriteLine("<tr><td><b>Network attached?</b></td><td>" + SystemInformation.Network.ToString() + "</td></tr>");
-      sw.WriteLine("<tr><td><b>Primary monitor size</b></td><td>" + SystemInformation.PrimaryMonitorSize.ToString() + "</td></tr>");
-      sw.WriteLine("<tr><td><b>CPU details</b></td><td>"+GetCPUInfos()+"</td></tr>");
+      sw.WriteLine("<tr><td><b>Primary monitor size</b></td><td>" + SystemInformation.PrimaryMonitorSize.ToString() +
+                   "</td></tr>");
+      sw.WriteLine("<tr><td><b>CPU details</b></td><td>" + GetCPUInfos() + "</td></tr>");
       sw.WriteLine("</body></html>");
       sw.Close();
     }

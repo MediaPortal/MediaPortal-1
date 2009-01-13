@@ -24,14 +24,12 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.TV
@@ -40,42 +38,32 @@ namespace MediaPortal.GUI.TV
   /// 
   /// </summary>
   /// 
-
   public class GUITVZAPOSD : GUIWindow
   {
-    [SkinControlAttribute(35)]
-    protected GUILabelControl lblCurrentChannel = null;
-    [SkinControlAttribute(36)]
-    protected GUITextControl lblOnTvNow = null;
-    [SkinControlAttribute(37)]
-    protected GUITextControl lblOnTvNext = null;
-    [SkinControlAttribute(100)]
-    protected GUILabelControl lblCurrentTime = null;
-    [SkinControlAttribute(101)]
-    protected GUILabelControl lblStartTime = null;
-    [SkinControlAttribute(102)]
-    protected GUILabelControl lblEndTime = null;
-    [SkinControlAttribute(39)]
-    protected GUIImage imgRecIcon = null;
-    [SkinControlAttribute(10)]
-    protected GUIImage imgTvChannelLogo = null;
+    [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
+    [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
+    [SkinControl(37)] protected GUITextControl lblOnTvNext = null;
+    [SkinControl(100)] protected GUILabelControl lblCurrentTime = null;
+    [SkinControl(101)] protected GUILabelControl lblStartTime = null;
+    [SkinControl(102)] protected GUILabelControl lblEndTime = null;
+    [SkinControl(39)] protected GUIImage imgRecIcon = null;
+    [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
 
 
-    bool m_bNeedRefresh = false;
-    DateTime m_dateTime = DateTime.Now;
+    private bool m_bNeedRefresh = false;
+    private DateTime m_dateTime = DateTime.Now;
 
-    List<TVChannel> tvChannelList = new List<TVChannel>();
+    private List<TVChannel> tvChannelList = new List<TVChannel>();
 
     public GUITVZAPOSD()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
+      GetID = (int) Window.WINDOW_TVZAPOSD;
     }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
+      GetID = (int) Window.WINDOW_TVZAPOSD;
       return bResult;
     }
 
@@ -88,8 +76,8 @@ namespace MediaPortal.GUI.TV
     public override void Render(float timePassed)
     {
       UpdateProgressBar();
-      Get_TimeInfo();							// show the time elapsed/total playing time
-      base.Render(timePassed);		// render our controls to the screen
+      Get_TimeInfo(); // show the time elapsed/total playing time
+      base.Render(timePassed); // render our controls to the screen
     }
 
     public override void OnAction(Action action)
@@ -117,7 +105,7 @@ namespace MediaPortal.GUI.TV
           {
             if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
             {
-              GUIFullScreenTV tvWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              GUIFullScreenTV tvWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int) Window.WINDOW_TVFULLSCREEN);
               tvWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
               tvWindow.OnAction(action);
             }
@@ -135,6 +123,7 @@ namespace MediaPortal.GUI.TV
 
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + newWindowId));
     }
+
     protected override void OnPageLoad()
     {
       // following line should stay. Problems with OSD not
@@ -142,7 +131,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetChannels(ref tvChannelList);
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
-      ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
       SetCurrentChannelLogo();
@@ -152,17 +141,16 @@ namespace MediaPortal.GUI.TV
     }
 
 
-    void Get_TimeInfo()
+    private void Get_TimeInfo()
     {
       string strChannel = GetChannelName();
       string strTime = strChannel;
       TVProgram prog = GUITVHome.Navigator.GetTVChannel(strChannel).CurrentProgram;
       if (prog != null)
       {
-
         strTime = String.Format("{0}-{1}",
-          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       if (lblCurrentTime != null)
       {
@@ -180,7 +168,7 @@ namespace MediaPortal.GUI.TV
 
       foreach (CPosition pos in _listPositions)
       {
-        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+        pos.control.SetPosition((int) pos.XPos, (int) pos.YPos + iCalibrationY);
       }
       foreach (CPosition pos in _listPositions)
       {
@@ -192,20 +180,22 @@ namespace MediaPortal.GUI.TV
           if (dwPosY < iTop)
           {
             int iSize = iTop - dwPosY;
-            if (iSize > iMin) iMin = iSize;
+            if (iSize > iMin)
+            {
+              iMin = iSize;
+            }
             bOffScreen = true;
           }
         }
       }
       if (bOffScreen)
       {
-
         foreach (CPosition pos in _listPositions)
         {
           GUIControl pControl = pos.control;
           int dwPosX = pControl.XPosition;
           int dwPosY = pControl.YPosition;
-          if (dwPosY < (int)100)
+          if (dwPosY < (int) 100)
           {
             dwPosY += Math.Abs(iMin);
             pControl.SetPosition(dwPosX, dwPosY);
@@ -229,7 +219,10 @@ namespace MediaPortal.GUI.TV
     private void OnPreviousChannel()
     {
       Log.Info("GUITV OSD: OnNextChannel");
-      if (!Recorder.View) return;
+      if (!Recorder.View)
+      {
+        return;
+      }
       GUITVHome.Navigator.ZapToPreviousChannel(true);
 
       SetCurrentChannelLogo();
@@ -238,9 +231,11 @@ namespace MediaPortal.GUI.TV
 
     private void OnNextChannel()
     {
-
       Log.Info("GUITV ZAPOSD: OnNextChannel");
-      if (!Recorder.View) return;
+      if (!Recorder.View)
+      {
+        return;
+      }
       GUITVHome.Navigator.ZapToNextChannel(true);
       SetCurrentChannelLogo();
       m_dateTime = DateTime.Now;
@@ -252,11 +247,11 @@ namespace MediaPortal.GUI.TV
     }
 
 
-    void SetCurrentChannelLogo()
+    private void SetCurrentChannelLogo()
     {
       string strChannel = GetChannelName();
-      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
-      if (System.IO.File.Exists(strLogo))
+      string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+      if (File.Exists(strLogo))
       {
         if (imgTvChannelLogo != null)
         {
@@ -276,11 +271,12 @@ namespace MediaPortal.GUI.TV
       ShowPrograms();
     }
 
-    string GetChannelName()
+    private string GetChannelName()
     {
       return GUITVHome.Navigator.ZapChannel;
     }
-    void ShowPrograms()
+
+    private void ShowPrograms()
     {
       if (lblOnTvNow != null)
       {
@@ -308,8 +304,8 @@ namespace MediaPortal.GUI.TV
       if (prog != null)
       {
         string strTime = String.Format("{0}-{1}",
-          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         if (lblCurrentTime != null)
         {
@@ -359,7 +355,7 @@ namespace MediaPortal.GUI.TV
       UpdateProgressBar();
     }
 
-    void UpdateProgressBar()
+    private void UpdateProgressBar()
     {
       double fPercent;
       TVProgram prog = GUITVHome.Navigator.GetTVChannel(GetChannelName()).CurrentProgram;
@@ -369,16 +365,16 @@ namespace MediaPortal.GUI.TV
         return;
       }
       string strTime = String.Format("{0}-{1}",
-        prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       TimeSpan ts = prog.EndTime - prog.StartTime;
       double iTotalSecs = ts.TotalSeconds;
       ts = DateTime.Now - prog.StartTime;
       double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+      fPercent = ((double) iCurSecs)/((double) iTotalSecs);
       fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int) fPercent).ToString());
     }
   }
 }

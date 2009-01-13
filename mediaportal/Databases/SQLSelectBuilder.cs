@@ -36,13 +36,13 @@ namespace MediaPortal.Database
   /// </summary>
   public class SQLSelectBuilder
   {
-    string fields = "";
-    string tables = "";
-    string where = "";
-    string groupBy = "";
-    string orderBy = "";
-    string count = "count(*)";
-    string distinct = "";
+    private string fields = "";
+    private string tables = "";
+    private string where = "";
+    private string groupBy = "";
+    private string orderBy = "";
+    private string count = "count(*)";
+    private string distinct = "";
 
 
     public SQLSelectBuilder()
@@ -208,7 +208,7 @@ namespace MediaPortal.Database
       get { return GetAsSQLCount(); }
     }
 
-    string GetAsSQL()
+    private string GetAsSQL()
     {
       string res = "";
       res = String.Format("SELECT {0} {1} FROM {2} ", distinct, FieldsForSQL, tables);
@@ -227,7 +227,7 @@ namespace MediaPortal.Database
       return res;
     }
 
-    string GetAsSQLCount()
+    private string GetAsSQLCount()
     {
       string res = "";
       res = String.Format("SELECT {0} FROM {1} ", count, tables);

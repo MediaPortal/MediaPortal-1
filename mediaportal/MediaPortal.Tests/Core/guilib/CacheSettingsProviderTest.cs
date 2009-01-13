@@ -24,10 +24,10 @@
 #endregion
 
 using System;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
 using NUnit.Framework;
-using MediaPortal.Profile;
 
 namespace MediaPortal.Tests.Core.Profile
 {
@@ -85,7 +85,7 @@ namespace MediaPortal.Tests.Core.Profile
     [SetUp]
     public void Init()
     {
-        GlobalServiceProvider.Replace<ILog>(new NoLog());
+      GlobalServiceProvider.Replace<ILog>(new NoLog());
       this.getValueReturns = null;
       this.getValueHits = 0;
       this.removeEntryHits = 0;

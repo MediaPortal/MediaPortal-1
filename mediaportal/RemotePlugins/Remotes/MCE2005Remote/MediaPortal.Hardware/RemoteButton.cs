@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Hardware
 {
   public enum RemoteButton
@@ -88,6 +86,6 @@ namespace MediaPortal.Hardware
 
     // Special OEM buttons
     AspectRatio = 39, // FIC Spectra
-    Print = 78,       // Hewlett Packard MCE Edition
+    Print = 78, // Hewlett Packard MCE Edition
   }
 }

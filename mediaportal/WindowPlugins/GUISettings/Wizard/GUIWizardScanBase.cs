@@ -25,14 +25,15 @@
 
 using System;
 using System.Collections;
-using System.Xml;
+using System.IO;
 using System.Threading;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Settings.Wizard;
+using MediaPortal.Radio.Database;
+using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
 using MediaPortal.Util;
-using MediaPortal.GUI.Settings.Wizard;
 
 namespace WindowPlugins.GUISettings.Wizard
 {
@@ -41,21 +42,15 @@ namespace WindowPlugins.GUISettings.Wizard
   /// </summary>
   public class GUIWizardScanBase : GUIWindow, AutoTuneCallback
   {
-    [SkinControlAttribute(26)]
-    protected GUILabelControl lblChannelsFound = null;
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblStatus = null;
-    [SkinControlAttribute(24)]
-    protected GUIListControl listChannelsFound = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnBack = null;
-    [SkinControlAttribute(20)]
-    protected GUIProgressControl progressBar = null;
+    [SkinControl(26)] protected GUILabelControl lblChannelsFound = null;
+    [SkinControl(27)] protected GUILabelControl lblStatus = null;
+    [SkinControl(24)] protected GUIListControl listChannelsFound = null;
+    [SkinControl(5)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+    [SkinControl(20)] protected GUIProgressControl progressBar = null;
 
-    int card = 0;
-    bool updateList = false;
+    private int card = 0;
+    private bool updateList = false;
     private bool _autoTuneRunning = false;
 
     public GUIWizardScanBase()
@@ -84,20 +79,22 @@ namespace WindowPlugins.GUISettings.Wizard
       WorkerThread.Start();
     }
 
-    
+
     protected virtual void OnScanDone()
     {
     }
+
     protected virtual NetworkType Network()
     {
       return NetworkType.Unknown;
     }
+
     public void ScanThread()
     {
       card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
       string country = GUIPropertyManager.GetProperty("#WizardCountry");
       //Recorder.Paused = true;
-            
+
       updateList = false;
       Recorder.StartAutoTune(Network(), card, this);
       _autoTuneRunning = true;
@@ -117,6 +114,7 @@ namespace WindowPlugins.GUISettings.Wizard
       OnScanDone();
       //Recorder.Paused = false;
     }
+
     public override void Process()
     {
       if (updateList)
@@ -144,25 +142,26 @@ namespace WindowPlugins.GUISettings.Wizard
         }
       }
     }
+
     protected void MapRadioToOtherCards(int id)
     {
       ArrayList radioChans = new ArrayList();
-      MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans, id);
+      RadioDatabase.GetStationsForCard(ref radioChans, id);
       for (int i = 0; i < Recorder.Count; ++i)
       {
         TVCaptureDevice dev = Recorder.Get(i);
 
         if (dev.Network == Network() && dev.ID != id)
         {
-          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+          foreach (RadioStation chan in radioChans)
           {
-            MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
+            RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
           }
         }
       }
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnNext)
       {
@@ -173,23 +172,27 @@ namespace WindowPlugins.GUISettings.Wizard
       base.OnClicked(controlId, control, actionType);
     }
 
-
     #region AutoTuneCallback
+
     public void OnNewChannel()
     {
     }
+
     public void OnStatus(string description)
     {
       lblStatus.Label = description;
     }
+
     public void OnStatus2(string description)
     {
       lblChannelsFound.Label = description;
     }
+
     public void OnProgress(int percentDone)
     {
       progressBar.Percentage = percentDone;
     }
+
     public void OnEnded()
     {
       _autoTuneRunning = false;
@@ -198,10 +201,12 @@ namespace WindowPlugins.GUISettings.Wizard
     public void OnSignal(int quality, int strength)
     {
     }
+
     public void UpdateList()
     {
       updateList = true;
     }
+
     protected void DoUpdateList()
     {
       listChannelsFound.Clear();
@@ -214,7 +219,6 @@ namespace WindowPlugins.GUISettings.Wizard
         item.IsFolder = false;
         listChannelsFound.Add(item);
         return;
-
       }
       int count = 1;
       foreach (TVChannel chan in channels)
@@ -222,8 +226,8 @@ namespace WindowPlugins.GUISettings.Wizard
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}. {1}", count, chan.Name);
         item.IsFolder = false;
-        string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-        if (!System.IO.File.Exists(strLogo))
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }

@@ -24,35 +24,35 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class DVDPlayer : MediaPortal.Configuration.SectionSettings
+  public class DVDPlayer : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox fileNameTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBox1;
-    private MediaPortal.UserInterface.Controls.MPButton button2;
-    private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-    private MediaPortal.UserInterface.Controls.MPButton parametersButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox internalPlayerCheckBox;
-    private System.Windows.Forms.OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel label1;
+    private MPTextBox fileNameTextBox;
+    private MPLabel label2;
+    private MPTextBox textBox1;
+    private MPButton button2;
+    private MPButton fileNameButton;
+    private MPButton parametersButton;
+    private MPTextBox parametersTextBox;
+    private MPCheckBox internalPlayerCheckBox;
+    private OpenFileDialog openFileDialog;
+    private MPGroupBox mpGroupBox3;
+    private MPComboBox defaultZoomModeComboBox;
+    private MPLabel label6;
+    private IContainer components = null;
 
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
-    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    private string[] aspectRatio = {"normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan"};
 
     public DVDPlayer()
       : this("DVD Player")
@@ -64,7 +64,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -72,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -94,7 +93,9 @@ namespace MediaPortal.Configuration.Sections
           if (aspectRatio[index].Equals(defaultAspectRatio))
           {
             if (index < defaultZoomModeComboBox.Items.Count)
+            {
               defaultZoomModeComboBox.SelectedIndex = index;
+            }
             break;
           }
         }
@@ -106,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("dvdplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("dvdplayer", "arguments", parametersTextBox.Text);
@@ -114,7 +115,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
 
         xmlwriter.SetValue("dvdplayer", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
-
       }
     }
 
@@ -138,12 +138,14 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void internalPlayerCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void internalPlayerCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-      fileNameTextBox.Enabled = parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = internalPlayerCheckBox.Checked;
+      fileNameTextBox.Enabled =
+        parametersTextBox.Enabled = fileNameButton.Enabled = parametersButton.Enabled = internalPlayerCheckBox.Checked;
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -182,8 +184,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.internalPlayerCheckBox);
       this.mpGroupBox1.Controls.Add(this.parametersButton);
       this.mpGroupBox1.Controls.Add(this.parametersTextBox);
@@ -201,7 +205,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.parametersButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Location = new System.Drawing.Point(384, 67);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -212,8 +218,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.parametersTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 68);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -230,7 +238,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(384, 43);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -241,8 +251,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.fileNameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 44);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -259,18 +271,22 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.defaultZoomModeComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Stretch",
-            "Zoom",
-            "Zoom 14:9",
-            "4:3 Letterbox",
-            "4:3 Pan and scan"});
+      this.defaultZoomModeComboBox.Items.AddRange(new object[]
+                                                    {
+                                                      "Normal",
+                                                      "Original Source Format",
+                                                      "Stretch",
+                                                      "Zoom",
+                                                      "Zoom 14:9",
+                                                      "4:3 Letterbox",
+                                                      "4:3 Pan and scan"
+                                                    });
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
@@ -302,8 +318,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpGroupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.label6);
       this.mpGroupBox3.Controls.Add(this.defaultZoomModeComboBox);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -324,8 +342,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.PerformLayout();
       this.mpGroupBox3.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -333,7 +351,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void parametersButton_Click(object sender, System.EventArgs e)
+    private void parametersButton_Click(object sender, EventArgs e)
     {
       ParameterForm parameters = new ParameterForm();
 
@@ -345,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void fileNameButton_Click(object sender, System.EventArgs e)
+    private void fileNameButton_Click(object sender, EventArgs e)
     {
       using (openFileDialog = new OpenFileDialog())
       {
@@ -366,4 +384,3 @@ namespace MediaPortal.Configuration.Sections
     }
   }
 }
-

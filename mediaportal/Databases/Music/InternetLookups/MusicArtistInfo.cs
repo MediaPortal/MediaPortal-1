@@ -24,15 +24,10 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Collections;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-
 using MediaPortal.Util;
-using System.Threading;
 
 namespace MediaPortal.Music.Database
 {
@@ -41,33 +36,33 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class MusicArtistInfo
   {
-    string m_strArtistName = "";
-    string m_strArtistPictureURL = "";
-    string m_strAKA = "";
-    string m_strBorn = "";
-    string m_strYearsActive = "";
-    string m_strGenres = "";
-    string m_strTones = "";
-    string m_strStyles = "";
-    string m_strInstruments = "";
+    private string m_strArtistName = "";
+    private string m_strArtistPictureURL = "";
+    private string m_strAKA = "";
+    private string m_strBorn = "";
+    private string m_strYearsActive = "";
+    private string m_strGenres = "";
+    private string m_strTones = "";
+    private string m_strStyles = "";
+    private string m_strInstruments = "";
     //string		m_strLabels="";
     //string		m_strSeeAlso="";
     //string    m_strGroupMembers="";
-    string m_strAMGBiography = "";
-    Hashtable m_relatedArtists = new Hashtable();
-    ArrayList m_discographyAlbum = new ArrayList();
-    ArrayList m_discographyCompilations = new ArrayList();
-    ArrayList m_discographySingles = new ArrayList();
-    ArrayList m_discographyMisc = new ArrayList();
-    Hashtable m_appearsOn = new Hashtable();
-    Hashtable m_songsAppearOn = new Hashtable();
-    ArrayList m_songHighlights = new ArrayList();
-    bool m_bLoaded = false;
+    private string m_strAMGBiography = "";
+    private Hashtable m_relatedArtists = new Hashtable();
+    private ArrayList m_discographyAlbum = new ArrayList();
+    private ArrayList m_discographyCompilations = new ArrayList();
+    private ArrayList m_discographySingles = new ArrayList();
+    private ArrayList m_discographyMisc = new ArrayList();
+    private Hashtable m_appearsOn = new Hashtable();
+    private Hashtable m_songsAppearOn = new Hashtable();
+    private ArrayList m_songHighlights = new ArrayList();
+    private bool m_bLoaded = false;
 
-    string m_albums = "";
-    string m_compilations = "";
-    string m_singles = "";
-    string m_misc = "";
+    private string m_albums = "";
+    private string m_compilations = "";
+    private string m_singles = "";
+    private string m_misc = "";
 
     public MusicArtistInfo()
     {
@@ -167,7 +162,9 @@ namespace MediaPortal.Music.Database
       get
       {
         if (m_albums != null && m_albums.Length > 0)
+        {
           return m_albums;
+        }
 
         StringBuilder strLine = new StringBuilder(2048);
         string strTmp = null;
@@ -175,13 +172,14 @@ namespace MediaPortal.Music.Database
         list = DiscographyAlbums;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[])list[i];
+          string[] listInfo = (string[]) list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
-            listInfo[0],  // year 
-            listInfo[1],  // title
-            listInfo[2]); // label
+                                 listInfo[0], // year 
+                                 listInfo[1], // title
+                                 listInfo[2]); // label
           strLine.Append(strTmp);
-        };
+        }
+        ;
         strLine.Append('\n');
         m_albums = strLine.ToString();
         return m_albums;
@@ -194,7 +192,9 @@ namespace MediaPortal.Music.Database
       get
       {
         if (m_compilations != null && m_compilations.Length > 0)
+        {
           return m_compilations;
+        }
 
         StringBuilder strLine = new StringBuilder(2048);
         string strTmp = null;
@@ -202,13 +202,14 @@ namespace MediaPortal.Music.Database
         list = DiscographyCompilations;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[])list[i];
+          string[] listInfo = (string[]) list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
-            listInfo[0],  // year 
-            listInfo[1],  // title
-            listInfo[2]); // label
+                                 listInfo[0], // year 
+                                 listInfo[1], // title
+                                 listInfo[2]); // label
           strLine.Append(strTmp);
-        };
+        }
+        ;
         strLine.Append('\n');
         m_compilations = strLine.ToString();
         return m_compilations;
@@ -221,7 +222,9 @@ namespace MediaPortal.Music.Database
       get
       {
         if (m_singles != null && m_singles.Length > 0)
+        {
           return m_singles;
+        }
 
         StringBuilder strLine = new StringBuilder(2048);
         string strTmp = null;
@@ -229,13 +232,14 @@ namespace MediaPortal.Music.Database
         list = DiscographySingles;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[])list[i];
+          string[] listInfo = (string[]) list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
-            listInfo[0],  // year 
-            listInfo[1],  // title
-            listInfo[2]); // label
+                                 listInfo[0], // year 
+                                 listInfo[1], // title
+                                 listInfo[2]); // label
           strLine.Append(strTmp);
-        };
+        }
+        ;
         strLine.Append('\n');
         m_singles = strLine.ToString();
         return m_singles;
@@ -248,7 +252,9 @@ namespace MediaPortal.Music.Database
       get
       {
         if (m_misc != null && m_misc.Length > 0)
+        {
           return m_misc;
+        }
 
         StringBuilder strLine = new StringBuilder(2048);
         string strTmp = null;
@@ -256,20 +262,21 @@ namespace MediaPortal.Music.Database
         list = DiscographyMisc;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[])list[i];
+          string[] listInfo = (string[]) list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
-            listInfo[0],  // year 
-            listInfo[1],  // title
-            listInfo[2]); // label
+                                 listInfo[0], // year 
+                                 listInfo[1], // title
+                                 listInfo[2]); // label
           strLine.Append(strTmp);
-        };
+        }
+        ;
         strLine.Append('\n');
         m_misc = strLine.ToString();
         return m_misc;
       }
       set { m_misc = value; }
     }
-    
+
     public bool Parse(string strHTML)
     {
       Match match = null;
@@ -280,7 +287,10 @@ namespace MediaPortal.Music.Database
       string endStr = "</span>";
       int begIndex = strHTML.IndexOf(begStr);
 
-      if (begIndex == -1) return false;
+      if (begIndex == -1)
+      {
+        return false;
+      }
 
       int endIndex = strHTML.IndexOf(endStr, begIndex);
 
@@ -298,7 +308,8 @@ namespace MediaPortal.Music.Database
       begIndex = strHTMLLow.IndexOf("<span>born</span>");
       if (begIndex != -1)
       {
-        iStartOfTable = strHTMLLow.LastIndexOf("<table", begIndex);   // look for the table that is holding the artist name to get more data
+        iStartOfTable = strHTMLLow.LastIndexOf("<table", begIndex);
+          // look for the table that is holding the artist name to get more data
         if (iStartOfTable != -1)
         {
           string data;
@@ -318,11 +329,11 @@ namespace MediaPortal.Music.Database
         StringBuilder buff = new StringBuilder();
         match = null;
         regex = new Regex(@"<div\sclass=""timeline-sub-active"">(?<year>[\w:]*)</div>",
-                    RegexOptions.IgnoreCase
-                    | RegexOptions.Multiline
-                    | RegexOptions.IgnorePatternWhitespace
-                    | RegexOptions.Compiled
-                  );
+                          RegexOptions.IgnoreCase
+                          | RegexOptions.Multiline
+                          | RegexOptions.IgnorePatternWhitespace
+                          | RegexOptions.Compiled
+          );
         for (match = regex.Match(strHTML); match.Success; match = match.NextMatch())
         {
           string year = match.Groups["year"].ToString();
@@ -331,7 +342,9 @@ namespace MediaPortal.Music.Database
           buff.Append('s');
         }
         if (buff.Length > 0)
+        {
           m_strYearsActive = buff.ToString(1, buff.Length - 1);
+        }
       }
 
       // Genre
@@ -343,10 +356,10 @@ namespace MediaPortal.Music.Database
         StringBuilder buff = new StringBuilder();
         match = null;
         regex = new Regex(@"<li>(?<data>.*?)</li>",
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
+                          RegexOptions.IgnoreCase
+                          | RegexOptions.Multiline
+                          | RegexOptions.IgnorePatternWhitespace
+                          | RegexOptions.Compiled
           );
         for (match = regex.Match(contentInfo); match.Success; match = match.NextMatch())
         {
@@ -373,10 +386,10 @@ namespace MediaPortal.Music.Database
         StringBuilder buff = new StringBuilder();
         match = null;
         regex = new Regex(@"<li>(?<data>.*?)</li>",
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
+                          RegexOptions.IgnoreCase
+                          | RegexOptions.Multiline
+                          | RegexOptions.IgnorePatternWhitespace
+                          | RegexOptions.Compiled
           );
         for (match = regex.Match(contentInfo); match.Success; match = match.NextMatch())
         {
@@ -403,10 +416,10 @@ namespace MediaPortal.Music.Database
         StringBuilder buff = new StringBuilder();
         match = null;
         regex = new Regex(@"<li>(?<data>.*?)</li>",
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
+                          RegexOptions.IgnoreCase
+                          | RegexOptions.Multiline
+                          | RegexOptions.IgnorePatternWhitespace
+                          | RegexOptions.Compiled
           );
         for (match = regex.Match(contentInfo); match.Success; match = match.NextMatch())
         {
@@ -433,10 +446,10 @@ namespace MediaPortal.Music.Database
         StringBuilder buff = new StringBuilder();
         match = null;
         regex = new Regex(@"<li>(?<data>.*?)</li>",
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
+                          RegexOptions.IgnoreCase
+                          | RegexOptions.Multiline
+                          | RegexOptions.IgnorePatternWhitespace
+                          | RegexOptions.Compiled
           );
         for (match = regex.Match(contentInfo); match.Success; match = match.NextMatch())
         {
@@ -462,7 +475,9 @@ namespace MediaPortal.Music.Database
       {
         begIndex = strHTMLLow.LastIndexOf("<a href=", endIndex);
         if (begIndex != -1)
+        {
           begIndex += 9;
+        }
         endIndex = strHTMLLow.LastIndexOf("\">", endIndex);
       }
       if (begIndex != -1 && endIndex != -1)
@@ -490,7 +505,9 @@ namespace MediaPortal.Music.Database
             m_strAMGBiography = data.Trim();
           }
         }
-        catch { }
+        catch
+        {
+        }
       }
 
       // picture URL
@@ -500,7 +517,9 @@ namespace MediaPortal.Music.Database
       {
         begIndex = strHTMLLow.IndexOf("<img src=", endIndex);
         if (begIndex != -1)
+        {
           begIndex += 10;
+        }
         endIndex = strHTMLLow.IndexOf("\"", begIndex + 2);
       }
       if (begIndex != -1 && endIndex != -1)
@@ -603,7 +622,9 @@ namespace MediaPortal.Music.Database
       {
         begIndex = strHTMLLow.LastIndexOf("<a href=", endIndex);
         if (begIndex != -1)
+        {
           begIndex += 9;
+        }
         endIndex = strHTMLLow.LastIndexOf("\">", endIndex);
       }
       if (begIndex != -1 && endIndex != -1)
@@ -622,8 +643,8 @@ namespace MediaPortal.Music.Database
             StringBuilder buff = new StringBuilder();
             match = null;
             regex = new Regex(
-                  @"""sorted-cell"">(?<year>.*?)</td>.*?sql=10:.*?"">(?<title>.*" +
-                  @"?)</a>.*?class=""cell"".*?>(?<label>.*?)</td>",
+              @"""sorted-cell"">(?<year>.*?)</td>.*?sql=10:.*?"">(?<title>.*" +
+              @"?)</a>.*?class=""cell"".*?>(?<label>.*?)</td>",
               RegexOptions.IgnoreCase
               | RegexOptions.Multiline
               | RegexOptions.IgnorePatternWhitespace
@@ -643,21 +664,28 @@ namespace MediaPortal.Music.Database
               util.ConvertHTMLToAnsi(label, out label);
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 m_discographyAlbum.Add(dAlbumInfo);
               }
-              catch { }
+              catch
+              {
+              }
             }
           }
         }
-        catch { }
+        catch
+        {
+        }
       }
 
       // discography (compilations, boxes[x])
       if (discographyPageContent != null && discographyPageContent.Length > 0)
       {
-        string[] albumTypes = new string[]{">compilations</a>", ">singles & eps</a>", ">dvds & videos</a>", 
-                                           ">other</a>"};
+        string[] albumTypes = new string[]
+                                {
+                                  ">compilations</a>", ">singles & eps</a>", ">dvds & videos</a>",
+                                  ">other</a>"
+                                };
         foreach (string albumtype in albumTypes)
         {
           begIndex = -1;
@@ -666,7 +694,9 @@ namespace MediaPortal.Music.Database
           {
             begIndex = discographyPageContentLower.LastIndexOf("<a href=", endIndex);
             if (begIndex != -1)
+            {
               begIndex += 9;
+            }
             endIndex = discographyPageContentLower.LastIndexOf("\">", endIndex);
           }
           if (begIndex != -1 && endIndex != -1)
@@ -706,20 +736,30 @@ namespace MediaPortal.Music.Database
                     util.ConvertHTMLToAnsi(label, out label);
                     try
                     {
-                      string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                      string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                       if (albumtype.StartsWith(">compilations"))
+                      {
                         m_discographyCompilations.Add(dAlbumInfo);
+                      }
                       else if (albumtype.StartsWith(">singles"))
+                      {
                         m_discographySingles.Add(dAlbumInfo);
+                      }
                       else if (albumtype.StartsWith(">dvds") || albumtype.StartsWith(">other"))
+                      {
                         m_discographyMisc.Add(dAlbumInfo);
+                      }
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                   } // end of for loop 
                 } // end of if(begIndex != -1)
               } // end of if(href.IndexOf(">") == -1)
             } // end of try
-            catch { }
+            catch
+            {
+            }
           } // end of if(begIndex != -1 && endIndex != -1)         
         } // end foreach
       } // end of if (discographyPageContent != null && discographyPageContent.Length > 0)
@@ -841,7 +881,6 @@ namespace MediaPortal.Music.Database
 
     public ArtistInfo Get()
     {
-
       ArtistInfo artist = new ArtistInfo();
       if (m_bLoaded)
       {

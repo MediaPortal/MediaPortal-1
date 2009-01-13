@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 
@@ -40,42 +38,29 @@ namespace MediaPortal.Dialogs
       Close,
       Next,
       Previous
-    };
+    } ;
 
-    [SkinControlAttribute(2)]
-    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(4)]
-    protected GUILabelControl lblName = null;
-    [SkinControlAttribute(10)]
-    protected GUIButtonControl btnPlus = null;
-    [SkinControlAttribute(11)]
-    protected GUIButtonControl btnMin = null;
-    [SkinControlAttribute(12)]
-    protected GUIButtonControl btnOk = null;
-    [SkinControlAttribute(13)]
-    protected GUIButtonControl btnNextItem = null;
-    [SkinControlAttribute(14)]
-    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(15)]
-    protected GUIButtonControl btnPreviousItem = null;
-    [SkinControlAttribute(100)]
-    protected GUIImage imgStar1 = null;
-    [SkinControlAttribute(101)]
-    protected GUIImage imgStar2 = null;
-    [SkinControlAttribute(102)]
-    protected GUIImage imgStar3 = null;
-    [SkinControlAttribute(103)]
-    protected GUIImage imgStar4 = null;
-    [SkinControlAttribute(104)]
-    protected GUIImage imgStar5 = null;
+    [SkinControl(2)] protected GUILabelControl lblHeading = null;
+    [SkinControl(4)] protected GUILabelControl lblName = null;
+    [SkinControl(10)] protected GUIButtonControl btnPlus = null;
+    [SkinControl(11)] protected GUIButtonControl btnMin = null;
+    [SkinControl(12)] protected GUIButtonControl btnOk = null;
+    [SkinControl(13)] protected GUIButtonControl btnNextItem = null;
+    [SkinControl(14)] protected GUIButtonControl btnPlay = null;
+    [SkinControl(15)] protected GUIButtonControl btnPreviousItem = null;
+    [SkinControl(100)] protected GUIImage imgStar1 = null;
+    [SkinControl(101)] protected GUIImage imgStar2 = null;
+    [SkinControl(102)] protected GUIImage imgStar3 = null;
+    [SkinControl(103)] protected GUIImage imgStar4 = null;
+    [SkinControl(104)] protected GUIImage imgStar5 = null;
 
-    int rating = 1;
-    string fileName;
-    ResultCode resultCode;
+    private int rating = 1;
+    private string fileName;
+    private ResultCode resultCode;
 
     public GUIDialogSetRating()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_RATING;
+      GetID = (int) Window.WINDOW_DIALOG_RATING;
     }
 
     public override bool Init()
@@ -83,7 +68,7 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\dialogRating.xml");
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnOk)
@@ -112,13 +97,19 @@ namespace MediaPortal.Dialogs
 
       if (control == btnMin)
       {
-        if (rating >= 1) rating--;
+        if (rating >= 1)
+        {
+          rating--;
+        }
         UpdateRating();
         return;
       }
       if (control == btnPlus)
       {
-        if (rating < 5) rating++;
+        if (rating < 5)
+        {
+          rating++;
+        }
         UpdateRating();
         return;
       }
@@ -139,6 +130,7 @@ namespace MediaPortal.Dialogs
 
       return base.OnMessage(message);
     }
+
     public void SetHeading(string strLine)
     {
       LoadSkin();
@@ -150,8 +142,14 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(string.Empty);
-      else SetHeading(GUILocalizeStrings.Get(iString));
+      if (iString == 0)
+      {
+        SetHeading(string.Empty);
+      }
+      else
+      {
+        SetHeading(GUILocalizeStrings.Get(iString));
+      }
     }
 
     public void SetTitle(string title)
@@ -162,15 +160,19 @@ namespace MediaPortal.Dialogs
       lblName.Label = title;
     }
 
-    void UpdateRating()
+    private void UpdateRating()
     {
-      GUIImage[] imgStars = new GUIImage[5] { imgStar1, imgStar2, imgStar3, imgStar4, imgStar5 };
+      GUIImage[] imgStars = new GUIImage[5] {imgStar1, imgStar2, imgStar3, imgStar4, imgStar5};
       for (int i = 0; i < 5; ++i)
       {
-        if ((i + 1) > (int)(Rating))
+        if ((i + 1) > (int) (Rating))
+        {
           imgStars[i].IsVisible = false;
+        }
         else
+        {
           imgStars[i].IsVisible = true;
+        }
       }
     }
 
@@ -179,6 +181,7 @@ namespace MediaPortal.Dialogs
       get { return rating; }
       set { rating = value; }
     }
+
     public string FileName
     {
       get { return fileName; }
@@ -189,6 +192,5 @@ namespace MediaPortal.Dialogs
     {
       get { return resultCode; }
     }
-
   }
 }

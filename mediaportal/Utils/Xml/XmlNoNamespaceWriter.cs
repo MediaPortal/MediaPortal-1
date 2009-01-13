@@ -23,33 +23,37 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Xml;
 
 namespace MediaPortal.Utils.Xml
 {
   /// <summary>
   /// Xml Writer that doesn't write the Namespace attributes when they are standard.
   /// </summary>
-  public class XmlNoNamespaceWriter : System.Xml.XmlTextWriter
+  public class XmlNoNamespaceWriter : XmlTextWriter
   {
     #region Variables
-    bool _skipAttribute = false;
+
+    private bool _skipAttribute = false;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="XmlNoNamespaceWriter"/> class.
     /// </summary>
     /// <param name="writer">The writer.</param>
-    public XmlNoNamespaceWriter(System.IO.TextWriter writer)
+    public XmlNoNamespaceWriter(TextWriter writer)
       : base(writer)
     {
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Writes the specified start tag and associates it with the given namespace and prefix.
     /// </summary>
@@ -73,7 +77,7 @@ namespace MediaPortal.Utils.Xml
     {
       //If the prefix or localname are "xmlns", don't write it.
       if ((prefix != null && prefix.CompareTo("xmlns") == 0) ||
-        (localName != null && localName.CompareTo("xmlns") == 0))
+          (localName != null && localName.CompareTo("xmlns") == 0))
       {
         _skipAttribute = true;
       }
@@ -127,6 +131,7 @@ namespace MediaPortal.Utils.Xml
       //localname.
       base.WriteQualifiedName(localName, null);
     }
+
     #endregion
   }
 }

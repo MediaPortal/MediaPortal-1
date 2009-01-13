@@ -26,46 +26,47 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class MoviePlayer : MediaPortal.Configuration.SectionSettings
+  public class MoviePlayer : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxExternalPlayer;
-    private MediaPortal.UserInterface.Controls.MPButton parametersButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox fileNameTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox externalPlayerCheckBox;
-    private System.Windows.Forms.OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoDecoderSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox wmvGroupBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox wmvCheckBox;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableAudioDualMonoModes;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAACDecoder;
-    private MediaPortal.UserInterface.Controls.MPComboBox aacAudioCodecComboBox;
-    bool _init = false;
+    private MPGroupBox groupBoxExternalPlayer;
+    private MPButton parametersButton;
+    private MPTextBox parametersTextBox;
+    private MPLabel label2;
+    private MPButton fileNameButton;
+    private MPTextBox fileNameTextBox;
+    private MPLabel label1;
+    private MPGroupBox mpGroupBox1;
+    private MPComboBox audioRendererComboBox;
+    private MPLabel label3;
+    private MPCheckBox externalPlayerCheckBox;
+    private OpenFileDialog openFileDialog;
+    private MPComboBox audioCodecComboBox;
+    private MPLabel label5;
+    private MPComboBox videoCodecComboBox;
+    private MPLabel label6;
+    private IContainer components = null;
+    private MPLabel mpLabel1;
+    private MPComboBox h264videoCodecComboBox;
+    private MPCheckBox autoDecoderSettings;
+    private MPGroupBox wmvGroupBox;
+    private MPCheckBox wmvCheckBox;
+    private MPLabel mpLabel2;
+    private MPCheckBox enableAudioDualMonoModes;
+    private MPLabel labelAACDecoder;
+    private MPComboBox aacAudioCodecComboBox;
+    private bool _init = false;
 
     public MoviePlayer()
       : this("Video Player")
@@ -92,16 +93,40 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
-        while (availableVideoFilters.Contains("CyberLink MPEG Muxer")) availableVideoFilters.Remove("CyberLink MPEG Muxer");
-        while (availableVideoFilters.Contains("Ulead MPEG Muxer")) availableVideoFilters.Remove("Ulead MPEG Muxer");
-        while (availableVideoFilters.Contains("PDR MPEG Muxer")) availableVideoFilters.Remove("PDR MPEG Muxer");
-        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder")) availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableVideoFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableVideoFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableVideoFilters.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-        while (availableAudioFilters.Contains("CyberLink MPEG Muxer")) availableAudioFilters.Remove("CyberLink MPEG Muxer");
-        while (availableAudioFilters.Contains("Ulead MPEG Muxer")) availableAudioFilters.Remove("Ulead MPEG Muxer");
-        while (availableAudioFilters.Contains("PDR MPEG Muxer")) availableAudioFilters.Remove("PDR MPEG Muxer");
-        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder")) availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        while (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Ulead MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("Ulead MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("PDR MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("PDR MPEG Muxer");
+        }
+        while (availableAudioFilters.Contains("Nero Mpeg2 Encoder"))
+        {
+          availableAudioFilters.Remove("Nero Mpeg2 Encoder");
+        }
         availableAudioFilters.Sort();
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
@@ -135,8 +160,11 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
+      {
+        return;
+      }
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
@@ -145,7 +173,8 @@ namespace MediaPortal.Configuration.Sections
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
-        audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+        audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
+                                                                        "Default DirectSound Device");
         wmvCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -159,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
           {
             bool Mpeg2DecFilterFound = false;
             bool DScalerFilterFound = false;
-            audioCodec = (string)availableAudioFilters[0];
+            audioCodec = (string) availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
               if (filter.Equals("MPA Decoder Filter"))
@@ -171,8 +200,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) audioCodec = "MPA Decoder Filter";
-            else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              audioCodec = "MPA Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              audioCodec = "DScaler Audio Decoder";
+            }
           }
         }
         Log.Info("  - videoCodec =(" + videoCodec + ")");
@@ -184,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
           Log.Info(" - availableVideoFilters.Count = " + availableVideoFilters.Count.ToString());
           if (availableVideoFilters.Count > 0)
           {
-            videoCodec = (string)availableVideoFilters[0];
+            videoCodec = (string) availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
               Log.Info(" - filter = (" + filter + ")");
@@ -198,8 +233,14 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) videoCodec = "MPV Decoder Filter";
-            else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
+            if (Mpeg2DecFilterFound)
+            {
+              videoCodec = "MPV Decoder Filter";
+            }
+            else if (DScalerFilterFound)
+            {
+              videoCodec = "DScaler Mpeg2 Video Decoder";
+            }
           }
         }
         if (h264videoCodec == string.Empty)
@@ -208,7 +249,7 @@ namespace MediaPortal.Configuration.Sections
           bool H264DecFilterFound = false;
           if (availableH264VideoFilters.Count > 0)
           {
-            h264videoCodec = (string)availableH264VideoFilters[0];
+            h264videoCodec = (string) availableH264VideoFilters[0];
             foreach (string filter in availableH264VideoFilters)
             {
               if (filter.Equals("CoreAVC Video Decoder"))
@@ -216,7 +257,10 @@ namespace MediaPortal.Configuration.Sections
                 H264DecFilterFound = true;
               }
             }
-            if (H264DecFilterFound) h264videoCodec = "CoreAVC Video Decoder";
+            if (H264DecFilterFound)
+            {
+              h264videoCodec = "CoreAVC Video Decoder";
+            }
           }
         }
         if (aacaudioCodec == string.Empty)
@@ -225,7 +269,7 @@ namespace MediaPortal.Configuration.Sections
           bool AACDecFilterFound = false;
           if (availableAACAudioFilters.Count > 0)
           {
-            aacaudioCodec = (string)availableAACAudioFilters[0];
+            aacaudioCodec = (string) availableAACAudioFilters[0];
             foreach (string filter in availableAACAudioFilters)
             {
               if (filter.Equals("MONOGRAM ACC Decoder"))
@@ -233,7 +277,10 @@ namespace MediaPortal.Configuration.Sections
                 AACDecFilterFound = true;
               }
             }
-            if (AACDecFilterFound) aacaudioCodec = "MONOGRAM ACC Decoder";
+            if (AACDecFilterFound)
+            {
+              aacaudioCodec = "MONOGRAM ACC Decoder";
+            }
           }
         }
         audioCodecComboBox.Text = audioCodec;
@@ -248,8 +295,11 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      if (_init == false) return;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (_init == false)
+      {
+        return;
+      }
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "audiodualmono", enableAudioDualMonoModes.Checked);
@@ -282,6 +332,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -320,8 +371,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxExternalPlayer
       // 
-      this.groupBoxExternalPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalPlayer.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxExternalPlayer.Controls.Add(this.externalPlayerCheckBox);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersButton);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersTextBox);
@@ -351,7 +404,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Location = new System.Drawing.Point(384, 84);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -362,8 +417,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 84);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -380,7 +437,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(384, 60);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -391,8 +450,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 60);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -409,8 +470,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.labelAACDecoder);
       this.mpGroupBox1.Controls.Add(this.aacAudioCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
@@ -441,8 +504,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // aacAudioCodecComboBox
       // 
-      this.aacAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.aacAudioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.aacAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 96);
@@ -459,8 +524,9 @@ namespace MediaPortal.Configuration.Sections
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 10;
-      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
-          ", you can switch between them)";
+      this.enableAudioDualMonoModes.Text =
+        "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
+        ", you can switch between them)";
       this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // autoDecoderSettings
@@ -472,8 +538,9 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.Name = "autoDecoderSettings";
       this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
       this.autoDecoderSettings.TabIndex = 0;
-      this.autoDecoderSettings.Text = "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
-          "equired)";
+      this.autoDecoderSettings.Text =
+        "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
+        "equired)";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
       // 
       // mpLabel1
@@ -486,8 +553,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // h264videoCodecComboBox
       // 
-      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.h264videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 48);
@@ -497,8 +566,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
@@ -524,8 +595,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 72);
@@ -535,8 +608,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
@@ -554,8 +629,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // wmvGroupBox
       // 
-      this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.wmvGroupBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -599,8 +676,8 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.ResumeLayout(false);
       this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -608,9 +685,10 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void externalPlayerCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void externalPlayerCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-      fileNameTextBox.Enabled = fileNameButton.Enabled = parametersTextBox.Enabled = parametersButton.Enabled = externalPlayerCheckBox.Checked;
+      fileNameTextBox.Enabled =
+        fileNameButton.Enabled = parametersTextBox.Enabled = parametersButton.Enabled = externalPlayerCheckBox.Checked;
     }
 
     /// <summary>
@@ -618,7 +696,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void fileNameButton_Click(object sender, System.EventArgs e)
+    private void fileNameButton_Click(object sender, EventArgs e)
     {
       using (openFileDialog = new OpenFileDialog())
       {
@@ -641,7 +719,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void parametersButton_Click(object sender, System.EventArgs e)
+    private void parametersButton_Click(object sender, EventArgs e)
     {
       ParameterForm parameters = new ParameterForm();
       parameters.AddParameter("%filename%", "Will be replaced by currently selected media file");

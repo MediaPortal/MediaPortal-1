@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
 {
@@ -82,4 +81,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MCEDisplay_Interop
     Volume = 0x200d
   }
 }
-

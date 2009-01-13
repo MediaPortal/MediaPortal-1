@@ -24,28 +24,28 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using DShowNET.Helper;
 using DirectShowLib;
-
-using MediaPortal.Util;
+using DShowNET.Helper;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using FilterCategory=DirectShowLib.FilterCategory;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class BasePostProcessing : MediaPortal.Configuration.SectionSettings
+  public class BasePostProcessing : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxActivatedFilters;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAvailableFilters;
-    private MediaPortal.UserInterface.Controls.MPLabel labelWarning;
-    private MediaPortal.UserInterface.Controls.MPLabel labelPropertiesHint;
+    private MPGroupBox groupBoxActivatedFilters;
+    private MPGroupBox groupBoxAvailableFilters;
+    private MPLabel labelWarning;
+    private MPLabel labelPropertiesHint;
     private CheckedListBox cLBDSFilter;
     private Button bSetup;
     private ListBox lBDSFilter;
-    private System.ComponentModel.IContainer components = null;
+    private IContainer components = null;
 
     public BasePostProcessing()
       : this("Post Processing")
@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -96,8 +97,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxActivatedFilters
       // 
-      this.groupBoxActivatedFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxActivatedFilters.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxActivatedFilters.Controls.Add(this.labelPropertiesHint);
       this.groupBoxActivatedFilters.Controls.Add(this.bSetup);
       this.groupBoxActivatedFilters.Controls.Add(this.cLBDSFilter);
@@ -111,7 +114,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelPropertiesHint
       // 
-      this.labelPropertiesHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelPropertiesHint.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelPropertiesHint.AutoSize = true;
       this.labelPropertiesHint.Location = new System.Drawing.Point(134, 140);
       this.labelPropertiesHint.Name = "labelPropertiesHint";
@@ -121,7 +126,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // bSetup
       // 
-      this.bSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.bSetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bSetup.Location = new System.Drawing.Point(16, 135);
       this.bSetup.Name = "bSetup";
       this.bSetup.Size = new System.Drawing.Size(112, 22);
@@ -132,9 +139,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cLBDSFilter
       // 
-      this.cLBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cLBDSFilter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cLBDSFilter.FormattingEnabled = true;
       this.cLBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.cLBDSFilter.Name = "cLBDSFilter";
@@ -144,9 +153,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAvailableFilters
       // 
-      this.groupBoxAvailableFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAvailableFilters.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAvailableFilters.Controls.Add(this.lBDSFilter);
       this.groupBoxAvailableFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAvailableFilters.Location = new System.Drawing.Point(0, 197);
@@ -158,9 +169,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lBDSFilter
       // 
-      this.lBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lBDSFilter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lBDSFilter.FormattingEnabled = true;
       this.lBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.lBDSFilter.Name = "lBDSFilter";
@@ -170,9 +183,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelWarning
       // 
-      this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelWarning.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
+                                                       System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.labelWarning.ForeColor = System.Drawing.Color.Red;
       this.labelWarning.Location = new System.Drawing.Point(0, 0);
       this.labelWarning.Name = "labelWarning";
@@ -192,28 +208,38 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActivatedFilters.PerformLayout();
       this.groupBoxAvailableFilters.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private void lBDSFilter_MouseDoubleClick(object sender, MouseEventArgs e)
     {
       bool booFound = false;
       for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+      {
         if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+        {
           booFound = true;
+        }
+      }
       if (!booFound)
+      {
         cLBDSFilter.Items.Add(lBDSFilter.SelectedItem);
+      }
       for (int i = 0; i < cLBDSFilter.Items.Count; i++)
+      {
         if (cLBDSFilter.Items[i] == lBDSFilter.SelectedItem)
+        {
           cLBDSFilter.SelectedIndex = i;
+        }
+      }
     }
 
     private void bSetup_Click(object sender, EventArgs e)
     {
       if (cLBDSFilter.SelectedIndex != -1)
       {
-        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
+        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) cLBDSFilter.SelectedItem);
         page.Show(this);
       }
     }
@@ -222,17 +248,22 @@ namespace MediaPortal.Configuration.Sections
     {
       int tmpIndex = cLBDSFilter.SelectedIndex;
       if (tmpIndex == -1)
+      {
         return;
+      }
       if (tmpIndex == 0)
+      {
         tmpIndex = 1;
+      }
       cLBDSFilter.Items.RemoveAt(cLBDSFilter.SelectedIndex);
       if (cLBDSFilter.Items.Count > 0)
+      {
         cLBDSFilter.SelectedIndex = tmpIndex - 1;
+      }
     }
 
     private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     protected void LoadSettings(string section)
@@ -244,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       cLBDSFilter.DisplayMember = "Name";
       lBDSFilter.DisplayMember = "Name";
       lBDSFilter.FormattingEnabled = true;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int intCount = 0;
         while (xmlreader.GetValueAsString(section, "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -257,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
           intCount++;
         }
       }
-      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory))
       {
         try
         {
@@ -281,19 +312,23 @@ namespace MediaPortal.Configuration.Sections
       cLBDSFilter.Sorted = true;
       lBDSFilter.Sorted = true;
       if (cLBDSFilter.Items.Count > 0)
+      {
         cLBDSFilter.SelectedIndex = 0;
+      }
       if (lBDSFilter.Items.Count > 0)
+      {
         lBDSFilter.SelectedIndex = 0;
+      }
     }
 
     protected void SaveSettings(string section)
     {
       DsDevice tmpDevice = null;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int i = 0; i < cLBDSFilter.Items.Count; i++)
         {
-          tmpDevice = (DsDevice)cLBDSFilter.Items[i];
+          tmpDevice = (DsDevice) cLBDSFilter.Items[i];
           xmlwriter.SetValue(section, "filter" + i.ToString(), tmpDevice.Name);
           xmlwriter.SetValueAsBool(section, "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
         }
@@ -302,4 +337,3 @@ namespace MediaPortal.Configuration.Sections
     }
   }
 }
-

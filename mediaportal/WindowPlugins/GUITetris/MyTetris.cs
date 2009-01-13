@@ -25,11 +25,8 @@
 
 using System;
 using System.Xml.Serialization;
-using System.Drawing;
-
-using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
-
+using MediaPortal.GUI.Library;
 using Tetris;
 
 namespace MediaPortal.Games.Tetris
@@ -42,10 +39,9 @@ namespace MediaPortal.Games.Tetris
   {
     #region Construction, initialization & cleanup
 
-
     public MyTetris()
     {
-      GetID = (int)Window.WINDOW_TETRIS;
+      GetID = (int) Window.WINDOW_TETRIS;
     }
 
     ~MyTetris()
@@ -93,7 +89,7 @@ namespace MediaPortal.Games.Tetris
 
       public void Load()
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           m_bMusic = xmlreader.GetValueAsBool("tetris", "music", true);
           m_bSound = xmlreader.GetValueAsBool("tetris", "sound", true);
@@ -109,7 +105,7 @@ namespace MediaPortal.Games.Tetris
 
       public void Save()
       {
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValueAsBool("tetris", "music", m_bMusic);
           xmlwriter.SetValueAsBool("tetris", "sound", m_bSound);
@@ -125,7 +121,7 @@ namespace MediaPortal.Games.Tetris
     public override bool Init()
     {
       // pre-register the control class so that the factory knows how to create it
-      GUIControlFactory.RegisterControl("tetris", typeof(MyTetrisControl));
+      GUIControlFactory.RegisterControl("tetris", typeof (MyTetrisControl));
 
       return Load(GUIGraphicsContext.Skin + @"\mytetris.xml");
     }
@@ -191,29 +187,29 @@ namespace MediaPortal.Games.Tetris
 
     #region Implementation
 
-    bool OnInit()
+    private bool OnInit()
     {
       _Settings.Load();
 
       if (_Settings.Music)
       {
-        GUIControl.SelectControl(GetID, (int)Controls.ToggleMusic);
+        GUIControl.SelectControl(GetID, (int) Controls.ToggleMusic);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int)Controls.ToggleMusic);
+        GUIControl.DeSelectControl(GetID, (int) Controls.ToggleMusic);
       }
 
       if (_Settings.Sound)
       {
-        GUIControl.SelectControl(GetID, (int)Controls.ToggleSound);
+        GUIControl.SelectControl(GetID, (int) Controls.ToggleSound);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int)Controls.ToggleSound);
+        GUIControl.DeSelectControl(GetID, (int) Controls.ToggleSound);
       }
 
-      m_wndTetris = GetControl((int)Controls.Tetris) as MyTetrisControl;
+      m_wndTetris = GetControl((int) Controls.Tetris) as MyTetrisControl;
 
       int nScore = 0;
       int nLines = 0;
@@ -240,23 +236,23 @@ namespace MediaPortal.Games.Tetris
       GUIPropertyManager.SetProperty("#tetris_lines", nLines.ToString());
       GUIPropertyManager.SetProperty("#tetris_level", nLevel.ToString());
       GUIPropertyManager.SetProperty("#tetris_highscore", _Settings.Highscore.ToString());
-      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get((int)Strings.MyTetris));
+      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get((int) Strings.MyTetris));
 
       return true;
     }
 
-    void OnDeinit()
+    private void OnDeinit()
     {
     }
 
-    void OnItemClicked(int nControl, bool bOn)
+    private void OnItemClicked(int nControl, bool bOn)
     {
       if (m_wndTetris == null)
       {
         return;
       }
 
-      switch ((Controls)nControl)
+      switch ((Controls) nControl)
       {
         case Controls.New:
           m_wndTetris.Start();
@@ -279,7 +275,7 @@ namespace MediaPortal.Games.Tetris
 
     #region Helper enums
 
-    enum Controls
+    private enum Controls
     {
       New = 2,
       ToggleMusic = 3,
@@ -288,19 +284,19 @@ namespace MediaPortal.Games.Tetris
       Score = 202,
       Lines = 204,
       Level = 206,
-    };
+    } ;
 
-    enum Strings
+    private enum Strings
     {
       MyTetris = 19001,
-    };
+    } ;
 
     #endregion Helper enums
 
     #region Member variables
 
-    MyTetrisControl m_wndTetris;
-    Settings _Settings = new Settings();
+    private MyTetrisControl m_wndTetris;
+    private Settings _Settings = new Settings();
 
     #endregion Member variables
 
@@ -331,10 +327,11 @@ namespace MediaPortal.Games.Tetris
       return GetID;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add GUITetris.GetHome implementation
-      strButtonText = GUILocalizeStrings.Get((int)Strings.MyTetris);
+      strButtonText = GUILocalizeStrings.Get((int) Strings.MyTetris);
       strButtonImage = "";
       strButtonImageFocus = "";
       strPictureImage = @"hover_tetris.png";

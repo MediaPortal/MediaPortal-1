@@ -23,23 +23,20 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 //using System.Windows.Forms;
-using System.IO;
-using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Profile
 {
   public class CacheSettingsProvider : ISettingsProvider
   {
-    Dictionary<SettingKey, object> cache = new Dictionary<SettingKey, object>();
-    ISettingsProvider provider;
+    private Dictionary<SettingKey, object> cache = new Dictionary<SettingKey, object>();
+    private ISettingsProvider provider;
     private int cacheHit = 0;
     private int cacheMiss = 0;
 
     #region class SettingKey
+
     private class SettingKey
     {
       private string section;
@@ -70,13 +67,18 @@ namespace MediaPortal.Profile
 
       public override bool Equals(object obj)
       {
-        SettingKey other = (SettingKey)obj;
+        SettingKey other = (SettingKey) obj;
         if (this.entry == other.entry && this.section == other.section)
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
     }
+
     #endregion
 
     public CacheSettingsProvider(ISettingsProvider provider)
@@ -85,7 +87,7 @@ namespace MediaPortal.Profile
 
       if (provider is ISettingsPrefetchable)
       {
-        ISettingsPrefetchable prefetcher = (ISettingsPrefetchable)provider;
+        ISettingsPrefetchable prefetcher = (ISettingsPrefetchable) provider;
         prefetcher.Prefetch(Remember);
       }
     }

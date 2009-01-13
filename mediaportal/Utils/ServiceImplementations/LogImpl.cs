@@ -26,9 +26,9 @@
 using System;
 using System.IO;
 using System.Threading;
-
-using MediaPortal.Services;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.Services;
 
 namespace MediaPortal.ServiceImplementations
 {
@@ -38,14 +38,18 @@ namespace MediaPortal.ServiceImplementations
   internal class LogImpl : ILog
   {
     #region Variables
+
     private static DateTime _previousDate;
     private static Level _minLevel;
     private static string logDir;
     private static bool bConfiguration;
+
     #endregion
+
     // when Configuartion.exe is running the logging should take place in Configuration.log
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
     /// </summary>
@@ -58,16 +62,18 @@ namespace MediaPortal.ServiceImplementations
         Directory.CreateDirectory(logDir);
       }
       //BackupLogFiles();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _minLevel =
-          (Level) Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level) Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       bConfiguration = false;
     }
+
     #endregion
 
     #region Private Methods
+
     private void Initialize(LogType type)
     {
       try
@@ -142,9 +148,11 @@ namespace MediaPortal.ServiceImplementations
 
       return "Unknown";
     }
+
     #endregion
 
     #region ILog Implementations
+
     public void BackupLogFiles()
     {
       BackupLogFile(LogType.Log);
@@ -303,7 +311,7 @@ namespace MediaPortal.ServiceImplementations
 
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
-      lock (typeof(Log))
+      lock (typeof (Log))
       {
         try
         {
@@ -346,6 +354,7 @@ namespace MediaPortal.ServiceImplementations
     {
       _minLevel = logLevel;
     }
+
     #endregion
   }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
@@ -10,6 +9,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
   {
     public string Section;
     public List<structXPLMsg> Details;
+
     public structXplSection(string SectionName)
     {
       this.Section = SectionName;
@@ -17,7 +17,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         this.Details = new List<structXPLMsg>();
         this.Details.Clear();
-      } catch
+      }
+      catch
       {
         this.Details = null;
         Log.Info("xPL.structXplSection(constructor): caught exception", new object[0]);
@@ -25,4 +26,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     }
   }
 }
-

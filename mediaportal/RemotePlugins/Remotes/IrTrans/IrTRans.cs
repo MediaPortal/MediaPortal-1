@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using MediaPortal.InputDevices;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.InputDevices
 {
@@ -42,18 +40,21 @@ namespace MediaPortal.InputDevices
   public class IrTrans
   {
     #region Variables and Constants
-    InputHandler irtransHandler;
-    Socket m_Socket;
-    IAsyncResult m_asynResult;
-    AsyncCallback pfnCallBack;
-    bool irTransEnabled = false;
-    string remoteKeyFile = "";
-    string remoteModel = "";
-    int irTransServerPort = 21000;
-    bool logVerbose = false;
+
+    private InputHandler irtransHandler;
+    private Socket m_Socket;
+    private IAsyncResult m_asynResult;
+    private AsyncCallback pfnCallBack;
+    private bool irTransEnabled = false;
+    private string remoteKeyFile = "";
+    private string remoteModel = "";
+    private int irTransServerPort = 21000;
+    private bool logVerbose = false;
+
     #endregion
 
     #region Enums and Structure
+
     public enum IrTransStatus
     {
       STATUS_MESSAGE = 1,
@@ -85,13 +86,11 @@ namespace MediaPortal.InputDevices
       public Int16 statustype;
       public Int16 adress;
       public UInt16 command_num;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-      public string remote;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)]
-      public string command;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 200)]
-      public string data;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)] public string remote;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)] public string command;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 200)] public string data;
     }
+
     #endregion
 
     public IrTrans()
@@ -105,7 +104,7 @@ namespace MediaPortal.InputDevices
     /// <param name="hwnd"></param>
     public void Init(IntPtr hwnd)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         irTransEnabled = xmlreader.GetValueAsBool("remote", "IRTrans", false);
         remoteModel = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");
@@ -119,17 +118,23 @@ namespace MediaPortal.InputDevices
         irtransHandler = new InputHandler(remoteKeyFile);
       }
       else
+      {
         return;
+      }
       // Now Connect to the IRTransServer 
       if (Connect_IrTrans(irTransServerPort))
       {
         if (logVerbose)
+        {
           Log.Info("IRTrans: Connection established.");
+        }
         // Now Wait for data to be sent
         WaitForData();
       }
       else
+      {
         return;
+      }
     }
 
     /// <summary>
@@ -138,18 +143,24 @@ namespace MediaPortal.InputDevices
     public void DeInit()
     {
       if (!irTransEnabled)
+      {
         return;
+      }
 
       try
       {
         m_Socket.Close();
         if (logVerbose)
+        {
           Log.Info("IRTrans: Connection closed.");
+        }
       }
       catch (SocketException se)
       {
         if (logVerbose)
+        {
           Log.Info("IRTrans: Exception on closing socket. {0}", se.Message);
+        }
       }
     }
 
@@ -160,7 +171,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="connectionPort"></param>
     /// <returns></returns>
-    bool Connect_IrTrans(int connectionPort)
+    private bool Connect_IrTrans(int connectionPort)
     {
       try
       {
@@ -182,7 +193,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Establishes an Async Callback Procedure that receives data being sent via the IRTrans Server.
     /// </summary>
-    void WaitForData()
+    private void WaitForData()
     {
       try
       {
@@ -193,12 +204,15 @@ namespace MediaPortal.InputDevices
         CSocketPacket socketPkt = new CSocketPacket();
         socketPkt.thisSocket = m_Socket;
         // Now start to listen for any data.
-        m_asynResult = m_Socket.BeginReceive(socketPkt.receiveBuffer, 0, socketPkt.receiveBuffer.Length, SocketFlags.None, pfnCallBack, socketPkt);
+        m_asynResult = m_Socket.BeginReceive(socketPkt.receiveBuffer, 0, socketPkt.receiveBuffer.Length,
+                                             SocketFlags.None, pfnCallBack, socketPkt);
       }
       catch (SocketException se)
       {
         if (logVerbose)
+        {
           Log.Info("IRTrans: Error on receive from socket: {0}", se.Message);
+        }
       }
     }
 
@@ -215,23 +229,23 @@ namespace MediaPortal.InputDevices
     /// Method is called, whenever a IR Comand is received via the IRTrans Server connection.
     /// </summary>
     /// <param name="asyn"></param>
-    void OnDataReceived(IAsyncResult asyn)
+    private void OnDataReceived(IAsyncResult asyn)
     {
       try
       {
-        CSocketPacket theSockId = (CSocketPacket)asyn.AsyncState;
+        CSocketPacket theSockId = (CSocketPacket) asyn.AsyncState;
         //Do an end receive first
         int bytesReceived = 0;
         bytesReceived = theSockId.thisSocket.EndReceive(asyn);
         // Map the received data to the structure
         IntPtr ptrReceive = Marshal.AllocHGlobal(bytesReceived);
         Marshal.Copy(theSockId.receiveBuffer, 0, ptrReceive, bytesReceived);
-        NETWORKRECV netrecv = (NETWORKRECV)Marshal.PtrToStructure(ptrReceive, typeof(NETWORKRECV));
+        NETWORKRECV netrecv = (NETWORKRECV) Marshal.PtrToStructure(ptrReceive, typeof (NETWORKRECV));
         if (logVerbose)
         {
           Log.Info("IRTrans: Command Start --------------------------------------------");
           Log.Info("IRTrans: Client       = {0}", netrecv.clientid);
-          Log.Info("IRTrans: Status       = {0}", (IrTransStatus)netrecv.statustype);
+          Log.Info("IRTrans: Status       = {0}", (IrTransStatus) netrecv.statustype);
           Log.Info("IRTrans: Remote       = {0}", netrecv.remote);
           Log.Info("IRTrans: Command Num. = {0}", netrecv.command_num.ToString());
           Log.Info("IRTrans: Command      = {0}", netrecv.command);
@@ -240,7 +254,7 @@ namespace MediaPortal.InputDevices
         }
 
         // Do an action only on Receive and if the command came from the selected Remote
-        if ((IrTransStatus)netrecv.statustype == IrTransStatus.STATUS_RECEIVE)
+        if ((IrTransStatus) netrecv.statustype == IrTransStatus.STATUS_RECEIVE)
         {
           if (netrecv.remote.Trim() == remoteModel)
           {
@@ -249,18 +263,24 @@ namespace MediaPortal.InputDevices
               if (irtransHandler.MapAction(netrecv.command.Trim()))
               {
                 if (logVerbose)
+                {
                   Log.Info("IRTrans: Action mapped");
+                }
               }
               else
               {
                 if (logVerbose)
+                {
                   Log.Info("IRTrans: Action not mapped");
+                }
               }
             }
             catch (Exception ex)
             {
               if (logVerbose)
+              {
                 Log.Info("IRTrans: Exception in IRTranshandler: {0}", ex.Message);
+              }
             }
           }
         }
@@ -269,13 +289,15 @@ namespace MediaPortal.InputDevices
         WaitForData();
       }
       catch (ObjectDisposedException)
-      { }
+      {
+      }
       catch (SocketException se)
       {
         if (logVerbose)
+        {
           Log.Info("IRTrans: Error on receive from socket: {0}", se.Message);
+        }
       }
     }
   }
-
 }

@@ -24,17 +24,17 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Collections;
-using System.Xml;
+using System.Diagnostics;
 using System.IO;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
+using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.Configuration;
-using System.Threading;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -45,21 +45,27 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class InputHandler
   {
-    int _xmlVersion = 3;
-    ArrayList _remote;
-    int _currentLayer = 1;
-    bool _isLoaded = false;
-    bool _basicHome = false;
+    private int _xmlVersion = 3;
+    private ArrayList _remote;
+    private int _currentLayer = 1;
+    private bool _isLoaded = false;
+    private bool _basicHome = false;
 
     /// <summary>
     /// Mapping successful loaded
     /// </summary>
-    public bool IsLoaded { get { return _isLoaded; } }
+    public bool IsLoaded
+    {
+      get { return _isLoaded; }
+    }
 
     /// <summary>
     /// Get current Layer (Multi-Layer support)
     /// </summary>
-    public int CurrentLayer { get { return _currentLayer; } }
+    public int CurrentLayer
+    {
+      get { return _currentLayer; }
+    }
 
 
     /// <summary>
@@ -67,28 +73,63 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public class Mapping
     {
-      string condition;
-      string conProperty;
-      int layer;
-      string command;
-      string cmdProperty;
-      int cmdKeyChar;
-      int cmdKeyCode;
-      string sound;
-      bool focus;
+      private string condition;
+      private string conProperty;
+      private int layer;
+      private string command;
+      private string cmdProperty;
+      private int cmdKeyChar;
+      private int cmdKeyCode;
+      private string sound;
+      private bool focus;
 
-      public int Layer { get { return layer; } }
-      public string Condition { get { return condition; } }
-      public string ConProperty { get { return conProperty; } }
-      public string Command { get { return command; } }
-      public string CmdProperty { get { return cmdProperty; } }
-      public int CmdKeyChar { get { return cmdKeyChar; } }
-      public int CmdKeyCode { get { return cmdKeyCode; } }
-      public string Sound { get { return sound; } }
-      public bool Focus { get { return focus; } }
+      public int Layer
+      {
+        get { return layer; }
+      }
+
+      public string Condition
+      {
+        get { return condition; }
+      }
+
+      public string ConProperty
+      {
+        get { return conProperty; }
+      }
+
+      public string Command
+      {
+        get { return command; }
+      }
+
+      public string CmdProperty
+      {
+        get { return cmdProperty; }
+      }
+
+      public int CmdKeyChar
+      {
+        get { return cmdKeyChar; }
+      }
+
+      public int CmdKeyCode
+      {
+        get { return cmdKeyCode; }
+      }
+
+      public string Sound
+      {
+        get { return sound; }
+      }
+
+      public bool Focus
+      {
+        get { return focus; }
+      }
 
       public Mapping(int newLayer, string newCondition, string newConProperty, string newCommand,
-        string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound, bool newFocus)
+                     string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound, bool newFocus)
       {
         layer = newLayer;
         condition = newCondition;
@@ -106,15 +147,26 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Button/mapping class
     /// </summary>
-    class RemoteMap
+    private class RemoteMap
     {
-      string code;
-      string name;
-      ArrayList mapping = new ArrayList();
+      private string code;
+      private string name;
+      private ArrayList mapping = new ArrayList();
 
-      public string Code { get { return code; } }
-      public string Name { get { return name; } }
-      public ArrayList Mapping { get { return mapping; } }
+      public string Code
+      {
+        get { return code; }
+      }
+
+      public string Name
+      {
+        get { return name; }
+      }
+
+      public ArrayList Mapping
+      {
+        get { return mapping; }
+      }
 
       public RemoteMap(string newCode, string newName, ArrayList newMapping)
       {
@@ -131,8 +183,10 @@ namespace MediaPortal.InputDevices
     /// <param name="deviceXmlName">Input device name</param>
     public InputHandler(string deviceXmlName)
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+      }
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
     }
@@ -161,7 +215,9 @@ namespace MediaPortal.InputDevices
     public bool CheckXmlFile(string xmlPath)
     {
       if (!File.Exists(xmlPath) || (GetXmlVersion(xmlPath) != _xmlVersion))
+      {
         return false;
+      }
       return true;
     }
 
@@ -180,12 +236,12 @@ namespace MediaPortal.InputDevices
       string pathCustom = Config.GetFile(Config.Dir.CustomInputDevice, deviceXmlName + ".xml");
       string pathDefault = Config.GetFile(Config.Dir.CustomInputDefault, deviceXmlName + ".xml");
 
-      if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))
+      if (File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
         path = pathCustom;
         Log.Info("MAP: using custom mappings for {0}", deviceXmlName);
       }
-      else if (System.IO.File.Exists(pathDefault) && CheckXmlFile(pathDefault))
+      else if (File.Exists(pathDefault) && CheckXmlFile(pathDefault))
       {
         path = pathDefault;
         Log.Info("MAP: using default mappings for {0}", deviceXmlName);
@@ -227,13 +283,18 @@ namespace MediaPortal.InputDevices
             string sound = string.Empty;
             XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
             if (soundAttribute != null)
+            {
               sound = soundAttribute.Value;
+            }
             bool focus = false;
             XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
             if (focusAttribute != null)
+            {
               focus = Convert.ToBoolean(focusAttribute.Value);
+            }
             int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
-            Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
+            Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar,
+                                               cmdKeyCode, sound, focus);
             mapping.Add(conditionMap);
           }
           RemoteMap remoteMap = new RemoteMap(value, name, mapping);
@@ -283,7 +344,7 @@ namespace MediaPortal.InputDevices
       return DoMapAction(btnCode, processID);
     }
 
-    int StopPlayback(int p1, int p2, object d)
+    private int StopPlayback(int p1, int p2, object d)
     {
       //Log.Debug("gibman StopPlayback {0}", GUIWindowManager.ActiveWindow);
       // we have to save the fullscreen status of the tv3 plugin for later use for the lastactivemodulefullscreen feature.
@@ -294,15 +355,14 @@ namespace MediaPortal.InputDevices
     }
 
 
-
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <param name="processID">Process-ID for close/kill commands</param>
-    bool DoMapAction(string btnCode, int processID)
+    private bool DoMapAction(string btnCode, int processID)
     {
-      if (!_isLoaded)   // No mapping loaded
+      if (!_isLoaded) // No mapping loaded
       {
         Log.Info("Map: No button mapping loaded");
         return false;
@@ -310,13 +370,17 @@ namespace MediaPortal.InputDevices
       Mapping map = null;
       map = GetMapping(btnCode);
       if (map == null)
+      {
         return false;
+      }
 #if DEBUG
       Log.Info("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
 #endif
       Action action;
       if (map.Sound != string.Empty)
-        MediaPortal.Util.Utils.PlaySound(map.Sound, false, true);
+      {
+        Util.Utils.PlaySound(map.Sound, false, true);
+      }
       if (map.Focus && !GUIGraphicsContext.HasFocus)
       {
         GUIGraphicsContext.ResetLastActivity();
@@ -327,43 +391,56 @@ namespace MediaPortal.InputDevices
       }
       switch (map.Command)
       {
-        case "ACTION":  // execute Action x
+        case "ACTION": // execute Action x
           Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
 #if DEBUG
           Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
 #endif
-          action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
+          action = new Action(key, (Action.ActionType) Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
         case "KEY": // send Key x
           SendKeys.SendWait(map.CmdProperty);
           break;
-        case "WINDOW":  // activate Window x
+        case "WINDOW": // activate Window x
           GUIGraphicsContext.ResetLastActivity();
           GUIMessage msg;
-          if ((Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
-            (Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+          if ((Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_HOME) ||
+              (Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_SECOND_HOME))
           {
             if (_basicHome)
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+            {
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
+                                   (int) GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+            }
             else
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+            {
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
+                                   (int) GUIWindow.Window.WINDOW_HOME, 0, null);
+            }
           }
           else
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, Convert.ToInt32(map.CmdProperty), 0, null);
+          {
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, Convert.ToInt32(map.CmdProperty),
+                                 0, null);
+          }
 
           GUIWindowManager.SendThreadMessage(msg);
           break;
-        case "TOGGLE":  // toggle Layer 1/2
+        case "TOGGLE": // toggle Layer 1/2
           if (_currentLayer == 1)
+          {
             _currentLayer = 2;
+          }
           else
+          {
             _currentLayer = 1;
+          }
           break;
         case "POWER": // power down commands
-          
+
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
-          {             
+          {
             GUIGraphicsContext.ResetLastActivity();
 
             //Stop all media before suspending or hibernating
@@ -382,7 +459,7 @@ namespace MediaPortal.InputDevices
             GUIWindowManager.SendThreadMessage(msg);             
             */
           }
-          
+
           switch (map.CmdProperty)
           {
             case "EXIT":
@@ -418,6 +495,7 @@ namespace MediaPortal.InputDevices
             {
               Process proc = Process.GetProcessById(processID);
               if (null != proc)
+              {
                 switch (map.CmdProperty)
                 {
                   case "CLOSE":
@@ -427,6 +505,7 @@ namespace MediaPortal.InputDevices
                     proc.Kill();
                     break;
                 }
+              }
             }
           }
           break;
@@ -448,13 +527,17 @@ namespace MediaPortal.InputDevices
       Mapping found = null;
 
       foreach (RemoteMap btn in _remote)
+      {
         if (btnCode == btn.Code)
         {
           button = btn;
           break;
         }
+      }
       if (button != null)
+      {
         foreach (Mapping map in button.Mapping)
+        {
           if ((map.Layer == 0) || (map.Layer == _currentLayer))
           {
             switch (map.Condition)
@@ -462,37 +545,55 @@ namespace MediaPortal.InputDevices
               case "*": // wildcard, no further condition
                 found = map;
                 break;
-              case "WINDOW":  // Window-ID = x
-                if ((!GUIWindowManager.IsOsdVisible && (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))) ||
-                  ((int)GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
+              case "WINDOW": // Window-ID = x
+                if ((!GUIWindowManager.IsOsdVisible &&
+                     (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))) ||
+                    ((int) GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
+                {
                   found = map;
+                }
                 break;
-              case "FULLSCREEN":  // Fullscreen = true/false
-                if ((GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty)) && !GUIWindowManager.IsRouted && !GUIWindowManager.IsOsdVisible)
+              case "FULLSCREEN": // Fullscreen = true/false
+                if ((GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty)) &&
+                    !GUIWindowManager.IsRouted && !GUIWindowManager.IsOsdVisible)
+                {
                   found = map;
+                }
                 break;
-              case "PLAYER":  // Playing TV/DVD/general
+              case "PLAYER": // Playing TV/DVD/general
                 if (!GUIWindowManager.IsRouted)
+                {
                   switch (map.ConProperty)
                   {
                     case "TV":
                       if (Recorder.IsViewing())
+                      {
                         found = map;
+                      }
                       break;
                     case "DVD":
                       if (g_Player.IsDVD)
+                      {
                         found = map;
+                      }
                       break;
                     case "MEDIA":
                       if (g_Player.Playing)
+                      {
                         found = map;
+                      }
                       break;
                   }
+                }
                 break;
             }
             if (found != null)
+            {
               return found;
+            }
           }
+        }
+      }
       return null;
     }
   }

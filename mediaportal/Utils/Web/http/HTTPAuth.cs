@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -37,19 +36,24 @@ namespace MediaPortal.Utils.Web
   public class HTTPAuth : IHttpAuthentication
   {
     #region Variables
+
     private Dictionary<string, NetworkCredential> _authList;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HTTPAuth"/> class.
     /// </summary>
     public HTTPAuth()
     {
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets the Network Credentials for a specified site.
     /// </summary>
@@ -75,11 +79,13 @@ namespace MediaPortal.Utils.Web
     public void Add(string site, NetworkCredential login)
     {
       if (_authList == null)
+      {
         _authList = new Dictionary<string, NetworkCredential>();
+      }
 
       _authList.Add(site, login);
     }
+
     #endregion
   }
 }
-

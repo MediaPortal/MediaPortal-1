@@ -24,48 +24,48 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
-using MediaPortal.SerialIR;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.SerialIR;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class RemoteSerialUIR : MediaPortal.Configuration.SectionSettings
+  public class RemoteSerialUIR : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-    private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel statusLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPComboBox CommPortCombo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxInitUIRIrman;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPComboBox IRLengthCombo;
-    private MediaPortal.UserInterface.Controls.MPComboBox HandShakeCombo;
-    private MediaPortal.UserInterface.Controls.MPComboBox BaudRateCombo;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPComboBox LearningTimeoutCombo;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPComboBox CommandDelayCombo;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private System.Windows.Forms.CheckedListBox ActionsCheckList;
-    private MediaPortal.UserInterface.Controls.MPButton buttonAllCodes;
-    private MediaPortal.UserInterface.Controls.MPButton buttonDefaultCodes;
-    private MediaPortal.UserInterface.Controls.MPButton buttonNoneCodes;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPComboBox ParityCombo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRTS;
+    private MPGroupBox groupBox1;
+    private MPCheckBox inputCheckBox;
+    private MPButton internalCommandsButton;
+    private MPGroupBox groupBox2;
+    private MPLabel statusLabel;
+    private MPLabel label1;
+    private MPComboBox CommPortCombo;
+    private MPCheckBox checkBoxInitUIRIrman;
+    private MPLabel label2;
+    private MPLabel label3;
+    private MPLabel label4;
+    private MPComboBox IRLengthCombo;
+    private MPComboBox HandShakeCombo;
+    private MPComboBox BaudRateCombo;
+    private IContainer components = null;
+    private MPLabel label5;
+    private MPComboBox LearningTimeoutCombo;
+    private MPLabel label6;
+    private MPComboBox CommandDelayCombo;
+    private MPLabel label7;
+    private CheckedListBox ActionsCheckList;
+    private MPButton buttonAllCodes;
+    private MPButton buttonDefaultCodes;
+    private MPButton buttonNoneCodes;
+    private MPLabel label8;
+    private MPComboBox ParityCombo;
+    private MPCheckBox checkBoxDTR;
+    private MPCheckBox checkBoxRTS;
 
     private bool initialize = false;
 
@@ -85,8 +85,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Initialize the SerialUIR component
       //
-      MediaPortal.SerialIR.SerialUIR.Create(new MediaPortal.SerialIR.SerialUIR.OnRemoteCommand(OnRemoteCommand));
-      MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
+      SerialUIR.Create(new SerialUIR.OnRemoteCommand(OnRemoteCommand));
+      SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     protected override void Dispose(bool disposing)
     {
-      MediaPortal.SerialIR.SerialUIR.Instance.Close();
+      SerialUIR.Instance.Close();
       if (disposing)
       {
         if (components != null)
@@ -107,7 +107,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         initialize = false;
         inputCheckBox.Checked = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
@@ -122,9 +122,17 @@ namespace MediaPortal.Configuration.Sections
         LearningTimeoutCombo.Text = xmlreader.GetValueAsString("SerialUIR", "timeout", "5");
 
         for (int i = 0; i < 16; i++)
-          ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "true") == "true");
+        {
+          ActionsCheckList.SetItemChecked(i,
+                                          xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "true") ==
+                                          "true");
+        }
         for (int i = 16; i < ActionsCheckList.Items.Count; i++)
-          ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "false") == "true");
+        {
+          ActionsCheckList.SetItemChecked(i,
+                                          xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "false") ==
+                                          "true");
+        }
 
         initialize = true;
         CommPortCombo.Text = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");
@@ -133,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("SerialUIR", "internal", inputCheckBox.Checked ? "true" : "false");
         xmlwriter.SetValue("SerialUIR", "baudrate", BaudRateCombo.Text);
@@ -147,17 +155,19 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("SerialUIR", "delay", CommandDelayCombo.Text);
         xmlwriter.SetValue("SerialUIR", "timeout", LearningTimeoutCombo.Text);
         for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        {
           xmlwriter.SetValue("SerialUIR", "learn" + i.ToString(), ActionsCheckList.GetItemChecked(i) ? "true" : "false");
+        }
       }
     }
 
     public void Close()
     {
-      MediaPortal.SerialIR.SerialUIR.Instance.Close();
+      SerialUIR.Instance.Close();
     }
 
-
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -197,9 +207,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxRTS);
       this.groupBox1.Controls.Add(this.checkBoxDTR);
       this.groupBox1.Controls.Add(this.label8);
@@ -269,12 +281,14 @@ namespace MediaPortal.Configuration.Sections
       // ParityCombo
       // 
       this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ParityCombo.Items.AddRange(new object[] {
-            "None",
-            "Odd",
-            "Even",
-            "Mark",
-            "Space"});
+      this.ParityCombo.Items.AddRange(new object[]
+                                        {
+                                          "None",
+                                          "Odd",
+                                          "Even",
+                                          "Mark",
+                                          "Space"
+                                        });
       this.ParityCombo.Location = new System.Drawing.Point(120, 136);
       this.ParityCombo.Name = "ParityCombo";
       this.ParityCombo.Size = new System.Drawing.Size(88, 21);
@@ -283,7 +297,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonNoneCodes
       // 
-      this.buttonNoneCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonNoneCodes.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
       this.buttonNoneCodes.Name = "buttonNoneCodes";
       this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
@@ -294,7 +310,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonDefaultCodes
       // 
-      this.buttonDefaultCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefaultCodes.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
       this.buttonDefaultCodes.Name = "buttonDefaultCodes";
       this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
@@ -305,7 +323,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonAllCodes
       // 
-      this.buttonAllCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAllCodes.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
       this.buttonAllCodes.Name = "buttonAllCodes";
       this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
@@ -316,7 +336,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label7
       // 
-      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label7.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label7.Location = new System.Drawing.Point(224, 24);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(32, 16);
@@ -325,9 +347,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ActionsCheckList
       // 
-      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ActionsCheckList.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.ActionsCheckList.CheckOnClick = true;
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
@@ -345,15 +369,17 @@ namespace MediaPortal.Configuration.Sections
       // CommandDelayCombo
       // 
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommandDelayCombo.Items.AddRange(new object[] {
-            "150",
-            "200",
-            "250",
-            "300",
-            "250",
-            "400",
-            "450",
-            "500"});
+      this.CommandDelayCombo.Items.AddRange(new object[]
+                                              {
+                                                "150",
+                                                "200",
+                                                "250",
+                                                "300",
+                                                "250",
+                                                "400",
+                                                "450",
+                                                "500"
+                                              });
       this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
@@ -371,22 +397,25 @@ namespace MediaPortal.Configuration.Sections
       // LearningTimeoutCombo
       // 
       this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.LearningTimeoutCombo.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10"});
+      this.LearningTimeoutCombo.Items.AddRange(new object[]
+                                                 {
+                                                   "1",
+                                                   "2",
+                                                   "3",
+                                                   "4",
+                                                   "5",
+                                                   "6",
+                                                   "7",
+                                                   "8",
+                                                   "9",
+                                                   "10"
+                                                 });
       this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
       this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
       this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
       this.LearningTimeoutCombo.TabIndex = 17;
-      this.LearningTimeoutCombo.SelectedIndexChanged += new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
+      this.LearningTimeoutCombo.SelectedIndexChanged +=
+        new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
       // 
       // label4
       // 
@@ -399,39 +428,41 @@ namespace MediaPortal.Configuration.Sections
       // IRLengthCombo
       // 
       this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.IRLengthCombo.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32"});
+      this.IRLengthCombo.Items.AddRange(new object[]
+                                          {
+                                            "1",
+                                            "2",
+                                            "3",
+                                            "4",
+                                            "5",
+                                            "6",
+                                            "7",
+                                            "8",
+                                            "9",
+                                            "10",
+                                            "11",
+                                            "12",
+                                            "13",
+                                            "14",
+                                            "15",
+                                            "16",
+                                            "17",
+                                            "18",
+                                            "19",
+                                            "20",
+                                            "21",
+                                            "22",
+                                            "23",
+                                            "24",
+                                            "25",
+                                            "26",
+                                            "27",
+                                            "28",
+                                            "29",
+                                            "30",
+                                            "31",
+                                            "32"
+                                          });
       this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
       this.IRLengthCombo.Name = "IRLengthCombo";
       this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
@@ -449,11 +480,13 @@ namespace MediaPortal.Configuration.Sections
       // HandShakeCombo
       // 
       this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.HandShakeCombo.Items.AddRange(new object[] {
-            "None",
-            "CtsRts",
-            "DsrDtr",
-            "XonXoff"});
+      this.HandShakeCombo.Items.AddRange(new object[]
+                                           {
+                                             "None",
+                                             "CtsRts",
+                                             "DsrDtr",
+                                             "XonXoff"
+                                           });
       this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
       this.HandShakeCombo.Name = "HandShakeCombo";
       this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
@@ -471,20 +504,22 @@ namespace MediaPortal.Configuration.Sections
       // BaudRateCombo
       // 
       this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.BaudRateCombo.Items.AddRange(new object[] {
-            "300",
-            "600",
-            "1200",
-            "2400",
-            "4800",
-            "9600",
-            "14400",
-            "19200",
-            "28800",
-            "38400",
-            "56000",
-            "57600",
-            "115200"});
+      this.BaudRateCombo.Items.AddRange(new object[]
+                                          {
+                                            "300",
+                                            "600",
+                                            "1200",
+                                            "2400",
+                                            "4800",
+                                            "9600",
+                                            "14400",
+                                            "19200",
+                                            "28800",
+                                            "38400",
+                                            "56000",
+                                            "57600",
+                                            "115200"
+                                          });
       this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
       this.BaudRateCombo.Name = "BaudRateCombo";
       this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
@@ -517,15 +552,17 @@ namespace MediaPortal.Configuration.Sections
       // CommPortCombo
       // 
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommPortCombo.Items.AddRange(new object[] {
-            "COM1:",
-            "COM2:",
-            "COM3:",
-            "COM4:",
-            "COM5:",
-            "COM6:",
-            "COM7:",
-            "COM8:"});
+      this.CommPortCombo.Items.AddRange(new object[]
+                                          {
+                                            "COM1:",
+                                            "COM2:",
+                                            "COM3:",
+                                            "COM4:",
+                                            "COM5:",
+                                            "COM6:",
+                                            "COM7:",
+                                            "COM8:"
+                                          });
       this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
@@ -556,8 +593,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 344);
@@ -569,8 +608,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
@@ -587,275 +628,277 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private string[] buttonNames = {
-										   "MOVE_LEFT"
-										   ,"MOVE_RIGHT"
-										   ,"MOVE_UP"
-										   ,"MOVE_DOWN"
-										   ,"PAGE_UP"
-										   ,"PAGE_DOWN"
-										   ,"SELECT_ITEM"
-										   ,"PREVIOUS_MENU"
-										   ,"SHOW_INFO"
-										   ,"PAUSE"
-										   ,"STOP"
-										   ,"FORWARD"
-										   ,"REWIND"
-										   ,"SHOW_GUI"
-										   ,"QUEUE_ITEM"
-										   ,"EXIT"
-
-										   ,"SHUTDOWN"
-										   ,"ASPECT_RATIO"
-										   ,"PLAY"
-										   ,"EJECTCD"
-										   ,"PREV_CHANNEL"
-										   ,"NEXT_CHANNEL"
-										   ,"RECORD"
-										   ,"DVD_MENU"
-										   ,"NEXT_CHAPTER"
-										   ,"PREV_CHAPTER"
-										   ,"VOLUME_DOWN"
-										   ,"VOLUME_UP"
-										   ,"AUDIO_NEXT_LANGUAGE"
-										   ,"SHOW_SUBTITLES"
-										   ,"NEXT_SUBTITLE"
-
-										   ,"HIGHLIGHT_ITEM"
-										   ,"PARENT_DIR"
-										   ,"NEXT_ITEM"
-										   ,"PREV_ITEM"
-										   ,"STEP_FORWARD"
-										   ,"STEP_BACK"
-										   ,"BIG_STEP_FORWARD"
-										   ,"BIG_STEP_BACK"
-										   ,"SHOW_OSD"
-										   ,"SHOW_CODEC"
-										   ,"NEXT_PICTURE"
-										   ,"PREV_PICTURE"
-										   ,"ZOOM_OUT"
-										   ,"ZOOM_IN"
-										   ,"TOGGLE_SOURCE_DEST"
-										   ,"SHOW_PLAYLIST"
-										   ,"REMOVE_ITEM"
-										   ,"SHOW_FULLSCREEN"
-										   ,"ZOOM_LEVEL_NORMAL"
-										   ,"ZOOM_LEVEL_1"
-										   ,"ZOOM_LEVEL_2"
-										   ,"ZOOM_LEVEL_3"
-										   ,"ZOOM_LEVEL_4"
-										   ,"ZOOM_LEVEL_5"
-										   ,"ZOOM_LEVEL_6"
-										   ,"ZOOM_LEVEL_7"
-										   ,"ZOOM_LEVEL_8"
-										   ,"ZOOM_LEVEL_9"
-										   ,"CALIBRATE_SWAP_ARROWS"
-										   ,"CALIBRATE_RESET"
-										   ,"ANALOG_MOVE"
-										   ,"ROTATE_PICTURE"
-										   ,"CLOSE_DIALOG"
-										   ,"SUBTITLE_DELAY_MIN"
-										   ,"SUBTITLE_DELAY_PLUS"
-										   ,"AUDIO_DELAY_MIN"
-										   ,"AUDIO_DELAY_PLUS"
-										   ,"CHANGE_RESOLUTION"
-										   ,"REMOTE_0"
-										   ,"REMOTE_1"
-										   ,"REMOTE_2"
-										   ,"REMOTE_3"
-										   ,"REMOTE_4"
-										   ,"REMOTE_5"
-										   ,"REMOTE_6"
-										   ,"REMOTE_7"
-										   ,"REMOTE_8"
-										   ,"REMOTE_9"
-										   ,"OSD_SHOW_LEFT"
-										   ,"OSD_SHOW_RIGHT"
-										   ,"OSD_SHOW_UP"
-										   ,"OSD_SHOW_DOWN"
-										   ,"OSD_SHOW_SELECT"
-										   ,"OSD_SHOW_VALUE_PLUS"
-										   ,"OSD_SHOW_VALUE_MIN"
-										   ,"SMALL_STEP_BACK"
-										   ,"MUSIC_FORWARD"
-										   ,"MUSIC_REWIND"
-										   ,"MUSIC_PLAY"
-										   ,"DELETE_ITEM"
-										   ,"COPY_ITEM"
-										   ,"MOVE_ITEM"
-										   ,"SHOW_MPLAYER_OSD"
-										   ,"OSD_HIDESUBMENU"
-										   ,"TAKE_SCREENSHOT"
-										   ,"INCREASE_TIMEBLOCK"
-										   ,"DECREASE_TIMEBLOCK"
-										   ,"DEFAULT_TIMEBLOCK"
-										   ,"TVGUIDE_RESET"
-										   ,"BACKGROUND_TOGGLE"
-										   ,"TOGGLE_WINDOWED_FULSLCREEN"
-										   ,"REBOOT"
-									   };
+                                     "MOVE_LEFT"
+                                     , "MOVE_RIGHT"
+                                     , "MOVE_UP"
+                                     , "MOVE_DOWN"
+                                     , "PAGE_UP"
+                                     , "PAGE_DOWN"
+                                     , "SELECT_ITEM"
+                                     , "PREVIOUS_MENU"
+                                     , "SHOW_INFO"
+                                     , "PAUSE"
+                                     , "STOP"
+                                     , "FORWARD"
+                                     , "REWIND"
+                                     , "SHOW_GUI"
+                                     , "QUEUE_ITEM"
+                                     , "EXIT"
+                                     , "SHUTDOWN"
+                                     , "ASPECT_RATIO"
+                                     , "PLAY"
+                                     , "EJECTCD"
+                                     , "PREV_CHANNEL"
+                                     , "NEXT_CHANNEL"
+                                     , "RECORD"
+                                     , "DVD_MENU"
+                                     , "NEXT_CHAPTER"
+                                     , "PREV_CHAPTER"
+                                     , "VOLUME_DOWN"
+                                     , "VOLUME_UP"
+                                     , "AUDIO_NEXT_LANGUAGE"
+                                     , "SHOW_SUBTITLES"
+                                     , "NEXT_SUBTITLE"
+                                     , "HIGHLIGHT_ITEM"
+                                     , "PARENT_DIR"
+                                     , "NEXT_ITEM"
+                                     , "PREV_ITEM"
+                                     , "STEP_FORWARD"
+                                     , "STEP_BACK"
+                                     , "BIG_STEP_FORWARD"
+                                     , "BIG_STEP_BACK"
+                                     , "SHOW_OSD"
+                                     , "SHOW_CODEC"
+                                     , "NEXT_PICTURE"
+                                     , "PREV_PICTURE"
+                                     , "ZOOM_OUT"
+                                     , "ZOOM_IN"
+                                     , "TOGGLE_SOURCE_DEST"
+                                     , "SHOW_PLAYLIST"
+                                     , "REMOVE_ITEM"
+                                     , "SHOW_FULLSCREEN"
+                                     , "ZOOM_LEVEL_NORMAL"
+                                     , "ZOOM_LEVEL_1"
+                                     , "ZOOM_LEVEL_2"
+                                     , "ZOOM_LEVEL_3"
+                                     , "ZOOM_LEVEL_4"
+                                     , "ZOOM_LEVEL_5"
+                                     , "ZOOM_LEVEL_6"
+                                     , "ZOOM_LEVEL_7"
+                                     , "ZOOM_LEVEL_8"
+                                     , "ZOOM_LEVEL_9"
+                                     , "CALIBRATE_SWAP_ARROWS"
+                                     , "CALIBRATE_RESET"
+                                     , "ANALOG_MOVE"
+                                     , "ROTATE_PICTURE"
+                                     , "CLOSE_DIALOG"
+                                     , "SUBTITLE_DELAY_MIN"
+                                     , "SUBTITLE_DELAY_PLUS"
+                                     , "AUDIO_DELAY_MIN"
+                                     , "AUDIO_DELAY_PLUS"
+                                     , "CHANGE_RESOLUTION"
+                                     , "REMOTE_0"
+                                     , "REMOTE_1"
+                                     , "REMOTE_2"
+                                     , "REMOTE_3"
+                                     , "REMOTE_4"
+                                     , "REMOTE_5"
+                                     , "REMOTE_6"
+                                     , "REMOTE_7"
+                                     , "REMOTE_8"
+                                     , "REMOTE_9"
+                                     , "OSD_SHOW_LEFT"
+                                     , "OSD_SHOW_RIGHT"
+                                     , "OSD_SHOW_UP"
+                                     , "OSD_SHOW_DOWN"
+                                     , "OSD_SHOW_SELECT"
+                                     , "OSD_SHOW_VALUE_PLUS"
+                                     , "OSD_SHOW_VALUE_MIN"
+                                     , "SMALL_STEP_BACK"
+                                     , "MUSIC_FORWARD"
+                                     , "MUSIC_REWIND"
+                                     , "MUSIC_PLAY"
+                                     , "DELETE_ITEM"
+                                     , "COPY_ITEM"
+                                     , "MOVE_ITEM"
+                                     , "SHOW_MPLAYER_OSD"
+                                     , "OSD_HIDESUBMENU"
+                                     , "TAKE_SCREENSHOT"
+                                     , "INCREASE_TIMEBLOCK"
+                                     , "DECREASE_TIMEBLOCK"
+                                     , "DEFAULT_TIMEBLOCK"
+                                     , "TVGUIDE_RESET"
+                                     , "BACKGROUND_TOGGLE"
+                                     , "TOGGLE_WINDOWED_FULSLCREEN"
+                                     , "REBOOT"
+                                   };
 
 
-    private void internalCommandsButton_Click(object sender, System.EventArgs e)
+    private void internalCommandsButton_Click(object sender, EventArgs e)
     {
       internalCommandsButton.Enabled = false;
       object[] commands = {
-									Action.ActionType.ACTION_MOVE_LEFT
-									, Action.ActionType.ACTION_MOVE_RIGHT             
-									, Action.ActionType.ACTION_MOVE_UP                
-									, Action.ActionType.ACTION_MOVE_DOWN              
-									, Action.ActionType.ACTION_PAGE_UP                
-									, Action.ActionType.ACTION_PAGE_DOWN              
-									, Action.ActionType.ACTION_SELECT_ITEM            
-									, Action.ActionType.ACTION_PREVIOUS_MENU          
-									, Action.ActionType.ACTION_SHOW_INFO              
-									, Action.ActionType.ACTION_PAUSE                  
-									, Action.ActionType.ACTION_STOP                   
-									, Action.ActionType.ACTION_FORWARD                
-									, Action.ActionType.ACTION_REWIND  
-									, Action.ActionType.ACTION_SHOW_GUI
-									, Action.ActionType.ACTION_QUEUE_ITEM
-									, Action.ActionType.ACTION_EXIT
-
-									, Action.ActionType.ACTION_SHUTDOWN
-									, Action.ActionType.ACTION_ASPECT_RATIO
-									, Action.ActionType.ACTION_PLAY
-									, Action.ActionType.ACTION_EJECTCD
-									, Action.ActionType.ACTION_PREV_CHANNEL
-									, Action.ActionType.ACTION_NEXT_CHANNEL
-									, Action.ActionType.ACTION_RECORD
-									, Action.ActionType.ACTION_DVD_MENU
-									, Action.ActionType.ACTION_NEXT_CHAPTER
-									, Action.ActionType.ACTION_PREV_CHAPTER
-									, Action.ActionType.ACTION_VOLUME_DOWN
-									, Action.ActionType.ACTION_VOLUME_UP
-									, Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE
-									, Action.ActionType.ACTION_SHOW_SUBTITLES
-									, Action.ActionType.ACTION_NEXT_AUDIO 
-
-									, Action.ActionType.ACTION_HIGHLIGHT_ITEM
-									, Action.ActionType.ACTION_PARENT_DIR
-									, Action.ActionType.ACTION_NEXT_ITEM
-									, Action.ActionType.ACTION_PREV_ITEM
-									, Action.ActionType.ACTION_STEP_FORWARD
-									, Action.ActionType.ACTION_STEP_BACK
-									, Action.ActionType.ACTION_BIG_STEP_FORWARD
-									, Action.ActionType.ACTION_BIG_STEP_BACK
-									, Action.ActionType.ACTION_SHOW_OSD     
-									, Action.ActionType.ACTION_SHOW_CODEC    
-									, Action.ActionType.ACTION_NEXT_PICTURE  
-									, Action.ActionType.ACTION_PREV_PICTURE  
-									, Action.ActionType.ACTION_ZOOM_OUT      
-									, Action.ActionType.ACTION_ZOOM_IN       
-									, Action.ActionType.ACTION_TOGGLE_SOURCE_DEST
-									, Action.ActionType.ACTION_SHOW_PLAYLIST   
-									, Action.ActionType.ACTION_REMOVE_ITEM     
-									, Action.ActionType.ACTION_SHOW_FULLSCREEN 
-									, Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL
-									, Action.ActionType.ACTION_ZOOM_LEVEL_1     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_2     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_3     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_4     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_5     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_6     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_7     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_8     
-									, Action.ActionType.ACTION_ZOOM_LEVEL_9     
-									, Action.ActionType.ACTION_CALIBRATE_SWAP_ARROWS
-									, Action.ActionType.ACTION_CALIBRATE_RESET       
-									, Action.ActionType.ACTION_ANALOG_MOVE           
-									, Action.ActionType.ACTION_ROTATE_PICTURE        
-									, Action.ActionType.ACTION_CLOSE_DIALOG          
-									, Action.ActionType.ACTION_SUBTITLE_DELAY_MIN    
-									, Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS
-									, Action.ActionType.ACTION_AUDIO_DELAY_MIN
-									, Action.ActionType.ACTION_AUDIO_DELAY_PLUS
-									, Action.ActionType.ACTION_CHANGE_RESOLUTION
-									, Action.ActionType.REMOTE_0
-									, Action.ActionType.REMOTE_1
-									, Action.ActionType.REMOTE_2
-									, Action.ActionType.REMOTE_3
-									, Action.ActionType.REMOTE_4
-									, Action.ActionType.REMOTE_5
-									, Action.ActionType.REMOTE_6
-									, Action.ActionType.REMOTE_7
-									, Action.ActionType.REMOTE_8
-									, Action.ActionType.REMOTE_9
-									, Action.ActionType.ACTION_OSD_SHOW_LEFT
-									, Action.ActionType.ACTION_OSD_SHOW_RIGHT
-									, Action.ActionType.ACTION_OSD_SHOW_UP
-									, Action.ActionType.ACTION_OSD_SHOW_DOWN
-									, Action.ActionType.ACTION_OSD_SHOW_SELECT
-									, Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS
-									, Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN
-									, Action.ActionType.ACTION_SMALL_STEP_BACK
-									, Action.ActionType.ACTION_MUSIC_FORWARD
-									, Action.ActionType.ACTION_MUSIC_REWIND
-									, Action.ActionType.ACTION_MUSIC_PLAY
-									, Action.ActionType.ACTION_DELETE_ITEM
-									, Action.ActionType.ACTION_COPY_ITEM
-									, Action.ActionType.ACTION_MOVE_ITEM
-									, Action.ActionType.ACTION_SHOW_MPLAYER_OSD
-									, Action.ActionType.ACTION_OSD_HIDESUBMENU
-									, Action.ActionType.ACTION_TAKE_SCREENSHOT
-									, Action.ActionType.ACTION_INCREASE_TIMEBLOCK
-									, Action.ActionType.ACTION_DECREASE_TIMEBLOCK
-									, Action.ActionType.ACTION_DEFAULT_TIMEBLOCK
-									, Action.ActionType.ACTION_TVGUIDE_RESET
-									, Action.ActionType.ACTION_BACKGROUND_TOGGLE
-									, Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN
-									, Action.ActionType.ACTION_REBOOT
-								};
+                            Action.ActionType.ACTION_MOVE_LEFT
+                            , Action.ActionType.ACTION_MOVE_RIGHT
+                            , Action.ActionType.ACTION_MOVE_UP
+                            , Action.ActionType.ACTION_MOVE_DOWN
+                            , Action.ActionType.ACTION_PAGE_UP
+                            , Action.ActionType.ACTION_PAGE_DOWN
+                            , Action.ActionType.ACTION_SELECT_ITEM
+                            , Action.ActionType.ACTION_PREVIOUS_MENU
+                            , Action.ActionType.ACTION_SHOW_INFO
+                            , Action.ActionType.ACTION_PAUSE
+                            , Action.ActionType.ACTION_STOP
+                            , Action.ActionType.ACTION_FORWARD
+                            , Action.ActionType.ACTION_REWIND
+                            , Action.ActionType.ACTION_SHOW_GUI
+                            , Action.ActionType.ACTION_QUEUE_ITEM
+                            , Action.ActionType.ACTION_EXIT
+                            , Action.ActionType.ACTION_SHUTDOWN
+                            , Action.ActionType.ACTION_ASPECT_RATIO
+                            , Action.ActionType.ACTION_PLAY
+                            , Action.ActionType.ACTION_EJECTCD
+                            , Action.ActionType.ACTION_PREV_CHANNEL
+                            , Action.ActionType.ACTION_NEXT_CHANNEL
+                            , Action.ActionType.ACTION_RECORD
+                            , Action.ActionType.ACTION_DVD_MENU
+                            , Action.ActionType.ACTION_NEXT_CHAPTER
+                            , Action.ActionType.ACTION_PREV_CHAPTER
+                            , Action.ActionType.ACTION_VOLUME_DOWN
+                            , Action.ActionType.ACTION_VOLUME_UP
+                            , Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE
+                            , Action.ActionType.ACTION_SHOW_SUBTITLES
+                            , Action.ActionType.ACTION_NEXT_AUDIO
+                            , Action.ActionType.ACTION_HIGHLIGHT_ITEM
+                            , Action.ActionType.ACTION_PARENT_DIR
+                            , Action.ActionType.ACTION_NEXT_ITEM
+                            , Action.ActionType.ACTION_PREV_ITEM
+                            , Action.ActionType.ACTION_STEP_FORWARD
+                            , Action.ActionType.ACTION_STEP_BACK
+                            , Action.ActionType.ACTION_BIG_STEP_FORWARD
+                            , Action.ActionType.ACTION_BIG_STEP_BACK
+                            , Action.ActionType.ACTION_SHOW_OSD
+                            , Action.ActionType.ACTION_SHOW_CODEC
+                            , Action.ActionType.ACTION_NEXT_PICTURE
+                            , Action.ActionType.ACTION_PREV_PICTURE
+                            , Action.ActionType.ACTION_ZOOM_OUT
+                            , Action.ActionType.ACTION_ZOOM_IN
+                            , Action.ActionType.ACTION_TOGGLE_SOURCE_DEST
+                            , Action.ActionType.ACTION_SHOW_PLAYLIST
+                            , Action.ActionType.ACTION_REMOVE_ITEM
+                            , Action.ActionType.ACTION_SHOW_FULLSCREEN
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_1
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_2
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_3
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_4
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_5
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_6
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_7
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_8
+                            , Action.ActionType.ACTION_ZOOM_LEVEL_9
+                            , Action.ActionType.ACTION_CALIBRATE_SWAP_ARROWS
+                            , Action.ActionType.ACTION_CALIBRATE_RESET
+                            , Action.ActionType.ACTION_ANALOG_MOVE
+                            , Action.ActionType.ACTION_ROTATE_PICTURE
+                            , Action.ActionType.ACTION_CLOSE_DIALOG
+                            , Action.ActionType.ACTION_SUBTITLE_DELAY_MIN
+                            , Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS
+                            , Action.ActionType.ACTION_AUDIO_DELAY_MIN
+                            , Action.ActionType.ACTION_AUDIO_DELAY_PLUS
+                            , Action.ActionType.ACTION_CHANGE_RESOLUTION
+                            , Action.ActionType.REMOTE_0
+                            , Action.ActionType.REMOTE_1
+                            , Action.ActionType.REMOTE_2
+                            , Action.ActionType.REMOTE_3
+                            , Action.ActionType.REMOTE_4
+                            , Action.ActionType.REMOTE_5
+                            , Action.ActionType.REMOTE_6
+                            , Action.ActionType.REMOTE_7
+                            , Action.ActionType.REMOTE_8
+                            , Action.ActionType.REMOTE_9
+                            , Action.ActionType.ACTION_OSD_SHOW_LEFT
+                            , Action.ActionType.ACTION_OSD_SHOW_RIGHT
+                            , Action.ActionType.ACTION_OSD_SHOW_UP
+                            , Action.ActionType.ACTION_OSD_SHOW_DOWN
+                            , Action.ActionType.ACTION_OSD_SHOW_SELECT
+                            , Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS
+                            , Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN
+                            , Action.ActionType.ACTION_SMALL_STEP_BACK
+                            , Action.ActionType.ACTION_MUSIC_FORWARD
+                            , Action.ActionType.ACTION_MUSIC_REWIND
+                            , Action.ActionType.ACTION_MUSIC_PLAY
+                            , Action.ActionType.ACTION_DELETE_ITEM
+                            , Action.ActionType.ACTION_COPY_ITEM
+                            , Action.ActionType.ACTION_MOVE_ITEM
+                            , Action.ActionType.ACTION_SHOW_MPLAYER_OSD
+                            , Action.ActionType.ACTION_OSD_HIDESUBMENU
+                            , Action.ActionType.ACTION_TAKE_SCREENSHOT
+                            , Action.ActionType.ACTION_INCREASE_TIMEBLOCK
+                            , Action.ActionType.ACTION_DECREASE_TIMEBLOCK
+                            , Action.ActionType.ACTION_DEFAULT_TIMEBLOCK
+                            , Action.ActionType.ACTION_TVGUIDE_RESET
+                            , Action.ActionType.ACTION_BACKGROUND_TOGGLE
+                            , Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN
+                            , Action.ActionType.ACTION_REBOOT
+                          };
 
       int count = 0;
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+      {
         if (ActionsCheckList.GetItemChecked(i))
+        {
           count++;
+        }
+      }
 
       object[] learncommands = new object[count];
       string[] learnbuttons = new string[count];
 
       count = 0;
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+      {
         if (ActionsCheckList.GetItemChecked(i))
         {
           learncommands[count] = commands[i];
           learnbuttons[count] = buttonNames[i];
           count++;
         }
+      }
 
-      MediaPortal.SerialIR.SerialUIR.Instance.StartListening -= new StartListeningEventHandler(Instance_CodeReceived);
-      MediaPortal.SerialIR.SerialUIR.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
+      SerialUIR.Instance.StartListening -= new StartListeningEventHandler(Instance_CodeReceived);
+      SerialUIR.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
 
-      MediaPortal.SerialIR.SerialUIR.Instance.BulkLearn(learncommands, learnbuttons);
-      MediaPortal.SerialIR.SerialUIR.Instance.SaveInternalValues();
+      SerialUIR.Instance.BulkLearn(learncommands, learnbuttons);
+      SerialUIR.Instance.SaveInternalValues();
 
-      MediaPortal.SerialIR.SerialUIR.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
-      MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
+      SerialUIR.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
+      SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
       statusLabel.Text = "Learning finished !";
       internalCommandsButton.Enabled = true;
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
     }
 
     private void Instance_CodeReceived(object sender, ListeningEventArgs e)
     {
       statusLabel.Text = e.Code;
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
     }
 
     private void Instance_StartLearning(object sender, LearningEventArgs e)
     {
       statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
     }
 
     private void OnRemoteCommand(object command)
     {
-      System.Diagnostics.Debug.WriteLine("Remote Command = " + command.ToString());
+      Debug.WriteLine("Remote Command = " + command.ToString());
     }
 
     private void SetReOpenStatus(bool available)
@@ -872,85 +915,104 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void CommPortCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void CommPortCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
-      SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetPort(CommPortCombo.Text));
+      SetReOpenStatus(SerialUIR.Instance.SetPort(CommPortCombo.Text));
     }
 
-    private void BaudRateCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      if (initialize)
-        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetBaudRate(int.Parse(BaudRateCombo.Text)));
-    }
-
-    private void HandShakeCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void BaudRateCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (initialize)
-        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetHandShake(HandShakeCombo.Text));
+      {
+        SetReOpenStatus(SerialUIR.Instance.SetBaudRate(int.Parse(BaudRateCombo.Text)));
+      }
     }
 
-    private void IRLengthCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void HandShakeCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (initialize)
-        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetIRBytes(int.Parse(IRLengthCombo.Text)));
+      {
+        SetReOpenStatus(SerialUIR.Instance.SetHandShake(HandShakeCombo.Text));
+      }
     }
 
-    private void checkBoxInitUIRIrman_CheckedChanged(object sender, System.EventArgs e)
+    private void IRLengthCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (initialize)
-        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetUIRIRmanInit(checkBoxInitUIRIrman.Checked));
+      {
+        SetReOpenStatus(SerialUIR.Instance.SetIRBytes(int.Parse(IRLengthCombo.Text)));
+      }
     }
 
-    private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void checkBoxInitUIRIrman_CheckedChanged(object sender, EventArgs e)
     {
-      MediaPortal.SerialIR.SerialUIR.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
+      if (initialize)
+      {
+        SetReOpenStatus(SerialUIR.Instance.SetUIRIRmanInit(checkBoxInitUIRIrman.Checked));
+      }
     }
 
-    private void LearningTimeoutCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void CommandDelayCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
-      MediaPortal.SerialIR.SerialUIR.Instance.LearningTimeOut = 1000 * int.Parse(LearningTimeoutCombo.Text);
+      SerialUIR.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
     }
 
-    private void buttonAllCodes_Click(object sender, System.EventArgs e)
+    private void LearningTimeoutCombo_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      SerialUIR.Instance.LearningTimeOut = 1000*int.Parse(LearningTimeoutCombo.Text);
+    }
+
+    private void buttonAllCodes_Click(object sender, EventArgs e)
     {
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+      {
         ActionsCheckList.SetItemChecked(i, true);
+      }
     }
 
-    private void buttonDefaultCodes_Click(object sender, System.EventArgs e)
+    private void buttonDefaultCodes_Click(object sender, EventArgs e)
     {
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+      {
         ActionsCheckList.SetItemChecked(i, (i < 31) ? true : false);
+      }
     }
 
-    private void buttonNoneCodes_Click(object sender, System.EventArgs e)
+    private void buttonNoneCodes_Click(object sender, EventArgs e)
     {
       for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+      {
         ActionsCheckList.SetItemChecked(i, (i < 16) ? true : false);
+      }
     }
 
-    private void ParityCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void ParityCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (initialize)
-        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetParity(ParityCombo.Text));
+      {
+        SetReOpenStatus(SerialUIR.Instance.SetParity(ParityCombo.Text));
+      }
     }
 
-    private void checkBoxDTR_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxDTR_CheckedChanged(object sender, EventArgs e)
     {
       if (initialize)
-        MediaPortal.SerialIR.SerialUIR.Instance.DTR = checkBoxRTS.Checked;
+      {
+        SerialUIR.Instance.DTR = checkBoxRTS.Checked;
+      }
     }
 
-    private void checkBoxRTS_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxRTS_CheckedChanged(object sender, EventArgs e)
     {
       if (initialize)
-        MediaPortal.SerialIR.SerialUIR.Instance.RTS = checkBoxRTS.Checked;
+      {
+        SerialUIR.Instance.RTS = checkBoxRTS.Checked;
+      }
     }
 
-    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-      MediaPortal.SerialIR.SerialUIR.Instance.InternalCommandsActive = inputCheckBox.Checked;
+      SerialUIR.Instance.InternalCommandsActive = inputCheckBox.Checked;
     }
-
   }
 }

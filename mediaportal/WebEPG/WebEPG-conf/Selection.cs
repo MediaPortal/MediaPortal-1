@@ -24,32 +24,31 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using System.Data;
-using MediaPortal.Webepg.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace WebEPG_conf
 {
   /// <summary>
   /// Summary description for Form1.
   /// </summary>
-  public class fSelection : System.Windows.Forms.Form
+  public class fSelection : Form
   {
     private TreeNode tGrabbers;
     private EventHandler handler;
-    private System.Windows.Forms.TreeView treeView1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox gbSelection;
-    private MediaPortal.UserInterface.Controls.MPButton bSelect;
-    private MediaPortal.UserInterface.Controls.MPButton bClose;
+    private TreeView treeView1;
+    private MPGroupBox gbSelection;
+    private MPButton bSelect;
+    private MPButton bClose;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
-    public fSelection(TreeNode grabbers, bool bChanGrab, System.EventHandler select_click)
+    public fSelection(TreeNode grabbers, bool bChanGrab, EventHandler select_click)
     {
       //
       // Required for Windows Form Designer support
@@ -63,7 +62,7 @@ namespace WebEPG_conf
       tGrabbers = grabbers;
 
       treeView1.Nodes.Clear();
-      treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
+      treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
 
       treeView1.TreeViewNodeSorter = new NodeSorter();
 
@@ -75,10 +74,7 @@ namespace WebEPG_conf
 
     public string[] Selected
     {
-      get
-      {
-        return (string[])treeView1.SelectedNode.Tag;
-      }
+      get { return (string[]) treeView1.SelectedNode.Tag; }
     }
 
     /// <summary>
@@ -97,6 +93,7 @@ namespace WebEPG_conf
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -112,9 +109,11 @@ namespace WebEPG_conf
       // 
       // treeView1
       // 
-      this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.treeView1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.treeView1.Location = new System.Drawing.Point(16, 27);
       this.treeView1.Name = "treeView1";
       this.treeView1.Size = new System.Drawing.Size(392, 293);
@@ -122,9 +121,11 @@ namespace WebEPG_conf
       // 
       // gbSelection
       // 
-      this.gbSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbSelection.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.gbSelection.Controls.Add(this.bClose);
       this.gbSelection.Controls.Add(this.bSelect);
       this.gbSelection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -137,7 +138,9 @@ namespace WebEPG_conf
       // 
       // bClose
       // 
-      this.bClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.bClose.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.bClose.Location = new System.Drawing.Point(336, 320);
       this.bClose.Name = "bClose";
       this.bClose.Size = new System.Drawing.Size(72, 24);
@@ -147,7 +150,9 @@ namespace WebEPG_conf
       // 
       // bSelect
       // 
-      this.bSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.bSelect.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bSelect.Location = new System.Drawing.Point(16, 320);
       this.bSelect.Name = "bSelect";
       this.bSelect.Size = new System.Drawing.Size(72, 24);
@@ -167,10 +172,9 @@ namespace WebEPG_conf
       this.Text = "Selection";
       this.gbSelection.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
-    #endregion
 
+    #endregion
 
     private void DoEvent(Object source, EventArgs e)
     {
@@ -185,7 +189,7 @@ namespace WebEPG_conf
     {
       //			TreeNode sNode = treeView1.SelectedNode;
       this.treeView1.Nodes.Clear();
-      this.treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
+      this.treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
     }
 
     private TreeNode FindNode(TreeNode tNode, string[] tag)
@@ -195,10 +199,12 @@ namespace WebEPG_conf
       {
         TreeNode rNode = FindNode(cNode, tag);
         if (rNode != null)
+        {
           return rNode;
+        }
       }
 
-      string[] ntag = (string[])tNode.Tag;
+      string[] ntag = (string[]) tNode.Tag;
       if (ntag != null && ntag[0] == tag[0] && ntag[1] == tag[1])
       {
         return tNode;

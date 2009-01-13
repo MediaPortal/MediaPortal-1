@@ -24,11 +24,10 @@
 #endregion
 
 using System;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
+using MediaPortal.Profile;
 
 namespace MediaPortal.WinampPlayer
 {
@@ -36,13 +35,13 @@ namespace MediaPortal.WinampPlayer
   /// Summary description for Class1.
   /// </summary>
   [PluginIcons("ExternalPlayers.Winamp.WinampLogo.png", "ExternalPlayers.Winamp.WinampLogoDisabled.png")]
-  public class WinampPlugin : MediaPortal.Player.IExternalPlayer
+  public class WinampPlugin : IExternalPlayer
   {
     private const string m_author = "int_20h";
     private const string m_player = "Winamp";
     private const string m_version = "1.0";
     private bool m_bStoppedManualy = false;
-    
+
     /*
     private string[] m_supportedExtensions = new string[]{".cda", ".mid", ".midi", ".rmi", ".kar", ".miz", ".mod", ".mdz", ".nst",
                                                           ".stm", ".stz", ".s3m", ".s3z", ".it", ".itz", ".xm", ".xmz", ".mtm", 
@@ -79,27 +78,19 @@ namespace MediaPortal.WinampPlayer
 
     public override string AuthorName
     {
-      get
-      {
-        return m_author;
-      }
+      get { return m_author; }
     }
 
     public override string PlayerName
     {
-      get
-      {
-        return m_player;
-      }
+      get { return m_player; }
     }
 
     public override string VersionNumber
     {
-      get
-      {
-        return m_version;
-      }
+      get { return m_version; }
     }
+
     public override string[] GetAllSupportedExtensions()
     {
       readConfig();
@@ -110,35 +101,42 @@ namespace MediaPortal.WinampPlayer
     {
       readConfig();
       string ext = null;
-      int dot = filename.LastIndexOf(".");    // couldn't find the dot to get the extension
-      if (dot == -1) return false;
+      int dot = filename.LastIndexOf("."); // couldn't find the dot to get the extension
+      if (dot == -1)
+      {
+        return false;
+      }
 
       ext = filename.Substring(dot).Trim();
-      if (ext.Length == 0) return false;   // no extension so return false;
+      if (ext.Length == 0)
+      {
+        return false; // no extension so return false;
+      }
 
       ext = ext.ToLower();
 
       for (int i = 0; i < m_supportedExtensions.Length; i++)
       {
         if (m_supportedExtensions[i].Equals(ext))
+        {
           return true;
+        }
       }
 
       // could not match the extension, so return false;
       return false;
-
     }
 
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
       }
       if (strExt != null && strExt.Length > 0)
       {
-        m_supportedExtensions = strExt.Split(new char[] { ':', ',' });
+        m_supportedExtensions = strExt.Split(new char[] {':', ','});
         for (int i = 0; i < m_supportedExtensions.Length; i++)
         {
           m_supportedExtensions[i] = m_supportedExtensions[i].Trim();
@@ -174,9 +172,11 @@ namespace MediaPortal.WinampPlayer
       if (m_winampController != null)
       {
         // stop other media which might be active until now.
-        if (g_Player.Playing)        
+        if (g_Player.Playing)
+        {
           g_Player.Stop();
-        
+        }
+
         m_strCurrentFile = strFile;
         m_winampController.ClearPlayList();
         m_winampController.Volume = m_volume;
@@ -231,7 +231,6 @@ namespace MediaPortal.WinampPlayer
           return (m_winampController.Status() == WinampController.PAUSED);
         }
         return false;
-
       }
     }
 
@@ -242,7 +241,7 @@ namespace MediaPortal.WinampPlayer
         if (m_winampController != null)
         {
           return (m_winampController.Status() == WinampController.PLAYING)
-                   || (m_winampController.Status() == WinampController.PAUSED);
+                 || (m_winampController.Status() == WinampController.PAUSED);
         }
         return false;
       }
@@ -252,7 +251,10 @@ namespace MediaPortal.WinampPlayer
     {
       get
       {
-        if (m_bStoppedManualy) return false;
+        if (m_bStoppedManualy)
+        {
+          return false;
+        }
         if (m_winampController != null)
         {
           return (m_winampController.Status() == WinampController.STOPPED);
@@ -308,7 +310,10 @@ namespace MediaPortal.WinampPlayer
     {
       double dCurTime = CurrentPosition;
       dTime = dCurTime + dTime;
-      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < 0.0d)
+      {
+        dTime = 0.0d;
+      }
       if (dTime < Duration)
       {
         m_winampController.Position = dTime;
@@ -317,7 +322,10 @@ namespace MediaPortal.WinampPlayer
 
     public override void SeekAbsolute(double dTime)
     {
-      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < 0.0d)
+      {
+        dTime = 0.0d;
+      }
       if (dTime < Duration)
       {
         m_winampController.Position = dTime;
@@ -329,11 +337,14 @@ namespace MediaPortal.WinampPlayer
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
-      double fOnePercent = Duration / 100.0d;
-      fCurPercent = fCurPercent + (double)iPercentage;
+      double fCurPercent = (dCurrentPos/Duration)*100.0d;
+      double fOnePercent = Duration/100.0d;
+      fCurPercent = fCurPercent + (double) iPercentage;
       fCurPercent *= fOnePercent;
-      if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+      if (fCurPercent < 0.0d)
+      {
+        fCurPercent = 0.0d;
+      }
       if (fCurPercent < Duration)
       {
         m_winampController.Position = fCurPercent;
@@ -343,17 +354,25 @@ namespace MediaPortal.WinampPlayer
 
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (iPercentage < 0) iPercentage = 0;
-      if (iPercentage >= 100) iPercentage = 100;
-      double fPercent = Duration / 100.0f;
-      fPercent *= (double)iPercentage;
+      if (iPercentage < 0)
+      {
+        iPercentage = 0;
+      }
+      if (iPercentage >= 100)
+      {
+        iPercentage = 100;
+      }
+      double fPercent = Duration/100.0f;
+      fPercent *= (double) iPercentage;
       m_winampController.Position = fPercent;
     }
 
-      public override void Process()
+    public override void Process()
     {
       if (!Playing)
+      {
         return;
+      }
 
       if (_notifyPlaying && CurrentPosition >= 10.0)
       {
@@ -366,10 +385,7 @@ namespace MediaPortal.WinampPlayer
 
     public override bool IsCDA
     {
-      get
-      {
-        return _isCDA;
-      }
+      get { return _isCDA; }
     }
   }
 }

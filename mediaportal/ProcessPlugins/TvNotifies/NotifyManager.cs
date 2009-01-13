@@ -25,62 +25,63 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.Util;
 
 namespace MediaPortal.TvNotifies
 {
   [PluginIcons("ProcessPlugins.TvNotifies.Notifybutton.gif", "ProcessPlugins.TvNotifies.Notifybutton_disabled.gif")]
   public class NotifyManager : ISetupForm, IPlugin //, IShowPlugin
   {
-    System.Windows.Forms.Timer _timer;
+    private Timer _timer;
     // flag indicating that notifies have been added/changed/removed
-    bool _notifiesListChanged;
-    int _preNotifyConfig;
+    private bool _notifiesListChanged;
+    private int _preNotifyConfig;
     //list of all notifies (alert me n minutes before program starts)
-    List<TVNotify> _notifiesList;
+    private List<TVNotify> _notifiesList;
 
     public NotifyManager()
     {
       _notifiesList = new List<TVNotify>();
-      TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnNotifiesChanged);
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      TVDatabase.OnNotifiesChanged += new TVDatabase.OnChangedHandler(OnNotifiesChanged);
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
-      _timer = new System.Windows.Forms.Timer();
+      }
+      _timer = new Timer();
       // check every 15 seconds for notifies
       _timer.Interval = 15000;
       _timer.Enabled = false;
       _timer.Tick += new EventHandler(_timer_Tick);
     }
 
-    void OnNotifiesChanged()
+    private void OnNotifiesChanged()
     {
       _notifiesListChanged = true;
     }
-    void LoadNotifies()
+
+    private void LoadNotifies()
     {
       _notifiesList.Clear();
       TVDatabase.GetNotifies(_notifiesList, true);
     }
 
 
-    void _timer_Tick(object sender, EventArgs e)
+    private void _timer_Tick(object sender, EventArgs e)
     {
       if (_notifiesListChanged)
       {
-        LoadNotifies(); 
+        LoadNotifies();
         _notifiesListChanged = false;
       }
       DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
       for (int i = 0; i < _notifiesList.Count; ++i)
       {
         TVNotify notify = _notifiesList[i];
-        if ( preNotifySecs > notify.Program.StartTime )
+        if (preNotifySecs > notify.Program.StartTime)
         {
           TVDatabase.DeleteNotify(notify);
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
@@ -128,7 +129,8 @@ namespace MediaPortal.TvNotifies
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add CallerIdPlugin.GetHome implementation
       strButtonText = null;
@@ -155,7 +157,7 @@ namespace MediaPortal.TvNotifies
 
     public void ShowPlugin()
     {
-      Form NotifySetup = new TvNotifies.NotifySetupForm();
+      Form NotifySetup = new NotifySetupForm();
       NotifySetup.ShowDialog();
     }
 

@@ -29,16 +29,18 @@ namespace MediaPortal.GUI.Video
 {
   public class VideoState
   {
-    static int m_iTempPlaylistWindow = 0;
-    static string m_strTempPlaylistDirectory = "";
-    static int m_iStartWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
-    static string view;
+    private static int m_iTempPlaylistWindow = 0;
+    private static string m_strTempPlaylistDirectory = "";
+    private static int m_iStartWindow = (int) GUIWindow.Window.WINDOW_VIDEOS;
+    private static string view;
+
     public VideoState()
     {
       // 
       // TODO: Add constructor logic here
       //
     }
+
     public static string View
     {
       get { return view; }

@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
-  public partial class DlgConfigModeHint : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class DlgConfigModeHint : MPConfigForm
   {
     public DlgConfigModeHint()
     {
@@ -19,7 +15,9 @@ namespace MediaPortal.Configuration
     private void btnContinue_Click(object sender, EventArgs e)
     {
       if (checkBoxConfirmed.Checked)
+      {
         this.DialogResult = DialogResult.OK;
+      }
 
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -28,6 +26,5 @@ namespace MediaPortal.Configuration
 
       this.Close();
     }
-
   }
 }

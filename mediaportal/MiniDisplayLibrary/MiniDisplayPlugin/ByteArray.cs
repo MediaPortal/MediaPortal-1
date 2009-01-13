@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
+﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
   public static class ByteArray
   {
@@ -31,4 +29,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
   }
 }
-

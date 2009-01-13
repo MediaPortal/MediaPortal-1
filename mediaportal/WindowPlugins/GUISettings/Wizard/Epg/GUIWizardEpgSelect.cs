@@ -23,18 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings.Wizard;
-using MediaPortal.TV.Database;
-using MediaPortal.EPG.config;
-using DShowNET;
 
 namespace WindowPlugins.GUISettings.Epg
 {
@@ -43,13 +33,12 @@ namespace WindowPlugins.GUISettings.Epg
   /// </summary>
   public class GUIWizardEpgSelect : GUIEpgSelectBase
   {
-    [SkinControlAttribute(5)]    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]   protected GUIButtonControl btnBack = null;
+    [SkinControl(5)] protected GUIButtonControl btnNext = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
 
     public GUIWizardEpgSelect()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_WIZARD_EPG_SELECT;
+      GetID = (int) Window.WINDOW_WIZARD_EPG_SELECT;
     }
 
     public override bool Init()
@@ -58,7 +47,7 @@ namespace WindowPlugins.GUISettings.Epg
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
@@ -73,7 +62,7 @@ namespace WindowPlugins.GUISettings.Epg
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnBack()
+    private void OnBack()
     {
       if (epgGrabberSelected)
       {
@@ -85,7 +74,7 @@ namespace WindowPlugins.GUISettings.Epg
     }
 
 
-    void OnNext()
+    private void OnNext()
     {
       string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
 

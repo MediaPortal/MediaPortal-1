@@ -24,42 +24,59 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
-using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicSort : MediaPortal.Configuration.SectionSettings
+  public class MusicSort : SectionSettings
   {
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbSortRight;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbSortLeft;
+    private IContainer components = null;
+    private MPComboBox comboBox1;
+    private MPTextBox tbSortRight;
+    private MPTextBox tbSortLeft;
 
-    const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
-    const string defaultFileTag = "[%filename%]";
-    const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
-    string[] sortModes =        { "Name",        "Date",           "Size",          "Track",         "Duration",      "Title",         "Artist",        "Album",       "Filename",     "Rating" };
-    string[] defaultSortTags1 = { defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag, defaultFileTag, defaultTrackTag };
-    string[] defaultSortTags2 = { "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%" };
+    private const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
+    private const string defaultFileTag = "[%filename%]";
+    private const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
 
-    string[] sortTags1 = new string[20];
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPLabel label15;
-    private MediaPortal.UserInterface.Controls.MPLabel label16;
-    private MediaPortal.UserInterface.Controls.MPLabel label17;
-    private MediaPortal.UserInterface.Controls.MPLabel label18;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSample;
-    private MediaPortal.UserInterface.Controls.MPLabel label19;
-    private MediaPortal.UserInterface.Controls.MPLabel label20;
-    private MediaPortal.UserInterface.Controls.MPLabel label21;
-    private MediaPortal.UserInterface.Controls.MPLabel label38;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowSort;
-    string[] sortTags2 = new string[20];
+    private string[] sortModes = {
+                                   "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
+                                   "Rating"
+                                 };
+
+    private string[] defaultSortTags1 = {
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag,
+                                          defaultFileTag, defaultTrackTag
+                                        };
+
+    private string[] defaultSortTags2 = {
+                                          "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%",
+                                          "%duration%", "%duration%", "%filesize%", "%rating%"
+                                        };
+
+    private string[] sortTags1 = new string[20];
+    private MPTabControl tabControl1;
+    private MPTabPage tabPage1;
+    private MPGroupBox groupBox3;
+    private MPGroupBox groupBox4;
+    private MPLabel label15;
+    private MPLabel label16;
+    private MPLabel label17;
+    private MPLabel label18;
+    private MPTextBox textBoxSample;
+    private MPLabel label19;
+    private MPLabel label20;
+    private MPLabel label21;
+    private MPLabel label38;
+    private MPCheckBox checkBoxShowSort;
+    private string[] sortTags2 = new string[20];
+
     /// <summary>
     /// 
     /// </summary>
@@ -76,7 +93,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     /// <summary>
@@ -85,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       comboBox1.Items.Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxShowSort.Checked = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
@@ -100,9 +116,9 @@ namespace MediaPortal.Configuration.Sections
       tbSortLeft.Text = sortTags1[comboBox1.SelectedIndex];
       tbSortRight.Text = sortTags2[comboBox1.SelectedIndex];
       ShowExample();
-
     }
-    void ShowExample()
+
+    private void ShowExample()
     {
       string duration = "3:51";
       string fileSize = "3.2MB";
@@ -112,26 +128,42 @@ namespace MediaPortal.Configuration.Sections
       string trackNr = "03";
       string year = "1973";
       string genre = "Pop";
-      string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat); ;
+      string date = DateTime.Now.ToShortDateString() + " " +
+                    DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+      ;
 
       string filename = "barcelona.mp3";
       string rating = "8.2";
 
       string line1 = tbSortLeft.Text;
       string line2 = tbSortRight.Text;
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%track%", trackNr); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", artist); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", artist);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", album); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", album);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", title); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%title%", title);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%year%", year); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%year%", year);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%date%", date); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%date%", date);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filename%", filename); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filename%", filename);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%rating%", rating); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%rating%", rating);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%duration%", duration); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%duration%", duration);
-      line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%genre%", genre); line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%genre%", genre);
+      line1 = Util.Utils.ReplaceTag(line1, "%track%", trackNr);
+      line2 = Util.Utils.ReplaceTag(line2, "%track%", trackNr);
+      line1 = Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
+      line2 = Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
+      line1 = Util.Utils.ReplaceTag(line1, "%artist%", artist);
+      line2 = Util.Utils.ReplaceTag(line2, "%artist%", artist);
+      line1 = Util.Utils.ReplaceTag(line1, "%album%", album);
+      line2 = Util.Utils.ReplaceTag(line2, "%album%", album);
+      line1 = Util.Utils.ReplaceTag(line1, "%title%", title);
+      line2 = Util.Utils.ReplaceTag(line2, "%title%", title);
+      line1 = Util.Utils.ReplaceTag(line1, "%year%", year);
+      line2 = Util.Utils.ReplaceTag(line2, "%year%", year);
+      line1 = Util.Utils.ReplaceTag(line1, "%date%", date);
+      line2 = Util.Utils.ReplaceTag(line2, "%date%", date);
+      line1 = Util.Utils.ReplaceTag(line1, "%filename%", filename);
+      line2 = Util.Utils.ReplaceTag(line2, "%filename%", filename);
+      line1 = Util.Utils.ReplaceTag(line1, "%rating%", rating);
+      line2 = Util.Utils.ReplaceTag(line2, "%rating%", rating);
+      line1 = Util.Utils.ReplaceTag(line1, "%duration%", duration);
+      line2 = Util.Utils.ReplaceTag(line2, "%duration%", duration);
+      line1 = Util.Utils.ReplaceTag(line1, "%genre%", genre);
+      line2 = Util.Utils.ReplaceTag(line2, "%genre%", genre);
 
-      while (line1.Length < 25) line1 += " ";
+      while (line1.Length < 25)
+      {
+        line1 += " ";
+      }
       textBoxSample.Text = line1 + line2;
     }
 
@@ -140,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("musicfiles", "showSortButton", checkBoxShowSort.Checked);
         for (int i = 0; i < sortModes.Length; ++i)
@@ -167,6 +199,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -249,8 +282,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.checkBoxShowSort);
       this.groupBox3.Controls.Add(this.groupBox4);
       this.groupBox3.Controls.Add(this.textBoxSample);
@@ -322,8 +357,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
       this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Location = new System.Drawing.Point(96, 129);
@@ -393,8 +430,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -415,6 +452,5 @@ namespace MediaPortal.Configuration.Sections
       sortTags2[comboBox1.SelectedIndex] = tbSortRight.Text;
       ShowExample();
     }
-
   }
 }

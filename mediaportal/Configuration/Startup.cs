@@ -24,17 +24,17 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Reflection;
-using System.IO;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
+using OsDetection;
 
 namespace MediaPortal.Configuration
 {
@@ -43,15 +43,15 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class Startup
   {
-    enum StartupMode
+    private enum StartupMode
     {
       Normal,
       Wizard
     }
 
-    StartupMode startupMode = StartupMode.Normal;
+    private StartupMode startupMode = StartupMode.Normal;
 
-    string sectionsConfiguration = string.Empty;
+    private string sectionsConfiguration = string.Empty;
 
     public delegate bool IECallBack(int hwnd, int lParam);
 
@@ -100,9 +100,9 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("Using Directories:");
-      foreach (string options in Enum.GetNames(typeof(Config.Dir)))
+      foreach (string options in Enum.GetNames(typeof (Config.Dir)))
       {
-        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
+        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir) Enum.Parse(typeof (Config.Dir), options)));
       }
 
       // rtv: disabled Wizard due to frequent bug reports on serveral sections.
@@ -142,11 +142,13 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      OSVersionInfo os = new OperatingSystemVersion();
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       string ServicePack = "";
       if (!String.IsNullOrEmpty(os.OSCSDVersion))
+      {
         ServicePack = " (" + os.OSCSDVersion + ")";
+      }
       Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
 
       bool exitConfiguration = false;
@@ -161,8 +163,9 @@ namespace MediaPortal.Configuration
           if (process.ProcessName.Equals(processName))
           {
             DialogResult dialogResult =
-              MessageBox.Show("MediaPortal has to be closed for configuration.\nClose MediaPortal and start Configuration?",
-                              "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+              MessageBox.Show(
+                "MediaPortal has to be closed for configuration.\nClose MediaPortal and start Configuration?",
+                "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -176,7 +179,8 @@ namespace MediaPortal.Configuration
                 process.CloseMainWindow();
               }
               catch
-              { }
+              {
+              }
               Log.Info("MediaPortal closed, continue running Configuration.");
               break;
             }
@@ -189,7 +193,8 @@ namespace MediaPortal.Configuration
         }
       }
       catch (Exception)
-      { }
+      {
+      }
 
       if (exitConfiguration)
       {
@@ -220,7 +225,7 @@ namespace MediaPortal.Configuration
       if (applicationForm != null)
       {
         Log.Info("start application");
-        System.Windows.Forms.Application.Run(applicationForm);
+        Application.Run(applicationForm);
       }
     }
 
@@ -230,8 +235,8 @@ namespace MediaPortal.Configuration
       try
       {
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-        System.Windows.Forms.Application.EnableVisualStyles();
-        System.Windows.Forms.Application.DoEvents();
+        Application.EnableVisualStyles();
+        Application.DoEvents();
 
         new Startup(arguments).Start();
       }
@@ -241,22 +246,29 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
       if (args.Name.Contains(".resources"))
+      {
         return null;
+      }
       if (args.Name.Contains(".XmlSerializers"))
+      {
         return null;
-      MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      System.Windows.Forms.Application.Exit();
+      }
+      MessageBox.Show(
+        "Failed to locate assembly '" + args.Name + "'." + Environment.NewLine +
+        "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.",
+        "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      Application.Exit();
       return null;
     }
 
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {
-      IntPtr windowHandle = (IntPtr)hwnd;
+      IntPtr windowHandle = (IntPtr) hwnd;
       StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int)windowHandle, sb, sb.Capacity);
+      GetWindowText((int) windowHandle, sb, sb.Capacity);
       string window = sb.ToString().ToLower();
       if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
       {
@@ -267,18 +279,23 @@ namespace MediaPortal.Configuration
 
     private static void CheckPrerequisites()
     {
-      OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
+      OSVersionInfo os = new OperatingSystemVersion();
       DialogResult res;
 
-      string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
+      string MsgNotSupported =
+        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      string MsgNotInstallable =
+        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      string MsgBetaServicePack =
+        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
       string ServicePack = "";
       if (!string.IsNullOrEmpty(os.OSCSDVersion))
+      {
         ServicePack = " (" + os.OSCSDVersion + ")";
+      }
       string MsgOsVersion = os.OSVersionString + ServicePack;
 
-      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+      int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
 
       // Disable OS if < XP
       if (ver < 51)
@@ -296,29 +313,38 @@ namespace MediaPortal.Configuration
           }
           break;
         case 52:
-          if (os.OSProductType == OsDetection.OSProductType.Workstation)
+          if (os.OSProductType == OSProductType.Workstation)
           {
             MsgOsVersion = MsgOsVersion + " [64bit]";
             MessageBox.Show(MsgNotInstallable, MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
           res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) Application.Exit();
+          if (res == DialogResult.Cancel)
+          {
+            Application.Exit();
+          }
           break;
         case 60:
-          if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
+          if (os.OSProductType != OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
             res = MessageBox.Show(MsgNotSupported, MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel) Application.Exit();
+            if (res == DialogResult.Cancel)
+            {
+              Application.Exit();
+            }
           }
           break;
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
+        res = MessageBox.Show(String.Format(MsgBetaServicePack, os.OSServicePackMajor), MsgOsVersion,
+                              MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        if (res == DialogResult.Cancel)
+        {
+          Application.Exit();
+        }
       }
     }
-
   }
 }

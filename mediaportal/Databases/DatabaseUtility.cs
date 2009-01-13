@@ -25,8 +25,6 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using System.Collections;
 using SQLite.NET;
 
 namespace MediaPortal.Database
@@ -36,7 +34,6 @@ namespace MediaPortal.Database
   /// </summary>
   public class DatabaseUtility
   {
-
     private DatabaseUtility()
     {
     }
@@ -69,17 +66,23 @@ namespace MediaPortal.Database
     {
       SQLiteResultSet results;
       if (m_db == null)
+      {
         return false;
+      }
       if (table == null)
+      {
         return false;
+      }
       if (table.Length == 0)
+      {
         return false;
+      }
       results = m_db.Execute("SELECT * FROM '" + table + "'");
       if (results != null)
       {
         for (int i = 0; i < results.ColumnNames.Count; ++i)
         {
-          if ((string)results.ColumnNames[i] == column)
+          if ((string) results.ColumnNames[i] == column)
           {
             return true;
           }
@@ -98,12 +101,19 @@ namespace MediaPortal.Database
     {
       SQLiteResultSet results;
       if (m_db == null)
+      {
         return false;
+      }
       if (table == null)
+      {
         return false;
+      }
       if (table.Length == 0)
+      {
         return false;
-      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name like '" + table + "' and type like 'table'");// UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+      }
+      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name like '" + table + "' and type like 'table'");
+        // UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
       if (results != null)
       {
         if (results.Rows.Count == 1)
@@ -125,7 +135,9 @@ namespace MediaPortal.Database
     {
       SQLiteResultSet results;
       bool res = false;
-      results = dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName + "' and type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name");
+      results =
+        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName +
+                         "' and type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name");
       if (results != null && results.Rows.Count > 0)
       {
         if (results.Rows.Count == 1)
@@ -141,7 +153,9 @@ namespace MediaPortal.Database
         }
       }
       if (res == true)
+      {
         return;
+      }
       try
       {
         dbHandle.Execute(strSQL);
@@ -152,6 +166,7 @@ namespace MediaPortal.Database
       }
       return;
     }
+
     /// <summary>
     /// Helper function to create a new table in the database
     /// </summary>
@@ -161,7 +176,9 @@ namespace MediaPortal.Database
     public static bool AddTable(SQLiteClient dbHandle, string strTable, string strSQL)
     {
       if (TableExists(dbHandle, strTable))
+      {
         return false;
+      }
       try
       {
         //Log.Info("create table:{0} {1}", strSQL,dbHandle);
@@ -179,9 +196,13 @@ namespace MediaPortal.Database
     {
       string result = Get(results, iRecord, strColum);
       if (result == null)
+      {
         return 0;
+      }
       if (result.Length == 0)
+      {
         return 0;
+      }
       int returnValue = -1;
       try
       {
@@ -190,7 +211,7 @@ namespace MediaPortal.Database
       catch (Exception)
       {
         Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
-                                            strColum, iRecord, result);
+                 strColum, iRecord, result);
       }
       return returnValue;
     }
@@ -205,7 +226,8 @@ namespace MediaPortal.Database
         return intValue;
       }
       catch (Exception)
-      { }
+      {
+      }
       return 0;
     }
 
@@ -218,7 +240,8 @@ namespace MediaPortal.Database
         return longValue;
       }
       catch (Exception)
-      { }
+      {
+      }
       return 0;
     }
 
@@ -226,9 +249,13 @@ namespace MediaPortal.Database
     {
       string result = Get(results, iRecord, strColum);
       if (result == null)
+      {
         return 0;
+      }
       if (result.Length == 0)
+      {
         return 0;
+      }
       long returnValue = -1;
       try
       {
@@ -237,7 +264,7 @@ namespace MediaPortal.Database
       catch (Exception)
       {
         Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
-            strColum, iRecord, result);
+                 strColum, iRecord, result);
       }
       return returnValue;
     }
@@ -245,8 +272,11 @@ namespace MediaPortal.Database
     public static DateTime GetAsDateTime(SQLiteResultSet results, int iRecord, string aTimestampColum)
     {
       DateTime finalResult = DateTime.MinValue;
-      if (results == null || string.IsNullOrEmpty(aTimestampColum) || results.Rows.Count < 1 || results.Rows.Count < iRecord)
+      if (results == null || string.IsNullOrEmpty(aTimestampColum) || results.Rows.Count < 1 ||
+          results.Rows.Count < iRecord)
+      {
         return finalResult;
+      }
 
       try
       {
@@ -254,9 +284,11 @@ namespace MediaPortal.Database
         int iCol = 0;
         if (results.ColumnIndices.ContainsKey(aTimestampColum))
         {
-          iCol = (int)results.ColumnIndices[aTimestampColum];
+          iCol = (int) results.ColumnIndices[aTimestampColum];
           if (arr.fields[iCol] != null)
+          {
             finalResult = Convert.ToDateTime((arr.fields[iCol]));
+          }
         }
       }
       catch (Exception)
@@ -270,14 +302,22 @@ namespace MediaPortal.Database
     public static string Get(SQLiteResultSet results, int iRecord, int column)
     {
       if (null == results)
+      {
         return string.Empty;
+      }
       if (results.Rows.Count < iRecord)
+      {
         return string.Empty;
+      }
       if (column < 0 || column >= results.ColumnNames.Count)
+      {
         return string.Empty;
+      }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       if (arr.fields[column] == null)
+      {
         return string.Empty;
+      }
       string strLine = (arr.fields[column]).Trim();
       //strLine = strLine.Replace("''","'");
       return strLine;
@@ -287,31 +327,43 @@ namespace MediaPortal.Database
     public static string Get(SQLiteResultSet results, int iRecord, string strColum)
     {
       if (null == results)
+      {
         return string.Empty;
+      }
       if (results.Rows.Count == 0)
+      {
         return string.Empty;
+      }
       if (results.Rows.Count < iRecord)
+      {
         return string.Empty;
+      }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       int iCol = 0;
       if (results.ColumnIndices.ContainsKey(strColum))
       {
-        iCol = (int)results.ColumnIndices[strColum];
+        iCol = (int) results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
+        {
           return string.Empty;
+        }
         string strLine = (arr.fields[iCol]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
       int pos = strColum.IndexOf(".");
       if (pos < 0)
+      {
         return string.Empty;
+      }
       strColum = strColum.Substring(pos + 1);
       if (results.ColumnIndices.ContainsKey(strColum))
       {
-        iCol = (int)results.ColumnIndices[strColum];
+        iCol = (int) results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
+        {
           return string.Empty;
+        }
         string strLine = (arr.fields[iCol]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
@@ -370,8 +422,10 @@ namespace MediaPortal.Database
 
     private static string FilterText(string strTxt)
     {
-      if (string.IsNullOrEmpty(strTxt))      
+      if (string.IsNullOrEmpty(strTxt))
+      {
         return Strings.Unknown;
+      }
       strTxt = strTxt.Replace("'", "''").Trim();
 
       return strTxt;
@@ -383,19 +437,24 @@ namespace MediaPortal.Database
       strFileName = "";
       strPath = "";
       if (strFileNameAndPath.Length == 0)
+      {
         return;
+      }
       int i = strFileNameAndPath.Length - 1;
       while (i > 0)
       {
         char ch = strFileNameAndPath[i];
         if (ch == ':' || ch == '/' || ch == '\\')
+        {
           break;
+        }
         else
+        {
           i--;
+        }
       }
       strPath = strFileNameAndPath.Substring(0, i).Trim();
       strFileName = strFileNameAndPath.Substring(i, strFileNameAndPath.Length - i).Trim();
     }
-
   }
 }

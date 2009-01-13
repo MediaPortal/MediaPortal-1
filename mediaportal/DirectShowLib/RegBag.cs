@@ -24,26 +24,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace DirectShowLib
 {
-    #region Interfaces
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("8A674B48-1F63-11d3-B64C-00C04F79498E"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface ICreatePropBagOnRegKey
-    {
-        [PreserveSig]
-        int Create(
-            [In] IntPtr hkey,
-            [In, MarshalAs(UnmanagedType.LPWStr)] string subkey,
-            [In] int ulOptions,
-            [In] int samDesired,
-            [In, MarshalAs(UnmanagedType.LPStruct)] Guid iid,
-            [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppBag
-            );
-    }
+  #region Interfaces
 
-    #endregion
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("8A674B48-1F63-11d3-B64C-00C04F79498E"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface ICreatePropBagOnRegKey
+  {
+    [PreserveSig]
+    int Create(
+      [In] IntPtr hkey,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string subkey,
+      [In] int ulOptions,
+      [In] int samDesired,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid iid,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppBag
+      );
+  }
+
+  #endregion
 }

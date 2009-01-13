@@ -29,16 +29,18 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Web;
 
 namespace MediaPortal.Utils.Web
 {
   public class AsyncGetRequest
   {
-    public delegate void AsyncGetRequestCompleted(List<String> responseStrings, HttpStatusCode responseStatus, String requestedURLCommand);
+    public delegate void AsyncGetRequestCompleted(
+      List<String> responseStrings, HttpStatusCode responseStatus, String requestedURLCommand);
+
     public event AsyncGetRequestCompleted workerFinished;
 
     public delegate void AsyncGetRequestError(String commandURL, Exception errorReason);
+
     public event AsyncGetRequestError workerError;
 
     // not really threadsafe but this is only used for the following param - no harm if overwritten
@@ -64,7 +66,7 @@ namespace MediaPortal.Utils.Web
     private void RequestWorker_DoWork(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "HTTP Async request";
-      SendWorkerRequest((string)e.Argument, _requestDelay);
+      SendWorkerRequest((string) e.Argument, _requestDelay);
     }
 
     private void SendWorkerRequest(String targetURL, int delayMSecs)
@@ -76,14 +78,16 @@ namespace MediaPortal.Utils.Web
         // send the command
         try
         {
-          request = (HttpWebRequest)WebRequest.Create(targetURL);
+          request = (HttpWebRequest) WebRequest.Create(targetURL);
           try
           {
             // Use the current user in case an NTLM Proxy or similar is used.
             // request.Proxy = WebProxy.GetDefaultProxy();
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
 
           //request.Timeout = 20000;
           request.Pipelined = false;
@@ -93,15 +97,21 @@ namespace MediaPortal.Utils.Web
           //request.ContentType = "application/x-www-form-urlencoded";
 
           if (delayMSecs > 0)
+          {
             Thread.Sleep(delayMSecs);
+          }
 
           if (request == null)
+          {
             throw (new Exception());
+          }
         }
         catch (Exception ex1)
         {
           if (workerError != null)
+          {
             workerError(targetURL, ex1);
+          }
           return;
         }
 
@@ -111,10 +121,12 @@ namespace MediaPortal.Utils.Web
         // get the response
         try
         {
-          response = (HttpWebResponse)request.GetResponse();
+          response = (HttpWebResponse) request.GetResponse();
           // most likely timed out..
           if (response == null)
+          {
             throw (new Exception());
+          }
 
           reader = new StreamReader(response.GetResponseStream());
           responseCode = response.StatusCode;
@@ -124,22 +136,30 @@ namespace MediaPortal.Utils.Web
         catch (Exception ex2)
         {
           if (workerError != null)
+          {
             workerError(targetURL, ex2);
+          }
           return;
         }
 
         List<String> responseStrings = new List<string>();
         String tmp = string.Empty;
         while ((tmp = reader.ReadLine()) != null)
+        {
           responseStrings.Add(tmp);
+        }
 
         if (workerFinished != null)
+        {
           workerFinished(responseStrings, responseCode, targetURL);
+        }
       }
       finally
       {
         if (request != null)
+        {
           request = null;
+        }
 
         if (response != null)
         {

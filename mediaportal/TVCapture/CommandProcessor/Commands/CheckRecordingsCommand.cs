@@ -24,31 +24,15 @@
 #endregion
 
 #region usings
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
-  public class CheckRecordingsCommand: CardCommand
+  public class CheckRecordingsCommand : CardCommand
   {
     public override void Execute(CommandProcessor handler)
     {

@@ -24,58 +24,47 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
 using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using System.Windows.Forms;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
-
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_ScanBase : MediaPortal.Configuration.SectionSettings, AutoTuneCallback
+  public class Wizard_ScanBase : SectionSettings, AutoTuneCallback
   {
     protected TVCaptureDevice _card = null;
-    bool _stopScan = false;
-    bool _scanning = false;
-    bool _radio = false;
+    private bool _stopScan = false;
+    private bool _scanning = false;
+    private bool _radio = false;
+
     public delegate void ScanFinishedHandler(object sender, EventArgs args);
+
     public event ScanFinishedHandler OnScanFinished;
+
     public delegate void ScanStartedHandler(object sender, EventArgs args);
+
     public event ScanStartedHandler OnScanStarted;
 
-    protected MediaPortal.UserInterface.Controls.MPLabel lblStatus;
-      protected MediaPortal.UserInterface.Controls.MPLabel lblStatus2;
-      protected ProgressBar progressBarQuality;
-      protected ProgressBar progressBarStrength;
-      protected ProgressBar progressBarProgress;
-      protected MediaPortal.UserInterface.Controls.MPButton buttonScan;
+    protected MPLabel lblStatus;
+    protected MPLabel lblStatus2;
+    protected ProgressBar progressBarQuality;
+    protected ProgressBar progressBarStrength;
+    protected ProgressBar progressBarProgress;
+    protected MPButton buttonScan;
 
 
-      public bool Scanning
-      {
-          get
-          {
-              return _scanning;
-          }
-      }
-      public bool Radio
-      {
-          get
-          {
-              return _radio;
-          }
-          set
-          {
-              _radio = value;
-          }
-      }
+    public bool Scanning
+    {
+      get { return _scanning; }
+    }
+
+    public bool Radio
+    {
+      get { return _radio; }
+      set { _radio = value; }
+    }
 
     public Wizard_ScanBase()
       : this("ScanBase")
@@ -90,39 +79,39 @@ namespace MediaPortal.Configuration.Sections
 
       // TODO: Add any initialization after the InitializeComponent call
     }
+
     public TVCaptureDevice Card
     {
-      set
-      {
-        _card = value;
-      }
+      set { _card = value; }
     }
 
-    protected void buttonScan_Click(object sender, System.EventArgs e)
+    protected void buttonScan_Click(object sender, EventArgs e)
     {
-        if (_scanning)
-        {
-            _stopScan = true;
-            buttonScan.Enabled = false;
-            Cursor = Cursors.WaitCursor;
-        }
-        else
-        {
-            buttonScan.Enabled = false;
-            Cursor = Cursors.WaitCursor;
-            Thread thread = new Thread(new ThreadStart(DoScan));
-            thread.IsBackground = true;
-            thread.Start();
-        }
+      if (_scanning)
+      {
+        _stopScan = true;
+        buttonScan.Enabled = false;
+        Cursor = Cursors.WaitCursor;
+      }
+      else
+      {
+        buttonScan.Enabled = false;
+        Cursor = Cursors.WaitCursor;
+        Thread thread = new Thread(new ThreadStart(DoScan));
+        thread.IsBackground = true;
+        thread.Start();
+      }
     }
 
     protected void DoScan()
     {
       if (_card == null)
       {
-          if (OnScanFinished != null)
-              OnScanFinished(this, null);
-          return;
+        if (OnScanFinished != null)
+        {
+          OnScanFinished(this, null);
+        }
+        return;
       }
       _stopScan = false;
       _scanning = true;
@@ -131,56 +120,72 @@ namespace MediaPortal.Configuration.Sections
       Cursor = Cursors.Default;
       if (OnScanStarted != null)
       {
-          OnScanStarted(this, null);
+        OnScanStarted(this, null);
       }
       OnStatus("Scan started");
       OnStatus2("");
 
       String[] parameters = GetScanParameters();
       _card.CreateGraph();
-      ITuning  _tuning;
+      ITuning _tuning;
       if (_radio)
       {
-          _tuning = new AnalogRadioTuning();
-          _tuning.AutoTuneRadio(_card, this);
+        _tuning = new AnalogRadioTuning();
+        _tuning.AutoTuneRadio(_card, this);
       }
-      else 
+      else
       {
         _tuning = GraphFactory.CreateTuning(_card);
         _tuning.AutoTuneTV(_card, this, parameters);
       }
       _tuning.Start();
-      while (!_tuning.IsFinished()&&(!_stopScan))
+      while (!_tuning.IsFinished() && (!_stopScan))
       {
-          _tuning.Next();
+        _tuning.Next();
       }
       _card.DeleteGraph();
       OnProgress(100);
       OnSignal(0, 0);
       OnStatus("Scan finished");
       if (OnScanFinished != null)
+      {
         OnScanFinished(this, null);
+      }
       _scanning = false;
       buttonScan.Text = "Scan";
       buttonScan.Enabled = true;
       Cursor = Cursors.Default;
-  }
+    }
 
-      protected virtual String[] GetScanParameters()
-      {
-          return null;
-      }
+    protected virtual String[] GetScanParameters()
+    {
+      return null;
+    }
+
     #region AutoTuneCallback
+
     public virtual void OnNewChannel()
     {
     }
 
     public void OnSignal(int quality, int strength)
     {
-      if (quality < 0) quality = 0;
-      if (quality > 100) quality = 100;
-      if (strength < 0) strength = 0;
-      if (strength > 100) strength = 100;
+      if (quality < 0)
+      {
+        quality = 0;
+      }
+      if (quality > 100)
+      {
+        quality = 100;
+      }
+      if (strength < 0)
+      {
+        strength = 0;
+      }
+      if (strength > 100)
+      {
+        strength = 100;
+      }
       progressBarQuality.Value = quality;
       progressBarStrength.Value = strength;
     }
@@ -189,7 +194,8 @@ namespace MediaPortal.Configuration.Sections
     {
       lblStatus.Text = description;
       lblStatus.Update();
-  }
+    }
+
     public void OnStatus2(string description)
     {
       lblStatus2.Text = description;
@@ -204,12 +210,11 @@ namespace MediaPortal.Configuration.Sections
     public void OnEnded()
     {
     }
+
     public virtual void UpdateList()
     {
     }
-    #endregion
 
+    #endregion
   }
 }
-
-

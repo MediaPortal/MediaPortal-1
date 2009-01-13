@@ -24,46 +24,47 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
-using MediaPortal.IR;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.IR;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class RemoteUSBUIRT : MediaPortal.Configuration.SectionSettings
+  public class RemoteUSBUIRT : SectionSettings
   {
     private const string USBUIRT_PLUGINVER = "1.16 (February 18, 2006)";
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox outputCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox digitCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enterCheckBox;
-    private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
-    private MediaPortal.UserInterface.Controls.MPButton tunerCommandsButton;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel lblUSBUIRTVersion;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private System.Windows.Forms.LinkLabel linkLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private System.Windows.Forms.Panel SettingsPnl;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private System.Windows.Forms.NumericUpDown commandRepeatNumUpDn;
-    private System.Windows.Forms.NumericUpDown interCommandDelayNumUpDn;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPTextBox testSendIrTxtBox;
-    private MediaPortal.UserInterface.Controls.MPButton testSendIrBtn;
+    private MPGroupBox groupBox1;
+    private MPCheckBox inputCheckBox;
+    private MPCheckBox outputCheckBox;
+    private MPCheckBox digitCheckBox;
+    private MPCheckBox enterCheckBox;
+    private MPButton internalCommandsButton;
+    private MPButton tunerCommandsButton;
+    private MPLabel label1;
+    private MPLabel lblUSBUIRTVersion;
+    private MPGroupBox groupBox2;
+    private MPLabel label2;
+    private LinkLabel linkLabel1;
+    private MPLabel label3;
+    private Panel SettingsPnl;
+    private MPLabel label4;
+    private MPLabel label5;
+    private NumericUpDown commandRepeatNumUpDn;
+    private NumericUpDown interCommandDelayNumUpDn;
+    private MPLabel label6;
+    private MPTextBox testSendIrTxtBox;
+    private MPButton testSendIrBtn;
     private GroupBox groupBox3;
     private Label lblUSBUIRTConfigVersion;
     private Label label7;
-    private System.ComponentModel.IContainer components = null;
+    private IContainer components = null;
 
     #region Properties
 
@@ -87,29 +88,35 @@ namespace MediaPortal.Configuration.Sections
       lblUSBUIRTConfigVersion.Text = USBUIRT_PLUGINVER;
     }
 
-    public override void  OnSectionActivated()
+    public override void OnSectionActivated()
     {
       if (inputCheckBox.Checked || outputCheckBox.Checked)
       {
-        if (MediaPortal.IR.USBUIRT.Instance == null)
+        if (USBUIRT.Instance == null)
+        {
           if (!InitUSBUIRTInstance())
+          {
             Log.Info("USBUIRT: InitUSBUIRTInstance failed in OnSectionActivated!");
+          }
+        }
       }
     }
 
     private bool InitUSBUIRTInstance()
     {
-      MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
+      USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
 
-      if (MediaPortal.IR.USBUIRT.Instance == null)
+      if (USBUIRT.Instance == null)
+      {
         return false;
+      }
 
-      lblUSBUIRTVersion.Text = MediaPortal.IR.USBUIRT.Instance.GetVersions();
+      lblUSBUIRTVersion.Text = USBUIRT.Instance.GetVersions();
 
       EnableTestIrControls();
 
-      MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = (int)commandRepeatNumUpDn.Value;
-      MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = (int)interCommandDelayNumUpDn.Value;
+      USBUIRT.Instance.CommandRepeatCount = (int) commandRepeatNumUpDn.Value;
+      USBUIRT.Instance.InterCommandDelay = (int) interCommandDelayNumUpDn.Value;
 
       return true;
     }
@@ -126,15 +133,17 @@ namespace MediaPortal.Configuration.Sections
           components.Dispose();
         }
 
-        if (MediaPortal.IR.USBUIRT.Instance != null)
-          MediaPortal.IR.USBUIRT.Instance.Dispose();
+        if (USBUIRT.Instance != null)
+        {
+          USBUIRT.Instance.Dispose();
+        }
       }
       base.Dispose(disposing);
     }
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         try
         {
@@ -152,7 +161,8 @@ namespace MediaPortal.Configuration.Sections
           digitCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "is3digit", false);
           enterCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
 
-          commandRepeatNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2); ;
+          commandRepeatNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2);
+          ;
           interCommandDelayNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
         }
 
@@ -165,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("USBUIRT", "internal", inputCheckBox.Checked);
         xmlwriter.SetValueAsBool("USBUIRT", "external", outputCheckBox.Checked);
@@ -177,15 +187,16 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteUSBUIRT));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (RemoteUSBUIRT));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.SettingsPnl = new System.Windows.Forms.Panel();
       this.testSendIrBtn = new MediaPortal.UserInterface.Controls.MPButton();
@@ -212,16 +223,18 @@ namespace MediaPortal.Configuration.Sections
       this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SettingsPnl.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.interCommandDelayNumUpDn)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.commandRepeatNumUpDn)).BeginInit();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.SettingsPnl);
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
@@ -268,25 +281,31 @@ namespace MediaPortal.Configuration.Sections
       // 
       // interCommandDelayNumUpDn
       // 
-      this.interCommandDelayNumUpDn.Increment = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Increment = new decimal(new int[]
+                                                              {
+                                                                50,
+                                                                0,
+                                                                0,
+                                                                0
+                                                              });
       this.interCommandDelayNumUpDn.Location = new System.Drawing.Point(153, 106);
-      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[]
+                                                            {
+                                                              1000,
+                                                              0,
+                                                              0,
+                                                              0
+                                                            });
       this.interCommandDelayNumUpDn.Name = "interCommandDelayNumUpDn";
       this.interCommandDelayNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.interCommandDelayNumUpDn.TabIndex = 12;
-      this.interCommandDelayNumUpDn.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Value = new decimal(new int[]
+                                                          {
+                                                            100,
+                                                            0,
+                                                            0,
+                                                            0
+                                                          });
       // 
       // label6
       // 
@@ -301,24 +320,30 @@ namespace MediaPortal.Configuration.Sections
       // commandRepeatNumUpDn
       // 
       this.commandRepeatNumUpDn.Location = new System.Drawing.Point(153, 82);
-      this.commandRepeatNumUpDn.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.commandRepeatNumUpDn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.commandRepeatNumUpDn.Maximum = new decimal(new int[]
+                                                        {
+                                                          5,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
+      this.commandRepeatNumUpDn.Minimum = new decimal(new int[]
+                                                        {
+                                                          1,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
       this.commandRepeatNumUpDn.Name = "commandRepeatNumUpDn";
       this.commandRepeatNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.commandRepeatNumUpDn.TabIndex = 10;
-      this.commandRepeatNumUpDn.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.commandRepeatNumUpDn.Value = new decimal(new int[]
+                                                      {
+                                                        1,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      });
       // 
       // label5
       // 
@@ -332,7 +357,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tunerCommandsButton
       // 
-      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.tunerCommandsButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.tunerCommandsButton.Location = new System.Drawing.Point(288, 53);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -342,7 +369,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // internalCommandsButton
       // 
-      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.internalCommandsButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.internalCommandsButton.Location = new System.Drawing.Point(288, 16);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -390,8 +419,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblUSBUIRTVersion
       // 
-      this.lblUSBUIRTVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 24);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
       this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 32);
@@ -415,8 +446,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
@@ -443,12 +476,15 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.TabIndex = 2;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "http://www.usbuirt.com";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(448, 40);
@@ -457,8 +493,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.lblUSBUIRTConfigVersion);
       this.groupBox3.Controls.Add(this.label7);
       this.groupBox3.Controls.Add(this.lblUSBUIRTVersion);
@@ -472,8 +510,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblUSBUIRTConfigVersion
       // 
-      this.lblUSBUIRTConfigVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTConfigVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 60);
       this.lblUSBUIRTConfigVersion.Name = "lblUSBUIRTConfigVersion";
       this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(256, 13);
@@ -500,23 +540,24 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.SettingsPnl.ResumeLayout(false);
       this.SettingsPnl.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.interCommandDelayNumUpDn)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.commandRepeatNumUpDn)).EndInit();
       this.groupBox2.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private void ShowDriverOfflineMsg()
     {
-      MessageBox.Show(this, "USBUIRT Driver is not loaded.  Please ensure the USBUIRT is\t\r\nproperly connected and drivers are installed.",
-        "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      MessageBox.Show(this,
+                      "USBUIRT Driver is not loaded.  Please ensure the USBUIRT is\t\r\nproperly connected and drivers are installed.",
+                      "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
     }
 
-    private void internalCommandsButton_Click(object sender, System.EventArgs e)
+    private void internalCommandsButton_Click(object sender, EventArgs e)
     {
       if (!GetUsbUirtDriverStatusOK())
       {
@@ -524,11 +565,11 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      MediaPortal.IR.USBUIRTLearnForm learnForm = new MediaPortal.IR.USBUIRTLearnForm(MediaPortal.IR.USBUIRTLearnForm.LearnType.MediaPortalCommands);
+      USBUIRTLearnForm learnForm = new USBUIRTLearnForm(USBUIRTLearnForm.LearnType.MediaPortalCommands);
       learnForm.ShowDialog(this);
     }
 
-    private void tunerCommandsButton_Click(object sender, System.EventArgs e)
+    private void tunerCommandsButton_Click(object sender, EventArgs e)
     {
       if (!GetUsbUirtDriverStatusOK())
       {
@@ -536,15 +577,15 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      MediaPortal.IR.USBUIRTLearnForm learnForm = new MediaPortal.IR.USBUIRTLearnForm(MediaPortal.IR.USBUIRTLearnForm.LearnType.SetTopBoxCommands);
+      USBUIRTLearnForm learnForm = new USBUIRTLearnForm(USBUIRTLearnForm.LearnType.SetTopBoxCommands);
       learnForm.ShowDialog(this);
     }
 
-    private void outputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void outputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       if (inputCheckBox.Checked || outputCheckBox.Checked)
       {
-        if (MediaPortal.IR.USBUIRT.Instance == null)
+        if (USBUIRT.Instance == null)
         {
           if (!InitUSBUIRTInstance())
           {
@@ -563,14 +604,14 @@ namespace MediaPortal.Configuration.Sections
       testSendIrBtn.Enabled = setTopControl;
       testSendIrTxtBox.Enabled = setTopControl;
 
-      MediaPortal.IR.USBUIRT.Instance.TransmitEnabled = outputCheckBox.Checked;
+      USBUIRT.Instance.TransmitEnabled = outputCheckBox.Checked;
     }
 
-    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       if (inputCheckBox.Checked || outputCheckBox.Checked)
       {
-        if (MediaPortal.IR.USBUIRT.Instance == null)
+        if (USBUIRT.Instance == null)
         {
           if (!InitUSBUIRTInstance())
           {
@@ -581,7 +622,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       internalCommandsButton.Enabled = inputCheckBox.Checked;
-      MediaPortal.IR.USBUIRT.Instance.ReceiveEnabled = inputCheckBox.Checked;
+      USBUIRT.Instance.ReceiveEnabled = inputCheckBox.Checked;
     }
 
     private void OnRemoteCommand(object command)
@@ -590,25 +631,25 @@ namespace MediaPortal.Configuration.Sections
 
     private bool GetUsbUirtDriverStatusOK()
     {
-      bool driverStatusOK = MediaPortal.IR.USBUIRT.Instance.IsUsbUirtLoaded;
+      bool driverStatusOK = USBUIRT.Instance.IsUsbUirtLoaded;
 
       // Check if the driver is loaded...
       if (driverStatusOK)
       {
         // The driver is loaded but is the USBUIRT connected?
-        driverStatusOK = MediaPortal.IR.USBUIRT.Instance.IsUsbUirtConnected;
+        driverStatusOK = USBUIRT.Instance.IsUsbUirtConnected;
       }
 
       else
       {
-        driverStatusOK = MediaPortal.IR.USBUIRT.Instance.Reconnect();
+        driverStatusOK = USBUIRT.Instance.Reconnect();
       }
 
-      lblUSBUIRTVersion.Text = MediaPortal.IR.USBUIRT.Instance.GetVersions();
+      lblUSBUIRTVersion.Text = USBUIRT.Instance.GetVersions();
       return driverStatusOK;
     }
 
-    private void USBUIRT_Load(object sender, System.EventArgs e)
+    private void USBUIRT_Load(object sender, EventArgs e)
     {
       outputCheckBox_CheckedChanged(null, null);
       inputCheckBox_CheckedChanged(null, null);
@@ -616,7 +657,7 @@ namespace MediaPortal.Configuration.Sections
       SettingsPnl.BringToFront();
     }
 
-    private void testSendIrTxtBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void testSendIrTxtBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar >= '0' && e.KeyChar <= '9') || e.KeyChar == 8) // keys 0-9 and the BackSpace key
       {
@@ -635,7 +676,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void testSendIrBtn_Click(object sender, System.EventArgs e)
+    private void testSendIrBtn_Click(object sender, EventArgs e)
     {
       if (!GetUsbUirtDriverStatusOK())
       {
@@ -645,25 +686,31 @@ namespace MediaPortal.Configuration.Sections
 
       if (testSendIrTxtBox.Text.Length == 0)
       {
-        System.Windows.Forms.MessageBox.Show(this, "No channel number entered.  Nothing to send.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show(this, "No channel number entered.  Nothing to send.\t", "USBUIRT", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         testSendIrTxtBox.Focus();
       }
 
-      else if (MediaPortal.IR.USBUIRT.Instance.TunerCodesLoaded)
+      else if (USBUIRT.Instance.TunerCodesLoaded)
       {
-        MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = (int)commandRepeatNumUpDn.Value;
-        MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = (int)interCommandDelayNumUpDn.Value;
-        MediaPortal.IR.USBUIRT.Instance.Is3Digit = digitCheckBox.Checked;
-        MediaPortal.IR.USBUIRT.Instance.NeedsEnter = enterCheckBox.Checked;
+        USBUIRT.Instance.CommandRepeatCount = (int) commandRepeatNumUpDn.Value;
+        USBUIRT.Instance.InterCommandDelay = (int) interCommandDelayNumUpDn.Value;
+        USBUIRT.Instance.Is3Digit = digitCheckBox.Checked;
+        USBUIRT.Instance.NeedsEnter = enterCheckBox.Checked;
 
-        if (MediaPortal.IR.USBUIRT.Instance.Is3Digit && testSendIrTxtBox.Text.Length > 3)
+        if (USBUIRT.Instance.Is3Digit && testSendIrTxtBox.Text.Length > 3)
         {
-          string msg = string.Format("Channel number is longer than 3 digits.  Either disable '{0}'\t\r\nor enter a channel number less than 3 digits long.", digitCheckBox.Text);
-          System.Windows.Forms.MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          string msg =
+            string.Format(
+              "Channel number is longer than 3 digits.  Either disable '{0}'\t\r\nor enter a channel number less than 3 digits long.",
+              digitCheckBox.Text);
+          MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         else
-          MediaPortal.IR.USBUIRT.Instance.ChangeTunerChannel(testSendIrTxtBox.Text, true);
+        {
+          USBUIRT.Instance.ChangeTunerChannel(testSendIrTxtBox.Text, true);
+        }
       }
 
       else
@@ -675,28 +722,28 @@ namespace MediaPortal.Configuration.Sections
 
     private void EnableTestIrControls()
     {
-      commandRepeatNumUpDn.Enabled = MediaPortal.IR.USBUIRT.Instance.TunerCodesLoaded;
-      interCommandDelayNumUpDn.Enabled = MediaPortal.IR.USBUIRT.Instance.TunerCodesLoaded;
+      commandRepeatNumUpDn.Enabled = USBUIRT.Instance.TunerCodesLoaded;
+      interCommandDelayNumUpDn.Enabled = USBUIRT.Instance.TunerCodesLoaded;
     }
 
-    private void digitCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void digitCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-      MediaPortal.IR.USBUIRT.Instance.Is3Digit = digitCheckBox.Checked;
+      USBUIRT.Instance.Is3Digit = digitCheckBox.Checked;
     }
 
-    private void enterCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    private void enterCheckBox_CheckedChanged(object sender, EventArgs e)
     {
-      MediaPortal.IR.USBUIRT.Instance.NeedsEnter = enterCheckBox.Checked;
+      USBUIRT.Instance.NeedsEnter = enterCheckBox.Checked;
     }
 
-    private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start(linkLabel1.Text);
+      Process.Start(linkLabel1.Text);
     }
 
-    private void SkipCodeBtn_Click(object sender, System.EventArgs e)
+    private void SkipCodeBtn_Click(object sender, EventArgs e)
     {
-      MediaPortal.IR.USBUIRT.Instance.SkipLearnForCurrentCode = true;
+      USBUIRT.Instance.SkipLearnForCurrentCode = true;
     }
   }
 }

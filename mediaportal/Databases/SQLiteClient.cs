@@ -221,7 +221,7 @@ namespace SQLite.NET
     //}
 
     // Methods
-    
+
     public SQLiteClient(string dbName)
     {
       // bool res = WaitForFile(dbName);
@@ -231,7 +231,7 @@ namespace SQLite.NET
       //Log.Info("dbs:open:{0}",databaseName);
       dbHandle = IntPtr.Zero;
 
-      SqliteError err = (SqliteError)sqlite3_open16(dbName, out dbHandle);
+      SqliteError err = (SqliteError) sqlite3_open16(dbName, out dbHandle);
       //Log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
       if (err != SqliteError.OK)
       {
@@ -254,19 +254,19 @@ namespace SQLite.NET
       if (dbHandle != IntPtr.Zero)
       {
         Log.Info("SQLiteClient: Closing database: {0}", databaseName);
-				try
-				{
-					sqlite3_close(dbHandle);
-				}
-				catch (Exception e)
-				{
-					Log.Error("SQLiteClient: Trouble closing database: {0} ({1})", databaseName, e.Message);
-				}
-				finally
-				{
-					dbHandle = IntPtr.Zero;
-					databaseName = string.Empty;
-				}
+        try
+        {
+          sqlite3_close(dbHandle);
+        }
+        catch (Exception e)
+        {
+          Log.Error("SQLiteClient: Trouble closing database: {0} ({1})", databaseName, e.Message);
+        }
+        finally
+        {
+          dbHandle = IntPtr.Zero;
+          databaseName = string.Empty;
+        }
       }
     }
 
@@ -277,14 +277,15 @@ namespace SQLite.NET
                 databaseName, statement, err.ToString(), errorMsg, sqlQuery);
 
       throw new SQLiteException(
-        String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement, err.ToString(),
+        String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement,
+                      err.ToString(),
                       errorMsg, sqlQuery), err);
     }
 
     public SQLiteResultSet Execute(string query)
     {
       SQLiteResultSet set1 = new SQLiteResultSet();
-      lock (typeof(SQLiteClient))
+      lock (typeof (SQLiteClient))
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
         if (query == null)
@@ -307,7 +308,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+          err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, ref pVm);
@@ -369,16 +370,17 @@ namespace SQLite.NET
 
           // bool res2 = WaitForFile(this.DBName);
 
-          SqliteError err = (SqliteError)sqlite3_open16(this.DBName, out dbHandle);
+          SqliteError err = (SqliteError) sqlite3_open16(this.DBName, out dbHandle);
 
           if (err != SqliteError.OK)
           {
-            throw new SQLiteException(string.Format("Failed to re-open database, SQLite said: {0} {1}", DBName, err.ToString()));
+            throw new SQLiteException(string.Format("Failed to re-open database, SQLite said: {0} {1}", DBName,
+                                                    err.ToString()));
           }
           else
-          {                        
+          {
             IntPtr pzTail;
-            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+            err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
 
             res = sqlite3_step(pVm);
             pN = sqlite3_column_count(pVm);
@@ -386,7 +388,7 @@ namespace SQLite.NET
             if (pVm == IntPtr.Zero)
             {
               ThrowError("sqlite3_prepare16:pvm=null", query, err);
-            }           
+            }
           }
         }
 

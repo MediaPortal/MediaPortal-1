@@ -35,13 +35,14 @@ namespace MediaPortal
   /// 
   public class DirectInputListener
   {
-    Device device = null;
-    Thread inputListener = null;
-    bool isRunning = false;
-    int delay = 150; // sleep time in milliseconds
+    private Device device = null;
+    private Thread inputListener = null;
+    private bool isRunning = false;
+    private int delay = 150; // sleep time in milliseconds
 
     // event: send info on joystick state change 
     public delegate void diStateChange(object sender, JoystickState state);
+
     public event diStateChange OnStateChange = null;
 
 
@@ -105,7 +106,7 @@ namespace MediaPortal
         {
           device.Unacquire();
         }
-        catch (System.NullReferenceException)
+        catch (NullReferenceException)
         {
         }
         device.Dispose();
@@ -136,7 +137,7 @@ namespace MediaPortal
       return res;
     }
 
-    string ButtonComboAsString(JoystickState state)
+    private string ButtonComboAsString(JoystickState state)
     {
       byte[] buttons = state.GetButtons();
       int button = 0;
@@ -156,7 +157,7 @@ namespace MediaPortal
       return res;
     }
 
-    void ThreadFunction()
+    private void ThreadFunction()
     {
       while (true)
       {
@@ -198,13 +199,12 @@ namespace MediaPortal
             return false;
           }
         }
-
       } //catch(InputException inputex)
 
       return (device != null);
     }
 
-    void UpdateInputState()
+    private void UpdateInputState()
     {
       JoystickState state;
       if (CheckDevice())
@@ -239,7 +239,7 @@ namespace MediaPortal
       }
     }
 
-    void StartListener()
+    private void StartListener()
     {
       inputListener = new Thread(new ThreadStart(this.ThreadFunction));
       inputListener.IsBackground = true;
@@ -257,7 +257,5 @@ namespace MediaPortal
     {
       isRunning = true;
     }
-
-
   }
 }

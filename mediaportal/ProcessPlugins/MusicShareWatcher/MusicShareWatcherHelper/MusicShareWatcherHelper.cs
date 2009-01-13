@@ -24,40 +24,40 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Threading;
-using MediaPortal.Services;
-using SQLite.NET;
-using MediaPortal.GUI.Library;
-using MediaPortal.TagReader;
-using MediaPortal.Database;
-using MediaPortal.Music.Database;
-using MediaPortal.Util;
+using System.Timers;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
+using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.Util;
+using Timer=System.Timers.Timer;
 
 namespace MediaPortal.MusicShareWatcher
 {
   public class MusicShareWatcherHelper
   {
     #region Variables
+
     private bool bMonitoring;
     public static MusicDatabase musicDB = null;
-    ArrayList m_Shares = new ArrayList();
-    ArrayList m_Watchers = new ArrayList();
+    private ArrayList m_Shares = new ArrayList();
+    private ArrayList m_Watchers = new ArrayList();
 
     // Lock order is _enterThread, _events.SyncRoot
     private object m_EnterThread = new object(); // Only one timer event is processed at any given moment
     private ArrayList m_Events = null;
 
-    private System.Timers.Timer m_Timer = null;
+    private Timer m_Timer = null;
     private int m_TimerInterval = 2000; // milliseconds
+
     #endregion
 
     #region Constructors/Destructors
+
     public MusicShareWatcherHelper()
     {
       // Create Log File
@@ -67,13 +67,17 @@ namespace MediaPortal.MusicShareWatcher
       LoadShares();
       Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
     }
+
     #endregion
 
     #region Main
+
     public void StartMonitor()
     {
       if (bMonitoring)
+      {
         WatchShares();
+      }
     }
 
     public void SetMonitoring(bool status)
@@ -155,7 +159,7 @@ namespace MediaPortal.MusicShareWatcher
           watcherFile.Renamed += new RenamedEventHandler(OnRenamed);
           // For directories, i'm only interested in a Delete event
           watcherDirectory.Deleted += new FileSystemEventHandler(OnDirectoryDeleted);
-          watcherDirectory.Renamed +=new RenamedEventHandler(OnRenamed);
+          watcherDirectory.Renamed += new RenamedEventHandler(OnRenamed);
 
           // Begin watching.
           watcherFile.EnableRaisingEvents = true;
@@ -164,23 +168,26 @@ namespace MediaPortal.MusicShareWatcher
           m_Watchers.Add(watcherDirectory);
 
           // Start Timer for processing events
-          m_Timer = new System.Timers.Timer(m_TimerInterval);
-          m_Timer.Elapsed += new System.Timers.ElapsedEventHandler(ProcessEvents);
+          m_Timer = new Timer(m_TimerInterval);
+          m_Timer.Elapsed += new ElapsedEventHandler(ProcessEvents);
           m_Timer.AutoReset = true;
           m_Timer.Enabled = watcherFile.EnableRaisingEvents;
           Log.Info(LogType.MusicShareWatcher, sharename);
         }
-        catch (System.ArgumentException ex)
+        catch (ArgumentException ex)
         {
-          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: {0} Exception: {1}", sharename ,ex.Message);
+          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: {0} Exception: {1}", sharename,
+                   ex.Message);
         }
       }
       Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
       Log.Info(LogType.MusicShareWatcher, "Note: Errors reported for CD/DVD drives can be ignored.");
     }
+
     #endregion Main
 
     #region EventHandlers
+
     // Event handler for Create of a file
     private void OnCreated(object source, FileSystemEventArgs e)
     {
@@ -221,13 +228,15 @@ namespace MediaPortal.MusicShareWatcher
       Log.Debug(LogType.MusicShareWatcher, "Rename File/Directory Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));
     }
+
     #endregion EventHandlers
 
     #region Private Methods
-    void ProcessEvents(object sender, System.Timers.ElapsedEventArgs e)
+
+    private void ProcessEvents(object sender, ElapsedEventArgs e)
     {
       // Allow only one Timer event to be executed.
-      if (System.Threading.Monitor.TryEnter(m_EnterThread))
+      if (Monitor.TryEnter(m_EnterThread))
       {
         // Only one thread at a time is processing the events                
         try
@@ -257,9 +266,14 @@ namespace MediaPortal.MusicShareWatcher
                   break;
                 case MusicShareWatcherEvent.EventType.Rename:
                   if (musicDB.RenameSong(currentEvent.OldFileName, currentEvent.FileName))
-                    Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName, currentEvent.FileName);
+                  {
+                    Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName,
+                             currentEvent.FileName);
+                  }
                   else
+                  {
                     Log.Info(LogType.MusicShareWatcher, "Song / Directory rename failed: {0}", currentEvent.FileName);
+                  }
                   break;
               }
               m_Events.RemoveAt(i);
@@ -269,10 +283,9 @@ namespace MediaPortal.MusicShareWatcher
         }
         finally
         {
-          System.Threading.Monitor.Exit(m_EnterThread);
+          Monitor.Exit(m_EnterThread);
         }
       }
-
     }
 
     // Method used by OnCreated to fill the song structure
@@ -281,7 +294,9 @@ namespace MediaPortal.MusicShareWatcher
       // Has the song already be added? 
       // This happens when a full directory is copied into the share.
       if (musicDB.SongExists(strFileName))
+      {
         return;
+      }
       // For some reason the Create is fired already by windows while the file is still copied.
       // This happens especially on large songs copied via WLAN.
       // The result is that MP Readtag is throwing an IO Exception.
@@ -294,7 +309,7 @@ namespace MediaPortal.MusicShareWatcher
         s = file.OpenRead();
         s.Close();
       }
-      catch (System.IO.IOException)
+      catch (IOException)
       {
         // The file is not closed yet. Ignore the event, it will be processed by the Change event
         return;
@@ -304,14 +319,15 @@ namespace MediaPortal.MusicShareWatcher
       // Check for Various Artists
       //musicDB.CheckVariousArtists(song.Album);
     }
+
     #endregion
 
     #region Common Methods
 
     // Retrieve the Music Shares that should be monitored
-    int LoadShares()
+    private int LoadShares()
     {
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
       string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
       for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
       {
@@ -320,16 +336,22 @@ namespace MediaPortal.MusicShareWatcher
         string shareType = String.Format("sharetype{0}", i);
 
         string ShareType = xmlreader.GetValueAsString("music", shareType, string.Empty);
-        if (ShareType == "yes") continue;
+        if (ShareType == "yes")
+        {
+          continue;
+        }
         string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
         if (SharePath.Length > 0)
+        {
           m_Shares.Add(SharePath);
+        }
       }
 
       xmlreader = null;
       return 0;
     }
+
     #endregion
   }
 }

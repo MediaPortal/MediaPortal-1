@@ -24,22 +24,22 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 
 namespace WatchDog
 {
-  class Utils
+  internal class Utils
   {
     public static void WarningDlg(string text)
     {
       MessageBox.Show(text, "MediaPortal WatchDog -- Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
+
     public static void ErrorDlg(string text)
     {
       MessageBox.Show(text, "MediaPortal WatchDog -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
+
     public static void SleepNonBlocking(long milliseconds)
     {
       long ticks = DateTime.Now.Ticks;

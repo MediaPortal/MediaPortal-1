@@ -24,17 +24,15 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Net;
-using System.IO;
-using System.Text;
-using System.Threading;
 using System.Collections;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
-using MediaPortal.Util;
+using System.ComponentModel;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace Wikipedia
 {
@@ -45,26 +43,19 @@ namespace Wikipedia
   public class GUIWikipedia : GUIWindow, ISetupForm, IShowPlugin
   {
     #region SkinControls
-    [SkinControlAttribute(10)]
-    protected GUIButtonControl buttonSearch = null;
-    [SkinControlAttribute(11)]
-    protected GUIButtonControl buttonLocal = null;
-    [SkinControlAttribute(14)]
-    protected GUIButtonControl buttonBack = null;
-    [SkinControlAttribute(12)]
-    protected GUIButtonControl buttonLinks = null;
-    [SkinControlAttribute(13)]
-    protected GUIButtonControl buttonImages = null;
 
-    [SkinControlAttribute(4)]
-    protected GUILabelControl searchtermLabel = null;
-    [SkinControlAttribute(5)]
-    protected GUILabelControl imagedescLabel = null;
-    [SkinControlAttribute(20)]
-    protected GUITextControl txtArticle = null;
+    [SkinControl(10)] protected GUIButtonControl buttonSearch = null;
+    [SkinControl(11)] protected GUIButtonControl buttonLocal = null;
+    [SkinControl(14)] protected GUIButtonControl buttonBack = null;
+    [SkinControl(12)] protected GUIButtonControl buttonLinks = null;
+    [SkinControl(13)] protected GUIButtonControl buttonImages = null;
 
-    [SkinControlAttribute(25)]
-    protected GUIImage imageControl = null;
+    [SkinControl(4)] protected GUILabelControl searchtermLabel = null;
+    [SkinControl(5)] protected GUILabelControl imagedescLabel = null;
+    [SkinControl(20)] protected GUITextControl txtArticle = null;
+
+    [SkinControl(25)] protected GUIImage imageControl = null;
+
     #endregion
 
     private string language = "Default";
@@ -76,7 +67,7 @@ namespace Wikipedia
 
     public GUIWikipedia()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_WIKIPEDIA;
+      GetID = (int) Window.WINDOW_WIKIPEDIA;
     }
 
     #region ISetupForm Members
@@ -140,7 +131,8 @@ namespace Wikipedia
     /// <param name="strPictureImage">subpicture for the button or empty for none</param>
     /// <returns>true  : plugin needs its own button on home
     ///          false : plugin does not need its own button on home</returns>
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(2516);
       strButtonImage = "";
@@ -148,6 +140,7 @@ namespace Wikipedia
       strPictureImage = @"hover_wikipedia.png";
       return true;
     }
+
     #endregion
 
     #region IShowPlugin Member
@@ -164,18 +157,23 @@ namespace Wikipedia
       return Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       // we don't want the user to start another search while one is already active
       if (_workerCompleted == false)
+      {
         return;
+      }
 
       // Here we want to open the OSD Keyboard to enter the searchstring
       if (control == buttonSearch)
       {
         // If the search Button was clicked we need to bring up the search keyboard.
-        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard) return;
+        VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+        if (null == keyboard)
+        {
+          return;
+        }
         string searchterm = string.Empty;
         //keyboard.IsSearchKeyboard = true;
         keyboard.Reset();
@@ -186,7 +184,9 @@ namespace Wikipedia
 
         // If input is finished, the string is saved to the searchterm var.
         if (keyboard.IsConfirmed)
+        {
           searchterm = keyboard.Text;
+        }
 
         // If there was a string entered try getting the article.
         if (searchterm != "")
@@ -194,10 +194,10 @@ namespace Wikipedia
           Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
           GetAndDisplayArticle(searchterm);
         }
-        // Else display an error dialog.
+          // Else display an error dialog.
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
           dlg.SetLine(2, string.Empty);
@@ -209,14 +209,14 @@ namespace Wikipedia
       if (control == buttonLocal)
       {
         // Create a new selection dialog.
-        GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
         if (pDlgOK != null)
         {
           pDlgOK.Reset();
           pDlgOK.SetHeading(GUILocalizeStrings.Get(2502)); //Select your local Wikipedia:
 
           // Add all the local sites we want to be displayed starting with int 0.
-          MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+          Settings langreader = new Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
           String allsites = langreader.GetValueAsString("Allsites", "sitenames", "");
           Log.Info("Wikipedia: available sites: " + allsites);
           String[] siteArray = allsites.Split(',');
@@ -239,7 +239,7 @@ namespace Wikipedia
         if (linkArray.Count > 0)
         {
           // Create a new selection dialog.
-          GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
           if (pDlgOK != null)
           {
             pDlgOK.Reset();
@@ -260,12 +260,11 @@ namespace Wikipedia
         }
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2506)); // No Links from this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }
-
       }
       // The Button containing a list of all images from the article
       if (control == buttonImages)
@@ -273,7 +272,7 @@ namespace Wikipedia
         if (imagedescArray.Count > 0)
         {
           // Create a new selection dialog.
-          GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
           if (pDlgOK != null)
           {
             pDlgOK.Reset();
@@ -288,13 +287,14 @@ namespace Wikipedia
             if (pDlgOK.SelectedLabel >= 0)
             {
               Log.Info("Wikipedia: new search from the image array: {0}", imagedescArray[pDlgOK.SelectedId - 1]);
-              GetAndDisplayImage(imagenameArray[pDlgOK.SelectedId - 1].ToString(), imagedescArray[pDlgOK.SelectedId - 1].ToString());
+              GetAndDisplayImage(imagenameArray[pDlgOK.SelectedId - 1].ToString(),
+                                 imagedescArray[pDlgOK.SelectedId - 1].ToString());
             }
           }
         }
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2508)); // No Images referenced in this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -304,15 +304,25 @@ namespace Wikipedia
       if (control == buttonBack)
       {
         if (!txtArticle.IsVisible)
+        {
           GUIControl.ShowControl(GetID, txtArticle.GetID);
+        }
         if (imageControl.IsVisible)
+        {
           GUIControl.HideControl(GetID, imageControl.GetID);
+        }
         if (!searchtermLabel.IsVisible)
+        {
           GUIControl.ShowControl(GetID, searchtermLabel.GetID);
+        }
         if (imagedescLabel.IsVisible)
+        {
           GUIControl.HideControl(GetID, imagedescLabel.GetID);
+        }
         if (buttonBack.IsVisible)
+        {
           GUIControl.HideControl(GetID, buttonBack.GetID);
+        }
       }
       base.OnClicked(controlId, control, actionType);
     }
@@ -320,7 +330,7 @@ namespace Wikipedia
     // Depending on which Entry was selected from the listbox we chose the language here.
     private void SelectLocalWikipedia(int labelnumber, String[] siteArray)
     {
-      MediaPortal.Profile.Settings langreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+      Settings langreader = new Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
       language = siteArray[labelnumber];
 
       if (searchtermLabel.Label != string.Empty && searchtermLabel.Label != "Wikipedia")
@@ -336,24 +346,34 @@ namespace Wikipedia
       string imagefilename = image.GetImageFilename();
       Log.Info("Wikipedia: Trying to display image file: {0}", imagefilename);
 
-      if (imagefilename != string.Empty && System.IO.File.Exists(imagefilename))
+      if (imagefilename != string.Empty && File.Exists(imagefilename))
       {
         if (txtArticle.IsVisible)
+        {
           GUIControl.HideControl(GetID, txtArticle.GetID);
+        }
         if (!imageControl.IsVisible)
+        {
           GUIControl.ShowControl(GetID, imageControl.GetID);
+        }
         if (searchtermLabel.IsVisible)
+        {
           GUIControl.HideControl(GetID, searchtermLabel.GetID);
+        }
         if (!imagedescLabel.IsVisible)
+        {
           GUIControl.ShowControl(GetID, imagedescLabel.GetID);
+        }
         if (!buttonBack.IsVisible)
+        {
           GUIControl.ShowControl(GetID, buttonBack.GetID);
+        }
         imagedescLabel.Label = imagedesc;
         imageControl.SetFileName(imagefilename);
       }
       else
       {
-        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
         dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
         dlg.SetLine(1, GUILocalizeStrings.Get(2512)); // Can't display image.
         dlg.SetLine(2, GUILocalizeStrings.Get(2513)); // Please have a look at the logfile.
@@ -362,7 +382,7 @@ namespace Wikipedia
     }
 
     // The main function.
-    void GetAndDisplayArticle(string searchterm)
+    private void GetAndDisplayArticle(string searchterm)
     {
       BackgroundWorker worker = new BackgroundWorker();
 
@@ -370,28 +390,41 @@ namespace Wikipedia
       worker.RunWorkerAsync(searchterm);
 
       while (_workerCompleted == false)
+      {
         GUIWindowManager.Process();
+      }
     }
 
     // All kind of stuff because of the wait cursor ;-)
-    void DownloadWorker(object sender, DoWorkEventArgs e)
+    private void DownloadWorker(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "Wikipedia";
       _workerCompleted = false;
 
       using (WaitCursor cursor = new WaitCursor())
+      {
         lock (this)
         {
           if (!txtArticle.IsVisible)
+          {
             GUIControl.ShowControl(GetID, txtArticle.GetID);
+          }
           if (imageControl.IsVisible)
+          {
             GUIControl.HideControl(GetID, imageControl.GetID);
+          }
           if (!searchtermLabel.IsVisible)
+          {
             GUIControl.ShowControl(GetID, searchtermLabel.GetID);
+          }
           if (imagedescLabel.IsVisible)
+          {
             GUIControl.HideControl(GetID, imagedescLabel.GetID);
+          }
           if (buttonBack.IsVisible)
+          {
             GUIControl.HideControl(GetID, buttonBack.GetID);
+          }
           linkArray.Clear();
           imagenameArray.Clear();
           imagedescArray.Clear();
@@ -404,17 +437,24 @@ namespace Wikipedia
           language = article.GetLanguage();
 
           if (articletext == "REDIRECT")
-            txtArticle.Label = GUILocalizeStrings.Get(2509) + "\n" + GUILocalizeStrings.Get(2510); //This page is only a redirect. Please chose the redirect aim from the link list.
+          {
+            txtArticle.Label = GUILocalizeStrings.Get(2509) + "\n" + GUILocalizeStrings.Get(2510);
+              //This page is only a redirect. Please chose the redirect aim from the link list.
+          }
           else if (articletext == string.Empty)
+          {
             txtArticle.Label = GUILocalizeStrings.Get(2504); //Sorry, no Article was found for your searchterm...
+          }
           else
+          {
             txtArticle.Label = articletext;
+          }
         }
+      }
 
       _workerCompleted = true;
     }
 
-    volatile bool _workerCompleted = true;
-
+    private volatile bool _workerCompleted = true;
   }
 }

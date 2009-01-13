@@ -24,17 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
 using System.IO;
-using ICSharpCode.SharpZipLib.Zip;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
-using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
@@ -50,6 +43,7 @@ namespace MediaPortal.MPInstaller
     {
       InitializeComponent();
     }
+
     public EditForm(string fil)
     {
       proiect_file_name = fil;
@@ -62,7 +56,9 @@ namespace MediaPortal.MPInstaller
     private void sToolStripMenuItem_Click(object sender, EventArgs e)
     {
       if (!IsGoodToSave())
+      {
         return;
+      }
 
       saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
@@ -80,6 +76,7 @@ namespace MediaPortal.MPInstaller
         _struct.SaveToFile(proiect_file_name);
       }
     }
+
     private void windowToolStripMenuItem_Click(object sender, EventArgs e)
     {
       addplugin(1);
@@ -105,19 +102,24 @@ namespace MediaPortal.MPInstaller
         switch (type)
         {
           case 1:
-            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE,
+                   Path.GetFullPath(fil), "01010");
             break;
           case 2:
-            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01020");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE,
+                   Path.GetFullPath(fil), "01020");
             break;
           case 3:
-            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01030");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE,
+                   Path.GetFullPath(fil), "01030");
             break;
           case 4:
-            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01040");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE,
+                   Path.GetFullPath(fil), "01040");
             break;
           case 5:
-            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01050");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE,
+                   Path.GetFullPath(fil), "01050");
             break;
           default:
             break;
@@ -135,7 +137,8 @@ namespace MediaPortal.MPInstaller
       {
         foreach (string fil in openFileDialog1.FileNames)
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_LOG_TYPE, Path.GetFullPath(fil), "03010", "");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_LOG_TYPE,
+                 Path.GetFullPath(fil), "03010", "");
         }
       }
     }
@@ -148,22 +151,32 @@ namespace MediaPortal.MPInstaller
       openFileDialog1.Multiselect = true;
       switch (type)
       {
-        case 1: openFileDialog1.Filter = "xml files (*.xml)|*.xml|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|All files (*.*)|*.*";
+        case 1:
+          openFileDialog1.Filter =
+            "xml files (*.xml)|*.xml|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.xml";
           break;
-        case 2: openFileDialog1.Filter = "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
+        case 2:
+          openFileDialog1.Filter =
+            "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.png";
           break;
-        case 3: openFileDialog1.Filter = "wav files (*.wav)|*.wav|All files (*.*)|*.*";
+        case 3:
+          openFileDialog1.Filter = "wav files (*.wav)|*.wav|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.wav";
           break;
-        case 4: openFileDialog1.Filter = "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
+        case 4:
+          openFileDialog1.Filter =
+            "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.png";
           break;
-        case 5: openFileDialog1.Filter = "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
+        case 5:
+          openFileDialog1.Filter =
+            "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.png";
           break;
-        case 6: openFileDialog1.Filter = "font files (*.ttf)|*.ttf|All files (*.*)|*.*";
+        case 6:
+          openFileDialog1.Filter = "font files (*.ttf)|*.ttf|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.ttf";
           break;
       }
@@ -172,26 +185,38 @@ namespace MediaPortal.MPInstaller
         foreach (string fil in openFileDialog1.FileNames)
         {
           if (Path.GetFullPath(fil).ToLower().IndexOf("skin\\") == 0)
+          {
             subtype = "Blue3";
+          }
           else
           {
-
             subtype = Path.GetFullPath(fil).Substring(Path.GetFullPath(fil).ToLower().IndexOf("skin\\") + 5);
             subtype = subtype.Substring(0, subtype.IndexOf("\\"));
           }
           switch (type)
           {
-            case 1: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            case 1:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
               break;
-            case 2: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02020", "");
+            case 2:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02020",
+                     "");
               break;
-            case 3: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02030", "");
+            case 3:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02030",
+                     "");
               break;
-            case 4: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02040", "");
+            case 4:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil),
+                     "02040", "");
               break;
-            case 5: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02050", "");
+            case 5:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02050",
+                     "");
               break;
-            case 6: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SYSTEMFONT_TYPE, subtype, Path.GetFullPath(fil), "02060", "");
+            case 6:
+              addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SYSTEMFONT_TYPE, subtype, Path.GetFullPath(fil),
+                     "02060", "");
               break;
             default:
               break;
@@ -203,15 +228,17 @@ namespace MediaPortal.MPInstaller
     private void addother(string ty, string sty)
     {
       //      string fil;
-      openFileDialog1.Filter = "All files (*.*)|*.*|xml files (*.xml)|*.xml|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg";
+      openFileDialog1.Filter =
+        "All files (*.*)|*.*|xml files (*.xml)|*.xml|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg";
       openFileDialog1.FileName = "";
       openFileDialog1.DefaultExt = "*.*";
       openFileDialog1.Multiselect = true;
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         foreach (string fil in openFileDialog1.FileNames)
+        {
           addrow(Path.GetFileName(fil), ty, sty, Path.GetFullPath(fil), "04010", "");
-
+        }
       }
     }
 
@@ -243,7 +270,7 @@ namespace MediaPortal.MPInstaller
       item1.SubItems.Add(list.FileName);
       item1.SubItems.Add(list.ID);
       item1.SubItems.Add(list.Option);
-      bossview.Items.AddRange(new ListViewItem[] { item1 });
+      bossview.Items.AddRange(new ListViewItem[] {item1});
     }
 
     private void addrow(string file, string type, string subtype, string path, string id)
@@ -254,8 +281,9 @@ namespace MediaPortal.MPInstaller
       item1.SubItems.Add(path);
       item1.SubItems.Add(id);
       item1.SubItems.Add("");
-      bossview.Items.AddRange(new ListViewItem[] { item1 });
+      bossview.Items.AddRange(new ListViewItem[] {item1});
     }
+
     private void addrow(string file, string type, string subtype, string path, string id, string op)
     {
       ListViewItem item1 = new ListViewItem(file, 0);
@@ -264,7 +292,7 @@ namespace MediaPortal.MPInstaller
       item1.SubItems.Add(path);
       item1.SubItems.Add(id);
       item1.SubItems.Add(op);
-      bossview.Items.AddRange(new ListViewItem[] { item1 });
+      bossview.Items.AddRange(new ListViewItem[] {item1});
     }
 
     private void OpenProjectFile(string projectFile)
@@ -275,7 +303,7 @@ namespace MediaPortal.MPInstaller
       this.Text = projectFile;
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        addrow((MPIFileList)_struct.FileList[i]);
+        addrow((MPIFileList) _struct.FileList[i]);
       }
 
       openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProiectdFileName);
@@ -290,7 +318,7 @@ namespace MediaPortal.MPInstaller
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         bossview.Items.Clear();
-        
+
         proiect_file_name = openFileDialog1.FileName;
         OpenProjectFile(proiect_file_name);
       }
@@ -409,7 +437,7 @@ namespace MediaPortal.MPInstaller
         foreach (string skinFolder in skinFolders)
         {
           bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] { "cvs" };
+          string[] invalidDirectoryNames = new string[] {"cvs"};
 
           string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
 
@@ -450,7 +478,8 @@ namespace MediaPortal.MPInstaller
         {
           tabControl1.Controls.Add(tabPage_Plugin);
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_TYPE || bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_MEDIA_TYPE ||
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_TYPE ||
+            bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_MEDIA_TYPE ||
             bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_SYSTEMFONT_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Skin);
@@ -501,9 +530,13 @@ namespace MediaPortal.MPInstaller
       {
         // Determine what the last sort order was and change it.
         if (bossview.Sorting == SortOrder.Ascending)
+        {
           bossview.Sorting = SortOrder.Descending;
+        }
         else
+        {
           bossview.Sorting = SortOrder.Ascending;
+        }
       }
 
       // Call the sort method to manually sort.
@@ -593,7 +626,8 @@ namespace MediaPortal.MPInstaller
 
     private void button_browse_Click(object sender, EventArgs e)
     {
-      openFileDialog1.Filter = "All files (*.*)|*.*|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg";
+      openFileDialog1.Filter =
+        "All files (*.*)|*.*|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg";
       openFileDialog1.FileName = "";
       openFileDialog1.DefaultExt = "*.*";
       openFileDialog1.Multiselect = false;
@@ -633,7 +667,7 @@ namespace MediaPortal.MPInstaller
 
     private void propertyGrid2_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
-      bossview.SelectedItems[0].SubItems[5].Text = ((FilePropertiesClass)propertyGrid2.SelectedObject).ToString();
+      bossview.SelectedItems[0].SubItems[5].Text = ((FilePropertiesClass) propertyGrid2.SelectedObject).ToString();
     }
 
     private void setupGroupsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -646,7 +680,8 @@ namespace MediaPortal.MPInstaller
 
     private void fileAutomatedDiscoverTypeToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      openFileDialog1.Filter = "All files (*.*)|*.*|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg|Skin files (*.xml)|*.xml|Plugin files (*.dll)|*.dll";
+      openFileDialog1.Filter =
+        "All files (*.*)|*.*|png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|jpeg files (*.jpg)|*.jpg|Skin files (*.xml)|*.xml|Plugin files (*.dll)|*.dll";
       openFileDialog1.FileName = "";
       openFileDialog1.DefaultExt = "*.*";
       openFileDialog1.Multiselect = true;
@@ -665,23 +700,28 @@ namespace MediaPortal.MPInstaller
       {
         if (fil.ToUpper().Contains("PLUGINS\\WINDOWS"))
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE,
+                 Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\TAGREADERS"))
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE,
+                 Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\SUBTITLE"))
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE,
+                 Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\PROCESS"))
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE,
+                 Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\EXTERNALPLAYERS"))
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE,
+                 Path.GetFullPath(fil), "01010");
         }
         return;
       }
@@ -693,29 +733,31 @@ namespace MediaPortal.MPInstaller
         {
           addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
         }
+        else if (fil.ToUpper().Contains("MEDIA\\ANIMATIONS"))
+        {
+          addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02010",
+                 "");
+        }
+        else if (fil.ToUpper().Contains("MEDIA\\TETRIS"))
+        {
+          addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+        }
+        else if (fil.ToUpper().Contains("\\MEDIA\\"))
+        {
+          string st = Path.GetFullPath(fil).Substring(Path.GetFullPath(fil).ToLower().IndexOf("\\media\\") + 6);
+          addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010",
+                 "OutputFileName=" + st + "|");
+        }
         else
-          if (fil.ToUpper().Contains("MEDIA\\ANIMATIONS"))
-          {
-            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
-          }
-          else if (fil.ToUpper().Contains("MEDIA\\TETRIS"))
-          {
-            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
-          }
-          else if (fil.ToUpper().Contains("\\MEDIA\\"))
-          {
-            string st = Path.GetFullPath(fil).Substring(Path.GetFullPath(fil).ToLower().IndexOf("\\media\\") + 6);
-            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010", "OutputFileName=" + st+"|");
-          }
-          else
-          {
-            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
-          }
+        {
+          addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+        }
         return;
       }
       if (Path.GetExtension(fil).ToUpper() == ".TXT")
       {
-        addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE, Path.GetFullPath(fil), "02010", "");
+        addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE,
+               Path.GetFullPath(fil), "02010", "");
         return;
       }
       addrow(Path.GetFileName(fil), MPinstallerStruct.OTHER_TYPE, "", Path.GetFullPath(fil), "02010", "");
@@ -723,7 +765,6 @@ namespace MediaPortal.MPInstaller
 
     private void directoryAutomatedDiscoverTypeToolStripMenuItem_Click(object sender, EventArgs e)
     {
-
       if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
       {
         DirectoryInfo di = new DirectoryInfo(folderBrowserDialog1.SelectedPath);
@@ -731,10 +772,11 @@ namespace MediaPortal.MPInstaller
         foreach (FileInfo f in fileList)
         {
           if (!f.DirectoryName.Contains(".svn"))
+          {
             addFile(f.FullName);
+          }
         }
       }
-
     }
 
     private bool IsGoodToSave()
@@ -768,9 +810,7 @@ namespace MediaPortal.MPInstaller
         {
           bossview.Items.Remove(li);
         }
-
       }
-
     }
 
     /// <summary>
@@ -784,12 +824,13 @@ namespace MediaPortal.MPInstaller
       bossview.Items.Clear();
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        if (((MPIFileList)_struct.FileList[i]).SkinType && ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\"+skint_comboBox1.Text+@"\"))
+        if (((MPIFileList) _struct.FileList[i]).SkinType &&
+            ((MPIFileList) _struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
         {
-          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = true;
-          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
+          ((MPIFileList) _struct.FileList[i]).FileProperties.DefaultFile = true;
+          ((MPIFileList) _struct.FileList[i]).Option = ((MPIFileList) _struct.FileList[i]).FileProperties.ToString();
         }
-        addrow((MPIFileList)_struct.FileList[i]);
+        addrow((MPIFileList) _struct.FileList[i]);
       }
     }
 
@@ -799,12 +840,13 @@ namespace MediaPortal.MPInstaller
       bossview.Items.Clear();
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        if (((MPIFileList)_struct.FileList[i]).SkinType && ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
+        if (((MPIFileList) _struct.FileList[i]).SkinType &&
+            ((MPIFileList) _struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
         {
-          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = false;
-          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
+          ((MPIFileList) _struct.FileList[i]).FileProperties.DefaultFile = false;
+          ((MPIFileList) _struct.FileList[i]).Option = ((MPIFileList) _struct.FileList[i]).FileProperties.ToString();
         }
-        addrow((MPIFileList)_struct.FileList[i]);
+        addrow((MPIFileList) _struct.FileList[i]);
       }
     }
 
@@ -818,7 +860,8 @@ namespace MediaPortal.MPInstaller
       {
         foreach (string fil in openFileDialog1.FileNames)
         {
-          addrow(Path.GetFileName(fil), MPinstallerStruct.INTERNAL_TYPE, MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE, Path.GetFullPath(fil), "07010", "");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.INTERNAL_TYPE, MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE,
+                 Path.GetFullPath(fil), "07010", "");
         }
       }
     }
@@ -827,6 +870,5 @@ namespace MediaPortal.MPInstaller
     {
       addskin(6);
     }
-
   }
 }

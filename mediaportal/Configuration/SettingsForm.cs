@@ -25,30 +25,32 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
 using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using Keys = MediaPortal.Configuration.Sections.Keys;
-using System.Xml;
-using System.Threading;
-using System.Collections.Generic;
-using System.IO;
+using DVDPlayer=MediaPortal.Configuration.Sections.DVDPlayer;
+using Keys=MediaPortal.Configuration.Sections.Keys;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SettingsForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class SettingsForm : MPConfigForm
   {
     #region DLL imports
 
@@ -81,10 +83,10 @@ namespace MediaPortal.Configuration
 
     public struct ConfigPage
     {
-      string sectionName;
-      SectionSettings parentsection;
-      SectionSettings configSection;
-      bool isExpertSetting;
+      private string sectionName;
+      private SectionSettings parentsection;
+      private SectionSettings configSection;
+      private bool isExpertSetting;
 
       public ConfigPage(SectionSettings aParentsection, SectionSettings aConfigSection, bool aIsExpertSetting)
       {
@@ -121,6 +123,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     public delegate bool IECallBack(int hwnd, int lParam);
+
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
@@ -160,6 +163,7 @@ namespace MediaPortal.Configuration
     }
 
     private static bool advancedMode = false;
+
     public static bool AdvancedMode
     {
       get { return advancedMode; }
@@ -191,7 +195,7 @@ namespace MediaPortal.Configuration
     private void OnStartup()
     {
       // start the splashscreen      
-      string version = System.Configuration.ConfigurationManager.AppSettings["version"];
+      string version = ConfigurationManager.AppSettings["version"];
       splashScreen.Version = version;
       splashScreen.Run();
       Log.Info("SettingsForm constructor");
@@ -200,19 +204,25 @@ namespace MediaPortal.Configuration
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://www.team-mediaportal.com/donate.html");
       // Stop MCE services
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Stopping MCE services...");
-      MediaPortal.Util.Utils.StopMCEServices();
+      }
+      Util.Utils.StopMCEServices();
       // Build options tree
       if (splashScreen != null)
-        splashScreen.SetInformation("Loading language...");
-      string strLanguage;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");        
+        splashScreen.SetInformation("Loading language...");
+      }
+      string strLanguage;
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
         if (splashScreen != null)
+        {
           splashScreen.SetInformation("Loading config options...");
+        }
         CheckModeHintDisplay(hintShowCount);
         // The initial hint allows to choose a mode so we need to ask before loading that setting
         advancedMode = xmlreader.GetValueAsBool("general", "AdvancedConfigMode", false);
@@ -223,7 +233,9 @@ namespace MediaPortal.Configuration
       BassRegistration.BassRegistration.Register();
       Log.Info("add project section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding project section...");
+      }
       Project project = new Project();
       AddSection(new ConfigPage(null, project, false));
 
@@ -244,7 +256,9 @@ namespace MediaPortal.Configuration
 
       // Select first item in the section tree
       if (sectionTree.Nodes.Count > 0)
+      {
         sectionTree.SelectedNode = sectionTree.Nodes[0];
+      }
 
       if (splashScreen != null)
       {
@@ -265,20 +279,26 @@ namespace MediaPortal.Configuration
     private void AddTabPlugins()
     {
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Loading plugins...");
+      }
 
       Log.Info("add plugins section");
       PluginsNew pluginsNew = new PluginsNew();
       AddSection(new ConfigPage(null, pluginsNew, false));
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Finished plugin loading...");
+      }
     }
 
     private void AddTabWeather()
     {
       //add weather section
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding weather section...");
+      }
 
       Log.Info("add weather section");
       Weather weather = new Weather();
@@ -289,7 +309,9 @@ namespace MediaPortal.Configuration
     {
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding filters section...");
+      }
 
       FiltersSection filterSection = new FiltersSection();
       AddSection(new ConfigPage(null, filterSection, true));
@@ -298,7 +320,9 @@ namespace MediaPortal.Configuration
       if (availableAudioFilters.Count > 0)
       {
         if (splashScreen != null)
+        {
           splashScreen.SetInformation("Adding audio filters...");
+        }
 
         foreach (string filter in availableAudioFilters)
         {
@@ -352,7 +376,9 @@ namespace MediaPortal.Configuration
       if (availableVideoFilters.Count > 0)
       {
         if (splashScreen != null)
+        {
           splashScreen.SetInformation("Adding video filters...");
+        }
         foreach (string filter in availableVideoFilters)
         {
           if (filter.Equals("MPV Decoder Filter"))
@@ -380,9 +406,10 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
+      string[] audioEncoders = new string[] {"InterVideo Audio Encoder"};
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
+      {
         for (int i = 0; i < audioEncoders.Length; ++i)
         {
           if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
@@ -394,13 +421,16 @@ namespace MediaPortal.Configuration
             AddSection(new ConfigPage(EncoderfilterSection, windvdEncoderConfig, true));
           }
         }
+      }
     }
 
     private void AddTabRemote()
     {
       //add remotes section      
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding remote section...");
+      }
       SectionSettings remote = new Remote();
       AddSection(new ConfigPage(null, remote, false));
 
@@ -422,7 +452,9 @@ namespace MediaPortal.Configuration
       //add television section
       Log.Info("add television section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding television section...");
+      }
 
       SectionSettings television = new Television();
       AddSection(new ConfigPage(null, television, false));
@@ -463,7 +495,9 @@ namespace MediaPortal.Configuration
       {
         Log.Info("add radio section");
         if (splashScreen != null)
+        {
           splashScreen.SetInformation("Adding radio section...");
+        }
 
         SectionSettings radio = new Sections.Radio();
         AddSection(new ConfigPage(null, radio, false));
@@ -477,7 +511,9 @@ namespace MediaPortal.Configuration
       //add pictures section
       Log.Info("add pictures section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding pictures section...");
+      }
 
       SectionSettings picture = new Pictures();
       AddSection(new ConfigPage(null, picture, false));
@@ -491,7 +527,9 @@ namespace MediaPortal.Configuration
       //add music section
       Log.Info("add music section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding music section...");
+      }
 
       SectionSettings music = new Sections.Music();
       AddSection(new ConfigPage(null, music, false));
@@ -515,13 +553,15 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(music, new MusicASIO(), true));
     }
 
-    
+
     private void AddTabMovies()
     {
       //add video section
       Log.Info("add video section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding video section...");
+      }
 
       SectionSettings movie = new Movies();
       AddSection(new ConfigPage(null, movie, false));
@@ -547,7 +587,9 @@ namespace MediaPortal.Configuration
       //add DVD section
       Log.Info("add DVD section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding DVD section...");
+      }
 
       SectionSettings dvd = new DVD();
       AddSection(new ConfigPage(null, dvd, false));
@@ -565,7 +607,9 @@ namespace MediaPortal.Configuration
     {
       Log.Info("add general section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding general section...");
+      }
 
       General general = new General();
       AddSection(new ConfigPage(null, general, false));
@@ -573,7 +617,9 @@ namespace MediaPortal.Configuration
       //add skins section
       Log.Info("add skins section");
       if (splashScreen != null)
+      {
         splashScreen.SetInformation("Adding skins section...");
+      }
 
       GeneralSkin skinConfig = new GeneralSkin();
       AddSection(new ConfigPage(general, skinConfig, false));
@@ -600,7 +646,7 @@ namespace MediaPortal.Configuration
       AdvancedMode = aShowAdvancedOptions;
 
       sectionTree.BeginUpdate();
-      TreeNode currentSelected = (TreeNode)sectionTree.SelectedNode;
+      TreeNode currentSelected = (TreeNode) sectionTree.SelectedNode;
       sectionTree.Nodes.Clear();
 
       foreach (KeyValuePair<string, ConfigPage> singleConfig in settingSections)
@@ -623,16 +669,18 @@ namespace MediaPortal.Configuration
             int parentPos = -1;
             // This limits usage to one level only - loop subitems if you want to build a tree
             for (int i = 0; i < sectionTree.Nodes.Count; i++)
+            {
               if (sectionTree.Nodes[i].Text.CompareTo(currentSection.Parentsection.Text) == 0)
               {
                 parentPos = i;
                 break;
               }
+            }
 
             if (parentPos > -1)
             {
               // Add to the parent node
-              SectionTreeNode parentTreeNode = (SectionTreeNode)sectionTree.Nodes[parentPos];
+              SectionTreeNode parentTreeNode = (SectionTreeNode) sectionTree.Nodes[parentPos];
               parentTreeNode.Nodes.Add(treeNode);
             }
           }
@@ -642,14 +690,17 @@ namespace MediaPortal.Configuration
       {
         // Reselect the node we were editing before
         foreach (TreeNode parentNode in sectionTree.Nodes)
+        {
           foreach (TreeNode node in parentNode.Nodes)
+          {
             if (node.Text.CompareTo(currentSelected.Text) == 0)
             {
               sectionTree.SelectedNode = node;
               node.EnsureVisible();
               break;
             }
-
+          }
+        }
       }
 
       sectionTree.EndUpdate();
@@ -665,10 +716,9 @@ namespace MediaPortal.Configuration
       do
       {
         hwnd = FindWindow(null, _windowName);
-        System.Threading.Thread.Sleep(250);
-      }
-      while (hwnd == IntPtr.Zero);
-      System.Threading.Thread.Sleep(100);
+        Thread.Sleep(250);
+      } while (hwnd == IntPtr.Zero);
+      Thread.Sleep(100);
       ShowWindow(hwnd, SW_SHOW);
       SetForegroundWindow(hwnd);
     }
@@ -676,7 +726,9 @@ namespace MediaPortal.Configuration
     public void AddSection(ConfigPage aSection)
     {
       if (settingSections.ContainsKey(aSection.SectionName))
+      {
         return;
+      }
 
       settingSections.Add(aSection.SectionName, aSection);
     }
@@ -704,7 +756,8 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -727,8 +780,10 @@ namespace MediaPortal.Configuration
       // 
       // sectionTree
       // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.sectionTree.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
       this.sectionTree.FullRowSelect = true;
       this.sectionTree.HideSelection = false;
       this.sectionTree.HotTracking = true;
@@ -743,7 +798,9 @@ namespace MediaPortal.Configuration
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(621, 513);
       this.cancelButton.Name = "cancelButton";
@@ -755,7 +812,9 @@ namespace MediaPortal.Configuration
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(540, 513);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -766,11 +825,14 @@ namespace MediaPortal.Configuration
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                      System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
@@ -779,13 +841,16 @@ namespace MediaPortal.Configuration
       this.headerLabel.TabIndex = 3;
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                          System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 58);
@@ -795,8 +860,10 @@ namespace MediaPortal.Configuration
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(8, 503);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(696, 2);
@@ -805,7 +872,9 @@ namespace MediaPortal.Configuration
       // 
       // applyButton
       // 
-      this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.applyButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.applyButton.Location = new System.Drawing.Point(459, 513);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
@@ -818,7 +887,9 @@ namespace MediaPortal.Configuration
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
       this.linkLabel1.Location = new System.Drawing.Point(12, 518);
       this.linkLabel1.Name = "linkLabel1";
@@ -826,14 +897,17 @@ namespace MediaPortal.Configuration
       this.linkLabel1.TabIndex = 9;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "Donate to MediaPortal";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // toolStrip1
       // 
-      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripSplitButton,
-            this.configToolStripSplitButton,
-            this.toolStripButtonSwitchAdvanced});
+      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+                                       {
+                                         this.helpToolStripSplitButton,
+                                         this.configToolStripSplitButton,
+                                         this.toolStripButtonSwitchAdvanced
+                                       });
       this.toolStrip1.Location = new System.Drawing.Point(0, 0);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.Size = new System.Drawing.Size(712, 25);
@@ -843,8 +917,10 @@ namespace MediaPortal.Configuration
       // helpToolStripSplitButton
       // 
       this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateHelpToolStripMenuItem});
+      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                                                             {
+                                                               this.updateHelpToolStripMenuItem
+                                                             });
       this.helpToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_help;
       this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
@@ -859,17 +935,20 @@ namespace MediaPortal.Configuration
       this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
       this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
       this.updateHelpToolStripMenuItem.Text = "Update Help";
-      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
-          "opened.";
+      this.updateHelpToolStripMenuItem.ToolTipText =
+        "Online update for the help references file. Use it if an incorrect wiki page was " +
+        "opened.";
       this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
       // 
       // configToolStripSplitButton
       // 
-      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.thumbsToolStripMenuItem,
-            this.logsToolStripMenuItem,
-            this.databaseToolStripMenuItem,
-            this.skinsToolStripMenuItem});
+      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                                                               {
+                                                                 this.thumbsToolStripMenuItem,
+                                                                 this.logsToolStripMenuItem,
+                                                                 this.databaseToolStripMenuItem,
+                                                                 this.skinsToolStripMenuItem
+                                                               });
       this.configToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
@@ -915,7 +994,8 @@ namespace MediaPortal.Configuration
       this.toolStripButtonSwitchAdvanced.AutoSize = false;
       this.toolStripButtonSwitchAdvanced.CheckOnClick = true;
       this.toolStripButtonSwitchAdvanced.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.toolStripButtonSwitchAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
+      this.toolStripButtonSwitchAdvanced.Image =
+        ((System.Drawing.Image) (resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
       this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
       this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(135, 22);
@@ -947,7 +1027,6 @@ namespace MediaPortal.Configuration
       this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     #endregion
@@ -1009,7 +1088,7 @@ namespace MediaPortal.Configuration
     private void SettingsForm_Closed(object sender, EventArgs e)
     {
       // Restart MCE services
-      MediaPortal.Util.Utils.RestartMCEServices();
+      Util.Utils.RestartMCEServices();
       try
       {
         // stop serial ir receiver thread
@@ -1031,8 +1110,10 @@ namespace MediaPortal.Configuration
     {
       GUIGraphicsContext.form = this;
       // Asynchronously pre-initialize the music engine if we're using the BassMusicPlayer
-      if (MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
-        MediaPortal.Player.BassMusicPlayer.CreatePlayerAsync();
+      if (BassMusicPlayer.IsDefaultMusicPlayer)
+      {
+        BassMusicPlayer.CreatePlayerAsync();
+      }
       Log.Info("Load settings");
 
       // We load ALL sections - not just those which are visible currently
@@ -1140,7 +1221,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 250;
       //Do we have 1 or more music,picture,video shares?
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == string.Empty)
@@ -1161,7 +1242,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(sharePathData) && sharePathData != string.Empty)
+          if (!Util.Utils.IsDVD(sharePathData) && sharePathData != string.Empty)
           {
             added = true;
             break;
@@ -1178,7 +1259,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("movies", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
+          if (!Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
             break;
@@ -1195,7 +1276,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("pictures", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
+          if (!Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
             break;
@@ -1212,7 +1293,8 @@ namespace MediaPortal.Configuration
         bool lastFmOn = xmlreader.GetValueAsBool("plugins", "Last.fm Radio", false);
         if (lastFmOn && !audioScrobblerOn)
         {
-          MessageBox.Show("Please configure the Audioscrobbler plugin to use Last.fm radio", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          MessageBox.Show("Please configure the Audioscrobbler plugin to use Last.fm radio", "MediaPortal Settings",
+                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return false;
         }
 
@@ -1222,11 +1304,12 @@ namespace MediaPortal.Configuration
           string asuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
           if (!string.IsNullOrEmpty(asuser))
           {
-            MediaPortal.Music.Database.MusicDatabase mdb = MediaPortal.Music.Database.MusicDatabase.Instance;
+            Music.Database.MusicDatabase mdb = Music.Database.MusicDatabase.Instance;
             string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
             if (string.IsNullOrEmpty(AsPass))
             {
-              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings",
+                              MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
               return false;
             }
           }
@@ -1246,7 +1329,9 @@ namespace MediaPortal.Configuration
         {
           // SaveSectionSettings recursively saves all subnodes as well
           if (saveNode.Parent == null)
+          {
             SaveSectionSettings(saveNode);
+          }
         }
       }
 
@@ -1281,7 +1366,9 @@ namespace MediaPortal.Configuration
               process.CloseMainWindow();
               // Wait for the process to die, we wait for a maximum of 10 seconds
               if (!process.WaitForExit(10000))
+              {
                 process.Kill();
+              }
             }
             catch (Exception)
             {
@@ -1289,7 +1376,9 @@ namespace MediaPortal.Configuration
               {
                 process.Kill();
               }
-              catch (Exception) { }
+              catch (Exception)
+              {
+              }
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -1322,16 +1411,18 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       SaveAllSettings();
     }
 
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {
-      IntPtr windowHandle = (IntPtr)hwnd;
+      IntPtr windowHandle = (IntPtr) hwnd;
       StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int)windowHandle, sb, sb.Capacity);
+      GetWindowText((int) windowHandle, sb, sb.Capacity);
       string window = sb.ToString().ToLower();
       if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
       {
@@ -1342,7 +1433,7 @@ namespace MediaPortal.Configuration
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start((string)e.Link.LinkData);
+      Process.Start((string) e.Link.LinkData);
     }
 
     private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)

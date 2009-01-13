@@ -24,30 +24,30 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.TV.Database;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for EditGroupForm.
   /// </summary>
-  public class EditGroupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class EditGroupForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPincode;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
-    TVGroup group = new TVGroup();
+    private MPLabel label1;
+    private MPTextBox textBoxName;
+    private MPLabel label2;
+    private MPTextBox textBoxPincode;
+    private MPButton buttonOK;
+    private MPButton buttonCancel;
+    private TVGroup group = new TVGroup();
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public EditGroupForm()
     {
@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -163,11 +164,11 @@ namespace MediaPortal.Configuration
       this.Text = "Edit Group";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void buttonOk_Click(object sender, System.EventArgs e)
+    private void buttonOk_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
       group.GroupName = textBoxName.Text;
@@ -182,7 +183,7 @@ namespace MediaPortal.Configuration
       this.Close();
     }
 
-    private void btnCancel_Click(object sender, System.EventArgs e)
+    private void btnCancel_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Close();
@@ -190,10 +191,7 @@ namespace MediaPortal.Configuration
 
     public TVGroup Group
     {
-      get
-      {
-        return group;
-      }
+      get { return group; }
       set
       {
         group = value;

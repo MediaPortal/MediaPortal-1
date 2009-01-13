@@ -24,16 +24,11 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Net;
 using System.IO;
-using System.Text;
-using System.Threading;
-using System.Collections;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.Net;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace Wikipedia
 {
@@ -43,6 +38,7 @@ namespace Wikipedia
   public class WikipediaImage
   {
     #region vars
+
     private string WikipediaURL = "http://en.wikipedia.org/wiki/Special:Export/";
     private string imagename = string.Empty;
     private string imagedesc = string.Empty;
@@ -52,6 +48,7 @@ namespace Wikipedia
     #endregion
 
     #region constructors
+
     /// <summary>This constructor creates a new WikipediaImage</summary>
     /// <summary>The name of the image and language need to be given</summary>
     /// <param name="imagename">The internal name of the image like "Bild_478.jpg" in "http://de.wikipedia.org/wiki/Bild:Bild_478.jpg"</param>
@@ -76,19 +73,21 @@ namespace Wikipedia
     public WikipediaImage() : this(string.Empty, "Default")
     {
     }
+
     #endregion
 
     #region class methods
+
     /// <summary>Gets the current MP language from mediaportal.xml and sets the Wikipedia URL accordingly</summary>
     private void SetLanguage(string language)
     {
       if (language == "Default")
       {
-        MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+        Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
         language = xmlreader.GetValueAsString("skin", "language", "English");
       }
 
-      MediaPortal.Profile.Settings detailxmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
+      Settings detailxmlreader = new Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
       this.WikipediaURL = detailxmlreader.GetValueAsString(language, "imageurl", "http://en.wikipedia.org/wiki/Image:");
       Log.Info("Wikipedia: Image language set to " + language + ".");
     }
@@ -106,9 +105,9 @@ namespace Wikipedia
     private void GetImageUrl()
     {
       string imagepage = string.Empty;
-      
+
       // Build the URL to the Image page
-      System.Uri url = new System.Uri(WikipediaURL + this.imagename);
+      Uri url = new Uri(WikipediaURL + this.imagename);
       Log.Info("Wikipedia: Trying to get following Image page: {0}", url.ToString());
 
       // Here we get the content from the web and put it to a string
@@ -144,7 +143,9 @@ namespace Wikipedia
         Log.Info(imageurl);
       }
       else
+      {
         this.imageurl = string.Empty;
+      }
     }
 
     /// <summary>Downloads the full-size image from the wikipedia page</summary>
@@ -156,12 +157,13 @@ namespace Wikipedia
         string thumbspath = Config.GetSubFolder(Config.Dir.Thumbs, @"wikipedia\");
 
         //Create the wikipedia subdir in thumbs when it not exists.
-        if (!System.IO.Directory.Exists(thumbspath))
-          System.IO.Directory.CreateDirectory(thumbspath);
-
-        if (!System.IO.File.Exists(thumbspath + imagename))
+        if (!Directory.Exists(thumbspath))
         {
+          Directory.CreateDirectory(thumbspath);
+        }
 
+        if (!File.Exists(thumbspath + imagename))
+        {
           Log.Info("Wikipedia: Trying to get following URL: {0}", imageurl);
           // Here we get the image from the web and save it to disk
           try
@@ -190,5 +192,4 @@ namespace Wikipedia
 
     #endregion
   }
-
 }

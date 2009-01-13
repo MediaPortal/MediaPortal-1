@@ -23,19 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Settings.Wizard;
-using MediaPortal.TV.Database;
-using MediaPortal.EPG.config;
-using DShowNET;
+using MediaPortal.Profile;
 
 namespace WindowPlugins.GUISettings.Epg
 {
@@ -47,7 +37,7 @@ namespace WindowPlugins.GUISettings.Epg
     //string _country="";
     public GUIWizardEpgMapping()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG_MAPPING;
+      GetID = (int) Window.WINDOW_SETTINGS_TV_EPG_MAPPING;
     }
 
     public override bool Init()
@@ -56,10 +46,9 @@ namespace WindowPlugins.GUISettings.Epg
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-
     }
 
 
@@ -71,8 +60,7 @@ namespace WindowPlugins.GUISettings.Epg
 
     protected override void OnPageLoad()
     {
-
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string countryCode = xmlReader.GetValueAsString("general", "country", "");
         string country = xmlReader.GetValueAsString("capture", "countryname", "");
@@ -80,7 +68,6 @@ namespace WindowPlugins.GUISettings.Epg
         GUIPropertyManager.SetProperty("#WizardCountry", country);
       }
       base.OnPageLoad();
-
     }
   }
 }

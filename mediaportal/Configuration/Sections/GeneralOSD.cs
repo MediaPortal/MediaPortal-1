@@ -25,31 +25,27 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Globalization;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class GeneralOSD : MediaPortal.Configuration.SectionSettings
+  public class GeneralOSD : SectionSettings
   {
-    private System.ComponentModel.IContainer components = null;
+    private IContainer components = null;
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOSD;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDisplayTimeout;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDisplayTimeout;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlGeneralOSD;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageOSD;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxZapOSD;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxZapDelay;
-    private MediaPortal.UserInterface.Controls.MPLabel labelZapDelay;
-    private MediaPortal.UserInterface.Controls.MPLabel labelZapTimeOut;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxZapTimeout;
+    private MPGroupBox groupBoxOSD;
+    private MPTextBox textBoxDisplayTimeout;
+    private MPLabel labelDisplayTimeout;
+    private MPTabControl tabControlGeneralOSD;
+    private MPTabPage tabPageOSD;
+    private MPGroupBox groupBoxZapOSD;
+    private MPTextBox textBoxZapDelay;
+    private MPLabel labelZapDelay;
+    private MPLabel labelZapTimeOut;
+    private MPTextBox textBoxZapTimeout;
 
     public GeneralOSD()
       : this("On-Screen Display")
@@ -65,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         textBoxDisplayTimeout.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
         textBoxZapDelay.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
@@ -75,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("movieplayer", "osdtimeout", textBoxDisplayTimeout.Text);
         xmlwriter.SetValue("movieplayer", "zapdelay", textBoxZapDelay.Text);
@@ -99,6 +95,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -123,9 +120,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlGeneralOSD
       // 
-      this.tabControlGeneralOSD.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlGeneralOSD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlGeneralOSD.Controls.Add(this.tabPageOSD);
       this.tabControlGeneralOSD.Location = new System.Drawing.Point(0, 0);
       this.tabControlGeneralOSD.Name = "tabControlGeneralOSD";
@@ -146,8 +145,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxZapOSD
       // 
-      this.groupBoxZapOSD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxZapOSD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxZapOSD.Controls.Add(this.textBoxZapTimeout);
       this.groupBoxZapOSD.Controls.Add(this.labelZapTimeOut);
       this.groupBoxZapOSD.Controls.Add(this.textBoxZapDelay);
@@ -162,8 +163,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxZapTimeout
       // 
-      this.textBoxZapTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxZapTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxZapTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapTimeout.Location = new System.Drawing.Point(160, 44);
       this.textBoxZapTimeout.Name = "textBoxZapTimeout";
@@ -181,8 +184,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxZapDelay
       // 
-      this.textBoxZapDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxZapDelay.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxZapDelay.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapDelay.Location = new System.Drawing.Point(160, 20);
       this.textBoxZapDelay.Name = "textBoxZapDelay";
@@ -200,8 +205,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxOSD
       // 
-      this.groupBoxOSD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxOSD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxOSD.Controls.Add(this.textBoxDisplayTimeout);
       this.groupBoxOSD.Controls.Add(this.labelDisplayTimeout);
       this.groupBoxOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -214,8 +221,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxDisplayTimeout
       // 
-      this.textBoxDisplayTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDisplayTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDisplayTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDisplayTimeout.Location = new System.Drawing.Point(160, 20);
       this.textBoxDisplayTimeout.Name = "textBoxDisplayTimeout";
@@ -243,8 +252,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxOSD.ResumeLayout(false);
       this.groupBoxOSD.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }

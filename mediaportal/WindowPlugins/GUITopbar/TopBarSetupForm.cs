@@ -24,31 +24,30 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Topbar
 {
   /// <summary>
   /// Summary description for TopBarSetupForm.
   /// </summary>
-  public class TopBarSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class TopBarSetupForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkAutoHide;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOk;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox textTimeOut;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkOverrideSkinAutoHide;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
+    private MPCheckBox chkAutoHide;
+    private MPButton buttonOk;
+    private MPLabel label2;
+    private MPLabel label1;
+    private MPTextBox textTimeOut;
+    private MPCheckBox chkOverrideSkinAutoHide;
+    private MPButton buttonCancel;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public TopBarSetupForm()
     {
@@ -76,6 +75,7 @@ namespace MediaPortal.Topbar
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -93,8 +93,10 @@ namespace MediaPortal.Topbar
       // 
       // chkAutoHide
       // 
-      this.chkAutoHide.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.chkAutoHide.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.chkAutoHide.AutoSize = true;
       this.chkAutoHide.Enabled = false;
       this.chkAutoHide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -107,7 +109,9 @@ namespace MediaPortal.Topbar
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonOk.Location = new System.Drawing.Point(73, 124);
       this.buttonOk.Name = "buttonOk";
@@ -119,7 +123,9 @@ namespace MediaPortal.Topbar
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(137, 76);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(57, 24);
@@ -136,8 +142,10 @@ namespace MediaPortal.Topbar
       // 
       // textTimeOut
       // 
-      this.textTimeOut.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTimeOut.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textTimeOut.BorderColor = System.Drawing.Color.Empty;
       this.textTimeOut.Location = new System.Drawing.Point(83, 73);
       this.textTimeOut.Name = "textTimeOut";
@@ -147,8 +155,10 @@ namespace MediaPortal.Topbar
       // 
       // chkOverrideSkinAutoHide
       // 
-      this.chkOverrideSkinAutoHide.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.chkOverrideSkinAutoHide.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.chkOverrideSkinAutoHide.AutoSize = true;
       this.chkOverrideSkinAutoHide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkOverrideSkinAutoHide.Location = new System.Drawing.Point(16, 16);
@@ -161,7 +171,9 @@ namespace MediaPortal.Topbar
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(154, 124);
       this.buttonCancel.Name = "buttonCancel";
@@ -190,25 +202,31 @@ namespace MediaPortal.Topbar
       this.Text = "Topbar - Setup";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "3");
 
         chkAutoHide.Checked = false;
-        if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1) chkAutoHide.Checked = true;
+        if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1)
+        {
+          chkAutoHide.Checked = true;
+        }
         chkOverrideSkinAutoHide.Checked = false;
-        if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1) chkOverrideSkinAutoHide.Checked = true;
+        if (xmlreader.GetValueAsInt("TopBar", "overrideskinautohide", 0) == 1)
+        {
+          chkOverrideSkinAutoHide.Checked = true;
+        }
         chkAutoHide.Enabled = chkOverrideSkinAutoHide.Checked;
       }
     }
 
-    private void buttonOk_Click(object sender, System.EventArgs e)
+    private void buttonOk_Click(object sender, EventArgs e)
     {
       SaveSettings();
       this.Close();
@@ -216,21 +234,27 @@ namespace MediaPortal.Topbar
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlWriter.SetValue("TopBar", "autohidetimeout", textTimeOut.Text);
 
         int iAutoHide = 0;
-        if (chkAutoHide.Checked) iAutoHide = 1;
+        if (chkAutoHide.Checked)
+        {
+          iAutoHide = 1;
+        }
         xmlWriter.SetValue("TopBar", "autohide", iAutoHide.ToString());
 
         int iBoolean = 0;
-        if (chkOverrideSkinAutoHide.Checked) iBoolean = 1;
+        if (chkOverrideSkinAutoHide.Checked)
+        {
+          iBoolean = 1;
+        }
         xmlWriter.SetValue("TopBar", "overrideskinautohide", iBoolean.ToString());
       }
     }
 
-    private void chkOverrideSkinAutoHide_CheckedChanged(object sender, System.EventArgs e)
+    private void chkOverrideSkinAutoHide_CheckedChanged(object sender, EventArgs e)
     {
       chkAutoHide.Enabled = chkOverrideSkinAutoHide.Checked;
     }

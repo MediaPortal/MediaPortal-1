@@ -1,20 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
-using Un4seen.Bass;
-using DShowNET.AudioMixer;
-using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
-using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -28,7 +14,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Assembly assembly;
       if (ClassReferences.ContainsKey(AssemblyName))
       {
-        return (DynaClassInfo)ClassReferences[AssemblyName];
+        return (DynaClassInfo) ClassReferences[AssemblyName];
       }
       if (!AssemblyReferences.ContainsKey(AssemblyName))
       {
@@ -36,9 +22,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       else
       {
-        assembly = (Assembly)AssemblyReferences[AssemblyName];
+        assembly = (Assembly) AssemblyReferences[AssemblyName];
       }
-      foreach (System.Type type in assembly.GetTypes())
+      foreach (Type type in assembly.GetTypes())
       {
         if (type.IsClass && type.FullName.EndsWith("." + ClassName))
         {
@@ -62,7 +48,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static object InvokeMethodSlow(string AssemblyName, string ClassName, string MethodName, object[] args)
     {
-      foreach (System.Type type in Assembly.LoadFrom(AssemblyName).GetTypes())
+      foreach (Type type in Assembly.LoadFrom(AssemblyName).GetTypes())
       {
         if (type.IsClass && type.FullName.EndsWith("." + ClassName))
         {
@@ -76,19 +62,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public class DynaClassInfo
     {
       public object ClassObject;
-      public System.Type type;
+      public Type type;
 
       public DynaClassInfo()
       {
       }
 
-      public DynaClassInfo(System.Type t, object c)
+      public DynaClassInfo(Type t, object c)
       {
         this.type = t;
         this.ClassObject = c;
       }
     }
   }
-
 }
-

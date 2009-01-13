@@ -24,12 +24,13 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
@@ -37,47 +38,48 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for SearchCityForm.
   /// </summary>
-  public class SearchCityForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class SearchCityForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxNewCity;
-    private System.Windows.Forms.ListBox listBoxCityResults;
-    private MediaPortal.UserInterface.Controls.MPTextBox searchTextBox;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCitySearch;
-    private MediaPortal.UserInterface.Controls.MPButton buttonAddCity;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCity;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCityResults;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCityDetails;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlCityURLs;
+    private MPGroupBox groupBoxNewCity;
+    private ListBox listBoxCityResults;
+    private MPTextBox searchTextBox;
+    private MPButton buttonCitySearch;
+    private MPButton buttonAddCity;
+    private MPLabel labelCity;
+    private MPLabel labelCityResults;
+    private MPGroupBox groupBoxCityDetails;
+    private MPTabControl tabControlCityURLs;
     private TabPage tabPageSatImg;
     private TabPage tabPageTempImg;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSatURL;
+    private MPTextBox textBoxSatURL;
     private TabPage tabPageUVImg;
     private TabPage tabPageWindsImg;
     private TabPage tabPageHumImg;
     private TabPage tabPagePrecImg;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTempURL;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxUVURL;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxWindURL;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxHumURL;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPrecURL;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancelCity;
+    private MPTextBox textBoxTempURL;
+    private MPTextBox textBoxUVURL;
+    private MPTextBox textBoxWindURL;
+    private MPTextBox textBoxHumURL;
+    private MPTextBox textBoxPrecURL;
+    private MPButton buttonCancelCity;
     private LinkLabel lblWeatherDetails;
     private PictureBox pictureBoxPreviewSat;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewSat;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewTemp;
+    private MPButton btnPreviewSat;
+    private MPButton btnPreviewTemp;
     private PictureBox pictureBoxPreviewTemp;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewUV;
+    private MPButton btnPreviewUV;
     private PictureBox pictureBoxPreviewUV;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewWinds;
+    private MPButton btnPreviewWinds;
     private PictureBox pictureBoxPreviewWinds;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewHumidity;
+    private MPButton btnPreviewHumidity;
     private PictureBox pictureBoxPreviewHumidity;
-    private MediaPortal.UserInterface.Controls.MPButton btnPreviewPrecip;
+    private MPButton btnPreviewPrecip;
     private PictureBox pictureBoxPreviewPrecip;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public SearchCityForm()
     {
@@ -107,6 +109,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -152,24 +155,26 @@ namespace MediaPortal.Configuration
       this.groupBoxCityDetails.SuspendLayout();
       this.tabControlCityURLs.SuspendLayout();
       this.tabPageSatImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewSat)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewSat)).BeginInit();
       this.tabPageTempImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewTemp)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewTemp)).BeginInit();
       this.tabPageUVImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewUV)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewUV)).BeginInit();
       this.tabPageWindsImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewWinds)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewWinds)).BeginInit();
       this.tabPageHumImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewHumidity)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewHumidity)).BeginInit();
       this.tabPagePrecImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewPrecip)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewPrecip)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxNewCity
       // 
-      this.groupBoxNewCity.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxNewCity.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxNewCity.Controls.Add(this.buttonCancelCity);
       this.groupBoxNewCity.Controls.Add(this.groupBoxCityDetails);
       this.groupBoxNewCity.Controls.Add(this.labelCity);
@@ -186,7 +191,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonCancelCity
       // 
-      this.buttonCancelCity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancelCity.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancelCity.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancelCity.Location = new System.Drawing.Point(396, 406);
       this.buttonCancelCity.Name = "buttonCancelCity";
@@ -199,9 +206,11 @@ namespace MediaPortal.Configuration
       // 
       // groupBoxCityDetails
       // 
-      this.groupBoxCityDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxCityDetails.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxCityDetails.Controls.Add(this.lblWeatherDetails);
       this.groupBoxCityDetails.Controls.Add(this.tabControlCityURLs);
       this.groupBoxCityDetails.Controls.Add(this.listBoxCityResults);
@@ -215,24 +224,30 @@ namespace MediaPortal.Configuration
       // 
       // lblWeatherDetails
       // 
-      this.lblWeatherDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblWeatherDetails.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblWeatherDetails.LinkArea = new System.Windows.Forms.LinkArea(130, 4);
       this.lblWeatherDetails.Location = new System.Drawing.Point(11, 311);
       this.lblWeatherDetails.Name = "lblWeatherDetails";
       this.lblWeatherDetails.Size = new System.Drawing.Size(436, 34);
       this.lblWeatherDetails.TabIndex = 38;
       this.lblWeatherDetails.TabStop = true;
-      this.lblWeatherDetails.Text = "Here you can enter URLs to detailed weather images.\r\nYou\'ll find many pictures at" +
-          " www.weather.com, your local news site or in our wiki.";
+      this.lblWeatherDetails.Text =
+        "Here you can enter URLs to detailed weather images.\r\nYou\'ll find many pictures at" +
+        " www.weather.com, your local news site or in our wiki.";
       this.lblWeatherDetails.UseCompatibleTextRendering = true;
-      this.lblWeatherDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblWeatherDetails_LinkClicked);
+      this.lblWeatherDetails.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblWeatherDetails_LinkClicked);
       // 
       // tabControlCityURLs
       // 
-      this.tabControlCityURLs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlCityURLs.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlCityURLs.Controls.Add(this.tabPageSatImg);
       this.tabControlCityURLs.Controls.Add(this.tabPageTempImg);
       this.tabControlCityURLs.Controls.Add(this.tabPageUVImg);
@@ -260,7 +275,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewSat
       // 
-      this.btnPreviewSat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewSat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewSat.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewSat.Name = "btnPreviewSat";
       this.btnPreviewSat.Size = new System.Drawing.Size(56, 20);
@@ -271,9 +288,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewSat
       // 
-      this.pictureBoxPreviewSat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewSat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewSat.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewSat.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewSat.Name = "pictureBoxPreviewSat";
@@ -285,8 +304,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxSatURL
       // 
-      this.textBoxSatURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSatURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSatURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSatURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxSatURL.Name = "textBoxSatURL";
@@ -308,7 +329,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewTemp
       // 
-      this.btnPreviewTemp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewTemp.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewTemp.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewTemp.Name = "btnPreviewTemp";
       this.btnPreviewTemp.Size = new System.Drawing.Size(56, 20);
@@ -319,9 +342,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewTemp
       // 
-      this.pictureBoxPreviewTemp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewTemp.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewTemp.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewTemp.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewTemp.Name = "pictureBoxPreviewTemp";
@@ -333,8 +358,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxTempURL
       // 
-      this.textBoxTempURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTempURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTempURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTempURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxTempURL.Name = "textBoxTempURL";
@@ -355,7 +382,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewUV
       // 
-      this.btnPreviewUV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewUV.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewUV.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewUV.Name = "btnPreviewUV";
       this.btnPreviewUV.Size = new System.Drawing.Size(56, 20);
@@ -366,9 +395,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewUV
       // 
-      this.pictureBoxPreviewUV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewUV.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewUV.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewUV.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewUV.Name = "pictureBoxPreviewUV";
@@ -380,8 +411,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxUVURL
       // 
-      this.textBoxUVURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxUVURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxUVURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxUVURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxUVURL.Name = "textBoxUVURL";
@@ -402,7 +435,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewWinds
       // 
-      this.btnPreviewWinds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewWinds.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewWinds.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewWinds.Name = "btnPreviewWinds";
       this.btnPreviewWinds.Size = new System.Drawing.Size(56, 20);
@@ -413,9 +448,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewWinds
       // 
-      this.pictureBoxPreviewWinds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewWinds.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewWinds.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewWinds.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewWinds.Name = "pictureBoxPreviewWinds";
@@ -427,8 +464,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxWindURL
       // 
-      this.textBoxWindURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxWindURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxWindURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxWindURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxWindURL.Name = "textBoxWindURL";
@@ -449,7 +488,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewHumidity
       // 
-      this.btnPreviewHumidity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewHumidity.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewHumidity.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewHumidity.Name = "btnPreviewHumidity";
       this.btnPreviewHumidity.Size = new System.Drawing.Size(56, 20);
@@ -460,9 +501,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewHumidity
       // 
-      this.pictureBoxPreviewHumidity.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewHumidity.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewHumidity.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewHumidity.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewHumidity.Name = "pictureBoxPreviewHumidity";
@@ -474,8 +517,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxHumURL
       // 
-      this.textBoxHumURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxHumURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxHumURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxHumURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxHumURL.Name = "textBoxHumURL";
@@ -496,7 +541,9 @@ namespace MediaPortal.Configuration
       // 
       // btnPreviewPrecip
       // 
-      this.btnPreviewPrecip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnPreviewPrecip.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPreviewPrecip.Location = new System.Drawing.Point(363, 6);
       this.btnPreviewPrecip.Name = "btnPreviewPrecip";
       this.btnPreviewPrecip.Size = new System.Drawing.Size(56, 20);
@@ -507,9 +554,11 @@ namespace MediaPortal.Configuration
       // 
       // pictureBoxPreviewPrecip
       // 
-      this.pictureBoxPreviewPrecip.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBoxPreviewPrecip.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxPreviewPrecip.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pictureBoxPreviewPrecip.Location = new System.Drawing.Point(6, 32);
       this.pictureBoxPreviewPrecip.Name = "pictureBoxPreviewPrecip";
@@ -521,8 +570,10 @@ namespace MediaPortal.Configuration
       // 
       // textBoxPrecURL
       // 
-      this.textBoxPrecURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPrecURL.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxPrecURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPrecURL.Location = new System.Drawing.Point(6, 6);
       this.textBoxPrecURL.Name = "textBoxPrecURL";
@@ -531,14 +582,17 @@ namespace MediaPortal.Configuration
       // 
       // listBoxCityResults
       // 
-      this.listBoxCityResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listBoxCityResults.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.listBoxCityResults.Location = new System.Drawing.Point(11, 34);
       this.listBoxCityResults.Name = "listBoxCityResults";
       this.listBoxCityResults.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
       this.listBoxCityResults.Size = new System.Drawing.Size(433, 69);
       this.listBoxCityResults.TabIndex = 6;
-      this.listBoxCityResults.SelectedIndexChanged += new System.EventHandler(this.listBoxCityResults_SelectedIndexChanged);
+      this.listBoxCityResults.SelectedIndexChanged +=
+        new System.EventHandler(this.listBoxCityResults_SelectedIndexChanged);
       // 
       // labelCityResults
       // 
@@ -560,7 +614,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonCitySearch
       // 
-      this.buttonCitySearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCitySearch.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCitySearch.Enabled = false;
       this.buttonCitySearch.Location = new System.Drawing.Point(396, 21);
       this.buttonCitySearch.Name = "buttonCitySearch";
@@ -572,7 +628,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonAddCity
       // 
-      this.buttonAddCity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAddCity.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonAddCity.Enabled = false;
       this.buttonAddCity.Location = new System.Drawing.Point(315, 406);
       this.buttonAddCity.Name = "buttonAddCity";
@@ -585,8 +643,10 @@ namespace MediaPortal.Configuration
       // 
       // searchTextBox
       // 
-      this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.searchTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.searchTextBox.BorderColor = System.Drawing.Color.Empty;
       this.searchTextBox.Location = new System.Drawing.Point(148, 21);
       this.searchTextBox.Name = "searchTextBox";
@@ -614,38 +674,35 @@ namespace MediaPortal.Configuration
       this.tabControlCityURLs.ResumeLayout(false);
       this.tabPageSatImg.ResumeLayout(false);
       this.tabPageSatImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewSat)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewSat)).EndInit();
       this.tabPageTempImg.ResumeLayout(false);
       this.tabPageTempImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewTemp)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewTemp)).EndInit();
       this.tabPageUVImg.ResumeLayout(false);
       this.tabPageUVImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewUV)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewUV)).EndInit();
       this.tabPageWindsImg.ResumeLayout(false);
       this.tabPageWindsImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewWinds)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewWinds)).EndInit();
       this.tabPageHumImg.ResumeLayout(false);
       this.tabPageHumImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewHumidity)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewHumidity)).EndInit();
       this.tabPagePrecImg.ResumeLayout(false);
       this.tabPagePrecImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewPrecip)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewPrecip)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
+    private ArrayList selectedCities = new ArrayList();
 
-    ArrayList selectedCities = new ArrayList();
     public ArrayList SelectedCities
     {
-      get
-      {
-        return selectedCities;
-      }
+      get { return selectedCities; }
     }
 
-    private void buttonCitySearch_Click(object sender, System.EventArgs e)
+    private void buttonCitySearch_Click(object sender, EventArgs e)
     {
       // Disable add button
       buttonAddCity.Enabled = false;
@@ -664,7 +721,9 @@ namespace MediaPortal.Configuration
           listBoxCityResults.Items.Add(city);
 
           if (listBoxCityResults.Items.Count == 1)
+          {
             listBoxCityResults.SelectedItem = listBoxCityResults.Items[0];
+          }
         }
         if (listBoxCityResults.Items.Count > 0)
         {
@@ -675,8 +734,11 @@ namespace MediaPortal.Configuration
         }
         else
         {
-          if (MessageBox.Show("No cities found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
+          if (MessageBox.Show("No cities found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
+              DialogResult.OK)
+          {
             searchTextBox.Focus();
+          }
         }
       }
       catch (Exception ex)
@@ -685,7 +747,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void searchTextBox_TextChanged(object sender, System.EventArgs e)
+    private void searchTextBox_TextChanged(object sender, EventArgs e)
     {
       buttonCitySearch.Enabled = searchTextBox.Text.Length > 0;
     }
@@ -693,10 +755,12 @@ namespace MediaPortal.Configuration
     private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter && searchTextBox.Focused)
+      {
         this.buttonCitySearch.PerformClick();
+      }
     }
 
-    private void buttonAddCity_Click(object sender, System.EventArgs e)
+    private void buttonAddCity_Click(object sender, EventArgs e)
     {
       if (listBoxCityResults.SelectedItems.Count > 0)
       {
@@ -715,18 +779,18 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void closeButton_Click(object sender, System.EventArgs e)
+    private void closeButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Hide();
     }
 
-    private void listBoxCityResults_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void listBoxCityResults_SelectedIndexChanged(object sender, EventArgs e)
     {
       buttonAddCity.Enabled = listBoxCityResults.SelectedItems.Count > 0;
     }
 
-    private void SearchCityForm_Load(object sender, System.EventArgs e)
+    private void SearchCityForm_Load(object sender, EventArgs e)
     {
       this.Height = 56 + 50;
       groupBoxCityDetails.Visible = false;
@@ -779,7 +843,9 @@ namespace MediaPortal.Configuration
       {
         Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_WeatherImages");
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
     private void SetPreviewImage(string aFilename, PictureBox aPreviewArea)
@@ -796,11 +862,15 @@ namespace MediaPortal.Configuration
             aPreviewArea.Image = preview;
           }
           else
-            MessageBox.Show(this, string.Format("Your link is not working!"), "Invalid location", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          {
+            MessageBox.Show(this, string.Format("Your link is not working!"), "Invalid location", MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+          }
         }
         catch (Exception ex)
         {
-          MessageBox.Show(this, string.Format("No usable image detected! \n{0}", ex.Message), "Invalid data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          MessageBox.Show(this, string.Format("No usable image detected! \n{0}", ex.Message), "Invalid data",
+                          MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
       }
     }
@@ -846,6 +916,5 @@ namespace MediaPortal.Configuration
       Util.Utils.DownLoadImage(textBoxPrecURL.Text, tempFile);
       SetPreviewImage(tempFile, pictureBoxPreviewPrecip);
     }
-
   }
 }

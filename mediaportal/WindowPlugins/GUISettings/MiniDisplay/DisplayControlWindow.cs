@@ -23,23 +23,17 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class DisplayControlWindow : GUIWindow
   {
-    [SkinControlAttribute(40)]
-    protected GUIToggleButtonControl btnDisplayVideo = null;
-    [SkinControlAttribute(41)]
-    protected GUIToggleButtonControl btnDisplayAction = null;
-    [SkinControlAttribute(42)]
-    protected GUISelectButtonControl btnDisplayActionTime = null;
-    [SkinControlAttribute(43)]
-    protected GUIToggleButtonControl btnDisplayIdle = null;
-    [SkinControlAttribute(44)]
-    protected GUISelectButtonControl btnIdleDelay = null;
+    [SkinControl(40)] protected GUIToggleButtonControl btnDisplayVideo = null;
+    [SkinControl(41)] protected GUIToggleButtonControl btnDisplayAction = null;
+    [SkinControl(42)] protected GUISelectButtonControl btnDisplayActionTime = null;
+    [SkinControl(43)] protected GUIToggleButtonControl btnDisplayIdle = null;
+    [SkinControl(44)] protected GUISelectButtonControl btnIdleDelay = null;
     private DisplayControl DisplayControl = new DisplayControl();
 
     public DisplayControlWindow()
@@ -189,4 +183,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     }
   }
 }
-

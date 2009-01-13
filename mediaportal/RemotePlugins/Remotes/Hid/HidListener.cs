@@ -24,24 +24,22 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Threading;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Util;
-using MediaPortal.Hooks;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Hooks;
+using MediaPortal.Profile;
 
 namespace MediaPortal.InputDevices
 {
   public class HidListener
   {
-    bool controlEnabled = false;
-    bool controlEnabledGlobally = false;
-    bool logVerbose = false;           // Verbose logging
-    InputHandler _inputHandler;
-    KeyboardHook _keyboardHook;
+    private bool controlEnabled = false;
+    private bool controlEnabledGlobally = false;
+    private bool logVerbose = false; // Verbose logging
+    private InputHandler _inputHandler;
+    private KeyboardHook _keyboardHook;
 
     public HidListener()
     {
@@ -52,9 +50,9 @@ namespace MediaPortal.InputDevices
       Init();
     }
 
-    void Init()
+    private void Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
         controlEnabledGlobally = xmlreader.GetValueAsBool("remote", "HIDGlobal", false);
@@ -82,13 +80,15 @@ namespace MediaPortal.InputDevices
     public void DeInit()
     {
       if (_keyboardHook != null && _keyboardHook.IsEnabled)
+      {
         _keyboardHook.IsEnabled = false;
+      }
     }
 
     [DllImport("user32.dll")]
-    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+    private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
 
-    void OnKeyDown(object sender, KeyEventArgs e)
+    private void OnKeyDown(object sender, KeyEventArgs e)
     {
       if (GUIGraphicsContext.form != null && GUIGraphicsContext.form.Focused == false)
       {
@@ -97,18 +97,18 @@ namespace MediaPortal.InputDevices
         if (appCommand != AppCommands.None)
         {
           int device = 0;
-          int keys = (((int)appCommand & ~0xF000) | (device & 0xF000));
-          int lParam = (((keys) << 16) | (((int)e.KeyCode)));
+          int keys = (((int) appCommand & ~0xF000) | (device & 0xF000));
+          int lParam = (((keys) << 16) | (((int) e.KeyCode)));
 
           // since the normal process involves geting polled via WndProc we have to get a tiny bit dirty 
           // and send a message back to the main form in order to get the key press handled without 
           // duplicating action mapping code from the main app
-          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
+          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint) GUIGraphicsContext.form.Handle, (uint) lParam);
         }
       }
     }
 
-    AppCommands KeyCodeToAppCommand(Keys keyCode)
+    private AppCommands KeyCodeToAppCommand(Keys keyCode)
     {
       switch (keyCode)
       {
@@ -134,34 +134,45 @@ namespace MediaPortal.InputDevices
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
-      key = (char)0;
+      key = (char) 0;
       keyCode = Keys.A;
 
       if (controlEnabled)
       {
         // we are only interested in WM_APPCOMMAND
         if (msg.Msg != 0x0319)
+        {
           return false;
+        }
 
-        AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+        AppCommands appCommand = (AppCommands) ((msg.LParam.ToInt32() >> 16) & ~0xF000);
 
         // find out which request the MCE remote handled last
-        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) && (appCommand != AppCommands.VolumeUp))
+        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
+            (appCommand != AppCommands.VolumeUp))
         {
-          if (Enum.IsDefined(typeof(AppCommands), InputDevices.LastHidRequest))
+          if (Enum.IsDefined(typeof (AppCommands), InputDevices.LastHidRequest))
           {
             // possible that it is the same request mapped to an app command?
             if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+            {
               return true;
+            }
           }
         }
 
         InputDevices.LastHidRequest = appCommand;
 
-        if (logVerbose) Log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
+        if (logVerbose)
+        {
+          Log.Info("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000),
+                   InputDevices.LastHidRequest.ToString());
+        }
 
         if (!_inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
+        {
           return false;
+        }
 
         msg.Result = new IntPtr(1);
 

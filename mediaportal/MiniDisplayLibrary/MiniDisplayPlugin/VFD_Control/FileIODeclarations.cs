@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
@@ -58,11 +59,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     [DllImport("kernel32.dll")]
     public static extern int CloseHandle(int hObject);
 
-    [DllImport("kernel32.dll", CharSet=CharSet.Auto)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
     public static extern int CreateEvent(ref SECURITY_ATTRIBUTES SecurityAttributes, int bManualReset, int bInitialState,
                                          string lpName);
 
-    [DllImport("kernel32.dll", CharSet=CharSet.Auto)]
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
     public static extern int
       CreateFile(string lpFileName, uint dwDesiredAccess, uint dwShareMode, ref SECURITY_ATTRIBUTES lpSecurityAttributes,
                  int dwCreationDisposition, uint dwFlagsAndAttributes, int hTemplateFile);

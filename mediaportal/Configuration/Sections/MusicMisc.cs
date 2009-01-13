@@ -23,80 +23,78 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration.Sections
 {
-    public partial class MusicMisc : MediaPortal.Configuration.SectionSettings
+  public partial class MusicMisc : SectionSettings
+  {
+    private string[] JumpToOptions = new string[] {"Now Playing", "Playlist", "Don't jump (stay at current window)"};
+
+    public MusicMisc()
+      : this("Music Miscellaneous")
     {
-        string[] JumpToOptions = new string[] { "Now Playing", "Playlist", "Don't jump (stay at current window)" };
-
-        public MusicMisc()
-            : this("Music Miscellaneous")
-        {
-        }
-
-        public MusicMisc(string name) : base(name)
-        {
-            InitializeComponent();
-
-            PlayNowJumpToCmbBox.Items.Clear();
-            PlayNowJumpToCmbBox.Items.AddRange(JumpToOptions);
-        }
-
-        public override void OnSectionActivated()
-        {
-            base.OnSectionActivated();
-        }
-
-        public override void LoadSettings()
-        {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-                string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-
-                switch (playNowJumpTo)
-                {
-                    case "nowplaying":
-                        PlayNowJumpToCmbBox.Text = JumpToOptions[0];
-                        break;
-
-                    case "playlist":
-                        PlayNowJumpToCmbBox.Text = JumpToOptions[1];
-                        break;
-
-                    case "none":
-                        PlayNowJumpToCmbBox.Text = JumpToOptions[2];
-                        break;
-                }
-
-            }
-        }
-
-        public override void SaveSettings()
-        {
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-                string playNowJumpTo = "nowplaying";
-
-                if (PlayNowJumpToCmbBox.Text == JumpToOptions[0])   // Now playing
-                    playNowJumpTo = "nowplaying";
-
-                else if (PlayNowJumpToCmbBox.Text == JumpToOptions[1])
-                    playNowJumpTo = "playlist";
-                
-                else
-                    playNowJumpTo = "none";
-
-                xmlwriter.SetValue("musicmisc", "playnowjumpto", playNowJumpTo);
-            }
-        }
     }
+
+    public MusicMisc(string name) : base(name)
+    {
+      InitializeComponent();
+
+      PlayNowJumpToCmbBox.Items.Clear();
+      PlayNowJumpToCmbBox.Items.AddRange(JumpToOptions);
+    }
+
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+    }
+
+    public override void LoadSettings()
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
+
+        switch (playNowJumpTo)
+        {
+          case "nowplaying":
+            PlayNowJumpToCmbBox.Text = JumpToOptions[0];
+            break;
+
+          case "playlist":
+            PlayNowJumpToCmbBox.Text = JumpToOptions[1];
+            break;
+
+          case "none":
+            PlayNowJumpToCmbBox.Text = JumpToOptions[2];
+            break;
+        }
+      }
+    }
+
+    public override void SaveSettings()
+    {
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string playNowJumpTo = "nowplaying";
+
+        if (PlayNowJumpToCmbBox.Text == JumpToOptions[0]) // Now playing
+        {
+          playNowJumpTo = "nowplaying";
+        }
+
+        else if (PlayNowJumpToCmbBox.Text == JumpToOptions[1])
+        {
+          playNowJumpTo = "playlist";
+        }
+
+        else
+        {
+          playNowJumpTo = "none";
+        }
+
+        xmlwriter.SetValue("musicmisc", "playnowjumpto", playNowJumpTo);
+      }
+    }
+  }
 }

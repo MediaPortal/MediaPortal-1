@@ -23,13 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Drawing;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-
 
 namespace MediaPortal.Dialogs
 {
@@ -38,15 +33,15 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogText : GUIDialogWindow
   {
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(3)]    protected GUITextControl txtArea = null;
-    [SkinControlAttribute(4)]    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(5)]    protected GUIImage imgLogo = null;
+    [SkinControl(2)] protected GUIButtonControl btnClose = null;
+    [SkinControl(3)] protected GUITextControl txtArea = null;
+    [SkinControl(4)] protected GUILabelControl lblHeading = null;
+    [SkinControl(5)] protected GUIImage imgLogo = null;
 
 
     public GUIDialogText()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TEXT;
+      GetID = (int) Window.WINDOW_DIALOG_TEXT;
     }
 
     public override bool Init()
@@ -70,7 +65,7 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnClose)
@@ -90,7 +85,6 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-
       SetHeading(GUILocalizeStrings.Get(iString));
     }
 
@@ -102,19 +96,17 @@ namespace MediaPortal.Dialogs
 
     public void SetImage(string filename)
     {
-
       imgLogo.FreeResources();
       imgLogo.SetFileName(filename);
       imgLogo.AllocResources();
     }
 
-    public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
+    public void SetImageDimensions(Size size, bool keepAspectRatio, bool centered)
     {
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
       imgLogo.Centered = centered;
     }
-
   }
 }

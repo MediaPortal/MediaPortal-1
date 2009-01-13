@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
@@ -9,13 +8,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
   {
     public string keyName;
     public string Value;
+
     public structXPLMsg(string newKeyName, string newKeyValue)
     {
       try
       {
         this.keyName = newKeyName;
         this.Value = newKeyValue;
-      } catch
+      }
+      catch
       {
         this.keyName = string.Empty;
         this.Value = string.Empty;
@@ -24,4 +25,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     }
   }
 }
-

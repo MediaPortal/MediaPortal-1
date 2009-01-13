@@ -1,20 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
-using Un4seen.Bass;
-using DShowNET.AudioMixer;
-using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
-using MediaPortal.Configuration;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -198,7 +183,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
   [StructLayout(LayoutKind.Sequential)]
   public struct SystemStatus
   {
-    public MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status CurrentPluginStatus;
+    public Status CurrentPluginStatus;
     public ulong CurrentIconMask;
     public bool MP_Is_Idle;
     public int SystemVolumeLevel;
@@ -236,4 +221,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     WindowID_RemoteControl = 0x4daa
   }
 }
-

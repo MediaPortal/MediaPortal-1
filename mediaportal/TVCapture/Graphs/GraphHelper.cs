@@ -24,27 +24,25 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Management;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Win32;
-using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
-using TVCapture;
 using MediaPortal.GUI.Library;
+using Microsoft.Win32;
+using TVCapture;
 
 namespace MediaPortal.TV.Recording
 {
   public class GraphHelper
   {
     #region variables
+
     private bool _definitionLoaded = false;
     private CaptureCardDefinition _captureCardDefinition = new CaptureCardDefinition();
     private string _deviceId;
     //private string _captureName;
     private string _commercialName;
+
     #endregion
 
     #region properties
@@ -53,8 +51,14 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition == null) return null;
-        if (_captureCardDefinition.Tv == null) return null;
+        if (_captureCardDefinition == null)
+        {
+          return null;
+        }
+        if (_captureCardDefinition.Tv == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Tv.FilterDefinitions;
       }
     }
@@ -66,11 +70,18 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition == null) return null;
-        if (_captureCardDefinition.Tv == null) return null;
+        if (_captureCardDefinition == null)
+        {
+          return null;
+        }
+        if (_captureCardDefinition.Tv == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Tv.ConnectionDefinitions;
       }
     }
+
     /// <summary>
     /// #MW#
     /// </summary>
@@ -78,7 +89,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition.Tv == null) return null;
+        if (_captureCardDefinition.Tv == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Tv.InterfaceDefinition;
       }
     }
@@ -90,7 +104,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition.Radio == null) return null;
+        if (_captureCardDefinition.Radio == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Radio.FilterDefinitions;
       }
     }
@@ -102,7 +119,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition.Radio == null) return null;
+        if (_captureCardDefinition.Radio == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Radio.ConnectionDefinitions;
       }
     }
@@ -114,7 +134,10 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_captureCardDefinition.Radio == null) return null;
+        if (_captureCardDefinition.Radio == null)
+        {
+          return null;
+        }
         return _captureCardDefinition.Radio.InterfaceDefinition;
       }
     }
@@ -125,10 +148,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string DeviceId
     {
-      get
-      {
-        return _deviceId;
-      }
+      get { return _deviceId; }
       set
       {
         if (_deviceId != value)
@@ -137,7 +157,9 @@ namespace MediaPortal.TV.Recording
           _definitionLoaded = false;
         }
       }
-    }/*
+    }
+
+    /*
 
     /// <summary>
     /// #MW#
@@ -153,15 +175,13 @@ namespace MediaPortal.TV.Recording
         }
       }
     }*/
+
     /// <summary>
     /// #MW#
     /// </summary>
     public string CommercialName
     {
-      get
-      {
-        return _commercialName;
-      }
+      get { return _commercialName; }
       set
       {
         if (_commercialName != value)
@@ -171,6 +191,7 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
     /// <summary>
     /// #MW#
     /// </summary>
@@ -178,15 +199,19 @@ namespace MediaPortal.TV.Recording
     {
       get { return _captureCardDefinition.Capabilities; }
     }
+
     #endregion
 
     #region Constructors
+
     public GraphHelper()
     {
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// This method:
     /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
@@ -216,10 +241,14 @@ namespace MediaPortal.TV.Recording
       // find the device entry in SYSTEM\CurrentControlSet\Enum\[device moniker]
       int pos1 = monikerName.IndexOf("#");
       if (pos1 < 0)
+      {
         return 0;
+      }
       int pos2 = monikerName.LastIndexOf("#");
       if (pos2 == pos1)
+      {
         return 0;
+      }
       string left = monikerName.Substring(0, pos1);
       string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
       mid = mid.Replace("#", "/");
@@ -227,15 +256,18 @@ namespace MediaPortal.TV.Recording
       string registryKeyName = left + @"\" + mid + @"\" + right;
 
       if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
+      {
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
+      }
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
       Log.Info("      key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+      {
         if (subkey != null)
         {
           //Get the name of the service which handles this device
-          string serviceName = (string)subkey.GetValue("Service");
+          string serviceName = (string) subkey.GetValue("Service");
 
           //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
           Log.Info("        serviceName:{0}", serviceName);
@@ -243,15 +275,16 @@ namespace MediaPortal.TV.Recording
           Log.Info("        key:{0}", registryKeyName);
 
           using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+          {
             if (subkey2 != null)
             {
               // get the number of instances for the device
-              Int32 count = (Int32)subkey2.GetValue("Count");
+              Int32 count = (Int32) subkey2.GetValue("Count");
 
               Log.Info("        Number of cards:{0}", count);
               for (int i = 0; i < count; i++)
               {
-                string moniker = (string)subkey2.GetValue(i.ToString());
+                string moniker = (string) subkey2.GetValue(i.ToString());
                 moniker = moniker.Replace(@"\", "#");
                 moniker = moniker.Replace(@"/", "#");
                 Log.Info("          card#{0}={1}", i, moniker);
@@ -261,7 +294,7 @@ namespace MediaPortal.TV.Recording
               for (int i = 0; i < count; i++)
               {
                 //get the moniker
-                string moniker = (string)subkey2.GetValue(i.ToString());
+                string moniker = (string) subkey2.GetValue(i.ToString());
                 moniker = moniker.Replace(@"\", "#");
                 moniker = moniker.Replace(@"/", "#");
 
@@ -279,9 +312,12 @@ namespace MediaPortal.TV.Recording
               Log.Info("        using default card:0 (subkey not found)");
               return 0;
             }
+          }
         }
+      }
       return -1;
     }
+
     /// <summary>
     /// This method:
     /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
@@ -317,32 +353,36 @@ namespace MediaPortal.TV.Recording
       string registryKeyName = left + @"\" + mid + @"\" + right;
 
       if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
+      {
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
+      }
 
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
       Log.Info("        key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+      {
         if (subkey != null)
         {
-          string serviceName = (string)subkey.GetValue("Service");
+          string serviceName = (string) subkey.GetValue("Service");
           Log.Info("        serviceName:{0}", serviceName);
           registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
           Log.Info("        key:{0}", registryKeyName);
 
           using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+          {
             if (subkey2 != null)
             {
-              Int32 count = (Int32)subkey2.GetValue("Count");
+              Int32 count = (Int32) subkey2.GetValue("Count");
               Log.Info("        filters available:{0}", count);
               for (int i = 0; i < count; ++i)
               {
-                string moniker = (string)subkey2.GetValue(i.ToString());
+                string moniker = (string) subkey2.GetValue(i.ToString());
                 moniker = moniker.Replace(@"\", "#");
                 moniker = moniker.Replace(@"/", "#");
                 Log.Info("          filter#:{0}={1}", i, moniker);
               }
-              string monikerToUse = (string)subkey2.GetValue(instance.ToString());
+              string monikerToUse = (string) subkey2.GetValue(instance.ToString());
               monikerToUse = monikerToUse.Replace(@"\", "#");
               monikerToUse = monikerToUse.Replace(@"/", "#");
               Log.Info("        using filter #:{0}={1}", instance, monikerToUse);
@@ -352,7 +392,9 @@ namespace MediaPortal.TV.Recording
             {
               return string.Empty;
             }
+          }
         }
+      }
       return string.Empty;
     }
 
@@ -368,9 +410,15 @@ namespace MediaPortal.TV.Recording
       //Log.Info("    GetHardwareLocation: filter:{1}", monikerName);
 
       int pos1 = monikerName.IndexOf("#");
-      if (pos1 < 0) return string.Empty;
+      if (pos1 < 0)
+      {
+        return string.Empty;
+      }
       int pos2 = monikerName.LastIndexOf("#");
-      if (pos2 < 0) return string.Empty;
+      if (pos2 < 0)
+      {
+        return string.Empty;
+      }
       string left = monikerName.Substring(0, pos1);
       string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
       mid = mid.Replace("#", "\\");
@@ -381,34 +429,73 @@ namespace MediaPortal.TV.Recording
       Log.Info("        key:{0}", registryKeyName);
 
       using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+      {
         if (subkey != null)
         {
-          string locInfo = (string)subkey.GetValue("LocationInformation");
-          if (locInfo == null) locInfo = string.Empty;
+          string locInfo = (string) subkey.GetValue("LocationInformation");
+          if (locInfo == null)
+          {
+            locInfo = string.Empty;
+          }
           Log.Info("        LocationInformation:{0}", locInfo);
 
           int busPos, busEnd, devPos, devEnd = locInfo.Length - 1;
           // PCI function
-          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd])) devEnd--;
-          if (devEnd == 0) return string.Empty;
-          while (devEnd >= 0 && char.IsNumber(locInfo[devEnd])) devEnd--;
-          if (devEnd == 0) return string.Empty;
+          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd]))
+          {
+            devEnd--;
+          }
+          if (devEnd == 0)
+          {
+            return string.Empty;
+          }
+          while (devEnd >= 0 && char.IsNumber(locInfo[devEnd]))
+          {
+            devEnd--;
+          }
+          if (devEnd == 0)
+          {
+            return string.Empty;
+          }
           // PCI device
-          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd])) devEnd--;
-          if (devEnd == 0) return string.Empty;
+          while (devEnd >= 0 && !char.IsNumber(locInfo[devEnd]))
+          {
+            devEnd--;
+          }
+          if (devEnd == 0)
+          {
+            return string.Empty;
+          }
           devPos = devEnd;
-          while (devPos >= 0 && char.IsNumber(locInfo[devPos])) devPos--;
-          if (devPos == 0) return string.Empty;
+          while (devPos >= 0 && char.IsNumber(locInfo[devPos]))
+          {
+            devPos--;
+          }
+          if (devPos == 0)
+          {
+            return string.Empty;
+          }
           // PCI bus
           busEnd = devPos;
-          while (busEnd >= 0 && !char.IsNumber(locInfo[busEnd])) busEnd--;
-          if (busEnd == 0) return string.Empty;
+          while (busEnd >= 0 && !char.IsNumber(locInfo[busEnd]))
+          {
+            busEnd--;
+          }
+          if (busEnd == 0)
+          {
+            return string.Empty;
+          }
           busPos = busEnd;
-          while (busPos >= 0 && char.IsNumber(locInfo[--busPos])) busPos--;
-          locInfo = "PCI bus " + locInfo.Substring(busPos + 1, busEnd - busPos) + ", device " + locInfo.Substring(devPos + 1, devEnd - devPos);
+          while (busPos >= 0 && char.IsNumber(locInfo[--busPos]))
+          {
+            busPos--;
+          }
+          locInfo = "PCI bus " + locInfo.Substring(busPos + 1, busEnd - busPos) + ", device " +
+                    locInfo.Substring(devPos + 1, devEnd - devPos);
           Log.Info("        LocationInformation:{0}", locInfo);
           return locInfo;
         }
+      }
       return string.Empty;
     }
 
@@ -419,7 +506,10 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     public bool LoadDefinitions(string videoDevice, string videoDeviceMoniker)
     {
-      if (_definitionLoaded) return true;
+      if (_definitionLoaded)
+      {
+        return true;
+      }
       _definitionLoaded = true;
       _captureCardDefinition = null;
       try
@@ -447,14 +537,17 @@ namespace MediaPortal.TV.Recording
         //                     <------------------ ID ---------------->
         // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
         string deviceId = videoDeviceMoniker.ToLower();
-        string[] tmp1 = videoDeviceMoniker.Split((char[])"#".ToCharArray());
+        string[] tmp1 = videoDeviceMoniker.Split((char[]) "#".ToCharArray());
         if (tmp1.Length >= 2)
+        {
           deviceId = tmp1[1].ToLower();
+        }
 
         CaptureCardDefinition ccd = null;
         foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
         {
-          if (cd.DeviceId.ToLower().IndexOf(deviceId) == 0 && cd.CaptureName.ToLower() == videoDevice.ToLower() && cd.CommercialName.ToLower() == CommercialName.ToLower())
+          if (cd.DeviceId.ToLower().IndexOf(deviceId) == 0 && cd.CaptureName.ToLower() == videoDevice.ToLower() &&
+              cd.CommercialName.ToLower() == CommercialName.ToLower())
           {
             ccd = cd;
             break;
@@ -463,7 +556,9 @@ namespace MediaPortal.TV.Recording
         //
         // If card is unsupported, simply return
         if (_captureCardDefinition == null)
+        {
           _captureCardDefinition = new CaptureCardDefinition();
+        }
         if (ccd == null)
         {
           Log.Error(" CaptureCard {0} NOT supported, no definitions found", videoDevice);
@@ -502,10 +597,12 @@ namespace MediaPortal.TV.Recording
         // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
         string captureDeviceDeviceName = videoDeviceMoniker;
         int pos = captureDeviceDeviceName.LastIndexOf("#");
-        if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
+        if (pos >= 0)
+        {
+          captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
+        }
         Log.Info(" video device moniker   :{0}", videoDeviceMoniker);
         Log.Info(" captureDeviceDeviceName:{0}", captureDeviceDeviceName);
-
 
 
         Instance = FindInstanceForDevice(captureDeviceDeviceName);
@@ -527,21 +624,30 @@ namespace MediaPortal.TV.Recording
           {
             // check if this filter has the correct friendly name
             Filter tmpFilter;
-            List<Filter> al = (List<Filter>)AvailableFilters.Filters[key];
+            List<Filter> al = (List<Filter>) AvailableFilters.Filters[key];
             tmpFilter = al[0];
-            if (String.Compare(tmpFilter.Name, fd.FriendlyName, true) != 0) continue;
+            if (String.Compare(tmpFilter.Name, fd.FriendlyName, true) != 0)
+            {
+              continue;
+            }
             if (fd.CheckDevice)
             {
               //yes, then check all instances of this filter
               foreach (Filter directShowFilter in al)
               {
-                if (String.Compare(directShowFilter.Name, fd.FriendlyName, true) != 0) continue;
+                if (String.Compare(directShowFilter.Name, fd.FriendlyName, true) != 0)
+                {
+                  continue;
+                }
 
                 //next check if the moniker is the same as the capturedevice moniker 
                 //we got a direct show filter with the correct name.
                 string filterMoniker = directShowFilter.MonikerString;
                 int posTmp = filterMoniker.LastIndexOf("#");
-                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
+                if (posTmp >= 0)
+                {
+                  filterMoniker = filterMoniker.Substring(0, posTmp);
+                }
                 if (captureDeviceDeviceName.ToLower().IndexOf(filterMoniker.ToLower()) >= 0)
                 {
                   //yes, filter found
@@ -549,7 +655,7 @@ namespace MediaPortal.TV.Recording
                   fd.MonikerDisplayName = directShowFilter.MonikerString;
                   break;
                 }
-              }//foreach (Filter directShowFilter in al)
+              } //foreach (Filter directShowFilter in al)
             }
             else
             {
@@ -557,10 +663,16 @@ namespace MediaPortal.TV.Recording
               filterFound = true;
               fd.MonikerDisplayName = tmpFilter.MonikerString;
             }
-            if (filterFound) break;
-          }//foreach (string key in AvailableFilters.Filters.Keys)
+            if (filterFound)
+            {
+              break;
+            }
+          } //foreach (string key in AvailableFilters.Filters.Keys)
 
-          if (filterFound) continue;
+          if (filterFound)
+          {
+            continue;
+          }
 
           //filter not found
           //could be that filter has completly different moniker then the
@@ -570,7 +682,7 @@ namespace MediaPortal.TV.Recording
           {
             Filter filter;
             List<Filter> al = AvailableFilters.Filters[key];
-            filter = (Filter)al[0];
+            filter = (Filter) al[0];
 
             // if directshow filter name == video filter name
             if (filter.Name.ToLower() == fd.FriendlyName.ToLower())
@@ -582,7 +694,10 @@ namespace MediaPortal.TV.Recording
                 filter = al[0] as Filter;
                 string filterMoniker = filter.MonikerString;
                 int posTmp = filterMoniker.LastIndexOf("#");
-                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
+                if (posTmp >= 0)
+                {
+                  filterMoniker = filterMoniker.Substring(0, posTmp);
+                }
 
                 Log.Info("  CheckDevice:{0}", filterMoniker);
                 if (!filterFound)
@@ -614,18 +729,23 @@ namespace MediaPortal.TV.Recording
                     {
                       filter = f;
                       filterFound = true;
-                      Log.Info("Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
+                      Log.Info("Filter matched on hardware location: {1} -> {0}", f.MonikerString,
+                               GetHardwareLocation(f.MonikerString));
                       break;
                     }
                   }
-                  if (!filterFound) Log.Info("No filters matched on hardware location");
+                  if (!filterFound)
+                  {
+                    Log.Info("No filters matched on hardware location");
+                  }
                 }
 
                 if (!filterFound)
                 {
                   if (al.Count > 0)
                   {
-                    Log.Info("use global filter moniker (if you have two identical tuner cards and see this, you might experience problems using both)");
+                    Log.Info(
+                      "use global filter moniker (if you have two identical tuner cards and see this, you might experience problems using both)");
                     filter = al[0] as Filter;
                     filterFound = true;
                   }
@@ -639,7 +759,10 @@ namespace MediaPortal.TV.Recording
                   Log.Info("    Found {0}={1}", filter.Name, filter.MonikerString);
                 }
               }
-              else filterFound = true;
+              else
+              {
+                filterFound = true;
+              }
 
               // For found filter, get the unique name, the moniker display name which contains not only
               // things like the type of device, but also a reference (in case of PnP hardware devices)
@@ -649,8 +772,8 @@ namespace MediaPortal.TV.Recording
                 fd.MonikerDisplayName = filter.MonikerString;
                 break;
               }
-            }//if (filter.Name.Equals(fd.FriendlyName))
-          }//foreach (string key in AvailableFilters.Filters.Keys)
+            } //if (filter.Name.Equals(fd.FriendlyName))
+          } //foreach (string key in AvailableFilters.Filters.Keys)
           // If no filter found thats in the definitions file, we obviously made a mistake defining it
           // Log the error and return false...
           if (!filterFound)
@@ -661,8 +784,9 @@ namespace MediaPortal.TV.Recording
               return (false);
             }
           }
-        }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
-      } catch (Exception ex)
+        } //foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
+      }
+      catch (Exception ex)
       {
         Log.Error(ex);
         return (false);
@@ -671,6 +795,7 @@ namespace MediaPortal.TV.Recording
       Log.Info("LoadDefinitions done");
       return (true);
     }
+
     #endregion
   }
 }

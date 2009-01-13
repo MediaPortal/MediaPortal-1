@@ -26,18 +26,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
+using MediaPortal.Configuration;
+using MediaPortal.Core.Transcoding;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Core.Transcoding;
-using DirectShowLib.SBE;
+using MediaPortal.Util;
 using Mpeg2SplitterPackage;
 
 namespace WindowPlugins.VideoEditor
@@ -45,51 +44,43 @@ namespace WindowPlugins.VideoEditor
   public class GUIVideoEditor : GUIWindow
   {
     #region GUIControls
-    [SkinControlAttribute(23)]
-    protected GUILabelControl titelLbl = null;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl backBtn = null;
+
+    [SkinControl(23)] protected GUILabelControl titelLbl = null;
+    [SkinControl(24)] protected GUIButtonControl backBtn = null;
     //[SkinControlAttribute(25)]		//protected GUIButtonControl cancelBtn = null;
-    [SkinControlAttribute(32)]
-    protected GUILabelControl startTime = null;
-    [SkinControlAttribute(34)]
-    protected GUILabelControl oldDurationLbl = null;
-    [SkinControlAttribute(101)]
-    protected GUIListControl videoListLct = null;
-    [SkinControlAttribute(102)]
-    protected GUISpinControl joinCutSpinCtrl = null;
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl videoWindow = null;
-    [SkinControlAttribute(103)]
-    protected GUIListControl joinListCtrl = null;
-    [SkinControlAttribute(104)]
-    protected GUIButtonControl startJoinBtn = null;
-    [SkinControlAttribute(105)]
-    protected GUIProgressControl progressBar = null;
-    [SkinControlAttribute(106)]
-    protected GUILabelControl progressPercent = null;
+    [SkinControl(32)] protected GUILabelControl startTime = null;
+    [SkinControl(34)] protected GUILabelControl oldDurationLbl = null;
+    [SkinControl(101)] protected GUIListControl videoListLct = null;
+    [SkinControl(102)] protected GUISpinControl joinCutSpinCtrl = null;
+    [SkinControl(99)] protected GUIVideoControl videoWindow = null;
+    [SkinControl(103)] protected GUIListControl joinListCtrl = null;
+    [SkinControl(104)] protected GUIButtonControl startJoinBtn = null;
+    [SkinControl(105)] protected GUIProgressControl progressBar = null;
+    [SkinControl(106)] protected GUILabelControl progressPercent = null;
 
     #endregion
 
     #region Own Variables
-    const int maxDrives = 50;
-    int cntDrives = 0;
-    string[] drives = new string[maxDrives];
-    string currentFolder = "";
-    VirtualDirectory directory = VirtualDirectories.Instance.Movies;
-    ArrayList extensions;
-    VideoEditorPreview cutScr;
-    List<System.IO.FileInfo> joiningList;
-    string filetoConvert;
-    TVRecorded recInfo;
-    DvrMsModifier dvrmsMod;
+
+    private const int maxDrives = 50;
+    private int cntDrives = 0;
+    private string[] drives = new string[maxDrives];
+    private string currentFolder = "";
+    private VirtualDirectory directory = VirtualDirectories.Instance.Movies;
+    private ArrayList extensions;
+    private VideoEditorPreview cutScr;
+    private List<FileInfo> joiningList;
+    private string filetoConvert;
+    private TVRecorded recInfo;
+    private DvrMsModifier dvrmsMod;
     private Thread joinThread;
-    bool working = false;
+    private bool working = false;
+
     #endregion
 
     public GUIVideoEditor()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR;
+      GetID = (int) Window.WINDOW_VIDEO_EDITOR;
     }
 
     #region Overrides
@@ -98,7 +89,6 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-
         bool init = Load(GUIGraphicsContext.Skin + @"\VideoEditorStartScreen.xml");
         if (init)
         {
@@ -118,7 +108,7 @@ namespace WindowPlugins.VideoEditor
       base.OnPageLoad();
       try
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           currentFolder = xmlreader.GetValueAsString("VideoEditor", "lastUsedFolder", "");
         }
@@ -131,13 +121,13 @@ namespace WindowPlugins.VideoEditor
         videoListLct.UpdateLayout();
         startJoinBtn.IsEnabled = false;
         joinListCtrl.IsVisible = false;
-        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))  //Join
+        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078)) //Join
         {
           joinListCtrl.IsVisible = true;
           startJoinBtn.IsEnabled = true;
           titelLbl.Label = GUILocalizeStrings.Get(2074); //Please, choose the files you would like to join:
         }
-        joiningList = new List<System.IO.FileInfo>();
+        joiningList = new List<FileInfo>();
         progressBar.Visible = false;
 
         if (currentFolder == "")
@@ -146,26 +136,28 @@ namespace WindowPlugins.VideoEditor
           LoadDrives();
         }
         else
+        {
           LoadListControl(currentFolder, extensions);
+        }
         CheckHasMencoder();
       }
       catch (Exception ex)
       {
         Log.Error(ex);
       }
-
     }
+
     protected override void OnPageDestroy(int new_windowId)
     {
       g_Player.Release();
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("VideoEditor", "lastUsedFolder", currentFolder);
       }
       base.OnPageDestroy(new_windowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (working)
       {
@@ -182,13 +174,15 @@ namespace WindowPlugins.VideoEditor
         //System.Windows.Forms.MessageBox.Show(item.Path);
         if (!item.IsFolder)
         {
-          if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))	//Cut
-            ToCutScreen(item.Path);
-          if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))	//join
+          if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077)) //Cut
           {
-            joiningList.Add(new System.IO.FileInfo(item.Path));
+            ToCutScreen(item.Path);
+          }
+          if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078)) //join
+          {
+            joiningList.Add(new FileInfo(item.Path));
             extensions.Clear();
-            extensions.Add(System.IO.Path.GetExtension(item.Path));
+            extensions.Add(Path.GetExtension(item.Path));
             LoadListControl(currentFolder, extensions);
             // joinListCtrl.Add(new GUIListItem(item.Path));
             LoadJoinList();
@@ -200,19 +194,22 @@ namespace WindowPlugins.VideoEditor
             progressBar.Visible = true;
             int duration;
             g_Player.Play(item.Path);
-            duration = (int)g_Player.Duration;
+            duration = (int) g_Player.Duration;
             g_Player.Stop();
             dvrmsMod = new DvrMsModifier();
             dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
             dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
-            dvrmsMod.TranscodeToMpeg(new System.IO.FileInfo(item.Path), duration);
-
+            dvrmsMod.TranscodeToMpeg(new FileInfo(item.Path), duration);
           }
           if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066)) // Mpeg to divx
           {
             CompressionSettings comprSettings = new CompressionSettings();
-            CompressSettings settingWindow = (CompressSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS);
-            if (settingWindow == null) return;
+            CompressSettings settingWindow =
+              (CompressSettings) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS);
+            if (settingWindow == null)
+            {
+              return;
+            }
             //            settingWindow.Settings = comprSettings;   BAV: do you need this one here or only line 216
             settingWindow.DoModal(this.GetID);
             if (settingWindow.Result)
@@ -244,24 +241,28 @@ namespace WindowPlugins.VideoEditor
             progressBar.Visible = true;
             int duration;
             g_Player.Play(item.Path);
-            duration = (int)g_Player.Duration;
+            duration = (int) g_Player.Duration;
             g_Player.Stop();
             g_Player.Release();
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
             dvrmsMod = new DvrMsModifier();
             dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
             dvrmsMod.OnFinished += new DvrMsModifier.Finished(dvrmsMod_OnFinished);
-            dvrmsMod.ConvertToDivx(new System.IO.FileInfo(item.Path), duration);
+            dvrmsMod.ConvertToDivx(new FileInfo(item.Path), duration);
           }
         }
 
-        else if (item.Label.Substring(1, 1) == ":")  // is a drive
+        else if (item.Label.Substring(1, 1) == ":") // is a drive
         {
           currentFolder = item.Label;
           if (currentFolder != string.Empty)
+          {
             LoadListControl(currentFolder, extensions);
+          }
           else
+          {
             LoadShares();
+          }
           LoadDrives();
         }
         else
@@ -278,67 +279,67 @@ namespace WindowPlugins.VideoEditor
 
       if (control == joinCutSpinCtrl)
       {
-        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078))		//join
+        if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2078)) //join
         {
           joinListCtrl.IsVisible = true;
           startJoinBtn.IsEnabled = true;
           startJoinBtn.Label = GUILocalizeStrings.Get(2079); //Start joining
-          titelLbl.Label = GUILocalizeStrings.Get(2074);	//Please, choose the files you would like to join:
+          titelLbl.Label = GUILocalizeStrings.Get(2074); //Please, choose the files you would like to join:
           extensions.Clear();
           extensions.Add(".dvr-ms");
           extensions.Add(".mpeg");
           extensions.Add(".mpg");
           extensions.Add(".ts");
           LoadListControl(currentFolder, extensions);
-
         }
-        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077))		//cut
+        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2077)) //cut
         {
           joinListCtrl.IsVisible = false;
           startJoinBtn.IsEnabled = false;
-          titelLbl.Label = GUILocalizeStrings.Get(2092);	//Please, choose a file you would like to edit:
+          titelLbl.Label = GUILocalizeStrings.Get(2092); //Please, choose a file you would like to edit:
           extensions.Clear();
           extensions.Add(".dvr-ms");
           extensions.Add(".mpeg");
           extensions.Add(".mpg");
           extensions.Add(".ts");
           LoadListControl(currentFolder, extensions);
-
         }
-        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
+        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071)) //dvr-ms to mpeg
         {
           joinListCtrl.IsVisible = false;
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
-          titelLbl.Label = GUILocalizeStrings.Get(2073);		//"Please, choose a file you would like to convert:";
+          titelLbl.Label = GUILocalizeStrings.Get(2073); //"Please, choose a file you would like to convert:";
           extensions.Clear();
           extensions.Add(".dvr-ms");
           LoadListControl(currentFolder, extensions);
         }
-        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071))		//dvr-ms to mpeg
+        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2071)) //dvr-ms to mpeg
         {
           joinListCtrl.IsVisible = false;
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
-          titelLbl.Label = GUILocalizeStrings.Get(2073);		//"Please, choose a file you would like to convert:";
+          titelLbl.Label = GUILocalizeStrings.Get(2073); //"Please, choose a file you would like to convert:";
         }
-        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066))		//mpeg to divx
+        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066)) //mpeg to divx
         {
           joinListCtrl.IsVisible = false;
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
-          titelLbl.Label = GUILocalizeStrings.Get(2065);		//"Please, choose the mpeg file you would like to convert to divx:";
+          titelLbl.Label = GUILocalizeStrings.Get(2065);
+            //"Please, choose the mpeg file you would like to convert to divx:";
           extensions.Clear();
           extensions.Add(".mpeg");
           extensions.Add(".mpg");
           LoadListControl(currentFolder, extensions);
         }
-        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068))		//dvr-ms to divx
+        else if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2068)) //dvr-ms to divx
         {
           joinListCtrl.IsVisible = false;
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
-          titelLbl.Label = GUILocalizeStrings.Get(2067);		//"Please, choose the dvr-ms file you would like to convert to divx:";
+          titelLbl.Label = GUILocalizeStrings.Get(2067);
+            //"Please, choose the dvr-ms file you would like to convert to divx:";
         }
       }
 
@@ -368,11 +369,11 @@ namespace WindowPlugins.VideoEditor
       base.OnClicked(controlId, control, actionType);
     }
 
-    void divxConverter_OnFinished()
+    private void divxConverter_OnFinished()
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2070); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -381,9 +382,11 @@ namespace WindowPlugins.VideoEditor
       {
         try
         {
-          System.IO.File.Delete(filetoConvert);
+          File.Delete(filetoConvert);
         }
-        catch { }
+        catch
+        {
+        }
       }
       working = false;
       progressBar.Visible = false;
@@ -408,7 +411,7 @@ namespace WindowPlugins.VideoEditor
       {
         outPath = joiningList[0].FullName.Replace(".mpg", "_joined.mpg");
       }
-      outFilename = new System.IO.FileInfo(outPath);
+      outFilename = new FileInfo(outPath);
 
       if (outFilename.Exists)
       {
@@ -421,18 +424,19 @@ namespace WindowPlugins.VideoEditor
       //progressLbl.Label = "100";
       progressBar.Percentage = 100;
     }
-    void joinmod_OnFinished()
+
+    private void joinmod_OnFinished()
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2069); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
       yesnoDialog.DoModal(GetID);
       if (yesnoDialog.IsConfirmed)
       {
-        System.IO.File.Delete(filetoConvert);
+        File.Delete(filetoConvert);
         /*	recInfo = new TVRecorded();
 				
             if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
@@ -449,11 +453,11 @@ namespace WindowPlugins.VideoEditor
       LoadListControl(currentFolder, extensions);
     }
 
-    void dvrmsMod_OnFinished()
+    private void dvrmsMod_OnFinished()
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2070); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -461,11 +465,11 @@ namespace WindowPlugins.VideoEditor
       if (yesnoDialog.IsConfirmed)
       {
         recInfo = new TVRecorded();
-        System.IO.File.Delete(filetoConvert);
+        File.Delete(filetoConvert);
         if (TVDatabase.GetRecordedTVByFilename(filetoConvert, ref recInfo))
         {
           TVDatabase.RemoveRecordedTV(recInfo);
-          recInfo.FileName = System.IO.Path.ChangeExtension(filetoConvert, ".mpeg");
+          recInfo.FileName = Path.ChangeExtension(filetoConvert, ".mpeg");
           TVDatabase.AddRecordedTV(recInfo);
         }
       }
@@ -480,7 +484,7 @@ namespace WindowPlugins.VideoEditor
       LoadListControl(currentFolder, extensions);
     }
 
-    void OnProgress(int percentage)
+    private void OnProgress(int percentage)
     {
       progressBar.Percentage = percentage;
       progressPercent.Label = percentage.ToString();
@@ -489,7 +493,7 @@ namespace WindowPlugins.VideoEditor
     private void LoadJoinList()
     {
       joinListCtrl.Clear();
-      foreach (System.IO.FileInfo file in joiningList)
+      foreach (FileInfo file in joiningList)
       {
         joinListCtrl.Add(new GUIListItem(file.FullName));
       }
@@ -500,16 +504,18 @@ namespace WindowPlugins.VideoEditor
     public void CheckHasMencoder()
     {
       string mencoderPath = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mencoderPath = xmlreader.GetValueAsString("VideoEditor", "mencoder", "");
       }
-      bool hasMencoder = System.IO.File.Exists(mencoderPath);
+      bool hasMencoder = File.Exists(mencoderPath);
       if (!hasMencoder)
       {
-        hasMencoder = System.IO.File.Exists(System.Windows.Forms.Application.StartupPath + @"\mencoder.exe");
+        hasMencoder = File.Exists(Application.StartupPath + @"\mencoder.exe");
         if (hasMencoder)
-          mencoderPath = System.Windows.Forms.Application.StartupPath + @"\mencoder.exe";
+        {
+          mencoderPath = Application.StartupPath + @"\mencoder.exe";
+        }
       }
       if (!hasMencoder)
       {
@@ -517,7 +523,7 @@ namespace WindowPlugins.VideoEditor
       }
     }
 
-    enum DriveType
+    private enum DriveType
     {
       Removable = 2,
       Fixed = 3,
@@ -535,11 +541,11 @@ namespace WindowPlugins.VideoEditor
       cntDrives = 0;
       foreach (string drive in Environment.GetLogicalDrives())
       {
-        switch ((DriveType)MediaPortal.Util.Utils.getDriveType(drive))
+        switch ((DriveType) Utils.getDriveType(drive))
         {
           case DriveType.Removable:
           case DriveType.CD:
-          //case DriveType.DVD:
+            //case DriveType.DVD:
           case DriveType.Fixed:
           case DriveType.RemoteDisk:
           case DriveType.RamDisk:
@@ -563,7 +569,7 @@ namespace WindowPlugins.VideoEditor
           GUIListItem item = new GUIListItem(drives[i]);
           item.IsFolder = true;
           item.Path = drives[i];
-          MediaPortal.Util.Utils.SetDefaultIcons(item);
+          Utils.SetDefaultIcons(item);
           videoListLct.Add(item);
         }
       }
@@ -585,7 +591,9 @@ namespace WindowPlugins.VideoEditor
       try
       {
         if (folder != null && folder != "")
-          folder = MediaPortal.Util.Utils.RemoveTrailingSlash(folder);
+        {
+          folder = Utils.RemoveTrailingSlash(folder);
+        }
 
         //directory = new VirtualDirectory();
         directory.SetExtensions(exts);
@@ -610,7 +618,10 @@ namespace WindowPlugins.VideoEditor
             {
               string prevFolder = "";
               int pos = folder.LastIndexOf(@"\");
-              if (pos >= 0) prevFolder = folder.Substring(0, pos);
+              if (pos >= 0)
+              {
+                prevFolder = folder.Substring(0, pos);
+              }
               pItem.Path = prevFolder;
             }
             Utils.SetDefaultIcons(pItem);
@@ -628,7 +639,10 @@ namespace WindowPlugins.VideoEditor
     protected override void OnShowContextMenu()
     {
       GUIListItem selected = joinListCtrl.SelectedListItem;
-      if (selected == null) return;
+      if (selected == null)
+      {
+        return;
+      }
       else
       {
         /* GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -655,7 +669,7 @@ namespace WindowPlugins.VideoEditor
 
     private void LoadShares()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -682,9 +696,13 @@ namespace WindowPlugins.VideoEditor
           share.Path = xmlreader.GetValueAsString("movies", strSharePath, string.Empty);
           string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("movies", strPincode, string.Empty));
           if (pinCode != string.Empty)
+          {
             share.Pincode = Convert.ToInt32(pinCode);
+          }
           else
+          {
             share.Pincode = -1;
+          }
 
           share.IsFtpShare = xmlreader.GetValueAsBool("movies", shareType, false);
           share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, string.Empty);
@@ -692,7 +710,7 @@ namespace WindowPlugins.VideoEditor
           share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("movies", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("movies", remoteFolder, "/");
-          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);
+          share.DefaultView = (Share.Views) xmlreader.GetValueAsInt("movies", shareViewPath, (int) Share.Views.List);
 
           if (share.Name.Length > 0)
           {
@@ -707,7 +725,10 @@ namespace WindowPlugins.VideoEditor
             }
             directory.Add(share);
           }
-          else break;
+          else
+          {
+            break;
+          }
         }
         //m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
       }
@@ -728,19 +749,23 @@ namespace WindowPlugins.VideoEditor
       try
       {
         if (filepath == null)
-          System.Windows.Forms.MessageBox.Show("No path");
+        {
+          MessageBox.Show("No path");
+        }
         if (cutScr == null)
         {
           cutScr = new VideoEditorPreview(filepath);
           cutScr.Init();
           if (GUIWindowManager.GetWindow(cutScr.GetID) == null)
           {
-            GUIWindow win = (GUIWindow)cutScr;
+            GUIWindow win = (GUIWindow) cutScr;
             GUIWindowManager.Add(ref win);
           }
         }
         else
+        {
           cutScr.CutFileName = filepath;
+        }
 
         GUIWindowManager.ActivateWindow(cutScr.GetID);
       }
@@ -749,6 +774,7 @@ namespace WindowPlugins.VideoEditor
         Log.Error("VideoEditor: (ToCutScreen) " + ex.Message);
       }
     }
+
     #endregion
   }
 }

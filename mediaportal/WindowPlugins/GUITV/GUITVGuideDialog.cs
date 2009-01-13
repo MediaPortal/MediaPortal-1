@@ -24,24 +24,11 @@
 #endregion
 
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-#endregion
 
+using System;
+using MediaPortal.GUI.Library;
+
+#endregion
 
 namespace MediaPortal.GUI.TV
 {
@@ -51,13 +38,15 @@ namespace MediaPortal.GUI.TV
   public class GUITVGuideDialog : GUITvGuideBase, IRenderLayer
   {
     #region Base Dialog Variables
-    bool m_bRunning = false;
+
+    private bool m_bRunning = false;
+
     #endregion
 
     public GUITVGuideDialog()
       : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE;
+      GetID = (int) Window.WINDOW_DIALOG_TVGUIDE;
     }
 
     public override bool Init()
@@ -72,12 +61,16 @@ namespace MediaPortal.GUI.TV
     }
 
     #region Base Dialog Members
+
     public void DoModal(int dwParentId)
     {
-      GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
-      if (null == parentWindow)      
+      GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId);
+      ;
+      if (null == parentWindow)
+      {
         return;
-      
+      }
+
       bool wasRouted = GUIWindowManager.IsRouted;
       //Log.Debug("GUITVGuideDialog: GetLayer");
       IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
@@ -94,9 +87,11 @@ namespace MediaPortal.GUI.TV
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)      
+      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
         GUIWindowManager.Process();
-      
+      }
+
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.UnRoute();
       GUIWindowManager.IsSwitchingToNewWindow = false;
@@ -110,6 +105,7 @@ namespace MediaPortal.GUI.TV
         GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
       }
     }
+
     #endregion
 
     public override bool OnMessage(GUIMessage message)
@@ -151,13 +147,14 @@ namespace MediaPortal.GUI.TV
           m_bRunning = false;
           return;
         case Action.ActionType.ACTION_SELECT_ITEM:
-		  m_bRunning = false;
-		  break;
+          m_bRunning = false;
+          break;
       }
       base.OnAction(action);
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return m_bRunning;
@@ -167,7 +164,7 @@ namespace MediaPortal.GUI.TV
     {
       Render(timePassed);
     }
+
     #endregion
   }
 }
-

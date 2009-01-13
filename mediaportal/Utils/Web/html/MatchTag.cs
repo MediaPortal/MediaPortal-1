@@ -23,22 +23,18 @@
 
 #endregion
 
-using System;
-using System.Web;
-using System.Text;
-
-using System.Collections;
-
 namespace MediaPortal.Utils.Web
 {
   public class MatchTag
   {
     #region Variables
-    string _fullTag;
-    string _tagName;
-    int _index;
-    int _lenght;
-    bool _isClose;
+
+    private string _fullTag;
+    private string _tagName;
+    private int _index;
+    private int _lenght;
+    private bool _isClose;
+
     #endregion
 
     #region Constructors/Destructors
@@ -52,7 +48,9 @@ namespace MediaPortal.Utils.Web
 
       int pos = _fullTag.IndexOf(' ');
       if (pos == -1)
+      {
         pos = _fullTag.Length - 1;
+      }
 
       int start = 1;
       _isClose = false;
@@ -62,7 +60,6 @@ namespace MediaPortal.Utils.Web
         _isClose = true;
       }
       _tagName = _fullTag.Substring(start, pos - start).ToLower();
-
     }
 
     #endregion
@@ -93,14 +90,18 @@ namespace MediaPortal.Utils.Web
     {
       get { return _isClose; }
     }
+
     #endregion
 
     #region Public Methods
+
     public bool SameType(MatchTag value)
     {
       if (_tagName == value._tagName &&
-        _isClose == value._isClose)
+          _isClose == value._isClose)
+      {
         return true;
+      }
 
       return false;
     }
@@ -109,6 +110,7 @@ namespace MediaPortal.Utils.Web
     {
       return _fullTag;
     }
+
     #endregion
   }
 }

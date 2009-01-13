@@ -24,18 +24,17 @@
 #endregion
 
 using System;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.MusicShareWatcher;
 using MediaPortal.Services;
-using System.Threading;
 
 namespace MediaPortal.MusicShareWatcher
 {
   public partial class MusicShareWatcher : Form
   {
-    bool bMonitoring;
-    static MusicShareWatcherHelper watcher = null;
+    private bool bMonitoring;
+    private static MusicShareWatcherHelper watcher = null;
 
     public MusicShareWatcher()
     {
@@ -48,13 +47,15 @@ namespace MediaPortal.MusicShareWatcher
       watcher.StartMonitor();
     }
 
-
     #region CommonMethods
+
     // Hide the window on startup into the tray
     private void OnResize(object sender, EventArgs e)
     {
       if (FormWindowState.Minimized == WindowState)
+      {
         Hide();
+      }
     }
 
     // Close the Watcher Application
@@ -83,6 +84,7 @@ namespace MediaPortal.MusicShareWatcher
 
     // React on Windows System Shutdown
     private const int WM_QUERYENDSESSION = 0x11;
+
     protected override void WndProc(ref Message msg)
     {
       if (msg.Msg == WM_QUERYENDSESSION)
@@ -93,6 +95,7 @@ namespace MediaPortal.MusicShareWatcher
       }
       base.WndProc(ref msg);
     }
+
     #endregion CommonMethods
   }
 }

@@ -24,49 +24,49 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Util;
-using MediaPortal.TagReader;
-using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_SelectPlugins : MediaPortal.Configuration.SectionSettings
+  public class Wizard_SelectPlugins : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel labelHD;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFolder;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel labelMusicCount;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPLabel labelPhotoCount;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPLabel labelMovieCount;
-    private MediaPortal.UserInterface.Controls.MPButton buttonStopStart;
-    private System.ComponentModel.IContainer components = null;
+    private MPGroupBox groupBox1;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPLabel labelHD;
+    private MPLabel label3;
+    private MPLabel labelFolder;
+    private MPLabel label4;
+    private MPLabel labelMusicCount;
+    private MPLabel label5;
+    private MPLabel labelPhotoCount;
+    private MPLabel label6;
+    private MPLabel labelMovieCount;
+    private MPButton buttonStopStart;
+    private IContainer components = null;
 
-    const int MaximumShares = 20;
-    long totalAudio;
-    long totalVideo;
-    long totalPhotos;
-    ArrayList sharesVideos = new ArrayList();
-    ArrayList sharesMusic = new ArrayList();
-    ArrayList sharesPhotos = new ArrayList();
-    bool stopScanning = false;
-    private System.Windows.Forms.ProgressBar progressBar1;
-    private System.Windows.Forms.Timer timer1;
-    private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
-    bool isScanning = false;
+    private const int MaximumShares = 20;
+    private long totalAudio;
+    private long totalVideo;
+    private long totalPhotos;
+    private ArrayList sharesVideos = new ArrayList();
+    private ArrayList sharesMusic = new ArrayList();
+    private ArrayList sharesPhotos = new ArrayList();
+    private bool stopScanning = false;
+    private ProgressBar progressBar1;
+    private Timer timer1;
+    private MPLabel fileLabel;
+    private bool isScanning = false;
 
     public Wizard_SelectPlugins()
       : this("Media Search")
@@ -76,7 +76,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_SelectPlugins(string name)
       : base(name)
     {
-
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -100,6 +99,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -128,9 +128,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.fileLabel);
       this.groupBox1.Controls.Add(this.progressBar1);
       this.groupBox1.Controls.Add(this.buttonStopStart);
@@ -154,8 +156,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 288);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 23);
@@ -163,8 +167,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(16, 264);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(440, 16);
@@ -173,7 +179,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonStopStart
       // 
-      this.buttonStopStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonStopStart.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonStopStart.Location = new System.Drawing.Point(384, 228);
       this.buttonStopStart.Name = "buttonStopStart";
       this.buttonStopStart.Size = new System.Drawing.Size(72, 22);
@@ -183,8 +191,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelMovieCount
       // 
-      this.labelMovieCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelMovieCount.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelMovieCount.Location = new System.Drawing.Point(176, 232);
       this.labelMovieCount.Name = "labelMovieCount";
       this.labelMovieCount.Size = new System.Drawing.Size(200, 16);
@@ -201,8 +211,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelPhotoCount
       // 
-      this.labelPhotoCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelPhotoCount.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelPhotoCount.Location = new System.Drawing.Point(176, 208);
       this.labelPhotoCount.Name = "labelPhotoCount";
       this.labelPhotoCount.Size = new System.Drawing.Size(280, 16);
@@ -219,8 +231,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelMusicCount
       // 
-      this.labelMusicCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelMusicCount.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelMusicCount.Location = new System.Drawing.Point(176, 184);
       this.labelMusicCount.Name = "labelMusicCount";
       this.labelMusicCount.Size = new System.Drawing.Size(280, 16);
@@ -237,8 +251,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelFolder
       // 
-      this.labelFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelFolder.Location = new System.Drawing.Point(128, 96);
       this.labelFolder.Name = "labelFolder";
       this.labelFolder.Size = new System.Drawing.Size(328, 64);
@@ -255,8 +271,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelHD
       // 
-      this.labelHD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelHD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.labelHD.Location = new System.Drawing.Point(128, 72);
       this.labelHD.Name = "labelHD";
       this.labelHD.Size = new System.Drawing.Size(328, 16);
@@ -291,11 +309,11 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    enum DriveType
+    private enum DriveType
     {
       Removable = 2,
       Fixed = 3,
@@ -305,7 +323,7 @@ namespace MediaPortal.Configuration.Sections
       RamDisk = 6
     }
 
-    private void buttonStop_Click(object sender, System.EventArgs e)
+    private void buttonStop_Click(object sender, EventArgs e)
     {
       if (!isScanning)
       {
@@ -319,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void SetDefaultShares()
+    private void SetDefaultShares()
     {
       //string[] drives = Environment.GetLogicalDrives();
       //foreach (string drive in drives)
@@ -344,10 +362,10 @@ namespace MediaPortal.Configuration.Sections
       //SaveShare(sharesMusic, "music");
       //SaveShare(sharesPhotos, "pictures");
       //SaveShare(sharesVideos, "movies");
-      MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(true, true, true, true);
+      VirtualDirectory.SetInitialDefaultShares(true, true, true, true);
     }
 
-    void DoScan()
+    private void DoScan()
     {
       isScanning = true;
       stopScanning = false;
@@ -362,10 +380,16 @@ namespace MediaPortal.Configuration.Sections
       foreach (string drive in drives)
       {
         int driveType = Util.Utils.getDriveType(drive);
-        if (driveType != (int)DriveType.Fixed) continue;
+        if (driveType != (int) DriveType.Fixed)
+        {
+          continue;
+        }
         labelHD.Text = String.Format("{0}", drive);
         ScanFolder(labelHD.Text, true, true, true);
-        if (stopScanning) break;
+        if (stopScanning)
+        {
+          break;
+        }
       }
 
       ScanMusic();
@@ -379,16 +403,17 @@ namespace MediaPortal.Configuration.Sections
       isScanning = false;
     }
 
-    void ScanMusic()
+    private void ScanMusic()
     {
       timer1.Enabled = false;
       progressBar1.Value = 0;
       MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
-      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+      MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged +=
+        new MusicDBReorgEventHandler(SetPercentDonebyEvent);
       int appel = m_dbs.MusicDatabaseReorg(null);
     }
 
-    void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+    private void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
     {
       progressBar1.Value = e.progress;
       SetStatus(e.phase);
@@ -397,15 +422,24 @@ namespace MediaPortal.Configuration.Sections
     private void SetStatus(string status)
     {
       fileLabel.Text = status;
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
     }
 
-    void ScanFolder(string folder, bool scanForAudio, bool scanForVideo, bool scanForPhotos)
+    private void ScanFolder(string folder, bool scanForAudio, bool scanForVideo, bool scanForPhotos)
     {
       //dont go into dvd folders
-      if (folder.ToLower().IndexOf(@"\video_ts") >= 0) return;
-      if (folder.ToLower().IndexOf(@":\recycler") >= 0) return;
-      if (folder.ToLower().IndexOf(@":\$win") >= 0) return;
+      if (folder.ToLower().IndexOf(@"\video_ts") >= 0)
+      {
+        return;
+      }
+      if (folder.ToLower().IndexOf(@":\recycler") >= 0)
+      {
+        return;
+      }
+      if (folder.ToLower().IndexOf(@":\$win") >= 0)
+      {
+        return;
+      }
       string[] files;
       string[] folders;
       try
@@ -413,19 +447,58 @@ namespace MediaPortal.Configuration.Sections
         string systemFolder = Environment.SystemDirectory;
         int pos = systemFolder.LastIndexOf(@"\");
         string windowsFolder = systemFolder.Substring(0, pos);
-        if (folder.IndexOf(windowsFolder) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Cookies)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Favorites)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.History)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)) >= 0) return;
-        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Recent)) >= 0) return;
+        if (folder.IndexOf(windowsFolder) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Cookies)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Favorites)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.History)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)) >= 0)
+        {
+          return;
+        }
+        if (folder.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.Recent)) >= 0)
+        {
+          return;
+        }
         files = Directory.GetFiles(folder);
         folders = Directory.GetDirectories(folder);
       }
@@ -440,7 +513,7 @@ namespace MediaPortal.Configuration.Sections
       labelMovieCount.Text = totalVideo.ToString();
       labelPhotoCount.Text = totalPhotos.ToString();
       labelMusicCount.Text = totalAudio.ToString();
-      System.Windows.Forms.Application.DoEvents();
+      Application.DoEvents();
       long videoCount = totalVideo;
       long audioCount = totalAudio;
       long photoCount = totalPhotos;
@@ -448,7 +521,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string file in files)
       {
-        string ext = System.IO.Path.GetExtension(file).ToLower();
+        string ext = Path.GetExtension(file).ToLower();
         if (ext == ".exe" || ext == ".dll" || ext == ".ocx")
         {
           isAudioFolder = false;
@@ -457,50 +530,58 @@ namespace MediaPortal.Configuration.Sections
           break;
         }
 
-        if (stopScanning) return;
-        if (MediaPortal.Util.Utils.IsAudio(file))
+        if (stopScanning)
+        {
+          return;
+        }
+        if (Util.Utils.IsAudio(file))
         {
           totalAudio++;
           if (scanForAudio)
           {
             isAudioFolder = true;
-            scanForAudio = false;//no need to scan subfolders
+            scanForAudio = false; //no need to scan subfolders
           }
         }
-        if (MediaPortal.Util.Utils.IsVideo(file))
+        if (Util.Utils.IsVideo(file))
         {
           totalVideo++;
           if (scanForVideo)
           {
             isVideoFolder = true;
-            scanForVideo = false;//no need to scan subfolders
+            scanForVideo = false; //no need to scan subfolders
           }
         }
-        if (MediaPortal.Util.Utils.IsPicture(file))
+        if (Util.Utils.IsPicture(file))
         {
           if (file.Length < 260)
           {
             if (file.ToLower() != "folder.jpg")
             {
               FileInfo info = new FileInfo(file);
-              if (info.Length >= 500 * 1024) // > 500KByte
+              if (info.Length >= 500*1024) // > 500KByte
               {
                 totalPhotos++;
                 if (scanForPhotos)
                 {
                   isPhotoFolder = true;
-                  scanForPhotos = false;//no need to scan subfolders
+                  scanForPhotos = false; //no need to scan subfolders
                 }
               }
             }
           }
           else
+          {
             Log.Info("ScanFolder: Path > 260: {0}", file);
+          }
         }
       }
       foreach (string subfolder in folders)
       {
-        if (stopScanning) return;
+        if (stopScanning)
+        {
+          return;
+        }
         if (subfolder != "." && subfolder != "..")
         {
           if (scanForVideo)
@@ -515,10 +596,15 @@ namespace MediaPortal.Configuration.Sections
                   isDVD = true;
                 }
               }
-              catch (Exception) { }
+              catch (Exception)
+              {
+              }
             }
           }
-          if (isDVD && !isVideoFolder) AddVideoShare(folder);
+          if (isDVD && !isVideoFolder)
+          {
+            AddVideoShare(folder);
+          }
           ScanFolder(subfolder, scanForAudio, scanForVideo, scanForPhotos);
         }
       }
@@ -526,7 +612,9 @@ namespace MediaPortal.Configuration.Sections
       {
         audioCount = (totalAudio - audioCount);
         if (audioCount >= 5)
+        {
           AddAudioShare(folder);
+        }
       }
       if (isVideoFolder)
       {
@@ -537,11 +625,13 @@ namespace MediaPortal.Configuration.Sections
       {
         photoCount = (totalPhotos - photoCount);
         if (photoCount >= 5)
+        {
           AddPhotoShare(folder);
+        }
       }
     }
 
-    string AddAudioShare(string folder)
+    private string AddAudioShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -554,7 +644,7 @@ namespace MediaPortal.Configuration.Sections
       return name;
     }
 
-    string AddVideoShare(string folder)
+    private string AddVideoShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -567,7 +657,7 @@ namespace MediaPortal.Configuration.Sections
       return name;
     }
 
-    string AddPhotoShare(string folder)
+    private string AddPhotoShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -580,9 +670,9 @@ namespace MediaPortal.Configuration.Sections
       return name;
     }
 
-    void SaveShare(ArrayList sharesList, string mediaType)
+    private void SaveShare(ArrayList sharesList, string mediaType)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -624,7 +714,6 @@ namespace MediaPortal.Configuration.Sections
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
               shareRemotePathData = shareData.RemoteFolder;
-
             }
           }
 
@@ -639,15 +728,19 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue(mediaType, sharePort, sharePortData.ToString());
           xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
         }
-
       }
     }
 
-    private void timer1_Tick(object sender, System.EventArgs e)
+    private void timer1_Tick(object sender, EventArgs e)
     {
-      if (progressBar1.Value + 1 < 100) progressBar1.Value++;
-      else progressBar1.Value = 0;
+      if (progressBar1.Value + 1 < 100)
+      {
+        progressBar1.Value++;
+      }
+      else
+      {
+        progressBar1.Value = 0;
+      }
     }
   }
 }
-

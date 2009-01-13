@@ -29,13 +29,13 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration
 {
-  class SetupGrabber
+  internal class SetupGrabber
   {
-
     public static bool LaunchGuideScheduler()
-    {	//start an TVGuideScheduler process
-      string appath = System.Windows.Forms.Application.StartupPath + "\\TVGuideScheduler.exe";
-      string WorkingDir=System.Windows.Forms.Application.StartupPath;
+    {
+      //start an TVGuideScheduler process
+      string appath = Application.StartupPath + "\\TVGuideScheduler.exe";
+      string WorkingDir = Application.StartupPath;
       try
       {
         Process runGuideScheduler = new Process();
@@ -43,10 +43,10 @@ namespace MediaPortal.Configuration
         runGuideScheduler.StartInfo.UseShellExecute = false;
         runGuideScheduler.StartInfo.WorkingDirectory = WorkingDir;
         runGuideScheduler.Start();
-					
+
         return true;
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         Console.WriteLine("The following exception was raised: ");
         Console.WriteLine(e.Message);

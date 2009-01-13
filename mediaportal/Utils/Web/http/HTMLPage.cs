@@ -24,14 +24,12 @@
 #endregion
 
 using System;
+using System.Reflection;
 using System.Text;
-using System.Xml;
-using System.IO;
-using System.Net;
-using System.Web;
+using System.Threading;
+using MediaPortal.Services;
 using mshtml;
 using SHDocVw;
-using MediaPortal.Services;
 
 namespace MediaPortal.Utils.Web
 {
@@ -41,17 +39,20 @@ namespace MediaPortal.Utils.Web
   public class HTMLPage
   {
     #region Variables
-    string _strPageHead = string.Empty;
-    string _strPageSource = string.Empty;
-    string _defaultEncode = "iso-8859-1";
-    string _pageEncodingMessage = string.Empty;
-    string _encoding = string.Empty;
-    string _error;
-    IHtmlCache _cache;
-    SHDocVw.InternetExplorer _IE;
+
+    private string _strPageHead = string.Empty;
+    private string _strPageSource = string.Empty;
+    private string _defaultEncode = "iso-8859-1";
+    private string _pageEncodingMessage = string.Empty;
+    private string _encoding = string.Empty;
+    private string _error;
+    private IHtmlCache _cache;
+    private InternetExplorer _IE;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HTMLPage"/> class.
     /// </summary>
@@ -80,9 +81,11 @@ namespace MediaPortal.Utils.Web
       _encoding = encoding;
       LoadPage(page);
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets or sets the encoding.
     /// </summary>
@@ -110,9 +113,11 @@ namespace MediaPortal.Utils.Web
     {
       get { return _error; }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Loads the page.
     /// </summary>
@@ -143,7 +148,9 @@ namespace MediaPortal.Utils.Web
       if (success)
       {
         if (_cache != null && _cache.Initialised)
+        {
           _cache.SavePage(page, _strPageSource);
+        }
 
         return true;
       }
@@ -158,9 +165,11 @@ namespace MediaPortal.Utils.Web
     {
       return _strPageSource;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Gets the page using external com browser IE.
     /// </summary>
@@ -172,18 +181,20 @@ namespace MediaPortal.Utils.Web
       // IE downloads all linked graphics ads, etc
       // IE will run Javascript source if required to renderthe page
       if (_IE == null)
-        _IE = new SHDocVw.InternetExplorer();
+      {
+        _IE = new InternetExplorer();
+      }
 
-      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
+      IWebBrowser2 webBrowser = (IWebBrowser2) _IE;
 
-      object empty = System.Reflection.Missing.Value;
+      object empty = Missing.Value;
 
       // check if request is POST or GET
       if (page.PostQuery != null)
       {
-        System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-        object postData = (object)encoding.GetBytes(page.PostQuery);
-        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
+        ASCIIEncoding encoding = new ASCIIEncoding();
+        object postData = (object) encoding.GetBytes(page.PostQuery);
+        object header = (object) "Content-Type: application/x-www-form-urlencoded\n\r";
         webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
       }
       else
@@ -191,8 +202,11 @@ namespace MediaPortal.Utils.Web
         webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
       }
 
-      while (webBrowser.Busy == true) System.Threading.Thread.Sleep(500);
-      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
+      while (webBrowser.Busy == true)
+      {
+        Thread.Sleep(500);
+      }
+      HTMLDocumentClass doc = (HTMLDocumentClass) webBrowser.Document;
 
       _strPageSource = doc.body.innerHTML;
 
@@ -233,7 +247,9 @@ namespace MediaPortal.Utils.Web
               strEncode = "";
               i += 8;
               for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
+              {
                 strEncode += _strPageSource[i];
+              }
               _encoding = strEncode;
             }
 
@@ -257,7 +273,7 @@ namespace MediaPortal.Utils.Web
             encode = System.Text.Encoding.GetEncoding(strEncode);
             _strPageSource = encode.GetString(pageData);
           }
-          catch (System.ArgumentException)
+          catch (ArgumentException)
           {
           }
         }
@@ -266,6 +282,7 @@ namespace MediaPortal.Utils.Web
       _error = Page.GetError();
       return false;
     }
+
     #endregion
   }
 }

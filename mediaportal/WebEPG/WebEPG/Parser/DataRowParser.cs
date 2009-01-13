@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using MediaPortal.Utils.Web;
@@ -36,16 +35,20 @@ namespace MediaPortal.WebEPG.Parser
   public class DataRowParser
   {
     #region Variables
-    ArrayList _templateData;
-    string _fieldDelimiter;
+
+    private ArrayList _templateData;
+    private string _fieldDelimiter;
+
     #endregion
 
     #region Constructors/Destructors
+
     public DataRowParser(string template, string delimiter)
     {
       _fieldDelimiter = delimiter;
       _templateData = GetElements(template);
     }
+
     #endregion
 
     #region Public Methods
@@ -56,19 +59,21 @@ namespace MediaPortal.WebEPG.Parser
 
       for (int i = 0; i < _templateData.Count; i++)
       {
-        string template = (string)_templateData[i];
+        string template = (string) _templateData[i];
 
         if (template.IndexOf("#") != -1)
         {
-          string rowSource = (string)sourceData[i];
+          string rowSource = (string) sourceData[i];
           data.SetElement(template, rowSource);
         }
       }
       return true;
     }
+
     #endregion
 
     #region Private Methods
+
     private ArrayList GetElements(string source)
     {
       ArrayList elements = new ArrayList();
@@ -82,7 +87,9 @@ namespace MediaPortal.WebEPG.Parser
         Match delim = elementTags[i];
 
         if (i == 0 && delim.Index == 0)
+        {
           continue;
+        }
 
         int start = 0;
         int end = delim.Index;
@@ -99,6 +106,7 @@ namespace MediaPortal.WebEPG.Parser
 
       return elements;
     }
+
     #endregion
   }
 }

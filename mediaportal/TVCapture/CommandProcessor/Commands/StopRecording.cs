@@ -24,26 +24,12 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -61,7 +47,10 @@ namespace MediaPortal.TV.Recording
         return;
       }
       //get the current selected card
-      if (handler.CurrentCardIndex < 0 || handler.CurrentCardIndex >= handler.TVCards.Count) return;
+      if (handler.CurrentCardIndex < 0 || handler.CurrentCardIndex >= handler.TVCards.Count)
+      {
+        return;
+      }
       TVCaptureDevice dev = handler.TVCards[handler.CurrentCardIndex];
 
       //is it recording?
@@ -78,18 +67,19 @@ namespace MediaPortal.TV.Recording
       if (dev.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
       {
         Log.WriteFile(LogType.Recorder, "Recorder: cancel recording");
-        dev.CurrentTVRecording.Canceled = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+        dev.CurrentTVRecording.Canceled = Util.Utils.datetolong(DateTime.Now);
       }
       else
       {
-        long datetime = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+        long datetime = Util.Utils.datetolong(DateTime.Now);
         TVProgram prog = dev.CurrentProgramRecording;
         Log.WriteFile(LogType.Recorder, "Recorder: cancel {0}", prog);
 
         if (prog != null)
         {
-          datetime = MediaPortal.Util.Utils.datetolong(prog.StartTime);
-          Log.WriteFile(LogType.Recorder, "Recorder: cancel serie {0} {1} {2}", prog.Title, prog.StartTime.ToLongDateString(), prog.StartTime.ToLongTimeString());
+          datetime = Util.Utils.datetolong(prog.StartTime);
+          Log.WriteFile(LogType.Recorder, "Recorder: cancel serie {0} {1} {2}", prog.Title,
+                        prog.StartTime.ToLongDateString(), prog.StartTime.ToLongTimeString());
         }
         else
         {

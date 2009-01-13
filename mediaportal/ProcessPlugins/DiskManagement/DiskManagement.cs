@@ -24,17 +24,15 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.TV.Recording;
+using System.IO;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
+using MediaPortal.Util;
 
 namespace ProcessPlugins.DiskSpace
 {
@@ -43,16 +41,17 @@ namespace ProcessPlugins.DiskSpace
   /// </summary>
   public class DiskManagement : IPlugin, ISetupForm
   {
-    System.Windows.Forms.Timer _timer;
+    private Timer _timer;
+
     public DiskManagement()
     {
-      _timer = new System.Windows.Forms.Timer();
-      _timer.Interval = 15 * 60 * 1000;
+      _timer = new Timer();
+      _timer.Interval = 15*60*1000;
       _timer.Enabled = false;
       _timer.Tick += new EventHandler(OnTimerElapsed);
     }
 
-    List<string> GetDisks()
+    private List<string> GetDisks()
     {
       List<string> drives = new List<string>();
       for (char drive = 'a'; drive <= 'z'; drive++)
@@ -69,16 +68,19 @@ namespace ProcessPlugins.DiskSpace
             }
           }
           if (newDrive)
+          {
             drives.Add(drive.ToString());
+          }
         }
       }
       return drives;
     }
 
-    void OnTimerElapsed(object sender, EventArgs e)
+    private void OnTimerElapsed(object sender, EventArgs e)
     {
       CheckFreeDiskSpace();
     }
+
     /// <summary>
     /// This method checks the diskspace on each harddisk
     /// if the diskspace used by recordings exceeds the disk quota set on the drive
@@ -86,7 +88,7 @@ namespace ProcessPlugins.DiskSpace
     /// </summary>
     /// <remarks>Note, this method will run once every 15 minutes
     /// </remarks>
-    void CheckFreeDiskSpace()
+    private void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...
 
@@ -100,26 +102,32 @@ namespace ProcessPlugins.DiskSpace
       }
     }
 
-    bool OutOfDiskSpace(string drive)
+    private bool OutOfDiskSpace(string drive)
     {
       ulong minimiumFreeDiskSpace = 0;
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
-        minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
+        minimiumFreeDiskSpace = (ulong) Int32.Parse(quotaText);
         if (minimiumFreeDiskSpace <= 51200) // 50MB
         {
           minimiumFreeDiskSpace = 51200;
         }
         minimiumFreeDiskSpace *= 1024;
       }
-      if (minimiumFreeDiskSpace <= 0) return false;
+      if (minimiumFreeDiskSpace <= 0)
+      {
+        return false;
+      }
       ulong freeDiskSpace = Utils.GetFreeDiskSpace(drive);
-      if (freeDiskSpace > minimiumFreeDiskSpace) return false;
+      if (freeDiskSpace > minimiumFreeDiskSpace)
+      {
+        return false;
+      }
       return true;
     }
 
-    List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
+    private List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       List<TVRecorded> recordedTvShows = new List<TVRecorded>();
@@ -127,7 +135,10 @@ namespace ProcessPlugins.DiskSpace
       TVDatabase.GetRecordedTV(ref recordedTvShows);
       foreach (TVRecorded recorded in recordedTvShows)
       {
-        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0]) continue;
+        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0])
+        {
+          continue;
+        }
 
         bool add = true;
         foreach (RecordingFileInfo fi in recordings)
@@ -150,10 +161,13 @@ namespace ProcessPlugins.DiskSpace
       return recordings;
     }
 
-    void CheckDriveFreeDiskSpace(string drive)
+    private void CheckDriveFreeDiskSpace(string drive)
     {
       //get disk quota to use
-      if (!OutOfDiskSpace(drive)) return;
+      if (!OutOfDiskSpace(drive))
+      {
+        return;
+      }
 
       List<RecordingFileInfo> recordings = null;
 
@@ -163,10 +177,14 @@ namespace ProcessPlugins.DiskSpace
       }
       catch (Exception ex)
       {
-        Log.Error("DiskManagement: An error occured while out of diskspace getting info about recordings - {0}", ex.Message);
+        Log.Error("DiskManagement: An error occured while out of diskspace getting info about recordings - {0}",
+                  ex.Message);
       }
 
-      if (recordings.Count == 0) return;
+      if (recordings.Count == 0)
+      {
+        return;
+      }
 
       Log.Warn("DiskManagement: not enough free space on drive: {0}.", drive);
       Log.Warn("DiskManagement: found {0} recordings on drive: {1}", recordings.Count, drive);
@@ -179,13 +197,13 @@ namespace ProcessPlugins.DiskSpace
       {
         try
         {
-          RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
+          RecordingFileInfo fi = (RecordingFileInfo) recordings[0];
           if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
           {
             Log.Info("Recorder: delete recording:{0} size:{1} date:{2} {3}",
-                                                fi.filename,
-                                                Utils.GetSize(fi.info.Length),
-                                                fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
+                     fi.filename,
+                     Utils.GetSize(fi.info.Length),
+                     fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
             Recorder.DeleteRecording(fi.record);
           }
         }
@@ -197,7 +215,7 @@ namespace ProcessPlugins.DiskSpace
         {
           recordings.RemoveAt(0);
         }
-      }//while ( OutOfDiskSpace(drive) && recordings.Count > 0)
+      } //while ( OutOfDiskSpace(drive) && recordings.Count > 0)
     }
 
     #region IPlugin Members
@@ -237,7 +255,8 @@ namespace ProcessPlugins.DiskSpace
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add CallerIdPlugin.GetHome implementation
       strButtonText = null;

@@ -24,68 +24,66 @@
 #endregion
 
 using System;
-using System.IO;
-
-using System.Diagnostics;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-
-using XPBurn;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
+using XPBurn;
 
 namespace MediaPortal.GUI.GUIBurner
 {
   /// <summary>
   /// Summary description for BurnerSetupForm.
   /// </summary>
-  public partial class BurnerSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class BurnerSetupForm : MPConfigForm
   {
     #region Private Variables
-    private XPBurn.XPBurnCD CDBurner;
+
+    private XPBurnCD CDBurner;
     private int selIndx = 0;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDeviceSettings;
+    private MPButton buttonOK;
+    private FolderBrowserDialog folderBrowserDialog1;
+    private OpenFileDialog openFileDialog1;
+    private MPGroupBox groupBoxDeviceSettings;
     private ComboBox comboBoxDeviceSelection;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDriveletter;
-    private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxBurnerDriver;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxOptions;
+    private MPLabel labelDriveletter;
+    private MPTextBox mpTextBoxBurnerDriver;
+    private MPLabel label1;
+    private MPButton buttonCancel;
+    private MPGroupBox groupBoxOptions;
     private Label labelTempHint;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTempPath;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSelectTempPath;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectTempPathLocation;
+    private MPTextBox textBoxTempPath;
+    private MPLabel labelSelectTempPath;
+    private MPButton buttonSelectTempPathLocation;
     private CheckBox checkBoxDontBurnDVD;
     private CheckBox checkBoxLeaveFileForDebug;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSupportFiles;
-    private MediaPortal.UserInterface.Controls.MPLabel labeldvdburnPath;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectDvdBurnPathLocation;
+    private MPGroupBox groupBoxSupportFiles;
+    private MPLabel labeldvdburnPath;
+    private MPButton buttonSelectDvdBurnPathLocation;
     private TextBox textBoxDVDBurnExePath;
     private LinkLabel linkLabelDVDBurnDownload;
     private LinkLabel linkLabelCygwinDownload;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDVDFormat;
+    private MPGroupBox groupBoxDVDFormat;
     private RadioButton radioButtonTvFormatNtsc;
     private RadioButton radioButtonTvFormatPal;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAspectRatio;
+    private MPGroupBox groupBoxAspectRatio;
     private RadioButton radioButtonAspectRatio16x9;
     private RadioButton radioButtonAspectRatio4x3;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDVDburnPathCorrect;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCygwinPathCorrect;
+    private MPLabel labelDVDburnPathCorrect;
+    private MPLabel labelCygwinPathCorrect;
     private CheckBox checkBoxDoNotEject;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
+
     #endregion
 
     #region BurnerSetupForm
+
     public BurnerSetupForm()
     {
       InitializeComponent();
@@ -94,14 +92,17 @@ namespace MediaPortal.GUI.GUIBurner
       // TODO: Add any constructor code after InitializeComponent call
       //
     }
+
     #endregion
 
     #region Serialization
+
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder", Path.GetDirectoryName(Path.GetTempPath()));
+        textBoxTempPath.Text = xmlreader.GetValueAsString("burner", "temp_folder",
+                                                          Path.GetDirectoryName(Path.GetTempPath()));
         textBoxDVDBurnExePath.Text = xmlreader.GetValueAsString("burner", "dvdburnexe_folder", getdefaultDVDBurnPath());
 
         selIndx = xmlreader.GetValueAsInt("burner", "recorder", 0);
@@ -119,7 +120,7 @@ namespace MediaPortal.GUI.GUIBurner
 
         try
         {
-          CDBurner = new XPBurn.XPBurnCD();
+          CDBurner = new XPBurnCD();
           GetRecorder();
           comboBoxDeviceSelection.SelectedIndex = selIndx;
           comboBoxDeviceSelection.Enabled = true;
@@ -140,7 +141,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("burner", "temp_folder", textBoxTempPath.Text);
         xmlwriter.SetValue("burner", "dvdburnexe_folder", textBoxDVDBurnExePath.Text);
@@ -156,9 +157,11 @@ namespace MediaPortal.GUI.GUIBurner
         xmlwriter.SetValueAsBool("burner", "DoNotEject", checkBoxDoNotEject.Checked);
       }
     }
+
     #endregion
 
     #region Private Methods
+
     private void GetRecorder()
     {
       //Fill The Combobox with available drives
@@ -176,14 +179,18 @@ namespace MediaPortal.GUI.GUIBurner
     private string getdefaultDVDBurnPath()
     {
       // because localized windows builds use other paths
-      return Path.GetDirectoryName(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Windows Resource Kits\Tools\"));
+      return
+        Path.GetDirectoryName(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                                           @"Windows Resource Kits\Tools\"));
     }
 
     private bool checkDVDBurnPath(string pathToFile)
     {
       bool found = false;
       if (File.Exists(Path.Combine(pathToFile, @"dvdburn.exe")))
+      {
         found = true;
+      }
 
       linkLabelDVDBurnDownload.Visible = found ? false : true;
       labelDVDburnPathCorrect.Visible = found ? true : false;
@@ -199,7 +206,9 @@ namespace MediaPortal.GUI.GUIBurner
       {
         string cygwinPath = Config.GetFile(Config.Dir.BurnerSupport, "mkisofs.exe");
         if (File.Exists(cygwinPath))
+        {
           found = true;
+        }
 
         linkLabelCygwinDownload.Visible = found ? false : true;
         labelCygwinPathCorrect.Visible = found ? true : false;
@@ -212,7 +221,7 @@ namespace MediaPortal.GUI.GUIBurner
       return found;
     }
 
-    private void buttonOK_Click(object sender, System.EventArgs e)
+    private void buttonOK_Click(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(textBoxTempPath.Text))
       {
@@ -227,7 +236,7 @@ namespace MediaPortal.GUI.GUIBurner
             Directory.CreateDirectory(textBoxTempPath.Text);
           }
           catch (Exception)
-          {             
+          {
           }
         }
 
@@ -242,7 +251,7 @@ namespace MediaPortal.GUI.GUIBurner
       }
     }
 
-    private void buttonSelectTempPathLocation_Click(object sender, System.EventArgs e)
+    private void buttonSelectTempPathLocation_Click(object sender, EventArgs e)
     {
       using (folderBrowserDialog1 = new FolderBrowserDialog())
       {
@@ -279,7 +288,8 @@ namespace MediaPortal.GUI.GUIBurner
     {
       try
       {
-        Help.ShowHelp(this, @"http://www.microsoft.com/downloads/details.aspx?FamilyID=9D467A69-57FF-4AE7-96EE-B18C4790CFFD&displaylang=en");
+        Help.ShowHelp(this,
+                      @"http://www.microsoft.com/downloads/details.aspx?FamilyID=9D467A69-57FF-4AE7-96EE-B18C4790CFFD&displaylang=en");
       }
       catch
       {
@@ -290,7 +300,7 @@ namespace MediaPortal.GUI.GUIBurner
     {
       try
       {
-				Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/MyBurnerSupportFiles/");
+        Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/MyBurnerSupportFiles/");
         //Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles.rar/");
       }
       catch
@@ -302,9 +312,11 @@ namespace MediaPortal.GUI.GUIBurner
     {
       this.Close();
     }
+
     #endregion
 
     #region Overrides
+
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -319,9 +331,11 @@ namespace MediaPortal.GUI.GUIBurner
       }
       base.Dispose(disposing);
     }
+
     #endregion
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -368,8 +382,10 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxSupportFiles
       // 
-      this.groupBoxSupportFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSupportFiles.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSupportFiles.Controls.Add(this.labelCygwinPathCorrect);
       this.groupBoxSupportFiles.Controls.Add(this.labelDVDburnPathCorrect);
       this.groupBoxSupportFiles.Controls.Add(this.linkLabelCygwinDownload);
@@ -408,22 +424,28 @@ namespace MediaPortal.GUI.GUIBurner
       // linkLabelCygwinDownload
       // 
       this.linkLabelCygwinDownload.AutoSize = true;
-      this.linkLabelCygwinDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.linkLabelCygwinDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                                  System.Drawing.FontStyle.Bold,
+                                                                  System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.linkLabelCygwinDownload.LinkArea = new System.Windows.Forms.LinkArea(16, 19);
       this.linkLabelCygwinDownload.Location = new System.Drawing.Point(18, 28);
       this.linkLabelCygwinDownload.Name = "linkLabelCygwinDownload";
       this.linkLabelCygwinDownload.Size = new System.Drawing.Size(462, 17);
       this.linkLabelCygwinDownload.TabIndex = 67;
       this.linkLabelCygwinDownload.TabStop = true;
-      this.linkLabelCygwinDownload.Text = "Please download this cygwin package and put its folder into MediaPortal\'s root di" +
-          "rectory";
+      this.linkLabelCygwinDownload.Text =
+        "Please download this cygwin package and put its folder into MediaPortal\'s root di" +
+        "rectory";
       this.linkLabelCygwinDownload.UseCompatibleTextRendering = true;
-      this.linkLabelCygwinDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCygwinDownload_LinkClicked);
+      this.linkLabelCygwinDownload.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelCygwinDownload_LinkClicked);
       // 
       // linkLabelDVDBurnDownload
       // 
       this.linkLabelDVDBurnDownload.AutoSize = true;
-      this.linkLabelDVDBurnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.linkLabelDVDBurnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                                   System.Drawing.FontStyle.Bold,
+                                                                   System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
       this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 53);
       this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
@@ -432,7 +454,8 @@ namespace MediaPortal.GUI.GUIBurner
       this.linkLabelDVDBurnDownload.TabStop = true;
       this.linkLabelDVDBurnDownload.Text = "Please download and install this file from Microsoft containing dvdburn.exe";
       this.linkLabelDVDBurnDownload.UseCompatibleTextRendering = true;
-      this.linkLabelDVDBurnDownload.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVDBurnDownload_LinkClicked);
+      this.linkLabelDVDBurnDownload.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDVDBurnDownload_LinkClicked);
       // 
       // labeldvdburnPath
       // 
@@ -445,7 +468,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonSelectDvdBurnPathLocation
       // 
-      this.buttonSelectDvdBurnPathLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectDvdBurnPathLocation.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectDvdBurnPathLocation.Location = new System.Drawing.Point(568, 76);
       this.buttonSelectDvdBurnPathLocation.Name = "buttonSelectDvdBurnPathLocation";
       this.buttonSelectDvdBurnPathLocation.Size = new System.Drawing.Size(30, 24);
@@ -456,8 +481,10 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // textBoxDVDBurnExePath
       // 
-      this.textBoxDVDBurnExePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDVDBurnExePath.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDVDBurnExePath.Location = new System.Drawing.Point(171, 79);
       this.textBoxDVDBurnExePath.Name = "textBoxDVDBurnExePath";
       this.textBoxDVDBurnExePath.Size = new System.Drawing.Size(380, 20);
@@ -466,8 +493,10 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxOptions
       // 
-      this.groupBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxOptions.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxOptions.Controls.Add(this.checkBoxDoNotEject);
       this.groupBoxOptions.Controls.Add(this.groupBoxAspectRatio);
       this.groupBoxOptions.Controls.Add(this.groupBoxDVDFormat);
@@ -593,18 +622,21 @@ namespace MediaPortal.GUI.GUIBurner
       // labelTempHint
       // 
       this.labelTempHint.AutoSize = true;
-      this.labelTempHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelTempHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                        System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.labelTempHint.Location = new System.Drawing.Point(117, 62);
       this.labelTempHint.Name = "labelTempHint";
       this.labelTempHint.Size = new System.Drawing.Size(466, 13);
       this.labelTempHint.TabIndex = 60;
       this.labelTempHint.Text = "All temp files for the burn process will be stored there (This may be up to 5 gb " +
-          "for a complete DVD)";
+                                "for a complete DVD)";
       // 
       // textBoxTempPath
       // 
-      this.textBoxTempPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTempPath.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTempPath.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTempPath.Enabled = false;
       this.textBoxTempPath.Location = new System.Drawing.Point(120, 27);
@@ -623,7 +655,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonSelectTempPathLocation
       // 
-      this.buttonSelectTempPathLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectTempPathLocation.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectTempPathLocation.Enabled = false;
       this.buttonSelectTempPathLocation.Location = new System.Drawing.Point(568, 24);
       this.buttonSelectTempPathLocation.Name = "buttonSelectTempPathLocation";
@@ -635,7 +669,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonCancel.Location = new System.Drawing.Point(540, 393);
       this.buttonCancel.Name = "buttonCancel";
@@ -647,8 +683,10 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // groupBoxDeviceSettings
       // 
-      this.groupBoxDeviceSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDeviceSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDeviceSettings.Controls.Add(this.comboBoxDeviceSelection);
       this.groupBoxDeviceSettings.Controls.Add(this.labelDriveletter);
       this.groupBoxDeviceSettings.Controls.Add(this.mpTextBoxBurnerDriver);
@@ -663,8 +701,10 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // comboBoxDeviceSelection
       // 
-      this.comboBoxDeviceSelection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDeviceSelection.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDeviceSelection.Enabled = false;
       this.comboBoxDeviceSelection.FormattingEnabled = true;
       this.comboBoxDeviceSelection.Location = new System.Drawing.Point(120, 21);
@@ -674,7 +714,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // labelDriveletter
       // 
-      this.labelDriveletter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelDriveletter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelDriveletter.AutoSize = true;
       this.labelDriveletter.Location = new System.Drawing.Point(499, 24);
       this.labelDriveletter.Name = "labelDriveletter";
@@ -684,7 +726,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // mpTextBoxBurnerDriver
       // 
-      this.mpTextBoxBurnerDriver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTextBoxBurnerDriver.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxBurnerDriver.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxBurnerDriver.Location = new System.Drawing.Point(566, 21);
       this.mpTextBoxBurnerDriver.Name = "mpTextBoxBurnerDriver";
@@ -702,7 +746,9 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       // buttonOK
       // 
-      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOK.Location = new System.Drawing.Point(437, 393);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(88, 24);
@@ -737,8 +783,8 @@ namespace MediaPortal.GUI.GUIBurner
       this.groupBoxDeviceSettings.ResumeLayout(false);
       this.groupBoxDeviceSettings.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
   }
 }

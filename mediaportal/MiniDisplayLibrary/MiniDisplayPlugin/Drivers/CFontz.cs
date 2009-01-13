@@ -3,14 +3,12 @@ using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
@@ -54,13 +52,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.CleanUp();
       this.LoadAdvancedSettings();
       Thread.Sleep(100);
-      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight, Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
+                 Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
+                 Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+                 Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
       this.Initialize();
     }
 
     public void CleanUp()
     {
-      AdvancedSettings.OnSettingsChanged -= new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged -=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       if (this.EQSettings.UseEqDisplay || this.DisplaySettings.BlankDisplayWithVideo)
       {
         while (this._EqThread.IsAlive)
@@ -75,7 +77,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
       this.CFD.ClearDisplay();
-      if (!this._BlankDisplayOnExit && ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
+      if (!this._BlankDisplayOnExit &&
+          ((this.DisplaySettings._Shutdown1 != string.Empty) || (this.DisplaySettings._Shutdown2 != string.Empty)))
       {
         this.CFD.SetLine(0, this.DisplaySettings._Shutdown1);
         this.CFD.SetLine(1, this.DisplaySettings._Shutdown2);
@@ -102,24 +105,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void DisplayEQ()
     {
-      if ((this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable) && !(this.EQSettings.RestrictEQ & ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
+      if ((this.EQSettings.UseEqDisplay & this.EQSettings._EqDataAvailable) &&
+          !(this.EQSettings.RestrictEQ &
+            ((DateTime.Now.Ticks - this.EQSettings._LastEQupdate.Ticks) < this.EQSettings._EqUpdateDelay)))
       {
         if (this.DoDebug)
         {
-          Log.Info("\nCFDisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.", new object[] { this.EQSettings.EqFftData.Length / 2 });
+          Log.Info("\nCFDisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
+                   new object[] {this.EQSettings.EqFftData.Length/2});
         }
         if (this.EQSettings.UseVUmeter || this.EQSettings.UseVUmeter2)
         {
-          this.EQSettings.Render_MaxValue = this.CFD.GetColumns() * 6;
+          this.EQSettings.Render_MaxValue = this.CFD.GetColumns()*6;
           this.EQSettings.Render_BANDS = 1;
           if (this.EQSettings._useVUindicators)
           {
-            this.EQSettings.Render_MaxValue = (this.CFD.GetColumns() - 1) * 6;
+            this.EQSettings.Render_MaxValue = (this.CFD.GetColumns() - 1)*6;
           }
         }
         else
         {
-          this.EQSettings.Render_MaxValue = this.CFD.GetRows() * 8;
+          this.EQSettings.Render_MaxValue = this.CFD.GetRows()*8;
           if (this.EQSettings.UseStereoEq)
           {
             this.EQSettings.Render_BANDS = 8;
@@ -141,11 +147,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) < this.DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
+              this.DisplaySettings._DisplayControlTimeout)
           {
             if (this.DoDebug)
             {
-              Log.Info("CFDisplay.DisplayOff(): DisplayControlAction Timer = {0}.", new object[] { DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction });
+              Log.Info("CFDisplay.DisplayOff(): DisplayControlAction Timer = {0}.",
+                       new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
             }
             return;
           }
@@ -225,7 +233,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
           MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) & (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
+          if ((!this.MPStatus.MediaPlayer_Active & this.DisplaySettings.BlankDisplayWithVideo) &
+              (this.DisplaySettings.BlankDisplayWhenIdle & !this._mpIsIdle))
           {
             this.DisplayOn();
           }
@@ -236,7 +245,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this.GetEQ();
               this.DisplayEQ();
             }
-            if (this.DisplaySettings.BlankDisplayWithVideo & (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) || this.MPStatus.Media_IsTVRecording))
+            if (this.DisplaySettings.BlankDisplayWithVideo &
+                (((this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsVideo) || this.MPStatus.Media_IsTV) ||
+                 this.MPStatus.Media_IsTVRecording))
             {
               if (this.DoDebug)
               {
@@ -302,8 +313,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.EQSettings.UseVUmeter = settings.VUmeter;
@@ -319,33 +330,59 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings.EQTitleDisplay = settings.EQTitleDisplay;
       this.EQSettings._EQTitleDisplayTime = settings.EQTitleDisplayTime;
       this.EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
-      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0) ? 0 : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) - (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
-      Log.Info("CFontz.LoadAdvancedSettings(): Extensive Logging: {0}", new object[] { Settings.Instance.ExtensiveLogging });
-      Log.Info("CFontz.LoadAdvancedSettings(): Device Port: {0}", new object[] { Settings.Instance.Port });
-      Log.Info("CFontz.LoadAdvancedSettings(): Display Type: {0}", new object[] { this.DisplayType });
-      Log.Info("CFontz.LoadAdvancedSettings(): Enable Keypad: {0}", new object[] { this.KPSettings.EnableKeyPad });
-      Log.Info("CFontz.LoadAdvancedSettings():   Use Custom KeypadMap: {0}", new object[] { this.KPSettings.EnableCustom });
-      Log.Info("CFontz.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}", new object[] { this.DisplaySettings._Shutdown1 });
-      Log.Info("CFontz.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}", new object[] { this.DisplaySettings._Shutdown2 });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Equalizer Display: {0}", new object[] { this.EQSettings.UseEqDisplay });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Stereo Equalizer Display: {0}", new object[] { this.EQSettings.UseStereoEq });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   VU Meter Display: {0}", new object[] { this.EQSettings.UseVUmeter });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   VU Meter Style 2 Display: {0}", new object[] { this.EQSettings.UseVUmeter2 });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Use VU Channel indicators: {0}", new object[] { this.EQSettings._useVUindicators });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Restrict EQ Update Rate: {0}", new object[] { this.EQSettings.RestrictEQ });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Restricted EQ Update Rate: {0} updates per second", new object[] { this.EQSettings._EQ_Restrict_FPS });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Delay EQ Startup: {0}", new object[] { this.EQSettings.DelayEQ });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Delay EQ Startup Time: {0} seconds", new object[] { this.EQSettings._DelayEQTime });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Smooth EQ Amplitude Decay: {0}", new object[] { this.EQSettings.SmoothEQ });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Show Track Info with EQ display: {0}", new object[] { this.EQSettings.EQTitleDisplay });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Show Track Info Interval: {0} seconds", new object[] { this.EQSettings._EQTitleDisplayTime });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Show Track Info duration: {0} seconds", new object[] { this.EQSettings._EQTitleShowTime });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}", new object[] { this.DisplaySettings.BlankDisplayWithVideo });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}", new object[] { this.DisplaySettings.EnableDisplayAction });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds", new object[] { this.DisplaySettings._DisplayControlTimeout });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle });
-      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds", new object[] { this.DisplaySettings._BlankIdleTimeout / 0xf4240L });
-      Log.Info("CFontz.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}", new object[] { this.EQSettings._AudioUseASIO });
+      this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
+                                         ? 0
+                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+      Log.Info("CFontz.LoadAdvancedSettings(): Extensive Logging: {0}",
+               new object[] {Settings.Instance.ExtensiveLogging});
+      Log.Info("CFontz.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
+      Log.Info("CFontz.LoadAdvancedSettings(): Display Type: {0}", new object[] {this.DisplayType});
+      Log.Info("CFontz.LoadAdvancedSettings(): Enable Keypad: {0}", new object[] {this.KPSettings.EnableKeyPad});
+      Log.Info("CFontz.LoadAdvancedSettings():   Use Custom KeypadMap: {0}", new object[] {this.KPSettings.EnableCustom});
+      Log.Info("CFontz.LoadAdvancedSettings(): Shutdown Message - Line 1: {0}",
+               new object[] {this.DisplaySettings._Shutdown1});
+      Log.Info("CFontz.LoadAdvancedSettings(): Shutdown Message - Line 2: {0}",
+               new object[] {this.DisplaySettings._Shutdown2});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseEqDisplay});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Stereo Equalizer Display: {0}",
+               new object[] {this.EQSettings.UseStereoEq});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   VU Meter Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   VU Meter Style 2 Display: {0}",
+               new object[] {this.EQSettings.UseVUmeter2});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Use VU Channel indicators: {0}",
+               new object[] {this.EQSettings._useVUindicators});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Restrict EQ Update Rate: {0}",
+               new object[] {this.EQSettings.RestrictEQ});
+      Log.Info(
+        "CFontz.LoadAdvancedSettings(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
+        new object[] {this.EQSettings._EQ_Restrict_FPS});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Delay EQ Startup: {0}",
+               new object[] {this.EQSettings.DelayEQ});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Delay EQ Startup Time: {0} seconds",
+               new object[] {this.EQSettings._DelayEQTime});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Smooth EQ Amplitude Decay: {0}",
+               new object[] {this.EQSettings.SmoothEQ});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Show Track Info with EQ display: {0}",
+               new object[] {this.EQSettings.EQTitleDisplay});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Show Track Info Interval: {0} seconds",
+               new object[] {this.EQSettings._EQTitleDisplayTime});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Show Track Info duration: {0} seconds",
+               new object[] {this.EQSettings._EQTitleShowTime});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Blank display with video: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -   Enable Display on Action: {0}",
+               new object[] {this.DisplaySettings.EnableDisplayAction});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     Enable display for: {0} seconds",
+               new object[] {this.DisplaySettings._DisplayControlTimeout});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
+               new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+      Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
+               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+      Log.Info("CFontz.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
+               new object[] {this.EQSettings._AudioUseASIO});
       Log.Info("CFontz.LoadAdvancedSettings(): Completed", new object[0]);
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
@@ -358,7 +395,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (this.DoDebug)
         {
-          Log.Info("CFDisplay.OnExternalAction(): received action {0}", new object[] { action.wID.ToString() });
+          Log.Info("CFDisplay.OnExternalAction(): received action {0}", new object[] {action.wID.ToString()});
         }
         Action.ActionType wID = action.wID;
         if (wID <= Action.ActionType.ACTION_SHOW_OSD)
@@ -368,7 +405,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             return;
           }
         }
-        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) && (wID != Action.ActionType.ACTION_MOUSE_CLICK))
+        else if (((wID != Action.ActionType.ACTION_SHOW_MPLAYER_OSD) && (wID != Action.ActionType.ACTION_KEY_PRESSED)) &&
+                 (wID != Action.ActionType.ACTION_MOUSE_CLICK))
         {
           return;
         }
@@ -472,7 +510,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("CFontz.SetLine(): Line {0} - Message = \"{1}\"", new object[] { line, message });
+            Log.Info("CFontz.SetLine(): Line {0} - Message = \"{1}\"", new object[] {line, message});
           }
           this.CFD.SetLine(line, message);
           if (this.DoDebug)
@@ -485,7 +523,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("CFontz.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}", new object[] { this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout });
+            Log.Info("CFontz.SetLine(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
+                     new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
           }
           if (this.DisplaySettings.BlankDisplayWhenIdle)
           {
@@ -497,7 +536,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
-            if (!this._IsDisplayOff && ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+            if (!this._IsDisplayOff &&
+                ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
             {
               if (this.DoDebug)
               {
@@ -523,10 +563,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG, bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
+    public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
+                      bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
       this.DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
-      Log.Info("{0}", new object[] { this.Description });
+      Log.Info("{0}", new object[] {this.Description});
       Log.Info("CFontz.Setup(): called", new object[0]);
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
@@ -550,10 +591,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this._IsOpen = false;
       try
       {
-        this._IsOpen = this.CFD.OpenDisplay(_port, this.DisplayType, this._BackLightControl, this._BackLightLevel, this._ContrastControl, this._ContrastLevel, this._UseKeypad);
-      } catch (Exception exception)
+        this._IsOpen = this.CFD.OpenDisplay(_port, this.DisplayType, this._BackLightControl, this._BackLightLevel,
+                                            this._ContrastControl, this._ContrastLevel, this._UseKeypad);
+      }
+      catch (Exception exception)
       {
-        Log.Info("CFontz.Setup() - CAUGHT EXCEPTION opening display port!: {0}", new object[] { exception });
+        Log.Info("CFontz.Setup() - CAUGHT EXCEPTION opening display port!: {0}", new object[] {exception});
       }
       if (this._IsOpen)
       {
@@ -592,7 +635,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("CFontz.Setup(): EQ_Update() FAILED TO START", new object[0]);
         }
       }
-      AdvancedSettings.OnSettingsChanged += new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+      AdvancedSettings.OnSettingsChanged +=
+        new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
       Log.Info("CFontz.Setup(): completed", new object[0]);
     }
 
@@ -625,50 +669,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string Description
     {
-      get
-      {
-        return "CrystalFontz Character LCD driver v04_17_2008";
-      }
+      get { return "CrystalFontz Character LCD driver v04_17_2008"; }
     }
 
     public string ErrorMessage
     {
-      get
-      {
-        return this._ErrorMessage;
-      }
+      get { return this._ErrorMessage; }
     }
 
     public bool IsDisabled
     {
-      get
-      {
-        return this._IsDisabled;
-      }
+      get { return this._IsDisabled; }
     }
 
     public string Name
     {
-      get
-      {
-        return "CFontz";
-      }
+      get { return "CFontz"; }
     }
 
     public bool SupportsGraphics
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     public bool SupportsText
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     [Serializable]
@@ -689,7 +715,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private bool m_EQTitleDisplay;
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
-      private static CFontz.AdvancedSettings m_Instance;
+      private static AdvancedSettings m_Instance;
       private bool m_NormalEQ;
       private int m_RepeatDelay;
       private bool m_RestrictEQ;
@@ -709,8 +735,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string str = "CFontz_Keypad";
         try
         {
-          Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file", new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"), Encoding.UTF8);
+          Log.Info(
+            "CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file",
+            new object[0]);
+          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+                                                   Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;
           writer.IndentChar = '\t';
@@ -857,16 +886,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           writer.Close();
           flag = true;
           Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file created", new object[0]);
-        } catch
+        }
+        catch
         {
-          Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): Error saving remote mapping to XML file", new object[0]);
+          Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): Error saving remote mapping to XML file",
+                   new object[0]);
           flag = false;
         }
         Log.Info("CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): completed", new object[0]);
         return flag;
       }
 
-      private static void Default(CFontz.AdvancedSettings _settings)
+      private static void Default(AdvancedSettings _settings)
       {
         Log.Info("CFontz.AdvancedSettings.Default(): called", new object[0]);
         _settings.EnableKeypad = false;
@@ -894,22 +925,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("CFontz.AdvancedSettings.Default(): completed", new object[0]);
       }
 
-      public static CFontz.AdvancedSettings Load()
+      public static AdvancedSettings Load()
       {
-        CFontz.AdvancedSettings settings;
+        AdvancedSettings settings;
         Log.Info("CFontz.AdvancedSettings.Load(): started", new object[0]);
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml")))
         {
           Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from XML file", new object[0]);
-          XmlSerializer serializer = new XmlSerializer(typeof(CFontz.AdvancedSettings));
+          XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"));
-          settings = (CFontz.AdvancedSettings)serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
         {
           Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from defaults", new object[0]);
-          settings = new CFontz.AdvancedSettings();
+          settings = new AdvancedSettings();
           Default(settings);
         }
         Log.Info("CFontz.AdvancedSettings.Load(): completed", new object[0]);
@@ -929,14 +960,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Save(Instance);
       }
 
-      public static void Save(CFontz.AdvancedSettings ToSave)
+      public static void Save(AdvancedSettings ToSave)
       {
         Log.Info("CFontz.AdvancedSettings.Save(): Saving settings to XML file", new object[0]);
-        XmlSerializer serializer = new XmlSerializer(typeof(CFontz.AdvancedSettings));
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"), Encoding.UTF8);
+        XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
+        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"),
+                                                 Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter)writer, ToSave);
+        serializer.Serialize((XmlWriter) writer, ToSave);
         writer.Close();
         Log.Info("CFontz.AdvancedSettings.Save(): completed", new object[0]);
       }
@@ -949,199 +981,109 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool BlankDisplayWhenIdle
       {
-        get
-        {
-          return this.m_BlankDisplayWhenIdle;
-        }
-        set
-        {
-          this.m_BlankDisplayWhenIdle = value;
-        }
+        get { return this.m_BlankDisplayWhenIdle; }
+        set { this.m_BlankDisplayWhenIdle = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWithVideo
       {
-        get
-        {
-          return this.m_BlankDisplayWithVideo;
-        }
-        set
-        {
-          this.m_BlankDisplayWithVideo = value;
-        }
+        get { return this.m_BlankDisplayWithVideo; }
+        set { this.m_BlankDisplayWithVideo = value; }
       }
 
       [XmlAttribute]
       public int BlankIdleTime
       {
-        get
-        {
-          return this.m_BlankIdleTime;
-        }
-        set
-        {
-          this.m_BlankIdleTime = value;
-        }
+        get { return this.m_BlankIdleTime; }
+        set { this.m_BlankIdleTime = value; }
       }
 
       [XmlAttribute]
       public bool DelayEQ
       {
-        get
-        {
-          return this.m_DelayEQ;
-        }
-        set
-        {
-          this.m_DelayEQ = value;
-        }
+        get { return this.m_DelayEQ; }
+        set { this.m_DelayEQ = value; }
       }
 
       [XmlAttribute]
       public int DelayEqTime
       {
-        get
-        {
-          return this.m_DelayEqTime;
-        }
-        set
-        {
-          this.m_DelayEqTime = value;
-        }
+        get { return this.m_DelayEqTime; }
+        set { this.m_DelayEqTime = value; }
       }
 
       [XmlAttribute]
       public string DeviceType
       {
-        get
-        {
-          return this.m_DeviceType;
-        }
-        set
-        {
-          this.m_DeviceType = value;
-        }
+        get { return this.m_DeviceType; }
+        set { this.m_DeviceType = value; }
       }
 
       [XmlAttribute]
       public bool DisableRepeat
       {
-        get
-        {
-          return this.m_DisableRepeat;
-        }
-        set
-        {
-          this.m_DisableRepeat = value;
-        }
+        get { return this.m_DisableRepeat; }
+        set { this.m_DisableRepeat = value; }
       }
 
       [XmlAttribute]
       public bool EnableDisplayAction
       {
-        get
-        {
-          return this.m_EnableDisplayAction;
-        }
-        set
-        {
-          this.m_EnableDisplayAction = value;
-        }
+        get { return this.m_EnableDisplayAction; }
+        set { this.m_EnableDisplayAction = value; }
       }
 
       [XmlAttribute]
       public int EnableDisplayActionTime
       {
-        get
-        {
-          return this.m_EnableDisplayActionTime;
-        }
-        set
-        {
-          this.m_EnableDisplayActionTime = value;
-        }
+        get { return this.m_EnableDisplayActionTime; }
+        set { this.m_EnableDisplayActionTime = value; }
       }
 
       [XmlAttribute]
       public bool EnableKeypad
       {
-        get
-        {
-          return this.m_EnableKeypad;
-        }
-        set
-        {
-          this.m_EnableKeypad = value;
-        }
+        get { return this.m_EnableKeypad; }
+        set { this.m_EnableKeypad = value; }
       }
 
       [XmlAttribute]
       public bool EqDisplay
       {
-        get
-        {
-          return this.m_EqDisplay;
-        }
-        set
-        {
-          this.m_EqDisplay = value;
-        }
+        get { return this.m_EqDisplay; }
+        set { this.m_EqDisplay = value; }
       }
 
       [XmlAttribute]
       public int EqRate
       {
-        get
-        {
-          return this.m_EqRate;
-        }
-        set
-        {
-          this.m_EqRate = value;
-        }
+        get { return this.m_EqRate; }
+        set { this.m_EqRate = value; }
       }
 
       [XmlAttribute]
       public bool EQTitleDisplay
       {
-        get
-        {
-          return this.m_EQTitleDisplay;
-        }
-        set
-        {
-          this.m_EQTitleDisplay = value;
-        }
+        get { return this.m_EQTitleDisplay; }
+        set { this.m_EQTitleDisplay = value; }
       }
 
       [XmlAttribute]
       public int EQTitleDisplayTime
       {
-        get
-        {
-          return this.m_EQTitleDisplayTime;
-        }
-        set
-        {
-          this.m_EQTitleDisplayTime = value;
-        }
+        get { return this.m_EQTitleDisplayTime; }
+        set { this.m_EQTitleDisplayTime = value; }
       }
 
       [XmlAttribute]
       public int EQTitleShowTime
       {
-        get
-        {
-          return this.m_EQTitleShowTime;
-        }
-        set
-        {
-          this.m_EQTitleShowTime = value;
-        }
+        get { return this.m_EQTitleShowTime; }
+        set { this.m_EQTitleShowTime = value; }
       }
 
-      public static CFontz.AdvancedSettings Instance
+      public static AdvancedSettings Instance
       {
         get
         {
@@ -1151,127 +1093,70 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           return m_Instance;
         }
-        set
-        {
-          m_Instance = value;
-        }
+        set { m_Instance = value; }
       }
 
       [XmlAttribute]
       public bool NormalEQ
       {
-        get
-        {
-          return this.m_NormalEQ;
-        }
-        set
-        {
-          this.m_NormalEQ = value;
-        }
+        get { return this.m_NormalEQ; }
+        set { this.m_NormalEQ = value; }
       }
 
       [XmlAttribute]
       public int RepeatDelay
       {
-        get
-        {
-          return this.m_RepeatDelay;
-        }
-        set
-        {
-          this.m_RepeatDelay = value;
-        }
+        get { return this.m_RepeatDelay; }
+        set { this.m_RepeatDelay = value; }
       }
 
       [XmlAttribute]
       public bool RestrictEQ
       {
-        get
-        {
-          return this.m_RestrictEQ;
-        }
-        set
-        {
-          this.m_RestrictEQ = value;
-        }
+        get { return this.m_RestrictEQ; }
+        set { this.m_RestrictEQ = value; }
       }
 
       [XmlAttribute]
       public bool SmoothEQ
       {
-        get
-        {
-          return this.m_SmoothEQ;
-        }
-        set
-        {
-          this.m_SmoothEQ = value;
-        }
+        get { return this.m_SmoothEQ; }
+        set { this.m_SmoothEQ = value; }
       }
 
       [XmlAttribute]
       public bool StereoEQ
       {
-        get
-        {
-          return this.m_StereoEQ;
-        }
-        set
-        {
-          this.m_StereoEQ = value;
-        }
+        get { return this.m_StereoEQ; }
+        set { this.m_StereoEQ = value; }
       }
 
       [XmlAttribute]
       public bool UseCustomKeypadMap
       {
-        get
-        {
-          return this.m_UseCustomKeypadMap;
-        }
-        set
-        {
-          this.m_UseCustomKeypadMap = value;
-        }
+        get { return this.m_UseCustomKeypadMap; }
+        set { this.m_UseCustomKeypadMap = value; }
       }
 
       [XmlAttribute]
       public bool VUindicators
       {
-        get
-        {
-          return this.m_VUindicators;
-        }
-        set
-        {
-          this.m_VUindicators = value;
-        }
+        get { return this.m_VUindicators; }
+        set { this.m_VUindicators = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter
       {
-        get
-        {
-          return this.m_VUmeter;
-        }
-        set
-        {
-          this.m_VUmeter = value;
-        }
+        get { return this.m_VUmeter; }
+        set { this.m_VUmeter = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter2
       {
-        get
-        {
-          return this.m_VUmeter2;
-        }
-        set
-        {
-          this.m_VUmeter2 = value;
-        }
+        get { return this.m_VUmeter2; }
+        set { this.m_VUmeter2 = value; }
       }
 
       public delegate void OnSettingsChangedHandler();
@@ -1291,25 +1176,50 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private bool _UseContrast;
       private bool _useCustomKeypadMapping;
       private SerialPort commPort;
-      public static readonly uint[] crcLookupTable = new uint[] { 
-                0, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf, 0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7, 
-                0x1081, 0x108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e, 0x9cc9, 0x8d40, 0xbfdb, 0xae52, 0xdaed, 0xcb64, 0xf9ff, 0xe876, 
-                0x2102, 0x308b, 0x210, 0x1399, 0x6726, 0x76af, 0x4434, 0x55bd, 0xad4a, 0xbcc3, 0x8e58, 0x9fd1, 0xeb6e, 0xfae7, 0xc87c, 0xd9f5, 
-                0x3183, 0x200a, 0x1291, 0x318, 0x77a7, 0x662e, 0x54b5, 0x453c, 0xbdcb, 0xac42, 0x9ed9, 0x8f50, 0xfbef, 0xea66, 0xd8fd, 0xc974, 
-                0x4204, 0x538d, 0x6116, 0x709f, 0x420, 0x15a9, 0x2732, 0x36bb, 0xce4c, 0xdfc5, 0xed5e, 0xfcd7, 0x8868, 0x99e1, 0xab7a, 0xbaf3, 
-                0x5285, 0x430c, 0x7197, 0x601e, 0x14a1, 0x528, 0x37b3, 0x263a, 0xdecd, 0xcf44, 0xfddf, 0xec56, 0x98e9, 0x8960, 0xbbfb, 0xaa72, 
-                0x6306, 0x728f, 0x4014, 0x519d, 0x2522, 0x34ab, 0x630, 0x17b9, 0xef4e, 0xfec7, 0xcc5c, 0xddd5, 0xa96a, 0xb8e3, 0x8a78, 0x9bf1, 
-                0x7387, 0x620e, 0x5095, 0x411c, 0x35a3, 0x242a, 0x16b1, 0x738, 0xffcf, 0xee46, 0xdcdd, 0xcd54, 0xb9eb, 0xa862, 0x9af9, 0x8b70, 
-                0x8408, 0x9581, 0xa71a, 0xb693, 0xc22c, 0xd3a5, 0xe13e, 0xf0b7, 0x840, 0x19c9, 0x2b52, 0x3adb, 0x4e64, 0x5fed, 0x6d76, 0x7cff, 
-                0x9489, 0x8500, 0xb79b, 0xa612, 0xd2ad, 0xc324, 0xf1bf, 0xe036, 0x18c1, 0x948, 0x3bd3, 0x2a5a, 0x5ee5, 0x4f6c, 0x7df7, 0x6c7e, 
-                0xa50a, 0xb483, 0x8618, 0x9791, 0xe32e, 0xf2a7, 0xc03c, 0xd1b5, 0x2942, 0x38cb, 0xa50, 0x1bd9, 0x6f66, 0x7eef, 0x4c74, 0x5dfd, 
-                0xb58b, 0xa402, 0x9699, 0x8710, 0xf3af, 0xe226, 0xd0bd, 0xc134, 0x39c3, 0x284a, 0x1ad1, 0xb58, 0x7fe7, 0x6e6e, 0x5cf5, 0x4d7c, 
-                0xc60c, 0xd785, 0xe51e, 0xf497, 0x8028, 0x91a1, 0xa33a, 0xb2b3, 0x4a44, 0x5bcd, 0x6956, 0x78df, 0xc60, 0x1de9, 0x2f72, 0x3efb, 
-                0xd68d, 0xc704, 0xf59f, 0xe416, 0x90a9, 0x8120, 0xb3bb, 0xa232, 0x5ac5, 0x4b4c, 0x79d7, 0x685e, 0x1ce1, 0xd68, 0x3ff3, 0x2e7a, 
-                0xe70e, 0xf687, 0xc41c, 0xd595, 0xa12a, 0xb0a3, 0x8238, 0x93b1, 0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0xe70, 0x1ff9, 
-                0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0xf78
-             };
-      public static readonly int[,] Display_Parameters = new int[,] { { 1, 0x1c200, 2, 20, 1 }, { 0, 0x2580, 4, 20, 0 }, { 1, 0x1c200, 2, 0x10, 1 }, { 0, 0x2580, 4, 20, 0 }, { 1, 0x1c200, 4, 20, 1 } };
+
+      public static readonly uint[] crcLookupTable = new uint[]
+                                                       {
+                                                         0, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
+                                                         0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
+                                                         0x1081, 0x108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e,
+                                                         0x9cc9, 0x8d40, 0xbfdb, 0xae52, 0xdaed, 0xcb64, 0xf9ff, 0xe876,
+                                                         0x2102, 0x308b, 0x210, 0x1399, 0x6726, 0x76af, 0x4434, 0x55bd,
+                                                         0xad4a, 0xbcc3, 0x8e58, 0x9fd1, 0xeb6e, 0xfae7, 0xc87c, 0xd9f5,
+                                                         0x3183, 0x200a, 0x1291, 0x318, 0x77a7, 0x662e, 0x54b5, 0x453c,
+                                                         0xbdcb, 0xac42, 0x9ed9, 0x8f50, 0xfbef, 0xea66, 0xd8fd, 0xc974,
+                                                         0x4204, 0x538d, 0x6116, 0x709f, 0x420, 0x15a9, 0x2732, 0x36bb,
+                                                         0xce4c, 0xdfc5, 0xed5e, 0xfcd7, 0x8868, 0x99e1, 0xab7a, 0xbaf3,
+                                                         0x5285, 0x430c, 0x7197, 0x601e, 0x14a1, 0x528, 0x37b3, 0x263a,
+                                                         0xdecd, 0xcf44, 0xfddf, 0xec56, 0x98e9, 0x8960, 0xbbfb, 0xaa72,
+                                                         0x6306, 0x728f, 0x4014, 0x519d, 0x2522, 0x34ab, 0x630, 0x17b9,
+                                                         0xef4e, 0xfec7, 0xcc5c, 0xddd5, 0xa96a, 0xb8e3, 0x8a78, 0x9bf1,
+                                                         0x7387, 0x620e, 0x5095, 0x411c, 0x35a3, 0x242a, 0x16b1, 0x738,
+                                                         0xffcf, 0xee46, 0xdcdd, 0xcd54, 0xb9eb, 0xa862, 0x9af9, 0x8b70,
+                                                         0x8408, 0x9581, 0xa71a, 0xb693, 0xc22c, 0xd3a5, 0xe13e, 0xf0b7,
+                                                         0x840, 0x19c9, 0x2b52, 0x3adb, 0x4e64, 0x5fed, 0x6d76, 0x7cff,
+                                                         0x9489, 0x8500, 0xb79b, 0xa612, 0xd2ad, 0xc324, 0xf1bf, 0xe036,
+                                                         0x18c1, 0x948, 0x3bd3, 0x2a5a, 0x5ee5, 0x4f6c, 0x7df7, 0x6c7e,
+                                                         0xa50a, 0xb483, 0x8618, 0x9791, 0xe32e, 0xf2a7, 0xc03c, 0xd1b5,
+                                                         0x2942, 0x38cb, 0xa50, 0x1bd9, 0x6f66, 0x7eef, 0x4c74, 0x5dfd,
+                                                         0xb58b, 0xa402, 0x9699, 0x8710, 0xf3af, 0xe226, 0xd0bd, 0xc134,
+                                                         0x39c3, 0x284a, 0x1ad1, 0xb58, 0x7fe7, 0x6e6e, 0x5cf5, 0x4d7c,
+                                                         0xc60c, 0xd785, 0xe51e, 0xf497, 0x8028, 0x91a1, 0xa33a, 0xb2b3,
+                                                         0x4a44, 0x5bcd, 0x6956, 0x78df, 0xc60, 0x1de9, 0x2f72, 0x3efb,
+                                                         0xd68d, 0xc704, 0xf59f, 0xe416, 0x90a9, 0x8120, 0xb3bb, 0xa232,
+                                                         0x5ac5, 0x4b4c, 0x79d7, 0x685e, 0x1ce1, 0xd68, 0x3ff3, 0x2e7a,
+                                                         0xe70e, 0xf687, 0xc41c, 0xd595, 0xa12a, 0xb0a3, 0x8238, 0x93b1,
+                                                         0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0xe70, 0x1ff9,
+                                                         0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
+                                                         0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0xf78
+                                                       };
+
+      public static readonly int[,] Display_Parameters = new int[,]
+                                                           {
+                                                             {1, 0x1c200, 2, 20, 1}, {0, 0x2580, 4, 20, 0},
+                                                             {1, 0x1c200, 2, 0x10, 1}, {0, 0x2580, 4, 20, 0},
+                                                             {1, 0x1c200, 4, 20, 1}
+                                                           };
+
       private Display_Settings dSettings = new Display_Settings();
 
       public void BacklightOff()
@@ -1353,9 +1263,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         uint num = 0xffff;
         for (int i = 0; i < (len - 1); i++)
         {
-          num = (num >> 8) ^ crcLookupTable[(int)((IntPtr)((num ^ Packet[i]) & 0xff))];
+          num = (num >> 8) ^ crcLookupTable[(int) ((IntPtr) ((num ^ Packet[i]) & 0xff))];
         }
-        Packet[len - 1] = (byte)~num;
+        Packet[len - 1] = (byte) ~num;
       }
 
       public void ClearDisplay()
@@ -1394,7 +1304,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             this._isOpen = false;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Error(exception);
         }
@@ -1407,28 +1318,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this._CommandSet.HideDisplay = null;
           this._CommandSet.RestoreDisplay = null;
-          this._CommandSet.HideCursor = new byte[] { 12, 1, 0, 0xff };
-          this._CommandSet.BackLight = new byte[] { 14, 1, 0xff, 0xff };
-          this._CommandSet.Contrast = new byte[] { 13, 1, 0xff, 0xff };
-          this._CommandSet.SetPosition = new byte[] { 11, 2, 0xff, 0xff, 0xff };
+          this._CommandSet.HideCursor = new byte[] {12, 1, 0, 0xff};
+          this._CommandSet.BackLight = new byte[] {14, 1, 0xff, 0xff};
+          this._CommandSet.Contrast = new byte[] {13, 1, 0xff, 0xff};
+          this._CommandSet.SetPosition = new byte[] {11, 2, 0xff, 0xff, 0xff};
           this._CommandSet.HorizontalBar = null;
           this._CommandSet.ScrollOff = null;
           this._CommandSet.WrapOff = null;
-          this._CommandSet.SetCustomChar = new byte[] { 9, 9, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff };
-          this._CommandSet.SetKeyReport = new byte[] { 0x17, 2, 0, 60, 0xff };
-          if (Display_Parameters[(int)dType, 0] == 0x10)
+          this._CommandSet.SetCustomChar = new byte[] {9, 9, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff};
+          this._CommandSet.SetKeyReport = new byte[] {0x17, 2, 0, 60, 0xff};
+          if (Display_Parameters[(int) dType, 0] == 0x10)
           {
-            this._CommandSet.SetLine = new byte[] { 
-                            0x1f, 0x12, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                            0x20, 0x20, 0x20, 0x20, 0xff
-                         };
+            this._CommandSet.SetLine = new byte[]
+                                         {
+                                           0x1f, 0x12, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20, 0x20, 0xff
+                                         };
           }
           else
           {
-            this._CommandSet.SetLine = new byte[] { 
-                            0x1f, 0x16, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0xff
-                         };
+            this._CommandSet.SetLine = new byte[]
+                                         {
+                                           0x1f, 0x16, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0xff
+                                         };
           }
           byte[] buffer = new byte[3];
           buffer[0] = 6;
@@ -1437,68 +1352,90 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          this._CommandSet.HideDisplay = new byte[] { 2 };
-          this._CommandSet.RestoreDisplay = new byte[] { 3 };
-          this._CommandSet.HideCursor = new byte[] { 4 };
-          this._CommandSet.BackLight = new byte[] { 14, 0xff };
-          this._CommandSet.Contrast = new byte[] { 15, 0xff };
-          this._CommandSet.SetPosition = new byte[] { 0x11, 0xff, 0xff };
-          this._CommandSet.HorizontalBar = new byte[] { 0x12, 0, 60, 0, 0x13, 0xff, 0xff };
-          this._CommandSet.ScrollOff = new byte[] { 20 };
-          this._CommandSet.WrapOff = new byte[] { 0x18 };
+          this._CommandSet.HideDisplay = new byte[] {2};
+          this._CommandSet.RestoreDisplay = new byte[] {3};
+          this._CommandSet.HideCursor = new byte[] {4};
+          this._CommandSet.BackLight = new byte[] {14, 0xff};
+          this._CommandSet.Contrast = new byte[] {15, 0xff};
+          this._CommandSet.SetPosition = new byte[] {0x11, 0xff, 0xff};
+          this._CommandSet.HorizontalBar = new byte[] {0x12, 0, 60, 0, 0x13, 0xff, 0xff};
+          this._CommandSet.ScrollOff = new byte[] {20};
+          this._CommandSet.WrapOff = new byte[] {0x18};
           byte[] buffer9 = new byte[10];
           buffer9[0] = 0x19;
           this._CommandSet.SetCustomChar = buffer9;
           this._CommandSet.SetKeyReport = null;
-          if (Display_Parameters[(int)dType, 3] == 0x10)
+          if (Display_Parameters[(int) dType, 3] == 0x10)
           {
-            this._CommandSet.SetLine = new byte[] { 
-                            0x11, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                            0x20, 0x20, 0x20
-                         };
-            if (Display_Parameters[(int)dType, 2] == 2)
+            this._CommandSet.SetLine = new byte[]
+                                         {
+                                           0x11, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20
+                                         };
+            if (Display_Parameters[(int) dType, 2] == 2)
             {
-              this._CommandSet.ClearDisplay = new byte[] { 
-                                0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-                             };
+              this._CommandSet.ClearDisplay = new byte[]
+                                                {
+                                                  0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                };
             }
             else
             {
-              this._CommandSet.ClearDisplay = new byte[] { 
-                                0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 2, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 3, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-                             };
+              this._CommandSet.ClearDisplay = new byte[]
+                                                {
+                                                  0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 2, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 3, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                };
             }
           }
           else
           {
-            this._CommandSet.SetLine = new byte[] { 
-                            0x11, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-                         };
-            if (Display_Parameters[(int)dType, 2] == 2)
+            this._CommandSet.SetLine = new byte[]
+                                         {
+                                           0x11, 0, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20,
+                                           0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                         };
+            if (Display_Parameters[(int) dType, 2] == 2)
             {
-              this._CommandSet.ClearDisplay = new byte[] { 
-                                0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-                             };
+              this._CommandSet.ClearDisplay = new byte[]
+                                                {
+                                                  0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20
+                                                };
             }
             else
             {
-              this._CommandSet.ClearDisplay = new byte[] { 
-                                0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 
-                                2, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 3, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 
-                                0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-                             };
+              this._CommandSet.ClearDisplay = new byte[]
+                                                {
+                                                  0x11, 0, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 1, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x11, 0,
+                                                  2, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x11, 0, 3, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                  , 0x20, 0x20, 0x20,
+                                                  0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
+                                                };
             }
           }
         }
@@ -1529,22 +1466,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             setLine = this._CommandSet.SetLine;
             if (length > 0)
             {
-              setLine[3] = (byte)row;
+              setLine[3] = (byte) row;
               if (RightToLeft == 0)
               {
                 for (int i = 0; i < this.dSettings.Columns; i++)
                 {
-                  if (((i + 1) * 6) < length)
+                  if (((i + 1)*6) < length)
                   {
                     setLine[4] = 5;
                   }
-                  else if ((length - (i * 6)) == 0)
+                  else if ((length - (i*6)) == 0)
                   {
                     setLine[4 + i] = 0x20;
                   }
                   else
                   {
-                    setLine[4 + i] = (byte)(0xa5 - (length - (i * 6)));
+                    setLine[4 + i] = (byte) (0xa5 - (length - (i*6)));
                   }
                 }
               }
@@ -1552,17 +1489,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 for (int j = 0; j < this.dSettings.Columns; j++)
                 {
-                  if (((j + 1) * 6) < length)
+                  if (((j + 1)*6) < length)
                   {
                     setLine[(4 + (this.dSettings.Columns - 1)) - j] = 5;
                   }
-                  else if ((length - (j * 6)) == 0)
+                  else if ((length - (j*6)) == 0)
                   {
                     setLine[(4 + (this.dSettings.Columns - 1)) - j] = 0x20;
                   }
                   else
                   {
-                    setLine[(4 + (this.dSettings.Columns - 1)) - j] = (byte)(0xa5 - (length - (j * 6)));
+                    setLine[(4 + (this.dSettings.Columns - 1)) - j] = (byte) (0xa5 - (length - (j*6)));
                   }
                 }
               }
@@ -1572,9 +1509,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             setLine = this._CommandSet.HorizontalBar;
-            setLine[4] = (byte)(this.dSettings.Columns - 1);
-            setLine[5] = (RightToLeft == 0) ? ((byte)length) : ((byte)(0x100 - length));
-            setLine[6] = (byte)row;
+            setLine[4] = (byte) (this.dSettings.Columns - 1);
+            setLine[5] = (RightToLeft == 0) ? ((byte) length) : ((byte) (0x100 - length));
+            setLine[6] = (byte) row;
           }
           this.commPort.Write(setLine, 0, setLine.Length);
         }
@@ -1584,7 +1521,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          int num = (this.dSettings.Columns - EQSettings.Render_BANDS) / 2;
+          int num = (this.dSettings.Columns - EQSettings.Render_BANDS)/2;
           if ((num > 0) & EQSettings.UseStereoEq)
           {
             num--;
@@ -1639,35 +1576,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (EqDataArray[1 + i] > 8)
                 {
-                  packet[index + i] = (byte)(EqDataArray[1 + i] - 9);
+                  packet[index + i] = (byte) (EqDataArray[1 + i] - 9);
                 }
                 else
                 {
                   packet[index + i] = 0x20;
-                  setLine[index + i] = (byte)(EqDataArray[1 + i] - 1);
+                  setLine[index + i] = (byte) (EqDataArray[1 + i] - 1);
                 }
               }
               else if (EqDataArray[1 + i] > 0x18)
               {
-                buffer4[index + i] = (byte)(EqDataArray[1 + i] - 0x19);
+                buffer4[index + i] = (byte) (EqDataArray[1 + i] - 0x19);
               }
               else if (EqDataArray[1 + i] > 0x10)
               {
                 buffer4[index + i] = 0x20;
-                buffer3[index + i] = (byte)(EqDataArray[1 + i] - 0x11);
+                buffer3[index + i] = (byte) (EqDataArray[1 + i] - 0x11);
               }
               else if (EqDataArray[1 + i] > 8)
               {
                 buffer4[index + i] = 0x20;
                 buffer3[index + i] = 0x20;
-                packet[index + i] = (byte)(EqDataArray[1 + i] - 9);
+                packet[index + i] = (byte) (EqDataArray[1 + i] - 9);
               }
               else
               {
                 buffer4[index + i] = 0x20;
                 buffer3[index + i] = 0x20;
                 packet[index + i] = 0x20;
-                setLine[index + i] = (byte)(EqDataArray[1 + i] - 1);
+                setLine[index + i] = (byte) (EqDataArray[1 + i] - 1);
               }
             }
           }
@@ -1707,12 +1644,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (extensiveLogging)
           {
-            Log.Info("CFontz.FireKeypadEvent(): No button mapping for Keypad button = {0}", new object[] { EventCode.ToString("x00") });
+            Log.Info("CFontz.FireKeypadEvent(): No button mapping for Keypad button = {0}",
+                     new object[] {EventCode.ToString("x00")});
           }
         }
         else if (extensiveLogging)
         {
-          Log.Info("CFontz.FireKeypadEvent(): fired event for Keypad button = {0}", new object[] { EventCode.ToString("x00") });
+          Log.Info("CFontz.FireKeypadEvent(): fired event for Keypad button = {0}",
+                   new object[] {EventCode.ToString("x00")});
         }
         if (extensiveLogging)
         {
@@ -1756,19 +1695,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) && (this._LastCharset != 1))
         {
-          byte[,] buffer = new byte[,] { { 0, 1, 1, 1, 1, 1, 1, 0 }, { 0, 3, 3, 3, 3, 3, 3, 0 }, { 0, 7, 7, 7, 7, 7, 7, 0 }, { 0, 15, 15, 15, 15, 15, 15, 0 }, { 0, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0 }, { 0, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+          byte[,] buffer = new byte[,]
+                             {
+                               {0, 1, 1, 1, 1, 1, 1, 0}, {0, 3, 3, 3, 3, 3, 3, 0}, {0, 7, 7, 7, 7, 7, 7, 0},
+                               {0, 15, 15, 15, 15, 15, 15, 0}, {0, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0},
+                               {0, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0}, {0, 0, 0, 0, 0, 0, 0, 0},
+                               {0, 0, 0, 0, 0, 0, 0, 0}
+                             };
           for (int i = 0; i < 8; i++)
           {
             int num2;
             byte[] setCustomChar = this._CommandSet.SetCustomChar;
             if (this.dSettings.PacketFormat)
             {
-              setCustomChar[2] = (byte)i;
+              setCustomChar[2] = (byte) i;
               num2 = 3;
             }
             else
             {
-              setCustomChar[1] = (byte)i;
+              setCustomChar[1] = (byte) i;
               num2 = 2;
             }
             for (int j = 0; j < 8; j++)
@@ -1789,19 +1734,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) && (this._LastCharset != 2))
         {
-          byte[,] buffer = new byte[,] { { 0, 0, 0, 0, 0, 0, 0, 30 }, { 0, 0, 0, 0, 0, 0, 30, 30 }, { 0, 0, 0, 0, 0, 30, 30, 30 }, { 0, 0, 0, 0, 30, 30, 30, 30 }, { 0, 0, 0, 30, 30, 30, 30, 30 }, { 0, 0, 30, 30, 30, 30, 30, 30 }, { 0, 30, 30, 30, 30, 30, 30, 30 }, { 30, 30, 30, 30, 30, 30, 30, 30 } };
+          byte[,] buffer = new byte[,]
+                             {
+                               {0, 0, 0, 0, 0, 0, 0, 30}, {0, 0, 0, 0, 0, 0, 30, 30}, {0, 0, 0, 0, 0, 30, 30, 30},
+                               {0, 0, 0, 0, 30, 30, 30, 30}, {0, 0, 0, 30, 30, 30, 30, 30},
+                               {0, 0, 30, 30, 30, 30, 30, 30}, {0, 30, 30, 30, 30, 30, 30, 30},
+                               {30, 30, 30, 30, 30, 30, 30, 30}
+                             };
           for (int i = 0; i < 8; i++)
           {
             int num2;
             byte[] setCustomChar = this._CommandSet.SetCustomChar;
             if (this.dSettings.PacketFormat)
             {
-              setCustomChar[2] = (byte)i;
+              setCustomChar[2] = (byte) i;
               num2 = 3;
             }
             else
             {
-              setCustomChar[1] = (byte)i;
+              setCustomChar[1] = (byte) i;
               num2 = 2;
             }
             for (int j = 0; j < 8; j++)
@@ -1818,12 +1769,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
 
-      public bool OpenDisplay(string _port, string displayName, bool _brightness, int _brightnessLevel, bool _contrast, int _contrastLevel, bool EnableKeypad)
+      public bool OpenDisplay(string _port, string displayName, bool _brightness, int _brightnessLevel, bool _contrast,
+                              int _contrastLevel, bool EnableKeypad)
       {
         this._DisplayType = this.GetDisplayType(displayName);
         if ((this._DisplayType > 4) || (this._DisplayType == -1))
         {
-          Log.Info("CFontz.CFDisplay.OpenDisplay(): INVALID DISPLAY TYPE = {0}!", new object[] { displayName });
+          Log.Info("CFontz.CFDisplay.OpenDisplay(): INVALID DISPLAY TYPE = {0}!", new object[] {displayName});
           this._isOpen = false;
         }
         else
@@ -1852,9 +1804,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.commPort.DiscardInBuffer();
             this._isOpen = true;
             this._IsDisplayOff = false;
-          } catch (Exception exception)
+          }
+          catch (Exception exception)
           {
-            Log.Info("CFontz.CFDisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display! - {0}", new object[] { exception });
+            Log.Info("CFontz.CFDisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display! - {0}",
+                     new object[] {exception});
             this._isOpen = false;
           }
         }
@@ -1868,12 +1822,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] backLight = this._CommandSet.BackLight;
           if (this.dSettings.PacketFormat)
           {
-            backLight[2] = (byte)brightness;
+            backLight[2] = (byte) brightness;
             this.Calc_CRC(ref backLight, backLight.Length);
           }
           else
           {
-            backLight[1] = (byte)brightness;
+            backLight[1] = (byte) brightness;
           }
           this._currentBrightness = brightness;
           this.commPort.Write(backLight, 0, backLight.Length);
@@ -1887,12 +1841,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] packet = this._CommandSet.Contrast;
           if (Display_Parameters[this._DisplayType, 0] == 1)
           {
-            packet[2] = (byte)contrast;
+            packet[2] = (byte) contrast;
             this.Calc_CRC(ref packet, packet.Length);
           }
           else
           {
-            packet[1] = (byte)contrast;
+            packet[1] = (byte) contrast;
           }
           this.commPort.Write(packet, 0, packet.Length);
         }
@@ -1913,17 +1867,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _message = _message.Substring(0, this.dSettings.Columns);
             if (this.dSettings.PacketFormat)
             {
-              setLine[3] = (byte)_line;
+              setLine[3] = (byte) _line;
               num = 4;
             }
             else
             {
-              setLine[2] = (byte)_line;
+              setLine[2] = (byte) _line;
               num = 3;
             }
             for (int i = 0; i < this.dSettings.Columns; i++)
             {
-              setLine[num + i] = (byte)_message[i];
+              setLine[num + i] = (byte) _message[i];
             }
             if (this.dSettings.PacketFormat)
             {
@@ -1946,15 +1900,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")) < 3)
           {
-            Log.Info("CFontz.CFDisplay.SetupKeypad(): Deleting CFontz_Keypad mapping file with the wrong version stamp.", new object[0]);
+            Log.Info(
+              "CFontz.CFDisplay.SetupKeypad(): Deleting CFontz_Keypad mapping file with the wrong version stamp.",
+              new object[0]);
             File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml"));
           }
           if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")))
           {
             Log.Info("CFontz.Setup(): Creating default CFontz_Keypad mapping file", new object[0]);
-            if (!CFontz.AdvancedSettings.CreateDefaultKeyPadMapping())
+            if (!AdvancedSettings.CreateDefaultKeyPadMapping())
             {
-              Log.Info("CFontz.CFDisplay.SetupKeypad(): ERROR Creating default CFontz_Keypad mapping file", new object[0]);
+              Log.Info("CFontz.CFDisplay.SetupKeypad(): ERROR Creating default CFontz_Keypad mapping file",
+                       new object[0]);
               flag2 = false;
             }
             else
@@ -1966,9 +1923,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             flag2 = true;
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
-          Log.Info("CFontz.CFDisplay.SetupKeypad(): CAUGHT EXCEPTION while loading InputHander - {0}", new object[] { exception });
+          Log.Info("CFontz.CFDisplay.SetupKeypad(): CAUGHT EXCEPTION while loading InputHander - {0}",
+                   new object[] {exception});
           flag2 = false;
           flag = false;
         }
@@ -1976,7 +1935,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("CFontz.CFDisplay.SetupKeypad(): Loading InputHandler", new object[0]);
           this._inputHandler = new InputHandler("CFontz_Keypad");
-          Log.Info("CFontz.CFDisplay.SetupKeypad(): InputHandler loaded = {0}", new object[] { this._inputHandler.IsLoaded });
+          Log.Info("CFontz.CFDisplay.SetupKeypad(): InputHandler loaded = {0}",
+                   new object[] {this._inputHandler.IsLoaded});
           if (this._inputHandler.IsLoaded)
           {
             flag = true;
@@ -1984,7 +1944,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             flag = false;
-            Log.Info("CFontz.CFDisplay.SetupKeypad(): error loading InputHandler - remote support disabled", new object[0]);
+            Log.Info("CFontz.CFDisplay.SetupKeypad(): error loading InputHandler - remote support disabled",
+                     new object[0]);
           }
         }
         else
@@ -1996,7 +1957,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return flag;
         }
-        Log.Info("CFontz.CFDisplay.SetupKeypad(): Error loading Keypad mapping file - Keypad support disabled", new object[0]);
+        Log.Info("CFontz.CFDisplay.SetupKeypad(): Error loading Keypad mapping file - Keypad support disabled",
+                 new object[0]);
         return false;
       }
 
@@ -2013,7 +1975,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
       {
-        byte eventCode = (byte)this.commPort.ReadByte();
+        byte eventCode = (byte) this.commPort.ReadByte();
         if (!this._useCustomKeypadMapping)
         {
           Action action;
@@ -2021,48 +1983,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           switch (eventCode)
           {
             case 0x4b:
-              Log.Info("CFDisplay: received KeyPad event - Cursor Up {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - Cursor Up {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_UP, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x4c:
-              Log.Info("CFDisplay: received KeyPad event - Cursor Down {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - Cursor Down {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_DOWN, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x52:
-              Log.Info("CFDisplay: received KeyPad event - Cursor Left{0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - Cursor Left{0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_LEFT, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 70:
-              Log.Info("CFDisplay: received KeyPad event - Cursor Right{0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - Cursor Right{0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_MOVE_RIGHT, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x4a:
-              Log.Info("CFDisplay: received KeyPad event - Enter {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - Enter {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_SELECT_ITEM, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 80:
-              Log.Info("CFDisplay: received KeyPad event - F1 {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - F1 {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_STEP_BACK, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
 
             case 0x51:
-              Log.Info("CFDisplay: received KeyPad event - F2 {0}", new object[] { eventCode.ToString("x00") });
+              Log.Info("CFDisplay: received KeyPad event - F2 {0}", new object[] {eventCode.ToString("x00")});
               action = new Action(Action.ActionType.ACTION_STOP, 0f, 0f);
               GUIGraphicsContext.OnAction(action);
               return;
           }
-          Log.Info("CFDisplay: received KeyPad event - received byte {0} Unknown Key", new object[] { eventCode.ToString("x00") });
+          Log.Info("CFDisplay: received KeyPad event - received byte {0} Unknown Key",
+                   new object[] {eventCode.ToString("x00")});
         }
         else
         {
@@ -2129,4 +2092,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
   }
 }
-

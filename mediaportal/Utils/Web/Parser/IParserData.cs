@@ -23,20 +23,18 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Utils.Web
 {
-	/// <summary>
-	/// Interface for Storing the Parser Data
-	/// </summary>
-	public interface IParserData
-	{
+  /// <summary>
+  /// Interface for Storing the Parser Data
+  /// </summary>
+  public interface IParserData
+  {
     /// <summary>
     /// Sets and element.
     /// </summary>
     /// <param name="tag">Element tag.</param>
     /// <param name="value">Element value.</param>
     void SetElement(string tag, string value);
-	}
+  }
 }

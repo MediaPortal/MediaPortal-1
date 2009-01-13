@@ -24,33 +24,20 @@
 #endregion
 
 #region usings
+
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Management;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
-using MediaPortal.Util;
 using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
-using MediaPortal.Radio.Database;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.TV.Teletext;
-using MediaPortal.TV.DiskSpace;
+
 #endregion
 
 namespace MediaPortal.TV.Recording
 {
   public class CancelRecordingCommand : CardCommand
   {
-    TVRecording _recordingToStop;
+    private TVRecording _recordingToStop;
+
     public CancelRecordingCommand(TVRecording recordingToStop)
     {
       _recordingToStop = recordingToStop;
@@ -61,21 +48,21 @@ namespace MediaPortal.TV.Recording
       if (_recordingToStop == null)
       {
         Succeeded = false;
-        ErrorMessage = GUILocalizeStrings.Get(752);// "No recording specified";
+        ErrorMessage = GUILocalizeStrings.Get(752); // "No recording specified";
         return;
       }
-      
+
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage = GUILocalizeStrings.Get(753);//"No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); //"No tuner cards installed";
         Succeeded = false;
         return;
       }
       bool stopped = false;
-      Log.WriteFile(LogType.Recorder, "Command:Cancel recording {0} {1}-{2}", 
-                                              _recordingToStop.Title,
-                                              _recordingToStop.StartTime.ToLongTimeString(),
-                                              _recordingToStop.EndTime.ToLongTimeString() );
+      Log.WriteFile(LogType.Recorder, "Command:Cancel recording {0} {1}-{2}",
+                    _recordingToStop.Title,
+                    _recordingToStop.StartTime.ToLongTimeString(),
+                    _recordingToStop.EndTime.ToLongTimeString());
 
       //find card which currently records the 'rec'
       for (int card = 0; card < handler.TVCards.Count; ++card)
@@ -91,15 +78,20 @@ namespace MediaPortal.TV.Recording
             //yep then cancel the recording
             if (_recordingToStop.RecType == TVRecording.RecordingType.Once)
             {
-              Log.WriteFile(LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
-              _recordingToStop.Canceled = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+              Log.WriteFile(LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName,
+                            dev.TVChannel);
+              _recordingToStop.Canceled = Util.Utils.datetolong(DateTime.Now);
             }
             else
             {
-              Log.WriteFile(LogType.Recorder, "Recorder: Stop serie of recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
-              long datetime = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+              Log.WriteFile(LogType.Recorder, "Recorder: Stop serie of recording card:{0} channel:{1}",
+                            dev.CommercialName, dev.TVChannel);
+              long datetime = Util.Utils.datetolong(DateTime.Now);
               TVProgram prog = dev.CurrentProgramRecording;
-              if (prog != null) datetime = MediaPortal.Util.Utils.datetolong(prog.StartTime);
+              if (prog != null)
+              {
+                datetime = Util.Utils.datetolong(prog.StartTime);
+              }
               _recordingToStop.CanceledSeries.Add(datetime);
               _recordingToStop.Canceled = 0;
             }
@@ -123,7 +115,7 @@ namespace MediaPortal.TV.Recording
       else
       {
         Succeeded = false;
-        ErrorMessage = GUILocalizeStrings.Get(754);// "No tuner is recording the specified show";
+        ErrorMessage = GUILocalizeStrings.Get(754); // "No tuner is recording the specified show";
       }
     }
   }

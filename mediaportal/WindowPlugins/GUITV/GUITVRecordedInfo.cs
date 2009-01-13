@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Globalization;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal.GUI.TV
 {
@@ -39,39 +37,53 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITvRecordedInfo : GUIWindow
   {
-		[SkinControlAttribute(17)]			  protected GUILabelControl					lblProgramGenre=null;
-		[SkinControlAttribute(15)]			  protected GUITextScrollUpControl	lblProgramDescription=null;
-		[SkinControlAttribute(14)]			  protected GUILabelControl					lblProgramTime=null;
-		[SkinControlAttribute(13)]			  protected GUIFadeLabel						lblProgramTitle=null;
-		[SkinControlAttribute(2)]					protected GUIButtonControl				btnKeep=null;
+    [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
+    [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControl(14)] protected GUILabelControl lblProgramTime = null;
+    [SkinControl(13)] protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControl(2)] protected GUIButtonControl btnKeep = null;
 
-    static TVRecorded currentProgram = null;
+    private static TVRecorded currentProgram = null;
 
     public GUITvRecordedInfo()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO;//759
+      GetID = (int) Window.WINDOW_TV_RECORDED_INFO; //759
     }
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvRecordedInfo.xml");
       return bResult;
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       if (Recorder.IsViewing())
       {
         GUIControl cntl = GetControl(300);
-        if (cntl != null) cntl.Visible = true;
+        if (cntl != null)
+        {
+          cntl.Visible = true;
+        }
         cntl = GetControl(99);
-        if (cntl != null) cntl.Visible = true;
+        if (cntl != null)
+        {
+          cntl.Visible = true;
+        }
       }
       else
       {
         GUIControl cntl = GetControl(300);
-        if (cntl != null) cntl.Visible = false;
+        if (cntl != null)
+        {
+          cntl.Visible = false;
+        }
         cntl = GetControl(99);
-        if (cntl != null) cntl.Visible = false;
+        if (cntl != null)
+        {
+          cntl.Visible = false;
+        }
       }
       Update();
     }
@@ -82,14 +94,17 @@ namespace MediaPortal.GUI.TV
       set { currentProgram = value; }
     }
 
-    void Update()
+    private void Update()
     {
-      if (currentProgram == null) return;
+      if (currentProgram == null)
+      {
+        return;
+      }
 
       string strTime = String.Format("{0} {1} - {2}",
-        MediaPortal.Util.Utils.GetShortDayString(currentProgram.StartTime),
-        currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Util.Utils.GetShortDayString(currentProgram.StartTime),
+                                     currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       lblProgramGenre.Label = currentProgram.Genre;
       lblProgramTime.Label = strTime;
@@ -97,23 +112,28 @@ namespace MediaPortal.GUI.TV
       lblProgramTitle.Label = currentProgram.Title;
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnKeep)
+      {
         OnKeep();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnKeep()
+    private void OnKeep()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(1042);
-      dlg.AddLocalizedString(1043);//Until watched
-      dlg.AddLocalizedString(1044);//Until space needed
-      dlg.AddLocalizedString(1045);//Until date
-      dlg.AddLocalizedString(1046);//Always
+      dlg.AddLocalizedString(1043); //Until watched
+      dlg.AddLocalizedString(1044); //Until space needed
+      dlg.AddLocalizedString(1045); //Until date
+      dlg.AddLocalizedString(1046); //Always
       switch (currentProgram.KeepRecordingMethod)
       {
         case TVRecorded.KeepMethod.UntilWatched:
@@ -130,7 +150,10 @@ namespace MediaPortal.GUI.TV
           break;
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
       switch (dlg.SelectedId)
       {
         case 1043:
@@ -149,22 +172,36 @@ namespace MediaPortal.GUI.TV
           {
             DateTime dt = currentProgram.StartTime.AddDays(iDay);
             if (currentProgram.StartTime < DateTime.Now)
+            {
               dt = DateTime.Now.AddDays(iDay);
+            }
 
             dlg.Add(dt.ToLongDateString());
           }
           TimeSpan ts = (currentProgram.KeepRecordingTill - currentProgram.StartTime);
           if (currentProgram.StartTime < DateTime.Now)
+          {
             ts = (currentProgram.KeepRecordingTill - DateTime.Now);
-          int days = (int)ts.TotalDays;
-          if (days >= 100) days = 30;
+          }
+          int days = (int) ts.TotalDays;
+          if (days >= 100)
+          {
+            days = 30;
+          }
           dlg.SelectedLabel = days - 1;
           dlg.DoModal(GetID);
-          if (dlg.SelectedLabel < 0) return;
+          if (dlg.SelectedLabel < 0)
+          {
+            return;
+          }
           if (currentProgram.StartTime < DateTime.Now)
+          {
             currentProgram.KeepRecordingTill = DateTime.Now.AddDays(dlg.SelectedLabel + 1);
+          }
           else
+          {
             currentProgram.KeepRecordingTill = currentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
+          }
           break;
         case 1046:
           currentProgram.KeepRecordingMethod = TVRecorded.KeepMethod.Always;

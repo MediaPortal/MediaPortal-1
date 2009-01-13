@@ -30,11 +30,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.GUI.Home
 {
   [PluginIcons("WindowPlugins.Home.Homemenu.gif", "WindowPlugins.Home.Homemenu_disabled.gif")]
-  public partial class GUIHomeSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm, ISetupForm, IComparer
+  public partial class GUIHomeSetupForm : MPConfigForm, ISetupForm, IComparer
   {
     public GUIHomeSetupForm()
     {
@@ -53,9 +54,18 @@ namespace MediaPortal.GUI.Home
         checkBoxShowSeconds.Checked = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
         string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <DD>.<Month>");
         cboxFormat.Items.Add(text);
-        if (!text.Equals("<Day> <DD>.<Month>")) cboxFormat.Items.Add("<Day> <DD>.<Month>");
-        if (!text.Equals("<Day> <DD> <Month>")) cboxFormat.Items.Add("<Day> <DD> <Month>");
-        if (!text.Equals("<Day> <Month> <DD>")) cboxFormat.Items.Add("<Day> <Month> <DD>");
+        if (!text.Equals("<Day> <DD>.<Month>"))
+        {
+          cboxFormat.Items.Add("<Day> <DD>.<Month>");
+        }
+        if (!text.Equals("<Day> <DD> <Month>"))
+        {
+          cboxFormat.Items.Add("<Day> <DD> <Month>");
+        }
+        if (!text.Equals("<Day> <Month> <DD>"))
+        {
+          cboxFormat.Items.Add("<Day> <Month> <DD>");
+        }
         cboxFormat.Text = text;
       }
     }
@@ -93,6 +103,7 @@ namespace MediaPortal.GUI.Home
     }
 
     #region Tab: Settings
+
     private void btnOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
@@ -149,46 +160,87 @@ namespace MediaPortal.GUI.Home
     {
       tboxTest.Text = "";
       string dateString = cboxFormat.Text;
-      if (String.IsNullOrEmpty(dateString)) return;
+      if (String.IsNullOrEmpty(dateString))
+      {
+        return;
+      }
 
       DateTime cur = DateTime.Now;
       string day;
       switch (cur.DayOfWeek)
       {
-        case DayOfWeek.Monday: day = "Monday"; break;
-        case DayOfWeek.Tuesday: day = "Tuesday"; break;
-        case DayOfWeek.Wednesday: day = "Wednesday"; break;
-        case DayOfWeek.Thursday: day = "Thursday"; break;
-        case DayOfWeek.Friday: day = "Friday"; break;
-        case DayOfWeek.Saturday: day = "Saturday"; break;
-        default: day = "Sunday"; break;
+        case DayOfWeek.Monday:
+          day = "Monday";
+          break;
+        case DayOfWeek.Tuesday:
+          day = "Tuesday";
+          break;
+        case DayOfWeek.Wednesday:
+          day = "Wednesday";
+          break;
+        case DayOfWeek.Thursday:
+          day = "Thursday";
+          break;
+        case DayOfWeek.Friday:
+          day = "Friday";
+          break;
+        case DayOfWeek.Saturday:
+          day = "Saturday";
+          break;
+        default:
+          day = "Sunday";
+          break;
       }
 
       string month;
       switch (cur.Month)
       {
-        case 1: month = "January"; break;
-        case 2: month = "February"; break;
-        case 3: month = "March"; break;
-        case 4: month = "April"; break;
-        case 5: month = "May"; break;
-        case 6: month = "June"; break;
-        case 7: month = "July"; break;
-        case 8: month = "August"; break;
-        case 9: month = "September"; break;
-        case 10: month = "October"; break;
-        case 11: month = "November"; break;
-        default: month = "December"; break;
+        case 1:
+          month = "January";
+          break;
+        case 2:
+          month = "February";
+          break;
+        case 3:
+          month = "March";
+          break;
+        case 4:
+          month = "April";
+          break;
+        case 5:
+          month = "May";
+          break;
+        case 6:
+          month = "June";
+          break;
+        case 7:
+          month = "July";
+          break;
+        case 8:
+          month = "August";
+          break;
+        case 9:
+          month = "September";
+          break;
+        case 10:
+          month = "October";
+          break;
+        case 11:
+          month = "November";
+          break;
+        default:
+          month = "December";
+          break;
       }
 
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
 
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(), "unknown");
 
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
-      dateString = MediaPortal.Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
 
       tboxTest.Text = dateString;
     }
@@ -202,6 +254,7 @@ namespace MediaPortal.GUI.Home
     {
       UpdateTestBox();
     }
+
     #endregion
 
     #region Tab: Menu SetUp
@@ -210,7 +263,10 @@ namespace MediaPortal.GUI.Home
     {
       tvMenu.Nodes.Clear();
       string directory = Config.GetSubFolder(Config.Dir.Plugins, "windows");
-      if (!Directory.Exists(directory)) return;
+      if (!Directory.Exists(directory))
+      {
+        return;
+      }
 
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -221,7 +277,6 @@ namespace MediaPortal.GUI.Home
           tnMyPlugIns = new TreeNode("my Plugins");
           tnMyPlugIns.Tag = new PluginInfo("my Plugins");
           tvMenu.Nodes.Add(tnMyPlugIns);
-
         }
 
         string[] files = Directory.GetFiles(directory, "*.dll");
@@ -237,7 +292,10 @@ namespace MediaPortal.GUI.Home
               foreach (Type type in exportedTypes)
               {
                 // an abstract class cannot be instanciated
-                if (type.IsAbstract) continue;
+                if (type.IsAbstract)
+                {
+                  continue;
+                }
                 // Try to locate the interface we're interested in
                 if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
                 {
@@ -249,7 +307,10 @@ namespace MediaPortal.GUI.Home
 
                     if (pluginForm != null)
                     {
-                      if (pluginForm.PluginName().Equals("Home")) continue;
+                      if (pluginForm.PluginName().Equals("Home"))
+                      {
+                        continue;
+                      }
                       if (pluginForm.PluginName().Equals("my Plugins"))
                       {
                         if (tnMyPlugIns != null)
@@ -260,15 +321,27 @@ namespace MediaPortal.GUI.Home
                         continue;
                       }
                       string enabled = xmlreader.GetValue("plugins", pluginForm.PluginName());
-                      if (enabled.CompareTo("yes") != 0) continue;
+                      if (enabled.CompareTo("yes") != 0)
+                      {
+                        continue;
+                      }
 
                       string showInHome = xmlreader.GetValue("home", pluginForm.PluginName());
 
                       TreeNode node;
-                      if ((useMyPlugins) && (showInHome.CompareTo("no") == 0)) node = tnMyPlugIns.Nodes.Add(pluginForm.PluginName());
-                      else node = tvMenu.Nodes.Add(pluginForm.PluginName());
+                      if ((useMyPlugins) && (showInHome.CompareTo("no") == 0))
+                      {
+                        node = tnMyPlugIns.Nodes.Add(pluginForm.PluginName());
+                      }
+                      else
+                      {
+                        node = tvMenu.Nodes.Add(pluginForm.PluginName());
+                      }
 
-                      if (node != null) node.Tag = new PluginInfo(pluginForm);
+                      if (node != null)
+                      {
+                        node.Tag = new PluginInfo(pluginForm);
+                      }
                     }
                   }
                   catch (Exception setupFormException)
@@ -300,24 +373,27 @@ namespace MediaPortal.GUI.Home
       bool updated = false;
       foreach (TreeNode node in tvMenu.Nodes)
       {
-        if (((PluginInfo)node.Tag).Index == Int32.MaxValue)
+        if (((PluginInfo) node.Tag).Index == Int32.MaxValue)
         {
-          ((PluginInfo)node.Tag).Index = node.Index;
+          ((PluginInfo) node.Tag).Index = node.Index;
           updated = true;
         }
         if (node.Nodes != null)
         {
           foreach (TreeNode subNode in node.Nodes)
           {
-            if (((PluginInfo)subNode.Tag).Index == Int32.MaxValue)
+            if (((PluginInfo) subNode.Tag).Index == Int32.MaxValue)
             {
-              ((PluginInfo)subNode.Tag).Index = subNode.Index;
+              ((PluginInfo) subNode.Tag).Index = subNode.Index;
               updated = true;
             }
           }
         }
       }
-      if (updated) SaveMenuSorting();
+      if (updated)
+      {
+        SaveMenuSorting();
+      }
     }
 
     private void tvMenu_AfterSelect(object sender, TreeViewEventArgs e)
@@ -333,13 +409,16 @@ namespace MediaPortal.GUI.Home
     private void buUp_Click(object sender, EventArgs e)
     {
       TreeNode tnSelected = tvMenu.SelectedNode;
-      if (tnSelected == null) return;
+      if (tnSelected == null)
+      {
+        return;
+      }
 
       tvMenu.BeginUpdate();
-      if (((PluginInfo)tnSelected.Tag).Index > 0)
+      if (((PluginInfo) tnSelected.Tag).Index > 0)
       {
-        ((PluginInfo)tnSelected.Tag).Index--;
-        ((PluginInfo)tnSelected.PrevNode.Tag).Index++;
+        ((PluginInfo) tnSelected.Tag).Index--;
+        ((PluginInfo) tnSelected.PrevNode.Tag).Index++;
         tvMenu.Sort();
         tvMenu.SelectedNode = tnSelected;
       }
@@ -349,16 +428,22 @@ namespace MediaPortal.GUI.Home
     private void buDown_Click(object sender, EventArgs e)
     {
       TreeNode tnSelected = tvMenu.SelectedNode;
-      if (tnSelected == null) return;
+      if (tnSelected == null)
+      {
+        return;
+      }
 
       tvMenu.BeginUpdate();
       TreeNodeCollection nodeColl = tvMenu.Nodes;
-      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;
-
-      if (((PluginInfo)tnSelected.Tag).Index + 1 < nodeColl.Count)
+      if (tnSelected.Parent != null)
       {
-        ((PluginInfo)tnSelected.Tag).Index++;
-        ((PluginInfo)tnSelected.NextNode.Tag).Index--;
+        nodeColl = tnSelected.Parent.Nodes;
+      }
+
+      if (((PluginInfo) tnSelected.Tag).Index + 1 < nodeColl.Count)
+      {
+        ((PluginInfo) tnSelected.Tag).Index++;
+        ((PluginInfo) tnSelected.NextNode.Tag).Index--;
         tvMenu.Sort();
 
         tvMenu.SelectedNode = tnSelected;
@@ -409,10 +494,11 @@ namespace MediaPortal.GUI.Home
 
     public int GetWindowId()
     {
-      return (int)GUIWindow.Window.WINDOW_HOME;
+      return (int) GUIWindow.Window.WINDOW_HOME;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = PluginName();
       strButtonImage = string.Empty;
@@ -424,12 +510,14 @@ namespace MediaPortal.GUI.Home
     #endregion
 
     #region IComparer<TreeNode>
+
     public int Compare(object x, object y)
     {
       TreeNode tx = x as TreeNode;
       TreeNode ty = y as TreeNode;
-      return ((PluginInfo)tx.Tag).Index - ((PluginInfo)ty.Tag).Index;
+      return ((PluginInfo) tx.Tag).Index - ((PluginInfo) ty.Tag).Index;
     }
+
     #endregion
 
     private void GUIHomeSetupForm_Load(object sender, EventArgs e)
@@ -492,7 +580,5 @@ namespace MediaPortal.GUI.Home
         }
       }
     }
-
   }
-
 }

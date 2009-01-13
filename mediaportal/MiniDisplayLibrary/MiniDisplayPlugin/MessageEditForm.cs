@@ -13,10 +13,10 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  public class MessageEditForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class MessageEditForm : MPConfigForm
   {
     private bool _CharacterDrawMode;
-    private string[] AlignmentList = new string[] { "Left", "Centered", "Right" };
+    private string[] AlignmentList = new string[] {"Left", "Centered", "Right"};
     private MPBeveledLine beveledLine1;
     private MPButton buttonApply;
     private MPButton buttonCancel;
@@ -99,7 +99,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private MPComboBox ComboBoxStatusProperty;
     private MPComboBox comboBoxWindowProperty;
     private Container components = null;
-    private string[] ConditionList = new string[] { "And", "IsNull", "NotNull", "Or" };
+    private string[] ConditionList = new string[] {"And", "IsNull", "NotNull", "Or"};
     private GroupBox groupboxCharacterEdit;
     private MPGroupBox GroupBoxCondition;
     private MPGroupBox groupBoxLine;
@@ -114,7 +114,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private MPLabel label1;
     private MPLabel labelExpand;
     private MPLabel labelLine;
-    private string[] MessageTypeList = new string[] { "Line", "Image" };
+    private string[] MessageTypeList = new string[] {"Line", "Image"};
     private MPLabel mpLabel1;
     private MPLabel mpLabel10;
     private MPLabel mpLabel11;
@@ -135,12 +135,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private MPTextBox mpTPBlength;
     private MPTextBox mpTPBStartChar;
     private MPTextBox mpTPBValueChar;
-    private Array nativeWindowsList = Enum.GetValues(typeof(GUIWindow.Window));
-    private string[] ProcessList = new string[] { "FixedValue", "Parse", "Performance Counter", "Property", "Text", "TextProgressBar" };
-    private string[] ProcessListImage = new string[] { "Parse", "Property", "Text", "X", "Y" };
+    private Array nativeWindowsList = Enum.GetValues(typeof (GUIWindow.Window));
+
+    private string[] ProcessList = new string[]
+                                     {
+                                       "FixedValue", "Parse", "Performance Counter", "Property", "Text",
+                                       "TextProgressBar"
+                                     };
+
+    private string[] ProcessListImage = new string[] {"Parse", "Property", "Text", "X", "Y"};
     private ArrayList propertyList = new ArrayList();
     private TreeNode SettingsNode;
-    private string[] StatusList = new string[] { "ALL STATES", "Action", "Idle", "PlayingDVD", "PlayingMusic", "PlayingRadio", "PlayingTV", "PlayingRecording", "PlayingVideo", "TimeShifting", "Dialog" };
+
+    private string[] StatusList = new string[]
+                                    {
+                                      "ALL STATES", "Action", "Idle", "PlayingDVD", "PlayingMusic", "PlayingRadio",
+                                      "PlayingTV", "PlayingRecording", "PlayingVideo", "TimeShifting", "Dialog"
+                                    };
+
     private MPTextBox textBoxCondValue;
     private MPTextBox textBoxProcessValue;
     private MPTextBox TextBoxTranslateFrom;
@@ -156,7 +168,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         if (window.ToString().IndexOf("DIALOG") == -1)
         {
-          switch (((int)Enum.Parse(typeof(GUIWindow.Window), window.ToString())))
+          switch (((int) Enum.Parse(typeof (GUIWindow.Window), window.ToString())))
           {
             case 100:
             case 0x65:
@@ -194,7 +206,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           this.windowsListFiltered.Add(this.GetFriendlyName(window.ToString()));
         }
-      Label_0343:
+        Label_0343:
         this.windowsList.Add(this.GetFriendlyName(window.ToString()));
       }
       this.windowsList.Add("ALL WINDOWS");
@@ -458,12 +470,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool isExpanded = false;
       TreeNode selectedNode = this.treeMapping.SelectedNode;
       isExpanded = selectedNode.IsExpanded;
-      if ((((((Data)selectedNode.Tag).Type == "MESSAGE") || (((Data)selectedNode.Tag).Type == "LINE")) || ((((Data)selectedNode.Tag).Type == "IMAGE") || (((Data)selectedNode.Tag).Type == "PROCESS"))) || ((((Data)selectedNode.Tag).Type == "CONDITION") || (((Data)selectedNode.Tag).Type == "SUBCONDITION")))
+      if ((((((Data) selectedNode.Tag).Type == "MESSAGE") || (((Data) selectedNode.Tag).Type == "LINE")) ||
+           ((((Data) selectedNode.Tag).Type == "IMAGE") || (((Data) selectedNode.Tag).Type == "PROCESS"))) ||
+          ((((Data) selectedNode.Tag).Type == "CONDITION") || (((Data) selectedNode.Tag).Type == "SUBCONDITION")))
       {
         if (selectedNode.Index < (selectedNode.Parent.Nodes.Count - 1))
         {
           int index = selectedNode.Index + 1;
-          TreeNode node = (TreeNode)selectedNode.Clone();
+          TreeNode node = (TreeNode) selectedNode.Clone();
           TreeNode parent = selectedNode.Parent;
           selectedNode.Remove();
           if (isExpanded)
@@ -473,7 +487,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           parent.Nodes.Insert(index, node);
           this.treeMapping.SelectedNode = node;
         }
-        this.treeMapping_AfterSelect(this, new TreeViewEventArgs(this.treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
+        this.treeMapping_AfterSelect(this,
+                                     new TreeViewEventArgs(this.treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
         this.changedSettings = true;
       }
     }
@@ -484,7 +499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       TreeNode node3;
       Log.Info("buttonNew_Click(): ADDING NEW NODE", new object[0]);
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       TreeNode node = new TreeNode("Idle (NEW MESSAGE)");
       node.Tag = new Data("MESSAGE", "STATUS", "Idle");
       TreeNode node5 = new TreeNode("WINDOWS");
@@ -504,7 +519,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       switch (tag.Type)
       {
         case "SECTION":
-          switch (((string)tag.Parameter))
+          switch (((string) tag.Parameter))
           {
             case "STATUSMESSAGES":
               {
@@ -535,7 +550,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 for (int i = 0; i < 8; i++)
                 {
                   TreeNode node13 = new TreeNode("Byte #" + i.ToString());
-                  node13.Tag = new Data("BYTE", i, (byte)0);
+                  node13.Tag = new Data("BYTE", i, (byte) 0);
                   node3.Nodes.Add(node13);
                 }
                 node3.ExpandAll();
@@ -566,7 +581,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             for (int j = 0; j < 8; j++)
             {
               TreeNode node14 = new TreeNode("Byte #" + j.ToString());
-              node14.Tag = new Data("BYTE", j, (byte)0);
+              node14.Tag = new Data("BYTE", j, (byte) 0);
               node3.Nodes.Add(node14);
             }
             node3.ExpandAll();
@@ -614,7 +629,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         case "CONDITION":
           string str3;
-          if (((str3 = (string)tag.Parameter) == null) || (!(str3 == "And") && !(str3 == "Or")))
+          if (((str3 = (string) tag.Parameter) == null) || (!(str3 == "And") && !(str3 == "Or")))
           {
             Log.Info("buttonNew_Click(): adding new CONDITION node", new object[0]);
             selectedNode.Parent.Nodes.Add(node9);
@@ -633,7 +648,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           break;
 
         default:
-          Log.Info("buttonNew_Click(): Unknown node \"{0}\"", new object[] { tag.Type });
+          Log.Info("buttonNew_Click(): Unknown node \"{0}\"", new object[] {tag.Type});
           break;
       }
       this.changedSettings = true;
@@ -652,13 +667,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void buttonRemove_Click(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       if (((tag.Type == "COMMAND") || (tag.Type == "SOUND")) || (tag.Type == "CONDITION"))
       {
         selectedNode = this.getNode("CONDITION");
-        tag = (Data)selectedNode.Tag;
+        tag = (Data) selectedNode.Tag;
       }
-      if (MessageBox.Show(this, "Are you sure you want to remove this " + tag.Type.ToLower() + "?", "Remove " + tag.Type.ToLower(), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+      if (
+        MessageBox.Show(this, "Are you sure you want to remove this " + tag.Type.ToLower() + "?",
+                        "Remove " + tag.Type.ToLower(), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button2) == DialogResult.Yes)
       {
         selectedNode.Remove();
         this.changedSettings = true;
@@ -670,14 +688,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool isExpanded = false;
       TreeNode selectedNode = this.treeMapping.SelectedNode;
       isExpanded = selectedNode.IsExpanded;
-      if ((((((Data)selectedNode.Tag).Type == "MESSAGE") || (((Data)selectedNode.Tag).Type == "LINE")) || ((((Data)selectedNode.Tag).Type == "IMAGE") || (((Data)selectedNode.Tag).Type == "PROCESS"))) || ((((Data)selectedNode.Tag).Type == "CONDITION") || (((Data)selectedNode.Tag).Type == "SUBCONDITION")))
+      if ((((((Data) selectedNode.Tag).Type == "MESSAGE") || (((Data) selectedNode.Tag).Type == "LINE")) ||
+           ((((Data) selectedNode.Tag).Type == "IMAGE") || (((Data) selectedNode.Tag).Type == "PROCESS"))) ||
+          ((((Data) selectedNode.Tag).Type == "CONDITION") || (((Data) selectedNode.Tag).Type == "SUBCONDITION")))
       {
         if (selectedNode.Index > 0)
         {
           int index = selectedNode.Index - 1;
-          TreeNode node = (TreeNode)selectedNode.Clone();
+          TreeNode node = (TreeNode) selectedNode.Clone();
           TreeNode parent = selectedNode.Parent;
-          if (((Data)selectedNode.Parent.Nodes[index].Tag).Type == "WINDOWLIST")
+          if (((Data) selectedNode.Parent.Nodes[index].Tag).Type == "WINDOWLIST")
           {
             return;
           }
@@ -689,7 +709,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           parent.Nodes.Insert(index, node);
           this.treeMapping.SelectedNode = node;
         }
-        this.treeMapping_AfterSelect(this, new TreeViewEventArgs(this.treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
+        this.treeMapping_AfterSelect(this,
+                                     new TreeViewEventArgs(this.treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
         this.changedSettings = true;
       }
     }
@@ -698,23 +719,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if (!this._CharacterDrawMode)
       {
-        string name = ((CheckBox)sender).Name;
+        string name = ((CheckBox) sender).Name;
         int row = int.Parse(name.Substring(3, 1));
         int num2 = int.Parse(name.Substring(5, 1));
-        if (((CheckBox)sender).CheckState == CheckState.Checked)
+        if (((CheckBox) sender).CheckState == CheckState.Checked)
         {
-          ((CheckBox)sender).CheckState = CheckState.Indeterminate;
+          ((CheckBox) sender).CheckState = CheckState.Indeterminate;
         }
-        Log.Info("CharBitmap_CheckedChanged(): bit changed - row = {0}, bit = {1}", new object[] { row, num2 });
+        Log.Info("CharBitmap_CheckedChanged(): bit changed - row = {0}, bit = {1}", new object[] {row, num2});
         byte newValue = 0;
         byte num4 = 0x80;
         for (int i = 7; i >= 0; i--)
         {
           if (this.GetCharacterPixel(row, i))
           {
-            newValue = (byte)(newValue + num4);
+            newValue = (byte) (newValue + num4);
           }
-          num4 = (byte)(num4 >> 1);
+          num4 = (byte) (num4 >> 1);
         }
         if (this.CharacterEditNode != null)
         {
@@ -728,7 +749,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.CharacterEditNode.Nodes[row].Text = "Byte " + row.ToString() + ": 0x" + newValue.ToString("x00");
           }
           this.changedSettings = true;
-          Log.Info("CharBitmap_CheckedChanged(): new row value = {0}", new object[] { newValue });
+          Log.Info("CharBitmap_CheckedChanged(): new row value = {0}", new object[] {newValue});
         }
       }
     }
@@ -751,34 +772,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void comboBoxAlignment_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("LINE");
-      Data tag = (Data)node.Tag;
-      Log.Info("comboBoxAlignment_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.comboBoxAlignment.SelectedItem.ToString() });
+      Data tag = (Data) node.Tag;
+      Log.Info(
+        "comboBoxAlignment_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+        new object[] {tag.Type, tag.Parameter, tag.Value, this.comboBoxAlignment.SelectedItem.ToString()});
       node.Tag = new Data("LINE", "ALIGNMENT", this.comboBoxAlignment.SelectedItem);
-      node.Text = "LINE Alignment = " + ((string)this.comboBoxAlignment.SelectedItem);
-      Data data2 = (Data)node.Tag;
-      Log.Info("comboBoxAlignment_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+      node.Text = "LINE Alignment = " + ((string) this.comboBoxAlignment.SelectedItem);
+      Data data2 = (Data) node.Tag;
+      Log.Info("comboBoxAlignment_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+               new object[] {data2.Type, data2.Parameter, data2.Value});
       this.changedSettings = true;
     }
 
     private void ComboBoxCondType_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("CONDITION");
-      Data tag = (Data)node.Tag;
-      string parameter = (string)tag.Parameter;
+      Data tag = (Data) node.Tag;
+      string parameter = (string) tag.Parameter;
       if (parameter != null)
       {
         if (!(parameter == "AND") && !(parameter == "OR"))
         {
           if ((parameter == "ISNULL") || (parameter == "NOTNULL"))
           {
-            node.Tag = new Data("CONDITION", (string)this.ComboBoxCondType.SelectedItem, this.textBoxCondValue.Text);
-            node.Text = (string)this.ComboBoxCondType.SelectedItem;
+            node.Tag = new Data("CONDITION", (string) this.ComboBoxCondType.SelectedItem, this.textBoxCondValue.Text);
+            node.Text = (string) this.ComboBoxCondType.SelectedItem;
           }
         }
         else
         {
-          node.Tag = new Data("CONDITION", (string)this.ComboBoxCondType.SelectedItem, string.Empty);
-          node.Text = (string)this.comboBoxWindowProperty.SelectedItem;
+          node.Tag = new Data("CONDITION", (string) this.ComboBoxCondType.SelectedItem, string.Empty);
+          node.Text = (string) this.comboBoxWindowProperty.SelectedItem;
           this.textBoxCondValue.Text = string.Empty;
         }
       }
@@ -788,8 +812,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void comboBoxMessageType_SelectedIndexChanged(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
-      Log.Info("comboBoxMessageType_SelectionChangeCommitted(): EXISTING TYPE = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type });
+      Data tag = (Data) selectedNode.Tag;
+      Log.Info(
+        "comboBoxMessageType_SelectionChangeCommitted(): EXISTING TYPE = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+        new object[] {tag.Type});
       string str = this.comboBoxMessageType.SelectedItem.ToString().ToLower();
       if (str != null)
       {
@@ -804,11 +830,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         else if (tag.Type.ToLower() != "line")
         {
           selectedNode.Tag = new Data("LINE", "ALIGNMENT", this.comboBoxAlignment.SelectedItem);
-          selectedNode.Text = "LINE Alignment = " + ((string)this.comboBoxAlignment.SelectedItem);
+          selectedNode.Text = "LINE Alignment = " + ((string) this.comboBoxAlignment.SelectedItem);
         }
       }
-      Data data2 = (Data)selectedNode.Tag;
-      Log.Info("comboBoxMessageType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+      Data data2 = (Data) selectedNode.Tag;
+      Log.Info("comboBoxMessageType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+               new object[] {data2.Type, data2.Parameter, data2.Value});
       this.changedSettings = true;
     }
 
@@ -821,19 +848,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxTextProgressBar.Enabled = false;
       this.groupBoxTextProgressBar.Visible = false;
       TreeNode node = this.getNode("PROCESS");
-      Data tag = (Data)node.Tag;
-      if (((str = (string)tag.Parameter) != null) && ((str == "AND") || (str == "OR")))
+      Data tag = (Data) node.Tag;
+      if (((str = (string) tag.Parameter) != null) && ((str == "AND") || (str == "OR")))
       {
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString() });
+        Log.Info(
+          "comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+          new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
         node.Tag = new Data("PROCESS", this.comboBoxProcessType.SelectedItem, string.Empty);
-        node.Text = (string)this.comboBoxProcessType.SelectedItem;
+        node.Text = (string) this.comboBoxProcessType.SelectedItem;
         this.textBoxProcessValue.Text = string.Empty;
-        data2 = (Data)node.Tag;
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+        data2 = (Data) node.Tag;
+        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+                 new object[] {data2.Type, data2.Parameter, data2.Value});
       }
       else if (this.comboBoxProcessType.Text.Equals("TextProgressBar"))
       {
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): TPB DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString() });
+        Log.Info(
+          "comboBoxProcessType_SelectionChangeCommitted(): TPB DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+          new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
         this.groupBoxTextProgressBar.Enabled = true;
         this.groupBoxTextProgressBar.Visible = true;
         node.Tag = new Data("PROCESS", this.comboBoxProcessType.SelectedItem, "[|]|*|-|8|#currentplaytime|#duration");
@@ -844,17 +876,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         this.mpTPBlength.Text = "8";
         this.mpTextBoxValueProperty.Text = "#currentplaytime";
         this.mpTextBoxTargetProperty.Text = "#duration";
-        node.Text = (string)this.comboBoxProcessType.SelectedItem;
-        data2 = (Data)node.Tag;
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+        node.Text = (string) this.comboBoxProcessType.SelectedItem;
+        data2 = (Data) node.Tag;
+        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+                 new object[] {data2.Type, data2.Parameter, data2.Value});
       }
       else
       {
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString() });
+        Log.Info(
+          "comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+          new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
         node.Tag = new Data("PROCESS", this.comboBoxProcessType.SelectedItem, this.textBoxProcessValue.Text);
-        node.Text = ((string)this.comboBoxProcessType.SelectedItem) + " - " + this.textBoxProcessValue.Text;
-        data2 = (Data)node.Tag;
-        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+        node.Text = ((string) this.comboBoxProcessType.SelectedItem) + " - " + this.textBoxProcessValue.Text;
+        data2 = (Data) node.Tag;
+        Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+                 new object[] {data2.Type, data2.Parameter, data2.Value});
       }
       this.changedSettings = true;
     }
@@ -862,12 +898,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void ComboBoxStatusProperty_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("MESSAGE");
-      Data tag = (Data)node.Tag;
-      Log.Info("ComboBoxStatusProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString() });
+      Data tag = (Data) node.Tag;
+      Log.Info(
+        "ComboBoxStatusProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+        new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
       node.Tag = new Data("MESSAGE", "STATUS", this.ComboBoxStatusProperty.SelectedItem);
-      node.Text = (string)this.ComboBoxStatusProperty.SelectedItem;
-      Data data2 = (Data)node.Tag;
-      Log.Info("ComboBoxStatusProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+      node.Text = (string) this.ComboBoxStatusProperty.SelectedItem;
+      Data data2 = (Data) node.Tag;
+      Log.Info(
+        "ComboBoxStatusProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
+        new object[] {data2.Type, data2.Parameter, data2.Value});
       this.changedSettings = true;
     }
 
@@ -875,8 +915,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       string str;
       TreeNode node = this.getNode("WINDOW");
-      Data tag = (Data)node.Tag;
-      Log.Info("comboBoxWindowProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}", new object[] { tag.Type, tag.Parameter, tag.Value, this.comboBoxWindowProperty.SelectedItem.ToString() });
+      Data tag = (Data) node.Tag;
+      Log.Info(
+        "comboBoxWindowProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
+        new object[] {tag.Type, tag.Parameter, tag.Value, this.comboBoxWindowProperty.SelectedItem.ToString()});
       if (((str = this.comboBoxWindowProperty.SelectedItem.ToString()) != null) && (str == "ALL WINDOWS"))
       {
         node.Tag = new Data("WINDOW", "ALL", "");
@@ -884,12 +926,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       else
       {
-        Log.Info(": finding window \"{0}\" = \"{1}\"", new object[] { this.comboBoxWindowProperty.SelectedItem.ToString(), this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString()) });
-        int num = (int)Enum.Parse(typeof(GUIWindow.Window), this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString()));
-        node.Tag = new Data("WINDOW", "ID", (int)Enum.Parse(typeof(GUIWindow.Window), this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString())));
+        Log.Info(": finding window \"{0}\" = \"{1}\"",
+                 new object[]
+                   {
+                     this.comboBoxWindowProperty.SelectedItem.ToString(),
+                     this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString())
+                   });
+        int num =
+          (int)
+          Enum.Parse(typeof (GUIWindow.Window), this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString()));
+        node.Tag = new Data("WINDOW", "ID",
+                            (int)
+                            Enum.Parse(typeof (GUIWindow.Window),
+                                       this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString())));
         node.Text = num.ToString();
-        Data data2 = (Data)node.Tag;
-        Log.Info("comboBoxWindowProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2} ({3})", new object[] { data2.Type, data2.Parameter, data2.Value, num });
+        Data data2 = (Data) node.Tag;
+        Log.Info(
+          "comboBoxWindowProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2} ({3})",
+          new object[] {data2.Type, data2.Parameter, data2.Value, num});
       }
       this.changedSettings = true;
     }
@@ -914,8 +968,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       for (int i = 0; i < 8; i++)
       {
         TreeNode node = CharBaseNode.Nodes[i];
-        Data tag = (Data)node.Tag;
-        byte num2 = (byte)tag.Value;
+        Data tag = (Data) node.Tag;
+        byte num2 = (byte) tag.Value;
         byte num3 = 0x80;
         for (int j = 7; j >= 0; j--)
         {
@@ -927,7 +981,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             this.SetCharacterPixel(i, j, false);
           }
-          num3 = (byte)(num3 >> 1);
+          num3 = (byte) (num3 >> 1);
         }
       }
       Log.Info("DrawCustomCharacter(): completed", new object[0]);
@@ -939,20 +993,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       string str = string.Empty;
       try
       {
-        if (Enum.Parse(typeof(Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpper()) != null)
+        if (Enum.Parse(typeof (Action.ActionType), "ACTION_" + friendlyName.Replace(' ', '_').ToUpper()) != null)
         {
           str = "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
         }
-      } catch (ArgumentException)
+      }
+      catch (ArgumentException)
       {
         try
         {
-          if (Enum.Parse(typeof(Action.ActionType), friendlyName.Replace(' ', '_').ToUpper()) != null)
+          if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpper()) != null)
           {
             str = friendlyName.Replace(' ', '_').ToUpper();
           }
           return str;
-        } catch (ArgumentException)
+        }
+        catch (ArgumentException)
         {
           return str;
         }
@@ -966,14 +1022,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Control[] controlArray = this.groupboxCharacterEdit.Controls.Find(key, false);
       if (controlArray.Length > 0)
       {
-        CheckBox box = (CheckBox)controlArray[0];
+        CheckBox box = (CheckBox) controlArray[0];
         if (box.CheckState == CheckState.Unchecked)
         {
           return false;
         }
         return true;
       }
-      Log.Info("CONTROL \"{0}\" NOT FOUND", new object[] { key });
+      Log.Info("CONTROL \"{0}\" NOT FOUND", new object[] {key});
       return false;
     }
 
@@ -1019,7 +1075,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private TreeNode getNode(string type)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       if (tag.Type == type)
       {
         return selectedNode;
@@ -1036,7 +1092,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               selectedNode = selectedNode.Parent;
               foreach (TreeNode node4 in selectedNode.Nodes)
               {
-                tag = (Data)node4.Tag;
+                tag = (Data) node4.Tag;
                 if (tag.Type == type)
                 {
                   return node4;
@@ -1047,7 +1103,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (TreeNode node5 in selectedNode.Nodes)
               {
-                tag = (Data)node5.Tag;
+                tag = (Data) node5.Tag;
                 if (tag.Type == type)
                 {
                   return node5;
@@ -1113,7 +1169,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           selectedNode = selectedNode.Parent;
           foreach (TreeNode node2 in selectedNode.Nodes)
           {
-            tag = (Data)node2.Tag;
+            tag = (Data) node2.Tag;
             if (tag.Type == type)
             {
               return node2;
@@ -1124,7 +1180,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           foreach (TreeNode node3 in selectedNode.Nodes)
           {
-            tag = (Data)node3.Tag;
+            tag = (Data) node3.Tag;
             if (tag.Type == type)
             {
               return node3;
@@ -1137,7 +1193,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private string GetWindowName(int WindowID)
     {
-      return this.GetWindowName(this.GetFriendlyName((string)this.windowsList[WindowID]));
+      return this.GetWindowName(this.GetFriendlyName((string) this.windowsList[WindowID]));
     }
 
     private string GetWindowName(string friendlyName)
@@ -1147,124 +1203,124 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void InitializeComponent()
     {
-      this.treeMapping = new System.Windows.Forms.TreeView();
-      this.labelExpand = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonRemove = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.buttonApply = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
-      this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBoxMessageEdit = new System.Windows.Forms.GroupBox();
-      this.groupBoxProcess = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBoxTextProgressBar = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpTPBlength = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTPBFillChar = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTPBValueChar = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTPBEndChar = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTPBStartChar = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTextBoxValueProperty = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTextBoxTargetProperty = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.GroupBoxCondition = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxCondValue = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.ComboBoxCondType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxProcessValue = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.comboBoxProcessType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.groupBoxMessageType = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxMessageType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.ComboBoxStatusProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.groupBoxWindow = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxWindowProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.groupBoxLine = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxAlignment = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.labelLine = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupboxCharacterEdit = new System.Windows.Forms.GroupBox();
-      this.cbR7B0 = new System.Windows.Forms.CheckBox();
-      this.cbR7B1 = new System.Windows.Forms.CheckBox();
-      this.cbR7B2 = new System.Windows.Forms.CheckBox();
-      this.cbR7B3 = new System.Windows.Forms.CheckBox();
-      this.cbR7B4 = new System.Windows.Forms.CheckBox();
-      this.cbR7B5 = new System.Windows.Forms.CheckBox();
-      this.cbR7B6 = new System.Windows.Forms.CheckBox();
-      this.cbR7B7 = new System.Windows.Forms.CheckBox();
-      this.cbR6B0 = new System.Windows.Forms.CheckBox();
-      this.cbR6B1 = new System.Windows.Forms.CheckBox();
-      this.cbR6B2 = new System.Windows.Forms.CheckBox();
-      this.cbR6B3 = new System.Windows.Forms.CheckBox();
-      this.cbR6B4 = new System.Windows.Forms.CheckBox();
-      this.cbR6B5 = new System.Windows.Forms.CheckBox();
-      this.cbR6B6 = new System.Windows.Forms.CheckBox();
-      this.cbR6B7 = new System.Windows.Forms.CheckBox();
-      this.cbR5B0 = new System.Windows.Forms.CheckBox();
-      this.cbR5B1 = new System.Windows.Forms.CheckBox();
-      this.cbR5B2 = new System.Windows.Forms.CheckBox();
-      this.cbR5B3 = new System.Windows.Forms.CheckBox();
-      this.cbR5B4 = new System.Windows.Forms.CheckBox();
-      this.cbR5B5 = new System.Windows.Forms.CheckBox();
-      this.cbR5B6 = new System.Windows.Forms.CheckBox();
-      this.cbR5B7 = new System.Windows.Forms.CheckBox();
-      this.cbR4B0 = new System.Windows.Forms.CheckBox();
-      this.cbR4B1 = new System.Windows.Forms.CheckBox();
-      this.cbR4B2 = new System.Windows.Forms.CheckBox();
-      this.cbR4B3 = new System.Windows.Forms.CheckBox();
-      this.cbR4B4 = new System.Windows.Forms.CheckBox();
-      this.cbR4B5 = new System.Windows.Forms.CheckBox();
-      this.cbR4B6 = new System.Windows.Forms.CheckBox();
-      this.cbR4B7 = new System.Windows.Forms.CheckBox();
-      this.cbR3B0 = new System.Windows.Forms.CheckBox();
-      this.cbR3B1 = new System.Windows.Forms.CheckBox();
-      this.cbR3B2 = new System.Windows.Forms.CheckBox();
-      this.cbR3B3 = new System.Windows.Forms.CheckBox();
-      this.cbR3B4 = new System.Windows.Forms.CheckBox();
-      this.cbR3B5 = new System.Windows.Forms.CheckBox();
-      this.cbR3B6 = new System.Windows.Forms.CheckBox();
-      this.cbR3B7 = new System.Windows.Forms.CheckBox();
-      this.cbR2B0 = new System.Windows.Forms.CheckBox();
-      this.cbR2B1 = new System.Windows.Forms.CheckBox();
-      this.cbR2B2 = new System.Windows.Forms.CheckBox();
-      this.cbR2B3 = new System.Windows.Forms.CheckBox();
-      this.cbR2B4 = new System.Windows.Forms.CheckBox();
-      this.cbR2B5 = new System.Windows.Forms.CheckBox();
-      this.cbR2B6 = new System.Windows.Forms.CheckBox();
-      this.cbR2B7 = new System.Windows.Forms.CheckBox();
-      this.cbR1B0 = new System.Windows.Forms.CheckBox();
-      this.cbR1B1 = new System.Windows.Forms.CheckBox();
-      this.cbR1B2 = new System.Windows.Forms.CheckBox();
-      this.cbR1B3 = new System.Windows.Forms.CheckBox();
-      this.cbR1B4 = new System.Windows.Forms.CheckBox();
-      this.cbR1B5 = new System.Windows.Forms.CheckBox();
-      this.cbR1B6 = new System.Windows.Forms.CheckBox();
-      this.cbR1B7 = new System.Windows.Forms.CheckBox();
-      this.cbR0B0 = new System.Windows.Forms.CheckBox();
-      this.cbR0B1 = new System.Windows.Forms.CheckBox();
-      this.cbR0B2 = new System.Windows.Forms.CheckBox();
-      this.cbR0B3 = new System.Windows.Forms.CheckBox();
-      this.cbR0B4 = new System.Windows.Forms.CheckBox();
-      this.cbR0B5 = new System.Windows.Forms.CheckBox();
-      this.cbR0B6 = new System.Windows.Forms.CheckBox();
-      this.cbR0B7 = new System.Windows.Forms.CheckBox();
-      this.groupboxTranslationEdit = new System.Windows.Forms.GroupBox();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.TextBoxTranslateTo = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.TextBoxTranslateFrom = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.treeMapping = new TreeView();
+      this.labelExpand = new MPLabel();
+      this.buttonDefault = new MPButton();
+      this.buttonRemove = new MPButton();
+      this.buttonDown = new MPButton();
+      this.buttonUp = new MPButton();
+      this.beveledLine1 = new MPBeveledLine();
+      this.buttonApply = new MPButton();
+      this.buttonOk = new MPButton();
+      this.buttonCancel = new MPButton();
+      this.headerLabel = new MPGradientLabel();
+      this.buttonNew = new MPButton();
+      this.groupBoxMessageEdit = new GroupBox();
+      this.groupBoxProcess = new MPGroupBox();
+      this.groupBoxTextProgressBar = new MPGroupBox();
+      this.mpTPBlength = new MPTextBox();
+      this.mpLabel12 = new MPLabel();
+      this.mpTPBFillChar = new MPTextBox();
+      this.mpLabel10 = new MPLabel();
+      this.mpTPBValueChar = new MPTextBox();
+      this.mpLabel11 = new MPLabel();
+      this.mpTPBEndChar = new MPTextBox();
+      this.mpLabel9 = new MPLabel();
+      this.mpTPBStartChar = new MPTextBox();
+      this.mpLabel8 = new MPLabel();
+      this.mpTextBoxValueProperty = new MPTextBox();
+      this.mpLabel6 = new MPLabel();
+      this.mpLabel7 = new MPLabel();
+      this.mpTextBoxTargetProperty = new MPTextBox();
+      this.GroupBoxCondition = new MPGroupBox();
+      this.mpLabel2 = new MPLabel();
+      this.mpLabel3 = new MPLabel();
+      this.textBoxCondValue = new MPTextBox();
+      this.ComboBoxCondType = new MPComboBox();
+      this.mpLabel1 = new MPLabel();
+      this.label1 = new MPLabel();
+      this.textBoxProcessValue = new MPTextBox();
+      this.comboBoxProcessType = new MPComboBox();
+      this.groupBoxMessageType = new MPGroupBox();
+      this.comboBoxMessageType = new MPComboBox();
+      this.mpLabel13 = new MPLabel();
+      this.groupBoxStatus = new MPGroupBox();
+      this.ComboBoxStatusProperty = new MPComboBox();
+      this.groupBoxWindow = new MPGroupBox();
+      this.comboBoxWindowProperty = new MPComboBox();
+      this.groupBoxLine = new MPGroupBox();
+      this.comboBoxAlignment = new MPComboBox();
+      this.labelLine = new MPLabel();
+      this.groupboxCharacterEdit = new GroupBox();
+      this.cbR7B0 = new CheckBox();
+      this.cbR7B1 = new CheckBox();
+      this.cbR7B2 = new CheckBox();
+      this.cbR7B3 = new CheckBox();
+      this.cbR7B4 = new CheckBox();
+      this.cbR7B5 = new CheckBox();
+      this.cbR7B6 = new CheckBox();
+      this.cbR7B7 = new CheckBox();
+      this.cbR6B0 = new CheckBox();
+      this.cbR6B1 = new CheckBox();
+      this.cbR6B2 = new CheckBox();
+      this.cbR6B3 = new CheckBox();
+      this.cbR6B4 = new CheckBox();
+      this.cbR6B5 = new CheckBox();
+      this.cbR6B6 = new CheckBox();
+      this.cbR6B7 = new CheckBox();
+      this.cbR5B0 = new CheckBox();
+      this.cbR5B1 = new CheckBox();
+      this.cbR5B2 = new CheckBox();
+      this.cbR5B3 = new CheckBox();
+      this.cbR5B4 = new CheckBox();
+      this.cbR5B5 = new CheckBox();
+      this.cbR5B6 = new CheckBox();
+      this.cbR5B7 = new CheckBox();
+      this.cbR4B0 = new CheckBox();
+      this.cbR4B1 = new CheckBox();
+      this.cbR4B2 = new CheckBox();
+      this.cbR4B3 = new CheckBox();
+      this.cbR4B4 = new CheckBox();
+      this.cbR4B5 = new CheckBox();
+      this.cbR4B6 = new CheckBox();
+      this.cbR4B7 = new CheckBox();
+      this.cbR3B0 = new CheckBox();
+      this.cbR3B1 = new CheckBox();
+      this.cbR3B2 = new CheckBox();
+      this.cbR3B3 = new CheckBox();
+      this.cbR3B4 = new CheckBox();
+      this.cbR3B5 = new CheckBox();
+      this.cbR3B6 = new CheckBox();
+      this.cbR3B7 = new CheckBox();
+      this.cbR2B0 = new CheckBox();
+      this.cbR2B1 = new CheckBox();
+      this.cbR2B2 = new CheckBox();
+      this.cbR2B3 = new CheckBox();
+      this.cbR2B4 = new CheckBox();
+      this.cbR2B5 = new CheckBox();
+      this.cbR2B6 = new CheckBox();
+      this.cbR2B7 = new CheckBox();
+      this.cbR1B0 = new CheckBox();
+      this.cbR1B1 = new CheckBox();
+      this.cbR1B2 = new CheckBox();
+      this.cbR1B3 = new CheckBox();
+      this.cbR1B4 = new CheckBox();
+      this.cbR1B5 = new CheckBox();
+      this.cbR1B6 = new CheckBox();
+      this.cbR1B7 = new CheckBox();
+      this.cbR0B0 = new CheckBox();
+      this.cbR0B1 = new CheckBox();
+      this.cbR0B2 = new CheckBox();
+      this.cbR0B3 = new CheckBox();
+      this.cbR0B4 = new CheckBox();
+      this.cbR0B5 = new CheckBox();
+      this.cbR0B6 = new CheckBox();
+      this.cbR0B7 = new CheckBox();
+      this.groupboxTranslationEdit = new GroupBox();
+      this.mpLabel5 = new MPLabel();
+      this.TextBoxTranslateTo = new MPTextBox();
+      this.mpLabel4 = new MPLabel();
+      this.TextBoxTranslateFrom = new MPTextBox();
       this.groupBoxMessageEdit.SuspendLayout();
       this.groupBoxProcess.SuspendLayout();
       this.groupBoxTextProgressBar.SuspendLayout();
@@ -1280,156 +1336,156 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeMapping.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                  | AnchorStyles.Left)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
-      this.treeMapping.Location = new System.Drawing.Point(16, 56);
+      this.treeMapping.Location = new Point(16, 56);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.Size = new System.Drawing.Size(312, 335);
+      this.treeMapping.Size = new Size(312, 335);
       this.treeMapping.TabIndex = 1;
-      this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
+      this.treeMapping.AfterSelect += new TreeViewEventHandler(this.treeMapping_AfterSelect);
       // 
       // labelExpand
       // 
-      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelExpand.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.labelExpand.AutoSize = true;
-      this.labelExpand.Location = new System.Drawing.Point(328, 374);
+      this.labelExpand.Location = new Point(328, 374);
       this.labelExpand.Name = "labelExpand";
-      this.labelExpand.Size = new System.Drawing.Size(13, 13);
+      this.labelExpand.Size = new Size(13, 13);
       this.labelExpand.TabIndex = 29;
       this.labelExpand.Text = "+";
-      this.labelExpand.Click += new System.EventHandler(this.labelExpand_Click);
+      this.labelExpand.Click += new EventHandler(this.labelExpand_Click);
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefault.Location = new System.Drawing.Point(268, 442);
+      this.buttonDefault.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonDefault.Location = new Point(268, 442);
       this.buttonDefault.Name = "buttonDefault";
-      this.buttonDefault.Size = new System.Drawing.Size(75, 23);
+      this.buttonDefault.Size = new Size(75, 23);
       this.buttonDefault.TabIndex = 28;
       this.buttonDefault.Text = "Reset";
       this.buttonDefault.UseVisualStyleBackColor = true;
-      this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
+      this.buttonDefault.Click += new EventHandler(this.buttonDefault_Click);
       // 
       // buttonRemove
       // 
-      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonRemove.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.buttonRemove.Enabled = false;
-      this.buttonRemove.Location = new System.Drawing.Point(272, 397);
+      this.buttonRemove.Location = new Point(272, 397);
       this.buttonRemove.Name = "buttonRemove";
-      this.buttonRemove.Size = new System.Drawing.Size(56, 20);
+      this.buttonRemove.Size = new Size(56, 20);
       this.buttonRemove.TabIndex = 27;
       this.buttonRemove.Text = "Remove";
       this.buttonRemove.UseVisualStyleBackColor = true;
-      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+      this.buttonRemove.Click += new EventHandler(this.buttonRemove_Click);
       // 
       // buttonDown
       // 
-      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDown.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.buttonDown.Enabled = false;
-      this.buttonDown.Location = new System.Drawing.Point(97, 397);
+      this.buttonDown.Location = new Point(97, 397);
       this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(56, 20);
+      this.buttonDown.Size = new Size(56, 20);
       this.buttonDown.TabIndex = 24;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
-      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
+      this.buttonDown.Click += new EventHandler(this.buttonDown_Click);
       // 
       // buttonUp
       // 
-      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonUp.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.buttonUp.Enabled = false;
-      this.buttonUp.Location = new System.Drawing.Point(16, 397);
+      this.buttonUp.Location = new Point(16, 397);
       this.buttonUp.Name = "buttonUp";
-      this.buttonUp.Size = new System.Drawing.Size(56, 20);
+      this.buttonUp.Size = new Size(56, 20);
       this.buttonUp.TabIndex = 23;
       this.buttonUp.Text = "Up";
       this.buttonUp.UseVisualStyleBackColor = true;
-      this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
+      this.buttonUp.Click += new EventHandler(this.buttonUp_Click);
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 432);
+      this.beveledLine1.Anchor = ((AnchorStyles) (((AnchorStyles.Bottom | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
+      this.beveledLine1.Location = new Point(8, 432);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(572, 2);
+      this.beveledLine1.Size = new Size(572, 2);
       this.beveledLine1.TabIndex = 21;
       // 
       // buttonApply
       // 
-      this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonApply.Location = new System.Drawing.Point(346, 442);
+      this.buttonApply.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonApply.Location = new Point(346, 442);
       this.buttonApply.Name = "buttonApply";
-      this.buttonApply.Size = new System.Drawing.Size(75, 23);
+      this.buttonApply.Size = new Size(75, 23);
       this.buttonApply.TabIndex = 20;
       this.buttonApply.Text = "Apply";
       this.buttonApply.UseVisualStyleBackColor = true;
-      this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+      this.buttonApply.Click += new EventHandler(this.buttonApply_Click);
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOk.Location = new System.Drawing.Point(426, 442);
+      this.buttonOk.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonOk.Location = new Point(426, 442);
       this.buttonOk.Name = "buttonOk";
-      this.buttonOk.Size = new System.Drawing.Size(75, 23);
+      this.buttonOk.Size = new Size(75, 23);
       this.buttonOk.TabIndex = 19;
       this.buttonOk.Text = "OK";
       this.buttonOk.UseVisualStyleBackColor = true;
-      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+      this.buttonOk.Click += new EventHandler(this.buttonOk_Click);
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.Location = new System.Drawing.Point(505, 442);
+      this.buttonCancel.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonCancel.Location = new Point(505, 442);
       this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.Size = new Size(75, 23);
       this.buttonCancel.TabIndex = 18;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                  | AnchorStyles.Right)));
       this.headerLabel.Caption = "MiniDisplay.xml";
-      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(16, 16);
+      this.headerLabel.FirstColor = SystemColors.InactiveCaption;
+      this.headerLabel.Font = new Font("Verdana", 14.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte) (0)));
+      this.headerLabel.LastColor = Color.WhiteSmoke;
+      this.headerLabel.Location = new Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(558, 24);
+      this.headerLabel.Size = new Size(558, 24);
       this.headerLabel.TabIndex = 17;
-      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.TextColor = Color.WhiteSmoke;
+      this.headerLabel.TextFont = new Font("Verdana", 14.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte) (0)));
       // 
       // buttonNew
       // 
-      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonNew.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.buttonNew.Enabled = false;
-      this.buttonNew.Location = new System.Drawing.Point(189, 397);
+      this.buttonNew.Location = new Point(189, 397);
       this.buttonNew.Name = "buttonNew";
-      this.buttonNew.Size = new System.Drawing.Size(56, 20);
+      this.buttonNew.Size = new Size(56, 20);
       this.buttonNew.TabIndex = 26;
       this.buttonNew.Text = "New";
       this.buttonNew.UseVisualStyleBackColor = true;
-      this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
+      this.buttonNew.Click += new EventHandler(this.buttonNew_Click);
       // 
       // groupBoxMessageEdit
       // 
-      this.groupBoxMessageEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageEdit.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                           | AnchorStyles.Left)
+                                                          | AnchorStyles.Right)));
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxProcess);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxMessageType);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxStatus);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxWindow);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxLine);
-      this.groupBoxMessageEdit.Location = new System.Drawing.Point(344, 46);
+      this.groupBoxMessageEdit.Location = new Point(344, 46);
       this.groupBoxMessageEdit.Name = "groupBoxMessageEdit";
-      this.groupBoxMessageEdit.Size = new System.Drawing.Size(239, 380);
+      this.groupBoxMessageEdit.Size = new Size(239, 380);
       this.groupBoxMessageEdit.TabIndex = 31;
       this.groupBoxMessageEdit.TabStop = false;
       this.groupBoxMessageEdit.Text = "Message Editor";
@@ -1437,9 +1493,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxProcess
       // 
-      this.groupBoxProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProcess.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                       | AnchorStyles.Left)
+                                                      | AnchorStyles.Right)));
       this.groupBoxProcess.Controls.Add(this.groupBoxTextProgressBar);
       this.groupBoxProcess.Controls.Add(this.GroupBoxCondition);
       this.groupBoxProcess.Controls.Add(this.mpLabel1);
@@ -1447,19 +1503,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxProcess.Controls.Add(this.textBoxProcessValue);
       this.groupBoxProcess.Controls.Add(this.comboBoxProcessType);
       this.groupBoxProcess.Enabled = false;
-      this.groupBoxProcess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxProcess.Location = new System.Drawing.Point(7, 192);
+      this.groupBoxProcess.FlatStyle = FlatStyle.Popup;
+      this.groupBoxProcess.Location = new Point(7, 192);
       this.groupBoxProcess.Name = "groupBoxProcess";
-      this.groupBoxProcess.Size = new System.Drawing.Size(223, 184);
+      this.groupBoxProcess.Size = new Size(223, 184);
       this.groupBoxProcess.TabIndex = 32;
       this.groupBoxProcess.TabStop = false;
       this.groupBoxProcess.Text = "Process";
       // 
       // groupBoxTextProgressBar
       // 
-      this.groupBoxTextProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTextProgressBar.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                               | AnchorStyles.Left)
+                                                              | AnchorStyles.Right)));
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBlength);
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel12);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBFillChar);
@@ -1475,10 +1531,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel7);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTextBoxTargetProperty);
       this.groupBoxTextProgressBar.Enabled = false;
-      this.groupBoxTextProgressBar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxTextProgressBar.Location = new System.Drawing.Point(11, 47);
+      this.groupBoxTextProgressBar.FlatStyle = FlatStyle.Popup;
+      this.groupBoxTextProgressBar.Location = new Point(11, 47);
       this.groupBoxTextProgressBar.Name = "groupBoxTextProgressBar";
-      this.groupBoxTextProgressBar.Size = new System.Drawing.Size(201, 131);
+      this.groupBoxTextProgressBar.Size = new Size(201, 131);
       this.groupBoxTextProgressBar.TabIndex = 33;
       this.groupBoxTextProgressBar.TabStop = false;
       this.groupBoxTextProgressBar.Text = "TextProgressBar Parameters";
@@ -1486,155 +1542,155 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTPBlength
       // 
-      this.mpTPBlength.BorderColor = System.Drawing.Color.Empty;
-      this.mpTPBlength.Location = new System.Drawing.Point(69, 62);
+      this.mpTPBlength.BorderColor = Color.Empty;
+      this.mpTPBlength.Location = new Point(69, 62);
       this.mpTPBlength.MaxLength = 2;
       this.mpTPBlength.Name = "mpTPBlength";
-      this.mpTPBlength.Size = new System.Drawing.Size(23, 20);
+      this.mpTPBlength.Size = new Size(23, 20);
       this.mpTPBlength.TabIndex = 36;
-      this.mpTPBlength.TextChanged += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBlength.TextChanged += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel12
       // 
       this.mpLabel12.AutoSize = true;
-      this.mpLabel12.Location = new System.Drawing.Point(6, 65);
+      this.mpLabel12.Location = new Point(6, 65);
       this.mpLabel12.Name = "mpLabel12";
-      this.mpLabel12.Size = new System.Drawing.Size(62, 13);
+      this.mpLabel12.Size = new Size(62, 13);
       this.mpLabel12.TabIndex = 35;
       this.mpLabel12.Text = "Bar Length:";
       // 
       // mpTPBFillChar
       // 
-      this.mpTPBFillChar.BorderColor = System.Drawing.Color.Empty;
-      this.mpTPBFillChar.Location = new System.Drawing.Point(167, 39);
+      this.mpTPBFillChar.BorderColor = Color.Empty;
+      this.mpTPBFillChar.Location = new Point(167, 39);
       this.mpTPBFillChar.MaxLength = 1;
       this.mpTPBFillChar.Name = "mpTPBFillChar";
-      this.mpTPBFillChar.Size = new System.Drawing.Size(23, 20);
+      this.mpTPBFillChar.Size = new Size(23, 20);
       this.mpTPBFillChar.TabIndex = 34;
-      this.mpTPBFillChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBFillChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel10
       // 
       this.mpLabel10.AutoSize = true;
-      this.mpLabel10.Location = new System.Drawing.Point(104, 42);
+      this.mpLabel10.Location = new Point(104, 42);
       this.mpLabel10.Name = "mpLabel10";
-      this.mpLabel10.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel10.Size = new Size(47, 13);
       this.mpLabel10.TabIndex = 33;
       this.mpLabel10.Text = "Fill Char:";
       // 
       // mpTPBValueChar
       // 
-      this.mpTPBValueChar.BorderColor = System.Drawing.Color.Empty;
-      this.mpTPBValueChar.Location = new System.Drawing.Point(69, 39);
+      this.mpTPBValueChar.BorderColor = Color.Empty;
+      this.mpTPBValueChar.Location = new Point(69, 39);
       this.mpTPBValueChar.MaxLength = 1;
       this.mpTPBValueChar.Name = "mpTPBValueChar";
-      this.mpTPBValueChar.Size = new System.Drawing.Size(23, 20);
+      this.mpTPBValueChar.Size = new Size(23, 20);
       this.mpTPBValueChar.TabIndex = 32;
-      this.mpTPBValueChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBValueChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel11
       // 
       this.mpLabel11.AutoSize = true;
-      this.mpLabel11.Location = new System.Drawing.Point(6, 42);
+      this.mpLabel11.Location = new Point(6, 42);
       this.mpLabel11.Name = "mpLabel11";
-      this.mpLabel11.Size = new System.Drawing.Size(62, 13);
+      this.mpLabel11.Size = new Size(62, 13);
       this.mpLabel11.TabIndex = 31;
       this.mpLabel11.Text = "Value Char:";
       // 
       // mpTPBEndChar
       // 
-      this.mpTPBEndChar.BorderColor = System.Drawing.Color.Empty;
-      this.mpTPBEndChar.Location = new System.Drawing.Point(167, 17);
+      this.mpTPBEndChar.BorderColor = Color.Empty;
+      this.mpTPBEndChar.Location = new Point(167, 17);
       this.mpTPBEndChar.MaxLength = 1;
       this.mpTPBEndChar.Name = "mpTPBEndChar";
-      this.mpTPBEndChar.Size = new System.Drawing.Size(23, 20);
+      this.mpTPBEndChar.Size = new Size(23, 20);
       this.mpTPBEndChar.TabIndex = 30;
-      this.mpTPBEndChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBEndChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel9
       // 
       this.mpLabel9.AutoSize = true;
-      this.mpLabel9.Location = new System.Drawing.Point(104, 20);
+      this.mpLabel9.Location = new Point(104, 20);
       this.mpLabel9.Name = "mpLabel9";
-      this.mpLabel9.Size = new System.Drawing.Size(54, 13);
+      this.mpLabel9.Size = new Size(54, 13);
       this.mpLabel9.TabIndex = 29;
       this.mpLabel9.Text = "End Char:";
       // 
       // mpTPBStartChar
       // 
-      this.mpTPBStartChar.BorderColor = System.Drawing.Color.Empty;
-      this.mpTPBStartChar.Location = new System.Drawing.Point(69, 17);
+      this.mpTPBStartChar.BorderColor = Color.Empty;
+      this.mpTPBStartChar.Location = new Point(69, 17);
       this.mpTPBStartChar.MaxLength = 1;
       this.mpTPBStartChar.Name = "mpTPBStartChar";
-      this.mpTPBStartChar.Size = new System.Drawing.Size(23, 20);
+      this.mpTPBStartChar.Size = new Size(23, 20);
       this.mpTPBStartChar.TabIndex = 28;
-      this.mpTPBStartChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBStartChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel8
       // 
       this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(6, 20);
+      this.mpLabel8.Location = new Point(6, 20);
       this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new System.Drawing.Size(57, 13);
+      this.mpLabel8.Size = new Size(57, 13);
       this.mpLabel8.TabIndex = 27;
       this.mpLabel8.Text = "Start Char:";
       // 
       // mpTextBoxValueProperty
       // 
-      this.mpTextBoxValueProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTextBoxValueProperty.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxValueProperty.Location = new System.Drawing.Point(92, 85);
+      this.mpTextBoxValueProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                             | AnchorStyles.Right)));
+      this.mpTextBoxValueProperty.BorderColor = Color.Empty;
+      this.mpTextBoxValueProperty.Location = new Point(92, 85);
       this.mpTextBoxValueProperty.MaxLength = 100;
       this.mpTextBoxValueProperty.Name = "mpTextBoxValueProperty";
-      this.mpTextBoxValueProperty.Size = new System.Drawing.Size(97, 20);
+      this.mpTextBoxValueProperty.Size = new Size(97, 20);
       this.mpTextBoxValueProperty.TabIndex = 26;
-      this.mpTextBoxValueProperty.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTextBoxValueProperty.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel6
       // 
       this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(6, 88);
+      this.mpLabel6.Location = new Point(6, 88);
       this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(79, 13);
+      this.mpLabel6.Size = new Size(79, 13);
       this.mpLabel6.TabIndex = 25;
       this.mpLabel6.Text = "Value Property:";
       // 
       // mpLabel7
       // 
       this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(6, 112);
+      this.mpLabel7.Location = new Point(6, 112);
       this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new System.Drawing.Size(83, 13);
+      this.mpLabel7.Size = new Size(83, 13);
       this.mpLabel7.TabIndex = 23;
       this.mpLabel7.Text = "Target Property:";
       // 
       // mpTextBoxTargetProperty
       // 
-      this.mpTextBoxTargetProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpTextBoxTargetProperty.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxTargetProperty.Location = new System.Drawing.Point(92, 108);
+      this.mpTextBoxTargetProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                              | AnchorStyles.Right)));
+      this.mpTextBoxTargetProperty.BorderColor = Color.Empty;
+      this.mpTextBoxTargetProperty.Location = new Point(92, 108);
       this.mpTextBoxTargetProperty.MaxLength = 100;
       this.mpTextBoxTargetProperty.Name = "mpTextBoxTargetProperty";
-      this.mpTextBoxTargetProperty.Size = new System.Drawing.Size(97, 20);
+      this.mpTextBoxTargetProperty.Size = new Size(97, 20);
       this.mpTextBoxTargetProperty.TabIndex = 22;
-      this.mpTextBoxTargetProperty.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTextBoxTargetProperty.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
       // 
       // GroupBoxCondition
       // 
-      this.GroupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.GroupBoxCondition.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                         | AnchorStyles.Left)
+                                                        | AnchorStyles.Right)));
       this.GroupBoxCondition.Controls.Add(this.mpLabel2);
       this.GroupBoxCondition.Controls.Add(this.mpLabel3);
       this.GroupBoxCondition.Controls.Add(this.textBoxCondValue);
       this.GroupBoxCondition.Controls.Add(this.ComboBoxCondType);
       this.GroupBoxCondition.Enabled = false;
-      this.GroupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GroupBoxCondition.Location = new System.Drawing.Point(11, 78);
+      this.GroupBoxCondition.FlatStyle = FlatStyle.Popup;
+      this.GroupBoxCondition.Location = new Point(11, 78);
       this.GroupBoxCondition.Name = "GroupBoxCondition";
-      this.GroupBoxCondition.Size = new System.Drawing.Size(201, 80);
+      this.GroupBoxCondition.Size = new Size(201, 80);
       this.GroupBoxCondition.TabIndex = 32;
       this.GroupBoxCondition.TabStop = false;
       this.GroupBoxCondition.Text = "Condition";
@@ -1642,216 +1698,220 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(13, 23);
+      this.mpLabel2.Location = new Point(13, 23);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(34, 13);
+      this.mpLabel2.Size = new Size(34, 13);
       this.mpLabel2.TabIndex = 25;
       this.mpLabel2.Text = "Type:";
       // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(13, 56);
+      this.mpLabel3.Location = new Point(13, 56);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(37, 13);
+      this.mpLabel3.Size = new Size(37, 13);
       this.mpLabel3.TabIndex = 23;
       this.mpLabel3.Text = "Value:";
       // 
       // textBoxCondValue
       // 
-      this.textBoxCondValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxCondValue.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxCondValue.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                       | AnchorStyles.Right)));
+      this.textBoxCondValue.BorderColor = Color.Empty;
       this.textBoxCondValue.Enabled = false;
-      this.textBoxCondValue.Location = new System.Drawing.Point(56, 52);
+      this.textBoxCondValue.Location = new Point(56, 52);
       this.textBoxCondValue.MaxLength = 100;
       this.textBoxCondValue.Name = "textBoxCondValue";
-      this.textBoxCondValue.Size = new System.Drawing.Size(133, 20);
+      this.textBoxCondValue.Size = new Size(133, 20);
       this.textBoxCondValue.TabIndex = 22;
-      this.textBoxCondValue.LostFocus += new System.EventHandler(this.textBoxCondValue_LostFocus);
+      this.textBoxCondValue.LostFocus += new EventHandler(this.textBoxCondValue_LostFocus);
       // 
       // ComboBoxCondType
       // 
-      this.ComboBoxCondType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.ComboBoxCondType.BorderColor = System.Drawing.Color.Empty;
-      this.ComboBoxCondType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ComboBoxCondType.ForeColor = System.Drawing.Color.DarkGreen;
-      this.ComboBoxCondType.Location = new System.Drawing.Point(53, 20);
+      this.ComboBoxCondType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                       | AnchorStyles.Right)));
+      this.ComboBoxCondType.BorderColor = Color.Empty;
+      this.ComboBoxCondType.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.ComboBoxCondType.ForeColor = Color.DarkGreen;
+      this.ComboBoxCondType.Location = new Point(53, 20);
       this.ComboBoxCondType.Name = "ComboBoxCondType";
-      this.ComboBoxCondType.Size = new System.Drawing.Size(136, 21);
+      this.ComboBoxCondType.Size = new Size(136, 21);
       this.ComboBoxCondType.Sorted = true;
       this.ComboBoxCondType.TabIndex = 14;
-      this.ComboBoxCondType.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
+      this.ComboBoxCondType.SelectionChangeCommitted += new EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(24, 23);
+      this.mpLabel1.Location = new Point(24, 23);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(34, 13);
+      this.mpLabel1.Size = new Size(34, 13);
       this.mpLabel1.TabIndex = 25;
       this.mpLabel1.Text = "Type:";
       // 
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(24, 56);
+      this.label1.Location = new Point(24, 56);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(37, 13);
+      this.label1.Size = new Size(37, 13);
       this.label1.TabIndex = 23;
       this.label1.Text = "Value:";
       // 
       // textBoxProcessValue
       // 
-      this.textBoxProcessValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxProcessValue.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxProcessValue.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                          | AnchorStyles.Right)));
+      this.textBoxProcessValue.BorderColor = Color.Empty;
       this.textBoxProcessValue.Enabled = false;
-      this.textBoxProcessValue.Location = new System.Drawing.Point(67, 52);
+      this.textBoxProcessValue.Location = new Point(67, 52);
       this.textBoxProcessValue.MaxLength = 100;
       this.textBoxProcessValue.Name = "textBoxProcessValue";
-      this.textBoxProcessValue.Size = new System.Drawing.Size(133, 20);
+      this.textBoxProcessValue.Size = new Size(133, 20);
       this.textBoxProcessValue.TabIndex = 22;
-      this.textBoxProcessValue.LostFocus += new System.EventHandler(this.textBoxProcessValue_LostFocus);
+      this.textBoxProcessValue.LostFocus += new EventHandler(this.textBoxProcessValue_LostFocus);
       // 
       // comboBoxProcessType
       // 
-      this.comboBoxProcessType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxProcessType.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxProcessType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxProcessType.ForeColor = System.Drawing.Color.DarkGreen;
-      this.comboBoxProcessType.Location = new System.Drawing.Point(64, 20);
+      this.comboBoxProcessType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                          | AnchorStyles.Right)));
+      this.comboBoxProcessType.BorderColor = Color.Empty;
+      this.comboBoxProcessType.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.comboBoxProcessType.ForeColor = Color.DarkGreen;
+      this.comboBoxProcessType.Location = new Point(64, 20);
       this.comboBoxProcessType.Name = "comboBoxProcessType";
-      this.comboBoxProcessType.Size = new System.Drawing.Size(136, 21);
+      this.comboBoxProcessType.Size = new Size(136, 21);
       this.comboBoxProcessType.Sorted = true;
       this.comboBoxProcessType.TabIndex = 14;
-      this.comboBoxProcessType.SelectionChangeCommitted += new System.EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
+      this.comboBoxProcessType.SelectionChangeCommitted +=
+        new EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
       // 
       // groupBoxMessageType
       // 
-      this.groupBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                          | AnchorStyles.Right)));
       this.groupBoxMessageType.Controls.Add(this.comboBoxMessageType);
       this.groupBoxMessageType.Controls.Add(this.mpLabel13);
       this.groupBoxMessageType.Enabled = false;
-      this.groupBoxMessageType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxMessageType.Location = new System.Drawing.Point(7, 105);
+      this.groupBoxMessageType.FlatStyle = FlatStyle.Popup;
+      this.groupBoxMessageType.Location = new Point(7, 105);
       this.groupBoxMessageType.Name = "groupBoxMessageType";
-      this.groupBoxMessageType.Size = new System.Drawing.Size(224, 40);
+      this.groupBoxMessageType.Size = new Size(224, 40);
       this.groupBoxMessageType.TabIndex = 35;
       this.groupBoxMessageType.TabStop = false;
       this.groupBoxMessageType.Text = "Message ";
       // 
       // comboBoxMessageType
       // 
-      this.comboBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxMessageType.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxMessageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxMessageType.Location = new System.Drawing.Point(80, 13);
+      this.comboBoxMessageType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                          | AnchorStyles.Right)));
+      this.comboBoxMessageType.BorderColor = Color.Empty;
+      this.comboBoxMessageType.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.comboBoxMessageType.Location = new Point(80, 13);
       this.comboBoxMessageType.Name = "comboBoxMessageType";
-      this.comboBoxMessageType.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxMessageType.Size = new Size(121, 21);
       this.comboBoxMessageType.TabIndex = 25;
-      this.comboBoxMessageType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
+      this.comboBoxMessageType.SelectedIndexChanged += new EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
       // 
       // mpLabel13
       // 
       this.mpLabel13.AutoSize = true;
-      this.mpLabel13.Location = new System.Drawing.Point(24, 16);
+      this.mpLabel13.Location = new Point(24, 16);
       this.mpLabel13.Name = "mpLabel13";
-      this.mpLabel13.Size = new System.Drawing.Size(34, 13);
+      this.mpLabel13.Size = new Size(34, 13);
       this.mpLabel13.TabIndex = 16;
       this.mpLabel13.Text = "Type:";
       // 
       // groupBoxStatus
       // 
-      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStatus.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.groupBoxStatus.Controls.Add(this.ComboBoxStatusProperty);
       this.groupBoxStatus.Enabled = false;
-      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxStatus.Location = new System.Drawing.Point(7, 13);
+      this.groupBoxStatus.FlatStyle = FlatStyle.Popup;
+      this.groupBoxStatus.Location = new Point(7, 13);
       this.groupBoxStatus.Name = "groupBoxStatus";
-      this.groupBoxStatus.Size = new System.Drawing.Size(224, 42);
+      this.groupBoxStatus.Size = new Size(224, 42);
       this.groupBoxStatus.TabIndex = 34;
       this.groupBoxStatus.TabStop = false;
       this.groupBoxStatus.Text = " Status ";
       // 
       // ComboBoxStatusProperty
       // 
-      this.ComboBoxStatusProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.ComboBoxStatusProperty.BorderColor = System.Drawing.Color.Empty;
-      this.ComboBoxStatusProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ComboBoxStatusProperty.Location = new System.Drawing.Point(24, 15);
+      this.ComboBoxStatusProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                             | AnchorStyles.Right)));
+      this.ComboBoxStatusProperty.BorderColor = Color.Empty;
+      this.ComboBoxStatusProperty.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.ComboBoxStatusProperty.Location = new Point(24, 15);
       this.ComboBoxStatusProperty.Name = "ComboBoxStatusProperty";
-      this.ComboBoxStatusProperty.Size = new System.Drawing.Size(176, 21);
+      this.ComboBoxStatusProperty.Size = new Size(176, 21);
       this.ComboBoxStatusProperty.TabIndex = 25;
-      this.ComboBoxStatusProperty.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
+      this.ComboBoxStatusProperty.SelectionChangeCommitted +=
+        new EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
       // 
       // groupBoxWindow
       // 
-      this.groupBoxWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxWindow.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.groupBoxWindow.Controls.Add(this.comboBoxWindowProperty);
       this.groupBoxWindow.Enabled = false;
-      this.groupBoxWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxWindow.Location = new System.Drawing.Point(7, 59);
+      this.groupBoxWindow.FlatStyle = FlatStyle.Popup;
+      this.groupBoxWindow.Location = new Point(7, 59);
       this.groupBoxWindow.Name = "groupBoxWindow";
-      this.groupBoxWindow.Size = new System.Drawing.Size(224, 42);
+      this.groupBoxWindow.Size = new Size(224, 42);
       this.groupBoxWindow.TabIndex = 31;
       this.groupBoxWindow.TabStop = false;
       this.groupBoxWindow.Text = " Window ";
       // 
       // comboBoxWindowProperty
       // 
-      this.comboBoxWindowProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxWindowProperty.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxWindowProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxWindowProperty.ForeColor = System.Drawing.Color.Blue;
-      this.comboBoxWindowProperty.Location = new System.Drawing.Point(24, 15);
+      this.comboBoxWindowProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                             | AnchorStyles.Right)));
+      this.comboBoxWindowProperty.BorderColor = Color.Empty;
+      this.comboBoxWindowProperty.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.comboBoxWindowProperty.ForeColor = Color.Blue;
+      this.comboBoxWindowProperty.Location = new Point(24, 15);
       this.comboBoxWindowProperty.Name = "comboBoxWindowProperty";
-      this.comboBoxWindowProperty.Size = new System.Drawing.Size(176, 21);
+      this.comboBoxWindowProperty.Size = new Size(176, 21);
       this.comboBoxWindowProperty.Sorted = true;
       this.comboBoxWindowProperty.TabIndex = 13;
-      this.comboBoxWindowProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
+      this.comboBoxWindowProperty.SelectionChangeCommitted +=
+        new EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
       // 
       // groupBoxLine
       // 
-      this.groupBoxLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLine.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
       this.groupBoxLine.Controls.Add(this.comboBoxAlignment);
       this.groupBoxLine.Controls.Add(this.labelLine);
       this.groupBoxLine.Enabled = false;
-      this.groupBoxLine.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxLine.Location = new System.Drawing.Point(7, 149);
+      this.groupBoxLine.FlatStyle = FlatStyle.Popup;
+      this.groupBoxLine.Location = new Point(7, 149);
       this.groupBoxLine.Name = "groupBoxLine";
-      this.groupBoxLine.Size = new System.Drawing.Size(224, 40);
+      this.groupBoxLine.Size = new Size(224, 40);
       this.groupBoxLine.TabIndex = 33;
       this.groupBoxLine.TabStop = false;
       this.groupBoxLine.Text = "Line";
       // 
       // comboBoxAlignment
       // 
-      this.comboBoxAlignment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxAlignment.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxAlignment.Location = new System.Drawing.Point(80, 13);
+      this.comboBoxAlignment.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                        | AnchorStyles.Right)));
+      this.comboBoxAlignment.BorderColor = Color.Empty;
+      this.comboBoxAlignment.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.comboBoxAlignment.Location = new Point(80, 13);
       this.comboBoxAlignment.Name = "comboBoxAlignment";
-      this.comboBoxAlignment.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxAlignment.Size = new Size(121, 21);
       this.comboBoxAlignment.TabIndex = 25;
-      this.comboBoxAlignment.SelectionChangeCommitted += new System.EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
+      this.comboBoxAlignment.SelectionChangeCommitted +=
+        new EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
       // 
       // labelLine
       // 
       this.labelLine.AutoSize = true;
-      this.labelLine.Location = new System.Drawing.Point(24, 16);
+      this.labelLine.Location = new Point(24, 16);
       this.labelLine.Name = "labelLine";
-      this.labelLine.Size = new System.Drawing.Size(56, 13);
+      this.labelLine.Size = new Size(56, 13);
       this.labelLine.TabIndex = 16;
       this.labelLine.Text = "Alignment:";
       // 
@@ -1921,9 +1981,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B5);
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B6);
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B7);
-      this.groupboxCharacterEdit.Location = new System.Drawing.Point(344, 46);
+      this.groupboxCharacterEdit.Location = new Point(344, 46);
       this.groupboxCharacterEdit.Name = "groupboxCharacterEdit";
-      this.groupboxCharacterEdit.Size = new System.Drawing.Size(239, 380);
+      this.groupboxCharacterEdit.Size = new Size(239, 380);
       this.groupboxCharacterEdit.TabIndex = 32;
       this.groupboxCharacterEdit.TabStop = false;
       this.groupboxCharacterEdit.Text = " Custom Character Editor ";
@@ -1932,642 +1992,642 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // cbR7B0
       // 
       this.cbR7B0.AutoSize = true;
-      this.cbR7B0.Location = new System.Drawing.Point(142, 112);
+      this.cbR7B0.Location = new Point(142, 112);
       this.cbR7B0.Name = "cbR7B0";
-      this.cbR7B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B0.Size = new Size(15, 14);
       this.cbR7B0.TabIndex = 63;
       this.cbR7B0.UseVisualStyleBackColor = true;
-      this.cbR7B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B1
       // 
       this.cbR7B1.AutoSize = true;
-      this.cbR7B1.Location = new System.Drawing.Point(130, 112);
+      this.cbR7B1.Location = new Point(130, 112);
       this.cbR7B1.Name = "cbR7B1";
-      this.cbR7B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B1.Size = new Size(15, 14);
       this.cbR7B1.TabIndex = 62;
       this.cbR7B1.UseVisualStyleBackColor = true;
-      this.cbR7B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B2
       // 
       this.cbR7B2.AutoSize = true;
-      this.cbR7B2.Location = new System.Drawing.Point(118, 112);
+      this.cbR7B2.Location = new Point(118, 112);
       this.cbR7B2.Name = "cbR7B2";
-      this.cbR7B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B2.Size = new Size(15, 14);
       this.cbR7B2.TabIndex = 61;
       this.cbR7B2.UseVisualStyleBackColor = true;
-      this.cbR7B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B3
       // 
       this.cbR7B3.AutoSize = true;
-      this.cbR7B3.Location = new System.Drawing.Point(106, 112);
+      this.cbR7B3.Location = new Point(106, 112);
       this.cbR7B3.Name = "cbR7B3";
-      this.cbR7B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B3.Size = new Size(15, 14);
       this.cbR7B3.TabIndex = 60;
       this.cbR7B3.UseVisualStyleBackColor = true;
-      this.cbR7B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B4
       // 
       this.cbR7B4.AutoSize = true;
-      this.cbR7B4.Location = new System.Drawing.Point(94, 112);
+      this.cbR7B4.Location = new Point(94, 112);
       this.cbR7B4.Name = "cbR7B4";
-      this.cbR7B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B4.Size = new Size(15, 14);
       this.cbR7B4.TabIndex = 59;
       this.cbR7B4.UseVisualStyleBackColor = true;
-      this.cbR7B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B5
       // 
       this.cbR7B5.AutoSize = true;
-      this.cbR7B5.Location = new System.Drawing.Point(82, 112);
+      this.cbR7B5.Location = new Point(82, 112);
       this.cbR7B5.Name = "cbR7B5";
-      this.cbR7B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B5.Size = new Size(15, 14);
       this.cbR7B5.TabIndex = 58;
       this.cbR7B5.UseVisualStyleBackColor = true;
-      this.cbR7B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B6
       // 
       this.cbR7B6.AutoSize = true;
-      this.cbR7B6.Location = new System.Drawing.Point(70, 112);
+      this.cbR7B6.Location = new Point(70, 112);
       this.cbR7B6.Name = "cbR7B6";
-      this.cbR7B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B6.Size = new Size(15, 14);
       this.cbR7B6.TabIndex = 57;
       this.cbR7B6.UseVisualStyleBackColor = true;
-      this.cbR7B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B7
       // 
       this.cbR7B7.AutoSize = true;
-      this.cbR7B7.Location = new System.Drawing.Point(58, 112);
+      this.cbR7B7.Location = new Point(58, 112);
       this.cbR7B7.Name = "cbR7B7";
-      this.cbR7B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR7B7.Size = new Size(15, 14);
       this.cbR7B7.TabIndex = 56;
       this.cbR7B7.UseVisualStyleBackColor = true;
-      this.cbR7B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B0
       // 
       this.cbR6B0.AutoSize = true;
-      this.cbR6B0.Location = new System.Drawing.Point(142, 100);
+      this.cbR6B0.Location = new Point(142, 100);
       this.cbR6B0.Name = "cbR6B0";
-      this.cbR6B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B0.Size = new Size(15, 14);
       this.cbR6B0.TabIndex = 55;
       this.cbR6B0.UseVisualStyleBackColor = true;
-      this.cbR6B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B1
       // 
       this.cbR6B1.AutoSize = true;
-      this.cbR6B1.Location = new System.Drawing.Point(130, 100);
+      this.cbR6B1.Location = new Point(130, 100);
       this.cbR6B1.Name = "cbR6B1";
-      this.cbR6B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B1.Size = new Size(15, 14);
       this.cbR6B1.TabIndex = 54;
       this.cbR6B1.UseVisualStyleBackColor = true;
-      this.cbR6B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B2
       // 
       this.cbR6B2.AutoSize = true;
-      this.cbR6B2.Location = new System.Drawing.Point(118, 100);
+      this.cbR6B2.Location = new Point(118, 100);
       this.cbR6B2.Name = "cbR6B2";
-      this.cbR6B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B2.Size = new Size(15, 14);
       this.cbR6B2.TabIndex = 53;
       this.cbR6B2.UseVisualStyleBackColor = true;
-      this.cbR6B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B3
       // 
       this.cbR6B3.AutoSize = true;
-      this.cbR6B3.Location = new System.Drawing.Point(106, 100);
+      this.cbR6B3.Location = new Point(106, 100);
       this.cbR6B3.Name = "cbR6B3";
-      this.cbR6B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B3.Size = new Size(15, 14);
       this.cbR6B3.TabIndex = 52;
       this.cbR6B3.UseVisualStyleBackColor = true;
-      this.cbR6B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B4
       // 
       this.cbR6B4.AutoSize = true;
-      this.cbR6B4.Location = new System.Drawing.Point(94, 100);
+      this.cbR6B4.Location = new Point(94, 100);
       this.cbR6B4.Name = "cbR6B4";
-      this.cbR6B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B4.Size = new Size(15, 14);
       this.cbR6B4.TabIndex = 51;
       this.cbR6B4.UseVisualStyleBackColor = true;
-      this.cbR6B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B5
       // 
       this.cbR6B5.AutoSize = true;
-      this.cbR6B5.Location = new System.Drawing.Point(82, 100);
+      this.cbR6B5.Location = new Point(82, 100);
       this.cbR6B5.Name = "cbR6B5";
-      this.cbR6B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B5.Size = new Size(15, 14);
       this.cbR6B5.TabIndex = 50;
       this.cbR6B5.UseVisualStyleBackColor = true;
-      this.cbR6B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B6
       // 
       this.cbR6B6.AutoSize = true;
-      this.cbR6B6.Location = new System.Drawing.Point(70, 100);
+      this.cbR6B6.Location = new Point(70, 100);
       this.cbR6B6.Name = "cbR6B6";
-      this.cbR6B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B6.Size = new Size(15, 14);
       this.cbR6B6.TabIndex = 49;
       this.cbR6B6.UseVisualStyleBackColor = true;
-      this.cbR6B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B7
       // 
       this.cbR6B7.AutoSize = true;
-      this.cbR6B7.Location = new System.Drawing.Point(58, 100);
+      this.cbR6B7.Location = new Point(58, 100);
       this.cbR6B7.Name = "cbR6B7";
-      this.cbR6B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR6B7.Size = new Size(15, 14);
       this.cbR6B7.TabIndex = 48;
       this.cbR6B7.UseVisualStyleBackColor = true;
-      this.cbR6B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B0
       // 
       this.cbR5B0.AutoSize = true;
-      this.cbR5B0.Location = new System.Drawing.Point(142, 88);
+      this.cbR5B0.Location = new Point(142, 88);
       this.cbR5B0.Name = "cbR5B0";
-      this.cbR5B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B0.Size = new Size(15, 14);
       this.cbR5B0.TabIndex = 47;
       this.cbR5B0.UseVisualStyleBackColor = true;
-      this.cbR5B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B1
       // 
       this.cbR5B1.AutoSize = true;
-      this.cbR5B1.Location = new System.Drawing.Point(130, 88);
+      this.cbR5B1.Location = new Point(130, 88);
       this.cbR5B1.Name = "cbR5B1";
-      this.cbR5B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B1.Size = new Size(15, 14);
       this.cbR5B1.TabIndex = 46;
       this.cbR5B1.UseVisualStyleBackColor = true;
-      this.cbR5B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B2
       // 
       this.cbR5B2.AutoSize = true;
-      this.cbR5B2.Location = new System.Drawing.Point(118, 88);
+      this.cbR5B2.Location = new Point(118, 88);
       this.cbR5B2.Name = "cbR5B2";
-      this.cbR5B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B2.Size = new Size(15, 14);
       this.cbR5B2.TabIndex = 45;
       this.cbR5B2.UseVisualStyleBackColor = true;
-      this.cbR5B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B3
       // 
       this.cbR5B3.AutoSize = true;
-      this.cbR5B3.Location = new System.Drawing.Point(106, 88);
+      this.cbR5B3.Location = new Point(106, 88);
       this.cbR5B3.Name = "cbR5B3";
-      this.cbR5B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B3.Size = new Size(15, 14);
       this.cbR5B3.TabIndex = 44;
       this.cbR5B3.UseVisualStyleBackColor = true;
-      this.cbR5B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B4
       // 
       this.cbR5B4.AutoSize = true;
-      this.cbR5B4.Location = new System.Drawing.Point(94, 88);
+      this.cbR5B4.Location = new Point(94, 88);
       this.cbR5B4.Name = "cbR5B4";
-      this.cbR5B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B4.Size = new Size(15, 14);
       this.cbR5B4.TabIndex = 43;
       this.cbR5B4.UseVisualStyleBackColor = true;
-      this.cbR5B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B5
       // 
       this.cbR5B5.AutoSize = true;
-      this.cbR5B5.Location = new System.Drawing.Point(82, 88);
+      this.cbR5B5.Location = new Point(82, 88);
       this.cbR5B5.Name = "cbR5B5";
-      this.cbR5B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B5.Size = new Size(15, 14);
       this.cbR5B5.TabIndex = 42;
       this.cbR5B5.UseVisualStyleBackColor = true;
-      this.cbR5B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B6
       // 
       this.cbR5B6.AutoSize = true;
-      this.cbR5B6.Location = new System.Drawing.Point(70, 88);
+      this.cbR5B6.Location = new Point(70, 88);
       this.cbR5B6.Name = "cbR5B6";
-      this.cbR5B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B6.Size = new Size(15, 14);
       this.cbR5B6.TabIndex = 41;
       this.cbR5B6.UseVisualStyleBackColor = true;
-      this.cbR5B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B7
       // 
       this.cbR5B7.AutoSize = true;
-      this.cbR5B7.Location = new System.Drawing.Point(58, 88);
+      this.cbR5B7.Location = new Point(58, 88);
       this.cbR5B7.Name = "cbR5B7";
-      this.cbR5B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR5B7.Size = new Size(15, 14);
       this.cbR5B7.TabIndex = 40;
       this.cbR5B7.UseVisualStyleBackColor = true;
-      this.cbR5B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B0
       // 
       this.cbR4B0.AutoSize = true;
-      this.cbR4B0.Location = new System.Drawing.Point(142, 76);
+      this.cbR4B0.Location = new Point(142, 76);
       this.cbR4B0.Name = "cbR4B0";
-      this.cbR4B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B0.Size = new Size(15, 14);
       this.cbR4B0.TabIndex = 39;
       this.cbR4B0.UseVisualStyleBackColor = true;
-      this.cbR4B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B1
       // 
       this.cbR4B1.AutoSize = true;
-      this.cbR4B1.Location = new System.Drawing.Point(130, 76);
+      this.cbR4B1.Location = new Point(130, 76);
       this.cbR4B1.Name = "cbR4B1";
-      this.cbR4B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B1.Size = new Size(15, 14);
       this.cbR4B1.TabIndex = 38;
       this.cbR4B1.UseVisualStyleBackColor = true;
-      this.cbR4B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B2
       // 
       this.cbR4B2.AutoSize = true;
-      this.cbR4B2.Location = new System.Drawing.Point(118, 76);
+      this.cbR4B2.Location = new Point(118, 76);
       this.cbR4B2.Name = "cbR4B2";
-      this.cbR4B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B2.Size = new Size(15, 14);
       this.cbR4B2.TabIndex = 37;
       this.cbR4B2.UseVisualStyleBackColor = true;
-      this.cbR4B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B3
       // 
       this.cbR4B3.AutoSize = true;
-      this.cbR4B3.Location = new System.Drawing.Point(106, 76);
+      this.cbR4B3.Location = new Point(106, 76);
       this.cbR4B3.Name = "cbR4B3";
-      this.cbR4B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B3.Size = new Size(15, 14);
       this.cbR4B3.TabIndex = 36;
       this.cbR4B3.UseVisualStyleBackColor = true;
-      this.cbR4B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B4
       // 
       this.cbR4B4.AutoSize = true;
-      this.cbR4B4.Location = new System.Drawing.Point(94, 76);
+      this.cbR4B4.Location = new Point(94, 76);
       this.cbR4B4.Name = "cbR4B4";
-      this.cbR4B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B4.Size = new Size(15, 14);
       this.cbR4B4.TabIndex = 35;
       this.cbR4B4.UseVisualStyleBackColor = true;
-      this.cbR4B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B5
       // 
       this.cbR4B5.AutoSize = true;
-      this.cbR4B5.Location = new System.Drawing.Point(82, 76);
+      this.cbR4B5.Location = new Point(82, 76);
       this.cbR4B5.Name = "cbR4B5";
-      this.cbR4B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B5.Size = new Size(15, 14);
       this.cbR4B5.TabIndex = 34;
       this.cbR4B5.UseVisualStyleBackColor = true;
-      this.cbR4B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B6
       // 
       this.cbR4B6.AutoSize = true;
-      this.cbR4B6.Location = new System.Drawing.Point(70, 76);
+      this.cbR4B6.Location = new Point(70, 76);
       this.cbR4B6.Name = "cbR4B6";
-      this.cbR4B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B6.Size = new Size(15, 14);
       this.cbR4B6.TabIndex = 33;
       this.cbR4B6.UseVisualStyleBackColor = true;
-      this.cbR4B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B7
       // 
       this.cbR4B7.AutoSize = true;
-      this.cbR4B7.Location = new System.Drawing.Point(58, 76);
+      this.cbR4B7.Location = new Point(58, 76);
       this.cbR4B7.Name = "cbR4B7";
-      this.cbR4B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR4B7.Size = new Size(15, 14);
       this.cbR4B7.TabIndex = 32;
       this.cbR4B7.UseVisualStyleBackColor = true;
-      this.cbR4B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B0
       // 
       this.cbR3B0.AutoSize = true;
-      this.cbR3B0.Location = new System.Drawing.Point(142, 64);
+      this.cbR3B0.Location = new Point(142, 64);
       this.cbR3B0.Name = "cbR3B0";
-      this.cbR3B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B0.Size = new Size(15, 14);
       this.cbR3B0.TabIndex = 31;
       this.cbR3B0.UseVisualStyleBackColor = true;
-      this.cbR3B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B1
       // 
       this.cbR3B1.AutoSize = true;
-      this.cbR3B1.Location = new System.Drawing.Point(130, 64);
+      this.cbR3B1.Location = new Point(130, 64);
       this.cbR3B1.Name = "cbR3B1";
-      this.cbR3B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B1.Size = new Size(15, 14);
       this.cbR3B1.TabIndex = 30;
       this.cbR3B1.UseVisualStyleBackColor = true;
-      this.cbR3B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B2
       // 
       this.cbR3B2.AutoSize = true;
-      this.cbR3B2.Location = new System.Drawing.Point(118, 64);
+      this.cbR3B2.Location = new Point(118, 64);
       this.cbR3B2.Name = "cbR3B2";
-      this.cbR3B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B2.Size = new Size(15, 14);
       this.cbR3B2.TabIndex = 29;
       this.cbR3B2.UseVisualStyleBackColor = true;
-      this.cbR3B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B3
       // 
       this.cbR3B3.AutoSize = true;
-      this.cbR3B3.Location = new System.Drawing.Point(106, 64);
+      this.cbR3B3.Location = new Point(106, 64);
       this.cbR3B3.Name = "cbR3B3";
-      this.cbR3B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B3.Size = new Size(15, 14);
       this.cbR3B3.TabIndex = 28;
       this.cbR3B3.UseVisualStyleBackColor = true;
-      this.cbR3B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B4
       // 
       this.cbR3B4.AutoSize = true;
-      this.cbR3B4.Location = new System.Drawing.Point(94, 64);
+      this.cbR3B4.Location = new Point(94, 64);
       this.cbR3B4.Name = "cbR3B4";
-      this.cbR3B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B4.Size = new Size(15, 14);
       this.cbR3B4.TabIndex = 27;
       this.cbR3B4.UseVisualStyleBackColor = true;
-      this.cbR3B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B5
       // 
       this.cbR3B5.AutoSize = true;
-      this.cbR3B5.Location = new System.Drawing.Point(82, 64);
+      this.cbR3B5.Location = new Point(82, 64);
       this.cbR3B5.Name = "cbR3B5";
-      this.cbR3B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B5.Size = new Size(15, 14);
       this.cbR3B5.TabIndex = 26;
       this.cbR3B5.UseVisualStyleBackColor = true;
-      this.cbR3B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B6
       // 
       this.cbR3B6.AutoSize = true;
-      this.cbR3B6.Location = new System.Drawing.Point(70, 64);
+      this.cbR3B6.Location = new Point(70, 64);
       this.cbR3B6.Name = "cbR3B6";
-      this.cbR3B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B6.Size = new Size(15, 14);
       this.cbR3B6.TabIndex = 25;
       this.cbR3B6.UseVisualStyleBackColor = true;
-      this.cbR3B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B7
       // 
       this.cbR3B7.AutoSize = true;
-      this.cbR3B7.Location = new System.Drawing.Point(58, 64);
+      this.cbR3B7.Location = new Point(58, 64);
       this.cbR3B7.Name = "cbR3B7";
-      this.cbR3B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR3B7.Size = new Size(15, 14);
       this.cbR3B7.TabIndex = 24;
       this.cbR3B7.UseVisualStyleBackColor = true;
-      this.cbR3B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B0
       // 
       this.cbR2B0.AutoSize = true;
-      this.cbR2B0.Location = new System.Drawing.Point(142, 52);
+      this.cbR2B0.Location = new Point(142, 52);
       this.cbR2B0.Name = "cbR2B0";
-      this.cbR2B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B0.Size = new Size(15, 14);
       this.cbR2B0.TabIndex = 23;
       this.cbR2B0.UseVisualStyleBackColor = true;
-      this.cbR2B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B1
       // 
       this.cbR2B1.AutoSize = true;
-      this.cbR2B1.Location = new System.Drawing.Point(130, 52);
+      this.cbR2B1.Location = new Point(130, 52);
       this.cbR2B1.Name = "cbR2B1";
-      this.cbR2B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B1.Size = new Size(15, 14);
       this.cbR2B1.TabIndex = 22;
       this.cbR2B1.UseVisualStyleBackColor = true;
-      this.cbR2B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B2
       // 
       this.cbR2B2.AutoSize = true;
-      this.cbR2B2.Location = new System.Drawing.Point(118, 52);
+      this.cbR2B2.Location = new Point(118, 52);
       this.cbR2B2.Name = "cbR2B2";
-      this.cbR2B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B2.Size = new Size(15, 14);
       this.cbR2B2.TabIndex = 21;
       this.cbR2B2.UseVisualStyleBackColor = true;
-      this.cbR2B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B3
       // 
       this.cbR2B3.AutoSize = true;
-      this.cbR2B3.Location = new System.Drawing.Point(106, 52);
+      this.cbR2B3.Location = new Point(106, 52);
       this.cbR2B3.Name = "cbR2B3";
-      this.cbR2B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B3.Size = new Size(15, 14);
       this.cbR2B3.TabIndex = 20;
       this.cbR2B3.UseVisualStyleBackColor = true;
-      this.cbR2B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B4
       // 
       this.cbR2B4.AutoSize = true;
-      this.cbR2B4.Location = new System.Drawing.Point(94, 52);
+      this.cbR2B4.Location = new Point(94, 52);
       this.cbR2B4.Name = "cbR2B4";
-      this.cbR2B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B4.Size = new Size(15, 14);
       this.cbR2B4.TabIndex = 19;
       this.cbR2B4.UseVisualStyleBackColor = true;
-      this.cbR2B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B5
       // 
       this.cbR2B5.AutoSize = true;
-      this.cbR2B5.Location = new System.Drawing.Point(82, 52);
+      this.cbR2B5.Location = new Point(82, 52);
       this.cbR2B5.Name = "cbR2B5";
-      this.cbR2B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B5.Size = new Size(15, 14);
       this.cbR2B5.TabIndex = 18;
       this.cbR2B5.UseVisualStyleBackColor = true;
-      this.cbR2B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B6
       // 
       this.cbR2B6.AutoSize = true;
-      this.cbR2B6.Location = new System.Drawing.Point(70, 52);
+      this.cbR2B6.Location = new Point(70, 52);
       this.cbR2B6.Name = "cbR2B6";
-      this.cbR2B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B6.Size = new Size(15, 14);
       this.cbR2B6.TabIndex = 17;
       this.cbR2B6.UseVisualStyleBackColor = true;
-      this.cbR2B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B7
       // 
       this.cbR2B7.AutoSize = true;
-      this.cbR2B7.Location = new System.Drawing.Point(58, 52);
+      this.cbR2B7.Location = new Point(58, 52);
       this.cbR2B7.Name = "cbR2B7";
-      this.cbR2B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR2B7.Size = new Size(15, 14);
       this.cbR2B7.TabIndex = 16;
       this.cbR2B7.UseVisualStyleBackColor = true;
-      this.cbR2B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B0
       // 
       this.cbR1B0.AutoSize = true;
-      this.cbR1B0.Location = new System.Drawing.Point(142, 40);
+      this.cbR1B0.Location = new Point(142, 40);
       this.cbR1B0.Name = "cbR1B0";
-      this.cbR1B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B0.Size = new Size(15, 14);
       this.cbR1B0.TabIndex = 15;
       this.cbR1B0.UseVisualStyleBackColor = true;
-      this.cbR1B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B1
       // 
       this.cbR1B1.AutoSize = true;
-      this.cbR1B1.Location = new System.Drawing.Point(130, 40);
+      this.cbR1B1.Location = new Point(130, 40);
       this.cbR1B1.Name = "cbR1B1";
-      this.cbR1B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B1.Size = new Size(15, 14);
       this.cbR1B1.TabIndex = 14;
       this.cbR1B1.UseVisualStyleBackColor = true;
-      this.cbR1B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B2
       // 
       this.cbR1B2.AutoSize = true;
-      this.cbR1B2.Location = new System.Drawing.Point(118, 40);
+      this.cbR1B2.Location = new Point(118, 40);
       this.cbR1B2.Name = "cbR1B2";
-      this.cbR1B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B2.Size = new Size(15, 14);
       this.cbR1B2.TabIndex = 13;
       this.cbR1B2.UseVisualStyleBackColor = true;
-      this.cbR1B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B3
       // 
       this.cbR1B3.AutoSize = true;
-      this.cbR1B3.Location = new System.Drawing.Point(106, 40);
+      this.cbR1B3.Location = new Point(106, 40);
       this.cbR1B3.Name = "cbR1B3";
-      this.cbR1B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B3.Size = new Size(15, 14);
       this.cbR1B3.TabIndex = 12;
       this.cbR1B3.UseVisualStyleBackColor = true;
-      this.cbR1B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B4
       // 
       this.cbR1B4.AutoSize = true;
-      this.cbR1B4.Location = new System.Drawing.Point(94, 40);
+      this.cbR1B4.Location = new Point(94, 40);
       this.cbR1B4.Name = "cbR1B4";
-      this.cbR1B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B4.Size = new Size(15, 14);
       this.cbR1B4.TabIndex = 11;
       this.cbR1B4.UseVisualStyleBackColor = true;
-      this.cbR1B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B5
       // 
       this.cbR1B5.AutoSize = true;
-      this.cbR1B5.Location = new System.Drawing.Point(82, 40);
+      this.cbR1B5.Location = new Point(82, 40);
       this.cbR1B5.Name = "cbR1B5";
-      this.cbR1B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B5.Size = new Size(15, 14);
       this.cbR1B5.TabIndex = 10;
       this.cbR1B5.UseVisualStyleBackColor = true;
-      this.cbR1B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B6
       // 
       this.cbR1B6.AutoSize = true;
-      this.cbR1B6.Location = new System.Drawing.Point(70, 40);
+      this.cbR1B6.Location = new Point(70, 40);
       this.cbR1B6.Name = "cbR1B6";
-      this.cbR1B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B6.Size = new Size(15, 14);
       this.cbR1B6.TabIndex = 9;
       this.cbR1B6.UseVisualStyleBackColor = true;
-      this.cbR1B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B7
       // 
       this.cbR1B7.AutoSize = true;
-      this.cbR1B7.Location = new System.Drawing.Point(58, 40);
+      this.cbR1B7.Location = new Point(58, 40);
       this.cbR1B7.Name = "cbR1B7";
-      this.cbR1B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR1B7.Size = new Size(15, 14);
       this.cbR1B7.TabIndex = 8;
       this.cbR1B7.UseVisualStyleBackColor = true;
-      this.cbR1B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B0
       // 
       this.cbR0B0.AutoSize = true;
-      this.cbR0B0.Location = new System.Drawing.Point(142, 28);
+      this.cbR0B0.Location = new Point(142, 28);
       this.cbR0B0.Name = "cbR0B0";
-      this.cbR0B0.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B0.Size = new Size(15, 14);
       this.cbR0B0.TabIndex = 7;
       this.cbR0B0.UseVisualStyleBackColor = true;
-      this.cbR0B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B1
       // 
       this.cbR0B1.AutoSize = true;
-      this.cbR0B1.Location = new System.Drawing.Point(130, 28);
+      this.cbR0B1.Location = new Point(130, 28);
       this.cbR0B1.Name = "cbR0B1";
-      this.cbR0B1.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B1.Size = new Size(15, 14);
       this.cbR0B1.TabIndex = 6;
       this.cbR0B1.UseVisualStyleBackColor = true;
-      this.cbR0B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B2
       // 
       this.cbR0B2.AutoSize = true;
-      this.cbR0B2.Location = new System.Drawing.Point(118, 28);
+      this.cbR0B2.Location = new Point(118, 28);
       this.cbR0B2.Name = "cbR0B2";
-      this.cbR0B2.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B2.Size = new Size(15, 14);
       this.cbR0B2.TabIndex = 5;
       this.cbR0B2.UseVisualStyleBackColor = true;
-      this.cbR0B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B3
       // 
       this.cbR0B3.AutoSize = true;
-      this.cbR0B3.Location = new System.Drawing.Point(106, 28);
+      this.cbR0B3.Location = new Point(106, 28);
       this.cbR0B3.Name = "cbR0B3";
-      this.cbR0B3.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B3.Size = new Size(15, 14);
       this.cbR0B3.TabIndex = 4;
       this.cbR0B3.UseVisualStyleBackColor = true;
-      this.cbR0B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B4
       // 
       this.cbR0B4.AutoSize = true;
-      this.cbR0B4.Location = new System.Drawing.Point(94, 28);
+      this.cbR0B4.Location = new Point(94, 28);
       this.cbR0B4.Name = "cbR0B4";
-      this.cbR0B4.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B4.Size = new Size(15, 14);
       this.cbR0B4.TabIndex = 3;
       this.cbR0B4.UseVisualStyleBackColor = true;
-      this.cbR0B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B5
       // 
       this.cbR0B5.AutoSize = true;
-      this.cbR0B5.Location = new System.Drawing.Point(82, 28);
+      this.cbR0B5.Location = new Point(82, 28);
       this.cbR0B5.Name = "cbR0B5";
-      this.cbR0B5.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B5.Size = new Size(15, 14);
       this.cbR0B5.TabIndex = 2;
       this.cbR0B5.UseVisualStyleBackColor = true;
-      this.cbR0B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B6
       // 
       this.cbR0B6.AutoSize = true;
-      this.cbR0B6.Location = new System.Drawing.Point(70, 28);
+      this.cbR0B6.Location = new Point(70, 28);
       this.cbR0B6.Name = "cbR0B6";
-      this.cbR0B6.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B6.Size = new Size(15, 14);
       this.cbR0B6.TabIndex = 1;
       this.cbR0B6.UseVisualStyleBackColor = true;
-      this.cbR0B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B7
       // 
       this.cbR0B7.AutoSize = true;
-      this.cbR0B7.Location = new System.Drawing.Point(58, 28);
+      this.cbR0B7.Location = new Point(58, 28);
       this.cbR0B7.Name = "cbR0B7";
-      this.cbR0B7.Size = new System.Drawing.Size(15, 14);
+      this.cbR0B7.Size = new Size(15, 14);
       this.cbR0B7.TabIndex = 0;
       this.cbR0B7.UseVisualStyleBackColor = true;
-      this.cbR0B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // groupboxTranslationEdit
       // 
@@ -2575,9 +2635,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxTranslationEdit.Controls.Add(this.TextBoxTranslateTo);
       this.groupboxTranslationEdit.Controls.Add(this.mpLabel4);
       this.groupboxTranslationEdit.Controls.Add(this.TextBoxTranslateFrom);
-      this.groupboxTranslationEdit.Location = new System.Drawing.Point(344, 46);
+      this.groupboxTranslationEdit.Location = new Point(344, 46);
       this.groupboxTranslationEdit.Name = "groupboxTranslationEdit";
-      this.groupboxTranslationEdit.Size = new System.Drawing.Size(239, 380);
+      this.groupboxTranslationEdit.Size = new Size(239, 380);
       this.groupboxTranslationEdit.TabIndex = 33;
       this.groupboxTranslationEdit.TabStop = false;
       this.groupboxTranslationEdit.Text = " Translation Editor ";
@@ -2586,46 +2646,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(15, 56);
+      this.mpLabel5.Location = new Point(15, 56);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(23, 13);
+      this.mpLabel5.Size = new Size(23, 13);
       this.mpLabel5.TabIndex = 27;
       this.mpLabel5.Text = "To:";
       // 
       // TextBoxTranslateTo
       // 
-      this.TextBoxTranslateTo.BorderColor = System.Drawing.Color.Empty;
-      this.TextBoxTranslateTo.Location = new System.Drawing.Point(58, 52);
+      this.TextBoxTranslateTo.BorderColor = Color.Empty;
+      this.TextBoxTranslateTo.Location = new Point(58, 52);
       this.TextBoxTranslateTo.MaxLength = 100;
       this.TextBoxTranslateTo.Name = "TextBoxTranslateTo";
-      this.TextBoxTranslateTo.Size = new System.Drawing.Size(133, 20);
+      this.TextBoxTranslateTo.Size = new Size(133, 20);
       this.TextBoxTranslateTo.TabIndex = 26;
-      this.TextBoxTranslateTo.LostFocus += new System.EventHandler(this.TextBoxTranslateTo_LostFocus);
+      this.TextBoxTranslateTo.LostFocus += new EventHandler(this.TextBoxTranslateTo_LostFocus);
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(15, 28);
+      this.mpLabel4.Location = new Point(15, 28);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(33, 13);
+      this.mpLabel4.Size = new Size(33, 13);
       this.mpLabel4.TabIndex = 25;
       this.mpLabel4.Text = "From:";
       // 
       // TextBoxTranslateFrom
       // 
-      this.TextBoxTranslateFrom.BorderColor = System.Drawing.Color.Empty;
-      this.TextBoxTranslateFrom.Location = new System.Drawing.Point(58, 24);
+      this.TextBoxTranslateFrom.BorderColor = Color.Empty;
+      this.TextBoxTranslateFrom.Location = new Point(58, 24);
       this.TextBoxTranslateFrom.MaxLength = 1;
       this.TextBoxTranslateFrom.Name = "TextBoxTranslateFrom";
-      this.TextBoxTranslateFrom.Size = new System.Drawing.Size(133, 20);
+      this.TextBoxTranslateFrom.Size = new Size(133, 20);
       this.TextBoxTranslateFrom.TabIndex = 24;
-      this.TextBoxTranslateFrom.LostFocus += new System.EventHandler(this.TextBoxTranslateFrom_LostFocus);
+      this.TextBoxTranslateFrom.LostFocus += new EventHandler(this.TextBoxTranslateFrom_LostFocus);
       // 
       // MessageEditForm
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleDimensions = new SizeF(6F, 13F);
       this.AutoScroll = true;
-      this.ClientSize = new System.Drawing.Size(590, 475);
+      this.ClientSize = new Size(590, 475);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
@@ -2643,7 +2703,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.Controls.Add(this.groupboxCharacterEdit);
       this.Name = "MessageEditForm";
       this.ShowInTaskbar = false;
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.StartPosition = FormStartPosition.CenterScreen;
       this.Text = "MiniDisplay - Setup - Configuration Editor";
       this.groupBoxMessageEdit.ResumeLayout(false);
       this.groupBoxProcess.ResumeLayout(false);
@@ -2664,7 +2724,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxTranslationEdit.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     private void labelExpand_Click(object sender, EventArgs e)
@@ -2691,15 +2750,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         string file = Config.GetFile(Config.Dir.Config, fileName);
         if (!File.Exists(file))
         {
-          MessageBox.Show("Can't locate configuration file " + fileName + "\n\nMake sure it exists", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-          this.buttonUp.Enabled = this.buttonDown.Enabled = this.buttonNew.Enabled = this.buttonRemove.Enabled = this.buttonDefault.Enabled = this.buttonApply.Enabled = false;
+          MessageBox.Show("Can't locate configuration file " + fileName + "\n\nMake sure it exists",
+                          "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+          this.buttonUp.Enabled =
+            this.buttonDown.Enabled =
+            this.buttonNew.Enabled =
+            this.buttonRemove.Enabled = this.buttonDefault.Enabled = this.buttonApply.Enabled = false;
           base.ShowInTaskbar = true;
           base.WindowState = FormWindowState.Minimized;
           new Thread(new ThreadStart(this.CloseThread)).Start();
         }
         else
         {
-          Log.Info("LOADING {0}", new object[] { fileName });
+          Log.Info("LOADING {0}", new object[] {fileName});
           document.Load(file);
           Log.Info("Extracting Settings", new object[0]);
           XmlNode node = document.DocumentElement.SelectSingleNode("/Settings");
@@ -2783,14 +2846,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 XmlNode node9 = list7[k];
                 XmlNode node10 = list8[k];
                 string text = "Translation: \"" + node9.InnerText + "\" = \"" + node10.InnerText + "\"";
-                Log.Info("  Adding : {0}", new object[] { text });
+                Log.Info("  Adding : {0}", new object[] {text});
                 TreeNode node11 = new TreeNode(text);
                 node11.Tag = new Data("TRANSLATION", node9.InnerText, node10.InnerText);
                 node3.Nodes.Add(node11);
               }
               else
               {
-                Log.Info("Ignoring corrupt character translation - index = {0}", new object[] { k });
+                Log.Info("Ignoring corrupt character translation - index = {0}", new object[] {k});
               }
             }
           }
@@ -2806,7 +2869,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               str6 = "ALL STATES";
             }
-            Log.Info("Adding Message: state = \"{0}\"", new object[] { str6 });
+            Log.Info("Adding Message: state = \"{0}\"", new object[] {str6});
             TreeNode node13 = new TreeNode(str6);
             node13.Tag = new Data("MESSAGE", "STATUS", str6);
             node2.Nodes.Add(node13);
@@ -2821,15 +2884,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 int num6 = int.Parse(node15.InnerText);
                 string innerText = node15.InnerText;
-                if (Enum.IsDefined(typeof(GUIWindow.Window), num6))
+                if (Enum.IsDefined(typeof (GUIWindow.Window), num6))
                 {
-                  innerText = innerText + " (" + this.GetFriendlyName(Enum.GetName(typeof(GUIWindow.Window), num6)) + ")";
+                  innerText = innerText + " (" + this.GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), num6)) +
+                              ")";
                 }
                 else
                 {
                   innerText = innerText + "(UNKNOWN!)";
                 }
-                Log.Info("  Adding Window: {0}", new object[] { innerText });
+                Log.Info("  Adding Window: {0}", new object[] {innerText});
                 TreeNode node16 = new TreeNode(innerText);
                 node16.Tag = new Data("WINDOW", "ID", node15.InnerText);
                 node14.Nodes.Add(node16);
@@ -2837,7 +2901,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             else
             {
-              Log.Info("  Adding Window: {0}", new object[] { "All Windows" });
+              Log.Info("  Adding Window: {0}", new object[] {"All Windows"});
               TreeNode node17 = new TreeNode("All Windows");
               node17.Tag = new Data("WINDOW", "ALL", "");
               node14.Nodes.Add(node17);
@@ -2864,7 +2928,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               node19.Tag = new Data("LINE", "ALIGNMENT", node18.Attributes["Alignment"].Value);
               node13.Nodes.Add(node19);
               Log.Info("    Added Line", new object[0]);
-              Log.Info("    Enumerating Line properties - child nodes = {0}({1})", new object[] { node18.HasChildNodes, node18.ChildNodes.Count });
+              Log.Info("    Enumerating Line properties - child nodes = {0}({1})",
+                       new object[] {node18.HasChildNodes, node18.ChildNodes.Count});
               if (node18.HasChildNodes)
               {
                 foreach (XmlNode node20 in node18.ChildNodes)
@@ -2873,62 +2938,75 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   {
                     continue;
                   }
-                  Log.Info("      Adding property: {0}", new object[] { node20.LocalName });
-                  TreeNode node21 = new TreeNode(node20.LocalName + ((node20.Attributes.GetNamedItem("Value") == null) ? string.Empty : (": " + node20.Attributes["Value"].Value)));
+                  Log.Info("      Adding property: {0}", new object[] {node20.LocalName});
+                  TreeNode node21 =
+                    new TreeNode(node20.LocalName +
+                                 ((node20.Attributes.GetNamedItem("Value") == null)
+                                    ? string.Empty
+                                    : (": " + node20.Attributes["Value"].Value)));
                   if (!node20.LocalName.Equals("TextProgressBar"))
                   {
                     node21.Tag = new Data("PROCESS", node20.LocalName, node20.Attributes["Value"].Value);
                   }
                   else
                   {
-                    string str8 = string.Concat(new object[] { node20.Attributes["StartChar"].Value[0], "|", node20.Attributes["EndChar"].Value[0], "|", node20.Attributes["ValueChar"].Value[0], "|", node20.Attributes["FillChar"].Value, "|", node20.Attributes["Length"].Value, "|" });
+                    string str8 =
+                      string.Concat(new object[]
+                                      {
+                                        node20.Attributes["StartChar"].Value[0], "|",
+                                        node20.Attributes["EndChar"].Value[0], "|",
+                                        node20.Attributes["ValueChar"].Value[0], "|", node20.Attributes["FillChar"].Value
+                                        , "|", node20.Attributes["Length"].Value, "|"
+                                      });
                     if (node20.ChildNodes[0].LocalName.Equals("ValueProperty"))
                     {
-                      str8 = str8 + node20.ChildNodes[0].Attributes["Value"].Value + "|" + node20.ChildNodes[1].Attributes["Value"].Value;
+                      str8 = str8 + node20.ChildNodes[0].Attributes["Value"].Value + "|" +
+                             node20.ChildNodes[1].Attributes["Value"].Value;
                     }
                     else
                     {
-                      str8 = str8 + node20.ChildNodes[1].Attributes["Value"].Value + "|" + node20.ChildNodes[0].Attributes["Value"].Value;
+                      str8 = str8 + node20.ChildNodes[1].Attributes["Value"].Value + "|" +
+                             node20.ChildNodes[0].Attributes["Value"].Value;
                     }
                     node21.Tag = new Data("PROCESS", node20.LocalName, str8);
                   }
                   node19.Nodes.Add(node21);
-                  Log.Info("      Added property: {0}", new object[] { node20.LocalName });
+                  Log.Info("      Added property: {0}", new object[] {node20.LocalName});
                   if (!node20.LocalName.Equals("TextProgressBar") && node20.HasChildNodes)
                   {
                     Log.Info("      Enumerating Line conditions", new object[0]);
                     foreach (XmlNode node22 in node20.ChildNodes)
                     {
                       TreeNode node23;
-                      Log.Info("        Adding Condition: {0}", new object[] { node22.LocalName });
+                      Log.Info("        Adding Condition: {0}", new object[] {node22.LocalName});
                       if (((name = node22.LocalName.ToLower()) != null) && ((name == "or") || (name == "and")))
                       {
-                        Log.Info("          Adding and/or Condition: {0}", new object[] { node22.LocalName });
+                        Log.Info("          Adding and/or Condition: {0}", new object[] {node22.LocalName});
                         node23 = new TreeNode(node22.LocalName);
                         node23.Tag = new Data("CONDITION", node22.LocalName, "");
                         node21.Nodes.Add(node23);
-                        Log.Info("          Added and/or Condition: {0}", new object[] { node22.LocalName });
+                        Log.Info("          Added and/or Condition: {0}", new object[] {node22.LocalName});
                         if (node22.HasChildNodes)
                         {
                           foreach (XmlNode node24 in node22.ChildNodes)
                           {
-                            Log.Info("          Adding SubCondition: {0}", new object[] { node24.LocalName });
+                            Log.Info("          Adding SubCondition: {0}", new object[] {node24.LocalName});
                             TreeNode node25 = new TreeNode(node24.LocalName + ": " + node24.Attributes["Value"].Value);
                             node25.Tag = new Data("SUBCONDITION", node24.LocalName, node24.Attributes["Value"].Value);
                             node23.Nodes.Add(node25);
-                            Log.Info("          Added SubCondition: {0}", new object[] { node24.LocalName });
+                            Log.Info("          Added SubCondition: {0}", new object[] {node24.LocalName});
                           }
                         }
                       }
                       else
                       {
-                        Log.Info("          Adding other Condition: {0}", new object[] { node22.LocalName });
+                        Log.Info("          Adding other Condition: {0}", new object[] {node22.LocalName});
                         node23 = new TreeNode(node22.LocalName + ": " + node22.Attributes["Value"].Value);
                         node23.Tag = new Data("CONDITION", node22.LocalName, node22.Attributes["Value"].Value);
                         node21.Nodes.Add(node23);
-                        Log.Info("          Added other Condition: {0}", new object[] { node22.LocalName });
+                        Log.Info("          Added other Condition: {0}", new object[] {node22.LocalName});
                       }
-                      Log.Info("        Added Condition: {0}", new object[] { node22.LocalName });
+                      Log.Info("        Added Condition: {0}", new object[] {node22.LocalName});
                     }
                     Log.Info("      Enumerated Line conditions", new object[0]);
                   }
@@ -2936,59 +3014,64 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
               Log.Info("    Enumerated Line properties", new object[0]);
               continue;
-            Label_0FD9:
+              Label_0FD9:
               Log.Info("    Adding Image", new object[0]);
               TreeNode node26 = new TreeNode("IMAGE");
               node26.Tag = new Data("IMAGE", "", "");
               node13.Nodes.Add(node26);
               Log.Info("    Added Image", new object[0]);
-              Log.Info("    Enumerating Image properties - child nodes = {0}({1})", new object[] { node18.HasChildNodes, node18.ChildNodes.Count });
+              Log.Info("    Enumerating Image properties - child nodes = {0}({1})",
+                       new object[] {node18.HasChildNodes, node18.ChildNodes.Count});
               if (node18.HasChildNodes)
               {
                 foreach (XmlNode node27 in node18.ChildNodes)
                 {
                   if (node27 != null)
                   {
-                    Log.Info("      Adding Image property: {0}", new object[] { node27.LocalName });
-                    TreeNode node28 = new TreeNode(node27.LocalName + ((node27.Attributes.GetNamedItem("Value") == null) ? string.Empty : (": " + node27.Attributes["Value"].Value)));
+                    Log.Info("      Adding Image property: {0}", new object[] {node27.LocalName});
+                    TreeNode node28 =
+                      new TreeNode(node27.LocalName +
+                                   ((node27.Attributes.GetNamedItem("Value") == null)
+                                      ? string.Empty
+                                      : (": " + node27.Attributes["Value"].Value)));
                     node28.Tag = new Data("PROCESS", node27.LocalName, node27.Attributes["Value"].Value);
                     node26.Nodes.Add(node28);
-                    Log.Info("      Added Image property: {0}", new object[] { node27.LocalName });
+                    Log.Info("      Added Image property: {0}", new object[] {node27.LocalName});
                     if (node27.HasChildNodes)
                     {
                       Log.Info("      Enumerating Image conditions", new object[0]);
                       foreach (XmlNode node29 in node27.ChildNodes)
                       {
                         TreeNode node30;
-                        Log.Info("        Adding Image Condition: {0}", new object[] { node29.LocalName });
+                        Log.Info("        Adding Image Condition: {0}", new object[] {node29.LocalName});
                         if (((name = node29.LocalName.ToLower()) != null) && ((name == "or") || (name == "and")))
                         {
-                          Log.Info("          Adding and/or Image Condition: {0}", new object[] { node29.LocalName });
+                          Log.Info("          Adding and/or Image Condition: {0}", new object[] {node29.LocalName});
                           node30 = new TreeNode(node29.LocalName);
                           node30.Tag = new Data("CONDITION", node29.LocalName, "");
                           node28.Nodes.Add(node30);
-                          Log.Info("          Added and/or Image Condition: {0}", new object[] { node29.LocalName });
+                          Log.Info("          Added and/or Image Condition: {0}", new object[] {node29.LocalName});
                           if (node29.HasChildNodes)
                           {
                             foreach (XmlNode node31 in node29.ChildNodes)
                             {
-                              Log.Info("          Adding Image SubCondition: {0}", new object[] { node31.LocalName });
+                              Log.Info("          Adding Image SubCondition: {0}", new object[] {node31.LocalName});
                               TreeNode node32 = new TreeNode(node31.LocalName + ": " + node31.Attributes["Value"].Value);
                               node32.Tag = new Data("SUBCONDITION", node31.LocalName, node31.Attributes["Value"].Value);
                               node30.Nodes.Add(node32);
-                              Log.Info("          Added Image SubCondition: {0}", new object[] { node31.LocalName });
+                              Log.Info("          Added Image SubCondition: {0}", new object[] {node31.LocalName});
                             }
                           }
                         }
                         else
                         {
-                          Log.Info("          Adding other Image Condition: {0}", new object[] { node29.LocalName });
+                          Log.Info("          Adding other Image Condition: {0}", new object[] {node29.LocalName});
                           node30 = new TreeNode(node29.LocalName + ": " + node29.Attributes["Value"].Value);
                           node30.Tag = new Data("CONDITION", node29.LocalName, node29.Attributes["Value"].Value);
                           node28.Nodes.Add(node30);
-                          Log.Info("          Added other Image Condition: {0}", new object[] { node29.LocalName });
+                          Log.Info("          Added other Image Condition: {0}", new object[] {node29.LocalName});
                         }
-                        Log.Info("        Added Image Condition: {0}", new object[] { node29.LocalName });
+                        Log.Info("        Added Image Condition: {0}", new object[] {node29.LocalName});
                       }
                       Log.Info("      Enumerated Image conditions", new object[0]);
                     }
@@ -2997,9 +3080,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               }
               Log.Info("    Enumerated Image properties", new object[0]);
               continue;
-            Label_1497:
+              Label_1497:
               ;
-              Log.Info("  Enumerating unknown tag \"{0}\"", new object[] { node18.Name });
+              Log.Info("  Enumerating unknown tag \"{0}\"", new object[] {node18.Name});
             }
             Log.Info("  Enuerated Lines", new object[0]);
             Log.Info("    MESSAGE ADDED   ", new object[0]);
@@ -3012,7 +3095,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.treeMapping.Nodes.Add(node4);
           this.changedSettings = false;
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -3023,7 +3107,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       try
       {
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
-      } catch
+      }
+      catch
       {
         Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"", new object[0]);
       }
@@ -3039,14 +3124,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         foreach (TreeNode node in this.treeMapping.Nodes)
         {
           writer.WriteStartElement("remote");
-          writer.WriteAttributeString("family", (string)((Data)node.Tag).Value);
+          writer.WriteAttributeString("family", (string) ((Data) node.Tag).Value);
           if (node.Nodes.Count > 0)
           {
             foreach (TreeNode node2 in node.Nodes)
             {
               writer.WriteStartElement("button");
-              writer.WriteAttributeString("name", (string)((Data)node2.Tag).Parameter);
-              writer.WriteAttributeString("code", (string)((Data)node2.Tag).Value);
+              writer.WriteAttributeString("name", (string) ((Data) node2.Tag).Parameter);
+              writer.WriteAttributeString("code", (string) ((Data) node2.Tag).Value);
               if (node2.Nodes.Count > 0)
               {
                 foreach (TreeNode node3 in node2.Nodes)
@@ -3061,7 +3146,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                     bool focus = false;
                     foreach (TreeNode node5 in node4.Nodes)
                     {
-                      string type = ((Data)node5.Tag).Type;
+                      string type = ((Data) node5.Tag).Type;
                       if (type != null)
                       {
                         if (!(type == "COMMAND"))
@@ -3073,16 +3158,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                         }
                         else
                         {
-                          str4 = (string)((Data)node5.Tag).Parameter;
-                          focus = ((Data)node5.Tag).Focus;
+                          str4 = (string) ((Data) node5.Tag).Parameter;
+                          focus = ((Data) node5.Tag).Focus;
                           if (str4 != "KEY")
                           {
-                            str5 = ((Data)node5.Tag).Value.ToString();
+                            str5 = ((Data) node5.Tag).Value.ToString();
                           }
                           else
                           {
                             str4 = "ACTION";
-                            Key key = (Key)((Data)node5.Tag).Value;
+                            Key key = (Key) ((Data) node5.Tag).Value;
                             str5 = "93";
                             str6 = key.KeyChar.ToString();
                             str7 = key.KeyCode.ToString();
@@ -3090,12 +3175,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                         }
                       }
                       continue;
-                    Label_02C0:
-                      str8 = (string)((Data)node5.Tag).Value;
+                      Label_02C0:
+                      str8 = (string) ((Data) node5.Tag).Value;
                     }
-                    string parameter = (string)((Data)node4.Tag).Parameter;
-                    string str3 = ((Data)node4.Tag).Value.ToString();
-                    string str = Convert.ToString(((Data)node3.Tag).Value);
+                    string parameter = (string) ((Data) node4.Tag).Parameter;
+                    string str3 = ((Data) node4.Tag).Value.ToString();
+                    string str = Convert.ToString(((Data) node3.Tag).Value);
                     writer.WriteStartElement("action");
                     writer.WriteAttributeString("layer", str);
                     writer.WriteAttributeString("condition", parameter);
@@ -3152,7 +3237,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       try
       {
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Config));
-      } catch
+      }
+      catch
       {
       }
       XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, fileName), Encoding.UTF8);
@@ -3163,21 +3249,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       writer.WriteStartElement("Settings");
       for (int i = 0; i < this.SettingsNode.Nodes.Count; i++)
       {
-        Data tag = (Data)this.SettingsNode.Nodes[i].Tag;
-        writer.WriteAttributeString((string)tag.Parameter, (string)tag.Value);
+        Data tag = (Data) this.SettingsNode.Nodes[i].Tag;
+        writer.WriteAttributeString((string) tag.Parameter, (string) tag.Value);
       }
       foreach (TreeNode node in this.treeMapping.Nodes[0].Nodes)
       {
-        Data data2 = (Data)node.Tag;
-        Log.Info("processing DATA: Type = {0}, parameter = {1}, value = {2}", new object[] { data2.Type, data2.Parameter, data2.Value });
+        Data data2 = (Data) node.Tag;
+        Log.Info("processing DATA: Type = {0}, parameter = {1}, value = {2}",
+                 new object[] {data2.Type, data2.Parameter, data2.Value});
         writer.WriteStartElement("Message");
-        if (((string)data2.Value) != "ALL STATES")
+        if (((string) data2.Value) != "ALL STATES")
         {
-          writer.WriteAttributeString("Status", (string)data2.Value);
+          writer.WriteAttributeString("Status", (string) data2.Value);
         }
         foreach (TreeNode node2 in node.Nodes)
         {
-          Data data3 = (Data)node2.Tag;
+          Data data3 = (Data) node2.Tag;
           string type = data3.Type;
           if (type != null)
           {
@@ -3197,9 +3284,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               Log.Info("processing WINDOWLIST", new object[0]);
               foreach (TreeNode node3 in node2.Nodes)
               {
-                Data data4 = (Data)node3.Tag;
-                Log.Info("processing WINDOW: Type = {0}, parameter = {1}, value = {2}", new object[] { data4.Type, data4.Parameter, data4.Value });
-                if (((string)data4.Parameter) == "ID")
+                Data data4 = (Data) node3.Tag;
+                Log.Info("processing WINDOW: Type = {0}, parameter = {1}, value = {2}",
+                         new object[] {data4.Type, data4.Parameter, data4.Value});
+                if (((string) data4.Parameter) == "ID")
                 {
                   writer.WriteElementString("Window", data4.Value.ToString());
                 }
@@ -3207,18 +3295,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
           }
           continue;
-        Label_028F:
+          Label_028F:
           writer.WriteStartElement("Line");
-          writer.WriteAttributeString("Alignment", (string)data3.Value);
-          Log.Info("processing LINE: Alignment = {0}", new object[] { data3.Type });
+          writer.WriteAttributeString("Alignment", (string) data3.Value);
+          Log.Info("processing LINE: Alignment = {0}", new object[] {data3.Type});
           foreach (TreeNode node4 in node2.Nodes)
           {
-            Data data5 = (Data)node4.Tag;
-            Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}", new object[] { data5.Type, data5.Parameter, data5.Value });
+            Data data5 = (Data) node4.Tag;
+            Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}",
+                     new object[] {data5.Type, data5.Parameter, data5.Value});
             if (data5.Parameter.Equals("TextProgressBar"))
             {
-              string[] strArray = ((string)data5.Value).Split(new char[] { '|' });
-              writer.WriteStartElement((string)data5.Parameter);
+              string[] strArray = ((string) data5.Value).Split(new char[] {'|'});
+              writer.WriteStartElement((string) data5.Parameter);
               writer.WriteAttributeString("StartChar", strArray[0]);
               writer.WriteAttributeString("EndChar", strArray[1]);
               writer.WriteAttributeString("ValueChar", strArray[2]);
@@ -3233,28 +3322,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             else
             {
-              writer.WriteStartElement((string)data5.Parameter);
-              writer.WriteAttributeString("Value", (string)data5.Value);
+              writer.WriteStartElement((string) data5.Parameter);
+              writer.WriteAttributeString("Value", (string) data5.Value);
               foreach (TreeNode node5 in node4.Nodes)
               {
                 string str4;
-                Data data6 = (Data)node5.Tag;
-                Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}", new object[] { data6.Type, data6.Parameter, data6.Value });
-                if (((str4 = (string)data6.Parameter) != null) && ((str4 == "And") || (str4 == "Or")))
+                Data data6 = (Data) node5.Tag;
+                Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}",
+                         new object[] {data6.Type, data6.Parameter, data6.Value});
+                if (((str4 = (string) data6.Parameter) != null) && ((str4 == "And") || (str4 == "Or")))
                 {
-                  writer.WriteStartElement((string)data6.Parameter);
+                  writer.WriteStartElement((string) data6.Parameter);
                   foreach (TreeNode node6 in node5.Nodes)
                   {
-                    Data data7 = (Data)node6.Tag;
-                    writer.WriteStartElement((string)data7.Parameter);
-                    writer.WriteAttributeString("Value", (string)data7.Value);
+                    Data data7 = (Data) node6.Tag;
+                    writer.WriteStartElement((string) data7.Parameter);
+                    writer.WriteAttributeString("Value", (string) data7.Value);
                     writer.WriteEndElement();
                   }
                   writer.WriteEndElement();
                   continue;
                 }
-                writer.WriteStartElement((string)data6.Parameter);
-                writer.WriteAttributeString("Value", (string)data6.Value);
+                writer.WriteStartElement((string) data6.Parameter);
+                writer.WriteAttributeString("Value", (string) data6.Value);
                 writer.WriteEndElement();
               }
             }
@@ -3262,35 +3352,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           writer.WriteEndElement();
           continue;
-        Label_05EE:
+          Label_05EE:
           writer.WriteStartElement("Image");
           Log.Info("processing IMAGE", new object[0]);
           foreach (TreeNode node7 in node2.Nodes)
           {
-            Data data8 = (Data)node7.Tag;
-            Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}", new object[] { data8.Type, data8.Parameter, data8.Value });
-            writer.WriteStartElement((string)data8.Parameter);
-            writer.WriteAttributeString("Value", (string)data8.Value);
+            Data data8 = (Data) node7.Tag;
+            Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}",
+                     new object[] {data8.Type, data8.Parameter, data8.Value});
+            writer.WriteStartElement((string) data8.Parameter);
+            writer.WriteAttributeString("Value", (string) data8.Value);
             foreach (TreeNode node8 in node7.Nodes)
             {
               string str5;
-              Data data9 = (Data)node8.Tag;
-              Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}", new object[] { data9.Type, data9.Parameter, data9.Value });
-              if (((str5 = (string)data9.Parameter) != null) && ((str5 == "And") || (str5 == "Or")))
+              Data data9 = (Data) node8.Tag;
+              Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}",
+                       new object[] {data9.Type, data9.Parameter, data9.Value});
+              if (((str5 = (string) data9.Parameter) != null) && ((str5 == "And") || (str5 == "Or")))
               {
-                writer.WriteStartElement((string)data9.Parameter);
+                writer.WriteStartElement((string) data9.Parameter);
                 foreach (TreeNode node9 in node8.Nodes)
                 {
-                  Data data10 = (Data)node9.Tag;
-                  writer.WriteStartElement((string)data10.Parameter);
-                  writer.WriteAttributeString("Value", (string)data10.Value);
+                  Data data10 = (Data) node9.Tag;
+                  writer.WriteStartElement((string) data10.Parameter);
+                  writer.WriteAttributeString("Value", (string) data10.Value);
                   writer.WriteEndElement();
                 }
                 writer.WriteEndElement();
                 continue;
               }
-              writer.WriteStartElement((string)data9.Parameter);
-              writer.WriteAttributeString("Value", (string)data9.Value);
+              writer.WriteStartElement((string) data9.Parameter);
+              writer.WriteAttributeString("Value", (string) data9.Value);
               writer.WriteEndElement();
             }
             writer.WriteEndElement();
@@ -3304,17 +3396,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       writer.WriteStartElement("TranslateFrom");
       foreach (TreeNode node10 in this.treeMapping.Nodes[1].Nodes)
       {
-        Data data11 = (Data)node10.Tag;
-        Log.Info("processing nodeFrom: Type = {0}, parameter = {1}, value = {2}", new object[] { data11.Type, data11.Parameter, data11.Value });
-        writer.WriteElementString("string", (string)data11.Parameter);
+        Data data11 = (Data) node10.Tag;
+        Log.Info("processing nodeFrom: Type = {0}, parameter = {1}, value = {2}",
+                 new object[] {data11.Type, data11.Parameter, data11.Value});
+        writer.WriteElementString("string", (string) data11.Parameter);
       }
       writer.WriteEndElement();
       writer.WriteStartElement("TranslateTo");
       foreach (TreeNode node11 in this.treeMapping.Nodes[1].Nodes)
       {
-        Data data12 = (Data)node11.Tag;
-        Log.Info("processing nodeTo: Type = {0}, parameter = {1}, value = {2}", new object[] { data12.Type, data12.Parameter, data12.Value });
-        writer.WriteElementString("string", (string)data12.Value);
+        Data data12 = (Data) node11.Tag;
+        Log.Info("processing nodeTo: Type = {0}, parameter = {1}, value = {2}",
+                 new object[] {data12.Type, data12.Parameter, data12.Value});
+        writer.WriteElementString("string", (string) data12.Value);
       }
       writer.WriteEndElement();
       Log.Info("PROCESSING TRANSLATIONS COMPLETED", new object[0]);
@@ -3325,8 +3419,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         writer.WriteStartElement("CustomCharacter");
         foreach (TreeNode node13 in node12.Nodes)
         {
-          Data data13 = (Data)node13.Tag;
-          Log.Info("processing CustomCharacter: Type = {0}, parameter = {1}, value = {2}", new object[] { data13.Type, data13.Parameter, data13.Value });
+          Data data13 = (Data) node13.Tag;
+          Log.Info("processing CustomCharacter: Type = {0}, parameter = {1}, value = {2}",
+                   new object[] {data13.Type, data13.Parameter, data13.Value});
           writer.WriteElementString("int", data13.Value.ToString());
         }
         writer.WriteEndElement();
@@ -3346,7 +3441,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Control[] controlArray = this.groupboxCharacterEdit.Controls.Find(key, false);
       if (controlArray.Length > 0)
       {
-        CheckBox box = (CheckBox)controlArray[0];
+        CheckBox box = (CheckBox) controlArray[0];
         if (SetOn)
         {
           box.CheckState = CheckState.Indeterminate;
@@ -3358,14 +3453,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       else
       {
-        Log.Info("CONTROL \"{0}\" NOT FOUND", new object[] { key });
+        Log.Info("CONTROL \"{0}\" NOT FOUND", new object[] {key});
       }
     }
 
     private void textBoxCondValue_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       selectedNode.Tag = new Data(tag.Type, tag.Parameter, this.textBoxCondValue.Text);
       selectedNode.Text = tag.Parameter + ": " + this.textBoxCondValue.Text;
       this.changedSettings = true;
@@ -3374,7 +3469,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void textBoxProcessValue_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       selectedNode.Tag = new Data(tag.Type, tag.Parameter, this.textBoxProcessValue.Text);
       selectedNode.Text = tag.Parameter + ": " + this.textBoxProcessValue.Text;
       this.changedSettings = true;
@@ -3383,11 +3478,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextBoxTranslateFrom_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       if (tag.Type.Equals("TRANSLATION"))
       {
         selectedNode.Tag = new Data("TRANSLATION", this.TextBoxTranslateFrom.Text, tag.Value);
-        selectedNode.Text = string.Concat(new object[] { "Translation: \"", this.TextBoxTranslateFrom.Text, "\" = \"", tag.Value, "\"" });
+        selectedNode.Text =
+          string.Concat(new object[] {"Translation: \"", this.TextBoxTranslateFrom.Text, "\" = \"", tag.Value, "\""});
         this.changedSettings = true;
       }
     }
@@ -3395,11 +3491,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextBoxTranslateTo_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
+      Data tag = (Data) selectedNode.Tag;
       if (tag.Type.Equals("TRANSLATION"))
       {
         selectedNode.Tag = new Data("TRANSLATION", tag.Parameter, this.TextBoxTranslateTo.Text);
-        selectedNode.Text = string.Concat(new object[] { "Translation: \"", tag.Parameter, "\" = \"", this.TextBoxTranslateTo.Text, "\"" });
+        selectedNode.Text =
+          string.Concat(new object[] {"Translation: \"", tag.Parameter, "\" = \"", this.TextBoxTranslateTo.Text, "\""});
         this.changedSettings = true;
       }
     }
@@ -3407,8 +3504,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextProgressBar_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data)selectedNode.Tag;
-      string newValue = this.mpTPBStartChar.Text.Substring(0, 1) + "|" + this.mpTPBEndChar.Text.Substring(0, 1) + "|" + this.mpTPBValueChar.Text.Substring(0, 1) + "|" + this.mpTPBFillChar.Text.Substring(0, 1) + "|" + this.mpTPBlength.Text + "|" + this.mpTextBoxValueProperty.Text + "|" + this.mpTextBoxTargetProperty.Text;
+      Data tag = (Data) selectedNode.Tag;
+      string newValue = this.mpTPBStartChar.Text.Substring(0, 1) + "|" + this.mpTPBEndChar.Text.Substring(0, 1) + "|" +
+                        this.mpTPBValueChar.Text.Substring(0, 1) + "|" + this.mpTPBFillChar.Text.Substring(0, 1) + "|" +
+                        this.mpTPBlength.Text + "|" + this.mpTextBoxValueProperty.Text + "|" +
+                        this.mpTextBoxTargetProperty.Text;
       selectedNode.Tag = new Data(tag.Type, tag.Parameter, newValue);
       this.changedSettings = true;
     }
@@ -3427,8 +3527,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Info("treeMapping_AfterSelect: SELECTED NODE DOES NOT HAVE A DATA TAG", new object[0]);
         return;
       }
-      Data tag = (Data)charBaseNode.Tag;
-      Log.Info("treeMapping_AfterSelect: data - Type = {0}, Parameter = {1}, Value = {2}", new object[] { tag.Type, tag.Parameter, tag.Value });
+      Data tag = (Data) charBaseNode.Tag;
+      Log.Info("treeMapping_AfterSelect: data - Type = {0}, Parameter = {1}, Value = {2}",
+               new object[] {tag.Type, tag.Parameter, tag.Value});
       this.groupboxTranslationEdit.Visible = false;
       this.groupBoxMessageEdit.Visible = false;
       this.groupboxCharacterEdit.Visible = false;
@@ -3465,8 +3566,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         case "TRANSLATION":
           this.groupboxTranslationEdit.Visible = true;
-          this.TextBoxTranslateFrom.Text = (string)tag.Parameter;
-          this.TextBoxTranslateTo.Text = (string)tag.Value;
+          this.TextBoxTranslateFrom.Text = (string) tag.Parameter;
+          this.TextBoxTranslateTo.Text = (string) tag.Value;
           this.buttonNew.Enabled = true;
           this.buttonRemove.Enabled = true;
           goto Label_0C73;
@@ -3494,17 +3595,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         case "SECTION":
           string str3;
           Log.Info("treeMapping_AfterSelect: Processing SECTION message.", new object[0]);
-          if (((str3 = (string)tag.Parameter) != null) && (((str3 == "STATUSMESSAGES") || (str3 == "CHARACTERTRANSLATIONS")) || (str3 == "CUSTOMCHARACTERS")))
+          if (((str3 = (string) tag.Parameter) != null) &&
+              (((str3 == "STATUSMESSAGES") || (str3 == "CHARACTERTRANSLATIONS")) || (str3 == "CUSTOMCHARACTERS")))
           {
             this.buttonNew.Enabled = true;
           }
           goto Label_0C73;
 
         case "MESSAGE":
-          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] { tag.Type });
+          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] {tag.Type});
           this.groupBoxStatus.Enabled = true;
           this.ComboBoxStatusProperty.Enabled = true;
-          this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string)tag.Value);
+          this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string) tag.Value);
           this.buttonNew.Enabled = true;
           this.buttonRemove.Enabled = true;
           this.groupBoxMessageEdit.Visible = true;
@@ -3519,40 +3621,43 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           goto Label_0C73;
 
         case "WINDOWLIST":
-          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] { tag.Type });
+          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] {tag.Type});
           this.buttonNew.Enabled = true;
           this.buttonRemove.Enabled = true;
           this.groupBoxMessageEdit.Visible = true;
           goto Label_0C73;
 
         case "WINDOW":
-          Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message.", new object[] { tag.Parameter });
+          Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message.", new object[] {tag.Parameter});
           this.groupBoxWindow.Enabled = true;
           this.comboBoxWindowProperty.Enabled = true;
-          switch (((string)tag.Parameter))
+          switch (((string) tag.Parameter))
           {
             case "ALL":
               this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, "ALL WINDOWS");
               break;
 
             case "ID":
-              this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, this.GetFriendlyName(Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(tag.Value))));
+              this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList,
+                               this.GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(tag.Value))));
               break;
           }
           break;
 
         case "LINE":
-          Log.Info("treeMapping_AfterSelect: Processing LINE message. (index = {0}, count = {1})", new object[] { charBaseNode.Index, charBaseNode.Parent.Nodes.Count });
+          Log.Info("treeMapping_AfterSelect: Processing LINE message. (index = {0}, count = {1})",
+                   new object[] {charBaseNode.Index, charBaseNode.Parent.Nodes.Count});
           this.groupBoxMessageType.Enabled = true;
           this.comboBoxMessageType.Enabled = true;
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
           this.groupBoxLine.Enabled = true;
           this.comboBoxAlignment.Enabled = true;
-          this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string)tag.Value);
+          this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string) tag.Value);
           this.groupBoxMessageType.Enabled = true;
           this.comboBoxMessageType.Enabled = true;
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
-          if ((charBaseNode.Index > 0) && (((Data)charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
+          if ((charBaseNode.Index > 0) &&
+              (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
             Log.Info("treeMapping_AfterSelect: Processing LINE message. Enabling buttonUp", new object[0]);
             this.buttonUp.Enabled = true;
@@ -3568,12 +3673,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           goto Label_0C73;
 
         case "IMAGE":
-          Log.Info("treeMapping_AfterSelect: Processing IMAGE message. (index = {0}, count = {1})", new object[] { charBaseNode.Index, charBaseNode.Parent.Nodes.Count });
+          Log.Info("treeMapping_AfterSelect: Processing IMAGE message. (index = {0}, count = {1})",
+                   new object[] {charBaseNode.Index, charBaseNode.Parent.Nodes.Count});
           this.groupBoxMessageType.Enabled = true;
           this.comboBoxMessageType.Enabled = true;
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
-          this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string)tag.Parameter);
-          if ((charBaseNode.Index > 0) && (((Data)charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
+          this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string) tag.Parameter);
+          if ((charBaseNode.Index > 0) &&
+              (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
             Log.Info("treeMapping_AfterSelect: Processing IMAGE message. Enabling buttonUp", new object[0]);
             this.buttonUp.Enabled = true;
@@ -3597,12 +3704,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             if (!tag.Parameter.Equals("TextProgressBar"))
             {
               this.textBoxProcessValue.Enabled = true;
-              this.textBoxProcessValue.Text = (string)tag.Value;
+              this.textBoxProcessValue.Text = (string) tag.Value;
             }
             else
             {
               Log.Info("treeMapping_AfterSelect: Processing TextProgressBar message.", new object[0]);
-              string[] strArray = ((string)tag.Value).Split(new char[] { '|' });
+              string[] strArray = ((string) tag.Value).Split(new char[] {'|'});
               if (strArray.Length >= 7)
               {
                 this.mpTPBStartChar.Text = strArray[0];
@@ -3627,14 +3734,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               this.groupBoxTextProgressBar.Enabled = true;
               Log.Info("treeMapping_AfterSelect: Processed TextProgressBar message.", new object[0]);
             }
-            Data data2 = (Data)charBaseNode.Parent.Tag;
+            Data data2 = (Data) charBaseNode.Parent.Tag;
             if (data2.Type.Equals("IMAGE"))
             {
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string)tag.Parameter);
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string) tag.Parameter);
             }
             else
             {
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string)tag.Parameter);
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string) tag.Parameter);
             }
             if (charBaseNode.Index > 0)
             {
@@ -3651,14 +3758,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case "CONDITION":
         case "SUBCONDITION":
-          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] { tag.Parameter });
+          Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] {tag.Parameter});
           this.groupBoxProcess.Enabled = true;
           this.comboBoxProcessType.Enabled = false;
           this.textBoxProcessValue.Enabled = false;
           this.textBoxCondValue.Enabled = true;
           this.GroupBoxCondition.Enabled = true;
-          this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string)tag.Parameter);
-          this.textBoxCondValue.Text = (string)tag.Value;
+          this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string) tag.Parameter);
+          this.textBoxCondValue.Text = (string) tag.Value;
           if (charBaseNode.Index > 0)
           {
             this.buttonUp.Enabled = true;
@@ -3678,7 +3785,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.buttonNew.Enabled = true;
       this.buttonRemove.Enabled = true;
       this.groupBoxMessageEdit.Visible = true;
-    Label_0C73:
+      Label_0C73:
       if ((tag.Type == "MESSAGE") || (tag.Type == "SECTION"))
       {
         return;
@@ -3687,11 +3794,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       TreeNode parent = charBaseNode.Parent;
       if (parent != null)
       {
-        tag = (Data)parent.Tag;
-        Log.Info("treeMapping_AfterSelect: First parent node: Type = {0}, Parameter = {1}, Value = {2}", new object[] { tag.Type, tag.Parameter, tag.Value });
+        tag = (Data) parent.Tag;
+        Log.Info("treeMapping_AfterSelect: First parent node: Type = {0}, Parameter = {1}, Value = {2}",
+                 new object[] {tag.Type, tag.Parameter, tag.Value});
         while (!flag)
         {
-          Log.Info("treeMapping_AfterSelect: Processing parent node: Type = {0}, Parameter = {1}, Value = {2}", new object[] { tag.Type, tag.Parameter, tag.Value });
+          Log.Info("treeMapping_AfterSelect: Processing parent node: Type = {0}, Parameter = {1}, Value = {2}",
+                   new object[] {tag.Type, tag.Parameter, tag.Value});
           switch (tag.Type)
           {
             case "SECTION":
@@ -3700,7 +3809,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               goto Label_1044;
 
             case "WINDOWLIST":
-              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] { tag.Type });
+              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] {tag.Type});
               if (tag.Type == "SECTION")
               {
                 flag = true;
@@ -3708,15 +3817,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               goto Label_1044;
 
             case "MESSAGE":
-              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] { tag.Type });
-              this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string)tag.Value);
+              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] {tag.Type});
+              this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string) tag.Value);
               this.ComboBoxStatusProperty.Enabled = false;
               flag = true;
               goto Label_1044;
 
             case "WINDOW":
-              Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message for display.", new object[] { tag.Parameter });
-              switch (((string)tag.Parameter))
+              Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message for display.",
+                       new object[] {tag.Parameter});
+              switch (((string) tag.Parameter))
               {
                 case "ID":
                   goto Label_0EFB;
@@ -3725,7 +3835,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
             case "LINE":
               Log.Info("treeMapping_AfterSelect: Processing LINE message for display.", new object[0]);
-              this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string)tag.Value);
+              this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string) tag.Value);
               this.comboBoxAlignment.Enabled = false;
               goto Label_1044;
 
@@ -3735,31 +3845,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
             case "PROCESS":
               Log.Info("treeMapping_AfterSelect: Processing PROCESS message for display.", new object[0]);
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string)tag.Parameter);
-              this.textBoxProcessValue.Text = (string)tag.Value;
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string) tag.Parameter);
+              this.textBoxProcessValue.Text = (string) tag.Value;
               this.comboBoxProcessType.Enabled = false;
               goto Label_1044;
 
             case "CONDITION":
             case "SUBCONDITION":
-              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] { tag.Parameter });
-              this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string)tag.Parameter);
-              this.textBoxCondValue.Text = (string)tag.Value;
+              Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] {tag.Parameter});
+              this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string) tag.Parameter);
+              this.textBoxCondValue.Text = (string) tag.Value;
               this.ComboBoxCondType.Enabled = false;
               goto Label_1044;
 
             default:
               goto Label_1044;
           }
-        Label_0EFB:
-          this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, this.GetFriendlyName(Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(tag.Value))));
-        Label_0F32:
+          Label_0EFB:
+          this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList,
+                           this.GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(tag.Value))));
+          Label_0F32:
           this.comboBoxWindowProperty.Enabled = false;
-        Label_1044:
+          Label_1044:
           if (!flag)
           {
             parent = parent.Parent;
-            tag = (Data)parent.Tag;
+            tag = (Data) parent.Tag;
           }
         }
       }
@@ -3799,7 +3910,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           newParameter = string.Empty;
         }
-        this.type = (string)newType;
+        this.type = (string) newType;
         this.dataValue = newValue;
         this.parameter = newParameter;
       }
@@ -3814,7 +3925,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           newParameter = string.Empty;
         }
-        this.type = (string)newType;
+        this.type = (string) newType;
         this.dataValue = newValue;
         this.parameter = newParameter;
         this.focus = newFocus;
@@ -3822,48 +3933,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       public bool Focus
       {
-        get
-        {
-          return this.focus;
-        }
-        set
-        {
-          this.focus = value;
-        }
+        get { return this.focus; }
+        set { this.focus = value; }
       }
 
       public object Parameter
       {
-        get
-        {
-          return this.parameter;
-        }
-        set
-        {
-          this.parameter = value;
-        }
+        get { return this.parameter; }
+        set { this.parameter = value; }
       }
 
       public string Type
       {
-        get
-        {
-          return this.type;
-        }
+        get { return this.type; }
       }
 
       public object Value
       {
-        get
-        {
-          return this.dataValue;
-        }
-        set
-        {
-          this.dataValue = value;
-        }
+        get { return this.dataValue; }
+        set { this.dataValue = value; }
       }
     }
   }
 }
-

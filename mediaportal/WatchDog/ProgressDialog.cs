@@ -50,7 +50,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using WatchDog;
 
 namespace WatchDog
 {
@@ -59,10 +58,11 @@ namespace WatchDog
   /// </summary>
   public class ProgressDialog : MPForm
   {
-    private System.Windows.Forms.Label actionLabel;
-    private System.Windows.Forms.Button okButton;
-    private System.Windows.Forms.ProgressBar progressBar;
-    private System.Windows.Forms.Label descLabel;
+    private Label actionLabel;
+    private Button okButton;
+    private ProgressBar progressBar;
+    private Label descLabel;
+
     public ProgressDialog()
     {
       //
@@ -70,104 +70,113 @@ namespace WatchDog
       //
       InitializeComponent();
     }
-		
+
     #region Windows Forms Designer generated code
+
     /// <summary>
     /// This method is required for Windows Forms designer support.
     /// Do not change the method contents inside the source code editor. The Forms designer might
     /// not be able to load this method if it was changed manually.
     /// </summary>
-    private void InitializeComponent() {
-      this.descLabel = new System.Windows.Forms.Label();
-      this.progressBar = new System.Windows.Forms.ProgressBar();
-      this.okButton = new System.Windows.Forms.Button();
-      this.actionLabel = new System.Windows.Forms.Label();
+    private void InitializeComponent()
+    {
+      this.descLabel = new Label();
+      this.progressBar = new ProgressBar();
+      this.okButton = new Button();
+      this.actionLabel = new Label();
       this.SuspendLayout();
       // 
       // descLabel
       // 
-      this.descLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.descLabel.Location = new System.Drawing.Point(16, 8);
+      this.descLabel.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte) (0)));
+      this.descLabel.Location = new Point(16, 8);
       this.descLabel.Name = "descLabel";
-      this.descLabel.Size = new System.Drawing.Size(88, 16);
+      this.descLabel.Size = new Size(88, 16);
       this.descLabel.TabIndex = 0;
       this.descLabel.Text = "Current action:";
       // 
       // progressBar
       // 
-      this.progressBar.Location = new System.Drawing.Point(16, 56);
+      this.progressBar.Location = new Point(16, 56);
       this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(336, 16);
+      this.progressBar.Size = new Size(336, 16);
       this.progressBar.TabIndex = 2;
       // 
       // okButton
       // 
-      this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+      this.okButton.DialogResult = DialogResult.OK;
       this.okButton.Enabled = false;
-      this.okButton.Location = new System.Drawing.Point(129, 101);
+      this.okButton.Location = new Point(129, 101);
       this.okButton.Name = "okButton";
-      this.okButton.Size = new System.Drawing.Size(88, 24);
+      this.okButton.Size = new Size(88, 24);
       this.okButton.TabIndex = 3;
       this.okButton.Text = "OK";
-      this.okButton.Click += new System.EventHandler(this.OkButtonClick);
+      this.okButton.Click += new EventHandler(this.OkButtonClick);
       // 
       // actionLabel
       // 
-      this.actionLabel.Location = new System.Drawing.Point(16, 32);
+      this.actionLabel.Location = new Point(16, 32);
       this.actionLabel.Name = "actionLabel";
-      this.actionLabel.Size = new System.Drawing.Size(344, 16);
+      this.actionLabel.Size = new Size(344, 16);
       this.actionLabel.TabIndex = 1;
       // 
       // ProgressDialog
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(368, 137);
+      this.AutoScaleBaseSize = new Size(5, 13);
+      this.ClientSize = new Size(368, 137);
       this.ControlBox = false;
       this.Controls.Add(this.descLabel);
       this.Controls.Add(this.actionLabel);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.progressBar);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+      this.FormBorderStyle = FormBorderStyle.Fixed3D;
       this.MaximizeBox = false;
-      this.MaximumSize = new System.Drawing.Size(378, 168);
+      this.MaximumSize = new Size(378, 168);
       this.MinimizeBox = false;
-      this.MinimumSize = new System.Drawing.Size(378, 168);
+      this.MinimumSize = new Size(378, 168);
       this.Name = "ProgressDialog";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.StartPosition = FormStartPosition.CenterScreen;
       this.Text = "Progress";
       this.TopMost = true;
       this.ResumeLayout(false);
-
     }
+
     #endregion
-		
+
     public void setWindowTitle(string title)
     {
       this.Text = title;
     }
+
     public void setAction(string action)
     {
       this.actionLabel.Text = action;
     }
+
     public int getProgress()
     {
       return this.progressBar.Value;
     }
+
     public Form getForm()
     {
       return this;
     }
+
     public void setProgress(int value)
     {
       if ((value < 0) || (value > 100))
+      {
         return;
+      }
       if (value > this.progressBar.Value)
       {
         while (this.progressBar.Value < value)
         {
           this.progressBar.Value++;
         }
-      } else if (value < this.progressBar.Value)
+      }
+      else if (value < this.progressBar.Value)
       {
         while (this.progressBar.Value > value)
         {
@@ -175,13 +184,15 @@ namespace WatchDog
         }
       }
     }
+
     public void Done()
     {
       this.progressBar.Value = 100;
       setAction("Done!");
       this.okButton.Enabled = true;
     }
-    void OkButtonClick(object sender, System.EventArgs e)
+
+    private void OkButtonClick(object sender, EventArgs e)
     {
       this.Close();
     }

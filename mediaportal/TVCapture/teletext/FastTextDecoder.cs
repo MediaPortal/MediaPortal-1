@@ -23,19 +23,15 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MediaPortal.TV.Teletext
 {
   public class FastTextDecoder
   {
-    int _redPage = -1;
-    int _greenPage = -1;
-    int _yellowPage = -1;
-    int _bluePage = -1;
-    int _whitePage = -1;
+    private int _redPage = -1;
+    private int _greenPage = -1;
+    private int _yellowPage = -1;
+    private int _bluePage = -1;
+    private int _whitePage = -1;
 
     public FastTextDecoder()
     {
@@ -49,24 +45,29 @@ namespace MediaPortal.TV.Teletext
       _bluePage = -1;
       _whitePage = -1;
 
-      int maxRows=pageData.Length/42;
-      if (maxRows < 1) return;
+      int maxRows = pageData.Length/42;
+      if (maxRows < 1)
+      {
+        return;
+      }
 
       int pageNumber = 0;
       for (int rowNr = 0; rowNr < maxRows; rowNr++)
       {
-        int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref pageData);
-        if (packetNumber ==0)
-          pageNumber = Hamming.GetPageNumber(rowNr * 42, ref pageData);
+        int packetNumber = Hamming.GetPacketNumber(rowNr*42, ref pageData);
+        if (packetNumber == 0)
+        {
+          pageNumber = Hamming.GetPageNumber(rowNr*42, ref pageData);
+        }
         if (packetNumber == 27)
         {
-          DecodePacket27(pageNumber, rowNr * 42, ref pageData);
+          DecodePacket27(pageNumber, rowNr*42, ref pageData);
           return;
         }
       }
     }
 
-    void DecodePacket27(int pageNumber,int offset, ref byte[] pageData)
+    private void DecodePacket27(int pageNumber, int offset, ref byte[] pageData)
     {
       offset += 3;
       // Links 0 through 5
@@ -77,45 +78,58 @@ namespace MediaPortal.TV.Teletext
 
         for (int i = 0; i < 6; i++)
         {
-          linkData[i] = Hamming.Decode[ pageData[offset] ];
+          linkData[i] = Hamming.Decode[pageData[offset]];
           offset++;
         }
 
         byte pageUnits = linkData[0];
         byte pageTens = linkData[1];
-        byte s1 = (byte)(linkData[2]);
-        byte s2 = (byte)(linkData[3] & 0x7);
-        byte s3 = (byte)(linkData[4]);
-        byte s4 = (byte)(linkData[5] & 0x3);
+        byte s1 = (byte) (linkData[2]);
+        byte s2 = (byte) (linkData[3] & 0x7);
+        byte s3 = (byte) (linkData[4]);
+        byte s4 = (byte) (linkData[5] & 0x3);
 
-        byte m1 = (byte)(linkData[3] >> 3);
-        byte m2 = (byte)((linkData[5] & 0x4) >> 2);
-        byte m3 = (byte)(linkData[5] >> 3);
-        byte m = (byte)((m3 << 2) + (m2 << 1) + m1);
+        byte m1 = (byte) (linkData[3] >> 3);
+        byte m2 = (byte) ((linkData[5] & 0x4) >> 2);
+        byte m3 = (byte) (linkData[5] >> 3);
+        byte m = (byte) ((m3 << 2) + (m2 << 1) + m1);
 
         // Magazine is complemented
-        int Magazine = pageNumber / 0x100;
-        if (Magazine == 8) Magazine = 0;
+        int Magazine = pageNumber/0x100;
+        if (Magazine == 8)
+        {
+          Magazine = 0;
+        }
 
-        byte linkMagazine = (byte)(m ^ (Magazine % 8));
-        
+        byte linkMagazine = (byte) (m ^ (Magazine%8));
+
         // Magazine encoded as 0 is magazine 8
         if (linkMagazine == 0)
         {
           linkMagazine = 8;
         }
-        int pageNr = linkMagazine * 0x100 + pageTens * 0x10 + pageUnits;
+        int pageNr = linkMagazine*0x100 + pageTens*0x10 + pageUnits;
         if (!IsDecimalPage(pageNr))
         {
           pageNr = -1;
         }
         switch (index)
         {
-          case 0: _redPage = pageNr; break;
-          case 1: _greenPage = pageNr; break;
-          case 2: _yellowPage = pageNr; break;
-          case 3: _bluePage = pageNr; break;
-          case 5: _whitePage = pageNr; break;
+          case 0:
+            _redPage = pageNr;
+            break;
+          case 1:
+            _greenPage = pageNr;
+            break;
+          case 2:
+            _yellowPage = pageNr;
+            break;
+          case 3:
+            _bluePage = pageNr;
+            break;
+          case 5:
+            _whitePage = pageNr;
+            break;
         }
       }
     }
@@ -144,10 +158,10 @@ namespace MediaPortal.TV.Teletext
     {
       get { return _whitePage; }
     }
-    bool IsDecimalPage(int i)
-    {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
-    }
 
+    private bool IsDecimalPage(int i)
+    {
+      return (bool) (((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+    }
   }
 }

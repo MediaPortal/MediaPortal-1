@@ -24,31 +24,33 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace GUIRSSFeed
 {
   /// <summary>
   /// Details form for entering a site for My News Plugin
   /// </summary>
-  public class DetailsForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class DetailsForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
-    private MediaPortal.UserInterface.Controls.MPLabel labelEncoding;
-    public MediaPortal.UserInterface.Controls.MPTextBox textName;
-    private MediaPortal.UserInterface.Controls.MPLabel labelThumbnail;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFeedName;
-    private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
-    private MediaPortal.UserInterface.Controls.MPTextBox textImage;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
-    private MediaPortal.UserInterface.Controls.MPTextBox textDescription;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSave;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxURL;
-    private MediaPortal.UserInterface.Controls.MPTextBox textEncoding;
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private MPLabel labelDescription;
+    private MPLabel labelEncoding;
+    public MPTextBox textName;
+    private MPLabel labelThumbnail;
+    private MPLabel labelFeedName;
+    private MPButton buttonBrowse;
+    private MPTextBox textImage;
+    private MPLabel label2;
+    private MPButton buttonCancel;
+    private MPTextBox textDescription;
+    private MPButton buttonSave;
+    private MPTextBox textBoxURL;
+    private MPTextBox textEncoding;
+    private OpenFileDialog openFileDialog1;
     public int ID;
     //private SetupForm form;
     public bool isNew;
@@ -73,7 +75,7 @@ namespace GUIRSSFeed
         string tempText;
         for (int i = 0; i < 20; i++)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
             if (tempText == "")
@@ -85,7 +87,9 @@ namespace GUIRSSFeed
           }
         }
         if (this.ID == -1)
+        {
           Console.WriteLine("No more open slots!");
+        }
         //TODO: Need message box popup here if no more slots left
       }
 
@@ -95,12 +99,12 @@ namespace GUIRSSFeed
       //
     }
 
-    void saveInfo(object obj, EventArgs ea)
+    private void saveInfo(object obj, EventArgs ea)
     {
       SaveSettings();
     }
 
-    private void browseFile(object obj, System.EventArgs e)
+    private void browseFile(object obj, EventArgs e)
     {
       OpenFileDialog dlg = new OpenFileDialog();
       dlg.CheckFileExists = true;
@@ -116,11 +120,10 @@ namespace GUIRSSFeed
       }
     }
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-
         textName.Text = xmlreader.GetValueAsString("rss", "siteName" + ID, "");
         textBoxURL.Text = xmlreader.GetValueAsString("rss", "siteURL" + ID, "");
         textEncoding.Text = xmlreader.GetValueAsString("rss", "siteEncoding" + ID, "windows-1252");
@@ -129,9 +132,9 @@ namespace GUIRSSFeed
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("rss", "siteName" + this.ID, textName.Text);
         xmlwriter.SetValue("rss", "siteURL" + this.ID, textBoxURL.Text);
@@ -141,7 +144,9 @@ namespace GUIRSSFeed
       }
       this.Close();
     }
+
     #region Windows Forms Designer generated code
+
     /// <summary>
     /// This method is required for Windows Forms designer support.
     /// Do not change the method contents inside the source code editor. The Forms designer might
@@ -149,156 +154,156 @@ namespace GUIRSSFeed
     /// </summary>
     private void InitializeComponent()
     {
-      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.textBoxURL = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.textEncoding = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textImage = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelFeedName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelThumbnail = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.labelDescription = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelEncoding = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.openFileDialog1 = new OpenFileDialog();
+      this.textBoxURL = new MPTextBox();
+      this.textEncoding = new MPTextBox();
+      this.buttonSave = new MPButton();
+      this.textDescription = new MPTextBox();
+      this.buttonCancel = new MPButton();
+      this.label2 = new MPLabel();
+      this.textImage = new MPTextBox();
+      this.buttonBrowse = new MPButton();
+      this.labelFeedName = new MPLabel();
+      this.labelThumbnail = new MPLabel();
+      this.textName = new MPTextBox();
+      this.labelDescription = new MPLabel();
+      this.labelEncoding = new MPLabel();
       this.SuspendLayout();
       // 
       // textBoxURL
       // 
-      this.textBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxURL.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxURL.Location = new System.Drawing.Point(80, 58);
+      this.textBoxURL.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                 | AnchorStyles.Right)));
+      this.textBoxURL.BorderColor = Color.Empty;
+      this.textBoxURL.Location = new Point(80, 58);
       this.textBoxURL.Name = "textBoxURL";
-      this.textBoxURL.Size = new System.Drawing.Size(396, 20);
+      this.textBoxURL.Size = new Size(396, 20);
       this.textBoxURL.TabIndex = 4;
       // 
       // textEncoding
       // 
-      this.textEncoding.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textEncoding.BorderColor = System.Drawing.Color.Empty;
-      this.textEncoding.Location = new System.Drawing.Point(80, 93);
+      this.textEncoding.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
+      this.textEncoding.BorderColor = Color.Empty;
+      this.textEncoding.Location = new Point(80, 93);
       this.textEncoding.Name = "textEncoding";
-      this.textEncoding.Size = new System.Drawing.Size(136, 20);
+      this.textEncoding.Size = new Size(136, 20);
       this.textEncoding.TabIndex = 6;
       this.textEncoding.Text = "windows-1252";
       // 
       // buttonSave
       // 
-      this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSave.Location = new System.Drawing.Point(320, 180);
+      this.buttonSave.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonSave.Location = new Point(320, 180);
       this.buttonSave.Name = "buttonSave";
-      this.buttonSave.Size = new System.Drawing.Size(75, 23);
+      this.buttonSave.Size = new Size(75, 23);
       this.buttonSave.TabIndex = 7;
       this.buttonSave.Text = "&OK";
       this.buttonSave.UseVisualStyleBackColor = true;
-      this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+      this.buttonSave.Click += new EventHandler(this.buttonSave_Click);
       // 
       // textDescription
       // 
-      this.textDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textDescription.BorderColor = System.Drawing.Color.Empty;
-      this.textDescription.Location = new System.Drawing.Point(340, 24);
+      this.textDescription.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                      | AnchorStyles.Right)));
+      this.textDescription.BorderColor = Color.Empty;
+      this.textDescription.Location = new Point(340, 24);
       this.textDescription.Name = "textDescription";
-      this.textDescription.Size = new System.Drawing.Size(136, 20);
+      this.textDescription.Size = new Size(136, 20);
       this.textDescription.TabIndex = 5;
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonCancel.Location = new System.Drawing.Point(401, 180);
+      this.buttonCancel.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = DialogResult.Cancel;
+      this.buttonCancel.Location = new Point(401, 180);
       this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.Size = new Size(75, 23);
       this.buttonCancel.TabIndex = 8;
       this.buttonCancel.Text = "&Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
-      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+      this.buttonCancel.Click += new EventHandler(this.buttonCancel_Click);
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(12, 61);
+      this.label2.Location = new Point(12, 61);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(54, 13);
+      this.label2.Size = new Size(54, 13);
       this.label2.TabIndex = 1;
       this.label2.Text = "RSS URL";
       // 
       // textImage
       // 
-      this.textImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.textImage.BorderColor = System.Drawing.Color.Empty;
-      this.textImage.Location = new System.Drawing.Point(80, 128);
+      this.textImage.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
+      this.textImage.BorderColor = Color.Empty;
+      this.textImage.Location = new Point(80, 128);
       this.textImage.Name = "textImage";
-      this.textImage.Size = new System.Drawing.Size(315, 20);
+      this.textImage.Size = new Size(315, 20);
       this.textImage.TabIndex = 9;
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(401, 126);
+      this.buttonBrowse.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+      this.buttonBrowse.Location = new Point(401, 126);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+      this.buttonBrowse.Size = new Size(75, 23);
       this.buttonBrowse.TabIndex = 10;
       this.buttonBrowse.Text = "Browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
-      this.buttonBrowse.Click += new System.EventHandler(this.browseFile);
+      this.buttonBrowse.Click += new EventHandler(this.browseFile);
       // 
       // labelFeedName
       // 
       this.labelFeedName.AutoSize = true;
-      this.labelFeedName.Location = new System.Drawing.Point(12, 27);
+      this.labelFeedName.Location = new Point(12, 27);
       this.labelFeedName.Name = "labelFeedName";
-      this.labelFeedName.Size = new System.Drawing.Size(60, 13);
+      this.labelFeedName.Size = new Size(60, 13);
       this.labelFeedName.TabIndex = 0;
       this.labelFeedName.Text = "Feed name";
       // 
       // labelThumbnail
       // 
       this.labelThumbnail.AutoSize = true;
-      this.labelThumbnail.Location = new System.Drawing.Point(12, 131);
+      this.labelThumbnail.Location = new Point(12, 131);
       this.labelThumbnail.Name = "labelThumbnail";
-      this.labelThumbnail.Size = new System.Drawing.Size(56, 13);
+      this.labelThumbnail.Size = new Size(56, 13);
       this.labelThumbnail.TabIndex = 8;
       this.labelThumbnail.Text = "Thumbnail";
       // 
       // textName
       // 
-      this.textName.BorderColor = System.Drawing.Color.Empty;
-      this.textName.Location = new System.Drawing.Point(80, 24);
+      this.textName.BorderColor = Color.Empty;
+      this.textName.Location = new Point(80, 24);
       this.textName.Name = "textName";
-      this.textName.Size = new System.Drawing.Size(136, 20);
+      this.textName.Size = new Size(136, 20);
       this.textName.TabIndex = 3;
       // 
       // labelDescription
       // 
       this.labelDescription.AutoSize = true;
-      this.labelDescription.Location = new System.Drawing.Point(253, 27);
+      this.labelDescription.Location = new Point(253, 27);
       this.labelDescription.Name = "labelDescription";
-      this.labelDescription.Size = new System.Drawing.Size(81, 13);
+      this.labelDescription.Size = new Size(81, 13);
       this.labelDescription.TabIndex = 2;
       this.labelDescription.Text = "Title description";
       // 
       // labelEncoding
       // 
       this.labelEncoding.AutoSize = true;
-      this.labelEncoding.Location = new System.Drawing.Point(12, 96);
+      this.labelEncoding.Location = new Point(12, 96);
       this.labelEncoding.Name = "labelEncoding";
-      this.labelEncoding.Size = new System.Drawing.Size(52, 13);
+      this.labelEncoding.Size = new Size(52, 13);
       this.labelEncoding.TabIndex = 1;
       this.labelEncoding.Text = "Encoding";
       // 
       // DetailsForm
       // 
       this.AcceptButton = this.buttonSave;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleDimensions = new SizeF(6F, 13F);
       this.CancelButton = this.buttonCancel;
-      this.ClientSize = new System.Drawing.Size(488, 215);
+      this.ClientSize = new Size(488, 215);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textImage);
       this.Controls.Add(this.textEncoding);
@@ -312,17 +317,17 @@ namespace GUIRSSFeed
       this.Controls.Add(this.labelDescription);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.labelFeedName);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.FormBorderStyle = FormBorderStyle.FixedDialog;
       this.Name = "DetailsForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.StartPosition = FormStartPosition.CenterParent;
       this.Text = "RSS News - Setup - DetailsForm";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void buttonSave_Click(object sender, System.EventArgs e)
+    private void buttonSave_Click(object sender, EventArgs e)
     {
       SaveSettings();
       this.Close();

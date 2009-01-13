@@ -33,11 +33,14 @@ namespace MediaPortal.Utils.Time
   public class BasicTime
   {
     #region Variables
+
     private int _hour = 0;
     private int _minute = 0;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BasicTime"/> class.
     /// </summary>
@@ -75,13 +78,15 @@ namespace MediaPortal.Utils.Time
     public BasicTime(long time)
     {
       time /= 100L;
-      _minute = (int)(time % 100L);
+      _minute = (int) (time%100L);
       time /= 100L;
-      _hour = (int)(time % 100L);
+      _hour = (int) (time%100L);
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the minute.
     /// </summary>
@@ -99,9 +104,11 @@ namespace MediaPortal.Utils.Time
     {
       get { return _hour; }
     }
+
     #endregion
 
     #region operators
+
     /// <summary>
     /// Operator &gt;s the specified time1.
     /// </summary>
@@ -111,10 +118,14 @@ namespace MediaPortal.Utils.Time
     public static bool operator >(BasicTime time1, BasicTime time2)
     {
       if (time1.Hour > time2.Hour)
+      {
         return true;
+      }
 
       if (time1.Hour == time2.Hour && time1.Minute > time2.Minute)
+      {
         return true;
+      }
 
       return false;
     }
@@ -122,10 +133,14 @@ namespace MediaPortal.Utils.Time
     public static bool operator <(BasicTime time1, BasicTime time2)
     {
       if (time1.Hour < time2.Hour)
+      {
         return true;
+      }
 
       if (time1.Hour == time2.Hour && time1.Minute < time2.Minute)
+      {
         return true;
+      }
 
       return false;
     }
@@ -141,14 +156,20 @@ namespace MediaPortal.Utils.Time
       if (time1.Hour == time2.Hour)
       {
         if (time1.Minute == time2.Minute)
+        {
           return true;
+        }
 
         if (time1.Minute > time2.Minute)
+        {
           return true;
+        }
       }
 
       if (time1.Hour > time2.Hour)
+      {
         return true;
+      }
 
       return false;
     }
@@ -158,14 +179,20 @@ namespace MediaPortal.Utils.Time
       if (time1.Hour == time2.Hour)
       {
         if (time1.Minute == time2.Minute)
+        {
           return true;
+        }
 
         if (time1.Minute < time2.Minute)
+        {
           return true;
+        }
       }
 
       if (time1.Hour < time2.Hour)
+      {
         return true;
+      }
 
       return false;
     }
@@ -179,10 +206,14 @@ namespace MediaPortal.Utils.Time
     public static bool operator >(BasicTime time1, DateTime time2)
     {
       if (time1.Hour > time2.Hour)
+      {
         return true;
+      }
 
       if (time1.Hour == time2.Hour && time1.Minute > time2.Minute)
+      {
         return true;
+      }
 
       return false;
     }
@@ -190,10 +221,14 @@ namespace MediaPortal.Utils.Time
     public static bool operator <(BasicTime time1, DateTime time2)
     {
       if (time1.Hour < time2.Hour)
+      {
         return true;
+      }
 
       if (time1.Hour == time2.Hour && time1.Minute < time2.Minute)
+      {
         return true;
+      }
 
       return false;
     }
@@ -209,14 +244,20 @@ namespace MediaPortal.Utils.Time
       if (time1.Hour == time2.Hour)
       {
         if (time1.Minute == time2.Minute)
+        {
           return true;
+        }
 
         if (time1.Minute > time2.Minute)
+        {
           return true;
+        }
       }
 
       if (time1.Hour > time2.Hour)
+      {
         return true;
+      }
 
       return false;
     }
@@ -226,20 +267,28 @@ namespace MediaPortal.Utils.Time
       if (time1.Hour == time2.Hour)
       {
         if (time1.Minute == time2.Minute)
+        {
           return true;
+        }
 
         if (time1.Minute < time2.Minute)
+        {
           return true;
+        }
       }
 
       if (time1.Hour < time2.Hour)
+      {
         return true;
+      }
 
       return false;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Parses a time string.
     /// </summary>
@@ -248,11 +297,13 @@ namespace MediaPortal.Utils.Time
     {
       strTime = strTime.Replace(" ", "");
       if (strTime == "")
+      {
         throw (new ArgumentException("Time String Empty"));
+      }
 
       int sepPos;
 
-      char[] timeSeperators = { ':', '.', 'h', 'H' };
+      char[] timeSeperators = {':', '.', 'h', 'H'};
 
       if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1)
       {
@@ -260,8 +311,10 @@ namespace MediaPortal.Utils.Time
         {
           int start = sepPos - 2;
           if (start < 0)
+          {
             start = 0;
-          _hour = int.Parse(strTime.Substring(start, sepPos-start));
+          }
+          _hour = int.Parse(strTime.Substring(start, sepPos - start));
           _minute = int.Parse(strTime.Substring(sepPos + 1, 2));
         }
         catch (Exception)
@@ -275,7 +328,7 @@ namespace MediaPortal.Utils.Time
         int time;
         try
         {
-           time = int.Parse(strTime);
+          time = int.Parse(strTime);
         }
         catch (Exception)
         {
@@ -284,23 +337,30 @@ namespace MediaPortal.Utils.Time
 
         if (time > 0 && time < 2400)
         {
-          _minute = time % 100;
-          _hour = time / 100;
+          _minute = time%100;
+          _hour = time/100;
         }
       }
 
       if (strTime.ToLower().IndexOf("pm") != -1 && _hour != 0)
       {
         if (_hour != 12)
+        {
           _hour += 12;
+        }
       }
 
       if (strTime.ToLower().IndexOf("am") != -1 && _hour == 12)
+      {
         _hour = 0;
+      }
 
       if (_hour == 24)
+      {
         _hour = 0;
+      }
     }
+
     #endregion
 
     public override string ToString()

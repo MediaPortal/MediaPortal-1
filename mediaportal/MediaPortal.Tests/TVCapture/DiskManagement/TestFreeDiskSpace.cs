@@ -23,19 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
-using NUnit.Framework;
-
-using MediaPortal.Util;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-using MediaPortal.TV.DiskSpace;
 /*
 namespace MediaPortal.Tests.Disk
 {

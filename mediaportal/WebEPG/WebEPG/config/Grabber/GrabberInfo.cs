@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Xml.Serialization;
 
 namespace MediaPortal.WebEPG.Config.Grabber
@@ -35,24 +33,17 @@ namespace MediaPortal.WebEPG.Config.Grabber
   public class GrabberInfo
   {
     #region Variables
-    [XmlIgnore()]
-    public string GrabberID;
-    [XmlIgnore()]
-    public string GrabberName;
-    [XmlIgnore()]
-    public string SiteDesc;
-    [XmlIgnore()]
-    public string Country;
-    [XmlAttribute("language")]
-    public string Language;
-    [XmlAttribute("availableDays")]
-    public int GrabDays;
-    [XmlAttribute("timezone")]
-    public string TimeZone;
-    [XmlAttribute("version")]
-    public string Version;
-    [XmlIgnore()]
-    public bool Linked;
+
+    [XmlIgnore()] public string GrabberID;
+    [XmlIgnore()] public string GrabberName;
+    [XmlIgnore()] public string SiteDesc;
+    [XmlIgnore()] public string Country;
+    [XmlAttribute("language")] public string Language;
+    [XmlAttribute("availableDays")] public int GrabDays;
+    [XmlAttribute("timezone")] public string TimeZone;
+    [XmlAttribute("version")] public string Version;
+    [XmlIgnore()] public bool Linked;
+
     #endregion
   }
 }

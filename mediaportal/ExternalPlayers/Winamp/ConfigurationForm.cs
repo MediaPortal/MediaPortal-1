@@ -24,35 +24,30 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Text;
-using System.IO;
-using Microsoft.Win32;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.WinampPlayer
 {
   /// <summary>
   /// Summary description for Configuration.
   /// </summary>
-  public class ConfigurationForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class ConfigurationForm : MPConfigForm
   {
     public const string WINAMPINI = "winamp.ini";
 
     private string m_enabledExt = "";
-    private MediaPortal.UserInterface.Controls.MPButton btnOK;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox extensionBox;
-    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    private MPButton btnOK;
+    private MPLabel label1;
+    private MPTextBox extensionBox;
+    private MPButton btnCancel;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public ConfigurationForm()
     {
@@ -79,6 +74,7 @@ namespace MediaPortal.WinampPlayer
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -93,7 +89,9 @@ namespace MediaPortal.WinampPlayer
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(186, 50);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -104,8 +102,10 @@ namespace MediaPortal.WinampPlayer
       // 
       // extensionBox
       // 
-      this.extensionBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionBox.BorderColor = System.Drawing.Color.Empty;
       this.extensionBox.Location = new System.Drawing.Point(82, 16);
       this.extensionBox.Name = "extensionBox";
@@ -147,32 +147,33 @@ namespace MediaPortal.WinampPlayer
       this.Text = "Winamp - Setup";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
-    #endregion
 
+    #endregion
 
     private void LoadSettings()
     {
       extensionBox.Text = String.Empty;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_enabledExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
         m_enabledExt.Replace(":", ","); // in case it was using the old plugin code where the separator was ":"
       }
       if (m_enabledExt != null && m_enabledExt.Length > 0)
+      {
         extensionBox.Text = m_enabledExt;
+      }
     }
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlWriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlWriter.SetValue("winampplugin", "enabledextensions", extensionBox.Text);
       }
     }
 
-    private void bnOK_Click(object sender, System.EventArgs e)
+    private void bnOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
       this.Close();
@@ -183,6 +184,5 @@ namespace MediaPortal.WinampPlayer
       LoadSettings();
       this.Close();
     }
-
   }
 }

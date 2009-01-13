@@ -24,10 +24,10 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
-using Microsoft.Win32;
-using MediaPortal.GUI.Library;
 using System.IO;
+using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
+using Microsoft.Win32;
 
 namespace MediaPortal.InputDevices
 {
@@ -45,7 +45,7 @@ namespace MediaPortal.InputDevices
     /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
     /// <returns></returns>
     [DllImport("kernel32.dll")]
-    static extern bool SetDllDirectory(
+    private static extern bool SetDllDirectory(
       string PathName);
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace MediaPortal.InputDevices
     /// <param name="IRPort"></param>
     /// <returns></returns>
     [DllImport("irremote.dll")]
-    static extern bool IR_Open(
+    private static extern bool IR_Open(
       int WindowHandle,
       uint Msg,
       bool Verbose,
@@ -71,7 +71,7 @@ namespace MediaPortal.InputDevices
     /// <param name="KeyCode"></param>
     /// <returns></returns>
     [DllImport("irremote.dll")]
-    static extern bool IR_GetSystemKeyCode(
+    private static extern bool IR_GetSystemKeyCode(
       out int RepeatCount,
       out int RemoteCode,
       out int KeyCode);
@@ -83,18 +83,17 @@ namespace MediaPortal.InputDevices
     /// <param name="Msg"></param>
     /// <returns></returns>
     [DllImport("irremote.dll")]
-    static extern bool IR_Close(
+    private static extern bool IR_Close(
       int WindowHandle,
       uint Msg);
 
     #endregion
 
-
     public static string CurrentVersion = "2.49.23332";
 
     public static bool IRClose(IntPtr WindowHandle, uint Msg)
     {
-      return IR_Close((int)WindowHandle, Msg);
+      return IR_Close((int) WindowHandle, Msg);
     }
 
     public static bool IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
@@ -119,7 +118,7 @@ namespace MediaPortal.InputDevices
 
     public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, ushort IRPort)
     {
-      return IR_Open((int)WindowHandle, Msg, Verbose, IRPort);
+      return IR_Open((int) WindowHandle, Msg, Verbose, IRPort);
     }
 
     public static bool IRSetDllDirectory(string PathName)
@@ -134,17 +133,24 @@ namespace MediaPortal.InputDevices
     public static string GetHCWPath()
     {
       string dllPath = null;
-        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote"))
+      using (
+        RegistryKey rkey =
+          Registry.LocalMachine.OpenSubKey(
+            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote"))
+      {
+        if (rkey != null)
         {
-          if (rkey != null)
+          dllPath = rkey.GetValue("UninstallString").ToString();
+          if (dllPath.IndexOf("UNir32") > 0)
           {
-            dllPath = rkey.GetValue("UninstallString").ToString();
-            if (dllPath.IndexOf("UNir32") > 0)
-              dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
-            else if (dllPath.IndexOf("UNIR32") > 0)
-              dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
+          }
+          else if (dllPath.IndexOf("UNIR32") > 0)
+          {
+            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
           }
         }
+      }
       return dllPath;
     }
 

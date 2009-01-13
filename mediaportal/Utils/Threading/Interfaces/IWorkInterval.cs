@@ -26,8 +26,6 @@
 #region Usings
 
 using System;
-using System.Text;
-using System.Collections.Generic;
 
 #endregion
 
@@ -63,6 +61,7 @@ namespace MediaPortal.Threading
     /// Method that gets called when the ThreadPool is stopped
     /// </summary>
     void OnThreadPoolStopped();
+
     void ResetWorkState();
   }
 }

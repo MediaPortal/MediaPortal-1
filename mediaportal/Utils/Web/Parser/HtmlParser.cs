@@ -34,15 +34,18 @@ namespace MediaPortal.Utils.Web
   public class HtmlParser
   {
     #region Variables
+
     private HtmlParserTemplate _template;
     private HtmlProfiler _profiler;
     private HtmlSectionParser _sectionParser;
     private string _sectionSource;
     private Type _dataType;
     private object[] _dataArgs;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HtmlParser"/> class.
     /// </summary>
@@ -58,9 +61,11 @@ namespace MediaPortal.Utils.Web
       _profiler = new HtmlProfiler(_template.SectionTemplate);
       _sectionParser = new HtmlSectionParser(_template.SectionTemplate);
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Parses the URL and returns the number of instances of the template found on this site
     /// </summary>
@@ -76,7 +81,9 @@ namespace MediaPortal.Utils.Web
       {
         startIndex = pageSource.IndexOf(_template.Start, 0);
         if (startIndex == -1)
+        {
           startIndex = 0;
+        }
         //return -1;
       }
 
@@ -87,7 +94,9 @@ namespace MediaPortal.Utils.Web
       {
         endIndex = pageSource.ToLower().IndexOf(_template.End, startIndex);
         if (endIndex == -1)
+        {
           endIndex = pageSource.Length;
+        }
         //return -1;
       }
 
@@ -119,9 +128,11 @@ namespace MediaPortal.Utils.Web
       }
 
       // create a new IParserData object from the type and arguments given to the constructor
-      IParserData sectionData = (IParserData)Activator.CreateInstance(_dataType, _dataArgs);
+      IParserData sectionData = (IParserData) Activator.CreateInstance(_dataType, _dataArgs);
       if (_sectionParser.ParseSection(sectionSource, ref sectionData))
+      {
         return sectionData;
+      }
       return null;
     }
 
@@ -172,7 +183,7 @@ namespace MediaPortal.Utils.Web
           result = searchRegex.Match(sectionSource);
         }
       }
-      catch (System.ArgumentException)// ex)
+      catch (ArgumentException) // ex)
       {
         //_log.Error("Html Parser: Regex error: {0} {1}", regex, ex.ToString());
         return string.Empty;
@@ -189,7 +200,6 @@ namespace MediaPortal.Utils.Web
           int end = result.Index + result.Length;
           _sectionSource += sectionSource.Substring(end, sectionSource.Length - end);
         }
-
       }
 
       return found;
@@ -204,13 +214,14 @@ namespace MediaPortal.Utils.Web
     /// <returns>bool - success/fail</returns>
     public bool GetHyperLink(int index, string match, ref HTTPRequest linkURL)
     {
-
       string regex = "<(a |[^>]*onclick)[^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLower()
 
       string result = SearchRegex(index, regex, true, false);
 
       if (result == null)
+      {
         return false;
+      }
 
       bool linkFound = false;
       string strLinkURL = string.Empty;
@@ -219,13 +230,17 @@ namespace MediaPortal.Utils.Web
       char delim = '>';
 
       if (result.ToLower().IndexOf("href=") != -1)
-        start += result.ToLower().IndexOf("href=")+5;
+      {
+        start += result.ToLower().IndexOf("href=") + 5;
+      }
       if (result.ToLower().IndexOf("onclick=") != -1)
-        start+=result.ToLower().IndexOf("onclick=")+8;
-      if (result[start+1]=='\"' || result[start+1]=='\'')
+      {
+        start += result.ToLower().IndexOf("onclick=") + 8;
+      }
+      if (result[start + 1] == '\"' || result[start + 1] == '\'')
       {
         start++;
-        delim=result[start];
+        delim = result[start];
       }
 
       int end = -1;
@@ -235,7 +250,9 @@ namespace MediaPortal.Utils.Web
       //  start = result.IndexOf(delim);
       //}
       if (start != -1)
+      {
         end = result.IndexOf(delim, ++start);
+      }
 
       if (end != -1)
       {
@@ -258,10 +275,14 @@ namespace MediaPortal.Utils.Web
         end = -1;
 
         if (start != -1)
+        {
           end = strLinkURL.IndexOf(delim, ++start);
+        }
 
         if (end != -1)
+        {
           strLinkURL = strLinkURL.Substring(start, end - start);
+        }
       }
 
       string[] param = GetJavaSubLinkParams(result); //strLinkURL);
@@ -274,7 +295,9 @@ namespace MediaPortal.Utils.Web
         else
         {
           for (int i = 0; i < param.Length; i++)
+          {
             linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", HtmlString.ToAscii(param[i]));
+          }
         }
       }
       else
@@ -285,9 +308,11 @@ namespace MediaPortal.Utils.Web
 
       return linkFound;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Gets the java sub link params.
     /// </summary>
@@ -295,7 +320,6 @@ namespace MediaPortal.Utils.Web
     /// <returns>params</returns>
     private string[] GetJavaSubLinkParams(string link)
     {
-
       int args = -1;
       int[,] param = null;
       int start = -1;
@@ -303,7 +327,7 @@ namespace MediaPortal.Utils.Web
       if ((start = link.IndexOf("(")) != -1)
       {
         args = 0;
-        param = new int[link.Length - start, 2];
+        param = new int[link.Length - start,2];
         param[0, 0] = start + 1;
         for (int i = 0; i < link.Length - start; i++)
         {
@@ -327,11 +351,14 @@ namespace MediaPortal.Utils.Web
         args++;
         array = new string[args];
         for (int i = 0; i < args; i++)
+        {
           array[i] = link.Substring(param[i, 0], param[i, 1] - param[i, 0]).Trim('\"', '\'');
+        }
       }
 
       return array;
     }
+
     #endregion
   }
 }

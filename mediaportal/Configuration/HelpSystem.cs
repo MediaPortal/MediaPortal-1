@@ -24,25 +24,27 @@
 #endregion
 
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using System.Xml;
-using System.Net;
-using System.IO;
-
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
   public static class HelpSystem
   {
-    static string helpReferencesFile = Config.GetFile(Config.Dir.Config, "HelpReferences.xml");
+    private static string helpReferencesFile = Config.GetFile(Config.Dir.Config, "HelpReferences.xml");
     private const string helpReferencesURL = @"http://install.team-mediaportal.com/MP1/HelpReferences_MediaPortal.xml";
 
     public static void ShowHelp(string sectionName)
     {
       if (!File.Exists(helpReferencesFile))
       {
-        MessageBox.Show("No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
+        MessageBox.Show(
+          "No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
         return;
       }
 
@@ -59,7 +61,7 @@ namespace MediaPortal.Configuration
           XmlNode sectionNode = sectionNodes[i];
           if (sectionNode.Attributes["name"].Value == sectionName)
           {
-            System.Diagnostics.Process.Start(
+            Process.Start(
               String.Format(@"{0}{1}",
                             generalNode.Attributes["baseurl"].Value,
                             sectionNode.Attributes["suburl"].Value));
@@ -69,12 +71,15 @@ namespace MediaPortal.Configuration
       }
 
       Log.Error("No help reference found for section: {0}", sectionName);
-      MessageBox.Show(String.Format("No help reference found for section:\r\n       {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
+      MessageBox.Show(
+        String.Format(
+          "No help reference found for section:\r\n       {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.",
+          sectionName));
     }
 
     public static void UpdateHelpReferences()
     {
-      if (!Util.Win32API.IsConnectedToInternet())
+      if (!Win32API.IsConnectedToInternet())
       {
         MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -87,13 +92,15 @@ namespace MediaPortal.Configuration
       try
       {
         if (File.Exists(helpReferencesTemp))
+        {
           File.Delete(helpReferencesTemp);
+        }
 
         Application.DoEvents();
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(helpReferencesURL);
+        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(helpReferencesURL);
         Application.DoEvents();
 
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
         {
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
@@ -105,7 +112,10 @@ namespace MediaPortal.Configuration
                 while (true)
                 {
                   string line = tin.ReadLine();
-                  if (line == null) break;
+                  if (line == null)
+                  {
+                    break;
+                  }
                   tout.WriteLine(line);
                 }
               }

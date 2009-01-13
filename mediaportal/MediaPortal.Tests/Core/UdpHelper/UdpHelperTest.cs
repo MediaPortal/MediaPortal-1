@@ -24,12 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using NUnit.Framework;
 using UdpHelper;
-using MediaPortal.Util;
 
 namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
 {
@@ -37,7 +33,7 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
   [Category("UdpHelper")]
   public class NetHelperTest
   {
-    int udpPort = 2110;
+    private int udpPort = 2110;
 
     [SetUp]
     public void Init()
@@ -58,6 +54,5 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
       Assert.IsTrue(connection.Start(udpPort + 1));
       connection.Stop();
     }
-
   }
 }

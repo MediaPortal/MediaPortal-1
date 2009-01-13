@@ -24,56 +24,60 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using System.Globalization;
-using MediaPortal.Util;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class TVRecording : MediaPortal.Configuration.SectionSettings
+  public class TVRecording : SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox startTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox endTextBox;
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbDeleteWatchedShows;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbAddRecordingsToMovie;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFormat;
-    private MediaPortal.UserInterface.Controls.MPLabel label38;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPLabel label10;
-    private MediaPortal.UserInterface.Controls.MPLabel label12;
-    private MediaPortal.UserInterface.Controls.MPLabel label11;
-    private MediaPortal.UserInterface.Controls.MPLabel label9;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageSettings;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPLabel label14;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxRecording;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSample;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MPLabel label4;
+    private MPLabel label3;
+    private MPLabel label2;
+    private MPLabel label1;
+    private MPTextBox startTextBox;
+    private MPTextBox endTextBox;
+    private FolderBrowserDialog folderBrowserDialog;
+    private MPCheckBox cbDeleteWatchedShows;
+    private MPCheckBox cbAddRecordingsToMovie;
+    private MPGroupBox groupBox2;
+    private MPTextBox textBoxFormat;
+    private MPLabel label38;
+    private MPLabel label6;
+    private MPLabel label7;
+    private MPLabel label10;
+    private MPLabel label12;
+    private MPLabel label11;
+    private MPLabel label9;
+    private MPTabControl tabControl1;
+    private MPTabPage tabPageSettings;
+    private MPTabPage tabPage2;
+    private MPGroupBox groupBox3;
+    private MPLabel label14;
+    private MPComboBox comboBoxRecording;
+    private MPTextBox textBoxSample;
+    private IContainer components = null;
+    private MPGroupBox groupBox1;
 
-    private string[] formatKind = { "Movies", "Series" };
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboDrives;
-    private MediaPortal.UserInterface.Controls.MPLabel lblTotalSpace;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPLabel label13;
-    private MediaPortal.UserInterface.Controls.MPLabel lblFreeDiskSpace;
-    private MediaPortal.UserInterface.Controls.MPLabel labelQuota;
+    private string[] formatKind = {"Movies", "Series"};
+    private MPTabPage tabPage1;
+    private MPGroupBox groupBox4;
+    private MPLabel label5;
+    private MPComboBox comboDrives;
+    private MPLabel lblTotalSpace;
+    private MPLabel label8;
+    private MPLabel label13;
+    private MPLabel lblFreeDiskSpace;
+    private MPLabel labelQuota;
     private TrackBar trackBar1;
-    private MediaPortal.UserInterface.Controls.MPLabel label15;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbBackToBack;
-    private string[] formatString = { string.Empty, string.Empty };
+    private MPLabel label15;
+    private MPCheckBox cbBackToBack;
+    private string[] formatString = {string.Empty, string.Empty};
 
     public TVRecording()
       : this("Recording")
@@ -91,7 +95,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
 
       // Disable if TVE3
-      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         this.Enabled = false;
       }
@@ -113,6 +117,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -165,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox4.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).BeginInit();
       this.SuspendLayout();
       // 
       // cbAddRecordingsToMovie
@@ -181,8 +186,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // endTextBox
       // 
-      this.endTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.endTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.endTextBox.BorderColor = System.Drawing.Color.Empty;
       this.endTextBox.Location = new System.Drawing.Point(94, 44);
       this.endTextBox.MaxLength = 3;
@@ -194,8 +201,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startTextBox
       // 
-      this.startTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.startTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.startTextBox.BorderColor = System.Drawing.Color.Empty;
       this.startTextBox.Location = new System.Drawing.Point(94, 20);
       this.startTextBox.MaxLength = 3;
@@ -216,7 +225,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(125, 48);
       this.label3.Name = "label3";
@@ -226,7 +237,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(125, 24);
       this.label2.Name = "label2";
@@ -256,8 +269,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.groupBox1);
       this.groupBox2.Controls.Add(this.textBoxSample);
       this.groupBox2.Controls.Add(this.label14);
@@ -294,8 +309,9 @@ namespace MediaPortal.Configuration.Sections
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(66, 130);
       this.label12.TabIndex = 15;
-      this.label12.Text = "start day\r\nstart month\r\nstart year\r\nstart hours\r\nstart minutes\r\nend day\r\nend mont" +
-          "h\r\nend year\r\nend hours\r\nend minutes";
+      this.label12.Text =
+        "start day\r\nstart month\r\nstart year\r\nstart hours\r\nstart minutes\r\nend day\r\nend mont" +
+        "h\r\nend year\r\nend hours\r\nend minutes";
       // 
       // label10
       // 
@@ -304,8 +320,9 @@ namespace MediaPortal.Configuration.Sections
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(82, 130);
       this.label10.TabIndex = 13;
-      this.label10.Text = "channel name\r\ntitle\r\nepisode name\r\ngenre\r\nseries number\r\nepisode number\r\nepisode " +
-          "part\r\ndate\r\nstart time\r\nend time";
+      this.label10.Text =
+        "channel name\r\ntitle\r\nepisode name\r\ngenre\r\nseries number\r\nepisode number\r\nepisode " +
+        "part\r\ndate\r\nstart time\r\nend time";
       // 
       // label9
       // 
@@ -314,8 +331,9 @@ namespace MediaPortal.Configuration.Sections
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(70, 130);
       this.label9.TabIndex = 12;
-      this.label9.Text = "%channel% =\r\n%title% =\r\n%name% =\r\n%genre% =\r\n%series% =\r\n%episode% =\r\n%part% =\r\n%" +
-          "date% =\r\n%start% =\r\n%end% =\r\n";
+      this.label9.Text =
+        "%channel% =\r\n%title% =\r\n%name% =\r\n%genre% =\r\n%series% =\r\n%episode% =\r\n%part% =\r\n%" +
+        "date% =\r\n%start% =\r\n%end% =\r\n";
       this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // label11
@@ -325,14 +343,17 @@ namespace MediaPortal.Configuration.Sections
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(81, 130);
       this.label11.TabIndex = 14;
-      this.label11.Text = "%startday% =\r\n%startmonth% =\r\n%startyear% =\r\n%starthh% =\r\n%startmm% =\r\n%endday% =" +
-          "\r\n%endmonth% =\r\n%endyear% =\r\n%endhh% =\r\n%endmm% =\r\n";
+      this.label11.Text =
+        "%startday% =\r\n%startmonth% =\r\n%startyear% =\r\n%starthh% =\r\n%startmm% =\r\n%endday% =" +
+        "\r\n%endmonth% =\r\n%endyear% =\r\n%endhh% =\r\n%endmm% =\r\n";
       this.label11.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
       this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Cursor = System.Windows.Forms.Cursors.Default;
@@ -355,9 +376,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.comboBoxRecording.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxRecording.FormattingEnabled = true;
-      this.comboBoxRecording.Items.AddRange(new object[] {
-            "Movies",
-            "Series"});
+      this.comboBoxRecording.Items.AddRange(new object[]
+                                              {
+                                                "Movies",
+                                                "Series"
+                                              });
       this.comboBoxRecording.Location = new System.Drawing.Point(80, 20);
       this.comboBoxRecording.Name = "comboBoxRecording";
       this.comboBoxRecording.Size = new System.Drawing.Size(88, 21);
@@ -372,7 +395,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Size = new System.Drawing.Size(327, 26);
       this.label7.TabIndex = 0;
       this.label7.Text = "A recording is a movie, if the recording is a manual or single type.\r\nUse blockqu" +
-          "otes [ ] to specify optional fields and \\ for relative paths.";
+                         "otes [ ] to specify optional fields and \\ for relative paths.";
       // 
       // label6
       // 
@@ -385,8 +408,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxFormat
       // 
-      this.textBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFormat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFormat.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFormat.Location = new System.Drawing.Point(80, 84);
       this.textBoxFormat.Name = "textBoxFormat";
@@ -497,7 +522,8 @@ namespace MediaPortal.Configuration.Sections
       // labelQuota
       // 
       this.labelQuota.AutoSize = true;
-      this.labelQuota.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelQuota.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.labelQuota.Location = new System.Drawing.Point(234, 134);
       this.labelQuota.Name = "labelQuota";
       this.labelQuota.Size = new System.Drawing.Size(48, 13);
@@ -594,10 +620,10 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBar1)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private class Example
@@ -612,7 +638,8 @@ namespace MediaPortal.Configuration.Sections
       public DateTime EndDate;
       public string Genre;
 
-      public Example(string channel, string title, string episode, string seriesNum, string episodeNum, string episodePart, string genre, DateTime startDate, DateTime endDate)
+      public Example(string channel, string title, string episode, string seriesNum, string episodeNum,
+                     string episodePart, string genre, DateTime startDate, DateTime endDate)
       {
         Channel = channel;
         Title = title;
@@ -632,36 +659,40 @@ namespace MediaPortal.Configuration.Sections
       string strName = string.Empty;
       string strDirectory = string.Empty;
       Example[] example = new Example[2];
-      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 22, 45, 0));
-      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 20, 45, 0));
+      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama",
+                               new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 22, 45, 0));
+      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy",
+                               new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 20, 45, 0));
       string strDefaultName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                  example[recType].Channel, example[recType].Title,
-                                  example[recType].StartDate.Year, example[recType].StartDate.Month, example[recType].StartDate.Day,
-                                  example[recType].StartDate.Hour,
-                                  example[recType].StartDate.Minute,
-                                  DateTime.Now.Minute, DateTime.Now.Second);
+                                            example[recType].Channel, example[recType].Title,
+                                            example[recType].StartDate.Year, example[recType].StartDate.Month,
+                                            example[recType].StartDate.Day,
+                                            example[recType].StartDate.Hour,
+                                            example[recType].StartDate.Minute,
+                                            DateTime.Now.Minute, DateTime.Now.Second);
       if (strInput != string.Empty)
       {
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.Day.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.Month.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.Year.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.Hour.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.Minute.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.Day.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.Month.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].EndDate.Year.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.Hour.ToString(), "unknown");
-        strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.Minute.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%channel%", example[recType].Channel, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%title%", example[recType].Title, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%name%", example[recType].Episode, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%series%", example[recType].SeriesNum, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%episode%", example[recType].EpisodeNum, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%part%", example[recType].EpisodePart, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%date%", example[recType].StartDate.ToShortDateString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%start%", example[recType].StartDate.ToShortTimeString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%end%", example[recType].EndDate.ToShortTimeString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%genre%", example[recType].Genre, "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startday%", example[recType].StartDate.Day.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startmonth%", example[recType].StartDate.Month.ToString(),
+                                         "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].StartDate.Year.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%starthh%", example[recType].StartDate.Hour.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startmm%", example[recType].StartDate.Minute.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endday%", example[recType].EndDate.Day.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endmonth%", example[recType].EndDate.Month.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%startyear%", example[recType].EndDate.Year.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endhh%", example[recType].EndDate.Hour.ToString(), "unknown");
+        strInput = Util.Utils.ReplaceTag(strInput, "%endmm%", example[recType].EndDate.Minute.ToString(), "unknown");
 
         int index = strInput.LastIndexOf('\\');
         switch (index)
@@ -680,21 +711,25 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
-        strName = MediaPortal.Util.Utils.MakeFileName(strName);
+        strDirectory = Util.Utils.MakeDirectoryPath(strDirectory);
+        strName = Util.Utils.MakeFileName(strName);
       }
       if (strName == string.Empty)
+      {
         strName = strDefaultName;
+      }
       string strReturn = strDirectory;
       if (strDirectory != string.Empty)
+      {
         strReturn += "\\";
+      }
       strReturn += strName + ".dvr-ms";
       return strReturn;
     }
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
         endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));
@@ -712,7 +747,7 @@ namespace MediaPortal.Configuration.Sections
       for (char drive = 'a'; drive <= 'z'; drive++)
       {
         string driveLetter = String.Format("{0}:", drive);
-        if (MediaPortal.Util.Utils.getDriveType(driveLetter) == 3)
+        if (Util.Utils.getDriveType(driveLetter) == 3)
         {
           comboDrives.Items.Add(driveLetter);
         }
@@ -723,7 +758,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("capture", "prerecord", startTextBox.Text);
         xmlwriter.SetValue("capture", "postrecord", endTextBox.Text);
@@ -738,7 +773,7 @@ namespace MediaPortal.Configuration.Sections
       UpdateDriveInfo(true);
     }
 
-    private void startTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void startTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
@@ -746,7 +781,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void endTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    private void endTextBox_KeyPress(object sender, KeyPressEventArgs e)
     {
       if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
@@ -768,68 +803,73 @@ namespace MediaPortal.Configuration.Sections
     private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
-        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
-        (e.KeyChar == '>') || (e.KeyChar == '|'))
+          (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
+          (e.KeyChar == '>') || (e.KeyChar == '|'))
       {
         e.Handled = true;
       }
     }
-    void UpdateDriveInfo(bool save)
+
+    private void UpdateDriveInfo(bool save)
     {
-      string drive = (string)comboDrives.SelectedItem;
-      ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(drive);
-      long totalSpace = MediaPortal.Util.Utils.GetDiskSize(drive);
-      lblFreeDiskSpace.Text = MediaPortal.Util.Utils.GetSize((long)freeSpace);
-      lblTotalSpace.Text = MediaPortal.Util.Utils.GetSize((long)totalSpace);
+      string drive = (string) comboDrives.SelectedItem;
+      ulong freeSpace = Util.Utils.GetFreeDiskSpace(drive);
+      long totalSpace = Util.Utils.GetDiskSize(drive);
+      lblFreeDiskSpace.Text = Util.Utils.GetSize((long) freeSpace);
+      lblTotalSpace.Text = Util.Utils.GetSize((long) totalSpace);
       if (lblTotalSpace.Text == "0")
+      {
         lblTotalSpace.Text = "Not available - WMI service not available";
+      }
 
       if (save)
       {
-        float percent = (float)trackBar1.Value;
+        float percent = (float) trackBar1.Value;
         percent /= 100f;
-        float quota = percent * ((float)totalSpace);
+        float quota = percent*((float) totalSpace);
         if (quota < (52428800f)) //50MB
         {
-          quota = (52428800f);//50MB
-          percent = (quota / ((float)totalSpace))*100f;
+          quota = (52428800f); //50MB
+          percent = (quota/((float) totalSpace))*100f;
           try
           {
-            trackBar1.Value = (int)percent;
+            trackBar1.Value = (int) percent;
           }
           catch (ArgumentOutOfRangeException)
           {
             trackBar1.Value = 0;
           }
         }
-        labelQuota.Text = MediaPortal.Util.Utils.GetSize((long)quota);
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        labelQuota.Text = Util.Utils.GetSize((long) quota);
+        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          long longQuota = (long)quota;
+          long longQuota = (long) quota;
           longQuota /= 1024; // kbyte
           xmlwriter.SetValue("freediskspace", drive[0].ToString(), longQuota.ToString());
         }
       }
       else
       {
-        using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
-          float quota = (float)Int32.Parse(quotaText);
-          if (quota < 51200) quota = 51200f;
-          quota *= 1024f;//kbyte
-          labelQuota.Text = MediaPortal.Util.Utils.GetSize((long)quota);
+          float quota = (float) Int32.Parse(quotaText);
+          if (quota < 51200)
+          {
+            quota = 51200f;
+          }
+          quota *= 1024f; //kbyte
+          labelQuota.Text = Util.Utils.GetSize((long) quota);
 
-          float percent = (quota / ((float)totalSpace)) * 100f;
+          float percent = (quota/((float) totalSpace))*100f;
           try
           {
-            trackBar1.Value = (int)percent;
+            trackBar1.Value = (int) percent;
           }
           catch (ArgumentOutOfRangeException)
           {
             trackBar1.Value = 0;
           }
-
         }
       }
     }
@@ -839,10 +879,9 @@ namespace MediaPortal.Configuration.Sections
       UpdateDriveInfo(true);
     }
 
-    void comboDrives_SelectedIndexChanged(object sender, EventArgs e)
+    private void comboDrives_SelectedIndexChanged(object sender, EventArgs e)
     {
       UpdateDriveInfo(false);
     }
   }
 }
-

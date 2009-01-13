@@ -23,9 +23,8 @@
 
 #endregion
 
-using NUnit.Framework;
-using System.Collections;
 using MediaPortal.Utils.Web;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Utils.Web
 {
@@ -45,7 +44,9 @@ namespace MediaPortal.Tests.Utils.Web
       template.Template = "<table><tr><td>Test</td><td>1</td><td>2</td></tr></table>";
       profiler = new HtmlProfiler(template);
 
-      count = profiler.MatchCount("<table><tr><td>Test</td><td>1</td><td>2</td></tr></table><div><div><div><table><tr><td>Test</td><td>1</td><td>2</td></tr></table><span><span><span><table><tr><td>Test</td><td>1</td><td>2</td><td>3</td></tr></table>");
+      count =
+        profiler.MatchCount(
+          "<table><tr><td>Test</td><td>1</td><td>2</td></tr></table><div><div><div><table><tr><td>Test</td><td>1</td><td>2</td></tr></table><span><span><span><table><tr><td>Test</td><td>1</td><td>2</td><td>3</td></tr></table>");
 
       Assert.IsTrue(count == 2);
 
@@ -53,7 +54,9 @@ namespace MediaPortal.Tests.Utils.Web
       template.Template = "<table><tr><td>Test</td><td>1</td><td>2</td><Z(><td>3</td></Z)?></tr></table>";
       profiler = new HtmlProfiler(template);
 
-      count = profiler.MatchCount("<table><tr><td>Test</td><td>1</td><td>2</td></tr></table><div><div><div><table><tr><td>Test</td><td>1</td><td>2</td></tr></table><span><span><span><table><tr><td>Test</td><td>1</td><td>2</td><td>3</td></tr></table>");
+      count =
+        profiler.MatchCount(
+          "<table><tr><td>Test</td><td>1</td><td>2</td></tr></table><div><div><div><table><tr><td>Test</td><td>1</td><td>2</td></tr></table><span><span><span><table><tr><td>Test</td><td>1</td><td>2</td><td>3</td></tr></table>");
 
       Assert.IsTrue(count == 3);
     }

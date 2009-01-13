@@ -23,28 +23,27 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using MediaPortal.Util;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicShares : MediaPortal.Configuration.Sections.BaseShares
+  public class MusicShares : BaseShares
   {
     public MusicShares()
-      : this("Music Folders") { }
+      : this("Music Folders")
+    {
+    }
 
     public MusicShares(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {
-      base.LoadSettings("music", Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC));
+      base.LoadSettings("music", Win32API.GetFolderPath(Win32API.CSIDL_MYMUSIC));
     }
 
     public override void SaveSettings()

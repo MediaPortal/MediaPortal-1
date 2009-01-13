@@ -24,11 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using MediaPortal.Util;
 using MediaPortal.Playlists;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Core.Playlists
 {
@@ -74,7 +71,6 @@ namespace MediaPortal.Tests.Core.Playlists
       PlayListItem item1 = new PlayListItem("apa", "c:\\apa.mp3");
       playlist.Add(item1);
       Assert.AreEqual("c:\\apa.mp3", player.GetNext());
-
     }
 
     #region IPlayer Members
@@ -143,6 +139,7 @@ namespace MediaPortal.Tests.Core.Playlists
     {
       return false;
     }
+
     #endregion
   }
 }

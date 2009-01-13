@@ -23,26 +23,23 @@
 
 #endregion
 
-using System;
-using MediaPortal.Support;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.IO;
-
+using MediaPortal.Support;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Support
 {
   [TestFixture]
   public class EventLogsTests
   {
-    string outputDir = "Support\\TestData\\TestOutput\\";
-    string[] logNames = { "Application", "System" };
+    private string outputDir = "Support\\TestData\\TestOutput\\";
+    private string[] logNames = {"Application", "System"};
 
     private class MyProcRunner : ProcessRunner
     {
       public bool ranTwice = false;
       public int count = 0;
+
       public override void Run()
       {
         count++;
@@ -55,7 +52,9 @@ namespace MediaPortal.Tests.Support
       foreach (string logName in logNames)
       {
         if (File.Exists(outputDir + logName + ".evt"))
+        {
           File.Delete(outputDir + logName + ".evt");
+        }
       }
     }
 

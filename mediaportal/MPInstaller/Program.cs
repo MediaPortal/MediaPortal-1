@@ -25,25 +25,24 @@
 
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Microsoft.Win32;
-using MediaPortal.MPInstaller;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  static class Program
+  internal static class Program
   {
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       string fil = string.Empty;
       if (args.Length > 0)
+      {
         fil = args[0];
+      }
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Thread.CurrentThread.Name = "MPInstaller";
@@ -59,7 +58,9 @@ namespace MediaPortal.MPInstaller
             wiz.starStep();
           }
           else
+          {
             MessageBox.Show("Invalid package !");
+          }
         }
         if (Path.GetExtension(fil) == ".xmp")
         {
@@ -68,7 +69,9 @@ namespace MediaPortal.MPInstaller
         }
       }
       else
+      {
         Application.Run(new start_form());
+      }
     }
   }
 }

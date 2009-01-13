@@ -24,23 +24,20 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Collections;
 using System.DirectoryServices;
+using System.Windows.Forms;
 using TaskScheduler;
-using Microsoft.Win32;
 
 namespace MediaPortal.Configuration
 {
-  class TaskScheduler
+  internal class TaskScheduler
   {
-
     public static bool GetTask(ref short[] taskSettings, ref string userAccount)
     {
       bool taskfound = false;
       ScheduledTasks st = new ScheduledTasks();
       string[] taskNames = st.GetTaskNames();
-      foreach (string name in taskNames) 
+      foreach (string name in taskNames)
       {
         Task t = st.OpenTask(name);
         if (t != null && t.Name.StartsWith("MPGuideScheduler"))
@@ -48,24 +45,23 @@ namespace MediaPortal.Configuration
           taskfound = true;
           try
           {
-            userAccount= t.AccountName;
+            userAccount = t.AccountName;
           }
-          catch(Exception)
+          catch (Exception)
           {
-            userAccount="";
+            userAccount = "";
           }
 
 
-          foreach (Trigger tr in t.Triggers) 
+          foreach (Trigger tr in t.Triggers)
           {
             //Console.WriteLine("    " + tr.ToString());
-            if (tr is DailyTrigger) 
+            if (tr is DailyTrigger)
             {
               taskSettings[0] = (tr as DailyTrigger).StartHour;
               taskSettings[1] = (tr as DailyTrigger).StartMinute;
               taskSettings[2] = (tr as DailyTrigger).DaysInterval;
             }
-            
           }
           t.Close();
         }
@@ -85,27 +81,27 @@ namespace MediaPortal.Configuration
       }
     }
 
-    public static void CreateTask(short hour,short minute,short frequency,string user,string password)
+    public static void CreateTask(short hour, short minute, short frequency, string user, string password)
     {
       //check if the user exists
       try
       {
         // maybe a bug, but the DirectoryEntry.exists does not seem to work
         // and instead of returning when user isn't found throws exception?
-        if (!DirectoryEntry.Exists("WinNT://" + Environment.MachineName+ "/" + user + ",user"))
+        if (!DirectoryEntry.Exists("WinNT://" + Environment.MachineName + "/" + user + ",user"))
         {
           //this should run if user not found, instead goes to catch
-          user="";
-          password="";
-        }        
+          user = "";
+          password = "";
+        }
       }
       catch (Exception ex)
       {
         if (ex.Message == "The user name could not be found")
         {
-          user="";
-          password="";
-        }      
+          user = "";
+          password = "";
+        }
         else
         {
           Console.WriteLine(ex.Message);
@@ -115,12 +111,14 @@ namespace MediaPortal.Configuration
       ScheduledTasks st = new ScheduledTasks();
       Task t = st.OpenTask("MPGuideScheduler");
       // if the task exists - modify it
-      if (t != null) 
+      if (t != null)
       {
-        if (user !=null && user !="" && password !=null && password !="")
+        if (user != null && user != "" && password != null && password != "")
+        {
           t.SetAccountInformation(user, password);
+        }
         t.Comment = "MediaPortal TV Guide Download Scheduler";
-        foreach (Trigger tr in t.Triggers) 
+        foreach (Trigger tr in t.Triggers)
         {
           (tr as DailyTrigger).StartHour = hour;
           (tr as DailyTrigger).StartMinute = minute;
@@ -134,7 +132,7 @@ namespace MediaPortal.Configuration
       {
         try
         {
-          string path = System.Windows.Forms.Application.StartupPath;
+          string path = Application.StartupPath;
           t = st.CreateTask("MPGuideScheduler");
           t.ApplicationName = path + @"\TVGuideScheduler.exe";
           t.WorkingDirectory = path;
@@ -145,20 +143,21 @@ namespace MediaPortal.Configuration
           t.Save();
           t.Close();
         }
-        catch(Exception)
+        catch (Exception)
         {
         }
       }
       st.Dispose();
     }
+
     public static void DeleteTask()
     {
       ScheduledTasks st = new ScheduledTasks();
       Task t = st.OpenTask("MPGuideScheduler");
       // if the task exists - delete it
-      if (t != null) 
+      if (t != null)
       {
-       st.DeleteTask("MPGuideScheduler");
+        st.DeleteTask("MPGuideScheduler");
       }
       st.Dispose();
     }

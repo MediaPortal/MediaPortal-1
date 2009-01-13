@@ -24,29 +24,33 @@
 #endregion
 
 using System;
+using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TV.Recording;
-using MediaPortal.Util;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_DVBSTV : Wizard_ScanBase
   {
-    class Transponder : IComparable
+    private class Transponder : IComparable
     {
       public string SatName;
       public string FileName;
+
       public override string ToString()
       {
         return SatName;
       }
+
       public int CompareTo(object o)
       {
-        Transponder k = (Transponder)o;
+        Transponder k = (Transponder) o;
         return SatName.CompareTo(k.SatName);
       }
-
     }
+
 #if EDIT
     protected MediaPortal.UserInterface.Controls.MPLabel lblStatus;
     protected MediaPortal.UserInterface.Controls.MPLabel lblStatus2;
@@ -58,47 +62,47 @@ namespace MediaPortal.Configuration.Sections
     }
     protected MediaPortal.UserInterface.Controls.MPButton buttonScan;
 #endif
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbTone4;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbTone3;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbTone2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbTone1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder3;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder4;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel label31;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB1;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbkind4;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbkind3;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbkind2;
-    private MediaPortal.UserInterface.Controls.MPLabel label30;
-    private MediaPortal.UserInterface.Controls.MPLabel label32;
-    private MediaPortal.UserInterface.Controls.MPComboBox diseqcd;
-    private MediaPortal.UserInterface.Controls.MPComboBox diseqcc;
-    private MediaPortal.UserInterface.Controls.MPComboBox diseqcb;
-    private MediaPortal.UserInterface.Controls.MPComboBox diseqca;
-    private MediaPortal.UserInterface.Controls.MPComboBox lnbkind1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPTextBox circularMHZ;
-    private MediaPortal.UserInterface.Controls.MPLabel label20;
-    private MediaPortal.UserInterface.Controls.MPTextBox cbandMHZ;
-    private MediaPortal.UserInterface.Controls.MPLabel label21;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPTextBox lnb1MHZ;
-    private MediaPortal.UserInterface.Controls.MPLabel lnb1;
-    private MediaPortal.UserInterface.Controls.MPTextBox lnbswMHZ;
-    private MediaPortal.UserInterface.Controls.MPLabel switchMHZ;
-    private MediaPortal.UserInterface.Controls.MPTextBox lnb0MHZ;
-    private MediaPortal.UserInterface.Controls.MPLabel label22;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MPComboBox lnbTone4;
+    private MPComboBox lnbTone3;
+    private MPComboBox lnbTone2;
+    private MPLabel mpLabel4;
+    private MPComboBox lnbTone1;
+    private MPGroupBox groupBox3;
+    private MPComboBox cbTransponder;
+    private MPComboBox cbTransponder2;
+    private MPComboBox cbTransponder3;
+    private MPComboBox cbTransponder4;
+    private MPGroupBox groupBox2;
+    private MPLabel label31;
+    private MPCheckBox useLNB4;
+    private MPCheckBox useLNB3;
+    private MPCheckBox useLNB2;
+    private MPCheckBox useLNB1;
+    private MPComboBox lnbkind4;
+    private MPComboBox lnbkind3;
+    private MPComboBox lnbkind2;
+    private MPLabel label30;
+    private MPLabel label32;
+    private MPComboBox diseqcd;
+    private MPComboBox diseqcc;
+    private MPComboBox diseqcb;
+    private MPComboBox diseqca;
+    private MPComboBox lnbkind1;
+    private MPGroupBox groupBox4;
+    private MPTextBox circularMHZ;
+    private MPLabel label20;
+    private MPTextBox cbandMHZ;
+    private MPLabel label21;
+    private MPGroupBox mpGroupBox1;
+    private MPTextBox lnb1MHZ;
+    private MPLabel lnb1;
+    private MPTextBox lnbswMHZ;
+    private MPLabel switchMHZ;
+    private MPTextBox lnb0MHZ;
+    private MPLabel label22;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel3;
 
 
     public Wizard_DVBSTV()
@@ -110,7 +114,6 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBSTV(string name)
       : base(name)
     {
-
       _card = null;
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -119,6 +122,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -180,9 +184,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.mpLabel3);
       this.groupBox3.Controls.Add(this.progressBarQuality);
       this.groupBox3.Controls.Add(this.mpLabel2);
@@ -213,8 +219,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarQuality
       // 
-      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarQuality.Location = new System.Drawing.Point(120, 310);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(320, 16);
@@ -239,8 +247,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarStrength
       // 
-      this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarStrength.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarStrength.Location = new System.Drawing.Point(120, 290);
       this.progressBarStrength.Name = "progressBarStrength";
       this.progressBarStrength.Size = new System.Drawing.Size(320, 16);
@@ -316,8 +326,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbTransponder4
       // 
-      this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder4.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder4.Location = new System.Drawing.Point(328, 112);
       this.cbTransponder4.Name = "cbTransponder4";
@@ -338,8 +350,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbTransponder3
       // 
-      this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder3.Location = new System.Drawing.Point(328, 88);
       this.cbTransponder3.Name = "cbTransponder3";
@@ -363,8 +377,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbTransponder2
       // 
-      this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder2.Location = new System.Drawing.Point(328, 64);
       this.cbTransponder2.Name = "cbTransponder2";
@@ -373,10 +389,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbkind4
       // 
-      this.lnbkind4.Items.AddRange(new object[] {
-            "Ku-Band",
-            "C-Band",
-            "Circular"});
+      this.lnbkind4.Items.AddRange(new object[]
+                                     {
+                                       "Ku-Band",
+                                       "C-Band",
+                                       "Circular"
+                                     });
       this.lnbkind4.Location = new System.Drawing.Point(187, 112);
       this.lnbkind4.Name = "lnbkind4";
       this.lnbkind4.Size = new System.Drawing.Size(72, 21);
@@ -384,8 +402,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbTransponder
       // 
-      this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbTransponder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder.Location = new System.Drawing.Point(328, 40);
       this.cbTransponder.Name = "cbTransponder";
@@ -394,10 +414,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbkind3
       // 
-      this.lnbkind3.Items.AddRange(new object[] {
-            "Ku-Band",
-            "C-Band",
-            "Circular"});
+      this.lnbkind3.Items.AddRange(new object[]
+                                     {
+                                       "Ku-Band",
+                                       "C-Band",
+                                       "Circular"
+                                     });
       this.lnbkind3.Location = new System.Drawing.Point(187, 88);
       this.lnbkind3.Name = "lnbkind3";
       this.lnbkind3.Size = new System.Drawing.Size(72, 21);
@@ -405,10 +427,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbkind2
       // 
-      this.lnbkind2.Items.AddRange(new object[] {
-            "Ku-Band",
-            "C-Band",
-            "Circular"});
+      this.lnbkind2.Items.AddRange(new object[]
+                                     {
+                                       "Ku-Band",
+                                       "C-Band",
+                                       "Circular"
+                                     });
       this.lnbkind2.Location = new System.Drawing.Point(187, 64);
       this.lnbkind2.Name = "lnbkind2";
       this.lnbkind2.Size = new System.Drawing.Size(72, 21);
@@ -432,14 +456,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // diseqcd
       // 
-      this.diseqcd.Items.AddRange(new object[] {
-            "None",
-            "Simple A",
-            "Simple B",
-            "Level 1 A/A",
-            "Level 1 B/A",
-            "Level 1 A/B",
-            "Level 1 B/B"});
+      this.diseqcd.Items.AddRange(new object[]
+                                    {
+                                      "None",
+                                      "Simple A",
+                                      "Simple B",
+                                      "Level 1 A/A",
+                                      "Level 1 B/A",
+                                      "Level 1 A/B",
+                                      "Level 1 B/B"
+                                    });
       this.diseqcd.Location = new System.Drawing.Point(71, 112);
       this.diseqcd.Name = "diseqcd";
       this.diseqcd.Size = new System.Drawing.Size(104, 21);
@@ -448,14 +474,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // diseqcc
       // 
-      this.diseqcc.Items.AddRange(new object[] {
-            "None",
-            "Simple A",
-            "Simple B",
-            "Level 1 A/A",
-            "Level 1 B/A",
-            "Level 1 A/B",
-            "Level 1 B/B"});
+      this.diseqcc.Items.AddRange(new object[]
+                                    {
+                                      "None",
+                                      "Simple A",
+                                      "Simple B",
+                                      "Level 1 A/A",
+                                      "Level 1 B/A",
+                                      "Level 1 A/B",
+                                      "Level 1 B/B"
+                                    });
       this.diseqcc.Location = new System.Drawing.Point(71, 88);
       this.diseqcc.Name = "diseqcc";
       this.diseqcc.Size = new System.Drawing.Size(104, 21);
@@ -464,14 +492,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // diseqcb
       // 
-      this.diseqcb.Items.AddRange(new object[] {
-            "None",
-            "Simple A",
-            "Simple B",
-            "Level 1 A/A",
-            "Level 1 B/A",
-            "Level 1 A/B",
-            "Level 1 B/B"});
+      this.diseqcb.Items.AddRange(new object[]
+                                    {
+                                      "None",
+                                      "Simple A",
+                                      "Simple B",
+                                      "Level 1 A/A",
+                                      "Level 1 B/A",
+                                      "Level 1 A/B",
+                                      "Level 1 B/B"
+                                    });
       this.diseqcb.Location = new System.Drawing.Point(71, 64);
       this.diseqcb.Name = "diseqcb";
       this.diseqcb.Size = new System.Drawing.Size(104, 21);
@@ -480,14 +510,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       // diseqca
       // 
-      this.diseqca.Items.AddRange(new object[] {
-            "None",
-            "Simple A",
-            "Simple B",
-            "Level 1 A/A",
-            "Level 1 B/A",
-            "Level 1 A/B",
-            "Level 1 B/B"});
+      this.diseqca.Items.AddRange(new object[]
+                                    {
+                                      "None",
+                                      "Simple A",
+                                      "Simple B",
+                                      "Level 1 A/A",
+                                      "Level 1 B/A",
+                                      "Level 1 A/B",
+                                      "Level 1 B/B"
+                                    });
       this.diseqca.Location = new System.Drawing.Point(71, 40);
       this.diseqca.Name = "diseqca";
       this.diseqca.Size = new System.Drawing.Size(104, 21);
@@ -496,10 +528,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbkind1
       // 
-      this.lnbkind1.Items.AddRange(new object[] {
-            "Ku-Band",
-            "C-Band",
-            "Circular"});
+      this.lnbkind1.Items.AddRange(new object[]
+                                     {
+                                       "Ku-Band",
+                                       "C-Band",
+                                       "Circular"
+                                     });
       this.lnbkind1.Location = new System.Drawing.Point(187, 40);
       this.lnbkind1.Name = "lnbkind1";
       this.lnbkind1.Size = new System.Drawing.Size(72, 21);
@@ -617,9 +651,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblStatus
       // 
-      this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                    System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus.Location = new System.Drawing.Point(18, 337);
       this.lblStatus.Name = "lblStatus";
       this.lblStatus.Size = new System.Drawing.Size(423, 17);
@@ -627,9 +664,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblStatus2
       // 
-      this.lblStatus2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.lblStatus2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.lblStatus2.Location = new System.Drawing.Point(17, 359);
       this.lblStatus2.Name = "lblStatus2";
       this.lblStatus2.Size = new System.Drawing.Size(423, 17);
@@ -637,8 +677,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBarProgress
       // 
-      this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarProgress.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBarProgress.Location = new System.Drawing.Point(120, 270);
       this.progressBarProgress.Name = "progressBarProgress";
       this.progressBarProgress.Size = new System.Drawing.Size(320, 16);
@@ -647,7 +689,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonScan
       // 
-      this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonScan.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonScan.Location = new System.Drawing.Point(454, 273);
       this.buttonScan.Name = "buttonScan";
       this.buttonScan.Size = new System.Drawing.Size(72, 22);
@@ -658,11 +702,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbTone4
       // 
-      this.lnbTone4.Items.AddRange(new object[] {
-            "None",
-            "22 kHz",
-            "33 kHz",
-            "44 kHz"});
+      this.lnbTone4.Items.AddRange(new object[]
+                                     {
+                                       "None",
+                                       "22 kHz",
+                                       "33 kHz",
+                                       "44 kHz"
+                                     });
       this.lnbTone4.Location = new System.Drawing.Point(265, 112);
       this.lnbTone4.Name = "lnbTone4";
       this.lnbTone4.Size = new System.Drawing.Size(57, 21);
@@ -671,11 +717,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbTone3
       // 
-      this.lnbTone3.Items.AddRange(new object[] {
-            "None",
-            "22 kHz",
-            "33 kHz",
-            "44 kHz"});
+      this.lnbTone3.Items.AddRange(new object[]
+                                     {
+                                       "None",
+                                       "22 kHz",
+                                       "33 kHz",
+                                       "44 kHz"
+                                     });
       this.lnbTone3.Location = new System.Drawing.Point(265, 88);
       this.lnbTone3.Name = "lnbTone3";
       this.lnbTone3.Size = new System.Drawing.Size(57, 21);
@@ -684,11 +732,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbTone2
       // 
-      this.lnbTone2.Items.AddRange(new object[] {
-            "None",
-            "22 kHz",
-            "33 kHz",
-            "44 kHz"});
+      this.lnbTone2.Items.AddRange(new object[]
+                                     {
+                                       "None",
+                                       "22 kHz",
+                                       "33 kHz",
+                                       "44 kHz"
+                                     });
       this.lnbTone2.Location = new System.Drawing.Point(265, 64);
       this.lnbTone2.Name = "lnbTone2";
       this.lnbTone2.Size = new System.Drawing.Size(57, 21);
@@ -705,12 +755,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lnbTone1
       // 
-      this.lnbTone1.Items.AddRange(new object[] {
-            "None",
-            "22 kHz",
-            "33 kHz",
-            "44 kHz",
-            ""});
+      this.lnbTone1.Items.AddRange(new object[]
+                                     {
+                                       "None",
+                                       "22 kHz",
+                                       "33 kHz",
+                                       "44 kHz",
+                                       ""
+                                     });
       this.lnbTone1.Location = new System.Drawing.Point(265, 40);
       this.lnbTone1.Name = "lnbTone1";
       this.lnbTone1.Size = new System.Drawing.Size(57, 21);
@@ -729,22 +781,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    Transponder LoadTransponderName(string fileName)
+    private Transponder LoadTransponderName(string fileName)
     {
       Transponder ts = new Transponder();
       ts.FileName = fileName;
       ts.SatName = fileName;
 
       string line;
-      System.IO.TextReader tin = System.IO.File.OpenText(Config.GetFile(Config.Dir.Base, "Tuningparameters" , fileName));
+      TextReader tin = File.OpenText(Config.GetFile(Config.Dir.Base, "Tuningparameters", fileName));
       while (true)
       {
         line = tin.ReadLine();
-        if (line == null) break;
+        if (line == null)
+        {
+          break;
+        }
         string search = line.ToLower();
         int pos = search.IndexOf("satname");
         if (pos >= 0)
@@ -762,6 +817,7 @@ namespace MediaPortal.Configuration.Sections
 
       return ts;
     }
+
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
@@ -786,12 +842,12 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Items.Clear();
       cbTransponder3.Items.Clear();
       cbTransponder4.Items.Clear();
-      string[] files = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"), "*.tpl");
+      string[] files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Base, "Tuningparameters"), "*.tpl");
       Transponder[] transponders = new Transponder[files.Length];
       int trans = 0;
       foreach (string file in files)
       {
-        string fileName = System.IO.Path.GetFileName(file);
+        string fileName = Path.GetFileName(file);
         Transponder ts = LoadTransponderName(fileName);
         if (ts != null)
         {
@@ -807,53 +863,71 @@ namespace MediaPortal.Configuration.Sections
         cbTransponder4.Items.Add(ts);
       }
       if (cbTransponder.Items.Count > 0)
+      {
         cbTransponder.SelectedIndex = 0;
+      }
       if (cbTransponder2.Items.Count > 0)
+      {
         cbTransponder2.SelectedIndex = 0;
+      }
       if (cbTransponder3.Items.Count > 0)
+      {
         cbTransponder3.SelectedIndex = 0;
+      }
       if (cbTransponder4.Items.Count > 0)
+      {
         cbTransponder4.SelectedIndex = 0;
+      }
 
 
       useLNB1.Checked = true;
       useLNB2.Checked = false;
       useLNB3.Checked = false;
       useLNB4.Checked = false;
-      this.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-      this.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+      this.OnScanFinished += new ScanFinishedHandler(this.dlg_OnScanFinished);
+      this.OnScanStarted += new ScanStartedHandler(this.dlg_OnScanStarted);
       LoadSettings();
     }
+
     protected override String[] GetScanParameters()
     {
       int m_diseqcLoops = 1;
       string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), _card.FriendlyName);
-      if (useLNB2.Checked) m_diseqcLoops++;
-      if (useLNB3.Checked) m_diseqcLoops++;
-      if (useLNB4.Checked) m_diseqcLoops++;
+      if (useLNB2.Checked)
+      {
+        m_diseqcLoops++;
+      }
+      if (useLNB3.Checked)
+      {
+        m_diseqcLoops++;
+      }
+      if (useLNB4.Checked)
+      {
+        m_diseqcLoops++;
+      }
       String[] parameters = new String[m_diseqcLoops];
-      Transponder ts = (Transponder)cbTransponder.SelectedItem;
+      Transponder ts = (Transponder) cbTransponder.SelectedItem;
       parameters[0] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" + ts.FileName);
 
       if (useLNB2.Checked)
       {
-        ts = (Transponder)cbTransponder2.SelectedItem;
-        parameters[1] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" , ts.FileName);
+        ts = (Transponder) cbTransponder2.SelectedItem;
+        parameters[1] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\", ts.FileName);
       }
       if (useLNB3.Checked)
       {
-        ts = (Transponder)cbTransponder3.SelectedItem;
-        parameters[2] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\" , ts.FileName);
+        ts = (Transponder) cbTransponder3.SelectedItem;
+        parameters[2] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\", ts.FileName);
       }
       if (useLNB4.Checked)
       {
-        ts = (Transponder)cbTransponder4.SelectedItem;
+        ts = (Transponder) cbTransponder4.SelectedItem;
         parameters[3] = Config.GetFile(Config.Dir.Base, @"Tuningparameters\", ts.FileName);
       }
       return parameters;
     }
 
-    void dlg_OnScanFinished(object sender, EventArgs args)
+    private void dlg_OnScanFinished(object sender, EventArgs args)
     {
       this.groupBox2.Enabled = true;
       this.groupBox4.Enabled = true;
@@ -864,10 +938,9 @@ namespace MediaPortal.Configuration.Sections
         wizard.DisableBack(false);
         wizard.DisableNext(false);
       }
-
     }
 
-    void dlg_OnScanStarted(object sender, EventArgs args)
+    private void dlg_OnScanStarted(object sender, EventArgs args)
     {
       this.groupBox2.Enabled = false;
       this.groupBox4.Enabled = false;
@@ -878,8 +951,8 @@ namespace MediaPortal.Configuration.Sections
         wizard.DisableBack(true);
         wizard.DisableNext(true);
       }
-
     }
+
     public override void LoadSettings()
     {
       if (_card == null)
@@ -891,7 +964,7 @@ namespace MediaPortal.Configuration.Sections
       string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), _card.FriendlyName);
 
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+      using (Settings xmlreader = new Settings(filename))
       {
         lnb0MHZ.Text = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750).ToString();
         lnb1MHZ.Text = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600).ToString();
@@ -910,110 +983,218 @@ namespace MediaPortal.Configuration.Sections
         int lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
         switch (lnbTone)
         {
-          case 0: lnbTone1.SelectedIndex = 0; break;
-          case 22: lnbTone1.SelectedIndex = 1; break;
-          case 33: lnbTone1.SelectedIndex = 2; break;
-          case 44: lnbTone1.SelectedIndex = 3; break;
+          case 0:
+            lnbTone1.SelectedIndex = 0;
+            break;
+          case 22:
+            lnbTone1.SelectedIndex = 1;
+            break;
+          case 33:
+            lnbTone1.SelectedIndex = 2;
+            break;
+          case 44:
+            lnbTone1.SelectedIndex = 3;
+            break;
         }
         lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
         switch (lnbTone)
         {
-          case 0: lnbTone2.SelectedIndex = 0; break;
-          case 22: lnbTone2.SelectedIndex = 1; break;
-          case 33: lnbTone2.SelectedIndex = 2; break;
-          case 44: lnbTone2.SelectedIndex = 3; break;
+          case 0:
+            lnbTone2.SelectedIndex = 0;
+            break;
+          case 22:
+            lnbTone2.SelectedIndex = 1;
+            break;
+          case 33:
+            lnbTone2.SelectedIndex = 2;
+            break;
+          case 44:
+            lnbTone2.SelectedIndex = 3;
+            break;
         }
         lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
         switch (lnbTone)
         {
-          case 0: lnbTone3.SelectedIndex = 0; break;
-          case 22: lnbTone3.SelectedIndex = 1; break;
-          case 33: lnbTone3.SelectedIndex = 2; break;
-          case 44: lnbTone3.SelectedIndex = 3; break;
+          case 0:
+            lnbTone3.SelectedIndex = 0;
+            break;
+          case 22:
+            lnbTone3.SelectedIndex = 1;
+            break;
+          case 33:
+            lnbTone3.SelectedIndex = 2;
+            break;
+          case 44:
+            lnbTone3.SelectedIndex = 3;
+            break;
         }
         lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
         switch (lnbTone)
         {
-          case 0: lnbTone4.SelectedIndex = 0; break;
-          case 22: lnbTone4.SelectedIndex = 1; break;
-          case 33: lnbTone4.SelectedIndex = 2; break;
-          case 44: lnbTone4.SelectedIndex = 3; break;
+          case 0:
+            lnbTone4.SelectedIndex = 0;
+            break;
+          case 22:
+            lnbTone4.SelectedIndex = 1;
+            break;
+          case 33:
+            lnbTone4.SelectedIndex = 2;
+            break;
+          case 44:
+            lnbTone4.SelectedIndex = 3;
+            break;
         }
         int lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
         switch (lnbKind)
         {
-          case 0: lnbkind1.SelectedItem = "Ku-Band"; break;
-          case 1: lnbkind1.SelectedItem = "C-Band"; break;
-          case 2: lnbkind1.SelectedItem = "Circular"; break;
+          case 0:
+            lnbkind1.SelectedItem = "Ku-Band";
+            break;
+          case 1:
+            lnbkind1.SelectedItem = "C-Band";
+            break;
+          case 2:
+            lnbkind1.SelectedItem = "Circular";
+            break;
         }
         lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
         switch (lnbKind)
         {
-          case 0: lnbkind2.SelectedItem = "Ku-Band"; break;
-          case 1: lnbkind2.SelectedItem = "C-Band"; break;
-          case 2: lnbkind2.SelectedItem = "Circular"; break;
+          case 0:
+            lnbkind2.SelectedItem = "Ku-Band";
+            break;
+          case 1:
+            lnbkind2.SelectedItem = "C-Band";
+            break;
+          case 2:
+            lnbkind2.SelectedItem = "Circular";
+            break;
         }
         lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
         switch (lnbKind)
         {
-          case 0: lnbkind3.SelectedItem = "Ku-Band"; break;
-          case 1: lnbkind3.SelectedItem = "C-Band"; break;
-          case 2: lnbkind3.SelectedItem = "Circular"; break;
+          case 0:
+            lnbkind3.SelectedItem = "Ku-Band";
+            break;
+          case 1:
+            lnbkind3.SelectedItem = "C-Band";
+            break;
+          case 2:
+            lnbkind3.SelectedItem = "Circular";
+            break;
         }
         lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
         switch (lnbKind)
         {
-          case 0: lnbkind4.SelectedItem = "Ku-Band"; break;
-          case 1: lnbkind4.SelectedItem = "C-Band"; break;
-          case 2: lnbkind4.SelectedItem = "Circular"; break;
+          case 0:
+            lnbkind4.SelectedItem = "Ku-Band";
+            break;
+          case 1:
+            lnbkind4.SelectedItem = "C-Band";
+            break;
+          case 2:
+            lnbkind4.SelectedItem = "Circular";
+            break;
         }
         int diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
         switch (diseqc)
         {
-          case 0: diseqca.SelectedItem = "None"; break;
-          case 1: diseqca.SelectedItem = "Simple A"; break;
-          case 2: diseqca.SelectedItem = "Simple B"; break;
-          case 3: diseqca.SelectedItem = "Level 1 A/A"; break;
-          case 4: diseqca.SelectedItem = "Level 1 B/A"; break;
-          case 5: diseqca.SelectedItem = "Level 1 A/B"; break;
-          case 6: diseqca.SelectedItem = "Level 1 B/B"; break;
-
+          case 0:
+            diseqca.SelectedItem = "None";
+            break;
+          case 1:
+            diseqca.SelectedItem = "Simple A";
+            break;
+          case 2:
+            diseqca.SelectedItem = "Simple B";
+            break;
+          case 3:
+            diseqca.SelectedItem = "Level 1 A/A";
+            break;
+          case 4:
+            diseqca.SelectedItem = "Level 1 B/A";
+            break;
+          case 5:
+            diseqca.SelectedItem = "Level 1 A/B";
+            break;
+          case 6:
+            diseqca.SelectedItem = "Level 1 B/B";
+            break;
         }
         diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
         switch (diseqc)
         {
-          case 0: diseqcb.SelectedItem = "None"; break;
-          case 1: diseqcb.SelectedItem = "Simple A"; break;
-          case 2: diseqcb.SelectedItem = "Simple B"; break;
-          case 3: diseqcb.SelectedItem = "Level 1 A/A"; break;
-          case 4: diseqcb.SelectedItem = "Level 1 B/A"; break;
-          case 5: diseqcb.SelectedItem = "Level 1 A/B"; break;
-          case 6: diseqcb.SelectedItem = "Level 1 B/B"; break;
-
+          case 0:
+            diseqcb.SelectedItem = "None";
+            break;
+          case 1:
+            diseqcb.SelectedItem = "Simple A";
+            break;
+          case 2:
+            diseqcb.SelectedItem = "Simple B";
+            break;
+          case 3:
+            diseqcb.SelectedItem = "Level 1 A/A";
+            break;
+          case 4:
+            diseqcb.SelectedItem = "Level 1 B/A";
+            break;
+          case 5:
+            diseqcb.SelectedItem = "Level 1 A/B";
+            break;
+          case 6:
+            diseqcb.SelectedItem = "Level 1 B/B";
+            break;
         }
         diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
         switch (diseqc)
         {
-          case 0: diseqcc.SelectedItem = "None"; break;
-          case 1: diseqcc.SelectedItem = "Simple A"; break;
-          case 2: diseqcc.SelectedItem = "Simple B"; break;
-          case 3: diseqcc.SelectedItem = "Level 1 A/A"; break;
-          case 4: diseqcc.SelectedItem = "Level 1 B/A"; break;
-          case 5: diseqcc.SelectedItem = "Level 1 A/B"; break;
-          case 6: diseqcc.SelectedItem = "Level 1 B/B"; break;
-
+          case 0:
+            diseqcc.SelectedItem = "None";
+            break;
+          case 1:
+            diseqcc.SelectedItem = "Simple A";
+            break;
+          case 2:
+            diseqcc.SelectedItem = "Simple B";
+            break;
+          case 3:
+            diseqcc.SelectedItem = "Level 1 A/A";
+            break;
+          case 4:
+            diseqcc.SelectedItem = "Level 1 B/A";
+            break;
+          case 5:
+            diseqcc.SelectedItem = "Level 1 A/B";
+            break;
+          case 6:
+            diseqcc.SelectedItem = "Level 1 B/B";
+            break;
         }
         diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
         switch (diseqc)
         {
-          case 0: diseqcd.SelectedItem = "None"; break;
-          case 1: diseqcd.SelectedItem = "Simple A"; break;
-          case 2: diseqcd.SelectedItem = "Simple B"; break;
-          case 3: diseqcd.SelectedItem = "Level 1 A/A"; break;
-          case 4: diseqcd.SelectedItem = "Level 1 B/A"; break;
-          case 5: diseqcd.SelectedItem = "Level 1 A/B"; break;
-          case 6: diseqcd.SelectedItem = "Level 1 B/B"; break;
-
+          case 0:
+            diseqcd.SelectedItem = "None";
+            break;
+          case 1:
+            diseqcd.SelectedItem = "Simple A";
+            break;
+          case 2:
+            diseqcd.SelectedItem = "Simple B";
+            break;
+          case 3:
+            diseqcd.SelectedItem = "Level 1 A/A";
+            break;
+          case 4:
+            diseqcd.SelectedItem = "Level 1 B/A";
+            break;
+          case 5:
+            diseqcd.SelectedItem = "Level 1 A/B";
+            break;
+          case 6:
+            diseqcd.SelectedItem = "Level 1 B/B";
+            break;
         }
         string transponder = xmlreader.GetValueAsString("dvbs", "transponder1", "");
         Log.Info("1:{0}", transponder);
@@ -1021,7 +1202,7 @@ namespace MediaPortal.Configuration.Sections
         {
           for (int i = 0; i < cbTransponder.Items.Count; ++i)
           {
-            Transponder tp = (Transponder)cbTransponder.Items[i];
+            Transponder tp = (Transponder) cbTransponder.Items[i];
             if (tp.SatName == transponder)
             {
               cbTransponder.SelectedIndex = i;
@@ -1033,7 +1214,7 @@ namespace MediaPortal.Configuration.Sections
 
         for (int i = 0; i < cbTransponder2.Items.Count; ++i)
         {
-          Transponder tp = (Transponder)cbTransponder2.Items[i];
+          Transponder tp = (Transponder) cbTransponder2.Items[i];
           if (tp.SatName == transponder)
           {
             cbTransponder2.SelectedIndex = i;
@@ -1044,7 +1225,7 @@ namespace MediaPortal.Configuration.Sections
 
         for (int i = 0; i < cbTransponder3.Items.Count; ++i)
         {
-          Transponder tp = (Transponder)cbTransponder3.Items[i];
+          Transponder tp = (Transponder) cbTransponder3.Items[i];
           if (tp.SatName == transponder)
           {
             cbTransponder3.SelectedIndex = i;
@@ -1055,25 +1236,23 @@ namespace MediaPortal.Configuration.Sections
 
         for (int i = 0; i < cbTransponder4.Items.Count; ++i)
         {
-          Transponder tp = (Transponder)cbTransponder4.Items[i];
+          Transponder tp = (Transponder) cbTransponder4.Items[i];
           if (tp.SatName == transponder)
           {
             cbTransponder4.SelectedIndex = i;
             break;
           }
         }
-
-
       }
     }
 
     public override void SaveSettings()
     {
       Log.Info("Save DVBS:{0}", _card.FriendlyName);
-      string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), _card.FriendlyName);
+      string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), _card.FriendlyName);
       // save settings
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+      using (Settings xmlwriter = new Settings(filename))
       {
         xmlwriter.SetValue("dvbs", "LNB0", lnb0MHZ.Text);
         xmlwriter.SetValue("dvbs", "LNB1", lnb1MHZ.Text);
@@ -1087,34 +1266,66 @@ namespace MediaPortal.Configuration.Sections
         int lnbTone = lnbTone1.SelectedIndex;
         switch (lnbTone)
         {
-          case 0: xmlwriter.SetValue("dvbs", "lnb", "0"); break;
-          case 1: xmlwriter.SetValue("dvbs", "lnb", "22"); break;
-          case 2: xmlwriter.SetValue("dvbs", "lnb", "33"); break;
-          case 3: xmlwriter.SetValue("dvbs", "lnb", "44"); break;
+          case 0:
+            xmlwriter.SetValue("dvbs", "lnb", "0");
+            break;
+          case 1:
+            xmlwriter.SetValue("dvbs", "lnb", "22");
+            break;
+          case 2:
+            xmlwriter.SetValue("dvbs", "lnb", "33");
+            break;
+          case 3:
+            xmlwriter.SetValue("dvbs", "lnb", "44");
+            break;
         }
         lnbTone = lnbTone2.SelectedIndex;
         switch (lnbTone)
         {
-          case 0: xmlwriter.SetValue("dvbs", "lnb2", "0"); break;
-          case 1: xmlwriter.SetValue("dvbs", "lnb2", "22"); break;
-          case 2: xmlwriter.SetValue("dvbs", "lnb2", "33"); break;
-          case 3: xmlwriter.SetValue("dvbs", "lnb2", "44"); break;
+          case 0:
+            xmlwriter.SetValue("dvbs", "lnb2", "0");
+            break;
+          case 1:
+            xmlwriter.SetValue("dvbs", "lnb2", "22");
+            break;
+          case 2:
+            xmlwriter.SetValue("dvbs", "lnb2", "33");
+            break;
+          case 3:
+            xmlwriter.SetValue("dvbs", "lnb2", "44");
+            break;
         }
         lnbTone = lnbTone3.SelectedIndex;
         switch (lnbTone)
         {
-          case 0: xmlwriter.SetValue("dvbs", "lnb3", "0"); break;
-          case 1: xmlwriter.SetValue("dvbs", "lnb3", "22"); break;
-          case 2: xmlwriter.SetValue("dvbs", "lnb3", "33"); break;
-          case 3: xmlwriter.SetValue("dvbs", "lnb3", "44"); break;
+          case 0:
+            xmlwriter.SetValue("dvbs", "lnb3", "0");
+            break;
+          case 1:
+            xmlwriter.SetValue("dvbs", "lnb3", "22");
+            break;
+          case 2:
+            xmlwriter.SetValue("dvbs", "lnb3", "33");
+            break;
+          case 3:
+            xmlwriter.SetValue("dvbs", "lnb3", "44");
+            break;
         }
         lnbTone = lnbTone4.SelectedIndex;
         switch (lnbTone)
         {
-          case 0: xmlwriter.SetValue("dvbs", "lnb4", "0"); break;
-          case 1: xmlwriter.SetValue("dvbs", "lnb4", "22"); break;
-          case 2: xmlwriter.SetValue("dvbs", "lnb4", "33"); break;
-          case 3: xmlwriter.SetValue("dvbs", "lnb4", "44"); break;
+          case 0:
+            xmlwriter.SetValue("dvbs", "lnb4", "0");
+            break;
+          case 1:
+            xmlwriter.SetValue("dvbs", "lnb4", "22");
+            break;
+          case 2:
+            xmlwriter.SetValue("dvbs", "lnb4", "33");
+            break;
+          case 3:
+            xmlwriter.SetValue("dvbs", "lnb4", "44");
+            break;
         }
         if (diseqca.SelectedIndex >= 0)
         {
@@ -1135,25 +1346,25 @@ namespace MediaPortal.Configuration.Sections
         if (lnbkind1.SelectedIndex >= 0)
         {
           xmlwriter.SetValue("dvbs", "lnbKind", lnbkind1.SelectedIndex);
-          xmlwriter.SetValue("dvbs", "transponder1", ((Transponder)cbTransponder.SelectedItem).SatName);
+          xmlwriter.SetValue("dvbs", "transponder1", ((Transponder) cbTransponder.SelectedItem).SatName);
         }
         if (lnbkind2.SelectedIndex >= 0)
         {
           xmlwriter.SetValue("dvbs", "lnbKind2", lnbkind2.SelectedIndex);
-          xmlwriter.SetValue("dvbs", "transponder2", ((Transponder)cbTransponder2.SelectedItem).SatName);
+          xmlwriter.SetValue("dvbs", "transponder2", ((Transponder) cbTransponder2.SelectedItem).SatName);
         }
         if (lnbkind3.SelectedIndex >= 0)
         {
           xmlwriter.SetValue("dvbs", "lnbKind3", lnbkind3.SelectedIndex);
-          xmlwriter.SetValue("dvbs", "transponder3", ((Transponder)cbTransponder3.SelectedItem).SatName);
+          xmlwriter.SetValue("dvbs", "transponder3", ((Transponder) cbTransponder3.SelectedItem).SatName);
         }
         if (lnbkind4.SelectedIndex >= 0)
         {
           xmlwriter.SetValue("dvbs", "lnbKind4", lnbkind4.SelectedIndex);
-          xmlwriter.SetValue("dvbs", "transponder4", ((Transponder)cbTransponder4.SelectedItem).SatName);
+          xmlwriter.SetValue("dvbs", "transponder4", ((Transponder) cbTransponder4.SelectedItem).SatName);
         }
       }
-      MediaPortal.Profile.Settings.SaveCache();
+      Settings.SaveCache();
     }
 
     private void useLNB1_CheckedChanged(object sender, EventArgs e)
@@ -1190,24 +1401,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void groupBox2_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void mpComboBox3_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     private void mpComboBox2_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
-
   }
 }
-

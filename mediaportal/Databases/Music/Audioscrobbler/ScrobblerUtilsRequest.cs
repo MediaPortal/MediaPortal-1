@@ -26,22 +26,20 @@
 #region usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 #endregion
 
 namespace MediaPortal.Music.Database
 {
-
-  public class ScrobblerRequestException : System.ApplicationException
+  public class ScrobblerRequestException : ApplicationException
   {
-    public ScrobblerRequestException(string message) : base(message) { }
+    public ScrobblerRequestException(string message) : base(message)
+    {
+    }
   }
 
   public class ScrobblerUtilsRequest
   {
-
     #region enums
 
     public enum RequestType
@@ -76,7 +74,9 @@ namespace MediaPortal.Music.Database
     public ScrobblerUtilsRequest(RequestType type)
     {
       if (_lastRequestID == 4294967295)
+      {
         _lastRequestID = 0;
+      }
       ID = ++_lastRequestID;
       Type = type;
     }
@@ -88,14 +88,12 @@ namespace MediaPortal.Music.Database
 
     public override bool Equals(object o)
     {
-      return o is ScrobblerUtilsRequest && ((ScrobblerUtilsRequest)o).ID == ID;
+      return o is ScrobblerUtilsRequest && ((ScrobblerUtilsRequest) o).ID == ID;
     }
 
     public override int GetHashCode()
     {
       return base.GetHashCode();
     }
-
   }
-
 }

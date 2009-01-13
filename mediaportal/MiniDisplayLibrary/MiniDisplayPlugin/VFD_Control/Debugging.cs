@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;

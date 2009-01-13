@@ -24,22 +24,24 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.Reflection;
+using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.TV.Recording;
-using MediaPortal.Util;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for WizardForm.
   /// </summary>
-  public class WizardForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class WizardForm : MPConfigForm
   {
     internal class SectionHolder
     {
@@ -60,7 +62,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     //
     // Private members
@@ -70,28 +72,28 @@ namespace MediaPortal.Configuration
       get { return wizardPages; }
     }
 
-    static ArrayList wizardPages = new ArrayList();
+    private static ArrayList wizardPages = new ArrayList();
 
     public static WizardForm Form
     {
       get { return wizardForm; }
     }
 
-    static WizardForm wizardForm;
+    private static WizardForm wizardForm;
 
-    string wizardCaption = string.Empty;
+    private string wizardCaption = string.Empty;
 
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton nextButton;
-    private MediaPortal.UserInterface.Controls.MPButton backButton;
-    private System.Windows.Forms.Panel topPanel;
-    private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.Panel panel2;
-    private System.Windows.Forms.Panel holderPanel;
-    private MediaPortal.UserInterface.Controls.MPLabel topicLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel infoLabel;
-    private System.Windows.Forms.PictureBox pictureBox1;
-    int visiblePageIndex = -1;
+    private MPButton cancelButton;
+    private MPButton nextButton;
+    private MPButton backButton;
+    private Panel topPanel;
+    private Panel panel1;
+    private Panel panel2;
+    private Panel holderPanel;
+    private MPLabel topicLabel;
+    private MPLabel infoLabel;
+    private PictureBox pictureBox1;
+    private int visiblePageIndex = -1;
 
     public void AddSection(SectionSettings settings, string topic, string information)
     {
@@ -122,7 +124,7 @@ namespace MediaPortal.Configuration
       InitializeComponent();
 
       // Stop MCE services
-      MediaPortal.Util.Utils.StopMCEServices();
+      Util.Utils.StopMCEServices();
 
       //
       // Set caption
@@ -133,13 +135,13 @@ namespace MediaPortal.Configuration
       // Check if we got a sections file to read from, or if we should specify
       // the default sections
       //
-      if (sectionConfiguration != string.Empty && System.IO.File.Exists(sectionConfiguration))
+      if (sectionConfiguration != string.Empty && File.Exists(sectionConfiguration))
       {
         LoadSections(sectionConfiguration);
       }
       else
       {
-        Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
+        TVCaptureCards sect = new TVCaptureCards();
         sect.AddAllCards();
         sect.LoadCaptureCards();
         Log.Info("found {0} tv cards", sect.captureCards.Count);
@@ -181,10 +183,11 @@ namespace MediaPortal.Configuration
           */
         }
 
-        AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
-        AddSection(new Sections.General(), "General", "General information...");
-        AddSection(new Sections.GeneralSkin(), "Skin", "Skin settings...");
-        AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
+        AddSection(new Wizard_Welcome(), "Welcome to MediaPortal", "");
+        AddSection(new General(), "General", "General information...");
+        AddSection(new GeneralSkin(), "Skin", "Skin settings...");
+        AddSection(new Wizard_SelectPlugins(), "Media",
+                   "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
         //if (analogCard)
         //{
         //  AddSection(new Sections.Wizard_AnalogTV(), "TV - Analog", "Analog TV configuration", "");
@@ -206,15 +209,15 @@ namespace MediaPortal.Configuration
         //{
         //  AddSection(new Sections.Wizard_ATSCTV(), "TV - ATSC", "Digital TV ATSC configuration", "");
         //}
-        
+
         // AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
 
-        if (Sections.Remote.IsMceRemoteInstalled(this.Handle))
+        if (Remote.IsMceRemoteInstalled(this.Handle))
         {
-          AddSection(new Sections.Remote(), "Remote Control", "Configure MCE Remote control", "");
+          AddSection(new Remote(), "Remote Control", "Configure MCE Remote control", "");
         }
-        AddSection(new Sections.Weather(), "Weather", "My weather setup", "");
-        AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
+        AddSection(new Weather(), "Weather", "My weather setup", "");
+        AddSection(new Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
       }
     }
 
@@ -283,11 +286,13 @@ namespace MediaPortal.Configuration
                 //
                 if (dependencyNode == null)
                 {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty, infoNode != null ? infoNode.InnerText : string.Empty);
+                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty,
+                             infoNode != null ? infoNode.InnerText : string.Empty);
                 }
                 else
                 {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty, infoNode != null ? infoNode.InnerText : string.Empty, dependencyNode.InnerText);
+                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty,
+                             infoNode != null ? infoNode.InnerText : string.Empty, dependencyNode.InnerText);
                 }
               }
             }
@@ -296,7 +301,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception e)
       {
-        System.Diagnostics.Debug.WriteLine(e.Message);
+        Debug.WriteLine(e.Message);
       }
     }
 
@@ -315,7 +320,7 @@ namespace MediaPortal.Configuration
         // Create the instance of the section settings class, pass the section name as argument
         // to the constructor. We do this to be able to use the same name on <name> as in the <dependency> tag.
         //
-        SectionSettings section = (SectionSettings)Activator.CreateInstance(sectionType, new object[] { sectionName });
+        SectionSettings section = (SectionSettings) Activator.CreateInstance(sectionType, new object[] {sectionName});
         return section;
       }
 
@@ -341,6 +346,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -358,12 +364,14 @@ namespace MediaPortal.Configuration
       this.holderPanel = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.topPanel.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(536, 520);
       this.cancelButton.Name = "cancelButton";
@@ -375,7 +383,9 @@ namespace MediaPortal.Configuration
       // 
       // nextButton
       // 
-      this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.nextButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.nextButton.Location = new System.Drawing.Point(456, 520);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(72, 22);
@@ -386,7 +396,9 @@ namespace MediaPortal.Configuration
       // 
       // backButton
       // 
-      this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.backButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.backButton.Location = new System.Drawing.Point(376, 520);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(72, 22);
@@ -409,7 +421,8 @@ namespace MediaPortal.Configuration
       // 
       // infoLabel
       // 
-      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                                                    System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.infoLabel.Location = new System.Drawing.Point(8, 26);
       this.infoLabel.Name = "infoLabel";
       this.infoLabel.Size = new System.Drawing.Size(512, 40);
@@ -418,7 +431,8 @@ namespace MediaPortal.Configuration
       // 
       // topicLabel
       // 
-      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.topicLabel.Location = new System.Drawing.Point(8, 8);
       this.topicLabel.Name = "topicLabel";
       this.topicLabel.Size = new System.Drawing.Size(272, 23);
@@ -476,10 +490,10 @@ namespace MediaPortal.Configuration
       this.Text = "WizardForm";
       this.Load += new System.EventHandler(this.WizardForm_Load);
       this.topPanel.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -487,7 +501,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void WizardForm_Load(object sender, System.EventArgs e)
+    private void WizardForm_Load(object sender, EventArgs e)
     {
       //
       // Load settings
@@ -588,7 +602,7 @@ namespace MediaPortal.Configuration
             //
             // Return property
             //
-            return (bool)holder.Section.GetSetting(property);
+            return (bool) holder.Section.GetSetting(property);
           }
         }
 
@@ -681,7 +695,7 @@ namespace MediaPortal.Configuration
       holderPanel.Controls.Add(section);
     }
 
-    private void nextButton_Click(object sender, System.EventArgs e)
+    private void nextButton_Click(object sender, EventArgs e)
     {
       SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
       holder.Section.SaveSettings();
@@ -693,7 +707,7 @@ namespace MediaPortal.Configuration
         SaveSectionSettings();
 
         // Restart MCE services
-        MediaPortal.Util.Utils.RestartMCEServices();
+        Util.Utils.RestartMCEServices();
 
         this.Close();
       }
@@ -706,15 +720,15 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void cancelButton_Click(object sender, System.EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
       // Restart MCE services
-      MediaPortal.Util.Utils.RestartMCEServices();
+      Util.Utils.RestartMCEServices();
 
       this.Close();
     }
 
-    private void backButton_Click(object sender, System.EventArgs e)
+    private void backButton_Click(object sender, EventArgs e)
     {
       ShowPreviousPage();
     }
@@ -764,8 +778,8 @@ namespace MediaPortal.Configuration
       //
       // Init general (not visual) settings
       //
-      MediaPortal.Configuration.SectionSettings DVDClass;
-      DVDClass = new Sections.DVD("DVD");
+      SectionSettings DVDClass;
+      DVDClass = new DVD("DVD");
       DVDClass.LoadSettings();
       DVDClass.SaveSettings();
       DVDClass.Dispose();
@@ -774,11 +788,11 @@ namespace MediaPortal.Configuration
       // Make sure default enabled plugins are activated in MediaPortal.xml
       // (required since PluginManager only loads plugins which are listed in there)
       //
-      Sections.PluginsNew pluginSettings = new MediaPortal.Configuration.Sections.PluginsNew();
+      PluginsNew pluginSettings = new PluginsNew();
       pluginSettings.OnSectionActivated();
       pluginSettings.SaveSettings();
 
-      MediaPortal.Profile.Settings.SaveCache();
+      Settings.SaveCache();
     }
   }
 }

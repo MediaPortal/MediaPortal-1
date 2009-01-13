@@ -53,7 +53,7 @@ namespace MediaPortal.Hardware
 
     #region Fields
 
-    RemoteButton _button;
+    private RemoteButton _button;
 
     #endregion Fields
   }

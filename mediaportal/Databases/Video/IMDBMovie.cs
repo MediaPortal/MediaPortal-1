@@ -34,151 +34,177 @@ namespace MediaPortal.Video.Database
   /// </summary>
   public class IMDBMovie
   {
-    int m_id = -1;
-    string m_strDirector = string.Empty;
-    string m_strWritingCredits = string.Empty;
-    string m_strGenre = string.Empty;
-    string m_strTagLine = string.Empty;
-    string m_strPlotOutline = string.Empty;
-    string m_strPlot = string.Empty;
-    string m_strPictureURL = string.Empty;
-    string m_strTitle = string.Empty;
-    string m_strVotes = string.Empty;
-    string m_strCast = string.Empty;
-    string m_strSearchString = string.Empty;
-    string m_strFile = string.Empty;
-    string m_strPath = string.Empty;
-    string m_strDVDLabel = string.Empty;
-    string m_strIMDBNumber = string.Empty;
-    string m_strDatabase = string.Empty;
-    string m_strCDLabel = string.Empty;
-    int m_iTop250 = 0;
-    int m_iYear = 1900;
-    float m_fRating = 0.0f;
-    string m_strMPARating = string.Empty;
-    int m_iRunTime = 0;
-    int m_iWatched = 0;
-    int m_actorid = -1;
-    int m_genreid = -1;
-    string m_strActor = string.Empty;
-    string m_strgenre = string.Empty;
+    private int m_id = -1;
+    private string m_strDirector = string.Empty;
+    private string m_strWritingCredits = string.Empty;
+    private string m_strGenre = string.Empty;
+    private string m_strTagLine = string.Empty;
+    private string m_strPlotOutline = string.Empty;
+    private string m_strPlot = string.Empty;
+    private string m_strPictureURL = string.Empty;
+    private string m_strTitle = string.Empty;
+    private string m_strVotes = string.Empty;
+    private string m_strCast = string.Empty;
+    private string m_strSearchString = string.Empty;
+    private string m_strFile = string.Empty;
+    private string m_strPath = string.Empty;
+    private string m_strDVDLabel = string.Empty;
+    private string m_strIMDBNumber = string.Empty;
+    private string m_strDatabase = string.Empty;
+    private string m_strCDLabel = string.Empty;
+    private int m_iTop250 = 0;
+    private int m_iYear = 1900;
+    private float m_fRating = 0.0f;
+    private string m_strMPARating = string.Empty;
+    private int m_iRunTime = 0;
+    private int m_iWatched = 0;
+    private int m_actorid = -1;
+    private int m_genreid = -1;
+    private string m_strActor = string.Empty;
+    private string m_strgenre = string.Empty;
 
     public IMDBMovie()
     {
     }
+
     public int ID
     {
       get { return m_id; }
       set { m_id = value; }
     }
+
     public bool IsEmpty
     {
       get
       {
-        if ((m_strTitle != string.Empty) && (m_strTitle != Strings.Unknown)) return false;
+        if ((m_strTitle != string.Empty) && (m_strTitle != Strings.Unknown))
+        {
+          return false;
+        }
         return true;
       }
     }
+
     public int actorId
     {
       get { return m_actorid; }
       set { m_actorid = value; }
     }
+
     public int genreId
     {
       get { return m_genreid; }
       set { m_genreid = value; }
     }
+
     public string Genre
     {
       get { return m_strgenre; }
       set { m_strgenre = value; }
     }
+
     public string Actor
     {
       get { return m_strActor; }
       set { m_strActor = value; }
     }
+
     public int RunTime
     {
       get { return m_iRunTime; }
       set { m_iRunTime = value; }
     }
+
     public int Watched
     {
       get { return m_iWatched; }
       set { m_iWatched = value; }
     }
+
     public string MPARating
     {
       get { return m_strMPARating; }
       set { m_strMPARating = value; }
     }
+
     public string Director
     {
       get { return m_strDirector; }
       set { m_strDirector = value; }
     }
+
     public string WritingCredits
     {
       get { return m_strWritingCredits; }
       set { m_strWritingCredits = value; }
     }
+
     public string SingleGenre
     {
       get { return m_strGenre; }
       set { m_strGenre = value; }
     }
+
     public string TagLine
     {
       get { return m_strTagLine; }
       set { m_strTagLine = value; }
     }
+
     public string PlotOutline
     {
       get { return m_strPlotOutline; }
       set { m_strPlotOutline = value; }
     }
+
     public string Plot
     {
       get { return m_strPlot; }
       set { m_strPlot = value; }
     }
+
     public string ThumbURL
     {
       get { return m_strPictureURL; }
       set { m_strPictureURL = value; }
     }
+
     public string Title
     {
       get { return m_strTitle; }
       set { m_strTitle = value; }
     }
+
     public string Votes
     {
       get { return m_strVotes; }
       set { m_strVotes = value; }
     }
+
     public string Cast
     {
       get { return m_strCast; }
       set { m_strCast = value; }
     }
+
     public string SearchString
     {
       get { return m_strSearchString; }
       set { m_strSearchString = value; }
     }
+
     public string File
     {
       get { return m_strFile; }
       set { m_strFile = value; }
     }
+
     public string Path
     {
       get { return m_strPath; }
       set { m_strPath = value; }
     }
+
     public string DVDLabel
     {
       get { return m_strDVDLabel; }
@@ -190,31 +216,37 @@ namespace MediaPortal.Video.Database
       get { return m_strCDLabel; }
       set { m_strCDLabel = value; }
     }
+
     public string IMDBNumber
     {
       get { return m_strIMDBNumber; }
       set { m_strIMDBNumber = value; }
     }
+
     public int Top250
     {
       get { return m_iTop250; }
       set { m_iTop250 = value; }
     }
+
     public int Year
     {
       get { return m_iYear; }
       set { m_iYear = value; }
     }
+
     public float Rating
     {
       get { return m_fRating; }
       set { m_fRating = value; }
     }
+
     public string Database
     {
       get { return m_strDatabase; }
       set { m_strDatabase = value; }
     }
+
     public void Reset()
     {
       m_strDirector = string.Empty;
@@ -240,7 +272,7 @@ namespace MediaPortal.Video.Database
 
     public void SetProperties()
     {
-      string strThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
+      string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
       GUIPropertyManager.SetProperty("#director", Director);
       GUIPropertyManager.SetProperty("#genre", Genre);
       GUIPropertyManager.SetProperty("#cast", Cast);
@@ -259,13 +291,16 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating.ToString());
       string strValue = "no";
-      if (Watched > 0) strValue = "yes";
+      if (Watched > 0)
+      {
+        strValue = "yes";
+      }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
     }
 
     public void SetPlayProperties()
     {
-      string strThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
+      string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
       GUIPropertyManager.SetProperty("#Play.Current.Director", Director);
       GUIPropertyManager.SetProperty("#Play.Current.Genre", Genre);
       GUIPropertyManager.SetProperty("#Play.Current.Cast", Cast);
@@ -284,9 +319,11 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Play.Current.Runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.MPAARating", MPARating.ToString());
       string strValue = "no";
-      if (Watched > 0) strValue = "yes";
+      if (Watched > 0)
+      {
+        strValue = "yes";
+      }
       GUIPropertyManager.SetProperty("#Play.Current.IsWatched", strValue);
     }
-
   }
 }

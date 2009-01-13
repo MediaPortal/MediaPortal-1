@@ -24,9 +24,8 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.IO;
 using MediaPortal.Configuration;
 
 namespace WatchDog
@@ -38,18 +37,19 @@ namespace WatchDog
   {
     private int totalActions = 2;
 
-    private static string[] logNames = { "Application", "System" };
-		
+    private static string[] logNames = {"Application", "System"};
+
     public PreTestActions()
     {
     }
-	
+
     private void updateProgress(int subActions)
     {
-      int actionAmount = 100 / totalActions;
-      int subActionAmount = actionAmount / subActions;
+      int actionAmount = 100/totalActions;
+      int subActionAmount = actionAmount/subActions;
       base.setProgress(base.getProgress() + subActionAmount);
     }
+
     public bool PerformActions()
     {
       ClearEventLog();
@@ -57,6 +57,7 @@ namespace WatchDog
       base.Done();
       return true;
     }
+
     private void ClearEventLog()
     {
       base.setAction("Clearing EventLogs...");
@@ -65,14 +66,21 @@ namespace WatchDog
       foreach (string strLogName in logNames)
       {
         EventLog e = new EventLog(strLogName);
-        try {
+        try
+        {
           e.Clear();
-        } catch (Exception) {}
+        }
+        catch (Exception)
+        {
+        }
         updateProgress(subActions);
       }
       if (subActions == 0)
+      {
         updateProgress(1);
+      }
     }
+
     private void ClearDir(string strDir)
     {
       string[] files = Directory.GetFiles(strDir);
@@ -86,9 +94,11 @@ namespace WatchDog
         }
       }
       if (subActions == 0)
+      {
         updateProgress(1);
-
+      }
     }
+
     private void ClearMPLogDir()
     {
       base.setAction("Clearing MediaPortal log subdirectory...");

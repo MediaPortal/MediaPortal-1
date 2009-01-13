@@ -24,13 +24,12 @@
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Topbar;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace MediaPortal.GUI.Home
@@ -41,13 +40,16 @@ namespace MediaPortal.GUI.Home
   public class GUIPlugIns : GUIHomeBaseWindow
   {
     #region Constructor
+
     public GUIPlugIns()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MYPLUGINS;
+      GetID = (int) Window.WINDOW_MYPLUGINS;
     }
+
     #endregion
 
     #region Override
+
     public override bool Init()
     {
       //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
@@ -56,11 +58,14 @@ namespace MediaPortal.GUI.Home
 
     protected override void LoadButtonNames()
     {
-      if (menuMain == null) return;
+      if (menuMain == null)
+      {
+        return;
+      }
       menuMain.ButtonInfos.Clear();
       ArrayList plugins = PluginManager.SetupForms;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (ISetupForm setup in plugins)
         {
@@ -71,32 +76,52 @@ namespace MediaPortal.GUI.Home
           string nonFocusHover;
           if (setup.GetHome(out plugInText, out focusTexture, out nonFocusTexture, out hover))
           {
-            if (setup.PluginName().Equals("Home")) continue;
+            if (setup.PluginName().Equals("Home"))
+            {
+              continue;
+            }
             IShowPlugin showPlugin = setup as IShowPlugin;
 
             string showInPlugIns = xmlreader.GetValue("myplugins", setup.PluginName());
             if ((showInPlugIns == null) || (showInPlugIns.Length < 1))
             {
-              if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true)) continue;
+              if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true))
+              {
+                continue;
+              }
             }
             else
             {
-              if (showInPlugIns.ToLower().Equals("no")) continue;
+              if (showInPlugIns.ToLower().Equals("no"))
+              {
+                continue;
+              }
             }
 
-            if ((focusTexture == null) || (focusTexture.Length < 1)) focusTexture = setup.PluginName();
-            if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1)) nonFocusTexture = setup.PluginName();
-            if ((hover == null) || (hover.Length < 1)) hover = setup.PluginName();
+            if ((focusTexture == null) || (focusTexture.Length < 1))
+            {
+              focusTexture = setup.PluginName();
+            }
+            if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1))
+            {
+              nonFocusTexture = setup.PluginName();
+            }
+            if ((hover == null) || (hover.Length < 1))
+            {
+              hover = setup.PluginName();
+            }
             focusTexture = GetFocusTextureFileName(focusTexture);
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
             int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture, hover, nonFocusHover, index));
+            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture,
+                                                        hover, nonFocusHover, index));
           }
         }
       }
     }
+
     #endregion
   }
 }

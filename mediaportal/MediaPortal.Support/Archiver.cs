@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip;
@@ -54,7 +52,7 @@ namespace MediaPortal.Support
       crc.Update(buf);
       ze.Crc = crc.Value;
       zipStream.PutNextEntry(ze);
-      zipStream.Write(buf, 0, buf.Length);      
+      zipStream.Write(buf, 0, buf.Length);
     }
 
     public void AddDirectory(string directory)

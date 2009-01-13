@@ -24,20 +24,13 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Windows.Forms;
-using DShowNET;
-using DirectShowLib;
 using DirectShowLib.BDA;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
+using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using System.Xml;
 
 namespace MediaPortal.TV.Scanning
 {
-
   /// <summary>
   /// Summary description for ATSCTuning.
   /// </summary>
@@ -45,34 +38,40 @@ namespace MediaPortal.TV.Scanning
   {
     //#DM - changed maximum number of channels to tune to 69#
     //const int MaxATSCChannel = 255;
-    const int MaxATSCChannel = 69;
-    
-    TVCaptureDevice _captureCard;
-    AutoTuneCallback _callback = null;
-    int _currentIndex = -1;
+    private const int MaxATSCChannel = 69;
 
-    int _newChannels, _updatedChannels;
-    int _newRadioChannels, _updatedRadioChannels;
+    private TVCaptureDevice _captureCard;
+    private AutoTuneCallback _callback = null;
+    private int _currentIndex = -1;
+
+    private int _newChannels, _updatedChannels;
+    private int _newRadioChannels, _updatedRadioChannels;
 
     public ATSCTuning()
     {
     }
+
     #region ITuning Members
+
     public void Start()
     {
       _newRadioChannels = 0;
       _updatedRadioChannels = 0;
       _newChannels = 0;
       _updatedChannels = 0;
-      
+
       //#DM - changed starting channel number so tuning starts at 2#
       //_currentIndex = 0;
       _currentIndex = 2;
       _callback.OnProgress(0);
     }
+
     public void Next()
     {
-      if (_currentIndex  > MaxATSCChannel) return;
+      if (_currentIndex > MaxATSCChannel)
+      {
+        return;
+      }
       UpdateStatus();
       Tune();
       Scan();
@@ -88,7 +87,7 @@ namespace MediaPortal.TV.Scanning
       _captureCard = card;
       _callback = statusCallback;
 
-      _currentIndex =0;
+      _currentIndex = 0;
       return;
     }
 
@@ -104,24 +103,31 @@ namespace MediaPortal.TV.Scanning
       return 0;
     }
 
-    void UpdateStatus()
+    private void UpdateStatus()
     {
       int index = _currentIndex;
-      if (index < 0) index = 0;
-      float percent = ((float)index) / ((float)MaxATSCChannel);
+      if (index < 0)
+      {
+        index = 0;
+      }
+      float percent = ((float) index)/((float) MaxATSCChannel);
       percent *= 100.0f;
-      _callback.OnProgress((int)percent);
+      _callback.OnProgress((int) percent);
     }
+
     public bool IsFinished()
     {
       if (_currentIndex >= MaxATSCChannel)
+      {
         return true;
+      }
       return false;
     }
 
-    void DetectAvailableStreams()
+    private void DetectAvailableStreams()
     {
-      Log.Info("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", _captureCard.SignalQuality, _captureCard.SignalStrength);
+      Log.Info("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", _captureCard.SignalQuality,
+               _captureCard.SignalStrength);
       string chanDesc = String.Format("Channel:{0}", _currentIndex);
       string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", _currentIndex, chanDesc);
       _callback.OnStatus(description);
@@ -129,14 +135,15 @@ namespace MediaPortal.TV.Scanning
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
-      _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
+      _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels,
+                                      ref _updatedRadioChannels);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
 
       _callback.UpdateList();
       return;
     }
 
-    void Scan()
+    private void Scan()
     {
       _captureCard.Process();
       if (_captureCard.SignalPresent())
@@ -146,7 +153,7 @@ namespace MediaPortal.TV.Scanning
     }
 
 
-    void Tune()
+    private void Tune()
     {
       if (_currentIndex < 0 || _currentIndex >= MaxATSCChannel)
       {
@@ -169,16 +176,17 @@ namespace MediaPortal.TV.Scanning
       newchan.PhysicalChannel = _currentIndex;
       newchan.Frequency = -1;
       newchan.Symbolrate = -1;
-      newchan.Modulation = (int)ModulationType.ModNotSet;
-      newchan.FEC = (int)FECMethod.MethodNotSet;
+      newchan.Modulation = (int) ModulationType.ModNotSet;
+      newchan.FEC = (int) FECMethod.MethodNotSet;
       _captureCard.Tune(newchan, 0);
 
       //tune locking : 2 seconds
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Info("atsc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
-                  _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
+               _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
     }
+
     #endregion
   }
 }

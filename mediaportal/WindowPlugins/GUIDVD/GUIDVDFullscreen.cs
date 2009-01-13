@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,27 +20,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Collections;
-using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
 using MediaPortal.Player;
-using MediaPortal.Playlists;
-using MediaPortal.Util;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-using MediaPortal.Video.Database;
 using MediaPortal.Services;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-
 
 namespace MediaPortal.GUI.Video
 {
@@ -54,7 +41,7 @@ namespace MediaPortal.GUI.Video
     public GUIDVDFullscreen()
       : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DVD;
+      GetID = (int) Window.WINDOW_DVD;
     }
 
     public override bool Init()
@@ -142,7 +129,8 @@ namespace MediaPortal.GUI.Video
       return GetID;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(341);
       strButtonImage = string.Empty;

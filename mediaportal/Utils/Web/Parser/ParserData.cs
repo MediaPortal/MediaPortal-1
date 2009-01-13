@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 
 namespace MediaPortal.Utils.Web
@@ -34,10 +33,13 @@ namespace MediaPortal.Utils.Web
   public class ParserData : IParserData
   {
     #region Variables
-    Dictionary<string, string> _data;
+
+    private Dictionary<string, string> _data;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ParserData"/> class.
     /// </summary>
@@ -45,9 +47,11 @@ namespace MediaPortal.Utils.Web
     {
       _data = new Dictionary<string, string>();
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the number of elements stored.
     /// </summary>
@@ -56,9 +60,11 @@ namespace MediaPortal.Utils.Web
     {
       get { return _data.Count; }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Gets an element by tag name.
     /// </summary>
@@ -80,7 +86,9 @@ namespace MediaPortal.Utils.Web
 
       enumerator.MoveNext();
       for (int i = 0; i < index; i++)
+      {
         enumerator.MoveNext();
+      }
 
       return enumerator.Current.Key;
     }
@@ -96,13 +104,17 @@ namespace MediaPortal.Utils.Web
 
       enumerator.MoveNext();
       for (int i = 0; i < index; i++)
+      {
         enumerator.MoveNext();
+      }
 
       return enumerator.Current.Value;
     }
+
     #endregion
 
     #region IParserData Implementations
+
     /// <summary>
     /// Sets an element.
     /// </summary>
@@ -112,6 +124,7 @@ namespace MediaPortal.Utils.Web
     {
       _data.Add(tag, value);
     }
+
     #endregion
   }
 }

@@ -23,9 +23,8 @@
 
 #endregion
 
-using NUnit.Framework;
-using System.Collections;
 using MediaPortal.Utils.Web;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Utils.Web
 {
@@ -36,8 +35,8 @@ namespace MediaPortal.Tests.Utils.Web
     [Test]
     public void TagList()
     {
-
-      MatchTagCollection tagList = HtmlString.TagList("<table><tr><#non tag><td><*junk></td><!-- comment --></tr></table>");
+      MatchTagCollection tagList =
+        HtmlString.TagList("<table><tr><#non tag><td><*junk></td><!-- comment --></tr></table>");
       Assert.IsTrue(tagList.Count == 7);
     }
 

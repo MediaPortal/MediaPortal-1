@@ -23,10 +23,8 @@
 
 #endregion
 
-using System;
-using MediaPortal.GUI.Library;
 using System.Drawing;
-
+using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.home
 {
@@ -35,12 +33,11 @@ namespace WindowPlugins.home
   /// </summary>
   public class GUIBasicHome : GUIWindow
   {
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl _videoWindow = null;
+    [SkinControl(99)] protected GUIVideoControl _videoWindow = null;
 
     public GUIBasicHome()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+      GetID = (int) Window.WINDOW_SECOND_HOME;
     }
 
     public override bool Init()
@@ -55,16 +52,16 @@ namespace WindowPlugins.home
       if (ctl != null)
       {
         ctl.Focus = false;
-        ctl.Focus = true;   // this will update the skin property #highlightedbutton
+        ctl.Focus = true; // this will update the skin property #highlightedbutton
       }
       base.OnPageLoad();
 
       //set video window position
       if (_videoWindow != null)
       {
-        GUIGraphicsContext.VideoWindow = new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height);
+        GUIGraphicsContext.VideoWindow = new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition,
+                                                       _videoWindow.Width, _videoWindow.Height);
       }
     }
-
   }
 }

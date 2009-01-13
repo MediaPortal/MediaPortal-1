@@ -23,31 +23,50 @@
 
 #endregion
 
-using System;
 using MediaPortal.TV.Scanning;
+using TVCapture;
+
 namespace MediaPortal.TV.Recording
 {
-	/// <summary>
-	/// Singleton class implementing a factory which can be used for creating new
-	/// instances of IGraph for a particular TVCapture card
-	/// <seealso cref="MediaPortal.TV.Recording.IGraph"/>
-	/// </summary>
-	public class GraphFactory
-	{
-		private GraphFactory()
-		{
-		}
-		
-		public static ITuning CreateTuning(TVCaptureDevice card)
-		{
-			if (!card.CreateGraph()) return null;
-			if (card.Network == NetworkType.Analog) return new AnalogTVTuning();
-			if (card.Network == NetworkType.DVBT) return new DVBTTuning();
-			if (card.Network == NetworkType.DVBS) return new DVBSTuning();
-			if (card.Network == NetworkType.DVBC) return new DVBCTuning();
-			if (card.Network == NetworkType.ATSC) return new ATSCTuning();
-			return null;
-		}
+  /// <summary>
+  /// Singleton class implementing a factory which can be used for creating new
+  /// instances of IGraph for a particular TVCapture card
+  /// <seealso cref="MediaPortal.TV.Recording.IGraph"/>
+  /// </summary>
+  public class GraphFactory
+  {
+    private GraphFactory()
+    {
+    }
+
+    public static ITuning CreateTuning(TVCaptureDevice card)
+    {
+      if (!card.CreateGraph())
+      {
+        return null;
+      }
+      if (card.Network == NetworkType.Analog)
+      {
+        return new AnalogTVTuning();
+      }
+      if (card.Network == NetworkType.DVBT)
+      {
+        return new DVBTTuning();
+      }
+      if (card.Network == NetworkType.DVBS)
+      {
+        return new DVBSTuning();
+      }
+      if (card.Network == NetworkType.DVBC)
+      {
+        return new DVBCTuning();
+      }
+      if (card.Network == NetworkType.ATSC)
+      {
+        return new ATSCTuning();
+      }
+      return null;
+    }
 
     /// <summary>
     /// Creates a new object which supports the specified TVCapture card and implements
@@ -58,32 +77,32 @@ namespace MediaPortal.TV.Recording
     /// <seealso>MediaPortal.TV.Recording.TVCaptureDevice</seealso>
     public static IGraph CreateGraph(TVCaptureDevice card)
     {
+      if (card.CardType == CardTypes.Digital_BDA)
+      {
+        return new DVBGraphBDA(card);
+      }
 
-      if (card.CardType == TVCapture.CardTypes.Digital_BDA)
-				return new DVBGraphBDA(card);
-
-      if (card.CardType == TVCapture.CardTypes.Digital_SS2)
-			{
+      if (card.CardType == CardTypes.Digital_SS2)
+      {
         return new DVBGraphSkyStar2(card);
-				//return new DVBGraphSS2(card.ID);
-			}
+        //return new DVBGraphSS2(card.ID);
+      }
       /*
       if (card.CardType == TVCapture.CardTypes.Digital_TTPremium)
       {
         return new DVBGraphTTPremium(card);
       }
       */
-      if (card.CardType == TVCapture.CardTypes.Analog)
+      if (card.CardType == CardTypes.Analog)
       {
         return new SinkGraphEx(card);
       }
-			if (card.CardType== TVCapture.CardTypes.Analog_MCE)
+      if (card.CardType == CardTypes.Analog_MCE)
       {
         return new SinkGraphEx(card);
       }
 
       return new DummyGraph(card);
     }
-	}
+  }
 }
-

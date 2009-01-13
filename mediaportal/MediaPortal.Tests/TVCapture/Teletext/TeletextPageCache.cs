@@ -24,11 +24,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using MediaPortal.TV.Teletext;
 using NUnit.Framework;
+
 namespace MediaPortal.Tests.Teletext
 {
   [TestFixture]
@@ -42,7 +41,7 @@ namespace MediaPortal.Tests.Teletext
       int pageNr2 = 0x234;
       TeletextPageCache cache = new TeletextPageCache();
 
-      Assert.AreEqual(0,cache.NumberOfSubpages(pageNr));
+      Assert.AreEqual(0, cache.NumberOfSubpages(pageNr));
 
       cache.AllocPage(pageNr, 0x0);
       Assert.AreEqual(1, cache.NumberOfSubpages(pageNr));
@@ -132,21 +131,39 @@ namespace MediaPortal.Tests.Teletext
     [Test]
     public void GetSetPage()
     {
-      byte[] byData = new byte[50 * 42];
+      byte[] byData = new byte[50*42];
       TeletextPageCache cache = new TeletextPageCache();
       byte kar = 0;
-      for (int pageNr = 0x100; pageNr <= 0x200; pageNr+=0x10)
+      for (int pageNr = 0x100; pageNr <= 0x200; pageNr += 0x10)
       {
-        if (kar < 255) kar++;
-        else kar=0;
-        for (int subPageNr = 0x0; subPageNr <= 0x70; subPageNr+=0x10)
+        if (kar < 255)
         {
-          if (kar < 255) kar++;
-          else kar = 0;
-          for (int i=0; i < byData.Length;++i)
+          kar++;
+        }
+        else
+        {
+          kar = 0;
+        }
+        for (int subPageNr = 0x0; subPageNr <= 0x70; subPageNr += 0x10)
+        {
+          if (kar < 255)
           {
-            if (kar < 255) kar++;
-            else kar = 0;
+            kar++;
+          }
+          else
+          {
+            kar = 0;
+          }
+          for (int i = 0; i < byData.Length; ++i)
+          {
+            if (kar < 255)
+            {
+              kar++;
+            }
+            else
+            {
+              kar = 0;
+            }
             byData[i] = kar;
           }
           cache.SetPage(pageNr, subPageNr, byData);
@@ -155,20 +172,38 @@ namespace MediaPortal.Tests.Teletext
 
       //now check it!
       kar = 0;
-      for (int pageNr = 0x100; pageNr <= 0x200; pageNr+=0x10)
+      for (int pageNr = 0x100; pageNr <= 0x200; pageNr += 0x10)
       {
-        if (kar < 255) kar++;
-        else kar = 0;
-        for (int subPageNr = 0x0; subPageNr <= 0x70; subPageNr+=0x10)
+        if (kar < 255)
+        {
+          kar++;
+        }
+        else
+        {
+          kar = 0;
+        }
+        for (int subPageNr = 0x0; subPageNr <= 0x70; subPageNr += 0x10)
         {
           byData = cache.GetPage(pageNr, subPageNr);
-          if (kar < 255) kar++;
-          else kar = 0;
+          if (kar < 255)
+          {
+            kar++;
+          }
+          else
+          {
+            kar = 0;
+          }
           for (int i = 0; i < byData.Length; ++i)
           {
-            if (kar < 255) kar++;
-            else kar = 0;
-            Assert.AreEqual(byData[i] , kar);
+            if (kar < 255)
+            {
+              kar++;
+            }
+            else
+            {
+              kar = 0;
+            }
+            Assert.AreEqual(byData[i], kar);
           }
         }
       }
@@ -177,10 +212,12 @@ namespace MediaPortal.Tests.Teletext
     [Test]
     public void ClearPage()
     {
-      byte[] byData = new byte[50 * 42];
+      byte[] byData = new byte[50*42];
       TeletextPageCache cache = new TeletextPageCache();
       for (int i = 0; i < byData.Length; ++i)
+      {
         byData[i] = 0xea;
+      }
 
       cache.SetPage(0x100, 0x1, byData);
       cache.ClearPage(0x100, 0x1);
@@ -191,18 +228,21 @@ namespace MediaPortal.Tests.Teletext
         Assert.AreEqual(32, byData[i]);
       }
     }
+
     [Test]
     public void GetPagePtr()
     {
-      byte[] byData = new byte[50 * 42];
+      byte[] byData = new byte[50*42];
       TeletextPageCache cache = new TeletextPageCache();
       for (int i = 0; i < byData.Length; ++i)
+      {
         byData[i] = 0xea;
+      }
 
       cache.SetPage(0x100, 0x1, byData);
-      byData = new byte[50 * 42];
+      byData = new byte[50*42];
 
-      IntPtr ptrPage=cache.GetPagePtr(0x100, 0x1);
+      IntPtr ptrPage = cache.GetPagePtr(0x100, 0x1);
       Marshal.Copy(ptrPage, byData, 0, byData.Length);
 
       for (int i = 0; i < byData.Length; ++i)

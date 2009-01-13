@@ -24,10 +24,11 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.IO;
+using System.Threading;
+using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
@@ -59,7 +60,10 @@ namespace MediaPortal.Video.Database
     public bool Fetch(string movieName)
     {
       this.movieName = movieName;
-      if (movieName == string.Empty) return true;
+      if (movieName == string.Empty)
+      {
+        return true;
+      }
       if (!OnSearchStarting(this))
       {
         return false;
@@ -102,7 +106,10 @@ namespace MediaPortal.Video.Database
     public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie)
     {
       movieDetails = currentMovie;
-      if ((selectedMovie < 0) || (selectedMovie >= this.Count)) return true;
+      if ((selectedMovie < 0) || (selectedMovie >= this.Count))
+      {
+        return true;
+      }
       this.url = this[selectedMovie];
       this.movieName = this.url.Title;
       if (!OnDetailsStarting(this))
@@ -159,10 +166,10 @@ namespace MediaPortal.Video.Database
               }
             }
           }
-          string largeCoverArt = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-          string coverArt = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-          MediaPortal.Util.Utils.FileDelete(largeCoverArt);
-          MediaPortal.Util.Utils.FileDelete(coverArt);
+          string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
+          string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
+          Util.Utils.FileDelete(largeCoverArt);
+          Util.Utils.FileDelete(coverArt);
           line1 = GUILocalizeStrings.Get(1009);
           OnProgress(line1, movieDetails.Title, string.Empty, -1);
           //Only get actors if we really want to.
@@ -225,8 +232,8 @@ namespace MediaPortal.Video.Database
         actorsThread = null;
         disableCancel = false;
       }
-
     }
+
     private void _fetchActorsInMovie()
     {
       if (movieDetails == null)
@@ -234,7 +241,7 @@ namespace MediaPortal.Video.Database
         return;
       }
       string cast = movieDetails.Cast + "," + movieDetails.Director;
-      char[] splitter = { '\n', ',' };
+      char[] splitter = {'\n', ','};
       string[] temp = cast.Split(splitter);
       ArrayList actors = new ArrayList();
       foreach (string element in temp)
@@ -250,7 +257,7 @@ namespace MediaPortal.Video.Database
         int percent = 0;
         for (int i = 0; i < actors.Count; ++i)
         {
-          string actor = (string)actors[i];
+          string actor = (string) actors[i];
           string role = string.Empty;
           int pos = actor.IndexOf(" as ");
           if (pos >= 0)
@@ -287,10 +294,10 @@ namespace MediaPortal.Video.Database
               VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
               if (imdbActor.ThumbnailUrl != string.Empty)
               {
-                string largeCoverArt = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-                string coverArt = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-                MediaPortal.Util.Utils.FileDelete(largeCoverArt);
-                MediaPortal.Util.Utils.FileDelete(coverArt);
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.Name);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.Name);
+                Util.Utils.FileDelete(largeCoverArt);
+                Util.Utils.FileDelete(coverArt);
                 line1 = GUILocalizeStrings.Get(1009);
                 OnProgress(line1, line2, line3, percent);
                 DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.Name);
@@ -313,38 +320,50 @@ namespace MediaPortal.Video.Database
             VideoDatabase.SetActorInfo(actorId, imdbActor);
             VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
           }
-          percent += 100 / actors.Count;
+          percent += 100/actors.Count;
         }
       }
     }
 
     public void CancelFetchActors()
     {
-      if (actorsThread == null) return;
+      if (actorsThread == null)
+      {
+        return;
+      }
       if ((actorsThread.IsAlive) && (!disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
         actorsThread.Abort();
       }
     }
+
     public void CancelFetch()
     {
-      if (movieThread == null) return;
+      if (movieThread == null)
+      {
+        return;
+      }
       if ((movieThread.IsAlive) && (!disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", movieThread.ManagedThreadId);
         movieThread.Abort();
       }
     }
+
     public void CancelFetchDetails()
     {
-      if (detailsThread == null) return;
+      if (detailsThread == null)
+      {
+        return;
+      }
       if ((detailsThread.IsAlive) && (!disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", detailsThread.ManagedThreadId);
         detailsThread.Abort();
       }
     }
+
     // MovieName for the search
     public string MovieName
     {
@@ -385,7 +404,9 @@ namespace MediaPortal.Video.Database
         int distance = Levenshtein.Match(name, _imdb[index].Title);
 
         if (distance == matchingDistance && matchingDistance != int.MaxValue)
+        {
           isAmbiguous = true;
+        }
 
         if (distance < matchingDistance)
         {
@@ -396,12 +417,15 @@ namespace MediaPortal.Video.Database
       }
 
       if (isAmbiguous)
+      {
         return -1;
+      }
 
       return matchingIndex;
     }
 
     #region IMDB.IProgress
+
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
       disableCancel = true;
@@ -411,6 +435,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
       if (progress != null)
@@ -418,6 +443,7 @@ namespace MediaPortal.Video.Database
         progress.OnProgress(line1, line2, line3, percent);
       }
     }
+
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -426,6 +452,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -434,6 +461,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -442,6 +470,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -450,6 +479,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -458,6 +488,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -466,6 +497,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -474,6 +506,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -482,6 +515,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -490,6 +524,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -498,6 +533,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       if (progress != null)
@@ -506,6 +542,7 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
+
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
       if (progress != null)
@@ -518,6 +555,7 @@ namespace MediaPortal.Video.Database
         return false;
       }
     }
+
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selected)
     {
       if (progress != null)
@@ -530,6 +568,7 @@ namespace MediaPortal.Video.Database
         return false;
       }
     }
+
     public bool OnScanStart(int total)
     {
       if (progress != null)
@@ -538,6 +577,7 @@ namespace MediaPortal.Video.Database
       }
       return true;
     }
+
     public bool OnScanEnd()
     {
       if (progress != null)
@@ -546,6 +586,7 @@ namespace MediaPortal.Video.Database
       }
       return true;
     }
+
     public bool OnScanIterating(int count)
     {
       if (progress != null)
@@ -554,6 +595,7 @@ namespace MediaPortal.Video.Database
       }
       return true;
     }
+
     public bool OnScanIterated(int count)
     {
       if (progress != null)
@@ -564,10 +606,12 @@ namespace MediaPortal.Video.Database
     }
 
     #endregion
+
     /// <summary>
     /// Download IMDB info for a movie
     /// </summary>
-    public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching, bool getActors)
+    public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching,
+                                   bool getActors)
     {
       Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       string strMovieName = currentMovie.SearchString;
@@ -597,25 +641,28 @@ namespace MediaPortal.Video.Database
         strMovieName = currentMovie.Title;
         if ((strMovieName == string.Empty) || (strMovieName == Strings.Unknown))
         {
-          if (strFileName == string.Empty) return true;
-          if (MediaPortal.Util.Utils.IsDVD(strFileName))
+          if (strFileName == string.Empty)
+          {
+            return true;
+          }
+          if (Util.Utils.IsDVD(strFileName))
           {
             //DVD
             string strDrive = strFileName.Substring(0, 2);
-            currentMovie.DVDLabel = MediaPortal.Util.Utils.GetDriveName(strDrive);
+            currentMovie.DVDLabel = Util.Utils.GetDriveName(strDrive);
             strMovieName = currentMovie.DVDLabel;
           }
           else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
           {
             //DVD folder
             string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
-            currentMovie.DVDLabel = System.IO.Path.GetFileName(dvdFolder);
+            currentMovie.DVDLabel = Path.GetFileName(dvdFolder);
             strMovieName = currentMovie.DVDLabel;
           }
           else
           {
             //Movie 
-            strMovieName = System.IO.Path.GetFileNameWithoutExtension(strFileName);
+            strMovieName = Path.GetFileNameWithoutExtension(strFileName);
           }
         }
         if ((strMovieName == string.Empty) || (strMovieName == Strings.Unknown))
@@ -630,7 +677,10 @@ namespace MediaPortal.Video.Database
       currentMovie.SearchString = strMovieName;
       if (currentMovie.ID >= 0)
       {
-        if (!Util.Win32API.IsConnectedToInternet()) return false;
+        if (!Win32API.IsConnectedToInternet())
+        {
+          return false;
+        }
         IMDBFetcher fetcher = new IMDBFetcher(progress);
         fetcher.Movie = currentMovie;
         fetcher.getActors = getActors;
@@ -654,7 +704,10 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
-              if (strMovieName == string.Empty) return false;
+              if (strMovieName == string.Empty)
+              {
+                return false;
+              }
             }
           }
           else
@@ -680,7 +733,10 @@ namespace MediaPortal.Video.Database
                   {
                     return false;
                   }
-                  if (strMovieName == string.Empty) return false;
+                  if (strMovieName == string.Empty)
+                  {
+                    return false;
+                  }
                 }
               }
             }
@@ -694,7 +750,10 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
-              if (strMovieName == string.Empty) return false;
+              if (strMovieName == string.Empty)
+              {
+                return false;
+              }
             }
           }
         } while (selectedMovie < 0);
@@ -724,28 +783,32 @@ namespace MediaPortal.Video.Database
       {
         if (imageUrl.Length > 0)
         {
-          string largeCoverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(type, title);
-          string coverArtImage = MediaPortal.Util.Utils.GetCoverArtName(type, title);
-          if (!System.IO.File.Exists(coverArtImage))
+          string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(type, title);
+          string coverArtImage = Util.Utils.GetCoverArtName(type, title);
+          if (!File.Exists(coverArtImage))
           {
             string imageExtension;
-            imageExtension = System.IO.Path.GetExtension(imageUrl);
+            imageExtension = Path.GetExtension(imageUrl);
             if (imageExtension == string.Empty)
             {
               imageExtension = ".jpg";
             }
             string temporaryFilename = "temp";
             temporaryFilename += imageExtension;
-            MediaPortal.Util.Utils.FileDelete(temporaryFilename);
+            Util.Utils.FileDelete(temporaryFilename);
 
-            MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
-            if (System.IO.File.Exists(temporaryFilename))
+            Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+            if (File.Exists(temporaryFilename))
             {
-              if (MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+              if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int) Thumbs.ThumbLargeResolution,
+                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+              {
+                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int) Thumbs.ThumbResolution,
+                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+              }
             }
 
-            MediaPortal.Util.Utils.FileDelete(temporaryFilename);
+            Util.Utils.FileDelete(temporaryFilename);
           }
         }
       }
@@ -757,7 +820,8 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// Download IMDB info for all movies in a collection of paths
     /// </summary>
-    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting, bool getActors)
+    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting,
+                                bool getActors)
     {
       bool success = true;
       ArrayList availableFiles = new ArrayList();
@@ -785,7 +849,7 @@ namespace MediaPortal.Video.Database
         if (!skipExisting || id == -1)
         {
           string path, filename;
-          MediaPortal.Util.Utils.Split(file, out path, out filename);
+          Util.Utils.Split(file, out path, out filename);
           movieDetails.Path = path;
           movieDetails.File = filename;
           GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
@@ -803,6 +867,7 @@ namespace MediaPortal.Video.Database
       }
       return success;
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -816,7 +881,7 @@ namespace MediaPortal.Video.Database
       try
       {
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+        dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
@@ -847,7 +912,9 @@ namespace MediaPortal.Video.Database
         // Ignore
       }
     }
-    public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching, bool getActors)
+
+    public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching,
+                                       bool getActors)
     {
       string file, path, filename;
       path = movieDetails.Path;
@@ -864,7 +931,7 @@ namespace MediaPortal.Video.Database
           filename = filename.Substring(1);
           movieDetails.File = filename;
         }
-        file = path + System.IO.Path.DirectorySeparatorChar + filename;
+        file = path + Path.DirectorySeparatorChar + filename;
       }
       else
       {
@@ -877,25 +944,28 @@ namespace MediaPortal.Video.Database
         Log.Info("Adding file:{0}", file);
         id = VideoDatabase.AddMovieFile(file);
         VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+        dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
-          if (item.IsFolder) continue;
-          if (MediaPortal.Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
+          if (item.IsFolder)
+          {
+            continue;
+          }
+          if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
 
-            MediaPortal.Database.DatabaseUtility.Split(item.Path, out strPath, out strFileName);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strFileName);
+            DatabaseUtility.Split(item.Path, out strPath, out strFileName);
+            DatabaseUtility.RemoveInvalidChars(ref strPath);
+            DatabaseUtility.RemoveInvalidChars(ref strFileName);
             int pathId = VideoDatabase.AddPath(strPath);
             VideoDatabase.AddFile(id, pathId, strFileName);
           }
         }
         movieDetails.ID = id;
       }
-      if (IMDBFetcher.RefreshIMDB(progress, ref movieDetails, isFuzzyMatching, getActors))
+      if (RefreshIMDB(progress, ref movieDetails, isFuzzyMatching, getActors))
       {
         if (movieDetails != null)
         {
@@ -904,6 +974,5 @@ namespace MediaPortal.Video.Database
       }
       return false;
     }
-
   }
 }

@@ -1,17 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Threading;
-using MediaPortal.TV.Teletext;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
-
+using MediaPortal.GUI.Library;
+using MediaPortal.TV.Teletext;
 
 namespace MediaPortal.GUI.TV
 {
+
   #region enum
+
   public enum TeletextButton
   {
     Red,
@@ -19,6 +17,7 @@ namespace MediaPortal.GUI.TV
     Yellow,
     Blue
   }
+
   #endregion
 
   /// <summary>
@@ -27,15 +26,15 @@ namespace MediaPortal.GUI.TV
   public class GUITVTeletextBase : GUIWindow
   {
     #region gui controls
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblMessage = null;
-    [SkinControlAttribute(500)]
-    protected GUIImage imgTeletextFirst = null;
-    [SkinControlAttribute(501)]
-    protected GUIImage imgTeletextSecond = null;
+
+    [SkinControl(27)] protected GUILabelControl lblMessage = null;
+    [SkinControl(500)] protected GUIImage imgTeletextFirst = null;
+    [SkinControl(501)] protected GUIImage imgTeletextSecond = null;
+
     #endregion
 
     #region variables
+
     protected Bitmap bmpTeletextPage;
     protected string inputLine = string.Empty;
     protected int currentPageNumber = 100;
@@ -56,20 +55,21 @@ namespace MediaPortal.GUI.TV
     protected bool _rememberLastValues;
     protected bool _updating;
     protected int _percentageOfMaximumHeight;
-    protected bool _updateFirst=true;
+    protected bool _updateFirst = true;
+
     #endregion
 
     #region Property
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     #endregion
 
     #region Initialization method
+
     /// <summary>
     /// Initialize the window
     /// </summary>
@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.TV
       lblMessage.Visible = false;
       // Activate teletext grabbing in the server
       TeletextGrabber.Grab = true;
-      TeletextGrabber.TeletextCache.PageUpdatedEvent += new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+      TeletextGrabber.TeletextCache.PageUpdatedEvent += new DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 
 
       // Remember the start time
@@ -96,12 +96,12 @@ namespace MediaPortal.GUI.TV
       // Initialize the images
       if (imgTeletextFirst != null)
       {
-        imgTeletextFirst.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        imgTeletextFirst.ColorKey = Color.HotPink.ToArgb();
         TeletextGrabber.TeletextCache.SetPageSize(imgTeletextFirst.Width, imgTeletextFirst.Height);
       }
       if (imgTeletextSecond != null)
       {
-        imgTeletextSecond.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        imgTeletextSecond.ColorKey = Color.HotPink.ToArgb();
         TeletextGrabber.TeletextCache.SetPageSize(imgTeletextSecond.Width, imgTeletextSecond.Height);
       }
 
@@ -123,13 +123,15 @@ namespace MediaPortal.GUI.TV
       _updateThread.IsBackground = true;
       _updateThread.Start();
     }
+
     #endregion
 
     #region OnAction
+
     public override void OnAction(Action action)
     {
       // if we have a keypress or a remote button press then check if it is a number and add it to the inputLine
-      char key = (char)0;
+      char key = (char) 0;
       if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
       {
         if (action.m_key != null)
@@ -137,10 +139,13 @@ namespace MediaPortal.GUI.TV
           if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            key = (char)action.m_key.KeyChar;
+            key = (char) action.m_key.KeyChar;
           }
         }
-        if (key == (char)0) return;
+        if (key == (char) 0)
+        {
+          return;
+        }
         UpdateInputLine(key);
       }
       switch (action.wID)
@@ -195,9 +200,11 @@ namespace MediaPortal.GUI.TV
       }
       base.OnAction(action);
     }
+
     #endregion
 
     #region Navigation methods
+
     /// <summary>
     /// Selects the next subpage, if possible
     /// </summary>
@@ -276,9 +283,13 @@ namespace MediaPortal.GUI.TV
         currentPageNumber = Int32.Parse(inputLine);
         currentSubPageNumber = 1;
         if (currentPageNumber < 100)
+        {
           currentPageNumber = 100;
+        }
         if (currentPageNumber > 899)
+        {
           currentPageNumber = 899;
+        }
         RequestPage();
         inputLine = "";
       }
@@ -306,13 +317,13 @@ namespace MediaPortal.GUI.TV
           hexPage = TeletextGrabber.TeletextCache.PageBlue;
           break;
       }
-      int mag = hexPage / 0x100;
-      hexPage -= mag * 0x100;
+      int mag = hexPage/0x100;
+      hexPage -= mag*0x100;
 
-      int tens = hexPage / 0x10;
-      hexPage -= tens * 0x10;
+      int tens = hexPage/0x10;
+      hexPage -= tens*0x10;
 
-      int pageNr = mag * 100 + tens * 10 + hexPage;
+      int pageNr = mag*100 + tens*10 + hexPage;
       if (pageNr >= 100 && pageNr <= 899)
       {
         showNewPage(pageNr);
@@ -335,9 +346,11 @@ namespace MediaPortal.GUI.TV
         return;
       }
     }
+
     #endregion
 
     #region Update, Process, Cache event callback and Redraw
+
     /// <summary>
     /// Callback for the update event
     /// </summary>
@@ -347,15 +360,24 @@ namespace MediaPortal.GUI.TV
       // here is only a flag set to true, the bitmap is getting
       // in a timer-elapsed event!
       if (TeletextGrabber.TeletextCache == null)
+      {
         return;
+      }
       //if (TeletextGrabber.TeletextCache.PageSelectText.IndexOf("-") != -1)// page select is running
       //  return;
       if (GUIWindowManager.ActiveWindow == GetID)
       {
-        if (currentPageNumber < 100) currentPageNumber = 100;
-        if (currentPageNumber > 899) currentPageNumber = 899;
+        if (currentPageNumber < 100)
+        {
+          currentPageNumber = 100;
+        }
+        if (currentPageNumber > 899)
+        {
+          currentPageNumber = 899;
+        }
         int NumberOfSubpages = TeletextGrabber.TeletextCache.NumberOfSubpages(currentPageNumber);
-        Log.Debug("dvb-teletext page updated. {0:X}/{1}", Convert.ToString(currentPageNumber), Convert.ToString(currentSubPageNumber));
+        Log.Debug("dvb-teletext page updated. {0:X}/{1}", Convert.ToString(currentPageNumber),
+                  Convert.ToString(currentSubPageNumber));
         RequestPage();
         if (NumberOfSubpages > currentSubPageNumber)
         {
@@ -365,7 +387,6 @@ namespace MediaPortal.GUI.TV
         {
           currentSubPageNumber = 1;
         }
-
       }
     }
 
@@ -381,17 +402,19 @@ namespace MediaPortal.GUI.TV
       {
         // Is there an update request, than update
         if (_requestPage[_requestPtr] != -1)
-        { // Ok to check because thread updates _reqPtr
-          Log.Debug("dvb-teletext: Thread render page {0} / subpage {1} /ptr {2}", currentPageNumber, currentSubPageNumber, _requestPtr);
+        {
+          // Ok to check because thread updates _reqPtr
+          Log.Debug("dvb-teletext: Thread render page {0} / subpage {1} /ptr {2}", currentPageNumber,
+                    currentSubPageNumber, _requestPtr);
           _renderPtr = _requestPtr;
           _requestmutex.WaitOne();
-          _requestPtr = (_requestPtr + 1) % 2;
+          _requestPtr = (_requestPtr + 1)%2;
           _requestmutex.ReleaseMutex();
 
           GetNewPage(_requestPage[_renderPtr], _requestSubPage[_renderPtr]);
           _requestPage[_renderPtr] = -1;
-          Log.Debug("dvb-teletext: Thread end - render page {0} / subpage {1} /ptr {2}", currentPageNumber, currentSubPageNumber, _requestPtr);
-         
+          Log.Debug("dvb-teletext: Thread end - render page {0} / subpage {1} /ptr {2}", currentPageNumber,
+                    currentSubPageNumber, _requestPtr);
         }
         else
         {
@@ -400,7 +423,6 @@ namespace MediaPortal.GUI.TV
         }
       }
       Log.Debug("dvb-teletext: Thread render exit");
-        
     }
 
     /// <summary>
@@ -422,7 +444,7 @@ namespace MediaPortal.GUI.TV
             // Update first image. Step 1 make it invisible
             imgTeletextFirst.IsVisible = false;
             // Clear the old image
-            System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
+            Image img = (Image) bmpTeletextPage.Clone();
             imgTeletextFirst.FileName = "";
             GUITextureManager.ReleaseTexture("[teletextpage]");
             // Set the new image and make the image visible again
@@ -438,7 +460,7 @@ namespace MediaPortal.GUI.TV
             // Update second image
             imgTeletextSecond.IsVisible = false;
             // Clear the old image
-            System.Drawing.Image img2 = (Image)bmpTeletextPage.Clone();
+            Image img2 = (Image) bmpTeletextPage.Clone();
             imgTeletextSecond.FileName = "";
             GUITextureManager.ReleaseTexture("[teletextpage2]");
             // Set the new image and make the image visible again
@@ -454,27 +476,29 @@ namespace MediaPortal.GUI.TV
         {
           Log.Error(ex);
         }
-
       }
     }
 
     protected void RequestPage()
     {
       _requestmutex.WaitOne();
-      Log.Debug("dvb-teletext: RequestPage page {0} / subpage {1} /ptr {2}", currentPageNumber, currentSubPageNumber, _requestPtr);
+      Log.Debug("dvb-teletext: RequestPage page {0} / subpage {1} /ptr {2}", currentPageNumber, currentSubPageNumber,
+                _requestPtr);
       _requestPage[_requestPtr] = currentPageNumber;
       _requestSubPage[_requestPtr] = currentSubPageNumber;
       _requestmutex.ReleaseMutex();
     }
+
     #endregion
 
     #region Serialisation
+
     /// <summary>
     /// Load the settings
     /// </summary>
     protected void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
@@ -490,15 +514,14 @@ namespace MediaPortal.GUI.TV
     {
       if (_rememberLastValues)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlreader.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
           xmlreader.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);
         }
       }
     }
-    #endregion
 
+    #endregion
   }
 }
-

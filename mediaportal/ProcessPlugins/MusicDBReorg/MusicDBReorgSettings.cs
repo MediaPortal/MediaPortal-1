@@ -27,15 +27,16 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.Profile;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+
 #endregion
 
 namespace MediaPortal.ProcessPlugins.MusicDBReorg
 {
-  public partial class MusicDBReorgSettings : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class MusicDBReorgSettings : MPConfigForm
   {
-
     #region Ctor
 
     public MusicDBReorgSettings()
@@ -51,18 +52,22 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private void LoadSettings()
     {
       // load settings
-      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         int hours, minutes;
         hours = reader.GetValueAsInt("musicdbreorg", "hours", 0);
         minutes = reader.GetValueAsInt("musicdbreorg", "minutes", 0);
         VerifySchedule(ref hours, ref minutes);
         hoursTextBox.Text = hours.ToString();
-        minutesTextBox.Text = minutes.ToString() ;
+        minutesTextBox.Text = minutes.ToString();
         if (hoursTextBox.Text.Length == 1)
+        {
           hoursTextBox.Text = "0" + hoursTextBox.Text;
+        }
         if (minutesTextBox.Text.Length == 1)
+        {
           minutesTextBox.Text = "0" + minutesTextBox.Text;
+        }
 
         cbMonday.Checked = reader.GetValueAsBool("musicdbreorg", "monday", true);
         cbTuesday.Checked = reader.GetValueAsBool("musicdbreorg", "tuesday", true);
@@ -77,7 +82,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private void SaveSettings()
     {
       // save settings
-      using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         int hours, minutes;
         hours = Int32.Parse(hoursTextBox.Text);
@@ -99,13 +104,17 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private void VerifySchedule(ref int hours, ref int minutes)
     {
       if (hours < 0 || hours > 23)
+      {
         hours = 0;
+      }
       if (minutes < 0 || minutes > 59)
+      {
         minutes = 0;
+      }
     }
 
     #endregion
-    
+
     #region Event handlers
 
     private void hoursTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -144,6 +153,5 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     }
 
     #endregion
-
   }
 }

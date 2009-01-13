@@ -24,21 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
-using MediaPortal.ControlDevices;
 
 namespace MediaPortal.ControlDevices
 {
   public partial class LearnControlPanel : UserControl
   {
-
-    
     public LearnControlPanel()
     {
       InitializeComponent();
@@ -113,29 +104,23 @@ namespace MediaPortal.ControlDevices
 
 
 //      mpCodeList.Items.Add(FactoryButton("CUSTOM_20"));
-
-
-
     }
 
- //   public ControlCode FactoryButton(string id)
- //   {
- //     return (ControlCode)new USBUIRTControlCode(id);
- //   }
+    //   public ControlCode FactoryButton(string id)
+    //   {
+    //     return (ControlCode)new USBUIRTControlCode(id);
+    //   }
 
     private void mpGroupBox1_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void USBUIRTLearnControl_Load(object sender, EventArgs e)
     {
-
     }
 
     private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
     {
-
     }
   }
 }

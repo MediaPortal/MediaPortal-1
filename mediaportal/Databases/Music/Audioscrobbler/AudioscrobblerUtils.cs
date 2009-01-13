@@ -26,25 +26,28 @@
 #region Usings
 
 using System;
-using System.Threading;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Web;
 using System.Xml;
-
-using MediaPortal.Util;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
+using MediaPortal.Util;
 
 #endregion
 
 namespace MediaPortal.Music.Database
 {
+
   #region argument types
 
   public enum lastFMFeed
@@ -116,6 +119,7 @@ namespace MediaPortal.Music.Database
     public bool MarkLocalTracks;
 
     public delegate void AlbumInfoRequestHandler(AlbumInfoRequest request, List<Song> songs);
+
     public AlbumInfoRequestHandler AlbumInfoRequestCompleted;
 
     public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, bool markLocalTracks)
@@ -126,16 +130,22 @@ namespace MediaPortal.Music.Database
       SortBestTracks = sortBestTracks;
       MarkLocalTracks = markLocalTracks;
     }
-    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, bool markLocalTracks, AlbumInfoRequestHandler handler)
+
+    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, bool markLocalTracks,
+                            AlbumInfoRequestHandler handler)
       : this(artistToSearch, albumToSearch, sortBestTracks, markLocalTracks)
     {
       AlbumInfoRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
-      List<Song> songs = AudioscrobblerUtils.Instance.getAlbumInfo(ArtistToSearch, AlbumToSearch, SortBestTracks, MarkLocalTracks);
+      List<Song> songs = AudioscrobblerUtils.Instance.getAlbumInfo(ArtistToSearch, AlbumToSearch, SortBestTracks,
+                                                                   MarkLocalTracks);
       if (AlbumInfoRequestCompleted != null)
+      {
         AlbumInfoRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -145,6 +155,7 @@ namespace MediaPortal.Music.Database
     public bool RandomizeArtists;
 
     public delegate void SimilarArtistRequestHandler(SimilarArtistRequest request, List<Song> songs);
+
     public SimilarArtistRequestHandler SimilarArtistRequestCompleted;
 
     public SimilarArtistRequest(string artistToSearch, bool randomizeArtists)
@@ -153,16 +164,20 @@ namespace MediaPortal.Music.Database
       ArtistToSearch = artistToSearch;
       RandomizeArtists = randomizeArtists;
     }
+
     public SimilarArtistRequest(string artistToSearch, bool randomizeArtists, SimilarArtistRequestHandler handler)
       : this(artistToSearch, randomizeArtists)
     {
       SimilarArtistRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getSimilarArtists(ArtistToSearch, RandomizeArtists);
       if (SimilarArtistRequestCompleted != null)
+      {
         SimilarArtistRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -172,6 +187,7 @@ namespace MediaPortal.Music.Database
     public string ArtistToSearch;
 
     public delegate void ArtistInfoRequestHandler(ArtistInfoRequest request, Song song);
+
     public ArtistInfoRequestHandler ArtistInfoRequestCompleted;
 
     public ArtistInfoRequest(string artistToSearch)
@@ -179,16 +195,20 @@ namespace MediaPortal.Music.Database
     {
       ArtistToSearch = artistToSearch;
     }
+
     public ArtistInfoRequest(string artistToSearch, ArtistInfoRequestHandler handler)
       : this(artistToSearch)
     {
       ArtistInfoRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       Song song = AudioscrobblerUtils.Instance.getArtistInfo(ArtistToSearch);
       if (ArtistInfoRequestCompleted != null)
+      {
         ArtistInfoRequestCompleted(this, song);
+      }
     }
   }
 
@@ -201,9 +221,11 @@ namespace MediaPortal.Music.Database
     public bool AddAvailableTracksOnly;
 
     public delegate void TagInfoRequestHandler(TagInfoRequest request, List<Song> songs);
+
     public TagInfoRequestHandler TagInfoRequestCompleted;
 
-    public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks, bool addAvailableTracksOnly)
+    public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks,
+                          bool addAvailableTracksOnly)
       : base(RequestType.GetAlbumInfo)
     {
       ArtistToSearch = artistToSearch;
@@ -212,16 +234,22 @@ namespace MediaPortal.Music.Database
       SortBestTracks = sortBestTracks;
       AddAvailableTracksOnly = addAvailableTracksOnly;
     }
-    public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks, bool addAvailableTracksOnly, TagInfoRequestHandler handler)
+
+    public TagInfoRequest(string artistToSearch, string trackToSearch, bool randomizeUsedTag, bool sortBestTracks,
+                          bool addAvailableTracksOnly, TagInfoRequestHandler handler)
       : this(artistToSearch, trackToSearch, randomizeUsedTag, sortBestTracks, addAvailableTracksOnly)
     {
       TagInfoRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
-      List<Song> songs = AudioscrobblerUtils.Instance.getTagInfo(ArtistToSearch, TrackToSearch, RandomizeUsedTag, SortBestTracks, AddAvailableTracksOnly);
+      List<Song> songs = AudioscrobblerUtils.Instance.getTagInfo(ArtistToSearch, TrackToSearch, RandomizeUsedTag,
+                                                                 SortBestTracks, AddAvailableTracksOnly);
       if (TagInfoRequestCompleted != null)
+      {
         TagInfoRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -232,6 +260,7 @@ namespace MediaPortal.Music.Database
     public string TrackToSearch;
 
     public delegate void TagsForTrackRequestHandler(TagsForTrackRequest request, List<Song> songs);
+
     public TagsForTrackRequestHandler TagsForTrackRequestCompleted;
 
     public TagsForTrackRequest(string artistToSearch, string trackToSearch)
@@ -240,16 +269,20 @@ namespace MediaPortal.Music.Database
       ArtistToSearch = artistToSearch;
       TrackToSearch = trackToSearch;
     }
+
     public TagsForTrackRequest(string artistToSearch, string trackToSearch, TagsForTrackRequestHandler handler)
       : this(artistToSearch, trackToSearch)
     {
       TagsForTrackRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getTagsForTrack(ArtistToSearch, TrackToSearch);
       if (TagsForTrackRequestCompleted != null)
+      {
         TagsForTrackRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -258,6 +291,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void UsersTagsRequestHandler(UsersTagsRequest request, List<Song> songs);
+
     public UsersTagsRequestHandler UsersTagsRequestCompleted;
 
     public UsersTagsRequest(string userForFeed)
@@ -265,16 +299,20 @@ namespace MediaPortal.Music.Database
     {
       UserForFeed = userForFeed;
     }
+
     public UsersTagsRequest(string userForFeed, UsersTagsRequestHandler handler)
       : this(userForFeed)
     {
       UsersTagsRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(lastFMFeed.toptags, UserForFeed);
       if (UsersTagsRequestCompleted != null)
+      {
         UsersTagsRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -283,6 +321,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void UsersFriendsRequestHandler(UsersFriendsRequest request, List<Song> songs);
+
     public UsersFriendsRequestHandler UsersFriendsRequestCompleted;
 
     public UsersFriendsRequest(string userForFeed)
@@ -290,16 +329,20 @@ namespace MediaPortal.Music.Database
     {
       UserForFeed = userForFeed;
     }
+
     public UsersFriendsRequest(string userForFeed, UsersFriendsRequestHandler handler)
       : this(userForFeed)
     {
       UsersFriendsRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(lastFMFeed.friends, UserForFeed);
       if (UsersFriendsRequestCompleted != null)
+      {
         UsersFriendsRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -309,6 +352,7 @@ namespace MediaPortal.Music.Database
     public string UserForFeed;
 
     public delegate void GeneralFeedRequestHandler(GeneralFeedRequest request, List<Song> songs);
+
     public GeneralFeedRequestHandler GeneralFeedRequestCompleted;
 
     public GeneralFeedRequest(lastFMFeed feedToSearch, string userForFeed)
@@ -317,24 +361,29 @@ namespace MediaPortal.Music.Database
       FeedToSearch = feedToSearch;
       UserForFeed = userForFeed;
     }
+
     public GeneralFeedRequest(lastFMFeed feedToSearch, string userForFeed, GeneralFeedRequestHandler handler)
       : this(feedToSearch, userForFeed)
     {
       GeneralFeedRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getAudioScrobblerFeed(FeedToSearch, UserForFeed);
       if (GeneralFeedRequestCompleted != null)
+      {
         GeneralFeedRequestCompleted(this, songs);
+      }
     }
   }
 
   public class NeighboursArtistsRequest : ScrobblerUtilsRequest
   {
-    bool _randomizeList;
+    private bool _randomizeList;
 
     public delegate void NeighboursArtistsRequestHandler(NeighboursArtistsRequest request, List<Song> songs);
+
     public NeighboursArtistsRequestHandler NeighboursArtistsRequestCompleted;
 
     public NeighboursArtistsRequest(bool randomizeList)
@@ -342,24 +391,29 @@ namespace MediaPortal.Music.Database
     {
       _randomizeList = randomizeList;
     }
+
     public NeighboursArtistsRequest(bool randomizeList, NeighboursArtistsRequestHandler handler)
       : this(randomizeList)
     {
       NeighboursArtistsRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getNeighboursArtists(_randomizeList);
       if (NeighboursArtistsRequestCompleted != null)
+      {
         NeighboursArtistsRequestCompleted(this, songs);
+      }
     }
   }
 
   public class FriendsArtistsRequest : ScrobblerUtilsRequest
   {
-    bool _randomizeList;
+    private bool _randomizeList;
 
     public delegate void FriendsArtistsRequestHandler(FriendsArtistsRequest request, List<Song> songs);
+
     public FriendsArtistsRequestHandler FriendsArtistsRequestCompleted;
 
     public FriendsArtistsRequest(bool randomizeList)
@@ -367,76 +421,101 @@ namespace MediaPortal.Music.Database
     {
       _randomizeList = randomizeList;
     }
+
     public FriendsArtistsRequest(bool randomizeList, FriendsArtistsRequestHandler handler)
       : this(randomizeList)
     {
       FriendsArtistsRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getFriendsArtists(_randomizeList);
       if (FriendsArtistsRequestCompleted != null)
+      {
         FriendsArtistsRequestCompleted(this, songs);
+      }
     }
   }
 
   public class RandomTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void RandomTracksRequestHandler(RandomTracksRequest request, List<Song> songs);
+
     public RandomTracksRequestHandler RandomTracksRequestCompleted;
 
     public RandomTracksRequest()
-      : base(RequestType.GetRandomTracks) { }
+      : base(RequestType.GetRandomTracks)
+    {
+    }
+
     public RandomTracksRequest(RandomTracksRequestHandler handler)
       : this()
     {
       RandomTracksRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getRandomTracks();
       if (RandomTracksRequestCompleted != null)
+      {
         RandomTracksRequestCompleted(this, songs);
+      }
     }
   }
 
   public class UnheardTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void UnheardTracksRequestHandler(UnheardTracksRequest request, List<Song> songs);
+
     public UnheardTracksRequestHandler UnheardTracksRequestCompleted;
 
     public UnheardTracksRequest()
-      : base(RequestType.GetUnhearedTracks) { }
+      : base(RequestType.GetUnhearedTracks)
+    {
+    }
+
     public UnheardTracksRequest(UnheardTracksRequestHandler handler)
       : this()
     {
       UnheardTracksRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getUnhearedTracks();
       if (UnheardTracksRequestCompleted != null)
+      {
         UnheardTracksRequestCompleted(this, songs);
+      }
     }
   }
 
   public class FavoriteTracksRequest : ScrobblerUtilsRequest
   {
     public delegate void FavoriteTracksRequestHandler(FavoriteTracksRequest request, List<Song> songs);
+
     public FavoriteTracksRequestHandler FavoriteTracksRequestCompleted;
 
     public FavoriteTracksRequest()
-      : base(RequestType.GetFavoriteTracks) { }
+      : base(RequestType.GetFavoriteTracks)
+    {
+    }
+
     public FavoriteTracksRequest(FavoriteTracksRequestHandler handler)
       : this()
     {
       FavoriteTracksRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
       List<Song> songs = AudioscrobblerUtils.Instance.getFavoriteTracks();
       if (FavoriteTracksRequestCompleted != null)
+      {
         FavoriteTracksRequestCompleted(this, songs);
+      }
     }
   }
 
@@ -447,7 +526,9 @@ namespace MediaPortal.Music.Database
     public string ListName;
     public bool StartPlayback;
 
-    public delegate void XspfPlaylistRequestHandler(XspfPlaylistRequest request, List<Song> songs, string listname, bool startnow);
+    public delegate void XspfPlaylistRequestHandler(
+      XspfPlaylistRequest request, List<Song> songs, string listname, bool startnow);
+
     public XspfPlaylistRequestHandler XspfPlaylistRequestCompleted;
 
     public XspfPlaylistRequest(bool attemptRetryOnHttpError, string urlWithSession, bool startPlay)
@@ -457,16 +538,22 @@ namespace MediaPortal.Music.Database
       UrlWithSession = urlWithSession;
       StartPlayback = startPlay;
     }
-    public XspfPlaylistRequest(bool attemptRetryOnHttpError, string urlWithSession, bool startPlay, XspfPlaylistRequestHandler handler)
+
+    public XspfPlaylistRequest(bool attemptRetryOnHttpError, string urlWithSession, bool startPlay,
+                               XspfPlaylistRequestHandler handler)
       : this(attemptRetryOnHttpError, urlWithSession, startPlay)
     {
       XspfPlaylistRequestCompleted += handler;
     }
+
     public override void PerformRequest()
     {
-      List<Song> songs = AudioscrobblerUtils.Instance.getRadioPlaylist(AttemptRetryOnHttpError, UrlWithSession, out ListName);
+      List<Song> songs = AudioscrobblerUtils.Instance.getRadioPlaylist(AttemptRetryOnHttpError, UrlWithSession,
+                                                                       out ListName);
       if (XspfPlaylistRequestCompleted != null)
+      {
         XspfPlaylistRequestCompleted(this, songs, ListName, StartPlayback);
+      }
     }
   }
 
@@ -496,10 +583,11 @@ namespace MediaPortal.Music.Database
     private object _queueMutex = new object();
 
     private delegate void AddRequestDelegate(ScrobblerUtilsRequest request);
+
     private delegate void RemoveRequestDelegate(ScrobblerUtilsRequest request);
 
     // List<Song> songList = null;
-    List<String> _unwantedTags = null;
+    private List<String> _unwantedTags = null;
 
     #endregion
 
@@ -515,7 +603,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// ctor
     /// </summary>
-    AudioscrobblerUtils()
+    private AudioscrobblerUtils()
     {
       LoadSettings();
     }
@@ -543,20 +631,21 @@ namespace MediaPortal.Music.Database
           {
             _running = true;
             GlobalServiceProvider.Get<IThreadPool>().Add(delegate()
-            {
-              ScrobblerUtilsRequest req;
-              while (_requestQueue.Count > 0)
-              {
-                lock (_queueMutex)
-                {
-                  req = _requestQueue[0];
-                  _requestQueue.Remove(req);
-                }
-                req.PerformRequest();
-              }
-              lock (_queueMutex)
-                _running = false;
-            }, "ScrobblerUtilsRequest", QueuePriority.High, ThreadPriority.Normal);
+                                                           {
+                                                             ScrobblerUtilsRequest req;
+                                                             while (_requestQueue.Count > 0)
+                                                             {
+                                                               lock (_queueMutex)
+                                                               {
+                                                                 req = _requestQueue[0];
+                                                                 _requestQueue.Remove(req);
+                                                               }
+                                                               req.PerformRequest();
+                                                             }
+                                                             lock (_queueMutex)
+                                                               _running = false;
+                                                           }, "ScrobblerUtilsRequest", QueuePriority.High,
+                                                         ThreadPriority.Normal);
           }
         }
       }
@@ -570,8 +659,10 @@ namespace MediaPortal.Music.Database
     public void RemoveRequest(ScrobblerUtilsRequest request)
     {
       if (request != null)
+      {
         lock (_queueMutex)
           _requestQueue.Remove(request);
+      }
     }
 
     #endregion
@@ -582,14 +673,19 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (Convert.ToDouble(aSong.LastFMMatch, System.Globalization.NumberFormatInfo.InvariantInfo) < _minimumArtistMatchPercent)
+        if (Convert.ToDouble(aSong.LastFMMatch, NumberFormatInfo.InvariantInfo) < _minimumArtistMatchPercent)
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
       catch (Exception ex)
       {
-        Log.Warn("AudioscrobblerUtils: Could not check percentage match for Song: {0} - {1}", aSong.ToShortString(), ex.Message);
+        Log.Warn("AudioscrobblerUtils: Could not check percentage match for Song: {0} - {1}", aSong.ToShortString(),
+                 ex.Message);
         return false;
       }
     }
@@ -615,7 +711,7 @@ namespace MediaPortal.Music.Database
         {
           // If x is not null...
           if (y.LastFMMatch == null)
-          // ...and y is null, x is greater.
+            // ...and y is null, x is greater.
           {
             return -1;
           }
@@ -626,12 +722,18 @@ namespace MediaPortal.Music.Database
             if (x.LastFMMatch != string.Empty && y.LastFMMatch != string.Empty)
             {
               if (Convert.ToInt32(x.LastFMMatch) < Convert.ToInt32(x.LastFMMatch))
+              {
                 retval = 1;
+              }
               else
+              {
                 retval = -1;
+              }
             }
             else
+            {
               return 0;
+            }
 
             if (retval != 0)
             {
@@ -657,23 +759,32 @@ namespace MediaPortal.Music.Database
       try
       {
         if (x.TimesPlayed == 0)
+        {
           //if (y.TimesPlayed != null && y.TimesPlayed >= 0)
           //{
           //  return 1;
           //}
           //else
           return 0;
+        }
 
         if (y.TimesPlayed == 0)
+        {
           return 0;
+        }
 
         if (x.TimesPlayed == y.TimesPlayed)
+        {
           return 0;
+        }
+        else if (x.TimesPlayed < y.TimesPlayed)
+        {
+          retval = 1;
+        }
         else
-          if (x.TimesPlayed < y.TimesPlayed)
-            retval = 1;
-          else
-            retval = -1;
+        {
+          retval = -1;
+        }
 
         if (retval != 0)
         {
@@ -725,9 +836,9 @@ namespace MediaPortal.Music.Database
 
     #region Serialization
 
-    void LoadSettings()
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _decodeUtf8 = xmlreader.GetValueAsBool("audioscrobbler", "decodeutf8", false);
@@ -736,10 +847,14 @@ namespace MediaPortal.Music.Database
       MusicDatabase mdb = MusicDatabase.Instance;
       _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
-      _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
+      _useDebugLog =
+        (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1)
+          ? true
+          : false;
       //int tmpRMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iOfflineMode", -1);
       int tmpRand = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iRandomness", -1);
-      int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode", -1);
+      int tmpNMode = mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iNeighbourMode",
+                                                 -1);
 
       switch (tmpNMode)
       {
@@ -758,7 +873,7 @@ namespace MediaPortal.Music.Database
       }
 
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
-      ArtistMatchPercent = 100 - (int)(0.9 * _randomNessPercent);
+      ArtistMatchPercent = 100 - (int) (0.9*_randomNessPercent);
       _unwantedTags = buildTagBlacklist();
       LookupLock = new object();
     }
@@ -772,71 +887,73 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public int ArtistMatchPercent
     {
-      get
-      {
-        return _minimumArtistMatchPercent;
-      }
+      get { return _minimumArtistMatchPercent; }
       set
       {
         if (value != _minimumArtistMatchPercent)
         {
           _minimumArtistMatchPercent = value;
           if (_useDebugLog)
-            Log.Info("AudioscrobblerBase: minimum match for similar artists set to {0}", Convert.ToString(_minimumArtistMatchPercent));
+          {
+            Log.Info("AudioscrobblerBase: minimum match for similar artists set to {0}",
+                     Convert.ToString(_minimumArtistMatchPercent));
+          }
         }
       }
     }
 
     public int LimitRandomListCount
     {
-      get
-      {
-        return _limitRandomListCount;
-      }
+      get { return _limitRandomListCount; }
       set
       {
         if (value != _limitRandomListCount)
         {
           _limitRandomListCount = value;
           if (_useDebugLog)
-            Log.Info("AudioscrobblerBase: limit for random result lists set to {0}", Convert.ToString(_limitRandomListCount));
+          {
+            Log.Info("AudioscrobblerBase: limit for random result lists set to {0}",
+                     Convert.ToString(_limitRandomListCount));
+          }
         }
       }
     }
 
     public int RandomNessPercent
     {
-      get
-      {
-        return _randomNessPercent;
-      }
+      get { return _randomNessPercent; }
       set
       {
         if (value != _randomNessPercent)
         {
           if (value == 0)
+          {
             _randomNessPercent = 1;
+          }
           else
+          {
             _randomNessPercent = value;
+          }
           if (_useDebugLog)
+          {
             Log.Info("AudioscrobblerBase: percentage of randomness set to {0}", Convert.ToString(_randomNessPercent));
+          }
         }
       }
     }
 
     public lastFMFeed CurrentNeighbourMode
     {
-      get
-      {
-        return _currentNeighbourMode;
-      }
+      get { return _currentNeighbourMode; }
       set
       {
         if (value != _currentNeighbourMode)
         {
           _currentNeighbourMode = value;
           if (_useDebugLog)
+          {
             Log.Info("AudioscrobblerBase: {0}", "CurrentNeighbourMode changed");
+          }
         }
       }
     }
@@ -855,38 +972,53 @@ namespace MediaPortal.Music.Database
     public List<Song> getAudioScrobblerFeed(lastFMFeed feed_, string asUser_)
     {
       if (string.IsNullOrEmpty(asUser_))
+      {
         asUser_ = _defaultUser;
+      }
 
       switch (feed_)
       {
         case lastFMFeed.recenttracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml",
+                             @"//recenttracks/track", feed_);
         case lastFMFeed.topartists:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "topartists.xml", @"//topartists/artist", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "topartists.xml",
+                             @"//topartists/artist", feed_);
         case lastFMFeed.weeklyartistchart:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklyartistchart.xml", @"//weeklyartistchart/artist", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklyartistchart.xml",
+                             @"//weeklyartistchart/artist", feed_);
         case lastFMFeed.toptracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "toptracks.xml", @"//toptracks/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "toptracks.xml",
+                             @"//toptracks/track", feed_);
         case lastFMFeed.weeklytrackchart:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklytrackchart.xml", @"//weeklytrackchart/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "weeklytrackchart.xml",
+                             @"//weeklytrackchart/track", feed_);
         case lastFMFeed.neighbours:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml", @"//neighbours/user", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "neighbours.xml",
+                             @"//neighbours/user", feed_);
         case lastFMFeed.friends:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml", @"//friends/user", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "friends.xml",
+                             @"//friends/user", feed_);
         case lastFMFeed.toptags:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag",
+                             feed_);
         case lastFMFeed.chartstoptags:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/tag/toptags.xml", @"//toptags/tag", feed_);
         case lastFMFeed.systemrecs:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "systemrecs.xml", @"//recommendations/artist", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "systemrecs.xml",
+                             @"//recommendations/artist", feed_);
         case lastFMFeed.profile:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "profile.xml", @"//profile", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "profile.xml", @"//profile",
+                             feed_);
         case lastFMFeed.recentbannedtracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentbannedtracks.xml", @"//recentbannedtracks/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentbannedtracks.xml",
+                             @"//recentbannedtracks/track", feed_);
         case lastFMFeed.recentlovedtracks:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentlovedtracks.xml", @"//recentlovedtracks/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recentlovedtracks.xml",
+                             @"//recentlovedtracks/track", feed_);
         default:
-          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml",
+                             @"//recenttracks/track", feed_);
       }
     }
 
@@ -931,9 +1063,14 @@ namespace MediaPortal.Music.Database
                   Song dbSong = new Song();
                   // The filename is unique so try if we get a 100% correct result first
                   if (!string.IsNullOrEmpty(unfilteredList_[s].FileName))
+                  {
                     mdb.GetSongByFileName(unfilteredList_[s].FileName, ref dbSong);
+                  }
                   else
-                    mdb.GetSongByMusicTagInfo(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist), unfilteredList_[s].Album, unfilteredList_[s].Title, true, ref dbSong);
+                  {
+                    mdb.GetSongByMusicTagInfo(AudioscrobblerBase.StripArtistPrefix(unfilteredList_[s].Artist),
+                                              unfilteredList_[s].Album, unfilteredList_[s].Title, true, ref dbSong);
+                  }
 
                   if (!string.IsNullOrEmpty(dbSong.Artist))
                   {
@@ -971,7 +1108,7 @@ namespace MediaPortal.Music.Database
                   ArrayList artistsInDB = new ArrayList();
                   if (mdb.GetArtists(4, unfilteredList_[s].Artist, ref artistsInDB))
                   {
-                    artistArray = (String[])artistsInDB.ToArray(typeof(String));
+                    artistArray = (String[]) artistsInDB.ToArray(typeof (String));
                     foreach (String singleArtist in artistArray)
                     {
                       Song addSong = new Song();
@@ -1007,7 +1144,7 @@ namespace MediaPortal.Music.Database
                   ArrayList albumsInDB = new ArrayList();
                   if (mdb.GetAlbums(2, unfilteredList_[s].Album, ref albumsInDB))
                   {
-                    albumArray = (AlbumInfo[])albumsInDB.ToArray(typeof(AlbumInfo));
+                    albumArray = (AlbumInfo[]) albumsInDB.ToArray(typeof (AlbumInfo));
                     foreach (AlbumInfo singleAlbum in albumArray)
                     {
                       Song addSong = new Song();
@@ -1073,7 +1210,8 @@ namespace MediaPortal.Music.Database
     /// <param name="albumToSearch_">Album name</param>
     /// <param name="sortBestTracks">false gives album songs in trackorder, true by popularity</param>
     /// <returns>Song-List of Album Tracks with Title, Artist, Album, TimesPlayed, URL(track), DateTimePlayed (album release), WebImage</returns>
-    public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks, bool aMarkLocalInURL)
+    public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks,
+                                   bool aMarkLocalInURL)
     {
       int failover = 0;
       string urlArtist = AudioscrobblerBase.getValidURLLastFMString(AudioscrobblerBase.UndoArtistPrefix(artistToSearch_));
@@ -1123,13 +1261,14 @@ namespace MediaPortal.Music.Database
         //}
         //else
         failover = 0;
-
       } while (failover != 0);
 
       if (albumTracks.Count > 0)
       {
         if (sortBestTracks)
+        {
           albumTracks.Sort(CompareSongsByTimesPlayed);
+        }
 
         if (aMarkLocalInURL)
         {
@@ -1142,8 +1281,12 @@ namespace MediaPortal.Music.Database
 
             foreach (Song localSong in filteredSongs)
             {
-              if (localSong.Artist.ToLowerInvariant() == AudioscrobblerBase.StripArtistPrefix(albumTracks[i].Artist).ToLowerInvariant() && localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
+              if (localSong.Artist.ToLowerInvariant() ==
+                  AudioscrobblerBase.StripArtistPrefix(albumTracks[i].Artist).ToLowerInvariant() &&
+                  localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
+              {
                 albumTracks[i].URL = "local";
+              }
             }
           }
         }
@@ -1161,7 +1304,8 @@ namespace MediaPortal.Music.Database
     /// <param name="sortBestTracks_">do not apply randomness on track lookup</param>
     /// <param name="addAvailableTracksOnly">filter all songs not locally available</param>
     /// <returns>List of Song where Song.Genre contains the used tag</returns>
-    public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_, bool sortBestTracks_, bool addAvailableTracksOnly)
+    public List<Song> getTagInfo(string artistToSearch_, string trackToSearch_, bool randomizeUsedTag_,
+                                 bool sortBestTracks_, bool addAvailableTracksOnly)
     {
       int randomPosition = 0;
       int calcRandValue = 0;
@@ -1176,7 +1320,9 @@ namespace MediaPortal.Music.Database
 
       // no tags for current track - try artist tags instead
       if (tagTracks.Count < 1)
+      {
         tagTracks = getTagsForArtist(urlArtist);
+      }
 
       if (tagTracks.Count > 0)
       {
@@ -1188,9 +1334,13 @@ namespace MediaPortal.Music.Database
 
           // only use the top 10 tags
           if (tagTracks.Count > _limitRandomListCount)
-            calcRandValue = (_limitRandomListCount) * _randomNessPercent / 100;
+          {
+            calcRandValue = (_limitRandomListCount)*_randomNessPercent/100;
+          }
           else
-            calcRandValue = ((tagTracks.Count) - 1) * _randomNessPercent / 100;
+          {
+            calcRandValue = ((tagTracks.Count) - 1)*_randomNessPercent/100;
+          }
 
           // make sure calcRandValue is not lower then random(minvalue, )
           calcRandValue = calcRandValue > 0 ? calcRandValue : 0;
@@ -1210,7 +1360,7 @@ namespace MediaPortal.Music.Database
               // Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
               // do not try to often..
               // if random picking doesn't lead to a result quit the randomness and pick the best
-              if (x > tagTracks.Count * 3)
+              if (x > tagTracks.Count*3)
               {
                 for (int t = 0; t < tagTracks.Count; t++)
                 {
@@ -1251,9 +1401,13 @@ namespace MediaPortal.Music.Database
         {
           // use the best matches for the given track only            
           if (sortBestTracks_)
+          {
             tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, false, addAvailableTracksOnly);
+          }
           else
+          {
             tagTracks = getSimilarToTag(lastFMFeed.taggedtracks, tmpGenre, true, addAvailableTracksOnly);
+          }
 
           //// filter tracks not available in music database
           //if (addAvailableTracksOnly)
@@ -1262,12 +1416,16 @@ namespace MediaPortal.Music.Database
           //}
         }
         else
+        {
           tagTracks.Clear();
+        }
       }
 
       // sort list by playcount (times a track was tagged in this case)
       if (sortBestTracks_)
+      {
         tagTracks.Sort(CompareSongsByTimesPlayed);
+      }
 
       foreach (Song tagSong in tagTracks)
       {
@@ -1302,12 +1460,16 @@ namespace MediaPortal.Music.Database
 
           if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
           {
-            Log.Warn("AudioScrobblerUtils: alternative artist spelling detected - trying to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
+            Log.Warn(
+              "AudioScrobblerUtils: alternative artist spelling detected - trying to fetch both thumbs (MP: {0} / official: {1})",
+              artistToSearch_, tmpSong.Artist);
             fetchWebImage(coverURL, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
             fetchWebImage(coverURL, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
           }
           else
+          {
             fetchWebImage(coverURL, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
+          }
         }
       }
 
@@ -1329,7 +1491,8 @@ namespace MediaPortal.Music.Database
       return ParseXMLDocForUsedTags(urlArtist, urlTrack, lastFMFeed.toptracktags);
     }
 
-    public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_, bool addAvailableTracksOnly_)
+    public List<Song> getSimilarToTag(lastFMFeed searchType_, string taggedWith_, bool randomizeList_,
+                                      bool addAvailableTracksOnly_)
     {
       songFilterType currentFilterType = songFilterType.Track;
       switch (searchType_)
@@ -1363,14 +1526,18 @@ namespace MediaPortal.Music.Database
         if (taggedArtists.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (taggedArtists.Count - 1) * _randomNessPercent / 100;
+          int calcRandValue = (taggedArtists.Count - 1)*_randomNessPercent/100;
           while (artistsAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
             if (calcRandValue > minRandValue)
+            {
               randomPosition = rand.Next(0, calcRandValue);
+            }
             else
+            {
               randomPosition = rand.Next(0, minRandValue);
+            }
             // loop current list to find out if randomPos was already inserted
             for (int j = 0; j < randomTaggedArtists.Count; j++)
             {
@@ -1391,25 +1558,37 @@ namespace MediaPortal.Music.Database
           _limitRandomListCount = oldRandomLimit;
           // enough similar artists
           if (addAvailableTracksOnly_)
+          {
             return filterForLocalSongs(randomTaggedArtists, true, currentFilterType);
+          }
           else
+          {
             return randomTaggedArtists;
+          }
         }
         else
         {
           // limit not reached - return all Artists
           if (addAvailableTracksOnly_)
+          {
             return filterForLocalSongs(taggedArtists, true, currentFilterType);
+          }
           else
+          {
             return taggedArtists;
+          }
         }
       }
       else
       {
         if (addAvailableTracksOnly_)
+        {
           return filterForLocalSongs(ParseXMLDocForTags(taggedWith_, searchType_), true, currentFilterType);
+        }
         else
+        {
           return ParseXMLDocForTags(taggedWith_, searchType_);
+        }
       }
     }
 
@@ -1428,14 +1607,18 @@ namespace MediaPortal.Music.Database
         if (similarArtists.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (similarArtists.Count - 1) * _randomNessPercent / 100;
+          int calcRandValue = (similarArtists.Count - 1)*_randomNessPercent/100;
           while (artistsAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
             if (calcRandValue > minRandValue)
+            {
               randomPosition = rand.Next(0, calcRandValue);
+            }
             else
+            {
               randomPosition = rand.Next(0, minRandValue);
+            }
             // loop current list to find out if randomPos was already inserted
             for (int j = 0; j < randomSimilarArtists.Count; j++)
             {
@@ -1456,11 +1639,15 @@ namespace MediaPortal.Music.Database
           return randomSimilarArtists;
         }
         else
+        {
           // limit not reached - return all Artists
           return similarArtists;
+        }
       }
       else
+      {
         return ParseXMLDocForSimilarArtists(Artist_);
+      }
     }
 
     public List<Song> getNeighboursArtists(bool randomizeList_)
@@ -1495,7 +1682,9 @@ namespace MediaPortal.Music.Database
       {
         string albumThumbName = Util.Utils.MakeFileName(string.Format("{0}-{1}{2}", aSong.Artist, aSong.Album, ".jpg"));
         if (fetchWebImage(aSong.WebImage, albumThumbName, Thumbs.MusicAlbum))
+        {
           ImagePath = string.Format(@"{0}\{1}", Thumbs.MusicAlbum, albumThumbName);
+        }
       }
       catch (Exception ex)
       {
@@ -1525,7 +1714,9 @@ namespace MediaPortal.Music.Database
       bool success = false;
 
       if (!AudioscrobblerBase.IsFetchingCovers)
+      {
         return success;
+      }
 
       fileName = Util.Utils.MakeFileName(fileName);
 
@@ -1533,16 +1724,18 @@ namespace MediaPortal.Music.Database
       {
         // do not download last.fm's placeholder
         if ((imageUrl.IndexOf("no_album") <= 0)
-         && (imageUrl.IndexOf("no_artist") <= 0)
-         && (imageUrl.IndexOf(@"/noimage/") <= 0)
-          // almost useless because Last.fm currently has redundant images - TODO: image comparison algo
-         && (!imageUrl.EndsWith(@"160/260045.jpg"))
-         && (!imageUrl.EndsWith(@"160/2765129.gif"))
-         && (!imageUrl.EndsWith(@"160/311112.gif")))
+            && (imageUrl.IndexOf("no_artist") <= 0)
+            && (imageUrl.IndexOf(@"/noimage/") <= 0)
+            // almost useless because Last.fm currently has redundant images - TODO: image comparison algo
+            && (!imageUrl.EndsWith(@"160/260045.jpg"))
+            && (!imageUrl.EndsWith(@"160/2765129.gif"))
+            && (!imageUrl.EndsWith(@"160/311112.gif")))
         {
           //Create the album subdir in thumbs if it does not exist.
           if (!Directory.Exists(thumbspath))
+          {
             Directory.CreateDirectory(thumbspath);
+          }
 
           string fullPath = Path.Combine(thumbspath, fileName);
           string fullLargePath = Util.Utils.ConvertToLargeCoverArt(fullPath);
@@ -1564,13 +1757,15 @@ namespace MediaPortal.Music.Database
                 newFile.Delete();
                 Log.Debug("MyMusic: better thumb {0} already exists - do not save", fullLargePath);
               }
-              // temp thumb is "better" than old one
+                // temp thumb is "better" than old one
               else
               {
                 try
                 {
-                  Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-                  Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                  Util.Picture.CreateThumbnail(tmpFile, fullPath, (int) Thumbs.ThumbResolution,
+                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                  Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int) Thumbs.ThumbLargeResolution,
+                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                   Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fullLargePath);
                 }
                 catch (IOException ex)
@@ -1582,8 +1777,10 @@ namespace MediaPortal.Music.Database
             }
             else
             {
-              Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-              Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+              Util.Picture.CreateThumbnail(tmpFile, fullPath, (int) Thumbs.ThumbResolution, (int) Thumbs.ThumbResolution,
+                                           0, Thumbs.SpeedThumbsSmall);
+              Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int) Thumbs.ThumbLargeResolution,
+                                           (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
             }
             success = true;
@@ -1594,7 +1791,9 @@ namespace MediaPortal.Music.Database
           }
         }
         else
+        {
           Log.Debug("MyMusic: last.fm only uses a placeholder - do not download thumb");
+        }
       }
       else
       {
@@ -1632,7 +1831,7 @@ namespace MediaPortal.Music.Database
             // If error e.g. 503, server busy, etc wait and try again.
             if (wex.Status == WebExceptionStatus.ProtocolError && retryHttpError)
             {
-              HttpWebResponse httpResponse = (HttpWebResponse)wex.Response;
+              HttpWebResponse httpResponse = (HttpWebResponse) wex.Response;
               switch (httpResponse.StatusCode)
               {
                 case HttpStatusCode.BadGateway:
@@ -1684,7 +1883,7 @@ namespace MediaPortal.Music.Database
       int loops = 0;
 
       // fetch more than needed since there could be double entries
-      while (addedSongs < _limitRandomListCount * 3)
+      while (addedSongs < _limitRandomListCount*3)
       {
         loops++;
         lookupSong.Clear();
@@ -1694,11 +1893,13 @@ namespace MediaPortal.Music.Database
 
         bool found = false;
         for (int i = 0; i < randomSongList.Count; i++)
+        {
           if (randomSongList[i].Artist == randomSong.Artist)
           {
             found = true;
             break;
           }
+        }
 
         if (!found)
         {
@@ -1728,7 +1929,9 @@ namespace MediaPortal.Music.Database
         if (loops > 20)
         {
           if (randomMode_ == offlineMode.timesplayed)
+          {
             Log.Debug("AudioScrobblerUtils: Not enough unique unheard tracks for random mode");
+          }
           break;
         }
       }
@@ -1762,14 +1965,18 @@ namespace MediaPortal.Music.Database
         if (myNeighbours.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
+          int calcRandValue = (myNeighbours.Count - 1)*_randomNessPercent/100;
           while (neighboursAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
             if (calcRandValue > minRandValue)
+            {
               randomPosition = rand.Next(0, calcRandValue);
+            }
             else
+            {
               randomPosition = rand.Next(0, minRandValue);
+            }
 
             // loop current list to find out if randomPos was already inserted
             for (int j = 0; j < myRandomNeighbours.Count; j++)
@@ -1796,28 +2003,35 @@ namespace MediaPortal.Music.Database
             if (myNeighboorsArtists.Count > 0)
             {
               if (myNeighboorsArtists[0].LastFMMatch != string.Empty)
+              {
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
-              else
-                if (myNeighboorsArtists[0].TimesPlayed >= 0)
-                  myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              }
+              else if (myNeighboorsArtists[0].TimesPlayed >= 0)
+              {
+                myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              }
             }
             // make sure the neighbour has enough top artists
             if (myNeighboorsArtists.Count > _limitRandomListCount)
             {
               // get _limitRandomListCount artists for each random neighbour
               int artistsAdded = 0;
-              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
+              int artistsPerNeighbour = _limitRandomListCount/myNeighbours.Count;
               // make sure there is at least one song per neighbour
               artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
-              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1)*_randomNessPercent/100;
               while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
                 if (calcRandAValue > minRandAValue)
+                {
                   randomPosition = rand.Next(0, calcRandAValue);
+                }
                 else
+                {
                   randomPosition = rand.Next(0, minRandAValue);
+                }
 
                 for (int j = 0; j < myRandomNeighboorsArtists.Count; j++)
                 {
@@ -1837,10 +2051,9 @@ namespace MediaPortal.Music.Database
             }
           }
           return myRandomNeighboorsArtists;
-
         }
         else
-        // limit not reached - return all neighbours random artists          
+          // limit not reached - return all neighbours random artists          
         {
           for (int i = 0; i < myNeighbours.Count; i++)
           {
@@ -1849,10 +2062,13 @@ namespace MediaPortal.Music.Database
             if (myNeighboorsArtists.Count > 0)
             {
               if (myNeighboorsArtists[0].LastFMMatch != string.Empty)
+              {
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
-              else
-                if (myNeighboorsArtists[0].TimesPlayed >= 0)
-                  myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              }
+              else if (myNeighboorsArtists[0].TimesPlayed >= 0)
+              {
+                myNeighboorsArtists.Sort(CompareSongsByTimesPlayed);
+              }
             }
 
             // make sure the neighbour has enough top artists
@@ -1860,18 +2076,22 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each neighbour
               int artistsAdded = 0;
-              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
+              int artistsPerNeighbour = _limitRandomListCount/myNeighbours.Count;
               // make sure there is at least one song per neighbour
               artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
-              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1)*_randomNessPercent/100;
               while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
                 if (calcRandAValue > minRandAValue)
+                {
                   randomPosition = rand.Next(0, calcRandAValue);
+                }
                 else
+                {
                   randomPosition = rand.Next(0, minRandAValue);
+                }
 
                 for (int j = 0; j < myNeighboorsArtists.Count; j++)
                 {
@@ -1892,14 +2112,17 @@ namespace MediaPortal.Music.Database
           }
           return myRandomNeighboorsArtists;
         }
-
       }
-      // do not randomize
+        // do not randomize
       else
       {
         if (myNeighbours.Count > 4)
+        {
           for (int i = 0; i < 4; i++)
+          {
             myNeighboorsArtists.AddRange(getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist));
+          }
+        }
         return myNeighboorsArtists;
       }
     }
@@ -1924,24 +2147,36 @@ namespace MediaPortal.Music.Database
         DateTime tmpRelease = DateTime.MinValue;
 
         if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
+        {
           tmpArtist = DecodeUtf8String(nodes[0].Attributes["artist"].Value);
+        }
         else
+        {
           tmpArtist = artist_;
+        }
         if (!string.IsNullOrEmpty(nodes[0].Attributes["title"].Value))
+        {
           tmpAlbum = DecodeUtf8String(nodes[0].Attributes["title"].Value);
+        }
         else
+        {
           tmpAlbum = album_;
+        }
 
         foreach (XmlNode mainchild in nodes[0].ChildNodes)
         {
           if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
+          {
             tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+          }
           else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
           {
             foreach (XmlNode coverchild in mainchild.ChildNodes)
             {
               if (coverchild.Name == "large" && coverchild.ChildNodes.Count != 0)
+              {
                 tmpCover = coverchild.ChildNodes[0].Value;
+              }
             }
           }
           //else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
@@ -1969,25 +2204,33 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode child in node.ChildNodes)
           {
             if (child.Name == "reach" && child.ChildNodes.Count != 0)
+            {
               nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+            }
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
+            {
               nodeSong.URL = child.ChildNodes[0].Value;
+            }
           }
           AlbumInfoList.Add(nodeSong);
         }
 
-        artist_ = System.Web.HttpUtility.UrlDecode(artist_);
+        artist_ = HttpUtility.UrlDecode(artist_);
         string thumbPath = artist_ + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
 
         if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())
         {
           string thumbPathAlternative = tmpArtist + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
-          Log.Warn("AudioScrobblerUtils: alternative album artist spelling detected - fetching both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
+          Log.Warn(
+            "AudioScrobblerUtils: alternative album artist spelling detected - fetching both thumbs (MP: {0} / official: {1})",
+            artist_, tmpArtist);
           fetchWebImage(tmpCover, thumbPathAlternative, Thumbs.MusicAlbum);
           fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
         }
         else
+        {
           fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
+        }
       }
       catch
       {
@@ -2014,20 +2257,34 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode mainchild in node.ChildNodes)
           {
             if (mainchild.Name == "name" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "mbid" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.MusicBrainzID = mainchild.ChildNodes[0].Value;
+            }
             else if (mainchild.Name == "reach" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.TimesPlayed = Convert.ToInt32(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "url" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.URL = mainchild.ChildNodes[0].Value;
+            }
             else if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.DateTimePlayed = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
             {
               foreach (XmlNode coverchild in mainchild.ChildNodes)
+              {
                 if (coverchild.Name == "large" && coverchild.ChildNodes.Count != 0)
+                {
                   nodeSong.WebImage = coverchild.ChildNodes[0].Value;
+                }
+              }
             }
           }
           TopAlbumList.Add(nodeSong);
@@ -2052,11 +2309,17 @@ namespace MediaPortal.Music.Database
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
 
         if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
+        {
           artistInfo.Artist = DecodeUtf8String(nodes[0].Attributes["artist"].Value);
+        }
         if (!string.IsNullOrEmpty(nodes[0].Attributes["picture"].Value))
+        {
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
+        }
         if (!string.IsNullOrEmpty(nodes[0].Attributes["mbid"].Value))
+        {
           artistInfo.MusicBrainzID = nodes[0].Attributes["mbid"].Value;
+        }
       }
       catch
       {
@@ -2081,15 +2344,25 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode child in node.ChildNodes)
           {
             if (child.Name == "name" && child.ChildNodes.Count != 0)
+            {
               nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
+            }
             else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+            {
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+            }
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
+            {
               nodeSong.URL = child.ChildNodes[0].Value;
+            }
             else if (child.Name == "image" && child.ChildNodes.Count != 0)
+            {
               nodeSong.WebImage = child.ChildNodes[0].Value;
+            }
             else if (child.Name == "match" && child.ChildNodes.Count != 0)
+            {
               nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+            }
           }
           SimilarArtistList.Add(nodeSong);
         }
@@ -2122,7 +2395,8 @@ namespace MediaPortal.Music.Database
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
           case lastFMFeed.toptracktags:
-            doc.Load(DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml"));
+            doc.Load(
+              DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml"));
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
 
@@ -2144,11 +2418,17 @@ namespace MediaPortal.Music.Database
             nodeSong.Artist = artist_;
             nodeSong.Title = track_;
             if (child.Name == "name" && child.ChildNodes.Count != 0)
+            {
               nodeSong.Genre = DecodeUtf8String(child.ChildNodes[0].Value);
+            }
             if (child.Name == "url" && child.ChildNodes.Count != 0)
+            {
               nodeSong.URL = child.ChildNodes[0].Value;
+            }
             if (child.Name == "count" && child.ChildNodes.Count != 0)
+            {
               nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+            }
           }
           UsedTagsList.Add(nodeSong);
         }
@@ -2196,32 +2476,53 @@ namespace MediaPortal.Music.Database
             {
               case lastFMFeed.taggedartists:
                 if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                {
                   nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
+                }
                 if (child.Name == "image" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.WebImage = child.ChildNodes[0].Value;
+                }
                 break;
               case lastFMFeed.taggedalbums:
                 if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                {
                   nodeSong.Album = DecodeUtf8String(node.Attributes["name"].Value);
+                }
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                {
                   if (string.IsNullOrEmpty(child.Attributes["name"].Value))
+                  {
                     nodeSong.Artist = DecodeUtf8String(child.Attributes["name"].Value);
+                  }
+                }
                 break;
               case lastFMFeed.taggedtracks:
                 if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                {
                   nodeSong.Title = DecodeUtf8String(node.Attributes["name"].Value);
+                }
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                {
                   if (!string.IsNullOrEmpty(child.Attributes["name"].Value))
+                  {
                     nodeSong.Artist = DecodeUtf8String(child.Attributes["name"].Value);
+                  }
+                }
                 break;
-
             }
             if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+            {
               nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+            }
             if (child.Name == "url" && child.ChildNodes.Count != 0)
+            {
               nodeSong.URL = child.ChildNodes[0].Value;
+            }
             if (node.Attributes["count"].Value != "")
+            {
               nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+            }
           }
           TagsList.Add(nodeSong);
         }
@@ -2252,15 +2553,25 @@ namespace MediaPortal.Music.Database
             {
               case (lastFMFeed.recenttracks):
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "date" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
+                }
                 break;
               case (lastFMFeed.recentbannedtracks):
                 goto case lastFMFeed.recenttracks;
@@ -2268,66 +2579,112 @@ namespace MediaPortal.Music.Database
                 goto case lastFMFeed.recenttracks;
               case (lastFMFeed.topartists):
                 if (child.Name == "name" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
-                //else if (child.Name == "name" && child.ChildNodes.Count != 0)
-                //  nodeSong.Title = ConvertUtf8StringToSystemCodepage(child.ChildNodes[0].Value);
+                }
+                  //else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                  //  nodeSong.Title = ConvertUtf8StringToSystemCodepage(child.ChildNodes[0].Value);
                 else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "match" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+                }
                 break;
               case (lastFMFeed.weeklyartistchart):
                 goto case lastFMFeed.topartists;
               case (lastFMFeed.toptracks):
                 if (child.Name == "artist" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "name" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 break;
               case (lastFMFeed.toptags):
                 if (child.Name == "name" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "count" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 break;
-              // doesn't work atm
+                // doesn't work atm
               case (lastFMFeed.chartstoptags):
                 if (!string.IsNullOrEmpty(node.Attributes["name"].Value))
+                {
                   nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
+                }
                 if (node.Attributes["count"].Value != "")
+                {
                   nodeSong.TimesPlayed = Convert.ToInt32(node.Attributes["count"].Value);
+                }
                 if (node.Attributes["url"].Value != "")
+                {
                   nodeSong.URL = node.Attributes["url"].Value;
+                }
                 break;
               case (lastFMFeed.neighbours):
                 if (node.Attributes["username"].Value != "")
+                {
                   nodeSong.Artist = node.Attributes["username"].Value;
+                }
                 if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "match" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.LastFMMatch = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "image" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.WebImage = child.ChildNodes[0].Value;
+                }
                 break;
               case (lastFMFeed.friends):
                 if (node.Attributes["username"].Value != "")
+                {
                   nodeSong.Artist = node.Attributes["username"].Value;
+                }
                 if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "image" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.WebImage = child.ChildNodes[0].Value;
+                }
                 //else if (child.Name == "connections" && child.ChildNodes.Count != 0)
                 //  nodeSong.LastFMMatch = child.ChildNodes[0].Value;
                 break;
@@ -2337,31 +2694,55 @@ namespace MediaPortal.Music.Database
                 goto case lastFMFeed.topartists;
               case (lastFMFeed.systemrecs):
                 if (child.Name == "name" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Artist = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 break;
               case (lastFMFeed.profile):
                 if (node.Attributes["id"].Value != String.Empty)
+                {
                   nodeSong.Id = Convert.ToInt32(node.Attributes["id"].Value);
+                }
                 if (node.Attributes["username"].Value != String.Empty)
+                {
                   nodeSong.Artist = node.Attributes["username"].Value;
+                }
                 if (child.Name == "url" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.URL = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "realname" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Title = DecodeUtf8String(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "registered" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.DateTimePlayed = Convert.ToDateTime(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "statsreset" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.DateTimeModified = Convert.ToDateTime(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "country" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.Genre = child.ChildNodes[0].Value;
+                }
                 else if (child.Name == "playcount" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.TimesPlayed = Convert.ToInt32(child.ChildNodes[0].Value);
+                }
                 else if (child.Name == "avatar" && child.ChildNodes.Count != 0)
+                {
                   nodeSong.WebImage = child.ChildNodes[0].Value;
+                }
                 break;
             } //switch
           }
@@ -2374,6 +2755,7 @@ namespace MediaPortal.Music.Database
       }
       return songList;
     }
+
     #endregion
 
     #region MusicBrainz - Parser
@@ -2421,7 +2803,9 @@ namespace MediaPortal.Music.Database
                     mbContainer.Clear();
                   }
                   else
+                  {
                     mbContainer = new Song();
+                  }
 
                   mbContainer.MusicBrainzID = reader.GetAttribute("id");
                   mbContainer.LastFMMatch = reader.GetAttribute(@"ext:score");
@@ -2429,36 +2813,43 @@ namespace MediaPortal.Music.Database
                 break;
               case 3:
                 if (string.IsNullOrEmpty(reader.Name))
+                {
                   continue;
+                }
 
                 if (reader.Name == "name")
+                {
                   mbContainer.Artist = reader.ReadString();
-                else
-                  if (reader.Name == "sort-name")
-                    mbContainer.Title = reader.ReadString();
-                  else
-                    if (reader.Name.Contains("life-span"))
+                }
+                else if (reader.Name == "sort-name")
+                {
+                  mbContainer.Title = reader.ReadString();
+                }
+                else if (reader.Name.Contains("life-span"))
+                {
+                  try
+                  {
+                    // unlikely - most dates are simply years - need to check what is common..
+                    DateTime born = DateTime.UtcNow;
+                    if (DateTime.TryParse(reader.ReadString(), CultureInfo.InvariantCulture,
+                                          DateTimeStyles.AssumeUniversal, out born))
                     {
-                      try
-                      {
-                        // unlikely - most dates are simply years - need to check what is common..
-                        DateTime born = DateTime.UtcNow;
-                        if (DateTime.TryParse(reader.ReadString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out born))
-                          mbContainer.Year = born.Year;
-                      }
-                      catch (Exception)
-                      {
-                      }
+                      mbContainer.Year = born.Year;
                     }
-                    else
-                      if (reader.Name == "disambiguation")
-                        mbContainer.Genre = reader.ReadString();
+                  }
+                  catch (Exception)
+                  {
+                  }
+                }
+                else if (reader.Name == "disambiguation")
+                {
+                  mbContainer.Genre = reader.ReadString();
+                }
                 break;
               default:
                 continue;
-              //break;
+                //break;
             }
-
           } // <-- while reading
         }
         File.Delete(tempFile);
@@ -2515,21 +2906,37 @@ namespace MediaPortal.Music.Database
           foreach (XmlNode mainchild in node.ChildNodes)
           {
             if (mainchild.Name == "creator" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.Artist = DecodeUtf8String(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "title" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.Title = DecodeUtf8String(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "id" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.Id = Convert.ToInt32(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "album" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.Album = DecodeUtf8String(mainchild.ChildNodes[0].Value);
+            }
             else if (mainchild.Name == "location" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.FileName = nodeSong.URL = mainchild.ChildNodes[0].Value;
+            }
             else if (mainchild.Name == "image" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.WebImage = mainchild.ChildNodes[0].Value;
+            }
             else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
-              nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value) / 1000);
+            {
+              nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value)/1000);
+            }
             else if (mainchild.Name == "lastfm:trackauth" && mainchild.ChildNodes.Count != 0)
+            {
               nodeSong.AuthToken = mainchild.ChildNodes[0].Value;
+            }
           }
           XSPFPlaylist.Add(nodeSong);
         }
@@ -2566,9 +2973,11 @@ namespace MediaPortal.Music.Database
       return BuildXmlRpcRequest(XmlRpcType.unBanTrack, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
     }
 
-    public string GetRadioAddTrackToPlaylistRequest(string aUser, string aChallenge, string aAuth, string aArtist, string aTitle)
+    public string GetRadioAddTrackToPlaylistRequest(string aUser, string aChallenge, string aAuth, string aArtist,
+                                                    string aTitle)
     {
-      return BuildXmlRpcRequest(XmlRpcType.addTrackToUserPlaylist, aUser, aChallenge, aAuth, aArtist, aTitle, String.Empty);
+      return BuildXmlRpcRequest(XmlRpcType.addTrackToUserPlaylist, aUser, aChallenge, aAuth, aArtist, aTitle,
+                                String.Empty);
     }
 
     /// <summary>
@@ -2582,29 +2991,42 @@ namespace MediaPortal.Music.Database
     /// <param name="aTitle">The track title to get love/ban.</param>
     /// <param name="aFriendsUserName">The friends name to remove.</param>
     /// <returns>The XML data in string format</returns>
-    private string BuildXmlRpcRequest(XmlRpcType aMethodType, string aUser, string aChallenge, string aAuth, string aArtist, string aTitle, string aFriendsUserName)
+    private string BuildXmlRpcRequest(XmlRpcType aMethodType, string aUser, string aChallenge, string aAuth,
+                                      string aArtist, string aTitle, string aFriendsUserName)
     {
       string ResultXml = String.Empty;
       List<string> AllParams = new List<string>(5);
       try
       {
         if (!String.IsNullOrEmpty(aUser))
+        {
           AllParams.Add(aUser);
+        }
         if (!String.IsNullOrEmpty(aChallenge))
+        {
           AllParams.Add(aChallenge);
+        }
         if (!String.IsNullOrEmpty(aAuth))
+        {
           AllParams.Add(aAuth);
+        }
         if (aMethodType == XmlRpcType.removeFriend)
         {
           if (!String.IsNullOrEmpty(aFriendsUserName))
+          {
             AllParams.Add(aFriendsUserName);
+          }
         }
         else
         {
           if (!String.IsNullOrEmpty(aArtist))
+          {
             AllParams.Add(aArtist);
+          }
           if (!String.IsNullOrEmpty(aTitle))
+          {
             AllParams.Add(aTitle);
+          }
         }
 
         using (MemoryStream memoryStream = new MemoryStream())
@@ -2651,7 +3073,9 @@ namespace MediaPortal.Music.Database
     public string GetLargeLastFmCover(string aOriginalURL)
     {
       if (String.IsNullOrEmpty(aOriginalURL))
+      {
         return String.Empty;
+      }
 
       string highResPic = aOriginalURL;
       int resPos = aOriginalURL.LastIndexOf('/');
@@ -2675,7 +3099,9 @@ namespace MediaPortal.Music.Database
           string WindowsString = Encoding.GetEncoding(sysencoding.WindowsCodePage).GetString(Utf8Array);
 
           if (WindowsString != aUtf8String)
+          {
             Log.Debug("AudioscrobblerUtils: Encoding changed - UTF8: {0}, System: {1}", aUtf8String, WindowsString);
+          }
 
           return WindowsString;
         }
@@ -2686,7 +3112,9 @@ namespace MediaPortal.Music.Database
         }
       }
       else
+      {
         return aUtf8String;
+      }
     }
 
     public List<Song> TryFilterBelowMinimumMatch(List<Song> aUnfilteredList)
@@ -2706,7 +3134,8 @@ namespace MediaPortal.Music.Database
         int removedItems = aUnfilteredList.Count;
         aUnfilteredList.RemoveAll(IsSongBelowMinPercentage);
         removedItems -= aUnfilteredList.Count;
-        Log.Debug("AudioscrobblerUtils: TryFilterBelowMinimumMatch removed {0} items which were not exact enough", removedItems.ToString());
+        Log.Debug("AudioscrobblerUtils: TryFilterBelowMinimumMatch removed {0} items which were not exact enough",
+                  removedItems.ToString());
       }
 
       return aUnfilteredList;

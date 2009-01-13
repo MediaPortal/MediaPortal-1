@@ -49,256 +49,258 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
-#if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
+using System.Security;
+#if !USING_NET11
+
 #endif
 
 namespace DirectShowLib.BDA
 {
-    #region Declarations
 
-    /// <summary>
-    /// From CLSID_TIFLoad
-    /// </summary>
-    [ComImport, Guid("14EB8748-1753-4393-95AE-4F7E7A87AAD6")]
-    public class TIFLoad
-    {
-    }
+  #region Declarations
 
-    #endregion
+  /// <summary>
+  /// From CLSID_TIFLoad
+  /// </summary>
+  [ComImport, Guid("14EB8748-1753-4393-95AE-4F7E7A87AAD6")]
+  public class TIFLoad
+  {
+  }
 
-    #region Interfaces
+  #endregion
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("DFEF4A68-EE61-415f-9CCB-CD95F2F98A3A"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IBDA_TIF_REGISTRATION
-    {
-        [PreserveSig]
-        int RegisterTIFEx(
-          [In] IPin pTIFInputPin,
-          [Out] out int ppvRegistrationContext,
-          [Out, MarshalAs(UnmanagedType.Interface)] out object ppMpeg2DataControl
-          );
+  #region Interfaces
 
-        [PreserveSig]
-        int UnregisterTIF([In] int pvRegistrationContext);
-    }
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("DFEF4A68-EE61-415f-9CCB-CD95F2F98A3A"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IBDA_TIF_REGISTRATION
+  {
+    [PreserveSig]
+    int RegisterTIFEx(
+      [In] IPin pTIFInputPin,
+      [Out] out int ppvRegistrationContext,
+      [Out, MarshalAs(UnmanagedType.Interface)] out object ppMpeg2DataControl
+      );
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("F9BAC2F9-4149-4916-B2EF-FAA202326862"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IMPEG2_TIF_CONTROL
-    {
-        [PreserveSig]
-        int RegisterTIF(
-            [In, MarshalAs(UnmanagedType.Interface)] object pUnkTIF,
-            [In, Out] ref int ppvRegistrationContext
-            );
+    [PreserveSig]
+    int UnregisterTIF([In] int pvRegistrationContext);
+  }
 
-        [PreserveSig]
-        int UnregisterTIF([In] int pvRegistrationContext);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("F9BAC2F9-4149-4916-B2EF-FAA202326862"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IMPEG2_TIF_CONTROL
+  {
+    [PreserveSig]
+    int RegisterTIF(
+      [In, MarshalAs(UnmanagedType.Interface)] object pUnkTIF,
+      [In, Out] ref int ppvRegistrationContext
+      );
 
-        [PreserveSig]
-        int AddPIDs(
-            [In] int ulcPIDs,
-            [In] ref int pulPIDs
-            );
+    [PreserveSig]
+    int UnregisterTIF([In] int pvRegistrationContext);
 
-        [PreserveSig]
-        int DeletePIDs(
-            [In] int ulcPIDs,
-            [In] ref int pulPIDs
-            );
+    [PreserveSig]
+    int AddPIDs(
+      [In] int ulcPIDs,
+      [In] ref int pulPIDs
+      );
 
-        [PreserveSig]
-        int GetPIDCount([Out] out int pulcPIDs);
+    [PreserveSig]
+    int DeletePIDs(
+      [In] int ulcPIDs,
+      [In] ref int pulPIDs
+      );
 
-        [PreserveSig]
-        int GetPIDs(
-            [Out] out int pulcPIDs,
-            [Out] out int pulPIDs
-            );
-    }
+    [PreserveSig]
+    int GetPIDCount([Out] out int pulcPIDs);
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("A3B152DF-7A90-4218-AC54-9830BEE8C0B6"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface ITuneRequestInfo
-    {
-        [PreserveSig]
-        int GetLocatorData([In] ITuneRequest Request);
+    [PreserveSig]
+    int GetPIDs(
+      [Out] out int pulcPIDs,
+      [Out] out int pulPIDs
+      );
+  }
 
-        [PreserveSig]
-        int GetComponentData([In] ITuneRequest CurrentRequest);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("A3B152DF-7A90-4218-AC54-9830BEE8C0B6"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface ITuneRequestInfo
+  {
+    [PreserveSig]
+    int GetLocatorData([In] ITuneRequest Request);
 
-        [PreserveSig]
-        int CreateComponentList([In] ITuneRequest CurrentRequest);
+    [PreserveSig]
+    int GetComponentData([In] ITuneRequest CurrentRequest);
 
-        [PreserveSig]
-        int GetNextProgram(
-            [In] ITuneRequest CurrentRequest,
-            [Out] out ITuneRequest TuneRequest
-            );
+    [PreserveSig]
+    int CreateComponentList([In] ITuneRequest CurrentRequest);
 
-        [PreserveSig]
-        int GetPreviousProgram(
-            [In] ITuneRequest CurrentRequest,
-            [Out] out ITuneRequest TuneRequest
-            );
+    [PreserveSig]
+    int GetNextProgram(
+      [In] ITuneRequest CurrentRequest,
+      [Out] out ITuneRequest TuneRequest
+      );
 
-        [PreserveSig]
-        int GetNextLocator(
-            [In] ITuneRequest CurrentRequest,
-            [Out] out ITuneRequest TuneRequest
-            );
+    [PreserveSig]
+    int GetPreviousProgram(
+      [In] ITuneRequest CurrentRequest,
+      [Out] out ITuneRequest TuneRequest
+      );
 
-        [PreserveSig]
-        int GetPreviousLocator(
-            [In] ITuneRequest CurrentRequest,
-            [Out] out ITuneRequest TuneRequest
-            );
-    }
+    [PreserveSig]
+    int GetNextLocator(
+      [In] ITuneRequest CurrentRequest,
+      [Out] out ITuneRequest TuneRequest
+      );
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("EFDA0C80-F395-42c3-9B3C-56B37DEC7BB7"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IGuideDataEvent
-    {
-        [PreserveSig]
-        int GuideDataAcquired();
+    [PreserveSig]
+    int GetPreviousLocator(
+      [In] ITuneRequest CurrentRequest,
+      [Out] out ITuneRequest TuneRequest
+      );
+  }
 
-        [PreserveSig]
-        int ProgramChanged([In] object varProgramDescriptionID);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("EFDA0C80-F395-42c3-9B3C-56B37DEC7BB7"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGuideDataEvent
+  {
+    [PreserveSig]
+    int GuideDataAcquired();
 
-        [PreserveSig]
-        int ServiceChanged([In] object varProgramDescriptionID);
+    [PreserveSig]
+    int ProgramChanged([In] object varProgramDescriptionID);
 
-        [PreserveSig]
-        int ScheduleEntryChanged([In] object varProgramDescriptionID);
+    [PreserveSig]
+    int ServiceChanged([In] object varProgramDescriptionID);
 
-        [PreserveSig]
-        int ProgramDeleted([In] object varProgramDescriptionID);
+    [PreserveSig]
+    int ScheduleEntryChanged([In] object varProgramDescriptionID);
 
-        [PreserveSig]
-        int ServiceDeleted([In] object varProgramDescriptionID);
+    [PreserveSig]
+    int ProgramDeleted([In] object varProgramDescriptionID);
 
-        [PreserveSig]
-        int ScheduleDeleted([In] object varProgramDescriptionID);
-    }
+    [PreserveSig]
+    int ServiceDeleted([In] object varProgramDescriptionID);
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("88EC5E58-BB73-41d6-99CE-66C524B8B591"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IGuideDataProperty
-    {
-        [PreserveSig]
-        int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrName);
+    [PreserveSig]
+    int ScheduleDeleted([In] object varProgramDescriptionID);
+  }
 
-        [PreserveSig]
-        int get_Language([Out] out int idLang);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("88EC5E58-BB73-41d6-99CE-66C524B8B591"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGuideDataProperty
+  {
+    [PreserveSig]
+    int get_Name([Out, MarshalAs(UnmanagedType.BStr)] out string pbstrName);
 
-        [PreserveSig]
-        int get_Value([Out] out object pvar);
-    }
+    [PreserveSig]
+    int get_Language([Out] out int idLang);
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("AE44423B-4571-475c-AD2C-F40A771D80EF"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IEnumGuideDataProperties
-    {
-        [PreserveSig]
-        int Next(
-            [In] int celt,
-            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] IGuideDataProperty [] ppprop,
-            [In] IntPtr pcelt
-            );
+    [PreserveSig]
+    int get_Value([Out] out object pvar);
+  }
 
-        [PreserveSig]
-        int Skip([In] int celt);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("AE44423B-4571-475c-AD2C-F40A771D80EF"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEnumGuideDataProperties
+  {
+    [PreserveSig]
+    int Next(
+      [In] int celt,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IGuideDataProperty[] ppprop,
+      [In] IntPtr pcelt
+      );
 
-        [PreserveSig]
-        int Reset();
+    [PreserveSig]
+    int Skip([In] int celt);
 
-        [PreserveSig]
-        int Clone([Out] out IEnumGuideDataProperties ppenum);
-    }
+    [PreserveSig]
+    int Reset();
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("1993299C-CED6-4788-87A3-420067DCE0C7"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IEnumTuneRequests
-    {
-        [PreserveSig]
-        int Next(
-            [In] int celt,
-            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ITuneRequest[] ppprop,
-            [In] IntPtr pcelt
-            );
+    [PreserveSig]
+    int Clone([Out] out IEnumGuideDataProperties ppenum);
+  }
 
-        [PreserveSig]
-        int Skip([In] int celt);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("1993299C-CED6-4788-87A3-420067DCE0C7"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IEnumTuneRequests
+  {
+    [PreserveSig]
+    int Next(
+      [In] int celt,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ITuneRequest[] ppprop,
+      [In] IntPtr pcelt
+      );
 
-        [PreserveSig]
-        int Reset();
+    [PreserveSig]
+    int Skip([In] int celt);
 
-        [PreserveSig]
-        int Clone([Out] out IEnumTuneRequests ppenum);
-    }
+    [PreserveSig]
+    int Reset();
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("61571138-5B01-43cd-AEAF-60B784A0BF93"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IGuideData
-    {
-        [PreserveSig]
-        int GetServices([Out] out IEnumTuneRequests ppEnumTuneRequests);
+    [PreserveSig]
+    int Clone([Out] out IEnumTuneRequests ppenum);
+  }
 
-        [PreserveSig]
-        int GetServiceProperties(
-            [In] ITuneRequest pTuneRequest,
-            [Out] out IEnumGuideDataProperties ppEnumProperties
-            );
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("61571138-5B01-43cd-AEAF-60B784A0BF93"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGuideData
+  {
+    [PreserveSig]
+    int GetServices([Out] out IEnumTuneRequests ppEnumTuneRequests);
 
-        [PreserveSig]
+    [PreserveSig]
+    int GetServiceProperties(
+      [In] ITuneRequest pTuneRequest,
+      [Out] out IEnumGuideDataProperties ppEnumProperties
+      );
+
+    [PreserveSig]
 #if USING_NET11
         int GetGuideProgramIDs([Out] out UCOMIEnumVARIANT pEnumPrograms);
 #else
-        int GetGuideProgramIDs([Out] out IEnumVARIANT pEnumPrograms);
+    int GetGuideProgramIDs([Out] out IEnumVARIANT pEnumPrograms);
 #endif
 
-        [PreserveSig]
-        int GetProgramProperties(
-            [In] object varProgramDescriptionID,
-            [Out] out IEnumGuideDataProperties ppEnumProperties
-            );
+    [PreserveSig]
+    int GetProgramProperties(
+      [In] object varProgramDescriptionID,
+      [Out] out IEnumGuideDataProperties ppEnumProperties
+      );
 
-        [PreserveSig]
+    [PreserveSig]
 #if USING_NET11
         int GetScheduleEntryIDs([Out] out UCOMIEnumVARIANT pEnumScheduleEntries);
 #else
-        int GetScheduleEntryIDs([Out] out IEnumVARIANT pEnumScheduleEntries);
+    int GetScheduleEntryIDs([Out] out IEnumVARIANT pEnumScheduleEntries);
 #endif
 
-        [PreserveSig]
-        int GetScheduleEntryProperties(
-            [In] object varScheduleEntryDescriptionID,
-            [Out] out IEnumGuideDataProperties ppEnumProperties
-            );
-    }
+    [PreserveSig]
+    int GetScheduleEntryProperties(
+      [In] object varScheduleEntryDescriptionID,
+      [Out] out IEnumGuideDataProperties ppEnumProperties
+      );
+  }
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("4764ff7c-fa95-4525-af4d-d32236db9e38"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IGuideDataLoader
-    {
-        [PreserveSig]
-        int Init([In] IGuideData pGuideStore);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("4764ff7c-fa95-4525-af4d-d32236db9e38"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGuideDataLoader
+  {
+    [PreserveSig]
+    int Init([In] IGuideData pGuideStore);
 
-        [PreserveSig]
-        int Terminate();
-    }
+    [PreserveSig]
+    int Terminate();
+  }
 
-    #endregion
+  #endregion
 }

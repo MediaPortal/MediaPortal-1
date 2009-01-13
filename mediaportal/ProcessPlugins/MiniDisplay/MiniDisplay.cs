@@ -24,30 +24,24 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Un4seen.Bass;
-using DShowNET.AudioMixer;
-using Microsoft.Win32;
-using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Profile;
-using MediaPortal.TV.Recording;
+using Microsoft.Win32;
+using Message=MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  [PluginIcons("ProcessPlugins.MiniDisplay.MiniDisplay.lcd.gif", "ProcessPlugins.MiniDisplay.MiniDisplay.lcd_deactivated.gif")]
+  [PluginIcons("ProcessPlugins.MiniDisplay.MiniDisplay.lcd.gif",
+    "ProcessPlugins.MiniDisplay.MiniDisplay.lcd_deactivated.gif")]
   public class MiniDisplay : IPlugin, ISetupForm
   {
-
     #region variables
+
     private PropertyBrowser browser;
     private bool ControlScreenSaver;
     private IDisplay display;
@@ -56,19 +50,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private bool ScreenSaverActive = false;
     //private bool ScreenSaverActiveAtStart;
     //private int ScreenSaverTimeOut;
-    private MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status status;
+    private Status status;
     private bool stopRequested;
     private Thread t;
     private object ThreadAccessMutex = new object();
+
     #endregion
 
     #region ctor
+
     public MiniDisplay()
     {
     }
+
     #endregion
 
     #region ISetupForm members
+
     public string PluginName()
     {
       return "MiniDisplay";
@@ -111,7 +109,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       return true;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = string.Empty;
       strButtonImage = string.Empty;
@@ -123,10 +122,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #endregion
 
     #region IPlugin members
+
     public void Start()
     {
       Log.Info("MiniDisplay.Start(): called", new object[0]);
-      Log.Info("MiniDisplay.Start(): {0}", new object[] { MiniDisplayHelper.Plugin_Version });
+      Log.Info("MiniDisplay.Start(): {0}", new object[] {MiniDisplayHelper.Plugin_Version});
       Log.Info("MiniDisplay.Start(): plugin starting...", new object[0]);
       if (!File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
       {
@@ -180,13 +180,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #endregion
 
     #region Thread handling
+
     private void DoStart()
     {
       if ((this.t == null) || !this.t.IsAlive)
       {
         try
         {
-          this.display = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.LCDType;
+          this.display = Settings.Instance.LCDType;
           if (this.display == null)
           {
             Log.Info("MiniDisplay.DoStart(): Internal display type not found.  Plugin not started!!!", new object[0]);
@@ -205,7 +206,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED", new object[0]);
           }
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
           Log.Info("MiniDisplay.DoStart: Exception while starting plugin: " + exception.Message, new object[0]);
           if ((this.t != null) && this.t.IsAlive)
@@ -238,7 +240,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           DateTime time = DateTime.Now.AddSeconds(5.0);
           while (this.t.IsAlive && (DateTime.Now.Ticks < time.Ticks))
           {
-            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (Settings.Instance.ExtensiveLogging)
             {
               Log.Info("MiniDisplay.DoStop: Background thread still alive, waiting 100ms...", new object[0]);
             }
@@ -248,15 +250,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             this.t.Abort();
             Thread.Sleep(100);
-            Log.Info("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}", new object[] { this.t.IsAlive });
+            Log.Info("MiniDisplay.DoStop(): Forcing display thread shutdown. t.IsAlive = {0}",
+                     new object[] {this.t.IsAlive});
           }
-          if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+          if (Settings.Instance.ExtensiveLogging)
           {
             Log.Info("MiniDisplay.DoStop(): Background thread has stopped.", new object[0]);
           }
           this.t = null;
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -267,54 +271,54 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool flag = false;
       try
       {
-        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        if (Settings.Instance.ExtensiveLogging)
         {
           Log.Debug("MiniDisplay Processing status.", new object[0]);
         }
-        GUIWindow.Window activeWindow = (GUIWindow.Window)GUIWindowManager.ActiveWindow;
-        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
+        if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("Active window is {0}", new object[] { activeWindow.ToString() });
+          Log.Debug("Active window is {0}", new object[] {activeWindow.ToString()});
         }
-        this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Idle;
+        this.status = Status.Idle;
         if (g_Player.Player != null)
         {
-          if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+          if (Settings.Instance.ExtensiveLogging)
           {
             Log.Debug("Active player detected", new object[0]);
           }
           GUIPropertyManager.SetProperty("#paused", g_Player.Paused ? "true" : string.Empty);
           if (g_Player.IsDVD)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingDVD;
+            this.status = Status.PlayingDVD;
             flag = true;
           }
           else if (g_Player.IsRadio)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRadio;
+            this.status = Status.PlayingRadio;
           }
           else if (g_Player.IsMusic)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingMusic;
+            this.status = Status.PlayingMusic;
           }
           else if (g_Player.IsTimeShifting)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Timeshifting;
+            this.status = Status.Timeshifting;
             flag = true;
           }
           else if (g_Player.IsTVRecording)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRecording;
+            this.status = Status.PlayingRecording;
             flag = true;
           }
           else if (g_Player.IsTV)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV;
+            this.status = Status.PlayingTV;
             flag = true;
           }
           else if (g_Player.IsVideo)
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingVideo;
+            this.status = Status.PlayingVideo;
             flag = true;
           }
           if (this.ControlScreenSaver && flag)
@@ -325,9 +329,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         else
         {
           GUIPropertyManager.SetProperty("#paused", string.Empty);
-          if (this.IsTVWindow((int)activeWindow))
+          if (this.IsTVWindow((int) activeWindow))
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV;
+            this.status = Status.PlayingTV;
           }
           if (this.ControlScreenSaver)
           {
@@ -336,63 +340,64 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, MiniDisplayHelper.GetIdleTimeout()))
         {
-          this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Action;
+          this.status = Status.Action;
         }
         if (GUIWindowManager.IsRouted)
         {
           string dialogTitle = string.Empty;
           string dialogHighlightedItem = string.Empty;
-          GUIWindow.Window activeWindowEx = (GUIWindow.Window)GUIWindowManager.ActiveWindowEx;
+          GUIWindow.Window activeWindowEx = (GUIWindow.Window) GUIWindowManager.ActiveWindowEx;
           if (this.GetDialogInfo(activeWindowEx, ref dialogTitle, ref dialogHighlightedItem))
           {
-            this.status = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Dialog;
+            this.status = Status.Dialog;
             GUIPropertyManager.GetProperty("#currentmodule");
             GUIPropertyManager.SetProperty("#DialogLabel", dialogTitle);
             GUIPropertyManager.SetProperty("#DialogItem", dialogHighlightedItem);
-            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (Settings.Instance.ExtensiveLogging)
             {
-              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", new object[] { activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem });
+              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"",
+                        new object[] {activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem});
             }
           }
         }
-        if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+        if (Settings.Instance.ExtensiveLogging)
         {
-          Log.Debug("Detected status is {0}", new object[] { this.status.ToString() });
+          Log.Debug("Detected status is {0}", new object[] {this.status.ToString()});
         }
         lock (MiniDisplayHelper.StatusMutex)
         {
           MiniDisplayHelper.MPStatus.CurrentPluginStatus = this.status;
           MiniDisplayHelper.MPStatus.MP_Is_Idle = false;
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Idle))
+          if (this.status.Equals(Status.Idle))
           {
             MiniDisplayHelper.MPStatus.MP_Is_Idle = true;
           }
           MiniDisplayHelper.MPStatus.CurrentIconMask = MiniDisplayHelper.SetPluginIcons();
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingDVD))
+          if (this.status.Equals(Status.PlayingDVD))
           {
             MiniDisplayHelper.MPStatus.Media_IsDVD = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRadio))
+          if (this.status.Equals(Status.PlayingRadio))
           {
             MiniDisplayHelper.MPStatus.Media_IsRadio = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingMusic))
+          if (this.status.Equals(Status.PlayingMusic))
           {
             MiniDisplayHelper.MPStatus.Media_IsMusic = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingRecording))
+          if (this.status.Equals(Status.PlayingRecording))
           {
             MiniDisplayHelper.MPStatus.Media_IsTVRecording = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingTV))
+          if (this.status.Equals(Status.PlayingTV))
           {
             MiniDisplayHelper.MPStatus.Media_IsTV = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Timeshifting))
+          if (this.status.Equals(Status.Timeshifting))
           {
             MiniDisplayHelper.MPStatus.Media_IsTVRecording = true;
           }
-          if (this.status.Equals(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.PlayingVideo))
+          if (this.status.Equals(Status.PlayingVideo))
           {
             MiniDisplayHelper.MPStatus.Media_IsVideo = true;
           }
@@ -402,7 +407,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (((this.browser != null) && !this.browser.IsDisposed) && MiniDisplayHelper._PropertyBrowserAvailable)
           {
-            if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+            if (Settings.Instance.ExtensiveLogging)
             {
               Log.Info("MiniDisplayPlugin.DoWork(): Updating PropertyBrowser.", new object[0]);
             }
@@ -410,9 +415,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             this.browser.SetActiveWindow(activeWindow);
           }
         }
-        foreach (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message message in MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.Messages)
+        foreach (Message message in Settings.Instance.Messages)
         {
-          if (((message.Status == MediaPortal.ProcessPlugins.MiniDisplayPlugin.Status.Any) || (message.Status == this.status)) && ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
+          if (((message.Status == Status.Any) || (message.Status == this.status)) &&
+              ((message.Windows.Count == 0) || message.Windows.Contains((int) activeWindow)))
           {
             if (!message.Process(this.handler))
             {
@@ -420,7 +426,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             return;
           }
         }
-      } catch (Exception exception)
+      }
+      catch (Exception exception)
       {
         Log.Error(exception);
       }
@@ -429,9 +436,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     public void Run()
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
-      this.ControlScreenSaver = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ControlScreenSaver;
-      Log.Info("MiniDisplay.Run(): Control ScreenSaver: {0}", new object[] { this.ControlScreenSaver.ToString() });
-      bool extensiveLogging = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging;
+      this.ControlScreenSaver = Settings.Instance.ControlScreenSaver;
+      Log.Info("MiniDisplay.Run(): Control ScreenSaver: {0}", new object[] {this.ControlScreenSaver.ToString()});
+      bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = false;
       if (extensiveLogging)
       {
@@ -459,9 +466,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 this.DoWork();
               }
-            } catch (Exception exception)
+            }
+            catch (Exception exception)
             {
-              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] { exception });
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in DoWork() - {0}", new object[] {exception});
               if (exception.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -473,9 +481,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               {
                 this.handler.DisplayLines();
               }
-            } catch (Exception exception2)
+            }
+            catch (Exception exception2)
             {
-              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] { exception2 });
+              Log.Debug("MiniDisplay.Run(): CAUGHT EXCEPTION in handler.DisplayLines() - {0}", new object[] {exception2});
               if (exception2.Message.Contains("ThreadAbortException"))
               {
                 this.stopRequested = true;
@@ -485,7 +494,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping...", new object[0]);
             }
-            Thread.Sleep(MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ScrollDelay);
+            Thread.Sleep(Settings.Instance.ScrollDelay);
             if (extensiveLogging)
             {
               Log.Debug("MiniDisplay.Run(): MiniDisplay Sleeping... DONE", new object[0]);
@@ -502,7 +511,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
         flag2 = true;
         this.handler.Stop();
-      } catch (ThreadAbortException)
+      }
+      catch (ThreadAbortException)
       {
         Log.Error("MiniDisplay.Run(): CAUGHT ThreadAbortException", new object[0]);
         if (!flag2)
@@ -510,9 +520,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.handler.Stop();
           flag2 = true;
         }
-      } catch (Exception exception3)
+      }
+      catch (Exception exception3)
       {
-        Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] { exception3 });
+        Log.Error("MiniDisplay.Run(): CAUGHT EXCEPTION: {0}", new object[] {exception3});
       }
       if (extensiveLogging)
       {
@@ -527,6 +538,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #endregion
 
     #region Helper methods
+
     public bool GetDialogInfo(GUIWindow.Window dialogWindow, ref string DialogTitle, ref string DialogHighlightedItem)
     {
       GUIListControl control = null;
@@ -535,11 +547,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         case GUIWindow.Window.WINDOW_DIALOG_YES_NO:
           {
-            GUIDialogYesNo window = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogYesNo window = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj16 in window.controlList)
             {
-              if (obj16.GetType() == typeof(GUIFadeLabel))
+              if (obj16.GetType() == typeof (GUIFadeLabel))
               {
                 GUIFadeLabel label3 = obj16 as GUIFadeLabel;
                 if (DialogTitle == string.Empty)
@@ -554,7 +566,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   DialogTitle = DialogTitle + " - " + label3.Label;
                 }
               }
-              if (obj16.GetType() == typeof(GUILabelControl))
+              if (obj16.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control14 = obj16 as GUILabelControl;
                 if (DialogTitle == string.Empty)
@@ -569,7 +581,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   DialogTitle = DialogTitle + " - " + control14.Label;
                 }
               }
-              if (obj16.GetType() == typeof(GUIButtonControl))
+              if (obj16.GetType() == typeof (GUIButtonControl))
               {
                 GUIButtonControl control15 = obj16 as GUIButtonControl;
                 if (!control15.Focus)
@@ -583,10 +595,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
           {
-            GUIDialogProgress progress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogProgress progress = (GUIDialogProgress) GUIWindowManager.GetWindow((int) dialogWindow);
             foreach (object obj6 in progress.controlList)
             {
-              if (obj6.GetType() == typeof(GUILabelControl))
+              if (obj6.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control6 = obj6 as GUILabelControl;
                 if (control6.GetID == 1)
@@ -597,7 +609,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             foreach (object obj7 in progress.controlList)
             {
-              if (obj7.GetType() == typeof(GUIProgressControl))
+              if (obj7.GetType() == typeof (GUIProgressControl))
               {
                 GUIProgressControl control7 = obj7 as GUIProgressControl;
                 DialogHighlightedItem = "Progress: " + control7.Percentage.ToString() + "%";
@@ -607,12 +619,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_SELECT:
           {
-            GUIDialogSelect select = (GUIDialogSelect)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogSelect select = (GUIDialogSelect) GUIWindowManager.GetWindow((int) dialogWindow);
             control = null;
             focus = false;
             foreach (object obj9 in select.controlList)
             {
-              if (obj9.GetType() == typeof(GUIListControl))
+              if (obj9.GetType() == typeof (GUIListControl))
               {
                 control = obj9 as GUIListControl;
                 focus = control.Focus;
@@ -630,7 +642,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (object obj10 in select.controlList)
               {
-                if (obj10.GetType() == typeof(GUIButtonControl))
+                if (obj10.GetType() == typeof (GUIButtonControl))
                 {
                   GUIButtonControl control10 = obj10 as GUIButtonControl;
                   if (control10.Focus)
@@ -644,22 +656,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_OK:
           {
-            GUIDialogOK gok = (GUIDialogOK)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogOK gok = (GUIDialogOK) GUIWindowManager.GetWindow((int) dialogWindow);
             foreach (object obj5 in gok.controlList)
             {
-              if (obj5.GetType() == typeof(GUIButtonControl))
+              if (obj5.GetType() == typeof (GUIButtonControl))
               {
                 GUIButtonControl control4 = obj5 as GUIButtonControl;
                 if (control4.Focus)
                 {
                   DialogHighlightedItem = control4.Description;
-                  if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+                  if (Settings.Instance.ExtensiveLogging)
                   {
-                    Log.Info("MiniDisplay.GetDialogInfo(): found WINDOW_DIALOG_OK buttoncontrol ID = {0} Label = \"{1}\" Desc = \"{2}\"", new object[] { control4.GetID, control4.Label, control4.Description });
+                    Log.Info(
+                      "MiniDisplay.GetDialogInfo(): found WINDOW_DIALOG_OK buttoncontrol ID = {0} Label = \"{1}\" Desc = \"{2}\"",
+                      new object[] {control4.GetID, control4.Label, control4.Description});
                   }
                 }
               }
-              if (obj5.GetType() == typeof(GUIFadeLabel))
+              if (obj5.GetType() == typeof (GUIFadeLabel))
               {
                 GUIFadeLabel label = obj5 as GUIFadeLabel;
                 if (DialogTitle == string.Empty)
@@ -674,7 +688,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   DialogTitle = DialogTitle + " - " + label.Label;
                 }
               }
-              if (obj5.GetType() == typeof(GUILabelControl))
+              if (obj5.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control5 = obj5 as GUILabelControl;
                 if (DialogTitle == string.Empty)
@@ -695,12 +709,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_SELECT2:
           {
-            GUIDialogSelect2 select2 = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogSelect2 select2 = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) dialogWindow);
             control = null;
             focus = false;
             foreach (object obj11 in select2.controlList)
             {
-              if (obj11.GetType() == typeof(GUIListControl))
+              if (obj11.GetType() == typeof (GUIListControl))
               {
                 control = obj11 as GUIListControl;
                 focus = control.Focus;
@@ -718,7 +732,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (object obj12 in select2.controlList)
               {
-                if (obj12.GetType() == typeof(GUIButtonControl))
+                if (obj12.GetType() == typeof (GUIButtonControl))
                 {
                   GUIButtonControl control11 = obj12 as GUIButtonControl;
                   if (control11.Focus)
@@ -732,10 +746,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_MENU:
           {
-            GUIDialogMenu menu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogMenu menu = (GUIDialogMenu) GUIWindowManager.GetWindow((int) dialogWindow);
             foreach (object obj13 in menu.controlList)
             {
-              if (obj13.GetType() == typeof(GUILabelControl))
+              if (obj13.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control12 = obj13 as GUILabelControl;
                 if (!control12.Label.Trim().ToLower().Equals("menu"))
@@ -748,7 +762,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             focus = false;
             foreach (object obj14 in menu.controlList)
             {
-              if (obj14.GetType() == typeof(GUIListControl))
+              if (obj14.GetType() == typeof (GUIListControl))
               {
                 control = obj14 as GUIListControl;
                 focus = control.Focus;
@@ -766,7 +780,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (object obj15 in menu.controlList)
               {
-                if (obj15.GetType() == typeof(GUIButtonControl))
+                if (obj15.GetType() == typeof (GUIButtonControl))
                 {
                   GUIButtonControl control13 = obj15 as GUIButtonControl;
                   if (control13.Focus)
@@ -780,11 +794,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_RATING:
           {
-            GUIDialogSetRating rating = (GUIDialogSetRating)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogSetRating rating = (GUIDialogSetRating) GUIWindowManager.GetWindow((int) dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj8 in rating.controlList)
             {
-              if (obj8.GetType() == typeof(GUIFadeLabel))
+              if (obj8.GetType() == typeof (GUIFadeLabel))
               {
                 GUIFadeLabel label2 = obj8 as GUIFadeLabel;
                 if (DialogTitle == string.Empty)
@@ -799,7 +813,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   DialogTitle = DialogTitle + " - " + label2.Label;
                 }
               }
-              if (obj8.GetType() == typeof(GUILabelControl))
+              if (obj8.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control8 = obj8 as GUILabelControl;
                 if (DialogTitle == string.Empty)
@@ -814,7 +828,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                   DialogTitle = DialogTitle + " - " + control8.Label;
                 }
               }
-              if (obj8.GetType() == typeof(GUIButtonControl))
+              if (obj8.GetType() == typeof (GUIButtonControl))
               {
                 GUIButtonControl control9 = obj8 as GUIButtonControl;
                 if (!control9.Focus)
@@ -828,11 +842,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
           {
-            GUIDialogMenuBottomRight right = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)dialogWindow);
+            GUIDialogMenuBottomRight right = (GUIDialogMenuBottomRight) GUIWindowManager.GetWindow((int) dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj2 in right.controlList)
             {
-              if (obj2.GetType() == typeof(GUILabelControl))
+              if (obj2.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control2 = obj2 as GUILabelControl;
                 if (!control2.Label.Trim().ToLower().Equals("menu") && (control2.Label != string.Empty))
@@ -852,7 +866,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             focus = false;
             foreach (object obj3 in right.controlList)
             {
-              if (obj3.GetType() == typeof(GUIListControl))
+              if (obj3.GetType() == typeof (GUIListControl))
               {
                 control = obj3 as GUIListControl;
                 focus = control.Focus;
@@ -870,7 +884,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (object obj4 in right.controlList)
               {
-                if (obj4.GetType() == typeof(GUIButtonControl))
+                if (obj4.GetType() == typeof (GUIButtonControl))
                 {
                   GUIButtonControl control3 = obj4 as GUIButtonControl;
                   if (control3.Focus)
@@ -889,9 +903,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void GetTVSource()
     {
       MiniDisplayHelper.UseTVServer = false;
-      if ((File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll") && File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvLibrary.Interfaces.dll")) && File.Exists(Config.GetFolder(Config.Dir.Plugins) + @"\Windows\TvPlugin.dll"))
+      if ((File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll") &&
+           File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvLibrary.Interfaces.dll")) &&
+          File.Exists(Config.GetFolder(Config.Dir.Plugins) + @"\Windows\TvPlugin.dll"))
       {
-        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           if (settings.GetValueAsString("tvservice", "hostname", "") != string.Empty)
           {
@@ -908,12 +924,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private bool IsTVWindow(int windowId)
     {
-      return ((windowId == 1) || ((windowId == 602) || ((windowId == 600) || ((windowId == 603) || ((windowId == 606) || ((windowId == 605) || ((windowId == 601) || ((windowId == 604) || ((windowId == 7700) || ((windowId == 7701) || ((windowId == 607) || ((windowId == 608) || ((windowId == 609) || ((windowId == 611) || ((windowId == 612) || ((windowId == 613) || ((windowId == 610) || ((windowId == 749) || (windowId == 748)))))))))))))))))));
+      return ((windowId == 1) ||
+              ((windowId == 602) ||
+               ((windowId == 600) ||
+                ((windowId == 603) ||
+                 ((windowId == 606) ||
+                  ((windowId == 605) ||
+                   ((windowId == 601) ||
+                    ((windowId == 604) ||
+                     ((windowId == 7700) ||
+                      ((windowId == 7701) ||
+                       ((windowId == 607) ||
+                        ((windowId == 608) ||
+                         ((windowId == 609) ||
+                          ((windowId == 611) ||
+                           ((windowId == 612) ||
+                            ((windowId == 613) || ((windowId == 610) || ((windowId == 749) || (windowId == 748)))))))))))))))))));
     }
 
     #endregion
 
     #region Event handling
+
     private void GUIWindowManager_OnNewAction(Action action)
     {
       this.lastAction = DateTime.Now;
@@ -921,7 +953,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
-      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+      if (Settings.Instance.ExtensiveLogging)
       {
         Log.Debug("MiniDisplay: SystemPowerModeChanged event was raised.", new object[0]);
       }
@@ -948,15 +980,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void browser_Closing(object sender, FormClosingEventArgs e)
     {
-      if (MediaPortal.ProcessPlugins.MiniDisplayPlugin.Settings.Instance.ExtensiveLogging)
+      if (Settings.Instance.ExtensiveLogging)
       {
         Log.Info("MiniDisplay.browser_Closing(): PropertyBrowser is closing.", new object[0]);
       }
       this.browser = null;
     }
+
     #endregion
-
-
   }
 }
-

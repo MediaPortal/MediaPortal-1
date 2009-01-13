@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
@@ -34,7 +33,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace MediaPortal.Hardware
 {
-  sealed class Remote : Device
+  internal sealed class Remote : Device
   {
     #region Constructor
 
@@ -48,11 +47,11 @@ namespace MediaPortal.Hardware
 
     #region Implementation
 
-    void Init()
+    private void Init()
     {
       try
       {
-        _deviceClass = Device.HidGuid;
+        _deviceClass = HidGuid;
         _doubleClickTime = GetDoubleClickTime();
 
         _deviceBuffer = new byte[256];
@@ -78,16 +77,21 @@ namespace MediaPortal.Hardware
       string devicePath = FindDevice(_deviceClass);
 
       if (devicePath == null)
+      {
         return;
+      }
       if (LogVerbose)
       {
         Log.Info("MCE: Using: {0}", devicePath);
       }
 
-      SafeFileHandle deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+      SafeFileHandle deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open,
+                                               FileFlag.Overlapped, 0);
 
       if (deviceHandle.IsInvalid)
+      {
         throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
+      }
 
       _deviceWatcher.RegisterDeviceRemoval(deviceHandle);
 
@@ -96,24 +100,29 @@ namespace MediaPortal.Hardware
       _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
     }
 
-    void OnReadComplete(IAsyncResult asyncResult)
+    private void OnReadComplete(IAsyncResult asyncResult)
     {
       try
       {
         if (_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
         {
-          if (_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
+          if (_deviceBuffer[5] == (int) _doubleClickButton &&
+              Environment.TickCount - _doubleClickTick <= _doubleClickTime)
           {
             if (DoubleClick != null)
+            {
               DoubleClick(this, new RemoteEventArgs(_doubleClickButton));
+            }
           }
           else
           {
-            _doubleClickButton = (RemoteButton)_deviceBuffer[5];
+            _doubleClickButton = (RemoteButton) _deviceBuffer[5];
             _doubleClickTick = Environment.TickCount;
 
             if (Click != null)
+            {
               Click(this, new RemoteEventArgs(_doubleClickButton));
+            }
           }
         }
         // begin another asynchronous read from the device
@@ -124,7 +133,7 @@ namespace MediaPortal.Hardware
       }
     }
 
-    void OnSettingsChanged()
+    private void OnSettingsChanged()
     {
       _doubleClickTime = GetDoubleClickTime();
     }
@@ -134,7 +143,7 @@ namespace MediaPortal.Hardware
     #region Interop
 
     [DllImport("user32")]
-    static extern int GetDoubleClickTime();
+    private static extern int GetDoubleClickTime();
 
     #endregion Interop
 
@@ -147,13 +156,11 @@ namespace MediaPortal.Hardware
 
     #region Members
 
-    static Remote _deviceSingleton;
-    int _doubleClickTime = -1;
-    int _doubleClickTick = 0;
-    RemoteButton _doubleClickButton;
+    private static Remote _deviceSingleton;
+    private int _doubleClickTime = -1;
+    private int _doubleClickTick = 0;
+    private RemoteButton _doubleClickButton;
 
     #endregion Members
-
-
   }
 }

@@ -25,18 +25,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Data.OleDb;
 using System.Data;
+using System.Data.OleDb;
+using System.IO;
 using System.Threading;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
 using MediaPortal.Configuration;
-
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 
 namespace ProcessPlugins.TvMovie
 {
-  class TvMovieSchedules
+  internal class TvMovieSchedules
   {
     private FileSystemWatcher _watcher = null;
     private OleDbConnection _databaseConnection = null;
@@ -44,9 +45,13 @@ namespace ProcessPlugins.TvMovie
 
     public void Start()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         if (!xmlreader.GetValueAsBool("tvmovie", "importschedules", true))
+        {
           return;
+        }
+      }
 
       Log.Debug("TVMovie: Starting schedules-importer");
 
@@ -57,7 +62,9 @@ namespace ProcessPlugins.TvMovie
       _watcher_Changed(null, null); // run on startup
 
       if (_watcher == null)
+      {
         _watcher = new FileSystemWatcher(dbDirectory, dbFile);
+      }
 
       _watcher.Changed += new FileSystemEventHandler(_watcher_Changed);
       _watcher.EnableRaisingEvents = true;
@@ -68,12 +75,12 @@ namespace ProcessPlugins.TvMovie
     {
       Log.Debug("TVMovie: Stopping schedules-importer");
 
-			if (_watcher != null)
-			{
-				_watcher.EnableRaisingEvents = false;
-				_watcher.Changed -= new FileSystemEventHandler(_watcher_Changed);
-				_watcher.Dispose();
-			}
+      if (_watcher != null)
+      {
+        _watcher.EnableRaisingEvents = false;
+        _watcher.Changed -= new FileSystemEventHandler(_watcher_Changed);
+        _watcher.Dispose();
+      }
     }
 
 
@@ -84,13 +91,18 @@ namespace ProcessPlugins.TvMovie
       string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}";
 
       if (TvMovieDatabase.DatabasePath != string.Empty)
+      {
         dataProviderString = string.Format(dataProviderString, TvMovieDatabase.DatabasePath);
+      }
       else
+      {
         return;
+      }
 
       _databaseConnection = new OleDbConnection(dataProviderString);
 
-      string sqlSelect = "SELECT Markierungen.ID, Markierungen.Sendung, Markierungen.SenderKennung, Markierungen.Datum, Markierungen.Uhrzeit, Markierungen.Dauer FROM Markierungen WHERE (((Markierungen.Aufzeichnung)=True));";
+      string sqlSelect =
+        "SELECT Markierungen.ID, Markierungen.Sendung, Markierungen.SenderKennung, Markierungen.Datum, Markierungen.Uhrzeit, Markierungen.Dauer FROM Markierungen WHERE (((Markierungen.Aufzeichnung)=True));";
 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
@@ -105,7 +117,7 @@ namespace ProcessPlugins.TvMovie
           databaseAdapter.Fill(tvMovieTable, "Markierungen");
           success = true;
         }
-        catch (System.Data.OleDb.OleDbException)
+        catch (OleDbException)
         {
           Log.Debug("TVMovie: Database is locked - retrying in 200 msec");
           Thread.Sleep(200);
@@ -117,7 +129,9 @@ namespace ProcessPlugins.TvMovie
       } while (!success);
 
       if (!success)
+      {
         Log.Error("TVMovie: Error accessing TV Movie ClickFinder database while reading schedules");
+      }
 
       foreach (DataRow guideEntry in tvMovieTable.Tables["Markierungen"].Rows)
       {
@@ -145,14 +159,19 @@ namespace ProcessPlugins.TvMovie
 
           if (!ScheduleExists(scheduledRecording))
           {
-            int result = MediaPortal.TV.Recording.Recorder.AddRecording(ref scheduledRecording);
+            int result = Recorder.AddRecording(ref scheduledRecording);
             Log.Debug("TVMovie: added schedule - {0}", result);
           }
           else
+          {
             Log.Debug("TVMovie: schedule already in database");
+          }
         }
         else
-          Log.Error("TVMovie: Station \"{0}\" is unknown because it is not mapped - schedule has not been added", stationName);
+        {
+          Log.Error("TVMovie: Station \"{0}\" is unknown because it is not mapped - schedule has not been added",
+                    stationName);
+        }
       }
     }
 
@@ -164,15 +183,14 @@ namespace ProcessPlugins.TvMovie
       foreach (TVRecording recording in recs)
       {
         if (schedule.Channel == recording.Channel
-          && schedule.Title == recording.Title
-          && schedule.StartTime == recording.StartTime
-          && schedule.EndTime == recording.EndTime)
+            && schedule.Title == recording.Title
+            && schedule.StartTime == recording.StartTime
+            && schedule.EndTime == recording.EndTime)
         {
           return true;
         }
       }
       return false;
     }
-
   }
 }

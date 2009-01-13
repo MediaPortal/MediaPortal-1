@@ -24,20 +24,16 @@
 #endregion
 
 using System;
-using System.Text;
 using System.IO;
-using System.Xml;
-using System.Diagnostics;
 using System.Threading;
-using System.Collections;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
 
 namespace MediaPortal.TVGuideScheduler
 {
-  class GetGuideData
+  internal class GetGuideData
   {
     public static void Main(string[] options)
     {
@@ -54,7 +50,7 @@ namespace MediaPortal.TVGuideScheduler
       string FileToImport = null;
       bool RunConfig = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         grabber = xmlreader.GetValueAsString("xmltv", "grabber", "tv_grab_uk_rt");
         multiGrab = xmlreader.GetValueAsString("xmltv", "advanced", "yes");
@@ -87,7 +83,10 @@ namespace MediaPortal.TVGuideScheduler
           LoadFromFile = true;
           FileNext = true;
         }
-        if (s.ToUpper() == "/CONFIGURE") RunConfig = true;
+        if (s.ToUpper() == "/CONFIGURE")
+        {
+          RunConfig = true;
+        }
       }
 
       if (LoadFromFile)
@@ -97,8 +96,10 @@ namespace MediaPortal.TVGuideScheduler
           XMLTVImport importMulti = new XMLTVImport();
           importMulti.Import(FileToImport, false);
         }
-        else Log.Info("TVGuideScheduler: /file option but no filename ");
-
+        else
+        {
+          Log.Info("TVGuideScheduler: /file option but no filename ");
+        }
       }
       else
       {
@@ -120,16 +121,19 @@ namespace MediaPortal.TVGuideScheduler
         else
         {
           Grabber grab = new Grabber(grabber.ToLower());
-          string strEXEpath = System.IO.Path.GetFullPath(grab.Output);
+          string strEXEpath = Path.GetFullPath(grab.Output);
 
           //check if there is a .conf file for the grabber, or /configure on command line
           //if not found run xmltv.exe with the --configure to set channels
           if (grab.GrabberName != "tv_grab_nl_wolf")
           {
             if ((!File.Exists(grab.Output + "\\" + grab.GrabberName + ".conf")) || (RunConfig))
+            {
               XMLTVgrab.GrabberConfigure(grab.GrabberName, grab.Output);
+            }
             else
-            { //check its size to see if its valid
+            {
+              //check its size to see if its valid
               FileInfo conf = new FileInfo(grab.Output + "\\" + grab.GrabberName + ".conf");
               if (conf.Length < 10) //to indicate that it contains some data
               {
@@ -140,18 +144,19 @@ namespace MediaPortal.TVGuideScheduler
           }
           if (multiGrab == "yes")
           {
-            grabberSingleDays = dayString.Split(new Char[] { ',' });
-            XMLTVgrab.BuildThreads(grabberSingleDays, grab.GrabberName, grab.ConfigFile, strEXEpath, grab.Output, grab.Options, runGrabberLowPriority);
+            grabberSingleDays = dayString.Split(new Char[] {','});
+            XMLTVgrab.BuildThreads(grabberSingleDays, grab.GrabberName, grab.ConfigFile, strEXEpath, grab.Output,
+                                   grab.Options, runGrabberLowPriority);
             // check file is not empty then import single day files into database
             foreach (string s in grabberSingleDays)
             {
-              FileInfo file = new FileInfo(grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml");
+              FileInfo file = new FileInfo(grab.Output + "\\TVguide" + Convert.ToInt32(s) + ".xml");
               if (file.Exists)
               {
                 if (file.Length > 250) //to indicate that it contains some data
                 {
                   XMLTVImport importSingle = new XMLTVImport();
-                  importSingle.Import(grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml", false);
+                  importSingle.Import(grab.Output + "\\TVguide" + Convert.ToInt32(s) + ".xml", false);
                 }
                 else
                 {
@@ -160,7 +165,8 @@ namespace MediaPortal.TVGuideScheduler
               }
               else
               {
-                Log.Error("TVGuideScheduler: No XML file is found in - " + grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml");
+                Log.Error("TVGuideScheduler: No XML file is found in - " + grab.Output + "\\TVguide" +
+                          Convert.ToInt32(s) + ".xml");
               }
             }
           }
@@ -175,23 +181,23 @@ namespace MediaPortal.TVGuideScheduler
             }
             else
             {
-              DateTime lastProg = MediaPortal.Util.Utils.longtodate(System.Convert.ToInt64(lastGuideDate));
+              DateTime lastProg = Util.Utils.longtodate(Convert.ToInt64(lastGuideDate));
               daysInGuide = lastProg - DateTime.Now;
-              grabberDays = grab.GuideDays - System.Convert.ToInt32(daysInGuide.Days);
+              grabberDays = grab.GuideDays - Convert.ToInt32(daysInGuide.Days);
             }
             int offset = 0;
-            if (System.Convert.ToInt32(daysInGuide.Days) < 0)
+            if (Convert.ToInt32(daysInGuide.Days) < 0)
             {
               Log.Info("TVGuideScheduler: /already more days in guide than configured, exiting");
               return;
             }
-            if (System.Convert.ToInt32(daysInGuide.Days) == 0)
+            if (Convert.ToInt32(daysInGuide.Days) == 0)
             {
-              offset = System.Convert.ToInt32(daysInGuide.Days);
+              offset = Convert.ToInt32(daysInGuide.Days);
             }
             else
             {
-              offset = System.Convert.ToInt32(daysInGuide.Days) + 1;
+              offset = Convert.ToInt32(daysInGuide.Days) + 1;
             }
 
             if (grab.GrabberName == "tv_grab_nl_wolf")
@@ -200,7 +206,8 @@ namespace MediaPortal.TVGuideScheduler
             }
             else
             {
-              XMLTVgrab.RunGrabber(grab.GrabberName, grab.ConfigFile, strEXEpath, grab.Output, grabberDays, offset, grab.Options, runGrabberLowPriority);
+              XMLTVgrab.RunGrabber(grab.GrabberName, grab.ConfigFile, strEXEpath, grab.Output, grabberDays, offset,
+                                   grab.Options, runGrabberLowPriority);
             }
             //check file is not empty then import multi day file into database
             FileInfo file = new FileInfo(grab.Output + "\\TVguide.xml");
@@ -217,7 +224,5 @@ namespace MediaPortal.TVGuideScheduler
         }
       }
     }
-
   }
-
 }

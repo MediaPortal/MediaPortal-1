@@ -24,18 +24,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
 namespace MediaPortal.Profile
 {
   public class XmlSettingsProvider : ISettingsProvider, ISettingsPrefetchable
   {
-    XmlDocument document = null;
-    bool modified = false;
-    string filename = null;
+    private XmlDocument document = null;
+    private bool modified = false;
+    private string filename = null;
 
     public XmlSettingsProvider(string xmlFileName)
     {
@@ -45,20 +43,32 @@ namespace MediaPortal.Profile
       try
       {
         document.Load(filename);
-        if (document.DocumentElement == null) 
+        if (document.DocumentElement == null)
+        {
           document = null;
+        }
       }
       catch (Exception)
       {
         if (File.Exists(filename + ".bak"))
+        {
           document.Load(filename + ".bak");
+        }
         if (File.Exists(filename + ".xml"))
+        {
           File.Delete(filename + ".xml");
-        if (document.DocumentElement == null) document = null;
+        }
+        if (document.DocumentElement == null)
+        {
+          document = null;
+        }
       }
       if (document == null)
+      {
         document = new XmlDocument();
+      }
     }
+
     public string FileName
     {
       get { return filename; }
@@ -66,28 +76,60 @@ namespace MediaPortal.Profile
 
     public object GetValue(string section, string entry)
     {
-      if (document == null) return null;
+      if (document == null)
+      {
+        return null;
+      }
 
       XmlElement root = document.DocumentElement;
-      if (root == null) return null;
+      if (root == null)
+      {
+        return null;
+      }
       XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
-      if (entryNode == null) return null;
+      if (entryNode == null)
+      {
+        return null;
+      }
       return entryNode.InnerText;
     }
 
     public void Save()
     {
-      if (!modified) return;
-      if (document == null) return;
-      if (document.DocumentElement == null) return;
-      if (document.ChildNodes.Count == 0) return;
-      if (document.DocumentElement.ChildNodes == null) return;
+      if (!modified)
+      {
+        return;
+      }
+      if (document == null)
+      {
+        return;
+      }
+      if (document.DocumentElement == null)
+      {
+        return;
+      }
+      if (document.ChildNodes.Count == 0)
+      {
+        return;
+      }
+      if (document.DocumentElement.ChildNodes == null)
+      {
+        return;
+      }
       try
       {
-        if (File.Exists(filename + ".bak")) File.Delete(filename + ".bak");
-        if (File.Exists(filename)) File.Move(filename, filename + ".bak");
+        if (File.Exists(filename + ".bak"))
+        {
+          File.Delete(filename + ".bak");
+        }
+        if (File.Exists(filename))
+        {
+          File.Move(filename, filename + ".bak");
+        }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       using (StreamWriter stream = new StreamWriter(filename, false))
       {
@@ -97,6 +139,7 @@ namespace MediaPortal.Profile
       }
       modified = false;
     }
+
     public void SetValue(string section, string entry, object value)
     {
       // If the value is null, remove the entry
@@ -141,9 +184,11 @@ namespace MediaPortal.Profile
 
     public void RemoveEntry(string section, string entry)
     {
-
       // Verify the file exists
-      if (document == null) return;
+      if (document == null)
+      {
+        return;
+      }
       // -- Unecessary : if (document.DocumentElement == null) return;
       // Get the entry's node, if it exists
       // -- Unecessary : XmlElement root = document.DocumentElement;
@@ -153,14 +198,18 @@ namespace MediaPortal.Profile
       //entryNode = document.DocumentElement.SelectSingleNode(GetSectionsPath(section));
 
       if (entryNode == null)
+      {
         return;
+      }
       entryNode.ParentNode.RemoveChild(entryNode);
       modified = true;
     }
+
     private string GetSectionsPath(string section)
     {
       return "section[@name=\"" + section + "\"]";
     }
+
     private string GetEntryPath(string entry)
     {
       return "entry[@name=\"" + entry + "\"]";
@@ -172,7 +221,9 @@ namespace MediaPortal.Profile
       object value;
 
       if (!File.Exists(filename))
+      {
         return;
+      }
 
       using (XmlReader reader = XmlReader.Create(filename, GetReaderSettings()))
       {

@@ -9,7 +9,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class iMONLCDg_AdvancedSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class iMONLCDg_AdvancedSetupForm : MPConfigForm
   {
     private MPButton btnOK;
     private MPButton btnReset;
@@ -93,10 +93,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpUseLargeIcons.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "UseLargeIcons");
       this.mpUseCustomIcons.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "UseCustomIcons");
       this.mpUseInvertedIcons.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "UseInvertedIcons");
-      this.mpBlankDisplayWithVideo.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "BlankDisplayWithVideo");
+      this.mpBlankDisplayWithVideo.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance,
+                                                    "BlankDisplayWithVideo");
       this.mpEnableDisplayAction.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "EnableDisplayAction");
       this.mpEnableDisplayActionTime.SelectedIndex = 0;
-      this.mpEnableDisplayActionTime.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance, "EnableDisplayActionTime");
+      this.mpEnableDisplayActionTime.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance,
+                                                      "EnableDisplayActionTime");
       this.mpVFD_UseV3DLL.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "VFD_UseV3DLL");
       this.cmbEqRate.SelectedIndex = 0;
       this.cmbEqRate.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance, "EqRate");
@@ -107,7 +109,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.mpSmoothEQ.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "SmoothEQ");
       this.mpEQTitleDisplay.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "EQTitleDisplay");
       this.cmbEQTitleDisplayTime.SelectedIndex = 0;
-      this.cmbEQTitleDisplayTime.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance, "EQTitleDisplayTime");
+      this.cmbEQTitleDisplayTime.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance,
+                                                  "EQTitleDisplayTime");
       this.cmbEQTitleShowTime.SelectedIndex = 0;
       this.cmbEQTitleShowTime.DataBindings.Add("SelectedIndex", iMONLCDg.AdvancedSettings.Instance, "EQTitleShowTime");
       this.mpBlankDisplayWhenIdle.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "BlankDisplayWhenIdle");
@@ -317,7 +320,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (this.cmbType.SelectedItem.ToString() == "AutoDetect")
       {
-        Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for AutoDetect", new object[0]);
+        Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for AutoDetect",
+                  new object[0]);
         this.mpBlankDisplayWhenIdle.Enabled = true;
         if (this.mpBlankDisplayWhenIdle.Checked)
         {
@@ -451,7 +455,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else if ((this.cmbType.SelectedItem.ToString() == "LCD") || (this.cmbType.SelectedItem.ToString() == "LCD2"))
       {
-        Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for LCD/LCD2", new object[0]);
+        Log.Debug("iMONLCDg.AdvancedSetupForm.cmbType_changed: Enabling Advanced Setup options for LCD/LCD2",
+                  new object[0]);
         this.mpBlankDisplayWhenIdle.Enabled = true;
         if (this.mpBlankDisplayWhenIdle.Checked)
         {
@@ -800,73 +805,73 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeComponent()
     {
-      this.groupBoxConfiguration = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.mpMonitorPowerState = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxManager = new System.Windows.Forms.GroupBox();
-      this.mpForceManagerReload = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpRestartFrontview = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpForceKeyBoardMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpForceManagerRestart = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpEnsureManagerStartup = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxHardware = new System.Windows.Forms.GroupBox();
-      this.mpDelayStartup = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cmbType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpVFD_UseV3DLL = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxRemoteControl = new System.Windows.Forms.GroupBox();
-      this.lblRemoteType = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbRemoteType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.lblDelay = new System.Windows.Forms.Label();
-      this.tbDelay = new System.Windows.Forms.TrackBar();
-      this.cbDisableRepeat = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbUseRC = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxDisplayControl = new System.Windows.Forms.GroupBox();
-      this.cmbBlankIdleTime = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpEnableDisplayActionTime = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpEnableDisplayAction = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpBlankDisplayWithVideo = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpBlankDisplayWhenIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupboxEqualizerOptions = new System.Windows.Forms.GroupBox();
-      this.cmbDelayEqTime = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.groupEQstyle = new System.Windows.Forms.GroupBox();
-      this.mpUseVUmeter2 = new System.Windows.Forms.RadioButton();
-      this.cbVUindicators = new System.Windows.Forms.CheckBox();
-      this.mpUseVUmeter = new System.Windows.Forms.RadioButton();
-      this.mpUseStereoEQ = new System.Windows.Forms.RadioButton();
-      this.mpNormalEQ = new System.Windows.Forms.RadioButton();
-      this.cmbEqMode = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabelEQmode = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cmbEQTitleDisplayTime = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabelEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cmbEQTitleShowTime = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpEQTitleDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpSmoothEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpEqDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpRestrictEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cmbEqRate = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpDelayEQ = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxDisplayOptions = new System.Windows.Forms.GroupBox();
-      this.ckDiskIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ckDiskMediaStatus = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ckDeviceMonitor = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpVolumeDisplay = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpProgressBar = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpEditFont = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpEditIcon = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpUseCustomFont = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpUseLargeIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpUseCustomIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpUseInvertedIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnReset = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxConfiguration = new MPGroupBox();
+      this.groupBox1 = new GroupBox();
+      this.mpMonitorPowerState = new MPCheckBox();
+      this.groupBoxManager = new GroupBox();
+      this.mpForceManagerReload = new MPCheckBox();
+      this.mpRestartFrontview = new MPCheckBox();
+      this.mpForceKeyBoardMode = new MPCheckBox();
+      this.mpForceManagerRestart = new MPCheckBox();
+      this.mpEnsureManagerStartup = new MPCheckBox();
+      this.groupBoxHardware = new GroupBox();
+      this.mpDelayStartup = new MPCheckBox();
+      this.label1 = new MPLabel();
+      this.cmbType = new MPComboBox();
+      this.mpVFD_UseV3DLL = new MPCheckBox();
+      this.groupBoxRemoteControl = new GroupBox();
+      this.lblRemoteType = new MPLabel();
+      this.cbRemoteType = new MPComboBox();
+      this.lblDelay = new Label();
+      this.tbDelay = new TrackBar();
+      this.cbDisableRepeat = new MPCheckBox();
+      this.cbUseRC = new MPCheckBox();
+      this.groupBoxDisplayControl = new GroupBox();
+      this.cmbBlankIdleTime = new MPComboBox();
+      this.mpEnableDisplayActionTime = new MPComboBox();
+      this.mpEnableDisplayAction = new MPCheckBox();
+      this.mpBlankDisplayWithVideo = new MPCheckBox();
+      this.mpBlankDisplayWhenIdle = new MPCheckBox();
+      this.groupboxEqualizerOptions = new GroupBox();
+      this.cmbDelayEqTime = new MPComboBox();
+      this.groupEQstyle = new GroupBox();
+      this.mpUseVUmeter2 = new RadioButton();
+      this.cbVUindicators = new CheckBox();
+      this.mpUseVUmeter = new RadioButton();
+      this.mpUseStereoEQ = new RadioButton();
+      this.mpNormalEQ = new RadioButton();
+      this.cmbEqMode = new MPComboBox();
+      this.mpLabelEQmode = new MPLabel();
+      this.mpLabel2 = new MPLabel();
+      this.cmbEQTitleDisplayTime = new MPComboBox();
+      this.mpLabelEQTitleDisplay = new MPLabel();
+      this.cmbEQTitleShowTime = new MPComboBox();
+      this.mpEQTitleDisplay = new MPCheckBox();
+      this.mpSmoothEQ = new MPCheckBox();
+      this.mpEqDisplay = new MPCheckBox();
+      this.mpRestrictEQ = new MPCheckBox();
+      this.cmbEqRate = new MPComboBox();
+      this.mpDelayEQ = new MPCheckBox();
+      this.groupBoxDisplayOptions = new GroupBox();
+      this.ckDiskIcon = new MPCheckBox();
+      this.ckDiskMediaStatus = new MPCheckBox();
+      this.ckDeviceMonitor = new MPCheckBox();
+      this.mpVolumeDisplay = new MPCheckBox();
+      this.mpProgressBar = new MPCheckBox();
+      this.mpEditFont = new MPButton();
+      this.mpEditIcon = new MPButton();
+      this.mpUseCustomFont = new MPCheckBox();
+      this.mpUseLargeIcons = new MPCheckBox();
+      this.mpUseCustomIcons = new MPCheckBox();
+      this.mpUseInvertedIcons = new MPCheckBox();
+      this.btnOK = new MPButton();
+      this.btnReset = new MPButton();
       this.groupBoxConfiguration.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBoxManager.SuspendLayout();
       this.groupBoxHardware.SuspendLayout();
       this.groupBoxRemoteControl.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbDelay)).BeginInit();
+      ((ISupportInitialize) (this.tbDelay)).BeginInit();
       this.groupBoxDisplayControl.SuspendLayout();
       this.groupboxEqualizerOptions.SuspendLayout();
       this.groupEQstyle.SuspendLayout();
@@ -875,9 +880,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxConfiguration
       // 
-      this.groupBoxConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxConfiguration.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                             | AnchorStyles.Left)
+                                                            | AnchorStyles.Right)));
       this.groupBoxConfiguration.Controls.Add(this.groupBox1);
       this.groupBoxConfiguration.Controls.Add(this.groupBoxManager);
       this.groupBoxConfiguration.Controls.Add(this.groupBoxHardware);
@@ -885,10 +890,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxConfiguration.Controls.Add(this.groupBoxDisplayControl);
       this.groupBoxConfiguration.Controls.Add(this.groupboxEqualizerOptions);
       this.groupBoxConfiguration.Controls.Add(this.groupBoxDisplayOptions);
-      this.groupBoxConfiguration.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxConfiguration.Location = new System.Drawing.Point(9, 6);
+      this.groupBoxConfiguration.FlatStyle = FlatStyle.Popup;
+      this.groupBoxConfiguration.Location = new Point(9, 6);
       this.groupBoxConfiguration.Name = "groupBoxConfiguration";
-      this.groupBoxConfiguration.Size = new System.Drawing.Size(632, 464);
+      this.groupBoxConfiguration.Size = new Size(632, 464);
       this.groupBoxConfiguration.TabIndex = 4;
       this.groupBoxConfiguration.TabStop = false;
       this.groupBoxConfiguration.Text = "Configuration";
@@ -896,19 +901,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.mpMonitorPowerState);
-      this.groupBox1.Location = new System.Drawing.Point(10, 232);
+      this.groupBox1.Location = new Point(10, 232);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(305, 30);
+      this.groupBox1.Size = new Size(305, 30);
       this.groupBox1.TabIndex = 134;
       this.groupBox1.TabStop = false;
       // 
       // mpMonitorPowerState
       // 
       this.mpMonitorPowerState.AutoSize = true;
-      this.mpMonitorPowerState.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpMonitorPowerState.Location = new System.Drawing.Point(13, 9);
+      this.mpMonitorPowerState.FlatStyle = FlatStyle.Popup;
+      this.mpMonitorPowerState.Location = new Point(13, 9);
       this.mpMonitorPowerState.Name = "mpMonitorPowerState";
-      this.mpMonitorPowerState.Size = new System.Drawing.Size(153, 17);
+      this.mpMonitorPowerState.Size = new Size(153, 17);
       this.mpMonitorPowerState.TabIndex = 80;
       this.mpMonitorPowerState.Text = "Monitor PowerState Events";
       this.mpMonitorPowerState.UseVisualStyleBackColor = true;
@@ -920,9 +925,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxManager.Controls.Add(this.mpForceKeyBoardMode);
       this.groupBoxManager.Controls.Add(this.mpForceManagerRestart);
       this.groupBoxManager.Controls.Add(this.mpEnsureManagerStartup);
-      this.groupBoxManager.Location = new System.Drawing.Point(9, 116);
+      this.groupBoxManager.Location = new Point(9, 116);
       this.groupBoxManager.Name = "groupBoxManager";
-      this.groupBoxManager.Size = new System.Drawing.Size(306, 115);
+      this.groupBoxManager.Size = new Size(306, 115);
       this.groupBoxManager.TabIndex = 133;
       this.groupBoxManager.TabStop = false;
       this.groupBoxManager.Text = "Antec/iMON Manager";
@@ -930,10 +935,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpForceManagerReload
       // 
       this.mpForceManagerReload.AutoSize = true;
-      this.mpForceManagerReload.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpForceManagerReload.Location = new System.Drawing.Point(14, 53);
+      this.mpForceManagerReload.FlatStyle = FlatStyle.Popup;
+      this.mpForceManagerReload.Location = new Point(14, 53);
       this.mpForceManagerReload.Name = "mpForceManagerReload";
-      this.mpForceManagerReload.Size = new System.Drawing.Size(167, 17);
+      this.mpForceManagerReload.Size = new Size(167, 17);
       this.mpForceManagerReload.TabIndex = 130;
       this.mpForceManagerReload.Text = "Force reload during driver start";
       this.mpForceManagerReload.UseVisualStyleBackColor = true;
@@ -941,10 +946,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpRestartFrontview
       // 
       this.mpRestartFrontview.AutoSize = true;
-      this.mpRestartFrontview.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRestartFrontview.Location = new System.Drawing.Point(14, 73);
+      this.mpRestartFrontview.FlatStyle = FlatStyle.Popup;
+      this.mpRestartFrontview.Location = new Point(14, 73);
       this.mpRestartFrontview.Name = "mpRestartFrontview";
-      this.mpRestartFrontview.Size = new System.Drawing.Size(142, 17);
+      this.mpRestartFrontview.Size = new Size(142, 17);
       this.mpRestartFrontview.TabIndex = 128;
       this.mpRestartFrontview.Text = "Restart FrontView on exit";
       this.mpRestartFrontview.UseVisualStyleBackColor = true;
@@ -952,10 +957,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpForceKeyBoardMode
       // 
       this.mpForceKeyBoardMode.AutoSize = true;
-      this.mpForceKeyBoardMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpForceKeyBoardMode.Location = new System.Drawing.Point(14, 93);
+      this.mpForceKeyBoardMode.FlatStyle = FlatStyle.Popup;
+      this.mpForceKeyBoardMode.Location = new Point(14, 93);
       this.mpForceKeyBoardMode.Name = "mpForceKeyBoardMode";
-      this.mpForceKeyBoardMode.Size = new System.Drawing.Size(235, 17);
+      this.mpForceKeyBoardMode.Size = new Size(235, 17);
       this.mpForceKeyBoardMode.TabIndex = 129;
       this.mpForceKeyBoardMode.Text = "Force to use KeyBoard mode with iMON Pad";
       this.mpForceKeyBoardMode.UseVisualStyleBackColor = true;
@@ -963,10 +968,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpForceManagerRestart
       // 
       this.mpForceManagerRestart.AutoSize = true;
-      this.mpForceManagerRestart.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpForceManagerRestart.Location = new System.Drawing.Point(14, 33);
+      this.mpForceManagerRestart.FlatStyle = FlatStyle.Popup;
+      this.mpForceManagerRestart.Location = new Point(14, 33);
       this.mpForceManagerRestart.Name = "mpForceManagerRestart";
-      this.mpForceManagerRestart.Size = new System.Drawing.Size(159, 17);
+      this.mpForceManagerRestart.Size = new Size(159, 17);
       this.mpForceManagerRestart.TabIndex = 127;
       this.mpForceManagerRestart.Text = "Force restart after driver start";
       this.mpForceManagerRestart.UseVisualStyleBackColor = true;
@@ -974,10 +979,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpEnsureManagerStartup
       // 
       this.mpEnsureManagerStartup.AutoSize = true;
-      this.mpEnsureManagerStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpEnsureManagerStartup.Location = new System.Drawing.Point(14, 13);
+      this.mpEnsureManagerStartup.FlatStyle = FlatStyle.Popup;
+      this.mpEnsureManagerStartup.Location = new Point(14, 13);
       this.mpEnsureManagerStartup.Name = "mpEnsureManagerStartup";
-      this.mpEnsureManagerStartup.Size = new System.Drawing.Size(190, 17);
+      this.mpEnsureManagerStartup.Size = new Size(190, 17);
       this.mpEnsureManagerStartup.TabIndex = 126;
       this.mpEnsureManagerStartup.Text = "Ensure is running before driver start";
       this.mpEnsureManagerStartup.UseVisualStyleBackColor = true;
@@ -988,9 +993,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxHardware.Controls.Add(this.label1);
       this.groupBoxHardware.Controls.Add(this.cmbType);
       this.groupBoxHardware.Controls.Add(this.mpVFD_UseV3DLL);
-      this.groupBoxHardware.Location = new System.Drawing.Point(10, 15);
+      this.groupBoxHardware.Location = new Point(10, 15);
       this.groupBoxHardware.Name = "groupBoxHardware";
-      this.groupBoxHardware.Size = new System.Drawing.Size(306, 95);
+      this.groupBoxHardware.Size = new Size(306, 95);
       this.groupBoxHardware.TabIndex = 132;
       this.groupBoxHardware.TabStop = false;
       this.groupBoxHardware.Text = " Hardware Options ";
@@ -998,67 +1003,69 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpDelayStartup
       // 
       this.mpDelayStartup.AutoSize = true;
-      this.mpDelayStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpDelayStartup.Location = new System.Drawing.Point(13, 44);
+      this.mpDelayStartup.FlatStyle = FlatStyle.Popup;
+      this.mpDelayStartup.Location = new Point(13, 44);
       this.mpDelayStartup.Name = "mpDelayStartup";
-      this.mpDelayStartup.Size = new System.Drawing.Size(265, 17);
+      this.mpDelayStartup.Size = new Size(265, 17);
       this.mpDelayStartup.TabIndex = 126;
       this.mpDelayStartup.Text = "Delay driver initialization (Problematic USB devices)";
       this.mpDelayStartup.UseVisualStyleBackColor = true;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 18);
+      this.label1.Location = new Point(16, 18);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(73, 23);
+      this.label1.Size = new Size(73, 23);
       this.label1.TabIndex = 13;
       this.label1.Text = "Display Type";
-      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.label1.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cmbType
       // 
-      this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cmbType.BorderColor = System.Drawing.Color.Empty;
-      this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbType.Items.AddRange(new object[] {
-            "AutoDetect",
-            "LCD",
-            "LCD2",
-            "VFD",
-            "LCD3R"});
-      this.cmbType.Location = new System.Drawing.Point(95, 18);
+      this.cmbType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                              | AnchorStyles.Right)));
+      this.cmbType.BorderColor = Color.Empty;
+      this.cmbType.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbType.Items.AddRange(new object[]
+                                    {
+                                      "AutoDetect",
+                                      "LCD",
+                                      "LCD2",
+                                      "VFD",
+                                      "LCD3R"
+                                    });
+      this.cmbType.Location = new Point(95, 18);
       this.cmbType.Name = "cmbType";
-      this.cmbType.Size = new System.Drawing.Size(195, 21);
+      this.cmbType.Size = new Size(195, 21);
       this.cmbType.TabIndex = 12;
-      this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
+      this.cmbType.SelectedIndexChanged += new EventHandler(this.cmbType_SelectedIndexChanged);
       // 
       // mpVFD_UseV3DLL
       // 
       this.mpVFD_UseV3DLL.AutoSize = true;
-      this.mpVFD_UseV3DLL.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpVFD_UseV3DLL.Location = new System.Drawing.Point(13, 67);
+      this.mpVFD_UseV3DLL.FlatStyle = FlatStyle.Popup;
+      this.mpVFD_UseV3DLL.Location = new Point(13, 67);
       this.mpVFD_UseV3DLL.Name = "mpVFD_UseV3DLL";
-      this.mpVFD_UseV3DLL.Size = new System.Drawing.Size(234, 17);
+      this.mpVFD_UseV3DLL.Size = new Size(234, 17);
       this.mpVFD_UseV3DLL.TabIndex = 77;
       this.mpVFD_UseV3DLL.Text = "Use SG_VFD.dll  V3  (VFD with old firmware)";
       this.mpVFD_UseV3DLL.UseVisualStyleBackColor = true;
-      this.mpVFD_UseV3DLL.CheckedChanged += new System.EventHandler(this.mpVFD_UseV3DLL_CheckedChanged);
+      this.mpVFD_UseV3DLL.CheckedChanged += new EventHandler(this.mpVFD_UseV3DLL_CheckedChanged);
       // 
       // groupBoxRemoteControl
       // 
-      this.groupBoxRemoteControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRemoteControl.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                             | AnchorStyles.Left)
+                                                            | AnchorStyles.Right)));
       this.groupBoxRemoteControl.Controls.Add(this.lblRemoteType);
       this.groupBoxRemoteControl.Controls.Add(this.cbRemoteType);
       this.groupBoxRemoteControl.Controls.Add(this.lblDelay);
       this.groupBoxRemoteControl.Controls.Add(this.tbDelay);
       this.groupBoxRemoteControl.Controls.Add(this.cbDisableRepeat);
       this.groupBoxRemoteControl.Controls.Add(this.cbUseRC);
-      this.groupBoxRemoteControl.Location = new System.Drawing.Point(322, 368);
+      this.groupBoxRemoteControl.Location = new Point(322, 368);
       this.groupBoxRemoteControl.Name = "groupBoxRemoteControl";
-      this.groupBoxRemoteControl.Size = new System.Drawing.Size(300, 88);
+      this.groupBoxRemoteControl.Size = new Size(300, 88);
       this.groupBoxRemoteControl.TabIndex = 131;
       this.groupBoxRemoteControl.TabStop = false;
       this.groupBoxRemoteControl.Text = " Remote Control Options";
@@ -1066,197 +1073,203 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRemoteType
       // 
-      this.lblRemoteType.Location = new System.Drawing.Point(13, 37);
+      this.lblRemoteType.Location = new Point(13, 37);
       this.lblRemoteType.Name = "lblRemoteType";
-      this.lblRemoteType.Size = new System.Drawing.Size(73, 23);
+      this.lblRemoteType.Size = new Size(73, 23);
       this.lblRemoteType.TabIndex = 140;
       this.lblRemoteType.Text = "Remote Type";
-      this.lblRemoteType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.lblRemoteType.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cbRemoteType
       // 
-      this.cbRemoteType.BorderColor = System.Drawing.Color.Empty;
-      this.cbRemoteType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbRemoteType.Items.AddRange(new object[] {
-            "MCE",
-            "PAD"});
-      this.cbRemoteType.Location = new System.Drawing.Point(86, 37);
+      this.cbRemoteType.BorderColor = Color.Empty;
+      this.cbRemoteType.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cbRemoteType.Items.AddRange(new object[]
+                                         {
+                                           "MCE",
+                                           "PAD"
+                                         });
+      this.cbRemoteType.Location = new Point(86, 37);
       this.cbRemoteType.Name = "cbRemoteType";
-      this.cbRemoteType.Size = new System.Drawing.Size(83, 21);
+      this.cbRemoteType.Size = new Size(83, 21);
       this.cbRemoteType.TabIndex = 139;
       // 
       // lblDelay
       // 
-      this.lblDelay.Location = new System.Drawing.Point(169, 17);
+      this.lblDelay.Location = new Point(169, 17);
       this.lblDelay.Name = "lblDelay";
-      this.lblDelay.Size = new System.Drawing.Size(126, 17);
+      this.lblDelay.Size = new Size(126, 17);
       this.lblDelay.TabIndex = 138;
       this.lblDelay.Text = "Repeat Delay: 1000ms";
-      this.lblDelay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      this.lblDelay.TextAlign = ContentAlignment.MiddleCenter;
       // 
       // tbDelay
       // 
       this.tbDelay.LargeChange = 1;
-      this.tbDelay.Location = new System.Drawing.Point(180, 36);
+      this.tbDelay.Location = new Point(180, 36);
       this.tbDelay.Maximum = 20;
       this.tbDelay.Name = "tbDelay";
-      this.tbDelay.Size = new System.Drawing.Size(104, 45);
+      this.tbDelay.Size = new Size(104, 45);
       this.tbDelay.TabIndex = 137;
-      this.tbDelay.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-      this.tbDelay.Scroll += new System.EventHandler(this.tbDelay_Scroll);
+      this.tbDelay.TickStyle = TickStyle.TopLeft;
+      this.tbDelay.Scroll += new EventHandler(this.tbDelay_Scroll);
       // 
       // cbDisableRepeat
       // 
       this.cbDisableRepeat.AutoSize = true;
-      this.cbDisableRepeat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbDisableRepeat.Location = new System.Drawing.Point(14, 64);
+      this.cbDisableRepeat.FlatStyle = FlatStyle.Popup;
+      this.cbDisableRepeat.Location = new Point(14, 64);
       this.cbDisableRepeat.Name = "cbDisableRepeat";
-      this.cbDisableRepeat.Size = new System.Drawing.Size(118, 17);
+      this.cbDisableRepeat.Size = new Size(118, 17);
       this.cbDisableRepeat.TabIndex = 136;
       this.cbDisableRepeat.Text = "Disable Key Repeat";
       this.cbDisableRepeat.UseVisualStyleBackColor = true;
-      this.cbDisableRepeat.CheckedChanged += new System.EventHandler(this.cbDisableRepeat_CheckedChanged);
+      this.cbDisableRepeat.CheckedChanged += new EventHandler(this.cbDisableRepeat_CheckedChanged);
       // 
       // cbUseRC
       // 
       this.cbUseRC.AutoSize = true;
-      this.cbUseRC.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbUseRC.Location = new System.Drawing.Point(14, 17);
+      this.cbUseRC.FlatStyle = FlatStyle.Popup;
+      this.cbUseRC.Location = new Point(14, 17);
       this.cbUseRC.Name = "cbUseRC";
-      this.cbUseRC.Size = new System.Drawing.Size(133, 17);
+      this.cbUseRC.Size = new Size(133, 17);
       this.cbUseRC.TabIndex = 126;
       this.cbUseRC.Text = "Enable Remote Control";
       this.cbUseRC.UseVisualStyleBackColor = true;
-      this.cbUseRC.CheckedChanged += new System.EventHandler(this.cbUseRC_CheckedChanged);
+      this.cbUseRC.CheckedChanged += new EventHandler(this.cbUseRC_CheckedChanged);
       // 
       // groupBoxDisplayControl
       // 
-      this.groupBoxDisplayControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDisplayControl.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                             | AnchorStyles.Right)));
       this.groupBoxDisplayControl.Controls.Add(this.cmbBlankIdleTime);
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayAction);
       this.groupBoxDisplayControl.Controls.Add(this.mpBlankDisplayWithVideo);
       this.groupBoxDisplayControl.Controls.Add(this.mpBlankDisplayWhenIdle);
-      this.groupBoxDisplayControl.Location = new System.Drawing.Point(322, 15);
+      this.groupBoxDisplayControl.Location = new Point(322, 15);
       this.groupBoxDisplayControl.Name = "groupBoxDisplayControl";
-      this.groupBoxDisplayControl.Size = new System.Drawing.Size(300, 82);
+      this.groupBoxDisplayControl.Size = new Size(300, 82);
       this.groupBoxDisplayControl.TabIndex = 124;
       this.groupBoxDisplayControl.TabStop = false;
       this.groupBoxDisplayControl.Text = " Display Control Options ";
       // 
       // cmbBlankIdleTime
       // 
-      this.cmbBlankIdleTime.BorderColor = System.Drawing.Color.Empty;
-      this.cmbBlankIdleTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbBlankIdleTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-      this.cmbBlankIdleTime.Location = new System.Drawing.Point(174, 55);
+      this.cmbBlankIdleTime.BorderColor = Color.Empty;
+      this.cmbBlankIdleTime.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbBlankIdleTime.Items.AddRange(new object[]
+                                             {
+                                               "0",
+                                               "1",
+                                               "2",
+                                               "3",
+                                               "4",
+                                               "5",
+                                               "6",
+                                               "7",
+                                               "8",
+                                               "9",
+                                               "10",
+                                               "11",
+                                               "12",
+                                               "13",
+                                               "14",
+                                               "15",
+                                               "16",
+                                               "17",
+                                               "18",
+                                               "19",
+                                               "20",
+                                               "21",
+                                               "22",
+                                               "23",
+                                               "24",
+                                               "25",
+                                               "26",
+                                               "27",
+                                               "28",
+                                               "29",
+                                               "30"
+                                             });
+      this.cmbBlankIdleTime.Location = new Point(174, 55);
       this.cmbBlankIdleTime.Name = "cmbBlankIdleTime";
-      this.cmbBlankIdleTime.Size = new System.Drawing.Size(42, 21);
+      this.cmbBlankIdleTime.Size = new Size(42, 21);
       this.cmbBlankIdleTime.TabIndex = 98;
       // 
       // mpEnableDisplayActionTime
       // 
-      this.mpEnableDisplayActionTime.BorderColor = System.Drawing.Color.Empty;
-      this.mpEnableDisplayActionTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpEnableDisplayActionTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20"});
-      this.mpEnableDisplayActionTime.Location = new System.Drawing.Point(188, 33);
+      this.mpEnableDisplayActionTime.BorderColor = Color.Empty;
+      this.mpEnableDisplayActionTime.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.mpEnableDisplayActionTime.Items.AddRange(new object[]
+                                                      {
+                                                        "0",
+                                                        "1",
+                                                        "2",
+                                                        "3",
+                                                        "4",
+                                                        "5",
+                                                        "6",
+                                                        "7",
+                                                        "8",
+                                                        "9",
+                                                        "10",
+                                                        "11",
+                                                        "12",
+                                                        "13",
+                                                        "14",
+                                                        "15",
+                                                        "16",
+                                                        "17",
+                                                        "18",
+                                                        "19",
+                                                        "20"
+                                                      });
+      this.mpEnableDisplayActionTime.Location = new Point(188, 33);
       this.mpEnableDisplayActionTime.Name = "mpEnableDisplayActionTime";
-      this.mpEnableDisplayActionTime.Size = new System.Drawing.Size(42, 21);
+      this.mpEnableDisplayActionTime.Size = new Size(42, 21);
       this.mpEnableDisplayActionTime.TabIndex = 96;
       // 
       // mpEnableDisplayAction
       // 
       this.mpEnableDisplayAction.AutoSize = true;
-      this.mpEnableDisplayAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpEnableDisplayAction.Location = new System.Drawing.Point(30, 35);
+      this.mpEnableDisplayAction.FlatStyle = FlatStyle.Popup;
+      this.mpEnableDisplayAction.Location = new Point(30, 35);
       this.mpEnableDisplayAction.Name = "mpEnableDisplayAction";
-      this.mpEnableDisplayAction.Size = new System.Drawing.Size(256, 17);
+      this.mpEnableDisplayAction.Size = new Size(256, 17);
       this.mpEnableDisplayAction.TabIndex = 97;
       this.mpEnableDisplayAction.Text = "Enable Display on Action for                   Seconds";
       this.mpEnableDisplayAction.UseVisualStyleBackColor = true;
-      this.mpEnableDisplayAction.CheckedChanged += new System.EventHandler(this.mpEnableDisplayAction_CheckedChanged);
+      this.mpEnableDisplayAction.CheckedChanged += new EventHandler(this.mpEnableDisplayAction_CheckedChanged);
       // 
       // mpBlankDisplayWithVideo
       // 
       this.mpBlankDisplayWithVideo.AutoSize = true;
-      this.mpBlankDisplayWithVideo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpBlankDisplayWithVideo.Location = new System.Drawing.Point(14, 14);
+      this.mpBlankDisplayWithVideo.FlatStyle = FlatStyle.Popup;
+      this.mpBlankDisplayWithVideo.Location = new Point(14, 14);
       this.mpBlankDisplayWithVideo.Name = "mpBlankDisplayWithVideo";
-      this.mpBlankDisplayWithVideo.Size = new System.Drawing.Size(205, 17);
+      this.mpBlankDisplayWithVideo.Size = new Size(205, 17);
       this.mpBlankDisplayWithVideo.TabIndex = 95;
       this.mpBlankDisplayWithVideo.Text = "Turn off display during Video Playback";
       this.mpBlankDisplayWithVideo.UseVisualStyleBackColor = true;
-      this.mpBlankDisplayWithVideo.CheckedChanged += new System.EventHandler(this.mpBlankDisplayWithVideo_CheckedChanged);
+      this.mpBlankDisplayWithVideo.CheckedChanged += new EventHandler(this.mpBlankDisplayWithVideo_CheckedChanged);
       // 
       // mpBlankDisplayWhenIdle
       // 
       this.mpBlankDisplayWhenIdle.AutoSize = true;
-      this.mpBlankDisplayWhenIdle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpBlankDisplayWhenIdle.Location = new System.Drawing.Point(14, 57);
+      this.mpBlankDisplayWhenIdle.FlatStyle = FlatStyle.Popup;
+      this.mpBlankDisplayWhenIdle.Location = new Point(14, 57);
       this.mpBlankDisplayWhenIdle.Name = "mpBlankDisplayWhenIdle";
-      this.mpBlankDisplayWhenIdle.Size = new System.Drawing.Size(259, 17);
+      this.mpBlankDisplayWhenIdle.Size = new Size(259, 17);
       this.mpBlankDisplayWhenIdle.TabIndex = 99;
       this.mpBlankDisplayWhenIdle.Text = "Turn off display when idle for                    seconds";
       this.mpBlankDisplayWhenIdle.UseVisualStyleBackColor = true;
-      this.mpBlankDisplayWhenIdle.CheckedChanged += new System.EventHandler(this.mpBlankDisplayWhenIdle_CheckedChanged);
+      this.mpBlankDisplayWhenIdle.CheckedChanged += new EventHandler(this.mpBlankDisplayWhenIdle_CheckedChanged);
       // 
       // groupboxEqualizerOptions
       // 
-      this.groupboxEqualizerOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupboxEqualizerOptions.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                               | AnchorStyles.Right)));
       this.groupboxEqualizerOptions.Controls.Add(this.cmbDelayEqTime);
       this.groupboxEqualizerOptions.Controls.Add(this.groupEQstyle);
       this.groupboxEqualizerOptions.Controls.Add(this.cmbEqMode);
@@ -1271,66 +1284,68 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupboxEqualizerOptions.Controls.Add(this.mpRestrictEQ);
       this.groupboxEqualizerOptions.Controls.Add(this.cmbEqRate);
       this.groupboxEqualizerOptions.Controls.Add(this.mpDelayEQ);
-      this.groupboxEqualizerOptions.Location = new System.Drawing.Point(322, 103);
+      this.groupboxEqualizerOptions.Location = new Point(322, 103);
       this.groupboxEqualizerOptions.Name = "groupboxEqualizerOptions";
-      this.groupboxEqualizerOptions.Size = new System.Drawing.Size(300, 259);
+      this.groupboxEqualizerOptions.Size = new Size(300, 259);
       this.groupboxEqualizerOptions.TabIndex = 123;
       this.groupboxEqualizerOptions.TabStop = false;
       this.groupboxEqualizerOptions.Text = " Equalizer Options ";
       // 
       // cmbDelayEqTime
       // 
-      this.cmbDelayEqTime.BorderColor = System.Drawing.Color.Empty;
-      this.cmbDelayEqTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbDelayEqTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-      this.cmbDelayEqTime.Location = new System.Drawing.Point(168, 169);
+      this.cmbDelayEqTime.BorderColor = Color.Empty;
+      this.cmbDelayEqTime.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbDelayEqTime.Items.AddRange(new object[]
+                                           {
+                                             "0",
+                                             "1",
+                                             "2",
+                                             "3",
+                                             "4",
+                                             "5",
+                                             "6",
+                                             "7",
+                                             "8",
+                                             "9",
+                                             "10",
+                                             "11",
+                                             "12",
+                                             "13",
+                                             "14",
+                                             "15",
+                                             "16",
+                                             "17",
+                                             "18",
+                                             "19",
+                                             "20",
+                                             "21",
+                                             "22",
+                                             "23",
+                                             "24",
+                                             "25",
+                                             "26",
+                                             "27",
+                                             "28",
+                                             "29",
+                                             "30"
+                                           });
+      this.cmbDelayEqTime.Location = new Point(168, 169);
       this.cmbDelayEqTime.Name = "cmbDelayEqTime";
-      this.cmbDelayEqTime.Size = new System.Drawing.Size(53, 21);
+      this.cmbDelayEqTime.Size = new Size(53, 21);
       this.cmbDelayEqTime.TabIndex = 124;
       // 
       // groupEQstyle
       // 
-      this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupEQstyle.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.mpUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.mpUseVUmeter);
       this.groupEQstyle.Controls.Add(this.mpUseStereoEQ);
       this.groupEQstyle.Controls.Add(this.mpNormalEQ);
-      this.groupEQstyle.Location = new System.Drawing.Point(8, 65);
+      this.groupEQstyle.Location = new Point(8, 65);
       this.groupEQstyle.Name = "groupEQstyle";
-      this.groupEQstyle.Size = new System.Drawing.Size(285, 60);
+      this.groupEQstyle.Size = new Size(285, 60);
       this.groupEQstyle.TabIndex = 140;
       this.groupEQstyle.TabStop = false;
       this.groupEQstyle.Text = " Equalizer Style ";
@@ -1338,20 +1353,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpUseVUmeter2
       // 
       this.mpUseVUmeter2.AutoSize = true;
-      this.mpUseVUmeter2.Location = new System.Drawing.Point(204, 17);
+      this.mpUseVUmeter2.Location = new Point(204, 17);
       this.mpUseVUmeter2.Name = "mpUseVUmeter2";
-      this.mpUseVUmeter2.Size = new System.Drawing.Size(79, 17);
+      this.mpUseVUmeter2.Size = new Size(79, 17);
       this.mpUseVUmeter2.TabIndex = 121;
       this.mpUseVUmeter2.Text = "VU Meter 2";
       this.mpUseVUmeter2.UseVisualStyleBackColor = true;
-      this.mpUseVUmeter2.CheckedChanged += new System.EventHandler(this.mpUseVUmeter2_CheckedChanged);
+      this.mpUseVUmeter2.CheckedChanged += new EventHandler(this.mpUseVUmeter2_CheckedChanged);
       // 
       // cbVUindicators
       // 
       this.cbVUindicators.AutoSize = true;
-      this.cbVUindicators.Location = new System.Drawing.Point(8, 40);
+      this.cbVUindicators.Location = new Point(8, 40);
       this.cbVUindicators.Name = "cbVUindicators";
-      this.cbVUindicators.Size = new System.Drawing.Size(213, 17);
+      this.cbVUindicators.Size = new Size(213, 17);
       this.cbVUindicators.TabIndex = 120;
       this.cbVUindicators.Text = "Show Channel indicators for VU Display";
       this.cbVUindicators.UseVisualStyleBackColor = true;
@@ -1359,181 +1374,187 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpUseVUmeter
       // 
       this.mpUseVUmeter.AutoSize = true;
-      this.mpUseVUmeter.Location = new System.Drawing.Point(131, 17);
+      this.mpUseVUmeter.Location = new Point(131, 17);
       this.mpUseVUmeter.Name = "mpUseVUmeter";
-      this.mpUseVUmeter.Size = new System.Drawing.Size(70, 17);
+      this.mpUseVUmeter.Size = new Size(70, 17);
       this.mpUseVUmeter.TabIndex = 2;
       this.mpUseVUmeter.Text = "VU Meter";
       this.mpUseVUmeter.UseVisualStyleBackColor = true;
-      this.mpUseVUmeter.CheckedChanged += new System.EventHandler(this.mpUseVUmeter_CheckedChanged);
+      this.mpUseVUmeter.CheckedChanged += new EventHandler(this.mpUseVUmeter_CheckedChanged);
       // 
       // mpUseStereoEQ
       // 
       this.mpUseStereoEQ.AutoSize = true;
-      this.mpUseStereoEQ.Location = new System.Drawing.Point(73, 17);
+      this.mpUseStereoEQ.Location = new Point(73, 17);
       this.mpUseStereoEQ.Name = "mpUseStereoEQ";
-      this.mpUseStereoEQ.Size = new System.Drawing.Size(56, 17);
+      this.mpUseStereoEQ.Size = new Size(56, 17);
       this.mpUseStereoEQ.TabIndex = 1;
       this.mpUseStereoEQ.Text = "Stereo";
       this.mpUseStereoEQ.UseVisualStyleBackColor = true;
-      this.mpUseStereoEQ.CheckedChanged += new System.EventHandler(this.mpUseStereoEQ_CheckedChanged);
+      this.mpUseStereoEQ.CheckedChanged += new EventHandler(this.mpUseStereoEQ_CheckedChanged);
       // 
       // mpNormalEQ
       // 
       this.mpNormalEQ.AutoSize = true;
       this.mpNormalEQ.Checked = true;
-      this.mpNormalEQ.Location = new System.Drawing.Point(13, 17);
+      this.mpNormalEQ.Location = new Point(13, 17);
       this.mpNormalEQ.Name = "mpNormalEQ";
-      this.mpNormalEQ.Size = new System.Drawing.Size(58, 17);
+      this.mpNormalEQ.Size = new Size(58, 17);
       this.mpNormalEQ.TabIndex = 0;
       this.mpNormalEQ.TabStop = true;
       this.mpNormalEQ.Text = "Normal";
       this.mpNormalEQ.UseVisualStyleBackColor = true;
-      this.mpNormalEQ.CheckedChanged += new System.EventHandler(this.mpNormalEQ_CheckedChanged);
+      this.mpNormalEQ.CheckedChanged += new EventHandler(this.mpNormalEQ_CheckedChanged);
       // 
       // cmbEqMode
       // 
-      this.cmbEqMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cmbEqMode.BorderColor = System.Drawing.Color.Empty;
-      this.cmbEqMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEqMode.Items.AddRange(new object[] {
-            "Up from bottom",
-            "Down from top",
-            "Expand from middle"});
-      this.cmbEqMode.Location = new System.Drawing.Point(134, 43);
+      this.cmbEqMode.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
+      this.cmbEqMode.BorderColor = Color.Empty;
+      this.cmbEqMode.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbEqMode.Items.AddRange(new object[]
+                                      {
+                                        "Up from bottom",
+                                        "Down from top",
+                                        "Expand from middle"
+                                      });
+      this.cmbEqMode.Location = new Point(134, 43);
       this.cmbEqMode.Name = "cmbEqMode";
-      this.cmbEqMode.Size = new System.Drawing.Size(97, 21);
+      this.cmbEqMode.Size = new Size(97, 21);
       this.cmbEqMode.TabIndex = 122;
       // 
       // mpLabelEQmode
       // 
-      this.mpLabelEQmode.Location = new System.Drawing.Point(42, 45);
+      this.mpLabelEQmode.Location = new Point(42, 45);
       this.mpLabelEQmode.Name = "mpLabelEQmode";
-      this.mpLabelEQmode.Size = new System.Drawing.Size(95, 17);
+      this.mpLabelEQmode.Size = new Size(95, 17);
       this.mpLabelEQmode.TabIndex = 136;
       this.mpLabelEQmode.Text = "EQ Display Mode:";
-      this.mpLabelEQmode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.mpLabelEQmode.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // mpLabel2
       // 
-      this.mpLabel2.Location = new System.Drawing.Point(108, 150);
+      this.mpLabel2.Location = new Point(108, 150);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(116, 17);
+      this.mpLabel2.Size = new Size(116, 17);
       this.mpLabel2.TabIndex = 135;
       this.mpLabel2.Text = "updates per Seconds";
-      this.mpLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.mpLabel2.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cmbEQTitleDisplayTime
       // 
-      this.cmbEQTitleDisplayTime.BorderColor = System.Drawing.Color.Empty;
-      this.cmbEQTitleDisplayTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEQTitleDisplayTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-      this.cmbEQTitleDisplayTime.Location = new System.Drawing.Point(172, 232);
+      this.cmbEQTitleDisplayTime.BorderColor = Color.Empty;
+      this.cmbEQTitleDisplayTime.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbEQTitleDisplayTime.Items.AddRange(new object[]
+                                                  {
+                                                    "0",
+                                                    "1",
+                                                    "2",
+                                                    "3",
+                                                    "4",
+                                                    "5",
+                                                    "6",
+                                                    "7",
+                                                    "8",
+                                                    "9",
+                                                    "10",
+                                                    "11",
+                                                    "12",
+                                                    "13",
+                                                    "14",
+                                                    "15",
+                                                    "16",
+                                                    "17",
+                                                    "18",
+                                                    "19",
+                                                    "20",
+                                                    "21",
+                                                    "22",
+                                                    "23",
+                                                    "24",
+                                                    "25",
+                                                    "26",
+                                                    "27",
+                                                    "28",
+                                                    "29",
+                                                    "30"
+                                                  });
+      this.cmbEQTitleDisplayTime.Location = new Point(172, 232);
       this.cmbEQTitleDisplayTime.Name = "cmbEQTitleDisplayTime";
-      this.cmbEQTitleDisplayTime.Size = new System.Drawing.Size(49, 21);
+      this.cmbEQTitleDisplayTime.Size = new Size(49, 21);
       this.cmbEQTitleDisplayTime.TabIndex = 130;
       // 
       // mpLabelEQTitleDisplay
       // 
-      this.mpLabelEQTitleDisplay.Location = new System.Drawing.Point(94, 234);
+      this.mpLabelEQTitleDisplay.Location = new Point(94, 234);
       this.mpLabelEQTitleDisplay.Name = "mpLabelEQTitleDisplay";
-      this.mpLabelEQTitleDisplay.Size = new System.Drawing.Size(197, 17);
+      this.mpLabelEQTitleDisplay.Size = new Size(197, 17);
       this.mpLabelEQTitleDisplay.TabIndex = 134;
       this.mpLabelEQTitleDisplay.Text = "Seconds every                    Seconds";
-      this.mpLabelEQTitleDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.mpLabelEQTitleDisplay.TextAlign = ContentAlignment.MiddleLeft;
       // 
       // cmbEQTitleShowTime
       // 
-      this.cmbEQTitleShowTime.BorderColor = System.Drawing.Color.Empty;
-      this.cmbEQTitleShowTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEQTitleShowTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
-      this.cmbEQTitleShowTime.Location = new System.Drawing.Point(45, 232);
+      this.cmbEQTitleShowTime.BorderColor = Color.Empty;
+      this.cmbEQTitleShowTime.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbEQTitleShowTime.Items.AddRange(new object[]
+                                               {
+                                                 "0",
+                                                 "1",
+                                                 "2",
+                                                 "3",
+                                                 "4",
+                                                 "5",
+                                                 "6",
+                                                 "7",
+                                                 "8",
+                                                 "9",
+                                                 "10",
+                                                 "11",
+                                                 "12",
+                                                 "13",
+                                                 "14",
+                                                 "15",
+                                                 "16",
+                                                 "17",
+                                                 "18",
+                                                 "19",
+                                                 "20",
+                                                 "21",
+                                                 "22",
+                                                 "23",
+                                                 "24",
+                                                 "25",
+                                                 "26",
+                                                 "27",
+                                                 "28",
+                                                 "29",
+                                                 "30"
+                                               });
+      this.cmbEQTitleShowTime.Location = new Point(45, 232);
       this.cmbEQTitleShowTime.Name = "cmbEQTitleShowTime";
-      this.cmbEQTitleShowTime.Size = new System.Drawing.Size(49, 21);
+      this.cmbEQTitleShowTime.Size = new Size(49, 21);
       this.cmbEQTitleShowTime.TabIndex = 133;
       // 
       // mpEQTitleDisplay
       // 
       this.mpEQTitleDisplay.AutoSize = true;
-      this.mpEQTitleDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpEQTitleDisplay.Location = new System.Drawing.Point(29, 213);
+      this.mpEQTitleDisplay.FlatStyle = FlatStyle.Popup;
+      this.mpEQTitleDisplay.Location = new Point(29, 213);
       this.mpEQTitleDisplay.Name = "mpEQTitleDisplay";
-      this.mpEQTitleDisplay.Size = new System.Drawing.Size(118, 17);
+      this.mpEQTitleDisplay.Size = new Size(118, 17);
       this.mpEQTitleDisplay.TabIndex = 132;
       this.mpEQTitleDisplay.Text = "Show Track Info for";
       this.mpEQTitleDisplay.UseVisualStyleBackColor = true;
-      this.mpEQTitleDisplay.CheckedChanged += new System.EventHandler(this.mpEQTitleDisplay_CheckedChanged);
+      this.mpEQTitleDisplay.CheckedChanged += new EventHandler(this.mpEQTitleDisplay_CheckedChanged);
       // 
       // mpSmoothEQ
       // 
       this.mpSmoothEQ.AutoSize = true;
-      this.mpSmoothEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpSmoothEQ.Location = new System.Drawing.Point(29, 192);
+      this.mpSmoothEQ.FlatStyle = FlatStyle.Popup;
+      this.mpSmoothEQ.Location = new Point(29, 192);
       this.mpSmoothEQ.Name = "mpSmoothEQ";
-      this.mpSmoothEQ.Size = new System.Drawing.Size(222, 17);
+      this.mpSmoothEQ.Size = new Size(222, 17);
       this.mpSmoothEQ.TabIndex = 129;
       this.mpSmoothEQ.Text = "Use Equalizer Smoothing (Delayed decay)";
       this.mpSmoothEQ.UseVisualStyleBackColor = true;
@@ -1541,114 +1562,116 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpEqDisplay
       // 
       this.mpEqDisplay.AutoSize = true;
-      this.mpEqDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpEqDisplay.Location = new System.Drawing.Point(13, 24);
+      this.mpEqDisplay.FlatStyle = FlatStyle.Popup;
+      this.mpEqDisplay.Location = new Point(13, 24);
       this.mpEqDisplay.Name = "mpEqDisplay";
-      this.mpEqDisplay.Size = new System.Drawing.Size(124, 17);
+      this.mpEqDisplay.Size = new Size(124, 17);
       this.mpEqDisplay.TabIndex = 126;
       this.mpEqDisplay.Text = "Use Equalizer display";
       this.mpEqDisplay.UseVisualStyleBackColor = true;
-      this.mpEqDisplay.CheckedChanged += new System.EventHandler(this.mpEqDisplay_CheckedChanged);
+      this.mpEqDisplay.CheckedChanged += new EventHandler(this.mpEqDisplay_CheckedChanged);
       // 
       // mpRestrictEQ
       // 
       this.mpRestrictEQ.AutoSize = true;
-      this.mpRestrictEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRestrictEQ.Location = new System.Drawing.Point(29, 129);
+      this.mpRestrictEQ.FlatStyle = FlatStyle.Popup;
+      this.mpRestrictEQ.Location = new Point(29, 129);
       this.mpRestrictEQ.Name = "mpRestrictEQ";
-      this.mpRestrictEQ.Size = new System.Drawing.Size(183, 17);
+      this.mpRestrictEQ.Size = new Size(183, 17);
       this.mpRestrictEQ.TabIndex = 127;
       this.mpRestrictEQ.Text = "Limit Equalizer display update rate";
       this.mpRestrictEQ.UseVisualStyleBackColor = true;
-      this.mpRestrictEQ.CheckedChanged += new System.EventHandler(this.mpRestrictEQ_CheckedChanged);
+      this.mpRestrictEQ.CheckedChanged += new EventHandler(this.mpRestrictEQ_CheckedChanged);
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.BorderColor = System.Drawing.Color.Empty;
-      this.cmbEqRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEqRate.Items.AddRange(new object[] {
-            "MAX",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60"});
-      this.cmbEqRate.Location = new System.Drawing.Point(45, 148);
+      this.cmbEqRate.BorderColor = Color.Empty;
+      this.cmbEqRate.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.cmbEqRate.Items.AddRange(new object[]
+                                      {
+                                        "MAX",
+                                        "1",
+                                        "2",
+                                        "3",
+                                        "4",
+                                        "5",
+                                        "6",
+                                        "7",
+                                        "8",
+                                        "9",
+                                        "10",
+                                        "11",
+                                        "12",
+                                        "13",
+                                        "14",
+                                        "15",
+                                        "16",
+                                        "17",
+                                        "18",
+                                        "19",
+                                        "20",
+                                        "21",
+                                        "22",
+                                        "23",
+                                        "24",
+                                        "25",
+                                        "26",
+                                        "27",
+                                        "28",
+                                        "29",
+                                        "30",
+                                        "31",
+                                        "32",
+                                        "33",
+                                        "34",
+                                        "35",
+                                        "36",
+                                        "37",
+                                        "38",
+                                        "39",
+                                        "40",
+                                        "41",
+                                        "42",
+                                        "43",
+                                        "44",
+                                        "45",
+                                        "46",
+                                        "47",
+                                        "48",
+                                        "49",
+                                        "50",
+                                        "51",
+                                        "52",
+                                        "53",
+                                        "54",
+                                        "55",
+                                        "56",
+                                        "57",
+                                        "58",
+                                        "59",
+                                        "60"
+                                      });
+      this.cmbEqRate.Location = new Point(45, 148);
       this.cmbEqRate.Name = "cmbEqRate";
-      this.cmbEqRate.Size = new System.Drawing.Size(57, 21);
+      this.cmbEqRate.Size = new Size(57, 21);
       this.cmbEqRate.TabIndex = 123;
       // 
       // mpDelayEQ
       // 
       this.mpDelayEQ.AutoSize = true;
-      this.mpDelayEQ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpDelayEQ.Location = new System.Drawing.Point(29, 171);
+      this.mpDelayEQ.FlatStyle = FlatStyle.Popup;
+      this.mpDelayEQ.Location = new Point(29, 171);
       this.mpDelayEQ.Name = "mpDelayEQ";
-      this.mpDelayEQ.Size = new System.Drawing.Size(247, 17);
+      this.mpDelayEQ.Size = new Size(247, 17);
       this.mpDelayEQ.TabIndex = 128;
       this.mpDelayEQ.Text = "Delay Equalizer Start by                       Seconds";
       this.mpDelayEQ.UseVisualStyleBackColor = true;
-      this.mpDelayEQ.CheckedChanged += new System.EventHandler(this.mpDelayEQ_CheckedChanged);
+      this.mpDelayEQ.CheckedChanged += new EventHandler(this.mpDelayEQ_CheckedChanged);
       // 
       // groupBoxDisplayOptions
       // 
-      this.groupBoxDisplayOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.groupBoxDisplayOptions.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                             | AnchorStyles.Left)));
       this.groupBoxDisplayOptions.Controls.Add(this.ckDiskIcon);
       this.groupBoxDisplayOptions.Controls.Add(this.ckDiskMediaStatus);
       this.groupBoxDisplayOptions.Controls.Add(this.ckDeviceMonitor);
@@ -1660,9 +1683,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxDisplayOptions.Controls.Add(this.mpUseLargeIcons);
       this.groupBoxDisplayOptions.Controls.Add(this.mpUseCustomIcons);
       this.groupBoxDisplayOptions.Controls.Add(this.mpUseInvertedIcons);
-      this.groupBoxDisplayOptions.Location = new System.Drawing.Point(10, 268);
+      this.groupBoxDisplayOptions.Location = new Point(10, 268);
       this.groupBoxDisplayOptions.Name = "groupBoxDisplayOptions";
-      this.groupBoxDisplayOptions.Size = new System.Drawing.Size(306, 188);
+      this.groupBoxDisplayOptions.Size = new Size(306, 188);
       this.groupBoxDisplayOptions.TabIndex = 130;
       this.groupBoxDisplayOptions.TabStop = false;
       this.groupBoxDisplayOptions.Text = "Display Options (Valid only with LCD/LCD2 displays) ";
@@ -1670,22 +1693,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // ckDiskIcon
       // 
       this.ckDiskIcon.AutoSize = true;
-      this.ckDiskIcon.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckDiskIcon.Location = new System.Drawing.Point(16, 20);
+      this.ckDiskIcon.FlatStyle = FlatStyle.Popup;
+      this.ckDiskIcon.Location = new Point(16, 20);
       this.ckDiskIcon.Name = "ckDiskIcon";
-      this.ckDiskIcon.Size = new System.Drawing.Size(91, 17);
+      this.ckDiskIcon.Size = new Size(91, 17);
       this.ckDiskIcon.TabIndex = 73;
       this.ckDiskIcon.Text = "Use Disk Icon";
       this.ckDiskIcon.UseVisualStyleBackColor = true;
-      this.ckDiskIcon.CheckedChanged += new System.EventHandler(this.ckDiskIcon_CheckedChanged);
+      this.ckDiskIcon.CheckedChanged += new EventHandler(this.ckDiskIcon_CheckedChanged);
       // 
       // ckDiskMediaStatus
       // 
       this.ckDiskMediaStatus.AutoSize = true;
-      this.ckDiskMediaStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckDiskMediaStatus.Location = new System.Drawing.Point(32, 38);
+      this.ckDiskMediaStatus.FlatStyle = FlatStyle.Popup;
+      this.ckDiskMediaStatus.Location = new Point(32, 38);
       this.ckDiskMediaStatus.Name = "ckDiskMediaStatus";
-      this.ckDiskMediaStatus.Size = new System.Drawing.Size(171, 17);
+      this.ckDiskMediaStatus.Size = new Size(171, 17);
       this.ckDiskMediaStatus.TabIndex = 73;
       this.ckDiskMediaStatus.Text = "Display Media Transport Status";
       this.ckDiskMediaStatus.UseVisualStyleBackColor = true;
@@ -1693,10 +1716,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // ckDeviceMonitor
       // 
       this.ckDeviceMonitor.AutoSize = true;
-      this.ckDeviceMonitor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ckDeviceMonitor.Location = new System.Drawing.Point(32, 54);
+      this.ckDeviceMonitor.FlatStyle = FlatStyle.Popup;
+      this.ckDeviceMonitor.Location = new Point(32, 54);
       this.ckDeviceMonitor.Name = "ckDeviceMonitor";
-      this.ckDeviceMonitor.Size = new System.Drawing.Size(172, 17);
+      this.ckDeviceMonitor.Size = new Size(172, 17);
       this.ckDeviceMonitor.TabIndex = 73;
       this.ckDeviceMonitor.Text = "Display CD/DVD volume status";
       this.ckDeviceMonitor.UseVisualStyleBackColor = true;
@@ -1704,10 +1727,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpVolumeDisplay
       // 
       this.mpVolumeDisplay.AutoSize = true;
-      this.mpVolumeDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpVolumeDisplay.Location = new System.Drawing.Point(16, 72);
+      this.mpVolumeDisplay.FlatStyle = FlatStyle.Popup;
+      this.mpVolumeDisplay.Location = new Point(16, 72);
       this.mpVolumeDisplay.Name = "mpVolumeDisplay";
-      this.mpVolumeDisplay.Size = new System.Drawing.Size(171, 17);
+      this.mpVolumeDisplay.Size = new Size(171, 17);
       this.mpVolumeDisplay.TabIndex = 75;
       this.mpVolumeDisplay.Text = "Use Top Bar as Volume display";
       this.mpVolumeDisplay.UseVisualStyleBackColor = true;
@@ -1715,112 +1738,112 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // mpProgressBar
       // 
       this.mpProgressBar.AutoSize = true;
-      this.mpProgressBar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpProgressBar.Location = new System.Drawing.Point(16, 90);
+      this.mpProgressBar.FlatStyle = FlatStyle.Popup;
+      this.mpProgressBar.Location = new Point(16, 90);
       this.mpProgressBar.Name = "mpProgressBar";
-      this.mpProgressBar.Size = new System.Drawing.Size(193, 17);
+      this.mpProgressBar.Size = new Size(193, 17);
       this.mpProgressBar.TabIndex = 74;
       this.mpProgressBar.Text = "Use Bottom Bar as Progress Display";
       this.mpProgressBar.UseVisualStyleBackColor = true;
       // 
       // mpEditFont
       // 
-      this.mpEditFont.Location = new System.Drawing.Point(215, 105);
+      this.mpEditFont.Location = new Point(215, 105);
       this.mpEditFont.Name = "mpEditFont";
-      this.mpEditFont.Size = new System.Drawing.Size(63, 23);
+      this.mpEditFont.Size = new Size(63, 23);
       this.mpEditFont.TabIndex = 79;
       this.mpEditFont.Text = "&Edit Font";
       this.mpEditFont.UseVisualStyleBackColor = true;
-      this.mpEditFont.Click += new System.EventHandler(this.mpEditFont_Click);
+      this.mpEditFont.Click += new EventHandler(this.mpEditFont_Click);
       // 
       // mpEditIcon
       // 
-      this.mpEditIcon.Location = new System.Drawing.Point(215, 141);
+      this.mpEditIcon.Location = new Point(215, 141);
       this.mpEditIcon.Name = "mpEditIcon";
-      this.mpEditIcon.Size = new System.Drawing.Size(63, 23);
+      this.mpEditIcon.Size = new Size(63, 23);
       this.mpEditIcon.TabIndex = 78;
       this.mpEditIcon.Text = "&Edit Icons";
       this.mpEditIcon.UseVisualStyleBackColor = true;
-      this.mpEditIcon.Click += new System.EventHandler(this.mpEditIcon_Click);
+      this.mpEditIcon.Click += new EventHandler(this.mpEditIcon_Click);
       // 
       // mpUseCustomFont
       // 
       this.mpUseCustomFont.AutoSize = true;
-      this.mpUseCustomFont.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUseCustomFont.Location = new System.Drawing.Point(16, 108);
+      this.mpUseCustomFont.FlatStyle = FlatStyle.Popup;
+      this.mpUseCustomFont.Location = new Point(16, 108);
       this.mpUseCustomFont.Name = "mpUseCustomFont";
-      this.mpUseCustomFont.Size = new System.Drawing.Size(105, 17);
+      this.mpUseCustomFont.Size = new Size(105, 17);
       this.mpUseCustomFont.TabIndex = 77;
       this.mpUseCustomFont.Text = "Use Custom Font";
       this.mpUseCustomFont.UseVisualStyleBackColor = true;
-      this.mpUseCustomFont.CheckedChanged += new System.EventHandler(this.mpUseCustomFont_CheckedChanged);
+      this.mpUseCustomFont.CheckedChanged += new EventHandler(this.mpUseCustomFont_CheckedChanged);
       // 
       // mpUseLargeIcons
       // 
       this.mpUseLargeIcons.AutoSize = true;
-      this.mpUseLargeIcons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUseLargeIcons.Location = new System.Drawing.Point(16, 126);
+      this.mpUseLargeIcons.FlatStyle = FlatStyle.Popup;
+      this.mpUseLargeIcons.Location = new Point(16, 126);
       this.mpUseLargeIcons.Name = "mpUseLargeIcons";
-      this.mpUseLargeIcons.Size = new System.Drawing.Size(102, 17);
+      this.mpUseLargeIcons.Size = new Size(102, 17);
       this.mpUseLargeIcons.TabIndex = 77;
       this.mpUseLargeIcons.Text = "Use Large Icons";
       this.mpUseLargeIcons.UseVisualStyleBackColor = true;
-      this.mpUseLargeIcons.CheckedChanged += new System.EventHandler(this.mpUseLargeIcons_CheckedChanged);
+      this.mpUseLargeIcons.CheckedChanged += new EventHandler(this.mpUseLargeIcons_CheckedChanged);
       // 
       // mpUseCustomIcons
       // 
       this.mpUseCustomIcons.AutoSize = true;
-      this.mpUseCustomIcons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUseCustomIcons.Location = new System.Drawing.Point(32, 144);
+      this.mpUseCustomIcons.FlatStyle = FlatStyle.Popup;
+      this.mpUseCustomIcons.Location = new Point(32, 144);
       this.mpUseCustomIcons.Name = "mpUseCustomIcons";
-      this.mpUseCustomIcons.Size = new System.Drawing.Size(140, 17);
+      this.mpUseCustomIcons.Size = new Size(140, 17);
       this.mpUseCustomIcons.TabIndex = 77;
       this.mpUseCustomIcons.Text = "Use Custom Large Icons";
       this.mpUseCustomIcons.UseVisualStyleBackColor = true;
-      this.mpUseCustomIcons.CheckedChanged += new System.EventHandler(this.mpUseCustomIcons_CheckedChanged);
+      this.mpUseCustomIcons.CheckedChanged += new EventHandler(this.mpUseCustomIcons_CheckedChanged);
       // 
       // mpUseInvertedIcons
       // 
       this.mpUseInvertedIcons.AutoSize = true;
-      this.mpUseInvertedIcons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpUseInvertedIcons.Location = new System.Drawing.Point(32, 162);
+      this.mpUseInvertedIcons.FlatStyle = FlatStyle.Popup;
+      this.mpUseInvertedIcons.Location = new Point(32, 162);
       this.mpUseInvertedIcons.Name = "mpUseInvertedIcons";
-      this.mpUseInvertedIcons.Size = new System.Drawing.Size(172, 17);
+      this.mpUseInvertedIcons.Size = new Size(172, 17);
       this.mpUseInvertedIcons.TabIndex = 77;
       this.mpUseInvertedIcons.Text = "Invert (reverse) the Large Icons";
       this.mpUseInvertedIcons.UseVisualStyleBackColor = true;
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnOK.Location = new System.Drawing.Point(563, 476);
+      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Location = new Point(563, 476);
       this.btnOK.Name = "btnOK";
-      this.btnOK.Size = new System.Drawing.Size(78, 23);
+      this.btnOK.Size = new Size(78, 23);
       this.btnOK.TabIndex = 6;
       this.btnOK.Text = "&OK";
       this.btnOK.UseVisualStyleBackColor = true;
-      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+      this.btnOK.Click += new EventHandler(this.btnOK_Click);
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnReset.Location = new System.Drawing.Point(479, 476);
+      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Location = new Point(479, 476);
       this.btnReset.Name = "btnReset";
-      this.btnReset.Size = new System.Drawing.Size(78, 23);
+      this.btnReset.Size = new Size(78, 23);
       this.btnReset.TabIndex = 6;
       this.btnReset.Text = "&RESET";
       this.btnReset.UseVisualStyleBackColor = true;
-      this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+      this.btnReset.Click += new EventHandler(this.btnReset_Click);
       // 
       // iMONLCDg_AdvancedSetupForm
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(650, 504);
+      this.AutoScaleDimensions = new SizeF(6F, 13F);
+      this.ClientSize = new Size(650, 504);
       this.Controls.Add(this.btnOK);
       this.Controls.Add(this.btnReset);
       this.Controls.Add(this.groupBoxConfiguration);
       this.Name = "iMONLCDg_AdvancedSetupForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.StartPosition = FormStartPosition.CenterParent;
       this.Text = "MiniDisplay - Setup - Advanced Settings";
       this.groupBoxConfiguration.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
@@ -1831,7 +1854,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxHardware.PerformLayout();
       this.groupBoxRemoteControl.ResumeLayout(false);
       this.groupBoxRemoteControl.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbDelay)).EndInit();
+      ((ISupportInitialize) (this.tbDelay)).EndInit();
       this.groupBoxDisplayControl.ResumeLayout(false);
       this.groupBoxDisplayControl.PerformLayout();
       this.groupboxEqualizerOptions.ResumeLayout(false);
@@ -1841,7 +1864,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBoxDisplayOptions.ResumeLayout(false);
       this.groupBoxDisplayOptions.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     private void mpBlankDisplayWhenIdle_CheckedChanged(object sender, EventArgs e)
@@ -1950,7 +1972,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetDelayLabel()
     {
-      this.lblDelay.Text = "Repeat Delay: " + ((this.tbDelay.Value * 0x19)).ToString() + "ms";
+      this.lblDelay.Text = "Repeat Delay: " + ((this.tbDelay.Value*0x19)).ToString() + "ms";
     }
 
     private void tbDelay_Scroll(object sender, EventArgs e)
@@ -1982,4 +2004,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     }
   }
 }
-

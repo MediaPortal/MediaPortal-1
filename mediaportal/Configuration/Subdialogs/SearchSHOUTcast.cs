@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.IO;
@@ -32,6 +31,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
 
 namespace MediaPortal.Configuration
@@ -39,22 +39,24 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for SearchSHOUTcast.
   /// </summary>
-  public class SearchSHOUTcast : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class SearchSHOUTcast : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPButton SearchButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox SearchText;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
-    private MediaPortal.UserInterface.Controls.MPButton AddButton;
+    private MPButton SearchButton;
+    private MPTextBox SearchText;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private MPListView ResultsBox;
+    private MPButton AddButton;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
-    private MediaPortal.UserInterface.Controls.MPLabel WaitLabel;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private Container components = null;
 
-    private RadioStation Selected_Radiostation = null;     //Our return station info
+    private MPLabel WaitLabel;
+    private ColumnHeader columnHeader3;
+
+    private RadioStation Selected_Radiostation = null; //Our return station info
 
     public SearchSHOUTcast()
     {
@@ -83,6 +85,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -120,13 +123,17 @@ namespace MediaPortal.Configuration
       // 
       // ResultsBox
       // 
-      this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                 this.columnHeader1,
-                                                                                 this.columnHeader2,
-                                                                                 this.columnHeader3});
+      this.ResultsBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                         {
+                                           this.columnHeader1,
+                                           this.columnHeader2,
+                                           this.columnHeader3
+                                         });
       this.ResultsBox.ForeColor = System.Drawing.Color.Black;
       this.ResultsBox.FullRowSelect = true;
       this.ResultsBox.HideSelection = false;
@@ -170,7 +177,8 @@ namespace MediaPortal.Configuration
       this.WaitLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.WaitLabel.Enabled = false;
       this.WaitLabel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold,
+                                                    System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
       this.WaitLabel.ForeColor = System.Drawing.Color.Black;
       this.WaitLabel.Location = new System.Drawing.Point(160, 104);
       this.WaitLabel.Name = "WaitLabel";
@@ -198,8 +206,8 @@ namespace MediaPortal.Configuration
       this.Text = "Search SHOUTcast for your favorite radio stations";
       this.Load += new System.EventHandler(this.SearchSHOUTcast_Load);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public RadioStation Station
@@ -208,8 +216,14 @@ namespace MediaPortal.Configuration
       get
       {
         //returns selected radiostation if nothing then null
-        if (Selected_Radiostation == null) return null;
-        else return Selected_Radiostation;
+        if (Selected_Radiostation == null)
+        {
+          return null;
+        }
+        else
+        {
+          return Selected_Radiostation;
+        }
       }
     }
 
@@ -217,19 +231,19 @@ namespace MediaPortal.Configuration
     {
       //Create needed variables
       int count = 100,
-        total = 0,
-        counter = 1;										   // Used to keep track of file numbering
+          total = 0,
+          counter = 1; // Used to keep track of file numbering
       int[] found = new int[count],
-        end = new int[count];
+            end = new int[count];
 
-      string[] SCstaindex = new string[count];                      //Index info
-      string[] SCstanum = new string[count];					       // Second part holds file number on Shoutcast
-      string[] SCstaname = new string[count];                       // Extracted station name
-      string[] SCstabr = new string[count];						   //Bitrate info
-      WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
-      string HTMLdownload;										   // Hold HTML for parsing or misc
-      byte[] HTMLbuffer;                      					   // HTML buffer
-      MatchCollection mc;											   // Holds matched data
+      string[] SCstaindex = new string[count]; //Index info
+      string[] SCstanum = new string[count]; // Second part holds file number on Shoutcast
+      string[] SCstaname = new string[count]; // Extracted station name
+      string[] SCstabr = new string[count]; //Bitrate info
+      WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
+      string HTMLdownload; // Hold HTML for parsing or misc
+      byte[] HTMLbuffer; // HTML buffer
+      MatchCollection mc; // Holds matched data
       // Create Regex objects and define the search criteria.
       Regex nterm = new Regex("Unfortunately, there weren't any SHOUTcast streams found containing the term");
       Regex ngenre = new Regex("Unfortunately, there weren't any SHOUTcast streams found under the genre");
@@ -263,17 +277,18 @@ namespace MediaPortal.Configuration
 
       try
       {
-
         //Build index numbers for stations
         int ind = 0;
         for (int i = counter; i < counter + count; i++)
         {
           if (i < 10)
           {
-
             SCstaindex[ind] = "0" + i.ToString();
           }
-          else SCstaindex[ind] = i.ToString();
+          else
+          {
+            SCstaindex[ind] = i.ToString();
+          }
           ind++;
         }
 
@@ -315,7 +330,6 @@ namespace MediaPortal.Configuration
           // Record the character position where the match was found.
           found[i] = mc[i].Index;
         }
-
       }
       catch (IndexOutOfRangeException)
       {
@@ -343,10 +357,13 @@ namespace MediaPortal.Configuration
       return stations;
     }
 
-    private void SearchButton_Click(object sender, System.EventArgs e)
+    private void SearchButton_Click(object sender, EventArgs e)
     {
       //Check if the user has entered any text
-      if (SearchText.Text == null || SearchText.Text == "") return;
+      if (SearchText.Text == null || SearchText.Text == "")
+      {
+        return;
+      }
       ArrayList Station_List = new ArrayList();
       //Show wait window
       WaitLabel.Focus();
@@ -360,31 +377,36 @@ namespace MediaPortal.Configuration
         MessageBox.Show(this, "No stations found please search again.");
         return;
       }
-      if (ResultsBox.Items != null) ResultsBox.Items.Clear();
+      if (ResultsBox.Items != null)
+      {
+        ResultsBox.Items.Clear();
+      }
       foreach (RadioStation station in Station_List)
       {
         RadioStation radiostation = new RadioStation();
         radiostation.Bitrate = station.Bitrate;
         radiostation.Name = station.Name;
         radiostation.URL = station.URL;
-        ListViewItem listItem = new ListViewItem(new string[] {   radiostation.Bitrate.ToString(),
-																		  radiostation.Name,
-																		  radiostation.URL
-																	  });
+        ListViewItem listItem = new ListViewItem(new string[]
+                                                   {
+                                                     radiostation.Bitrate.ToString(),
+                                                     radiostation.Name,
+                                                     radiostation.URL
+                                                   });
         listItem.Tag = radiostation;
         ResultsBox.Items.Add(listItem);
       }
       ResultsBox.Focus();
     }
 
-    private void AddButton_Click(object sender, System.EventArgs e)
+    private void AddButton_Click(object sender, EventArgs e)
     {
       foreach (ListViewItem listItem in ResultsBox.SelectedItems)
       {
         WaitLabel.Focus();
         WaitLabel.Visible = true;
         WaitLabel.Enabled = true;
-        WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+        WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
         string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
         //Get station file number to get the file
         RadioStation radiostation = listItem.Tag as RadioStation;
@@ -426,12 +448,10 @@ namespace MediaPortal.Configuration
           this.Close();
           return;
         }
-
       }
-
     }
 
-    private void SearchSHOUTcast_Load(object sender, System.EventArgs e)
+    private void SearchSHOUTcast_Load(object sender, EventArgs e)
     {
       //Check if we are connected to a network
       if (!SystemInformation.Network)
@@ -458,7 +478,8 @@ namespace MediaPortal.Configuration
       if (!reged)
       {
         //Inform the user that they need to register the source to play streams
-        MessageBox.Show(this, "The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
+        MessageBox.Show(this,
+                        "The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
         this.Close();
         return;
       }

@@ -24,127 +24,124 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Management;
 using System.Collections;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+using System.Drawing;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
-using DShowNET;
+using System.Windows.Forms;
 using DShowNET.Helper;
-using DirectShowLib;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
+using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
-using TVCapture;
+using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.TV.Database;
-using MediaPortal.Util;
+using MediaPortal.TV.Recording;
+using MediaPortal.UserInterface.Controls;
+using TVCapture;
 
 namespace MediaPortal.Configuration
 {
   /// <summary>
   /// Summary description for EditCaptureCardForm.
   /// </summary>
-  public class EditCaptureCardForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class EditCaptureCardForm : MPConfigForm
   {
-    static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPComboBox cardComboBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useRecordingCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useWatchingCheckBox;
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
+    private MPLabel label1;
+    private MPComboBox cardComboBox;
+    private MPCheckBox useRecordingCheckBox;
+    private MPCheckBox useWatchingCheckBox;
+    private MPButton cancelButton;
+    private MPButton okButton;
     private IContainer components;
 
     //
     // Private members
     //
-    ArrayList captureFormats = new ArrayList();
-    ArrayList propertyPages = new ArrayList();
+    private ArrayList captureFormats = new ArrayList();
+    private ArrayList propertyPages = new ArrayList();
     private Size m_size = new Size(0, 0);
-    private MediaPortal.UserInterface.Controls.MPLabel label12;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
+    private MPLabel label12;
+    private MPTextBox textBoxName;
 
-    bool acceptuserinput = false;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAutotune;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAutotuneRadio;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage5;
-    private MediaPortal.UserInterface.Controls.MPLabel label14;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox3Audio;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox3Video;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox2Audio;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox2Video;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox1Audio;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBox1Video;
-    private MediaPortal.UserInterface.Controls.MPLabel label15;
-    private MediaPortal.UserInterface.Controls.MPLabel label16;
-    private MediaPortal.UserInterface.Controls.MPLabel label17;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHiQuality;
-    private System.Windows.Forms.NumericUpDown updownPrio;
-    private MediaPortal.UserInterface.Controls.MPLabel label24;
-    private MediaPortal.UserInterface.Controls.MPLabel label25;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxQuality;
-    private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbRecordingFolder;
-    private MediaPortal.UserInterface.Controls.MPLabel label35;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbRgbVideo;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbRgbAudio;
-    private MediaPortal.UserInterface.Controls.MPLabel label18;
-    private MediaPortal.UserInterface.Controls.MPLabel label26;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox7;
-    private MediaPortal.UserInterface.Controls.MPLabel label19;
-    private MediaPortal.UserInterface.Controls.MPLabel label27;
-    private MediaPortal.UserInterface.Controls.MPLabel label28;
-    private MediaPortal.UserInterface.Controls.MPLabel label29;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbPortMin;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbPortMax;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbLowMax;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbLowMin;
-    private MediaPortal.UserInterface.Controls.MPLabel label34;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbMedMax;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbMedMin;
-    private MediaPortal.UserInterface.Controls.MPLabel label36;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbHighMax;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbHighMin;
-    private MediaPortal.UserInterface.Controls.MPLabel label37;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbLowVBR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbMedVBR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbHighVBR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbPortVBR;
+    private bool acceptuserinput = false;
+    private MPTabControl tabControl1;
+    private MPTabPage tabPage1;
+    private MPTabPage tabPage3;
+    private MPTabPage tabPageAutotune;
+    private MPTabPage tabPageAutotuneRadio;
+    private MPTabPage tabPage5;
+    private MPLabel label14;
+    private MPComboBox comboBox3Audio;
+    private MPComboBox comboBox3Video;
+    private MPComboBox comboBox2Audio;
+    private MPComboBox comboBox2Video;
+    private MPComboBox comboBox1Audio;
+    private MPComboBox comboBox1Video;
+    private MPLabel label15;
+    private MPLabel label16;
+    private MPLabel label17;
+    private MPCheckBox checkBoxHiQuality;
+    private NumericUpDown updownPrio;
+    private MPLabel label24;
+    private MPLabel label25;
+    private MPComboBox comboBoxQuality;
+    private MPButton buttonBrowse;
+    private MPTextBox tbRecordingFolder;
+    private MPLabel label35;
+    private MPComboBox cbRgbVideo;
+    private MPComboBox cbRgbAudio;
+    private MPLabel label18;
+    private MPLabel label26;
+    private MPGroupBox groupBox5;
+    private MPGroupBox groupBox7;
+    private MPLabel label19;
+    private MPLabel label27;
+    private MPLabel label28;
+    private MPLabel label29;
+    private MPTextBox tbPortMin;
+    private MPTextBox tbPortMax;
+    private MPTextBox tbLowMax;
+    private MPTextBox tbLowMin;
+    private MPLabel label34;
+    private MPTextBox tbMedMax;
+    private MPTextBox tbMedMin;
+    private MPLabel label36;
+    private MPTextBox tbHighMax;
+    private MPTextBox tbHighMin;
+    private MPLabel label37;
+    private MPCheckBox cbLowVBR;
+    private MPCheckBox cbMedVBR;
+    private MPCheckBox cbHighVBR;
+    private MPCheckBox cbPortVBR;
     private CheckBox checkBoxHWPidFiltering;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPLabel mpLabel1;
     private ComboBox comboBoxCAM;
-    int CardId;
-    private MediaPortal.UserInterface.Controls.MPLabel lblFrameSize;
+    private int CardId;
+    private MPLabel lblFrameSize;
     private ComboBox comboBoxFrameSize;
-    private MediaPortal.UserInterface.Controls.MPLabel lblFrameRate;
+    private MPLabel lblFrameRate;
     private ComboBox comboBoxFrameRate;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBox5vAntennae;
-    private MediaPortal.UserInterface.Controls.MPGroupBox cropGroupBox;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownLeft;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownBottom;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownTop;
-    private MediaPortal.UserInterface.Controls.MPLabel cropRightLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel cropLeftLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel cropBottomLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel cropTopLabel;
-    private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownRight;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MPCheckBox checkBox5vAntennae;
+    private MPGroupBox cropGroupBox;
+    private MPNumericUpDown mpNumericUpDownLeft;
+    private MPNumericUpDown mpNumericUpDownBottom;
+    private MPNumericUpDown mpNumericUpDownTop;
+    private MPLabel cropRightLabel;
+    private MPLabel cropLeftLabel;
+    private MPLabel cropBottomLabel;
+    private MPLabel cropTopLabel;
+    private MPNumericUpDown mpNumericUpDownRight;
+    private MPLabel mpLabel2;
     private ComboBox comboBoxAudioQuality;
     private CheckBox cbDisableDNR;
     private ToolTip toolTip1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbTVVBR;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbTVHigh;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbTVMin;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    TVCaptureDevice prevDevice = null;
+    private MPCheckBox cbTVVBR;
+    private MPTextBox tbTVHigh;
+    private MPTextBox tbTVMin;
+    private MPLabel mpLabel3;
+    private TVCaptureDevice prevDevice = null;
 
 
     /// <summary>
@@ -152,20 +149,20 @@ namespace MediaPortal.Configuration
     /// </summary>
     public EditCaptureCardForm(int cardId, bool addNewCard, TVCaptureDevice deviceToEdit)
     {
-
       ArrayList captureCards = new ArrayList();
       if (addNewCard)
       {
         try
         {
-          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config,"capturecards.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          using (
+            FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "capturecards.xml"), FileMode.Open,
+                                                   FileAccess.Read, FileShare.ReadWrite))
           {
-
             SoapFormatter formatter = new SoapFormatter();
-            captureCards = (ArrayList)formatter.Deserialize(fileStream);
+            captureCards = (ArrayList) formatter.Deserialize(fileStream);
             for (int i = 0; i < captureCards.Count; i++)
             {
-              ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
+              ((TVCaptureDevice) captureCards[i]).ID = (i + 1);
             }
             //
             // Finally close our file stream
@@ -175,7 +172,7 @@ namespace MediaPortal.Configuration
         }
         catch
         {
-					Log.Error("Recorder: EditCaptureCardForm");
+          Log.Error("Recorder: EditCaptureCardForm");
         }
       }
 
@@ -251,12 +248,15 @@ namespace MediaPortal.Configuration
       if (availableVideoDevices.Count == 0)
       {
         this.Close();
-        MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("No video device was found, you won't be able to configure a capture card",
+                        "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled = false;
         acceptuserinput = false;
       }
       else
+      {
         acceptuserinput = true;
+      }
 
       // #MW#
       // Load capture card definitions, and only display those cards that are supported by MP
@@ -278,18 +278,21 @@ namespace MediaPortal.Configuration
         for (int i = 0; i < availableVideoDevices.Count; i++)
         {
           //treat the SSE2 DVB-S card as a general H/W card
-          if (((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
+          if (((string) (availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
           {
-            if (ss2Added) continue;
+            if (ss2Added)
+            {
+              continue;
+            }
             if (addNewCard || (!addNewCard && deviceToEdit.VideoDevice == "B2C2 MPEG-2 Source"))
             {
               ss2Added = true;
               TVCaptureDevice cd = new TVCaptureDevice();
               cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
-              cd.VideoDevice = (string)availableVideoDevices[i];
+              cd.VideoDevice = (string) availableVideoDevices[i];
               cd.CommercialName = "Skystar 2";
-              cd.CardType = TVCapture.CardTypes.Digital_SS2;
-              cd.DeviceId = (string)availableVideoDevices[i];
+              cd.CardType = CardTypes.Digital_SS2;
+              cd.DeviceId = (string) availableVideoDevices[i];
               cd.SupportsTV = true;
               cd.SupportsRadio = false;
               cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
@@ -301,11 +304,15 @@ namespace MediaPortal.Configuration
                 foreach (TVCaptureDevice dev in captureCards)
                 {
                   if (dev.CardType == cd.CardType)
+                  {
                     alreadyAdded = true;
+                  }
                 }
               }
               if (!alreadyAdded)
+              {
                 cardComboBox.Items.Add(cbcc);
+              }
             }
             //Rem'd below should fix SS2 cards with other DVB devices
             //if (addNewCard) break; // must not break in edit mode
@@ -349,10 +356,13 @@ namespace MediaPortal.Configuration
           bool add = false;
           if (ccd.CaptureName != string.Empty)
           {
-            string videoDev = (string)(availableVideoDevices[i]);
-            string videoMon = (string)(availableVideoDeviceMonikers[i]);
+            string videoDev = (string) (availableVideoDevices[i]);
+            string videoMon = (string) (availableVideoDeviceMonikers[i]);
             if ((String.Compare(videoDev, ccd.CaptureName, true) == 0) &&
-                 (videoMon.ToLower().IndexOf(ccd.DeviceId.ToLower()) > -1)) add = true;
+                (videoMon.ToLower().IndexOf(ccd.DeviceId.ToLower()) > -1))
+            {
+              add = true;
+            }
           }
           if (add)
           {
@@ -362,8 +372,8 @@ namespace MediaPortal.Configuration
             cd.ID = cardId;
             if (ccd.CaptureName != string.Empty)
             {
-              cd.VideoDevice = ccd.CaptureName;////Hauppauge WinTV PVR PCI II Capture
-              cd.CommercialName = ccd.CommercialName;//PVR 150MCE
+              cd.VideoDevice = ccd.CaptureName; ////Hauppauge WinTV PVR PCI II Capture
+              cd.CommercialName = ccd.CommercialName; //PVR 150MCE
               cd.CardType = ccd.Capabilities.CardType;
               cd.DeviceId = ccd.DeviceId;
               cd.SupportsTV = ccd.Capabilities.HasTv;
@@ -372,14 +382,17 @@ namespace MediaPortal.Configuration
 
             // only 3 values ?? "Adding name:{0} capture:{1} id:{2} type:{3}",
             Log.Info("Adding name:{0} id:{1} type:{2}",
-              cd.CommercialName,
-              cd.DeviceId,
-              cd.CardType.ToString());
+                     cd.CommercialName,
+                     cd.DeviceId,
+                     cd.CardType.ToString());
             ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
             int nr = 1;
             foreach (ComboBoxCaptureCard cb in cardComboBox.Items)
             {
-              if (cb.CaptureDevice.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower()) nr++;
+              if (cb.CaptureDevice.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower())
+              {
+                nr++;
+              }
             }
             cbcc.Number = nr;
             cbcc.MaxCards = nr;
@@ -397,11 +410,14 @@ namespace MediaPortal.Configuration
                 if (cbcc.CaptureDevice.DeviceId.ToLower() == deviceToEdit.DeviceId.ToLower())
                 {
                   if (deviceToEdit.VideoDeviceMoniker.ToLower() == cbcc.VideoDeviceMoniker.ToLower() &&
-                    deviceToEdit.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
+                      deviceToEdit.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
                   {
                     cardComboBox.Items.Add(cbcc);
-                    if (deviceToEdit != null && deviceToEdit.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower())
+                    if (deviceToEdit != null &&
+                        deviceToEdit.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower())
+                    {
                       cardComboBox.SelectedIndex = cardComboBox.Items.Count - 1;
+                    }
                   }
                 }
               }
@@ -416,7 +432,7 @@ namespace MediaPortal.Configuration
                   if (cbcc.CaptureDevice.DeviceId.ToLower() == dev.DeviceId.ToLower())
                   {
                     if (dev.VideoDeviceMoniker.ToLower() == cbcc.VideoDeviceMoniker.ToLower() &&
-                      dev.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
+                        dev.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
                     {
                       alreadyAdded = true;
                     }
@@ -427,21 +443,26 @@ namespace MediaPortal.Configuration
               {
                 cardComboBox.Items.Add(cbcc);
                 if (cardComboBox.SelectedItem == null)
+                {
                   cardComboBox.SelectedIndex = 0;
+                }
               }
             }
-          }//if (add)
-        }//for (int i = 0; i < availableVideoDevices.Count; i++)
-      }//foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
+          } //if (add)
+        } //for (int i = 0; i < availableVideoDevices.Count; i++)
+      } //foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
 
       if (cardComboBox.Items.Count == 0)
       {
-        MessageBox.Show("No video capture card(s) were found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("No video capture card(s) were found, you won't be able to configure a capture card",
+                        "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled = false;
         acceptuserinput = false;
       }
       else
+      {
         acceptuserinput = true;
+      }
 
 
       textBoxName.Text = String.Format("card{0}", cardId);
@@ -463,6 +484,7 @@ namespace MediaPortal.Configuration
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -470,7 +492,8 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (EditCaptureCardForm));
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.cropGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -556,11 +579,11 @@ namespace MediaPortal.Configuration
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.cropGroupBox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownRight)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownLeft)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownBottom)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownTop)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownRight)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownLeft)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownBottom)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownTop)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.updownPrio)).BeginInit();
       this.groupBox5.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.tabPage5.SuspendLayout();
@@ -624,11 +647,13 @@ namespace MediaPortal.Configuration
       // mpNumericUpDownRight
       // 
       this.mpNumericUpDownRight.Location = new System.Drawing.Point(267, 43);
-      this.mpNumericUpDownRight.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
+      this.mpNumericUpDownRight.Maximum = new decimal(new int[]
+                                                        {
+                                                          200,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
       this.mpNumericUpDownRight.Name = "mpNumericUpDownRight";
       this.mpNumericUpDownRight.Size = new System.Drawing.Size(46, 20);
       this.mpNumericUpDownRight.TabIndex = 4;
@@ -636,11 +661,13 @@ namespace MediaPortal.Configuration
       // mpNumericUpDownLeft
       // 
       this.mpNumericUpDownLeft.Location = new System.Drawing.Point(117, 43);
-      this.mpNumericUpDownLeft.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
+      this.mpNumericUpDownLeft.Maximum = new decimal(new int[]
+                                                       {
+                                                         200,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
       this.mpNumericUpDownLeft.Name = "mpNumericUpDownLeft";
       this.mpNumericUpDownLeft.Size = new System.Drawing.Size(46, 20);
       this.mpNumericUpDownLeft.TabIndex = 3;
@@ -648,11 +675,13 @@ namespace MediaPortal.Configuration
       // mpNumericUpDownBottom
       // 
       this.mpNumericUpDownBottom.Location = new System.Drawing.Point(192, 72);
-      this.mpNumericUpDownBottom.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
+      this.mpNumericUpDownBottom.Maximum = new decimal(new int[]
+                                                         {
+                                                           200,
+                                                           0,
+                                                           0,
+                                                           0
+                                                         });
       this.mpNumericUpDownBottom.Name = "mpNumericUpDownBottom";
       this.mpNumericUpDownBottom.Size = new System.Drawing.Size(46, 20);
       this.mpNumericUpDownBottom.TabIndex = 6;
@@ -660,11 +689,13 @@ namespace MediaPortal.Configuration
       // mpNumericUpDownTop
       // 
       this.mpNumericUpDownTop.Location = new System.Drawing.Point(192, 14);
-      this.mpNumericUpDownTop.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
+      this.mpNumericUpDownTop.Maximum = new decimal(new int[]
+                                                      {
+                                                        200,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      });
       this.mpNumericUpDownTop.Name = "mpNumericUpDownTop";
       this.mpNumericUpDownTop.Size = new System.Drawing.Size(46, 20);
       this.mpNumericUpDownTop.TabIndex = 1;
@@ -720,10 +751,12 @@ namespace MediaPortal.Configuration
       // comboBoxFrameRate
       // 
       this.comboBoxFrameRate.FormattingEnabled = true;
-      this.comboBoxFrameRate.Items.AddRange(new object[] {
-            "29.97 fps (NTSC)",
-            "25 fps (PAL/SECAM)",
-            "15 fps"});
+      this.comboBoxFrameRate.Items.AddRange(new object[]
+                                              {
+                                                "29.97 fps (NTSC)",
+                                                "25 fps (PAL/SECAM)",
+                                                "15 fps"
+                                              });
       this.comboBoxFrameRate.Location = new System.Drawing.Point(375, 125);
       this.comboBoxFrameRate.Name = "comboBoxFrameRate";
       this.comboBoxFrameRate.Size = new System.Drawing.Size(151, 21);
@@ -748,16 +781,18 @@ namespace MediaPortal.Configuration
       // comboBoxFrameSize
       // 
       this.comboBoxFrameSize.FormattingEnabled = true;
-      this.comboBoxFrameSize.Items.AddRange(new object[] {
-            "768x576 PAL square pixels",
-            "720x576 PAL/SECAM ITU-601 D1 (recommended)",
-            "720x480 NTSC ITU-601 D1 (recommended)",
-            "704x576 PAL/SECAM TV broadcast",
-            "704x480 NTSC TV broadcast",
-            "640x480 NTSC square pixels",
-            "352x288 PAL CIF",
-            "352x240 NTSC CIF",
-            "320x240 NTSC CIF square pixels"});
+      this.comboBoxFrameSize.Items.AddRange(new object[]
+                                              {
+                                                "768x576 PAL square pixels",
+                                                "720x576 PAL/SECAM ITU-601 D1 (recommended)",
+                                                "720x480 NTSC ITU-601 D1 (recommended)",
+                                                "704x576 PAL/SECAM TV broadcast",
+                                                "704x480 NTSC TV broadcast",
+                                                "640x480 NTSC square pixels",
+                                                "352x288 PAL CIF",
+                                                "352x240 NTSC CIF",
+                                                "320x240 NTSC CIF square pixels"
+                                              });
       this.comboBoxFrameSize.Location = new System.Drawing.Point(35, 125);
       this.comboBoxFrameSize.Name = "comboBoxFrameSize";
       this.comboBoxFrameSize.Size = new System.Drawing.Size(299, 21);
@@ -775,12 +810,14 @@ namespace MediaPortal.Configuration
       // 
       this.comboBoxCAM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCAM.FormattingEnabled = true;
-      this.comboBoxCAM.Items.AddRange(new object[] {
-            "Default",
-            "Viaccess",
-            "Aston",
-            "Conax",
-            "Cryptoworks"});
+      this.comboBoxCAM.Items.AddRange(new object[]
+                                        {
+                                          "Default",
+                                          "Viaccess",
+                                          "Aston",
+                                          "Conax",
+                                          "Cryptoworks"
+                                        });
       this.comboBoxCAM.Location = new System.Drawing.Point(405, 65);
       this.comboBoxCAM.Name = "comboBoxCAM";
       this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
@@ -807,29 +844,37 @@ namespace MediaPortal.Configuration
       // updownPrio
       // 
       this.updownPrio.Location = new System.Drawing.Point(152, 42);
-      this.updownPrio.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-      this.updownPrio.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.updownPrio.Maximum = new decimal(new int[]
+                                              {
+                                                10,
+                                                0,
+                                                0,
+                                                0
+                                              });
+      this.updownPrio.Minimum = new decimal(new int[]
+                                              {
+                                                1,
+                                                0,
+                                                0,
+                                                0
+                                              });
       this.updownPrio.Name = "updownPrio";
       this.updownPrio.Size = new System.Drawing.Size(56, 20);
       this.updownPrio.TabIndex = 51;
-      this.updownPrio.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.updownPrio.Value = new decimal(new int[]
+                                            {
+                                              1,
+                                              0,
+                                              0,
+                                              0
+                                            });
       // 
       // cardComboBox
       // 
-      this.cardComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cardComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cardComboBox.BorderColor = System.Drawing.Color.Empty;
       this.cardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cardComboBox.Location = new System.Drawing.Point(112, 8);
@@ -1067,11 +1112,13 @@ namespace MediaPortal.Configuration
       // comboBoxAudioQuality
       // 
       this.comboBoxAudioQuality.FormattingEnabled = true;
-      this.comboBoxAudioQuality.Items.AddRange(new object[] {
-            "192 Kbps",
-            "224 Kbps",
-            "256 Kbps",
-            "384 Kbps"});
+      this.comboBoxAudioQuality.Items.AddRange(new object[]
+                                                 {
+                                                   "192 Kbps",
+                                                   "224 Kbps",
+                                                   "256 Kbps",
+                                                   "384 Kbps"
+                                                 });
       this.comboBoxAudioQuality.Location = new System.Drawing.Point(128, 71);
       this.comboBoxAudioQuality.Name = "comboBoxAudioQuality";
       this.comboBoxAudioQuality.Size = new System.Drawing.Size(128, 21);
@@ -1347,11 +1394,13 @@ namespace MediaPortal.Configuration
       // comboBoxQuality
       // 
       this.comboBoxQuality.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxQuality.Items.AddRange(new object[] {
-            "Portable",
-            "Low",
-            "Medium",
-            "High"});
+      this.comboBoxQuality.Items.AddRange(new object[]
+                                            {
+                                              "Portable",
+                                              "Low",
+                                              "Medium",
+                                              "High"
+                                            });
       this.comboBoxQuality.Location = new System.Drawing.Point(128, 38);
       this.comboBoxQuality.Name = "comboBoxQuality";
       this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
@@ -1370,7 +1419,9 @@ namespace MediaPortal.Configuration
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(391, 464);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -1381,7 +1432,9 @@ namespace MediaPortal.Configuration
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.Location = new System.Drawing.Point(471, 464);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -1448,11 +1501,11 @@ namespace MediaPortal.Configuration
       this.tabPage1.PerformLayout();
       this.cropGroupBox.ResumeLayout(false);
       this.cropGroupBox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownRight)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownLeft)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownBottom)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.mpNumericUpDownTop)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownRight)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownLeft)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownBottom)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.mpNumericUpDownTop)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.updownPrio)).EndInit();
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       this.tabPage3.ResumeLayout(false);
@@ -1461,21 +1514,26 @@ namespace MediaPortal.Configuration
       this.groupBox7.ResumeLayout(false);
       this.groupBox7.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    void FillInDefaultRecordingPath()
+    private void FillInDefaultRecordingPath()
     {
-      if (tbRecordingFolder.Text != string.Empty) return;
+      if (tbRecordingFolder.Text != string.Empty)
+      {
+        return;
+      }
 
       string recFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
       recFolder += @"\My Recordings";
       try
       {
-        System.IO.Directory.CreateDirectory(recFolder);
+        Directory.CreateDirectory(recFolder);
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
       tbRecordingFolder.Text = recFolder;
     }
 
@@ -1484,34 +1542,36 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void okButton_Click(object sender, System.EventArgs e)
+    private void okButton_Click(object sender, EventArgs e)
     {
       if (tbRecordingFolder.Text == string.Empty)
       {
         tabControl1.SelectedTab = tabPage1;
-        MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         return;
       }
       SaveAllSettings();
       this.DialogResult = DialogResult.OK;
       this.Hide();
-
     }
-    private void useRecording_Check_Changed(object sender, System.EventArgs e)
+
+    private void useRecording_Check_Changed(object sender, EventArgs e)
     {
       groupBox5.Enabled = useRecordingCheckBox.Checked;
     }
 
-    private void EditCaptureCardForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void EditCaptureCardForm_Closing(object sender, CancelEventArgs e)
     {
       IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
       if (enumerator.MoveNext())
       {
-        Sections.Wizard_ScanBase currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+        Wizard_ScanBase currentDialog = (Wizard_ScanBase) enumerator.Current;
         if ((currentDialog != null) && (currentDialog.Scanning))
         {
           tabControl1.SelectedTab = tabPageAutotune;
-          MessageBox.Show("Please stop autotuning first", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          MessageBox.Show("Please stop autotuning first", "MediaPortal Settings", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
           e.Cancel = true;
           return;
         }
@@ -1522,15 +1582,14 @@ namespace MediaPortal.Configuration
       }
     }
 
-    void SaveAllSettings()
+    private void SaveAllSettings()
     {
-
       if (CaptureCard != null && CaptureCard.FriendlyName != string.Empty)
       {
         try
         {
           string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), CaptureCard.FriendlyName);
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+          using (Settings xmlwriter = new Settings(filename))
           {
             Log.Debug("*** HiQuality {0}", Convert.ToString(checkBoxHiQuality.Checked));
             xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
@@ -1621,28 +1680,39 @@ namespace MediaPortal.Configuration
 
             Log.Debug("*** hwfiltering {0}", Convert.ToString(checkBoxHWPidFiltering.Checked));
             if (checkBoxHWPidFiltering.Visible)
+            {
               xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+            }
 
             Log.Debug("*** cam {0}", Convert.ToString(comboBoxCAM.SelectedItem));
             if (comboBoxCAM.Visible)
+            {
               xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+            }
 
             Log.Debug("*** framerate {0}", comboBoxFrameRate.Text);
             if (comboBoxFrameRate.Visible)
+            {
               xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
+            }
 
             Log.Debug("*** framesize {0}", comboBoxFrameSize.Text);
             if (comboBoxFrameSize.Visible)
+            {
               xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
+            }
 
             Log.Debug("*** Antennae5v {0}", Convert.ToString(checkBox5vAntennae.Checked));
             if (checkBox5vAntennae.Visible)
+            {
               xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
+            }
           }
         }
         catch (Exception ex)
         {
-          Log.Error("EditCaptureCardForm: ERROR saving card {0} - {1} , {2} , {3}", CaptureCard.FriendlyName, ex.Message, ex.Source, ex.StackTrace);
+          Log.Error("EditCaptureCardForm: ERROR saving card {0} - {1} , {2} , {3}", CaptureCard.FriendlyName, ex.Message,
+                    ex.Source, ex.StackTrace);
         }
 
         try
@@ -1650,7 +1720,7 @@ namespace MediaPortal.Configuration
           IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
           if (enumerator.MoveNext())
           {
-            Sections.Wizard_ScanBase currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+            Wizard_ScanBase currentDialog = (Wizard_ScanBase) enumerator.Current;
             if (currentDialog != null)
             {
               currentDialog.SaveSettings();
@@ -1659,23 +1729,25 @@ namespace MediaPortal.Configuration
         }
         catch (Exception ex2)
         {
-          Log.Error("EditCaptureCardForm: ERROR in Wizard_ScanBase dialog {0} , {1} , {2}", ex2.Message, ex2.Source, ex2.StackTrace);
+          Log.Error("EditCaptureCardForm: ERROR in Wizard_ScanBase dialog {0} , {1} , {2}", ex2.Message, ex2.Source,
+                    ex2.StackTrace);
         }
 
         try
         {
           // save crop settings
-          MediaPortal.Player.CropSettings cropSettings = new MediaPortal.Player.CropSettings(
-                      Convert.ToInt32(mpNumericUpDownTop.Value),
-                      Convert.ToInt32(mpNumericUpDownBottom.Value),
-                      Convert.ToInt32(mpNumericUpDownLeft.Value),
-                      Convert.ToInt32(mpNumericUpDownRight.Value)
-                      );
+          CropSettings cropSettings = new CropSettings(
+            Convert.ToInt32(mpNumericUpDownTop.Value),
+            Convert.ToInt32(mpNumericUpDownBottom.Value),
+            Convert.ToInt32(mpNumericUpDownLeft.Value),
+            Convert.ToInt32(mpNumericUpDownRight.Value)
+            );
           CaptureCard.CropSettings = cropSettings;
         }
         catch (Exception ex3)
         {
-          Log.Error("EditCaptureCardForm: ERROR saving crop settings {0} , {1} , {2}", ex3.Message, ex3.Source, ex3.StackTrace);
+          Log.Error("EditCaptureCardForm: ERROR saving crop settings {0} , {1} , {2}", ex3.Message, ex3.Source,
+                    ex3.StackTrace);
         }
       }
     }
@@ -1685,33 +1757,39 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void cancelButton_Click(object sender, System.EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Hide();
     }
 
-    private void cardComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void cardComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (!acceptuserinput) return;
-      if (cardComboBox.SelectedItem == null) return;
-      if (((ComboBoxCaptureCard)(cardComboBox.SelectedItem)).CaptureDevice == prevDevice)
+      if (!acceptuserinput)
+      {
+        return;
+      }
+      if (cardComboBox.SelectedItem == null)
+      {
+        return;
+      }
+      if (((ComboBoxCaptureCard) (cardComboBox.SelectedItem)).CaptureDevice == prevDevice)
       {
         return;
       }
 
-      prevDevice = ((ComboBoxCaptureCard)(cardComboBox.SelectedItem)).CaptureDevice;
+      prevDevice = ((ComboBoxCaptureCard) (cardComboBox.SelectedItem)).CaptureDevice;
       if (!FillInAll())
       {
         tabControl1.Controls.Remove(tabPageAutotune);
-        MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
       }
       else
       {
         FillAutotuneTab();
       }
     }
-
 
 
     /// <summary>
@@ -1730,7 +1808,7 @@ namespace MediaPortal.Configuration
     /// 
     /// Display should give the descriptive name, ie PVR150MCE, PVR350 etc.
     /// </summary>
-    bool FillInAll()
+    private bool FillInAll()
     {
       checkBoxHWPidFiltering.Visible = false;
       comboBoxCAM.Visible = false;
@@ -1769,7 +1847,7 @@ namespace MediaPortal.Configuration
             }
             if (capture.Supports5vAntennae)
             {
-                checkBox5vAntennae.Visible = true;
+              checkBox5vAntennae.Visible = true;
             }
             // load crop settings
             mpNumericUpDownTop.Value = capture.CropSettings.Top;
@@ -1777,13 +1855,16 @@ namespace MediaPortal.Configuration
             mpNumericUpDownLeft.Value = capture.CropSettings.Left;
             mpNumericUpDownRight.Value = capture.CropSettings.Right;
           }
-          else return false;
+          else
+          {
+            return false;
+          }
         }
       }
       catch (Exception ex)
       {
         Log.Info("FillInAll exception:{0} {1} {2}",
-          ex.Message, ex.Source, ex.StackTrace);
+                 ex.Message, ex.Source, ex.StackTrace);
         return false;
       }
       finally
@@ -1812,47 +1893,48 @@ namespace MediaPortal.Configuration
       }
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage5);
-      Sections.Wizard_ScanBase currentDialog = null;
+      Wizard_ScanBase currentDialog = null;
       this.tabPageAutotune.Controls.Clear();
       if (networkType == NetworkType.Analog)
       {
-        currentDialog = new Sections.Wizard_AnalogTV();
+        currentDialog = new Wizard_AnalogTV();
         this.tabPageAutotune.Controls.Add(currentDialog);
-        Sections.Wizard_ScanBase radioDialog = new Sections.Wizard_AnalogRadio();
+        Wizard_ScanBase radioDialog = new Wizard_AnalogRadio();
         this.tabPageAutotuneRadio.Controls.Add(radioDialog);
-        radioDialog.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-        radioDialog.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+        radioDialog.OnScanFinished += new Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
+        radioDialog.OnScanStarted += new Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
         radioDialog.Card = capture;
       }
       else if (networkType == NetworkType.DVBC)
       {
-        currentDialog = new Sections.Wizard_DVBCTV();
+        currentDialog = new Wizard_DVBCTV();
         this.tabPageAutotune.Controls.Add(currentDialog);
       }
       else if (networkType == NetworkType.DVBT)
       {
-        currentDialog = new Sections.Wizard_DVBTTV();
+        currentDialog = new Wizard_DVBTTV();
         this.tabPageAutotune.Controls.Add(currentDialog);
       }
       else if (networkType == NetworkType.DVBS)
       {
-        currentDialog = new Sections.Wizard_DVBSTV();
+        currentDialog = new Wizard_DVBSTV();
         this.tabPageAutotune.Controls.Add(currentDialog);
       }
       else if (networkType == NetworkType.ATSC)
       {
-        currentDialog = new Sections.Wizard_ATSCTV();
+        currentDialog = new Wizard_ATSCTV();
         this.tabPageAutotune.Controls.Add(currentDialog);
       }
       else
       {
         return;
       }
-      currentDialog.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
-      currentDialog.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+      currentDialog.OnScanFinished += new Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
+      currentDialog.OnScanStarted += new Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
       currentDialog.Card = capture;
     }
-    private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
+
+    private void EditCaptureCardForm_Load(object sender, EventArgs e)
     {
       comboBoxFrameRate.SelectedIndex = 0;
       comboBoxFrameSize.SelectedIndex = 0;
@@ -1866,8 +1948,8 @@ namespace MediaPortal.Configuration
           FillAutotuneTab();
           if (capture.FriendlyName != string.Empty)
           {
-            string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), capture.FriendlyName);
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+            string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), capture.FriendlyName);
+            using (Settings xmlreader = new Settings(filename))
             {
               checkBoxHiQuality.Checked = xmlreader.GetValueAsBool("quality", "enabled", false);
               comboBoxQuality.SelectedIndex = xmlreader.GetValueAsInt("quality", "default", 2);
@@ -1911,7 +1993,7 @@ namespace MediaPortal.Configuration
               tbTVMin.Text = xmlreader.GetValueAsInt("quality", "TVLow", 11000).ToString();
               tbTVHigh.Text = xmlreader.GetValueAsInt("quality", "TVHigh", 13000).ToString();
               cbTVVBR.Checked = xmlreader.GetValueAsBool("quality", "TVVBR", true);
-              
+
               cbDisableDNR.Checked = xmlreader.GetValueAsBool("quality", "DNR", false);
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
@@ -1925,7 +2007,8 @@ namespace MediaPortal.Configuration
       }
       else
       {
-        MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
       }
 
 
@@ -1933,23 +2016,23 @@ namespace MediaPortal.Configuration
     }
 
 
-
-
     public TVCaptureDevice CaptureCard
     {
       get
       {
-        if (cardComboBox.SelectedItem == null) return null;
+        if (cardComboBox.SelectedItem == null)
+        {
+          return null;
+        }
 
         ComboBoxCaptureCard combo = cardComboBox.SelectedItem as ComboBoxCaptureCard;
         TVCaptureDevice card = (combo).CaptureDevice;
 
 
-
         card.RecordingPath = tbRecordingFolder.Text;
         card.UseForRecording = useRecordingCheckBox.Checked;
         card.UseForTV = useWatchingCheckBox.Checked;
-        card.Priority = (int)updownPrio.Value;
+        card.Priority = (int) updownPrio.Value;
 
 
         card.FriendlyName = textBoxName.Text;
@@ -1961,8 +2044,14 @@ namespace MediaPortal.Configuration
         }
         else
         {
-          if (comboBoxQuality.SelectedIndex < 0) card.Quality = -1;
-          else card.Quality = comboBoxQuality.SelectedIndex;
+          if (comboBoxQuality.SelectedIndex < 0)
+          {
+            card.Quality = -1;
+          }
+          else
+          {
+            card.Quality = comboBoxQuality.SelectedIndex;
+          }
         }
         return card;
       }
@@ -1993,14 +2082,14 @@ namespace MediaPortal.Configuration
           textBoxName.Text = card.FriendlyName;
           for (int i = 0; i < cardComboBox.Items.Count; ++i)
           {
-            ComboBoxCaptureCard cd = (ComboBoxCaptureCard)cardComboBox.Items[i];
+            ComboBoxCaptureCard cd = (ComboBoxCaptureCard) cardComboBox.Items[i];
             if (card.DeviceId != null)
             {
               if (cd.CaptureDevice.DeviceId.ToLower() == card.DeviceId.ToLower())
               {
                 if (card.VideoDeviceMoniker.ToLower() == cd.VideoDeviceMoniker.ToLower() &&
-                  card.VideoDevice.ToLower() == cd.CaptureDevice.VideoDevice.ToLower() &&
-                  card.CommercialName.ToLower() == cd.CaptureDevice.CommercialName.ToLower())
+                    card.VideoDevice.ToLower() == cd.CaptureDevice.VideoDevice.ToLower() &&
+                    card.CommercialName.ToLower() == cd.CaptureDevice.CommercialName.ToLower())
                 {
                   cardComboBox.SelectedIndex = i;
                   break;
@@ -2016,75 +2105,96 @@ namespace MediaPortal.Configuration
 
           FillInAll(); // fill all framerates & audio in types...
           // select the correct framesize
-
         }
         acceptuserinput = true;
       }
     }
-    private void tabPageAutotune_Enter(object sender, System.EventArgs e)
-    {
 
-      TVCaptureDevice capture = CaptureCard;
-      // save settings for card
-      if (capture != null)
-      {
-        string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), capture.FriendlyName);
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
-        {
-          if (checkBoxHWPidFiltering.Visible)
-            xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
-          if (comboBoxCAM.Visible)
-            xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
-          if (comboBoxFrameRate.Visible)
-            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
-          if (comboBoxFrameSize.Visible)
-            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
-          if (checkBox5vAntennae.Visible)
-            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
-        }
-        if (capture.CardType == TVCapture.CardTypes.Digital_SS2)/* ||
-            capture.CardType == TVCapture.CardTypes.Digital_TTPremium)*/
-        {
-          // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-            xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
-          }
-        }
-      }
-
-      Sections.Wizard_ScanBase currentDialog = null;
-      IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
-      if (enumerator.MoveNext())
-      {
-        currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
-        currentDialog.OnSectionActivated();
-      }
-    }
-    private void tabPageAutotuneRadio_Enter(object sender, System.EventArgs e)
+    private void tabPageAutotune_Enter(object sender, EventArgs e)
     {
       TVCaptureDevice capture = CaptureCard;
       // save settings for card
       if (capture != null)
       {
         string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), capture.FriendlyName);
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+        using (Settings xmlwriter = new Settings(filename))
         {
           if (checkBoxHWPidFiltering.Visible)
+          {
             xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
-          if (checkBox5vAntennae.Visible)
-            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
+          }
           if (comboBoxCAM.Visible)
+          {
             xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+          }
           if (comboBoxFrameRate.Visible)
+          {
             xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
+          }
           if (comboBoxFrameSize.Visible)
+          {
             xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
+          }
+          if (checkBox5vAntennae.Visible)
+          {
+            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
+          }
         }
-        if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
+        if (capture.CardType == CardTypes.Digital_SS2)
+          /* ||
+            capture.CardType == TVCapture.CardTypes.Digital_TTPremium)*/
         {
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
+            xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
+          }
+        }
+      }
+
+      Wizard_ScanBase currentDialog = null;
+      IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
+      if (enumerator.MoveNext())
+      {
+        currentDialog = (Wizard_ScanBase) enumerator.Current;
+        currentDialog.OnSectionActivated();
+      }
+    }
+
+    private void tabPageAutotuneRadio_Enter(object sender, EventArgs e)
+    {
+      TVCaptureDevice capture = CaptureCard;
+      // save settings for card
+      if (capture != null)
+      {
+        string filename = String.Format(Config.GetFile(Config.Dir.Database, "card_{0}.xml"), capture.FriendlyName);
+        using (Settings xmlwriter = new Settings(filename))
+        {
+          if (checkBoxHWPidFiltering.Visible)
+          {
+            xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+          }
+          if (checkBox5vAntennae.Visible)
+          {
+            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
+          }
+          if (comboBoxCAM.Visible)
+          {
+            xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+          }
+          if (comboBoxFrameRate.Visible)
+          {
+            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
+          }
+          if (comboBoxFrameSize.Visible)
+          {
+            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
+          }
+        }
+        if (capture.CardType == CardTypes.Digital_SS2)
+        {
+          // save settings for get the filename in mp.xml
+          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }
@@ -2095,33 +2205,33 @@ namespace MediaPortal.Configuration
         tabPageAutotuneRadio.Controls.Clear();
         return;
       }
-      Sections.Wizard_ScanBase currentDialog = null;
+      Wizard_ScanBase currentDialog = null;
       IEnumerator enumerator = this.tabPageAutotuneRadio.Controls.GetEnumerator();
       if (enumerator.MoveNext())
       {
-        currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+        currentDialog = (Wizard_ScanBase) enumerator.Current;
         currentDialog.OnSectionActivated();
       }
     }
 
-    void dlg_OnScanFinished(object sender, EventArgs args)
+    private void dlg_OnScanFinished(object sender, EventArgs args)
     {
       okButton.Enabled = true;
       cancelButton.Enabled = true;
       TVDatabase.ClearCache();
-      MediaPortal.Configuration.Sections.TVChannels.UpdateList();
-      MediaPortal.Configuration.Sections.RadioStations.UpdateList();
+      TVChannels.UpdateList();
+      RadioStations.UpdateList();
     }
-    void dlg_OnScanStarted(object sender, EventArgs args)
+
+    private void dlg_OnScanStarted(object sender, EventArgs args)
     {
       okButton.Enabled = false;
       cancelButton.Enabled = false;
     }
 
 
-    private void buttonBrowse_Click_1(object sender, System.EventArgs e)
+    private void buttonBrowse_Click_1(object sender, EventArgs e)
     {
-
       using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
       {
         folderBrowserDialog.Description = "Select the folder where recordings should be stored";
@@ -2138,21 +2248,25 @@ namespace MediaPortal.Configuration
 
     private void checkBox5vAntennae_CheckedChanged(object sender, EventArgs e)
     {
-    
     }
 
     private void tbPortMin_TextChanged(object sender, EventArgs e)
     {
       if (Convert.ToInt32(tbPortMin.Text) < 500)
+      {
         tbPortMin.Text = "500";
+      }
     }
 
     private void tbPortMax_TextChanged(object sender, EventArgs e)
     {
       if (Convert.ToInt32(tbPortMax.Text) < 500)
+      {
         tbPortMax.Text = "500";
+      }
     }
   }
+
   public class CaptureFormat
   {
     public int Width;
@@ -2165,6 +2279,7 @@ namespace MediaPortal.Configuration
     }
   }
 }
+
 public class ComboBoxCaptureCard
 {
   private TVCaptureDevice _mCaptureDevice;
@@ -2192,6 +2307,7 @@ public class ComboBoxCaptureCard
     get { return m_iNumber; }
     set { m_iNumber = value; }
   }
+
   public int MaxCards
   {
     get { return m_iMax; }

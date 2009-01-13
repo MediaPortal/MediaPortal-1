@@ -24,20 +24,23 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Util;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Vis;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Music : MediaPortal.Configuration.SectionSettings
+  public class Music : SectionSettings
   {
     private delegate void LoadVisualizationListDelegate(List<VisualizationInfo> vizPluginsInfo);
 
@@ -59,38 +62,41 @@ namespace MediaPortal.Configuration.Sections
     private const string JumpToOption5 = "Fullscreen [always] (internal music player only)";
     private const string JumpToOption6 = "Fullscreen [if multiple items] (internal music player only)";
 
-    string[] JumpToValues = new string[] { 
-            JumpToValue0,
-	          JumpToValue1,
-            JumpToValue2,
-            JumpToValue3,
-            JumpToValue4,
-            JumpToValue5,
-            JumpToValue6,
-        };
+    private string[] JumpToValues = new string[]
+                                      {
+                                        JumpToValue0,
+                                        JumpToValue1,
+                                        JumpToValue2,
+                                        JumpToValue3,
+                                        JumpToValue4,
+                                        JumpToValue5,
+                                        JumpToValue6,
+                                      };
 
-    string[] JumpToOptions = new string[] { 
-            JumpToOption0,
-            JumpToOption1,
-            JumpToOption2,
-            JumpToOption3,
-            JumpToOption4,
-            JumpToOption5,
-            JumpToOption6,
-        };
+    private string[] JumpToOptions = new string[]
+                                       {
+                                         JumpToOption0,
+                                         JumpToOption1,
+                                         JumpToOption2,
+                                         JumpToOption3,
+                                         JumpToOption4,
+                                         JumpToOption5,
+                                         JumpToOption6,
+                                       };
 
-    string[] autoPlayOptions = new string[] { 
-            "Autoplay, never ask", 
-            "Don't autoplay, never ask", 
-            "Ask every time a CD is inserted" 
-        };
+    private string[] autoPlayOptions = new string[]
+                                         {
+                                           "Autoplay, never ask",
+                                           "Don't autoplay, never ask",
+                                           "Ask every time a CD is inserted"
+                                         };
 
-    string[] PlayerOptions = new string[]{
-            "BASS engine",
-            "Internal dshow player",
-            //"Windows Media Player 9",
-            
-        };
+    private string[] PlayerOptions = new string[]
+                                       {
+                                         "BASS engine",
+                                         "Internal dshow player",
+                                         //"Windows Media Player 9",
+                                       };
 
     private const string LyricsValue0 = "never";
     private const string LyricsValue1 = "asOverlay";
@@ -100,46 +106,47 @@ namespace MediaPortal.Configuration.Sections
     private const string LyricsOption1 = "Display as an overlay";
     private const string LyricsOption2 = "Show visual cue that lyrics are available";
 
-    string[] ShowLyricsOptions = new string[]{
-            LyricsOption0,
-            LyricsOption1,
-            LyricsOption2
-        };
+    private string[] ShowLyricsOptions = new string[]
+                                           {
+                                             LyricsOption0,
+                                             LyricsOption1,
+                                             LyricsOption2
+                                           };
 
-    private Visualization.IVisualizationManager IVizMgr = null;
+    private IVisualizationManager IVizMgr = null;
     private VisualizationInfo VizPluginInfo = null;
     private bool VisualizationsInitialized = false;
     private bool SuppressVisualizationRestart = false;
     private bool EnqueueNext = true;
-    private MediaPortal.Visualization.VisualizationWindow VizWindow;
+    private VisualizationWindow VizWindow;
 
     #endregion
 
     #region Controls
 
-    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPTabControl MusicSettingsTabCtl;
+    private FolderBrowserDialog folderBrowserDialog;
+    private MPLabel label4;
+    private IContainer components = null;
+    private MPTabControl MusicSettingsTabCtl;
     private TabPage PlayerTabPg;
-    private MediaPortal.UserInterface.Controls.MPGroupBox PlaybackSettingsGrpBox;
+    private MPGroupBox PlaybackSettingsGrpBox;
     private Label BufferingSecondsLbl;
     private Label CrossFadeSecondsLbl;
     private NumericUpDown StreamOutputLevelNud;
     private CheckBox FadeOnStartStopChkbox;
     private Label label12;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel CrossFadingLbl;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox showID3CheckBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox audioPlayerComboBox;
+    private MPLabel mpLabel1;
+    private MPLabel CrossFadingLbl;
+    private MPGroupBox mpGroupBox1;
+    private MPLabel label2;
+    private MPCheckBox showID3CheckBox;
+    private MPComboBox audioPlayerComboBox;
     private TabPage VisualizationsTabPg;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
+    private MPGroupBox mpGroupBox3;
     private LinkLabel SoundSpectrumLnkLbl;
-    private MediaPortal.UserInterface.Controls.MPCheckBox EnableStatusOverlaysChkBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ShowTrackInfoChkBox;
-    private MediaPortal.UserInterface.Controls.MPLabel VizPlaceHolderLbl;
+    private MPCheckBox EnableStatusOverlaysChkBox;
+    private MPCheckBox ShowTrackInfoChkBox;
+    private MPLabel VizPlaceHolderLbl;
     private Label label11;
     private Label label10;
     private ComboBox VizPresetsCmbBox;
@@ -149,39 +156,39 @@ namespace MediaPortal.Configuration.Sections
     private Label label5;
     private NumericUpDown VisualizationFpsNud;
     private TabPage PlaylistTabPg;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ResumePlaylistChkBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox SavePlaylistOnExitChkBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
-    private MediaPortal.UserInterface.Controls.MPButton playlistButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox playlistFolderTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MPGroupBox groupBox1;
+    private MPCheckBox autoShuffleCheckBox;
+    private MPCheckBox ResumePlaylistChkBox;
+    private MPCheckBox SavePlaylistOnExitChkBox;
+    private MPCheckBox repeatPlaylistCheckBox;
+    private MPButton playlistButton;
+    private MPTextBox playlistFolderTextBox;
+    private MPLabel label1;
     private TabPage MiscTabPg;
     private GroupBox groupBox2;
     private ComboBox PlayNowJumpToCmbBox;
     private Label label8;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAutoPlay;
+    private MPGroupBox mpGroupBox2;
+    private MPLabel labelAutoPlay;
     private CheckBox GaplessPlaybackChkBox;
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
     private TabPage tabPageNowPlaying;
     private GroupBox groupBoxDynamicContent;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableTagLookups;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableAlbumLookups;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDisableCoverLookups;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxVizOptions;
-    private MediaPortal.UserInterface.Controls.MPCheckBox ShowVizInNowPlayingChkBox;
+    private MPCheckBox checkBoxDisableTagLookups;
+    private MPCheckBox checkBoxDisableAlbumLookups;
+    private MPCheckBox checkBoxDisableCoverLookups;
+    private MPGroupBox groupBoxVizOptions;
+    private MPCheckBox ShowVizInNowPlayingChkBox;
     private ComboBox ShowLyricsCmbBox;
     private Label label9;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnqueueAdd;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAddFile;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonEnqueue;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
+    private MPGroupBox groupBoxEnqueueAdd;
+    private MPRadioButton radioButtonAddFile;
+    private MPRadioButton radioButtonEnqueue;
+    private MPLabel mpLabel2;
+    private MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
-    private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
+    private MPComboBox autoPlayComboBox;
 
     #endregion
 
@@ -228,7 +235,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // Player Settings
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
@@ -240,73 +247,99 @@ namespace MediaPortal.Configuration.Sections
 
         // For Directshow player, we need to have the exact wording here
         if (audioPlayerComboBox.SelectedIndex == 1)
+        {
           soundDeviceComboBox.Items.Add("Default DirectSound Device");
+        }
         else
+        {
           soundDeviceComboBox.Items.Add("Default Sound Device");
+        }
 
         // Fill the combo box, starting at 1 to skip the "No Sound" device
         for (int i = 1; i < soundDevices.Length; i++)
+        {
           soundDeviceComboBox.Items.Add(soundDevices[i]);
+        }
 
         string soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "None");
 
         // On first usage, we don't have any sound device
         if (soundDevice == "None")
+        {
           soundDeviceComboBox.SelectedIndex = 0;
+        }
         else
+        {
           soundDeviceComboBox.SelectedItem = soundDevice;
+        }
 
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
         if (crossFadeMS < 0)
+        {
           crossFadeMS = 4000;
+        }
 
         else if (crossFadeMS > hScrollBarCrossFade.Maximum)
+        {
           crossFadeMS = hScrollBarCrossFade.Maximum;
+        }
 
         hScrollBarCrossFade.Value = crossFadeMS;
 
         int bufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 5000);
 
         if (bufferingMS < hScrollBarBuffering.Minimum)
+        {
           bufferingMS = hScrollBarBuffering.Minimum;
+        }
 
         else if (bufferingMS > hScrollBarBuffering.Maximum)
+        {
           bufferingMS = hScrollBarBuffering.Maximum;
+        }
 
         hScrollBarBuffering.Value = bufferingMS;
 
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
+        StreamOutputLevelNud.Value = (decimal) xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
 
         // Visualization Settings
-        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
+        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int) VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
         string vizClsid = xmlreader.GetValueAsString("musicvisualization", "clsid", "");
         int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
 
-        if (vizType == (int)VisualizationInfo.PluginType.None
+        if (vizType == (int) VisualizationInfo.PluginType.None
             && vizName == "None")
         {
           VizPluginInfo = new VisualizationInfo("None", true);
         }
 
         else
-          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid, vizPreset);
+        {
+          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType) vizType, vizPath, vizName, vizClsid,
+                                                vizPreset);
+        }
 
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
 
-        if (fps < (int)VisualizationFpsNud.Minimum)
-          fps = (int)VisualizationFpsNud.Minimum;
+        if (fps < (int) VisualizationFpsNud.Minimum)
+        {
+          fps = (int) VisualizationFpsNud.Minimum;
+        }
 
         else if (fps > VisualizationFpsNud.Maximum)
-          fps = (int)VisualizationFpsNud.Maximum;
+        {
+          fps = (int) VisualizationFpsNud.Maximum;
+        }
 
         VisualizationFpsNud.Value = fps;
 
-        EnableStatusOverlaysChkBox.Checked = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays", false);
+        EnableStatusOverlaysChkBox.Checked = xmlreader.GetValueAsBool("musicvisualization", "enableStatusOverlays",
+                                                                      false);
         ShowTrackInfoChkBox.Checked = xmlreader.GetValueAsBool("musicvisualization", "showTrackInfo", true);
         EnableStatusOverlaysChkBox_CheckedChanged(null, null);
 
@@ -317,13 +350,15 @@ namespace MediaPortal.Configuration.Sections
 
         if (string.Compare(playlistFolderTextBox.Text, playListFolder) == 0)
         {
-          if (System.IO.Directory.Exists(playListFolder) == false)
+          if (Directory.Exists(playListFolder) == false)
           {
             try
             {
-              System.IO.Directory.CreateDirectory(playListFolder);
+              Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
           }
         }
 
@@ -421,7 +456,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
@@ -436,25 +471,29 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         // Visualization Settings
-        if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0)  // Something else than "None" selected
+        if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0) // Something else than "None" selected
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
           int selIndex = VisualizationsCmbBox.SelectedIndex;
 
           if (selIndex < 0 || selIndex >= vizPluginsInfo.Count)
+          {
             selIndex = 0;
+          }
 
           xmlwriter.SetValue("musicvisualization", "name", vizPluginsInfo[selIndex].Name);
-          xmlwriter.SetValue("musicvisualization", "vizType", ((int)vizPluginsInfo[selIndex].VisualizationType).ToString());
+          xmlwriter.SetValue("musicvisualization", "vizType",
+                             ((int) vizPluginsInfo[selIndex].VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
-        else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)  // This is the case, when we started Config without activating the Vis Tab
+        else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
+          // This is the case, when we started Config without activating the Vis Tab
         {
           xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
-          xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
+          xmlwriter.SetValue("musicvisualization", "vizType", ((int) VizPluginInfo.VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
@@ -488,13 +527,19 @@ namespace MediaPortal.Configuration.Sections
         string autoPlayText;
 
         if (autoPlayComboBox.Text == autoPlayOptions[1])
+        {
           autoPlayText = "No";
+        }
 
         else if (autoPlayComboBox.Text == autoPlayOptions[2])
+        {
           autoPlayText = "Ask";
+        }
 
         else
+        {
           autoPlayText = "Yes";
+        }
 
         xmlwriter.SetValue("audioplayer", "autoplay", autoPlayText);
 
@@ -608,6 +653,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -681,11 +727,11 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.StreamOutputLevelNud)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
       this.VisualizationsTabPg.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.VisualizationFpsNud)).BeginInit();
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
@@ -709,7 +755,8 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.SelectedIndex = 0;
       this.MusicSettingsTabCtl.Size = new System.Drawing.Size(472, 400);
       this.MusicSettingsTabCtl.TabIndex = 1;
-      this.MusicSettingsTabCtl.SelectedIndexChanged += new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
+      this.MusicSettingsTabCtl.SelectedIndexChanged +=
+        new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
       // 
       // PlayerTabPg
       // 
@@ -758,8 +805,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -773,8 +822,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -821,11 +872,13 @@ namespace MediaPortal.Configuration.Sections
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
-      this.StreamOutputLevelNud.Value = new decimal(new int[] {
-            85,
-            0,
-            0,
-            0});
+      this.StreamOutputLevelNud.Value = new decimal(new int[]
+                                                      {
+                                                        85,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      });
       // 
       // FadeOnStartStopChkbox
       // 
@@ -867,8 +920,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -893,8 +948,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -924,18 +981,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioPlayerComboBox.Items.AddRange(new object[] {
-            "Internal dshow player",
-            "BASS engine"});
+      this.audioPlayerComboBox.Items.AddRange(new object[]
+                                                {
+                                                  "Internal dshow player",
+                                                  "BASS engine"
+                                                });
       this.audioPlayerComboBox.Location = new System.Drawing.Point(91, 24);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
       this.audioPlayerComboBox.TabIndex = 1;
-      this.audioPlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
+      this.audioPlayerComboBox.SelectedIndexChanged +=
+        new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
       // 
       // VisualizationsTabPg
       // 
@@ -979,7 +1041,8 @@ namespace MediaPortal.Configuration.Sections
       this.SoundSpectrumLnkLbl.TabStop = true;
       this.SoundSpectrumLnkLbl.Text = "Get more great visualizations at SoundSpectrum.com";
       this.SoundSpectrumLnkLbl.Visible = false;
-      this.SoundSpectrumLnkLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.SoundSpectrumLnkLbl_LinkClicked);
+      this.SoundSpectrumLnkLbl.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.SoundSpectrumLnkLbl_LinkClicked);
       // 
       // EnableStatusOverlaysChkBox
       // 
@@ -991,7 +1054,8 @@ namespace MediaPortal.Configuration.Sections
       this.EnableStatusOverlaysChkBox.TabIndex = 9;
       this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
       this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
-      this.EnableStatusOverlaysChkBox.CheckedChanged += new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
+      this.EnableStatusOverlaysChkBox.CheckedChanged +=
+        new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
       // 
       // ShowTrackInfoChkBox
       // 
@@ -1050,7 +1114,8 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
       this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
       this.VisualizationsCmbBox.TabIndex = 1;
-      this.VisualizationsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
+      this.VisualizationsCmbBox.SelectedIndexChanged +=
+        new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
       // 
       // label6
       // 
@@ -1082,24 +1147,30 @@ namespace MediaPortal.Configuration.Sections
       // VisualizationFpsNud
       // 
       this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 265);
-      this.VisualizationFpsNud.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-      this.VisualizationFpsNud.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+      this.VisualizationFpsNud.Maximum = new decimal(new int[]
+                                                       {
+                                                         50,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
+      this.VisualizationFpsNud.Minimum = new decimal(new int[]
+                                                       {
+                                                         5,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
       this.VisualizationFpsNud.Name = "VisualizationFpsNud";
       this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
       this.VisualizationFpsNud.TabIndex = 7;
-      this.VisualizationFpsNud.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
+      this.VisualizationFpsNud.Value = new decimal(new int[]
+                                                     {
+                                                       30,
+                                                       0,
+                                                       0,
+                                                       0
+                                                     });
       this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
       // 
       // PlaylistTabPg
@@ -1114,8 +1185,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
       this.groupBox1.Controls.Add(this.SavePlaylistOnExitChkBox);
@@ -1177,7 +1250,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistButton
       // 
-      this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistButton.Location = new System.Drawing.Point(365, 22);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(61, 22);
@@ -1188,8 +1263,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
@@ -1389,8 +1466,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1435,13 +1514,13 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg.ResumeLayout(false);
       this.PlaybackSettingsGrpBox.ResumeLayout(false);
       this.PlaybackSettingsGrpBox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.StreamOutputLevelNud)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.VisualizationsTabPg.ResumeLayout(false);
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.VisualizationFpsNud)).EndInit();
       this.PlaylistTabPg.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -1458,8 +1537,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     /// <summary>
@@ -1467,7 +1546,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void playlistButton_Click(object sender, System.EventArgs e)
+    private void playlistButton_Click(object sender, EventArgs e)
     {
       using (folderBrowserDialog = new FolderBrowserDialog())
       {
@@ -1518,7 +1597,7 @@ namespace MediaPortal.Configuration.Sections
 
           VisualizationsTabPg.Enabled = false;
           MessageBox.Show(this, "Visualization settings are only available with the BASS music player.",
-              "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                          "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
       }
     }
@@ -1532,9 +1611,13 @@ namespace MediaPortal.Configuration.Sections
       if (soundDeviceComboBox.Items.Count > 0)
       {
         if (_useBassEngine)
+        {
           soundDeviceComboBox.Items[0] = "Default Sound Device";
+        }
         else
+        {
           soundDeviceComboBox.Items[0] = "Default DirectSound Device";
+        }
       }
     }
 
@@ -1543,7 +1626,9 @@ namespace MediaPortal.Configuration.Sections
       float xFadeSecs = 0;
 
       if (hScrollBarCrossFade.Value > 0)
-        xFadeSecs = (float)hScrollBarCrossFade.Value / 1000f;
+      {
+        xFadeSecs = (float) hScrollBarCrossFade.Value/1000f;
+      }
 
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
@@ -1553,7 +1638,9 @@ namespace MediaPortal.Configuration.Sections
       float bufferingSecs = 0;
 
       if (hScrollBarBuffering.Value > 0)
-        bufferingSecs = (float)hScrollBarBuffering.Value / 1000f;
+      {
+        bufferingSecs = (float) hScrollBarBuffering.Value/1000f;
+      }
 
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
     }
@@ -1563,18 +1650,24 @@ namespace MediaPortal.Configuration.Sections
       int selIndex = VisualizationsCmbBox.SelectedIndex;
 
       if (VisualizationsCmbBox.Items.Count <= 1 || selIndex < 0)
+      {
         return;
+      }
 
       if (IVizMgr == null)
+      {
         return;
+      }
 
       // Stop the visualization
       VizWindow.Run = false;
 
-      VizPluginInfo = (VisualizationInfo)VisualizationsCmbBox.SelectedItem;
+      VizPluginInfo = (VisualizationInfo) VisualizationsCmbBox.SelectedItem;
 
       if (VizPluginInfo == null || VizPluginInfo.IsDummyPlugin)
+      {
         return;
+      }
 
       // For Winamp Plugins we use our own form to do the preview, because in some installations, we found problems
       if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp)
@@ -1593,7 +1686,9 @@ namespace MediaPortal.Configuration.Sections
 
         if (!vizCreated)
         {
-          string msg = string.Format("Unable to load the following visualization:\r\nName:{0}\r\nCLSID:{1}\r\nType:{2}\r\nPreset Count:{3}",
+          string msg =
+            string.Format(
+              "Unable to load the following visualization:\r\nName:{0}\r\nCLSID:{1}\r\nType:{2}\r\nPreset Count:{3}",
               VizPluginInfo.Name, VizPluginInfo.CLSID, VizPluginInfo.VisualizationType, VizPluginInfo.PresetCount);
 
           MessageBox.Show(this, msg, "Visualization Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -1614,7 +1709,9 @@ namespace MediaPortal.Configuration.Sections
           }
 
           else
+          {
             VizPresetsCmbBox.Enabled = false;
+          }
 
           // Force a Resize event to ensure the viz engine is notified of window size
           IVizMgr.ResizeVisualizationWindow(VizWindow.Size);
@@ -1626,15 +1723,21 @@ namespace MediaPortal.Configuration.Sections
     private void VizPresetsCmbBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (VizPluginInfo == null)
+      {
         return;
+      }
 
       if (VizPresetsCmbBox.SelectedIndex == -1)
+      {
         return;
+      }
 
       int selIndex = VizPresetsCmbBox.SelectedIndex;
 
       if (selIndex < 0 || selIndex >= VizPluginInfo.PresetCount)
+      {
         selIndex = 0;
+      }
 
       VizPluginInfo.PresetIndex = selIndex;
       bool vizCreated = false;
@@ -1650,13 +1753,15 @@ namespace MediaPortal.Configuration.Sections
 
     private void SoundSpectrumLnkLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start(@"http://www.SoundSpectrum.com");
+      Process.Start(@"http://www.SoundSpectrum.com");
     }
 
     private void VisualizationFpsNud_ValueChanged(object sender, EventArgs e)
     {
       if (IVizMgr != null)
-        IVizMgr.TargetFPS = (int)VisualizationFpsNud.Value;
+      {
+        IVizMgr.TargetFPS = (int) VisualizationFpsNud.Value;
+      }
     }
 
     private void GaplessPlaybackChkBox_CheckedChanged(object sender, EventArgs e)
@@ -1677,16 +1782,16 @@ namespace MediaPortal.Configuration.Sections
       if (enableMixing.Checked)
       {
         // We must not have checked the "ASIO" at the same time
-        SectionSettings section = SectionSettings.GetSection("Music ASIO");
+        SectionSettings section = GetSection("Music ASIO");
 
         if (section != null)
         {
-          bool asio = (bool)section.GetSetting("useasio");
+          bool asio = (bool) section.GetSetting("useasio");
           if (asio)
           {
             enableMixing.Checked = false;
             MessageBox.Show(this, "Upmixing and ASIO must not be used at the same time",
-                "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           }
         }
       }
@@ -1697,14 +1802,16 @@ namespace MediaPortal.Configuration.Sections
       //System.Diagnostics.Debugger.Launch();
       Cursor.Current = Cursors.WaitCursor;
 
-      MediaPortal.Player.BassAudioEngine bassEngine = MediaPortal.Player.BassMusicPlayer.Player;
+      BassAudioEngine bassEngine = BassMusicPlayer.Player;
 
       IVizMgr = bassEngine.IVizManager;
       VizWindow = bassEngine.VisualizationWindow;
       List<VisualizationInfo> vizPluginsInfo = null;
 
       if (IVizMgr != null)
+      {
         vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
+      }
 
       LoadVisualizationList(vizPluginsInfo);
     }
@@ -1713,7 +1820,9 @@ namespace MediaPortal.Configuration.Sections
     {
       // If we're already populated the list we don't need to do it again so bail out
       if (VisualizationsInitialized)
+      {
         return;
+      }
 
       if (InvokeRequired)
       {
@@ -1740,17 +1849,23 @@ namespace MediaPortal.Configuration.Sections
         VisualizationInfo pluginInfo = vizPluginsInfo[i];
 
         if (pluginInfo.IsIdenticalTo(VizPluginInfo, true))
+        {
           selectedIndex = i;
+        }
 
         VisualizationsCmbBox.Items.Add(pluginInfo);
       }
 
       if (selectedIndex == -1 && VisualizationsCmbBox.Items.Count > 0)
+      {
         selectedIndex = 0;
+      }
 
       // If only one item was added it's the dummy "None" entry and we didn't find any other visualizations
       if (VisualizationsCmbBox.Items.Count == 1)
+      {
         VizPlaceHolderLbl.Text = "No compatible visualizations were found.";
+      }
 
       VisualizationsCmbBox.SelectedIndex = selectedIndex;
     }

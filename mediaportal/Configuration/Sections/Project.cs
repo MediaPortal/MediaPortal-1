@@ -23,20 +23,19 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class Project : MediaPortal.Configuration.SectionSettings
+  public partial class Project : SectionSettings
   {
     public Project()
-      : this("Project") { }
+      : this("Project")
+    {
+    }
 
     public Project(string name)
       : base(name)
@@ -44,58 +43,68 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelHomepage.Text == null)
+      {
         return;
+      }
       if (linkLabelHomepage.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelHomepage.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelHomepage.Text);
+        Process.Start(sInfo);
       }
     }
 
-    private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelForums.Text == null)
+      {
         return;
+      }
       if (linkLabelForums.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelForums.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelForums.Text);
+        Process.Start(sInfo);
       }
     }
 
-    private void linkLabel3_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelOnlineDocumentation.Text == null)
+      {
         return;
+      }
       if (linkLabelOnlineDocumentation.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelOnlineDocumentation.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelOnlineDocumentation.Text);
+        Process.Start(sInfo);
       }
     }
 
-    private void linkLabel4_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelSourceforge.Text == null)
+      {
         return;
+      }
       if (linkLabelSourceforge.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelSourceforge.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelSourceforge.Text);
+        Process.Start(sInfo);
       }
     }
 
     private void linkLabelPayPal_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelPayPal.Text == null)
+      {
         return;
+      }
       if (linkLabelPayPal.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelPayPal.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelPayPal.Text);
+        Process.Start(sInfo);
       }
     }
   }

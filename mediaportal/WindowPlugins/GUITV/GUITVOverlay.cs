@@ -23,48 +23,43 @@
 
 #endregion
 
-using System;
-using System.Drawing;
-using System.Globalization;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Player;
+
 namespace MediaPortal.GUI.TV
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class GUITVOverlay:GUIOverlayWindow, IRenderLayer
+  /// <summary>
+  /// 
+  /// </summary>
+  public class GUITVOverlay : GUIOverlayWindow, IRenderLayer
   {
-    bool _didRenderLastTime = false;
+    private bool _didRenderLastTime = false;
+
     public GUITVOverlay()
-		{
-			GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
-		}
+    {
+      GetID = (int) Window.WINDOW_TV_OVERLAY;
+    }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+      GetID = (int) Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;
     }
 
     public override bool SupportsDelayedLoad
     {
-      get { return false;}
-    }    
-    
-    public override void PreInit()
-		{
-			base.PreInit();
-      AllocResources();
-    
+      get { return false; }
     }
 
-    void OnUpdateState(bool render)
+    public override void PreInit()
+    {
+      base.PreInit();
+      AllocResources();
+    }
+
+    private void OnUpdateState(bool render)
     {
       if (_didRenderLastTime != render)
       {
@@ -79,7 +74,9 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
+
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       if (GUIGraphicsContext.IsFullScreenVideo)
@@ -101,6 +98,7 @@ namespace MediaPortal.GUI.TV
     {
       Render(timePassed);
     }
+
     #endregion
-	}
+  }
 }

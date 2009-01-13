@@ -24,16 +24,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 namespace MediaPortal.Support
 {
   public class EventLogCsvLogger : ILogCreator
   {
     private string logname;
+
     public EventLogCsvLogger(string logname)
     {
       this.logname = logname;
@@ -52,7 +51,7 @@ namespace MediaPortal.Support
           line += "\"" + entry.Source + "\";";
           line += "\"" + entry.Category + "\";";
           line += "\"" + entry.EntryType.ToString() + "\";";
-          line += "\"" + entry.Message.Replace(System.Environment.NewLine, " ") + "\";";
+          line += "\"" + entry.Message.Replace(Environment.NewLine, " ") + "\";";
           line += "\"" + entry.InstanceId.ToString() + "\"";
           writer.WriteLine(line);
         }

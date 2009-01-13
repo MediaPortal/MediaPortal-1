@@ -1,17 +1,19 @@
 using System;
 using System.Collections;
-using XPBurn.COM;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
+using XPBurn.COM;
+using FILETIME=XPBurn.COM.FILETIME;
+using STATSTG=XPBurn.COM.STATSTG;
 
 namespace XPBurn
-{	
+{
   [ComVisible(true)]
-	unsafe internal class XPBurnIStorage: IStorage
-  {    
+  internal unsafe class XPBurnIStorage : IStorage
+  {
     #region Private Fields
 
-    private XPBurn.COM.STATSTG fStatstg;
+    private STATSTG fStatstg;
 
     #endregion
 
@@ -23,18 +25,17 @@ namespace XPBurn
     public Hashtable fSubStorages;
 
     #endregion
-  
+
     #region Constructors
 
     public XPBurnIStorage(string name)
     {
       fStreams = new Hashtable();
       fSubStorages = new Hashtable();
-      fStatstg = new XPBurn.COM.STATSTG();
+      fStatstg = new STATSTG();
 
-      fStatstg.pwcsName = (char*)Marshal.StringToCoTaskMemUni(name);
+      fStatstg.pwcsName = (char*) Marshal.StringToCoTaskMemUni(name);
       fStatstg.type = CONSTS.STGTY_STORAGE;
-
     }
 
     #endregion
@@ -52,7 +53,7 @@ namespace XPBurn
 
     public XPBurnIStream CreateFileStream(string filename, string streamName)
     {
-      XPBurnIStream stream = new XPBurnIStream(filename, streamName, System.IO.FileMode.Open);
+      XPBurnIStream stream = new XPBurnIStream(filename, streamName, FileMode.Open);
       fStreams.Add(streamName, stream);
 
       return stream;
@@ -62,7 +63,7 @@ namespace XPBurn
     {
       XPBurnIStorage storage = new XPBurnIStorage(storageName);
       fSubStorages.Add(storageName, storage);
-     
+
       return storage;
     }
 
@@ -70,61 +71,70 @@ namespace XPBurn
 
     #region IStorage Members
 
-    unsafe public int CreateStream(string p1, uint p2, uint p3, uint p4, void * * p5)
-    {      
+    public unsafe int CreateStream(string p1, uint p2, uint p3, uint p4, void** p5)
+    {
       return CONSTS.E_NOTIMPL;
     }
 
-    unsafe public int OpenStream(string pwcsName, void* reserved1, uint grfMode, uint reserved2, out IStream stm)
-    {      
+    public unsafe int OpenStream(string pwcsName, void* reserved1, uint grfMode, uint reserved2, out IStream stm)
+    {
       stm = null;
-      
+
       if (pwcsName != null)
       {
         if (fStreams.Contains(pwcsName))
         {
-          stm = (IStream)fStreams[pwcsName];
+          stm = (IStream) fStreams[pwcsName];
 
           return CONSTS.S_OK;
         }
         else
+        {
           return CONSTS.STG_E_FILENOTFOUND;
+        }
       }
       else
+      {
         return CONSTS.STG_E_INVALIDPOINTER;
+      }
     }
 
-    unsafe public int CreateStorage(string p1, uint p2, uint p3, uint p4, void * * p5)
-    {      
+    public unsafe int CreateStorage(string p1, uint p2, uint p3, uint p4, void** p5)
+    {
       return CONSTS.E_NOTIMPL;
     }
 
-    unsafe public int OpenStorage(string pwcsName, IStorage stgPriority, uint grfMode, char** snbExclude, uint reserved, out IStorage stg)
-    {      
+    public unsafe int OpenStorage(string pwcsName, IStorage stgPriority, uint grfMode, char** snbExclude, uint reserved,
+                                  out IStorage stg)
+    {
       stg = null;
 
       if (pwcsName != null)
-      {        
+      {
         if (fSubStorages.Contains(pwcsName))
         {
-          stg = (IStorage)fSubStorages[pwcsName];
-          
+          stg = (IStorage) fSubStorages[pwcsName];
+
           return CONSTS.S_OK;
         }
         else
+        {
           return CONSTS.STG_E_FILENOTFOUND;
+        }
       }
       else
-        return CONSTS.STG_E_INVALIDPOINTER;      
+      {
+        return CONSTS.STG_E_INVALIDPOINTER;
+      }
     }
 
-    unsafe public int CopyTo(uint p1, Guid * p2, char * * p3, IStorage p4)
-    {     
+    public unsafe int CopyTo(uint p1, Guid* p2, char** p3, IStorage p4)
+    {
       return CONSTS.E_NOTIMPL;
     }
 
     public int MoveElementTo(string p1, IStorage p2, string p3, uint p4)
-    {      
+    {
       return CONSTS.E_NOTIMPL;
     }
 
@@ -134,11 +144,11 @@ namespace XPBurn
     }
 
     public int Revert()
-    {     
+    {
       return CONSTS.S_OK;
     }
 
-    unsafe public int EnumElements(uint p1, void* p2, uint p3, out IEnumSTATSTG enm)
+    public unsafe int EnumElements(uint p1, void* p2, uint p3, out IEnumSTATSTG enm)
     {
       enm = new XPBurnEnumStorageElements(this);
 
@@ -151,36 +161,38 @@ namespace XPBurn
     }
 
     public int RenameElement(string p1, string p2)
-    {      
+    {
       return CONSTS.E_NOTIMPL;
     }
 
-    unsafe public int SetElementTimes(string p1, XPBurn.COM.FILETIME * p2, XPBurn.COM.FILETIME * p3, XPBurn.COM.FILETIME * p4)
-    {     
+    public unsafe int SetElementTimes(string p1, FILETIME* p2, FILETIME* p3, FILETIME* p4)
+    {
       return CONSTS.E_NOTIMPL;
     }
 
-    unsafe public int SetClass(Guid * p1)
-    {      
+    public unsafe int SetClass(Guid* p1)
+    {
       return CONSTS.E_NOTIMPL;
     }
 
     public int SetStateBits(uint p1, uint p2)
-    {     
+    {
       return CONSTS.E_NOTIMPL;
     }
 
-    unsafe public int Stat(XPBurn.COM.STATSTG* statstg, uint grfStatFlag)
+    public unsafe int Stat(STATSTG* statstg, uint grfStatFlag)
     {
       if (statstg != null)
       {
         if (grfStatFlag != CONSTS.STATFLAG_NONAME)
         {
           string tempString = Marshal.PtrToStringUni(new IntPtr(fStatstg.pwcsName));
-          statstg->pwcsName =(char*)Marshal.StringToCoTaskMemUni(tempString);
+          statstg->pwcsName = (char*) Marshal.StringToCoTaskMemUni(tempString);
         }
         else
+        {
           statstg->pwcsName = null;
+        }
 
         statstg->type = fStatstg.type;
         statstg->cbSize = fStatstg.cbSize;
@@ -196,7 +208,9 @@ namespace XPBurn
         return CONSTS.S_OK;
       }
       else
+      {
         return CONSTS.STG_E_INVALIDPOINTER;
+      }
     }
 
     #endregion

@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
+using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
+using OsDetection;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class FiltersVideoRenderer : MediaPortal.Configuration.SectionSettings
+  public partial class FiltersVideoRenderer : SectionSettings
   {
     public FiltersVideoRenderer()
       : this("Video Renderer Settings")
@@ -25,22 +21,25 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       base.LoadSettings();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //VMR9 settings
-        checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true); // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
+        checkboxMpNonsquare.Checked = xmlreader.GetValueAsBool("general", "nonsquare", true);
+          // http://msdn2.microsoft.com/en-us/library/ms787438(VS.85).aspx
         checkboxDXEclusive.Checked = xmlreader.GetValueAsBool("general", "exclusivemode", true);
-        mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering"); // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
+        mpVMR9FilterMethod.Text = xmlreader.GetValueAsString("general", "dx9filteringmode", "Gaussian Quad Filtering");
+          // http://msdn2.microsoft.com/en-us/library/ms788066.aspx
         checkBoxVMRWebStreams.Checked = xmlreader.GetValueAsBool("general", "usevrm9forwebstreams", true);
-        checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false); // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
+        checkBoxDecimateMask.Checked = xmlreader.GetValueAsBool("general", "dx9decimatemask", false);
+          // http://msdn2.microsoft.com/en-us/library/ms787452(VS.85).aspx
 
         bool ValueEVR = false;
 
         try
         {
           //EVR - VMR9 selection
-          OsDetection.OSVersionInfo os = new OsDetection.OperatingSystemVersion();
-          int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
+          OSVersionInfo os = new OperatingSystemVersion();
+          int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
           ValueEVR = ver >= 60 ? true : false;
         }
         catch (Exception ex)
@@ -59,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "nonsquare", checkboxMpNonsquare.Checked);
         xmlwriter.SetValueAsBool("general", "exclusivemode", checkboxDXEclusive.Checked);
@@ -95,6 +94,5 @@ namespace MediaPortal.Configuration.Sections
         labelFilteringHint.Enabled = true;
       }
     }
-
   }
 }

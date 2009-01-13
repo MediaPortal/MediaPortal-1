@@ -23,23 +23,22 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.Util;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class PictureExtensions : MediaPortal.Configuration.Sections.BaseFileExtensions
+  public class PictureExtensions : BaseFileExtensions
   {
     public PictureExtensions()
-      : this("Picture Extensions") { }
+      : this("Picture Extensions")
+    {
+    }
 
     public PictureExtensions(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {

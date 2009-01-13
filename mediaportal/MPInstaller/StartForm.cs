@@ -24,83 +24,82 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using MediaPortal.MPInstaller;
+
 namespace MediaPortal.MPInstaller
 {
-    public partial class start_form : MPInstallerForm
+  public partial class start_form : MPInstallerForm
+  {
+    public start_form()
     {
-        public start_form()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
+    }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            EditForm create_dlg = new EditForm();
-            this.Hide();
-            create_dlg.ShowDialog();
-            this.Show();
-        }
+    private void button1_Click(object sender, EventArgs e)
+    {
+      EditForm create_dlg = new EditForm();
+      this.Hide();
+      create_dlg.ShowDialog();
+      this.Show();
+    }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
-            {
-                this.Hide();
-                install_Package(openFileDialog1.FileName);
-                this.Show();
-            }
-        }
-
-        private void install_Package(string fil)
-        {
-                wizard_1 wiz = new wizard_1();
-                wiz.package.LoadFromFile(fil);
-                if (wiz.package.isValid)
-                {
-                    wiz.starStep();
-                }
-                else
-                    MessageBox.Show("Invalid package !");
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            controlp cnt = new controlp();
-            this.Hide();
-            cnt.ShowDialog();
-            this.Show();
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void button4_Click_1(object sender, EventArgs e)
-        {
-            this.Hide();
-            UpdateChecker checker = new UpdateChecker();
-            checker.Check();
-            this.Show();
-        }
-
-      private void label1_MouseEnter(object sender, EventArgs e)
+    private void button2_Click(object sender, EventArgs e)
+    {
+      if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
-        ((Label)sender).Font = new System.Drawing.Font("Verdana", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0))); 
-        ((Label)sender).ForeColor =Color.FromArgb(0x879996) ;
-      }
-
-      private void label1_MouseLeave(object sender, EventArgs e)
-      {
-        ((Label)sender).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))); 
-        ((Label)sender).ForeColor = Color.White;
+        this.Hide();
+        install_Package(openFileDialog1.FileName);
+        this.Show();
       }
     }
+
+    private void install_Package(string fil)
+    {
+      wizard_1 wiz = new wizard_1();
+      wiz.package.LoadFromFile(fil);
+      if (wiz.package.isValid)
+      {
+        wiz.starStep();
+      }
+      else
+      {
+        MessageBox.Show("Invalid package !");
+      }
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+      controlp cnt = new controlp();
+      this.Hide();
+      cnt.ShowDialog();
+      this.Show();
+    }
+
+    private void button4_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
+
+    private void button4_Click_1(object sender, EventArgs e)
+    {
+      this.Hide();
+      UpdateChecker checker = new UpdateChecker();
+      checker.Check();
+      this.Show();
+    }
+
+    private void label1_MouseEnter(object sender, EventArgs e)
+    {
+      ((Label) sender).Font = new Font("Verdana", 9.75F, ((FontStyle) ((FontStyle.Bold | FontStyle.Underline))),
+                                       GraphicsUnit.Point, ((byte) (0)));
+      ((Label) sender).ForeColor = Color.FromArgb(0x879996);
+    }
+
+    private void label1_MouseLeave(object sender, EventArgs e)
+    {
+      ((Label) sender).Font = new Font("Verdana", 9.75F, FontStyle.Bold, GraphicsUnit.Point, ((byte) (0)));
+      ((Label) sender).ForeColor = Color.White;
+    }
+  }
 }

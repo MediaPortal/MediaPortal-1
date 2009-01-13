@@ -24,16 +24,18 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Collections;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Radio.Database;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Alarm
 {
@@ -43,10 +45,11 @@ namespace MediaPortal.GUI.Alarm
   public class Alarm : IDisposable
   {
     #region Private Variables
+
     private static AlarmCollection _Alarms;
-    private System.Windows.Forms.Timer _AlarmTimer = new System.Windows.Forms.Timer();
-    private System.Windows.Forms.Timer _VolumeFadeTimer = new System.Windows.Forms.Timer();
-    private static System.Windows.Forms.Timer _StopAlarmTimer = new System.Windows.Forms.Timer();
+    private Timer _AlarmTimer = new Timer();
+    private Timer _VolumeFadeTimer = new Timer();
+    private static Timer _StopAlarmTimer = new Timer();
     private int _Id;
     private bool _Enabled;
     private string _Name;
@@ -72,7 +75,7 @@ namespace MediaPortal.GUI.Alarm
     private PlayListPlayer playlistPlayer;
     private bool _disallowShutdown;
     private static bool _initializedStopAlarmTimer;
-    private System.ComponentModel.BackgroundWorker _backgroundWorker;
+    private BackgroundWorker _backgroundWorker;
     private static int _wakeupInterval = 0;
 
     //constants
@@ -81,11 +84,13 @@ namespace MediaPortal.GUI.Alarm
     #endregion
 
     #region Public Enumerations
+
     public enum AlarmType
     {
       Once = 0,
       Recurring = 1
     }
+
     public enum MediaType
     {
       PlayList = 0,
@@ -93,15 +98,18 @@ namespace MediaPortal.GUI.Alarm
       File = 2,
       Message = 3
     }
+
     #endregion
 
     #region Constructor
-    public Alarm(int id, string name, int mediaType, bool enabled, DateTime time, bool mon, bool tue, bool wed, bool thu, bool fri, bool sat, bool sun, string sound, bool volumeFade, bool wakeup, int alarmType, string message)
+
+    public Alarm(int id, string name, int mediaType, bool enabled, DateTime time, bool mon, bool tue, bool wed, bool thu,
+                 bool fri, bool sat, bool sun, string sound, bool volumeFade, bool wakeup, int alarmType, string message)
       : this()
     {
       _Id = id;
       _Name = name;
-      _MediaType = (MediaType)mediaType;
+      _MediaType = (MediaType) mediaType;
       _Enabled = enabled;
       _Time = time;
       _Mon = mon;
@@ -114,18 +122,16 @@ namespace MediaPortal.GUI.Alarm
       _Sound = sound;
       _VolumeFade = volumeFade;
       _Wakeup = wakeup;
-      _AlarmType = (AlarmType)alarmType;
+      _AlarmType = (AlarmType) alarmType;
       _Message = message;
       _SnoozeAlarmTime = new DateTime(1901, 1, 1); //ensure that its before the actual alarm trigger time
       _disallowShutdown = false;
 
       InitializeTimer();
-
     }
 
     private Alarm()
     {
-
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
@@ -136,9 +142,11 @@ namespace MediaPortal.GUI.Alarm
       _Name = GUILocalizeStrings.Get(869) + _Id.ToString();
       _Time = DateTime.Now;
     }
+
     #endregion
 
     #region Public Properties
+
     public AlarmType AlarmOccurrenceType
     {
       get { return _AlarmType; }
@@ -156,6 +164,7 @@ namespace MediaPortal.GUI.Alarm
       get { return _Name; }
       set { _Name = value; }
     }
+
     /// <summary>
     /// Returns a string to display the days the alarm is enabled
     /// </summary>
@@ -166,29 +175,44 @@ namespace MediaPortal.GUI.Alarm
         StringBuilder sb = new StringBuilder("-------");
 
         if (_Sun)
+        {
           sb.Replace("-", "S", 0, 1);
+        }
         if (_Mon)
+        {
           sb.Replace("-", "M", 1, 1);
+        }
         if (_Tue)
+        {
           sb.Replace("-", "T", 2, 1);
+        }
         if (_Wed)
+        {
           sb.Replace("-", "W", 3, 1);
+        }
         if (_Thu)
+        {
           sb.Replace("-", "T", 4, 1);
+        }
         if (_Fri)
+        {
           sb.Replace("-", "F", 5, 1);
+        }
         if (_Sat)
+        {
           sb.Replace("-", "S", 6, 1);
+        }
 
         return sb.ToString();
       }
-
     }
+
     public MediaType AlarmMediaType
     {
       get { return _MediaType; }
       set { _MediaType = value; }
     }
+
     public bool Enabled
     {
       get { return _Enabled; }
@@ -198,16 +222,19 @@ namespace MediaPortal.GUI.Alarm
         _AlarmTimer.Enabled = value;
       }
     }
+
     public DateTime Time
     {
       get { return _Time; }
       set { _Time = value; }
     }
+
     public DateTime LastTriggeredTime
     {
       get { return _LastTriggeredTime; }
       set { _LastTriggeredTime = value; }
     }
+
     public DateTime NextAlarmTriggerTime
     {
       get
@@ -225,7 +252,7 @@ namespace MediaPortal.GUI.Alarm
             //resolve recurring alarm to next trigger date
             //loop through the next 7 days to 
             //find the next enabled day for the alarm
-            for (int i = 0 ; i < 8 ; i++)
+            for (int i = 0; i < 8; i++)
             {
               DateTime DateToCheck = DateTime.Now.AddDays(i);
 
@@ -233,7 +260,8 @@ namespace MediaPortal.GUI.Alarm
               if (this.IsDayEnabled(DateToCheck.DayOfWeek))
               {
                 //find next enabled day - build new date from the new date found, combined with the alarm trigger time
-                tmpNextAlarmTriggerTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day, this.Time.Hour, this.Time.Minute, this.Time.Second);
+                tmpNextAlarmTriggerTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day,
+                                                       this.Time.Hour, this.Time.Minute, this.Time.Second);
 
                 //check to see if the alarm for this day has passed or not
                 //extra 15 seconds leeway for OnTimer to act before the next alarm trigger time is reported
@@ -267,81 +295,87 @@ namespace MediaPortal.GUI.Alarm
 
           return _SnoozeAlarmTime;
         }
-
       }
     }
+
     public string Sound
     {
       get { return _Sound; }
       set { _Sound = value; }
     }
+
     public int Id
     {
       get { return _Id; }
     }
+
     public bool Mon
     {
       get { return _Mon; }
       set { _Mon = value; }
     }
+
     public bool Tue
     {
       get { return _Tue; }
       set { _Tue = value; }
     }
+
     public bool Wed
     {
       get { return _Wed; }
       set { _Wed = value; }
     }
+
     public bool Thu
     {
       get { return _Thu; }
       set { _Thu = value; }
     }
+
     public bool Fri
     {
       get { return _Fri; }
       set { _Fri = value; }
     }
+
     public bool Sat
     {
       get { return _Sat; }
       set { _Sat = value; }
     }
+
     public bool Sun
     {
       get { return _Sun; }
       set { _Sun = value; }
     }
+
     public bool VolumeFade
     {
       get { return _VolumeFade; }
       set { _VolumeFade = value; }
     }
+
     public GUIListItem SelectedItem
     {
       get { return _SelectedItem; }
       set { _SelectedItem = value; }
     }
+
     public string Message
     {
       get { return _Message; }
       set { _Message = value; }
     }
+
     public bool DisallowShutdown
     {
-      get
-      {
-        return _disallowShutdown;
-      }
+      get { return _disallowShutdown; }
 
-      set
-      {
-        _disallowShutdown = value;
-
-      }
+      set { _disallowShutdown = value; }
     }
+
     public bool AlarmTriggerDialogOpen
     {
       get
@@ -372,7 +406,9 @@ namespace MediaPortal.GUI.Alarm
       _VolumeFadeTimer.Interval = 3000; //3 seconds
 
       if (_Enabled)
+      {
         _AlarmTimer.Enabled = true;
+      }
     }
 
     /// <summary>
@@ -388,7 +424,8 @@ namespace MediaPortal.GUI.Alarm
         if (DateTime.Now.Subtract(LastTriggeredTime).TotalMinutes > 1)
         {
           //check to see if alarm is within the current minute
-          if ((DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) <= 0) && (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now.AddMinutes(-1)) >= 0))
+          if ((DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) <= 0) &&
+              (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now.AddMinutes(-1)) >= 0))
           {
             if (_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
             {
@@ -412,16 +449,16 @@ namespace MediaPortal.GUI.Alarm
                   g_Player.Volume = 0;
                   _VolumeFadeTimer.Enabled = true;
                 }
-
               }
 
               //set StopAlarmTime (alarm timeout)
-              Alarm.StopAlarmTime = DateTime.Now.AddMinutes(Alarm.AlarmTimeout);
+              StopAlarmTime = DateTime.Now.AddMinutes(AlarmTimeout);
 
               //load alarm dialog in different thread - allows PowerScheduler to continue working properly (as it requires the UI thread, and dialogs steal the UI thread when modal)
-              _backgroundWorker = new System.ComponentModel.BackgroundWorker();
-              _backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(ShowAlarmTriggeredDialog_DoWork);
-              _backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(ShowAlarmTriggeredDialog_RunWorkerCompleted);
+              _backgroundWorker = new BackgroundWorker();
+              _backgroundWorker.DoWork += new DoWorkEventHandler(ShowAlarmTriggeredDialog_DoWork);
+              _backgroundWorker.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(ShowAlarmTriggeredDialog_RunWorkerCompleted);
 
               //build dialog title
               string dialogTitle;
@@ -436,21 +473,22 @@ namespace MediaPortal.GUI.Alarm
 
               //run thread
               _backgroundWorker.RunWorkerAsync(dialogTitle);
-
             }
-
           }
-          //else if the NextAlarmTriggerTime is before the current time, once-off alarm was missed - disable alarm
+            //else if the NextAlarmTriggerTime is before the current time, once-off alarm was missed - disable alarm
           else if (DateTime.Compare(this.NextAlarmTriggerTime, DateTime.Now) < 0)
           {
             if ((_backgroundWorker != null) && (_backgroundWorker.IsBusy))
+            {
               return;
+            }
 
             _AlarmTimer.Enabled = false;
             this.Enabled = false;
-            Alarm.SaveAlarm(this);
+            SaveAlarm(this);
 
-            Log.Info("Alarm '{0}' could not fire at {1}. Computer not on and wake up not allowed?", this.Name, this.NextAlarmTriggerTime.ToString());
+            Log.Info("Alarm '{0}' could not fire at {1}. Computer not on and wake up not allowed?", this.Name,
+                     this.NextAlarmTriggerTime.ToString());
           }
         }
       }
@@ -459,7 +497,6 @@ namespace MediaPortal.GUI.Alarm
         if (g_Player.Volume < 99)
         {
           g_Player.Volume += 1;
-
         }
         else
         {
@@ -471,18 +508,18 @@ namespace MediaPortal.GUI.Alarm
     /// <summary>
     /// Method that shows the alarm triggered dialog - to dismiss or snooze alarm
     /// </summary>
-    public void ShowAlarmTriggeredDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+    public void ShowAlarmTriggeredDialog_DoWork(object sender, DoWorkEventArgs e)
     {
-      if (GUIWindowManager.IsRouted)   // Don't show two dialogs at the same time
+      if (GUIWindowManager.IsRouted) // Don't show two dialogs at the same time
       {
-        e.Result = 1;  // try it once again in 1 minute
+        e.Result = 1; // try it once again in 1 minute
         return;
       }
 
-      GUIDialogMenu dlgAlarmOpts = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlgAlarmOpts = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
       dlgAlarmOpts.Reset();
 
-      dlgAlarmOpts.SetHeading((string)e.Argument);
+      dlgAlarmOpts.SetHeading((string) e.Argument);
 
       dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 5 " + GUILocalizeStrings.Get(3004));
       dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 10 " + GUILocalizeStrings.Get(3004));
@@ -491,7 +528,7 @@ namespace MediaPortal.GUI.Alarm
       dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 1 " + GUILocalizeStrings.Get(3001));
       dlgAlarmOpts.Add(GUILocalizeStrings.Get(858));
 
-      dlgAlarmOpts.DoModal(GUI.Library.GUIWindowManager.ActiveWindow);
+      dlgAlarmOpts.DoModal(GUIWindowManager.ActiveWindow);
 
       //process dialog result
       switch (dlgAlarmOpts.SelectedLabel)
@@ -527,22 +564,22 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ShowAlarmTriggeredDialog_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+    private void ShowAlarmTriggeredDialog_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
       //dialog dismissed, assume alarm acknowledged, allow shutdown if criteria met
       _disallowShutdown = false;
 
-      SetSnoozePeriod((int)e.Result);
+      SetSnoozePeriod((int) e.Result);
       _backgroundWorker.Dispose();
 
       //disable alarm if it is a once-only alarm and no snooze was required
-      if ((((int)e.Result) == 0) && (this.AlarmOccurrenceType == AlarmType.Once))
+      if ((((int) e.Result) == 0) && (this.AlarmOccurrenceType == AlarmType.Once))
       {
         //disable the timer.
         _AlarmTimer.Enabled = false;
 
         this.Enabled = false;
-        Alarm.SaveAlarm(this);
+        SaveAlarm(this);
       }
     }
 
@@ -554,7 +591,10 @@ namespace MediaPortal.GUI.Alarm
     {
       if (minutes > 0)
       {
-        if (_MediaType != MediaType.Message) { g_Player.Stop(); }
+        if (_MediaType != MediaType.Message)
+        {
+          g_Player.Stop();
+        }
         _SnoozeAlarmTime = DateTime.Now.AddMinutes(minutes);
 
         //do not return to the home screen if snooze was set and and alarm is not allowed to wake up computer (otherwise, snooze alarm may not run)
@@ -616,7 +656,6 @@ namespace MediaPortal.GUI.Alarm
           return _Sun;
       }
       return false;
-
     }
 
     /// <summary>
@@ -629,7 +668,7 @@ namespace MediaPortal.GUI.Alarm
         case MediaType.PlayList:
           if (PlayListFactory.IsPlayList(_Sound))
           {
-            string soundName = Alarm.PlayListPath + "\\" + _Sound;
+            string soundName = PlayListPath + "\\" + _Sound;
             IPlayListIO loader = PlayListFactory.CreateIO(soundName);
             PlayList playlist = new PlayList();
 
@@ -645,7 +684,7 @@ namespace MediaPortal.GUI.Alarm
               g_Player.Volume = 99;
               return;
             }
-            for (int i = 0 ; i < playlist.Count ; ++i)
+            for (int i = 0; i < playlist.Count; ++i)
             {
               PlayListItem playListItem = playlist[i];
               playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
@@ -657,7 +696,6 @@ namespace MediaPortal.GUI.Alarm
               SetVolume();
               playlistPlayer.Play(0);
               g_Player.Volume = 99;
-
             }
           }
           else
@@ -677,7 +715,8 @@ namespace MediaPortal.GUI.Alarm
               if (station.URL.Length < 5)
               {
                 // FM radio
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, (int)GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,
+                                                (int) GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
                 msg.Label = station.Name;
                 GUIGraphicsContext.SendMessage(msg);
               }
@@ -691,21 +730,22 @@ namespace MediaPortal.GUI.Alarm
           }
           break;
         case MediaType.File:
-          if (Alarm.AlarmSoundPath.Length != 0 && _Sound.Length != 0)
+          if (AlarmSoundPath.Length != 0 && _Sound.Length != 0)
           {
             try
             {
               _RepeatCount = 0;
               SetVolume();
-              g_Player.Play(Alarm.AlarmSoundPath + "\\" + _Sound);
+              g_Player.Play(AlarmSoundPath + "\\" + _Sound);
               g_Player.Volume = 99;
 
               //add playback end handler if file <= repeat seconds in configuration
-              if (g_Player.Duration <= Alarm.RepeatSeconds)
-                g_Player.PlayBackEnded += new MediaPortal.Player.g_Player.EndedHandler(g_Player_PlayBackEnded);
-
+              if (g_Player.Duration <= RepeatSeconds)
+              {
+                g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+              }
             }
-            catch (System.Runtime.InteropServices.COMException)
+            catch (COMException)
             {
               ShowErrorDialog();
             }
@@ -721,7 +761,6 @@ namespace MediaPortal.GUI.Alarm
           //do not play any media, message only
           break;
       }
-
     }
 
     /// <summary>
@@ -729,16 +768,16 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     private void SetVolume()
     {
-      MediaPortal.Player.VolumeHandler volumeHandler = new VolumeHandler();
+      VolumeHandler volumeHandler = new VolumeHandler();
 
       //check to see if setting has been enabled
-      if (Alarm.AlarmVolEnable)
+      if (AlarmVolEnable)
       {
         //apply volume if it has been set (greater than 0)
-        if (Alarm.AlarmVol > 0)
+        if (AlarmVol > 0)
         {
-          volumeHandler.Volume = Alarm.AlarmVol;
-          Log.Info("Alarm: volume changed to alarm volume setting - {0}", Alarm.AlarmVol);
+          volumeHandler.Volume = AlarmVol;
+          Log.Info("Alarm: volume changed to alarm volume setting - {0}", AlarmVol);
         }
       }
 
@@ -750,7 +789,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     private void ShowErrorDialog()
     {
-      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
       if (dlgOK != null)
       {
         dlgOK.SetHeading(6);
@@ -766,25 +805,27 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     /// <param name="type"></param>
     /// <param name="filename"></param>
-    private void g_Player_PlayBackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
+    private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       //play file again, increment loop counter
       if (_RepeatCount <= RepeatCount)
       {
-        g_Player.Play(Alarm.AlarmSoundPath + "\\" + _Sound);
+        g_Player.Play(AlarmSoundPath + "\\" + _Sound);
         _RepeatCount += 1;
       }
-
     }
+
     #endregion
 
     #region IDisposable Members
+
     public void Dispose()
     {
       _AlarmTimer.Enabled = false;
       _AlarmTimer.Dispose();
       _VolumeFadeTimer.Dispose();
     }
+
     #endregion
 
     #region Static Methods
@@ -797,9 +838,9 @@ namespace MediaPortal.GUI.Alarm
     {
       AlarmCollection Alarms = new AlarmCollection();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        for (int i = 0 ; i < _MaxAlarms ; i++)
+        for (int i = 0; i < _MaxAlarms; i++)
         {
           string NameTag = String.Format("alarmName{0}", i);
           string MediaTypeTag = String.Format("alarmMediaType{0}", i);
@@ -840,16 +881,17 @@ namespace MediaPortal.GUI.Alarm
 
 
             Alarm objAlarm = new Alarm(i, AlarmName, AlarmMediaType, AlarmEnabled, AlarmTime,
-              AlarmMon, AlarmTue, AlarmWed, AlarmThu,
-              AlarmFri, AlarmSat, AlarmSun, AlarmSound, AlarmVolumeFade, WakeUpPC, AlarmType, Message);
+                                       AlarmMon, AlarmTue, AlarmWed, AlarmThu,
+                                       AlarmFri, AlarmSat, AlarmSun, AlarmSound, AlarmVolumeFade, WakeUpPC, AlarmType,
+                                       Message);
 
             Alarms.Add(objAlarm);
           }
         }
       }
       _Alarms = Alarms;
-
     }
+
     /// <summary>
     /// Saves an alarm to the configuration file
     /// </summary>
@@ -859,11 +901,10 @@ namespace MediaPortal.GUI.Alarm
     {
       int id = alarmToSave.Id;
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-
         xmlwriter.SetValue("alarm", "alarmName" + id, alarmToSave.Name);
-        xmlwriter.SetValue("alarm", "alarmMediaType" + id, (int)alarmToSave.AlarmMediaType);
+        xmlwriter.SetValue("alarm", "alarmMediaType" + id, (int) alarmToSave.AlarmMediaType);
         xmlwriter.SetValueAsBool("alarm", "alarmEnabled" + id, alarmToSave.Enabled);
         xmlwriter.SetValue("alarm", "alarmTime" + id, alarmToSave.Time);
         xmlwriter.SetValueAsBool("alarm", "alarmMon" + id, alarmToSave.Mon);
@@ -876,13 +917,10 @@ namespace MediaPortal.GUI.Alarm
         xmlwriter.SetValue("alarm", "alarmSound" + id, alarmToSave.Sound);
         xmlwriter.SetValueAsBool("alarm", "alarmVolumeFade" + id, alarmToSave.VolumeFade);
         xmlwriter.SetValueAsBool("alarm", "alarmWakeUpPC" + id, alarmToSave.Wakeup);
-        xmlwriter.SetValue("alarm", "alarmType" + id, (int)alarmToSave.AlarmOccurrenceType);
+        xmlwriter.SetValue("alarm", "alarmType" + id, (int) alarmToSave.AlarmOccurrenceType);
         xmlwriter.SetValue("alarm", "alarmMessage" + id, alarmToSave.Message);
       }
       return true;
-
-
-
     }
 
     /// <summary>
@@ -892,7 +930,7 @@ namespace MediaPortal.GUI.Alarm
     /// <returns>true if suceeded</returns>
     public static bool DeleteAlarm(int id)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.RemoveEntry("alarm", "alarmName" + id);
         xmlwriter.RemoveEntry("alarm", "alarmEnabled" + id);
@@ -923,9 +961,10 @@ namespace MediaPortal.GUI.Alarm
       get
       {
         string tempText;
-        for (int i = 0 ; i < _MaxAlarms ; i++)
+        for (int i = 0; i < _MaxAlarms; i++)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"))
+            )
           {
             tempText = xmlreader.GetValueAsString("alarm", "alarmName" + i, "");
             if (tempText.Length == 0)
@@ -953,8 +992,11 @@ namespace MediaPortal.GUI.Alarm
             return "DefaultPlaylist.png";
           case MediaType.Radio:
             {
-              string thumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, this.Sound);
-              if (thumb.Length != 0) return thumb;
+              string thumb = Util.Utils.GetCoverArt(Thumbs.Radio, this.Sound);
+              if (thumb.Length != 0)
+              {
+                return thumb;
+              }
               return "DefaultMyradio.png";
             }
           case MediaType.Message:
@@ -980,7 +1022,7 @@ namespace MediaPortal.GUI.Alarm
         _Alarms.Clear();
 
         //Load all the alarms 
-        Alarm.LoadAll();
+        LoadAll();
       }
     }
 
@@ -1021,12 +1063,12 @@ namespace MediaPortal.GUI.Alarm
         if (alarmTriggerDialogsOpen > 0)
         {
           //dismiss all alarm trigger dialogs
-          for (int i = 0 ; i < alarmTriggerDialogsOpen ; i++)
+          for (int i = 0; i < alarmTriggerDialogsOpen; i++)
           {
-            MediaPortal.GUI.Library.Action act = new Action();
-            act.wID = MediaPortal.GUI.Library.Action.ActionType.REMOTE_6; //number for the dismiss option
+            Action act = new Action();
+            act.wID = Action.ActionType.REMOTE_6; //number for the dismiss option
 
-            MediaPortal.GUI.Library.GUIGraphicsContext.OnAction(act);
+            GUIGraphicsContext.OnAction(act);
           }
 
           //stop player
@@ -1042,6 +1084,7 @@ namespace MediaPortal.GUI.Alarm
     #endregion
 
     #region Static Properties
+
     /// <summary>
     /// Gets / Sets the loaded alarms
     /// </summary>
@@ -1049,6 +1092,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get { return _Alarms; }
     }
+
     /// <summary>
     /// Gets the alarms sound path from the configuration file
     /// </summary>
@@ -1056,23 +1100,23 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          return MediaPortal.Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", ""));
+          return Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", ""));
         }
       }
     }
+
     /// <summary>
     /// Gets the playlist path from the configuration file
     /// </summary>
     public static string PlayListPath
     {
-
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          return MediaPortal.Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music", "playlists", ""));
+          return Util.Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music", "playlists", ""));
         }
       }
     }
@@ -1084,7 +1128,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);
         }
@@ -1098,7 +1142,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatSeconds", 120);
         }
@@ -1112,7 +1156,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
         }
@@ -1126,7 +1170,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           return xmlreader.GetValueAsBool("alarm", "alarmAlarmVolEnable", false);
         }
@@ -1140,7 +1184,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmAlarmVol", 0);
         }
@@ -1178,10 +1222,7 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     public static DateTime StopAlarmTime
     {
-      get
-      {
-        return _StopAlarmTime;
-      }
+      get { return _StopAlarmTime; }
       set
       {
         //only take the later datetime value
@@ -1191,7 +1232,7 @@ namespace MediaPortal.GUI.Alarm
           InitializeStopAlarmTimer();
           _StopAlarmTimer.Enabled = true;
         }
-        //if value is before current time, assume StopAlarmTimer is to be disabled
+          //if value is before current time, assume StopAlarmTimer is to be disabled
         else if (DateTime.Compare(value, DateTime.Now) < 0)
         {
           _StopAlarmTime = value;
@@ -1203,6 +1244,7 @@ namespace MediaPortal.GUI.Alarm
     #endregion
 
     #region PowerScheduler Interface Implementation
+
     /// <summary>
     /// Powersheduler implimentation, returns true if the plugin can allow hibernation
     /// </summary>
@@ -1228,12 +1270,15 @@ namespace MediaPortal.GUI.Alarm
     /// <returns>DateTime</returns>
     public static DateTime GetNextAlarmDateTime(DateTime earliestStartTime)
     {
-      if (_Alarms == null) return DateTime.MaxValue;
+      if (_Alarms == null)
+      {
+        return DateTime.MaxValue;
+      }
 
       //load wakeupInterval value if not there (different to powerscheduler's)
       if (_wakeupInterval == 0)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _wakeupInterval = xmlreader.GetValueAsInt("alarm", "wakeupInterval", 2);
         }
@@ -1267,7 +1312,6 @@ namespace MediaPortal.GUI.Alarm
             a.DisallowShutdown = true;
           }
         }
-
       }
 
       //MediaPortal.GUI.Library.Log.Info("Alarm: next alarm trigger time: {0}", NextStartTime.ToString());
@@ -1277,6 +1321,5 @@ namespace MediaPortal.GUI.Alarm
     }
 
     #endregion
-
   }
 }

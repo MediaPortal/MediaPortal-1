@@ -24,33 +24,32 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Text;
 using System.IO;
-using MediaPortal.Util;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.MPExTuneCmd
 {
   /// <summary>
   /// Summary description for MPExTuneCmdForm.
   /// </summary>
-  public class MPExTuneCmdForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class MPExTuneCmdForm : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox MpExTuneCmdLoc;
-    private MediaPortal.UserInterface.Controls.MPButton browseButton;
-    private MediaPortal.UserInterface.Controls.MPButton ok_button;
-    private MediaPortal.UserInterface.Controls.MPButton cancel_button;
-    private MediaPortal.UserInterface.Controls.MPTextBox MPExTuneCmdDelim;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MPLabel label1;
+    private MPTextBox MpExTuneCmdLoc;
+    private MPButton browseButton;
+    private MPButton ok_button;
+    private MPButton cancel_button;
+    private MPTextBox MPExTuneCmdDelim;
+    private MPLabel label2;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public MPExTuneCmdForm()
     {
@@ -81,7 +80,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MpExTuneCmdLoc.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commandloc", "C:\\dtvcon\\dtvcmd.exe");
         MPExTuneCmdDelim.Text = xmlreader.GetValueAsString("MPExTuneCmd", "commanddelim", "#");
@@ -90,7 +89,7 @@ namespace MediaPortal.MPExTuneCmd
 
     private bool SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("MPExTuneCmd", "commandloc", MpExTuneCmdLoc.Text);
         xmlwriter.SetValue("MPExTuneCmd", "commanddelim", MPExTuneCmdDelim.Text);
@@ -99,6 +98,7 @@ namespace MediaPortal.MPExTuneCmd
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -116,8 +116,10 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // MpExTuneCmdLoc
       // 
-      this.MpExTuneCmdLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MpExTuneCmdLoc.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.MpExTuneCmdLoc.BorderColor = System.Drawing.Color.Empty;
       this.MpExTuneCmdLoc.Location = new System.Drawing.Point(112, 16);
       this.MpExTuneCmdLoc.Name = "MpExTuneCmdLoc";
@@ -135,7 +137,9 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // browseButton
       // 
-      this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browseButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.browseButton.Location = new System.Drawing.Point(308, 16);
       this.browseButton.Name = "browseButton";
       this.browseButton.Size = new System.Drawing.Size(24, 24);
@@ -146,7 +150,9 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // ok_button
       // 
-      this.ok_button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.ok_button.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.ok_button.Location = new System.Drawing.Point(214, 127);
       this.ok_button.Name = "ok_button";
       this.ok_button.Size = new System.Drawing.Size(56, 24);
@@ -157,7 +163,9 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // cancel_button
       // 
-      this.cancel_button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancel_button.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancel_button.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancel_button.Location = new System.Drawing.Point(276, 127);
       this.cancel_button.Name = "cancel_button";
@@ -169,8 +177,10 @@ namespace MediaPortal.MPExTuneCmd
       // 
       // MPExTuneCmdDelim
       // 
-      this.MPExTuneCmdDelim.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MPExTuneCmdDelim.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.MPExTuneCmdDelim.BorderColor = System.Drawing.Color.Empty;
       this.MPExTuneCmdDelim.Location = new System.Drawing.Point(112, 56);
       this.MPExTuneCmdDelim.Name = "MPExTuneCmdDelim";
@@ -205,23 +215,17 @@ namespace MediaPortal.MPExTuneCmd
       this.Text = "MPExTuneCmd - Setup";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
     /// <summary>
-
     /// This method is called whenever the browse button is click
-
     /// </summary>
-
     /// <param name="sender">the sender instance</param>
-
     /// <param name="e">the event.  In this case click!</param>
-
-    private void browseButton_Click(object sender, System.EventArgs e)
+    private void browseButton_Click(object sender, EventArgs e)
     {
-
       string curDir = Directory.GetCurrentDirectory();
 
       // The filter for the dialog window is foobar2000.exe
@@ -240,22 +244,21 @@ namespace MediaPortal.MPExTuneCmd
 
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-
         MpExTuneCmdLoc.Text = dlg.FileName;
-
       }
 
       Directory.SetCurrentDirectory(curDir);
-
     }
 
-    private void ok_button_Click(object sender, System.EventArgs e)
+    private void ok_button_Click(object sender, EventArgs e)
     {
       if (SaveSettings())
+      {
         this.Close();
+      }
     }
 
-    private void cancel_button_Click(object sender, System.EventArgs e)
+    private void cancel_button_Click(object sender, EventArgs e)
     {
       this.Close();
     }

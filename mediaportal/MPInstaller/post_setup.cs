@@ -24,69 +24,69 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
-using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class post_setup : MPInstallerForm
+  public partial class post_setup : MPInstallerForm
+  {
+    public MPinstallerStruct _struct;
+
+    public post_setup()
     {
-        public MPinstallerStruct _struct;
-        public post_setup()
-        {
-            InitializeComponent();
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (comboBox1.SelectedIndex)
-            {
-                case 0:
-                    comboBox2.Items.Clear();
-                    comboBox2.Items.Add("MediaPortal.exe");
-                    comboBox2.Items.Add("Configuration.exe");
-                    foreach (MPIFileList fl in _struct.FileList)
-                    {
-                      if ((fl.Type == MPinstallerStruct.OTHER_TYPE)&&
-                           ((Path.GetExtension(fl.FileName).ToUpper() == ".BAT") || (Path.GetExtension(fl.FileName).ToUpper() == ".EXE")))
-                        comboBox2.Items.Add(fl.FileNameShort);
-                    }
-                    break;
-                case 1:
-                    comboBox2.Items.Clear();
-                    foreach (MPIFileList fl in _struct.FileList)
-                    {
-                        if (fl.Type == MPinstallerStruct.PLUGIN_TYPE)
-                            comboBox2.Items.Add(fl.FileNameShort);
-                    }
-                    break;
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            _struct.AddAction(new ActionInfo("POSTSETUP",comboBox1.SelectedIndex,comboBox2.Text));
-            this.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void post_setup_Load(object sender, EventArgs e)
-        {
-            ActionInfo a = _struct.FindAction("POSTSETUP");
-            if (a != null)
-            {
-                comboBox1.SelectedIndex = a.Id;
-                comboBox2.Text = a.Command;
-            }
-        }
+      InitializeComponent();
     }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      switch (comboBox1.SelectedIndex)
+      {
+        case 0:
+          comboBox2.Items.Clear();
+          comboBox2.Items.Add("MediaPortal.exe");
+          comboBox2.Items.Add("Configuration.exe");
+          foreach (MPIFileList fl in _struct.FileList)
+          {
+            if ((fl.Type == MPinstallerStruct.OTHER_TYPE) &&
+                ((Path.GetExtension(fl.FileName).ToUpper() == ".BAT") ||
+                 (Path.GetExtension(fl.FileName).ToUpper() == ".EXE")))
+            {
+              comboBox2.Items.Add(fl.FileNameShort);
+            }
+          }
+          break;
+        case 1:
+          comboBox2.Items.Clear();
+          foreach (MPIFileList fl in _struct.FileList)
+          {
+            if (fl.Type == MPinstallerStruct.PLUGIN_TYPE)
+            {
+              comboBox2.Items.Add(fl.FileNameShort);
+            }
+          }
+          break;
+      }
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+      _struct.AddAction(new ActionInfo("POSTSETUP", comboBox1.SelectedIndex, comboBox2.Text));
+      this.Close();
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
+
+    private void post_setup_Load(object sender, EventArgs e)
+    {
+      ActionInfo a = _struct.FindAction("POSTSETUP");
+      if (a != null)
+      {
+        comboBox1.SelectedIndex = a.Id;
+        comboBox2.Text = a.Command;
+      }
+    }
+  }
 }

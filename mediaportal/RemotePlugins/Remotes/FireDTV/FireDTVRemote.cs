@@ -24,18 +24,12 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Data;
 using System.IO;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Microsoft.Win32;
-using MediaPortal.InputDevices.FireDTV;
-using MediaPortal.InputDevices;
-using MediaPortal.Util;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.InputDevices.FireDTV;
+using MediaPortal.Profile;
 
 namespace MediaPortal.InputDevices
 {
@@ -45,15 +39,18 @@ namespace MediaPortal.InputDevices
   public class FireDTVRemote
   {
     #region Private Variables
+
     private static bool _enabled = false;
     private bool _logVerbose = false;
     private static string _name;
 
     private FireDTVControl _fireDTV = null;
     private InputHandler _inputHandler;
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     ///  
     /// </summary>
@@ -77,7 +74,9 @@ namespace MediaPortal.InputDevices
           sourceFilter.StartFireDTVRemoteControlSupport();
         }
         else
+        {
           Log.Error("FireDTVRemote: SourceFilter {0} Not Found", _name);
+        }
       }
     }
 
@@ -96,11 +95,14 @@ namespace MediaPortal.InputDevices
       try
       {
         // first read the configuration, to determine the initialisation is needed
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _enabled = ((xmlreader.GetValueAsBool("remote", "FireDTV", false)));
           _name = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
-          if (!_enabled) return;
+          if (!_enabled)
+          {
+            return;
+          }
         }
 
         // load the default input mapping
@@ -130,15 +132,18 @@ namespace MediaPortal.InputDevices
 
     public void DeInit()
     {
-      if (_fireDTV != null) _fireDTV.CloseDrivers();
+      if (_fireDTV != null)
+      {
+        _fireDTV.CloseDrivers();
+      }
     }
 
-    public bool WndProc(ref System.Windows.Forms.Message msg, out MediaPortal.GUI.Library.Action action, out char key, out System.Windows.Forms.Keys keyCode)
+    public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
-      keyCode = System.Windows.Forms.Keys.A;
-      key = (char)0;
+      keyCode = Keys.A;
+      key = (char) 0;
       action = null;
-      switch ((FireDTVConstants.FireDTVWindowMessages)msg.Msg)
+      switch ((FireDTVConstants.FireDTVWindowMessages) msg.Msg)
       {
         case FireDTVConstants.FireDTVWindowMessages.DeviceAttached:
           Log.Info("FireDTVRemote: DeviceAttached");
@@ -147,7 +152,7 @@ namespace MediaPortal.InputDevices
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceDetached:
           Log.Info("FireDTVRemote: DeviceDetached");
-          _fireDTV.SourceFilters.RemoveByHandle((uint)msg.WParam);
+          _fireDTV.SourceFilters.RemoveByHandle((uint) msg.WParam);
           break;
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceChanged:
@@ -159,10 +164,15 @@ namespace MediaPortal.InputDevices
           if (_enabled)
           {
             int remoteKeyCode = msg.LParam.ToInt32();
-            if (_logVerbose) Log.Info("FireDTVRemote: RemoteControlEvent {0}", remoteKeyCode);
+            if (_logVerbose)
+            {
+              Log.Info("FireDTVRemote: RemoteControlEvent {0}", remoteKeyCode);
+            }
 
             if (!_inputHandler.MapAction(remoteKeyCode))
+            {
               return false;
+            }
 
             msg.Result = new IntPtr(1);
             return true;
@@ -175,11 +185,7 @@ namespace MediaPortal.InputDevices
 
     public Guid RCGuid
     {
-      get
-      {
-        return new Guid("{73DF3DFD-855A-418c-B98B-121C513BD2E4}");
-      }
+      get { return new Guid("{73DF3DFD-855A-418c-B98B-121C513BD2E4}"); }
     }
-
   }
 }

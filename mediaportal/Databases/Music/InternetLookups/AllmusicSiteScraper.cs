@@ -25,15 +25,12 @@
 
 using System;
 using System.Collections;
-using System.Net;
-using System.Web;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.Music.Database;
-
+using System.Web;
 using MediaPortal.Util;
-using System.Threading;
 
 namespace MediaPortal.Music.Database
 {
@@ -42,13 +39,17 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class AllmusicSiteScraper
   {
-    public enum SearchBy : int { Artists = 1, Albums };
+    public enum SearchBy : int
+    {
+      Artists = 1,
+      Albums
+    } ;
 
     internal const string MAINURL = "http://www.allmusic.com";
     internal const string URLPROGRAM = "/cg/amg.dll";
     internal const string JAVASCRIPTZ = "p=amg&token=&sql=";
-    protected ArrayList m_codes = new ArrayList();	// if multiple..
-    protected ArrayList m_values = new ArrayList();	// if multiple..
+    protected ArrayList m_codes = new ArrayList(); // if multiple..
+    protected ArrayList m_values = new ArrayList(); // if multiple..
     protected bool m_multiple = false;
     protected string m_htmlCode = null;
     protected string m_queryString = "";
@@ -67,7 +68,7 @@ namespace MediaPortal.Music.Database
 
     public string[] GetItemsFound()
     {
-      return (string[])m_values.ToArray(typeof(string));
+      return (string[]) m_values.ToArray(typeof (string));
     }
 
     public string GetHtmlContent()
@@ -78,14 +79,19 @@ namespace MediaPortal.Music.Database
     public bool FindInfoByIndex(int index)
     {
       if (index < 0 || index > m_codes.Count - 1)
+      {
         return false;
+      }
 
       string strGetData = m_queryString + m_codes[index];
 
       string strHTML = GetHTTP(MAINURL + URLPROGRAM + "?" + strGetData);
-      if (strHTML.Length == 0) return false;
+      if (strHTML.Length == 0)
+      {
+        return false;
+      }
 
-      m_htmlCode = strHTML;	// save the html content...
+      m_htmlCode = strHTML; // save the html content...
       return true;
     }
 
@@ -93,12 +99,16 @@ namespace MediaPortal.Music.Database
     {
       HTMLUtil util = new HTMLUtil();
       searchStr = searchStr.Replace(",", ""); // Remove Comma, as it causes problems with Search
-      string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy, HttpUtility.UrlEncode(searchStr));
+      string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int) searchBy,
+                                         HttpUtility.UrlEncode(searchStr));
 
       string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
-      if (strHTML.Length == 0) return false;
+      if (strHTML.Length == 0)
+      {
+        return false;
+      }
 
-      m_htmlCode = strHTML;	// save the html content...
+      m_htmlCode = strHTML; // save the html content...
 
       Regex multiples = new Regex(
         @"\sSearch\sResults\sfor:",
@@ -112,12 +122,15 @@ namespace MediaPortal.Music.Database
       {
         string pattern = "bogus";
         if (searchBy.ToString().Equals("Artists"))
+        {
           pattern = @"<a\shref.*?sql=(?<code>(11:|41).*?)"">(?<name>.*?)</a>.*?<TD" +
-                     @"\sclass.*?>(?<name2>.*?)</TD>.*?""cell"">(?<name3>.*?)</td>";
+                    @"\sclass.*?>(?<name2>.*?)</TD>.*?""cell"">(?<name3>.*?)</td>";
+        }
         else if (searchBy.ToString().Equals("Albums")) // below patter needs to be checked
+        {
           pattern = @"""cell"">(?<name2>.*?)</TD>.*?style.*?word;"">(?<name3>.*?)<" +
                     @"/TD>.*?onclick=""z\('(?<code>.*?)'\)"">(?<name>.*?)</a>";
-
+        }
 
 
         Match m;
@@ -130,7 +143,7 @@ namespace MediaPortal.Music.Database
           );
 
 
-        for (m = itemsFoundFromSite.Match(strHTML) ; m.Success ; m = m.NextMatch())
+        for (m = itemsFoundFromSite.Match(strHTML); m.Success; m = m.NextMatch())
         {
           string code = m.Groups["code"].ToString();
           string name = m.Groups["name"].ToString();
@@ -150,7 +163,7 @@ namespace MediaPortal.Music.Database
           util.ConvertHTMLToAnsi(detail2, out detail2);
 
           detail += " - " + detail2;
-          System.Console.Out.WriteLine("code = {0}, name = {1}, detail = {2}", code, name, detail);
+          Console.Out.WriteLine("code = {0}, name = {1}, detail = {2}", code, name, detail);
           if (detail.Length > 0)
           {
             m_codes.Add(code);
@@ -163,14 +176,13 @@ namespace MediaPortal.Music.Database
           }
         }
         m_queryString = JAVASCRIPTZ;
-        System.Console.Out.WriteLine("url = {0}", m_queryString);
+        Console.Out.WriteLine("url = {0}", m_queryString);
         m_multiple = true;
       }
       else // found the right one
       {
       }
       return true;
-
     }
 
     internal static string PostHTTP(string strURL, string strData)
@@ -180,14 +192,15 @@ namespace MediaPortal.Music.Database
         string strBody;
 
         string strUri = String.Format("{0}?{1}", strURL, strData);
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUri);
+        HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUri);
         req.ProtocolVersion = HttpVersion.Version11;
-        req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
-        HttpWebResponse result = (HttpWebResponse)req.GetResponse();
+        req.UserAgent =
+          "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
+        HttpWebResponse result = (HttpWebResponse) req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
 
         // 1252 is encoding for Windows format
-        Encoding encode = System.Text.Encoding.GetEncoding(1252);
+        Encoding encode = Encoding.GetEncoding(1252);
         StreamReader sr = new StreamReader(ReceiveStream, encode);
         strBody = sr.ReadToEnd();
         return strBody;
@@ -211,7 +224,7 @@ namespace MediaPortal.Music.Database
       Stream ReceiveStream = myResponse.GetResponseStream();
 
       // 1252 is encoding for Windows format
-      Encoding encode = System.Text.Encoding.GetEncoding(1252);
+      Encoding encode = Encoding.GetEncoding(1252);
       StreamReader sr = new StreamReader(ReceiveStream, encode);
       retval = sr.ReadToEnd();
 
@@ -222,7 +235,7 @@ namespace MediaPortal.Music.Database
     }
 
     [STAThread]
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       MusicArtistInfo artist = new MusicArtistInfo();
       MusicAlbumInfo album = new MusicAlbumInfo();
@@ -232,5 +245,4 @@ namespace MediaPortal.Music.Database
       artist.Parse(prog.GetHtmlContent());
     }
   }
-
 }

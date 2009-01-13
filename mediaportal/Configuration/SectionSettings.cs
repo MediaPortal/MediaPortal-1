@@ -20,19 +20,14 @@
  */
 
 using System;
-using System.IO;
 using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Data;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Generic;
 
 namespace MediaPortal.Configuration
 {
-  public partial class SectionSettings : System.Windows.Forms.UserControl
+  public partial class SectionSettings : UserControl
   {
     public SectionSettings()
     {

@@ -23,49 +23,49 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player ;
 using MediaPortal.TV.Recording;
+
 namespace MediaPortal.GUI.TV
 {
-	/// <summary>
-	/// Summary description for GUITVCompressMain.
-	/// </summary>
-	public class GUITVCompressMain : GUIWindow	
-	{
-		public GUITVCompressMain()
-		{
-			GetID=(int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN;
-		}
-    
-		public override bool Init()
-		{
-			return Load (GUIGraphicsContext.Skin+@"\mytvcompressmain.xml");
-		}
-		public override void OnAction(Action action)
-		{
-            //switch (action.wID)
-            //{
-            //}
-			base.OnAction(action);
-		}
+  /// <summary>
+  /// Summary description for GUITVCompressMain.
+  /// </summary>
+  public class GUITVCompressMain : GUIWindow
+  {
+    public GUITVCompressMain()
+    {
+      GetID = (int) Window.WINDOW_TV_COMPRESS_MAIN;
+    }
 
-		protected override void OnPageDestroy(int newWindowId)
-		{
-			if ( !GUIGraphicsContext.IsTvWindow(newWindowId) )
-			{
-				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
-				{
-					if (GUIGraphicsContext.ShowBackground)
-					{
-						// stop timeshifting & viewing... 
-	              
-						Recorder.StopViewing();
-					}
-				}
-			}
-			base.OnPageDestroy (newWindowId);
-		}
-	}
+    public override bool Init()
+    {
+      return Load(GUIGraphicsContext.Skin + @"\mytvcompressmain.xml");
+    }
+
+    public override void OnAction(Action action)
+    {
+      //switch (action.wID)
+      //{
+      //}
+      base.OnAction(action);
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
+      {
+        if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting() || Recorder.IsRecording()))
+        {
+          if (GUIGraphicsContext.ShowBackground)
+          {
+            // stop timeshifting & viewing... 
+
+            Recorder.StopViewing();
+          }
+        }
+      }
+      base.OnPageDestroy(newWindowId);
+    }
+  }
 }

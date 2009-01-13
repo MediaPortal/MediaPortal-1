@@ -24,33 +24,32 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.Video.Database;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>
   /// Summary description for DlgMovieList.
   /// </summary>
-  public class DlgMovieList : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class DlgMovieList : MPConfigForm
   {
-    private System.Windows.Forms.ListView listView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFileName;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTitle;
-    private MediaPortal.UserInterface.Controls.MPButton buttonFind;
+    private ListView listView1;
+    private ColumnHeader columnHeader1;
+    private MPButton buttonOK;
+    private MPButton buttonCancel;
+    private MPLabel label1;
+    private MPLabel labelFileName;
+    private MPLabel label2;
+    private MPTextBox textBoxTitle;
+    private MPButton buttonFind;
     private bool newFind = false;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public DlgMovieList()
     {
@@ -83,22 +82,26 @@ namespace MediaPortal.Configuration.Sections
     {
       get
       {
-        if (listView1.SelectedIndices.Count <= 0) return 0;
+        if (listView1.SelectedIndices.Count <= 0)
+        {
+          return 0;
+        }
         return listView1.SelectedIndices[0];
       }
     }
+
     public string Filename
     {
-      set
-      {
-        labelFileName.Text = value;
-      }
+      set { labelFileName.Text = value; }
     }
+
     public void AddMovie(string movie)
     {
       listView1.Items.Add(movie);
     }
+
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -118,11 +121,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listView1
       // 
-      this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+      this.listView1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                        {
+                                          this.columnHeader1
+                                        });
       this.listView1.Location = new System.Drawing.Point(8, 52);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(446, 261);
@@ -138,7 +145,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonFind
       // 
-      this.buttonFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonFind.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonFind.Location = new System.Drawing.Point(404, 319);
       this.buttonFind.Name = "buttonFind";
       this.buttonFind.Size = new System.Drawing.Size(50, 22);
@@ -149,8 +158,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxTitle
       // 
-      this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTitle.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTitle.Location = new System.Drawing.Point(37, 320);
       this.textBoxTitle.Name = "textBoxTitle";
@@ -159,7 +170,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label2.Location = new System.Drawing.Point(6, 323);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(34, 16);
@@ -183,7 +196,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.Location = new System.Drawing.Point(404, 345);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(50, 23);
@@ -194,7 +209,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonOK
       // 
-      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOK.Location = new System.Drawing.Point(349, 345);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(50, 23);
@@ -223,31 +240,30 @@ namespace MediaPortal.Configuration.Sections
       this.Text = "IMDB Movie results";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
 
-    private void button1_Click(object sender, System.EventArgs e)
+    private void button1_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
       this.Close();
     }
 
-    private void button2_Click(object sender, System.EventArgs e)
+    private void button2_Click(object sender, EventArgs e)
     {
       this.DialogResult = DialogResult.Cancel;
       this.Close();
     }
 
-    private void listView1_DoubleClick(object sender, System.EventArgs e)
+    private void listView1_DoubleClick(object sender, EventArgs e)
     {
       base.OnDoubleClick(e);
       this.DialogResult = DialogResult.OK;
       this.Close();
-
     }
 
-    private void buttonFind_Click(object sender, System.EventArgs e)
+    private void buttonFind_Click(object sender, EventArgs e)
     {
       buttonFind.Enabled = false;
       buttonOK.Enabled = false;
@@ -257,13 +273,15 @@ namespace MediaPortal.Configuration.Sections
       this.DialogResult = DialogResult.OK;
       this.Close();
     }
-      public bool IsNewFind
-      {
-         get { return this.newFind; }
-      }
-      public string NewTitleToFind
-      {
-          get { return this.textBoxTitle.Text; }
-      }
+
+    public bool IsNewFind
+    {
+      get { return this.newFind; }
+    }
+
+    public string NewTitleToFind
+    {
+      get { return this.textBoxTitle.Text; }
+    }
   }
 }

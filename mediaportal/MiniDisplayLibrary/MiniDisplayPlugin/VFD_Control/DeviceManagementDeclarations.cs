@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -63,7 +64,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, int Flags);
 
     [DllImport("setupapi.dll")]
@@ -77,10 +78,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
                                                          ref Guid InterfaceClassGuid, int MemberIndex,
                                                          ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
-    [DllImport("setupapi.dll", CharSet=CharSet.Auto)]
+    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
     public static extern IntPtr SetupDiGetClassDevs(ref Guid ClassGuid, string Enumerator, int hwndParent, int Flags);
 
-    [DllImport("setupapi.dll", CharSet=CharSet.Auto)]
+    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
     public static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet,
                                                               ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData,
                                                               IntPtr DeviceInterfaceDetailData,
@@ -105,7 +106,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     }
 
     // Use this to read the dbcc_name string and classguid.
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public class DEV_BROADCAST_DEVICEINTERFACE_1
     {
       #region Fields
@@ -113,8 +114,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int dbcc_size;
       public int dbcc_devicetype;
       public int dbcc_reserved;
-      [MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.U1, SizeConst=16)] public byte[] dbcc_classguid;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=255)] public char[] dbcc_name;
+
+      [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)] public byte[]
+        dbcc_classguid;
+
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)] public char[] dbcc_name;
 
       #endregion
     }

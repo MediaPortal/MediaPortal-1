@@ -24,19 +24,17 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
 using System.Text;
-
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
-using MediaPortal.Music.Database;
-using MediaPortal.Dialogs;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
 {
@@ -62,18 +60,27 @@ namespace MediaPortal.GUI.Music
       try
       {
         if (x.TimesPlayed == 0)
+        {
           return 0;
+        }
 
         if (y.TimesPlayed == 0)
+        {
           return 0;
+        }
 
         if (x.TimesPlayed == y.TimesPlayed)
+        {
           return 0;
+        }
+        else if (x.TimesPlayed < y.TimesPlayed)
+        {
+          retval = 1;
+        }
         else
-          if (x.TimesPlayed < y.TimesPlayed)
-            retval = 1;
-          else
-            retval = -1;
+        {
+          retval = -1;
+        }
 
         if (retval != 0)
         {
@@ -92,25 +99,26 @@ namespace MediaPortal.GUI.Music
     }
 
     // add the beginning artist again to avoid drifting away in style.
-    const int REINSERT_AFTER_THIS_MANY_SONGS = 10;
+    private const int REINSERT_AFTER_THIS_MANY_SONGS = 10;
 
     #region Variables
-    MusicDatabase mdb = null;
-    DirectoryHistory m_history = new DirectoryHistory();
-    string m_strDirectory = string.Empty;
-    int m_iItemSelected = -1;
-    int m_iLastControl = 0;
-    int m_nTempPlayListWindow = 0;
-    string m_strTempPlayListDirectory = string.Empty;
-    string m_strCurrentFile = string.Empty;
-    string _currentScrobbleUser = string.Empty;
-    Song _scrobbleStartTrack;
-    VirtualDirectory _virtualDirectory = new VirtualDirectory();
+
+    private MusicDatabase mdb = null;
+    private DirectoryHistory m_history = new DirectoryHistory();
+    private string m_strDirectory = string.Empty;
+    private int m_iItemSelected = -1;
+    private int m_iLastControl = 0;
+    private int m_nTempPlayListWindow = 0;
+    private string m_strTempPlayListDirectory = string.Empty;
+    private string m_strCurrentFile = string.Empty;
+    private string _currentScrobbleUser = string.Empty;
+    private Song _scrobbleStartTrack;
+    private VirtualDirectory _virtualDirectory = new VirtualDirectory();
     //const int MaxNumPShuffleSongPredict = 12;
-    int _totalScrobbledSongs = 0;
-    int _maxScrobbledSongsPerArtist = 1;
-    int _maxScrobbledArtistsForSongs = 4;
-    int _preferCountForTracks = 2;
+    private int _totalScrobbledSongs = 0;
+    private int _maxScrobbledSongsPerArtist = 1;
+    private int _maxScrobbledArtistsForSongs = 4;
+    private int _preferCountForTracks = 2;
     private bool ScrobblerOn = false;
     private bool _enableScrobbling = false;
     private bool _useSimilarRandom = true;
@@ -118,6 +126,7 @@ namespace MediaPortal.GUI.Music
     private List<string> _scrobbleUsers = new List<string>(1);
     private AudioscrobblerUtils ascrobbler = null;
     private ScrobblerUtilsRequest _lastRequest;
+
     #endregion
 
     protected delegate void ThreadRefreshList();
@@ -125,26 +134,26 @@ namespace MediaPortal.GUI.Music
     private ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
     private offlineMode currentOfflineMode = offlineMode.random;
 
-    [SkinControlAttribute(20)] protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)] protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)] protected GUIButtonControl btnClear = null;
-    [SkinControlAttribute(26)] protected GUIButtonControl btnNowPlaying = null;
-    [SkinControlAttribute(27)] protected GUIToggleButtonControl btnScrobble = null;
-    [SkinControlAttribute(28)] protected GUIButtonControl btnScrobbleMode = null;
-    [SkinControlAttribute(29)] protected GUIButtonControl btnScrobbleUser = null;
-    [SkinControlAttribute(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+    [SkinControl(20)] protected GUIButtonControl btnShuffle = null;
+    [SkinControl(21)] protected GUIButtonControl btnSave = null;
+    [SkinControl(22)] protected GUIButtonControl btnClear = null;
+    [SkinControl(26)] protected GUIButtonControl btnNowPlaying = null;
+    [SkinControl(27)] protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControl(28)] protected GUIButtonControl btnScrobbleMode = null;
+    [SkinControl(29)] protected GUIButtonControl btnScrobbleUser = null;
+    [SkinControl(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
 
 
     public GUIMusicPlayList()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
+      GetID = (int) Window.WINDOW_MUSIC_PLAYLIST;
 
       _virtualDirectory.AddDrives();
-      _virtualDirectory.SetExtensions(MediaPortal.Util.Utils.AudioExtensions);
+      _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
     }
 
     private void LoadScrobbleUserSettings()
-    {      
+    {
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
@@ -170,16 +179,18 @@ namespace MediaPortal.GUI.Music
           currentOfflineMode = offlineMode.random;
           break;
       }
-      Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - dynamic playlist inserts: {1}", _currentScrobbleUser, Convert.ToString(ScrobblerOn));
+      Log.Info("GUIMusicPlayList: Scrobblesettings loaded for {0} - dynamic playlist inserts: {1}", _currentScrobbleUser,
+               Convert.ToString(ScrobblerOn));
     }
 
     #region overrides
+
     public override bool Init()
     {
       mdb = MusicDatabase.Instance;
-      m_strDirectory = System.IO.Directory.GetCurrentDirectory();
+      m_strDirectory = Directory.GetCurrentDirectory();
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
@@ -189,7 +200,9 @@ namespace MediaPortal.GUI.Music
       _scrobbleUsers = mdb.GetAllScrobbleUsers();
       // no users in database
       if (_scrobbleUsers.Count > 0 && _enableScrobbling)
+      {
         LoadScrobbleUserSettings();
+      }
 
       ascrobbler = AudioscrobblerUtils.Instance;
       //      ScrobbleLock = new object();
@@ -205,41 +218,51 @@ namespace MediaPortal.GUI.Music
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnNewAction);
 
       if (_lastRequest != null)
+      {
         ascrobbler.RemoveRequest(_lastRequest);
+      }
 
       base.DeInit();
     }
 
     protected override string SerializeName
     {
-      get
-      {
-        return "mymusicplaylist";
-      }
+      get { return "mymusicplaylist"; }
     }
 
     protected override bool AllowView(View view)
     {
       if (view == View.List)
+      {
         return false;
+      }
       if (view == View.Albums)
+      {
         return false;
+      }
       if (view == View.FilmStrip)
+      {
         return false;
+      }
       return true;
     }
 
     // Fires every time - especially ACTION_MUSIC_PLAY even if we're already playing stuff
     private void OnNewAction(Action action)
     {
-      if ((action.wID == Action.ActionType.ACTION_MUSIC_PLAY || action.wID == Action.ActionType.ACTION_PLAY) && GUIWindowManager.ActiveWindow == GetID)
+      if ((action.wID == Action.ActionType.ACTION_MUSIC_PLAY || action.wID == Action.ActionType.ACTION_PLAY) &&
+          GUIWindowManager.ActiveWindow == GetID)
+      {
         try
         {
           // Avoid double action if e.g. jumped to playlist screen.
-          if (base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistAlways && base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistMultipleItems)
+          if (base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistAlways &&
+              base.PlayNowJumpTo != PlayNowJumpToType.CurrentPlaylistMultipleItems)
           {
             if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+            {
               playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+            }
 
             playlistPlayer.Play(facadeView.SelectedListItemIndex);
             bool didJump = DoPlayNowJumpTo(facadeView.Count);
@@ -250,6 +273,7 @@ namespace MediaPortal.GUI.Music
         {
           Log.Error("GUIMusicPlaylist: Error in ACTION_PLAY: {0}", ex.Message);
         }
+      }
     }
 
     public override void OnAction(Action action)
@@ -261,21 +285,27 @@ namespace MediaPortal.GUI.Music
       }
 
       else if (action.wID == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
+      {
         MovePlayListItemUp();
+      }
 
       else if (action.wID == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN)
+      {
         MovePlayListItemDown();
+      }
 
       else if (action.wID == Action.ActionType.ACTION_DELETE_SELECTED_ITEM)
+      {
         DeletePlayListItem();
+      }
 
-    // Handle case where playlist has been stopped and we receive a player action.
-      // This allows us to restart the playback proccess...
+        // Handle case where playlist has been stopped and we receive a player action.
+        // This allows us to restart the playback proccess...
       else if (action.wID == Action.ActionType.ACTION_MUSIC_PLAY
-       || action.wID == Action.ActionType.ACTION_NEXT_ITEM
-       || action.wID == Action.ActionType.ACTION_PAUSE
-       || action.wID == Action.ActionType.ACTION_PREV_ITEM
-     )
+               || action.wID == Action.ActionType.ACTION_NEXT_ITEM
+               || action.wID == Action.ActionType.ACTION_PAUSE
+               || action.wID == Action.ActionType.ACTION_PREV_ITEM
+        )
       {
         if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
         {
@@ -305,10 +335,14 @@ namespace MediaPortal.GUI.Music
       facadeView.View = GUIFacadeControl.ViewMode.Playlist;
 
       if (ScrobblerOn)
+      {
         btnScrobble.Selected = true;
+      }
 
       if (_scrobbleUsers.Count < 2)
+      {
         btnScrobbleUser.Visible = false;
+      }
 
       btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
@@ -327,7 +361,7 @@ namespace MediaPortal.GUI.Music
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
 
-      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
       }
@@ -343,7 +377,7 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
-      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         settings.SetValueAsBool("musicfiles", "repeat", playlistPlayer.RepeatPlaylist);
       }
@@ -351,7 +385,7 @@ namespace MediaPortal.GUI.Music
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
@@ -359,41 +393,49 @@ namespace MediaPortal.GUI.Music
       {
         // no users in database
         if (_scrobbleUsers.Count == 0)
+        {
           return;
+        }
         //for (int i = 0; i < scrobbleusers.Count; i++)       
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
         if (dlg != null)
         {
           dlg.Reset();
-          dlg.SetHeading(GUILocalizeStrings.Get(497));//Menu
+          dlg.SetHeading(GUILocalizeStrings.Get(497)); //Menu
           int selected = 0;
           int count = 0;
           foreach (string scrobbler in _scrobbleUsers)
           {
             dlg.Add(scrobbler);
             if (scrobbler == _currentScrobbleUser)
+            {
               selected = count;
+            }
             count++;
           }
           dlg.SelectedLabel = selected;
         }
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel < 0)
+        {
           return;
+        }
 
         if (_currentScrobbleUser != dlg.SelectedLabelText)
         {
           _currentScrobbleUser = dlg.SelectedLabelText;
           btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
-          AudioscrobblerBase.DoChangeUser(_currentScrobbleUser, mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
+          AudioscrobblerBase.DoChangeUser(_currentScrobbleUser,
+                                          mdb.AddScrobbleUserPassword(
+                                            Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
           LoadScrobbleUserSettings();
           UpdateButtonStates();
         }
 
         GUIControl.FocusControl(GetID, controlId);
         return;
-      }//if (control == btnScrobbleUser)
+      } //if (control == btnScrobbleUser)
 
 
       if (control == btnScrobbleMode)
@@ -402,7 +444,7 @@ namespace MediaPortal.GUI.Music
         do
         {
           shouldContinue = false;
-          GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
           if (dlg != null)
           {
             dlg.Reset();
@@ -420,7 +462,9 @@ namespace MediaPortal.GUI.Music
 
             dlg.DoModal(GetID);
             if (dlg.SelectedLabel < 0)
+            {
               return;
+            }
 
             switch (dlg.SelectedId)
             {
@@ -455,23 +499,25 @@ namespace MediaPortal.GUI.Music
             }
 
             if (currentScrobbleMode == ScrobbleMode.Random)
+            {
               if (currentOfflineMode == offlineMode.favorites)
               {
                 MusicDatabase checkdb = MusicDatabase.Instance;
-                if (checkdb.GetTotalFavorites() <= _maxScrobbledArtistsForSongs * 2)
+                if (checkdb.GetTotalFavorites() <= _maxScrobbledArtistsForSongs*2)
                 {
                   shouldContinue = true;
-                  Log.Warn("Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");
+                  Log.Warn(
+                    "Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");
                 }
               }
+            }
           }
-
         } while (shouldContinue);
 
         CheckScrobbleInstantStart();
         GUIControl.FocusControl(GetID, controlId);
         return;
-      }//if (control == btnScrobbleMode)
+      } //if (control == btnScrobbleMode)
 
       if (control == btnShuffle)
       {
@@ -485,14 +531,14 @@ namespace MediaPortal.GUI.Music
       {
         ClearPlayList();
       }
-      //else if (control == btnPlay)
-      //{
-      //  playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-      //  playlistPlayer.Reset();
-      //  playlistPlayer.Play(facadeView.SelectedListItemIndex);
+        //else if (control == btnPlay)
+        //{
+        //  playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        //  playlistPlayer.Reset();
+        //  playlistPlayer.Play(facadeView.SelectedListItemIndex);
 
-      //  UpdateButtonStates();
-      //}
+        //  UpdateButtonStates();
+        //}
 
       else if (control == btnScrobble)
       {
@@ -505,9 +551,12 @@ namespace MediaPortal.GUI.Music
           CheckScrobbleInstantStart();
         }
         else
+        {
           ScrobblerOn = false;
+        }
 
         if (facadeView.PlayListView != null)
+        {
           //{
           //  // Prevent the currently playing track from being scrolled off the top 
           //  // or bottom of the screen when other items are re-ordered
@@ -515,6 +564,7 @@ namespace MediaPortal.GUI.Music
           //  facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !ScrobblerOn;
           //}
           UpdateButtonStates();
+        }
       }
       else if ((btnRepeatPlaylist != null) && (control == btnRepeatPlaylist))
       {
@@ -556,7 +606,7 @@ namespace MediaPortal.GUI.Music
 
             if (m_iLastControl == facadeView.GetID && facadeView.Count <= 0)
             {
-              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+              if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MUSIC_PLAYLIST)
               {
                 m_iLastControl = btnNowPlaying.GetID;
                 GUIControl.FocusControl(GetID, m_iLastControl);
@@ -573,7 +623,7 @@ namespace MediaPortal.GUI.Music
     protected override void UpdateButtonStates()
     {
       // only update while playlist is visible
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+      if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MUSIC_PLAYLIST)
       {
         if (facadeView != null)
         {
@@ -584,9 +634,13 @@ namespace MediaPortal.GUI.Music
             btnSave.Disabled = false;
 
             if (ScrobblerOn)
+            {
               btnScrobble.Selected = true;
+            }
             else
+            {
               btnScrobble.Selected = false;
+            }
           }
           else
           {
@@ -615,9 +669,13 @@ namespace MediaPortal.GUI.Music
     {
       GUIListItem item = facadeView.SelectedListItem;
       if (item == null)
+      {
         return;
+      }
       if (item.IsFolder)
+      {
         return;
+      }
 
       string strPath = item.Path;
       playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
@@ -653,7 +711,7 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
-    void OnThreadMessage(GUIMessage message)
+    private void OnThreadMessage(GUIMessage message)
     {
       switch (message.Message)
       {
@@ -661,16 +719,17 @@ namespace MediaPortal.GUI.Music
           ClearScrobbleStartTrack();
           break;
 
-        //special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
+          //special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && playlistPlayer.CurrentSong != 0)
           {
             //
           }
           break;
-        // delaying internet lookups for smooth playback start
+          // delaying internet lookups for smooth playback start
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn && _enableScrobbling) // && playlistPlayer.CurrentSong != 0)
+          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn && _enableScrobbling)
+            // && playlistPlayer.CurrentSong != 0)
           {
             DoScrobbleLookups();
           }
@@ -678,10 +737,12 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void OnRetrieveMusicInfo(ref List<GUIListItem> items)
+    private void OnRetrieveMusicInfo(ref List<GUIListItem> items)
     {
       if (items.Count <= 0)
+      {
         return;
+      }
       MusicDatabase dbs = MusicDatabase.Instance;
       Song song = new Song();
       foreach (GUIListItem item in items)
@@ -694,11 +755,10 @@ namespace MediaPortal.GUI.Music
             tag = song.ToMusicTag();
             item.MusicTag = tag;
           }
-          else
-            if (UseID3)
-            {
-              item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
-            }
+          else if (UseID3)
+          {
+            item.MusicTag = TagReader.TagReader.ReadTag(item.Path);
+          }
         }
       }
     }
@@ -728,7 +788,9 @@ namespace MediaPortal.GUI.Music
           /* copy playlist from general playlist*/
           int iCurrentSong = -1;
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+          {
             iCurrentSong = playlistPlayer.CurrentSong;
+          }
 
           string strFileName;
           for (int i = 0; i < playlist.Count; ++i)
@@ -742,7 +804,7 @@ namespace MediaPortal.GUI.Music
             pItem.IsFolder = false;
             //pItem.m_bIsShareOrDrive = false;
 
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            Util.Utils.SetDefaultIcons(pItem);
             if (item.Played)
             {
               pItem.Shaded = true;
@@ -753,23 +815,28 @@ namespace MediaPortal.GUI.Music
               int nDuration = item.Duration;
               if (nDuration > 0)
               {
-                string str = MediaPortal.Util.Utils.SecondsToHMSString(nDuration);
+                string str = Util.Utils.SecondsToHMSString(nDuration);
                 pItem.Label2 = str;
               }
               else
+              {
                 pItem.Label2 = string.Empty;
+              }
             }
-            pItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+            pItem.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             itemlist.Add(pItem);
           }
           OnRetrieveMusicInfo(ref itemlist);
           iCurrentSong = 0;
           strFileName = string.Empty;
           //	Search current playlist item
-          if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 && g_Player.Playing
-            && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
-            || (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC
-            && g_Player.Playing))
+          if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 &&
+               g_Player.Playing
+               && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+              ||
+              (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MUSIC_PLAYLIST &&
+               playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC
+               && g_Player.Playing))
           {
             iCurrentSong = playlistPlayer.CurrentSong;
             if (iCurrentSong >= 0)
@@ -791,7 +858,9 @@ namespace MediaPortal.GUI.Music
             if (tag != null)
             {
               if (tag.Duration > 0)
+              {
                 totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+              }
             }
             facadeView.Add(item);
             //	synchronize playlist with current directory
@@ -805,14 +874,21 @@ namespace MediaPortal.GUI.Music
           {
             GUIListItem rootItem = itemlist[0];
             if (rootItem.Label == "..")
+            {
               iTotalItems--;
+            }
           }
 
           //set object count label
           if (totalPlayingTime.TotalSeconds > 0)
-            GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+          {
+            GUIPropertyManager.SetProperty("#itemcount",
+                                           Util.Utils.GetSongCountLabel(iTotalItems, (int) totalPlayingTime.TotalSeconds));
+          }
           else
+          {
             GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+          }
 
           SetLabels();
           for (int i = 0; i < facadeView.Count; ++i)
@@ -845,35 +921,40 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void ClearScrobbleStartTrack()
+    private void ClearScrobbleStartTrack()
     {
       if (_rememberStartTrack && _scrobbleStartTrack != null)
+      {
         _scrobbleStartTrack = null;
+      }
     }
 
-    void ClearFileItems()
+    private void ClearFileItems()
     {
       GUIControl.ClearControl(GetID, facadeView.GetID);
     }
 
-    void ClearPlayList()
+    private void ClearPlayList()
     {
       ClearFileItems();
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+      {
         playlistPlayer.Reset();
+      }
       ClearScrobbleStartTrack();
       LoadDirectory(string.Empty);
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnNowPlaying.GetID);
-
     }
 
-    void RemovePlayListItem(int iItem)
+    private void RemovePlayListItem(int iItem)
     {
       GUIListItem pItem = facadeView[iItem];
       if (pItem == null)
+      {
         return;
+      }
       string strFileName = pItem.Path;
 
       playlistPlayer.Remove(PlayListType.PLAYLIST_MUSIC, strFileName);
@@ -884,13 +965,15 @@ namespace MediaPortal.GUI.Music
       SelectCurrentPlayingSong();
     }
 
-    void ShufflePlayList()
+    private void ShufflePlayList()
     {
       ClearFileItems();
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
       if (playlist.Count <= 0)
+      {
         return;
+      }
       string strFileName = string.Empty;
       if (playlistPlayer.CurrentSong >= 0)
       {
@@ -902,7 +985,9 @@ namespace MediaPortal.GUI.Music
       }
       playlist.Shuffle();
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+      {
         playlistPlayer.Reset();
+      }
 
       if (strFileName.Length > 0)
       {
@@ -910,24 +995,26 @@ namespace MediaPortal.GUI.Music
         {
           PlayListItem item = playlist[i];
           if (item.FileName == strFileName)
+          {
             playlistPlayer.CurrentSong = i;
+          }
         }
       }
       LoadDirectory(m_strDirectory);
       SelectCurrentPlayingSong();
     }
 
-    void SavePlayList()
+    private void SavePlayList()
     {
       string strNewFileName = string.Empty;
       if (GetKeyboard(ref strNewFileName))
       {
-        string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
+        string strPath = Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = string.Empty;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strPlayListPath = xmlreader.GetValueAsString("music", "playlists", string.Empty);
-          strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(strPlayListPath);
+          strPlayListPath = Util.Utils.RemoveTrailingSlash(strPlayListPath);
         }
 
         strPath += ".m3u";
@@ -951,11 +1038,11 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    void SelectCurrentPlayingSong()
+    private void SelectCurrentPlayingSong()
     {
       if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
       {
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+        if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MUSIC_PLAYLIST)
         {
           // delete prev. selected item
           for (int i = 0; i < facadeView.Count; ++i)
@@ -975,13 +1062,15 @@ namespace MediaPortal.GUI.Music
             GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
             GUIListItem item = facadeView[iSong];
             if (item != null)
+            {
               item.Selected = true;
+            }
           }
         }
       }
     }
 
-    bool AddRandomSongToPlaylist(ref Song song)
+    private bool AddRandomSongToPlaylist(ref Song song)
     {
       //check duplication
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -989,12 +1078,14 @@ namespace MediaPortal.GUI.Music
       {
         PlayListItem item = playlist[i];
         if (item.FileName == song.FileName)
+        {
           return false;
+        }
       }
 
       //add to playlist
       PlayListItem playlistItem = new PlayListItem();
-      playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+      playlistItem.Type = PlayListItem.PlayListItemType.Audio;
       StringBuilder sb = new StringBuilder();
 
       playlistItem.FileName = song.FileName;
@@ -1018,7 +1109,9 @@ namespace MediaPortal.GUI.Music
     private void MovePlayListItemUp()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+      }
 
       if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
@@ -1034,7 +1127,9 @@ namespace MediaPortal.GUI.Music
       int selectedIndex = facadeView.MoveItemUp(iItem, true);
 
       if (iItem == playlistPlayer.CurrentSong)
+      {
         playlistPlayer.CurrentSong = selectedIndex;
+      }
 
       facadeView.SelectedListItemIndex = selectedIndex;
       UpdateButtonStates();
@@ -1043,7 +1138,9 @@ namespace MediaPortal.GUI.Music
     private void MovePlayListItemDown()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+      }
 
       if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
@@ -1059,7 +1156,9 @@ namespace MediaPortal.GUI.Music
       int selectedIndex = facadeView.MoveItemDown(iItem, true);
 
       if (iItem == playlistPlayer.CurrentSong)
+      {
         playlistPlayer.CurrentSong = selectedIndex;
+      }
 
       UpdateButtonStates();
     }
@@ -1067,7 +1166,9 @@ namespace MediaPortal.GUI.Music
     private void DeletePlayListItem()
     {
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+      {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+      }
 
       if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
           || facadeView.View != GUIFacadeControl.ViewMode.Playlist
@@ -1087,28 +1188,38 @@ namespace MediaPortal.GUI.Music
         string nextTrackPath = PlayListPlayer.SingletonPlayer.GetNext();
 
         if (nextTrackPath.Length == 0)
+        {
           g_Player.Stop();
+        }
 
         else
         {
           if (iItem == facadeView.Count)
+          {
             playlistPlayer.Play(iItem - 1);
+          }
 
           else
+          {
             playlistPlayer.PlayNext();
+          }
         }
       }
 
       if (facadeView.Count == 0)
+      {
         g_Player.Stop();
+      }
 
       else
+      {
         facadeView.PlayListView.SelectedListItemIndex = iItem;
+      }
 
       UpdateButtonStates();
     }
 
-    void CheckScrobbleInstantStart()
+    private void CheckScrobbleInstantStart()
     {
       if (ScrobblerOn)
       {
@@ -1123,23 +1234,27 @@ namespace MediaPortal.GUI.Music
           }
         }
         if (playList.Count == 0)
+        {
           if (currentScrobbleMode != ScrobbleMode.Similar)
           {
             DoScrobbleLookups();
           }
+        }
       }
     }
 
     private void UpdateSimilarArtists(string _trackArtist)
     {
       if (_trackArtist == null)
+      {
         return;
+      }
       if (_trackArtist != string.Empty)
       {
         SimilarArtistRequest request2 = new SimilarArtistRequest(
-                      _trackArtist,
-                      _useSimilarRandom,
-                      new SimilarArtistRequest.SimilarArtistRequestHandler(OnUpdateSimilarArtistsCompleted));
+          _trackArtist,
+          _useSimilarRandom,
+          new SimilarArtistRequest.SimilarArtistRequestHandler(OnUpdateSimilarArtistsCompleted));
         _lastRequest = request2;
         ascrobbler.AddRequest(request2);
       }
@@ -1148,8 +1263,8 @@ namespace MediaPortal.GUI.Music
     private void UpdateNeighboursArtists(bool randomizeList)
     {
       NeighboursArtistsRequest request = new NeighboursArtistsRequest(
-                      randomizeList,
-                      new NeighboursArtistsRequest.NeighboursArtistsRequestHandler(OnUpdateNeighboursArtistsCompleted));
+        randomizeList,
+        new NeighboursArtistsRequest.NeighboursArtistsRequestHandler(OnUpdateNeighboursArtistsCompleted));
       _lastRequest = request;
       ascrobbler.AddRequest(request);
     }
@@ -1157,8 +1272,8 @@ namespace MediaPortal.GUI.Music
     private void UpdateFriendsArtists(bool randomizeList)
     {
       FriendsArtistsRequest request = new FriendsArtistsRequest(
-                      randomizeList,
-                      new FriendsArtistsRequest.FriendsArtistsRequestHandler(OnUpdateFriendsArtistsCompleted));
+        randomizeList,
+        new FriendsArtistsRequest.FriendsArtistsRequestHandler(OnUpdateFriendsArtistsCompleted));
       _lastRequest = request;
       ascrobbler.AddRequest(request);
     }
@@ -1166,7 +1281,7 @@ namespace MediaPortal.GUI.Music
     private void UpdateRandomTracks()
     {
       RandomTracksRequest request = new RandomTracksRequest(
-                      new RandomTracksRequest.RandomTracksRequestHandler(OnUpdateRandomTracksCompleted));
+        new RandomTracksRequest.RandomTracksRequestHandler(OnUpdateRandomTracksCompleted));
       _lastRequest = request;
       ascrobbler.AddRequest(request);
     }
@@ -1174,7 +1289,7 @@ namespace MediaPortal.GUI.Music
     private void UpdateUnheardTracks()
     {
       UnheardTracksRequest request = new UnheardTracksRequest(
-                      new UnheardTracksRequest.UnheardTracksRequestHandler(OnUpdateUnheardTracksCompleted));
+        new UnheardTracksRequest.UnheardTracksRequestHandler(OnUpdateUnheardTracksCompleted));
       _lastRequest = request;
       ascrobbler.AddRequest(request);
     }
@@ -1182,12 +1297,12 @@ namespace MediaPortal.GUI.Music
     private void UpdateFavoriteTracks()
     {
       FavoriteTracksRequest request = new FavoriteTracksRequest(
-                      new FavoriteTracksRequest.FavoriteTracksRequestHandler(OnUpdateFavoriteTracksCompleted));
+        new FavoriteTracksRequest.FavoriteTracksRequestHandler(OnUpdateFavoriteTracksCompleted));
       _lastRequest = request;
       ascrobbler.AddRequest(request);
     }
 
-    void DoScrobbleLookups()
+    private void DoScrobbleLookups()
     {
       PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
@@ -1200,6 +1315,7 @@ namespace MediaPortal.GUI.Music
       {
         case ScrobbleMode.Similar:
           if (_rememberStartTrack && _scrobbleStartTrack != null)
+          {
             if (_totalScrobbledSongs > REINSERT_AFTER_THIS_MANY_SONGS)
             {
               _totalScrobbledSongs = 0;
@@ -1208,6 +1324,7 @@ namespace MediaPortal.GUI.Music
               scrobbledArtists.Add(tmpArtist);
               break;
             }
+          }
           string strFile = string.Empty;
           if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != string.Empty && g_Player.IsMusic)
           {
@@ -1217,7 +1334,9 @@ namespace MediaPortal.GUI.Music
             if (songFound)
             {
               if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == string.Empty)
+              {
                 _scrobbleStartTrack = current10SekSong.Clone();
+              }
 
               try
               {
@@ -1229,7 +1348,6 @@ namespace MediaPortal.GUI.Music
               {
                 Log.Error("ScrobbleLookupThread: exception on lookup Similar - {0}", ex.Message);
               }
-
             }
           }
           break;
@@ -1294,60 +1412,91 @@ namespace MediaPortal.GUI.Music
     public void OnUpdateSimilarArtistsCompleted(SimilarArtistRequest request2, List<Song> SimilarArtists)
     {
       if (request2.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(SimilarArtists);
+      }
       else
-        Log.Warn("GUIMusicPlaylist: OnUpdateSimilarArtistsCompleted: unexpected response for request: {0}", request2.Type);
+      {
+        Log.Warn("GUIMusicPlaylist: OnUpdateSimilarArtistsCompleted: unexpected response for request: {0}",
+                 request2.Type);
+      }
     }
 
     public void OnUpdateNeighboursArtistsCompleted(NeighboursArtistsRequest request, List<Song> NeighboursArtists)
     {
       if (request.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(NeighboursArtists);
+      }
       else
-        Log.Warn("GUIMusicPlaylist: OnUpdateNeighboursArtistsCompleted: unexpected response for request: {0}", request.Type);
+      {
+        Log.Warn("GUIMusicPlaylist: OnUpdateNeighboursArtistsCompleted: unexpected response for request: {0}",
+                 request.Type);
+      }
     }
 
     public void OnUpdateFriendsArtistsCompleted(FriendsArtistsRequest request, List<Song> FriendsArtists)
     {
       if (request.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(FriendsArtists);
+      }
       else
+      {
         Log.Warn("GUIMusicPlaylist: OnUpdateFriendsArtistsCompleted: unexpected response for request: {0}", request.Type);
+      }
     }
 
     public void OnUpdateRandomTracksCompleted(RandomTracksRequest request, List<Song> RandomTracks)
     {
       if (request.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(RandomTracks);
+      }
       else
+      {
         Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
+      }
     }
 
     public void OnUpdateUnheardTracksCompleted(UnheardTracksRequest request, List<Song> UnheardTracks)
     {
       if (request.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(UnheardTracks);
+      }
       else
+      {
         Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
+      }
     }
 
     public void OnUpdateFavoriteTracksCompleted(FavoriteTracksRequest request, List<Song> FavoriteTracks)
     {
       if (request.Equals(_lastRequest))
+      {
         OnScrobbleLookupsCompleted(FavoriteTracks);
+      }
       else
+      {
         Log.Warn("GUIMusicPlaylist: OnUpdateRandomTracksCompleted: unexpected response for request: {0}", request.Type);
+      }
     }
 
-    void OnScrobbleLookupsCompleted(List<Song> LookupArtists)
+    private void OnScrobbleLookupsCompleted(List<Song> LookupArtists)
     {
-      Log.Debug("GUIMusicPlaylist: OnScrobbleLookupsCompleted - processing {0} results", Convert.ToString(LookupArtists.Count));
+      Log.Debug("GUIMusicPlaylist: OnScrobbleLookupsCompleted - processing {0} results",
+                Convert.ToString(LookupArtists.Count));
 
       if (LookupArtists.Count < _maxScrobbledArtistsForSongs)
       {
         if (LookupArtists.Count > 0)
+        {
           for (int i = 0; i < LookupArtists.Count; i++)
+          {
             ScrobbleSimilarArtists(LookupArtists[i].Artist);
+          }
+        }
       }
       else // enough artists
       {
@@ -1358,10 +1507,13 @@ namespace MediaPortal.GUI.Music
         while (addedSimilarSongs < _maxScrobbledArtistsForSongs)
         {
           if (ScrobbleSimilarArtists(LookupArtists[loops].Artist))
+          {
             addedSimilarSongs++;
+          }
           loops++;
           // okay okay seems like there aren't enough files to add
           if (loops == LookupArtists.Count - 1)
+          {
             // make sure we get a few songs at least...
             //if (_preferCountForTracks != 2)
             //{
@@ -1371,19 +1523,20 @@ namespace MediaPortal.GUI.Music
             //}
             //else
             break;
+          }
         }
         _preferCountForTracks = previouspreferCount;
       }
 
       GUIGraphicsContext.form.Invoke(new ThreadRefreshList(DoRefreshList));
     }
-    
+
     private void DoRefreshList()
     {
       if (facadeView != null)
       {
         // only focus the file while playlist is visible
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
+        if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_MUSIC_PLAYLIST)
         {
           LoadDirectory(string.Empty);
           SelectCurrentPlayingSong();
@@ -1395,7 +1548,7 @@ namespace MediaPortal.GUI.Music
     {
       MusicDatabase dbs = MusicDatabase.Instance;
       PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      List<Song> songList = new List<Song>();      
+      List<Song> songList = new List<Song>();
       double avgPlayCount = 0;
       int songsAdded = 0;
       int j = 0;
@@ -1406,7 +1559,9 @@ namespace MediaPortal.GUI.Music
 
       // exit if not enough songs were found
       if (songList.Count < _maxScrobbledSongsPerArtist)
+      {
         return false;
+      }
 
       // lookup how many times this artist's songs were played
       avgPlayCount = dbs.GetAveragePlayCountForArtist(Artist_);
@@ -1416,35 +1571,49 @@ namespace MediaPortal.GUI.Music
         case 0:
           // delete all heard songs
           for (int s = 0; s < songList.Count; s++)
+          {
             if (songList[s].TimesPlayed > 0)
             {
               songList.Remove(songList[s]);
               s--;
             }
+          }
           break;
         case 1:
           // delete all well known songs
           if (avgPlayCount < 0.5)
+          {
             goto case 0;
+          }
           else
+          {
             for (int s = 0; s < songList.Count; s++)
+            {
               // song was played more often than average
               if (songList[s].TimesPlayed > avgPlayCount)
+              {
                 // give 1x played songs a chance...
                 if (songList[s].TimesPlayed > 1)
+                {
                   songList.Remove(songList[s]);
+                }
+              }
+            }
+          }
           break;
         case 2:
           break;
         case 3:
           // only well known songs
           for (int s = 0; s < songList.Count; s++)
+          {
             // delete all rarely heard songs
             if (songList[s].TimesPlayed < avgPlayCount)
             {
               songList.Remove(songList[s]);
               s--;
             }
+          }
 
           // get new average playcount of remaining files
           if (songList.Count > 0)
@@ -1459,12 +1628,14 @@ namespace MediaPortal.GUI.Music
 
             int songListCount = songList.Count;
             for (int s = 0; s < songListCount; s++)
+            {
               if (songList[s].TimesPlayed < avgOfKnownSongs)
               {
                 songList.Remove(songList[s]);
                 songListCount = songList.Count;
                 s--;
               }
+            }
           }
           //songList.Sort(CompareSongsByTimesPlayed);
           break;
@@ -1472,18 +1643,24 @@ namespace MediaPortal.GUI.Music
 
       // check if there are still enough songs
       if (songList.Count < _maxScrobbledSongsPerArtist)
+      {
         return false;
+      }
 
       PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
-      
+
       int randomPosition;
 
       while (songsAdded < _maxScrobbledSongsPerArtist)
       {
         if (_preferCountForTracks == 3)
-          randomPosition = rand.Next(0, songList.Count / 2);
+        {
+          randomPosition = rand.Next(0, songList.Count/2);
+        }
         else
+        {
           randomPosition = rand.Next(0, songList.Count - 1);
+        }
 
         Song refSong = new Song();
 
@@ -1499,8 +1676,10 @@ namespace MediaPortal.GUI.Music
 
         j++;
 
-        if (j > songList.Count * 5)
+        if (j > songList.Count*5)
+        {
           break;
+        }
       }
       // _maxScrobbledSongsPerArtist are inserted      
       return true;
@@ -1519,18 +1698,22 @@ namespace MediaPortal.GUI.Music
             bool dirtyTag = false;
             if (item.MusicTag != null)
             {
-              tag = (MusicTag)item.MusicTag;
+              tag = (MusicTag) item.MusicTag;
 
               if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == string.Empty)
+              {
                 dirtyTag = true;
+              }
             }
             else
+            {
               dirtyTag = true;
+            }
 
             if (tag != null && !dirtyTag)
             {
               int playCount = tag.TimesPlayed;
-              string duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+              string duration = Util.Utils.SecondsToHMSString(tag.Duration);
               item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
               item.Label2 = duration;
             }
@@ -1545,10 +1728,10 @@ namespace MediaPortal.GUI.Music
         }
         catch (Exception ex)
         {
-          Log.Error("GUIMusicPlaylist: exception occured - item without Albumtag? - {0} / {1}", ex.Message, ex.StackTrace);
+          Log.Error("GUIMusicPlaylist: exception occured - item without Albumtag? - {0} / {1}", ex.Message,
+                    ex.StackTrace);
         }
       }
     }
-
   }
 }

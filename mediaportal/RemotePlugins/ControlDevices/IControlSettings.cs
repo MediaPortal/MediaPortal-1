@@ -23,44 +23,23 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 
 namespace MediaPortal.ControlDevices
 {
   public interface IControlSettings
   {
-    bool Enabled
-    {
-      set;
-      get;
-    }
+    bool Enabled { set; get; }
 
-    bool EnableInput
-    {
-      set;
-      get;
-    }
+    bool EnableInput { set; get; }
 
-    bool EnableOutput
-    {
-      set;
-      get;
-    }
+    bool EnableOutput { set; get; }
 
-    bool Verbose
-    {
-      set;
-      get;
-    }
+    bool Verbose { set; get; }
 
-    string Prefix
-    {
-      get;
-    }
+    string Prefix { get; }
 
-    System.Windows.Forms.UserControl SettingsPanel { get; }
+    UserControl SettingsPanel { get; }
 
     void Load();
 

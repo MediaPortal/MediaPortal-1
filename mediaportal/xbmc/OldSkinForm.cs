@@ -23,61 +23,66 @@
 
 #endregion
 
+using System;
+using System.ComponentModel;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal
 {
-	/// <summary>
-	/// Summary description for OldSkinForm.
-	/// </summary>
-	public class OldSkinForm : MediaPortal.UserInterface.Controls.MPForm
-	{
-		private MediaPortal.UserInterface.Controls.MPLabel label1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIgnoreMsg;
-    private MediaPortal.UserInterface.Controls.MPButton bClose;
-    private System.ComponentModel.IContainer components;
-    private System.Windows.Forms.Timer CloseTimer;
+  /// <summary>
+  /// Summary description for OldSkinForm.
+  /// </summary>
+  public class OldSkinForm : MPForm
+  {
+    private MPLabel label1;
+    private MPCheckBox checkBoxIgnoreMsg;
+    private MPButton bClose;
+    private IContainer components;
+    private Timer CloseTimer;
 
     private int _nagCount = 0;
     private int _CloseInSeconds = 15;
 
-		public OldSkinForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public OldSkinForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.components = new System.ComponentModel.Container();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxIgnoreMsg = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -87,13 +92,14 @@ namespace MediaPortal
       // 
       // label1
       // 
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular,
+                                                 System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       this.label1.Location = new System.Drawing.Point(29, 19);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(291, 106);
       this.label1.TabIndex = 0;
       this.label1.Text = "The currently selected skin is outdated.\r\n\r\nThis will cause problems when using M" +
-          "P!\r\n\r\n(Do NOT file bugreports using this skin)";
+                         "P!\r\n\r\n(Do NOT file bugreports using this skin)";
       // 
       // checkBoxIgnoreMsg
       // 
@@ -137,57 +143,67 @@ namespace MediaPortal
       this.Text = "Warning! Outdated skin!";
       this.ResumeLayout(false);
       this.PerformLayout();
+    }
 
-		}
-		#endregion
+    #endregion
 
-		private void bClose_Click(object sender, System.EventArgs e)
-		{
+    private void bClose_Click(object sender, EventArgs e)
+    {
       _nagCount++;
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         xmlwriter.SetValueAsBool("general", "dontshowskinversion", checkBoxIgnoreMsg.Checked);
         xmlwriter.SetValue("general", "skinobsoletecount", _nagCount);
-			}
-			this.Close();
-		}
-		
-		public bool CheckSkinVersion(string skin)
-		{
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				bool ignoreErrors=false;
-				ignoreErrors=xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
+      }
+      this.Close();
+    }
+
+    public bool CheckSkinVersion(string skin)
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        bool ignoreErrors = false;
+        ignoreErrors = xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
         _nagCount = xmlreader.GetValueAsInt("general", "skinobsoletecount", 0);
-				if (ignoreErrors) return true;
-			}
+        if (ignoreErrors)
+        {
+          return true;
+        }
+      }
       checkBoxIgnoreMsg.Visible = _nagCount > 4 ? true : false;
 
-			string versionBlue3Skin="";
-			string versionSkin="";
-			string filename= Config.GetFile(Config.Dir.Skin, "Blue3", "references.xml");
-			if(File.Exists(filename))
-			{	
-				XmlDocument doc=new XmlDocument();
-				doc.Load(filename);
-				XmlNode node=doc.SelectSingleNode("/controls/skin/version");
-				if (node!=null && node.InnerText!=null)
-					versionBlue3Skin=node.InnerText;
-			}
+      string versionBlue3Skin = "";
+      string versionSkin = "";
+      string filename = Config.GetFile(Config.Dir.Skin, "Blue3", "references.xml");
+      if (File.Exists(filename))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+        XmlNode node = doc.SelectSingleNode("/controls/skin/version");
+        if (node != null && node.InnerText != null)
+        {
+          versionBlue3Skin = node.InnerText;
+        }
+      }
       filename = Config.GetFile(Config.Dir.Skin, skin, "references.xml");
-			if(File.Exists(filename))
-			{	
-				XmlDocument doc=new XmlDocument();
-				doc.Load(filename);
-				XmlNode node=doc.SelectSingleNode("/controls/skin/version");
-				if (node!=null && node.InnerText!=null)
-					versionSkin=node.InnerText;
-			}
-			if (versionBlue3Skin==versionSkin) return true;
-			return false;
-		}
+      if (File.Exists(filename))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+        XmlNode node = doc.SelectSingleNode("/controls/skin/version");
+        if (node != null && node.InnerText != null)
+        {
+          versionSkin = node.InnerText;
+        }
+      }
+      if (versionBlue3Skin == versionSkin)
+      {
+        return true;
+      }
+      return false;
+    }
 
-    private void CloseTimer_Tick(object sender, System.EventArgs e)
+    private void CloseTimer_Tick(object sender, EventArgs e)
     {
       _CloseInSeconds--;
       if (_CloseInSeconds > 0)
@@ -200,5 +216,5 @@ namespace MediaPortal
         bClose_Click(sender, e);
       }
     }
-	}
+  }
 }

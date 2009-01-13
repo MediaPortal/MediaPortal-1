@@ -24,31 +24,30 @@
 #endregion
 
 using System;
-using System.Xml;
-using System.Drawing;
-using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using MediaPortal.TV.Database;
+using System.Xml;
 using MediaPortal.Radio.Database;
+using MediaPortal.TV.Database;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>
   /// Summary description for TvChannelLookupService.
   /// </summary>
-  public class TvChannelLookupService : MediaPortal.UserInterface.Controls.MPConfigForm
+  public class TvChannelLookupService : MPConfigForm
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton button1;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCountries;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
-    XmlDocument docSetup;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPButton button1;
+    private MPComboBox cbCountries;
+    private MPComboBox cbCities;
+    private XmlDocument docSetup;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public TvChannelLookupService()
     {
@@ -78,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -145,11 +145,11 @@ namespace MediaPortal.Configuration.Sections
       this.Text = "TV Channel Lookup Service";
       this.Load += new System.EventHandler(this.TvChannelLookupService_Load);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void TvChannelLookupService_Load(object sender, System.EventArgs e)
+    private void TvChannelLookupService_Load(object sender, EventArgs e)
     {
       cbCountries.Items.Clear();
       cbCities.Items.Clear();
@@ -163,13 +163,15 @@ namespace MediaPortal.Configuration.Sections
       }
 
       if (cbCountries.Items.Count > 0 && cbCountries.SelectedIndex < 0)
+      {
         cbCountries.SelectedIndex = 0;
+      }
       FillInCities();
     }
 
-    void FillInCities()
+    private void FillInCities()
     {
-      string country = (string)cbCountries.SelectedItem;
+      string country = (string) cbCountries.SelectedItem;
       cbCities.Items.Clear();
       XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
       foreach (XmlNode nodeCountry in listCountries)
@@ -187,13 +189,15 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       if (cbCities.Items.Count > 0 && cbCities.SelectedIndex < 0)
+      {
         cbCities.SelectedIndex = 0;
+      }
     }
 
-    private void button1_Click(object sender, System.EventArgs e)
+    private void button1_Click(object sender, EventArgs e)
     {
-      string country = (string)cbCountries.SelectedItem;
-      string city = (string)cbCities.SelectedItem;
+      string country = (string) cbCountries.SelectedItem;
+      string city = (string) cbCities.SelectedItem;
       XmlDocument doc = new XmlDocument();
       doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
       XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
@@ -217,7 +221,8 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-    void ImportAnalogChannels(string xmlFile)
+
+    private void ImportAnalogChannels(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
       UriBuilder builder = new UriBuilder("http", "www.team-mediaportal.com", 80, "tvsetup/analog/" + xmlFile);
@@ -235,13 +240,16 @@ namespace MediaPortal.Configuration.Sections
         {
           chan.Number = Int32.Parse(number.Value);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         try
         {
-
           chan.Frequency = ConvertToTvFrequency(frequency.Value, ref chan);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
         TVDatabase.AddChannel(chan);
       }
       XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
@@ -255,22 +263,35 @@ namespace MediaPortal.Configuration.Sections
         RadioDatabase.AddStation(ref chan);
       }
     }
-    long ConvertToFrequency(string frequency)
+
+    private long ConvertToFrequency(string frequency)
     {
-      if (frequency.Trim() == string.Empty) return 0;
+      if (frequency.Trim() == string.Empty)
+      {
+        return 0;
+      }
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
-      if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
-      if (usage.IndexOf(",") >= 0) frequency = frequency.Replace(".", ",");
+      if (usage.IndexOf(".") >= 0)
+      {
+        frequency = frequency.Replace(",", ".");
+      }
+      if (usage.IndexOf(",") >= 0)
+      {
+        frequency = frequency.Replace(".", ",");
+      }
       double freqValue = Convert.ToDouble(frequency);
       freqValue *= 1000000;
-      return (long)(freqValue);
+      return (long) (freqValue);
     }
 
 
-    long ConvertToTvFrequency(string frequency, ref TVChannel chan)
+    private long ConvertToTvFrequency(string frequency, ref TVChannel chan)
     {
-      if (frequency.Trim() == string.Empty) return 0;
+      if (frequency.Trim() == string.Empty)
+      {
+        return 0;
+      }
       chan.Number = TVDatabase.FindFreeTvChannelNumber(chan.Number);
       frequency = frequency.ToUpper();
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
@@ -283,14 +304,20 @@ namespace MediaPortal.Configuration.Sections
 
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
-      if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
-      if (usage.IndexOf(",") >= 0) frequency = frequency.Replace(".", ",");
+      if (usage.IndexOf(".") >= 0)
+      {
+        frequency = frequency.Replace(",", ".");
+      }
+      if (usage.IndexOf(",") >= 0)
+      {
+        frequency = frequency.Replace(".", ",");
+      }
       double freqValue = Convert.ToDouble(frequency);
       freqValue *= 1000000;
-      return (long)(freqValue);
+      return (long) (freqValue);
     }
 
-    private void cbCountries_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void cbCountries_SelectedIndexChanged(object sender, EventArgs e)
     {
       FillInCities();
     }

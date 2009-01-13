@@ -24,15 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using Un4seen.Bass;
+using MediaPortal.Profile;
 using Un4seen.BassAsio;
 
 namespace MediaPortal.Configuration.Sections
@@ -40,6 +34,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class MusicASIO : SectionSettings
   {
     #region Constructors/Destructors
+
     public MusicASIO()
       : this("Music ASIO")
     {
@@ -50,9 +45,11 @@ namespace MediaPortal.Configuration.Sections
     {
       InitializeComponent();
     }
+
     #endregion
 
     #region Private Methods
+
     private void useASIOCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       asioDeviceComboBox.Items.Clear();
@@ -60,16 +57,16 @@ namespace MediaPortal.Configuration.Sections
       if (useASIOCheckBox.Checked)
       {
         // We must not have checked the "Upmixing" checkbox in the Music setting the same time
-        SectionSettings section = SectionSettings.GetSection("Music");
+        SectionSettings section = GetSection("Music");
 
         if (section != null)
         {
-          bool mixing = (bool)section.GetSetting("mixing");
+          bool mixing = (bool) section.GetSetting("mixing");
           if (mixing)
           {
             useASIOCheckBox.Checked = false;
             MessageBox.Show(this, "ASIO and Upmixing (in the Music Tab) must not be used at the same time",
-                "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           }
         }
 
@@ -100,22 +97,25 @@ namespace MediaPortal.Configuration.Sections
       {
         BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
         if (info != null)
+        {
           lbNumberOfChannels.Text = String.Format("Selected device has {0} output channel(s).", info.outputs);
+        }
         else
+        {
           lbNumberOfChannels.Text = "Couldn't get channel information for selected device";
+        }
       }
       else
       {
         MessageBox.Show(this, "Error initialising the selected ASIO device",
-              "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
 
     private void hScrollBarBalance_ValueChanged(object sender, EventArgs e)
     {
-      double balance = (double)hScrollBarBalance.Value / 100.0;
+      double balance = (double) hScrollBarBalance.Value/100.0;
       lbBalance.Text = String.Format("{0}", balance);
-
     }
 
     private void btSettings_Click(object sender, EventArgs e)
@@ -123,27 +123,29 @@ namespace MediaPortal.Configuration.Sections
       if (!BassAsio.BASS_ASIO_ControlPanel())
       {
         MessageBox.Show(this, "Selected ASIO device does not have a Control Panel",
-              "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
+
     #endregion
 
     #region SectionSettings Overloads
+
     public override void OnSectionActivated()
     {
       //
       // Disable the complete Page, when the Music Player is not the BASS engine
       //
-      SectionSettings section = SectionSettings.GetSection("Music");
+      SectionSettings section = GetSection("Music");
 
       if (section != null)
       {
-        string player = (string)section.GetSetting("audioPlayer");
+        string player = (string) section.GetSetting("audioPlayer");
         if (player.IndexOf("BASS") == -1)
         {
           this.Enabled = false;
           MessageBox.Show(this, "ASIO is only available with the BASS music player selected.",
-              "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                          "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
         else
         {
@@ -157,7 +159,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool _useASIO = xmlreader.GetValueAsBool("audioplayer", "asio", false);
         string _asioDeviceSelected = xmlreader.GetValueAsString("audioplayer", "asiodevice", "None");
@@ -183,7 +185,9 @@ namespace MediaPortal.Configuration.Sections
             asioDeviceComboBox.SelectedItem = _asioDeviceSelected;
           }
           else
+          {
             Log.Warn("Selected ASIO Device not found. {0}", _asioDeviceSelected);
+          }
         }
         else
         {
@@ -198,15 +202,19 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // Player Settings
         xmlwriter.SetValueAsBool("audioplayer", "asio", useASIOCheckBox.Checked);
 
         if (useASIOCheckBox.Checked)
+        {
           xmlwriter.SetValue("audioplayer", "asiodevice", asioDeviceComboBox.Text);
+        }
         else
+        {
           xmlwriter.SetValue("audioplayer", "asiodevice", "None");
+        }
 
         xmlwriter.SetValue("audioplayer", "asiobalance", hScrollBarBalance.Value);
       }
@@ -227,6 +235,7 @@ namespace MediaPortal.Configuration.Sections
 
       return null;
     }
+
     #endregion
   }
 }

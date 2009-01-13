@@ -25,161 +25,156 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Configuration;
-using System.Threading;
-using System.Text;
-using System.IO;
-using Microsoft.Win32;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.Globalization;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.MPExTuneCmd
 {
-	/// <summary>
-	/// Summary description for MPExTuneCmd.
-	/// </summary>
-	public class MPExTuneCmd: IPlugin, ISetupForm
-	{
-		public static int WINDOW_MPExTuneCmd = 9099;	// a window ID shouldn't be needed when a non visual plugin ?!
-		private static string s_TuneCmd		= "";
-		private static string s_TuneParam	= "";
-		private const string  s_version     = "0.1";
+  /// <summary>
+  /// Summary description for MPExTuneCmd.
+  /// </summary>
+  public class MPExTuneCmd : IPlugin, ISetupForm
+  {
+    public static int WINDOW_MPExTuneCmd = 9099; // a window ID shouldn't be needed when a non visual plugin ?!
+    private static string s_TuneCmd = "";
+    private static string s_TuneParam = "";
+    private const string s_version = "0.1";
 
-		public MPExTuneCmd()
+    public MPExTuneCmd()
     {
-		}
+    }
 
-		public void Start()
-		{
-			Log.Info("MPExTuneCmd {0} plugin starting.",s_version);
+    public void Start()
+    {
+      Log.Info("MPExTuneCmd {0} plugin starting.", s_version);
 
-			LoadSettings();
+      LoadSettings();
 
-			Log.Info("Adding message handler for MPExTuneCmd {0}.",s_version);
+      Log.Info("Adding message handler for MPExTuneCmd {0}.", s_version);
 
-			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
-			return;
-		}
+      GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
+      return;
+    }
 
-		public void Stop()
-		{
-			Log.Info("MPExTuneCmd {0} plugin stopping.",s_version);
-			return;
-		}
+    public void Stop()
+    {
+      Log.Info("MPExTuneCmd {0} plugin stopping.", s_version);
+      return;
+    }
 
-		private void LoadSettings()
-		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-				s_TuneCmd = xmlreader.GetValueAsString("MPExTuneCmd","commandloc","C:\\dtvcon\\dtvcmd.exe");
-				s_TuneParam = xmlreader.GetValueAsString("MPExTuneCmd","commanddelim","");
-			}
-		}
-		
-		private void OnThreadMessage(GUIMessage message)
-		{
-			switch (message.Message)
-			{
-				case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL : 
-					bool bIsInteger;
-					double retNum;	
-					bIsInteger = Double.TryParse(message.Label, System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out retNum );
-					this.ChangeTunerChannel( message.Label );
-					break;
-			}
-		}
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        s_TuneCmd = xmlreader.GetValueAsString("MPExTuneCmd", "commandloc", "C:\\dtvcon\\dtvcmd.exe");
+        s_TuneParam = xmlreader.GetValueAsString("MPExTuneCmd", "commanddelim", "");
+      }
+    }
 
-		public void ChangeTunerChannel(string channel_data) 
-		{
-			Log.Info("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data );
-			this.RunProgram(s_TuneCmd, s_TuneParam + channel_data );
+    private void OnThreadMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL:
+          bool bIsInteger;
+          double retNum;
+          bIsInteger = Double.TryParse(message.Label, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out retNum);
+          this.ChangeTunerChannel(message.Label);
+          break;
+      }
+    }
 
-		}
+    public void ChangeTunerChannel(string channel_data)
+    {
+      Log.Info("MPExTuneCmd processing external tuner cmd: {0}", s_TuneCmd + " " + s_TuneParam + channel_data);
+      this.RunProgram(s_TuneCmd, s_TuneParam + channel_data);
+    }
 
-		/// <summary>
-		/// Runs a particular program in the local file system
-		/// </summary>
-		/// <param name="exeName"></param>
-		/// <param name="argsLine"></param>
-		private void RunProgram(string exeName, string argsLine)
-		{
-			ProcessStartInfo psI = new ProcessStartInfo(exeName, argsLine);
-			Process newProcess = new Process();
+    /// <summary>
+    /// Runs a particular program in the local file system
+    /// </summary>
+    /// <param name="exeName"></param>
+    /// <param name="argsLine"></param>
+    private void RunProgram(string exeName, string argsLine)
+    {
+      ProcessStartInfo psI = new ProcessStartInfo(exeName, argsLine);
+      Process newProcess = new Process();
 
-			try
-			{
-				newProcess.StartInfo.FileName = exeName;
-				newProcess.StartInfo.Arguments = argsLine;
-				newProcess.StartInfo.UseShellExecute = true;
-				newProcess.StartInfo.CreateNoWindow = true;
-				newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				newProcess.Start();
-			}
+      try
+      {
+        newProcess.StartInfo.FileName = exeName;
+        newProcess.StartInfo.Arguments = argsLine;
+        newProcess.StartInfo.UseShellExecute = true;
+        newProcess.StartInfo.CreateNoWindow = true;
+        newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+        newProcess.Start();
+      }
 
-			catch(Exception e)
-			{
-				throw e;
-			}
-		}
+      catch (Exception e)
+      {
+        throw e;
+      }
+    }
 
-		#region ISetupForm Members
+    #region ISetupForm Members
 
+    public bool CanEnable()
+    {
+      return true;
+    }
 
-		public bool CanEnable()
-		{
-			return true;
-		}
+    public string PluginName()
+    {
+      return "MPExTuneCmd";
+    }
 
-		public string PluginName()
-		{
-			return "MPExTuneCmd";
-		}
+    public bool HasSetup()
+    {
+      return true;
+    }
 
-		public bool HasSetup()
-		{
-			return true;
-		}
-		public bool DefaultEnabled()
-		{
-			return false;
-		}
+    public bool DefaultEnabled()
+    {
+      return false;
+    }
 
-		public int GetWindowId()
-		{
-			return WINDOW_MPExTuneCmd;
-		}
+    public int GetWindowId()
+    {
+      return WINDOW_MPExTuneCmd;
+    }
 
-		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-		{
-			strButtonText = "MPExTuneCmd Plugin";
-			strButtonImage = "";
-			strButtonImageFocus = "";
-			strPictureImage = "";
-			return false;
-		}
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
+    {
+      strButtonText = "MPExTuneCmd Plugin";
+      strButtonImage = "";
+      strButtonImageFocus = "";
+      strPictureImage = "";
+      return false;
+    }
 
-		public string Author()
-		{
-			return "901Racer";
-		}
+    public string Author()
+    {
+      return "901Racer";
+    }
 
-		public string Description()
-		{
-			return "Controls your external tuner";
-		}
+    public string Description()
+    {
+      return "Controls your external tuner";
+    }
 
-		/// <summary>
-		/// This method is called by the plugin screen to show the configuration for the foobar plugin
-		/// </summary>
-		public void ShowPlugin()
-		{ 
-			System.Windows.Forms.Form setup = new MPExTuneCmdForm();
-			setup.ShowDialog();
-		}
-		
+    /// <summary>
+    /// This method is called by the plugin screen to show the configuration for the foobar plugin
+    /// </summary>
+    public void ShowPlugin()
+    {
+      Form setup = new MPExTuneCmdForm();
+      setup.ShowDialog();
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

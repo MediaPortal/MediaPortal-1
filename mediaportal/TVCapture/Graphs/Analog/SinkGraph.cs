@@ -24,24 +24,21 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using System.Runtime.InteropServices;
+using System.Drawing;
 using System.Threading;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
-using MediaPortal.Services;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.GUI.Library;
-using Microsoft.Win32;
-using MediaPortal.TV.Database;
-using MediaPortal.Radio.Database;
-using Toub.MediaCenter.Dvrms.Metadata;
-using MediaPortal.TV.Teletext;
 using MediaPortal.Configuration;
-using System.Text;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Radio.Database;
+using MediaPortal.Services;
+using MediaPortal.TV.Database;
+using MediaPortal.TV.Teletext;
+using Microsoft.Win32;
 
 namespace MediaPortal.TV.Recording
 {
@@ -64,7 +61,8 @@ namespace MediaPortal.TV.Recording
       Recording,
       Viewing,
       Radio
-    };
+    } ;
+
     protected int _cardId = -1;
     protected string _videoCaptureFilterName = "";
     protected TVCaptureDevice _card;
@@ -78,7 +76,7 @@ namespace MediaPortal.TV.Recording
     protected IAMAnalogVideoDecoder _analogVideoDecoderInterface = null;
     protected VideoCaptureDevice _videoCaptureHelper = null;
     protected MPEG2Demux _mpeg2DemuxHelper = null;
-    protected DsROTEntry _rotEntry = null;			// Cookie into the Running Object Table
+    protected DsROTEntry _rotEntry = null; // Cookie into the Running Object Table
     protected State _graphState = State.None;
     protected int _channelNumber = -1;
     protected int _countryCode = 31;
@@ -89,13 +87,13 @@ namespace MediaPortal.TV.Recording
     protected double _frameRate;
     protected VideoProcAmp _videoProcAmpHelper = null;
     protected VMR9Util _vmr9 = null;
-    DateTime _signalLostTimer;
+    private DateTime _signalLostTimer;
     protected string _cardName;
-    ArrayList _listAudioPids = new ArrayList();
-    int _selectedAudioLanguage = 11; // multiple channel support =1;
+    private ArrayList _listAudioPids = new ArrayList();
+    private int _selectedAudioLanguage = 11; // multiple channel support =1;
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
-    bool _isTuning = false;
+    private bool _isTuning = false;
     protected string _TVTunerMoniker = string.Empty;
     protected string _lastError = string.Empty;
 
@@ -105,7 +103,8 @@ namespace MediaPortal.TV.Recording
     /// <param name="countryCode">country code</param>
     /// <param name="cable">use Cable or antenna</param>
     /// <param name="videoCaptureFilter">Filter name of the capture device</param>
-    public SinkGraph( int ID, int countryCode, bool cable, string videoCaptureFilter, Size frameSize, double frameRate, string friendlyName )
+    public SinkGraph(int ID, int countryCode, bool cable, string videoCaptureFilter, Size frameSize, double frameRate,
+                     string friendlyName)
     {
       _cardName = friendlyName;
       _cardId = ID;
@@ -116,18 +115,24 @@ namespace MediaPortal.TV.Recording
       _sizeFrame = frameSize;
       _frameRate = frameRate;
 
-      if ( _sizeFrame.Width == 0 || _sizeFrame.Height == 0 )
+      if (_sizeFrame.Width == 0 || _sizeFrame.Height == 0)
+      {
         _sizeFrame = new Size(720, 576);
+      }
 
 
       try
       {
-        using ( RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal") )
-        { }
-        using ( RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal") )
-        { }
+        using (RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
+        using (RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
       }
-      catch ( Exception ) { }
+      catch (Exception)
+      {
+      }
     }
 
     /// <summary>
@@ -135,7 +140,7 @@ namespace MediaPortal.TV.Recording
     /// Easier to handle and to extent...
     /// </summary>
     /// <param name="pCard"></param>
-    public SinkGraph( TVCaptureDevice pCard )
+    public SinkGraph(TVCaptureDevice pCard)
     {
       _card = pCard;
 
@@ -151,13 +156,18 @@ namespace MediaPortal.TV.Recording
 
       try
       {
-        using ( RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal") )
-        { }
-        using ( RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal") )
-        { }
+        using (RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
+        using (RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
       }
-      catch ( Exception ) { }
+      catch (Exception)
+      {
+      }
     }
+
     /// <summary>
     /// #MW#, Added moniker name... ie the REAL device!!!
     /// </summary>
@@ -168,7 +178,8 @@ namespace MediaPortal.TV.Recording
     /// <param name="strVideoCaptureMoniker"></param>
     /// <param name="frameSize"></param>
     /// <param name="frameRate"></param>
-    public SinkGraph( int ID, int countryCode, bool cable, string videoCaptureFilter, string strVideoCaptureMoniker, Size frameSize, double frameRate )
+    public SinkGraph(int ID, int countryCode, bool cable, string videoCaptureFilter, string strVideoCaptureMoniker,
+                     Size frameSize, double frameRate)
     {
       _cardId = ID;
       _isUsingCable = cable;
@@ -180,22 +191,29 @@ namespace MediaPortal.TV.Recording
       _sizeFrame = frameSize;
       _frameRate = frameRate;
 
-      if ( _sizeFrame.Width == 0 || _sizeFrame.Height == 0 )
+      if (_sizeFrame.Width == 0 || _sizeFrame.Height == 0)
+      {
         _sizeFrame = new Size(720, 576);
+      }
       try
       {
-        using ( RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal") )
-        { }
-        using ( RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal") )
-        { }
+        using (RegistryKey newKey = Registry.CurrentUser.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
+        using (RegistryKey newKey = Registry.LocalMachine.CreateSubKey(@"Software\MediaPortal"))
+        {
+        }
       }
-      catch ( Exception ) { }
+      catch (Exception)
+      {
+      }
     }
+
     /// <summary>
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
-    public virtual bool CreateGraph( int Quality )
+    public virtual bool CreateGraph(int Quality)
     {
       return true;
     }
@@ -220,32 +238,38 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartTimeShifting( TVChannel channel, string strFileName )
+    public bool StartTimeShifting(TVChannel channel, string strFileName)
     {
-      if ( _graphState != State.Created && _graphState != State.TimeShifting )
-        return false;
-      ulong freeSpace = Util.Utils.GetFreeDiskSpace(strFileName);
-      if ( freeSpace < ( 1024L * 1024L * 1024L ) )// 1 GB
+      if (_graphState != State.Created && _graphState != State.TimeShifting)
       {
-        _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
-        Log.WriteFile(LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
         return false;
       }
-      if ( _mpeg2DemuxHelper == null )
-        return false;
-      _countryCode = channel.Country;
-      if ( _graphState == State.TimeShifting )
+      ulong freeSpace = Util.Utils.GetFreeDiskSpace(strFileName);
+      if (freeSpace < (1024L*1024L*1024L)) // 1 GB
       {
-        if ( channel != null )
+        _lastError = GUILocalizeStrings.Get(765); // "Not enough free diskspace";
+        Log.WriteFile(LogType.Recorder, true,
+                      "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace",
+                      strFileName[0]);
+        return false;
+      }
+      if (_mpeg2DemuxHelper == null)
+      {
+        return false;
+      }
+      _countryCode = channel.Country;
+      if (_graphState == State.TimeShifting)
+      {
+        if (channel != null)
         {
-          if ( channel.Number != _channelNumber )
+          if (channel.Number != _channelNumber)
           {
             TuneChannel(channel);
           }
           return true;
         }
       }
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _vmr9.Dispose();
         _vmr9 = null;
@@ -266,43 +290,44 @@ namespace MediaPortal.TV.Recording
     protected bool ConnectVideoCaptureToMPEG2Demuxer()
     {
       //			Log.WriteFile(LogType.Log,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
-      if ( _filterCapture == null || _graphBuilderInterface == null )
+      if (_filterCapture == null || _graphBuilderInterface == null)
       {
         Log.Error("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
         return false;
       }
-      if ( _videoCaptureHelper == null )
+      if (_videoCaptureHelper == null)
       {
         Log.Error("SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
         return false;
       }
-      if ( _mpeg2DemuxHelper == null )
+      if (_mpeg2DemuxHelper == null)
       {
         return false;
       }
-      if ( _mpeg2DemuxHelper.IsRendered )
+      if (_mpeg2DemuxHelper.IsRendered)
       {
         return true;
       }
       //ask graph to render [capture] -> [mpeg2 demuxer]
       //it will use the encoder (if needed)
       Guid cat = PinCategory.Capture;
-      int hr = _captureGraphBuilderInterface.RenderStream(cat, null/*new Guid[1]{ med}*/, _filterCapture, null, _mpeg2DemuxHelper.BaseFilter);
-      if ( hr == 0 )
+      int hr = _captureGraphBuilderInterface.RenderStream(cat, null /*new Guid[1]{ med}*/, _filterCapture, null,
+                                                          _mpeg2DemuxHelper.BaseFilter);
+      if (hr == 0)
       {
         return true;
       }
       //ok, that failed. seems we have to do it ourselves
       //				Log.WriteFile(LogType.Log,"SinkGraph:find MPEG2 demuxer input pin");
       IPin pinIn = DsFindPin.ByDirection(_mpeg2DemuxHelper.BaseFilter, PinDirection.Input, 0);
-      if ( pinIn == null )
+      if (pinIn == null)
       {
         Log.Error("SinkGraph:FAILED could not find mpeg2 demux input pin");
         return false;
       }
       //					Log.WriteFile(LogType.Log,"SinkGraph:found MPEG2 demuxer input pin");
       hr = _graphBuilderInterface.Connect(_videoCaptureHelper.CapturePin, pinIn);
-      if ( hr != 0 )
+      if (hr != 0)
       {
         Log.Error("SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}", hr);
         DirectShowUtil.ReleaseComObject(pinIn);
@@ -322,11 +347,15 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StopTimeShifting()
     {
-      if ( _graphState != State.TimeShifting )
+      if (_graphState != State.TimeShifting)
+      {
         return false;
+      }
       Log.Info("SinkGraph:StopTimeShifting()");
-      if ( _mpeg2DemuxHelper != null )
+      if (_mpeg2DemuxHelper != null)
+      {
         _mpeg2DemuxHelper.StopTimeShifting();
+      }
       _graphState = State.Created;
       return true;
     }
@@ -349,18 +378,23 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    public bool StartRecording( Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart )
+    public bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName,
+                               bool bContentRecording, DateTime timeProgStart)
     {
-      if ( _graphState != State.TimeShifting )
+      if (_graphState != State.TimeShifting)
+      {
         return false;
-      if ( _mpeg2DemuxHelper == null )
+      }
+      if (_mpeg2DemuxHelper == null)
+      {
         return false;
+      }
       _countryCode = channel.Country;
-      if ( channel.Number != _channelNumber )
+      if (channel.Number != _channelNumber)
       {
         TuneChannel(channel);
       }
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _vmr9.Dispose();
         _vmr9 = null;
@@ -370,18 +404,25 @@ namespace MediaPortal.TV.Recording
       {
         if (recording.Quality != TVRecording.QualityType.NotSet)
         {
-
           if (recording.Quality == TVRecording.QualityType.Portable)
+          {
             SetQuality(0);
+          }
 
           if (recording.Quality == TVRecording.QualityType.Low)
+          {
             SetQuality(1);
+          }
 
           if (recording.Quality == TVRecording.QualityType.Medium)
+          {
             SetQuality(2);
+          }
 
           if (recording.Quality == TVRecording.QualityType.High)
+          {
             SetQuality(3);
+          }
         }
         else
         {
@@ -391,9 +432,11 @@ namespace MediaPortal.TV.Recording
       }
       SetFrameRateAndSize();
       if (!_mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime))
+      {
         return false;
+      }
       _graphState = State.Recording;
-     return true;
+      return true;
     }
 
     /// <summary>
@@ -405,12 +448,16 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void StopRecording()
     {
-      if ( _graphState != State.Recording )
+      if (_graphState != State.Recording)
+      {
         return;
+      }
 
       Log.Info("SinkGraph:StopRecording()");
-      if ( _mpeg2DemuxHelper != null )
+      if (_mpeg2DemuxHelper != null)
+      {
         _mpeg2DemuxHelper.StopRecording();
+      }
       _graphState = State.TimeShifting;
       SetQuality(4);
     }
@@ -432,27 +479,39 @@ namespace MediaPortal.TV.Recording
     /// <returns>true : graph needs to be rebuild for this channel
     ///          false: graph does not need to be rebuild for this channel
     /// </returns>
-    public bool ShouldRebuildGraph( TVChannel newChannel )
+    public bool ShouldRebuildGraph(TVChannel newChannel)
     {
       int iChannel = newChannel.Number;
       // if we switch from tuner <-> SVHS/Composite then 
       // we need to rebuild the capture graph
       bool bFixCrossbar = true;
-      if ( _previousChannel >= 0 )
+      if (_previousChannel >= 0)
       {
-        if ( _previousChannel < (int)ExternalInputs.svhs && iChannel < (int)ExternalInputs.svhs )
+        if (_previousChannel < (int) ExternalInputs.svhs && iChannel < (int) ExternalInputs.svhs)
+        {
           bFixCrossbar = false;
-        if ( _previousChannel == (int)ExternalInputs.rgb && iChannel == (int)ExternalInputs.rgb )
+        }
+        if (_previousChannel == (int) ExternalInputs.rgb && iChannel == (int) ExternalInputs.rgb)
+        {
           bFixCrossbar = false;
-        if ( _previousChannel == (int)ExternalInputs.svhs && iChannel == (int)ExternalInputs.svhs )
+        }
+        if (_previousChannel == (int) ExternalInputs.svhs && iChannel == (int) ExternalInputs.svhs)
+        {
           bFixCrossbar = false;
-        if ( _previousChannel == (int)ExternalInputs.cvbs1 && iChannel == (int)ExternalInputs.cvbs1 )
+        }
+        if (_previousChannel == (int) ExternalInputs.cvbs1 && iChannel == (int) ExternalInputs.cvbs1)
+        {
           bFixCrossbar = false;
-        if ( _previousChannel == (int)ExternalInputs.cvbs2 && iChannel == (int)ExternalInputs.cvbs2 )
+        }
+        if (_previousChannel == (int) ExternalInputs.cvbs2 && iChannel == (int) ExternalInputs.cvbs2)
+        {
           bFixCrossbar = false;
+        }
       }
       else
+      {
         bFixCrossbar = false;
+      }
       return bFixCrossbar;
     }
 
@@ -463,7 +522,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
-    public void TuneChannel( TVChannel channel )
+    public void TuneChannel(TVChannel channel)
     {
       _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono | TVAudioMode.LangA);
       if (_graphState != State.TimeShifting && _graphState != State.Viewing)
@@ -477,26 +536,32 @@ namespace MediaPortal.TV.Recording
         _channelNumber = channel.Number;
         _countryCode = channel.Country;
         AnalogVideoStandard standard = channel.TVStandard;
-        Log.Info("SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", _channelNumber, _countryCode, standard, channel.Name);
-        if (_channelNumber < (int)ExternalInputs.svhs)
+        Log.Info("SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", _channelNumber,
+                 _countryCode, standard, channel.Name);
+        if (_channelNumber < (int) ExternalInputs.svhs)
         {
           if (_tvTunerInterface == null)
+          {
             return;
+          }
           try
           {
             InitializeTuner();
             SetVideoStandard(standard);
-            Log.Info("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}", _countryCode, standard.ToString(), _isUsingCable);
+            Log.Info("SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}", _countryCode,
+                     standard.ToString(), _isUsingCable);
             AMTunerSubChannel iVideoSubChannel, iAudioSubChannel;
             int currentCountry, iCurrentChannel, currentFreq;
             _tvTunerInterface.get_VideoFrequency(out currentFreq);
             _tvTunerInterface.get_TVFormat(out standard);
             _tvTunerInterface.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
             _tvTunerInterface.get_CountryCode(out currentCountry);
-            Log.Info("SinkGraph: _tvTunerInterface {0} {1} {2} {3}", currentFreq, standard, iCurrentChannel, currentCountry);
+            Log.Info("SinkGraph: _tvTunerInterface {0} {1} {2} {3}", currentFreq, standard, iCurrentChannel,
+                     currentCountry);
             if (iCurrentChannel != _channelNumber)
             {
-              Log.Info("SinkGraph: iCurrentChannel = {0} & _channelNumber = {1} & channel.Number {2}", iCurrentChannel, _channelNumber, channel.Number);
+              Log.Info("SinkGraph: iCurrentChannel = {0} & _channelNumber = {1} & channel.Number {2}", iCurrentChannel,
+                       _channelNumber, channel.Number);
               _tvTunerInterface.put_Channel(channel.Number, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
               Log.Info("SinkGraph: _tvTunerInterface.put_Channel {0}", channel.Number);
               DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
@@ -514,9 +579,9 @@ namespace MediaPortal.TV.Recording
             {
               return;
             }
-            dFreq = iFreq / 1000000d;
+            dFreq = iFreq/1000000d;
             Log.Info("SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
-              iChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());
+                     iChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());
           }
           catch (Exception ex)
           {
@@ -530,28 +595,38 @@ namespace MediaPortal.TV.Recording
         bool bFixCrossbar = true;
         if (_previousChannel >= 0)
         {
-          if (_previousChannel < (int)ExternalInputs.svhs && channel.Number < (int)ExternalInputs.svhs)
+          if (_previousChannel < (int) ExternalInputs.svhs && channel.Number < (int) ExternalInputs.svhs)
+          {
             bFixCrossbar = false;
-          if (_previousChannel == (int)ExternalInputs.svhs && channel.Number == (int)ExternalInputs.svhs)
+          }
+          if (_previousChannel == (int) ExternalInputs.svhs && channel.Number == (int) ExternalInputs.svhs)
+          {
             bFixCrossbar = false;
-          if (_previousChannel == (int)ExternalInputs.rgb && channel.Number == (int)ExternalInputs.rgb)
+          }
+          if (_previousChannel == (int) ExternalInputs.rgb && channel.Number == (int) ExternalInputs.rgb)
+          {
             bFixCrossbar = false;
-          if (_previousChannel == (int)ExternalInputs.cvbs1 && channel.Number == (int)ExternalInputs.cvbs1)
+          }
+          if (_previousChannel == (int) ExternalInputs.cvbs1 && channel.Number == (int) ExternalInputs.cvbs1)
+          {
             bFixCrossbar = false;
-          if (_previousChannel == (int)ExternalInputs.cvbs2 && channel.Number == (int)ExternalInputs.cvbs2)
+          }
+          if (_previousChannel == (int) ExternalInputs.cvbs2 && channel.Number == (int) ExternalInputs.cvbs2)
+          {
             bFixCrossbar = false;
+          }
         }
         if (bFixCrossbar)
         {
           CrossBar.RouteEx(_graphBuilderInterface,
-            _captureGraphBuilderInterface,
-            _filterCapture,
-            channel.Number < (int)ExternalInputs.svhs,
-            (channel.Number == (int)ExternalInputs.cvbs1),
-            (channel.Number == (int)ExternalInputs.cvbs2),
-            (channel.Number == (int)ExternalInputs.svhs),
-            (channel.Number == (int)ExternalInputs.rgb),
-            _cardName);
+                           _captureGraphBuilderInterface,
+                           _filterCapture,
+                           channel.Number < (int) ExternalInputs.svhs,
+                           (channel.Number == (int) ExternalInputs.cvbs1),
+                           (channel.Number == (int) ExternalInputs.cvbs2),
+                           (channel.Number == (int) ExternalInputs.svhs),
+                           (channel.Number == (int) ExternalInputs.rgb),
+                           _cardName);
         }
       }
       finally
@@ -571,7 +646,7 @@ namespace MediaPortal.TV.Recording
       TVAudioMode hwSupportedAudioModes;
       _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
       Log.Debug("SinkGraph: Channel available audio modes: {0}", availableAudioModes);
-      for ( int i = 0; i < 8; i++ )
+      for (int i = 0; i < 8; i++)
       {
         Thread.Sleep(50);
         _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
@@ -587,26 +662,32 @@ namespace MediaPortal.TV.Recording
       {
         langType = "Mono";
       }
-      if ( ( availableAudioModes & TVAudioMode.Stereo ) == TVAudioMode.Stereo )
+      if ((availableAudioModes & TVAudioMode.Stereo) == TVAudioMode.Stereo)
       {
         langType = "Stereo";
         currentAudioMode = TVAudioMode.Stereo;
       }
       int langs = 0;
-      if ( ( availableAudioModes & TVAudioMode.LangA ) == TVAudioMode.LangA )
+      if ((availableAudioModes & TVAudioMode.LangA) == TVAudioMode.LangA)
       {
-        if ( langs++ == 0 )
+        if (langs++ == 0)
+        {
           currentAudioMode |= TVAudioMode.LangA;
+        }
       }
-      if ( ( availableAudioModes & TVAudioMode.LangB ) == TVAudioMode.LangB )
+      if ((availableAudioModes & TVAudioMode.LangB) == TVAudioMode.LangB)
       {
-        if ( langs++ == 0 )
+        if (langs++ == 0)
+        {
           currentAudioMode |= TVAudioMode.LangB;
+        }
       }
-      if ( ( availableAudioModes & TVAudioMode.LangC ) == TVAudioMode.LangC )
+      if ((availableAudioModes & TVAudioMode.LangC) == TVAudioMode.LangC)
       {
-        if ( langs++ == 0 )
+        if (langs++ == 0)
+        {
           currentAudioMode |= TVAudioMode.LangC;
+        }
       }
       if (langs > 1)
       {
@@ -637,7 +718,7 @@ namespace MediaPortal.TV.Recording
     /// <remarks>
     /// Graph must be created first with CreateGraph()
     /// </remarks>
-    public bool StartViewing( TVChannel channel )
+    public bool StartViewing(TVChannel channel)
     {
       Log.Info("SinkGraph: StartViewing()");
       if (_graphState != State.Created && _graphState != State.Viewing)
@@ -645,32 +726,32 @@ namespace MediaPortal.TV.Recording
         return false;
       }
       _countryCode = channel.Country;
-      if ( _mpeg2DemuxHelper == null )
+      if (_mpeg2DemuxHelper == null)
       {
         _lastError = "Graph not built correctly";
         Log.Error("SinkGraph: StartViewing() FAILED: no mpeg2 demuxer present");
         return false;
       }
-      if ( _videoCaptureHelper == null )
+      if (_videoCaptureHelper == null)
       {
         _lastError = "Graph not built correctly";
         Log.Error("SinkGraph: StartViewing() FAILED: no video capture device present");
         return false;
       }
-      if ( _graphState == State.Viewing )
+      if (_graphState == State.Viewing)
       {
-        if ( channel.Number != _channelNumber )
+        if (channel.Number != _channelNumber)
         {
           TuneChannel(channel);
         }
         return true;
       }
       // add VMR9 renderer to graph
-      if ( _vmr9 == null )
+      if (_vmr9 == null)
       {
         _vmr9 = new VMR9Util();
       }
-      if ( false == _vmr9.AddVMR9(_graphBuilderInterface) )
+      if (false == _vmr9.AddVMR9(_graphBuilderInterface))
       {
         _vmr9.Dispose();
         _vmr9 = null;
@@ -681,29 +762,43 @@ namespace MediaPortal.TV.Recording
       SetFrameRateAndSize();
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        if ( strValue.Equals("zoom") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if ( strValue.Equals("stretch") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if ( strValue.Equals("normal") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if ( strValue.Equals("original") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if ( strValue.Equals("letterbox") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if ( strValue.Equals("panscan") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
-        if ( strValue.Equals("zoom149") )
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        if (strValue.Equals("zoom"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Zoom;
+        }
+        if (strValue.Equals("stretch"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Stretch;
+        }
+        if (strValue.Equals("normal"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Normal;
+        }
+        if (strValue.Equals("original"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Original;
+        }
+        if (strValue.Equals("letterbox"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
+        }
+        if (strValue.Equals("panscan"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+        }
+        if (strValue.Equals("zoom149"))
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
+        }
       }
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
-        if ( _vmr9.IsVMR9Connected )
+        if (_vmr9.IsVMR9Connected)
         {
           _vmr9.SetDeinterlaceMode();
         }
@@ -735,7 +830,7 @@ namespace MediaPortal.TV.Recording
       }
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       Log.Info("SinkGraph:StopViewing()");
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _vmr9.Enable(false);
       }
@@ -753,15 +848,23 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     private void GUIGraphicsContext_OnVideoWindowChanged()
     {
-      if ( !GUIGraphicsContext.VMR9Allowed )
+      if (!GUIGraphicsContext.VMR9Allowed)
+      {
         return;
-      if ( GUIGraphicsContext.Vmr9Active )
+      }
+      if (GUIGraphicsContext.Vmr9Active)
+      {
         return;
-      if ( _graphState != State.Viewing )
+      }
+      if (_graphState != State.Viewing)
+      {
         return;
-      if ( _mpeg2DemuxHelper == null )
+      }
+      if (_mpeg2DemuxHelper == null)
+      {
         return;
-      if ( GUIGraphicsContext.BlankScreen )
+      }
+      if (GUIGraphicsContext.BlankScreen)
       {
         _mpeg2DemuxHelper.Overlay = false;
       }
@@ -784,8 +887,8 @@ namespace MediaPortal.TV.Recording
         {
           return;
         }
-        System.Drawing.Rectangle rSource, rDest;
-        MediaPortal.GUI.Library.Geometry m_geometry = new MediaPortal.GUI.Library.Geometry();
+        Rectangle rSource, rDest;
+        Geometry m_geometry = new Geometry();
         m_geometry.ImageWidth = iVideoWidth;
         m_geometry.ImageHeight = iVideoHeight;
         m_geometry.ScreenWidth = nw;
@@ -794,26 +897,33 @@ namespace MediaPortal.TV.Recording
         m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
         m_geometry.GetWindow(out rSource, out rDest);
         m_geometry.GetWindow(aspectX, aspectY, out rSource, out rDest);
-        rDest.X += (int)x;
-        rDest.Y += (int)y;
+        rDest.X += (int) x;
+        rDest.Y += (int) y;
         Log.Info("overlay: video WxH  : {0}x{1}", iVideoWidth, iVideoHeight);
         Log.Info("overlay: video AR   : {0}:{1}", aspectX, aspectY);
         Log.Info("overlay: screen WxH : {0}x{1}", nw, nh);
         Log.Info("overlay: AR type    : {0}", GUIGraphicsContext.ARType);
         Log.Info("overlay: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
-        Log.Info("overlay: src        : ({0},{1})-({2},{3})", rSource.X, rSource.Y, rSource.X + rSource.Width, rSource.Y + rSource.Height);
-        Log.Info("overlay: dst        : ({0},{1})-({2},{3})", rDest.X, rDest.Y, rDest.X + rDest.Width, rDest.Y + rDest.Height);
+        Log.Info("overlay: src        : ({0},{1})-({2},{3})", rSource.X, rSource.Y, rSource.X + rSource.Width,
+                 rSource.Y + rSource.Height);
+        Log.Info("overlay: dst        : ({0},{1})-({2},{3})", rDest.X, rDest.Y, rDest.X + rDest.Width,
+                 rDest.Y + rDest.Height);
         if (rSource.Left < 0 || rSource.Top < 0 || rSource.Width <= 0 || rSource.Height <= 0)
+        {
           return;
+        }
         if (rDest.Left < 0 || rDest.Top < 0 || rDest.Width <= 0 || rDest.Height <= 0)
+        {
           return;
+        }
         _mpeg2DemuxHelper.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
         _mpeg2DemuxHelper.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
         _mpeg2DemuxHelper.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
       }
       else
       {
-        if (GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 || GUIGraphicsContext.VideoWindow.Width <= 0 || GUIGraphicsContext.VideoWindow.Height <= 0)
+        if (GUIGraphicsContext.VideoWindow.Left < 0 || GUIGraphicsContext.VideoWindow.Top < 0 ||
+            GUIGraphicsContext.VideoWindow.Width <= 0 || GUIGraphicsContext.VideoWindow.Height <= 0)
         {
           return;
         }
@@ -824,11 +934,14 @@ namespace MediaPortal.TV.Recording
         _mpeg2DemuxHelper.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
         if (GUIGraphicsContext.VideoWindow.Width > 0 && GUIGraphicsContext.VideoWindow.Height > 0)
         {
-          _mpeg2DemuxHelper.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+          _mpeg2DemuxHelper.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width,
+                                                   GUIGraphicsContext.VideoWindow.Height);
         }
         if (GUIGraphicsContext.VideoWindow.Width > 0 && GUIGraphicsContext.VideoWindow.Height > 0)
         {
-          _mpeg2DemuxHelper.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
+          _mpeg2DemuxHelper.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top,
+                                              GUIGraphicsContext.VideoWindow.Width,
+                                              GUIGraphicsContext.VideoWindow.Height);
         }
       }
     }
@@ -836,7 +949,7 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Add preferred mpeg2 audio/video codecs to the graph
     /// </summary>
-    void AddPreferredCodecs( bool audio, bool video )
+    private void AddPreferredCodecs(bool audio, bool video)
     {
       // add preferred video & audio codecs
       string strVideoCodec = "";
@@ -844,7 +957,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       int intFilters = 0;
       string strFilters = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int intCount = 0;
         while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
@@ -860,12 +973,18 @@ namespace MediaPortal.TV.Recording
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
       }
-      if ( video && strVideoCodec.Length > 0 )
+      if (video && strVideoCodec.Length > 0)
+      {
         DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, strVideoCodec);
-      if ( audio && strAudioCodec.Length > 0 )
+      }
+      if (audio && strAudioCodec.Length > 0)
+      {
         DirectShowUtil.AddFilterToGraph(_graphBuilderInterface, strAudioCodec);
-      if ( audio && strAudioRenderer.Length > 0 )
+      }
+      if (audio && strAudioRenderer.Length > 0)
+      {
         DirectShowUtil.AddAudioRendererToGraph(_graphBuilderInterface, strAudioRenderer, false);
+      }
       customFilters = new IBaseFilter[intFilters];
       string[] arrFilters = strFilters.Split(';');
       for (int i = 0; i < intFilters; i++)
@@ -883,38 +1002,54 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     public bool SignalPresent()
     {
-      if ( _tvTunerInterface == null )
+      if (_tvTunerInterface == null)
+      {
         return false;
-      if ( _channelNumber >= (int)ExternalInputs.svhs )
+      }
+      if (_channelNumber >= (int) ExternalInputs.svhs)
+      {
         return true;
+      }
       AMTunerSignalStrength strength;
       _tvTunerInterface.SignalPresent(out strength);
-      return ( ( (int)strength ) >= 1 );
+      return (((int) strength) >= 1);
     }
 
     public int SignalQuality()
     {
-      if ( _tvTunerInterface == null )
+      if (_tvTunerInterface == null)
+      {
         return 1;
-      if ( _channelNumber >= (int)ExternalInputs.svhs )
+      }
+      if (_channelNumber >= (int) ExternalInputs.svhs)
+      {
         return 100;
+      }
       AMTunerSignalStrength strength;
       _tvTunerInterface.SignalPresent(out strength);
-      if ( strength == AMTunerSignalStrength.SignalPresent )
+      if (strength == AMTunerSignalStrength.SignalPresent)
+      {
         return 100;
+      }
       return 1;
     }
 
     public int SignalStrength()
     {
-      if ( _tvTunerInterface == null )
+      if (_tvTunerInterface == null)
+      {
         return 1;
-      if ( _channelNumber >= (int)ExternalInputs.svhs )
+      }
+      if (_channelNumber >= (int) ExternalInputs.svhs)
+      {
         return 100;
+      }
       AMTunerSignalStrength strength;
       _tvTunerInterface.SignalPresent(out strength);
-      if ( strength == AMTunerSignalStrength.SignalPresent )
+      if (strength == AMTunerSignalStrength.SignalPresent)
+      {
         return 100;
+      }
       return 1;
     }
 
@@ -924,8 +1059,10 @@ namespace MediaPortal.TV.Recording
     /// <returns>video frequency in Hz </returns>
     public long VideoFrequency()
     {
-      if ( _tvTunerInterface == null )
+      if (_tvTunerInterface == null)
+      {
         return 0;
+      }
       int lFreq;
       _tvTunerInterface.get_VideoFrequency(out lFreq);
       return lFreq;
@@ -936,15 +1073,22 @@ namespace MediaPortal.TV.Recording
     /// Will be called when the user changed the gamma, brightness,contrast settings
     /// This method takes the new settings and applies them to the video amplifier
     /// </summary>
-    static bool reentrant = false;
+    private static bool reentrant = false;
+
     protected void OnGammaContrastBrightnessChanged()
     {
-      if ( _graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing )
+      if (_graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing)
+      {
         return;
-      if ( _videoProcAmpHelper == null )
+      }
+      if (_videoProcAmpHelper == null)
+      {
         return;
-      if ( reentrant )
+      }
+      if (reentrant)
+      {
         return;
+      }
       reentrant = true;
       // #DM# follow code needs to be re-written to take into consideration multiple cards with differing VideoProcAmp settings
       //set the changed values
@@ -1001,7 +1145,7 @@ namespace MediaPortal.TV.Recording
     /// Sets the tv standard used (pal,ntsc,secam,...) for the video decoder
     /// </summary>
     /// <param name="standard">TVStandard</param>
-    protected void SetVideoStandard( AnalogVideoStandard standard )
+    protected void SetVideoStandard(AnalogVideoStandard standard)
     {
       if (standard == AnalogVideoStandard.None)
       {
@@ -1009,16 +1153,20 @@ namespace MediaPortal.TV.Recording
       }
       if (_analogVideoDecoderInterface == null)
       {
-         return;
+        return;
       }
       AnalogVideoStandard currentStandard;
       int hr = _analogVideoDecoderInterface.get_TVFormat(out currentStandard);
       Log.Info("SinkGraph:Select tvformat:{0}", standard.ToString());
-      if ( standard == AnalogVideoStandard.None )
+      if (standard == AnalogVideoStandard.None)
+      {
         standard = AnalogVideoStandard.PAL_B;
+      }
       hr = _analogVideoDecoderInterface.put_TVFormat(standard);
-      if ( hr != 0 )
+      if (hr != 0)
+      {
         Log.Error("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+      }
     }
 
     /// <summary>
@@ -1030,48 +1178,62 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     protected void InitializeTuner()
     {
-      if ( _tvTunerInterface == null )
+      if (_tvTunerInterface == null)
+      {
         return;
+      }
       int iTuningSpace, iCountry;
       AMTunerModeType mode;
 
       _tvTunerInterface.get_TuningSpace(out iTuningSpace);
-      if ( iTuningSpace != 0 )
+      if (iTuningSpace != 0)
+      {
         _tvTunerInterface.put_TuningSpace(0);
+      }
 
       _tvTunerInterface.get_CountryCode(out iCountry);
-      if ( iCountry != _countryCode )
+      if (iCountry != _countryCode)
+      {
         _tvTunerInterface.put_CountryCode(_countryCode);
+      }
 
       _tvTunerInterface.get_Mode(out mode);
-      if ( mode != AMTunerModeType.TV )
+      if (mode != AMTunerModeType.TV)
+      {
         _tvTunerInterface.put_Mode(AMTunerModeType.TV);
+      }
 
       TunerInputType inputType;
       _tvTunerInterface.get_InputType(0, out inputType);
-      if ( _isUsingCable )
+      if (_isUsingCable)
       {
-        if ( inputType != TunerInputType.Cable )
+        if (inputType != TunerInputType.Cable)
+        {
           _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
+        }
       }
       else
       {
-        if ( inputType != TunerInputType.Antenna )
+        if (inputType != TunerInputType.Antenna)
+        {
           _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
+        }
       }
     }
 
-    void UpdateVideoState()
+    private void UpdateVideoState()
     {
       //check if this card is used for watching tv
       bool isViewing = Recorder.IsCardViewing(_cardId);
-      if ( !isViewing )
+      if (!isViewing)
+      {
         return;
+      }
 
-      if ( !SignalPresent() )
+      if (!SignalPresent())
       {
         TimeSpan ts = DateTime.Now - _signalLostTimer;
-        if ( ts.TotalSeconds < VideoRendererStatistics.NoSignalTimeOut )
+        if (ts.TotalSeconds < VideoRendererStatistics.NoSignalTimeOut)
         {
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
           return;
@@ -1080,12 +1242,12 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        if ( GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f )
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
         {
-          if ( ( g_Player.Playing && !g_Player.Paused ) || ( !g_Player.Playing ) )
+          if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
           {
             TimeSpan ts = DateTime.Now - _signalLostTimer;
-            if ( ts.TotalSeconds < VideoRendererStatistics.NoSignalTimeOut )
+            if (ts.TotalSeconds < VideoRendererStatistics.NoSignalTimeOut)
             {
               VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
               return;
@@ -1101,22 +1263,28 @@ namespace MediaPortal.TV.Recording
 
     public void Process()
     {
-      if ( !GUIGraphicsContext.VMR9Allowed )
-        return;
-      if ( _captureGraphBuilderInterface == null )
-        return;
-      if ( _filterCapture == null )
-        return;
-
-
-      if ( _graphState == State.Viewing )
+      if (!GUIGraphicsContext.VMR9Allowed)
       {
-        if ( GUIGraphicsContext.Vmr9Active && _vmr9 != null )
+        return;
+      }
+      if (_captureGraphBuilderInterface == null)
+      {
+        return;
+      }
+      if (_filterCapture == null)
+      {
+        return;
+      }
+
+
+      if (_graphState == State.Viewing)
+      {
+        if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
         {
           _vmr9.Process();
         }
       }
-      if ( !_isTuning )
+      if (!_isTuning)
       {
         UpdateVideoState();
       }
@@ -1124,13 +1292,16 @@ namespace MediaPortal.TV.Recording
 
     public PropertyPageCollection PropertyPages()
     {
-
       PropertyPageCollection propertyPages = null;
       {
-        if ( _captureGraphBuilderInterface == null )
+        if (_captureGraphBuilderInterface == null)
+        {
           return null;
-        if ( _filterCapture == null )
+        }
+        if (_filterCapture == null)
+        {
           return null;
+        }
         try
         {
           SourceCollection VideoSources = new SourceCollection(_captureGraphBuilderInterface, _filterCapture, true);
@@ -1138,22 +1309,21 @@ namespace MediaPortal.TV.Recording
           // #MW#, difficult to say if this must be changed, as it depends on the loaded
           // filters. The list below is fixed list however... So???
           propertyPages = new PropertyPageCollection(_captureGraphBuilderInterface,
-            _filterCapture, null,
-            null, null,
-            VideoSources, null, null);
-
+                                                     _filterCapture, null,
+                                                     null, null,
+                                                     VideoSources, null, null);
         }
-        catch ( Exception ex )
+        catch (Exception ex)
         {
           Log.Error(ex);
         }
 
-        return ( propertyPages );
+        return (propertyPages);
       }
     }
 
 
-    public bool SupportsFrameSize( Size framesize )
+    public bool SupportsFrameSize(Size framesize)
     {
       return false;
     }
@@ -1162,19 +1332,24 @@ namespace MediaPortal.TV.Recording
     {
       return NetworkType.Analog;
     }
-    public void Tune( object tuningObject, int disecqNo )
+
+    public void Tune(object tuningObject, int disecqNo)
     {
     }
-    public void StoreChannels( int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels, ref int newRadioChannels, ref int updatedRadioChannels )
+
+    public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels,
+                              ref int newRadioChannels, ref int updatedRadioChannels)
     {
-      if ( !SignalPresent() )
+      if (!SignalPresent())
+      {
         return;
-      if ( tv )
+      }
+      if (tv)
       {
         TVChannel tvChan = null;
         int channelId = TVDatabase.GetChannelId(_channelNumber);
         tvChan = TVDatabase.GetChannelById(channelId);
-        if ( tvChan == null )
+        if (tvChan == null)
         {
           //doesn't exists
           tvChan = new TVChannel();
@@ -1182,12 +1357,12 @@ namespace MediaPortal.TV.Recording
           tvChan.Scrambled = false;
           //then add a new channel to the database
           string channelName = GetTeletextChannelName();
-          if ( channelName == string.Empty )
+          if (channelName == string.Empty)
           {
             channelName = _channelNumber.ToString();
           }
           int otherChannelId = TVDatabase.GetChannelId(channelName);
-          if ( otherChannelId == -1 )
+          if (otherChannelId == -1)
           {
             tvChan.Name = channelName;
           }
@@ -1200,9 +1375,10 @@ namespace MediaPortal.TV.Recording
           tvChan.Sort = 40000;
           Log.Info("SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
           int id = TVDatabase.AddChannel(tvChan);
-          if ( id < 0 )
+          if (id < 0)
           {
-            Log.Error("SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+            Log.Error("SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number,
+                      tvChan.Sort);
           }
           channelId = id;
           newChannels++;
@@ -1221,22 +1397,24 @@ namespace MediaPortal.TV.Recording
         group.ID = groupid;
         TVDatabase.MapChannelToGroup(group, tvChan);
       }
-      if ( radio )
+      if (radio)
       {
-        if ( _graphState != State.Radio )
+        if (_graphState != State.Radio)
+        {
           return;
+        }
         int frequency = 0;
         int hr = _tvTunerInterface.get_AudioFrequency(out frequency);
-        if ( ( hr != 0 ) || ( frequency == 0 ) )
+        if ((hr != 0) || (frequency == 0))
         {
           return;
         }
         long stationFrequency = frequency;
-        float floatFrequency = ( (float)stationFrequency ) / 1000000f;
+        float floatFrequency = ((float) stationFrequency)/1000000f;
         string stationName = String.Format("{0:###.##}", floatFrequency);
         //TODO get name from RDS
-        MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
-        if ( !RadioDatabase.GetStation(stationName, out station) )
+        RadioStation station = new RadioStation();
+        if (!RadioDatabase.GetStation(stationName, out station))
         {
           //doesn't exists
           //then add a new station to the database
@@ -1248,9 +1426,10 @@ namespace MediaPortal.TV.Recording
           station.Channel = GetUniqueRadioChannel();
           Log.Info("Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
           int id = RadioDatabase.AddStation(ref station);
-          if ( id < 0 )
+          if (id < 0)
           {
-            Log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+            Log.Error("Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name,
+                      station.Frequency);
           }
           newRadioChannels++;
         }
@@ -1263,42 +1442,45 @@ namespace MediaPortal.TV.Recording
           Log.Info("Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
         }
         RadioDatabase.MapChannelToCard(station.ID, _card.ID);
-
       }
     }
+
     public string GetTeletextChannelName()
     {
       bool currentTeletextGrabbing = _grabTeletext;
       _grabTeletext = true;
       TeletextGrabber.TeletextCache.ClearTeletextChannelName();
       string channelName = "";
-      for ( int i = 0; i < 5; i++ )
+      for (int i = 0; i < 5; i++)
       {
         channelName = TeletextGrabber.TeletextCache.GetTeletextChannelName();
-        if ( channelName != string.Empty )
+        if (channelName != string.Empty)
+        {
           break;
-        System.Threading.Thread.Sleep(500);
+        }
+        Thread.Sleep(500);
       }
       _grabTeletext = currentTeletextGrabbing;
       return channelName;
     }
-    int GetUniqueRadioChannel()
+
+    private int GetUniqueRadioChannel()
     {
       ArrayList stations = new ArrayList();
       RadioDatabase.GetStations(ref stations);
       int number = 1;
-      while ( true )
+      while (true)
       {
         bool unique = true;
-        foreach ( MediaPortal.Radio.Database.RadioStation station in stations )
+        foreach (RadioStation station in stations)
         {
-          if ( station.Channel == number )
+          if (station.Channel == number)
           {
             unique = false;
             break;
           }
         }
-        if ( !unique )
+        if (!unique)
         {
           number++;
         }
@@ -1310,14 +1492,14 @@ namespace MediaPortal.TV.Recording
     }
 
 
-    public void TuneRadioChannel( RadioStation station )
+    public void TuneRadioChannel(RadioStation station)
     {
       Log.Info("SinkGraphEx:tune to {0} {1} hz", station.Name, station.Frequency);
       _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
-      if ( _isUsingCable )
+      if (_isUsingCable)
       {
         _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
       }
@@ -1325,24 +1507,30 @@ namespace MediaPortal.TV.Recording
       {
         _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
       }
-      _tvTunerInterface.put_Channel((int)station.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
+      _tvTunerInterface.put_Channel((int) station.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       int frequency;
       _tvTunerInterface.get_AudioFrequency(out frequency);
       Log.Info("SinkGraphEx:  tuned to {0} hz", frequency);
       _isTuning = false;
     }
 
-    public void StartRadio( RadioStation station )
+    public void StartRadio(RadioStation station)
     {
-      if ( _graphState != State.Radio )
+      if (_graphState != State.Radio)
       {
-        if ( _graphState != State.Created )
+        if (_graphState != State.Created)
+        {
           return;
-        if ( _mpeg2DemuxHelper == null )
+        }
+        if (_mpeg2DemuxHelper == null)
+        {
           return;
-        if ( _videoCaptureHelper == null )
+        }
+        if (_videoCaptureHelper == null)
+        {
           return;
-        if ( _vmr9 != null )
+        }
+        if (_vmr9 != null)
         {
           _vmr9.Dispose();
           _vmr9 = null;
@@ -1351,14 +1539,14 @@ namespace MediaPortal.TV.Recording
         AddPreferredCodecs(true, false);
 
         CrossBar.RouteEx(_graphBuilderInterface,
-          _captureGraphBuilderInterface,
-          _filterCapture,
-          true,
-          false,
-          false,
-          false,
-          false,
-          _cardName);
+                         _captureGraphBuilderInterface,
+                         _filterCapture,
+                         true,
+                         false,
+                         false,
+                         false,
+                         false,
+                         _cardName);
         TuneRadioChannel(station);
         _mpeg2DemuxHelper.StartListening();
 
@@ -1372,21 +1560,23 @@ namespace MediaPortal.TV.Recording
 
     public void StopRadio()
     {
-      if ( _graphState != State.Radio )
+      if (_graphState != State.Radio)
+      {
         return;
+      }
       ;
       _mpeg2DemuxHelper.StopListening();
       _graphState = State.Created;
     }
 
-    public void TuneRadioFrequency( int frequency )
+    public void TuneRadioFrequency(int frequency)
     {
       Log.Info("SinkGraphEx:tune to {0} hz", frequency);
       _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
-      if ( _isUsingCable )
+      if (_isUsingCable)
       {
         _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
       }
@@ -1402,44 +1592,72 @@ namespace MediaPortal.TV.Recording
 
     protected void SetFrameRateAndSize()
     {
-      if ( _videoCaptureHelper == null )
+      if (_videoCaptureHelper == null)
+      {
         return;
+      }
       string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
+      using (Settings xmlreader = new Settings(filename))
       {
         string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25 fps (PAL/SECAM)");
-        string frameSize = xmlreader.GetValueAsString("analog", "framesize", "720x576 PAL/SECAM ITU-601 D1 (recommended)");
-        if ( frameRate == "29.97 fps (NTSC)" )
+        string frameSize = xmlreader.GetValueAsString("analog", "framesize",
+                                                      "720x576 PAL/SECAM ITU-601 D1 (recommended)");
+        if (frameRate == "29.97 fps (NTSC)")
+        {
           _videoCaptureHelper.SetFrameRate(29.97);
-        else if ( frameRate == "25 fps (PAL/SECAM)" )
+        }
+        else if (frameRate == "25 fps (PAL/SECAM)")
+        {
           _videoCaptureHelper.SetFrameRate(25);
-        else if ( frameRate == "15 fps" )
+        }
+        else if (frameRate == "15 fps")
+        {
           _videoCaptureHelper.SetFrameRate(15);
+        }
 
-        if ( frameSize == "768x576 PAL square pixels" )
+        if (frameSize == "768x576 PAL square pixels")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(768, 576));
-        else if ( frameSize == "720x576 PAL/SECAM ITU-601 D1 (recommended)" )
+        }
+        else if (frameSize == "720x576 PAL/SECAM ITU-601 D1 (recommended)")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(720, 576));
-        else if ( frameSize == "720x480 NTSC ITU-601 D1 (recommended)" )
+        }
+        else if (frameSize == "720x480 NTSC ITU-601 D1 (recommended)")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(720, 480));
-        else if ( frameSize == "704x576 PAL/SECAM TV broadcast" )
+        }
+        else if (frameSize == "704x576 PAL/SECAM TV broadcast")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(704, 576));
-        else if ( frameSize == "704x480 NTSC TV broadcast" )
+        }
+        else if (frameSize == "704x480 NTSC TV broadcast")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(704, 480));
-        else if ( frameSize == "640x480 NTSC square pixels" )
+        }
+        else if (frameSize == "640x480 NTSC square pixels")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(640, 480));
-        else if ( frameSize == "352x288 PAL CIF" )
+        }
+        else if (frameSize == "352x288 PAL CIF")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(352, 288));
-        else if ( frameSize == "352x240 NTSC CIF" )
+        }
+        else if (frameSize == "352x240 NTSC CIF")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(352, 240));
-        else if ( frameSize == "320x240 NTSC CIF square pixels" )
+        }
+        else if (frameSize == "320x240 NTSC CIF square pixels")
+        {
           _videoCaptureHelper.SetFrameSize(new Size(352, 240));
+        }
       }
     }
-    protected void SetQuality( int Quality )
+
+    protected void SetQuality(int Quality)
     {
       string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", _card.FriendlyName));
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename) )
+      using (Settings xmlreader = new Settings(filename))
       {
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);
         if (!enabled)
@@ -1452,7 +1670,7 @@ namespace MediaPortal.TV.Recording
         //Set the selected audio quality
         int AudioQuality = xmlreader.GetValueAsInt("quality", "audioquality", 192);
         int defaultQuality = xmlreader.GetValueAsInt("quality", "default", 2);
-        if ( Quality == 5 )
+        if (Quality == 5)
         {
           Quality = defaultQuality;
         }
@@ -1471,21 +1689,21 @@ namespace MediaPortal.TV.Recording
         int highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 8000);
         int highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 12000);
         bool highVBR = xmlreader.GetValueAsBool("quality", "HighVBR", true);
-        
+
         int defaultMinTVKbps = xmlreader.GetValueAsInt("quality", "TVLow", 11000);
         int defaultMaxTVKbps = xmlreader.GetValueAsInt("quality", "TVHigh", 13000);
         bool defaultTVVBR = xmlreader.GetValueAsBool("quality", "TVVBR", true);
- 
-        string comName = this._card.Graph.CommercialName; 
-        
-        if ( comName.IndexOf("usb") >= 0 )
+
+        string comName = this._card.Graph.CommercialName;
+
+        if (comName.IndexOf("usb") >= 0)
         {
           highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 768);
           highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 4000);
         }
 
         Hauppauge props = new Hauppauge(_filterCapture, _card.DeviceId);
-        if ( Quality >= 0 )
+        if (Quality >= 0)
         {
           //103 is recommended for the stream buffer engine 
           props.SetStream(103);
@@ -1493,29 +1711,29 @@ namespace MediaPortal.TV.Recording
           //Turns the analog filter on/off
           props.SetDNR(DNR);
 
-          switch ( Quality )
+          switch (Quality)
           {
-            case 0://Portable
+            case 0: //Portable
               Log.Info("SinkGraph:Set quality:portable");
               props.SetVideoBitRate(portableMinKbps, portableMaxKbps, portableVBR);
               break;
-            case 1://low
+            case 1: //low
               Log.Info("SinkGraph:Set quality:low");
               props.SetVideoBitRate(lowMinKbps, lowMaxKbps, lowVBR);
               break;
-            case 2://medium
+            case 2: //medium
               Log.Info("SinkGraph:Set quality:medium");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
               break;
-            case 3://hi
+            case 3: //hi
               Log.Info("SinkGraph:Set quality:high");
               props.SetVideoBitRate(highMinKbps, highMaxKbps, highVBR);
               break;
-            case 4://TV default
+            case 4: //TV default
               Log.Info("SinkGraph:Set quality:TVdefault");
               props.SetVideoBitRate(defaultMinTVKbps, defaultMaxTVKbps, defaultTVVBR);
               break;
-            default://
+            default: //
               Log.Info("SinkGraph:Set quality to default (medium)");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
               break;
@@ -1531,20 +1749,22 @@ namespace MediaPortal.TV.Recording
           Log.Info("Hauppauge audio bitrate {0}", audkbps);
           Log.Info("Hauppauge stream type {0}", stream);
         }
-      }//if (Quality>=0)
-    }//protected void SetQuality(int Quality)
+      } //if (Quality>=0)
+    } //protected void SetQuality(int Quality)
 
     public bool HasTeletext()
     {
       return _hasTeletext;
     }
+
     #region Stream-Audio handling
+
     public int GetAudioLanguage()
     {
       return _selectedAudioLanguage;
     }
 
-    public void SetAudioLanguage( int audioPid )
+    public void SetAudioLanguage(int audioPid)
     {
       _selectedAudioLanguage = audioPid;
       //  if (_tvAudioTunerInterface == null) return;
@@ -1617,18 +1837,20 @@ namespace MediaPortal.TV.Recording
       //  }
       return _listAudioPids;
     }
+
     #endregion
 
     public string TvTimeshiftFileName()
     {
       return "live.tv";
     }
+
     public string RadioTimeshiftFileName()
     {
       return string.Empty;
     }
 
-    public void GrabTeletext( bool yesNo )
+    public void GrabTeletext(bool yesNo)
     {
       _grabTeletext = yesNo;
     }
@@ -1647,22 +1869,24 @@ namespace MediaPortal.TV.Recording
     {
       return true;
     }
+
     public bool IsEpgGrabbing()
     {
       return false;
     }
-    public bool GrabEpg( TVChannel chan )
+
+    public bool GrabEpg(TVChannel chan)
     {
       return false;
     }
 
-    public void RadioChannelMinMax( out int chanmin, out int chanmax )
+    public void RadioChannelMinMax(out int chanmin, out int chanmax)
     {
       Log.Info("SinkGraph:Getting Min and Max Radio channels");
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
-      if ( _isUsingCable )
+      if (_isUsingCable)
       {
         _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
       }
@@ -1672,17 +1896,16 @@ namespace MediaPortal.TV.Recording
       }
       _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
       Log.Info("SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
-
     }
 
-    public void TVChannelMinMax( out int chanmin, out int chanmax )
+    public void TVChannelMinMax(out int chanmin, out int chanmax)
     {
       Log.Info("SinkGraph:Getting Min and Max TV channels");
       InitializeTuner();
       _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
       Log.Info("SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
-
     }
+
     public bool StopEpgGrabbing()
     {
       return true;
@@ -1692,10 +1915,12 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
+
     public bool Supports5vAntennae()
     {
       return false;
     }
+
     public bool SupportsCamSelection()
     {
       return false;
@@ -1703,18 +1928,23 @@ namespace MediaPortal.TV.Recording
 
     public bool CanViewTimeShiftFile()
     {
-      if ( _graphState != State.TimeShifting && _graphState != State.Recording )
+      if (_graphState != State.TimeShifting && _graphState != State.Recording)
+      {
         return false;
+      }
       return true;
     }
+
     public bool IsRadio()
     {
-      return ( _graphState == State.Radio );
+      return (_graphState == State.Radio);
     }
+
     public bool IsRecording()
     {
-      return ( _graphState == State.Recording );
+      return (_graphState == State.Recording);
     }
+
     public string LastError()
     {
       return _lastError;

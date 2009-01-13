@@ -23,11 +23,11 @@
 
 #endregion
 
-using System;
-using System.Windows.Forms;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using Outlook = Microsoft.Office.Interop.Outlook;
+using Microsoft.Office.Interop.Outlook;
+using Exception=System.Exception;
 
 namespace ProcessPlugins.CallerId
 {
@@ -49,60 +49,114 @@ namespace ProcessPlugins.CallerId
 
       try
       {
-        Outlook.Application olApplication = new Outlook.Application();
-        Outlook.NameSpace olNamespace = olApplication.GetNamespace("mapi");
-        Outlook.MAPIFolder olContacts = olNamespace.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderContacts);
-        Outlook.Items olItems = (Outlook.Items)olContacts.Items;
+        Application olApplication = new Application();
+        NameSpace olNamespace = olApplication.GetNamespace("mapi");
+        MAPIFolder olContacts = olNamespace.GetDefaultFolder(OlDefaultFolders.olFolderContacts);
+        Items olItems = (Items) olContacts.Items;
 
         string sFilter
           = "[AssistantTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[Business2TelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[BusinessFaxNumber] = '" + outlookQuery + "' Or "
-          + "[BusinessTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[CallbackTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[CarTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[CompanyMainTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[Home2TelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[HomeFaxNumber] = '" + outlookQuery + "' Or "
-          + "[HomeTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[ISDNNumber] = '" + outlookQuery + "' Or "
-          + "[MobileTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[OtherFaxNumber] = '" + outlookQuery + "' Or "
-          + "[OtherTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[PrimaryTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[RadioTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[TelexNumber] = '" + outlookQuery + "' Or "
-          + "[HomeTelephoneNumber] = '" + outlookQuery + "' Or "
-          + "[TTYTDDTelephoneNumber] = '" + outlookQuery + "'";
+            + "[Business2TelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[BusinessFaxNumber] = '" + outlookQuery + "' Or "
+            + "[BusinessTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[CallbackTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[CarTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[CompanyMainTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[Home2TelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[HomeFaxNumber] = '" + outlookQuery + "' Or "
+            + "[HomeTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[ISDNNumber] = '" + outlookQuery + "' Or "
+            + "[MobileTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[OtherFaxNumber] = '" + outlookQuery + "' Or "
+            + "[OtherTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[PrimaryTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[RadioTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[TelexNumber] = '" + outlookQuery + "' Or "
+            + "[HomeTelephoneNumber] = '" + outlookQuery + "' Or "
+            + "[TTYTDDTelephoneNumber] = '" + outlookQuery + "'";
 
-        Outlook.ContactItem olContactItem = (Outlook.ContactItem)olItems.Find(sFilter);
+        ContactItem olContactItem = (ContactItem) olItems.Find(sFilter);
 
         if (olContactItem != null)
         {
-          if (olContactItem.AssistantTelephoneNumber == outlookQuery) found.Type = "Assistant Telephone";
-          else if (olContactItem.Business2TelephoneNumber == outlookQuery) found.Type = "Business 2 Telephone";
-          else if (olContactItem.BusinessFaxNumber == outlookQuery) found.Type = "Business Fax";
-          else if (olContactItem.BusinessTelephoneNumber == outlookQuery) found.Type = "Business Telephone";
-          else if (olContactItem.CallbackTelephoneNumber == outlookQuery) found.Type = "Callback Telephone";
-          else if (olContactItem.CarTelephoneNumber == outlookQuery) found.Type = "Car Telephone";
-          else if (olContactItem.CompanyMainTelephoneNumber == outlookQuery) found.Type = "Company Main Telephone";
-          else if (olContactItem.Home2TelephoneNumber == outlookQuery) found.Type = "Home 2 Telephone";
-          else if (olContactItem.HomeFaxNumber == outlookQuery) found.Type = "Home Fax";
-          else if (olContactItem.HomeTelephoneNumber == outlookQuery) found.Type = "Home Telephone";
-          else if (olContactItem.ISDNNumber == outlookQuery) found.Type = "ISDN";
-          else if (olContactItem.MobileTelephoneNumber == outlookQuery) found.Type = "Mobile Telephone";
-          else if (olContactItem.OtherFaxNumber == outlookQuery) found.Type = "Other Fax";
-          else if (olContactItem.OtherTelephoneNumber == outlookQuery) found.Type = "Other Telephone";
-          else if (olContactItem.PrimaryTelephoneNumber == outlookQuery) found.Type = "Primary Telephone";
-          else if (olContactItem.RadioTelephoneNumber == outlookQuery) found.Type = "Radio Telephone";
-          else if (olContactItem.TelexNumber == outlookQuery) found.Type = "Telex";
-          else if (olContactItem.TTYTDDTelephoneNumber == outlookQuery) found.Type = "TTYTDD Telephone";
+          if (olContactItem.AssistantTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Assistant Telephone";
+          }
+          else if (olContactItem.Business2TelephoneNumber == outlookQuery)
+          {
+            found.Type = "Business 2 Telephone";
+          }
+          else if (olContactItem.BusinessFaxNumber == outlookQuery)
+          {
+            found.Type = "Business Fax";
+          }
+          else if (olContactItem.BusinessTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Business Telephone";
+          }
+          else if (olContactItem.CallbackTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Callback Telephone";
+          }
+          else if (olContactItem.CarTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Car Telephone";
+          }
+          else if (olContactItem.CompanyMainTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Company Main Telephone";
+          }
+          else if (olContactItem.Home2TelephoneNumber == outlookQuery)
+          {
+            found.Type = "Home 2 Telephone";
+          }
+          else if (olContactItem.HomeFaxNumber == outlookQuery)
+          {
+            found.Type = "Home Fax";
+          }
+          else if (olContactItem.HomeTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Home Telephone";
+          }
+          else if (olContactItem.ISDNNumber == outlookQuery)
+          {
+            found.Type = "ISDN";
+          }
+          else if (olContactItem.MobileTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Mobile Telephone";
+          }
+          else if (olContactItem.OtherFaxNumber == outlookQuery)
+          {
+            found.Type = "Other Fax";
+          }
+          else if (olContactItem.OtherTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Other Telephone";
+          }
+          else if (olContactItem.PrimaryTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Primary Telephone";
+          }
+          else if (olContactItem.RadioTelephoneNumber == outlookQuery)
+          {
+            found.Type = "Radio Telephone";
+          }
+          else if (olContactItem.TelexNumber == outlookQuery)
+          {
+            found.Type = "Telex";
+          }
+          else if (olContactItem.TTYTDDTelephoneNumber == outlookQuery)
+          {
+            found.Type = "TTYTDD Telephone";
+          }
 
           found.Name = olContactItem.FullName;
 
-          string applicationPath = Application.ExecutablePath;
-          applicationPath = System.IO.Path.GetFullPath(applicationPath);
-          applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
+          string applicationPath = System.Windows.Forms.Application.ExecutablePath;
+          applicationPath = Path.GetFullPath(applicationPath);
+          applicationPath = Path.GetDirectoryName(applicationPath);
           if (olContactItem.Attachments[1] != null)
           {
             Log.Debug(Thumbs.Yac + @"\" + olContactItem.Attachments[1].FileName);

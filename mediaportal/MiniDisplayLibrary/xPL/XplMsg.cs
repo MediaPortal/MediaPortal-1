@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Microsoft.Win32;
 using MediaPortal.GUI.Library;
+using Microsoft.Win32;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 {
@@ -25,7 +24,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         this.XPL_Raw = string.Empty;
         this.XPL_Msg = new List<structXplSection>();
         this.XPL_Msg.Clear();
-      } catch
+      }
+      catch
       {
         Log.Info("xPL.XplMsg()[constructor]: caught EXCEPTION", new object[0]);
       }
@@ -47,7 +47,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           this.ExtractMsg();
         }
-      } catch
+      }
+      catch
       {
         Log.Info("xPL.XplMsg([constructor]): caught EXCEPTION", new object[0]);
       }
@@ -70,11 +71,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         int num2;
         string str3 = this.XPL_Raw;
         this.bValid = true;
-      Label_0032:
+        Label_0032:
         num2 = str3.IndexOf('\n' + "{");
         if (this.DoDebug)
         {
-          Log.Info("xPL.XplMsg.ExtractMsg(): next part - index = {0}", new object[] { this.XPL_Msg.Count });
+          Log.Info("xPL.XplMsg.ExtractMsg(): next part - index = {0}", new object[] {this.XPL_Msg.Count});
         }
         if (num2 == -1)
         {
@@ -97,7 +98,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           if (this.XPL_Msg.Count == 1)
           {
             string str4;
-            if (((str4 = this.XPL_Msg[this.XPL_Msg.Count - 1].Section) == null) || (((str4 != "XPL-CMND") && (str4 != "XPL-STAT")) && (str4 != "XPL-TRIG")))
+            if (((str4 = this.XPL_Msg[this.XPL_Msg.Count - 1].Section) == null) ||
+                (((str4 != "XPL-CMND") && (str4 != "XPL-STAT")) && (str4 != "XPL-TRIG")))
             {
               if (this.DoDebug)
               {
@@ -134,7 +136,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             str3 = str3.Substring(2);
           }
         }
-      } catch
+      }
+      catch
       {
         if (this.DoDebug)
         {
@@ -192,10 +195,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public int Bodies
     {
-      get
-      {
-        return (this.XPL_Msg.Count - 1);
-      }
+      get { return (this.XPL_Msg.Count - 1); }
     }
 
     private IPAddress BroadcastAddress
@@ -208,8 +208,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           try
           {
             key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
-            this.pBroadcastAddress = IPAddress.Parse((string)key.GetValue("BroadcastAddress", "255.255.255.255"));
-          } catch
+            this.pBroadcastAddress = IPAddress.Parse((string) key.GetValue("BroadcastAddress", "255.255.255.255"));
+          }
+          catch
           {
             this.pBroadcastAddress = IPAddress.Broadcast;
           }
@@ -224,18 +225,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     public string Content
     {
-      get
-      {
-        return this.XPL_Raw;
-      }
+      get { return this.XPL_Raw; }
     }
 
     public bool IsMessageValid
     {
-      get
-      {
-        return this.bValid;
-      }
+      get { return this.bValid; }
     }
 
     public XplSchema Schema
@@ -244,7 +239,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         XplSchema schema;
         schema.msgClass = this.XPL_Msg[1].Section.ToLower();
-        schema.msgType = schema.msgClass.Substring(schema.msgClass.IndexOf(".") + 1, (schema.msgClass.Length - schema.msgClass.IndexOf(".")) - 1);
+        schema.msgType = schema.msgClass.Substring(schema.msgClass.IndexOf(".") + 1,
+                                                   (schema.msgClass.Length - schema.msgClass.IndexOf(".")) - 1);
         schema.msgClass = schema.msgClass.Substring(0, schema.msgClass.IndexOf("."));
         return schema;
       }
@@ -284,4 +280,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     }
   }
 }
-

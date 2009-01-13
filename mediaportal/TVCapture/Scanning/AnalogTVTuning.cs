@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Threading;
 using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -39,47 +37,48 @@ namespace MediaPortal.TV.Scanning
   /// </summary>
   public class AnalogTVTuning : ITuning
   {
-    const int MaxChannelNo = 400;
-    int _currentChannel = 0, _maxChannel = 0, _minChannel = 0;
-    AutoTuneCallback _callback = null;
-    TVCaptureDevice _captureCard;
-    float _lastFrequency = -1f;
-    int _newChannels, _updatedChannels;
+    private const int MaxChannelNo = 400;
+    private int _currentChannel = 0, _maxChannel = 0, _minChannel = 0;
+    private AutoTuneCallback _callback = null;
+    private TVCaptureDevice _captureCard;
+    private float _lastFrequency = -1f;
+    private int _newChannels, _updatedChannels;
 
     public AnalogTVTuning()
     {
     }
+
     #region ITuning Members
 
     public void Start()
     {
-        _newChannels = 0;
-        _updatedChannels = 0;
-      _currentChannel = _minChannel-1;
+      _newChannels = 0;
+      _updatedChannels = 0;
+      _currentChannel = _minChannel - 1;
       _callback.OnSignal(0, 0);
       _callback.OnProgress(0);
-  }
-    
+    }
+
     public void Next()
     {
       _currentChannel++;
       if (IsFinished())
       {
-          _callback.OnEnded();
-          return;
+        _callback.OnEnded();
+        return;
       }
       Tune();
     }
-    
-    void Tune()
+
+    private void Tune()
     {
-      float percent = (((float)_currentChannel) - (float)_minChannel) / ((float)_maxChannel - (float)_minChannel);
+      float percent = (((float) _currentChannel) - (float) _minChannel)/((float) _maxChannel - (float) _minChannel);
       percent *= 100.0f;
-      _callback.OnProgress((int)percent);
+      _callback.OnProgress((int) percent);
       TuneChannel();
       //Wait for tuner to lock signal
-      System.Threading.Thread.Sleep(500);
-      float frequency = (float)_captureCard.VideoFrequency();
+      Thread.Sleep(500);
+      float frequency = (float) _captureCard.VideoFrequency();
       if (frequency != _lastFrequency)
       {
         _lastFrequency = frequency;
@@ -89,13 +88,14 @@ namespace MediaPortal.TV.Scanning
         _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
         if (_captureCard.SignalPresent())
         {
-            int radioTemp = 0;
-            _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels,  _updatedChannels ));
-            _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref radioTemp, ref radioTemp);
-            _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels, _updatedChannels));
-            _callback.OnNewChannel();
-            _callback.UpdateList();
-            return;
+          int radioTemp = 0;
+          _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels, _updatedChannels));
+          _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref radioTemp,
+                                          ref radioTemp);
+          _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels, _updatedChannels));
+          _callback.OnNewChannel();
+          _callback.UpdateList();
+          return;
         }
       }
       else
@@ -112,8 +112,8 @@ namespace MediaPortal.TV.Scanning
 
     public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
-        _newChannels = 0;
-        _updatedChannels = 0;
+      _newChannels = 0;
+      _updatedChannels = 0;
       _lastFrequency = -1f;
       _captureCard = card;
       card.TVChannelMinMax(out _minChannel, out _maxChannel);
@@ -132,11 +132,14 @@ namespace MediaPortal.TV.Scanning
 
     public bool IsFinished()
     {
-      if (_currentChannel > _maxChannel) return true;
+      if (_currentChannel > _maxChannel)
+      {
+        return true;
+      }
       return false;
     }
 
-    void TuneChannel()
+    private void TuneChannel()
     {
       TVChannel chan = new TVChannel();
       chan.Number = _currentChannel;
@@ -174,7 +177,6 @@ namespace MediaPortal.TV.Scanning
           int groupid = TVDatabase.AddGroup(group);
           group.ID = groupid;
           TVDatabase.MapChannelToGroup(group, chan);
-
         }
       }
       return _currentChannel;

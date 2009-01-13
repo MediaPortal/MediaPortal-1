@@ -24,17 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.IO;
-using MediaPortal.GUI.Library;
-using System.Diagnostics;
-using MediaPortal.Util;
 
 namespace MediaPortal.GUI.GUIBurner
 {
+
   #region EventArgs Classes
+
   public class FileFinishedEventArgs : EventArgs
   {
     public string SourceFile;
@@ -73,12 +68,18 @@ namespace MediaPortal.GUI.GUIBurner
   public class BurnDVDStatusUpdateEventArgs : EventArgs
   {
     private string _Status;
+
     public BurnDVDStatusUpdateEventArgs(string StatusString)
     {
       _Status = StatusString;
     }
-    public string Status { get { return _Status; } set { _Status = value; } }
 
+    public string Status
+    {
+      get { return _Status; }
+      set { _Status = value; }
+    }
   }
+
   #endregion
 }

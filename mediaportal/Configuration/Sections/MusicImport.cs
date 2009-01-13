@@ -24,24 +24,39 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
-using MediaPortal.Util;
+using System.Windows.Forms;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicImport : MediaPortal.Configuration.SectionSettings
+  public class MusicImport : SectionSettings
   {
     private class Preset
     {
-      int target;
-      int minimum;
-      int maximum;
+      private int target;
+      private int minimum;
+      private int maximum;
 
-      public int Target { get { return target; } }
-      public int Minimum { get { return minimum; } }
-      public int Maximum { get { return maximum; } }
+      public int Target
+      {
+        get { return target; }
+      }
+
+      public int Minimum
+      {
+        get { return minimum; }
+      }
+
+      public int Maximum
+      {
+        get { return maximum; }
+      }
 
       public Preset(string presetString)
       {
@@ -51,55 +66,55 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private System.ComponentModel.IContainer components = null;
-    private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
-    private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
-    private MediaPortal.UserInterface.Controls.MPButton buttonLocateLAME;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFastMode;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCBR;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDatabase;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxReplace;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMono;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxBackground;
+    private IContainer components = null;
+    private MPButton buttonDefault;
+    private MPButton buttonBrowse;
+    private MPButton buttonLocateLAME;
+    private MPCheckBox checkBoxFastMode;
+    private MPCheckBox checkBoxCBR;
+    private MPCheckBox checkBoxDatabase;
+    private MPCheckBox checkBoxReplace;
+    private MPCheckBox checkBoxMono;
+    private MPCheckBox checkBoxBackground;
     private FolderBrowserDialog folderBrowserDialog;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxQuality;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxBitrate;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxTarget;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPerformance;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMissing;
+    private MPGroupBox groupBoxQuality;
+    private MPGroupBox groupBoxBitrate;
+    private MPGroupBox groupBoxTarget;
+    private MPGroupBox groupBoxGeneralSettings;
+    private MPGroupBox groupBoxPerformance;
+    private MPGroupBox groupBoxMissing;
     private HScrollBar hScrollBarQuality;
     private HScrollBar hScrollBarBitrate;
     private HScrollBar hScrollBarPriority;
-    private MediaPortal.UserInterface.Controls.MPLabel labelTarget;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBitrate;
-    private MediaPortal.UserInterface.Controls.MPLabel labelLibraryFolder;
-    private MediaPortal.UserInterface.Controls.MPLabel labelFasterImport;
-    private MediaPortal.UserInterface.Controls.MPLabel labelBetterResponse;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDisabled;
+    private MPLabel labelTarget;
+    private MPLabel labelBitrate;
+    private MPLabel labelLibraryFolder;
+    private MPLabel labelFasterImport;
+    private MPLabel labelBetterResponse;
+    private MPLabel labelDisabled;
     private LinkLabel linkLabelLAME;
     private OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQuality;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonBitrate;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlMusicImport;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlMissing;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageMissing;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageEncoderSettings;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageFilenames;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageImportSettings;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxImportDir;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label12;
-    private MediaPortal.UserInterface.Controls.MPLabel label10;
-    private MediaPortal.UserInterface.Controls.MPLabel label9;
-    private MediaPortal.UserInterface.Controls.MPLabel label11;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSample;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFormat;
-    private MediaPortal.UserInterface.Controls.MPLabel label38;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUnknown;
+    private MPRadioButton radioButtonQuality;
+    private MPRadioButton radioButtonBitrate;
+    private MPTabControl tabControlMusicImport;
+    private MPTabControl tabControlMissing;
+    private MPTabPage tabPageMissing;
+    private MPTabPage tabPageEncoderSettings;
+    private MPTabPage tabPageFilenames;
+    private MPTabPage tabPageImportSettings;
+    private MPTextBox textBoxImportDir;
+    private MPGroupBox groupBox2;
+    private MPGroupBox groupBox1;
+    private MPLabel label12;
+    private MPLabel label10;
+    private MPLabel label9;
+    private MPLabel label11;
+    private MPTextBox textBoxSample;
+    private MPLabel label7;
+    private MPLabel label6;
+    private MPTextBox textBoxFormat;
+    private MPLabel label38;
+    private MPCheckBox checkBoxUnknown;
 
     private Preset[] Presets = new Preset[7];
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
@@ -151,7 +166,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxReplace.Checked = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", false);
         checkBoxMono.Checked = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
@@ -165,7 +180,9 @@ namespace MediaPortal.Configuration.Sections
         radioButtonBitrate.Checked = !radioButtonQuality.Checked;
         textBoxImportDir.Text = xmlreader.GetValueAsString("musicimport", "mp3importdir", "C:");
         checkBoxFastMode.Checked = xmlreader.GetValueAsBool("musicimport", "mp3fastmode", false);
-        labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
+        labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" +
+                           Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum +
+                           ")";
         labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
         textBoxFormat.Text = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
         checkBoxUnknown.Enabled = checkBoxDatabase.Checked;
@@ -179,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("musicimport", "mp3importdir", textBoxImportDir.Text);
         xmlwriter.SetValue("musicimport", "mp3priority", hScrollBarPriority.Value);
@@ -194,9 +211,13 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicimport", "mp3background", checkBoxBackground.Checked);
         xmlwriter.SetValueAsBool("musicimport", "importunknown", !checkBoxUnknown.Checked);
         if (textBoxFormat.Text != string.Empty)
+        {
           xmlwriter.SetValue("musicimport", "format", textBoxFormat.Text);
+        }
         else
+        {
           xmlwriter.SetValue("musicimport", "format", "%artist%\\%album%\\%track% %title%");
+        }
       }
     }
 
@@ -216,13 +237,15 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MusicImport));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (MusicImport));
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -304,7 +327,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageEncoderSettings
       // 
-      this.tabPageEncoderSettings.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tabPageEncoderSettings.BackgroundImage")));
+      this.tabPageEncoderSettings.BackgroundImage =
+        ((System.Drawing.Image) (resources.GetObject("tabPageEncoderSettings.BackgroundImage")));
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxQuality);
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxBitrate);
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxTarget);
@@ -549,7 +573,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowse.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonBrowse.Location = new System.Drawing.Point(344, 123);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(72, 22);
@@ -560,8 +586,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxImportDir
       // 
-      this.textBoxImportDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxImportDir.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxImportDir.BorderColor = System.Drawing.Color.Empty;
       this.textBoxImportDir.Location = new System.Drawing.Point(96, 124);
       this.textBoxImportDir.Name = "textBoxImportDir";
@@ -632,8 +660,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.groupBox1);
       this.groupBox2.Controls.Add(this.textBoxSample);
       this.groupBox2.Controls.Add(this.label7);
@@ -701,8 +731,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
       this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Location = new System.Drawing.Point(80, 76);
@@ -731,8 +763,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxFormat
       // 
-      this.textBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFormat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxFormat.BorderColor = System.Drawing.Color.Empty;
       this.textBoxFormat.Location = new System.Drawing.Point(80, 48);
       this.textBoxFormat.Name = "textBoxFormat";
@@ -761,7 +795,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageMissing
       // 
-      this.tabPageMissing.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tabPageMissing.BackgroundImage")));
+      this.tabPageMissing.BackgroundImage =
+        ((System.Drawing.Image) (resources.GetObject("tabPageMissing.BackgroundImage")));
       this.tabPageMissing.Controls.Add(this.groupBoxMissing);
       this.tabPageMissing.Location = new System.Drawing.Point(4, 22);
       this.tabPageMissing.Name = "tabPageMissing";
@@ -803,7 +838,8 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelLAME.TabIndex = 1;
       this.linkLabelLAME.TabStop = true;
       this.linkLabelLAME.Text = "http://mitiok.maresweb.org/lame-3.97b.zip";
-      this.linkLabelLAME.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLAME_LinkClicked);
+      this.linkLabelLAME.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLAME_LinkClicked);
       // 
       // labelDisabled
       // 
@@ -847,10 +883,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxMissing.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
-    #endregion
 
+    #endregion
 
     /// <summary>
     /// 
@@ -869,7 +904,9 @@ namespace MediaPortal.Configuration.Sections
       checkBoxDatabase.Checked = true;
       checkBoxBackground.Checked = false;
       labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
-      labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
+      labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" +
+                         Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum +
+                         ")";
     }
 
     /// <summary>
@@ -910,17 +947,21 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarQuality_Scroll(object sender, ScrollEventArgs e)
     {
-      labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
+      labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" +
+                         Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum +
+                         ")";
     }
 
     private void linkLabelLAME_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (linkLabelLAME.Text == null)
+      {
         return;
+      }
       if (linkLabelLAME.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelLAME.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelLAME.Text);
+        Process.Start(sInfo);
       }
     }
 
@@ -974,13 +1015,15 @@ namespace MediaPortal.Configuration.Sections
       string strDefault = "%artist%\\%album%\\%track% %title%";
 
       if (strInput == string.Empty)
+      {
         strInput = strDefault;
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%artist%", artist, "unknown");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%title%", title, "unknown");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%album%", album, "unknown");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%track%", trackNr, "unknown");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%year%", year, "unknown");
-      strInput = MediaPortal.Util.Utils.ReplaceTag(strInput, "%genre%", genre, "unknown");
+      }
+      strInput = Util.Utils.ReplaceTag(strInput, "%artist%", artist, "unknown");
+      strInput = Util.Utils.ReplaceTag(strInput, "%title%", title, "unknown");
+      strInput = Util.Utils.ReplaceTag(strInput, "%album%", album, "unknown");
+      strInput = Util.Utils.ReplaceTag(strInput, "%track%", trackNr, "unknown");
+      strInput = Util.Utils.ReplaceTag(strInput, "%year%", year, "unknown");
+      strInput = Util.Utils.ReplaceTag(strInput, "%genre%", genre, "unknown");
 
       int index = strInput.LastIndexOf('\\');
       switch (index)
@@ -998,11 +1041,13 @@ namespace MediaPortal.Configuration.Sections
           }
           break;
       }
-      strDirectory = MediaPortal.Util.Utils.MakeDirectoryPath(strDirectory);
-      strName = MediaPortal.Util.Utils.MakeFileName(strName);
+      strDirectory = Util.Utils.MakeDirectoryPath(strDirectory);
+      strName = Util.Utils.MakeFileName(strName);
       string strReturn = strDirectory;
       if (strDirectory != string.Empty)
+      {
         strReturn += "\\";
+      }
       strReturn += strName + ".mp3";
       return strReturn;
     }
@@ -1020,12 +1065,11 @@ namespace MediaPortal.Configuration.Sections
     private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
-        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
-        (e.KeyChar == '>') || (e.KeyChar == '|'))
+          (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
+          (e.KeyChar == '>') || (e.KeyChar == '|'))
       {
         e.Handled = true;
       }
     }
-
   }
 }

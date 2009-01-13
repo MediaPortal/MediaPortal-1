@@ -23,7 +23,6 @@
 
 #endregion
 
-
 namespace MediaPortal.Utils.CommandLine
 {
   /// <summary>

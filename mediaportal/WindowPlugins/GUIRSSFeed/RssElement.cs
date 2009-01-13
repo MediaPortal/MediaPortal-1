@@ -52,15 +52,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
  * THE SOFTWARE.
 */
-using System;
-
 namespace Rss
 {
-	/// <summary>Base class for all RSS elements</summary>
-	[@Serializable()]
-	public abstract class RssElement
-	{
-		/// <summary>Initialize a new instance of the RssElement class</summary>
-		protected RssElement() {}
-	}
+  /// <summary>Base class for all RSS elements</summary>
+  [@Serializable()]
+  public abstract class RssElement
+  {
+    /// <summary>Initialize a new instance of the RssElement class</summary>
+    protected RssElement()
+    {
+    }
+  }
 }

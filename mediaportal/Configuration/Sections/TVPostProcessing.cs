@@ -23,26 +23,22 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using DShowNET.Helper;
-using DirectShowLib;
-
-using MediaPortal.Util;
 
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class TVPostProcessing : MediaPortal.Configuration.Sections.BasePostProcessing
+  public class TVPostProcessing : BasePostProcessing
   {
     public TVPostProcessing()
-      : this("TV Post Processing") { }
+      : this("TV Post Processing")
+    {
+    }
 
     public TVPostProcessing(string name)
-      : base(name) { }
+      : base(name)
+    {
+    }
 
     public override void LoadSettings()
     {

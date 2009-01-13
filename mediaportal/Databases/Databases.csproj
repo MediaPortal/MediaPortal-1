@@ -227,7 +227,9 @@
     </Compile>
     <Compile Include="Music\Audioscrobbler\AudioscrobblerBase.cs" />
     <Compile Include="Music\Audioscrobbler\AudioscrobblerUtils.cs" />
-    <Compile Include="Music\InternetLookups\AWSECommerceService.cs" />
+    <Compile Include="Music\InternetLookups\AWSECommerceService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Music\MusicDatabase.cs">
       <SubType>Code</SubType>
     </Compile>

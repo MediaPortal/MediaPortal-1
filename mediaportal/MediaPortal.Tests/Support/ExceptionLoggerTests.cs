@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using MediaPortal.Support;
 using System.IO;
+using MediaPortal.Support;
+using NUnit.Framework;
 
 namespace MediaPortal.Tests.Support
 {

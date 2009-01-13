@@ -24,16 +24,13 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections;
-using System.Threading;
-using System.Diagnostics;
-using Microsoft.Win32.SafeHandles;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using Microsoft.Win32.SafeHandles;
 
 namespace MediaPortal.Hardware
 {
@@ -44,12 +41,16 @@ namespace MediaPortal.Hardware
     protected void OnDeviceArrival(object sender, EventArgs e)
     {
       if (_deviceStream != null)
+      {
         return;
+      }
 
       Open();
 
       if (DeviceArrival != null)
+      {
         DeviceArrival(sender, e);
+      }
     }
 
     protected abstract void Open();
@@ -57,7 +58,9 @@ namespace MediaPortal.Hardware
     protected void OnDeviceRemoval(object sender, EventArgs e)
     {
       if (_deviceStream == null)
+      {
         return;
+      }
 
       try
       {
@@ -73,7 +76,9 @@ namespace MediaPortal.Hardware
       }
 
       if (DeviceRemoval != null)
+      {
         DeviceRemoval(sender, e);
+      }
     }
 
     protected string FindDevice(Guid classGuid)
@@ -85,9 +90,11 @@ namespace MediaPortal.Hardware
       string devicePath = null;
 
       if (handle.ToInt32() == -1)
+      {
         throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
+      }
 
-      for (int deviceIndex = 0; ; deviceIndex++)
+      for (int deviceIndex = 0;; deviceIndex++)
       {
         DeviceInfoData deviceInfoData = new DeviceInfoData();
         deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
@@ -116,7 +123,8 @@ namespace MediaPortal.Hardware
 
         uint cbData = 0;
 
-        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false && cbData == 0)
+        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false &&
+            cbData == 0)
         {
           SetupDiDestroyDeviceInfoList(handle);
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
@@ -125,7 +133,9 @@ namespace MediaPortal.Hardware
         DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
         deviceInterfaceDetailData.Size = 5;
 
-        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) == false)
+        if (
+          SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) ==
+          false)
         {
           SetupDiDestroyDeviceInfoList(handle);
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
@@ -137,15 +147,19 @@ namespace MediaPortal.Hardware
         }
 
         foreach (string deviceId in _eHomeTransceivers)
+        {
           if ((deviceInterfaceDetailData.DevicePath.IndexOf(deviceId) != -1) || // eHome Infrared Transceiver List XP
-          (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))   // Microsoft/Philips 2005 (Vista)
+              (deviceInterfaceDetailData.DevicePath.StartsWith(@"\\?\hid#irdevice&col01#2")))
+            // Microsoft/Philips 2005 (Vista)
           {
             SetupDiDestroyDeviceInfoList(handle);
             devicePath = deviceInterfaceDetailData.DevicePath;
           }
+        }
         if (devicePath != null)
+        {
           break;
-
+        }
       }
       return devicePath;
     }
@@ -172,7 +186,7 @@ namespace MediaPortal.Hardware
               _eHomeTransceivers.Add(att.Value);
             }
           }
-          catch (System.Xml.XmlException)
+          catch (XmlException)
           {
             Log.Error("MCE: Error in XML file " + deviceXmlFile, "error");
             _eHomeTransceivers = null;
@@ -191,7 +205,12 @@ namespace MediaPortal.Hardware
     #region Interop
 
     [DllImport("kernel32", SetLastError = true)]
-    protected static extern SafeFileHandle CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+    protected static extern SafeFileHandle CreateFile(string FileName,
+                                                      [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess,
+                                                      [MarshalAs(UnmanagedType.U4)] FileShare ShareMode,
+                                                      uint SecurityAttributes,
+                                                      [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition,
+                                                      FileFlag FlagsAndAttributes, int hTemplateFile);
 
     [DllImport("kernel32", SetLastError = true)]
     protected static extern bool CloseHandle(IntPtr hObject);
@@ -227,8 +246,7 @@ namespace MediaPortal.Hardware
     {
       public int Size;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public string DevicePath;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string DevicePath;
     }
 
     [DllImport("hid")]
@@ -241,13 +259,21 @@ namespace MediaPortal.Hardware
     protected static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData, ref Guid guidClass, int MemberIndex, ref DeviceInterfaceData deviceInterfaceData);
+    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData,
+                                                             ref Guid guidClass, int MemberIndex,
+                                                             ref DeviceInterfaceData deviceInterfaceData);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, int unused1, int unused2, ref uint requiredSize, int unused3);
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
+                                                                 ref DeviceInterfaceData deviceInterfaceData,
+                                                                 int unused1, int unused2, ref uint requiredSize,
+                                                                 int unused3);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, ref DeviceInterfaceDetailData deviceInterfaceDetailData, uint detailSize, int unused1, int unused2);
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
+                                                                 ref DeviceInterfaceData deviceInterfaceData,
+                                                                 ref DeviceInterfaceDetailData deviceInterfaceDetailData,
+                                                                 uint detailSize, int unused1, int unused2);
 
     [DllImport("setupapi")]
     protected static extern bool SetupDiDestroyDeviceInfoList(IntPtr handle);
@@ -267,7 +293,7 @@ namespace MediaPortal.Hardware
     protected FileStream _deviceStream;
     protected byte[] _deviceBuffer;
     internal DeviceWatcher _deviceWatcher;
-    static bool _logVerbose;
+    private static bool _logVerbose;
     internal ArrayList _eHomeTransceivers;
 
     #endregion Members
@@ -289,14 +315,8 @@ namespace MediaPortal.Hardware
 
     public static bool LogVerbose
     {
-      set
-      {
-        _logVerbose = value;
-      }
-      get
-      {
-        return _logVerbose;
-      }
+      set { _logVerbose = value; }
+      get { return _logVerbose; }
     }
 
     #endregion Properties

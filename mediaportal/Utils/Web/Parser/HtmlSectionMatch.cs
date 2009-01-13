@@ -24,23 +24,21 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Utils.Web
 {
-	/// <summary>
+  /// <summary>
   /// Xml Serializable Class for Section Match data.
-	/// </summary>
+  /// </summary>
   [Serializable]
-	public class HtmlSectionMatch
-	{
+  public class HtmlSectionMatch
+  {
     #region Variables
-    [XmlAttribute("field")]
-    public string field;
-    [XmlAttribute("match")]
-    public string match;
+
+    [XmlAttribute("field")] public string field;
+    [XmlAttribute("match")] public string match;
+
     #endregion
   }
 }

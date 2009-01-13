@@ -24,18 +24,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Web;
-using System.Text;
-using System.Windows.Forms;
-using MediaPortal.EPG;
-using MediaPortal.Services;
-using MediaPortal.Webepg.TV.Database;
-using MediaPortal.Util;
-using MediaPortal.Utils.CommandLine;
-using MediaPortal.Configuration;
 using System.Threading;
+using MediaPortal.Configuration;
+using MediaPortal.Services;
+using MediaPortal.Utils.CommandLine;
 
 namespace MediaPortal.EPG.WebEPGxmltv
 {
@@ -45,11 +39,11 @@ namespace MediaPortal.EPG.WebEPGxmltv
     /// The main entry point for the WebEPG application as external exe.
     /// </summary>
     [STAThread]
-    static void Main(params string[] args)
+    private static void Main(params string[] args)
     {
       // Parse Command Line options
       CommandLineOptions webepgArgs = new CommandLineOptions();
-      ICommandLineOptions iwebepgArgs = (ICommandLineOptions)webepgArgs;
+      ICommandLineOptions iwebepgArgs = (ICommandLineOptions) webepgArgs;
 
       try
       {
@@ -67,44 +61,60 @@ namespace MediaPortal.EPG.WebEPGxmltv
       _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG: Starting");
 
       // set process priority lower
-      System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+      Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
       Thread.CurrentThread.Name = "WebEPG-xmltv";
       // try to catch all exceptions .. disabled in debug mode.
 #if !DEBUG
       try
       {
 #endif
-      
-        // Set location of directories and config file
-      bool mediaPortalPresent = false;
-      if (File.Exists(Config.GetFile(Config.Dir.Base, "MediaPortalDirs.xml")))
-        mediaPortalPresent = true;
 
-      string webepgDirectory = Config.GetFolder(Config.Dir.Base);
+        // Set location of directories and config file
+        bool mediaPortalPresent = false;
+        if (File.Exists(Config.GetFile(Config.Dir.Base, "MediaPortalDirs.xml")))
+        {
+          mediaPortalPresent = true;
+        }
+
+        string webepgDirectory = Config.GetFolder(Config.Dir.Base);
         if (webepgArgs.IsOption(CommandLineOptions.Option.webepg))
+        {
           webepgDirectory = webepgArgs.GetOption(CommandLineOptions.Option.webepg);
+        }
 
 
         string xmltvDirectory;
         if (webepgArgs.IsOption(CommandLineOptions.Option.xmltv))
+        {
           xmltvDirectory = webepgArgs.GetOption(CommandLineOptions.Option.xmltv);
+        }
         else
         {
           if (mediaPortalPresent)
+          {
             xmltvDirectory = Config.GetSubFolder(Config.Dir.Config, @"xmltv\");
+          }
           else
+          {
             xmltvDirectory = webepgDirectory + "\\xmltv\\";
+          }
         }
 
         string configFile;
         if (webepgArgs.IsOption(CommandLineOptions.Option.config))
+        {
           configFile = webepgArgs.GetOption(CommandLineOptions.Option.config);
+        }
         else
         {
           if (mediaPortalPresent)
+          {
             configFile = Config.GetFile(Config.Dir.Config, "WebEPG", "WebEPG.xml");
+          }
           else
+          {
             configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
+          }
         }
 
         _log.Info(LogType.WebEPG, "WebEPG: Using directories");
@@ -119,7 +129,7 @@ namespace MediaPortal.EPG.WebEPGxmltv
         // Program crashes cleanly without the MS message.
 #if !DEBUG
       }
-      // Catch and log all exceptions - fail cleanly
+        // Catch and log all exceptions - fail cleanly
       catch (Exception ex)
       {
         _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG: Fatal Error");

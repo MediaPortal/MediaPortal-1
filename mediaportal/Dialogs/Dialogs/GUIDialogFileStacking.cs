@@ -32,19 +32,20 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogFileStacking : GUIDialogWindow
   {
-    int m_iSelectedFile = -1;
-    int m_iFrames = -1;
-    int m_iNumberOfFiles = 0;
+    private int m_iSelectedFile = -1;
+    private int m_iFrames = -1;
+    private int m_iNumberOfFiles = 0;
+
     public GUIDialogFileStacking()
     {
-      GetID = (int)Window.WINDOW_DIALOG_FILESTACKING;
+      GetID = (int) Window.WINDOW_DIALOG_FILESTACKING;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogFileStacking.xml");
     }
-    
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -61,10 +62,14 @@ namespace MediaPortal.Dialogs
               GUIControl pControl = GetControl(i + 100);
               EnableControl(GetID, i + 100);
               ShowControl(GetID, i + 100);
-              if (i<m_iNumberOfFiles)
-               pControl.NavigateRight = i + 1 + 100;
+              if (i < m_iNumberOfFiles)
+              {
+                pControl.NavigateRight = i + 1 + 100;
+              }
               else
-               pControl.NavigateRight = 101;
+              {
+                pControl.NavigateRight = 101;
+              }
             }
 
             // disable CD's we dont use
@@ -78,7 +83,7 @@ namespace MediaPortal.Dialogs
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            m_iSelectedFile = message.SenderControlId-100;
+            m_iSelectedFile = message.SenderControlId - 100;
             PageDestroy();
           }
           break;
@@ -96,15 +101,15 @@ namespace MediaPortal.Dialogs
         int dwScreenWidth = GUIGraphicsContext.Width;
         for (int i = 1; i <= m_iNumberOfFiles; ++i)
         {
-          GUIControl pControl = GetControl(i+100);
+          GUIControl pControl = GetControl(i + 100);
           if (null != pControl)
           {
-            int dwEndPos = dwScreenWidth/2 - ((m_iNumberOfFiles - i) * 32);
+            int dwEndPos = dwScreenWidth/2 - ((m_iNumberOfFiles - i)*32);
             int dwStartPos = dwScreenWidth/2 + 140;
             float fStep = dwStartPos - dwEndPos;
             fStep /= 25.0f;
             fStep *= m_iFrames;
-            int dwPosX = (int)(dwStartPos - fStep);
+            int dwPosX = (int) (dwStartPos - fStep);
             pControl.SetPosition(dwPosX, GUIGraphicsContext.Height/2);
           }
         }
@@ -121,9 +126,9 @@ namespace MediaPortal.Dialogs
 
     public int SelectedFile
     {
-
       get { return m_iSelectedFile; }
     }
+
     public void SetNumberOfFiles(int iFiles)
     {
       LoadSkin();
@@ -135,7 +140,5 @@ namespace MediaPortal.Dialogs
       SetControlLabel(GetID, 4, string.Empty);
       m_iNumberOfFiles = iFiles;
     }
-
   }
 }
-

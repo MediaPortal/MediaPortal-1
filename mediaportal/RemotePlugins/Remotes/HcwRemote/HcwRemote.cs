@@ -25,13 +25,13 @@
 
 using System;
 using System.Diagnostics;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using System.Threading;
-using System.Collections;
 using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using UdpHelper;
 
 namespace MediaPortal.InputDevices
 {
@@ -41,38 +41,41 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class HcwRemote
   {
-    bool _controlEnabled = false;       // HCW remote enabled
-    bool _allowExternal = false;        // External processes are controlled by the Hauppauge app
-    bool _keepControl = false;          // Keep control, if MP loses focus
-    bool _logVerbose = false;           // Verbose logging
-    DateTime _lastTime = DateTime.Now;  // Timestamp of last recieved keycode from remote
-    int _sameCommandCount = 0;          // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
-    int _lastExecutedCommandCount = 0;
-    int _lastCommand = 0;               // Last executed command
-    InputHandler _inputHandler;
-    UdpHelper.Connection _connection = null;
-    bool _exit = false;
-    int _port = 2110;
+    private bool _controlEnabled = false; // HCW remote enabled
+    private bool _allowExternal = false; // External processes are controlled by the Hauppauge app
+    private bool _keepControl = false; // Keep control, if MP loses focus
+    private bool _logVerbose = false; // Verbose logging
+    private DateTime _lastTime = DateTime.Now; // Timestamp of last recieved keycode from remote
 
-    TimeSpan _buttonRelease;
-    int _repeatFilter = 0;
-    int _repeatSpeed = 0;
-    bool _filterDoubleKlicks = false;
+    private int _sameCommandCount = 0;
+                // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
 
-    const int WM_ACTIVATE = 0x0006;
-    const int WM_POWERBROADCAST = 0x0218;
-    const int WA_INACTIVE = 0;
-    const int WA_ACTIVE = 1;
-    const int WA_CLICKACTIVE = 2;
+    private int _lastExecutedCommandCount = 0;
+    private int _lastCommand = 0; // Last executed command
+    private InputHandler _inputHandler;
+    private Connection _connection = null;
+    private bool _exit = false;
+    private int _port = 2110;
 
-    const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    const int PBT_APMRESUMECRITICAL = 0x0006;
+    private TimeSpan _buttonRelease;
+    private int _repeatFilter = 0;
+    private int _repeatSpeed = 0;
+    private bool _filterDoubleKlicks = false;
 
+    private const int WM_ACTIVATE = 0x0006;
+    private const int WM_POWERBROADCAST = 0x0218;
+    private const int WA_INACTIVE = 0;
+    private const int WA_ACTIVE = 1;
+    private const int WA_CLICKACTIVE = 2;
+
+    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+    private const int PBT_APMRESUMECRITICAL = 0x0006;
 
     #region Callback
 
     //Sets up callback so that other forms can catch a key press
     public delegate void HCWEvent(int keypress);
+
     public event HCWEvent HCWKeyPressed;
 
     #endregion
@@ -81,7 +84,10 @@ namespace MediaPortal.InputDevices
     /// HCW control enabled
     /// </summary>
     /// <returns>Returns true/false.</returns>
-    public bool Enabled { get { return _controlEnabled; } }
+    public bool Enabled
+    {
+      get { return _controlEnabled; }
+    }
 
 
     /// <summary>
@@ -104,7 +110,7 @@ namespace MediaPortal.InputDevices
     public void Init()
     {
       _exit = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
         _allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
@@ -127,14 +133,18 @@ namespace MediaPortal.InputDevices
         {
           FileVersionInfo exeVersionInfo = FileVersionInfo.GetVersionInfo(exePath + "Ir.exe");
           if (exeVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
+          {
             hcwDriverUpToDate = false;
+          }
         }
 
         if (File.Exists(dllPath + "irremote.DLL"))
         {
           FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
           if (dllVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
+          {
             hcwDriverUpToDate = false;
+          }
         }
 
         if (!hcwDriverUpToDate)
@@ -155,22 +165,22 @@ namespace MediaPortal.InputDevices
 
       if (_controlEnabled)
       {
-        _connection = new UdpHelper.Connection(_logVerbose);
+        _connection = new Connection(_logVerbose);
 
         _connection.Start(_port + 1);
-        _connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+        _connection.ReceiveEvent += new Connection.ReceiveEventHandler(OnReceive);
 
         Process process = Process.GetCurrentProcess();
         Log.Info("Process: {0}", process.ProcessName);
 
         Process procHelper = new Process();
-        procHelper.StartInfo.FileName = string.Format("{0}\\HcwHelper.exe", System.Windows.Forms.Application.StartupPath);
+        procHelper.StartInfo.FileName = string.Format("{0}\\HcwHelper.exe", Application.StartupPath);
         procHelper.Start();
         if (_allowExternal)
         {
           Log.Info("HCW: AllowExternal");
-          MediaPortal.Util.Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
-          MediaPortal.Util.Utils.OnStopExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
+          Util.Utils.OnStartExternal += new Util.Utils.UtilEventHandler(OnStartExternal);
+          Util.Utils.OnStopExternal += new Util.Utils.UtilEventHandler(OnStopExternal);
         }
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
@@ -191,19 +201,26 @@ namespace MediaPortal.InputDevices
         Thread.Sleep(1000);
 
         while (!_exit && (Process.GetProcessesByName("HcwHelper").Length > 0))
+        {
           Thread.Sleep(1000);
+        }
 
         if (!_exit)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
             _controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
+          }
           if (_controlEnabled)
+          {
             Process.Start(Application.StartupPath + @"\HcwHelper.exe");
+          }
           else
+          {
             _exit = true;
+          }
         }
-      }
-      while (!_exit);
+      } while (!_exit);
     }
 
 
@@ -217,10 +234,10 @@ namespace MediaPortal.InputDevices
         _exit = true;
         if (_allowExternal)
         {
-          MediaPortal.Util.Utils.OnStartExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
-          MediaPortal.Util.Utils.OnStopExternal -= new MediaPortal.Util.Utils.UtilEventHandler(OnStopExternal);
+          Util.Utils.OnStartExternal -= new Util.Utils.UtilEventHandler(OnStartExternal);
+          Util.Utils.OnStopExternal -= new Util.Utils.UtilEventHandler(OnStopExternal);
         }
-        _connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+        _connection.ReceiveEvent -= new Connection.ReceiveEventHandler(OnReceive);
         _connection.Send(_port, "APP", "SHUTDOWN", DateTime.Now);
         _connection.Stop();
         _connection = null;
@@ -246,11 +263,17 @@ namespace MediaPortal.InputDevices
     }
 
 
-    void OnReceive(string strReceive)
+    private void OnReceive(string strReceive)
     {
-      if (_logVerbose) Log.Info("HCW: received: {0}", strReceive);
+      if (_logVerbose)
+      {
+        Log.Info("HCW: received: {0}", strReceive);
+      }
       string msg = strReceive.Split('~')[0];
-      if (_logVerbose) Log.Info("HCW: Accepted: {0}", msg);
+      if (_logVerbose)
+      {
+        Log.Info("HCW: Accepted: {0}", msg);
+      }
       switch (msg.Split('|')[0])
       {
         case "CMD":
@@ -258,9 +281,15 @@ namespace MediaPortal.InputDevices
             // Time of button press - Use this for repeat delay calculations
             DateTime sentTime = DateTime.FromBinary(Convert.ToInt64(msg.Split('|')[2]));
             int newCommand = Convert.ToInt16(msg.Split('|')[1]);
-            
-            if (_logVerbose) Log.Info("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - _lastTime)).Milliseconds);
-            if (_logVerbose) Log.Info("HCW: sameCommandCount: {0}", _sameCommandCount.ToString());
+
+            if (_logVerbose)
+            {
+              Log.Info("HCW: elapsed time: {0}", ((TimeSpan) (sentTime - _lastTime)).Milliseconds);
+            }
+            if (_logVerbose)
+            {
+              Log.Info("HCW: sameCommandCount: {0}", _sameCommandCount.ToString());
+            }
 
             if (_lastCommand == newCommand)
             {
@@ -268,17 +297,25 @@ namespace MediaPortal.InputDevices
               // if so, reset counter & start new session
               if ((sentTime - _lastTime) > _buttonRelease)
               {
-                _sameCommandCount = 0;   // new session with this button
-                if (_logVerbose) Log.Info("HCW: same command, timeout true");
+                _sameCommandCount = 0; // new session with this button
+                if (_logVerbose)
+                {
+                  Log.Info("HCW: same command, timeout true");
+                }
               }
               else
               {
-                if (_logVerbose) Log.Info("HCW: same command, timeout false");
-                _sameCommandCount++;   // button release time not elapsed
+                if (_logVerbose)
+                {
+                  Log.Info("HCW: same command, timeout false");
+                }
+                _sameCommandCount++; // button release time not elapsed
               }
             }
             else
-              _sameCommandCount = 0;   // we got a new button
+            {
+              _sameCommandCount = 0; // we got a new button
+            }
 
             bool executeKey = false;
 
@@ -286,57 +323,69 @@ namespace MediaPortal.InputDevices
             if (_sameCommandCount == 0)
             {
               executeKey = true;
-            //here
+              //here
             }
 
             //// we got the identical button often enough to accept it
             if (_sameCommandCount == _repeatFilter)
+            {
               executeKey = true;
+            }
 
             // we got the identical button accepted and still pressed, repeat with repeatSpeed
             if ((_sameCommandCount > _repeatFilter) && (_sameCommandCount > _lastExecutedCommandCount + _repeatSpeed))
+            {
               executeKey = true;
+            }
 
             if (HCWKeyPressed != null)
+            {
               _filterDoubleKlicks = true;
+            }
 
             // double click filter
             if (executeKey && _filterDoubleKlicks)
             {
               int keyCode = newCommand;
-              
+
               // strip remote type
               if (keyCode > 2000)
+              {
                 keyCode = keyCode - 2000;
+              }
               else if (keyCode > 1000)
+              {
                 keyCode = keyCode - 1000;
+              }
 
               if ((_sameCommandCount > 0) &&
-                (keyCode == 46 || //46 = fullscreen/green button
-                keyCode == 37 ||  //37 = OK button
-                keyCode == 56 ||  //56 = yellow button
-                keyCode == 11 ||  //11 = red button
-                keyCode == 41 ||  //41 = blue button
-                keyCode == 13 ||  //13 = menu button
-                keyCode == 15 ||  //15 = mute button
-                keyCode == 48))   //48 = pause button
+                  (keyCode == 46 || //46 = fullscreen/green button
+                   keyCode == 37 || //37 = OK button
+                   keyCode == 56 || //56 = yellow button
+                   keyCode == 11 || //11 = red button
+                   keyCode == 41 || //41 = blue button
+                   keyCode == 13 || //13 = menu button
+                   keyCode == 15 || //15 = mute button
+                   keyCode == 48)) //48 = pause button
               {
                 executeKey = false;
-                if (_logVerbose) Log.Info("HCW: doubleclick supressed: {0}", newCommand.ToString());
-                
+                if (_logVerbose)
+                {
+                  Log.Info("HCW: doubleclick supressed: {0}", newCommand.ToString());
+                }
               }
               else
               {
                 //Send command for remote control learning
                 if (HCWKeyPressed != null)
+                {
                   HCWKeyPressed(newCommand);
-            
+                }
               }
             }
 
             if (executeKey)
             {
-              
               _lastExecutedCommandCount = _sameCommandCount;
               _lastCommand = newCommand;
               //Send command to application...
@@ -348,20 +397,24 @@ namespace MediaPortal.InputDevices
                 }
                 else
                 {
-                  if (_logVerbose) Log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
-
+                  if (_logVerbose)
+                  {
+                    Log.Info("HCW: repeat filter accepted: {0}", newCommand.ToString());
+                  }
                 }
               }
-                
             }
             _lastTime = sentTime;
           }
           break;
         case "APP":
-          
+
           if (msg.Split('|')[1] == "STOP")
           {
-            if (_logVerbose) Log.Info("HCW: received STOP from HcwHelper");
+            if (_logVerbose)
+            {
+              Log.Info("HCW: received STOP from HcwHelper");
+            }
             _controlEnabled = false;
             _exit = true;
             StopHcw();
@@ -401,6 +454,7 @@ namespace MediaPortal.InputDevices
     public bool WndProc(Message msg)
     {
       if (_controlEnabled)
+      {
         switch (msg.Msg)
         {
           case WM_POWERBROADCAST:
@@ -413,26 +467,34 @@ namespace MediaPortal.InputDevices
 
           case WM_ACTIVATE:
             if (_allowExternal && !_keepControl)
-              switch ((int)msg.WParam)
+            {
+              switch ((int) msg.WParam)
               {
                 case WA_INACTIVE:
-                  if (_logVerbose) Log.Info("HCW: lost focus");
+                  if (_logVerbose)
+                  {
+                    Log.Info("HCW: lost focus");
+                  }
                   {
                     StopHcw();
                     return true;
                   }
                 case WA_ACTIVE:
                 case WA_CLICKACTIVE:
-                  if (_logVerbose) Log.Info("HCW: got focus");
+                  if (_logVerbose)
+                  {
+                    Log.Info("HCW: got focus");
+                  }
                   {
                     StartHcw();
                     return true;
                   }
               }
+            }
             break;
         }
+      }
       return false;
     }
-
   }
 }

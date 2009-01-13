@@ -26,60 +26,70 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.Services;
-using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Epg
 {
-  class EpgChannelUpdate
+  internal class EpgChannelUpdate
   {
-    bool _isTv;
-    string _channelName;
-    DateTime _firstEvent;
-    DateTime _lastEvent;
+    private bool _isTv;
+    private string _channelName;
+    private DateTime _firstEvent;
+    private DateTime _lastEvent;
 
-    public EpgChannelUpdate(bool isTv,string channelName)
+    public EpgChannelUpdate(bool isTv, string channelName)
     {
-
       _isTv = isTv;
       _channelName = channelName;
       _firstEvent = DateTime.MinValue;
       _lastEvent = DateTime.MinValue;
     }
+
     public string ChannelName
     {
       get { return _channelName; }
     }
+
     public void NewEvent(DateTime time)
     {
       if (_firstEvent == DateTime.MinValue)
+      {
         _firstEvent = time;
+      }
       if (_lastEvent == DateTime.MinValue)
+      {
         _lastEvent = time;
+      }
       if (time < _firstEvent)
+      {
         _firstEvent = time;
+      }
       if (time > _lastEvent)
+      {
         _lastEvent = time;
+      }
     }
 
-    public void Update(ref List<TVChannel> listChannels,ref ArrayList stations)
+    public void Update(ref List<TVChannel> listChannels, ref ArrayList stations)
     {
       int hours = -1;
       if (_firstEvent != DateTime.MinValue && _lastEvent != DateTime.MinValue)
       {
         TimeSpan ts = _lastEvent - _firstEvent;
-        hours = (int)(ts.TotalHours - 2f);
+        hours = (int) (ts.TotalHours - 2f);
       }
 
       if (_isTv)
       {
         foreach (TVChannel ch in listChannels)
         {
-          if (String.Compare(ch.Name, _channelName, true) != 0) continue;
+          if (String.Compare(ch.Name, _channelName, true) != 0)
+          {
+            continue;
+          }
           if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
           {
             Log.WriteFile(LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
@@ -93,7 +103,8 @@ namespace MediaPortal.TV.Epg
           else
           {
             Log.WriteFile(LogType.EPG, "epg: channel:{0} received epg for : {1} hours (ignored last update:{2} {3})",
-              _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToLongTimeString());
+                          _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(),
+                          ch.LastDateTimeEpgGrabbed.ToLongTimeString());
           }
           return;
         }
@@ -102,7 +113,10 @@ namespace MediaPortal.TV.Epg
       {
         foreach (RadioStation ch in stations)
         {
-          if (String.Compare(ch.Name, _channelName, true) != 0) continue;
+          if (String.Compare(ch.Name, _channelName, true) != 0)
+          {
+            continue;
+          }
           if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
           {
             Log.WriteFile(LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
@@ -116,7 +130,8 @@ namespace MediaPortal.TV.Epg
           else
           {
             Log.WriteFile(LogType.EPG, "epg: station:{0} received epg for : {1} hours (ignored last update:{2} {3})",
-              _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToLongTimeString());
+                          _channelName, hours, ch.LastDateTimeEpgGrabbed.ToShortDateString(),
+                          ch.LastDateTimeEpgGrabbed.ToLongTimeString());
           }
           return;
         }

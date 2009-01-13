@@ -24,17 +24,17 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-
+using System.Drawing;
+using System.IO;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
+using MediaPortal.Radio.Database;
 using MediaPortal.TagReader;
 using MediaPortal.TV.Recording;
-using MediaPortal.Radio.Database;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
 {
@@ -44,61 +44,69 @@ namespace MediaPortal.GUI.Music
   public class GUIMusicOverlay : GUIOverlayWindow, IRenderLayer
   {
     #region Enums
+
     private enum PlayBackType : int
     {
       NORMAL = 0,
       GAPLESS = 1,
       CROSSFADE = 2
     }
+
     #endregion
 
     #region <skin> Variables
-    [SkinControlAttribute(0)]    protected GUIImage        _videoRectangle = null;
-    [SkinControlAttribute(1)]    protected GUIImage        _thumbImage = null;
-    [SkinControlAttribute(2)]    protected GUILabelControl _labelPlayTime = null;
-    [SkinControlAttribute(3)]    protected GUIImage        _imagePlayLogo = null;
-    [SkinControlAttribute(4)]    protected GUIImage        _imagePauseLogo = null;
-    [SkinControlAttribute(5)]    protected GUIFadeLabel    _labelInfo = null;
-    [SkinControlAttribute(6)]    protected GUIImage        _labelBigPlayTime = null;
-    [SkinControlAttribute(7)]    protected GUIImage        _imageFastForward = null;
-    [SkinControlAttribute(8)]    protected GUIImage        _imageRewind = null;
-    [SkinControlAttribute(9)]    protected GUIVideoControl _videoWindow = null;
-    [SkinControlAttribute(10)]   protected GUIImage        _imageNormal = null;
-    [SkinControlAttribute(11)]   protected GUIImage        _imageGapless = null;
-    [SkinControlAttribute(12)]   protected GUIImage        _imageCrossfade = null;
+
+    [SkinControl(0)] protected GUIImage _videoRectangle = null;
+    [SkinControl(1)] protected GUIImage _thumbImage = null;
+    [SkinControl(2)] protected GUILabelControl _labelPlayTime = null;
+    [SkinControl(3)] protected GUIImage _imagePlayLogo = null;
+    [SkinControl(4)] protected GUIImage _imagePauseLogo = null;
+    [SkinControl(5)] protected GUIFadeLabel _labelInfo = null;
+    [SkinControl(6)] protected GUIImage _labelBigPlayTime = null;
+    [SkinControl(7)] protected GUIImage _imageFastForward = null;
+    [SkinControl(8)] protected GUIImage _imageRewind = null;
+    [SkinControl(9)] protected GUIVideoControl _videoWindow = null;
+    [SkinControl(10)] protected GUIImage _imageNormal = null;
+    [SkinControl(11)] protected GUIImage _imageGapless = null;
+    [SkinControl(12)] protected GUIImage _imageCrossfade = null;
+
     #endregion
 
     #region Variables
-    bool _isFocused = false;
-    string _fileName           = string.Empty;
-    string _thumbLogo          = string.Empty;
-    bool _useBassEngine        = false;
-    bool _didRenderLastTime    = false;
-    bool _visualisationEnabled = true;
-    bool _useID3               = false;
-    bool _settingVisEnabled    = true;
-    PlayListPlayer playlistPlayer;
+
+    private bool _isFocused = false;
+    private string _fileName = string.Empty;
+    private string _thumbLogo = string.Empty;
+    private bool _useBassEngine = false;
+    private bool _didRenderLastTime = false;
+    private bool _visualisationEnabled = true;
+    private bool _useID3 = false;
+    private bool _settingVisEnabled = true;
+    private PlayListPlayer playlistPlayer;
+
     #endregion
 
     #region Constructors/Destructors
+
     public GUIMusicOverlay()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
+      GetID = (int) Window.WINDOW_MUSIC_OVERLAY;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
       _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;
         _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
       }
     }
+
     #endregion
 
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\musicOverlay.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
+      GetID = (int) Window.WINDOW_MUSIC_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MusicOverlay);
       return result;
     }
@@ -118,7 +126,7 @@ namespace MediaPortal.GUI.Music
     {
     }
 
-    void OnUpdateState(bool render)
+    private void OnUpdateState(bool render)
     {
       if (_didRenderLastTime != render)
       {
@@ -137,19 +145,19 @@ namespace MediaPortal.GUI.Music
     public override bool DoesPostRender()
     {
       if (!g_Player.Playing ||
-           g_Player.IsVideo || g_Player.IsDVD || g_Player.IsTVRecording || g_Player.IsTV ||
-          (!g_Player.IsRadio && !g_Player.IsMusic) )
+          g_Player.IsVideo || g_Player.IsDVD || g_Player.IsTVRecording || g_Player.IsTV ||
+          (!g_Player.IsRadio && !g_Player.IsMusic))
       {
         _fileName = string.Empty;
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }
 
-      if (g_Player.Playing) 
+      if (g_Player.Playing)
       {
         if (g_Player.CurrentFile.Contains(".tsbuffer")) // timeshifting via TVServer ?
         {
-          PlayListItem pitem=playlistPlayer.GetCurrentItem();
+          PlayListItem pitem = playlistPlayer.GetCurrentItem();
           if (pitem != null)
           {
             if (pitem.FileName != _fileName)
@@ -169,16 +177,17 @@ namespace MediaPortal.GUI.Music
             }
           }
         }
-        else
-          if (g_Player.CurrentFile!=_fileName)
+        else if (g_Player.CurrentFile != _fileName)
+        {
+          _fileName = g_Player.CurrentFile;
+          if (_settingVisEnabled)
           {
-            _fileName=g_Player.CurrentFile;
-            if (_settingVisEnabled)
-              _visualisationEnabled = true;
-            SetCurrentFile(_fileName);
+            _visualisationEnabled = true;
           }
+          SetCurrentFile(_fileName);
+        }
       }
-      
+
       if ((Recorder.IsRadio()) && (Recorder.RadioStationName() != _fileName))
       {
         _fileName = Recorder.RadioStationName();
@@ -196,15 +205,22 @@ namespace MediaPortal.GUI.Music
         OnUpdateState(false);
 
         if ((_videoWindow != null) &&
-            (GUIGraphicsContext.VideoWindow.Equals(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height))))
+            (GUIGraphicsContext.VideoWindow.Equals(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition,
+                                                                 _videoWindow.Width, _videoWindow.Height))))
+        {
           return base.IsAnimating(AnimationType.WindowClose);
+        }
         else
         {
           if ((_videoRectangle != null) &&
-            (GUIGraphicsContext.VideoWindow.Equals(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width, _videoRectangle.Height))))
+              (GUIGraphicsContext.VideoWindow.Equals(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition,
+                                                                   _videoRectangle.Width, _videoRectangle.Height))))
+          {
             return base.IsAnimating(AnimationType.WindowClose);
+          }
         }
-        return false;   // no final animation when the video window has changed, this happens most likely when a new window opens
+        return false;
+          // no final animation when the video window has changed, this happens most likely when a new window opens
       }
       OnUpdateState(true);
       return true;
@@ -213,8 +229,13 @@ namespace MediaPortal.GUI.Music
     public override void PostRender(float timePassed, int iLayer)
     {
       if (GUIWindowManager.IsRouted)
+      {
         return;
-      if (iLayer != 2) return;
+      }
+      if (iLayer != 2)
+      {
+        return;
+      }
       if (!base.IsAnimating(AnimationType.WindowClose))
       {
         if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
@@ -223,10 +244,10 @@ namespace MediaPortal.GUI.Music
           SetCurrentFile(_fileName);
         }
 
-        long lPTS1 = (long)(g_Player.CurrentPosition);
-        int hh = (int)(lPTS1 / 3600) % 100;
-        int mm = (int)((lPTS1 / 60) % 60);
-        int ss = (int)((lPTS1 / 1) % 60);
+        long lPTS1 = (long) (g_Player.CurrentPosition);
+        int hh = (int) (lPTS1/3600)%100;
+        int mm = (int) ((lPTS1/60)%60);
+        int ss = (int) ((lPTS1/1)%60);
 
         int iSpeed = g_Player.Speed;
         if (hh == 0 && mm == 0 && ss < 5)
@@ -240,90 +261,124 @@ namespace MediaPortal.GUI.Music
         }
 
         if (_imagePlayLogo != null)
+        {
           _imagePlayLogo.Visible = ((g_Player.Paused == false) && (g_Player.Playing));
+        }
 
         if (_imagePauseLogo != null)
+        {
           _imagePauseLogo.Visible = (g_Player.Paused == true);
+        }
 
         if (_imageFastForward != null)
+        {
           _imageFastForward.Visible = (g_Player.Speed > 1);
+        }
 
         if (_imageRewind != null)
+        {
           _imageRewind.Visible = (g_Player.Speed < 0);
+        }
 
         if (_imageNormal != null)
-          _imageNormal.Visible = (g_Player.PlaybackType == (int)PlayBackType.NORMAL);
+        {
+          _imageNormal.Visible = (g_Player.PlaybackType == (int) PlayBackType.NORMAL);
+        }
 
         if (_imageGapless != null)
-          _imageGapless.Visible = (g_Player.PlaybackType == (int)PlayBackType.GAPLESS);
+        {
+          _imageGapless.Visible = (g_Player.PlaybackType == (int) PlayBackType.GAPLESS);
+        }
 
         if (_imageCrossfade != null)
-          _imageCrossfade.Visible = (g_Player.PlaybackType == (int)PlayBackType.CROSSFADE);
+        {
+          _imageCrossfade.Visible = (g_Player.PlaybackType == (int) PlayBackType.CROSSFADE);
+        }
 
-				if (_videoWindow != null)
-					_videoWindow.Visible = _visualisationEnabled;  // switch it of when we do not have any vizualisation
+        if (_videoWindow != null)
+        {
+          _videoWindow.Visible = _visualisationEnabled; // switch it of when we do not have any vizualisation
+        }
 
         if (_videoRectangle != null)
         {
           if (g_Player.Playing) // && !_videoWindow.SetVideoWindow)
+          {
             _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+          }
           else
+          {
             _videoRectangle.Visible = false;
+          }
         }
-        
+
         // this is called serveral times per second!
         if (_videoWindow != null)
-        {          
+        {
           // Old code for overlay support? Commented out to fix Mantis:
           // 0001682: Music visualization it's off position when using UI Calibration
           //SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
         }
-        // still needed?
+          // still needed?
+        else if (_videoRectangle != null) // to be compatible to the old version
+        {
+          SetVideoWindow(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width,
+                                       _videoRectangle.Height));
+        }
         else
-          if (_videoRectangle != null)// to be compatible to the old version
+        {
+          // @ Bav: _videoWindow == null here -> System.NullReferenceException
+          //SetVideoWindow(new Rectangle());
+          Rectangle dummyRect = new Rectangle();
+          if (!dummyRect.Equals(GUIGraphicsContext.VideoWindow))
           {
-            SetVideoWindow(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width, _videoRectangle.Height));
+            GUIGraphicsContext.VideoWindow = dummyRect;
           }
-          else
-          {
-            // @ Bav: _videoWindow == null here -> System.NullReferenceException
-            //SetVideoWindow(new Rectangle());
-            Rectangle dummyRect = new Rectangle();
-            if (!dummyRect.Equals(GUIGraphicsContext.VideoWindow))
-              GUIGraphicsContext.VideoWindow = dummyRect;
 
-            if (_videoWindow != null) _videoWindow.SetVideoWindow = false;  // avoid flickering if visualization is turned off
+          if (_videoWindow != null)
+          {
+            _videoWindow.SetVideoWindow = false; // avoid flickering if visualization is turned off
           }
+        }
       }
       base.Render(timePassed);
     }
 
-    void SetVideoWindow(Rectangle newRect)
+    private void SetVideoWindow(Rectangle newRect)
     {
       if (_visualisationEnabled && _videoWindow != null)
       {
         _videoWindow.SetVideoWindow = true;
         if (!newRect.Equals(GUIGraphicsContext.VideoWindow))
+        {
           GUIGraphicsContext.VideoWindow = newRect;
+        }
       }
     }
 
 
-    void SetCurrentFile(string fileName)
+    private void SetCurrentFile(string fileName)
     {
       if ((fileName == null) || (fileName == string.Empty))
+      {
         return;
+      }
       // last.fm radio sets properties manually therefore do not overwrite them.
       if (Util.Utils.IsLastFMStream(fileName))
+      {
         return;
+      }
 
       // When Playing an Internet Stream, via BASS, we set the properties inside the BASS audio engine to be able to detect track changes
-      if (BassMusicPlayer.IsDefaultMusicPlayer && (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("mms")))
+      if (BassMusicPlayer.IsDefaultMusicPlayer &&
+          (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("mms")))
+      {
         return;
-     
+      }
+
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
 
       MusicTag tag = null;
       _thumbLogo = string.Empty;
@@ -332,20 +387,26 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
       if (tag != null)
       {
-        string strText = GUILocalizeStrings.Get(437);	//	"Duration"
-        string strDuration = String.Format("{0} {1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
+        string strText = GUILocalizeStrings.Get(437); //	"Duration"
+        string strDuration = String.Format("{0} {1}", strText, Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0)
+        {
           strDuration = string.Empty;
+        }
 
-        strText = GUILocalizeStrings.Get(435);	//	"Track"
+        strText = GUILocalizeStrings.Get(435); //	"Track"
         string strTrack = String.Format("{0} {1}", strText, tag.Track);
         if (tag.Track <= 0)
+        {
           strTrack = string.Empty;
+        }
 
-        strText = GUILocalizeStrings.Get(436);	//	"Year"
+        strText = GUILocalizeStrings.Get(436); //	"Year"
         string strYear = String.Format("{0} {1}", strText, tag.Year);
         if (tag.Year <= 1900)
+        {
           strYear = string.Empty;
+        }
 
         GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
@@ -355,7 +416,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
         GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
         GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
-        GUIPropertyManager.SetProperty("#duration", MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
+        GUIPropertyManager.SetProperty("#duration", Util.Utils.SecondsToHMSString(tag.Duration));
       }
 
       // Show Information of Next File in Playlist
@@ -373,27 +434,35 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
       try
       {
-        GUIPropertyManager.SetProperty("#Play.Next.File", System.IO.Path.GetFileName(fileName));
-        GUIPropertyManager.SetProperty("#Play.Next.Title", MediaPortal.Util.Utils.GetFilename(fileName));
+        GUIPropertyManager.SetProperty("#Play.Next.File", Path.GetFileName(fileName));
+        GUIPropertyManager.SetProperty("#Play.Next.Title", Util.Utils.GetFilename(fileName));
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       if (tag != null)
       {
-        string strText = GUILocalizeStrings.Get(437);	//	"Duration"
-        string strDuration = String.Format("{0}{1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
+        string strText = GUILocalizeStrings.Get(437); //	"Duration"
+        string strDuration = String.Format("{0}{1}", strText, Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0)
+        {
           strDuration = string.Empty;
+        }
 
-        strText = GUILocalizeStrings.Get(435);	//	"Track"
+        strText = GUILocalizeStrings.Get(435); //	"Track"
         string strTrack = String.Format("{0}{1}", strText, tag.Track);
         if (tag.Track <= 0)
+        {
           strTrack = string.Empty;
+        }
 
-        strText = GUILocalizeStrings.Get(436);	//	"Year"
+        strText = GUILocalizeStrings.Get(436); //	"Year"
         string strYear = String.Format("{0}{1}", strText, tag.Year);
         if (tag.Year <= 1900)
+        {
           strYear = string.Empty;
+        }
 
         GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);
@@ -408,10 +477,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Focused
     {
-      get
-      {
-        return _isFocused;
-      }
+      get { return _isFocused; }
       set
       {
         _isFocused = value;
@@ -419,7 +485,8 @@ namespace MediaPortal.GUI.Music
         {
           if (_videoWindow != null)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)_videoWindow.GetID, 0, 0, null);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int) _videoWindow.GetID,
+                                            0, 0, null);
             OnMessage(msg);
           }
         }
@@ -432,6 +499,7 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
+
     protected override bool ShouldFocus(Action action)
     {
       return (action.wID == Action.ActionType.ACTION_MOVE_DOWN);
@@ -447,7 +515,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    MusicTag GetInfo(string fileName, out string thumb)
+    private MusicTag GetInfo(string fileName, out string thumb)
     {
       string skin = GUIGraphicsContext.Skin;
       thumb = string.Empty;
@@ -461,7 +529,9 @@ namespace MediaPortal.GUI.Music
         tag = new MusicTag();
         string cover = Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
         if (cover != string.Empty)
+        {
           thumb = cover;
+        }
         tag.Title = Recorder.RadioStationName();
       }
       if (g_Player.IsRadio)
@@ -471,16 +541,21 @@ namespace MediaPortal.GUI.Music
         string strFName = g_Player.CurrentFile;
         string coverart;
         // check if radio via TVPlugin
-        if (strFName.EndsWith(".tsbuffer",StringComparison.InvariantCultureIgnoreCase) || strFName.StartsWith("rtsp://",StringComparison.InvariantCultureIgnoreCase))
+        if (strFName.EndsWith(".tsbuffer", StringComparison.InvariantCultureIgnoreCase) ||
+            strFName.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase))
         {
           // yes
-            string strChan = GUIPropertyManager.GetProperty("#Play.Current.ArtistThumb");
-            tag.Title = strChan;
-            coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
-            if (coverart != string.Empty)
-              thumb = coverart;
-            else
-              thumb = string.Empty;
+          string strChan = GUIPropertyManager.GetProperty("#Play.Current.ArtistThumb");
+          tag.Title = strChan;
+          coverart = Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
+          if (coverart != string.Empty)
+          {
+            thumb = coverart;
+          }
+          else
+          {
+            thumb = string.Empty;
+          }
         }
         else
         {
@@ -491,14 +566,16 @@ namespace MediaPortal.GUI.Music
           {
             if (strFName.IndexOf(".radio") > 0)
             {
-              string strChan = System.IO.Path.GetFileNameWithoutExtension(strFName);
+              string strChan = Path.GetFileNameWithoutExtension(strFName);
               if (station.Frequency.ToString().Equals(strChan))
               {
                 // got it, check if it has a thumbnail
                 tag.Title = station.Name;
-                coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+                coverart = Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
                 if (coverart != string.Empty)
+                {
                   thumb = coverart;
+                }
               }
             }
             else
@@ -506,13 +583,15 @@ namespace MediaPortal.GUI.Music
               if (station.URL.Equals(strFName))
               {
                 tag.Title = station.Name;
-                coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+                coverart = Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
                 if (coverart != string.Empty)
+                {
                   thumb = coverart;
+                }
               }
             }
           } //foreach (RadioStation station in stations)
-        }  // if (strFName.Contains(".tsbuffer"))
+        } // if (strFName.Contains(".tsbuffer"))
       } //if (g_Player.IsRadio)
 
 
@@ -525,12 +604,18 @@ namespace MediaPortal.GUI.Music
         PlayListItem item = null;
 
         if (isCurrent)
+        {
           item = playlistPlayer.GetCurrentItem();
+        }
         else
+        {
           item = playlistPlayer.GetNextItem();
+        }
 
         if (item != null)
-          tag = (MusicTag)item.MusicTag;
+        {
+          tag = (MusicTag) item.MusicTag;
+        }
       }
 
       string strThumb = string.Empty;
@@ -538,19 +623,23 @@ namespace MediaPortal.GUI.Music
       if (tag != null)
       {
         strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
-        if (System.IO.File.Exists(strThumb))
+        if (File.Exists(strThumb))
+        {
           thumb = strThumb;
+        }
       }
 
       // no succes with album cover try folder cache
       if (string.IsNullOrEmpty(thumb))
-        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);      
+      {
+        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);
+      }
 
       if (isCurrent)
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
-        if (System.IO.File.Exists(strLarge))
+        if (File.Exists(strLarge))
         {
           //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
           thumb = strLarge;
@@ -560,16 +649,18 @@ namespace MediaPortal.GUI.Music
       return tag;
     }
 
-
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return DoesPostRender();
     }
+
     public void RenderLayer(float timePassed)
     {
       PostRender(timePassed, 2);
     }
+
     #endregion
   }
 }

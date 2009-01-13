@@ -24,13 +24,12 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-
 using MediaPortal.Configuration;
+using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
-  public partial class PluginSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class PluginSetupForm : MPConfigForm
   {
     public PluginSetupForm()
     {
@@ -42,7 +41,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         checkBoxUseTrayIcon.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         checkBoxShowBallonTips.Checked = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
@@ -55,16 +54,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("audioscrobbler", "showtrayicon", checkBoxUseTrayIcon.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "showballontips", checkBoxShowBallonTips.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "submitradiotracks", checkBoxSubmitToProfile.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "directskip", checkBoxDirectSkip.Checked);
         xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
-        xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0);// comboBoxStreamPlayerType.SelectedIndex);
+        xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0); // comboBoxStreamPlayerType.SelectedIndex);
         xmlwriter.SetValueAsBool("audioscrobbler", "oneclickstart", checkBoxOneClickMode.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "usesmskeyboard", checkBoxUseSMSStyle.Checked);
       }
@@ -90,7 +89,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (checkBoxUseTrayIcon.Checked)
       {
         checkBoxShowBallonTips.Enabled = true;
-        checkBoxShowBallonTips.Checked = true; ;
+        checkBoxShowBallonTips.Checked = true;
+        ;
       }
       else
       {

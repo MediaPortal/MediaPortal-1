@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
+﻿namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 {
   public enum xplConfigTypes
   {
@@ -9,4 +7,3 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     xOption
   }
 }
-

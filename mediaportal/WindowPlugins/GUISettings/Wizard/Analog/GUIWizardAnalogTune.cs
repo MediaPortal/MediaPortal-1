@@ -35,13 +35,14 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
   {
     public GUIWizardAnalogTune()
     {
-      GetID = (int)Window.WINDOW_WIZARD_ANALOG_TUNE;
+      GetID = (int) Window.WINDOW_WIZARD_ANALOG_TUNE;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_analog_scan.xml");
     }
+
     protected override void OnScanDone()
     {
       GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");

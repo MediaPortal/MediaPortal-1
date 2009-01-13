@@ -28,12 +28,12 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Xml;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web;
+using System.Xml;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Configuration;
 
 namespace ProcessPlugins.CallerId
 {
@@ -69,9 +69,9 @@ namespace ProcessPlugins.CallerId
 
 
             XmlNode areacodeNode;
-            temp.Add("000", SUCCESS_LOADED_AREACODE_XML);	// slot 000 reserved for hashtable status
+            temp.Add("000", SUCCESS_LOADED_AREACODE_XML); // slot 000 reserved for hashtable status
 
-            for (int i = 0; i < areacodeNodes.Count; i++)  // Loop through, pulling npa and location.
+            for (int i = 0; i < areacodeNodes.Count; i++) // Loop through, pulling npa and location.
             {
               areacodeNode = areacodeNodes[i];
               npa = areacodeNode.Attributes["npa"].Value;
@@ -82,10 +82,10 @@ namespace ProcessPlugins.CallerId
               }
             }
           }
-          else    // the file doesn't exist; put something in the lookup table to indicate it wasn't.
+          else // the file doesn't exist; put something in the lookup table to indicate it wasn't.
           {
             // TODO detect that it wasn't loaded succesfully or other error conditions, if it *was* located.
-            temp.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML);		// slot 000 reserved for hashtable status
+            temp.Add("000", ERR_FAILED_TO_FIND_AREACODE_XML); // slot 000 reserved for hashtable status
             Log.Error("couldn't load xml from " + areaCodeXMLFile, "error");
           }
           areaCodeLookup = temp;
@@ -101,11 +101,10 @@ namespace ProcessPlugins.CallerId
       // TODO: ensure that the sought file name isn't "too long"
       try
       {
-        if ((path.StartsWith("http"))) // based on http://cephas.net/blog/2003/10/25/failsafe_amazon_image_using_java_c_coldfusion.html
+        if ((path.StartsWith("http")))
+          // based on http://cephas.net/blog/2003/10/25/failsafe_amazon_image_using_java_c_coldfusion.html
         {
-
-
-          System.Net.HttpWebRequest webreq = (System.Net.HttpWebRequest)WebRequest.Create(path);
+          HttpWebRequest webreq = (HttpWebRequest) WebRequest.Create(path);
           WebResponse response = webreq.GetResponse();
           if (response.ContentType.StartsWith("image"))
           {
@@ -124,13 +123,12 @@ namespace ProcessPlugins.CallerId
       return result;
     }
 
-
     #region IPlugin Members
 
     public void Start()
     {
-
-      string location = (string)AreaCodeToLocationMap["206"];  //for improved perf, preload the hashtable for areacodes xml file now
+      string location = (string) AreaCodeToLocationMap["206"];
+        //for improved perf, preload the hashtable for areacodes xml file now
       Thread workerThread = new Thread(new ThreadStart(YACListen));
       workerThread.IsBackground = true;
       workerThread.Name = "YAC Listener";
@@ -146,19 +144,18 @@ namespace ProcessPlugins.CallerId
     }
 
 
-    void YACListen()
+    private void YACListen()
     {
       int port = 10629; //YAC's port
       string inboundRawYACData = null;
 
       try
       {
-
         object[] oButtons = new Object[1];
 
-        System.Net.Sockets.TcpListener server = new TcpListener(IPAddress.Any, port);
+        TcpListener server = new TcpListener(IPAddress.Any, port);
 
-        server.Start();	// Start listening for client requests.
+        server.Start(); // Start listening for client requests.
 
         string yaclogofile = String.Format(@"{0}\yac-small.png", Thumbs.Yac);
         if (HasImage(yaclogofile))
@@ -170,7 +167,7 @@ namespace ProcessPlugins.CallerId
         {
           lock (this)
           {
-            if (server.Pending())   // AcceptTCPClient is synchronous, so only enter it when we've got a listener pending 
+            if (server.Pending()) // AcceptTCPClient is synchronous, so only enter it when we've got a listener pending 
             {
               TcpClient client = server.AcceptTcpClient();
               string currentTime = DateTime.Now.ToString("t");
@@ -180,10 +177,10 @@ namespace ProcessPlugins.CallerId
               NetworkStream stream = client.GetStream();
               StreamReader sreader = new StreamReader(stream);
               inboundRawYACData = sreader.ReadToEnd();
-              client.Close();			// Shutdown and end connection
+              client.Close(); // Shutdown and end connection
 
 
-              if (inboundRawYACData.Length > 513)  // chop off more anything beyond a "reasonable" payload
+              if (inboundRawYACData.Length > 513) // chop off more anything beyond a "reasonable" payload
               {
                 inboundRawYACData.Remove(512, (inboundRawYACData.Length - 511));
               }
@@ -195,7 +192,7 @@ namespace ProcessPlugins.CallerId
                 Log.Info("failed to parse call");
               }
             }
-            System.Threading.Thread.Sleep(100); // breathe for a moment, so we don't peg the CPU in this tight loop
+            Thread.Sleep(100); // breathe for a moment, so we don't peg the CPU in this tight loop
           }
         }
       }
@@ -222,12 +219,12 @@ namespace ProcessPlugins.CallerId
         //   YAC phone call format is: @CALLYAC Test Call~(425) 555-1212 -- note that this is the *usual* number format, but not the only one
         // YAC text message format is: text of message
 
-        if (inboundRawYACData.StartsWith("@CALL"))  // it's a call
+        if (inboundRawYACData.StartsWith("@CALL")) // it's a call
         {
-          inboundRawYACData = inboundRawYACData.Remove(0, 5);  // get rid of the @CALL label
+          inboundRawYACData = inboundRawYACData.Remove(0, 5); // get rid of the @CALL label
 
           // Split the name & phone number at the tilde
-          char[] delimiter = { '~' };
+          char[] delimiter = {'~'};
           string[] split = null;
           split = inboundRawYACData.Split(delimiter, 2);
           string callernameStr = split[0].Trim();
@@ -257,10 +254,10 @@ namespace ProcessPlugins.CallerId
                 targetPicturePath = String.Format(@"{0}\wireless-caller.jpg", Thumbs.Yac);
                 break;
               }
-            default:  // see if there's numeric-only content and act on what I find, plus other scrutiny
+            default: // see if there's numeric-only content and act on what I find, plus other scrutiny
               {
                 string numericOnlyPhoneNumber = phonenumStr;
-                System.Text.RegularExpressions.Regex numericOnlyRegex = new System.Text.RegularExpressions.Regex(@"[^\d]");
+                Regex numericOnlyRegex = new Regex(@"[^\d]");
                 numericOnlyPhoneNumber = numericOnlyRegex.Replace(numericOnlyPhoneNumber, "");
 
                 if (numericOnlyPhoneNumber.Length == 0)
@@ -299,17 +296,19 @@ namespace ProcessPlugins.CallerId
 
                     else // no perfect match on caller name
                     {
-                      switch (numericOnlyPhoneNumber.Length)	//   finally, try to chop bits of the number off & look for them in order.
+                      switch (numericOnlyPhoneNumber.Length)
+                        //   finally, try to chop bits of the number off & look for them in order.
                       {
-                        // case 7: 
-                        //   create a 10-digit number from the area code that *may* be present in HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1\AreaCode
-                        //   extra credit: extract location (area code/state) from MC PostalCode
-                        // goto case 10;
+                          // case 7: 
+                          //   create a 10-digit number from the area code that *may* be present in HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1\AreaCode
+                          //   extra credit: extract location (area code/state) from MC PostalCode
+                          // goto case 10;
 
                         case 11: // remove first digit if it's a 1, and then use 10-digit logic 
                           // assume that the 11 digits include a bogus first digit (that it's really a 3+7 US-style number)
                           numericOnlyPhoneNumber = numericOnlyPhoneNumber.Substring(1, 10);
-                          goto case 10; // msdn says "Unlike the C++ switch statement, C# does not support an explicit fall through from one case label to another. If you want, you can use goto a switch-case, or goto default."
+                          goto case 10;
+                            // msdn says "Unlike the C++ switch statement, C# does not support an explicit fall through from one case label to another. If you want, you can use goto a switch-case, or goto default."
 
                         case 10: // default logic for original version
                           {
@@ -323,7 +322,7 @@ namespace ProcessPlugins.CallerId
                             else
                             {
                               // try to find a picture for the areacode's location (state, province, etc.)
-                              string location = (string)AreaCodeToLocationMap[targetareacodeStr];
+                              string location = (string) AreaCodeToLocationMap[targetareacodeStr];
 
                               if (location == null)
                               {
@@ -351,14 +350,14 @@ namespace ProcessPlugins.CallerId
                             // a picture could go here if you wanted, but a better place is at the default in the switch for all calls
                             break;
                           }
-
                       } // end switch (numericOnlyPhoneNumber.Length)
                     } // end else // no perfect match on caller name
-                  }  // end no perfect match for number
+                  } // end no perfect match for number
                 } // end content in numericOnlyPhoneNumber
 
                 // TODO figure out why this doesn't give an image for an otherwise unknown wireless caller
-                if ((callernameStr.ToLower() == "wireless caller") & (imagepathStr == null))  // use this graphic whenever I don't have a better picture for a wireless caller
+                if ((callernameStr.ToLower() == "wireless caller") & (imagepathStr == null))
+                  // use this graphic whenever I don't have a better picture for a wireless caller
                 {
                   targetPicturePath = String.Format(@"{0}\wireless-caller.jpg", Thumbs.Yac);
                 }
@@ -370,7 +369,6 @@ namespace ProcessPlugins.CallerId
 
           titlebarStr = callernameStr;
           bodyStr = "Call from " + phonenumStr + " at " + currentTime.ToLower();
-
         } // end if (inboundRawYACData.StartsWith("@CALL"))  // it's a call
 
         else // it's a text message
@@ -378,7 +376,8 @@ namespace ProcessPlugins.CallerId
           titlebarStr = "Text Message";
           bodyStr = inboundRawYACData + " at " + currentTime.ToLower();
 
-          targetPicturePath = String.Format(@"{0}\{1}.jpg", Thumbs.Yac, inboundRawYACData.Trim()); // a picture for the text message payload?
+          targetPicturePath = String.Format(@"{0}\{1}.jpg", Thumbs.Yac, inboundRawYACData.Trim());
+            // a picture for the text message payload?
           if (HasImage(targetPicturePath))
           {
             imagepathStr = targetPicturePath;
@@ -405,8 +404,6 @@ namespace ProcessPlugins.CallerId
         Log.Info("   Image: " + imagepathStr);
 
 
-
-
         //show message...
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
         msg.Label = titlebarStr;
@@ -414,7 +411,7 @@ namespace ProcessPlugins.CallerId
         msg.Label3 = imagepathStr;
         GUIGraphicsContext.SendMessage(msg);
         //				mcHost.HostControl.Dialog(bodyStr, titlebarStr, oButtons, 20, false, imagepathStr, new OnDialogCloseDelegate(OnButtonPress));
-      }  // end try
+      } // end try
 
 
       catch (Exception e)
@@ -428,8 +425,6 @@ namespace ProcessPlugins.CallerId
       }
       return true;
     }
-
-
 
     #endregion
 
@@ -456,7 +451,8 @@ namespace ProcessPlugins.CallerId
       return -1;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       // TODO:  Add CallerIdPlugin.GetHome implementation
       strButtonText = null;

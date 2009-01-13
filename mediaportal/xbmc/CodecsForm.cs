@@ -24,45 +24,43 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Xml;
+using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
-using DirectShowLib;
-using Microsoft.Win32;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 namespace MediaPortal
 {
   /// <summary>
   /// Summary description for CodecsForm.
   /// </summary>
-  public class CodecsForm : MediaPortal.UserInterface.Controls.MPForm
+  public class CodecsForm : MPForm
   {
-    private System.Windows.Forms.LinkLabel LinkLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private System.Windows.Forms.LinkLabel LinkLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel labelMPEG2;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private System.Windows.Forms.LinkLabel LinkLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.Windows.Forms.LinkLabel LinkLabel4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
-    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private LinkLabel LinkLabel1;
+    private MPLabel label2;
+    private MPLabel label3;
+    private LinkLabel LinkLabel2;
+    private MPLabel labelMPEG2;
+    private MPLabel label1;
+    private MPLabel label4;
+    private LinkLabel LinkLabel3;
+    private MPLabel label5;
+    private MPLabel label6;
+    private LinkLabel LinkLabel4;
+    private MPCheckBox checkBox1;
+    private MPButton button1;
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public CodecsForm()
     {
@@ -92,6 +90,7 @@ namespace MediaPortal
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -120,8 +119,8 @@ namespace MediaPortal
       this.labelMPEG2.Size = new System.Drawing.Size(512, 32);
       this.labelMPEG2.TabIndex = 0;
       this.labelMPEG2.Text = "No MPEG2 video/audio codecs are installed on your PC. To play MPEG2 files, DVD\'s " +
-        "or watch TV you\'ll need to install an MPEG2 codec. The MediaPortal team recommen" +
-        "ds WinDVD6 or PowerDVD6";
+                             "or watch TV you\'ll need to install an MPEG2 codec. The MediaPortal team recommen" +
+                             "ds WinDVD6 or PowerDVD6";
       // 
       // LinkLabel1
       // 
@@ -131,7 +130,8 @@ namespace MediaPortal
       this.LinkLabel1.TabIndex = 1;
       this.LinkLabel1.TabStop = true;
       this.LinkLabel1.Text = "http://www.intervideo.com/jsp/WinDVD_Profile.jsp";
-      this.LinkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+      this.LinkLabel1.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
       // 
       // label2
       // 
@@ -157,7 +157,8 @@ namespace MediaPortal
       this.LinkLabel2.TabIndex = 4;
       this.LinkLabel2.TabStop = true;
       this.LinkLabel2.Text = "http://www.gocyberlink.com/english/products/product_main.jsp?ProdId=28";
-      this.LinkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+      this.LinkLabel2.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
       // 
       // label1
       // 
@@ -166,7 +167,7 @@ namespace MediaPortal
       this.label1.Size = new System.Drawing.Size(488, 32);
       this.label1.TabIndex = 5;
       this.label1.Text = "FFDShow is not installed on your PC. We recommend to install FFDShow if you want " +
-        "to play xvid, divx, mpeg1 and many more media formats";
+                         "to play xvid, divx, mpeg1 and many more media formats";
       // 
       // label4
       // 
@@ -184,7 +185,8 @@ namespace MediaPortal
       this.LinkLabel3.TabIndex = 7;
       this.LinkLabel3.TabStop = true;
       this.LinkLabel3.Text = "http://www.free-codecs.com/download/FFDShow.htm";
-      this.LinkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+      this.LinkLabel3.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
       // 
       // label5
       // 
@@ -193,7 +195,7 @@ namespace MediaPortal
       this.label5.Size = new System.Drawing.Size(488, 32);
       this.label5.TabIndex = 8;
       this.label5.Text = "The VOBSUB codec is not installed on your PC. We recommend to use vobsub if you w" +
-        "ant to have subtitles with your movies";
+                         "ant to have subtitles with your movies";
       // 
       // label6
       // 
@@ -211,7 +213,8 @@ namespace MediaPortal
       this.LinkLabel4.TabIndex = 10;
       this.LinkLabel4.TabStop = true;
       this.LinkLabel4.Text = "http://www.free-codecs.com/download/VobSub.htm";
-      this.LinkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+      this.LinkLabel4.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
       // 
       // checkBox1
       // 
@@ -251,23 +254,24 @@ namespace MediaPortal
       this.Text = "Missing codecs";
       this.Load += new System.EventHandler(this.CodecsForm_Load);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
-    private void button1_Click(object sender, System.EventArgs e)
+    private void button1_Click(object sender, EventArgs e)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValueAsBool("general", "checkcodecs", !checkBox1.Checked);
       }
       this.Close();
     }
 
-    private void CodecsForm_Load(object sender, System.EventArgs e)
+    private void CodecsForm_Load(object sender, EventArgs e)
     {
     }
-    void ShowMPEG2Warning(bool bOn)
+
+    private void ShowMPEG2Warning(bool bOn)
     {
       labelMPEG2.Visible = bOn;
       label2.Visible = bOn;
@@ -276,14 +280,14 @@ namespace MediaPortal
       LinkLabel2.Visible = bOn;
     }
 
-    void ShowFFDShowWarning(bool bOn)
+    private void ShowFFDShowWarning(bool bOn)
     {
       label1.Visible = bOn;
       label4.Visible = bOn;
       LinkLabel3.Visible = bOn;
     }
 
-    void ShowVobSUBWarning(bool bOn)
+    private void ShowVobSUBWarning(bool bOn)
     {
       label5.Visible = bOn;
       label6.Visible = bOn;
@@ -292,10 +296,13 @@ namespace MediaPortal
 
     public bool AreCodecsInstalled()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool checkCodecs = xmlreader.GetValueAsBool("general", "checkcodecs", true);
-        if (!checkCodecs) return true;
+        if (!checkCodecs)
+        {
+          return true;
+        }
       }
       bool MPEG2CodecsInstalled = false;
       bool FFDShowInstalled = false;
@@ -304,17 +311,32 @@ namespace MediaPortal
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
       if (availableVideoFilters.Count > 0 && availableAudioFilters.Count > 0)
+      {
         MPEG2CodecsInstalled = true;
+      }
 
       try
       {
-        using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Classes\CLSID\{007FC171-01AA-4B3A-B2DB-062DEE815A1E}\InProcServer32"))
+        using (
+          RegistryKey subkey =
+            Registry.LocalMachine.OpenSubKey(
+              @"SOFTWARE\Classes\CLSID\{007FC171-01AA-4B3A-B2DB-062DEE815A1E}\InProcServer32"))
+        {
           if (subkey != null)
+          {
             FFDShowInstalled = true;
+          }
+        }
 
-        using (RegistryKey subkey = Registry.ClassesRoot.OpenSubKey(@"CLSID\{0180E49C-13BF-46DB-9AFD-9F52292E1C22}\InprocServer32"))
+        using (
+          RegistryKey subkey =
+            Registry.ClassesRoot.OpenSubKey(@"CLSID\{0180E49C-13BF-46DB-9AFD-9F52292E1C22}\InprocServer32"))
+        {
           if (subkey != null)
+          {
             VobSubInstalled = true;
+          }
+        }
       }
       catch (Exception)
       {
@@ -322,14 +344,16 @@ namespace MediaPortal
       ShowMPEG2Warning(!MPEG2CodecsInstalled);
       ShowFFDShowWarning(!FFDShowInstalled);
       ShowVobSUBWarning(!VobSubInstalled);
-      if (MPEG2CodecsInstalled && FFDShowInstalled && VobSubInstalled) return true;
+      if (MPEG2CodecsInstalled && FFDShowInstalled && VobSubInstalled)
+      {
+        return true;
+      }
       return false;
     }
 
-    private void LinkLabel_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start(((LinkLabel)sender).Text);
+      Process.Start(((LinkLabel) sender).Text);
     }
-
   }
 }
