@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Library
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
-    private static bool _isDX9EXused = System.Environment.OSVersion.Version.Major >= 6; 
+    private static bool _isDX9EXused = System.Environment.OSVersion.Version.Major >= 6;
 
     private static Point _screenCenterPos = new Point();
 
@@ -203,17 +203,23 @@ namespace MediaPortal.GUI.Library
       {
         if (value != blankScreen)
         {
-          if (turnOffMonitor)
+          try
           {
-            if (value)
-              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)MONITOR_OFF);
-            else
-              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, (IntPtr)MONITOR_ON);
+            if (turnOffMonitor)
+            {
+              if (Form.ActiveForm.Handle != IntPtr.Zero)
+                SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, value ? (IntPtr)MONITOR_ON : (IntPtr)MONITOR_OFF);
+              else
+                Log.Warn("GraphicContext: Could not power monitor {0}", value ? "off" : "on");
+            }
+            blankScreen = value;
+            if (OnVideoWindowChanged != null)
+              OnVideoWindowChanged();
           }
-
-          blankScreen = value;
-          if (OnVideoWindowChanged != null)
-            OnVideoWindowChanged();
+          catch (Exception ex)
+          {
+            Log.Error("GraphicContext: Error setting Blankscreen to {0} - {1}", value, ex.ToString());
+          }
         }
       }
     }
@@ -1266,11 +1272,11 @@ namespace MediaPortal.GUI.Library
       [MethodImpl(MethodImplOptions.Synchronized)]
       get
       {
-          return vmr9RenderBusy;
+        return vmr9RenderBusy;
       }
       set
       {
-          vmr9RenderBusy = value;
+        vmr9RenderBusy = value;
       }
     }
 
@@ -1339,7 +1345,7 @@ namespace MediaPortal.GUI.Library
     {
       return _isDX9EXused;
     }
-    
+
     static public Microsoft.DirectX.Direct3D.Pool GetTexturePoolType()
     {
       // DirectX9 Ex device works only with Pool.Default
