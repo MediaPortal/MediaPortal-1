@@ -23,30 +23,31 @@
 
 #endregion
 
-using System.Net.Sockets;
+using System;
+using System.Net;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
   class InternetChecker
   {
-
-    InternetChecker()
+    public static bool CheckConnection()
     {
-    }
-    
-    public static bool ConnectionExists()
-    {
+      Uri Url = new Uri("http://install.team-mediaportal.com/");
+      WebRequest WebReq = System.Net.WebRequest.Create(Url);
+      WebResponse Resp;
+      
       try
       {
-        TcpClient clnt = new TcpClient("www.google.com", 80);
-        clnt.Close();
+        Resp = WebReq.GetResponse();
+        Resp.Close();
+        WebReq = null;
         return true;
       }
       catch
       {
+        WebReq = null;
         return false;
       }
     }
-
   }
 }

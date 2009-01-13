@@ -510,4 +510,7 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Please select settings for downloads:</value>
   </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>No Internet connection found! To continue the installation an active connection is required.</value>
+  </data>
 </root>

@@ -108,6 +108,18 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
+      //
+      // check Internet connection unless files have already been downloaded
+      //
+      if (_currentDialog.type == DialogType.DownloadOnly && Directory.GetFiles(Application.StartupPath + "\\deploy").Length < 3)
+      {
+        if (!InstallationChecks.InternetChecker.CheckConnection())
+        {
+          MessageBox.Show(Utils.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          return;
+        }
+      }
+      
       if (nextButton.Text == Utils.GetBestTranslation("MainWindow_buttonClose"))
       {
         //
