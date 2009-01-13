@@ -507,4 +507,7 @@ Proseguire l'installazione è un vostro rischio.</value>
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Selezionare le preferenze per lo scarico:</value>
   </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Connessione internet non trovata ! Per continuare l'installazione è necessaria una connessione internet.</value>
+  </data>
 </root>
