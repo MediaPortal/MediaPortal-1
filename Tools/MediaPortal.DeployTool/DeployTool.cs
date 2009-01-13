@@ -116,7 +116,6 @@ namespace MediaPortal.DeployTool
         if (!InstallationChecks.InternetChecker.CheckConnection())
         {
           MessageBox.Show(Utils.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-          return;
         }
       }
       
