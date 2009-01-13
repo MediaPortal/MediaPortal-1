@@ -156,7 +156,7 @@ namespace MediaPortal.Configuration.Sections
         {
           if (tag.IsExternalPlayer)
             continue;
-          if (tag.IsProcess && !tag.IsEnabled)
+          if (tag.IsProcess && !tag.IsEnabled && tag.SetupForm.PluginName() != "Audioscrobbler")
             continue;
 
           if (tag.WindowId == 760) // GUIBurner
@@ -192,6 +192,8 @@ namespace MediaPortal.Configuration.Sections
             if (tag.SetupForm.PluginName() == "TV Recordings Cleanup")
               continue;
             if (tag.SetupForm.PluginName() == "TV Movie Clickfinder")
+              continue;
+            if (tag.SetupForm.PluginName() == "TV Notifier")
               continue;
             // Unsure about this one - people might use it to get the xml file grabbed which _then_ is imported by some other app like tvserver
             //if (tag.SetupForm.PluginName() == "WebEPG grabber")
