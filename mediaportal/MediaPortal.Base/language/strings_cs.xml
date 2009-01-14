@@ -473,7 +473,7 @@
     <String id="596">Čekání na stránku {0}/{1}...</String>
     <String id="599">Storm</String>
     <String id="600">TV Program</String>
-    <String id="601">Zapnout nahrávání</String>
+    <String id="601">Spustit nahrávání</String>
     <String id="602">Kanál:</String>
     <String id="603">Plánovač</String>
     <String id="604">Nahrané pořady</String>
@@ -565,7 +565,7 @@
     <String id="690">Diskografie (alba)</String>
     <String id="692">TV-streamy</String>
     <String id="702">Žádný zpěvák nenalezen!</String>
-    <String id="703">Není dostupné připojení k Internetu!</String>
+    <String id="703">Připojení k Internetu není dostupné!</String>
     <String id="706">Výběr zdroje</String>
     <String id="707">Zapnout TV</String>
     <String id="708">Časový posun</String>
@@ -584,7 +584,7 @@
     <String id="721">Zobrait: Počet přehrání</String>
     <String id="722">Nelze přehrát disk</String>
     <String id="723">Byl disk vložen?</String>
-    <String id="724">Prohledat program TV</String>
+    <String id="724">Prohledat TV program</String>
     <String id="725">Žánr</String>
     <String id="726">Název</String>
     <String id="727">Přahrávat TV na pozadí?</String>
@@ -679,6 +679,8 @@
     <String id="869">Nový alarm</String>
     <String id="870">Opakování</String>
     <String id="871">Vzbudit počítač pro toto buzení</String>
+    <String id="872">Začíná na</String>
+    <String id="873">TV pořad</String>
     <String id="874">Epizoda</String>
     <String id="875">Aktuální program</String>
     <String id="876">Do ručního zastavení</String>
@@ -956,14 +958,14 @@
     <String id="2062">low</String>
     <String id="2063">medium</String>
     <String id="2064">high</String>
-    <String id="2065">Prosím zvolte mpeg který, chcete překonvertovat do divx:</String>
+    <String id="2065">Prosím zvolte mpeg soubor který, chcete překonvertovat do divx:</String>
     <String id="2066">Mpeg do divx</String>
-    <String id="2067">Prosím zvolte dvr-ms který, chcete překonvertovat do divx:</String>
+    <String id="2067">Prosím zvolte dvr-ms soubor který, chcete překonvertovat do divx:</String>
     <String id="2068">Dvr-ms do divx</String>
-    <String id="2069">Finished joining the video files</String>
-    <String id="2070">Finished converting the video file</String>
+    <String id="2069">Spojování souborů bylo ukončeno</String>
+    <String id="2070">Konverze byla dokončena</String>
     <String id="2071">Dvr-ms do mpeg</String>
-    <String id="2072">Start converting</String>
+    <String id="2072">Spustit konverzi</String>
     <String id="2073">Prosím zvolte dvr-ms, který chcete překonvertovat:</String>
     <String id="2074">Prosím zvolte soubory, které chcete sloučit:</String>
     <String id="2075">Define the new cut points</String>
@@ -971,9 +973,9 @@
     <String id="2077">Střih</String>
     <String id="2078">Spojení</String>
     <String id="2079">Spustit spojení</String>
-    <String id="2080">Unsupported filetype</String>
-    <String id="2081">Cannot cut</String>
-    <String id="2082">Finished cutting the video file</String>
+    <String id="2080">Nepodporovaný soubor</String>
+    <String id="2081">Nelze stříhat</String>
+    <String id="2082">Stříhání bylo dokončeno</String>
     <String id="2083">Would you like to delete the original file?</String>
     <String id="2084">start</String>
     <String id="2085">ukončit</String>
@@ -1188,7 +1190,7 @@
     <String id="6002">Audio směšovač</String>
     <String id="6003">De-interlacing</String>
     <String id="6004">Poměr stran</String>
-    <String id="6005">Dékla časového posunu</String>
+    <String id="6005">Délka čas. posunu</String>
     <String id="6006">Automatické zap. TV</String>
     <String id="6007">Možnosti nahrávání</String>
     <String id="6008">Řazení kanálů</String>
