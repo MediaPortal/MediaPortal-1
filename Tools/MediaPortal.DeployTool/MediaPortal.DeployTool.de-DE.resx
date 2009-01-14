@@ -514,4 +514,7 @@ Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployT
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
     <value>Keine Internetverbindung gefunden! Zum Fortführen der Installation wird eine Internetverbindung benötigt.</value>
   </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Auf dem angegebenen Laufwerk ist nicht ausreichend Speicherplatz vorhanden! Zur Installation von MediaPortal werden {0} MB Speicherplatz benötigt.</value>
+  </data>
 </root>
