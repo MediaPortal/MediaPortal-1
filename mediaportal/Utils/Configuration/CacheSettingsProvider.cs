@@ -24,7 +24,7 @@
 #endregion
 
 using System.Collections.Generic;
-//using System.Windows.Forms;
+using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Profile
 {
