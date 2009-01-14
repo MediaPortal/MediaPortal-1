@@ -26,7 +26,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-
 namespace MediaPortal.Ripper
 {
   /// <summary>
@@ -34,7 +33,7 @@ namespace MediaPortal.Ripper
   /// </summary>
   internal class Win32Functions
   {
-    public enum DriveTypes:uint 
+    public enum DriveTypes : uint
     {
       DRIVE_UNKNOWN = 0,
       DRIVE_NO_ROOT_DIR,
@@ -43,27 +42,27 @@ namespace MediaPortal.Ripper
       DRIVE_REMOTE,
       DRIVE_CDROM,
       DRIVE_RAMDISK
-    };
-    
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll")]
-    public extern static DriveTypes GetDriveType(string drive);
+    } ;
+
+    [DllImport("Kernel32.dll")]
+    public static extern DriveTypes GetDriveType(string drive);
 
     //DesiredAccess values
-    public const uint GENERIC_READ      = 0x80000000;
-    public const uint GENERIC_WRITE     = 0x40000000;
-    public const uint GENERIC_EXECUTE   = 0x20000000;
-    public const uint GENERIC_ALL       = 0x10000000;
+    public const uint GENERIC_READ = 0x80000000;
+    public const uint GENERIC_WRITE = 0x40000000;
+    public const uint GENERIC_EXECUTE = 0x20000000;
+    public const uint GENERIC_ALL = 0x10000000;
 
     //Share constants
-    public const uint FILE_SHARE_READ   = 0x00000001;  
-    public const uint FILE_SHARE_WRITE  = 0x00000002;  
-    public const uint FILE_SHARE_DELETE = 0x00000004;  
-    
+    public const uint FILE_SHARE_READ = 0x00000001;
+    public const uint FILE_SHARE_WRITE = 0x00000002;
+    public const uint FILE_SHARE_DELETE = 0x00000004;
+
     //CreationDisposition constants
-    public const uint CREATE_NEW        = 1;
-    public const uint CREATE_ALWAYS     = 2;
-    public const uint OPEN_EXISTING     = 3;
-    public const uint OPEN_ALWAYS       = 4;
+    public const uint CREATE_NEW = 1;
+    public const uint CREATE_ALWAYS = 2;
+    public const uint OPEN_EXISTING = 3;
+    public const uint OPEN_ALWAYS = 4;
     public const uint TRUNCATE_EXISTING = 5;
 
     /// <summary>
@@ -77,26 +76,26 @@ namespace MediaPortal.Ripper
     /// <param name="dwFlagsAndAttributes">0 in fine for this case</param>
     /// <param name="hTemplateFile">NULL handle in this case</param>
     /// <returns>INVALID_HANDLE_VALUE on error or the handle to file if success</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static IntPtr CreateFile(string FileName, uint DesiredAccess, 
-      uint ShareMode, IntPtr lpSecurityAttributes, 
-      uint CreationDisposition, uint dwFlagsAndAttributes,
-      IntPtr hTemplateFile);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern IntPtr CreateFile(string FileName, uint DesiredAccess,
+                                           uint ShareMode, IntPtr lpSecurityAttributes,
+                                           uint CreationDisposition, uint dwFlagsAndAttributes,
+                                           IntPtr hTemplateFile);
 
     /// <summary>
     /// The CloseHandle function closes an open object handle.
     /// </summary>
     /// <param name="hObject">Handle to an open object.</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static int CloseHandle(IntPtr hObject);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern int CloseHandle(IntPtr hObject);
 
-    public const uint IOCTL_CDROM_READ_TOC         = 0x00024000;
-    public const uint IOCTL_STORAGE_CHECK_VERIFY   = 0x002D4800;
-    public const uint IOCTL_CDROM_RAW_READ         = 0x0002403E;
-    public const uint IOCTL_STORAGE_MEDIA_REMOVAL  = 0x002D4804;
-    public const uint IOCTL_STORAGE_EJECT_MEDIA    = 0x002D4808;
-    public const uint IOCTL_STORAGE_LOAD_MEDIA     = 0x002D480C;
+    public const uint IOCTL_CDROM_READ_TOC = 0x00024000;
+    public const uint IOCTL_STORAGE_CHECK_VERIFY = 0x002D4800;
+    public const uint IOCTL_CDROM_RAW_READ = 0x0002403E;
+    public const uint IOCTL_STORAGE_MEDIA_REMOVAL = 0x002D4804;
+    public const uint IOCTL_STORAGE_EJECT_MEDIA = 0x002D4808;
+    public const uint IOCTL_STORAGE_LOAD_MEDIA = 0x002D480C;
 
     /// <summary>
     /// Most general form of DeviceIoControl Win32 function
@@ -110,63 +109,56 @@ namespace MediaPortal.Ripper
     /// <param name="lpBytesReturned">Receives the size, in bytes, of the data stored into the buffer pointed to by lpOutBuffer. </param>
     /// <param name="lpOverlapped">Pointer to an OVERLAPPED structure. Discarded for this case</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static int DeviceIoControl(IntPtr hDevice, uint IoControlCode, 
-      IntPtr lpInBuffer, uint InBufferSize,
-      IntPtr lpOutBuffer, uint nOutBufferSize,
-      ref uint lpBytesReturned,
-      IntPtr lpOverlapped);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode,
+                                             IntPtr lpInBuffer, uint InBufferSize,
+                                             IntPtr lpOutBuffer, uint nOutBufferSize,
+                                             ref uint lpBytesReturned,
+                                             IntPtr lpOverlapped);
 
-    [ StructLayout( LayoutKind.Sequential )]
-    public struct TRACK_DATA 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct TRACK_DATA
     {
-      public  byte  Reserved;
-      private byte  BitMapped;
-      public  byte  Control 
-      { 
-        get
-        {
-          return (byte)(BitMapped & 0x0F);
-        }
-        set
-        {
-          BitMapped = (byte)((BitMapped & 0xF0) | (value & (byte)0x0F));
-        }
+      public byte Reserved;
+      private byte BitMapped;
+
+      public byte Control
+      {
+        get { return (byte) (BitMapped & 0x0F); }
+        set { BitMapped = (byte) ((BitMapped & 0xF0) | (value & (byte) 0x0F)); }
       }
+
       public byte Adr
       {
-        get
-        {
-          return (byte)((BitMapped & (byte)0xF0) >> 4);
-        }
-        set
-        {
-          BitMapped = (byte)((BitMapped & (byte)0x0F) | (value << 4));
-        }
+        get { return (byte) ((BitMapped & (byte) 0xF0) >> 4); }
+        set { BitMapped = (byte) ((BitMapped & (byte) 0x0F) | (value << 4)); }
       }
-      public byte  TrackNumber;
-      public byte  Reserved1;
+
+      public byte TrackNumber;
+      public byte Reserved1;
+
       /// <summary>
       /// Don't use array to avoid array creation
       /// </summary>
-      public byte  Address_0;
-      public byte  Address_1;
-      public byte  Address_2;
-      public byte  Address_3;
-    };
+      public byte Address_0;
+
+      public byte Address_1;
+      public byte Address_2;
+      public byte Address_3;
+    } ;
 
     public const int MAXIMUM_NUMBER_TRACKS = 100;
 
-    [ StructLayout( LayoutKind.Sequential )]
+    [StructLayout(LayoutKind.Sequential)]
     public class TrackDataList
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=MAXIMUM_NUMBER_TRACKS*8)]
-      private byte[] Data;
-      public TRACK_DATA this [int Index]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXIMUM_NUMBER_TRACKS*8)] private byte[] Data;
+
+      public TRACK_DATA this[int Index]
       {
         get
         {
-          if ( (Index < 0) | (Index >= MAXIMUM_NUMBER_TRACKS))
+          if ((Index < 0) | (Index >= MAXIMUM_NUMBER_TRACKS))
           {
             throw new IndexOutOfRangeException();
           }
@@ -175,8 +167,8 @@ namespace MediaPortal.Ripper
           try
           {
             IntPtr buffer = handle.AddrOfPinnedObject();
-            buffer = (IntPtr)(buffer.ToInt32() + (Index*Marshal.SizeOf(typeof(TRACK_DATA))));
-            res = (TRACK_DATA)Marshal.PtrToStructure(buffer, typeof(TRACK_DATA));
+            buffer = (IntPtr) (buffer.ToInt32() + (Index*Marshal.SizeOf(typeof (TRACK_DATA))));
+            res = (TRACK_DATA) Marshal.PtrToStructure(buffer, typeof (TRACK_DATA));
           }
           finally
           {
@@ -185,43 +177,50 @@ namespace MediaPortal.Ripper
           return res;
         }
       }
+
       public TrackDataList()
       {
-        Data = new byte[MAXIMUM_NUMBER_TRACKS*Marshal.SizeOf(typeof(TRACK_DATA))];
+        Data = new byte[MAXIMUM_NUMBER_TRACKS*Marshal.SizeOf(typeof (TRACK_DATA))];
       }
     }
-    
-    [StructLayout( LayoutKind.Sequential )]
-    public class CDROM_TOC 
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class CDROM_TOC
     {
       public ushort Length;
       public byte FirstTrack = 0;
       public byte LastTrack = 0;
-      
+
       public TrackDataList TrackData;
 
       public CDROM_TOC()
       {
         TrackData = new TrackDataList();
-        Length = (ushort)Marshal.SizeOf(this);
+        Length = (ushort) Marshal.SizeOf(this);
       }
-    } 
- 
-    [ StructLayout( LayoutKind.Sequential )]
-    public class PREVENT_MEDIA_REMOVAL 
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class PREVENT_MEDIA_REMOVAL
     {
       public byte PreventMediaRemoval = 0;
     }
-    
-    public enum TRACK_MODE_TYPE { YellowMode2, XAForm2, CDDA }
-    [ StructLayout( LayoutKind.Sequential )]
-      public class RAW_READ_INFO 
+
+    public enum TRACK_MODE_TYPE
     {
-      public long  DiskOffset = 0;
-      public uint  SectorCount = 0;
-      public TRACK_MODE_TYPE  TrackMode = TRACK_MODE_TYPE.CDDA;
+      YellowMode2,
+      XAForm2,
+      CDDA
     }
-    
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class RAW_READ_INFO
+    {
+      public long DiskOffset = 0;
+      public uint SectorCount = 0;
+      public TRACK_MODE_TYPE TrackMode = TRACK_MODE_TYPE.CDDA;
+    }
+
     /// <summary>
     /// Overload version of DeviceIOControl to read the TOC (Table of contents)
     /// </summary>
@@ -234,12 +233,12 @@ namespace MediaPortal.Ripper
     /// <param name="BytesReturned">Receives the size, in bytes, of the data stored into OutTOC</param>
     /// <param name="Overlapped">Pointer to an OVERLAPPED structure. Discarded for this case</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static int DeviceIoControl(IntPtr hDevice, uint IoControlCode, 
-      IntPtr InBuffer, uint InBufferSize,
-      [Out] CDROM_TOC OutTOC, uint OutBufferSize,
-      ref uint BytesReturned,
-      IntPtr Overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode,
+                                             IntPtr InBuffer, uint InBufferSize,
+                                             [Out] CDROM_TOC OutTOC, uint OutBufferSize,
+                                             ref uint BytesReturned,
+                                             IntPtr Overlapped);
 
     /// <summary>
     /// Overload version of DeviceIOControl to lock/unlock the CD
@@ -253,12 +252,12 @@ namespace MediaPortal.Ripper
     /// <param name="BytesReturned">A "dummy" varible in this case</param>
     /// <param name="Overlapped">Pointer to an OVERLAPPED structure. Discarded for this case</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static int DeviceIoControl(IntPtr hDevice, uint IoControlCode, 
-      [In] PREVENT_MEDIA_REMOVAL InMediaRemoval, uint InBufferSize,
-      IntPtr OutBuffer, uint OutBufferSize,
-      ref uint BytesReturned,
-      IntPtr Overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode,
+                                             [In] PREVENT_MEDIA_REMOVAL InMediaRemoval, uint InBufferSize,
+                                             IntPtr OutBuffer, uint OutBufferSize,
+                                             ref uint BytesReturned,
+                                             IntPtr Overlapped);
 
     /// <summary>
     /// Overload version of DeviceIOControl to read digital data
@@ -272,11 +271,11 @@ namespace MediaPortal.Ripper
     /// <param name="BytesReturned">Receives the size, in bytes, of the data stored into OutBuffer</param>
     /// <param name="Overlapped">Pointer to an OVERLAPPED structure. Discarded for this case</param>
     /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-    [System.Runtime.InteropServices.DllImport("Kernel32.dll", SetLastError=true)]
-    public extern static int DeviceIoControl(IntPtr hDevice, uint IoControlCode, 
-      [In] RAW_READ_INFO rri, uint InBufferSize,
-      [In, Out] byte[] OutBuffer, uint OutBufferSize,
-      ref uint BytesReturned,
-      IntPtr Overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true)]
+    public static extern int DeviceIoControl(IntPtr hDevice, uint IoControlCode,
+                                             [In] RAW_READ_INFO rri, uint InBufferSize,
+                                             [In, Out] byte[] OutBuffer, uint OutBufferSize,
+                                             ref uint BytesReturned,
+                                             IntPtr Overlapped);
   }
 }

@@ -23,191 +23,201 @@
 
 #endregion
 
-using System;
 using System.Threading;
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class Dispatcher
-	{
-		#region Constructors
+  public sealed class Dispatcher
+  {
+    #region Constructors
 
-		private Dispatcher()
-		{
-			_thread = new Thread(new ThreadStart(RunWorker));
-			_thread.Name = "Dispatcher";
-			_thread.Start();
-		}
+    private Dispatcher()
+    {
+      _thread = new Thread(new ThreadStart(RunWorker));
+      _thread.Name = "Dispatcher";
+      _thread.Start();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler									ShutdownFinished;
-		public event EventHandler									ShutdownStarted;
-		public event DispatcherUnhandledExceptionEventHandler		UnhandledException;
-		public event DispatcherUnhandledExceptionFilterEventHandler UnhandledExceptionFilter;
+    public event EventHandler ShutdownFinished;
+    public event EventHandler ShutdownStarted;
+    public event DispatcherUnhandledExceptionEventHandler UnhandledException;
+    public event DispatcherUnhandledExceptionFilterEventHandler UnhandledExceptionFilter;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method)
-		{
-			return BeginInvoke(priority, method, null);
-		}
+    public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method)
+    {
+      return BeginInvoke(priority, method, null);
+    }
 
-		public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method, object arg)
-		{
-			return BeginInvoke(priority, method, arg, null);
-		}
+    public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method, object arg)
+    {
+      return BeginInvoke(priority, method, arg, null);
+    }
 
-		public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method, object arg, params object[] args)
-		{
-			return new DispatcherOperation(priority, this);
-		}
-		
-		public void BeginInvokeShutdown(DispatcherPriority priority)
-		{
-		}
+    public DispatcherOperation BeginInvoke(DispatcherPriority priority, Delegate method, object arg,
+                                           params object[] args)
+    {
+      return new DispatcherOperation(priority, this);
+    }
 
-		private void BeginInvokeShutdownWorker()
-		{
-			_hasShutdownStarted = true;
+    public void BeginInvokeShutdown(DispatcherPriority priority)
+    {
+    }
 
-			if(ShutdownStarted != null)
-				ShutdownStarted(this, EventArgs.Empty);
+    private void BeginInvokeShutdownWorker()
+    {
+      _hasShutdownStarted = true;
+
+      if (ShutdownStarted != null)
+      {
+        ShutdownStarted(this, EventArgs.Empty);
+      }
 
 
-			_hasShutdownFinished = true;
+      _hasShutdownFinished = true;
 
-			if(ShutdownFinished != null)
-				ShutdownFinished(this, EventArgs.Empty);
-		}
+      if (ShutdownFinished != null)
+      {
+        ShutdownFinished(this, EventArgs.Empty);
+      }
+    }
 
-		public bool CheckAccess()
-		{
-			return _thread == Thread.CurrentThread;
-		}
+    public bool CheckAccess()
+    {
+      return _thread == Thread.CurrentThread;
+    }
 
-		public DispatcherProcessingDisabled DisableProcessing()
-		{
-			throw new NotImplementedException();
-		}
-		
-		public static void ExitAllFrames()
-		{
-		}
+    public DispatcherProcessingDisabled DisableProcessing()
+    {
+      throw new NotImplementedException();
+    }
 
-		public static Dispatcher FromThread(Thread thread)
-		{
-			if(thread != _currentDispatcher.Thread)
-				return null;
+    public static void ExitAllFrames()
+    {
+    }
 
-			return _currentDispatcher;
-		}
+    public static Dispatcher FromThread(Thread thread)
+    {
+      if (thread != _currentDispatcher.Thread)
+      {
+        return null;
+      }
 
-		public object Invoke(DispatcherPriority priority, Delegate method)
-		{
-			return Invoke(priority, method, null);
-		}
+      return _currentDispatcher;
+    }
 
-		public object Invoke(DispatcherPriority priority, Delegate method, object arg)
-		{
-			return Invoke(priority, method, arg, null);
-		}
+    public object Invoke(DispatcherPriority priority, Delegate method)
+    {
+      return Invoke(priority, method, null);
+    }
 
-		public object Invoke(DispatcherPriority priority, Delegate method, object arg, params object[] args)
-		{
-			throw new NotImplementedException();
-		}
+    public object Invoke(DispatcherPriority priority, Delegate method, object arg)
+    {
+      return Invoke(priority, method, arg, null);
+    }
 
-		public object Invoke(DispatcherPriority priority, TimeSpan timeout, Delegate method, object arg)
-		{
-			throw new NotImplementedException();
-		}
+    public object Invoke(DispatcherPriority priority, Delegate method, object arg, params object[] args)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void InvokeShutdown()
-		{
-		}
+    public object Invoke(DispatcherPriority priority, TimeSpan timeout, Delegate method, object arg)
+    {
+      throw new NotImplementedException();
+    }
 
-		public static void PushFrame(DispatcherFrame frame)
-		{
-		}
+    public void InvokeShutdown()
+    {
+    }
 
-		public static void Run()
-		{
-			new Dispatcher();
-		}
+    public static void PushFrame(DispatcherFrame frame)
+    {
+    }
 
-		private void RunWorker()
-		{
-			_currentDispatcher = this;
+    public static void Run()
+    {
+      new Dispatcher();
+    }
 
-			for(;;)
-			{
-				try
-				{
-				}
-				catch(Exception e)
-				{
-					if(UnhandledExceptionFilter != null)
-					{
-						DispatcherUnhandledExceptionFilterEventArgs args = new DispatcherUnhandledExceptionFilterEventArgs(this, e);
+    private void RunWorker()
+    {
+      _currentDispatcher = this;
 
-						if(UnhandledException != null && args.RequestCatch == false)
-							UnhandledException(this, new DispatcherUnhandledExceptionEventArgs(this, e));
-					}
-				}
-			}
+      for (;;)
+      {
+        try
+        {
+        }
+        catch (Exception e)
+        {
+          if (UnhandledExceptionFilter != null)
+          {
+            DispatcherUnhandledExceptionFilterEventArgs args = new DispatcherUnhandledExceptionFilterEventArgs(this, e);
+
+            if (UnhandledException != null && args.RequestCatch == false)
+            {
+              UnhandledException(this, new DispatcherUnhandledExceptionEventArgs(this, e));
+            }
+          }
+        }
+      }
 
 //			_currentDispatcher = null;
-		}
+    }
 
-		public static void ValidatePriority(DispatcherPriority priority, string parameterName)
-		{
-		}
+    public static void ValidatePriority(DispatcherPriority priority, string parameterName)
+    {
+    }
 
-		public void VerifyAccess()
-		{
-			if(_thread != Thread.CurrentThread)
-				throw new InvalidOperationException();
-		}
+    public void VerifyAccess()
+    {
+      if (_thread != Thread.CurrentThread)
+      {
+        throw new InvalidOperationException();
+      }
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		public static Dispatcher CurrentDispatcher
-		{
-			get { return _currentDispatcher; }
-		}
+    public static Dispatcher CurrentDispatcher
+    {
+      get { return _currentDispatcher; }
+    }
 
-		public bool HasShutdownFinished
-		{
-			get { return _hasShutdownFinished; }
-		}
-		
-		public bool HasShutdownStarted
-		{
-			get { return _hasShutdownStarted; }
-		}
+    public bool HasShutdownFinished
+    {
+      get { return _hasShutdownFinished; }
+    }
 
-		public DispatcherHooks Hooks
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public bool HasShutdownStarted
+    {
+      get { return _hasShutdownStarted; }
+    }
 
-		public Thread Thread
-		{
-			get { return _thread; }
-		}
+    public DispatcherHooks Hooks
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#region Fields
+    public Thread Thread
+    {
+      get { return _thread; }
+    }
 
-		static Dispatcher			_currentDispatcher;
-		bool						_hasShutdownFinished;
-		bool						_hasShutdownStarted;
-		Thread						_thread;
+    #region Fields
 
-		#endregion Fields
-	}
+    private static Dispatcher _currentDispatcher;
+    private bool _hasShutdownFinished;
+    private bool _hasShutdownStarted;
+    private Thread _thread;
+
+    #endregion Fields
+  }
 }

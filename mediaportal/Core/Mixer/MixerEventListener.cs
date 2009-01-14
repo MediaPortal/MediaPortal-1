@@ -23,43 +23,46 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
 
 namespace MediaPortal.Mixer
 {
-	internal class MixerEventListener : NativeWindow
-	{
-		#region Events
+  internal class MixerEventListener : NativeWindow
+  {
+    #region Events
 
-		public event MixerEventHandler	LineChanged;
-		public event MixerEventHandler	ControlChanged;
+    public event MixerEventHandler LineChanged;
+    public event MixerEventHandler ControlChanged;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public void Start()
-		{
-			CreateParams createParams = new CreateParams();
+    public void Start()
+    {
+      CreateParams createParams = new CreateParams();
 
-			createParams.ExStyle = 0x08000000;
-			createParams.Style = unchecked((int)0x80000000);
-			
-			CreateHandle(createParams);
-		}
+      createParams.ExStyle = 0x08000000;
+      createParams.Style = unchecked((int) 0x80000000);
 
-		protected override void WndProc(ref Message m)
-		{
-			if(m.Msg == (int)MixerMessages.LineChanged && LineChanged != null)
-				LineChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
+      CreateHandle(createParams);
+    }
 
-			if(m.Msg == (int)MixerMessages.ControlChanged && ControlChanged != null)
-				ControlChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
+    protected override void WndProc(ref Message m)
+    {
+      if (m.Msg == (int) MixerMessages.LineChanged && LineChanged != null)
+      {
+        LineChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
+      }
 
-			base.WndProc(ref m);
-		}
+      if (m.Msg == (int) MixerMessages.ControlChanged && ControlChanged != null)
+      {
+        ControlChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
+      }
 
-		#endregion Methods
-	}
+      base.WndProc(ref m);
+    }
+
+    #endregion Methods
+  }
 }

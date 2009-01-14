@@ -23,34 +23,31 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class Control : FrameworkElement
-	{
-		#region Constructors
+  public class Control : FrameworkElement
+  {
+    #region Constructors
 
-		static Control()
-		{
-			FrameworkPropertyMetadata metadata = new FrameworkPropertyMetadata();
+    static Control()
+    {
+      FrameworkPropertyMetadata metadata = new FrameworkPropertyMetadata();
 
-			#region Background
+      #region Background
 
-			metadata.AffectsArrange = true;
-			metadata.AffectsMeasure = true;
-			metadata.AffectsParentArrange = true;
-			metadata.AffectsParentMeasure = true;
-			metadata.AffectsRender = true;
+      metadata.AffectsArrange = true;
+      metadata.AffectsMeasure = true;
+      metadata.AffectsParentArrange = true;
+      metadata.AffectsParentMeasure = true;
+      metadata.AffectsRender = true;
 
-			BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(Control), metadata);
+      BackgroundProperty = DependencyProperty.Register("Background", typeof (Brush), typeof (Control), metadata);
 
-			#endregion Background
+      #endregion Background
 
 //			BorderBrushProperty;
 //			BorderThicknessProperty;
@@ -60,212 +57,216 @@ namespace System.Windows.Controls
 //			FontStyleProperty;
 //			FontWeightProperty;
 
-			#region Focusable
+      #region Focusable
 
-			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
+      FocusableProperty.OverrideMetadata(typeof (Control), new FrameworkPropertyMetadata(true));
 
-			#endregion Focusable
+      #endregion Focusable
 
 //			ForegroundProperty;
 
-			#region HozitonalContentAlignment
+      #region HozitonalContentAlignment
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = HorizontalAlignment.Stretch;
-			metadata.AffectsArrange = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = HorizontalAlignment.Stretch;
+      metadata.AffectsArrange = true;
 
-			HorizontalContentAlignmentProperty = DependencyProperty.Register("HozitonalContentAlignment", typeof(HorizontalAlignment), typeof(Control), metadata);
+      HorizontalContentAlignmentProperty = DependencyProperty.Register("HozitonalContentAlignment",
+                                                                       typeof (HorizontalAlignment), typeof (Control),
+                                                                       metadata);
 
-			#endregion HozitonalContentAlignment
+      #endregion HozitonalContentAlignment
 
-			#region IsTabStop
+      #region IsTabStop
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = true;
 
-			IsTabStopProperty = DependencyProperty.Register("IsTabStop", typeof(bool), typeof(Control), metadata);
+      IsTabStopProperty = DependencyProperty.Register("IsTabStop", typeof (bool), typeof (Control), metadata);
 
-			#endregion IsTabStop
+      #endregion IsTabStop
 
-			#region Padding
+      #region Padding
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = Thickness.Empty;
-			metadata.AffectsArrange = true;
-			metadata.AffectsMeasure = true;
-			metadata.AffectsParentArrange = true;
-			metadata.AffectsParentMeasure = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = Thickness.Empty;
+      metadata.AffectsArrange = true;
+      metadata.AffectsMeasure = true;
+      metadata.AffectsParentArrange = true;
+      metadata.AffectsParentMeasure = true;
 
-			PaddingProperty = DependencyProperty.Register("Padding", typeof(Thickness), typeof(Control), metadata);
+      PaddingProperty = DependencyProperty.Register("Padding", typeof (Thickness), typeof (Control), metadata);
 
-			#endregion Padding
+      #endregion Padding
 
-			#region TabIndex
+      #region TabIndex
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = 1;
-			metadata.AffectsArrange = true;
-			metadata.AffectsMeasure = true;
-			metadata.AffectsParentArrange = true;
-			metadata.AffectsParentMeasure = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = 1;
+      metadata.AffectsArrange = true;
+      metadata.AffectsMeasure = true;
+      metadata.AffectsParentArrange = true;
+      metadata.AffectsParentMeasure = true;
 
-			TabIndexProperty = DependencyProperty.Register("Padding", typeof(int), typeof(Control), metadata);
+      TabIndexProperty = DependencyProperty.Register("Padding", typeof (int), typeof (Control), metadata);
 
-			#endregion TabIndex
+      #endregion TabIndex
 
-			#region Template
+      #region Template
 
-			metadata = new FrameworkPropertyMetadata();
+      metadata = new FrameworkPropertyMetadata();
 
-			TemplateProperty = DependencyProperty.Register("Template", typeof(ControlTemplate), typeof(Control), metadata);
+      TemplateProperty = DependencyProperty.Register("Template", typeof (ControlTemplate), typeof (Control), metadata);
 
-			#endregion Template
+      #endregion Template
 
 //			TextDecorationsProperty;
 //			TextTrimmingProperty;
 
-			#region VerticalContentAlignment
+      #region VerticalContentAlignment
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = VerticalAlignment.Stretch;
-			metadata.AffectsArrange = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = VerticalAlignment.Stretch;
+      metadata.AffectsArrange = true;
 
-			VerticalContentAlignmentProperty = DependencyProperty.Register("VerticalContentAlignment", typeof(VerticalAlignment), typeof(Control), metadata);
+      VerticalContentAlignmentProperty = DependencyProperty.Register("VerticalContentAlignment",
+                                                                     typeof (VerticalAlignment), typeof (Control),
+                                                                     metadata);
 
-			#endregion HozitonalContentAlignment
-		}
+      #endregion HozitonalContentAlignment
+    }
 
-		public Control()
-		{
-		}
+    public Control()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		[BindableAttribute(true)] 
-		public Brush Background
-		{
-			get { return GetValue(BackgroundProperty) as Brush; }
-			set { SetValue(BackgroundProperty, value); }
-		}
+    [Bindable(true)]
+    public Brush Background
+    {
+      get { return GetValue(BackgroundProperty) as Brush; }
+      set { SetValue(BackgroundProperty, value); }
+    }
 
-		public event MouseButtonEventHandler MouseDoubleClick
-		{
-			add		{ AddHandler(MouseDoubleClickEvent, value); }
-			remove	{ RemoveHandler(MouseDoubleClickEvent, value); }
-		}
+    public event MouseButtonEventHandler MouseDoubleClick
+    {
+      add { AddHandler(MouseDoubleClickEvent, value); }
+      remove { RemoveHandler(MouseDoubleClickEvent, value); }
+    }
 
-		public event MouseButtonEventHandler PreviewMouseDoubleClick
-		{
-			add		{ AddHandler(PreviewMouseDoubleClickEvent, value); }
-			remove	{ RemoveHandler(PreviewMouseDoubleClickEvent, value); }
-		}
+    public event MouseButtonEventHandler PreviewMouseDoubleClick
+    {
+      add { AddHandler(PreviewMouseDoubleClickEvent, value); }
+      remove { RemoveHandler(PreviewMouseDoubleClickEvent, value); }
+    }
 
-		#endregion Events
+    #endregion Events
 
-		#region Events (Routed)
+    #region Events (Routed)
 
-		public static readonly RoutedEvent MouseDoubleClickEvent;
-		public static readonly RoutedEvent PreviewMouseDoubleClickEvent;
+    public static readonly RoutedEvent MouseDoubleClickEvent;
+    public static readonly RoutedEvent PreviewMouseDoubleClickEvent;
 
-		#endregion Events (Routed)
+    #endregion Events (Routed)
 
-		#region Methods
+    #region Methods
 
-		protected override Size ArrangeOverride(Rect finalRect)
-		{
-			return base.ArrangeOverride (finalRect);
-		}
+    protected override Size ArrangeOverride(Rect finalRect)
+    {
+      return base.ArrangeOverride(finalRect);
+    }
 
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			return base.MeasureOverride (availableSize);
-		}
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      return base.MeasureOverride(availableSize);
+    }
 
-		protected virtual void OnMouseDoubleClick(MouseButtonEventArgs e)
-		{
-		}
+    protected virtual void OnMouseDoubleClick(MouseButtonEventArgs e)
+    {
+    }
 
-		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-		{
-		}
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
-		{
-		}
+    protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		protected virtual void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
-		{
-		}
+    protected virtual void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
+    {
+    }
 
-		protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
-		{
-		}
+    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
-		{
-		}
-			
-		protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
-		{
-		}
-		
-		public override string ToString()
-		{
-			return base.ToString();
-		}
-			
-		#endregion Methods
+    protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		#region Properties
+    protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
+    {
+    }
 
-		[BindableAttribute(true)] 
-		public HorizontalAlignment HorizontalContentAlignment
-		{
-			get { return (HorizontalAlignment)GetValue(HorizontalContentAlignmentProperty); }
-			set { SetValue(HorizontalContentAlignmentProperty, value); }
-		}
+    public override string ToString()
+    {
+      return base.ToString();
+    }
 
-		[BindableAttribute(true)] 
-		public Thickness Padding
-		{
-			get { return (Thickness)GetValue(PaddingProperty); }
-			set { SetValue(PaddingProperty, value); }
-		}
+    #endregion Methods
 
-		[BindableAttribute(true)] 
-		public bool IsTabStop
-		{
-			get { return (bool)GetValue(IsTabStopProperty); }
-			set { SetValue(IsTabStopProperty, value); }
-		}
+    #region Properties
 
-		[BindableAttribute(true)] 
-		public int TabIndex
-		{
-			get { return (int)GetValue(TabIndexProperty); }
-			set { SetValue(TabIndexProperty, value); }
-		}
+    [Bindable(true)]
+    public HorizontalAlignment HorizontalContentAlignment
+    {
+      get { return (HorizontalAlignment) GetValue(HorizontalContentAlignmentProperty); }
+      set { SetValue(HorizontalContentAlignmentProperty, value); }
+    }
 
-		public ControlTemplate Template
-		{
-			get { return (ControlTemplate)GetValue(TemplateProperty); }
-			set { SetValue(TemplateProperty, value); }
-		}
+    [Bindable(true)]
+    public Thickness Padding
+    {
+      get { return (Thickness) GetValue(PaddingProperty); }
+      set { SetValue(PaddingProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public VerticalAlignment VerticalContentAlignment
-		{
-			get { return (VerticalAlignment)GetValue(VerticalContentAlignmentProperty); }
-			set { SetValue(VerticalContentAlignmentProperty, value); }
-		}
+    [Bindable(true)]
+    public bool IsTabStop
+    {
+      get { return (bool) GetValue(IsTabStopProperty); }
+      set { SetValue(IsTabStopProperty, value); }
+    }
 
-		#endregion Properties
+    [Bindable(true)]
+    public int TabIndex
+    {
+      get { return (int) GetValue(TabIndexProperty); }
+      set { SetValue(TabIndexProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    public ControlTemplate Template
+    {
+      get { return (ControlTemplate) GetValue(TemplateProperty); }
+      set { SetValue(TemplateProperty, value); }
+    }
 
-		public static readonly DependencyProperty BackgroundProperty;
+    [Bindable(true)]
+    public VerticalAlignment VerticalContentAlignment
+    {
+      get { return (VerticalAlignment) GetValue(VerticalContentAlignmentProperty); }
+      set { SetValue(VerticalContentAlignmentProperty, value); }
+    }
+
+    #endregion Properties
+
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty BackgroundProperty;
 //		public static readonly DependencyProperty BorderBrushProperty;
 //		public static readonly DependencyProperty BorderThicknessProperty;
 //		public static readonly DependencyProperty FontFamilyProperty;
@@ -274,15 +275,15 @@ namespace System.Windows.Controls
 //		public static readonly DependencyProperty FontStyleProperty;
 //		public static readonly DependencyProperty FontWeightProperty;
 //		public static readonly DependencyProperty ForegroundProperty;
-		public static readonly DependencyProperty HorizontalContentAlignmentProperty;
-		public static readonly DependencyProperty IsTabStopProperty;
-		public static readonly DependencyProperty PaddingProperty;
-		public static readonly DependencyProperty TabIndexProperty;
-		public static readonly DependencyProperty TemplateProperty;
+    public static readonly DependencyProperty HorizontalContentAlignmentProperty;
+    public static readonly DependencyProperty IsTabStopProperty;
+    public static readonly DependencyProperty PaddingProperty;
+    public static readonly DependencyProperty TabIndexProperty;
+    public static readonly DependencyProperty TemplateProperty;
 //		public static readonly DependencyProperty TextDecorationsProperty;
 //		public static readonly DependencyProperty TextTrimmingProperty;
-		public static readonly DependencyProperty VerticalContentAlignmentProperty;
+    public static readonly DependencyProperty VerticalContentAlignmentProperty;
 
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties (Dependency)
+  }
 }

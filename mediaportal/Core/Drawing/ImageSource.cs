@@ -25,101 +25,92 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(ImageSourceConverter))]
-	public abstract class ImageSource : Animatable, IFormattable
-	{
-		#region Constructors
+  [TypeConverter(typeof (ImageSourceConverter))]
+  public abstract class ImageSource : Animatable, IFormattable
+  {
+    #region Constructors
 
-		static ImageSource()
-		{
-			AreaOfInterestProperty = DependencyProperty.Register("AreaOfInterest", typeof(Rect), typeof(ImageSource));
-			AreaOfInterestUnitsProperty = DependencyProperty.Register("AreaOfInterestUnits", typeof(BrushMappingMode), typeof(ImageSource));
-		}
+    static ImageSource()
+    {
+      AreaOfInterestProperty = DependencyProperty.Register("AreaOfInterest", typeof (Rect), typeof (ImageSource));
+      AreaOfInterestUnitsProperty = DependencyProperty.Register("AreaOfInterestUnits", typeof (BrushMappingMode),
+                                                                typeof (ImageSource));
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public new ImageSource Copy()
-		{
-			return (ImageSource)base.Copy();
-		}
+    public new ImageSource Copy()
+    {
+      return (ImageSource) base.Copy();
+    }
 
-		protected override void CopyCore(Freezable sourceFreezable)
-		{
-		}
+    protected override void CopyCore(Freezable sourceFreezable)
+    {
+    }
 
-		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-		{
-		}
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+    {
+    }
 
-		protected override bool FreezeCore(bool isChecking)
-		{
-			throw new NotImplementedException();
-		}
+    protected override bool FreezeCore(bool isChecking)
+    {
+      throw new NotImplementedException();
+    }
 
-		public new ImageSource GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
+    public new ImageSource GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-		string IFormattable.ToString(string format, IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
+    string IFormattable.ToString(string format, IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
 
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-		}
+    public override string ToString()
+    {
+      throw new NotImplementedException();
+    }
 
-		public string ToString(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
+    public string ToString(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-				
-		#region Properties
+    #endregion Methods
 
-		public Rect AreaOfInterest
-		{
-			get { return (Rect)GetValue(AreaOfInterestProperty); }
-			set { SetValue(AreaOfInterestProperty, value); }
-		}
+    #region Properties
 
-		public BrushMappingMode AreaOfInterestUnits
-		{
-			get { return (BrushMappingMode)GetValue(AreaOfInterestUnitsProperty); }
-			set { SetValue(AreaOfInterestUnitsProperty, value); }
-		}
+    public Rect AreaOfInterest
+    {
+      get { return (Rect) GetValue(AreaOfInterestProperty); }
+      set { SetValue(AreaOfInterestProperty, value); }
+    }
 
-		public abstract double Height
-		{
-			get;
-		}
+    public BrushMappingMode AreaOfInterestUnits
+    {
+      get { return (BrushMappingMode) GetValue(AreaOfInterestUnitsProperty); }
+      set { SetValue(AreaOfInterestUnitsProperty, value); }
+    }
 
-		public abstract double Width
-		{
-			get;
-		}
+    public abstract double Height { get; }
 
-		#endregion Properties
+    public abstract double Width { get; }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty AreaOfInterestProperty;
-		public static readonly DependencyProperty AreaOfInterestUnitsProperty;
-		
-		#endregion Properties (Dependency)
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty AreaOfInterestProperty;
+    public static readonly DependencyProperty AreaOfInterestUnitsProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

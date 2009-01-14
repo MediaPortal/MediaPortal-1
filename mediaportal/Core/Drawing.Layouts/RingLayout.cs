@@ -25,141 +25,150 @@
 
 using System;
 using System.Windows;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public class RingLayout : ILayout
-	{
-		#region Constructors
+  public class RingLayout : ILayout
+  {
+    #region Constructors
 
-		public RingLayout() : this(0, 0)
-		{
-		}
+    public RingLayout() : this(0, 0)
+    {
+    }
 
-		public RingLayout(int spacing) : this(spacing, spacing)
-		{
-		}
-		
-		public RingLayout(int horizontalSpacing, int verticalSpacing)
-		{
-			_spacing.Width = horizontalSpacing;
-			_spacing.Height = verticalSpacing;
-		}
+    public RingLayout(int spacing) : this(spacing, spacing)
+    {
+    }
 
-		#endregion Constructors
+    public RingLayout(int horizontalSpacing, int verticalSpacing)
+    {
+      _spacing.Width = horizontalSpacing;
+      _spacing.Height = verticalSpacing;
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
-		{
-			Rect rect = new Rect(x, y, element.Width, element.Height);
-            
-			switch(element.HorizontalAlignment)
-			{
-				case HorizontalAlignment.Center:
-					rect.X = x + w / 2 - element.Width / 2;
-					break;
-				case HorizontalAlignment.Right:
-					rect.X = x + w  - element.Width;
-					break;
-				case HorizontalAlignment.Stretch:
-					rect.Width = w - t.Right;
-					break;
-			}
+    #region Methods
 
-			switch(element.VerticalAlignment)
-			{
-				case VerticalAlignment.Center:
-					rect.Y = y + h / 2 - element.Height / 2;
-					break;
-				case VerticalAlignment.Bottom:
-					rect.Y = h  - element.Height;
-					break;
-				case VerticalAlignment.Stretch:
-					rect.Height = h - t.Bottom;
-					break;
-			}
-		
-			element.Arrange(rect);
-		}
+    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    {
+      Rect rect = new Rect(x, y, element.Width, element.Height);
 
-		public void Arrange(GUIGroup element)
-		{
-			Point l = element.Location;
-			Rect r = new Rect();
-			Thickness t = element.Margin;
+      switch (element.HorizontalAlignment)
+      {
+        case HorizontalAlignment.Center:
+          rect.X = x + w/2 - element.Width/2;
+          break;
+        case HorizontalAlignment.Right:
+          rect.X = x + w - element.Width;
+          break;
+        case HorizontalAlignment.Stretch:
+          rect.Width = w - t.Right;
+          break;
+      }
 
-			int index = 0;
+      switch (element.VerticalAlignment)
+      {
+        case VerticalAlignment.Center:
+          rect.Y = y + h/2 - element.Height/2;
+          break;
+        case VerticalAlignment.Bottom:
+          rect.Y = h - element.Height;
+          break;
+        case VerticalAlignment.Stretch:
+          rect.Height = h - t.Bottom;
+          break;
+      }
 
-			foreach(FrameworkElement child in element.Children)
-			{
-				if(child.Visibility == Visibility.Collapsed)
-					continue;
+      element.Arrange(rect);
+    }
 
-				double angle = (++index * 2 * Math.PI) / element.Children.Count;
+    public void Arrange(GUIGroup element)
+    {
+      Point l = element.Location;
+      Rect r = new Rect();
+      Thickness t = element.Margin;
 
-				r.Width = child.Width;
-				r.Height = child.Height;
-				r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width * 2)) / 2) + (int)(Math.Sin(angle) * _radius) - (r.Width / 2);
-				r.Y = t.Top + _spacing.Height + ((_size.Height - t.Height - (_spacing.Height * 2)) / 2) - (int)(Math.Cos(angle) * _radius) - (r.Height / 2);
+      int index = 0;
 
-				child.Arrange(r);
-			}
-		}
+      foreach (FrameworkElement child in element.Children)
+      {
+        if (child.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-		public Size Measure(GUIGroup element, Size availableSize)
-		{
-			double w = 0;
-			double h = 0;
+        double angle = (++index*2*Math.PI)/element.Children.Count;
 
-			foreach(FrameworkElement child in element.Children)
-			{
-				if(child.Visibility == Visibility.Collapsed)
-					continue;
+        r.Width = child.Width;
+        r.Height = child.Height;
+        r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width*2))/2) +
+              (int) (Math.Sin(angle)*_radius) - (r.Width/2);
+        r.Y = t.Top + _spacing.Height + ((_size.Height - t.Height - (_spacing.Height*2))/2) -
+              (int) (Math.Cos(angle)*_radius) - (r.Height/2);
 
-				child.Measure(availableSize);
+        child.Arrange(r);
+      }
+    }
 
-				w = Math.Max(w, child.Width);
-				h = Math.Max(h, child.Height);
-			}
+    public Size Measure(GUIGroup element, Size availableSize)
+    {
+      double w = 0;
+      double h = 0;
 
-			Thickness t = element.Margin;
+      foreach (FrameworkElement child in element.Children)
+      {
+        if (child.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-			_radius = (Math.Min(w + _spacing.Width * element.Children.Count, h + _spacing.Height * element.Children.Count) / 2);
-			_radius -= Math.Max(w, h) / 2;
-			_size.Width = (int)(2 * _radius) - w + t.Width;
-			_size.Height = (int)(2 * _radius) - h + t.Height;
-			
-			return _size;
-		}
+        child.Measure(availableSize);
 
-		#endregion Methods
-		
-		#region Properties
+        w = Math.Max(w, child.Width);
+        h = Math.Max(h, child.Height);
+      }
 
-		public Size Size
-		{
-			get { return _size; }
-		}
+      Thickness t = element.Margin;
 
-		public Size Spacing
-		{
-			get { return _spacing; }
-			set { if(Size.Equals(_spacing, value) == false) _spacing = value; }
-		}
+      _radius = (Math.Min(w + _spacing.Width*element.Children.Count, h + _spacing.Height*element.Children.Count)/2);
+      _radius -= Math.Max(w, h)/2;
+      _size.Width = (int) (2*_radius) - w + t.Width;
+      _size.Height = (int) (2*_radius) - h + t.Height;
 
-		#endregion Properties
+      return _size;
+    }
 
-		#region Fields
+    #endregion Methods
 
-		Size						_size = Size.Empty;
-		Size						_spacing = Size.Empty;
-		double						_radius = 0;
+    #region Properties
 
-		#endregion Fields
-	}
+    public Size Size
+    {
+      get { return _size; }
+    }
+
+    public Size Spacing
+    {
+      get { return _spacing; }
+      set
+      {
+        if (Equals(_spacing, value) == false)
+        {
+          _spacing = value;
+        }
+      }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private Size _size = Size.Empty;
+    private Size _spacing = Size.Empty;
+    private double _radius = 0;
+
+    #endregion Fields
+  }
 }

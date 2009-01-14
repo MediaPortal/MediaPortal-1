@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Player.DSP
@@ -39,13 +38,12 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// The Name of the Effect
     /// </summary>
-    [XmlAttribute]
-    public string EffectName = string.Empty;
+    [XmlAttribute] public string EffectName = string.Empty;
 
     /// <summary>
     /// List of Parameters for this Effect
     /// </summary>
-    [XmlElement("Parameter", typeof(BassEffectParm))]
-    public List<BassEffectParm> Parameter = new List<BassEffectParm>();
+    [XmlElement("Parameter", typeof (BassEffectParm))] public List<BassEffectParm> Parameter =
+      new List<BassEffectParm>();
   }
 }

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MediaPortal.GUI.Library
 {
@@ -55,14 +56,14 @@ namespace MediaPortal.GUI.Library
       Playlist
     }
 
-    GUIPlayListItemListControl _viewPlayList = null; // instance of a re-orderable playlist list control
-    GUIListControl _viewList = null;			// instance of the list control
+    private GUIPlayListItemListControl _viewPlayList = null; // instance of a re-orderable playlist list control
+    private GUIListControl _viewList = null; // instance of the list control
 
-    GUIListControl _viewAlbum = null;	// instance of the album list control
-    GUIThumbnailPanel _viewThumbnail = null; // instance of the thumbnail control
-    GUIFilmstripControl _viewFilmStrip = null; // instance of the filmstrip control
-    ViewMode _currentViewMode;						// current view
-    List<GUIListItem> _itemList = new List<GUIListItem>(); // unfiltered itemlist
+    private GUIListControl _viewAlbum = null; // instance of the album list control
+    private GUIThumbnailPanel _viewThumbnail = null; // instance of the thumbnail control
+    private GUIFilmstripControl _viewFilmStrip = null; // instance of the filmstrip control
+    private ViewMode _currentViewMode; // current view
+    private List<GUIListItem> _itemList = new List<GUIListItem>(); // unfiltered itemlist
 
     public GUIFacadeControl(int dwParentID)
       : base(dwParentID)
@@ -90,7 +91,10 @@ namespace MediaPortal.GUI.Library
         cntl.GetID = GetID;
         cntl.WindowId = WindowId;
         cntl.ParentControl = this;
-        if (base.Animations.Count != 0) cntl.Animations.AddRange(base.Animations);
+        if (base.Animations.Count != 0)
+        {
+          cntl.Animations.AddRange(base.Animations);
+        }
       }
     }
 
@@ -190,14 +194,19 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        switch(_currentViewMode)
+        switch (_currentViewMode)
         {
-          case ViewMode.AlbumView:  return AlbumListView;
-          case ViewMode.List:       return _viewList;
-          case ViewMode.Filmstrip:  return _viewFilmStrip;
-          case ViewMode.Playlist:   return _viewPlayList;
+          case ViewMode.AlbumView:
+            return AlbumListView;
+          case ViewMode.List:
+            return _viewList;
+          case ViewMode.Filmstrip:
+            return _viewFilmStrip;
+          case ViewMode.Playlist:
+            return _viewPlayList;
           case ViewMode.LargeIcons:
-          case ViewMode.SmallIcons: return _viewThumbnail;
+          case ViewMode.SmallIcons:
+            return _viewThumbnail;
         }
         return null;
       }
@@ -222,13 +231,16 @@ namespace MediaPortal.GUI.Library
       GUIControl cntl = CurrentView;
       if (cntl != null)
       {
-        uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+        uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
         if (GUIGraphicsContext.Animations)
         {
           cntl.UpdateVisibility();
           cntl.DoRender(timePassed, currentTime);
         }
-        else cntl.Render(timePassed);
+        else
+        {
+          cntl.Render(timePassed);
+        }
       }
       base.Render(timePassed);
     }
@@ -277,6 +289,7 @@ namespace MediaPortal.GUI.Library
         _viewPlayList.ParentControl = this;
       }
     }
+
     public override int WindowId
     {
       get { return _windowId; }
@@ -284,15 +297,25 @@ namespace MediaPortal.GUI.Library
       {
         _windowId = value;
         if (AlbumListView != null)
+        {
           AlbumListView.WindowId = value;
+        }
         if (_viewList != null)
+        {
           _viewList.WindowId = value;
+        }
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.WindowId = value;
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.WindowId = value;
+        }
         if (_viewPlayList != null)
+        {
           _viewPlayList.WindowId = value;
+        }
       }
     }
 
@@ -302,15 +325,25 @@ namespace MediaPortal.GUI.Library
     public override void PreAllocResources()
     {
       if (AlbumListView != null)
+      {
         AlbumListView.PreAllocResources();
+      }
       if (_viewList != null)
+      {
         _viewList.PreAllocResources();
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.PreAllocResources();
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.PreAllocResources();
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.PreAllocResources();
+      }
       UpdateView();
     }
 
@@ -320,15 +353,25 @@ namespace MediaPortal.GUI.Library
     public override void FreeResources()
     {
       if (AlbumListView != null)
+      {
         AlbumListView.FreeResources();
+      }
       if (_viewList != null)
+      {
         _viewList.FreeResources();
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.FreeResources();
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.FreeResources();
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.FreeResources();
+      }
       _itemList.Clear();
     }
 
@@ -337,7 +380,10 @@ namespace MediaPortal.GUI.Library
       controlID = -1;
       focused = false;
       GUIControl cntl = CurrentView;
-      if (cntl != null) return cntl.HitTest(x, y, out controlID, out focused);
+      if (cntl != null)
+      {
+        return cntl.HitTest(x, y, out controlID, out focused);
+      }
       return false;
     }
 
@@ -345,7 +391,9 @@ namespace MediaPortal.GUI.Library
     {
       GUIControl cntl = CurrentView;
       if (cntl != null)
+      {
         cntl.OnAction(action);
+      }
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -354,7 +402,7 @@ namespace MediaPortal.GUI.Library
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
-          GUIListItem pItem = (GUIListItem)message.Object;
+          GUIListItem pItem = (GUIListItem) message.Object;
           Add(pItem);
           return true;
         }
@@ -381,32 +429,48 @@ namespace MediaPortal.GUI.Library
         RouteMessage(message);
         return true;
       }
-      
+
       GUIControl cntl = CurrentView;
-      if (cntl != null) return cntl.OnMessage(message);
-      
+      if (cntl != null)
+      {
+        return cntl.OnMessage(message);
+      }
+
       return false;
     }
 
-    void RouteMessage(GUIMessage message)
+    private void RouteMessage(GUIMessage message)
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.OnMessage(message);
+      }
       if (_viewList != null)
+      {
         _viewList.OnMessage(message);
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.OnMessage(message);
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.OnMessage(message);
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.OnMessage(message);
+      }
     }
 
     public override bool CanFocus()
     {
       GUIControl cntl = CurrentView;
-      if (cntl != null) return cntl.CanFocus();
-      
+      if (cntl != null)
+      {
+        return cntl.CanFocus();
+      }
+
       return true;
     }
 
@@ -415,13 +479,19 @@ namespace MediaPortal.GUI.Library
       get
       {
         GUIControl cntl = CurrentView;
-        if (cntl != null) return cntl.Focus;
+        if (cntl != null)
+        {
+          return cntl.Focus;
+        }
         return false;
       }
       set
       {
         GUIControl cntl = CurrentView;
-        if (cntl != null) cntl.Focus = value;
+        if (cntl != null)
+        {
+          cntl.Focus = value;
+        }
       }
     }
 
@@ -429,58 +499,95 @@ namespace MediaPortal.GUI.Library
     {
       controlID = -1;
       GUIControl cntl = CurrentView;
-      if (cntl != null) return cntl.InControl(x, y, out controlID);
+      if (cntl != null)
+      {
+        return cntl.InControl(x, y, out controlID);
+      }
       return false;
     }
 
-    public void Sort(System.Collections.Generic.IComparer<GUIListItem> comparer)
+    public void Sort(IComparer<GUIListItem> comparer)
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.Sort(comparer);
+      }
       if (_viewList != null)
+      {
         _viewList.Sort(comparer);
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.Sort(comparer);
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.Sort(comparer);
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.Sort(comparer);
+      }
       try
       {
         _itemList.Sort(comparer);
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
     public void Add(GUIListItem item)
     {
       if (item == null)
+      {
         return;
+      }
       if (_viewAlbum != null)
+      {
         _viewAlbum.Add(item);
+      }
       if (_viewList != null)
+      {
         _viewList.Add(item);
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.Add(item);
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.Add(item);
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.Add(item);
+      }
       _itemList.Add(item);
     }
 
     public void Filter(int searchKind, string searchString)
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.Clear();
+      }
       if (_viewList != null)
+      {
         _viewList.Clear();
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.Clear();
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.Clear();
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.Clear();
+      }
       if (searchString != "")
       {
         // Set active selection
@@ -492,15 +599,25 @@ namespace MediaPortal.GUI.Library
         dirUp.IconImage = "defaultFolderBack.png";
         dirUp.IconImageBig = "defaultFolderBackBig.png";
         if (_viewAlbum != null)
+        {
           _viewAlbum.Add(dirUp);
+        }
         if (_viewList != null)
+        {
           _viewList.Add(dirUp);
+        }
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.Add(dirUp);
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.Add(dirUp);
+        }
         if (_viewPlayList != null)
+        {
           _viewPlayList.Add(dirUp);
+        }
       }
 
       int iTotalItems = 0;
@@ -509,38 +626,56 @@ namespace MediaPortal.GUI.Library
       {
         validItem = false;
         GUIListItem item = _itemList[i];
-        switch ((SearchKinds)searchKind)
+        switch ((SearchKinds) searchKind)
         {
           case SearchKinds.SEARCH_STARTS_WITH:
             if (item.Label.ToLower().StartsWith(searchString.ToLower()))
+            {
               validItem = true;
+            }
             break;
           case SearchKinds.SEARCH_CONTAINS:
             if (item.Label.ToLower().IndexOf(searchString.ToLower()) >= 0)
+            {
               validItem = true;
+            }
             break;
           case SearchKinds.SEARCH_ENDS_WITH:
             if (item.Label.ToLower().EndsWith(searchString.ToLower()))
+            {
               validItem = true;
+            }
             break;
           case SearchKinds.SEARCH_IS:
             if (item.Label.ToLower().Equals(searchString.ToLower()))
+            {
               validItem = true;
+            }
             break;
         }
 
         if (validItem || searchString == "")
         {
           if (_viewAlbum != null)
+          {
             _viewAlbum.Add(item);
+          }
           if (_viewList != null)
+          {
             _viewList.Add(item);
+          }
           if (_viewThumbnail != null)
+          {
             _viewThumbnail.Add(item);
+          }
           if (_viewFilmStrip != null)
+          {
             _viewFilmStrip.Add(item);
+          }
           if (_viewPlayList != null)
+          {
             _viewPlayList.Add(item);
+          }
           iTotalItems++;
         }
       }
@@ -548,13 +683,17 @@ namespace MediaPortal.GUI.Library
       //set object count label
       string strObjects = string.Empty;
       if (iTotalItems == 1)
+      {
         strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
+      }
       else
+      {
         strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632)); //Objects
+      }
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
     }
 
-    void UpdateView()
+    private void UpdateView()
     {
       if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
       {
@@ -564,13 +703,21 @@ namespace MediaPortal.GUI.Library
         base.Height = _viewFilmStrip.Height;
         _viewFilmStrip.IsVisible = true;
         if (_viewList != null)
+        {
           _viewList.IsVisible = false;
+        }
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.IsVisible = false;
+        }
         if (_viewAlbum != null)
+        {
           _viewAlbum.IsVisible = false;
+        }
         if (_viewPlayList != null)
+        {
           _viewPlayList.IsVisible = false;
+        }
       }
       else if (_currentViewMode == ViewMode.List && _viewList != null)
       {
@@ -580,13 +727,21 @@ namespace MediaPortal.GUI.Library
         base.Height = _viewList.Height;
         _viewList.IsVisible = true;
         if (_viewPlayList != null)
+        {
           _viewPlayList.IsVisible = false;
+        }
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.IsVisible = false;
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.IsVisible = false;
+        }
         if (_viewAlbum != null)
+        {
           _viewAlbum.IsVisible = false;
+        }
       }
       else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
       {
@@ -595,15 +750,23 @@ namespace MediaPortal.GUI.Library
         base.Width = _viewPlayList.Width;
         base.Height = _viewPlayList.Height;
         if (_viewList != null)
+        {
           _viewList.IsVisible = false;
+        }
         _viewPlayList.IsVisible = true;
 
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.IsVisible = false;
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.IsVisible = false;
+        }
         if (_viewAlbum != null)
+        {
           _viewAlbum.IsVisible = false;
+        }
       }
       else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
       {
@@ -613,13 +776,21 @@ namespace MediaPortal.GUI.Library
         base.Height = _viewAlbum.Height;
         _viewAlbum.IsVisible = true;
         if (_viewList != null)
+        {
           _viewList.IsVisible = false;
+        }
         if (_viewThumbnail != null)
+        {
           _viewThumbnail.IsVisible = false;
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.IsVisible = false;
+        }
         if (_viewPlayList != null)
+        {
           _viewPlayList.IsVisible = false;
+        }
       }
       else if (_viewThumbnail != null)
       {
@@ -630,13 +801,21 @@ namespace MediaPortal.GUI.Library
         _viewThumbnail.ShowBigIcons(_currentViewMode == ViewMode.LargeIcons);
         _viewThumbnail.IsVisible = true;
         if (_viewList != null)
+        {
           _viewList.IsVisible = false;
+        }
         if (_viewFilmStrip != null)
+        {
           _viewFilmStrip.IsVisible = false;
+        }
         if (_viewAlbum != null)
+        {
           _viewAlbum.IsVisible = false;
+        }
         if (_viewPlayList != null)
+        {
           _viewPlayList.IsVisible = false;
+        }
       }
     }
 
@@ -681,45 +860,75 @@ namespace MediaPortal.GUI.Library
     public override void StorePosition()
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.StorePosition();
+      }
       if (_viewList != null)
+      {
         _viewList.StorePosition();
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.StorePosition();
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.StorePosition();
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.StorePosition();
+      }
       base.StorePosition();
     }
 
     public override void ReStorePosition()
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.ReStorePosition();
+      }
       if (_viewList != null)
+      {
         _viewList.ReStorePosition();
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.ReStorePosition();
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.ReStorePosition();
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.ReStorePosition();
+      }
       base.ReStorePosition();
     }
 
     public override void Animate(float timePassed, Animator animator)
     {
       if (_viewAlbum != null)
+      {
         _viewAlbum.Animate(timePassed, animator);
+      }
       if (_viewList != null)
+      {
         _viewList.Animate(timePassed, animator);
+      }
       if (_viewThumbnail != null)
+      {
         _viewThumbnail.Animate(timePassed, animator);
+      }
       if (_viewFilmStrip != null)
+      {
         _viewFilmStrip.Animate(timePassed, animator);
+      }
       if (_viewPlayList != null)
+      {
         _viewPlayList.Animate(timePassed, animator);
+      }
       base.Animate(timePassed, animator);
     }
 
@@ -728,15 +937,26 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        {
           return _viewFilmStrip.SelectedListItem;
+        }
         else if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           return _viewList.SelectedListItem;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+                 _viewThumbnail != null)
+        {
           return _viewThumbnail.SelectedListItem;
+        }
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           return _viewAlbum.SelectedListItem;
+        }
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           return _viewPlayList.SelectedListItem;
+        }
         return null;
       }
     }
@@ -746,15 +966,26 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        {
           return _viewFilmStrip.Count;
+        }
         else if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           return _viewList.Count;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+                 _viewThumbnail != null)
+        {
           return _viewThumbnail.Count;
+        }
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           return _viewAlbum.Count;
+        }
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           return _viewPlayList.Count;
+        }
         return 0;
       }
     }
@@ -762,43 +993,75 @@ namespace MediaPortal.GUI.Library
     public void Clear()
     {
       if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+      {
         _viewFilmStrip.Clear();
+      }
       else if (_currentViewMode == ViewMode.List && _viewList != null)
+      {
         _viewList.Clear();
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+      }
+      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+               _viewThumbnail != null)
+      {
         _viewThumbnail.Clear();
+      }
       else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+      {
         _viewAlbum.Clear();
+      }
       else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+      {
         _viewPlayList.Clear();
+      }
       _itemList.Clear();
     }
+
     public int SelectedListItemIndex
     {
       get
       {
         if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        {
           return _viewFilmStrip.SelectedListItemIndex;
+        }
         else if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           return _viewList.SelectedListItemIndex;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+                 _viewThumbnail != null)
+        {
           return _viewThumbnail.SelectedListItemIndex;
+        }
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           return _viewAlbum.SelectedListItemIndex;
+        }
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           return _viewPlayList.SelectedListItemIndex;
+        }
         return -1;
       }
       set
       {
         if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           _viewList.SelectedListItemIndex = value;
+        }
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           _viewAlbum.SelectedListItemIndex = value;
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+                 _viewThumbnail != null)
+        {
           _viewThumbnail.SelectedListItemIndex = value;
+        }
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           _viewPlayList.SelectedListItemIndex = value;
+        }
       }
     }
 
@@ -807,33 +1070,56 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        {
           return _viewFilmStrip[index];
+        }
         else if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           return _viewList[index];
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+                 _viewThumbnail != null)
+        {
           return _viewThumbnail[index];
+        }
         else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           return _viewAlbum[index];
+        }
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           return _viewPlayList[index];
+        }
         return null;
       }
     }
+
     public void RefreshCoverArt()
     {
       //GUIListItem item;
       for (int i = 0; i < Count; ++i)
       {
         if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        {
           _viewFilmStrip[i].RefreshCoverArt();
+        }
         if (_currentViewMode == ViewMode.List && _viewList != null)
+        {
           _viewList[i].RefreshCoverArt();
-        if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) && _viewThumbnail != null)
+        }
+        if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
+            _viewThumbnail != null)
+        {
           _viewThumbnail[i].RefreshCoverArt();
+        }
         if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        {
           _viewAlbum[i].RefreshCoverArt();
+        }
         if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        {
           _viewPlayList[i].RefreshCoverArt();
+        }
       }
     }
 
@@ -842,23 +1128,29 @@ namespace MediaPortal.GUI.Library
       int selectedItemIndex = -1;
 
       if (iItem < 0 || iItem >= _itemList.Count)
+      {
         return -1;
+      }
 
       int iNextItem = iItem + 1;
 
       if (iNextItem >= _itemList.Count)
+      {
         iNextItem = 0;
+      }
 
       GUIListItem item1 = _itemList[iItem];
       GUIListItem item2 = _itemList[iNextItem];
 
       if (item1 == null || item2 == null)
+      {
         return -1;
+      }
 
       try
       {
         Log.Info("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         _itemList[iItem] = item2;
         _itemList[iNextItem] = item1;
         selectedItemIndex = iNextItem;
@@ -875,19 +1167,27 @@ namespace MediaPortal.GUI.Library
         if (selectedItemIndex >= 0)
         {
           if (_viewPlayList != null)
+          {
             _viewPlayList.SelectedListItemIndex = _viewPlayList.MoveItemDown(iItem);
+          }
 
           if (_viewList != null)
+          {
             _viewList.SelectedListItemIndex = _viewList.MoveItemDown(iItem);
+          }
 
           if (_viewAlbum != null)
+          {
             _viewAlbum.SelectedListItemIndex = _viewAlbum.MoveItemDown(iItem);
+          }
 
           if (_viewThumbnail != null)
+          {
             _viewThumbnail.MoveItemDown(iItem);
+          }
         }
 
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
 
       return selectedItemIndex;
@@ -898,23 +1198,29 @@ namespace MediaPortal.GUI.Library
       int selectedItemIndex = -1;
 
       if (iItem < 0 || iItem >= _itemList.Count)
+      {
         return -1;
+      }
 
       int iPreviousItem = iItem - 1;
 
       if (iPreviousItem < 0)
+      {
         iPreviousItem = _itemList.Count - 1;
+      }
 
       GUIListItem item1 = _itemList[iItem];
       GUIListItem item2 = _itemList[iPreviousItem];
 
       if (item1 == null || item2 == null)
+      {
         return -1;
+      }
 
       try
       {
         Log.Info("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
-        System.Threading.Monitor.Enter(this);
+        Monitor.Enter(this);
         _itemList[iItem] = item2;
         _itemList[iPreviousItem] = item1;
         selectedItemIndex = iPreviousItem;
@@ -931,23 +1237,30 @@ namespace MediaPortal.GUI.Library
         if (selectedItemIndex >= 0)
         {
           if (_viewPlayList != null)
+          {
             _viewPlayList.SelectedListItemIndex = _viewPlayList.MoveItemUp(iItem);
+          }
 
           if (_viewList != null)
+          {
             _viewList.SelectedListItemIndex = _viewList.MoveItemUp(iItem);
+          }
 
           if (_viewAlbum != null)
+          {
             _viewAlbum.SelectedListItemIndex = _viewAlbum.MoveItemUp(iItem);
+          }
 
           if (_viewThumbnail != null)
+          {
             _viewThumbnail.MoveItemUp(iItem);
+          }
         }
 
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
 
       return selectedItemIndex;
     }
-
   }
 }

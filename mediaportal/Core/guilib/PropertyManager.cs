@@ -35,9 +35,11 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIPropertyManager
   {
-    static Hashtable _properties = new Hashtable();
-    static bool _isChanged = false;
+    private static Hashtable _properties = new Hashtable();
+    private static bool _isChanged = false;
+
     public delegate void OnPropertyChangedHandler(string tag, string tagValue);
+
     public static event OnPropertyChangedHandler OnPropertyChanged;
 
     /// <summary>
@@ -46,6 +48,7 @@ namespace MediaPortal.GUI.Library
     private GUIPropertyManager()
     {
     }
+
     static GUIPropertyManager()
     {
       _properties["#highlightedbutton"] = string.Empty;
@@ -54,27 +57,27 @@ namespace MediaPortal.GUI.Library
       _properties["#selecteditem2"] = string.Empty;
       _properties["#selectedthumb"] = string.Empty;
       _properties["#homedate"] = string.Empty;
-      _properties["#title"] = string.Empty;			// song title, imdb movie title, recording title
-      _properties["#artist"] = string.Empty;			// song artist
-      _properties["#album"] = string.Empty;			// song album
-      _properties["#track"] = string.Empty;			// song track number
-      _properties["#year"] = string.Empty;				// song year , imdb movie year
-      _properties["#comment"] = string.Empty;		// song comment
-      _properties["#director"] = string.Empty;		// imdb movie director
-      _properties["#genre"] = string.Empty;			// imdb movie genres
-      _properties["#cast"] = string.Empty;				// imdb movie cast 
-      _properties["#dvdlabel"] = string.Empty;		// imdb movie dvd label
+      _properties["#title"] = string.Empty; // song title, imdb movie title, recording title
+      _properties["#artist"] = string.Empty; // song artist
+      _properties["#album"] = string.Empty; // song album
+      _properties["#track"] = string.Empty; // song track number
+      _properties["#year"] = string.Empty; // song year , imdb movie year
+      _properties["#comment"] = string.Empty; // song comment
+      _properties["#director"] = string.Empty; // imdb movie director
+      _properties["#genre"] = string.Empty; // imdb movie genres
+      _properties["#cast"] = string.Empty; // imdb movie cast 
+      _properties["#dvdlabel"] = string.Empty; // imdb movie dvd label
       _properties["#imdbnumber"] = string.Empty; // imdb movie number
-      _properties["#file"] = string.Empty;				// imdb movie filename
-      _properties["#plot"] = string.Empty;				// imdb movie plot 
-      _properties["#plotoutline"] = string.Empty;// imdb movie plot outline
-      _properties["#rating"] = string.Empty;		  // imdb movie rating (0-10)
-      _properties["#tagline"] = string.Empty;    // imdb movie tag line
-      _properties["#votes"] = string.Empty;		  // imdb movie votes
-      _properties["#credits"] = string.Empty;    // imdb movie writing credits
+      _properties["#file"] = string.Empty; // imdb movie filename
+      _properties["#plot"] = string.Empty; // imdb movie plot 
+      _properties["#plotoutline"] = string.Empty; // imdb movie plot outline
+      _properties["#rating"] = string.Empty; // imdb movie rating (0-10)
+      _properties["#tagline"] = string.Empty; // imdb movie tag line
+      _properties["#votes"] = string.Empty; // imdb movie votes
+      _properties["#credits"] = string.Empty; // imdb movie writing credits
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
-      _properties["#runtime"] = string.Empty;    // imdb movie runtime 
-      _properties["#iswatched"] = string.Empty;  // boolean indication movie has been watched
+      _properties["#runtime"] = string.Empty; // imdb movie runtime 
+      _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
       _properties["#thumb"] = string.Empty;
       _properties["#currentplaytime"] = string.Empty;
       _properties["#currentremaining"] = string.Empty;
@@ -271,9 +274,18 @@ namespace MediaPortal.GUI.Library
     /// <param name="tagvalue">property value</param>
     public static void SetProperty(string tag, string tagvalue)
     {
-      if (String.IsNullOrEmpty(tag)) return;
-      if (tagvalue == null) return;
-      if (tag[0] != '#') return;
+      if (String.IsNullOrEmpty(tag))
+      {
+        return;
+      }
+      if (tagvalue == null)
+      {
+        return;
+      }
+      if (tag[0] != '#')
+      {
+        return;
+      }
 
       if (tag.Equals("#currentmodule"))
       {
@@ -281,11 +293,16 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.form.Text = "MediaPortal - " + tagvalue;
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
       lock (_properties)
       {
-        if (GetProperty(tag) == tagvalue) return;
+        if (GetProperty(tag) == tagvalue)
+        {
+          return;
+        }
         _properties[tag] = tagvalue;
         _isChanged = true;
       }
@@ -294,6 +311,7 @@ namespace MediaPortal.GUI.Library
         OnPropertyChanged(tag, tagvalue);
       }
     }
+
     /// <summary>
     /// This method returns the value for a given property
     /// </summary>
@@ -301,13 +319,24 @@ namespace MediaPortal.GUI.Library
     /// <returns>property value</returns>
     public static string GetProperty(string tag)
     {
-      if (tag == null) return string.Empty;
-      if (tag == string.Empty) return string.Empty;
-      if (tag[0] != '#') return string.Empty;
+      if (tag == null)
+      {
+        return string.Empty;
+      }
+      if (tag == string.Empty)
+      {
+        return string.Empty;
+      }
+      if (tag[0] != '#')
+      {
+        return string.Empty;
+      }
       lock (_properties)
       {
         if (_properties.ContainsKey(tag))
-          return (string)_properties[tag];
+        {
+          return (string) _properties[tag];
+        }
       }
       return string.Empty;
     }
@@ -341,7 +370,6 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
-
 
 
       SetProperty("#Play.Next.Thumb", string.Empty);
@@ -379,18 +407,27 @@ namespace MediaPortal.GUI.Library
     /// <returns>The value of the property.</returns>
     public static string Parse(string line)
     {
-      if (String.IsNullOrEmpty(line)) return string.Empty;
-      if (line.IndexOf('#') == -1) return line;
+      if (String.IsNullOrEmpty(line))
+      {
+        return string.Empty;
+      }
+      if (line.IndexOf('#') == -1)
+      {
+        return line;
+      }
       lock (_properties)
       {
         try
         {
           IDictionaryEnumerator myEnumerator = _properties.GetEnumerator();
-          if (myEnumerator == null) return line;
+          if (myEnumerator == null)
+          {
+            return line;
+          }
           myEnumerator.Reset();
           while (myEnumerator.MoveNext() && line.IndexOf('#') >= 0)
           {
-            line = line.Replace((string)myEnumerator.Key, (string)myEnumerator.Value);
+            line = line.Replace((string) myEnumerator.Key, (string) myEnumerator.Value);
           }
         }
         catch (Exception ex)

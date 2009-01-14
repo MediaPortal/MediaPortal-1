@@ -23,65 +23,64 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace System.Windows.Controls
 {
-	[TypeConverter(typeof(GridLengthConverter))]
-	public struct GridLength
-	{
-		#region Constructors
+  [TypeConverter(typeof (GridLengthConverter))]
+  public struct GridLength
+  {
+    #region Constructors
 
-		public GridLength(double pixels)
-		{
-			_value = pixels;
-			_unit = GridUnitType.Pixel;
-		}
+    public GridLength(double pixels)
+    {
+      _value = pixels;
+      _unit = GridUnitType.Pixel;
+    }
 
-		public GridLength(GridUnitType unit)
-		{
-			_value = 0;
-			_unit = unit;
-		}
+    public GridLength(GridUnitType unit)
+    {
+      _value = 0;
+      _unit = unit;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public GridUnitType GridUnitType
-		{
-			get { return _unit; }
-			set { _unit = value; }
-		}
+    public GridUnitType GridUnitType
+    {
+      get { return _unit; }
+      set { _unit = value; }
+    }
 
-		public bool IsAbsolute
-		{
-			get { return _unit == GridUnitType.Pixel; }
-		}
+    public bool IsAbsolute
+    {
+      get { return _unit == GridUnitType.Pixel; }
+    }
 
-		public bool IsAuto
-		{
-			get { return _unit == GridUnitType.Auto; }
-		}
+    public bool IsAuto
+    {
+      get { return _unit == GridUnitType.Auto; }
+    }
 
-		public bool IsStar
-		{
-			get { return _unit == GridUnitType.Star; }
-		}
+    public bool IsStar
+    {
+      get { return _unit == GridUnitType.Star; }
+    }
 
-		public double Value
-		{
-			get { return _value; }
-		}
+    public double Value
+    {
+      get { return _value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		double						_value;
-		GridUnitType				_unit;
+    private double _value;
+    private GridUnitType _unit;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

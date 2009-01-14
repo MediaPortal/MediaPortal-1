@@ -23,35 +23,35 @@
 
 #endregion
 
-using System;
+using System.Drawing;
 
 namespace MediaPortal.Drawing
 {
-	public abstract class GradientBrush : Brush
-	{
-		#region Constructors
+  public abstract class GradientBrush : Brush
+  {
+    #region Constructors
 
-		public GradientBrush()
-		{
-		}
+    public GradientBrush()
+    {
+    }
 
-		public GradientBrush(GradientStopCollection gradientStops)
-		{
-			_gradientStops = gradientStops;
-		}
+    public GradientBrush(GradientStopCollection gradientStops)
+    {
+      _gradientStops = gradientStops;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void AddStop(System.Drawing.Color color, double offset)
-		{
-			GradientStops.Add(new GradientStop(color, offset));
-		}
+    public void AddStop(Color color, double offset)
+    {
+      GradientStops.Add(new GradientStop(color, offset));
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
 //		public ColorInterpolationMode ColorInterpolationMode
 //		{
@@ -59,25 +59,32 @@ namespace MediaPortal.Drawing
 //			set { if(_colorInterpolationMode.Equals(_colorInterpolationMode) == false) { _colorInterpolationMode = value; _isDirty = true; } } 
 //		}
 
-		public GradientStopCollection GradientStops
-		{
-			get { if(_gradientStops == null) _gradientStops = new GradientStopCollection(); return _gradientStops; }
-		}
+    public GradientStopCollection GradientStops
+    {
+      get
+      {
+        if (_gradientStops == null)
+        {
+          _gradientStops = new GradientStopCollection();
+        }
+        return _gradientStops;
+      }
+    }
 
-		public GradientSpreadMethod SpreadMethod
-		{
-			get { return _spreadMethod; }
-			set { _spreadMethod = value; }
-		}
+    public GradientSpreadMethod SpreadMethod
+    {
+      get { return _spreadMethod; }
+      set { _spreadMethod = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
 //		ColorInterpolationMode				_colorInterpolationMode = ColorInterpolationMode.PhysicallyLinearGamma;
-		GradientStopCollection				_gradientStops;
-		GradientSpreadMethod				_spreadMethod;
+    private GradientStopCollection _gradientStops;
+    private GradientSpreadMethod _spreadMethod;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

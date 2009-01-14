@@ -23,86 +23,99 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Media.Animation
 {
-	internal sealed class AnimationClockCollection : CollectionBase
-	{
-		#region Constructors
+  internal sealed class AnimationClockCollection : CollectionBase
+  {
+    #region Constructors
 
-		public AnimationClockCollection()
-		{
-		}
+    public AnimationClockCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(AnimationClock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public void Add(AnimationClock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			List.Add(clock);
-		}
+      List.Add(clock);
+    }
 
-		public bool Contains(AnimationClock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public bool Contains(AnimationClock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			return List.Contains(clock);
-		}
+      return List.Contains(clock);
+    }
 
-		public void CopyTo(AnimationClock[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(AnimationClock[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(AnimationClock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public int IndexOf(AnimationClock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			return List.IndexOf(clock);
-		}
+      return List.IndexOf(clock);
+    }
 
-		public void Insert(int index, AnimationClock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public void Insert(int index, AnimationClock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			List.Insert(index, clock);
-		}
+      List.Insert(index, clock);
+    }
 
-		public bool Remove(AnimationClock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
-			
-			if(List.Contains(clock) == false)
-				return false;
+    public bool Remove(AnimationClock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			List.Remove(clock);
+      if (List.Contains(clock) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(clock);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public AnimationClock this[int index]
-		{ 
-			get { return (AnimationClock)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public AnimationClock this[int index]
+    {
+      get { return (AnimationClock) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

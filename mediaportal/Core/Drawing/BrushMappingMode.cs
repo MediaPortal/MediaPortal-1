@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum BrushMappingMode
-	{
-		RelativeToBoundingBox,
-		Absolute,
-	}
+  public enum BrushMappingMode
+  {
+    RelativeToBoundingBox,
+    Absolute,
+  }
 }

@@ -24,27 +24,26 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
 using DirectShowLib;
 
 namespace DShowNET.Helper
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class VideoProcAmp: IDisposable
-	{
-    protected IAMVideoProcAmp _interfaceVideoProcAmp=null;
-		public VideoProcAmp(IAMVideoProcAmp amp)
-		{
-			_interfaceVideoProcAmp=amp;
+  /// <summary>
+  /// 
+  /// </summary>
+  public class VideoProcAmp : IDisposable
+  {
+    protected IAMVideoProcAmp _interfaceVideoProcAmp = null;
+
+    public VideoProcAmp(IAMVideoProcAmp amp)
+    {
+      _interfaceVideoProcAmp = amp;
       Contrast = ContrastDefault;
       Brightness = BrightnessDefault;
       Gamma = GammaDefault;
       Saturation = SaturationDefault;
       Sharpness = SharpnessDefault;
-		}
+    }
 
     public void Dispose()
     {
@@ -53,26 +52,37 @@ namespace DShowNET.Helper
 
     public int Brightness
     {
-      get 
+      get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
-        VideoProcAmpFlags flags;
-        try{
-          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Brightness,out uiValue,out flags);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
         }
-        catch (Exception){}
-        return ToPercent(VideoProcAmpProperty.Brightness,uiValue);
+        int uiValue = 0;
+        VideoProcAmpFlags flags;
+        try
+        {
+          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Brightness, out uiValue, out flags);
+        }
+        catch (Exception)
+        {
+        }
+        return ToPercent(VideoProcAmpProperty.Brightness, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Brightness,value);
-        try{
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Brightness,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
         }
-        catch (Exception){}
-
+        int uiValue = FromPercent(VideoProcAmpProperty.Brightness, value);
+        try
+        {
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Brightness, uiValue, VideoProcAmpFlags.Manual);
+        }
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -80,23 +90,35 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
-        VideoProcAmpFlags flags;
-        try{
-          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Hue,out uiValue,out flags);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
         }
-        catch (Exception){}
-        return ToPercent(VideoProcAmpProperty.Hue,uiValue);
+        int uiValue = 0;
+        VideoProcAmpFlags flags;
+        try
+        {
+          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Hue, out uiValue, out flags);
+        }
+        catch (Exception)
+        {
+        }
+        return ToPercent(VideoProcAmpProperty.Hue, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Hue,value);
-        try{
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Hue,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
         }
-        catch (Exception){}
+        int uiValue = FromPercent(VideoProcAmpProperty.Hue, value);
+        try
+        {
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Hue, uiValue, VideoProcAmpFlags.Manual);
+        }
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -105,55 +127,77 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
-        VideoProcAmpFlags flags;
-        try 
+        if (_interfaceVideoProcAmp == null)
         {
-          int hr=_interfaceVideoProcAmp.Get(VideoProcAmpProperty.Contrast,out uiValue,out flags);
-					if (hr<0) return 62;
+          return 50;
         }
-        catch (Exception){}
+        int uiValue = 0;
+        VideoProcAmpFlags flags;
+        try
+        {
+          int hr = _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Contrast, out uiValue, out flags);
+          if (hr < 0)
+          {
+            return 62;
+          }
+        }
+        catch (Exception)
+        {
+        }
 
-        return ToPercent(VideoProcAmpProperty.Contrast,uiValue);
+        return ToPercent(VideoProcAmpProperty.Contrast, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Contrast,value);
-        try 
+        if (_interfaceVideoProcAmp == null)
         {
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Contrast,uiValue,VideoProcAmpFlags.Manual);
+          return;
         }
-        catch (Exception){}
+        int uiValue = FromPercent(VideoProcAmpProperty.Contrast, value);
+        try
+        {
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Contrast, uiValue, VideoProcAmpFlags.Manual);
+        }
+        catch (Exception)
+        {
+        }
       }
     }
-
 
 
     public int Saturation
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
-        VideoProcAmpFlags flags;
-        try{
-          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Saturation,out uiValue,out flags);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
         }
-        catch (Exception){}
-        return ToPercent(VideoProcAmpProperty.Saturation,uiValue);
+        int uiValue = 0;
+        VideoProcAmpFlags flags;
+        try
+        {
+          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Saturation, out uiValue, out flags);
+        }
+        catch (Exception)
+        {
+        }
+        return ToPercent(VideoProcAmpProperty.Saturation, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Saturation,value);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.Saturation, value);
         try
         {
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Saturation,uiValue,VideoProcAmpFlags.Manual);
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Saturation, uiValue, VideoProcAmpFlags.Manual);
         }
-        catch (Exception){}
-
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -162,24 +206,35 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
-        VideoProcAmpFlags flags;
-        try{
-          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Sharpness,out uiValue,out flags);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
         }
-        catch (Exception){}
-        return ToPercent(VideoProcAmpProperty.Sharpness,uiValue);
+        int uiValue = 0;
+        VideoProcAmpFlags flags;
+        try
+        {
+          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Sharpness, out uiValue, out flags);
+        }
+        catch (Exception)
+        {
+        }
+        return ToPercent(VideoProcAmpProperty.Sharpness, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Sharpness,value);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.Sharpness, value);
         try
         {
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Sharpness,uiValue,VideoProcAmpFlags.Manual);
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Sharpness, uiValue, VideoProcAmpFlags.Manual);
         }
-        catch (Exception){}
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -188,23 +243,35 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
+        }
+        int uiValue = 0;
         VideoProcAmpFlags flags;
-        try {
-          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Gamma,out uiValue,out flags);
-        } 
-        catch (Exception){}
-        return ToPercent(VideoProcAmpProperty.Gamma,uiValue);
+        try
+        {
+          _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Gamma, out uiValue, out flags);
+        }
+        catch (Exception)
+        {
+        }
+        return ToPercent(VideoProcAmpProperty.Gamma, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Gamma,value);
-        try{
-          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Gamma,uiValue,VideoProcAmpFlags.Manual);
-        } 
-        catch (Exception){}
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.Gamma, value);
+        try
+        {
+          _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Gamma, uiValue, VideoProcAmpFlags.Manual);
+        }
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -213,17 +280,23 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
+        }
+        int uiValue = 0;
         VideoProcAmpFlags flags;
-        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.ColorEnable,out uiValue,out flags);
-        return ToPercent(VideoProcAmpProperty.ColorEnable,uiValue);
+        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.ColorEnable, out uiValue, out flags);
+        return ToPercent(VideoProcAmpProperty.ColorEnable, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.ColorEnable,value);
-        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.ColorEnable,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.ColorEnable, value);
+        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.ColorEnable, uiValue, VideoProcAmpFlags.Manual);
       }
     }
 
@@ -232,17 +305,23 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
+        }
+        int uiValue = 0;
         VideoProcAmpFlags flags;
-        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.WhiteBalance,out uiValue,out flags);
-        return ToPercent(VideoProcAmpProperty.WhiteBalance,uiValue);
+        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.WhiteBalance, out uiValue, out flags);
+        return ToPercent(VideoProcAmpProperty.WhiteBalance, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.WhiteBalance,value);
-        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.WhiteBalance,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.WhiteBalance, value);
+        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.WhiteBalance, uiValue, VideoProcAmpFlags.Manual);
       }
     }
 
@@ -251,53 +330,66 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
+        }
+        int uiValue = 0;
         VideoProcAmpFlags flags;
-        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.BacklightCompensation,out uiValue,out flags);
-        return ToPercent(VideoProcAmpProperty.BacklightCompensation,uiValue);
+        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.BacklightCompensation, out uiValue, out flags);
+        return ToPercent(VideoProcAmpProperty.BacklightCompensation, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.BacklightCompensation,value);
-        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.BacklightCompensation,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.BacklightCompensation, value);
+        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.BacklightCompensation, uiValue, VideoProcAmpFlags.Manual);
       }
     }
-
 
 
     public int Gain
     {
-      get 
+      get
       {
-        if (_interfaceVideoProcAmp == null) return 50;
-        int uiValue=0;
+        if (_interfaceVideoProcAmp == null)
+        {
+          return 50;
+        }
+        int uiValue = 0;
         VideoProcAmpFlags flags;
-        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Gain,out uiValue,out flags);
-        return ToPercent(VideoProcAmpProperty.Gain,uiValue);
+        _interfaceVideoProcAmp.Get(VideoProcAmpProperty.Gain, out uiValue, out flags);
+        return ToPercent(VideoProcAmpProperty.Gain, uiValue);
       }
       set
       {
-        if (_interfaceVideoProcAmp == null) return;
-        int uiValue=FromPercent(VideoProcAmpProperty.Gain,value);
-        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Gain,uiValue,VideoProcAmpFlags.Manual);
+        if (_interfaceVideoProcAmp == null)
+        {
+          return;
+        }
+        int uiValue = FromPercent(VideoProcAmpProperty.Gain, value);
+        _interfaceVideoProcAmp.Set(VideoProcAmpProperty.Gain, uiValue, VideoProcAmpFlags.Manual);
       }
     }
 
 
-    int ToPercent(VideoProcAmpProperty proc, int ivalue)
+    private int ToPercent(VideoProcAmpProperty proc, int ivalue)
     {
-
-      if (_interfaceVideoProcAmp == null) return 50;
-      int iMin,iMax,iDelta,iDefault;
+      if (_interfaceVideoProcAmp == null)
+      {
+        return 50;
+      }
+      int iMin, iMax, iDelta, iDefault;
       VideoProcAmpFlags flags;
       try
       {
-        _interfaceVideoProcAmp.GetRange(proc,out iMin,out iMax,out iDelta, out iDefault,out flags);
-        float fWidth=iMax-iMin;
-        float fpos=(ivalue-iMin);
-        return (int)Math.Floor(0.5f+(fpos/fWidth)*100.0f);
+        _interfaceVideoProcAmp.GetRange(proc, out iMin, out iMax, out iDelta, out iDefault, out flags);
+        float fWidth = iMax - iMin;
+        float fpos = (ivalue - iMin);
+        return (int) Math.Floor(0.5f + (fpos/fWidth)*100.0f);
       }
       catch (Exception)
       {
@@ -305,22 +397,24 @@ namespace DShowNET.Helper
       return 0;
     }
 
-    int FromPercent(VideoProcAmpProperty proc, int ivalue)
+    private int FromPercent(VideoProcAmpProperty proc, int ivalue)
     {
-
-      if (_interfaceVideoProcAmp == null) return 50;
-      int iMin,iMax,iDelta,iDefault;
+      if (_interfaceVideoProcAmp == null)
+      {
+        return 50;
+      }
+      int iMin, iMax, iDelta, iDefault;
       VideoProcAmpFlags flags;
       try
       {
-        _interfaceVideoProcAmp.GetRange(proc,out iMin,out iMax,out iDelta, out iDefault,out flags);
-        float fWidth=iMax-iMin;
-        float fPos =((float)ivalue) / 100.0f;
+        _interfaceVideoProcAmp.GetRange(proc, out iMin, out iMax, out iDelta, out iDefault, out flags);
+        float fWidth = iMax - iMin;
+        float fPos = ((float) ivalue)/100.0f;
         fPos *= fWidth;
         fPos += iMin;
-        return (int)Math.Floor(0.5f+fPos);
+        return (int) Math.Floor(0.5f + fPos);
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
       return 0;
@@ -328,15 +422,19 @@ namespace DShowNET.Helper
 
     public int BrightnessDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Brightness,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Brightness,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Brightness, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Brightness, iDefault);
         }
         catch (Exception)
         {
@@ -345,18 +443,22 @@ namespace DShowNET.Helper
       }
     }
 
-    
+
     public int BacklightCompensationDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.BacklightCompensation,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.BacklightCompensation,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.BacklightCompensation, out iMin, out iMax, out iDelta,
+                                          out iDefault, out flags);
+          return ToPercent(VideoProcAmpProperty.BacklightCompensation, iDefault);
         }
         catch (Exception)
         {
@@ -364,17 +466,22 @@ namespace DShowNET.Helper
         }
       }
     }
+
     public int ContrastDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Contrast,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Contrast,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Contrast, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Contrast, iDefault);
         }
         catch (Exception)
         {
@@ -385,15 +492,19 @@ namespace DShowNET.Helper
 
     public int GainDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Gain,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Gain,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Gain, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Gain, iDefault);
         }
         catch (Exception)
         {
@@ -404,15 +515,19 @@ namespace DShowNET.Helper
 
     public int GammaDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Gamma,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Gamma,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Gamma, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Gamma, iDefault);
         }
         catch (Exception)
         {
@@ -424,15 +539,19 @@ namespace DShowNET.Helper
 
     public int HueDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Hue,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Hue,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Hue, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Hue, iDefault);
         }
         catch (Exception)
         {
@@ -443,15 +562,19 @@ namespace DShowNET.Helper
 
     public int SaturationDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Saturation,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Saturation,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Saturation, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Saturation, iDefault);
         }
         catch (Exception)
         {
@@ -463,15 +586,19 @@ namespace DShowNET.Helper
 
     public int SharpnessDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Sharpness,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.Sharpness,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.Sharpness, out iMin, out iMax, out iDelta, out iDefault,
+                                          out flags);
+          return ToPercent(VideoProcAmpProperty.Sharpness, iDefault);
         }
         catch (Exception)
         {
@@ -482,15 +609,19 @@ namespace DShowNET.Helper
 
     public int WhiteBalanceDefault
     {
-      get 
+      get
       {
         try
         {
-          if (_interfaceVideoProcAmp == null) return 50;
-          int iMin,iMax,iDelta,iDefault;
+          if (_interfaceVideoProcAmp == null)
+          {
+            return 50;
+          }
+          int iMin, iMax, iDelta, iDefault;
           VideoProcAmpFlags flags;
-          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.WhiteBalance,out iMin,out iMax,out iDelta, out iDefault,out flags);
-          return ToPercent(VideoProcAmpProperty.WhiteBalance,iDefault);
+          _interfaceVideoProcAmp.GetRange(VideoProcAmpProperty.WhiteBalance, out iMin, out iMax, out iDelta,
+                                          out iDefault, out flags);
+          return ToPercent(VideoProcAmpProperty.WhiteBalance, iDefault);
         }
         catch (Exception)
         {
@@ -498,8 +629,5 @@ namespace DShowNET.Helper
         }
       }
     }
-
-
-
-	}
+  }
 }

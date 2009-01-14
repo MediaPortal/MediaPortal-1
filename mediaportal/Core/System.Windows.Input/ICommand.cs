@@ -23,27 +23,23 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace System.Windows.Input
 {
-	[TypeConverter(typeof(CommandConverter))]
-	public interface ICommand
-	{
-		#region Methods
+  [TypeConverter(typeof (CommandConverter))]
+  public interface ICommand
+  {
+    #region Methods
 
-		bool Execute();
+    bool Execute();
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		bool IsEnabled
-		{
-			get;
-		}
+    bool IsEnabled { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

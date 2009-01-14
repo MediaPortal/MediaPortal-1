@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class StopAction : TimelineAction
-	{
-		#region Constructors
+  public class StopAction : TimelineAction
+  {
+    #region Constructors
 
-		public StopAction()
-		{
-		}
+    public StopAction()
+    {
+    }
 
-		#endregion Constructors
-	}
+    #endregion Constructors
+  }
 }

@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum Stretch
-	{
-		None,
-		Fill,
-		Uniform,
-		UniformToFill,
-	}
+  public enum Stretch
+  {
+    None,
+    Fill,
+    Uniform,
+    UniformToFill,
+  }
 }

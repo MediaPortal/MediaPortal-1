@@ -28,39 +28,43 @@ using System.IO;
 
 namespace Roger.ID3
 {
-	class StreamCopier
-	{
-		public static void Copy(Stream source, Stream destination, long byteCount)
-		{
-			long bytesRemaining = byteCount;
-			int bufferLength = 1024 * 1024;
-			byte[] buffer = new byte[bufferLength];
+  internal class StreamCopier
+  {
+    public static void Copy(Stream source, Stream destination, long byteCount)
+    {
+      long bytesRemaining = byteCount;
+      int bufferLength = 1024*1024;
+      byte[] buffer = new byte[bufferLength];
 
-			for (;;)
-			{
-				int bytesToRead = (int)Math.Min(bytesRemaining, bufferLength);
-				int bytesRead = source.Read(buffer, 0, bytesToRead);
-				if (bytesRead == 0)
-					break;
+      for (;;)
+      {
+        int bytesToRead = (int) Math.Min(bytesRemaining, bufferLength);
+        int bytesRead = source.Read(buffer, 0, bytesToRead);
+        if (bytesRead == 0)
+        {
+          break;
+        }
 
-				destination.Write(buffer, 0, bytesRead);
-				bytesRemaining -= bytesRead;
-			}
-		}
+        destination.Write(buffer, 0, bytesRead);
+        bytesRemaining -= bytesRead;
+      }
+    }
 
-		public static void Copy(Stream source, Stream destination)
-		{
-			int bufferLength = 1024 * 1024;
-			byte[] buffer = new byte[bufferLength];
+    public static void Copy(Stream source, Stream destination)
+    {
+      int bufferLength = 1024*1024;
+      byte[] buffer = new byte[bufferLength];
 
-			for (;;)
-			{
-				int bytesRead = source.Read(buffer, 0, bufferLength);
-				if (bytesRead == 0)
-					break;
+      for (;;)
+      {
+        int bytesRead = source.Read(buffer, 0, bufferLength);
+        if (bytesRead == 0)
+        {
+          break;
+        }
 
-				destination.Write(buffer, 0, bytesRead);
-			}
-		}
-	}
+        destination.Write(buffer, 0, bytesRead);
+      }
+    }
+  }
 }

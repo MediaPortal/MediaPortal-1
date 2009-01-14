@@ -23,21 +23,18 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace MediaPortal.Visualization
 {
   public interface IVisualization
   {
-    bool Initialized { get;}
-    bool PreRenderRequired { get;}
+    bool Initialized { get; }
+    bool PreRenderRequired { get; }
     bool IsEngineInstalled();
     bool IsWinampVis();
     bool Initialize();
-    bool InitializePreview();   // Used for visualization previews
+    bool InitializePreview(); // Used for visualization previews
     bool Config();
     int PreRenderVisualization();
     int RenderVisualization();

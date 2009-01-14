@@ -23,179 +23,199 @@
 
 #endregion
 
-using System;
 using System.Collections.Specialized;
 
 namespace System.Windows
 {
-	public class FrameworkPropertyMetadata : UIPropertyMetadata
-	{
-		#region Constructors
+  public class FrameworkPropertyMetadata : UIPropertyMetadata
+  {
+    #region Constructors
 
-		public FrameworkPropertyMetadata()
-		{
-		}
-		
-		public FrameworkPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride)
-		{
-		}
+    public FrameworkPropertyMetadata()
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue) : base(defaultValue)
-		{
-		}
+    public FrameworkPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride)
+    {
+    }
 
-		public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback) : base(propertyInvalidatedCallback)
-		{
-		}
-			
-		public FrameworkPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride)
-		{
-		}
+    public FrameworkPropertyMetadata(object defaultValue) : base(defaultValue)
+    {
+    }
 
-		public FrameworkPropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(getValueOverride, setValueOverride)
-		{
-		}
-		
-		public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options) : base(defaultValue)
-		{
-			_options = new BitVector32((int)options);
-		}
+    public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
+      : base(propertyInvalidatedCallback)
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback) : base(defaultValue, propertyInvalidatedCallback)
-		{
-		}
+    public FrameworkPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride)
+    {
+    }
 
-		public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride) : base(propertyInvalidatedCallback, getValueOverride, null)
-		{
-		}
+    public FrameworkPropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(getValueOverride, setValueOverride)
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
-		{
-		}
+    public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options) : base(defaultValue)
+    {
+      _options = new BitVector32((int) options);
+    }
 
-		public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-		}
+    public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
+      : base(defaultValue, propertyInvalidatedCallback)
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
-		{
-			_options = new BitVector32((int)options);
-		}
+    public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride)
+      : base(propertyInvalidatedCallback, getValueOverride, null)
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-		}
+    public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
+    {
+    }
 
-		public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-			_options = new BitVector32((int)options);
-		}
-			
-		public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride, bool isAnimationProhibited) : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride, isAnimationProhibited)
-		{
-			_options = new BitVector32((int)options);
-		}
-		
-		#endregion Constructors
+    public FrameworkPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+    }
 
-		#region Methods
+    public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options,
+                                     PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
+    {
+      _options = new BitVector32((int) options);
+    }
 
-		protected override PropertyMetadata CreateInstance()
-		{
-			return new FrameworkPropertyMetadata();
-		}
-		
-		protected override void Merge(PropertyMetadata baseMetadata, DependencyProperty dp)
-		{
-			base.Merge(baseMetadata, dp);
-		}
+    public FrameworkPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+    }
 
-		protected override void OnApply(DependencyProperty dp, Type targetType)
-		{
-			base.OnApply(dp, targetType);
-		}
+    public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options,
+                                     PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+      _options = new BitVector32((int) options);
+    }
 
-		#endregion Methods
+    public FrameworkPropertyMetadata(object defaultValue, FrameworkPropertyMetadataOptions options,
+                                     PropertyInvalidatedCallback propertyInvalidatedCallback,
+                                     GetValueOverride getValueOverride, SetValueOverride setValueOverride,
+                                     bool isAnimationProhibited)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride, isAnimationProhibited)
+    {
+      _options = new BitVector32((int) options);
+    }
 
-		#region Properties
+    #endregion Constructors
 
-		public bool AffectsArrange
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsArrange]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsArrange] = value;}
-		}
+    #region Methods
 
-		public bool AffectsMeasure
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsMeasure]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsMeasure] = value;}
-		}
-		
-		public bool AffectsParentArrange
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsParentArrange]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsParentArrange] = value; }
-		}
+    protected override PropertyMetadata CreateInstance()
+    {
+      return new FrameworkPropertyMetadata();
+    }
 
-		public bool AffectsParentMeasure
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsParentMeasure]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsParentMeasure] = value; }
-		}
-		
-		public bool AffectsRender
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsRender]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsRender] = value; }
-		}
+    protected override void Merge(PropertyMetadata baseMetadata, DependencyProperty dp)
+    {
+      base.Merge(baseMetadata, dp);
+    }
 
-		public bool BindsTwoWayByDefault
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.BindsTwoWayByDefault]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.BindsTwoWayByDefault] = value; }
-		}
+    protected override void OnApply(DependencyProperty dp, Type targetType)
+    {
+      base.OnApply(dp, targetType);
+    }
 
-		public bool Inherits
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.Inherits]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.Inherits] = value; }
-		}
+    #endregion Methods
 
-		public bool IsDataBindingAllowed
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.NotDataBindable] == false; }
-		}
+    #region Properties
 
-		public bool IsNotDataBindable
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.NotDataBindable]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.NotDataBindable] = value; }
-		}
+    public bool AffectsArrange
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.AffectsArrange]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.AffectsArrange] = value; }
+    }
 
-		public bool Journal
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.Journal]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.Journal] = value; }
-		}
+    public bool AffectsMeasure
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.AffectsMeasure]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.AffectsMeasure] = value; }
+    }
 
-		public bool SpanSeparatedTrees
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.SpanSeparatedTrees]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.SpanSeparatedTrees] = value; }
-		}
+    public bool AffectsParentArrange
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.AffectsParentArrange]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.AffectsParentArrange] = value; }
+    }
 
-		public bool UpdatesSourceOnLostFocusByDefault
-		{
-			get { return _options[(int)FrameworkPropertyMetadataOptions.UpdatesSourceOnLostFocusByDefault]; }
-			set { _options[(int)FrameworkPropertyMetadataOptions.UpdatesSourceOnLostFocusByDefault] = value; }
-		}
+    public bool AffectsParentMeasure
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.AffectsParentMeasure]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.AffectsParentMeasure] = value; }
+    }
 
-		#endregion Properties
+    public bool AffectsRender
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.AffectsRender]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.AffectsRender] = value; }
+    }
 
-		#region Fields
+    public bool BindsTwoWayByDefault
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.BindsTwoWayByDefault]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.BindsTwoWayByDefault] = value; }
+    }
 
-		BitVector32					_options = new BitVector32();
+    public bool Inherits
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.Inherits]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.Inherits] = value; }
+    }
 
-		#endregion Fields
-	}
+    public bool IsDataBindingAllowed
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.NotDataBindable] == false; }
+    }
+
+    public bool IsNotDataBindable
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.NotDataBindable]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.NotDataBindable] = value; }
+    }
+
+    public bool Journal
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.Journal]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.Journal] = value; }
+    }
+
+    public bool SpanSeparatedTrees
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.SpanSeparatedTrees]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.SpanSeparatedTrees] = value; }
+    }
+
+    public bool UpdatesSourceOnLostFocusByDefault
+    {
+      get { return _options[(int) FrameworkPropertyMetadataOptions.UpdatesSourceOnLostFocusByDefault]; }
+      set { _options[(int) FrameworkPropertyMetadataOptions.UpdatesSourceOnLostFocusByDefault] = value; }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private BitVector32 _options = new BitVector32();
+
+    #endregion Fields
+  }
 }

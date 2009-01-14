@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Drawing;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using System.Windows.Forms; // used for Keys definition
-using Direct3D = Microsoft.DirectX.Direct3D;
+using System.Windows.Forms;
+// used for Keys definition
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -37,48 +35,38 @@ namespace MediaPortal.GUI.Library
   public class GUISMSInputControl : GUIControl
   {
     public delegate void OnTextChangedHandler();
+
     public event OnTextChangedHandler OnTextChanged;
     // How often (per second) the caret blinks
-    const float fCARET_BLINK_RATE = 1.0f;
+    private const float fCARET_BLINK_RATE = 1.0f;
     // During the blink period, the amount the caret is visible. 0.5 equals
     // half the time, 0.75 equals 3/4ths of the time, etc.
-    const float fCARET_ON_RATIO = 0.75f;
+    private const float fCARET_ON_RATIO = 0.75f;
 
-    GUIFont _font = null;
-    GUIFont _font2 = null;
-    GUIFont _fontTextBox = null;
-    [XMLSkinElement("font")]
-    protected string _fontName = "font14";
-    [XMLSkinElement("font2")]
-    protected string _fontName2 = "font13";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")]
-    protected long _textColor2 = 0xFFFFFFFF;
+    private GUIFont _font = null;
+    private GUIFont _font2 = null;
+    private GUIFont _fontTextBox = null;
+    [XMLSkinElement("font")] protected string _fontName = "font14";
+    [XMLSkinElement("font2")] protected string _fontName2 = "font13";
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
 
-    [XMLSkinElement("textboxFont")]
-    protected string _textBoxFontName = "font13";
-    [XMLSkinElement("textboxXpos")]
-    protected int _xPositionTextBox = 200;
-    [XMLSkinElement("textboxYpos")]
-    protected int _yPositionTextBox = 300;
-    [XMLSkinElement("textboxWidth")]
-    protected int _widthTextBox = 100;
-    [XMLSkinElement("textboxHeight")]
-    protected int _heightTextBox = 30;
-    [XMLSkinElement("textboxColor")]
-    protected long _textBoxColor = 0xFFFFFFFF;
-    [XMLSkinElement("textboxBgColor")]
-    protected long _textBoxBackgroundColor = 0xFFFFFFFF;
+    [XMLSkinElement("textboxFont")] protected string _textBoxFontName = "font13";
+    [XMLSkinElement("textboxXpos")] protected int _xPositionTextBox = 200;
+    [XMLSkinElement("textboxYpos")] protected int _yPositionTextBox = 300;
+    [XMLSkinElement("textboxWidth")] protected int _widthTextBox = 100;
+    [XMLSkinElement("textboxHeight")] protected int _heightTextBox = 30;
+    [XMLSkinElement("textboxColor")] protected long _textBoxColor = 0xFFFFFFFF;
+    [XMLSkinElement("textboxBgColor")] protected long _textBoxBackgroundColor = 0xFFFFFFFF;
     protected string _lineData = "";
     protected int _position = 0;
-    DateTime _timerCaret = DateTime.Now;
-    DateTime _timerKey = DateTime.Now;
-    char _currentKey = (char)0;
-    char _previousKey = (char)0;
-    bool _usingKeyboard = false;
-    bool _needRefresh = false;
-    GUIImage _image;
+    private DateTime _timerCaret = DateTime.Now;
+    private DateTime _timerKey = DateTime.Now;
+    private char _currentKey = (char) 0;
+    private char _previousKey = (char) 0;
+    private bool _usingKeyboard = false;
+    private bool _needRefresh = false;
+    private GUIImage _image;
 
     public GUISMSInputControl(int dwParentID)
       : base(dwParentID)
@@ -89,13 +77,19 @@ namespace MediaPortal.GUI.Library
     {
       base.FinalizeConstruction();
       if (_fontName != "" && _fontName != "-")
+      {
         _font = GUIFontManager.GetFont(_fontName);
+      }
 
       if (_fontName2 != "" && _fontName2 != "-")
+      {
         _font2 = GUIFontManager.GetFont(_fontName2);
+      }
 
       if (_textBoxFontName != "" && _textBoxFontName != "-")
+      {
         _fontTextBox = GUIFontManager.GetFont(_textBoxFontName);
+      }
     }
 
     public override void ScaleToScreenResolution()
@@ -116,13 +110,19 @@ namespace MediaPortal.GUI.Library
       _lineData = "";
       _position = 0;
       if (_fontName != "" && _fontName != "-")
+      {
         _font = GUIFontManager.GetFont(_fontName);
+      }
 
       if (_fontName2 != "" && _fontName2 != "-")
+      {
         _font2 = GUIFontManager.GetFont(_fontName2);
+      }
 
       if (_textBoxFontName != "" && _textBoxFontName != "-")
+      {
         _fontTextBox = GUIFontManager.GetFont(_textBoxFontName);
+      }
 
       _image = new GUIImage(this.GetID, 1, 0, 0, _widthTextBox, 10, "bar_hor.png", 1);
       _image.ParentControl = this;
@@ -146,20 +146,16 @@ namespace MediaPortal.GUI.Library
     {
       return base.OnMessage(message);
     }
+
     public override bool CanFocus()
     {
       return true;
     }
+
     public string Text
     {
-      get
-      {
-        return _lineData;
-      }
-      set
-      {
-        _lineData = value;
-      }
+      get { return _lineData; }
+      set { _lineData = value; }
     }
 
     //TODO: add implementation
@@ -196,28 +192,35 @@ namespace MediaPortal.GUI.Library
           if (action.m_key != null)
           {
             // Enter key or OK button
-            if (action.m_key.KeyChar == (int)Keys.Enter)
+            if (action.m_key.KeyChar == (int) Keys.Enter)
             {
-              if (_currentKey != (char)0)
+              if (_currentKey != (char) 0)
               {
                 _lineData = _lineData.Insert(_position, _currentKey.ToString());
               }
-              _previousKey = (char)0;
-              _currentKey = (char)0;
+              _previousKey = (char) 0;
+              _currentKey = (char) 0;
               _timerKey = DateTime.Now;
               _position = 0;
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID, ParentID, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID, ParentID,
+                                              0, 0, null);
               msg.Label = _lineData;
-              if (OnTextChanged != null) OnTextChanged();
+              if (OnTextChanged != null)
+              {
+                OnTextChanged();
+              }
               _lineData = "";
               GUIGraphicsContext.SendMessage(msg);
               return;
             }
 
-            if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int)Keys.Back))
+            if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int) Keys.Back))
             {
-              Press((char)action.m_key.KeyChar);
-              if (OnTextChanged != null) OnTextChanged();
+              Press((char) action.m_key.KeyChar);
+              if (OnTextChanged != null)
+              {
+                OnTextChanged();
+              }
               return;
             }
           }
@@ -226,22 +229,26 @@ namespace MediaPortal.GUI.Library
       base.OnAction(action);
     }
 
-    void CheckTimer()
+    private void CheckTimer()
     {
       TimeSpan ts = DateTime.Now - _timerKey;
       if (ts.TotalMilliseconds >= 800)
       {
-        if (_currentKey != (char)0)
+        if (_currentKey != (char) 0)
         {
           if (_position == _lineData.Length)
+          {
             _lineData += _currentKey;
+          }
           else
+          {
             _lineData = _lineData.Insert(_position, _currentKey.ToString());
+          }
           _position++;
           _needRefresh = true;
         }
-        _previousKey = (char)0;
-        _currentKey = (char)0;
+        _previousKey = (char) 0;
+        _currentKey = (char) 0;
         _timerKey = DateTime.Now;
       }
     }
@@ -256,7 +263,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    void Press(char Key)
+    private void Press(char Key)
     {
       // Check keyboard
       if (Key < '0' || Key > '9')
@@ -266,17 +273,20 @@ namespace MediaPortal.GUI.Library
 
       if (!_usingKeyboard)
       {
-
         // Check different key pressed
-        if (Key != _previousKey && _currentKey != (char)0)
+        if (Key != _previousKey && _currentKey != (char) 0)
         {
           if (_position == _lineData.Length)
+          {
             _lineData += _currentKey;
+          }
           else
+          {
             _lineData = _lineData.Insert(_position, _currentKey.ToString());
+          }
 
-          _previousKey = (char)0;
-          _currentKey = (char)0;
+          _previousKey = (char) 0;
+          _currentKey = (char) 0;
           _timerKey = DateTime.Now;
           _position++;
         }
@@ -295,133 +305,347 @@ namespace MediaPortal.GUI.Library
             _position--;
           }
           _timerKey = DateTime.Now;
-          _previousKey = (char)0;
-          _currentKey = (char)0;
+          _previousKey = (char) 0;
+          _currentKey = (char) 0;
         }
         if (Key == '1')
         {
-          if (_currentKey == 0) _currentKey = ' ';
-          else if (_currentKey == ' ') _currentKey = '!';
-          else if (_currentKey == '!') _currentKey = '?';
-          else if (_currentKey == '?') _currentKey = '.';
-          else if (_currentKey == '.') _currentKey = '0';
-          else if (_currentKey == '0') _currentKey = '1';
-          else if (_currentKey == '1') _currentKey = 'ß';
-          else if (_currentKey == 'ß') _currentKey = '-';
-          else if (_currentKey == '-') _currentKey = '+';
-          else if (_currentKey == '+') _currentKey = ' ';
+          if (_currentKey == 0)
+          {
+            _currentKey = ' ';
+          }
+          else if (_currentKey == ' ')
+          {
+            _currentKey = '!';
+          }
+          else if (_currentKey == '!')
+          {
+            _currentKey = '?';
+          }
+          else if (_currentKey == '?')
+          {
+            _currentKey = '.';
+          }
+          else if (_currentKey == '.')
+          {
+            _currentKey = '0';
+          }
+          else if (_currentKey == '0')
+          {
+            _currentKey = '1';
+          }
+          else if (_currentKey == '1')
+          {
+            _currentKey = 'ß';
+          }
+          else if (_currentKey == 'ß')
+          {
+            _currentKey = '-';
+          }
+          else if (_currentKey == '-')
+          {
+            _currentKey = '+';
+          }
+          else if (_currentKey == '+')
+          {
+            _currentKey = ' ';
+          }
           _timerKey = DateTime.Now;
         }
 
         if (Key == '2')
         {
-          if (_currentKey == 0) _currentKey = 'a';
-          else if (_currentKey == 'a') _currentKey = 'b';
-          else if (_currentKey == 'b') _currentKey = 'c';
-          else if (_currentKey == 'c') _currentKey = '2';
-          else if (_currentKey == '2') _currentKey = 'ä';
-          else if (_currentKey == 'ä') _currentKey = 'à';
-          else if (_currentKey == 'à') _currentKey = 'á';
-          else if (_currentKey == 'á') _currentKey = 'â';
-          else if (_currentKey == 'â') _currentKey = 'a';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'a';
+          }
+          else if (_currentKey == 'a')
+          {
+            _currentKey = 'b';
+          }
+          else if (_currentKey == 'b')
+          {
+            _currentKey = 'c';
+          }
+          else if (_currentKey == 'c')
+          {
+            _currentKey = '2';
+          }
+          else if (_currentKey == '2')
+          {
+            _currentKey = 'ä';
+          }
+          else if (_currentKey == 'ä')
+          {
+            _currentKey = 'à';
+          }
+          else if (_currentKey == 'à')
+          {
+            _currentKey = 'á';
+          }
+          else if (_currentKey == 'á')
+          {
+            _currentKey = 'â';
+          }
+          else if (_currentKey == 'â')
+          {
+            _currentKey = 'a';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '3')
         {
-          if (_currentKey == 0) _currentKey = 'd';
-          else if (_currentKey == 'd') _currentKey = 'e';
-          else if (_currentKey == 'e') _currentKey = 'f';
-          else if (_currentKey == 'f') _currentKey = '3';
-          else if (_currentKey == '3') _currentKey = 'è';
-          else if (_currentKey == 'è') _currentKey = 'é';
-          else if (_currentKey == 'é') _currentKey = 'ê';
-          else if (_currentKey == 'ê') _currentKey = 'd';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'd';
+          }
+          else if (_currentKey == 'd')
+          {
+            _currentKey = 'e';
+          }
+          else if (_currentKey == 'e')
+          {
+            _currentKey = 'f';
+          }
+          else if (_currentKey == 'f')
+          {
+            _currentKey = '3';
+          }
+          else if (_currentKey == '3')
+          {
+            _currentKey = 'è';
+          }
+          else if (_currentKey == 'è')
+          {
+            _currentKey = 'é';
+          }
+          else if (_currentKey == 'é')
+          {
+            _currentKey = 'ê';
+          }
+          else if (_currentKey == 'ê')
+          {
+            _currentKey = 'd';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '4')
         {
-          if (_currentKey == 0) _currentKey = 'g';
-          else if (_currentKey == 'g') _currentKey = 'h';
-          else if (_currentKey == 'h') _currentKey = 'i';
-          else if (_currentKey == 'i') _currentKey = '4';
-          else if (_currentKey == '4') _currentKey = 'ì';
-          else if (_currentKey == 'ì') _currentKey = 'í';
-          else if (_currentKey == 'í') _currentKey = 'î';
-          else if (_currentKey == 'î') _currentKey = 'g';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'g';
+          }
+          else if (_currentKey == 'g')
+          {
+            _currentKey = 'h';
+          }
+          else if (_currentKey == 'h')
+          {
+            _currentKey = 'i';
+          }
+          else if (_currentKey == 'i')
+          {
+            _currentKey = '4';
+          }
+          else if (_currentKey == '4')
+          {
+            _currentKey = 'ì';
+          }
+          else if (_currentKey == 'ì')
+          {
+            _currentKey = 'í';
+          }
+          else if (_currentKey == 'í')
+          {
+            _currentKey = 'î';
+          }
+          else if (_currentKey == 'î')
+          {
+            _currentKey = 'g';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '5')
         {
-          if (_currentKey == 0) _currentKey = 'j';
-          else if (_currentKey == 'j') _currentKey = 'k';
-          else if (_currentKey == 'k') _currentKey = 'l';
-          else if (_currentKey == 'l') _currentKey = '5';
-          else if (_currentKey == '5') _currentKey = 'j';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'j';
+          }
+          else if (_currentKey == 'j')
+          {
+            _currentKey = 'k';
+          }
+          else if (_currentKey == 'k')
+          {
+            _currentKey = 'l';
+          }
+          else if (_currentKey == 'l')
+          {
+            _currentKey = '5';
+          }
+          else if (_currentKey == '5')
+          {
+            _currentKey = 'j';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '6')
         {
-          if (_currentKey == 0) _currentKey = 'm';
-          else if (_currentKey == 'm') _currentKey = 'n';
-          else if (_currentKey == 'n') _currentKey = 'o';
-          else if (_currentKey == 'o') _currentKey = '6';
-          else if (_currentKey == '6') _currentKey = 'ö';
-          else if (_currentKey == 'ö') _currentKey = 'ò';
-          else if (_currentKey == 'ò') _currentKey = 'ó';
-          else if (_currentKey == 'ó') _currentKey = 'ô';
-          else if (_currentKey == 'ô') _currentKey = 'm';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'm';
+          }
+          else if (_currentKey == 'm')
+          {
+            _currentKey = 'n';
+          }
+          else if (_currentKey == 'n')
+          {
+            _currentKey = 'o';
+          }
+          else if (_currentKey == 'o')
+          {
+            _currentKey = '6';
+          }
+          else if (_currentKey == '6')
+          {
+            _currentKey = 'ö';
+          }
+          else if (_currentKey == 'ö')
+          {
+            _currentKey = 'ò';
+          }
+          else if (_currentKey == 'ò')
+          {
+            _currentKey = 'ó';
+          }
+          else if (_currentKey == 'ó')
+          {
+            _currentKey = 'ô';
+          }
+          else if (_currentKey == 'ô')
+          {
+            _currentKey = 'm';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '7')
         {
-          if (_currentKey == 0) _currentKey = 'p';
-          else if (_currentKey == 'p') _currentKey = 'q';
-          else if (_currentKey == 'q') _currentKey = 'r';
-          else if (_currentKey == 'r') _currentKey = 's';
-          else if (_currentKey == 's') _currentKey = '7';
-          else if (_currentKey == '7') _currentKey = 'p';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'p';
+          }
+          else if (_currentKey == 'p')
+          {
+            _currentKey = 'q';
+          }
+          else if (_currentKey == 'q')
+          {
+            _currentKey = 'r';
+          }
+          else if (_currentKey == 'r')
+          {
+            _currentKey = 's';
+          }
+          else if (_currentKey == 's')
+          {
+            _currentKey = '7';
+          }
+          else if (_currentKey == '7')
+          {
+            _currentKey = 'p';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '8')
         {
-          if (_currentKey == 0) _currentKey = 't';
-          else if (_currentKey == 't') _currentKey = 'u';
-          else if (_currentKey == 'u') _currentKey = 'v';
-          else if (_currentKey == 'v') _currentKey = '8';
-          else if (_currentKey == '8') _currentKey = 'ü';
-          else if (_currentKey == 'ü') _currentKey = 'ù';
-          else if (_currentKey == 'ù') _currentKey = 'ú';
-          else if (_currentKey == 'ú') _currentKey = 'û';
-          else if (_currentKey == 'û') _currentKey = 't';
+          if (_currentKey == 0)
+          {
+            _currentKey = 't';
+          }
+          else if (_currentKey == 't')
+          {
+            _currentKey = 'u';
+          }
+          else if (_currentKey == 'u')
+          {
+            _currentKey = 'v';
+          }
+          else if (_currentKey == 'v')
+          {
+            _currentKey = '8';
+          }
+          else if (_currentKey == '8')
+          {
+            _currentKey = 'ü';
+          }
+          else if (_currentKey == 'ü')
+          {
+            _currentKey = 'ù';
+          }
+          else if (_currentKey == 'ù')
+          {
+            _currentKey = 'ú';
+          }
+          else if (_currentKey == 'ú')
+          {
+            _currentKey = 'û';
+          }
+          else if (_currentKey == 'û')
+          {
+            _currentKey = 't';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key == '9')
         {
-          if (_currentKey == 0) _currentKey = 'w';
-          else if (_currentKey == 'w') _currentKey = 'x';
-          else if (_currentKey == 'x') _currentKey = 'y';
-          else if (_currentKey == 'y') _currentKey = 'z';
-          else if (_currentKey == 'z') _currentKey = '9';
-          else if (_currentKey == '9') _currentKey = 'w';
+          if (_currentKey == 0)
+          {
+            _currentKey = 'w';
+          }
+          else if (_currentKey == 'w')
+          {
+            _currentKey = 'x';
+          }
+          else if (_currentKey == 'x')
+          {
+            _currentKey = 'y';
+          }
+          else if (_currentKey == 'y')
+          {
+            _currentKey = 'z';
+          }
+          else if (_currentKey == 'z')
+          {
+            _currentKey = '9';
+          }
+          else if (_currentKey == '9')
+          {
+            _currentKey = 'w';
+          }
           _timerKey = DateTime.Now;
         }
         if (Key < '0' || Key > '9')
         {
           _usingKeyboard = true;
           if (_position == _lineData.Length)
+          {
             _lineData += _currentKey;
+          }
           else
+          {
             _lineData = _lineData.Insert(_position, _currentKey.ToString());
+          }
 
-          _previousKey = (char)0;
-          _currentKey = (char)0;
+          _previousKey = (char) 0;
+          _currentKey = (char) 0;
           _timerKey = DateTime.Now;
           _position++;
         }
       }
       else
       {
-        if (Key == (char)8) // Backspace
+        if (Key == (char) 8) // Backspace
         {
           if (_position > 0)
           {
@@ -432,14 +656,18 @@ namespace MediaPortal.GUI.Library
         else
         {
           if (_position >= _lineData.Length)
+          {
             _lineData += Key;
+          }
           else
+          {
             _lineData = _lineData.Insert(_position, Key.ToString());
+          }
           _position++;
         }
 
-        _previousKey = (char)0;
-        _currentKey = (char)0;
+        _previousKey = (char) 0;
+        _currentKey = (char) 0;
         _timerKey = DateTime.Now;
       }
 
@@ -455,24 +683,30 @@ namespace MediaPortal.GUI.Library
       base.Render(timePassed);
     }
 
-    void DrawInput()
+    private void DrawInput()
     {
       int posY = _positionY;
       int step = 20;
       GUIGraphicsContext.ScaleVertical(ref step);
-      _font.DrawText(_positionX, posY, _textColor, " 1     2       3", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, " _    abc    def", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 1     2       3", Alignment.ALIGN_LEFT, -1);
+      posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, " _    abc    def", Alignment.ALIGN_LEFT, -1);
+      posY += step;
 
       posY += step;
-      _font.DrawText(_positionX, posY, _textColor, " 4     5      6", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "ghi   jkl    mno", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 4     5      6", Alignment.ALIGN_LEFT, -1);
+      posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, "ghi   jkl    mno", Alignment.ALIGN_LEFT, -1);
+      posY += step;
 
       posY += step;
-      _font.DrawText(_positionX, posY, _textColor, " 7     8      9", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      _font2.DrawText(_positionX, posY, _textColor2, "pqrs tuv wxyz", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 7     8      9", Alignment.ALIGN_LEFT, -1);
+      posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, "pqrs tuv wxyz", Alignment.ALIGN_LEFT, -1);
+      posY += step;
     }
 
-    void DrawTextBox(float timePassed)
+    private void DrawTextBox(float timePassed)
     {
       int x1 = _xPositionTextBox;
       int y1 = _yPositionTextBox;
@@ -491,32 +725,41 @@ namespace MediaPortal.GUI.Library
       _image.Render(timePassed);
     }
 
-    void DrawText()
+    private void DrawText()
     {
       string line = _lineData;
 
-      if (_currentKey != (char)0)
+      if (_currentKey != (char) 0)
       {
         line = line.Insert(_position, _currentKey.ToString());
         line = line.Insert(_position + 1, "_");
       }
-      else line = line.Insert(_position, "_");
+      else
+      {
+        line = line.Insert(_position, "_");
+      }
 
       float fCaretWidth = 0.0f;
       float fCaretHeight = 0.0f;
 
       _fontTextBox.GetTextExtent(line, ref fCaretWidth, ref fCaretHeight);
-      if (GUIGraphicsContext.graphics != null) fCaretWidth += line.Length;
+      if (GUIGraphicsContext.graphics != null)
+      {
+        fCaretWidth += line.Length;
+      }
       while (fCaretWidth > _widthTextBox)
       {
         line = line.Remove(0, 3);
         line = line.Insert(0, ".");
         line = line.Insert(0, ".");
         _fontTextBox.GetTextExtent(line, ref fCaretWidth, ref fCaretHeight);
-        if (GUIGraphicsContext.graphics != null) fCaretWidth += line.Length;
+        if (GUIGraphicsContext.graphics != null)
+        {
+          fCaretWidth += line.Length;
+        }
       }
 
-      _fontTextBox.DrawText(_xPositionTextBox, _yPositionTextBox, _textBoxColor, line, GUIControl.Alignment.ALIGN_LEFT, -1);
+      _fontTextBox.DrawText(_xPositionTextBox, _yPositionTextBox, _textBoxColor, line, Alignment.ALIGN_LEFT, -1);
 
       /*
             // Draw blinking caret using line primitives.
@@ -543,8 +786,14 @@ namespace MediaPortal.GUI.Library
       get { return _fontName; }
       set
       {
-        if (value == null) return;
-        if (value == string.Empty) return;
+        if (value == null)
+        {
+          return;
+        }
+        if (value == string.Empty)
+        {
+          return;
+        }
         _font = GUIFontManager.GetFont(value);
         _fontName = value;
       }
@@ -558,8 +807,14 @@ namespace MediaPortal.GUI.Library
       get { return _fontName2; }
       set
       {
-        if (value == null) return;
-        if (value == string.Empty) return;
+        if (value == null)
+        {
+          return;
+        }
+        if (value == string.Empty)
+        {
+          return;
+        }
         _font2 = GUIFontManager.GetFont(value);
         _fontName2 = value;
       }
@@ -573,8 +828,14 @@ namespace MediaPortal.GUI.Library
       get { return _textBoxFontName; }
       set
       {
-        if (value == null) return;
-        if (value == string.Empty) return;
+        if (value == null)
+        {
+          return;
+        }
+        if (value == string.Empty)
+        {
+          return;
+        }
         _fontTextBox = GUIFontManager.GetFont(value);
         _textBoxFontName = value;
       }
@@ -587,43 +848,34 @@ namespace MediaPortal.GUI.Library
     public long TextColor
     {
       get { return _textColor; }
-      set
-      {
-        _textColor = value;
-      }
+      set { _textColor = value; }
     }
+
     /// <summary>
     /// Get/set the textcolor of the text a-z
     /// </summary>
     public long TextColor2
     {
       get { return _textColor2; }
-      set
-      {
-        _textColor2 = value;
-      }
+      set { _textColor2 = value; }
     }
+
     /// <summary>
     /// Get/set the textcolor of the textbox
     /// </summary>
     public long TextBoxColor
     {
       get { return _textBoxColor; }
-      set
-      {
-        _textBoxColor = value;
-      }
+      set { _textBoxColor = value; }
     }
+
     /// <summary>
     /// Get/set the backgroundcolor of the textbox
     /// </summary>
     public long TextBoxBackGroundColor
     {
       get { return _textBoxBackgroundColor; }
-      set
-      {
-        _textBoxBackgroundColor = value;
-      }
+      set { _textBoxBackgroundColor = value; }
     }
 
     /// <summary>
@@ -632,44 +884,36 @@ namespace MediaPortal.GUI.Library
     public int TextBoxX
     {
       get { return _xPositionTextBox; }
-      set
-      {
-        _xPositionTextBox = value;
-      }
+      set { _xPositionTextBox = value; }
     }
+
     /// <summary>
     /// Get/set the y position of the textbox
     /// </summary>
     public int TextBoxY
     {
       get { return _yPositionTextBox; }
-      set
-      {
-        _yPositionTextBox = value;
-      }
+      set { _yPositionTextBox = value; }
     }
+
     /// <summary>
     /// Get/set the Width of the textbox
     /// </summary>
     public int TextBoxWidth
     {
       get { return _widthTextBox; }
-      set
-      {
-        _widthTextBox = value;
-      }
+      set { _widthTextBox = value; }
     }
+
     /// <summary>
     /// Get/set the Height of the textbox
     /// </summary>
     public int TextBoxHeight
     {
       get { return _heightTextBox; }
-      set
-      {
-        _heightTextBox = value;
-      }
+      set { _heightTextBox = value; }
     }
+
     public override int DimColor
     {
       get { return base.DimColor; }
@@ -688,6 +932,5 @@ namespace MediaPortal.GUI.Library
       get { return _position; }
       set { _position = value; }
     }
-
   }
 }

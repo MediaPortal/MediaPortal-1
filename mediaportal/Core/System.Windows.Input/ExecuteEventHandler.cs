@@ -25,9 +25,10 @@
 
 namespace System.Windows.Input
 {
-	#region Delegate
 
-	public delegate void ExecuteEventHandler(object sender, ExecuteEventArgs e);
+  #region Delegate
 
-	#endregion Delegate
+  public delegate void ExecuteEventHandler(object sender, ExecuteEventArgs e);
+
+  #endregion Delegate
 }

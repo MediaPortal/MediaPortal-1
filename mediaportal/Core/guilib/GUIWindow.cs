@@ -27,12 +27,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
+using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Library
 {
@@ -58,7 +60,6 @@ namespace MediaPortal.GUI.Library
     /// ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
     /// (Windows that may not be jumped to directly via InputMapper)
     /// </summary>
-
     public enum Window
     {
       WINDOW_INVALID = -1,
@@ -234,18 +235,22 @@ namespace MediaPortal.GUI.Library
       // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
       // (Windows that may not be jumped to directly via InputMapper)
     }
+
     #endregion
 
     #region enums
+
     protected enum AutoHideTopBar
     {
       UseDefault,
       No,
       Yes,
     }
+
     #endregion
 
     #region variables
+
     private int _windowId = -1;
     private int _previousWindowId = -1;
     private int _previousFocusedControlId = -1;
@@ -260,20 +265,21 @@ namespace MediaPortal.GUI.Library
     // 1=true  from skin.xml
     protected AutoHideTopBar _autoHideTopbarType = AutoHideTopBar.UseDefault;
     protected bool _autoHideTopbar = false;
-    protected bool _disableTopBar = false;                      // skin file can hide Topbar when needed
-    bool _isSkinLoaded = false;
+    protected bool _disableTopBar = false; // skin file can hide Topbar when needed
+    private bool _isSkinLoaded = false;
     protected bool _shouldRestore = false;
     private string _lastSkin = string.Empty;
-    bool _windowAllocated;
-    bool _hasRendered = false;
+    private bool _windowAllocated;
+    private bool _hasRendered = false;
     private bool _windowLoaded = false;
 
-    VisualEffect _showAnimation = new VisualEffect();   // for dialogs
-    VisualEffect _closeAnimation = new VisualEffect();
+    private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
+    private VisualEffect _closeAnimation = new VisualEffect();
 
     #endregion
 
     #region ctor
+
     /// <summary>
     /// The (emtpy) constructur of the GUIWindow
     /// </summary>
@@ -288,15 +294,18 @@ namespace MediaPortal.GUI.Library
     public GUIWindow(string skinFile)
       : this()
     {
-      if (skinFile == null) return;
+      if (skinFile == null)
+      {
+        return;
+      }
       _previousWindowId = -1;
       _windowXmlFileName = skinFile;
-
     }
 
     #endregion
 
     #region methods
+
     /// <summary>
     /// Clear() method. This method gets called when user switches skin. It removes any static vars
     /// the GUIWindow class has
@@ -308,10 +317,7 @@ namespace MediaPortal.GUI.Library
 
     public int PreviousFocusedId
     {
-      get
-      {
-        return _previousFocusedControlId;
-      }
+      get { return _previousFocusedControlId; }
     }
 
     /// <summary>
@@ -320,7 +326,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="control">new control to add</param>
     public void Add(ref GUIControl control)
     {
-      if (control == null) return;
+      if (control == null)
+      {
+        return;
+      }
       control.WindowId = GetID;
       Children.Add(control);
     }
@@ -344,7 +353,9 @@ namespace MediaPortal.GUI.Library
           if (control.GetID == dwId)
           {
             if (index >= 0 && index < Children.Count)
+            {
               Children.RemoveAt(index);
+            }
             return;
           }
         }
@@ -362,7 +373,7 @@ namespace MediaPortal.GUI.Library
       {
         for (int x = 0; x < Children.Count; ++x)
         {
-          ((GUIControl)Children[x]).OnInit();
+          ((GUIControl) Children[x]).OnInit();
         }
       }
       catch (Exception ex)
@@ -378,7 +389,9 @@ namespace MediaPortal.GUI.Library
       try
       {
         foreach (GUIControl control in Children)
+        {
           control.OnDeInit();
+        }
       }
       catch (Exception ex)
       {
@@ -409,15 +422,18 @@ namespace MediaPortal.GUI.Library
     /// Restores the position of the control to its default position.
     /// </summary>
     /// <param name="iControl">The identifier of the control that needs to be restored.</param>
-
     public void RestoreControlPosition(int iControl)
     {
       foreach (GUIControl control in Children)
+      {
         control.ReStorePosition();
+      }
     }
+
     #endregion
 
     #region load skin file
+
     /// <summary>
     /// Load the XML file for this window which 
     /// contains a definition of which controls the GUI has
@@ -428,13 +444,17 @@ namespace MediaPortal.GUI.Library
     {
       _isSkinLoaded = false;
       if ((_skinFileName == null) || (_skinFileName == ""))
+      {
         return false;
+      }
 
       _windowXmlFileName = _skinFileName;
 
       // if windows supports delayed loading then do nothing
       if (SupportsDelayedLoad)
+      {
         return true;
+      }
 
       //else load xml file now
       return LoadSkin();
@@ -449,9 +469,15 @@ namespace MediaPortal.GUI.Library
     {
       _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured
-      if (_windowXmlFileName == "") return false;
+      if (_windowXmlFileName == "")
+      {
+        return false;
+      }
       // TODO what is the reason for this check
-      if (Children.Count > 0) return false;
+      if (Children.Count > 0)
+      {
+        return false;
+      }
       _showAnimation.Reset();
       _closeAnimation.Reset();
 
@@ -463,7 +489,7 @@ namespace MediaPortal.GUI.Library
       string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
       GUIControlFactory.LoadReferences(strReferenceFile);
 
-      if (!System.IO.File.Exists(_windowXmlFileName))
+      if (!File.Exists(_windowXmlFileName))
       {
         Log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
@@ -473,10 +499,16 @@ namespace MediaPortal.GUI.Library
         // Load the XML file
         XmlDocument doc = new XmlDocument();
         doc.Load(_windowXmlFileName);
-        if (doc.DocumentElement == null) return false;
+        if (doc.DocumentElement == null)
+        {
+          return false;
+        }
         string root = doc.DocumentElement.Name;
         // Check root element
-        if (root != "window") return false;
+        if (root != "window")
+        {
+          return false;
+        }
 
         XmlNodeList nodeListAnimations = doc.DocumentElement.SelectNodes("/window/animation");
         if (nodeListAnimations != null)
@@ -495,14 +527,20 @@ namespace MediaPortal.GUI.Library
         }
         // Load id value
         XmlNode nodeId = doc.DocumentElement.SelectSingleNode("/window/id");
-        if (nodeId == null) return false;
+        if (nodeId == null)
+        {
+          return false;
+        }
         // Set the default control that has the focus after loading the window
         XmlNode nodeDefault = doc.DocumentElement.SelectSingleNode("/window/defaultcontrol");
-        if (nodeDefault == null) return false;
+        if (nodeDefault == null)
+        {
+          return false;
+        }
         // Convert the id to an int
         try
         {
-          _windowId = (int)System.Int32.Parse(nodeId.InnerText);
+          _windowId = (int) Int32.Parse(nodeId.InnerText);
         }
         catch (Exception)
         {
@@ -511,7 +549,7 @@ namespace MediaPortal.GUI.Library
         // Convert the id of the default control to an int
         try
         {
-          _defaultControlId = System.Int32.Parse(nodeDefault.InnerText);
+          _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
         catch (Exception)
         {
@@ -524,10 +562,14 @@ namespace MediaPortal.GUI.Library
           string xml = node.OuterXml;
 
           if (xml.IndexOf("Button.") != -1)
+          {
             xml = xml.Replace("Button.", "GUIControl.");
+          }
 
           if (xml.IndexOf("Window.") != -1)
+          {
             xml = xml.Replace("Window.", "GUIWindow.");
+          }
 
           XamlParser.LoadXml(xml, XmlNodeType.Element, this);
         }
@@ -540,9 +582,13 @@ namespace MediaPortal.GUI.Library
           {
             string allowed = nodeOverlay.InnerText.ToLower();
             if (allowed == "yes" || allowed == "true")
+            {
               _isOverlayAllowed = true;
+            }
             if (allowed == "no" || allowed == "false")
+            {
               _isOverlayAllowed = false;
+            }
           }
         }
 
@@ -557,9 +603,13 @@ namespace MediaPortal.GUI.Library
             _autoHideTopbarType = AutoHideTopBar.UseDefault;
             string allowed = nodeAutoHideTopbar.InnerText.ToLower();
             if (allowed == "yes" || allowed == "true")
+            {
               _autoHideTopbarType = AutoHideTopBar.Yes;
+            }
             if (allowed == "no" || allowed == "false")
+            {
               _autoHideTopbarType = AutoHideTopBar.No;
+            }
           }
         }
 
@@ -572,7 +622,9 @@ namespace MediaPortal.GUI.Library
           {
             string allowed = nodeDisableTopbar.InnerText.ToLower();
             if (allowed == "yes" || allowed == "true")
+            {
               _disableTopBar = true;
+            }
           }
         }
 
@@ -581,7 +633,9 @@ namespace MediaPortal.GUI.Library
         foreach (XmlNode node in nodeList)
         {
           if (node.Name == null)
+          {
             continue;
+          }
 
           switch (node.Name)
           {
@@ -596,7 +650,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // TODO: remove this when all XAML parser or will result in double initialization
-        ((ISupportInitialize)this).EndInit();
+        ((ISupportInitialize) this).EndInit();
 
         //				PrepareTriggers();
 
@@ -607,7 +661,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message, ex.StackTrace);
+        Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
+                  ex.StackTrace);
         return false;
       }
     }
@@ -620,7 +675,9 @@ namespace MediaPortal.GUI.Library
     protected void LoadControl(XmlNode node, IDictionary defines)
     {
       if (node == null || Children == null)
+      {
         return;
+      }
 
       try
       {
@@ -632,7 +689,7 @@ namespace MediaPortal.GUI.Library
           if (img.Width == 0 || img.Height == 0)
           {
             Log.Info("xml:{0} image id:{1} width:{2} height:{3} gfx:{4}",
-              _windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
+                     _windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
           }
         }
 
@@ -644,12 +701,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool LoadInclude(XmlNode node, IDictionary defines)
+    private bool LoadInclude(XmlNode node, IDictionary defines)
     {
       if (node == null || Children == null)
+      {
         return false;
+      }
 
-      if (System.IO.File.Exists(_windowXmlFileName) == false)
+      if (File.Exists(_windowXmlFileName) == false)
       {
         Log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
@@ -662,13 +721,19 @@ namespace MediaPortal.GUI.Library
         doc.Load(GUIGraphicsContext.Skin + "\\" + node.InnerText);
 
         if (doc.DocumentElement == null)
+        {
           return false;
+        }
 
         if (doc.DocumentElement.Name != "window")
+        {
           return false;
+        }
 
         foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
+        {
           LoadControl(controlNode, defines);
+        }
 
         return true;
       }
@@ -680,7 +745,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    IDictionary LoadDefines(XmlDocument document)
+    private IDictionary LoadDefines(XmlDocument document)
     {
       Hashtable table = new Hashtable();
 
@@ -691,7 +756,9 @@ namespace MediaPortal.GUI.Library
           string[] tokens = node.InnerText.Split(':');
 
           if (tokens.Length < 2)
+          {
             continue;
+          }
 
           table[tokens[0]] = tokens[1];
         }
@@ -707,6 +774,7 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region virtual methods
+
     /// <summary>
     /// This function gets called once by the runtime when everything is up & running
     /// directX is now initialized, but before the first window is activated. 
@@ -789,14 +857,16 @@ namespace MediaPortal.GUI.Library
       this.instance = obj;
     }
 
-    void SetControlVisibility()
+    private void SetControlVisibility()
     {
       // reset our info manager caches
       GUIInfoManager.ResetCache();
       foreach (GUIControl control in Children)
       {
         if (control.GetVisibleCondition() != 0)
+        {
           control.SetInitialVisibility();
+        }
       }
     }
 
@@ -807,7 +877,9 @@ namespace MediaPortal.GUI.Library
     protected virtual void OnPageLoad()
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
+      {
         LoadSkin();
+      }
 
       SetControlVisibility();
       QueueAnimation(AnimationType.WindowOpen);
@@ -817,11 +889,11 @@ namespace MediaPortal.GUI.Library
     {
       if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
-        if (new_windowId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO &&
-            new_windowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+        if (new_windowId != (int) Window.WINDOW_FULLSCREEN_VIDEO &&
+            new_windowId != (int) Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
-          if (HasAnimation(AnimationType.WindowClose))//&& !IsDialog)
+          if (HasAnimation(AnimationType.WindowClose)) //&& !IsDialog)
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
@@ -829,12 +901,15 @@ namespace MediaPortal.GUI.Library
             GUIWindowManager.IsSwitchingToNewWindow = false;
             while (IsAnimating(AnimationType.WindowClose))
             {
-              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING) break;
+              if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.RUNNING)
+              {
+                break;
+              }
               if (GUIGraphicsContext.Vmr9Active)
               {
-                if (Player.VMR9Util.g_vmr9 != null)
+                if (VMR9Util.g_vmr9 != null)
                 {
-                  if (!Player.VMR9Util.g_vmr9.Enabled)
+                  if (!VMR9Util.g_vmr9.Enabled)
                   {
                     break;
                   }
@@ -914,11 +989,15 @@ namespace MediaPortal.GUI.Library
         // tell every control we're gonna alloc the resources next
 
         foreach (GUIControl control in Children)
+        {
           control.PreAllocResources();
+        }
 
         // ask every control to alloc its resources
         foreach (GUIControl control in Children)
+        {
           control.AllocResources();
+        }
       }
       catch (Exception ex)
       {
@@ -938,7 +1017,9 @@ namespace MediaPortal.GUI.Library
       {
         // tell every control to free its resources
         foreach (GUIControl control in Children)
+        {
           control.FreeResources();
+        }
       }
       catch (Exception ex)
       {
@@ -954,7 +1035,9 @@ namespace MediaPortal.GUI.Library
       try
       {
         foreach (GUIControl control in Children)
+        {
           control.DoUpdate();
+        }
       }
       catch (Exception ex)
       {
@@ -974,21 +1057,22 @@ namespace MediaPortal.GUI.Library
 
       for (int i = 0; i < Children.Count; ++i)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = (GUIControl) Children[i];
         control.StorePosition();
         CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
         _listPositions.Add(pos);
       }
 
       FieldInfo[] allFields = this.GetType().GetFields(BindingFlags.Instance
-        | BindingFlags.NonPublic
-        | BindingFlags.FlattenHierarchy
-        | BindingFlags.Public);
+                                                       | BindingFlags.NonPublic
+                                                       | BindingFlags.FlattenHierarchy
+                                                       | BindingFlags.Public);
       foreach (FieldInfo field in allFields)
       {
-        if (field.IsDefined(typeof(SkinControlAttribute), false))
+        if (field.IsDefined(typeof (SkinControlAttribute), false))
         {
-          SkinControlAttribute atrb = (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
+          SkinControlAttribute atrb =
+            (SkinControlAttribute) field.GetCustomAttributes(typeof (SkinControlAttribute), false)[0];
 
           GUIControl control = GetControl(atrb.ID);
           if (control != null)
@@ -999,7 +1083,8 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace, this.ToString());
+              Log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace,
+                        this.ToString());
             }
           }
         }
@@ -1016,11 +1101,12 @@ namespace MediaPortal.GUI.Library
     {
       for (int x = 0; x < Children.Count; x++)
       {
-        GUIControl cntl = (GUIControl)Children[x];
+        GUIControl cntl = (GUIControl) Children[x];
         GUIControl cntlFound = cntl.GetControlById(iControlId);
         if (cntlFound != null)
+        {
           return cntlFound;
-
+        }
       }
       return null;
     }
@@ -1042,11 +1128,10 @@ namespace MediaPortal.GUI.Library
           {
             control.UpdateVisibility();
           }
-
         }
         else
         {
-          ((GUIControl)Children[x]).UpdateVisibility();
+          ((GUIControl) Children[x]).UpdateVisibility();
         }
       }
     }
@@ -1071,8 +1156,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (((GUIControl)Children[x]).Focus)
-            return ((GUIControl)Children[x]).GetID;
+          if (((GUIControl) Children[x]).Focus)
+          {
+            return ((GUIControl) Children[x]).GetID;
+          }
         }
       }
       return -1;
@@ -1084,7 +1171,10 @@ namespace MediaPortal.GUI.Library
     public virtual void LooseFocus()
     {
       GUIControl cntl = GetControl(GetFocusControlId());
-      if (cntl != null) cntl.Focus = false;
+      if (cntl != null)
+      {
+        cntl.Focus = false;
+      }
     }
 
     /// <summary>
@@ -1098,7 +1188,10 @@ namespace MediaPortal.GUI.Library
 
     public void DoRestoreSkin()
     {
-      if (!_shouldRestore) return;
+      if (!_shouldRestore)
+      {
+        return;
+      }
       _shouldRestore = false;
       FreeResources();
       Children.Clear();
@@ -1125,10 +1218,22 @@ namespace MediaPortal.GUI.Library
         {
           if (!_isSkinLoaded)
           {
-            if (GUIGraphicsContext.IsFullScreenVideo) return;
-            if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
-            if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
-            if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC) return; //SV Added by SteveV 2006-09-07
+            if (GUIGraphicsContext.IsFullScreenVideo)
+            {
+              return;
+            }
+            if (GetID == (int) Window.WINDOW_FULLSCREEN_VIDEO)
+            {
+              return;
+            }
+            if (GetID == (int) Window.WINDOW_TVFULLSCREEN)
+            {
+              return;
+            }
+            if (GetID == (int) Window.WINDOW_FULLSCREEN_MUSIC)
+            {
+              return; //SV Added by SteveV 2006-09-07
+            }
 
             // Print an error message
             GUIFont font = GUIFontManager.GetFont(0);
@@ -1138,18 +1243,20 @@ namespace MediaPortal.GUI.Library
               float fH = 0f;
               string strLine = String.Format("Missing or invalid file:{0}", _windowXmlFileName);
               font.GetTextExtent(strLine, ref fW, ref fH);
-              float x = (GUIGraphicsContext.Width - fW) / 2f;
-              float y = (GUIGraphicsContext.Height - fH) / 2f;
+              float x = (GUIGraphicsContext.Width - fW)/2f;
+              float y = (GUIGraphicsContext.Height - fH)/2f;
               font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT, -1);
               strLine = null;
             }
             font = null;
           }
           GUIGraphicsContext.SetScalingResolution(0, 0, false);
-          uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+          uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
           // render our window animation - returns false if it needs to stop rendering
           if (!RenderAnimation(currentTime))
+          {
             return;
+          }
 
           foreach (GUIControl control in Children)
           {
@@ -1180,7 +1287,9 @@ namespace MediaPortal.GUI.Library
         foreach (GUIControl control in Children)
         {
           if (control.NeedRefresh())
+          {
             return true;
+          }
         }
       }
       catch (Exception ex)
@@ -1198,7 +1307,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="action">action : contains the action</param>
     public virtual void OnAction(Action action)
     {
-      if (action == null) return;
+      if (action == null)
+      {
+        return;
+      }
       int id;
       //lock (this)
       {
@@ -1219,17 +1331,23 @@ namespace MediaPortal.GUI.Library
           // mouse moved, check which control has the focus
           if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
           {
-            OnMouseMove((int)action.fAmount1, (int)action.fAmount2, action);
+            OnMouseMove((int) action.fAmount1, (int) action.fAmount2, action);
             id = GetFocusControlId();
-            if (id >= 0) _previousFocusedControlId = id;
+            if (id >= 0)
+            {
+              _previousFocusedControlId = id;
+            }
             return;
           }
           // mouse clicked if there is a hit pass the action
           if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
           {
-            OnMouseClick((int)action.fAmount1, (int)action.fAmount2, action);
+            OnMouseClick((int) action.fAmount1, (int) action.fAmount2, action);
             id = GetFocusControlId();
-            if (id >= 0) _previousFocusedControlId = id;
+            if (id >= 0)
+            {
+              _previousFocusedControlId = id;
+            }
             return;
           }
 
@@ -1238,10 +1356,16 @@ namespace MediaPortal.GUI.Library
           if (cntlFoc != null)
           {
             id = GetFocusControlId();
-            if (id >= 0) _previousFocusedControlId = id;
+            if (id >= 0)
+            {
+              _previousFocusedControlId = id;
+            }
             cntlFoc.OnAction(action);
             id = GetFocusControlId();
-            if (id >= 0) _previousFocusedControlId = id;
+            if (id >= 0)
+            {
+              _previousFocusedControlId = id;
+            }
 
             return;
           }
@@ -1252,8 +1376,10 @@ namespace MediaPortal.GUI.Library
           OnMessage(msg);
           msg = null;
           id = GetFocusControlId();
-          if (id >= 0) _previousFocusedControlId = id;
-
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
         }
         catch (Exception ex)
         {
@@ -1277,7 +1403,10 @@ namespace MediaPortal.GUI.Library
     /// <returns>true if the message was handled, false if it wasnt</returns>
     public virtual bool OnMessage(GUIMessage message)
     {
-      if (message == null) return true;
+      if (message == null)
+      {
+        return true;
+      }
 
       //lock (this)
       AnimationTrigger(message);
@@ -1290,25 +1419,32 @@ namespace MediaPortal.GUI.Library
           {
             case GUIMessage.MessageType.GUI_MSG_CLICKED:
               if (iControlId != 0)
-                OnClicked(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
+              {
+                OnClicked(iControlId, GetControl(iControlId), (Action.ActionType) message.Param1);
+              }
               break;
 
             case GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN:
               if (iControlId != 0)
-                OnClickedDown(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
+              {
+                OnClickedDown(iControlId, GetControl(iControlId), (Action.ActionType) message.Param1);
+              }
               break;
 
             case GUIMessage.MessageType.GUI_MSG_CLICKED_UP:
               if (iControlId != 0)
-                OnClickedUp(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
+              {
+                OnClickedUp(iControlId, GetControl(iControlId), (Action.ActionType) message.Param1);
+              }
               break;
 
-            // Initialize the window.
+              // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 
               // we do not want fullscreen video/TV dialogue ID's persisted.
-              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+              if (GUIWindowManager.ActiveWindow != (int) Window.WINDOW_FULLSCREEN_VIDEO &&
+                  GUIWindowManager.ActiveWindow != (int) Window.WINDOW_TVFULLSCREEN)
               {
                 GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
               }
@@ -1348,13 +1484,16 @@ namespace MediaPortal.GUI.Library
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
 
-              if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+              if (message.Param1 != (int) Window.WINDOW_INVALID)
               {
                 if (message.Param1 != GetID)
+                {
                   _previousWindowId = message.Param1;
+                }
               }
 
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
+                                              null);
               OnMessage(msg);
 
               GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
@@ -1366,15 +1505,18 @@ namespace MediaPortal.GUI.Library
               TemporaryAnimationTrigger();
 
               id = GetFocusControlId();
-              if (id >= 0) _previousFocusedControlId = id;
+              if (id >= 0)
+              {
+                _previousFocusedControlId = id;
+              }
               return true;
-            // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+              // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
-            // Cleanup and free resources
+              // Cleanup and free resources
             case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
               {
                 OnPageDestroy(message.Param1);
-                if (_previousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
+                if (_previousWindowId != (int) Window.WINDOW_INVALID)
                 {
                   GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + _previousWindowId));
                 }
@@ -1392,17 +1534,21 @@ namespace MediaPortal.GUI.Library
                 return true;
               }
 
-            // Set the focus on the correct control
+              // Set the focus on the correct control
             case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
               {
-                if (GetFocusControlId() == message.TargetControlId) return true;
+                if (GetFocusControlId() == message.TargetControlId)
+                {
+                  return true;
+                }
 
                 if (message.TargetControlId > 0)
                 {
                   GUIControl cntlFocused = GetControl(GetFocusControlId());
                   if (cntlFocused != null)
                   {
-                    GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
+                    GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID,
+                                                             cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
                     cntlFocused.OnMessage(msgLostFocus);
                     msgLostFocus = null;
                     cntlFocused = null;
@@ -1419,7 +1565,10 @@ namespace MediaPortal.GUI.Library
                   cntTarget = null;
                 }
                 id = GetFocusControlId();
-                if (id >= 0) _previousFocusedControlId = id;
+                if (id >= 0)
+                {
+                  _previousFocusedControlId = id;
+                }
                 return true;
               }
           }
@@ -1430,8 +1579,10 @@ namespace MediaPortal.GUI.Library
             return cntlTarget.OnMessage(message);
           }
           id = GetFocusControlId();
-          if (id >= 0) _previousFocusedControlId = id;
-
+          if (id >= 0)
+          {
+            _previousFocusedControlId = id;
+          }
         }
         catch (Exception ex)
         {
@@ -1445,7 +1596,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int i = Children.Count - 1; i >= 0; i--)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = (GUIControl) Children[i];
         bool bFocus;
         int controlID;
         if (control.HitTest(cx, cy, out controlID, out bFocus))
@@ -1467,23 +1618,27 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     protected virtual void OnMouseClick(int posX, int posY, Action action)
     {
       for (int i = Children.Count - 1; i >= 0; i--)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = (GUIControl) Children[i];
         bool bFocus;
         int controlID;
         if (control.HitTest(posX, posY, out controlID, out bFocus))
         {
           GUIControl cntl = GetControl(controlID);
-          if (cntl != null) cntl.OnAction(action);
+          if (cntl != null)
+          {
+            cntl.OnAction(action);
+          }
           return;
         }
       }
     }
 
-    void TemporaryAnimationTrigger()
+    private void TemporaryAnimationTrigger()
     {
       //BAV: Testing
       return;
@@ -1498,14 +1653,19 @@ namespace MediaPortal.GUI.Library
       //}
     }
 
-    void AnimationTrigger(GUIMessage message)
+    private void AnimationTrigger(GUIMessage message)
     {
-      if (_children == null) return;
+      if (_children == null)
+      {
+        return;
+      }
 
       foreach (UIElement element in _children)
       {
         if (element is GUIAnimation)
-          ((GUIAnimation)element).OnMessage(message);
+        {
+          ((GUIAnimation) element).OnMessage(message);
+        }
       }
     }
 
@@ -1528,10 +1688,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual bool IsTv
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     public virtual void OnAdded()
@@ -1540,8 +1697,7 @@ namespace MediaPortal.GUI.Library
 
     #region effects
 
-
-    bool RenderAnimation(uint time)
+    private bool RenderAnimation(uint time)
     {
       TransformMatrix transform = new TransformMatrix();
       // show animation
@@ -1556,19 +1712,28 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
+    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
     {
     }
 
-    bool HasAnimation(AnimationType animType)
+    private bool HasAnimation(AnimationType animType)
     {
       if (_showAnimation.AnimationType == AnimationType.WindowOpen)
+      {
         return true;
+      }
       else if (_closeAnimation.AnimationType == AnimationType.WindowClose)
+      {
         return true;
+      }
       // Now check the controls to see if we have this animation
       foreach (GUIControl control in Children)
-        if (control.GetAnimation(animType, true) != null) return true;
+      {
+        if (control.GetAnimation(animType, true) != null)
+        {
+          return true;
+        }
+      }
       return false;
     }
 
@@ -1584,14 +1749,18 @@ namespace MediaPortal.GUI.Library
         else
         {
           if (0 == _showAnimation.Condition || GUIInfoManager.GetBool(_showAnimation.Condition, GetID))
+          {
             _showAnimation.QueuedProcess = AnimationProcess.Normal;
+          }
           _closeAnimation.ResetAnimation();
         }
       }
       if (animType == AnimationType.WindowClose)
       {
         if (!_windowAllocated || !_hasRendered) // can't render an animation if we aren't allocated or haven't rendered
+        {
           return;
+        }
         if (_showAnimation.CurrentProcess == AnimationProcess.Normal && _showAnimation.IsReversible)
         {
           _showAnimation.QueuedProcess = AnimationProcess.Reverse;
@@ -1600,7 +1769,9 @@ namespace MediaPortal.GUI.Library
         else
         {
           if (0 == _closeAnimation.Condition || GUIInfoManager.GetBool(_closeAnimation.Condition, GetID))
+          {
             _closeAnimation.QueuedProcess = AnimationProcess.Normal;
+          }
           _showAnimation.ResetAnimation();
         }
       }
@@ -1614,38 +1785,80 @@ namespace MediaPortal.GUI.Library
     {
       if (animType == AnimationType.WindowOpen)
       {
-        if (_showAnimation.QueuedProcess == AnimationProcess.Normal) return true;
-        if (_showAnimation.CurrentProcess == AnimationProcess.Normal) return true;
-        if (_closeAnimation.QueuedProcess == AnimationProcess.Reverse) return true;
-        if (_closeAnimation.CurrentProcess == AnimationProcess.Reverse) return true;
+        if (_showAnimation.QueuedProcess == AnimationProcess.Normal)
+        {
+          return true;
+        }
+        if (_showAnimation.CurrentProcess == AnimationProcess.Normal)
+        {
+          return true;
+        }
+        if (_closeAnimation.QueuedProcess == AnimationProcess.Reverse)
+        {
+          return true;
+        }
+        if (_closeAnimation.CurrentProcess == AnimationProcess.Reverse)
+        {
+          return true;
+        }
       }
       else if (animType == AnimationType.WindowClose)
       {
-        if (_closeAnimation.QueuedProcess == AnimationProcess.Normal) return true;
-        if (_closeAnimation.CurrentProcess == AnimationProcess.Normal) return true;
-        if (_showAnimation.QueuedProcess == AnimationProcess.Reverse) return true;
-        if (_showAnimation.CurrentProcess == AnimationProcess.Reverse) return true;
+        if (_closeAnimation.QueuedProcess == AnimationProcess.Normal)
+        {
+          return true;
+        }
+        if (_closeAnimation.CurrentProcess == AnimationProcess.Normal)
+        {
+          return true;
+        }
+        if (_showAnimation.QueuedProcess == AnimationProcess.Reverse)
+        {
+          return true;
+        }
+        if (_showAnimation.CurrentProcess == AnimationProcess.Reverse)
+        {
+          return true;
+        }
       }
       foreach (GUIControl control in Children)
       {
-        if (control.IsEffectAnimating(animType)) return true;
+        if (control.IsEffectAnimating(animType))
+        {
+          return true;
+        }
       }
       return false;
     }
 
     #endregion
+
     /// XAML related code follows
 
     #region Properties
 
     public UIElementCollection Children
     {
-      get { if (_children == null) _children = new UIElementCollection(); return _children; }
+      get
+      {
+        if (_children == null)
+        {
+          _children = new UIElementCollection();
+        }
+        return _children;
+      }
     }
 
     public StoryboardCollection Storyboards
     {
-      get { if (_storyboards == null) _storyboards = new StoryboardCollection(); return _storyboards; }
+      get
+      {
+        if (_storyboards == null)
+        {
+          _storyboards = new StoryboardCollection();
+        }
+        return _storyboards;
+      }
     }
 
     public bool WindowLoaded
@@ -1657,10 +1870,9 @@ namespace MediaPortal.GUI.Library
 
     #region Fields
 
-    UIElementCollection _children;
-    StoryboardCollection _storyboards;
+    private UIElementCollection _children;
+    private StoryboardCollection _storyboards;
 
     #endregion Fields
   }
 }
-

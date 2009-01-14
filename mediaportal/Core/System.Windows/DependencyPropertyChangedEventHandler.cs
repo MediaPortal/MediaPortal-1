@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void DependencyPropertyChangedEventHandler(object sender, DependencyPropertyChangedEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void DependencyPropertyChangedEventHandler(object sender, DependencyPropertyChangedEventArgs e);
+
+  #endregion Delegates
 }

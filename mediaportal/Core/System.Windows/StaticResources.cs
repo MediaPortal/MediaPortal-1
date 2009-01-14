@@ -23,31 +23,30 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows
 {
-	public sealed class StaticResources
-	{
-		#region Methods
+  public sealed class StaticResources
+  {
+    #region Methods
 
-		public static object Find(string name)
-		{
-			return _resources[name];
-		}
+    public static object Find(string name)
+    {
+      return _resources[name];
+    }
 
-		public static bool Contains(string name)
-		{
-			return _resources.Contains(name);
-		}
+    public static bool Contains(string name)
+    {
+      return _resources.Contains(name);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		static Hashtable			_resources = new Hashtable(100);
+    private static Hashtable _resources = new Hashtable(100);
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

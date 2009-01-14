@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate bool ValidateValueCallback(object value);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate bool ValidateValueCallback(object value);
+
+  #endregion Delegates
 }

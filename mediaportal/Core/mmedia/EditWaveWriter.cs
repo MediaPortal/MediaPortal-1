@@ -24,26 +24,24 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace Yeti.MMedia
 {
   /// <summary>
   /// Summary description for EditWaveWriter.
   /// </summary>
-  public class EditWaveWriter : System.Windows.Forms.UserControl, IEditAudioWriterConfig
+  public class EditWaveWriter : UserControl, IEditAudioWriterConfig
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private Yeti.MMedia.EditFormat editFormat1;
+    private MPGroupBox groupBox1;
+    private EditFormat editFormat1;
 
     /// <summary> 
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Container components = null;
 
     public EditWaveWriter()
     {
@@ -113,24 +111,16 @@ namespace Yeti.MMedia
 
     #endregion
 
-
     #region IEditAudioWriterConfig Members
 
     [Browsable(false)]
     public AudioWriterConfig Config
     {
-      get
-      {
-        return new AudioWriterConfig(editFormat1.Format);
-      }
-      set
-      {
-        editFormat1.Format = value.Format;
-      }
+      get { return new AudioWriterConfig(editFormat1.Format); }
+      set { editFormat1.Format = value.Format; }
     }
 
     #endregion
-
 
     #region IConfigControl Members
 
@@ -146,25 +136,19 @@ namespace Yeti.MMedia
 
     public Control ConfigControl
     {
-      get
-      {
-        return this;
-      }
+      get { return this; }
     }
 
     public string ControlName
     {
-      get
-      {
-        return "Wave writer config";
-      }
+      get { return "Wave writer config"; }
     }
 
-    public event System.EventHandler ConfigChange;
+    public event EventHandler ConfigChange;
 
     #endregion
 
-    private void editFormat1_ConfigChange(object sender, System.EventArgs e)
+    private void editFormat1_ConfigChange(object sender, EventArgs e)
     {
       if (ConfigChange != null)
       {
@@ -173,4 +157,3 @@ namespace Yeti.MMedia
     }
   }
 }
-

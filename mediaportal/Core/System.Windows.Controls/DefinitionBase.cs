@@ -23,72 +23,77 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public abstract class DefinitionBase : FrameworkContentElement
-	{
-		#region Constructors
+  public abstract class DefinitionBase : FrameworkContentElement
+  {
+    #region Constructors
 
-		static DefinitionBase()
-		{
-			SharedSizeGroupProperty = DependencyProperty.Register("SharedSizeGroup", typeof(string), typeof(DefinitionBase));
+    static DefinitionBase()
+    {
+      SharedSizeGroupProperty = DependencyProperty.Register("SharedSizeGroup", typeof (string), typeof (DefinitionBase));
 //			SharedSizeGroupProperty.ValidateValueCallback = new ValidateValueCallback(ValidateSharedSizeGroup);
-		}
+    }
 
-		public DefinitionBase()
-		{
-		}
+    public DefinitionBase()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		private bool ValidateSharedSizeGroup(object value)
-		{
-			string group = value as string;
+    private bool ValidateSharedSizeGroup(object value)
+    {
+      string group = value as string;
 
-			if(group == null)
-				return false;
+      if (group == null)
+      {
+        return false;
+      }
 
-			group = group.Trim();
+      group = group.Trim();
 
-			// cannot be empty
-			if(group == string.Empty)
-				return false;
+      // cannot be empty
+      if (group == string.Empty)
+      {
+        return false;
+      }
 
-			// cannot not start with a digit
-			if(char.IsDigit(group[0]))
-				return false;
+      // cannot not start with a digit
+      if (char.IsDigit(group[0]))
+      {
+        return false;
+      }
 
-			// must consist of letters, digits, and underscore characters only
-			foreach(char c in group)
-			{
-				if(!char.IsLetterOrDigit(c) && c != '_')
-					return false;
-			}
+      // must consist of letters, digits, and underscore characters only
+      foreach (char c in group)
+      {
+        if (!char.IsLetterOrDigit(c) && c != '_')
+        {
+          return false;
+        }
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public string SharedSizeGroup
-		{
-			get { return (string)GetValue(SharedSizeGroupProperty); }
-			set { SetValue(SharedSizeGroupProperty, value); }
-		}
+    public string SharedSizeGroup
+    {
+      get { return (string) GetValue(SharedSizeGroupProperty); }
+      set { SetValue(SharedSizeGroupProperty, value); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty SharedSizeGroupProperty;
+    public static readonly DependencyProperty SharedSizeGroupProperty;
 
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties (Dependency)
+  }
 }

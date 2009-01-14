@@ -23,78 +23,91 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Media.Animation
 {
-	public sealed class TimelineCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class TimelineCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public void Add(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			List.Add(timeline);
-		}
+      List.Add(timeline);
+    }
 
-		public bool Contains(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public bool Contains(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			return List.Contains(timeline);
-		}
+      return List.Contains(timeline);
+    }
 
-		public void CopyTo(Timeline[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Timeline[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public int IndexOf(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			return List.IndexOf(timeline);
-		}
+      return List.IndexOf(timeline);
+    }
 
-		public void Insert(int index, Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public void Insert(int index, Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			List.Insert(index, timeline);
-		}
+      List.Insert(index, timeline);
+    }
 
-		public bool Remove(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
-			
-			if(List.Contains(timeline) == false)
-				return false;
+    public bool Remove(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			List.Remove(timeline);
+      if (List.Contains(timeline) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(timeline);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Timeline this[int index]
-		{ 
-			get { return (Timeline)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public Timeline this[int index]
+    {
+      get { return (Timeline) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

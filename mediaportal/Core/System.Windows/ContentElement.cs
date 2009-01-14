@@ -23,14 +23,9 @@
 
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
-
 namespace System.Windows
 {
-	public class ContentElement : DependencyObject
-	{
-	}
+  public class ContentElement : DependencyObject
+  {
+  }
 }

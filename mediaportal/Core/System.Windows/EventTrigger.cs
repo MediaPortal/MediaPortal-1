@@ -23,85 +23,97 @@
 
 #endregion
 
-using System;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class EventTrigger : TriggerBase, IAddChild
-	{
-		#region Constructors
+  public class EventTrigger : TriggerBase, IAddChild
+  {
+    #region Constructors
 
-		public EventTrigger()
-		{
-		}
+    public EventTrigger()
+    {
+    }
 
-		public EventTrigger(RoutedEvent routedEvent)
-		{
-			_routedEvent = routedEvent;
-		}
+    public EventTrigger(RoutedEvent routedEvent)
+    {
+      _routedEvent = routedEvent;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected virtual void AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    protected virtual void AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			if(child is TriggerAction == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerAction)));
+      if (child is TriggerAction == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (TriggerAction)));
+      }
 
-			if(_actions == null)
-				_actions = new TriggerActionCollection();
+      if (_actions == null)
+      {
+        _actions = new TriggerActionCollection();
+      }
 
-			_actions.Add((TriggerAction)child);
-		}
+      _actions.Add((TriggerAction) child);
+    }
 
-		protected virtual void AddText(string text)
-		{
-		}
+    protected virtual void AddText(string text)
+    {
+    }
 
-		void IAddChild.AddChild(object child)
-		{
-			AddChild(child);
-		}
+    void IAddChild.AddChild(object child)
+    {
+      AddChild(child);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-			AddText(text);
-		}
+    void IAddChild.AddText(string text)
+    {
+      AddText(text);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public TriggerActionCollection Actions
-		{
-			get { if(_actions == null) _actions = new TriggerActionCollection(); return _actions; }
-		}
+    public TriggerActionCollection Actions
+    {
+      get
+      {
+        if (_actions == null)
+        {
+          _actions = new TriggerActionCollection();
+        }
+        return _actions;
+      }
+    }
 
-		public RoutedEvent RoutedEvent
-		{
-			get { return _routedEvent; }
-			set { _routedEvent = value; }
-		}
+    public RoutedEvent RoutedEvent
+    {
+      get { return _routedEvent; }
+      set { _routedEvent = value; }
+    }
 
-		public string SourceName
-		{
-			get { return _sourceName; }
-			set { _sourceName = value; }
-		}
+    public string SourceName
+    {
+      get { return _sourceName; }
+      set { _sourceName = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		TriggerActionCollection		_actions;
-		RoutedEvent					_routedEvent;
-		string						_sourceName;
+    private TriggerActionCollection _actions;
+    private RoutedEvent _routedEvent;
+    private string _sourceName;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

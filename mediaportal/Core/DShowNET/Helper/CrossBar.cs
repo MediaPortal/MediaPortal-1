@@ -24,18 +24,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace DShowNET.Helper
 {
   public class CrossBar
   {
-
     static CrossBar()
     {
     }
@@ -48,11 +45,21 @@ namespace DShowNET.Helper
     /// <param name="graphbuilder">IGraphBuilder </param>
     /// <param name="m_captureGraphBuilder">ICaptureGraphBuilder2 </param>
     /// <param name="captureFilter">IBaseFilter containing the capture device filter</param>
-    public static void Reset(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter)
+    public static void Reset(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,
+                             IBaseFilter captureFilter)
     {
-      if (graphbuilder == null) return;
-      if (m_captureGraphBuilder == null) return;
-      if (captureFilter == null) return;
+      if (graphbuilder == null)
+      {
+        return;
+      }
+      if (m_captureGraphBuilder == null)
+      {
+        return;
+      }
+      if (captureFilter == null)
+      {
+        return;
+      }
       Route(graphbuilder, m_captureGraphBuilder, captureFilter, true, false, false, false, false, false);
     }
 
@@ -70,11 +77,22 @@ namespace DShowNET.Helper
     /// <param name="logActions">true : log all actions in the logfile
     ///                          false: dont log
     /// </param>
-    public static void Route(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, bool logActions)
+    public static void Route(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,
+                             IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS,
+                             bool useRgb, bool logActions)
     {
-      if (graphbuilder == null) return;
-      if (m_captureGraphBuilder == null) return;
-      if (captureFilter == null) return;
+      if (graphbuilder == null)
+      {
+        return;
+      }
+      if (m_captureGraphBuilder == null)
+      {
+        return;
+      }
+      if (captureFilter == null)
+      {
+        return;
+      }
       bool CvbsWanted = (useCVBS1 || useCVBS2);
       int iCVBSVideo = 0;
       int iCVBSAudio = 0;
@@ -82,7 +100,10 @@ namespace DShowNET.Helper
       int iRgbVideo = 0;
 
       if (logActions)
-        Log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
+      {
+        Log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner,
+                 useCVBS1, useCVBS2, useSVHS, useRgb);
+      }
       try
       {
         int icurrentCrossbar = 0;
@@ -96,9 +117,12 @@ namespace DShowNET.Helper
           DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
           Guid iid;
           object o = null;
-          iid = typeof(IAMCrossbar).GUID;
-          if (logActions) Log.Info(" Find crossbar:#{0}", 1 + icurrentCrossbar);
-          hr = m_captureGraphBuilder.FindInterface(cat, null, searchfilter,  iid, out o);
+          iid = typeof (IAMCrossbar).GUID;
+          if (logActions)
+          {
+            Log.Info(" Find crossbar:#{0}", 1 + icurrentCrossbar);
+          }
+          hr = m_captureGraphBuilder.FindInterface(cat, null, searchfilter, iid, out o);
           if (hr == 0 && o != null)
           {
             // we found something, check if it is a crossbar
@@ -111,18 +135,22 @@ namespace DShowNET.Helper
               // new crossbar found
               icurrentCrossbar++;
               if (logActions)
+              {
                 Log.Info("  crossbar found:{0}", icurrentCrossbar);
+              }
 
               // get the number of input & output pins of the crossbar
               int iOutputPinCount, iInputPinCount;
               crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
               if (logActions)
+              {
                 Log.Info("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
+              }
 
-              int iPinIndexRelated;		// pin related (routed) with this output pin
+              int iPinIndexRelated; // pin related (routed) with this output pin
               int iPinIndexRelatedIn; // pin related (routed) with this input pin
-              PhysicalConnectorType PhysicalTypeOut;		// type of output pin
-              PhysicalConnectorType PhysicalTypeIn;			// type of input pin
+              PhysicalConnectorType PhysicalTypeOut; // type of output pin
+              PhysicalConnectorType PhysicalTypeIn; // type of input pin
               iCVBSVideo = 0;
               iCVBSAudio = 0;
 
@@ -142,7 +170,10 @@ namespace DShowNET.Helper
                     // yes thats possible, now get the information of the input pin
                     crossbar.get_CrossbarPinInfo(true, iIn, out iPinIndexRelatedIn, out PhysicalTypeIn);
                     if (logActions)
-                      Log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
+                    {
+                      Log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(),
+                               PhysicalTypeOut.ToString());
+                    }
 
 
                     // boolean indicating if current input pin should be connected to the current output pin
@@ -150,17 +181,26 @@ namespace DShowNET.Helper
 
                     // Check video input options
                     // if the input pin is a Tuner Input and we want to use the tuner, then connect this
-                    if (useTuner && PhysicalTypeIn == PhysicalConnectorType.Video_Tuner) bRoute = true;
+                    if (useTuner && PhysicalTypeIn == PhysicalConnectorType.Video_Tuner)
+                    {
+                      bRoute = true;
+                    }
 
                     // if the input pin is a CVBS input and we want to use CVBS then
                     if (CvbsWanted && PhysicalTypeIn == PhysicalConnectorType.Video_Composite)
                     {
                       // if this is the first CVBS input then connect
                       iCVBSVideo++;
-                      if (iCVBSVideo == 1 && CvbsWanted) bRoute = true;
+                      if (iCVBSVideo == 1 && CvbsWanted)
+                      {
+                        bRoute = true;
+                      }
 
                       // if this is the 2nd CVBS input and we want to use the 2nd CVBS input then connect
-                      if (iCVBSVideo == 2 && useCVBS2) bRoute = true;
+                      if (iCVBSVideo == 2 && useCVBS2)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // if the input pin is a SVHS input and we want to use SVHS then connect
@@ -169,7 +209,10 @@ namespace DShowNET.Helper
                       // make sure we only use the 1st SVHS input of the crossbar
                       // since the PVR150MCE crossbar has 2 SVHS inputs
                       iSVHSVideo++;
-                      if (iSVHSVideo == 1) bRoute = true;
+                      if (iSVHSVideo == 1)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // if the input pin is a RGB input and we want to use RGB then connect
@@ -178,7 +221,10 @@ namespace DShowNET.Helper
                       // make sure we only use the 1st SVHS input of the crossbar
                       // since the PVR150MCE crossbar has 2 SVHS inputs
                       iRgbVideo++;
-                      if (iRgbVideo == 1) bRoute = true;
+                      if (iRgbVideo == 1)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // Check audio input options
@@ -186,27 +232,42 @@ namespace DShowNET.Helper
                     // if this is the audio tuner input and we want to use the tuner, then connect
                     if (useTuner)
                     {
-                      if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner) bRoute = true;
+                      if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner)
+                      {
+                        bRoute = true;
+                      }
                     }
                     else
                     {
                       // if this is the audio line input
                       if ( /*PhysicalTypeIn==PhysicalConnectorType.Audio_AUX||*/
-                           PhysicalTypeIn == PhysicalConnectorType.Audio_Line ||
-                           PhysicalTypeIn == PhysicalConnectorType.Audio_AudioDecoder)
+                        PhysicalTypeIn == PhysicalConnectorType.Audio_Line ||
+                        PhysicalTypeIn == PhysicalConnectorType.Audio_AudioDecoder)
                       {
                         // if this is the first audio input then connect
                         iCVBSAudio++;
-                        if (CvbsWanted && iCVBSAudio == 1) bRoute = true;
+                        if (CvbsWanted && iCVBSAudio == 1)
+                        {
+                          bRoute = true;
+                        }
 
                         // if this is the 2nd audio input and we want to use the 2nd CVBS input then connect
-                        if (iCVBSAudio == 2 && useCVBS2) bRoute = true;
+                        if (iCVBSAudio == 2 && useCVBS2)
+                        {
+                          bRoute = true;
+                        }
 
                         // if we want to use SVHS then connect
-                        if (useSVHS) bRoute = true;
+                        if (useSVHS)
+                        {
+                          bRoute = true;
+                        }
 
                         // if we want to use RGB then connect
-                        if (useRgb) bRoute = true;
+                        if (useRgb)
+                        {
+                          bRoute = true;
+                        }
                       }
                     }
 
@@ -214,26 +275,41 @@ namespace DShowNET.Helper
                     if (bRoute)
                     {
                       //yes, then connect
-                      if (logActions) Log.Info("     connect");
+                      if (logActions)
+                      {
+                        Log.Info("     connect");
+                      }
                       hr = crossbar.Route(iOut, iIn);
                       if (logActions)
                       {
-                        if (hr != 0) Log.Info("    connect FAILED");
-                        else Log.Info("    connect success");
+                        if (hr != 0)
+                        {
+                          Log.Info("    connect FAILED");
+                        }
+                        else
+                        {
+                          Log.Info("    connect success");
+                        }
                       }
                     }
-                  }//if (hr==0)
-                }//for (int iIn=0; iIn < iInputPinCount; iIn++)
-              }//for (int iOut=0; iOut < iOutputPinCount; ++iOut)
-            }//if (crossbar!=null)
-          }//if (hr ==0 && o != null)
+                  } //if (hr==0)
+                } //for (int iIn=0; iIn < iInputPinCount; iIn++)
+              } //for (int iOut=0; iOut < iOutputPinCount; ++iOut)
+            } //if (crossbar!=null)
+          } //if (hr ==0 && o != null)
           else
           {
-            if (logActions) Log.Info("  no more crossbars.:0x{0:X}", hr);
+            if (logActions)
+            {
+              Log.Info("  no more crossbars.:0x{0:X}", hr);
+            }
             break;
           }
-        }//while (true)
-        if (logActions) Log.Info("crossbar routing done");
+        } //while (true)
+        if (logActions)
+        {
+          Log.Info("crossbar routing done");
+        }
       }
       catch (Exception ex)
       {
@@ -255,11 +331,22 @@ namespace DShowNET.Helper
     /// <param name="logActions">true : log all actions in the logfile
     ///                          false: dont log
     /// </param>
-    public static void RouteEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder, IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS, bool useRgb, string cardName)
+    public static void RouteEx(IGraphBuilder graphbuilder, ICaptureGraphBuilder2 m_captureGraphBuilder,
+                               IBaseFilter captureFilter, bool useTuner, bool useCVBS1, bool useCVBS2, bool useSVHS,
+                               bool useRgb, string cardName)
     {
-      if (graphbuilder == null) return;
-      if (m_captureGraphBuilder == null) return;
-      if (captureFilter == null) return;
+      if (graphbuilder == null)
+      {
+        return;
+      }
+      if (m_captureGraphBuilder == null)
+      {
+        return;
+      }
+      if (captureFilter == null)
+      {
+        return;
+      }
       bool CvbsWanted = (useCVBS1 || useCVBS2);
       int iCVBSVideo = 0;
       int iCVBSAudio = 0;
@@ -276,7 +363,7 @@ namespace DShowNET.Helper
       int videoRgb = 1;
 
       string filename = Config.GetFile(Config.Dir.Database, String.Format("card_{0}.xml", cardName));
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+      using (Settings xmlreader = new Settings(filename))
       {
         audioCVBS1 = 1 + xmlreader.GetValueAsInt("mapping", "audio1", 0);
         audioCVBS2 = 1 + xmlreader.GetValueAsInt("mapping", "audio2", 1);
@@ -290,7 +377,8 @@ namespace DShowNET.Helper
         videoRgb = 1 + xmlreader.GetValueAsInt("mapping", "video4", 0);
       }
 
-      Log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner, useCVBS1, useCVBS2, useSVHS, useRgb);
+      Log.Info("FixCrossbarRouting: use tuner:{0} use cvbs#1:{1} use cvbs#2:{2} use svhs:{3} use rgb:{4}", useTuner,
+               useCVBS1, useCVBS2, useSVHS, useRgb);
       try
       {
         int icurrentCrossbar = 0;
@@ -305,10 +393,10 @@ namespace DShowNET.Helper
           Guid iid;
           object o = null;
           //cat = FindDirection.UpstreamOnly;
-          iid = typeof(IAMCrossbar).GUID;
+          iid = typeof (IAMCrossbar).GUID;
           Log.Info(" Find crossbar:#{0}", 1 + icurrentCrossbar);
           DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
-          hr = m_captureGraphBuilder.FindInterface( cat , null, searchfilter,  iid, out o);
+          hr = m_captureGraphBuilder.FindInterface(cat, null, searchfilter, iid, out o);
           if (hr == 0 && o != null)
           {
             // we found something, check if it is a crossbar
@@ -327,10 +415,10 @@ namespace DShowNET.Helper
               crossbar.get_PinCounts(out iOutputPinCount, out iInputPinCount);
               Log.Info("    crossbar has {0} inputs and {1} outputs", iInputPinCount, iOutputPinCount);
 
-              int iPinIndexRelated;		// pin related (routed) with this output pin
+              int iPinIndexRelated; // pin related (routed) with this output pin
               int iPinIndexRelatedIn; // pin related (routed) with this input pin
-              PhysicalConnectorType PhysicalTypeOut;		// type of output pin
-              PhysicalConnectorType PhysicalTypeIn;			// type of input pin
+              PhysicalConnectorType PhysicalTypeOut; // type of output pin
+              PhysicalConnectorType PhysicalTypeIn; // type of input pin
               iCVBSVideo = 0;
               iCVBSAudio = 0;
 
@@ -349,7 +437,8 @@ namespace DShowNET.Helper
                   {
                     // yes thats possible, now get the information of the input pin
                     crossbar.get_CrossbarPinInfo(true, iIn, out iPinIndexRelatedIn, out PhysicalTypeIn);
-                    Log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(), PhysicalTypeOut.ToString());
+                    Log.Info("     check:in#{0}->out#{1} / {2} -> {3}", iIn, iOut, PhysicalTypeIn.ToString(),
+                             PhysicalTypeOut.ToString());
 
 
                     // boolean indicating if current input pin should be connected to the current output pin
@@ -357,38 +446,65 @@ namespace DShowNET.Helper
 
                     // Check video input options
                     // if the input pin is a Tuner Input and we want to use the tuner, then connect this
-                    if (useTuner && PhysicalTypeIn == PhysicalConnectorType.Video_Tuner) bRoute = true;
+                    if (useTuner && PhysicalTypeIn == PhysicalConnectorType.Video_Tuner)
+                    {
+                      bRoute = true;
+                    }
 
                     // if the input pin is a CVBS input and we want to use CVBS then
                     if (CvbsWanted && PhysicalTypeIn == PhysicalConnectorType.Video_Composite)
                     {
                       iCVBSVideo++;
-                      if (useCVBS1 && iCVBSVideo == 1) bRoute = true;
-                      if (useCVBS1 && iCVBSVideo == videoCVBS1) bRoute = true;
-                      if (useCVBS2 && iCVBSVideo == videoCVBS2) bRoute = true;
+                      if (useCVBS1 && iCVBSVideo == 1)
+                      {
+                        bRoute = true;
+                      }
+                      if (useCVBS1 && iCVBSVideo == videoCVBS1)
+                      {
+                        bRoute = true;
+                      }
+                      if (useCVBS2 && iCVBSVideo == videoCVBS2)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // if the input pin is a SVHS input and we want to use SVHS then connect
                     if (useSVHS && PhysicalTypeIn == PhysicalConnectorType.Video_SVideo)
                     {
                       iSVHSVideo++;
-                      if (iSVHSVideo == 1) bRoute = true;
-                      if (iSVHSVideo == videoSVHS) bRoute = true;
+                      if (iSVHSVideo == 1)
+                      {
+                        bRoute = true;
+                      }
+                      if (iSVHSVideo == videoSVHS)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // if the input pin is a RGB input and we want to use RGB then connect
                     if (useRgb && PhysicalTypeIn == PhysicalConnectorType.Video_RGB)
                     {
                       iRGBVideo++;
-                      if (iRGBVideo == 1) bRoute = true;
-                      if (iRGBVideo == videoRgb) bRoute = true;
+                      if (iRGBVideo == 1)
+                      {
+                        bRoute = true;
+                      }
+                      if (iRGBVideo == videoRgb)
+                      {
+                        bRoute = true;
+                      }
                     }
 
                     // Check audio input options
                     // if this is the audio tuner input and we want to use the tuner, then connect
                     if (useTuner)
                     {
-                      if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner) bRoute = true;
+                      if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner)
+                      {
+                        bRoute = true;
+                      }
                     }
                     else
                     {
@@ -399,14 +515,35 @@ namespace DShowNET.Helper
                       {
                         // if this is the first audio input then connect
                         iCVBSAudio++;
-                        if (useCVBS1 && iCVBSAudio == 1) bRoute = true;
-                        if (useCVBS2 && iCVBSAudio == 1) bRoute = true;
-                        if (useSVHS && iCVBSAudio == 1) bRoute = true;
+                        if (useCVBS1 && iCVBSAudio == 1)
+                        {
+                          bRoute = true;
+                        }
+                        if (useCVBS2 && iCVBSAudio == 1)
+                        {
+                          bRoute = true;
+                        }
+                        if (useSVHS && iCVBSAudio == 1)
+                        {
+                          bRoute = true;
+                        }
 
-                        if (useCVBS1 && iCVBSAudio == audioCVBS1) bRoute = true;
-                        if (useCVBS2 && iCVBSAudio == audioCVBS2) bRoute = true;
-                        if (useSVHS && iCVBSAudio == audioSVHS) bRoute = true;
-                        if (useRgb && iCVBSAudio == audioRgb) bRoute = true;
+                        if (useCVBS1 && iCVBSAudio == audioCVBS1)
+                        {
+                          bRoute = true;
+                        }
+                        if (useCVBS2 && iCVBSAudio == audioCVBS2)
+                        {
+                          bRoute = true;
+                        }
+                        if (useSVHS && iCVBSAudio == audioSVHS)
+                        {
+                          bRoute = true;
+                        }
+                        if (useRgb && iCVBSAudio == audioRgb)
+                        {
+                          bRoute = true;
+                        }
                       }
                     }
 
@@ -416,20 +553,26 @@ namespace DShowNET.Helper
                       //yes, then connect
                       Log.Info("     connect");
                       hr = crossbar.Route(iOut, iIn);
-                      if (hr != 0) Log.Info("    connect FAILED");
-                      else Log.Info("    connect success");
+                      if (hr != 0)
+                      {
+                        Log.Info("    connect FAILED");
+                      }
+                      else
+                      {
+                        Log.Info("    connect success");
+                      }
                     }
-                  }//if (hr==0)
-                }//for (int iIn=0; iIn < iInputPinCount; iIn++)
-              }//for (int iOut=0; iOut < iOutputPinCount; ++iOut)
-            }//if (crossbar!=null)
-          }//if (hr ==0 && o != null)
+                  } //if (hr==0)
+                } //for (int iIn=0; iIn < iInputPinCount; iIn++)
+              } //for (int iOut=0; iOut < iOutputPinCount; ++iOut)
+            } //if (crossbar!=null)
+          } //if (hr ==0 && o != null)
           else
           {
             Log.Info("  no more crossbars.:0x{0:X}", hr);
             break;
           }
-        }//while (true)
+        } //while (true)
         Log.Info("crossbar routing done");
       }
       catch (Exception ex)

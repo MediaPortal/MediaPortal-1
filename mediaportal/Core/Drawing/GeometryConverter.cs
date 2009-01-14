@@ -24,38 +24,45 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.Drawing
 {
-	public class GeometryConverter : TypeConverter
-	{
-		#region Methods
+  public class GeometryConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			if(t == typeof(Geometry))
-				return true;
+      if (t == typeof (Geometry))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return ConvertFromString(context, culture, (string)value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return ConvertFromString(context, culture, (string) value);
+      }
 
-			if(value is Geometry)
-				return value;
+      if (value is Geometry)
+      {
+        return value;
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
 //		private object ConvertFromString(ITypeDescriptorContext context, CultureInfo culture, string text)
 //		{
@@ -133,14 +140,15 @@ namespace MediaPortal.Drawing
 			return (Point[])array.ToArray(typeof(Point));
 		}
 */
-		#endregion Methods
 
-		#region Fields
+    #endregion Methods
 
-		// These regexs are courtesy of SharpVectorGraphics
-		static Regex _pathRegex = new Regex(@"(?=[A-Za-z])");
-		static Regex _argsRegex = new Regex(@"(\s*,\s*)|(\s+)|((?<=[0-9])(?=-))", RegexOptions.ExplicitCapture);
+    #region Fields
 
-		#endregion Fields
-	}
+    // These regexs are courtesy of SharpVectorGraphics
+    private static Regex _pathRegex = new Regex(@"(?=[A-Za-z])");
+    private static Regex _argsRegex = new Regex(@"(\s*,\s*)|(\s+)|((?<=[0-9])(?=-))", RegexOptions.ExplicitCapture);
+
+    #endregion Fields
+  }
 }

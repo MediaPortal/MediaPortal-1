@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void SizeChangedEventHandler(object sender, SizeChangedEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void SizeChangedEventHandler(object sender, SizeChangedEventArgs e);
+
+  #endregion Delegates
 }

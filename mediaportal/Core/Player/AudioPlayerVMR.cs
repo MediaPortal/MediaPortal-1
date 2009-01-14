@@ -25,13 +25,11 @@
 
 using System;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-
-using DShowNET.Helper;
 using DirectShowLib;
-
-using MediaPortal.GUI.Library;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
@@ -44,13 +42,15 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
-    string m_strCurrentFile = "";
-    PlayState m_state = PlayState.Init;
-    int m_iVolume = 100;
-    bool m_bNotifyPlaying = true;
+
+    private string m_strCurrentFile = "";
+    private PlayState m_state = PlayState.Init;
+    private int m_iVolume = 100;
+    private bool m_bNotifyPlaying = true;
     private IGraphBuilder graphBuilder;
 
     private DsROTEntry _rotEntry = null;
+
     /// <summary> control interface. </summary>
     private IMediaControl mediaCtrl;
 
@@ -59,15 +59,17 @@ namespace MediaPortal.Player
 
     /// <summary> seek interface for positioning in stream. </summary>
     private IMediaSeeking mediaSeek;
+
     /// <summary> seek interface to set position in stream. </summary>
     private IMediaPosition mediaPos;
-    /// <summary> video preview window interface. </summary>
 
+    /// <summary> video preview window interface. </summary>
     /// <summary> audio interface used to control volume. </summary>
     private IBasicAudio basicAudio;
-    private const int WM_GRAPHNOTIFY = 0x00008001;	// message from graph
 
-    private const int WS_CHILD = 0x40000000;	// attributes for video window
+    private const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
+
+    private const int WS_CHILD = 0x40000000; // attributes for video window
     private const int WS_CLIPCHILDREN = 0x02000000;
     private const int WS_CLIPSIBLINGS = 0x04000000;
 
@@ -84,7 +86,7 @@ namespace MediaPortal.Player
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       Log.Info("AudioPlayerVMR7.play {0}", strFile);
-      lock (typeof(AudioPlayerVMR7))
+      lock (typeof (AudioPlayerVMR7))
       {
         CloseInterfaces();
         if (!GetInterfaces())
@@ -102,8 +104,7 @@ namespace MediaPortal.Player
 
         GetFrameStepInterface();
 
-        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
-
+        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
 
 
         hr = mediaCtrl.Run();
@@ -123,7 +124,7 @@ namespace MediaPortal.Player
     }
 
 
-    void MovieEnded(bool bManualStop)
+    private void MovieEnded(bool bManualStop)
     {
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
@@ -141,7 +142,6 @@ namespace MediaPortal.Player
         }
       }
     }
-
 
 
     public override double Duration
@@ -189,26 +189,17 @@ namespace MediaPortal.Player
 
     public override bool Paused
     {
-      get
-      {
-        return (m_state == PlayState.Paused);
-      }
+      get { return (m_state == PlayState.Paused); }
     }
 
     public override bool Playing
     {
-      get
-      {
-        return (m_state == PlayState.Playing || m_state == PlayState.Paused);
-      }
+      get { return (m_state == PlayState.Playing || m_state == PlayState.Paused); }
     }
 
     public override bool Stopped
     {
-      get
-      {
-        return (m_state == PlayState.Init);
-      }
+      get { return (m_state == PlayState.Init); }
     }
 
     public override string CurrentFile
@@ -228,16 +219,26 @@ namespace MediaPortal.Player
 
     public override int Speed
     {
-      get 
+      get
       {
-        if (m_state == PlayState.Init) return 1;
-        if (mediaCtrl == null) return 1;
+        if (m_state == PlayState.Init)
+        {
+          return 1;
+        }
+        if (mediaCtrl == null)
+        {
+          return 1;
+        }
         double rate = 0;
         mediaPos.get_Rate(out rate);
-        return (int)rate;
+        return (int) rate;
       }
-      set {
-        if (mediaCtrl == null) return;
+      set
+      {
+        if (mediaCtrl == null)
+        {
+          return;
+        }
         if (m_state != PlayState.Init)
         {
           // For Rewind, we receive a negative value, which needs to be converted:
@@ -254,7 +255,7 @@ namespace MediaPortal.Player
           {
             try
             {
-              mediaPos.put_Rate((double)value);
+              mediaPos.put_Rate((double) value);
             }
             catch (Exception)
             {
@@ -276,10 +277,9 @@ namespace MediaPortal.Player
           {
             if (basicAudio != null)
             {
-
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent = (float)m_iVolume / 100.0f;
-              int iVolume = (int)((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN) * fPercent);
+              float fPercent = (float) m_iVolume/100.0f;
+              int iVolume = (int) ((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN)*fPercent);
               basicAudio.put_Volume((iVolume - DirectShowVolume.VOLUME_MIN));
             }
           }
@@ -293,12 +293,14 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null && mediaPos != null)
         {
-
           double dCurTime;
           mediaPos.get_CurrentPosition(out dCurTime);
 
           dTime = dCurTime + dTime;
-          if (dTime < 0.0d) dTime = 0.0d;
+          if (dTime < 0.0d)
+          {
+            dTime = 0.0d;
+          }
           if (dTime < Duration)
           {
             mediaPos.put_CurrentPosition(dTime);
@@ -313,7 +315,10 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null && mediaPos != null)
         {
-          if (dTime < 0.0d) dTime = 0.0d;
+          if (dTime < 0.0d)
+          {
+            dTime = 0.0d;
+          }
           if (dTime < Duration)
           {
             mediaPos.put_CurrentPosition(dTime);
@@ -332,11 +337,14 @@ namespace MediaPortal.Player
           mediaPos.get_CurrentPosition(out dCurrentPos);
           double dDuration = Duration;
 
-          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
-          double fOnePercent = Duration / 100.0d;
-          fCurPercent = fCurPercent + (double)iPercentage;
+          double fCurPercent = (dCurrentPos/Duration)*100.0d;
+          double fOnePercent = Duration/100.0d;
+          fCurPercent = fCurPercent + (double) iPercentage;
           fCurPercent *= fOnePercent;
-          if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+          if (fCurPercent < 0.0d)
+          {
+            fCurPercent = 0.0d;
+          }
           if (fCurPercent < Duration)
           {
             mediaPos.put_CurrentPosition(fCurPercent);
@@ -352,10 +360,16 @@ namespace MediaPortal.Player
       {
         if (mediaCtrl != null && mediaPos != null)
         {
-          if (iPercentage < 0) iPercentage = 0;
-          if (iPercentage >= 100) iPercentage = 100;
-          double fPercent = Duration / 100.0f;
-          fPercent *= (double)iPercentage;
+          if (iPercentage < 0)
+          {
+            iPercentage = 0;
+          }
+          if (iPercentage >= 100)
+          {
+            iPercentage = 100;
+          }
+          double fPercent = Duration/100.0f;
+          fPercent *= (double) iPercentage;
           mediaPos.put_CurrentPosition(fPercent);
         }
       }
@@ -368,11 +382,11 @@ namespace MediaPortal.Player
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    bool GetInterfaces()
+    private bool GetInterfaces()
     {
       int iStage = 1;
       string audioDevice;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         audioDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default DirectSound Device");
       }
@@ -380,7 +394,7 @@ namespace MediaPortal.Player
       //object comobj = null;
       try
       {
-        graphBuilder = (IGraphBuilder)new FilterGraph();
+        graphBuilder = (IGraphBuilder) new FilterGraph();
         iStage = 5;
         DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audioDevice, false);
         int hr = graphBuilder.RenderFile(m_strCurrentFile, null);
@@ -390,14 +404,14 @@ namespace MediaPortal.Player
           return false;
         }
         iStage = 6;
-        mediaCtrl = (IMediaControl)graphBuilder;
+        mediaCtrl = (IMediaControl) graphBuilder;
 
         iStage = 7;
-        mediaEvt = (IMediaEventEx)graphBuilder;
+        mediaEvt = (IMediaEventEx) graphBuilder;
         iStage = 8;
-        mediaSeek = (IMediaSeeking)graphBuilder;
+        mediaSeek = (IMediaSeeking) graphBuilder;
         iStage = 9;
-        mediaPos = (IMediaPosition)graphBuilder;
+        mediaPos = (IMediaPosition) graphBuilder;
         iStage = 10;
         basicAudio = graphBuilder as IBasicAudio;
         iStage = 11;
@@ -406,23 +420,22 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Log.Info("Can not start {0} stage:{1} err:{2} stack:{3}",
-                          m_strCurrentFile, iStage,
-                          ex.Message,
-                          ex.StackTrace);
+                 m_strCurrentFile, iStage,
+                 ex.Message,
+                 ex.StackTrace);
         return false;
       }
     }
 
 
-
     /// <summary> try to get the step interfaces. </summary>
-    bool GetFrameStepInterface()
+    private bool GetFrameStepInterface()
     {
       return true;
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
-    void CloseInterfaces()
+    private void CloseInterfaces()
     {
       int hr;
       try
@@ -453,19 +466,26 @@ namespace MediaPortal.Player
         basicAudio = null;
 
         if (graphBuilder != null)
-          DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
+        {
+          DirectShowUtil.ReleaseComObject(graphBuilder);
+        }
+        graphBuilder = null;
 
         m_state = PlayState.Init;
       }
       catch (Exception)
-      { }
+      {
+      }
     }
+
     public override void WndProc(ref Message m)
     {
       if (m.Msg == WM_GRAPHNOTIFY)
       {
         if (mediaEvt != null)
+        {
           OnGraphNotify();
+        }
         return;
       }
       base.WndProc(ref m);
@@ -476,7 +496,7 @@ namespace MediaPortal.Player
       get { return m_state == PlayState.Ended; }
     }
 
-    void OnGraphNotify()
+    private void OnGraphNotify()
     {
       int p1, p2, hr = 0;
       EventCode code;
@@ -484,19 +504,23 @@ namespace MediaPortal.Player
       {
         hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
         if (hr < 0)
+        {
           break;
+        }
         hr = mediaEvt.FreeEventParams(code, p1, p2);
         if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
           MovieEnded(false);
         }
-      }
-      while (hr == 0);
+      } while (hr == 0);
     }
 
     public override void Process()
     {
-      if (!Playing) return;
+      if (!Playing)
+      {
+        return;
+      }
       if (CurrentPosition >= 10.0)
       {
         if (m_bNotifyPlaying)
@@ -515,6 +539,7 @@ namespace MediaPortal.Player
     {
       CloseInterfaces();
     }
+
     #endregion
   }
 }

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -32,41 +30,38 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIToggleButtonControl : GUIControl
   {
-    [XMLSkinElement("textureFocus")]
-    protected string _focusedTextureName = "";
-    [XMLSkinElement("textureNoFocus")]
-    protected string _nonFocusedTextureName = "";
-    [XMLSkinElement("AltTextureFocus")]
-    protected string _alternativeFocusTextureName = "";
-    [XMLSkinElement("AltTextureNoFocus")]
-    protected string _alternativeNonFocusTextureName = "";
+    [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
+    [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("AltTextureFocus")] protected string _alternativeFocusTextureName = "";
+    [XMLSkinElement("AltTextureNoFocus")] protected string _alternativeNonFocusTextureName = "";
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
     protected GUIAnimation _imageAlternativeFocused = null;
     protected GUIAnimation _imageAlternativeNonFocused = null;
     protected int _frameCounter = 0;
-    [XMLSkinElement("font")]
-    protected string _fontName;
-    [XMLSkinElement("label")]
-    protected string _label = "";
+    [XMLSkinElement("font")] protected string _fontName;
+    [XMLSkinElement("label")] protected string _label = "";
     protected GUIFont _font = null;
 
-    [XMLSkinElement("textcolor")]                     protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
-    [XMLSkinElement("disabledcolor")]                 protected long _disabledColor = 0xFF606060;
-    [XMLSkinElement("hyperlink")]                     protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
 
     protected string _scriptAction = "";
-    [XMLSkinElement("textXOff")]                      protected int _textOffsetX = 0;
-    [XMLSkinElement("textYOff")]                      protected int _textOffsetY = 0;
-    [XMLSkinElement("textalign")]                     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
 
     public GUIToggleButtonControl(int parentId)
       : base(parentId)
     {
     }
-    public GUIToggleButtonControl(int parentId, int controlid, int posX, int posY, int width, int height, string textureFocusName, string textureNoFocusName, string textureAltFocusName, string textureAltNoFocusName)
+
+    public GUIToggleButtonControl(int parentId, int controlid, int posX, int posY, int width, int height,
+                                  string textureFocusName, string textureNoFocusName, string textureAltFocusName,
+                                  string textureAltNoFocusName)
       : base(parentId, controlid, posX, posY, width, height)
     {
       _focusedTextureName = textureFocusName;
@@ -77,23 +72,30 @@ namespace MediaPortal.GUI.Library
       FinalizeConstruction();
       DimColor = base.DimColor;
     }
+
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
 
-      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
+      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                           _focusedTextureName);
       _imageFocused.ParentControl = this;
 
-      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
+      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                              _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
 
-      _imageAlternativeFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName);
+      _imageAlternativeFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width,
+                                                      _height, _alternativeFocusTextureName);
       _imageAlternativeFocused.ParentControl = this;
 
-      _imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName);
+      _imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width,
+                                                         _height, _alternativeNonFocusTextureName);
       _imageAlternativeNonFocused.ParentControl = this;
       if (_fontName != "" && _fontName != "-")
+      {
         _font = GUIFontManager.GetFont(_fontName);
+      }
       GUILocalizeStrings.LocalizeLabel(ref _label);
     }
 
@@ -120,26 +122,38 @@ namespace MediaPortal.GUI.Library
       {
         int dwAlphaCounter = _frameCounter + 2;
         int dwAlphaChannel;
-        if ((dwAlphaCounter % 128) >= 64)
-          dwAlphaChannel = dwAlphaCounter % 64;
+        if ((dwAlphaCounter%128) >= 64)
+        {
+          dwAlphaChannel = dwAlphaCounter%64;
+        }
         else
-          dwAlphaChannel = 63 - (dwAlphaCounter % 64);
+        {
+          dwAlphaChannel = 63 - (dwAlphaCounter%64);
+        }
 
         dwAlphaChannel += 192;
         SetAlpha(dwAlphaChannel);
         if (_isSelected)
+        {
           _imageFocused.Render(timePassed);
+        }
         else
+        {
           _imageAlternativeFocused.Render(timePassed);
+        }
         _frameCounter++;
       }
       else
       {
         SetAlpha(0xff);
         if (_isSelected)
+        {
           _imageNonFocused.Render(timePassed);
+        }
         else
+        {
           _imageAlternativeNonFocused.Render(timePassed);
+        }
       }
 
       // render the text on the button
@@ -155,7 +169,9 @@ namespace MediaPortal.GUI.Library
 
         long color = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
         if (Dimmed)
+        {
           color &= (DimColor);
+        }
 
         // render the text on the button
         int x = 0;
@@ -170,9 +186,9 @@ namespace MediaPortal.GUI.Library
             x = _positionX + _width - _textOffsetX;
             break;
         }
-        uint c = (uint)color;
+        uint c = (uint) color;
         c = GUIGraphicsContext.MergeAlpha(c);
-        _font.DrawText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1);
+        _font.DrawText(x, (float) _textOffsetY + _positionY, c, _label, _textAlignment, -1);
       }
       base.Render(timePassed);
     }
@@ -194,7 +210,10 @@ namespace MediaPortal.GUI.Library
           // button selected.
           // send a message
           int iParam = 1;
-          if (!_isSelected) iParam = 0;
+          if (!_isSelected)
+          {
+            iParam = 0;
+          }
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, iParam, 0, null);
           GUIGraphicsContext.SendMessage(message);
         }
@@ -212,7 +231,10 @@ namespace MediaPortal.GUI.Library
           return true;
         }
       }
-      if (base.OnMessage(message)) return true;
+      if (base.OnMessage(message))
+      {
+        return true;
+      }
       return false;
     }
 
@@ -224,6 +246,7 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeFocused.PreAllocResources();
       _imageAlternativeNonFocused.PreAllocResources();
     }
+
     public override void AllocResources()
     {
       base.AllocResources();
@@ -236,6 +259,7 @@ namespace MediaPortal.GUI.Library
       _width = _imageFocused.Width;
       _height = _imageFocused.Height;
     }
+
     public override void FreeResources()
     {
       base.FreeResources();
@@ -244,6 +268,7 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeFocused.FreeResources();
       _imageAlternativeNonFocused.FreeResources();
     }
+
     public override void SetPosition(int posX, int posY)
     {
       base.SetPosition(posX, posY);
@@ -252,6 +277,7 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeFocused.SetPosition(posX, posY);
       _imageAlternativeNonFocused.SetPosition(posX, posY);
     }
+
     public override void SetAlpha(int dwAlpha)
     {
       base.SetAlpha(dwAlpha);
@@ -266,6 +292,7 @@ namespace MediaPortal.GUI.Library
       get { return _disabledColor; }
       set { _disabledColor = value; }
     }
+
     public string TexutureNoFocusName
     {
       get { return _imageNonFocused.FileName; }
@@ -275,6 +302,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return _imageFocused.FileName; }
     }
+
     public string AltTexutureNoFocusName
     {
       get { return _imageAlternativeNonFocused.FileName; }
@@ -296,7 +324,10 @@ namespace MediaPortal.GUI.Library
       get { return _fontName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _fontName = value;
         _font = GUIFontManager.GetFont(_fontName);
       }
@@ -304,8 +335,14 @@ namespace MediaPortal.GUI.Library
 
     public void SetLabel(string strFontName, string strLabel, long dwColor)
     {
-      if (strFontName == null) return;
-      if (strLabel == null) return;
+      if (strFontName == null)
+      {
+        return;
+      }
+      if (strLabel == null)
+      {
+        return;
+      }
       _label = strLabel;
       _textColor = dwColor;
       if (strFontName != "" && strFontName != "-")
@@ -326,6 +363,7 @@ namespace MediaPortal.GUI.Library
       get { return _hyperLinkWindowId; }
       set { _hyperLinkWindowId = value; }
     }
+
     public string ScriptAction
     {
       get { return _scriptAction; }
@@ -352,8 +390,8 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SetPosition(_positionX, _positionY);
       _imageAlternativeFocused.SetPosition(_positionX, _positionY);
       _imageAlternativeNonFocused.SetPosition(_positionX, _positionY);
-
     }
+
     /// <summary>
     /// Get/set the X-offset of the label.
     /// </summary>
@@ -362,6 +400,7 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetX; }
       set { _textOffsetX = value; }
     }
+
     /// <summary>
     /// Get/set the Y-offset of the label.
     /// </summary>
@@ -371,7 +410,8 @@ namespace MediaPortal.GUI.Library
       set { _textOffsetY = value; }
     }
 
-    public GUIControl.Alignment TextAlignment {
+    public Alignment TextAlignment
+    {
       get { return _textAlignment; }
       set { _textAlignment = value; }
     }
@@ -382,13 +422,23 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_imageFocused != null) _imageFocused.DimColor = value;
-        if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
-        if (_imageAlternativeFocused != null) _imageAlternativeFocused.DimColor = value;
-        if (_imageAlternativeNonFocused != null) _imageAlternativeNonFocused.DimColor = value;
+        if (_imageFocused != null)
+        {
+          _imageFocused.DimColor = value;
+        }
+        if (_imageNonFocused != null)
+        {
+          _imageNonFocused.DimColor = value;
+        }
+        if (_imageAlternativeFocused != null)
+        {
+          _imageAlternativeFocused.DimColor = value;
+        }
+        if (_imageAlternativeNonFocused != null)
+        {
+          _imageAlternativeNonFocused.DimColor = value;
+        }
       }
     }
-
-
   }
 }

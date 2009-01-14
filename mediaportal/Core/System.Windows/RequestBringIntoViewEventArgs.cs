@@ -23,54 +23,52 @@
 
 #endregion
 
-using System;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows
 {
-	public class RequestBringIntoViewEventArgs : RoutedEventArgs
-	{
-		#region Constructors
+  public class RequestBringIntoViewEventArgs : RoutedEventArgs
+  {
+    #region Constructors
 
-		public RequestBringIntoViewEventArgs(DependencyObject targetObject)
-		{
-			_targetObject = targetObject;
-			_targetRect = Rect.Empty;
-		}
+    public RequestBringIntoViewEventArgs(DependencyObject targetObject)
+    {
+      _targetObject = targetObject;
+      _targetRect = Rect.Empty;
+    }
 
-		public RequestBringIntoViewEventArgs(DependencyObject targetObject, Rect rect)
-		{
-			_targetObject = targetObject;
-			_targetRect = rect;
-		}
+    public RequestBringIntoViewEventArgs(DependencyObject targetObject, Rect rect)
+    {
+      _targetObject = targetObject;
+      _targetRect = rect;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
-	
-		protected override void InvokeEventHandler(Delegate handler, object target)
-		{
-			base.InvokeEventHandler(handler, target);
-		}
+    #region Methods
 
-		public DependencyObject TargetObject
-		{
-			get { return _targetObject; }
-		}
+    protected override void InvokeEventHandler(Delegate handler, object target)
+    {
+      base.InvokeEventHandler(handler, target);
+    }
 
-		public Rect TargetRect
-		{
-			get { return _targetRect; }
-		}
+    public DependencyObject TargetObject
+    {
+      get { return _targetObject; }
+    }
 
-		#endregion Methods
+    public Rect TargetRect
+    {
+      get { return _targetRect; }
+    }
 
-		#region Fields
+    #endregion Methods
 
-		DependencyObject			_targetObject;
-		Rect						_targetRect;
+    #region Fields
 
-		#endregion Fields
-	}
+    private DependencyObject _targetObject;
+    private Rect _targetRect;
+
+    #endregion Fields
+  }
 }

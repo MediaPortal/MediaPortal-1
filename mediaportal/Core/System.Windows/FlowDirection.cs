@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public enum FlowDirection
-	{
-		LeftToRight,
-		RightToLeft,
-	}
+  public enum FlowDirection
+  {
+    LeftToRight,
+    RightToLeft,
+  }
 }

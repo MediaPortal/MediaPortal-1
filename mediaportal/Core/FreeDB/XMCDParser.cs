@@ -24,10 +24,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections;
-
 
 namespace MediaPortal.Freedb
 {
@@ -36,10 +35,10 @@ namespace MediaPortal.Freedb
   /// </summary>
   public class XMCDParser
   {
-    const string APPNAME = "MediaPortal";
-    const string APPVERSION = "2.1";
+    private const string APPNAME = "MediaPortal";
+    private const string APPVERSION = "2.1";
     private string m_content = null;
-    private char[] m_seps = { '\r', '\n' };
+    private char[] m_seps = {'\r', '\n'};
 
     // store all the data
     private int[] m_offsets = null;
@@ -76,9 +75,11 @@ namespace MediaPortal.Freedb
 
     public CDInfoDetail parse(string content)
     {
-      m_content = (string)content.Clone();
+      m_content = (string) content.Clone();
       if (m_content.IndexOf("# xmcd") != 0)
+      {
         return null;
+      }
 
       m_offsets = parseOffsets();
       m_length = parseLength();
@@ -113,8 +114,8 @@ namespace MediaPortal.Freedb
       ArrayList offsets = new ArrayList();
       Hashtable comments = new Hashtable();
       Hashtable fields = new Hashtable();
-      char[] commentSep = { ':' };
-      char[] fieldSep = { '=' };
+      char[] commentSep = {':'};
+      char[] fieldSep = {'='};
       //string[] tokens = m_content.Split(m_seps);
 
       for (int i = 0; i < content.Length; i++)
@@ -130,9 +131,13 @@ namespace MediaPortal.Freedb
             curcomment = new string[2];
             curcomment[0] = curLine.Substring(1, index - 1).Trim();
             if (index < curLine.Length)
+            {
               curcomment[1] = curLine.Substring(index + 1).Trim();
+            }
             else
+            {
               curcomment[1] = "";
+            }
           }
           else
           {
@@ -159,11 +164,18 @@ namespace MediaPortal.Freedb
               int lastOne = 0;
               int thisOne = Convert.ToInt32(curcomment[0]);
               if (offsets.Count > 0)
+              {
                 lastOne = Convert.ToInt32(offsets[offsets.Count - 1]);
+              }
               if (thisOne > lastOne) // just to avoid adding unexpected commented numbers as offsets
+              {
                 offsets.Add(Convert.ToInt32(curcomment[0]));
+              }
             }
-            catch { ;}
+            catch
+            {
+              ;
+            }
           }
         }
         else
@@ -176,9 +188,13 @@ namespace MediaPortal.Freedb
             curfield = new string[2];
             curfield[0] = curLine.Substring(0, index).Trim();
             if (index < curLine.Length)
+            {
               curfield[1] = curLine.Substring(index + 1).Trim();
+            }
             else
+            {
               curfield[1] = "";
+            }
           }
           else
           {
@@ -208,17 +224,17 @@ namespace MediaPortal.Freedb
     private void InitVariables(ArrayList offsets, Hashtable comments, Hashtable fields)
     {
       // all the song offsets
-      m_offsets = (int[])offsets.ToArray(typeof(int));
+      m_offsets = (int[]) offsets.ToArray(typeof (int));
       m_cdTrackDetail = new CDTrackDetail[m_offsets.Length];
 
       foreach (DictionaryEntry dict in comments)
       {
-        string key = (string)dict.Key;
-        string val = (string)dict.Value;
+        string key = (string) dict.Key;
+        string val = (string) dict.Value;
         switch (key)
         {
           case "Disc length":
-            m_length = Convert.ToInt32(val.Split(new char[] { ' ' })[0].Trim());
+            m_length = Convert.ToInt32(val.Split(new char[] {' '})[0].Trim());
             m_trackDurations = calculateDurations(m_offsets, m_length);
             break;
           case "Revision":
@@ -234,10 +250,10 @@ namespace MediaPortal.Freedb
 
       foreach (DictionaryEntry dict in fields)
       {
-        string key = (string)dict.Key;
-        string val = (string)dict.Value;
+        string key = (string) dict.Key;
+        string val = (string) dict.Value;
 
-        if (key.StartsWith("TTITLE") || key.StartsWith("EXTT"))  // a track
+        if (key.StartsWith("TTITLE") || key.StartsWith("EXTT")) // a track
         {
           continue;
         }
@@ -265,20 +281,28 @@ namespace MediaPortal.Freedb
                 for (l = 0; l < yearChar.Length; l++)
                 {
                   if (Char.IsDigit(yearChar[l]))
+                  {
                     break;
+                  }
                 }
 
                 for (k = l; k < yearChar.Length; k++)
                 {
                   if (!Char.IsDigit(yearChar[k]))
+                  {
                     break;
+                  }
                 }
                 if (l < k)
                 {
                   if (k == year.Length)
+                  {
                     m_year = Convert.ToInt32(year.Substring(l));
+                  }
                   else
+                  {
                     m_year = Convert.ToInt32(year.Substring(l, k - l));
+                  }
                 }
               }
               break;
@@ -289,22 +313,30 @@ namespace MediaPortal.Freedb
               m_extd = val;
               break;
             case "PLAYORDER":
-              { // restricting scope...
+              {
+                // restricting scope...
                 int[] ai;
-                char[] seps = { ',', '\n', '\r', '\t' };
+                char[] seps = {',', '\n', '\r', '\t'};
 
                 string[] tokens = val.Split(seps);
                 if (tokens.Length == 1 && tokens[0].Trim().Length == 0)
+                {
                   ai = new int[0];
+                }
                 else
+                {
                   ai = new int[tokens.Length];
+                }
                 try
                 {
                   for (int i = 0; i < ai.Length; i++)
+                  {
                     ai[i] = Convert.ToInt32(tokens[i]);
+                  }
                 }
                 catch
-                { }
+                {
+                }
                 m_playorder = ai;
               }
               break;
@@ -318,9 +350,13 @@ namespace MediaPortal.Freedb
       //Some FreeDB annotators use a " - " instead of the conventional " / "
       //Try to find such a delimiter if the standard one is not found beforehand
       if (slash < 0)
+      {
         slash = m_title.IndexOf(" - ");
+      }
       if (slash < 0)
+      {
         m_artist = null;
+      }
       else
       {
         m_artist = m_title.Substring(0, slash);
@@ -338,14 +374,16 @@ namespace MediaPortal.Freedb
       */
       //isALegitimateCompilation if the CD Artist is either not set or equals "Various", "Various Artists", etc...
       Regex artistTagIsSetToVarious = new Regex(@"^(([Vv]arious)|([Aa]ssorted))( [Aa]rtist[s]?)?$");
-      bool isALegitimateCompilation = (m_artist == string.Empty || artistTagIsSetToVarious.Match(m_artist).Success) ? true : false;
+      bool isALegitimateCompilation = (m_artist == string.Empty || artistTagIsSetToVarious.Match(m_artist).Success)
+                                        ? true
+                                        : false;
 
       // Log.Debug("MediaPortal.Freedb.XMCDParser.InitVariables: IS THE CURRENT CD A COMPILATION? isALegitimateCompilation: {0}", isALegitimateCompilation.ToString());
 
       for (int i = 0; i < offsets.Count; i++)
       {
-        string title = (string)fields["TTITLE" + i];
-        string extt = (string)fields["EXTT" + i];
+        string title = (string) fields["TTITLE" + i];
+        string extt = (string) fields["EXTT" + i];
         m_cdTrackDetail[i] = new CDTrackDetail();
         // Log.Debug("MediaPortal.Freedb.XMCDParser.InitVariables: BEFORE TAG PRE-PROCESSING Artist: \"{0}\" & Title: \"{1}\"", m_artist, title);
         string trackArtist = extendedParseTrackArtist(title, isALegitimateCompilation);
@@ -358,7 +396,6 @@ namespace MediaPortal.Freedb
         m_cdTrackDetail[i].Duration = m_trackDurations[i];
         m_cdTrackDetail[i].EXTT = extt;
         m_cdTrackDetail[i].TrackNumber = i + 1;
-
       }
     }
 
@@ -368,8 +405,10 @@ namespace MediaPortal.Freedb
       int[] durations = new int[offsets.Length];
 
       for (i = 1; i < offsets.Length; i++)
-        durations[i - 1] = (offsets[i] - offsets[i - 1]) / 75;
-      durations[i - 1] = totalDuration - (offsets[i - 1] / 75);
+      {
+        durations[i - 1] = (offsets[i] - offsets[i - 1])/75;
+      }
+      durations[i - 1] = totalDuration - (offsets[i - 1]/75);
 
       return durations;
     }
@@ -388,15 +427,20 @@ namespace MediaPortal.Freedb
           string offset = tokens[i].Substring(1).Trim(); // skip the # at the begining of the 
           offset = offset.Trim();
           if (offset.Length > 0)
+          {
             list.Add(Convert.ToInt32(offset));
+          }
           else
+          {
             break;
+          }
         }
       }
       catch
-      { }
+      {
+      }
 
-      return (int[])list.ToArray(typeof(int));
+      return (int[]) list.ToArray(typeof (int));
     }
 
     private int parseLength()
@@ -425,7 +469,6 @@ namespace MediaPortal.Freedb
       {
       }
       return 0;
-
     }
 
     private string readSubmitter()
@@ -451,9 +494,13 @@ namespace MediaPortal.Freedb
       String title = parseTitle();
       int i = title.IndexOf(" / ");
       if (i < 0)
+      {
         return title;
+      }
       else
+      {
         return title.Substring(i + 3);
+      }
     }
 
     private string parseArtist()
@@ -461,9 +508,13 @@ namespace MediaPortal.Freedb
       String title = parseTitle();
       int i = title.IndexOf(" / ");
       if (i < 0)
+      {
         return null;
+      }
       else
+      {
         return title.Substring(0, i);
+      }
     }
 
     private string parseExtension()
@@ -481,7 +532,8 @@ namespace MediaPortal.Freedb
         retval = Convert.ToInt32(parseTag(@"\s*DYEAR\s*=\s*(.*)\s*\n"));
       }
       catch
-      { }
+      {
+      }
 
       return retval;
     }
@@ -505,13 +557,15 @@ namespace MediaPortal.Freedb
       {
         return title.Substring(j + 3);
       }
-      //If we're sure that the CD is a real compilation then we can use this workaround:
-      //A lot of annotators don't use the standard " / " to split the Artist name from the Title name, instead they rely on the unconventional " - " delimiter
+        //If we're sure that the CD is a real compilation then we can use this workaround:
+        //A lot of annotators don't use the standard " / " to split the Artist name from the Title name, instead they rely on the unconventional " - " delimiter
       else if (isALegitimateCompilation)
       {
         j = title.IndexOf(" - ");
         if (j > 0)
+        {
           return title.Substring(j + 3);
+        }
       }
       return title;
     }
@@ -523,13 +577,15 @@ namespace MediaPortal.Freedb
       {
         return title.Substring(0, j);
       }
-      //If we're sure that the CD is a real compilation then we can use this workaround:
-      //A lot of annotators don't use the standard " / " to split the Artist name from the Title name, instead they rely on the unconventional " - " delimiter
+        //If we're sure that the CD is a real compilation then we can use this workaround:
+        //A lot of annotators don't use the standard " / " to split the Artist name from the Title name, instead they rely on the unconventional " - " delimiter
       else if (isALegitimateCompilation)
       {
         j = title.IndexOf(" - ");
         if (j > 0)
+        {
           return title.Substring(0, j);
+        }
       }
       return m_artist;
     }
@@ -539,9 +595,13 @@ namespace MediaPortal.Freedb
       String title = parseTitle(i);
       int j = title.IndexOf(" / ");
       if (j > 0)
+      {
         return title.Substring(j + 3);
+      }
       else
+      {
         return title;
+      }
     }
 
     private string parseTrackArtist(int i)
@@ -549,18 +609,26 @@ namespace MediaPortal.Freedb
       String title = parseTitle(i);
       int j = title.IndexOf(" / ");
       if (j > 0)
+      {
         return title.Substring(0, j);
+      }
       else
+      {
         return m_artist;
+      }
     }
 
     private string parseTrackArtist(int i, string title)
     {
       int j = title.IndexOf(" / ");
       if (j > 0)
+      {
         return title.Substring(0, j);
+      }
       else
+      {
         return m_artist;
+      }
     }
 
     private string parseTrackExtension(int i)
@@ -572,17 +640,20 @@ namespace MediaPortal.Freedb
     private int[] parsePlayOrder()
     {
       int[] ai;
-      char[] seps = { ',', '\n', '\r', '\t' };
+      char[] seps = {',', '\n', '\r', '\t'};
 
       string[] tokens = parseTag(@"\s*PLAYORDER\s*=\s*(.*)\s*\n").Split(seps);
       ai = new int[tokens.Length];
       try
       {
         for (int i = 0; i < ai.Length; i++)
+        {
           ai[i] = Convert.ToInt32(tokens[i]);
+        }
       }
       catch
-      { }
+      {
+      }
       return ai;
     }
 
@@ -598,15 +669,19 @@ namespace MediaPortal.Freedb
       String search = "\n" + key + "=";
       int i = m_content.IndexOf(search);
       if (i < 0)
+      {
         return null;
+      }
       string s2 = "";
       for (; i > -1; i = m_content.IndexOf(search, i + key.Length + 2))
+      {
         s2 += " " + m_content.Substring(i + key.Length + 2, m_content.IndexOf("\n", i + key.Length + 2)).Trim();
+      }
 
       return translate(s2.Trim());
     }
 
-    string translate(string str)
+    private string translate(string str)
     {
       str = str.Replace("\\n", "\n");
       str = str.Replace("\\t", "\t");
@@ -631,7 +706,7 @@ namespace MediaPortal.Freedb
         list.Add(m.Groups[1].ToString().Trim());
       }
 
-      return (string[])list.ToArray(typeof(string));
+      return (string[]) list.ToArray(typeof (string));
     }
 
     private string parseTag(string pattern)
@@ -652,12 +727,18 @@ namespace MediaPortal.Freedb
     {
       int j = m_content.IndexOf(beg);
       if (j < 1)
+      {
         return null;
+      }
       int k = m_content.IndexOf(beg, j + beg.Length);
       if (k < 1)
+      {
         return null;
+      }
       else
+      {
         return m_content.Substring(j + beg.Length, k).Trim();
+      }
     }
 
     public static string createXMCD(CDInfoDetail cdinfo)
@@ -763,7 +844,9 @@ namespace MediaPortal.Freedb
       for (int i = 0; i < order.Length; i++)
       {
         if (i != 0)
+        {
           content.Append(',');
+        }
         content.Append(order[i]);
       }
       content.Append(newline);

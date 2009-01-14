@@ -23,96 +23,98 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
-	public abstract class ButtonBase : ContentControl
-	{
-		#region Constructors
+  public abstract class ButtonBase : ContentControl
+  {
+    #region Constructors
 
-		static ButtonBase()
-		{
-			ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
+    static ButtonBase()
+    {
+      ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof (RoutedEventHandler),
+                                                    typeof (Button));
 
-			ClickModeProperty = DependencyProperty.Register("ClickMode", typeof(ClickMode), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
-			CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(ButtonBase));
-			CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
-			IsPressedProperty = DependencyProperty.Register("IsPressed", typeof(bool), typeof(ButtonBase), new PropertyMetadata(false));
-		}
+      ClickModeProperty = DependencyProperty.Register("ClickMode", typeof (ClickMode), typeof (ButtonBase),
+                                                      new PropertyMetadata(ClickMode.OnRelease));
+      CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof (object), typeof (ButtonBase));
+      CommandProperty = DependencyProperty.Register("Command", typeof (ICommand), typeof (ButtonBase),
+                                                    new PropertyMetadata(ClickMode.OnRelease));
+      IsPressedProperty = DependencyProperty.Register("IsPressed", typeof (bool), typeof (ButtonBase),
+                                                      new PropertyMetadata(false));
+    }
 
-		protected ButtonBase()
-		{
-		}
+    protected ButtonBase()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event RoutedEventHandler Click
-		{
-			add		{ AddHandler(ClickEvent, value); } 
-			remove	{ RemoveHandler(ClickEvent, value); }
-		}
+    public event RoutedEventHandler Click
+    {
+      add { AddHandler(ClickEvent, value); }
+      remove { RemoveHandler(ClickEvent, value); }
+    }
 
-		#endregion Events
+    #endregion Events
 
-		#region Events (Routed)
+    #region Events (Routed)
 
-		public static readonly RoutedEvent ClickEvent;
+    public static readonly RoutedEvent ClickEvent;
 
-		#endregion Events (Routed)
+    #endregion Events (Routed)
 
-		#region Methods
+    #region Methods
 
-		protected virtual void OnClick()
-		{
-		}
+    protected virtual void OnClick()
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		[BindableAttribute(true)] 
-		public ClickMode ClickMode
-		{
-			get { return (ClickMode)GetValue(ClickModeProperty); }
-			set { SetValue(ClickModeProperty, value); }
-		}
+    [Bindable(true)]
+    public ClickMode ClickMode
+    {
+      get { return (ClickMode) GetValue(ClickModeProperty); }
+      set { SetValue(ClickModeProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public ICommand Command
-		{
-			get { return (ICommand)GetValue(CommandProperty); }
-			set { SetValue(CommandProperty, value);  }
-		}
+    [Bindable(true)]
+    public ICommand Command
+    {
+      get { return (ICommand) GetValue(CommandProperty); }
+      set { SetValue(CommandProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public object CommandParameter
-		{
-			get { return GetValue(CommandParameterProperty); }
-			set { SetValue(CommandParameterProperty, value); }
-		}
+    [Bindable(true)]
+    public object CommandParameter
+    {
+      get { return GetValue(CommandParameterProperty); }
+      set { SetValue(CommandParameterProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public bool IsPressed
-		{
-			get { return (bool)GetValue(IsPressedProperty); }
-			set { SetValue(IsPressedProperty, value); }
-		}
+    [Bindable(true)]
+    public bool IsPressed
+    {
+      get { return (bool) GetValue(IsPressedProperty); }
+      set { SetValue(IsPressedProperty, value); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty ClickModeProperty;
-		public static readonly DependencyProperty CommandParameterProperty;
-		public static readonly DependencyProperty CommandProperty;
-		public static readonly DependencyProperty IsPressedProperty;
+    public static readonly DependencyProperty ClickModeProperty;
+    public static readonly DependencyProperty CommandParameterProperty;
+    public static readonly DependencyProperty CommandProperty;
+    public static readonly DependencyProperty IsPressedProperty;
 
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties (Dependency)
+  }
 }

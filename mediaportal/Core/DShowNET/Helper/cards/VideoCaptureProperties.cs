@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,15 +20,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
 using DirectShowLib;
+using MediaPortal.GUI.Library;
 
 namespace DShowNET.Helper
 {
@@ -41,21 +40,24 @@ namespace DShowNET.Helper
   public class VideoCaptureProperties : IDisposable
   {
     private bool disposed = false;
-    Twinhan _twinhan;
-    DigitalEverywhere _digitalEverywhere;
-    TechnoTrend _technoTrend;
+    private Twinhan _twinhan;
+    private DigitalEverywhere _digitalEverywhere;
+    private TechnoTrend _technoTrend;
 
     #region ctor/dtor
+
     public VideoCaptureProperties(IBaseFilter tunerfilter)
     {
       _twinhan = new Twinhan(tunerfilter);
       _digitalEverywhere = new DigitalEverywhere(tunerfilter);
       _technoTrend = new TechnoTrend(tunerfilter);
     }
+
     ~VideoCaptureProperties()
     {
       Dispose(false);
     }
+
     #endregion
 
     #region Other card properties
@@ -69,7 +71,10 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_twinhan.IsTwinhan) return true;
+        if (_twinhan.IsTwinhan)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -78,7 +83,10 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_digitalEverywhere.IsDigitalEverywhere) return true;
+        if (_digitalEverywhere.IsDigitalEverywhere)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -87,7 +95,10 @@ namespace DShowNET.Helper
     {
       get
       {
-        if (_technoTrend.IsTechnoTrendUSBDVBT) return true;
+        if (_technoTrend.IsTechnoTrendUSBDVBT)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -100,7 +111,8 @@ namespace DShowNET.Helper
       }
     }
 
-    public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength, byte[] caPmt, int caPmtLen)
+    public bool SendPMT(string camType, int serviceId, int videoPid, int audioPid, byte[] PMT, int pmtLength,
+                        byte[] caPmt, int caPmtLen)
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
       {
@@ -108,7 +120,7 @@ namespace DShowNET.Helper
       }
       if (_twinhan.IsTwinhan)
       {
-        _twinhan.SendPMT(camType, (uint)videoPid, (uint)audioPid, caPmt, caPmtLen);
+        _twinhan.SendPMT(camType, (uint) videoPid, (uint) audioPid, caPmt, caPmtLen);
         return true;
       }
       if (_technoTrend.IsTechnoTrend)
@@ -130,15 +142,22 @@ namespace DShowNET.Helper
     public bool SupportsDiseqCommand()
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
+      {
         return true;
+      }
       if (_technoTrend.IsTechnoTrend)
+      {
         return true;
+      }
       if (this._twinhan.IsTwinhan)
+      {
         return true;
+      }
       return false;
     }
 
-    public void SendDiseqCommand(int lowOsc, int hiOsc, int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
+    public void SendDiseqCommand(int lowOsc, int hiOsc, int antennaNr, int frequency, int switchingFrequency,
+                                 int polarisation, int diseqcType)
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
       {
@@ -181,8 +200,8 @@ namespace DShowNET.Helper
       }
       return false;
     }
-    #endregion
 
+    #endregion
 
     #region IDisposable Members
 
@@ -213,13 +232,13 @@ namespace DShowNET.Helper
         }
         catch (Exception ex)
         {
-
           Log.Info("Hauppauge exception " + ex.Message);
           Log.Info("Hauppauge Disposed hcw.txt");
         }
       }
       disposed = true;
     }
+
     #endregion
   }
 }

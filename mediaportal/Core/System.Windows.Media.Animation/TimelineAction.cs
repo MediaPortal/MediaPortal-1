@@ -23,31 +23,28 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public class TimelineAction : TriggerAction
-	{
-		public TimelineAction()
-		{
-		}
+  public class TimelineAction : TriggerAction
+  {
+    public TimelineAction()
+    {
+    }
 
-		#region Properties
+    #region Properties
 
-		public string TargetName
-		{
-			get { return _targetName; }
-			set { _targetName = value; }
-		}
+    public string TargetName
+    {
+      get { return _targetName; }
+      set { _targetName = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		string						_targetName;
+    private string _targetName;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

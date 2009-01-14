@@ -25,47 +25,52 @@
 
 using System;
 using System.Collections;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
-	internal class VolumeHandlerCustom : VolumeHandler
-	{
-		#region Constructors
+  internal class VolumeHandlerCustom : VolumeHandler
+  {
+    #region Constructors
 
-		public VolumeHandlerCustom()
-		{
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-			{
-        string text = reader.GetValueAsString("volume", "table", "0, 4095, 8191, 1638, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
+    public VolumeHandlerCustom()
+    {
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string text = reader.GetValueAsString("volume", "table",
+                                              "0, 4095, 8191, 1638, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
 
-				if(text == string.Empty)
-					return;
+        if (text == string.Empty)
+        {
+          return;
+        }
 
-				ArrayList array = new ArrayList();
+        ArrayList array = new ArrayList();
 
-				try
-				{
-					foreach(string volume in text.Split(new char[] { ',', ';' }))
-					{
-						if(volume == string.Empty)
-							continue;
+        try
+        {
+          foreach (string volume in text.Split(new char[] {',', ';'}))
+          {
+            if (volume == string.Empty)
+            {
+              continue;
+            }
 
-						array.Add(Math.Max(this.Minimum, Math.Min(this.Maximum, int.Parse(volume))));
-					}
+            array.Add(Math.Max(this.Minimum, Math.Min(this.Maximum, int.Parse(volume))));
+          }
 
-					array.Sort();
+          array.Sort();
 
-					this.Table = (int[])array.ToArray(typeof(int));
-				}
-				catch
-				{
-					// heh, its undocumented remember, no fancy logging going on here
-				}
-			}
-		}
+          this.Table = (int[]) array.ToArray(typeof (int));
+        }
+        catch
+        {
+          // heh, its undocumented remember, no fancy logging going on here
+        }
+      }
+    }
 
-		#endregion Constructors
-	}
+    #endregion Constructors
+  }
 }

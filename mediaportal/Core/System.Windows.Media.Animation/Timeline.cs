@@ -23,191 +23,207 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Windows;
-using System.Windows.Serialization;
-
 namespace System.Windows.Media.Animation
 {
-	public abstract class Timeline : Animatable
-	{
-		#region Constructors
+  public abstract class Timeline : Animatable
+  {
+    #region Constructors
 
-		protected Timeline()
-		{
-			// stop compiled never used warnings
-			if(CurrentGlobalSpeedInvalidated != null)
-				CurrentGlobalSpeedInvalidated(this, EventArgs.Empty);
+    protected Timeline()
+    {
+      // stop compiled never used warnings
+      if (CurrentGlobalSpeedInvalidated != null)
+      {
+        CurrentGlobalSpeedInvalidated(this, EventArgs.Empty);
+      }
 
-			if(CurrentStateInvalidated != null)
-				CurrentStateInvalidated(this, EventArgs.Empty);
+      if (CurrentStateInvalidated != null)
+      {
+        CurrentStateInvalidated(this, EventArgs.Empty);
+      }
 
-			if(CurrentTimeInvalidated != null)
-				CurrentTimeInvalidated(this, EventArgs.Empty);
-		}
+      if (CurrentTimeInvalidated != null)
+      {
+        CurrentTimeInvalidated(this, EventArgs.Empty);
+      }
+    }
 
-		protected Timeline(Nullable<TimeSpan> beginTime) : this(beginTime, Duration.Automatic)
-		{
-		}
+    protected Timeline(Nullable<TimeSpan> beginTime) : this(beginTime, Duration.Automatic)
+    {
+    }
 
-		protected Timeline(Nullable<TimeSpan> beginTime, Duration duration) : this(beginTime, duration, RepeatBehavior.Forever)
-		{
-		}
+    protected Timeline(Nullable<TimeSpan> beginTime, Duration duration)
+      : this(beginTime, duration, RepeatBehavior.Forever)
+    {
+    }
 
-		protected Timeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
-		{
-			_beginTime = beginTime;
-			_duration = duration;
-			_repeatBehavior = repeatBehavior;
-		}
+    protected Timeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
+    {
+      _beginTime = beginTime;
+      _duration = duration;
+      _repeatBehavior = repeatBehavior;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler CurrentGlobalSpeedInvalidated;
-		public event EventHandler CurrentStateInvalidated;
-		public event EventHandler CurrentTimeInvalidated;
+    public event EventHandler CurrentGlobalSpeedInvalidated;
+    public event EventHandler CurrentStateInvalidated;
+    public event EventHandler CurrentTimeInvalidated;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		// Clock.FromTimeline 
+    // Clock.FromTimeline 
 
-		protected internal virtual Clock AllocateClock()
-		{
-			return new Clock(this);
-		}
+    protected internal virtual Clock AllocateClock()
+    {
+      return new Clock(this);
+    }
 
-		public new Timeline Copy()
-		{
-			return (Timeline)base.Copy();
-		}
+    public new Timeline Copy()
+    {
+      return (Timeline) base.Copy();
+    }
 
-		protected override void CopyCore(Freezable sourceFreezable)
-		{
-			base.CopyCore(sourceFreezable);
+    protected override void CopyCore(Freezable sourceFreezable)
+    {
+      base.CopyCore(sourceFreezable);
 
-			Timeline sourceTimeline = (Timeline)sourceFreezable;
-			
-			sourceTimeline._accelerationRatio = _accelerationRatio;
-			sourceTimeline._beginTime = _beginTime;
-			sourceTimeline._cutoffTime = _cutoffTime;
-			sourceTimeline._decelerationRatio = _decelerationRatio;
-			sourceTimeline._duration = _duration;
-			sourceTimeline._fillBehavior = _fillBehavior;
-			sourceTimeline._isAutoReverse = _isAutoReverse;
-			sourceTimeline._name = _name;
-			sourceTimeline._repeatBehavior = _repeatBehavior;
-			sourceTimeline._speedRatio = _speedRatio;
-		}
+      Timeline sourceTimeline = (Timeline) sourceFreezable;
 
-		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-		{
-			base.CopyCurrentValueCore(sourceAnimatable);
-		}
+      sourceTimeline._accelerationRatio = _accelerationRatio;
+      sourceTimeline._beginTime = _beginTime;
+      sourceTimeline._cutoffTime = _cutoffTime;
+      sourceTimeline._decelerationRatio = _decelerationRatio;
+      sourceTimeline._duration = _duration;
+      sourceTimeline._fillBehavior = _fillBehavior;
+      sourceTimeline._isAutoReverse = _isAutoReverse;
+      sourceTimeline._name = _name;
+      sourceTimeline._repeatBehavior = _repeatBehavior;
+      sourceTimeline._speedRatio = _speedRatio;
+    }
 
-		public Clock CreateClock()
-		{
-			return new Clock(this);
-		}
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+    {
+      base.CopyCurrentValueCore(sourceAnimatable);
+    }
 
-		protected internal Duration GetNaturalDuration(Clock clock)
-		{
-			// only be called when the Duration property is set to Automatic
-			return GetNaturalDurationCore(clock);
-		}
+    public Clock CreateClock()
+    {
+      return new Clock(this);
+    }
 
-		protected virtual Duration GetNaturalDurationCore(Clock clock)
-		{
-			return clock.NaturalDuration;
-		}
+    protected internal Duration GetNaturalDuration(Clock clock)
+    {
+      // only be called when the Duration property is set to Automatic
+      return GetNaturalDurationCore(clock);
+    }
 
-		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
-		{
-		}
+    protected virtual Duration GetNaturalDurationCore(Clock clock)
+    {
+      return clock.NaturalDuration;
+    }
 
-		#endregion Methods
+    protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+    {
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public double AccelerationRatio
-		{ 
-			get { return _accelerationRatio; }
-			set { if(value < 0 || value > 1) throw new ArgumentOutOfRangeException(); _accelerationRatio = value; }
-		}
+    #region Properties
 
-		public bool AutoReverse
-		{ 
-			get { return _isAutoReverse; }
-			set { _isAutoReverse = value; }
-		}
+    public double AccelerationRatio
+    {
+      get { return _accelerationRatio; }
+      set
+      {
+        if (value < 0 || value > 1)
+        {
+          throw new ArgumentOutOfRangeException();
+        }
+        _accelerationRatio = value;
+      }
+    }
 
-		public Nullable<TimeSpan> BeginTime
-		{
-			get { return _beginTime; }
-			set { _beginTime = value; }
-		}
-		
-		public Nullable<TimeSpan> CutoffTime
-		{
-			get { return _cutoffTime; }
-			set { _cutoffTime = value; }
-		}
+    public bool AutoReverse
+    {
+      get { return _isAutoReverse; }
+      set { _isAutoReverse = value; }
+    }
 
-		public double DecelerationRatio
-		{ 
-			get { return _decelerationRatio; }
-			set { if(value < 0 || value > 1) throw new ArgumentOutOfRangeException(); _decelerationRatio = value; }
-		}
+    public Nullable<TimeSpan> BeginTime
+    {
+      get { return _beginTime; }
+      set { _beginTime = value; }
+    }
 
-		public Duration Duration
-		{
-			get { return _duration; }
-			set { _duration = value; }
-		}
+    public Nullable<TimeSpan> CutoffTime
+    {
+      get { return _cutoffTime; }
+      set { _cutoffTime = value; }
+    }
 
-		public FillBehavior FillBehavior
-		{
-			get { return _fillBehavior; }
-			set { _fillBehavior = value; }
-		}
+    public double DecelerationRatio
+    {
+      get { return _decelerationRatio; }
+      set
+      {
+        if (value < 0 || value > 1)
+        {
+          throw new ArgumentOutOfRangeException();
+        }
+        _decelerationRatio = value;
+      }
+    }
 
-		public string Name
-		{
-			get { return _name; }
-			set { _name = value; }
-		}
+    public Duration Duration
+    {
+      get { return _duration; }
+      set { _duration = value; }
+    }
 
-		public RepeatBehavior RepeatBehavior
-		{ 
-			get { return _repeatBehavior; }
-			set { _repeatBehavior = value; }
-		}
+    public FillBehavior FillBehavior
+    {
+      get { return _fillBehavior; }
+      set { _fillBehavior = value; }
+    }
 
-		public double SpeedRatio
-		{
-			get { return _speedRatio; }
-			set { _speedRatio = value; }
-		}
+    public string Name
+    {
+      get { return _name; }
+      set { _name = value; }
+    }
 
-		#endregion Properties
+    public RepeatBehavior RepeatBehavior
+    {
+      get { return _repeatBehavior; }
+      set { _repeatBehavior = value; }
+    }
 
-		#region Fields
+    public double SpeedRatio
+    {
+      get { return _speedRatio; }
+      set { _speedRatio = value; }
+    }
 
-		double						_accelerationRatio = 0;
-		Nullable<TimeSpan>			_beginTime;
-		Nullable<TimeSpan>			_cutoffTime;
-		double						_decelerationRatio = 0;
-		Duration					_duration = new Duration();
-		FillBehavior				_fillBehavior;
-		bool						_isAutoReverse;
-		string						_name = string.Empty;
-		RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
-		double						_speedRatio = 1;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private double _accelerationRatio = 0;
+    private Nullable<TimeSpan> _beginTime;
+    private Nullable<TimeSpan> _cutoffTime;
+    private double _decelerationRatio = 0;
+    private Duration _duration = new Duration();
+    private FillBehavior _fillBehavior;
+    private bool _isAutoReverse;
+    private string _name = string.Empty;
+    private RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    private double _speedRatio = 1;
+
+    #endregion Fields
+  }
 }

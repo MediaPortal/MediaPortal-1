@@ -25,23 +25,23 @@
 
 namespace System.Windows.Dispatcher
 {
-	public enum DispatcherPriority
-	{
-		#region Values
+  public enum DispatcherPriority
+  {
+    #region Values
 
-		ApplicationIdle,
-		Background,
-		ContextIdle,
-		DataBind,
-		Inactive,
-		Input,
-		Invalid,
-		Loaded,
-		Normal,
-		Render,
-		Send,
-		SystemIdle,
+    ApplicationIdle,
+    Background,
+    ContextIdle,
+    DataBind,
+    Inactive,
+    Input,
+    Invalid,
+    Loaded,
+    Normal,
+    Render,
+    Send,
+    SystemIdle,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

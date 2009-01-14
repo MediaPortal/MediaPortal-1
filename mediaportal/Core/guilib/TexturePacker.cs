@@ -24,19 +24,20 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.Util;
+using Microsoft.DirectX.Direct3D;
+using Filter=Microsoft.DirectX.Direct3D.Filter;
 
 namespace MediaPortal.GUI.Library
 {
@@ -46,38 +47,43 @@ namespace MediaPortal.GUI.Library
   public class TexturePacker
   {
     public delegate void DisposeEventHandler(object sender, int texutureNumber);
+
     public event DisposeEventHandler Disposing;
+
     #region imports
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineRemoveTexture(int textureNo);
+    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
+                                                            float uoff, float voff, float umax, float vmax, int color);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEnginePresentTextures();
+    private static extern unsafe void FontEnginePresentTextures();
 
     #endregion
 
     #region PackedTexture Class
+
     [Serializable]
     public class PackedTexture
     {
       public PackedTextureNode root;
       public int textureNo;
-      [NonSerialized]
-      public Texture texture;
-    };
+      [NonSerialized] public Texture texture;
+    } ;
+
     #endregion
 
     #region PackedTextureNode class
+
     [Serializable]
     public class PackedTextureNode
     {
@@ -88,8 +94,14 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Get(string fileName)
       {
-        if (fileName == null) return null;
-        if (fileName.Length == 0) return null;
+        if (fileName == null)
+        {
+          return null;
+        }
+        if (fileName.Length == 0)
+        {
+          return null;
+        }
         if (FileName != null)
         {
           if (FileName == fileName)
@@ -100,7 +112,10 @@ namespace MediaPortal.GUI.Library
         if (ChildLeft != null)
         {
           PackedTextureNode node = ChildLeft.Get(fileName);
-          if (node != null) return node;
+          if (node != null)
+          {
+            return node;
+          }
         }
         if (ChildRight != null)
         {
@@ -116,11 +131,17 @@ namespace MediaPortal.GUI.Library
         if (ChildLeft != null && ChildRight != null)
         {
           PackedTextureNode node = ChildLeft.Insert(fileName, img, rootImage);
-          if (node != null) return node;
+          if (node != null)
+          {
+            return node;
+          }
           return ChildRight.Insert(fileName, img, rootImage);
         }
         //(if there's already a lightmap here, return)
-        if (FileName != null && FileName.Length > 0) return null;
+        if (FileName != null && FileName.Length > 0)
+        {
+          return null;
+        }
 
         //(if we're too small, return)
         if ((img.Width + 2) > Rect.Width || (img.Height + 2) > Rect.Height)
@@ -134,7 +155,7 @@ namespace MediaPortal.GUI.Library
           {
             FileName = fileName;
             g.CompositingQuality = Thumbs.Compositing;
-            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            g.CompositingMode = CompositingMode.SourceCopy;
             g.InterpolationMode = Thumbs.Interpolation;
             g.SmoothingMode = Thumbs.Smoothing;
             // draw oversized image first
@@ -145,7 +166,10 @@ namespace MediaPortal.GUI.Library
           return this;
         }
 
-        if (Rect.Width <= 2 || Rect.Height <= 2) return null;
+        if (Rect.Width <= 2 || Rect.Height <= 2)
+        {
+          return null;
+        }
         //(otherwise, gotta split this node and create some kids)
         ChildLeft = new PackedTextureNode();
         ChildRight = new PackedTextureNode();
@@ -157,29 +181,39 @@ namespace MediaPortal.GUI.Library
         if (dw > dh)
         {
           ChildLeft.Rect = new Rectangle(Rect.Left, Rect.Top, (img.Width + 2), Rect.Height);
-          ChildRight.Rect = new Rectangle(Rect.Left + (img.Width + 2), Rect.Top, Rect.Width - (img.Width + 2), Rect.Height);
+          ChildRight.Rect = new Rectangle(Rect.Left + (img.Width + 2), Rect.Top, Rect.Width - (img.Width + 2),
+                                          Rect.Height);
         }
         else
         {
           ChildLeft.Rect = new Rectangle(Rect.Left, Rect.Top, Rect.Width, (img.Height + 2));
-          ChildRight.Rect = new Rectangle(Rect.Left, Rect.Top + (img.Height + 2), Rect.Width, Rect.Height - (img.Height + 2));
+          ChildRight.Rect = new Rectangle(Rect.Left, Rect.Top + (img.Height + 2), Rect.Width,
+                                          Rect.Height - (img.Height + 2));
         }
         //(insert into first child we created)
         PackedTextureNode newNode = ChildLeft.Insert(fileName, img, rootImage);
-        if (newNode != null) return newNode;
+        if (newNode != null)
+        {
+          return newNode;
+        }
         return ChildRight.Insert(fileName, img, rootImage);
       }
     }
+
     #endregion
 
     #region variables
-    List<PackedTexture> _packedTextures;
+
+    private List<PackedTexture> _packedTextures;
+
     #endregion
 
     #region ctor/dtor
+
     public TexturePacker()
     {
     }
+
     #endregion
 
     public static void Cleanup()
@@ -189,29 +223,33 @@ namespace MediaPortal.GUI.Library
       string file1 = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
       string file2 = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
-      DateTime dt1 = System.IO.File.GetLastWriteTime(file1);
-      DateTime dt2 = System.IO.File.GetLastWriteTime(file2);
+      DateTime dt1 = File.GetLastWriteTime(file1);
+      DateTime dt2 = File.GetLastWriteTime(file2);
       if (dt1 > dt2)
+      {
         return;
+      }
 
-      MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
 
       // Intended for developers that rebuild mp often.
       if (xmlreader.GetValueAsBool("debug", "should_never_remove_packed_skin", false))
+      {
         return;
+      }
       Log.Info("TexturePacker: Removing packed skin");
 
-      System.IO.File.Delete(file1);
+      File.Delete(file1);
       for (int i = 0; i < 10; i++)
       {
         string fileName = string.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, i);
 
-        System.IO.File.Delete(fileName);
+        File.Delete(fileName);
       }
     }
 
 
-    bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
+    private bool Add(PackedTextureNode root, Image img, Image rootImage, string fileName)
     {
       PackedTextureNode node = root.Insert(fileName, img, rootImage);
       if (node != null)
@@ -224,7 +262,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    void SavePackedSkin(string skinName)
+    private void SavePackedSkin(string skinName)
     {
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
@@ -241,13 +279,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool LoadPackedSkin(string skinName)
+    private bool LoadPackedSkin(string skinName)
     {
       Log.Debug("Skin Folder : {0}", GUIGraphicsContext.Skin);
       Log.Debug("Cache Folder: {0}", GUIGraphicsContext.SkinCacheFolder);
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
         {
@@ -258,7 +296,7 @@ namespace MediaPortal.GUI.Library
               _packedTextures = new List<PackedTexture>();
               ArrayList packedTextures = new ArrayList();
               BinaryFormatter formatter = new BinaryFormatter();
-              packedTextures = (ArrayList)formatter.Deserialize(fileStream);
+              packedTextures = (ArrayList) formatter.Deserialize(fileStream);
               foreach (PackedTexture packed in packedTextures)
               {
                 _packedTextures.Add(packed);
@@ -273,26 +311,32 @@ namespace MediaPortal.GUI.Library
         }
       }
       return false;
-
     }
 
     public void PackSkinGraphics(string skinName)
     {
-      if (LoadPackedSkin(skinName)) return;
+      if (LoadPackedSkin(skinName))
+      {
+        return;
+      }
 
       _packedTextures = new List<PackedTexture>();
-      string[] files1 = System.IO.Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
-      string[] files2 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png");
-      string[] files3 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "64x64"), "*.png");
-      string[] files4 = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "128x128"), "*.png");
-      string[] files5 = System.IO.Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
+      string[] files1 = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
+      string[] files2 = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png");
+      string[] files3 = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "64x64"), "*.png");
+      string[] files4 = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "128x128"), "*.png");
+      string[] files5 = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
       string[] files = new string[files1.Length + files2.Length + files3.Length + files4.Length + files5.Length];
 
       int off = 0;
       for (int i = 0; i < files1.Length; ++i)
+      {
         files[off++] = files1[i];
+      }
       for (int i = 0; i < files2.Length; ++i)
+      {
         files[off++] = files2[i];
+      }
       /*
 			for (int i=0; i < files3.Length;++i)
 				files[off++] = files3[i];
@@ -312,10 +356,18 @@ namespace MediaPortal.GUI.Library
         iMaxWidth = d3dcaps.MaxTextureWidth;
         iMaxHeight = d3dcaps.MaxTextureHeight;
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
-      if (iMaxWidth > 2048) iMaxWidth = 2048;
-      if (iMaxHeight > 2048) iMaxHeight = 2048;
+      if (iMaxWidth > 2048)
+      {
+        iMaxWidth = 2048;
+      }
+      if (iMaxHeight > 2048)
+      {
+        iMaxHeight = 2048;
+      }
 
       while (true)
       {
@@ -329,7 +381,10 @@ namespace MediaPortal.GUI.Library
         bigOne.root.Rect = new Rectangle(0, 0, iMaxWidth, iMaxHeight);
         for (int i = 0; i < files.Length; ++i)
         {
-          if (files[i] == null) continue;
+          if (files[i] == null)
+          {
+            continue;
+          }
           files[i] = files[i].ToLower();
           if (files[i] != string.Empty)
           {
@@ -347,25 +402,37 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              if (dontAdd) files[i] = string.Empty;
-              else ImagesLeft = true;
+              if (dontAdd)
+              {
+                files[i] = string.Empty;
+              }
+              else
+              {
+                ImagesLeft = true;
+              }
             }
           }
         }
 
         if (!Directory.Exists(GUIGraphicsContext.SkinCacheFolder))
+        {
           Directory.CreateDirectory(GUIGraphicsContext.SkinCacheFolder);
-        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, _packedTextures.Count);
+        }
+        string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder,
+                                        _packedTextures.Count);
 
-        rootImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+        rootImage.Save(fileName, ImageFormat.Png);
         rootImage.Dispose();
         _packedTextures.Add(bigOne);
-        if (!ImagesLeft) break;
+        if (!ImagesLeft)
+        {
+          break;
+        }
       }
       SavePackedSkin(skinName);
     }
 
-    void LoadPackedGraphics(int index)
+    private void LoadPackedGraphics(int index)
     {
       //	return ;
       PackedTexture bigOne = _packedTextures[index];
@@ -380,30 +447,34 @@ namespace MediaPortal.GUI.Library
 
         ImageInformation info2 = new ImageInformation();
         Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-          fileName,
-          0, 0,//width/height
-          1,//mipslevels
-          0,//Usage.Dynamic,
-          useFormat,
-          GUIGraphicsContext.GetTexturePoolType(),
-          Direct3D.Filter.None,
-          Direct3D.Filter.None,
-          (int)0,
-          ref info2);
+                                             fileName,
+                                             0, 0, //width/height
+                                             1, //mipslevels
+                                             0, //Usage.Dynamic,
+                                             useFormat,
+                                             GUIGraphicsContext.GetTexturePoolType(),
+                                             Filter.None,
+                                             Filter.None,
+                                             (int) 0,
+                                             ref info2);
         bigOne.texture = tex;
         bigOne.texture.Disposing += new EventHandler(texture_Disposing);
 
-        Log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height, tex.LevelCount);
+        Log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height,
+                 tex.LevelCount);
       }
     }
 
-    void texture_Disposing(object sender, EventArgs e)
+    private void texture_Disposing(object sender, EventArgs e)
     {
-      if ((sender as Texture) == null) return;
+      if ((sender as Texture) == null)
+      {
+        return;
+      }
       for (int i = 0; i < _packedTextures.Count; ++i)
       {
         PackedTexture bigOne = _packedTextures[i];
-        if (bigOne.texture == (Texture)sender)
+        if (bigOne.texture == (Texture) sender)
         {
           if (bigOne.textureNo >= 0)
           {
@@ -421,14 +492,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool AddBitmap(PackedTextureNode root, Image rootImage, string file, out bool dontAdd)
+    private bool AddBitmap(PackedTextureNode root, Image rootImage, string file, out bool dontAdd)
     {
       bool result = false;
       dontAdd = false;
       using (Image bmp = Image.FromFile(file))
       {
         if (bmp.Width >= GUIGraphicsContext.Width ||
-          bmp.Height >= GUIGraphicsContext.Height)
+            bmp.Height >= GUIGraphicsContext.Height)
         {
           //dontAdd=true;
           //return false;
@@ -450,30 +521,37 @@ namespace MediaPortal.GUI.Library
       return result;
     }
 
-    public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth, out int iHeight, out Texture tex, out int TextureNo)
+    public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth,
+                    out int iHeight, out Texture tex, out int TextureNo)
     {
       uoffs = voffs = umax = vmax = 0.0f;
       iWidth = iHeight = 0;
       TextureNo = -1;
       tex = null;
-      if (_packedTextures == null) return false;
+      if (_packedTextures == null)
+      {
+        return false;
+      }
 
       if (fileName.StartsWith(@"\"))
       {
         fileName = fileName.Remove(0, 1);
       }
       fileName = fileName.ToLower();
-      if (fileName == string.Empty) return false;
+      if (fileName == string.Empty)
+      {
+        return false;
+      }
       int index = 0;
       foreach (PackedTexture bigOne in _packedTextures)
       {
         PackedTextureNode foundNode = bigOne.root.Get(fileName);
         if (foundNode != null)
         {
-          uoffs = ((float)foundNode.Rect.Left + 1) / ((float)bigOne.root.Rect.Width);
-          voffs = ((float)foundNode.Rect.Top + 1) / ((float)bigOne.root.Rect.Height);
-          umax = ((float)foundNode.Rect.Width - 2) / ((float)bigOne.root.Rect.Width);
-          vmax = ((float)foundNode.Rect.Height - 2) / ((float)bigOne.root.Rect.Height);
+          uoffs = ((float) foundNode.Rect.Left + 1)/((float) bigOne.root.Rect.Width);
+          voffs = ((float) foundNode.Rect.Top + 1)/((float) bigOne.root.Rect.Height);
+          umax = ((float) foundNode.Rect.Width - 2)/((float) bigOne.root.Rect.Width);
+          vmax = ((float) foundNode.Rect.Height - 2)/((float) bigOne.root.Rect.Height);
           iWidth = foundNode.Rect.Width - 2;
           iHeight = foundNode.Rect.Height - 2;
           if (bigOne.texture == null)
@@ -487,7 +565,7 @@ namespace MediaPortal.GUI.Library
             unsafe
             {
               IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
-              bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+              bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*) ptr.ToPointer());
               Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
             }
           }
@@ -524,7 +602,9 @@ namespace MediaPortal.GUI.Library
                 bigOne.texture.Disposing -= new EventHandler(texture_Disposing);
                 bigOne.texture.Dispose();
               }
-              catch (Exception) { }
+              catch (Exception)
+              {
+              }
             }
             bigOne.texture = null;
           }
@@ -532,17 +612,16 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool IsCompressedTextureFormatOk(Direct3D.Format textureFormat)
+    private bool IsCompressedTextureFormatOk(Format textureFormat)
     {
       if (Manager.CheckDeviceFormat(0, DeviceType.Hardware, GUIGraphicsContext.DirectXPresentParameters.BackBufferFormat,
-        Usage.None, ResourceType.Textures,
-        textureFormat))
+                                    Usage.None, ResourceType.Textures,
+                                    textureFormat))
       {
         Log.Info("TexurePacker:Using compressed textures");
         return true;
       }
       return false;
     }
-
   }
 }

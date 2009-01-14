@@ -25,9 +25,12 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using MediaPortal.Util;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
 
 namespace MediaPortal.GUI.Library
 {
@@ -36,13 +39,13 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class PluginManager
   {
-    static ArrayList _nonGuiPlugins = new ArrayList();
-    static ArrayList _guiPlugins = new ArrayList();
-    static ArrayList _setupForms = new ArrayList();
-    static ArrayList _wakeables = new ArrayList();
-    static bool _started = false;
-    static bool _windowPluginsLoaded = false;
-    static bool _nonWindowPluginsLoaded = false;
+    private static ArrayList _nonGuiPlugins = new ArrayList();
+    private static ArrayList _guiPlugins = new ArrayList();
+    private static ArrayList _setupForms = new ArrayList();
+    private static ArrayList _wakeables = new ArrayList();
+    private static bool _started = false;
+    private static bool _windowPluginsLoaded = false;
+    private static bool _nonWindowPluginsLoaded = false;
 
     static PluginManager()
     {
@@ -70,39 +73,53 @@ namespace MediaPortal.GUI.Library
 
     public static void Load()
     {
-      if (_nonWindowPluginsLoaded) return;
+      if (_nonWindowPluginsLoaded)
+      {
+        return;
+      }
       _nonWindowPluginsLoaded = true;
       Log.Info("  PlugInManager.Load()");
       try
       {
-        System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
-        System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
+        Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
+        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
-      catch (Exception) { }
-      string[] strFiles = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "*.dll");
+      catch (Exception)
+      {
+      }
+      string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "*.dll");
       foreach (string strFile in strFiles)
+      {
         LoadPlugin(strFile);
+      }
     }
 
     public static void LoadWindowPlugins()
     {
       if (_windowPluginsLoaded)
+      {
         return;
+      }
 
       _windowPluginsLoaded = true;
       Log.Info("  LoadWindowPlugins()");
       try
       {
-        System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
-        System.IO.Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
+        Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
+        Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
       LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
 
-      string[] strFiles = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "*.dll");
+      string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "*.dll");
       foreach (string strFile in strFiles)
       {
-        if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0) continue;
+        if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0)
+        {
+          continue;
+        }
         LoadWindowPlugin(strFile);
       }
     }
@@ -110,7 +127,9 @@ namespace MediaPortal.GUI.Library
     public static void Start()
     {
       if (_started)
+      {
         return;
+      }
 
       Log.Info("  PlugInManager.Start()");
       foreach (IPlugin plugin in _nonGuiPlugins)
@@ -130,7 +149,9 @@ namespace MediaPortal.GUI.Library
     public static void Stop()
     {
       if (!_started)
+      {
         return;
+      }
 
       Log.Info("  PlugInManager.Stop()");
       foreach (IPlugin plugin in _nonGuiPlugins)
@@ -144,7 +165,7 @@ namespace MediaPortal.GUI.Library
     public static void Clear()
     {
       Log.Info("PlugInManager.Clear()");
-      PluginManager.Stop();
+      Stop();
       _nonGuiPlugins.Clear();
       WakeablePlugins.Clear();
       GUIPlugins.Clear();
@@ -152,16 +173,18 @@ namespace MediaPortal.GUI.Library
       _nonWindowPluginsLoaded = false;
     }
 
-    static bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
+    private static bool MyInterfaceFilter(Type typeObj, Object criteriaObj)
     {
       return (typeObj.ToString().Equals(criteriaObj.ToString()));
     }
 
 
-    static void LoadPlugin(string strFile)
+    private static void LoadPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile))
+      {
         return;
+      }
 
       Type[] foundInterfaces = null;
 
@@ -171,7 +194,7 @@ namespace MediaPortal.GUI.Library
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  File Version : {0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
+          Log.Info("  File Version : {0}", FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
           Type[] types = assem.GetExportedTypes();
 
           foreach (Type t in types)
@@ -180,7 +203,10 @@ namespace MediaPortal.GUI.Library
             {
               if (t.IsClass)
               {
-                if (t.IsAbstract) continue;
+                if (t.IsAbstract)
+                {
+                  continue;
+                }
 
                 Object newObj = null;
                 IPlugin plugin = null;
@@ -190,14 +216,16 @@ namespace MediaPortal.GUI.Library
                   foundInterfaces = t.FindInterfaces(myFilter2, "MediaPortal.GUI.Library.IPlugin");
                   if (foundInterfaces.Length > 0)
                   {
-                    newObj = (object)Activator.CreateInstance(t);
-                    plugin = (IPlugin)newObj;
+                    newObj = (object) Activator.CreateInstance(t);
+                    plugin = (IPlugin) newObj;
                   }
                 }
-                catch (System.Reflection.TargetInvocationException ex)
+                catch (TargetInvocationException ex)
                 {
                   Log.Error(ex);
-                  Log.Error("PluginManager: {0} is incompatible with the current MediaPortal version and won't be loaded!", t.FullName);
+                  Log.Error(
+                    "PluginManager: {0} is incompatible with the current MediaPortal version and won't be loaded!",
+                    t.FullName);
                   continue;
                 }
                 catch (Exception iPluginException)
@@ -208,7 +236,9 @@ namespace MediaPortal.GUI.Library
                   Log.Error(iPluginException.StackTrace);
                 }
                 if (plugin == null)
+                {
                   continue;
+                }
 
                 try
                 {
@@ -216,8 +246,10 @@ namespace MediaPortal.GUI.Library
                   if (foundInterfaces.Length > 0)
                   {
                     if (newObj == null)
-                      newObj = (object)Activator.CreateInstance(t);
-                    ISetupForm setup = (ISetupForm)newObj;
+                    {
+                      newObj = (object) Activator.CreateInstance(t);
+                    }
+                    ISetupForm setup = (ISetupForm) newObj;
                     // don't activate plugins that have NO entry at all in 
                     // MediaPortal.xml
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
@@ -240,10 +272,14 @@ namespace MediaPortal.GUI.Library
                   if (foundInterfaces.Length > 0)
                   {
                     if (newObj == null)
-                      newObj = (object)Activator.CreateInstance(t);
-                    IWakeable setup = (IWakeable)newObj;
+                    {
+                      newObj = (object) Activator.CreateInstance(t);
+                    }
+                    IWakeable setup = (IWakeable) newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
+                    {
                       _wakeables.Add(setup);
+                    }
                   }
                 }
                 catch (Exception iWakeableException)
@@ -254,14 +290,17 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (System.NullReferenceException)
-            { }
+            catch (NullReferenceException)
+            {
+            }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\") + 1));
+        Log.Info(
+          "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
+          strFile.Substring(strFile.LastIndexOf(@"\") + 1));
         Log.Info("PluginManager: Exception: {0}", ex);
       }
     }
@@ -269,7 +308,9 @@ namespace MediaPortal.GUI.Library
     public static void LoadWindowPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile))
+      {
         return;
+      }
 
       Log.Info("  Load plugins from : {0}", strFile);
       try
@@ -277,7 +318,7 @@ namespace MediaPortal.GUI.Library
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  File Version : {0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
+          Log.Info("  File Version : {0}", FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
           Type[] types = assem.GetExportedTypes();
           Type[] foundInterfaces = null;
 
@@ -287,14 +328,17 @@ namespace MediaPortal.GUI.Library
             {
               if (t.IsClass)
               {
-                if (t.IsAbstract) continue;
+                if (t.IsAbstract)
+                {
+                  continue;
+                }
                 Object newObj = null;
-                if (t.IsSubclassOf(typeof(MediaPortal.GUI.Library.GUIWindow)))
+                if (t.IsSubclassOf(typeof (GUIWindow)))
                 {
                   try
                   {
-                    newObj = (object)Activator.CreateInstance(t);
-                    GUIWindow win = (GUIWindow)newObj;
+                    newObj = (object) Activator.CreateInstance(t);
+                    GUIWindow win = (GUIWindow) newObj;
 
                     if (win.GetID >= 0 && IsWindowPlugInEnabled(win.GetType().ToString()))
                     {
@@ -304,7 +348,8 @@ namespace MediaPortal.GUI.Library
                       }
                       catch (Exception ex)
                       {
-                        Log.Error("Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message, ex.Source, ex.StackTrace);
+                        Log.Error("Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message, ex.Source,
+                                  ex.StackTrace);
                       }
                       GUIWindowManager.Add(ref win);
                     }
@@ -324,10 +369,14 @@ namespace MediaPortal.GUI.Library
                   if (foundInterfaces.Length > 0)
                   {
                     if (newObj == null)
-                      newObj = (object)Activator.CreateInstance(t);
-                    ISetupForm setup = (ISetupForm)newObj;
+                    {
+                      newObj = (object) Activator.CreateInstance(t);
+                    }
+                    ISetupForm setup = (ISetupForm) newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
+                    {
                       _setupForms.Add(setup);
+                    }
                   }
                 }
                 catch (Exception iSetupFormException)
@@ -343,10 +392,14 @@ namespace MediaPortal.GUI.Library
                   if (foundInterfaces.Length > 0)
                   {
                     if (newObj == null)
-                      newObj = (object)Activator.CreateInstance(t);
-                    IWakeable setup = (IWakeable)newObj;
+                    {
+                      newObj = (object) Activator.CreateInstance(t);
+                    }
+                    IWakeable setup = (IWakeable) newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
+                    {
                       _wakeables.Add(setup);
+                    }
                   }
                 }
                 catch (Exception iWakeableException)
@@ -357,27 +410,36 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (System.NullReferenceException)
-            { }
+            catch (NullReferenceException)
+            {
+            }
           }
         }
       }
-      catch (System.BadImageFormatException)
+      catch (BadImageFormatException)
       {
       }
       catch (Exception ex)
       {
-        Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\") + 1));
+        Log.Info(
+          "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
+          strFile.Substring(strFile.LastIndexOf(@"\") + 1));
         Log.Info("PluginManager: Exception: {0}", ex);
       }
     }
 
     public static bool IsPlugInEnabled(string strDllname)
     {
-      if (strDllname.IndexOf("WindowPlugins.dll") >= 0) return true;
-      if (strDllname.IndexOf("ProcessPlugins.dll") >= 0) return true;
+      if (strDllname.IndexOf("WindowPlugins.dll") >= 0)
+      {
+        return true;
+      }
+      if (strDllname.IndexOf("ProcessPlugins.dll") >= 0)
+      {
+        return true;
+      }
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
@@ -390,31 +452,39 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsWindowPlugInEnabled(string strType)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         return xmlreader.GetValueAsBool("pluginswindows", strType, true);
+      }
     }
 
     public static bool IsPluginNameEnabled(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         return xmlreader.GetValueAsBool("plugins", strPluginName, true);
+      }
     }
 
     // hwahrmann: the previous method always returns true as a default, regardless if a plugin is in xml or not.
     // Don't know the reason why, but some code might rely on that and don't want to break it before release.
     public static bool IsPluginNameEnabled2(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         return xmlreader.GetValueAsBool("plugins", strPluginName, false);
+      }
     }
 
     public static bool PluginEntryExists(string strPluginName)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         return (xmlreader.GetValueAsString("plugins", strPluginName, string.Empty) != string.Empty);
+      }
     }
 
-    public static bool WndProc(ref System.Windows.Forms.Message msg)
+    public static bool WndProc(ref Message msg)
     {
       bool res = false;
       foreach (IPlugin plugin in _nonGuiPlugins)
@@ -424,7 +494,9 @@ namespace MediaPortal.GUI.Library
           IPluginReceiver pluginRev = plugin as IPluginReceiver;
           res = pluginRev.WndProc(ref msg);
           if (res)
+          {
             break;
+          }
         }
       }
       if (!res)
@@ -437,7 +509,9 @@ namespace MediaPortal.GUI.Library
             IPluginReceiver pluginRev = plugin as IPluginReceiver;
             res = pluginRev.WndProc(ref msg);
             if (res)
+            {
               break;
+            }
           }
         }
       }

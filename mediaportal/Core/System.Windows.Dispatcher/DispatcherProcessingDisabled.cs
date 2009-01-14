@@ -25,35 +25,35 @@
 
 namespace System.Windows.Dispatcher
 {
-	public struct DispatcherProcessingDisabled : IDisposable
-	{
-		#region Methods
+  public struct DispatcherProcessingDisabled : IDisposable
+  {
+    #region Methods
 
-		public void Dispose()
-		{
-		}
+    public void Dispose()
+    {
+    }
 
-		public override bool Equals(object obj)
-		{
-			throw new NotImplementedException();
-		}
+    public override bool Equals(object obj)
+    {
+      throw new NotImplementedException();
+    }
 
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
+    public override int GetHashCode()
+    {
+      throw new NotImplementedException();
+    }
 
-		public static bool operator == (DispatcherProcessingDisabled l, DispatcherProcessingDisabled r)
-		{
+    public static bool operator ==(DispatcherProcessingDisabled l, DispatcherProcessingDisabled r)
+    {
 //			return l._globalCookie = r._globalCookie;
-			throw new NotImplementedException();
-		}
+      throw new NotImplementedException();
+    }
 
-		public static bool operator != (DispatcherProcessingDisabled l, DispatcherProcessingDisabled r)
-		{
-			throw new NotImplementedException();
-		}
+    public static bool operator !=(DispatcherProcessingDisabled l, DispatcherProcessingDisabled r)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

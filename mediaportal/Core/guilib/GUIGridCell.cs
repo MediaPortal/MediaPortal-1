@@ -24,69 +24,50 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Serialization;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
   public class GUIGridCell
   {
     #region variables
-    GUIControl _control;
-    int _absoluteWidth = 0;
-    int _relativeWidth = 0;
-    int _calculatedWidth = 0;
-    int _positionX = 0;
-    GUIGridRow _row;
-    bool _hasFocus = false;
-    bool _resourcesAllocated = false;
+
+    private GUIControl _control;
+    private int _absoluteWidth = 0;
+    private int _relativeWidth = 0;
+    private int _calculatedWidth = 0;
+    private int _positionX = 0;
+    private GUIGridRow _row;
+    private bool _hasFocus = false;
+    private bool _resourcesAllocated = false;
+
     #endregion
 
     #region ctor
+
     public GUIGridCell(GUIGridRow row)
     {
       _row = row;
     }
+
     #endregion
 
     #region properties
 
     public GUIGridRow Row
     {
-      get
-      {
-        return _row;
-      }
-      set
-      {
-        _row = value;
-      }
+      get { return _row; }
+      set { _row = value; }
     }
 
     public int CalculatedWidth
     {
-      get
-      {
-        return _calculatedWidth;
-      }
-      set
-      {
-        _calculatedWidth = value;
-      }
+      get { return _calculatedWidth; }
+      set { _calculatedWidth = value; }
     }
 
     public int AbsoluteWidth
     {
-      get
-      {
-        return _absoluteWidth;
-      }
+      get { return _absoluteWidth; }
       set
       {
         _relativeWidth = 0;
@@ -96,14 +77,13 @@ namespace MediaPortal.GUI.Library
 
     public int RelativeWidth
     {
-      get
-      {
-        return _relativeWidth;
-      }
+      get { return _relativeWidth; }
       set
       {
         if (_relativeWidth < 0 || _relativeWidth > 100)
+        {
           throw new ArgumentOutOfRangeException("_relativeWidth");
+        }
         _relativeWidth = value;
         _absoluteWidth = 0;
       }
@@ -111,26 +91,23 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl Control
     {
-      get
-      {
-        return _control;
-      }
-      set
-      {
-        _control = value;
-      }
+      get { return _control; }
+      set { _control = value; }
     }
 
     public int RenderWidth
     {
       get
       {
-        if (AbsoluteWidth > 0) return AbsoluteWidth;
+        if (AbsoluteWidth > 0)
+        {
+          return AbsoluteWidth;
+        }
         if (RelativeWidth > 0)
         {
-          float width = (float)Row.GridControl.TotalWidth;
-          width *= (((float)RelativeWidth) / 100.0f);
-          return (int)width;
+          float width = (float) Row.GridControl.TotalWidth;
+          width *= (((float) RelativeWidth)/100.0f);
+          return (int) width;
         }
         return _calculatedWidth;
       }
@@ -138,20 +115,21 @@ namespace MediaPortal.GUI.Library
 
     public bool Focus
     {
-      get
-      {
-        return _hasFocus;
-      }
+      get { return _hasFocus; }
       set
       {
         _hasFocus = value;
         if (_control != null)
+        {
           _control.Focus = value;
+        }
       }
     }
+
     #endregion
 
     #region public methods
+
     public void FreeResources()
     {
       if (_resourcesAllocated)
@@ -160,10 +138,14 @@ namespace MediaPortal.GUI.Library
         _resourcesAllocated = false;
       }
     }
+
     public void Render(ref int offsetX, int offsetY, float timePassed)
     {
       _positionX = offsetX;
-      if (_control == null) return;
+      if (_control == null)
+      {
+        return;
+      }
       _control.Width = RenderWidth;
       _control.Height = Row.RenderHeight;
 
@@ -211,14 +193,20 @@ namespace MediaPortal.GUI.Library
     public GUIGridCell OnUp(int x)
     {
       GUIGridRow row = Row.GetRowAt(_control.YPosition - 1);
-      if (row == null) return null;
+      if (row == null)
+      {
+        return null;
+      }
       return GetColumnAt(row, x);
     }
 
     public GUIGridCell OnDown(int x)
     {
       GUIGridRow row = Row.GetRowAt(_control.YPosition + Row.RenderHeight + 1);
-      if (row == null) return null;
+      if (row == null)
+      {
+        return null;
+      }
       return GetColumnAt(row, x);
     }
 
@@ -226,7 +214,10 @@ namespace MediaPortal.GUI.Library
     {
       int index = ColumnIndex;
       index--;
-      if (index < 0) return null;
+      if (index < 0)
+      {
+        return null;
+      }
       return Row.Columns[index];
     }
 
@@ -234,19 +225,27 @@ namespace MediaPortal.GUI.Library
     {
       int index = ColumnIndex;
       index++;
-      if (index >= Row.Count) return null;
+      if (index >= Row.Count)
+      {
+        return null;
+      }
       return Row.Columns[index];
     }
+
     #endregion
 
     #region private members
-    int ColumnIndex
+
+    private int ColumnIndex
     {
       get
       {
         for (int column = 0; column < Row.Count; column++)
         {
-          if (this == Row.Columns[column]) return column;
+          if (this == Row.Columns[column])
+          {
+            return column;
+          }
         }
         return -1;
       }

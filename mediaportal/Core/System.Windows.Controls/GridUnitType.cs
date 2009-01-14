@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum GridUnitType
-	{
-		#region Values
+  public enum GridUnitType
+  {
+    #region Values
 
-		Auto,
-		Pixel,
-		Star,
+    Auto,
+    Pixel,
+    Star,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

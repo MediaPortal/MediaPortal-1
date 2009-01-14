@@ -23,64 +23,61 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class Canvas : Panel
-	{
-		#region Contructors
+  public class Canvas : Panel
+  {
+    #region Contructors
 
-		static Canvas()
-		{
-			BottomProperty = DependencyProperty.Register("Bottom", typeof(double), typeof(Canvas));
-			LeftProperty = DependencyProperty.Register("Left", typeof(double), typeof(Canvas));
-			RightProperty = DependencyProperty.Register("Right", typeof(double), typeof(Canvas));
-			TopProperty = DependencyProperty.Register("Top", typeof(double), typeof(Canvas));
-		}
+    static Canvas()
+    {
+      BottomProperty = DependencyProperty.Register("Bottom", typeof (double), typeof (Canvas));
+      LeftProperty = DependencyProperty.Register("Left", typeof (double), typeof (Canvas));
+      RightProperty = DependencyProperty.Register("Right", typeof (double), typeof (Canvas));
+      TopProperty = DependencyProperty.Register("Top", typeof (double), typeof (Canvas));
+    }
 
-		public Canvas()
-		{
-		}
+    public Canvas()
+    {
+    }
 
-		#endregion Contructors
+    #endregion Contructors
 
-		#region Methods
+    #region Methods
 
-		protected override Size ArrangeOverride(Rect finalRect)
-		{
-			return base.ArrangeOverride(finalRect);
-		}
+    protected override Size ArrangeOverride(Rect finalRect)
+    {
+      return base.ArrangeOverride(finalRect);
+    }
 
-		public static double GetBottom(UIElement element)
-		{
-			return (double)element.GetValue(BottomProperty);
-		}
+    public static double GetBottom(UIElement element)
+    {
+      return (double) element.GetValue(BottomProperty);
+    }
 
 //		protected override Geometry GetLayoutClip(Size layoutSlotSize)
 //		{
 //		}
 
-		public static double GetLeft(UIElement element)
-		{
-			return (double)element.GetValue(LeftProperty);
-		}
+    public static double GetLeft(UIElement element)
+    {
+      return (double) element.GetValue(LeftProperty);
+    }
 
-		public static double GetRight(UIElement element)
-		{
-			return (double)element.GetValue(RightProperty);
-		}
+    public static double GetRight(UIElement element)
+    {
+      return (double) element.GetValue(RightProperty);
+    }
 
-		public static double GetTop(UIElement element)
-		{
-			return (double)element.GetValue(TopProperty);
-		}
+    public static double GetTop(UIElement element)
+    {
+      return (double) element.GetValue(TopProperty);
+    }
 
-		protected override Size MeasureOverride(Size availableSize)
-		{
+    protected override Size MeasureOverride(Size availableSize)
+    {
 /*			if(_isEmpty)
 			{
 				_l = point.X;
@@ -99,38 +96,39 @@ namespace System.Windows.Controls
 			_r = Math.Max(_r, point.X);
 			_b = Math.Max(_b, point.Y);
 			
-*/			return base.MeasureOverride (availableSize);
-		}
+*/
+      return base.MeasureOverride(availableSize);
+    }
 
-		public static void SetBottom(UIElement element, double bottom)
-		{
-			element.SetValue(BottomProperty, bottom);
-		}
-		
-		public static void SetLeft(UIElement element, double left)
-		{
-			element.SetValue(LeftProperty, left);
-		}
+    public static void SetBottom(UIElement element, double bottom)
+    {
+      element.SetValue(BottomProperty, bottom);
+    }
 
-		public static void SetRight(UIElement element, double right)
-		{
-			element.SetValue(BottomProperty, right);
-		}
+    public static void SetLeft(UIElement element, double left)
+    {
+      element.SetValue(LeftProperty, left);
+    }
 
-		public static void SetTop(UIElement element, double top)
-		{
-			element.SetValue(BottomProperty, top);
-		}
+    public static void SetRight(UIElement element, double right)
+    {
+      element.SetValue(BottomProperty, right);
+    }
 
-		#endregion Methods
-	
-		#region Properties (Dependency)
+    public static void SetTop(UIElement element, double top)
+    {
+      element.SetValue(BottomProperty, top);
+    }
 
-		public static readonly DependencyProperty BottomProperty;
-		public static readonly DependencyProperty LeftProperty;
-		public static readonly DependencyProperty RightProperty;
-		public static readonly DependencyProperty TopProperty;
+    #endregion Methods
 
-		#endregion Properties (Dependency)
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty BottomProperty;
+    public static readonly DependencyProperty LeftProperty;
+    public static readonly DependencyProperty RightProperty;
+    public static readonly DependencyProperty TopProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

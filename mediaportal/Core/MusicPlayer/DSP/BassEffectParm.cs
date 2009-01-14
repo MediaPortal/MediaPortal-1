@@ -24,9 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Player.DSP
@@ -53,14 +50,11 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// Name of the Parameter
     /// </summary>
-    [XmlAttribute]
-    public string Name = "";
+    [XmlAttribute] public string Name = "";
 
     /// <summary>
     /// Value of the Parameter
     /// </summary>
-    [XmlAttribute]
-    public string Value = "";
-
+    [XmlAttribute] public string Value = "";
   }
 }

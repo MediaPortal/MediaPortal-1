@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.Visualization
 {
@@ -41,18 +39,22 @@ namespace MediaPortal.Visualization
       Winamp,
       Sonique,
       WMP,
-    };
+    } ;
 
     private string[] BlackList = new string[]
-            {
-                "{BFA29983-66E4-11d7-A75D-0000B4908923}",   // The WMP version the the G-Force plugin.  Since we support G-Force natively, we don't need this one
-                "{3DC95765-154D-11d8-A75D-0000B4908923}",   // The WMP version the the WhiteCap plugin.  Since we support WhiteCap natively, we don't need this one
-                "{4EC05565-154D-11d8-A75D-0000B4908923}",   // The WMP version the the SoftSkies plugin.  Since we support SoftSkies natively, we don't need this one 
-                "{BDEEAAAB-15DC-4e7d-802D-10115C069AD8}",   // The WMP version of TwistedPixel. We support the Winamp Version
-                "Milkdrop 1.04d",                           // Winamp Milkdrop 1.04d
-            };
+                                   {
+                                     "{BFA29983-66E4-11d7-A75D-0000B4908923}",
+                                     // The WMP version the the G-Force plugin.  Since we support G-Force natively, we don't need this one
+                                     "{3DC95765-154D-11d8-A75D-0000B4908923}",
+                                     // The WMP version the the WhiteCap plugin.  Since we support WhiteCap natively, we don't need this one
+                                     "{4EC05565-154D-11d8-A75D-0000B4908923}",
+                                     // The WMP version the the SoftSkies plugin.  Since we support SoftSkies natively, we don't need this one 
+                                     "{BDEEAAAB-15DC-4e7d-802D-10115C069AD8}",
+                                     // The WMP version of TwistedPixel. We support the Winamp Version
+                                     "Milkdrop 1.04d", // Winamp Milkdrop 1.04d
+                                   };
 
-    private VisualizationInfo.PluginType _VisualizationType = VisualizationInfo.PluginType.None;
+    private PluginType _VisualizationType = PluginType.None;
     private string _FilePath = string.Empty;
     private string _Name = string.Empty;
     private string _CLSID = string.Empty;
@@ -91,7 +93,9 @@ namespace MediaPortal.Visualization
       get
       {
         if (_PresetNames == null)
+        {
           _PresetNames = new List<string>();
+        }
 
         return _PresetNames;
       }
@@ -115,10 +119,14 @@ namespace MediaPortal.Visualization
       get
       {
         if (_PresetNames != null)
+        {
           return _PresetNames.Count;
+        }
 
         else
+        {
           return 0;
+        }
       }
     }
 
@@ -140,7 +148,7 @@ namespace MediaPortal.Visualization
       set { _IsBlackListed = value; }
     }
 
-    public VisualizationInfo(VisualizationInfo.PluginType vizType, string path, string name, string clsid, List<string> presets)
+    public VisualizationInfo(PluginType vizType, string path, string name, string clsid, List<string> presets)
     {
       _IsBlackListed = IsBlackListedVisualization(clsid) || IsBlackListedVisualization(name);
       _VisualizationType = vizType;
@@ -150,7 +158,7 @@ namespace MediaPortal.Visualization
       _PresetNames = presets;
     }
 
-    public VisualizationInfo(VisualizationInfo.PluginType vizType, string path, string name, string clsid, int presetIndex)
+    public VisualizationInfo(PluginType vizType, string path, string name, string clsid, int presetIndex)
     {
       _IsBlackListed = IsBlackListedVisualization(clsid) || IsBlackListedVisualization(name);
       _VisualizationType = vizType;
@@ -162,7 +170,7 @@ namespace MediaPortal.Visualization
 
     public VisualizationInfo(string name, bool isDummy)
     {
-      _VisualizationType = VisualizationInfo.PluginType.None;
+      _VisualizationType = PluginType.None;
       _Name = name;
       _IsDummyPlugin = isDummy;
     }
@@ -170,7 +178,9 @@ namespace MediaPortal.Visualization
     private bool IsBlackListedVisualization(string clsid)
     {
       if (clsid.Length == 0)
+      {
         return false;
+      }
 
       string pluginClisd = clsid.ToLower();
 
@@ -179,7 +189,9 @@ namespace MediaPortal.Visualization
         string curClsid = BlackList[i].ToLower();
 
         if (pluginClisd == curClsid)
+        {
           return true;
+        }
       }
 
       return false;
@@ -194,39 +206,59 @@ namespace MediaPortal.Visualization
     public bool IsIdenticalTo(VisualizationInfo vizInfo, bool doSimpleCheck)
     {
       if (this._Name != vizInfo._Name)
+      {
         return false;
+      }
 
       if (this._CLSID != vizInfo.CLSID)
+      {
         return false;
+      }
 
       if (this.FilePath != vizInfo.FilePath)
+      {
         return false;
+      }
 
       if (this.IsCOMPlugin != vizInfo.IsCOMPlugin)
+      {
         return false;
+      }
 
       if (this.IsDummyPlugin != vizInfo.IsDummyPlugin)
+      {
         return false;
+      }
 
       if (this.PresetIndex != vizInfo.PresetIndex)
+      {
         return false;
+      }
 
       if (this.VisualizationType != vizInfo.VisualizationType)
+      {
         return false;
+      }
 
       if (!doSimpleCheck)
       {
         if (this.HasPresets != vizInfo.HasPresets)
+        {
           return false;
+        }
 
 
         if (this.PresetNames.Count != vizInfo.PresetNames.Count)
+        {
           return false;
+        }
 
         for (int i = 0; i < this.PresetNames.Count; i++)
         {
           if (this.PresetNames[i] != vizInfo.PresetNames[i])
+          {
             return false;
+          }
         }
       }
 
@@ -235,25 +267,26 @@ namespace MediaPortal.Visualization
 
     public override string ToString()
     {
-      string sVizType = string.Empty; ;
+      string sVizType = string.Empty;
+      ;
 
       switch (_VisualizationType)
       {
-        case VisualizationInfo.PluginType.GForce:
-        case VisualizationInfo.PluginType.WhiteCap:
-        case VisualizationInfo.PluginType.SoftSkies:
+        case PluginType.GForce:
+        case PluginType.WhiteCap:
+        case PluginType.SoftSkies:
           sVizType = "";
           break;
 
-        case VisualizationInfo.PluginType.Sonique:
+        case PluginType.Sonique:
           sVizType = " (Sonique)";
           break;
 
-        case VisualizationInfo.PluginType.Winamp:
+        case PluginType.Winamp:
           sVizType = " (Winamp)";
           break;
 
-        case VisualizationInfo.PluginType.WMP:
+        case PluginType.WMP:
           sVizType = " (Windows Media Player)";
           break;
       }

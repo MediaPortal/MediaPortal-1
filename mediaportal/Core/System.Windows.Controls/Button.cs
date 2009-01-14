@@ -23,73 +23,72 @@
 
 #endregion
 
-using System;
-using System.Windows;
 using System.Windows.Automation;
-
-using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class Button : ButtonBase, IInvokeProvider
-	{
-		#region Constructors
-		
-		static Button()
-		{
-			IsCancelProperty = DependencyProperty.Register("IsCancel", typeof(bool), typeof(Button), new PropertyMetadata(false));
-			IsDefaultedProperty = DependencyProperty.Register("IsDefaulted", typeof(bool), typeof(Button), new PropertyMetadata(false));
-			IsDefaultProperty = DependencyProperty.Register("IsDefault", typeof(bool), typeof(Button), new PropertyMetadata(false));
-		}
+  public class Button : ButtonBase, IInvokeProvider
+  {
+    #region Constructors
 
-		public Button()
-		{
-		}
+    static Button()
+    {
+      IsCancelProperty = DependencyProperty.Register("IsCancel", typeof (bool), typeof (Button),
+                                                     new PropertyMetadata(false));
+      IsDefaultedProperty = DependencyProperty.Register("IsDefaulted", typeof (bool), typeof (Button),
+                                                        new PropertyMetadata(false));
+      IsDefaultProperty = DependencyProperty.Register("IsDefault", typeof (bool), typeof (Button),
+                                                      new PropertyMetadata(false));
+    }
 
-		#endregion Constructors
+    public Button()
+    {
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		void IInvokeProvider.Invoke()
-		{
-			throw new NotImplementedException();
-		}
+    #region Methods
 
-		protected override void OnClick()
-		{
-			throw new NotImplementedException();
-		}
+    void IInvokeProvider.Invoke()
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    protected override void OnClick()
+    {
+      throw new NotImplementedException();
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public bool IsCancel
-		{
-			get { return (bool)GetValue(IsCancelProperty); }
-			set { SetValue(IsCancelProperty, value); }
-		}
+    #region Properties
 
-		public bool IsDefault
-		{
-			get { return (bool)GetValue(IsDefaultProperty); }
-			set { SetValue(IsDefaultProperty, value); }
-		}
+    public bool IsCancel
+    {
+      get { return (bool) GetValue(IsCancelProperty); }
+      set { SetValue(IsCancelProperty, value); }
+    }
 
-		public bool IsDefaulted
-		{
-			get { return (bool)GetValue(IsDefaultedProperty); }
-			set { SetValue(IsDefaultedProperty, value); }
-		}
-		
-		#endregion Properties
+    public bool IsDefault
+    {
+      get { return (bool) GetValue(IsDefaultProperty); }
+      set { SetValue(IsDefaultProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    public bool IsDefaulted
+    {
+      get { return (bool) GetValue(IsDefaultedProperty); }
+      set { SetValue(IsDefaultedProperty, value); }
+    }
 
-		public static readonly DependencyProperty IsCancelProperty;
-		public static readonly DependencyProperty IsDefaultedProperty;
-		public static readonly DependencyProperty IsDefaultProperty;
+    #endregion Properties
 
-		#endregion Properties (Dependency)
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty IsCancelProperty;
+    public static readonly DependencyProperty IsDefaultedProperty;
+    public static readonly DependencyProperty IsDefaultProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

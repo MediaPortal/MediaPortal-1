@@ -26,10 +26,10 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.InteropServices;
-
 using DirectShowLib;
+
 #pragma warning disable 618
+
 namespace DShowNET.Helper
 {
   public class FilterHelper
@@ -82,13 +82,24 @@ namespace DShowNET.Helper
       foreach (Filter device in Filters.LegacyFilters)
       {
         if (device.Name == "B2C2 MPEG-2 Source")
+        {
           devices.Add(device.MonikerString);
+        }
       }
       foreach (Filter device in Filters.BDAReceivers)
       {
-        if (device.Name.ToLower() == "bda slip de-framer") continue;
-        if (device.Name.ToLower() == "bda mpe filter") continue;
-        if (device.Name.ToLower() == "bda mpe-filter") continue;
+        if (device.Name.ToLower() == "bda slip de-framer")
+        {
+          continue;
+        }
+        if (device.Name.ToLower() == "bda mpe filter")
+        {
+          continue;
+        }
+        if (device.Name.ToLower() == "bda mpe-filter")
+        {
+          continue;
+        }
         devices.Add(device.MonikerString);
       }
       return devices;
@@ -105,13 +116,24 @@ namespace DShowNET.Helper
       foreach (Filter device in Filters.LegacyFilters)
       {
         if (device.Name == "B2C2 MPEG-2 Source")
+        {
           devices.Add(device.Name);
+        }
       }
       foreach (Filter device in Filters.BDAReceivers)
       {
-        if (device.Name.ToLower() == "bda slip de-framer") continue;
-        if (device.Name.ToLower() == "bda mpe filter") continue;
-        if (device.Name.ToLower() == "bda mpe-filter") continue;
+        if (device.Name.ToLower() == "bda slip de-framer")
+        {
+          continue;
+        }
+        if (device.Name.ToLower() == "bda mpe filter")
+        {
+          continue;
+        }
+        if (device.Name.ToLower() == "bda mpe-filter")
+        {
+          continue;
+        }
         devices.Add(device.Name);
       }
       return devices;
@@ -136,14 +158,14 @@ namespace DShowNET.Helper
       foreach (Filter filter in Filters.LegacyFilters)
       {
         if (String.Compare(filter.Name, "DVD Navigator", true) == 0 ||
-        String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
-        String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
-        String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
-        String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
-        String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD6)", true) == 0 ||
-        String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD7)", true) == 0 )
-        // Not supported currently. The navigator doesnt work properly even in the GraphEdit  
-        //|| String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD8)", true) == 0)
+            String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
+            String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
+            String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
+            String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
+            String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD6)", true) == 0 ||
+            String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD7)", true) == 0)
+          // Not supported currently. The navigator doesnt work properly even in the GraphEdit  
+          //|| String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD8)", true) == 0)
         {
           navigators.Add(filter.Name);
         }
@@ -158,7 +180,11 @@ namespace DShowNET.Helper
       {
         bool add = false;
         //Cyberlink MPEG Audio encoder
-        if (filter.MonikerString == @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}") add = true;
+        if (filter.MonikerString ==
+            @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}")
+        {
+          add = true;
+        }
         if (add)
         {
           list.Add(filter.Name);
@@ -172,7 +198,11 @@ namespace DShowNET.Helper
       {
         bool add = false;
         //Cyberlink MPEG Video encoder
-        if (filter.MonikerString == @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") add = true;
+        if (filter.MonikerString ==
+            @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}")
+        {
+          add = true;
+        }
         if (add)
         {
           list.Add(filter.Name);
@@ -182,12 +212,12 @@ namespace DShowNET.Helper
 
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
     {
-      return GetFilters(mediaType, mediaSubType, (Merit)0x080001);
+      return GetFilters(mediaType, mediaSubType, (Merit) 0x080001);
     }
 
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType, Merit merit)
     {
-      return GetFilters(new Guid[] { mediaType }, new Guid[] { mediaSubType }, merit);
+      return GetFilters(new Guid[] {mediaType}, new Guid[] {mediaSubType}, merit);
     }
 
     public static ArrayList GetFilters(Guid[] mediaType, Guid[] mediaSubType, Merit merit)
@@ -195,17 +225,17 @@ namespace DShowNET.Helper
       ArrayList filters = new ArrayList();
       IEnumMoniker enumMoniker = null;
       IMoniker[] moniker = new IMoniker[1];
-      IFilterMapper2 mapper = (IFilterMapper2)new FilterMapper2();
+      IFilterMapper2 mapper = (IFilterMapper2) new FilterMapper2();
       Guid[] types = new Guid[mediaType.Length*2];
       for (int i = 0; i < mediaType.Length; i++)
       {
-        types[i * 2] = mediaType[i];
-        types[i * 2 + 1] = mediaSubType[i];
+        types[i*2] = mediaType[i];
+        types[i*2 + 1] = mediaSubType[i];
       }
       if (mapper != null)
       {
         int hResult = mapper.EnumMatchingFilters(
-           out enumMoniker,
+          out enumMoniker,
           0,
           true,
           merit,
@@ -231,8 +261,7 @@ namespace DShowNET.Helper
           string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
           filters.Add(filterName);
           moniker[0] = null;
-        }
-        while (true);
+        } while (true);
       }
       return filters;
     }

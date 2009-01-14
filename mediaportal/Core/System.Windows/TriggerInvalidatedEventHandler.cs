@@ -25,9 +25,10 @@
 
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void TriggerInvalidatedEventHandler(object sender, TriggerInvalidatedEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void TriggerInvalidatedEventHandler(object sender, TriggerInvalidatedEventArgs e);
+
+  #endregion Delegates
 }

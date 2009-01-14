@@ -23,61 +23,60 @@
 
 #endregion
 
-using System;
 using MediaPortal.Drawing;
 
 namespace System.Windows
 {
-	public class SizeChangedEventArgs : RoutedEventArgs
-	{
-		#region Constructors
+  public class SizeChangedEventArgs : RoutedEventArgs
+  {
+    #region Constructors
 
-		public SizeChangedEventArgs()
-		{
-		}
+    public SizeChangedEventArgs()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override void InvokeEventHandler(Delegate handler, object target)
-		{
-			base.InvokeEventHandler(handler, target);
-		}
+    protected override void InvokeEventHandler(Delegate handler, object target)
+    {
+      base.InvokeEventHandler(handler, target);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public bool HeightChanged
-		{
-			get { return _heightChanged; }
-		}
+    public bool HeightChanged
+    {
+      get { return _heightChanged; }
+    }
 
-		public Size NewSize
-		{
-			get { return _newSize; }
-		}
+    public Size NewSize
+    {
+      get { return _newSize; }
+    }
 
-		public Size PreviousSize
-		{
-			get { return _previousSize; }
-		}
+    public Size PreviousSize
+    {
+      get { return _previousSize; }
+    }
 
-		public bool WidthChanged
-		{
-			get { return _widthChanged; }
-		}
+    public bool WidthChanged
+    {
+      get { return _widthChanged; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		bool						_heightChanged = false;
-		Size						_newSize = Size.Empty;
-		Size						_previousSize = Size.Empty;
-		bool						_widthChanged = false;
+    private bool _heightChanged = false;
+    private Size _newSize = Size.Empty;
+    private Size _previousSize = Size.Empty;
+    private bool _widthChanged = false;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

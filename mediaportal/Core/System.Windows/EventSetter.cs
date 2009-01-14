@@ -23,55 +23,52 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows
 {
-	public class EventSetter : SetterBase
-	{
-		#region Constructors
+  public class EventSetter : SetterBase
+  {
+    #region Constructors
 
-		public EventSetter()
-		{
-		}
+    public EventSetter()
+    {
+    }
 
-		public EventSetter(RoutedEvent routedEvent, Delegate handler)
-		{
-			_event = routedEvent;
-			_handler = handler;
-		}
+    public EventSetter(RoutedEvent routedEvent, Delegate handler)
+    {
+      _event = routedEvent;
+      _handler = handler;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public RoutedEvent Event
-		{
-			get { return _event; }
-			set { _event = value; }
-		}
+    public RoutedEvent Event
+    {
+      get { return _event; }
+      set { _event = value; }
+    }
 
-		public bool HandledEventsToo
-		{
-			get { return _isHandledEventsToo; }
-			set { _isHandledEventsToo = value; }
-		}
+    public bool HandledEventsToo
+    {
+      get { return _isHandledEventsToo; }
+      set { _isHandledEventsToo = value; }
+    }
 
-		public Delegate Handler
-		{
-			get { return _handler; }
-			set { _handler = value; }
-		}
+    public Delegate Handler
+    {
+      get { return _handler; }
+      set { _handler = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		RoutedEvent					_event = null;
-		bool						_isHandledEventsToo = false;
-		Delegate					_handler = null;
+    private RoutedEvent _event = null;
+    private bool _isHandledEventsToo = false;
+    private Delegate _handler = null;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

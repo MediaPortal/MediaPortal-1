@@ -23,18 +23,13 @@
 
 #endregion
 
-using System;
-using System.Drawing;
-using System.Collections;
 using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
-
   public sealed class GUIWaitCursor : GUIControl
   {
     #region Constructors
@@ -52,7 +47,9 @@ namespace MediaPortal.GUI.Library
     public static void Dispose()
     {
       if (_animation != null)
+      {
         _animation.FreeResources();
+      }
 
       _animation = null;
     }
@@ -74,15 +71,19 @@ namespace MediaPortal.GUI.Library
     public static void Init()
     {
       if (_animation != null)
+      {
         return;
+      }
       _animation = new GUIAnimation();
 
       foreach (string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
+      {
         _animation.Filenames.Add(Path.GetFileName(filename));
+      }
 
       // dirty hack because the files are 96x96 - unfortunately no property gives the correct size at runtime when init is called :S
-      int scaleWidth = (GUIGraphicsContext.Width / 2) - 48;
-      int scaleHeigth = (GUIGraphicsContext.Height / 2) - 48;
+      int scaleWidth = (GUIGraphicsContext.Width/2) - 48;
+      int scaleHeigth = (GUIGraphicsContext.Height/2) - 48;
 
       _animation.SetPosition(scaleWidth, scaleHeigth);
 
@@ -103,7 +104,9 @@ namespace MediaPortal.GUI.Library
     public static void Render()
     {
       if (_showCount <= 0)
+      {
         return;
+      }
 
       GUIGraphicsContext.SetScalingResolution(0, 0, false);
       _animation.Render(GUIGraphicsContext.TimePassed);
@@ -111,7 +114,6 @@ namespace MediaPortal.GUI.Library
 
     public static void Show()
     {
-
       if (guiWaitCursorThread == null)
       {
         guiWaitCursorThread = new Thread(GUIWaitCursorThread);
@@ -125,8 +127,8 @@ namespace MediaPortal.GUI.Library
 
     #region Fields
 
-    static GUIAnimation _animation;
-    static int _showCount = 0;
+    private static GUIAnimation _animation;
+    private static int _showCount = 0;
 
     #endregion Fields
   }

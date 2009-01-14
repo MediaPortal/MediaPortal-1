@@ -25,74 +25,76 @@
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherOperation
-	{
-		#region Constructors
+  public sealed class DispatcherOperation
+  {
+    #region Constructors
 
-		internal DispatcherOperation(DispatcherPriority priority, Dispatcher dispatcher)
-		{
-			_priority = priority;
-			_dispatcher = dispatcher;
-		}
+    internal DispatcherOperation(DispatcherPriority priority, Dispatcher dispatcher)
+    {
+      _priority = priority;
+      _dispatcher = dispatcher;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler Aborted;
+    public event EventHandler Aborted;
 //		public event EventHandler Completed;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public bool Abort()
-		{
-			if(Aborted != null)
-				Aborted(this, EventArgs.Empty);
+    public bool Abort()
+    {
+      if (Aborted != null)
+      {
+        Aborted(this, EventArgs.Empty);
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		public DispatcherOperationStatus Wait()
-		{
-			throw new NotImplementedException();
-		}
+    public DispatcherOperationStatus Wait()
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Dispatcher Dispatcher
-		{
-			get { return _dispatcher; }
-		}
+    public Dispatcher Dispatcher
+    {
+      get { return _dispatcher; }
+    }
 
-		public DispatcherPriority Priority
-		{
-			get { return _priority; }
-			set { _priority = value; }
-		}
+    public DispatcherPriority Priority
+    {
+      get { return _priority; }
+      set { _priority = value; }
+    }
 
-		public object Result
-		{
-			get { return _result; }
-		}
+    public object Result
+    {
+      get { return _result; }
+    }
 
-		public DispatcherOperationStatus Status
-		{
-			get { return _status; }
-		}
+    public DispatcherOperationStatus Status
+    {
+      get { return _status; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Dispatcher					_dispatcher;
-		DispatcherPriority			_priority;
-		object						_result = null;
-		DispatcherOperationStatus	_status = DispatcherOperationStatus.Pending;
-	
-		#endregion Fields
-	}
+    private Dispatcher _dispatcher;
+    private DispatcherPriority _priority;
+    private object _result = null;
+    private DispatcherOperationStatus _status = DispatcherOperationStatus.Pending;
+
+    #endregion Fields
+  }
 }

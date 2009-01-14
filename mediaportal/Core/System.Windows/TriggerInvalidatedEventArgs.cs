@@ -23,48 +23,46 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public class TriggerInvalidatedEventArgs : EventArgs
-	{
-		#region Constructors
+  public class TriggerInvalidatedEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public TriggerInvalidatedEventArgs(DependencyObject element, DependencyProperty property, Style style)
-		{
-			_element = element;
-			_property = property;
-			_style = style;
-		}
+    public TriggerInvalidatedEventArgs(DependencyObject element, DependencyProperty property, Style style)
+    {
+      _element = element;
+      _property = property;
+      _style = style;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public DependencyObject Element
-		{
-			get { return _element; }
-		}
+    public DependencyObject Element
+    {
+      get { return _element; }
+    }
 
-		public DependencyProperty Property
-		{
-			get { return _property; }
-		}
+    public DependencyProperty Property
+    {
+      get { return _property; }
+    }
 
-		public Style Style
-		{
-			get { return _style; }
-		}
+    public Style Style
+    {
+      get { return _style; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		DependencyObject			_element;
-		DependencyProperty			_property;
-		Style						_style;
+    private DependencyObject _element;
+    private DependencyProperty _property;
+    private Style _style;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

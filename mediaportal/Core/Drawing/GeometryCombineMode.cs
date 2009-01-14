@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum GeometryCombineMode
-	{
-		Union,
-		Exclude,
-		Intersect,
-		Xor,
-	}
+  public enum GeometryCombineMode
+  {
+    Union,
+    Exclude,
+    Intersect,
+    Xor,
+  }
 }

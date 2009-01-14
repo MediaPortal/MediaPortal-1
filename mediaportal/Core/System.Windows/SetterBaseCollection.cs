@@ -23,107 +23,124 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class SetterBaseCollection : CollectionBase, IAddChild
-	{
-		#region Constructors
+  public sealed class SetterBaseCollection : CollectionBase, IAddChild
+  {
+    #region Constructors
 
-		public SetterBaseCollection()
-		{
-		}
+    public SetterBaseCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(SetterBase setter)
-		{
-			if(setter == null)
-				throw new ArgumentNullException("setter");
+    public void Add(SetterBase setter)
+    {
+      if (setter == null)
+      {
+        throw new ArgumentNullException("setter");
+      }
 
-			List.Add(setter);
-		}
+      List.Add(setter);
+    }
 
-		public bool Contains(SetterBase setter)
-		{
-			if(setter == null)
-				throw new ArgumentNullException("setter");
+    public bool Contains(SetterBase setter)
+    {
+      if (setter == null)
+      {
+        throw new ArgumentNullException("setter");
+      }
 
-			return List.Contains(setter);
-		}
+      return List.Contains(setter);
+    }
 
-		public void CopyTo(Setter[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Setter[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public SetterBaseCollection GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
-			
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    public SetterBaseCollection GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-			if(child is SetterBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			List.Add((SetterBase)child);
-		}
+      if (child is SetterBase == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (SetterBase)));
+      }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+      List.Add((SetterBase) child);
+    }
 
-		public int IndexOf(SetterBase setter)
-		{
-			if(setter == null)
-				throw new ArgumentNullException("setter");
+    void IAddChild.AddText(string text)
+    {
+    }
 
-			return List.IndexOf(setter);
-		}
+    public int IndexOf(SetterBase setter)
+    {
+      if (setter == null)
+      {
+        throw new ArgumentNullException("setter");
+      }
 
-		public void Insert(int index, SetterBase setter)
-		{
-			if(setter == null)
-				throw new ArgumentNullException("setter");
+      return List.IndexOf(setter);
+    }
 
-			List.Insert(index, setter);
-		}
+    public void Insert(int index, SetterBase setter)
+    {
+      if (setter == null)
+      {
+        throw new ArgumentNullException("setter");
+      }
 
-		public bool Remove(SetterBase setter)
-		{
-			if(setter == null)
-				throw new ArgumentNullException("setter");
-			
-			if(List.Contains(setter) == false)
-				return false;
+      List.Insert(index, setter);
+    }
 
-			List.Remove(setter);
+    public bool Remove(SetterBase setter)
+    {
+      if (setter == null)
+      {
+        throw new ArgumentNullException("setter");
+      }
 
-			return true;
-		}
+      if (List.Contains(setter) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(setter);
 
-		#region Properties
+      return true;
+    }
 
-		public SetterBase this[int index]
-		{ 
-			get { return (Setter)List[index]; }
-			set { List[index] = value; }
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    public SetterBase this[int index]
+    {
+      get { return (Setter) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

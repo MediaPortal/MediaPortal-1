@@ -23,60 +23,79 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public sealed class GeometryDrawing
-	{
-		#region Constructors
+  public sealed class GeometryDrawing
+  {
+    #region Constructors
 
-		public GeometryDrawing()
-		{
-		}
+    public GeometryDrawing()
+    {
+    }
 
-		public GeometryDrawing(Brush brush, Pen pen, Geometry geometry)
-		{
-		}
+    public GeometryDrawing(Brush brush, Pen pen, Geometry geometry)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void RaiseChanged()
-		{
-		}
+    private void RaiseChanged()
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Brush Brush
-		{
-			get { return _brush; }
-			set { if(!Brush.Equals(_brush, value)) { _brush = value; RaiseChanged(); } }
-		}
+    public Brush Brush
+    {
+      get { return _brush; }
+      set
+      {
+        if (!Equals(_brush, value))
+        {
+          _brush = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public Geometry Geometry
-		{
-			get { return _geometry; }
-			set { if(!Geometry.Equals(_geometry, value)) { _geometry = value; RaiseChanged(); } }
-		}
+    public Geometry Geometry
+    {
+      get { return _geometry; }
+      set
+      {
+        if (!Equals(_geometry, value))
+        {
+          _geometry = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public Pen Pen
-		{
-			get { return _pen; }
-			set { if(!Pen.Equals(_pen, value)) { _pen = value; RaiseChanged(); } }
-		}
+    public Pen Pen
+    {
+      get { return _pen; }
+      set
+      {
+        if (!Equals(_pen, value))
+        {
+          _pen = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Brush						_brush;
-		Geometry					_geometry;
-		Pen							_pen;
+    private Brush _brush;
+    private Geometry _geometry;
+    private Pen _pen;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

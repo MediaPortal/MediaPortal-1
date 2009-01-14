@@ -24,18 +24,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using MediaPortal.Util;
+using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
 {
   public class PlayListM3uIO : IPlayListIO
   {
-    const string M3U_START_MARKER = "#EXTM3U";
-    const string M3U_INFO_MARKER = "#EXTINF";
+    private const string M3U_START_MARKER = "#EXTM3U";
+    private const string M3U_INFO_MARKER = "#EXTINF";
     private PlayList playlist;
     private StreamReader file;
     private string basePath;
@@ -52,7 +50,9 @@ namespace MediaPortal.Playlists
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
     {
       if (playlistFileName == null)
+      {
         return false;
+      }
       playlist = incomingPlaylist;
       playlist.Clear();
 
@@ -64,11 +64,15 @@ namespace MediaPortal.Playlists
         using (file = new StreamReader(playlistFileName, Encoding.Default, true))
         {
           if (file == null)
+          {
             return false;
+          }
 
           string line = file.ReadLine();
           if (line == null || line.Length == 0)
+          {
             return false;
+          }
 
           string trimmedLine = line.Trim();
 
@@ -76,7 +80,9 @@ namespace MediaPortal.Playlists
           {
             string fileName = trimmedLine;
             if (!AddItem("", 0, fileName))
+            {
               return false;
+            }
           }
 
           line = file.ReadLine();
@@ -95,13 +101,17 @@ namespace MediaPortal.Playlists
                 {
                   line = file.ReadLine();
                   if (!AddItem(songName, lDuration, line))
+                  {
                     break;
+                  }
                 }
               }
               else
               {
                 if (!AddItem("", 0, trimmedLine))
+                {
                   break;
+                }
               }
             }
             line = file.ReadLine();
@@ -119,15 +129,15 @@ namespace MediaPortal.Playlists
     private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
     {
       //bool successfull;
-      int iColon = (int)trimmedLine.IndexOf(":");
-      int iComma = (int)trimmedLine.IndexOf(",");
+      int iColon = (int) trimmedLine.IndexOf(":");
+      int iComma = (int) trimmedLine.IndexOf(",");
       if (iColon >= 0 && iComma >= 0 && iComma > iColon)
       {
         iColon++;
         string duration = trimmedLine.Substring(iColon, iComma - iColon);
         iComma++;
         songName = trimmedLine.Substring(iComma);
-        lDuration = System.Int32.Parse(duration);
+        lDuration = Int32.Parse(duration);
         return true;
       }
       return false;
@@ -137,7 +147,9 @@ namespace MediaPortal.Playlists
     private bool AddItem(string songName, int duration, string fileName)
     {
       if (fileName == null || fileName.Length == 0)
+      {
         return false;
+      }
 
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
       if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
@@ -147,7 +159,7 @@ namespace MediaPortal.Playlists
       }
       else
       {
-        MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+        Util.Utils.GetQualifiedFilename(basePath, ref fileName);
         newItem.FileName = fileName;
         newItem.Type = PlayListItem.PlayListItemType.Audio;
       }

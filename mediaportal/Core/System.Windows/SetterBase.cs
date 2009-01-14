@@ -23,35 +23,35 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public abstract class SetterBase
-	{
-		#region Methods
+  public abstract class SetterBase
+  {
+    #region Methods
 
-		protected void CheckSealed()
-		{
-			if(_isSealed)
-				throw new InvalidOperationException();
-		}	
+    protected void CheckSealed()
+    {
+      if (_isSealed)
+      {
+        throw new InvalidOperationException();
+      }
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    public bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Methods
+    #region Methods
 
-		bool					_isSealed = false;
+    private bool _isSealed = false;
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -25,15 +25,16 @@
 
 using System;
 using MediaPortal.Util;
+
 namespace MediaPortal.GUI.Library
 {
-
   /// <summary>
   /// An implementation of an item that is part of a collection. (E.g, a GUIThumbnailPanel).
   /// </summary>
   public class GUIListItem
   {
     public delegate void ItemSelectedHandler(GUIListItem item, GUIControl parent);
+
     public delegate void RetrieveCoverArtHandler(GUIListItem item);
 
     //event which gets fired when the user has selected the item in the
@@ -43,36 +44,36 @@ namespace MediaPortal.GUI.Library
     //even which gets fired if the list,thumbnail or filmstrip few needs the
     //coverart for the specified item
     public event RetrieveCoverArtHandler OnRetrieveArt = null;
-    protected string _label = string.Empty;							// text of column1
-    protected string _label2 = string.Empty;							// text of column2
-    protected string _label3 = string.Empty;							// text of column3
-    protected string _thumbNailName = string.Empty;			// filename of thumbnail 
-    protected string _smallIconName = string.Empty;								// filename of icon
-    protected string _bigIconName = string.Empty;						// filename of icon
-    protected GUIImage _thumbnailImage = null;			// pointer to CImage containing the thumbnail
-    protected GUIImage _imageIcon = null;					// pointer to CImage containing the icon
-    protected GUIImage _imageBigPinIcon = null;				// pointer to CImage containing the icon
-    protected bool _isSelected = false;					// item is selected or not
-    protected bool _isFolder = false;						// indicated if the item is a folder or a path
-    protected string _folder = string.Empty;								// path + filename of the item
-    protected string _dvdLabel = string.Empty;						// indicates the disc number of movie
-    protected int _duration = 0;							// duration (in seconds) of the movie or song
-    FileInformation _fileInfo = null;								// file info (size, date/time etc.) of the file
-    bool _shaded = false;						// indicates if the item needs to be rendered shaded
-    float _rating = 0;								// rating of a movie
-    int _year = 0;									// release year of the movie/song
-    object _tagMusic;									// object containing the tag info of a music file (e.g., id3 tag)
-    object _tagTv;										// object containing the tag info of a tv-recording
-    object _tagAlbumInfo;							// object tag info of a music album
-    bool _isCoverArtRetrieved = false;
-    string _pinIconName = string.Empty;
+    protected string _label = string.Empty; // text of column1
+    protected string _label2 = string.Empty; // text of column2
+    protected string _label3 = string.Empty; // text of column3
+    protected string _thumbNailName = string.Empty; // filename of thumbnail 
+    protected string _smallIconName = string.Empty; // filename of icon
+    protected string _bigIconName = string.Empty; // filename of icon
+    protected GUIImage _thumbnailImage = null; // pointer to CImage containing the thumbnail
+    protected GUIImage _imageIcon = null; // pointer to CImage containing the icon
+    protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
+    protected bool _isSelected = false; // item is selected or not
+    protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected string _folder = string.Empty; // path + filename of the item
+    protected string _dvdLabel = string.Empty; // indicates the disc number of movie
+    protected int _duration = 0; // duration (in seconds) of the movie or song
+    private FileInformation _fileInfo = null; // file info (size, date/time etc.) of the file
+    private bool _shaded = false; // indicates if the item needs to be rendered shaded
+    private float _rating = 0; // rating of a movie
+    private int _year = 0; // release year of the movie/song
+    private object _tagMusic; // object containing the tag info of a music file (e.g., id3 tag)
+    private object _tagTv; // object containing the tag info of a tv-recording
+    private object _tagAlbumInfo; // object tag info of a music album
+    private bool _isCoverArtRetrieved = false;
+    private string _pinIconName = string.Empty;
     protected GUIImage _imagePinIcon = null;
-    protected bool _isRemote = false;           // indicating if this is a local or remote file
-    protected bool _isDownloading = false;            // indicating if this file is being downloaded
-    protected bool _isPlayed = false;                // indicating if playcount > 1
-    int _idItem = 0;                // General item id
-    bool _retrieveCoverArtAllowed = true;
-    int _dimColor = 0x60ffffff;
+    protected bool _isRemote = false; // indicating if this is a local or remote file
+    protected bool _isDownloading = false; // indicating if this file is being downloaded
+    protected bool _isPlayed = false; // indicating if playcount > 1
+    private int _idItem = 0; // General item id
+    private bool _retrieveCoverArtAllowed = true;
+    private int _dimColor = 0x60ffffff;
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -112,7 +113,9 @@ namespace MediaPortal.GUI.Library
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
     {
       if (String.IsNullOrEmpty(aLabel))
+      {
         return;
+      }
 
       _label = aLabel;
       _label2 = aLabel2;
@@ -128,7 +131,9 @@ namespace MediaPortal.GUI.Library
     public GUIListItem(string strLabel)
     {
       if (strLabel == null)
+      {
         return;
+      }
       _label = strLabel;
     }
 
@@ -141,7 +146,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null)
+        {
           return;
+        }
         _label = value;
       }
     }
@@ -155,7 +162,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null)
+        {
           return;
+        }
         _label2 = value;
       }
     }
@@ -169,7 +178,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null)
+        {
           return;
+        }
         _label3 = value;
       }
     }
@@ -181,14 +192,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-
         DoRetrieveArt();
         return _thumbNailName;
       }
       set
       {
         if (value == null)
+        {
           return;
+        }
         _thumbNailName = value;
       }
     }
@@ -200,14 +212,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-
         DoRetrieveArt();
         return _smallIconName;
       }
       set
       {
         if (value == null)
+        {
           return;
+        }
         _smallIconName = value;
       }
     }
@@ -216,14 +229,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-
         DoRetrieveArt();
         return _pinIconName;
       }
       set
       {
         if (value == null)
+        {
           return;
+        }
         _pinIconName = value;
       }
     }
@@ -236,14 +250,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-
         DoRetrieveArt();
         return _bigIconName;
       }
       set
       {
         if (value == null)
+        {
           return;
+        }
         _bigIconName = value;
       }
     }
@@ -297,7 +312,6 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-
         DoRetrieveArt();
         return _bigIconName.Length > 0;
       }
@@ -313,7 +327,9 @@ namespace MediaPortal.GUI.Library
       {
         _thumbnailImage = value;
         if (_thumbnailImage != null)
+        {
           _thumbnailImage.DimColor = DimColor;
+        }
       }
     }
 
@@ -327,7 +343,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageIcon = value;
         if (_imageIcon != null)
+        {
           _imageIcon.DimColor = DimColor;
+        }
       }
     }
 
@@ -341,7 +359,9 @@ namespace MediaPortal.GUI.Library
       {
         _imagePinIcon = value;
         if (_imagePinIcon != null)
+        {
           _imagePinIcon.DimColor = DimColor;
+        }
       }
     }
 
@@ -355,8 +375,9 @@ namespace MediaPortal.GUI.Library
       {
         _imageBigPinIcon = value;
         if (_imageBigPinIcon != null)
+        {
           _imageBigPinIcon.DimColor = DimColor;
-
+        }
       }
     }
 
@@ -378,7 +399,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null)
+        {
           return;
+        }
         _folder = value;
       }
     }
@@ -392,7 +415,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null)
+        {
           return;
+        }
         _dvdLabel = value;
       }
     }
@@ -405,9 +430,13 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_fileInfo != null)
+        {
           return _fileInfo.Length;
+        }
         else
+        {
           return 0L;
+        }
       }
     }
 
@@ -423,7 +452,9 @@ namespace MediaPortal.GUI.Library
         {
           _fileInfo = value;
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
     }
 
@@ -546,16 +577,23 @@ namespace MediaPortal.GUI.Library
     /// This method will raise the OnRetrieveArt() event to
     /// ask the listener to supply the thumbnail(s) for this item
     /// </summary>
-    void DoRetrieveArt()
+    private void DoRetrieveArt()
     {
       if (!_retrieveCoverArtAllowed)
+      {
         return;
+      }
       if (_isCoverArtRetrieved)
+      {
         return;
+      }
       _isCoverArtRetrieved = true;
       if (OnRetrieveArt != null)
+      {
         OnRetrieveArt(this);
+      }
     }
+
     public void RefreshCoverArt()
     {
       FreeIcons();
@@ -614,15 +652,22 @@ namespace MediaPortal.GUI.Library
       {
         _dimColor = value;
         if (_thumbnailImage != null)
+        {
           _thumbnailImage.DimColor = value;
+        }
         if (_imageIcon != null)
+        {
           _imageIcon.DimColor = value;
+        }
         if (_imageBigPinIcon != null)
+        {
           _imageBigPinIcon.DimColor = value;
+        }
         if (_imagePinIcon != null)
+        {
           _imagePinIcon.DimColor = value;
+        }
       }
     }
-
   }
 }

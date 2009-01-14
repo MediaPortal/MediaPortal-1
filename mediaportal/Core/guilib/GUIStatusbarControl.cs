@@ -38,24 +38,18 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIStatusbarControl : GUIControl
   {
-    [XMLSkinElement("label")]
-    string _property = "";
-    [XMLSkinElement("texturebg")]
-    string _backgroundTextureName;
-    [XMLSkinElement("lefttexture")]
-    string _leftTextureName;
-    [XMLSkinElement("midtexture")]
-    string _midTextureName;
-    [XMLSkinElement("righttexture")]
-    string _rightTextureName;
-    [XMLSkinElement("posYTop")]
-    string _top;
-    GUIAnimation _imageBackground = null;
-    GUIAnimation _imageLeft = null;
-    GUIAnimation _imageMid = null;
-    GUIAnimation _imageRight = null;
-    int _percentage = 0;
-    bool _containsProperty = false;
+    [XMLSkinElement("label")] private string _property = "";
+    [XMLSkinElement("texturebg")] private string _backgroundTextureName;
+    [XMLSkinElement("lefttexture")] private string _leftTextureName;
+    [XMLSkinElement("midtexture")] private string _midTextureName;
+    [XMLSkinElement("righttexture")] private string _rightTextureName;
+    [XMLSkinElement("posYTop")] private string _top;
+    private GUIAnimation _imageBackground = null;
+    private GUIAnimation _imageLeft = null;
+    private GUIAnimation _imageMid = null;
+    private GUIAnimation _imageRight = null;
+    private int _percentage = 0;
+    private bool _containsProperty = false;
 
     public GUIStatusbarControl(int dwParentID)
       : base(dwParentID)
@@ -75,7 +69,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLeftTexture">The left side texture.</param>
     /// <param name="strMidTexture">The middle texture.</param>
     /// <param name="strRightTexture">The right side texture.</param>
-    public GUIStatusbarControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture, string strLeftTexture, string strMidTexture, string strRightTexture)
+    public GUIStatusbarControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                               string strBackGroundTexture, string strLeftTexture, string strMidTexture,
+                               string strRightTexture)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _backgroundTextureName = strBackGroundTexture;
@@ -94,7 +90,8 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      _imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
+      _imageBackground = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                              _backgroundTextureName);
       _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
       _imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
       _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
@@ -113,9 +110,18 @@ namespace MediaPortal.GUI.Library
       _imageBackground.KeepAspectRatio = false;
       _imageMid.KeepAspectRatio = false;
       _imageRight.KeepAspectRatio = false;
-      if (_property == null) _property = string.Empty;
-      if (_property.IndexOf("#") >= 0) _containsProperty = true;
-      if (_top == null) _top = "20";
+      if (_property == null)
+      {
+        _property = string.Empty;
+      }
+      if (_property.IndexOf("#") >= 0)
+      {
+        _containsProperty = true;
+      }
+      if (_top == null)
+      {
+        _top = "20";
+      }
     }
 
     /// <summary>
@@ -153,7 +159,9 @@ namespace MediaPortal.GUI.Library
       {
         tb = Int32.Parse(GUIPropertyManager.Parse("#statusbarTB"));
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       if (_containsProperty)
       {
@@ -168,9 +176,14 @@ namespace MediaPortal.GUI.Library
               base.Render(timePassed);
               return;
             }
-            if (Percentage > 100) Percentage = 100;
+            if (Percentage > 100)
+            {
+              Percentage = 100;
+            }
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
         }
       }
 
@@ -179,7 +192,9 @@ namespace MediaPortal.GUI.Library
       {
         yPosTop = Convert.ToInt16(_top);
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
 
       // Render the background
       int iBkgHeight = _height;
@@ -203,9 +218,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
       //iHeight=20;
-      float fWidth = (float)_percentage;
+      float fWidth = (float) _percentage;
       fWidth /= 100.0f;
-      fWidth *= (float)(_imageBackground.Width - 24 - iWidthLeft - iWidthRight);
+      fWidth *= (float) (_imageBackground.Width - 24 - iWidthLeft - iWidthRight);
 
       int off = 12;
       GUIGraphicsContext.ScaleHorizontal(ref off);
@@ -213,12 +228,14 @@ namespace MediaPortal.GUI.Library
 
       int iYPos = 0;
       if (tb == 1)
-      {			// top
-        iYPos = yPosTop + (iBkgHeight - iHeightLeft) / 2;
+      {
+        // top
+        iYPos = yPosTop + (iBkgHeight - iHeightLeft)/2;
       }
       else
-      {  // bottom
-        iYPos = _imageBackground.YPosition + (iBkgHeight - iHeightLeft) / 2;
+      {
+        // bottom
+        iYPos = _imageBackground.YPosition + (iBkgHeight - iHeightLeft)/2;
       }
       //_imageLeft.SetHeight(iHeight);
       _imageLeft.SetPosition(iXPos, iYPos);
@@ -228,14 +245,14 @@ namespace MediaPortal.GUI.Library
       _imageLeft.Render(timePassed);
 
       iXPos += iWidthLeft;
-      if (_percentage > 0 && (int)fWidth > 1)
+      if (_percentage > 0 && (int) fWidth > 1)
       {
         _imageMid.SetPosition(iXPos, iYPos);
-        _imageMid.Height = iHeightLeft;//_imageMid.TextureHeight;
-        _imageMid.Width = (int)fWidth;
+        _imageMid.Height = iHeightLeft; //_imageMid.TextureHeight;
+        _imageMid.Width = (int) fWidth;
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
-        iXPos += (int)fWidth;
+        iXPos += (int) fWidth;
       }
       //_imageRight.SetHeight(iHeight);
       _imageRight.SetPosition(iXPos, iYPos);
@@ -264,8 +281,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _percentage = value;
-        if (_percentage < 0) _percentage = 0;
-        if (_percentage > 100) _percentage = 100;
+        if (_percentage < 0)
+        {
+          _percentage = 0;
+        }
+        if (_percentage > 100)
+        {
+          _percentage = 100;
+        }
       }
     }
 
@@ -360,8 +383,14 @@ namespace MediaPortal.GUI.Library
         if (value != null)
         {
           _property = value;
-          if (_property.IndexOf("#") >= 0) _containsProperty = true;
-          else _containsProperty = false;
+          if (_property.IndexOf("#") >= 0)
+          {
+            _containsProperty = true;
+          }
+          else
+          {
+            _containsProperty = false;
+          }
         }
       }
     }
@@ -372,12 +401,23 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_imageBackground != null) _imageBackground.DimColor = value;
-        if (_imageLeft != null) _imageLeft.DimColor = value;
-        if (_imageMid != null) _imageMid.DimColor = value;
-        if (_imageRight != null) _imageRight.DimColor = value;
+        if (_imageBackground != null)
+        {
+          _imageBackground.DimColor = value;
+        }
+        if (_imageLeft != null)
+        {
+          _imageLeft.DimColor = value;
+        }
+        if (_imageMid != null)
+        {
+          _imageMid.DimColor = value;
+        }
+        if (_imageRight != null)
+        {
+          _imageRight.DimColor = value;
+        }
       }
     }
-
   }
 }

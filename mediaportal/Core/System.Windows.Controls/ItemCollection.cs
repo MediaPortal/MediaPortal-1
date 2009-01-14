@@ -23,90 +23,101 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Windows;
-using System.Windows.Serialization;
 
 namespace System.Windows.Controls
 {
 //	TODO: objectCollection is a far more involved collection and needs more work
 //	public sealed class ItemCollection : CollectionView, IList, ICollection, IEnumerable
-	public sealed class ItemCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class ItemCollection : CollectionBase
+  {
+    #region Constructors
 
-		public ItemCollection()
-		{
-		}
+    public ItemCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(object item)
-		{
-			if(item == null)
-				throw new ArgumentNullException("item");
+    public void Add(object item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException("item");
+      }
 
-			List.Add(item);
-		}
+      List.Add(item);
+    }
 
-		public bool Contains(object item)
-		{
-			if(item == null)
-				throw new ArgumentNullException("item");
+    public bool Contains(object item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException("item");
+      }
 
-			return List.Contains(item);
-		}
+      return List.Contains(item);
+    }
 
-		public void CopyTo(Array array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Array array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(object item)
-		{
-			if(item == null)
-				throw new ArgumentNullException("item");
+    public int IndexOf(object item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException("item");
+      }
 
-			return List.IndexOf(item);
-		}
+      return List.IndexOf(item);
+    }
 
-		public void Insert(int index, object item)
-		{
-			if(item == null)
-				throw new ArgumentNullException("item");
+    public void Insert(int index, object item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException("item");
+      }
 
-			List.Insert(index, item);
-		}
+      List.Insert(index, item);
+    }
 
-		public bool Remove(object item)
-		{
-			if(item == null)
-				throw new ArgumentNullException("item");
-			
-			if(List.Contains(item) == false)
-				return false;
+    public bool Remove(object item)
+    {
+      if (item == null)
+      {
+        throw new ArgumentNullException("item");
+      }
 
-			List.Remove(item);
+      if (List.Contains(item) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(item);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public object this[int index]
-		{ 
-			get { return (object)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public object this[int index]
+    {
+      get { return (object) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

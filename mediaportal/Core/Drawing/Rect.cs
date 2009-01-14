@@ -23,64 +23,64 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(RectConverter))]
-	public struct Rect
-	{
-		#region Constructors
+  [TypeConverter(typeof (RectConverter))]
+  public struct Rect
+  {
+    #region Constructors
 
-		public Rect(Point location, Size size) : this(location.X, location.Y, size.Width, size.Height)
-		{
-		}
+    public Rect(Point location, Size size) : this(location.X, location.Y, size.Width, size.Height)
+    {
+    }
 
-		public Rect(double x, double y, double w, double h)
-		{
-			_location = new Point(x, y);
-			_size = new Size(w, h);
-		}
+    public Rect(double x, double y, double w, double h)
+    {
+      _location = new Point(x, y);
+      _size = new Size(w, h);
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Operators
+    #region Operators
 
-		public static bool operator ==(Rect l, Rect r)
-		{
-			return l._location.X == r._location.X && l._location.Y == r._location.Y && l._size.Width == r._size.Width && l._size.Height == r._size.Height;
-		}
+    public static bool operator ==(Rect l, Rect r)
+    {
+      return l._location.X == r._location.X && l._location.Y == r._location.Y && l._size.Width == r._size.Width &&
+             l._size.Height == r._size.Height;
+    }
 
-		public static bool operator !=(Rect l, Rect r)
-		{
-			return !(l._location.X == r._location.X && l._location.Y == r._location.Y && l._size.Width == r._size.Width && l._size.Height == r._size.Height);
-		}
+    public static bool operator !=(Rect l, Rect r)
+    {
+      return
+        !(l._location.X == r._location.X && l._location.Y == r._location.Y && l._size.Width == r._size.Width &&
+          l._size.Height == r._size.Height);
+    }
 
-		#endregion Operators
+    #endregion Operators
 
-		#region Methods
+    #region Methods
 
-		public bool Contains(Point point)
-		{
-			return point.X >= _location.X && point.Y >= _location.Y && point.X <= _location.X + _size.Width && point.Y <= _location.Y + _size.Height;
-		}
+    public bool Contains(Point point)
+    {
+      return point.X >= _location.X && point.Y >= _location.Y && point.X <= _location.X + _size.Width &&
+             point.Y <= _location.Y + _size.Height;
+    }
 
-		public bool Contains(double x, double y)
-		{
-			return x >= _location.X && y >= _location.Y && x <= _location.X + _size.Width && y <= _location.Y + _size.Height;
-		}
+    public bool Contains(double x, double y)
+    {
+      return x >= _location.X && y >= _location.Y && x <= _location.X + _size.Width && y <= _location.Y + _size.Height;
+    }
 
-		public bool Contains(Point point, Matrix matrix)
-		{
-			return Contains(point.X, point.Y, matrix);
-		}
+    public bool Contains(Point point, Matrix matrix)
+    {
+      return Contains(point.X, point.Y, matrix);
+    }
 
-		public bool Contains(double x, double y, Matrix matrix)
-		{
+    public bool Contains(double x, double y, Matrix matrix)
+    {
 /*			Vector3 n = new Vector3((float)x, (float)y, 0);
 			Vector3 f = new Vector3((float)x, (float)y, 1);
 
@@ -103,102 +103,104 @@ namespace MediaPortal.Drawing
 			if(Microsoft.DirectX.Direct3D.Geometry.IntersectTri(bl, br, tr, n, f, out intersect))
 				return true;
 
-*/			return false;
-		}
+*/
+      return false;
+    }
 
-		public override bool Equals(object o)
-		{
-			return o is Rect && ((Rect)o)._location.X == _location.X && ((Rect)o)._location.Y == _location.Y && ((Rect)o)._size.Width == _size.Width && ((Rect)o)._size.Height == _size.Height;
-		}
+    public override bool Equals(object o)
+    {
+      return o is Rect && ((Rect) o)._location.X == _location.X && ((Rect) o)._location.Y == _location.Y &&
+             ((Rect) o)._size.Width == _size.Width && ((Rect) o)._size.Height == _size.Height;
+    }
 
-		public override int GetHashCode()
-		{
-			return (int)((uint)_location.X ^ (uint)_location.Y ^ (uint)_size.Width ^ (uint)_size.Height);
-		}
+    public override int GetHashCode()
+    {
+      return (int) ((uint) _location.X ^ (uint) _location.Y ^ (uint) _size.Width ^ (uint) _size.Height);
+    }
 
-		public override string ToString()
-		{
-			return string.Format("{{X={0},Y={1},Width={2},Height={3}}}", _location.X, _location.Y, _size.Width, _size.Height);
-		}
+    public override string ToString()
+    {
+      return string.Format("{{X={0},Y={1},Width={2},Height={3}}}", _location.X, _location.Y, _size.Width, _size.Height);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public static Rect Empty
-		{
-			get { return _empty; }
-		}
+    public static Rect Empty
+    {
+      get { return _empty; }
+    }
 
-		public double Bottom
-		{
-			get { return _location.Y + _size.Height; }
-		}
+    public double Bottom
+    {
+      get { return _location.Y + _size.Height; }
+    }
 
-		public double Height
-		{
-			get { return _size.Height; }
-			set { _size.Height = value; }
-		}
+    public double Height
+    {
+      get { return _size.Height; }
+      set { _size.Height = value; }
+    }
 
-		public bool IsEmpty
-		{
-			get { return _location.X == 0 && _location.Y == 0 && _size.Width == 0 && _size.Height == 0; }
-		}
+    public bool IsEmpty
+    {
+      get { return _location.X == 0 && _location.Y == 0 && _size.Width == 0 && _size.Height == 0; }
+    }
 
-		public double Left
-		{
-			get { return _location.X; }
-		} 
+    public double Left
+    {
+      get { return _location.X; }
+    }
 
-		public Point Location
-		{
-			get { return _location; }
-			set { _location = value; }
-		} 
+    public Point Location
+    {
+      get { return _location; }
+      set { _location = value; }
+    }
 
-		public double Right
-		{
-			get { return _location.X + _size.Width; }
-		} 
+    public double Right
+    {
+      get { return _location.X + _size.Width; }
+    }
 
-		public Size Size
-		{
-			get { return _size; }
-			set { _size = value; }
-		} 
+    public Size Size
+    {
+      get { return _size; }
+      set { _size = value; }
+    }
 
-		public double Top
-		{
-			get { return _location.Y; }
-		} 
+    public double Top
+    {
+      get { return _location.Y; }
+    }
 
-		public double Width
-		{
-			get { return _size.Width; }
-			set { _size.Width = value; }
-		}
+    public double Width
+    {
+      get { return _size.Width; }
+      set { _size.Width = value; }
+    }
 
-		public double X
-		{
-			get { return _location.X; }
-			set { _location.X = value; }
-		}
+    public double X
+    {
+      get { return _location.X; }
+      set { _location.X = value; }
+    }
 
-		public double Y
-		{
-			get { return _location.Y; }
-			set { _location.Y = value; }
-		}
+    public double Y
+    {
+      get { return _location.Y; }
+      set { _location.Y = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Point						_location;
-		Size						_size;
-		static readonly Rect		_empty = new Rect();
+    private Point _location;
+    private Size _size;
+    private static readonly Rect _empty = new Rect();
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -24,20 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.IO;
-using System.Windows.Forms;
-
+using MediaPortal.GUI.Library;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Vis;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass.AddOn.Tags;
-using MediaPortal.GUI.Library;
-
-using MediaPortal.Player;
 
 namespace MediaPortal.Visualization
 {
@@ -63,7 +54,7 @@ namespace MediaPortal.Visualization
         if (VizPluginInfo == null)
         {
           Log.Error("Visualization Manager: Sonique visualization engine initialization failed! Reason:{0}",
-              "Missing or invalid VisualizationInfo object.");
+                    "Missing or invalid VisualizationInfo object.");
 
           return false;
         }
@@ -75,7 +66,9 @@ namespace MediaPortal.Visualization
 
       catch (Exception ex)
       {
-        Log.Error("Visualization Manager: Sonique visualization engine initialization failed with the following exception {0}", ex);
+        Log.Error(
+          "Visualization Manager: Sonique visualization engine initialization failed with the following exception {0}",
+          ex);
         return false;
       }
 
@@ -102,7 +95,9 @@ namespace MediaPortal.Visualization
       try
       {
         if (VisualizationWindow == null || !VisualizationWindow.Visible)
+        {
           return 0;
+        }
 
 
         if (VisualizationWindow.InvokeRequired)
@@ -113,7 +108,9 @@ namespace MediaPortal.Visualization
         }
 
         if (VisualizationWindow.OutputContextType == OutputContextType.DeviceContext)
+        {
           hdc = VisualizationWindow.CompatibleDC;
+        }
 
         else if (VisualizationWindow.OutputContextType == OutputContextType.WindowHandle)
         {
@@ -122,41 +119,50 @@ namespace MediaPortal.Visualization
         }
 
         else
+        {
           return -1;
+        }
 
 
         int stream = 0;
         if (!_IsPreviewVisualization)
         {
-
           if (Bass != null)
-            stream = (int)Bass.GetCurrentVizStream();
+          {
+            stream = (int) Bass.GetCurrentVizStream();
+          }
 
           if (stream != 0)
           {
             // Now we need to get the sample FFT data from the channel for rendering purposes
-            float[] data = new float[1024 * 4];
-            float[] fftData = new float[512];  // to receive 512 byte of fft
+            float[] data = new float[1024*4];
+            float[] fftData = new float[512]; // to receive 512 byte of fft
             Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref data[0], data.Length);
-            Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fftData[0], (int)BASSData.BASS_DATA_FFT1024);
+            Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fftData[0], (int) BASSData.BASS_DATA_FFT1024);
 
-            double pos = 1000 * Bass.CurrentPosition; // Convert to milliseconds
-            BassVis.BASS_SONIQUEVIS_Render2(VisChannel, ref data[0], ref fftData[0], hdc, BASSStream.BASS_SAMPLE_FLOAT, (int)pos);
+            double pos = 1000*Bass.CurrentPosition; // Convert to milliseconds
+            BassVis.BASS_SONIQUEVIS_Render2(VisChannel, ref data[0], ref fftData[0], hdc, BASSStream.BASS_SAMPLE_FLOAT,
+                                            (int) pos);
           }
         }
         else
+        {
           BassVis.BASS_SONIQUEVIS_Render(VisChannel, stream, hdc);
+        }
       }
 
       catch (Exception)
-      { }
+      {
+      }
 
       finally
       {
         if (destGraphics != null)
         {
           if (hdc != IntPtr.Zero)
+          {
             destGraphics.ReleaseHdc(hdc);
+          }
 
           destGraphics.Dispose();
         }
@@ -191,7 +197,9 @@ namespace MediaPortal.Visualization
       base.WindowChanged(vizWindow);
 
       if (vizWindow == null)
+      {
         return false;
+      }
 
       bool result = SetOutputContext(VisualizationWindow.OutputContextType);
       return result;
@@ -203,18 +211,24 @@ namespace MediaPortal.Visualization
       return result;
     }
 
-    public override bool SetOutputContext(VisualizationBase.OutputContextType outputType)
+    public override bool SetOutputContext(OutputContextType outputType)
     {
       if (VisualizationWindow == null)
+      {
         return false;
+      }
 
       // If width or height are 0 the call to BASS_SONIQUEVIS_CreateVis will fail.  
       // If width or height are 1 the window is in transition so we can ignore it.
       if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
+      {
         return false;
+      }
 
       if (VizPluginInfo == null || VizPluginInfo.FilePath.Length == 0 || !File.Exists(VizPluginInfo.FilePath))
+      {
         return false;
+      }
 
       string vizPath = VizPluginInfo.FilePath;
       string configFile = Path.Combine(Path.GetDirectoryName(vizPath), "vis.ini");
@@ -229,7 +243,8 @@ namespace MediaPortal.Visualization
       }
 
       BassVis.BASS_SONIQUEVIS_CreateFakeSoniqueWnd();
-      VisChannel = BassVis.BASS_SONIQUEVIS_CreateVis(vizPath, configFile, BASSVISCreate.BASS_VIS_DEFAULT, VisualizationWindow.Width, VisualizationWindow.Height);
+      VisChannel = BassVis.BASS_SONIQUEVIS_CreateVis(vizPath, configFile, BASSVISCreate.BASS_VIS_DEFAULT,
+                                                     VisualizationWindow.Width, VisualizationWindow.Height);
       return VisChannel != 0;
     }
   }

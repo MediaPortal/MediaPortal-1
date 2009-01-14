@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum PenLineJoin
-	{
-		Bevel,
-		Miter,
-		Round,
-	}
+  public enum PenLineJoin
+  {
+    Bevel,
+    Miter,
+    Round,
+  }
 }

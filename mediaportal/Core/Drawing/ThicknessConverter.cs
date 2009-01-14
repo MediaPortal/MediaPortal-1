@@ -29,31 +29,37 @@ using System.Globalization;
 
 namespace MediaPortal.Drawing
 {
-	public class ThicknessConverter : TypeConverter
-	{
-		#region Methods
+  public class ThicknessConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value == null)
-				throw base.GetConvertFromException(value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value == null)
+      {
+        throw base.GetConvertFromException(value);
+      }
 
-			string text = value as string;
+      string text = value as string;
 
-			if(text != null)
-				return Thickness.Parse(text, culture);
+      if (text != null)
+      {
+        return Thickness.Parse(text, culture);
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

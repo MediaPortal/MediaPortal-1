@@ -24,16 +24,12 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-
-using MediaPortal.Util;
+using System.Globalization;
 using MediaPortal.Configuration;
 using MediaPortal.Localisation;
+using MediaPortal.Profile;
 
 namespace MediaPortal.GUI.Library
 {
@@ -45,12 +41,15 @@ namespace MediaPortal.GUI.Library
   public class GUILocalizeStrings
   {
     #region Variables
-    static LocalisationProvider _stringProvider;
-    static Dictionary<string, string> _cultures;
-    static string[] _languages;
+
+    private static LocalisationProvider _stringProvider;
+    private static Dictionary<string, string> _cultures;
+    private static string[] _languages;
+
     #endregion
 
     #region Constructors/Destructors
+
     // singleton. Dont allow any instance of this class
     private GUILocalizeStrings()
     {
@@ -59,11 +58,15 @@ namespace MediaPortal.GUI.Library
     public static void Dispose()
     {
       if (_stringProvider != null)
+      {
         _stringProvider.Dispose();
+      }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Public method to load the text from a strings/xml file into memory
     /// </summary>
@@ -77,15 +80,20 @@ namespace MediaPortal.GUI.Library
     {
       bool isPrefixEnabled = true;
 
-      using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
+      }
 
       string directory = Config.GetFolder(Config.Dir.Language);
       string cultureName = null;
       if (language != null)
+      {
         cultureName = GetCultureName(language);
+      }
 
-      Log.Info("  Loading localized Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName, language, isPrefixEnabled);
+      Log.Info("  Loading localized Strings - Path: {0} Culture: {1}  Language: {2} Prefix: {3}", directory, cultureName,
+               language, isPrefixEnabled);
 
       _stringProvider = new LocalisationProvider(directory, cultureName, isPrefixEnabled);
 
@@ -97,7 +105,9 @@ namespace MediaPortal.GUI.Library
     public static string CurrentLanguage()
     {
       if (_stringProvider == null)
+      {
         Load(null);
+      }
 
       return _stringProvider.CurrentLanguage.EnglishName;
     }
@@ -105,9 +115,13 @@ namespace MediaPortal.GUI.Library
     public static void ChangeLanguage(string language)
     {
       if (_stringProvider == null)
+      {
         Load(language);
+      }
       else
+      {
         _stringProvider.ChangeLanguage(GetCultureName(language));
+      }
     }
 
     /// <summary>
@@ -122,7 +136,9 @@ namespace MediaPortal.GUI.Library
     public static string Get(int dwCode, object[] parameters)
     {
       if (_stringProvider == null)
+      {
         Load(null);
+      }
 
       string translation = _stringProvider.GetString("unmapped", dwCode);
       // if parameters or the translation is null, return the translation.
@@ -136,7 +152,7 @@ namespace MediaPortal.GUI.Library
       {
         return String.Format(translation, parameters);
       }
-      catch (System.FormatException e)
+      catch (FormatException e)
       {
         Log.Error("Error formatting translation with id {0}", dwCode);
         Log.Error("Unformatted translation: {0}", translation);
@@ -155,7 +171,9 @@ namespace MediaPortal.GUI.Library
     public static string Get(int dwCode)
     {
       if (_stringProvider == null)
+      {
         Load(null);
+      }
 
       string translation = _stringProvider.GetString("unmapped", dwCode);
 
@@ -171,21 +189,34 @@ namespace MediaPortal.GUI.Library
     public static void LocalizeLabel(ref string strLabel)
     {
       if (_stringProvider == null)
+      {
         Load(null);
+      }
 
-      if (strLabel == null) strLabel = string.Empty;
-      if (strLabel == "-") strLabel = "";
-      if (strLabel == "") return;
+      if (strLabel == null)
+      {
+        strLabel = string.Empty;
+      }
+      if (strLabel == "-")
+      {
+        strLabel = "";
+      }
+      if (strLabel == "")
+      {
+        return;
+      }
       // This can't be a valid string code if the first character isn't a number.
       // This check will save us from catching unnecessary exceptions.
       if (!char.IsNumber(strLabel, 0))
+      {
         return;
+      }
 
       int dwLabelID;
 
       try
       {
-        dwLabelID = System.Int32.Parse(strLabel);
+        dwLabelID = Int32.Parse(strLabel);
       }
       catch (FormatException e)
       {
@@ -205,7 +236,9 @@ namespace MediaPortal.GUI.Library
     public static string LocalSupported()
     {
       if (_stringProvider == null)
+      {
         Load(null);
+      }
 
       CultureInfo culture = _stringProvider.GetBestLanguage();
 
@@ -217,19 +250,23 @@ namespace MediaPortal.GUI.Library
       if (_languages == null)
       {
         if (_stringProvider == null)
+        {
           Load(null);
+        }
 
         CultureInfo[] cultures = _stringProvider.AvailableLanguages();
 
         SortedList sortedLanguages = new SortedList();
         foreach (CultureInfo culture in cultures)
+        {
           sortedLanguages.Add(culture.EnglishName, culture.EnglishName);
+        }
 
         _languages = new string[sortedLanguages.Count];
 
         for (int i = 0; i < sortedLanguages.Count; i++)
         {
-          _languages[i] = (string)sortedLanguages.GetByIndex(i);
+          _languages[i] = (string) sortedLanguages.GetByIndex(i);
         }
       }
 
@@ -251,10 +288,13 @@ namespace MediaPortal.GUI.Library
       }
 
       if (_cultures.ContainsKey(language))
+      {
         return _cultures[language];
+      }
 
       return null;
     }
+
     #endregion
   }
 }

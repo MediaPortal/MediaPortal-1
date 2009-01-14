@@ -23,68 +23,73 @@
 
 #endregion
 
-using System;
 using System.Collections;
+using System.Windows.Controls;
+using MediaPortal.GUI.Library;
 
 namespace System.Windows
 {
-	public sealed class EventManager
-	{
-		#region Constructors
-		
-		private EventManager()
-		{
-		}
+  public sealed class EventManager
+  {
+    #region Constructors
 
-		#endregion Constructors
+    private EventManager()
+    {
+    }
 
-		#region Methods
-		
-		public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
-		{
-			// MPSPECIFIC
-			if(ownerType == typeof(MediaPortal.GUI.Library.GUIWindow))
-				ownerType = typeof(System.Windows.Controls.Page);
+    #endregion Constructors
 
-			return (RoutedEvent)_registeredRoutedEvents[ownerType + name];
-		}
+    #region Methods
 
-		public static RoutedEvent[] GetRoutedEvents()
-		{
-			throw new NotImplementedException();
-		}
+    public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
+    {
+      // MPSPECIFIC
+      if (ownerType == typeof (GUIWindow))
+      {
+        ownerType = typeof (Page);
+      }
 
-		public static RoutedEvent[] GetRoutedEventsForOwner(Type ownerType)
-		{
-			throw new NotImplementedException();
-		}
+      return (RoutedEvent) _registeredRoutedEvents[ownerType + name];
+    }
 
-		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler)
-		{
+    public static RoutedEvent[] GetRoutedEvents()
+    {
+      throw new NotImplementedException();
+    }
+
+    public static RoutedEvent[] GetRoutedEventsForOwner(Type ownerType)
+    {
+      throw new NotImplementedException();
+    }
+
+    public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler)
+    {
 //			_registeredClassHandlers[classType].AddHandler(routedEvent, handler, true);
-		}
+    }
 
-		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
+    public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler,
+                                            bool handledEventsToo)
+    {
 //			_registeredClassHandlers[classType].AddHandler(routedEvent, handler, handledEventsToo);
-		}
+    }
 
-		public static RoutedEvent RegisterRoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
-		{
-			RoutedEvent routedEvent = new RoutedEvent(name, routingStrategy, handlerType, ownerType);
+    public static RoutedEvent RegisterRoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType,
+                                                  Type ownerType)
+    {
+      RoutedEvent routedEvent = new RoutedEvent(name, routingStrategy, handlerType, ownerType);
 
-			_registeredRoutedEvents[ownerType + name] = routedEvent;
+      _registeredRoutedEvents[ownerType + name] = routedEvent;
 
-			return routedEvent;
-		}
+      return routedEvent;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		static Hashtable						_registeredRoutedEvents = new Hashtable();
-		static RoutedEventHandlerInfoStore		_registeredClassHandlers = new RoutedEventHandlerInfoStore();
+    private static Hashtable _registeredRoutedEvents = new Hashtable();
+    private static RoutedEventHandlerInfoStore _registeredClassHandlers = new RoutedEventHandlerInfoStore();
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

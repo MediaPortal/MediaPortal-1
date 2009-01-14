@@ -23,11 +23,8 @@
 
 #endregion
 
-using System;
-
 using System.Text;
-
-
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
@@ -37,39 +34,29 @@ namespace MediaPortal.Player
   /// like winamp, foobar or,.... to play music
   /// By implementing this interface you can add support for your own external audio player
   /// </summary>
-  public abstract class IExternalPlayer : IPlayer, MediaPortal.GUI.Library.ISetupForm
+  public abstract class IExternalPlayer : IPlayer, ISetupForm
   {
     private bool _isEneabled = false;
 
     public override bool IsExternal
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     /// <summary>
     /// Property to enable/disable the external audio player
     /// </summary>
     public bool Enabled
     {
-      get
-      {
-        return _isEneabled;
-      }
-      set
-      {
-        _isEneabled = value;
-      }
+      get { return _isEneabled; }
+      set { _isEneabled = value; }
     }
 
     #region ISetupForm Members
 
     public string PluginName()
     {
-
       return PlayerName;
-
     }
 
     public bool DefaultEnabled()
@@ -79,7 +66,6 @@ namespace MediaPortal.Player
 
     public virtual string Description()
     {
-
       string[] exts = GetAllSupportedExtensions();
 
       StringBuilder extensions = new StringBuilder();
@@ -88,35 +74,27 @@ namespace MediaPortal.Player
 
       for (int i = 0; i < exts.Length; i++)
       {
-
         if (i > 0)
-
+        {
           extensions.Append(',');
+        }
 
         extensions.Append(exts[i]);
-
       }
 
       return extensions.ToString();
-
     }
-
 
 
     public string Author()
     {
-
       return AuthorName;
-
     }
-
 
 
     public virtual void ShowPlugin()
     {
-
       ; //nothing to show
-
     }
 
 
@@ -127,27 +105,19 @@ namespace MediaPortal.Player
 
     public bool CanEnable()
     {
-
       return true;
-
     }
-
 
 
     public virtual int GetWindowId()
     {
-
       return -1;
-
     }
 
 
-
-    public virtual bool GetHome(out string strButtonText, out string strButtonImage, 
-
-                                     out string strButtonImageFocus, out string strPictureImage)
+    public virtual bool GetHome(out string strButtonText, out string strButtonImage,
+                                out string strButtonImageFocus, out string strPictureImage)
     {
-
       strButtonText = "";
 
       strButtonImage = "";
@@ -157,37 +127,26 @@ namespace MediaPortal.Player
       strPictureImage = "";
 
       return false;
-
     }
 
     #endregion
-
 
     /// <summary>
     /// This method returns the name of the external player
     /// </summary>
     /// <returns>string representing the name of the external player</returns>
-    public abstract string PlayerName
-    {
-      get;
-    }
+    public abstract string PlayerName { get; }
 
     /// <summary>
     /// This method returns the version number of the plugin
     /// </summary>
-    public abstract string VersionNumber
-    {
-      get;
-    }
+    public abstract string VersionNumber { get; }
 
     /// <summary>
     /// This method returns the author of the external player
     /// </summary>
     /// <returns></returns>
-    public abstract string AuthorName
-    {
-      get;
-    }
+    public abstract string AuthorName { get; }
 
     /// <summary>
     /// Returns all the extensions that the external player supports.  
@@ -204,7 +163,5 @@ namespace MediaPortal.Player
     /// <param name="filename">a fully qualified path and filename or just the filename</param>
     /// <returns>true or false if the file is supported by the player</returns>
     public abstract bool SupportsFile(string filename);
-
   }
 }
-

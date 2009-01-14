@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public enum TimeSeekOrigin
-	{
-		BeginTime,
-		Duration,
-	}
+  public enum TimeSeekOrigin
+  {
+    BeginTime,
+    Duration,
+  }
 }

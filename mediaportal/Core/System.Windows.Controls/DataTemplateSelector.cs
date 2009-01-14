@@ -23,20 +23,17 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public class DataTemplateSelector
-	{
-		#region Methods
+  public class DataTemplateSelector
+  {
+    #region Methods
 
-		public virtual DataTemplate SelectTemplate(object item, DependencyObject container)
-		{
-			throw new NotImplementedException();
-		}
+    public virtual DataTemplate SelectTemplate(object item, DependencyObject container)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

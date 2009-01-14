@@ -23,122 +23,121 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Text;
 
 namespace Roger.ID3
 {
-	public class TagBuilder
-	{
-		byte majorVersion;
-		byte minorVersion;
+  public class TagBuilder
+  {
+    private byte majorVersion;
+    private byte minorVersion;
 
-		MemoryStream memoryStream;
+    private MemoryStream memoryStream;
 
-		public TagBuilder(byte majorVersion, byte minorVersion)
-		{
-			this.majorVersion = majorVersion;
-			this.minorVersion = minorVersion;
+    public TagBuilder(byte majorVersion, byte minorVersion)
+    {
+      this.majorVersion = majorVersion;
+      this.minorVersion = minorVersion;
 
-			memoryStream = new MemoryStream();
-		}
+      memoryStream = new MemoryStream();
+    }
 
-		public void Append(object frameId, object frameValue)
-		{
-			Append((string)frameId, frameValue);
-		}
+    public void Append(object frameId, object frameValue)
+    {
+      Append((string) frameId, frameValue);
+    }
 
-		public void Append(string frameId, object frameValue)
-		{
-			byte[] frameIdBuffer = EncodeFrameId(frameId);
-			byte[] frameValueBuffer = EncodeFrameValue(frameId, frameValue);
+    public void Append(string frameId, object frameValue)
+    {
+      byte[] frameIdBuffer = EncodeFrameId(frameId);
+      byte[] frameValueBuffer = EncodeFrameValue(frameId, frameValue);
 
-			// Frame ID
-			memoryStream.Write(frameIdBuffer, 0, 4);
+      // Frame ID
+      memoryStream.Write(frameIdBuffer, 0, 4);
 
-			// Frame Size
-			int frameLength = frameValueBuffer.Length;
-			WriteInt28(memoryStream, frameLength);
+      // Frame Size
+      int frameLength = frameValueBuffer.Length;
+      WriteInt28(memoryStream, frameLength);
 
-			// Flags (2 bytes)
-			memoryStream.WriteByte(0);
-			memoryStream.WriteByte(0);
+      // Flags (2 bytes)
+      memoryStream.WriteByte(0);
+      memoryStream.WriteByte(0);
 
-			// Frame data
-			memoryStream.Write(frameValueBuffer, 0, frameValueBuffer.Length);
-		}
+      // Frame data
+      memoryStream.Write(frameValueBuffer, 0, frameValueBuffer.Length);
+    }
 
-		byte[] EncodeFrameId(string frameId)
-		{
-			byte[] frameIdBuffer = new byte[4];
-			Encoding.ASCII.GetBytes(frameId, 0, 4, frameIdBuffer, 0);
+    private byte[] EncodeFrameId(string frameId)
+    {
+      byte[] frameIdBuffer = new byte[4];
+      Encoding.ASCII.GetBytes(frameId, 0, 4, frameIdBuffer, 0);
 
-			return frameIdBuffer;
-		}
+      return frameIdBuffer;
+    }
 
-		byte[] EncodeFrameValue(string frameId, object frameValue)
-		{
-			if (frameId[0] == 'T')
-			{
-				string valueString = (string)frameValue;
+    private byte[] EncodeFrameValue(string frameId, object frameValue)
+    {
+      if (frameId[0] == 'T')
+      {
+        string valueString = (string) frameValue;
 
-				// For now we'll use Latin1.
-				Encoding encoding = Encoding.GetEncoding(1252);
-				int bufferSize = 1 + encoding.GetByteCount(valueString);
+        // For now we'll use Latin1.
+        Encoding encoding = Encoding.GetEncoding(1252);
+        int bufferSize = 1 + encoding.GetByteCount(valueString);
 
-				byte[] buffer = new byte[bufferSize];
-				buffer[0] = 0;	// Latin1 encoding.
-				Encoding.UTF8.GetBytes(valueString, 0, valueString.Length, buffer, 1);
+        byte[] buffer = new byte[bufferSize];
+        buffer[0] = 0; // Latin1 encoding.
+        Encoding.UTF8.GetBytes(valueString, 0, valueString.Length, buffer, 1);
 
-				return buffer;
-			}
-			else
-			{
-				return (byte[])frameValue;
-			}
-		}
+        return buffer;
+      }
+      else
+      {
+        return (byte[]) frameValue;
+      }
+    }
 
-		public void WriteTo(Stream stream)
-		{
-			WriteMagic(stream);
-			WriteVersion(stream);
-			WriteFlags(stream);
+    public void WriteTo(Stream stream)
+    {
+      WriteMagic(stream);
+      WriteVersion(stream);
+      WriteFlags(stream);
 
-			WriteInt28(stream, (int)memoryStream.Length);
-			memoryStream.WriteTo(stream);
-		}
+      WriteInt28(stream, (int) memoryStream.Length);
+      memoryStream.WriteTo(stream);
+    }
 
-		void WriteMagic(Stream stream)
-		{
-			byte[] magic = Encoding.ASCII.GetBytes("ID3");
-			stream.Write(magic, 0, magic.Length);
-		}
+    private void WriteMagic(Stream stream)
+    {
+      byte[] magic = Encoding.ASCII.GetBytes("ID3");
+      stream.Write(magic, 0, magic.Length);
+    }
 
-		void WriteVersion(Stream stream)
-		{
-			stream.WriteByte(majorVersion);
-			stream.WriteByte(minorVersion);
-		}
+    private void WriteVersion(Stream stream)
+    {
+      stream.WriteByte(majorVersion);
+      stream.WriteByte(minorVersion);
+    }
 
-		void WriteFlags(Stream stream)
-		{
-			stream.WriteByte(0);
-		}
+    private void WriteFlags(Stream stream)
+    {
+      stream.WriteByte(0);
+    }
 
-		void WriteInt28(Stream stream, int n)
-		{
-			byte[] buffer = new byte[4];
+    private void WriteInt28(Stream stream, int n)
+    {
+      byte[] buffer = new byte[4];
 
-			buffer[3] = (byte)(n & 0x7F);
-			n >>= 7;
-			buffer[2] = (byte)(n & 0x7F);
-			n >>= 7;
-			buffer[1] = (byte)(n & 0x7F);
-			n >>= 7;
-			buffer[0] = (byte)(n & 0x7F);
+      buffer[3] = (byte) (n & 0x7F);
+      n >>= 7;
+      buffer[2] = (byte) (n & 0x7F);
+      n >>= 7;
+      buffer[1] = (byte) (n & 0x7F);
+      n >>= 7;
+      buffer[0] = (byte) (n & 0x7F);
 
-			stream.Write(buffer, 0, 4);
-		}
-	}
+      stream.Write(buffer, 0, 4);
+    }
+  }
 }

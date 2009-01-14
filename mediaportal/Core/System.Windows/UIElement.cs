@@ -23,172 +23,197 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
+using MediaPortal.GUI.Library;
+using Geometry=MediaPortal.Drawing.Geometry;
 
 namespace System.Windows
 {
-	public class UIElement : Visual, IInputElement, IAnimatable
-	{
-		#region Constructors
+  public class UIElement : Visual, IInputElement, IAnimatable
+  {
+    #region Constructors
 
-		static UIElement()
-		{
-			UIPropertyMetadata metadata;
+    static UIElement()
+    {
+      UIPropertyMetadata metadata;
 
-			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			IsEnabledChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsKeyboardFocusedChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusedChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsKeyboardFocusWithinChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusWithinChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsVisibleChangedEvent = EventManager.RegisterRoutedEvent("IsVisibleChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+      GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct,
+                                                               typeof (KeyboardFocusChangedEventHandler),
+                                                               typeof (UIElement));
+      LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct,
+                                                                typeof (KeyboardFocusChangedEventHandler),
+                                                                typeof (UIElement));
+      IsEnabledChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct,
+                                                               typeof (RoutedEventHandler), typeof (UIElement));
+      IsKeyboardFocusedChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusedChanged",
+                                                                       RoutingStrategy.Direct,
+                                                                       typeof (RoutedEventHandler), typeof (UIElement));
+      IsKeyboardFocusWithinChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusWithinChanged",
+                                                                           RoutingStrategy.Direct,
+                                                                           typeof (RoutedEventHandler),
+                                                                           typeof (UIElement));
+      IsVisibleChangedEvent = EventManager.RegisterRoutedEvent("IsVisibleChanged", RoutingStrategy.Direct,
+                                                               typeof (RoutedEventHandler), typeof (UIElement));
+      PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus",
+                                                                       RoutingStrategy.Direct,
+                                                                       typeof (KeyboardFocusChangedEventHandler),
+                                                                       typeof (UIElement));
+      LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct,
+                                                                typeof (KeyboardFocusChangedEventHandler),
+                                                                typeof (UIElement));
 
-			#region IsEnabled
+      #region IsEnabled
 
-			metadata = new UIPropertyMetadata();
-			metadata.DefaultValue = true;
-			metadata.GetValueOverride = new GetValueOverride(OnIsEnabledPropertyGetValue);
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsEnabledPropertyInvalidated);
+      metadata = new UIPropertyMetadata();
+      metadata.DefaultValue = true;
+      metadata.GetValueOverride = new GetValueOverride(OnIsEnabledPropertyGetValue);
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsEnabledPropertyInvalidated);
 
-			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), metadata);
-	
-			#endregion IsEnabled
+      IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof (bool), typeof (UIElement), metadata);
 
-			#region IsFocused
+      #endregion IsEnabled
 
-			metadata = new UIPropertyMetadata();
-			metadata.DefaultValue = false;
-			metadata.GetValueOverride = new GetValueOverride(OnIsFocusedPropertyGetValue);
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsFocusedPropertyInvalidated);
+      #region IsFocused
 
-			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), metadata);
+      metadata = new UIPropertyMetadata();
+      metadata.DefaultValue = false;
+      metadata.GetValueOverride = new GetValueOverride(OnIsFocusedPropertyGetValue);
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsFocusedPropertyInvalidated);
 
-			#endregion IsFocused
+      IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof (bool), typeof (UIElement), metadata);
 
-			IsKeyboardFocusedPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
-			IsKeyboardFocusedProperty = IsKeyboardFocusedPropertyKey.DependencyProperty;
+      #endregion IsFocused
 
-			IsKeyboardFocusWithinPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocusWithin", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
-			IsKeyboardFocusWithinProperty = IsKeyboardFocusWithinPropertyKey.DependencyProperty;
-			
-			IsVisiblePropertyKey = DependencyProperty.RegisterReadOnly("IsVisible", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(true));
-			IsVisibleProperty = IsVisiblePropertyKey.DependencyProperty;
+      IsKeyboardFocusedPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocused", typeof (bool),
+                                                                         typeof (UIElement),
+                                                                         new FrameworkPropertyMetadata(false));
+      IsKeyboardFocusedProperty = IsKeyboardFocusedPropertyKey.DependencyProperty;
 
-			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
-			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new FrameworkPropertyMetadata(1.0));
-			
-			#region IsFocused
+      IsKeyboardFocusWithinPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocusWithin", typeof (bool),
+                                                                             typeof (UIElement),
+                                                                             new FrameworkPropertyMetadata(false));
+      IsKeyboardFocusWithinProperty = IsKeyboardFocusWithinPropertyKey.DependencyProperty;
 
-			metadata = new UIPropertyMetadata();
-			metadata.DefaultValue = Visibility.Visible;
-			metadata.GetValueOverride = new GetValueOverride(OnVisibilityPropertyGetValue);
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnVisibilityPropertyInvalidated);
+      IsVisiblePropertyKey = DependencyProperty.RegisterReadOnly("IsVisible", typeof (bool), typeof (UIElement),
+                                                                 new FrameworkPropertyMetadata(true));
+      IsVisibleProperty = IsVisiblePropertyKey.DependencyProperty;
 
-			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), metadata);
+      OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof (Brush), typeof (UIElement));
+      OpacityProperty = DependencyProperty.Register("Opacity", typeof (double), typeof (UIElement),
+                                                    new FrameworkPropertyMetadata(1.0));
 
-			#endregion IsFocused
+      #region IsFocused
 
-			//			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
-			//			EventManager.RegisterClassHandler(
-		}
+      metadata = new UIPropertyMetadata();
+      metadata.DefaultValue = Visibility.Visible;
+      metadata.GetValueOverride = new GetValueOverride(OnVisibilityPropertyGetValue);
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnVisibilityPropertyInvalidated);
 
-		public UIElement()
-		{
-		}
+      VisibilityProperty = DependencyProperty.Register("Visibility", typeof (Visibility), typeof (UIElement), metadata);
 
-		#endregion Constructors
+      #endregion IsFocused
 
-		#region Events (Routed)
+      //			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
+      //			EventManager.RegisterClassHandler(
+    }
 
-		public static readonly RoutedEvent GotKeyboardFocusEvent;
-		public static readonly RoutedEvent LostKeyboardFocusEvent;
-		public static readonly RoutedEvent IsEnabledChangedEvent;
-		public static readonly RoutedEvent IsKeyboardFocusedChangedEvent;
-		public static readonly RoutedEvent IsKeyboardFocusWithinChangedEvent;
-		public static readonly RoutedEvent IsVisibleChangedEvent;
-		public static readonly RoutedEvent PreviewLostKeyboardFocusEvent;
-		public static readonly RoutedEvent PreviewGotKeyboardFocusEvent;
+    public UIElement()
+    {
+    }
 
-		#endregion Events (Routed)
+    #endregion Constructors
 
-		#region Methods
+    #region Events (Routed)
 
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-			AddHandler(routedEvent, handler, true);
-		}
+    public static readonly RoutedEvent GotKeyboardFocusEvent;
+    public static readonly RoutedEvent LostKeyboardFocusEvent;
+    public static readonly RoutedEvent IsEnabledChangedEvent;
+    public static readonly RoutedEvent IsKeyboardFocusedChangedEvent;
+    public static readonly RoutedEvent IsKeyboardFocusWithinChangedEvent;
+    public static readonly RoutedEvent IsVisibleChangedEvent;
+    public static readonly RoutedEvent PreviewLostKeyboardFocusEvent;
+    public static readonly RoutedEvent PreviewGotKeyboardFocusEvent;
 
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
-			if(_eventHandlersStore == null)
-				_eventHandlersStore = new EventHandlersStore();
+    #endregion Events (Routed)
 
-			_eventHandlersStore.AddRoutedEventHandler(routedEvent, handler, handledEventsToo);
-		}
+    #region Methods
 
-		public void AddToEventRoute(EventRoute route, RoutedEventArgs e)
-		{
-			BuildRouteCore(route, e);
-		}
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+      AddHandler(routedEvent, handler, true);
+    }
 
-		protected internal virtual object AdjustEventSource(RoutedEventArgs args)
-		{
-			// default implementation always returns null
-			return null;
-		}
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+    {
+      if (_eventHandlersStore == null)
+      {
+        _eventHandlersStore = new EventHandlersStore();
+      }
 
-		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
-		{
-			ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
-		}
+      _eventHandlersStore.AddRoutedEventHandler(routedEvent, handler, handledEventsToo);
+    }
 
-		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
-		{
-			if(clock == null)
-			{
-				// if clock parameter is null we are to remove the animation from the property
-				if(_animationStore != null)
-					_animationStore.RemoveAnimationClock(property, clock);
+    public void AddToEventRoute(EventRoute route, RoutedEventArgs e)
+    {
+      BuildRouteCore(route, e);
+    }
 
-				return;
-			}
+    protected internal virtual object AdjustEventSource(RoutedEventArgs args)
+    {
+      // default implementation always returns null
+      return null;
+    }
 
-			if(_animationStore == null)
-				_animationStore = new AnimationStore();
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
+    {
+      ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
+    }
 
-			_animationStore.ApplyAnimationClock(property, clock, handoffBehavior);
-		}
-	
-		public void Arrange(Rect finalRect)
-		{
-			ArrangeCore(finalRect);
-		}
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
+    {
+      if (clock == null)
+      {
+        // if clock parameter is null we are to remove the animation from the property
+        if (_animationStore != null)
+        {
+          _animationStore.RemoveAnimationClock(property, clock);
+        }
 
-		protected virtual void ArrangeCore(Rect finalRect)
-		{
-			// no default implementation
-		}
+        return;
+      }
 
-		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
-		{
-			BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
-		}
+      if (_animationStore == null)
+      {
+        _animationStore = new AnimationStore();
+      }
 
-		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
-		{
-			// If the animation's BeginTime is NULL, then any current animations will be removed 
-			// and the current value of the property will be held. If the entire animation value 
-			// is given as NULL, all animations will be removed from the property and the property value 
-			// will revert back to its base value.
+      _animationStore.ApplyAnimationClock(property, clock, handoffBehavior);
+    }
+
+    public void Arrange(Rect finalRect)
+    {
+      ArrangeCore(finalRect);
+    }
+
+    protected virtual void ArrangeCore(Rect finalRect)
+    {
+      // no default implementation
+    }
+
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
+    {
+      BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
+    }
+
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+    {
+      // If the animation's BeginTime is NULL, then any current animations will be removed 
+      // and the current value of the property will be held. If the entire animation value 
+      // is given as NULL, all animations will be removed from the property and the property value 
+      // will revert back to its base value.
 
 //			if(animation == null)
 //				_animatedStore.RemoveAnimations(property);
@@ -198,22 +223,24 @@ namespace System.Windows
 //				throw new NotImplementedException();
 
 
-			if(_animationStore == null)
-				_animationStore = new AnimationStore();
+      if (_animationStore == null)
+      {
+        _animationStore = new AnimationStore();
+      }
 
-			_animationStore.BeginAnimation(property, animation, handoffBehavior);
-		}
+      _animationStore.BeginAnimation(property, animation, handoffBehavior);
+    }
 
-		protected virtual bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
-		{
-			return true;
-		}
-			
-		public bool Focus()
-		{
-			return true;
+    protected virtual bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
+    {
+      return true;
+    }
 
-			/*			if(IsFocused)
+    public bool Focus()
+    {
+      return true;
+
+      /*			if(IsFocused)
 							return true;
 
 						if(Focusable && IsEnabled)
@@ -244,368 +271,409 @@ namespace System.Windows
 						// LostKeyboardFocus
 						// GotKeyboardFocus (source is the new focus target).
 			*/
-		}			
+    }
 
-		public object GetAnimationBaseValue(DependencyProperty property)
-		{
-			return GetValueBase(property);
-		}
+    public object GetAnimationBaseValue(DependencyProperty property)
+    {
+      return GetValueBase(property);
+    }
 
 //		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
 
-		protected virtual Geometry GetLayoutClip(Size layoutSlotSize)
-		{
-			return new RectangleGeometry(new Rect(Point.Empty, RenderSize));
-		}
-	
-		protected internal virtual DependencyObject GetUIParentCore()
-		{
-			return null;
-		}
-		
-		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			if(HasAnimatedProperties)
-				baseValue = _animationStore.GetValue(property, baseValue, metadata);
+    protected virtual Geometry GetLayoutClip(Size layoutSlotSize)
+    {
+      return new RectangleGeometry(new Rect(Point.Empty, RenderSize));
+    }
 
-			return base.GetValueCore(property, baseValue, metadata);
-		}
+    protected internal virtual DependencyObject GetUIParentCore()
+    {
+      return null;
+    }
 
-		public void InvalidateArrange()
-		{
-			_isArrangeValid = false;
-			
-			// after the invalidation, the element will have its layout updated, which will occur asynchronously.
-			ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateLayoutWorker), this);
-		}
+    protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      if (HasAnimatedProperties)
+      {
+        baseValue = _animationStore.GetValue(property, baseValue, metadata);
+      }
 
-		public void InvalidateMeasure()
-		{
-			_isMeasureValid = false;
+      return base.GetValueCore(property, baseValue, metadata);
+    }
 
-			InvalidateArrange();
-		}
+    public void InvalidateArrange()
+    {
+      _isArrangeValid = false;
 
-		public void InvalidateVisual()
-		{
-			InvalidateArrange();
-		}
-			
-		public void Measure(Size availableSize)
-		{
-			// http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
-			MeasureCore(availableSize);
-		}
+      // after the invalidation, the element will have its layout updated, which will occur asynchronously.
+      ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateLayoutWorker), this);
+    }
 
-		protected virtual Size MeasureCore(Size availableSize)
-		{
-			// http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
-			return Size.Empty;
-		}
-			
-		protected virtual void OnChildDesiredSizeChanged(UIElement child)
-		{
-			InvalidateMeasure();
-		}
-			
-		protected virtual void OnKeyDown(KeyEventArgs e)
-		{
-			// no default implementation
-		}
+    public void InvalidateMeasure()
+    {
+      _isMeasureValid = false;
 
-		protected virtual void OnKeyUp(KeyEventArgs e)
-		{
-			// no default implementation
-		}
+      InvalidateArrange();
+    }
 
-		private static object OnIsEnabledPropertyGetValue(DependencyObject d)
-		{
-			return ((UIElement)d).IsEnabled;
-		}
+    public void InvalidateVisual()
+    {
+      InvalidateArrange();
+    }
 
-		private static void OnIsEnabledPropertyInvalidated(DependencyObject d)
-		{
-			((UIElement)d)._isEnabledDirty = true;
-		}
+    public void Measure(Size availableSize)
+    {
+      // http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
+      MeasureCore(availableSize);
+    }
 
-		private static object OnIsFocusedPropertyGetValue(DependencyObject d)
-		{
-			return ((UIElement)d).IsFocused;
-		}
+    protected virtual Size MeasureCore(Size availableSize)
+    {
+      // http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
+      return Size.Empty;
+    }
 
-		private static void OnIsFocusedPropertyInvalidated(DependencyObject d)
-		{
-			((UIElement)d)._isFocusedDirty = true;
-		}
+    protected virtual void OnChildDesiredSizeChanged(UIElement child)
+    {
+      InvalidateMeasure();
+    }
 
-		protected internal virtual void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-		
-		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-		{
-		}
+    protected virtual void OnKeyDown(KeyEventArgs e)
+    {
+      // no default implementation
+    }
 
-		protected virtual void OnMouseEnter(MouseEventArgs e)
-		{
-			// no default implementation
-		}
-			
-		protected virtual void OnMouseLeave(MouseEventArgs e)
-		{
-			// no default implementation
-		}
+    protected virtual void OnKeyUp(KeyEventArgs e)
+    {
+      // no default implementation
+    }
 
-		protected virtual void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    private static object OnIsEnabledPropertyGetValue(DependencyObject d)
+    {
+      return ((UIElement) d).IsEnabled;
+    }
 
-		protected virtual void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    private static void OnIsEnabledPropertyInvalidated(DependencyObject d)
+    {
+      ((UIElement) d)._isEnabledDirty = true;
+    }
 
-		protected virtual void OnMouseMove(MouseEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-			
-		protected virtual void OnMouseRightButtonDown(MouseButtonEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    private static object OnIsFocusedPropertyGetValue(DependencyObject d)
+    {
+      return ((UIElement) d).IsFocused;
+    }
 
-		protected virtual void OnMouseRightButtonUp(MouseButtonEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    private static void OnIsFocusedPropertyInvalidated(DependencyObject d)
+    {
+      ((UIElement) d)._isFocusedDirty = true;
+    }
 
-		protected virtual void OnMouseWheel(MouseWheelEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-			
-		protected virtual void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
-		{
-		}
-			
-		protected virtual void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
-		{
-		}
+    protected internal virtual void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected virtual void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
-		{
-		}
-			
-		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
-		{
-			// no default implementation?!?!?
-		}
-		
-		protected virtual void OnQueryEnabled(object sender, QueryEnabledEventArgs e)
-		{
-			if(_commandBindings == null)
-				return;
+    protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+    {
+    }
 
-			foreach(CommandBinding binding in _commandBindings)
-			{
-				if(binding.Command == e.Command)
-					e.IsEnabled = binding.Command.IsEnabled;
-			}
-		}
+    protected virtual void OnMouseEnter(MouseEventArgs e)
+    {
+      // no default implementation
+    }
 
-		protected virtual void OnRender(DrawingContext dc)
-		{
-			// no default implementation
-		}
+    protected virtual void OnMouseLeave(MouseEventArgs e)
+    {
+      // no default implementation
+    }
 
-		protected internal virtual void OnRenderSizeChanged(SizeChangedInfo info)
-		{
-			// no default implementation
-		}
-			
-		private static object OnVisibilityPropertyGetValue(DependencyObject d)
-		{
-			return ((UIElement)d).Visibility;
-		}
+    protected virtual void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		private static void OnVisibilityPropertyInvalidated(DependencyObject d)
-		{
-			((UIElement)d)._visibilityDirty = true;
+    protected virtual void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
+    protected virtual void OnMouseMove(MouseEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		}
+    protected virtual void OnMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void RaiseEvent(RoutedEventArgs e)
-		{
-			if(_eventHandlersStore == null)
-				return;
+    protected virtual void OnMouseRightButtonUp(MouseButtonEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-			foreach(RoutedEventHandlerInfo handler in _eventHandlersStore.GetRoutedEventHandlers(e.RoutedEvent))
-			{
-				if(e.Handled && handler.InvokeHandledEventsToo == false)
-					continue;
+    protected virtual void OnMouseWheel(MouseWheelEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-				handler.InvokeHandler(this, e);
-			}
-		}
+    protected virtual void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-			if(_eventHandlersStore != null)
-				_eventHandlersStore.RemoveRoutedEventHandler(routedEvent, handler);
-		}
+    protected virtual void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+    }
 
-		public DrawingContext RenderOpen()
-		{
-			throw new NotImplementedException();
-		}
+    protected virtual void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
+    {
+    }
 
-		public Point TranslatePoint(Point pt, UIElement relativeTo)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
+    {
+      // no default implementation?!?!?
+    }
 
-		public void UpdateLayout()
-		{
-			// only update when necessary to do so
-			if(_isMeasureValid && _isArrangeValid)
-				return;
+    protected virtual void OnQueryEnabled(object sender, QueryEnabledEventArgs e)
+    {
+      if (_commandBindings == null)
+      {
+        return;
+      }
 
-			// This ensures that elements with IsMeasureValid==false or IsArrangeValid==false will call 
-			// element-specific MeasureCore and ArrangeCore methods, forces layout update, and all computed
-			// sizes will be validated.
+      foreach (CommandBinding binding in _commandBindings)
+      {
+        if (binding.Command == e.Command)
+        {
+          e.IsEnabled = binding.Command.IsEnabled;
+        }
+      }
+    }
 
-			// This method does nothing if layout is unchanged, or if neither arrangement nor measurement 
-			// of a layout is invalid. However, if layout is invalid in either respect, the method call will 
-			// redo the entire layout, therefore avoid calling it after each minute change in the element tree. 
-			// In fact, it makes sense to either never call it (the layout system will do this in a deferred manner, 
-			// in a way that balances performance and currency) or only call it if you absolutely need updated sizes 
-			// and positions after you do all changes to properties that may affect layout. 
+    protected virtual void OnRender(DrawingContext dc)
+    {
+      // no default implementation
+    }
 
+    protected internal virtual void OnRenderSizeChanged(SizeChangedInfo info)
+    {
+      // no default implementation
+    }
 
-		}
-		
-		protected void UpdateLayoutWorker(object state)
-		{
+    private static object OnVisibilityPropertyGetValue(DependencyObject d)
+    {
+      return ((UIElement) d).Visibility;
+    }
+
+    private static void OnVisibilityPropertyInvalidated(DependencyObject d)
+    {
+      ((UIElement) d)._visibilityDirty = true;
+    }
+
+    public void RaiseEvent(RoutedEventArgs e)
+    {
+      if (_eventHandlersStore == null)
+      {
+        return;
+      }
+
+      foreach (RoutedEventHandlerInfo handler in _eventHandlersStore.GetRoutedEventHandlers(e.RoutedEvent))
+      {
+        if (e.Handled && handler.InvokeHandledEventsToo == false)
+        {
+          continue;
+        }
+
+        handler.InvokeHandler(this, e);
+      }
+    }
+
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+      if (_eventHandlersStore != null)
+      {
+        _eventHandlersStore.RemoveRoutedEventHandler(routedEvent, handler);
+      }
+    }
+
+    public DrawingContext RenderOpen()
+    {
+      throw new NotImplementedException();
+    }
+
+    public Point TranslatePoint(Point pt, UIElement relativeTo)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void UpdateLayout()
+    {
+      // only update when necessary to do so
+      if (_isMeasureValid && _isArrangeValid)
+      {
+        return;
+      }
+
+      // This ensures that elements with IsMeasureValid==false or IsArrangeValid==false will call 
+      // element-specific MeasureCore and ArrangeCore methods, forces layout update, and all computed
+      // sizes will be validated.
+
+      // This method does nothing if layout is unchanged, or if neither arrangement nor measurement 
+      // of a layout is invalid. However, if layout is invalid in either respect, the method call will 
+      // redo the entire layout, therefore avoid calling it after each minute change in the element tree. 
+      // In fact, it makes sense to either never call it (the layout system will do this in a deferred manner, 
+      // in a way that balances performance and currency) or only call it if you absolutely need updated sizes 
+      // and positions after you do all changes to properties that may affect layout. 
+    }
+
+    protected void UpdateLayoutWorker(object state)
+    {
 //			UIElement element = (UIElement)state;
 //			element.Arrange(
-		}
-		
-		#endregion Methods
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Size DesiredSize
-		{
-			get { return _desiredSize; }
-		}
+    #region Properties
 
-		public bool HasAnimatedProperties
-		{
-			get { return _animationStore != null && _animationStore.HasAnimatedProperties; }
-		}
+    public Size DesiredSize
+    {
+      get { return _desiredSize; }
+    }
 
-		public bool IsArrangeValid
-		{
-			get { return _isArrangeValid; }
-		}
+    public bool HasAnimatedProperties
+    {
+      get { return _animationStore != null && _animationStore.HasAnimatedProperties; }
+    }
 
-		public bool IsEnabled
-		{
-			get { return IsEnabledCore; }
-			set { SetValue(IsEnabledProperty, value); }
-		}
+    public bool IsArrangeValid
+    {
+      get { return _isArrangeValid; }
+    }
 
-		protected virtual bool IsEnabledCore
-		{
-			get { if(_isEnabledDirty) { _isEnabledCache = (bool)GetValueBase(IsEnabledProperty); _isEnabledDirty = false; } return _isEnabledCache; }
-		}
+    public bool IsEnabled
+    {
+      get { return IsEnabledCore; }
+      set { SetValue(IsEnabledProperty, value); }
+    }
 
-		public bool IsFocused
-		{
-			get { if(_isFocusedDirty) { _isFocusedCache = (bool)GetValueBase(IsFocusedProperty); _isFocusedDirty = false; } return _isFocusedCache; }
-		}
+    protected virtual bool IsEnabledCore
+    {
+      get
+      {
+        if (_isEnabledDirty)
+        {
+          _isEnabledCache = (bool) GetValueBase(IsEnabledProperty);
+          _isEnabledDirty = false;
+        }
+        return _isEnabledCache;
+      }
+    }
 
-		public bool IsMeasureValid
-		{
-			get { return _isMeasureValid; }
-		}
+    public bool IsFocused
+    {
+      get
+      {
+        if (_isFocusedDirty)
+        {
+          _isFocusedCache = (bool) GetValueBase(IsFocusedProperty);
+          _isFocusedDirty = false;
+        }
+        return _isFocusedCache;
+      }
+    }
 
-		public CommandBindingCollection CommandBindings
-		{
-			get { if(_commandBindings == null) _commandBindings = new CommandBindingCollection(); return _commandBindings; }
-		}
+    public bool IsMeasureValid
+    {
+      get { return _isMeasureValid; }
+    }
 
-		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
-		public virtual bool IsVisible
-		{
-			// TODO: there should be no set accessor
-			get { return Visibility == Visibility.Visible; }
-			set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
-		}
+    public CommandBindingCollection CommandBindings
+    {
+      get
+      {
+        if (_commandBindings == null)
+        {
+          _commandBindings = new CommandBindingCollection();
+        }
+        return _commandBindings;
+      }
+    }
 
-		public virtual double Opacity
-		{
-			get { return (double)GetValue(OpacityProperty); }
-			set { SetValue(OpacityProperty, value); }
-		}
+    [XMLSkinElement("visible")]
+    public virtual bool IsVisible
+    {
+      // TODO: there should be no set accessor
+      get { return Visibility == Visibility.Visible; }
+      set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
+    }
 
-		public Brush OpacityMask
-		{
-			get { return (Brush)GetValue(OpacityMaskProperty); }
-			set { SetValue(OpacityMaskProperty, value); }
-		}
+    public virtual double Opacity
+    {
+      get { return (double) GetValue(OpacityProperty); }
+      set { SetValue(OpacityProperty, value); }
+    }
 
-		public Size RenderSize
-		{
-			get { return _renderSize; }
-			set { _renderSize = value; }
-		}
+    public Brush OpacityMask
+    {
+      get { return (Brush) GetValue(OpacityMaskProperty); }
+      set { SetValue(OpacityMaskProperty, value); }
+    }
 
-		public Visibility Visibility
-		{
-			get { if(_visibilityDirty) { _visibilityCache = (Visibility)GetValueBase(VisibilityProperty); _visibilityDirty = false; } return _visibilityCache; }
-			set { SetValue(VisibilityProperty, value); }
-		}
+    public Size RenderSize
+    {
+      get { return _renderSize; }
+      set { _renderSize = value; }
+    }
 
-		#endregion Properties
+    public Visibility Visibility
+    {
+      get
+      {
+        if (_visibilityDirty)
+        {
+          _visibilityCache = (Visibility) GetValueBase(VisibilityProperty);
+          _visibilityDirty = false;
+        }
+        return _visibilityCache;
+      }
+      set { SetValue(VisibilityProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty		IsEnabledProperty;
-		public static readonly DependencyProperty		IsFocusedProperty;
-		public static readonly DependencyProperty		IsKeyboardFocusedProperty;
-		public static readonly DependencyProperty		IsKeyboardFocusWithinProperty;
-		public static readonly DependencyProperty		IsVisibleProperty;
-		public static readonly DependencyProperty		OpacityProperty;
-		public static readonly DependencyProperty		OpacityMaskProperty;
-		public static readonly DependencyProperty		VisibilityProperty;
+    #region Properties (Dependency)
 
-		static readonly DependencyPropertyKey			IsKeyboardFocusedPropertyKey;
-		static readonly DependencyPropertyKey			IsKeyboardFocusWithinPropertyKey;
-		static readonly DependencyPropertyKey			IsVisiblePropertyKey;
+    public static readonly DependencyProperty IsEnabledProperty;
+    public static readonly DependencyProperty IsFocusedProperty;
+    public static readonly DependencyProperty IsKeyboardFocusedProperty;
+    public static readonly DependencyProperty IsKeyboardFocusWithinProperty;
+    public static readonly DependencyProperty IsVisibleProperty;
+    public static readonly DependencyProperty OpacityProperty;
+    public static readonly DependencyProperty OpacityMaskProperty;
+    public static readonly DependencyProperty VisibilityProperty;
 
-		#endregion Properties (Dependency)
+    private static readonly DependencyPropertyKey IsKeyboardFocusedPropertyKey;
+    private static readonly DependencyPropertyKey IsKeyboardFocusWithinPropertyKey;
+    private static readonly DependencyPropertyKey IsVisiblePropertyKey;
 
-		#region Fields
+    #endregion Properties (Dependency)
 
-		AnimationStore				_animationStore;
-		CommandBindingCollection	_commandBindings;
-		Size						_desiredSize = Size.Empty;
-		EventHandlersStore			_eventHandlersStore;
-		bool						_isArrangeValid = false;
-		bool						_isEnabledCache;
-		bool						_isEnabledDirty = true;
-		bool						_isFocusedCache;
-		bool						_isFocusedDirty = true;
-		bool						_isMeasureValid = false;
-		Size						_renderSize = Size.Empty;
-		Visibility					_visibilityCache;
-		bool						_visibilityDirty = true;
+    #region Fields
 
-		#endregion Fields
-	}
+    private AnimationStore _animationStore;
+    private CommandBindingCollection _commandBindings;
+    private Size _desiredSize = Size.Empty;
+    private EventHandlersStore _eventHandlersStore;
+    private bool _isArrangeValid = false;
+    private bool _isEnabledCache;
+    private bool _isEnabledDirty = true;
+    private bool _isFocusedCache;
+    private bool _isFocusedDirty = true;
+    private bool _isMeasureValid = false;
+    private Size _renderSize = Size.Empty;
+    private Visibility _visibilityCache;
+    private bool _visibilityDirty = true;
+
+    #endregion Fields
+  }
 }

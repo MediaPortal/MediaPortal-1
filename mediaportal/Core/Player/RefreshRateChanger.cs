@@ -26,12 +26,13 @@
 #region using
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using Microsoft.DirectX.Direct3D;
 
 #endregion
 
@@ -48,6 +49,7 @@ namespace MediaPortal.Player
     #region private delegates
 
     private delegate void NotifyRefreshRateChangedSuccessful(string msg, bool waitForFullScreen);
+
     private delegate void NotifyRefreshRateInteractGUI(string msg, bool waitForFullScreen);
 
     #endregion
@@ -70,9 +72,17 @@ namespace MediaPortal.Player
 
     #region public enums
 
-    public enum MediaType { Video, TV, Radio, Music, Recording, Unknown };
+    public enum MediaType
+    {
+      Video,
+      TV,
+      Radio,
+      Music,
+      Recording,
+      Unknown
+    } ;
 
-    #endregion   
+    #endregion
 
     #region private static methods
 
@@ -80,9 +90,12 @@ namespace MediaPortal.Player
     {
       try
       {
-        GUIGraphicsContext.form.Invoke(new NotifyRefreshRateInteractGUI(RefreshRateShowNotification), new object[] { msg, waitForFullScreen });
+        GUIGraphicsContext.form.Invoke(new NotifyRefreshRateInteractGUI(RefreshRateShowNotification),
+                                       new object[] {msg, waitForFullScreen});
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
     }
 
 
@@ -108,17 +121,24 @@ namespace MediaPortal.Player
 
     private static void NotifyRefreshRateChangedThread(object oMsg, object oWaitForFullScreen)
     {
-      if (!(oMsg is string)) return;
-      if (!(oWaitForFullScreen is bool)) return;
+      if (!(oMsg is string))
+      {
+        return;
+      }
+      if (!(oWaitForFullScreen is bool))
+      {
+        return;
+      }
 
-      string msg = (string)oMsg;
-      bool waitForFullScreen = (bool)oWaitForFullScreen;
+      string msg = (string) oMsg;
+      bool waitForFullScreen = (bool) oWaitForFullScreen;
 
       DateTime now = DateTime.Now;
       TimeSpan ts = DateTime.Now - now;
 
 
-      while (GUIGraphicsContext.IsFullScreenVideo != waitForFullScreen && ts.TotalSeconds < 10) //lets wait 5sec for fullscreen video to occur.
+      while (GUIGraphicsContext.IsFullScreenVideo != waitForFullScreen && ts.TotalSeconds < 10)
+        //lets wait 5sec for fullscreen video to occur.
       {
         Thread.Sleep(50);
         ts = DateTime.Now - now;
@@ -127,14 +147,16 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullScreen)
       {
         if (OnNotifyRefreshRateChangedCompleted != null)
+        {
           OnNotifyRefreshRateChangedCompleted(msg, waitForFullScreen);
+        }
       }
       Thread.CurrentThread.Abort();
     }
 
     private static void NotifyRefreshRateChanged(string msg, bool waitForFullScreen)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         bool notify = xmlreader.GetValueAsBool("general", "notify_on_refreshrate", false);
 
@@ -142,10 +164,11 @@ namespace MediaPortal.Player
         {
           if (OnNotifyRefreshRateChangedCompleted == null)
           {
-            OnNotifyRefreshRateChangedCompleted += new NotifyRefreshRateChangedSuccessful(NotifyRefreshRateChangedCompleted);
+            OnNotifyRefreshRateChangedCompleted +=
+              new NotifyRefreshRateChangedSuccessful(NotifyRefreshRateChangedCompleted);
           }
 
-          ThreadStart starter = delegate { NotifyRefreshRateChangedThread((object)msg, (object)waitForFullScreen); };
+          ThreadStart starter = delegate { NotifyRefreshRateChangedThread((object) msg, (object) waitForFullScreen); };
           Thread notifyRefreshRateChangedThread = new Thread(starter);
           notifyRefreshRateChangedThread.IsBackground = true;
           notifyRefreshRateChangedThread.Start();
@@ -159,7 +182,7 @@ namespace MediaPortal.Player
       provider.NumberDecimalSeparator = ".";
 
       string[] arrStr = new string[0];
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         arrStr = xmlreader.GetValueAsString("general", key, "").Split(';');
       }
@@ -179,7 +202,8 @@ namespace MediaPortal.Player
       return settingsHZ;
     }
 
-    private static void FindExtCmdfromSettings(double fps, double currentRR, bool deviceReset, out double newRR, out string newExtCmd, out string newRRDescription)
+    private static void FindExtCmdfromSettings(double fps, double currentRR, bool deviceReset, out double newRR,
+                                               out string newExtCmd, out string newRRDescription)
     {
       double cinemaHZ = 0;
       double palHZ = 0;
@@ -200,15 +224,19 @@ namespace MediaPortal.Player
       newExtCmd = "";
       newRRDescription = "";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         NumberFormatInfo provider = new NumberFormatInfo();
         provider.NumberDecimalSeparator = ".";
 
-        double.TryParse(xmlreader.GetValueAsString("general", "cinema_hz", ""), NumberStyles.AllowDecimalPoint, provider, out cinemaHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "pal_hz", ""), NumberStyles.AllowDecimalPoint, provider, out palHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "ntsc_hz", ""), NumberStyles.AllowDecimalPoint, provider, out ntscHZ);
-        double.TryParse(xmlreader.GetValueAsString("general", "tv_hz", ""), NumberStyles.AllowDecimalPoint, provider, out tvHZ);
+        double.TryParse(xmlreader.GetValueAsString("general", "cinema_hz", ""), NumberStyles.AllowDecimalPoint, provider,
+                        out cinemaHZ);
+        double.TryParse(xmlreader.GetValueAsString("general", "pal_hz", ""), NumberStyles.AllowDecimalPoint, provider,
+                        out palHZ);
+        double.TryParse(xmlreader.GetValueAsString("general", "ntsc_hz", ""), NumberStyles.AllowDecimalPoint, provider,
+                        out ntscHZ);
+        double.TryParse(xmlreader.GetValueAsString("general", "tv_hz", ""), NumberStyles.AllowDecimalPoint, provider,
+                        out tvHZ);
 
         cinemaEXT = xmlreader.GetValueAsString("general", "cinema_ext", "");
         palEXT = xmlreader.GetValueAsString("general", "pal_ext", "");
@@ -282,7 +310,6 @@ namespace MediaPortal.Player
 
     private static bool RunExternalJob(string newExtCmd, string strFile, MediaType type, bool deviceReset)
     {
-
       Log.Info("RefreshRateChanger.RunExternalJob: running external job in order to change refreshrate {0}", newExtCmd);
 
 
@@ -322,14 +349,14 @@ namespace MediaPortal.Player
         }
       }
 
-      System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(cmd);
+      ProcessStartInfo psi = new ProcessStartInfo(cmd);
       psi.RedirectStandardOutput = true;
-      psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+      psi.WindowStyle = ProcessWindowStyle.Hidden;
       psi.UseShellExecute = false;
       psi.Arguments = args;
       psi.CreateNoWindow = true;
 
-      System.Diagnostics.Process changeRR = null;
+      Process changeRR = null;
 
       try
       {
@@ -340,7 +367,7 @@ namespace MediaPortal.Player
           _refreshrateChangePending = true;
           _refreshrateChangeExecutionTime = DateTime.Now;
         }
-        changeRR = System.Diagnostics.Process.Start(psi);
+        changeRR = Process.Start(psi);
       }
       catch (Exception e)
       {
@@ -387,20 +414,21 @@ namespace MediaPortal.Player
     {
       int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
       double currentRR = 0;
-      if ((currentScreenNr == -1) || (Microsoft.DirectX.Direct3D.Manager.Adapters.Count <= currentScreenNr))
+      if ((currentScreenNr == -1) || (Manager.Adapters.Count <= currentScreenNr))
       {
-        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: could not aquire current screen number, or current screen number bigger than number of adapters available.");
+        Log.Info(
+          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not aquire current screen number, or current screen number bigger than number of adapters available.");
       }
       else
       {
-        currentRR = Microsoft.DirectX.Direct3D.Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
+        currentRR = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
       }
 
       bool enabled = false;
       bool deviceReset = false;
       bool force_refresh_rate = false;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
 
@@ -409,7 +437,8 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
           return;
         }
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false); ;
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
+        ;
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
@@ -418,25 +447,31 @@ namespace MediaPortal.Player
       string newRRDescription = "";
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
-      if ((currentRR != newRR && newRR > 0) || force_refresh_rate)// //run external command in order to change refresh rate.
+      if ((currentRR != newRR && newRR > 0) || force_refresh_rate)
+        // //run external command in order to change refresh rate.
       {
-        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
+        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
+                 currentRR, newRR);
         if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
       }
       {
-        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}", currentRR, newRR);
+        Log.Info(
+          "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",
+          currentRR, newRR);
       }
     }
-
 
 
     // defaults the refreshrate
     public static void AdaptRefreshRate()
     {
-      if (_refreshrateChangePending) return;
+      if (_refreshrateChangePending)
+      {
+        return;
+      }
 
       string defaultKeyHZ = "";
       double defaultHZ = 0;
@@ -446,7 +481,7 @@ namespace MediaPortal.Player
       double defaultFPS = 0;
       bool deviceReset = false;
       bool force_refresh_rate = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
         if (!enabled)
@@ -455,12 +490,15 @@ namespace MediaPortal.Player
           return;
         }
 
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false); ;
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
+        ;
 
-        bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false); ;
+        bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
+        ;
         if (!useDefaultHz)
         {
-          Log.Info("RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' not going back to default refreshrate");
+          Log.Info(
+            "RefreshRateChanger.AdaptRefreshRate: 'auto refreshrate changer' not going back to default refreshrate");
           return;
         }
 
@@ -468,7 +506,8 @@ namespace MediaPortal.Player
 
         if (defaultKeyHZ.Length > 0)
         {
-          double.TryParse(xmlreader.GetValueAsString("general", defaultKeyHZ, ""), NumberStyles.AllowDecimalPoint, provider, out defaultHZ);
+          double.TryParse(xmlreader.GetValueAsString("general", defaultKeyHZ, ""), NumberStyles.AllowDecimalPoint,
+                          provider, out defaultHZ);
         }
 
         if (defaultKeyHZ.IndexOf("cinema") > -1)
@@ -543,12 +582,15 @@ namespace MediaPortal.Player
     // change screen refresh rate based on media framerate
     public static void AdaptRefreshRate(string strFile, MediaType type)
     {
-      if (_refreshrateChangePending) return;
+      if (_refreshrateChangePending)
+      {
+        return;
+      }
 
-      bool isTV = MediaPortal.Util.Utils.IsLiveTv(strFile);
-      bool isDVD = MediaPortal.Util.Utils.IsDVD(strFile);
-      bool isVideo = MediaPortal.Util.Utils.IsVideo(strFile);
-      bool IsAVStream = MediaPortal.Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
+      bool isTV = Util.Utils.IsLiveTv(strFile);
+      bool isDVD = Util.Utils.IsDVD(strFile);
+      bool isVideo = Util.Utils.IsVideo(strFile);
+      bool IsAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
 
 
       if (!isTV && !isDVD && !isVideo)
@@ -561,7 +603,7 @@ namespace MediaPortal.Player
       provider.NumberDecimalSeparator = ".";
       bool deviceReset = false;
       bool force_refresh_rate = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
 
@@ -572,7 +614,8 @@ namespace MediaPortal.Player
         }
 
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false); ;
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
+        ;
       }
       double[] tvFPS = RetriveRefreshRateChangerSettings("tv_fps");
       double fps = -1;
@@ -588,7 +631,9 @@ namespace MediaPortal.Player
         }
         catch (Exception ex)
         {
-          Log.Error("RefreshRateChanger.AdaptRefreshRate: unable to call external DLL - medialib info (make sure 'MediaInfo.dll' is located in MP root dir.) {0}", ex.Message);
+          Log.Error(
+            "RefreshRateChanger.AdaptRefreshRate: unable to call external DLL - medialib info (make sure 'MediaInfo.dll' is located in MP root dir.) {0}",
+            ex.Message);
         }
         finally
         {
@@ -656,14 +701,14 @@ namespace MediaPortal.Player
     public static bool RefreshRateChangePending
     {
       get { return _refreshrateChangePending; }
-      set { _refreshrateChangePending = value;}
+      set { _refreshrateChangePending = value; }
     }
 
     public static string RefreshRateChangeStrFile
     {
       get { return _refreshrateChangeStrFile; }
     }
-    
+
 
     public static MediaType RefreshRateChangeMediaType
     {
@@ -682,6 +727,5 @@ namespace MediaPortal.Player
     }
 
     #endregion
-
   }
 }

@@ -25,15 +25,15 @@
 
 namespace System.Windows.Dispatcher
 {
-	public enum DispatcherOperationStatus
-	{
-		#region Values
+  public enum DispatcherOperationStatus
+  {
+    #region Values
 
-		Aborted,
-		Completed,
-		Executing,
-		Pending,
+    Aborted,
+    Completed,
+    Executing,
+    Pending,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

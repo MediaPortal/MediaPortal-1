@@ -28,250 +28,314 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.Mixer
 {
-	public sealed class Mixer : IDisposable
-	{
-		#region Events
+  public sealed class Mixer : IDisposable
+  {
+    #region Events
 
-		public event MixerEventHandler	LineChanged;
-		public event MixerEventHandler	ControlChanged;
+    public event MixerEventHandler LineChanged;
+    public event MixerEventHandler ControlChanged;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public void Close()
-		{
-			lock(this)
-			{
-				if(_handle == IntPtr.Zero)
-					return;
+    public void Close()
+    {
+      lock (this)
+      {
+        if (_handle == IntPtr.Zero)
+        {
+          return;
+        }
 
-				MixerNativeMethods.mixerClose(_handle);
+        MixerNativeMethods.mixerClose(_handle);
 
-				_handle = IntPtr.Zero;
-			}
-		}
+        _handle = IntPtr.Zero;
+      }
+    }
 
-		public void Dispose()
-		{
-			if(_mixerControlDetailsVolume != null)
-				_mixerControlDetailsVolume.Dispose();
+    public void Dispose()
+    {
+      if (_mixerControlDetailsVolume != null)
+      {
+        _mixerControlDetailsVolume.Dispose();
+      }
 
-			if(_mixerControlDetailsMute != null)
-				_mixerControlDetailsMute.Dispose();
+      if (_mixerControlDetailsMute != null)
+      {
+        _mixerControlDetailsMute.Dispose();
+      }
 
-			Close();
-		}
+      Close();
+    }
 
-		public void Open()
-		{
-			Open(0, false);
-		}
+    public void Open()
+    {
+      Open(0, false);
+    }
 
-		public void Open(int mixerIndex, bool isDigital)
-		{
-			lock(this)
-			{
-				if(isDigital)
-              _componentType = MixerComponentType.SourceWave;
+    public void Open(int mixerIndex, bool isDigital)
+    {
+      lock (this)
+      {
+        if (isDigital)
+        {
+          _componentType = MixerComponentType.SourceWave;
+        }
         // not enough to change this..
 
-				if(_mixerEventListener == null)
-				{
-					_mixerEventListener = new MixerEventListener();
-					_mixerEventListener.Start();
-					_mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
-					_mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
-				}
+        if (_mixerEventListener == null)
+        {
+          _mixerEventListener = new MixerEventListener();
+          _mixerEventListener.Start();
+          _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
+          _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
+        }
 
-				MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
+        MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
 
-				mc.Size = 0;
-				mc.ControlId = 0;
-				mc.ControlType = MixerControlType.Volume;
-				mc.fdwControl = 0;
-				mc.MultipleItems = 0;
-				mc.ShortName = string.Empty;
-				mc.Name = string.Empty;
-				mc.Minimum = 0;
-				mc.Maximum = 0;
-				mc.Reserved = 0;
-			
-				IntPtr handle = IntPtr.Zero;
+        mc.Size = 0;
+        mc.ControlId = 0;
+        mc.ControlType = MixerControlType.Volume;
+        mc.fdwControl = 0;
+        mc.MultipleItems = 0;
+        mc.ShortName = string.Empty;
+        mc.Name = string.Empty;
+        mc.Minimum = 0;
+        mc.Maximum = 0;
+        mc.Reserved = 0;
 
-				if(MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow) != MixerError.None)
-					throw new InvalidOperationException();
+        IntPtr handle = IntPtr.Zero;
 
-				_handle = handle;
+        if (
+          MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow) !=
+          MixerError.None)
+        {
+          throw new InvalidOperationException();
+        }
 
-				_mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
-				_mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
+        _handle = handle;
 
-				_isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-				_volume = (int)GetValue(_componentType, MixerControlType.Volume);
-			}
-		}
+        _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
+        _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
 
-		MixerNativeMethods.MixerControlDetails GetControl(MixerComponentType componentType, MixerControlType controlType)
-		{
-			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
+        _isMuted = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
+        _volume = (int) GetValue(_componentType, MixerControlType.Volume);
+      }
+    }
 
-			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-				throw new InvalidOperationException("Mixer.GetControl.1");
-		
-			using(MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-			{
-				if(MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
-					throw new InvalidOperationException("Mixer.GetControl.2");
+    private MixerNativeMethods.MixerControlDetails GetControl(MixerComponentType componentType,
+                                                              MixerControlType controlType)
+    {
+      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-				MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      {
+        throw new InvalidOperationException("Mixer.GetControl.1");
+      }
 
-				return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
-			}
+      using (
+        MixerNativeMethods.MixerLineControls mixerLineControls =
+          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
+      {
+        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
+            MixerError.None)
+        {
+          throw new InvalidOperationException("Mixer.GetControl.2");
+        }
 
-		}
+        MixerNativeMethods.MixerControl mixerControl =
+          (MixerNativeMethods.MixerControl)
+          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
 
-		object GetValue(MixerComponentType componentType, MixerControlType controlType)
-		{
-			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
+        return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
+      }
+    }
 
-			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-				throw new InvalidOperationException("Mixer.OpenControl.1");
-			
-			using(MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-			{
-				MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
-				MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl));
+    private object GetValue(MixerComponentType componentType, MixerControlType controlType)
+    {
+      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-				using(MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
-				{
-					MixerNativeMethods.mixerGetControlDetailsA(_handle, mixerControlDetails, 0);
+      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      {
+        throw new InvalidOperationException("Mixer.OpenControl.1");
+      }
 
-					return Marshal.ReadInt32(mixerControlDetails.Data);
-				}
-			}
-		}
+      using (
+        MixerNativeMethods.MixerLineControls mixerLineControls =
+          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
+      {
+        MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
+        MixerNativeMethods.MixerControl mixerControl =
+          (MixerNativeMethods.MixerControl)
+          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
 
-		void SetValue(MixerComponentType componentType, MixerControlType controlType, bool controlValue)
-		{
-			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
+        using (
+          MixerNativeMethods.MixerControlDetails mixerControlDetails =
+            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
+        {
+          MixerNativeMethods.mixerGetControlDetailsA(_handle, mixerControlDetails, 0);
 
-			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-				throw new InvalidOperationException("Mixer.SetValue.1");
-			
-			using(MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-			{
-				if(MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
-					throw new InvalidOperationException("Mixer.SetValue.2");
+          return Marshal.ReadInt32(mixerControlDetails.Data);
+        }
+      }
+    }
 
-				MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+    private void SetValue(MixerComponentType componentType, MixerControlType controlType, bool controlValue)
+    {
+      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-				using(MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
-				{
-					Marshal.WriteInt32(mixerControlDetails.Data, controlValue ? 1 : 0);
-					MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
-				}
-			}
-		}
+      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      {
+        throw new InvalidOperationException("Mixer.SetValue.1");
+      }
 
-		void SetValue(MixerNativeMethods.MixerControlDetails control, bool value)
-		{
-			if(control == null)
-				return;
+      using (
+        MixerNativeMethods.MixerLineControls mixerLineControls =
+          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
+      {
+        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
+            MixerError.None)
+        {
+          throw new InvalidOperationException("Mixer.SetValue.2");
+        }
 
-			Marshal.WriteInt32(control.Data, value ? 1 : 0);
-			MixerNativeMethods.mixerSetControlDetails(_handle, control, 0);
-		}
+        MixerNativeMethods.MixerControl mixerControl =
+          (MixerNativeMethods.MixerControl)
+          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
 
-		void SetValue(MixerNativeMethods.MixerControlDetails control, int value)
-		{
-			if(control == null)
-				return;
+        using (
+          MixerNativeMethods.MixerControlDetails mixerControlDetails =
+            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
+        {
+          Marshal.WriteInt32(mixerControlDetails.Data, controlValue ? 1 : 0);
+          MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
+        }
+      }
+    }
 
-			Marshal.WriteInt32(control.Data, value);
-			MixerNativeMethods.mixerSetControlDetails(_handle, control, 0);
-		}
+    private void SetValue(MixerNativeMethods.MixerControlDetails control, bool value)
+    {
+      if (control == null)
+      {
+        return;
+      }
 
-		void SetValue(MixerComponentType componentType, MixerControlType controlType, int controlValue)
-		{
-			MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
+      Marshal.WriteInt32(control.Data, value ? 1 : 0);
+      MixerNativeMethods.mixerSetControlDetails(_handle, control, 0);
+    }
 
-			if(MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
-				throw new InvalidOperationException("Mixer.SetValue.1");
-			
-			using(MixerNativeMethods.MixerLineControls mixerLineControls = new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
-			{
-				if(MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) != MixerError.None)
-					throw new InvalidOperationException("Mixer.SetValue.2");
+    private void SetValue(MixerNativeMethods.MixerControlDetails control, int value)
+    {
+      if (control == null)
+      {
+        return;
+      }
 
-				MixerNativeMethods.MixerControl mixerControl = (MixerNativeMethods.MixerControl)Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl)); 
+      Marshal.WriteInt32(control.Data, value);
+      MixerNativeMethods.mixerSetControlDetails(_handle, control, 0);
+    }
 
-				using(MixerNativeMethods.MixerControlDetails mixerControlDetails = new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
-				{
-					Marshal.WriteInt32(mixerControlDetails.Data, controlValue);
-					MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
-				}
-			}
-		}
+    private void SetValue(MixerComponentType componentType, MixerControlType controlType, int controlValue)
+    {
+      MixerNativeMethods.MixerLine mixerLine = new MixerNativeMethods.MixerLine(componentType);
 
-		void OnLineChanged(object sender, MixerEventArgs e)
-		{		
-			if(LineChanged != null)
-				LineChanged(sender, e);
-		}
-		
-		void OnControlChanged(object sender, MixerEventArgs e)
-		{
-			_isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-			_volume = (int)GetValue(_componentType, MixerControlType.Volume);
+      if (MixerNativeMethods.mixerGetLineInfoA(_handle, ref mixerLine, MixerLineFlags.ComponentType) != MixerError.None)
+      {
+        throw new InvalidOperationException("Mixer.SetValue.1");
+      }
 
-			if(ControlChanged != null)
-				ControlChanged(sender, e);
-		}
+      using (
+        MixerNativeMethods.MixerLineControls mixerLineControls =
+          new MixerNativeMethods.MixerLineControls(mixerLine.LineId, controlType))
+      {
+        if (MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType) !=
+            MixerError.None)
+        {
+          throw new InvalidOperationException("Mixer.SetValue.2");
+        }
 
-		#endregion Methods
+        MixerNativeMethods.MixerControl mixerControl =
+          (MixerNativeMethods.MixerControl)
+          Marshal.PtrToStructure(mixerLineControls.Data, typeof (MixerNativeMethods.MixerControl));
 
-		#region Properties
+        using (
+          MixerNativeMethods.MixerControlDetails mixerControlDetails =
+            new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId))
+        {
+          Marshal.WriteInt32(mixerControlDetails.Data, controlValue);
+          MixerNativeMethods.mixerSetControlDetails(_handle, mixerControlDetails, 0);
+        }
+      }
+    }
 
-		public bool IsMuted
-		{
-			get { lock(this) return _isMuted; }
-			set { lock(this) SetValue(_mixerControlDetailsMute, _isMuted = value); }
-		}
+    private void OnLineChanged(object sender, MixerEventArgs e)
+    {
+      if (LineChanged != null)
+      {
+        LineChanged(sender, e);
+      }
+    }
 
-		public IntPtr Handle
-		{
-			get { lock(this) return _handle; }
-		}
+    private void OnControlChanged(object sender, MixerEventArgs e)
+    {
+      _isMuted = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
+      _volume = (int) GetValue(_componentType, MixerControlType.Volume);
 
-		public int Volume
-		{
-			get { lock(this) return _volume; }
-			set { lock(this) SetValue(_mixerControlDetailsVolume, _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value))); }
-		}
+      if (ControlChanged != null)
+      {
+        ControlChanged(sender, e);
+      }
+    }
 
-		public int VolumeMaximum
-		{
-			get { return 65535; }
-		}
+    #endregion Methods
 
-		public int VolumeMinimum
-		{
-			get { return 0; }
-		}
+    #region Properties
 
-		#endregion Properties
+    public bool IsMuted
+    {
+      get { lock (this) return _isMuted; }
+      set { lock (this) SetValue(_mixerControlDetailsMute, _isMuted = value); }
+    }
 
-		#region Fields
+    public IntPtr Handle
+    {
+      get { lock (this) return _handle; }
+    }
 
-		MixerComponentType						_componentType = MixerComponentType.DestinationSpeakers;
-		IntPtr									_handle;
-		bool									_isMuted;
-		static MixerEventListener				_mixerEventListener;
-		int										_volume;
-		MixerNativeMethods.MixerControlDetails	_mixerControlDetailsVolume;
-		MixerNativeMethods.MixerControlDetails	_mixerControlDetailsMute;
+    public int Volume
+    {
+      get { lock (this) return _volume; }
+      set
+      {
+        lock (this)
+          SetValue(_mixerControlDetailsVolume,
+                   _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
+      }
+    }
 
-		#endregion Fields
-	}
+    public int VolumeMaximum
+    {
+      get { return 65535; }
+    }
+
+    public int VolumeMinimum
+    {
+      get { return 0; }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private MixerComponentType _componentType = MixerComponentType.DestinationSpeakers;
+    private IntPtr _handle;
+    private bool _isMuted;
+    private static MixerEventListener _mixerEventListener;
+    private int _volume;
+    private MixerNativeMethods.MixerControlDetails _mixerControlDetailsVolume;
+    private MixerNativeMethods.MixerControlDetails _mixerControlDetailsMute;
+
+    #endregion Fields
+  }
 }

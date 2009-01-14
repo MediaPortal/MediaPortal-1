@@ -23,45 +23,42 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
 
 namespace System.Windows
 {
-	public class FrameworkContentElement : ContentElement//, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
-	{
-		#region Constructors
+  public class FrameworkContentElement : ContentElement
+    //, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
+  {
+    #region Constructors
 
-		public FrameworkContentElement()
-		{
-		}
+    public FrameworkContentElement()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public object FindName(string name)
-		{
-			throw new NotImplementedException();
-		}
+    public object FindName(string name)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public DependencyObject Parent
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public DependencyObject Parent
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		protected internal virtual IEnumerator LogicalChildren
-		{
-			get { return NullEnumerator.Instance; }
-		}
+    protected internal virtual IEnumerator LogicalChildren
+    {
+      get { return NullEnumerator.Instance; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

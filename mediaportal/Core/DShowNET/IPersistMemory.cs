@@ -24,22 +24,21 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-
 using System.Runtime.InteropServices;
+
 namespace DShowNET
 {
   [ComVisible(true), ComImport,
-  Guid("BD1AE5E0-A6AE-11CE-BD37-504200C10000"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  interface IPersistMemory
+   Guid("BD1AE5E0-A6AE-11CE-BD37-504200C10000"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  internal interface IPersistMemory
   {
     #region "IPersist Methods"
+
     [PreserveSig]
     int GetClassID(
-    [Out]									out Guid pClassID);
+      [Out] out Guid pClassID);
+
     #endregion
 
     [PreserveSig]

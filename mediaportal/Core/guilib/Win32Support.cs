@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
+  /// <summary>
   /// Win32Support is a wrapper class that imports all the 
   /// necessary functions that are used in old
   /// double-buffering technique for smooth animation.
@@ -39,11 +39,11 @@ namespace MediaPortal.GUI.Library
     /// Enumeration to be used for those Win32 function 
     /// that return BOOL
     /// </summary>
-    public enum Bool 
+    public enum Bool
     {
       False = 0,
       True
-    };
+    } ;
 
     /// <summary>
     /// Enumeration for the raster operations used in BitBlt.
@@ -67,54 +67,54 @@ namespace MediaPortal.GUI.Library
       DSTINVERT = 0x00550009, // dest = (NOT dest)
       BLACKNESS = 0x00000042, // dest = BLACK
       WHITENESS = 0x00FF0062, // dest = WHITE
-    };
+    } ;
 
     /// <summary>
     /// CreateCompatibleDC
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true, 
-       SetLastError=true)]
+    [DllImport("gdi32.dll", ExactSpelling = true,
+      SetLastError = true)]
     public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
 
     /// <summary>
     /// DeleteDC
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true, 
-       SetLastError=true)]
+    [DllImport("gdi32.dll", ExactSpelling = true,
+      SetLastError = true)]
     public static extern Bool DeleteDC(IntPtr hdc);
 
     /// <summary>
     /// SelectObject
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true)]
-    public static extern IntPtr SelectObject(IntPtr hDC, 
-      IntPtr hObject);
+    [DllImport("gdi32.dll", ExactSpelling = true)]
+    public static extern IntPtr SelectObject(IntPtr hDC,
+                                             IntPtr hObject);
 
     /// <summary>
     /// DeleteObject
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true, 
-       SetLastError=true)]
+    [DllImport("gdi32.dll", ExactSpelling = true,
+      SetLastError = true)]
     public static extern Bool DeleteObject(IntPtr hObject);
 
     /// <summary>
     /// CreateCompatibleBitmap
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true, 
-       SetLastError=true)]
+    [DllImport("gdi32.dll", ExactSpelling = true,
+      SetLastError = true)]
     public static extern IntPtr CreateCompatibleBitmap(
       IntPtr hObject, int width, int height);
 
     /// <summary>
     /// BitBlt
     /// </summary>
-    [DllImport("gdi32.dll", ExactSpelling=true, 
-       SetLastError=true)]
+    [DllImport("gdi32.dll", ExactSpelling = true,
+      SetLastError = true)]
     public static extern Bool BitBlt(
-      IntPtr hObject, 
-      int nXDest, int nYDest, 
-      int nWidth, int nHeight, 
-      IntPtr hObjSource, int nXSrc, int nYSrc, 
+      IntPtr hObject,
+      int nXDest, int nYDest,
+      int nWidth, int nHeight,
+      IntPtr hObjSource, int nXSrc, int nYSrc,
       TernaryRasterOperations dwRop);
   }
 }

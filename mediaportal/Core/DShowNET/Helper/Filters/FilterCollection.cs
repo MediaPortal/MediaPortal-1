@@ -25,25 +25,26 @@
 
 using System;
 using System.Collections;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
+
 #pragma warning disable 618
+
 namespace DShowNET.Helper
 {
-	/// <summary>
-	///	 A collection of Filter objects (DirectShow filters).
-	///	 This is used by the <see cref="Capture"/> class to provide
-	///	 lists of capture devices and compression filters. This class
-	///	 cannot be created directly.
-	/// </summary>
-	public class FilterCollection : CollectionBase
-	{
-		/// <summary> Populate the collection with a list of filters from a particular category. </summary>
-		public FilterCollection(Guid category)
-		{
-			getFilters( category );
-		}
+  /// <summary>
+  ///	 A collection of Filter objects (DirectShow filters).
+  ///	 This is used by the <see cref="Capture"/> class to provide
+  ///	 lists of capture devices and compression filters. This class
+  ///	 cannot be created directly.
+  /// </summary>
+  public class FilterCollection : CollectionBase
+  {
+    /// <summary> Populate the collection with a list of filters from a particular category. </summary>
+    public FilterCollection(Guid category)
+    {
+      getFilters(category);
+    }
 
     /// <summary> Populate the collection with a list of filters from a particular category. </summary>
     public FilterCollection(Guid category, bool resolveNames)
@@ -55,71 +56,87 @@ namespace DShowNET.Helper
       }
     }
 
-		/// <summary> Populate the InnerList with a list of filters from a particular category </summary>
-		protected void getFilters(Guid category)
-		{
-			int					hr;
-			object				comObj = null;
-			ICreateDevEnum		enumDev = null;
+    /// <summary> Populate the InnerList with a list of filters from a particular category </summary>
+    protected void getFilters(Guid category)
+    {
+      int hr;
+      object comObj = null;
+      ICreateDevEnum enumDev = null;
       IEnumMoniker enumMon = null;
       IMoniker[] mon = new IMoniker[1];
 
-			try 
-			{
-				// Get the system device enumerator
-				Type srvType = Type.GetTypeFromCLSID( ClassId.SystemDeviceEnum );
-				if( srvType == null )
-					throw new NotImplementedException( "System Device Enumerator" );
-				comObj = Activator.CreateInstance( srvType );
-				enumDev = (ICreateDevEnum) comObj;
-
-				// Create an enumerator to find filters in category
-				hr = enumDev.CreateClassEnumerator(  category, out enumMon, 0 );
-        if( hr != 0 )
+      try
+      {
+        // Get the system device enumerator
+        Type srvType = Type.GetTypeFromCLSID(ClassId.SystemDeviceEnum);
+        if (srvType == null)
         {
-          return;//throw new NotSupportedException( "No devices of the category" );
+          throw new NotImplementedException("System Device Enumerator");
         }
-				// Loop through the enumerator
+        comObj = Activator.CreateInstance(srvType);
+        enumDev = (ICreateDevEnum) comObj;
+
+        // Create an enumerator to find filters in category
+        hr = enumDev.CreateClassEnumerator(category, out enumMon, 0);
+        if (hr != 0)
+        {
+          return; //throw new NotSupportedException( "No devices of the category" );
+        }
+        // Loop through the enumerator
         IntPtr f = IntPtr.Zero;
-				do
-				{
-					// Next filter
-					hr = enumMon.Next( 1, mon,  f );
-					if( (hr != 0) || (mon[0] == null) )
-						break;
-					
-					// Add the filter
-					Filter filter = new Filter( mon[0] );
-					InnerList.Add( filter );
+        do
+        {
+          // Next filter
+          hr = enumMon.Next(1, mon, f);
+          if ((hr != 0) || (mon[0] == null))
+          {
+            break;
+          }
 
-					// Release resources
-					DirectShowUtil.ReleaseComObject( mon[0] );
-					mon[0] = null;
-				}
-				while(true);
+          // Add the filter
+          Filter filter = new Filter(mon[0]);
+          InnerList.Add(filter);
 
-				// Sort
-				//InnerList.Sort();
-			}
-			finally
-			{
-				enumDev = null;
-				if( mon[0] != null )
-					DirectShowUtil.ReleaseComObject( mon[0] ); mon[0] = null;
-				if( enumMon != null )
-					DirectShowUtil.ReleaseComObject( enumMon ); enumMon = null;
-				if( comObj != null )
-					DirectShowUtil.ReleaseComObject( comObj ); comObj = null;
-			}
-		}
+          // Release resources
+          DirectShowUtil.ReleaseComObject(mon[0]);
+          mon[0] = null;
+        } while (true);
 
-		/// <summary> Get the filter at the specified index. </summary>
-		public Filter this[int index]
-		{
-			get { 
-        if (index >= InnerList.Count) return null;
-        return( (Filter) InnerList[index] ); 
+        // Sort
+        //InnerList.Sort();
       }
-		}
-	}
+      finally
+      {
+        enumDev = null;
+        if (mon[0] != null)
+        {
+          DirectShowUtil.ReleaseComObject(mon[0]);
+        }
+        mon[0] = null;
+        if (enumMon != null)
+        {
+          DirectShowUtil.ReleaseComObject(enumMon);
+        }
+        enumMon = null;
+        if (comObj != null)
+        {
+          DirectShowUtil.ReleaseComObject(comObj);
+        }
+        comObj = null;
+      }
+    }
+
+    /// <summary> Get the filter at the specified index. </summary>
+    public Filter this[int index]
+    {
+      get
+      {
+        if (index >= InnerList.Count)
+        {
+          return null;
+        }
+        return ((Filter) InnerList[index]);
+      }
+    }
+  }
 }

@@ -23,30 +23,26 @@
 
 #endregion
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Automation.Provider
 {
-	[ComVisibleAttribute(true)] 
-	[InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)] 
-	[GuidAttribute("d847d3a5-cab0-4a98-8c32-ecb45c59ad24")] 
-	public interface IExpandCollapseProvider
-	{
-		#region Methods
+  [ComVisible(true)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("d847d3a5-cab0-4a98-8c32-ecb45c59ad24")]
+  public interface IExpandCollapseProvider
+  {
+    #region Methods
 
-		void Collapse();
-		void Expand();
-			
-		#endregion Methods
+    void Collapse();
+    void Expand();
 
-		#region Properties
+    #endregion Methods
 
-		ExpandCollapseState ExpandCollapseState
-		{
-			get;
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    ExpandCollapseState ExpandCollapseState { get; }
+
+    #endregion Properties
+  }
 }

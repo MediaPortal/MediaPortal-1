@@ -23,107 +23,124 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class TriggerActionCollection : CollectionBase, IAddChild
-	{
-		#region Constructors
+  public sealed class TriggerActionCollection : CollectionBase, IAddChild
+  {
+    #region Constructors
 
-		public TriggerActionCollection()
-		{
-		}
+    public TriggerActionCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(TriggerAction action)
-		{
-			if(action == null)
-				throw new ArgumentNullException("action");
+    public void Add(TriggerAction action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
 
-			List.Add(action);
-		}
+      List.Add(action);
+    }
 
-		public bool Contains(TriggerAction action)
-		{
-			if(action == null)
-				throw new ArgumentNullException("action");
+    public bool Contains(TriggerAction action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
 
-			return List.Contains(action);
-		}
+      return List.Contains(action);
+    }
 
-		public void CopyTo(TriggerAction[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(TriggerAction[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public TriggerActionCollection GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
-			
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    public TriggerActionCollection GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-			if(child is TriggerAction == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerAction)));
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			List.Add((TriggerAction)child);
-		}
+      if (child is TriggerAction == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (TriggerAction)));
+      }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+      List.Add((TriggerAction) child);
+    }
 
-		public int IndexOf(TriggerAction action)
-		{
-			if(action == null)
-				throw new ArgumentNullException("action");
+    void IAddChild.AddText(string text)
+    {
+    }
 
-			return List.IndexOf(action);
-		}
+    public int IndexOf(TriggerAction action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
 
-		public void Insert(int index, TriggerAction action)
-		{
-			if(action == null)
-				throw new ArgumentNullException("action");
+      return List.IndexOf(action);
+    }
 
-			List.Insert(index, action);
-		}
+    public void Insert(int index, TriggerAction action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
 
-		public bool Remove(TriggerAction action)
-		{
-			if(action == null)
-				throw new ArgumentNullException("action");
-			
-			if(List.Contains(action) == false)
-				return false;
+      List.Insert(index, action);
+    }
 
-			List.Remove(action);
+    public bool Remove(TriggerAction action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
 
-			return true;
-		}
+      if (List.Contains(action) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(action);
 
-		#region Properties
+      return true;
+    }
 
-		public TriggerAction this[int index]
-		{ 
-			get { return (TriggerAction)List[index]; }
-			set { List[index] = value; }
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    public TriggerAction this[int index]
+    {
+      get { return (TriggerAction) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public class SystemResourceHost
-	{
-		//http://msdn.microsoft.com/windowsvista/default.aspx?pull=/library/en-us/dnlong/html/wpf101.asp
-		
+  public class SystemResourceHost
+  {
+    //http://msdn.microsoft.com/windowsvista/default.aspx?pull=/library/en-us/dnlong/html/wpf101.asp
+
 /*
  * 
  * 
@@ -55,12 +53,13 @@ FontSize="24" FontWeight="Bold" DockPanel.Dock="Top" />
    </DockPanel>
 </DockPanel>
 
-*/ 
-		public SystemResourceHost()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-	}
+*/
+
+    public SystemResourceHost()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
+  }
 }

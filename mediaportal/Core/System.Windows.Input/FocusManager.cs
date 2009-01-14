@@ -23,96 +23,98 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Input
 {
-	public sealed class FocusManager
-	{
-		#region Constructors
+  public sealed class FocusManager
+  {
+    #region Constructors
 
-		static FocusManager()
-		{
-			GotFocusEvent = EventManager.RegisterRoutedEvent("GotFocus", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FocusManager));
-			LostFocusEvent = EventManager.RegisterRoutedEvent("LostFocus", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FocusManager));
+    static FocusManager()
+    {
+      GotFocusEvent = EventManager.RegisterRoutedEvent("GotFocus", RoutingStrategy.Direct, typeof (RoutedEventHandler),
+                                                       typeof (FocusManager));
+      LostFocusEvent = EventManager.RegisterRoutedEvent("LostFocus", RoutingStrategy.Direct, typeof (RoutedEventHandler),
+                                                        typeof (FocusManager));
 
-			IsFocusScopeProperty = DependencyProperty.RegisterAttached("IsFocusScope", typeof(bool), typeof(FocusManager), new PropertyMetadata(false));
-			FocusedElementProperty = DependencyProperty.RegisterAttached("FocusedElement", typeof(IInputElement), typeof(FocusManager));
-		}
+      IsFocusScopeProperty = DependencyProperty.RegisterAttached("IsFocusScope", typeof (bool), typeof (FocusManager),
+                                                                 new PropertyMetadata(false));
+      FocusedElementProperty = DependencyProperty.RegisterAttached("FocusedElement", typeof (IInputElement),
+                                                                   typeof (FocusManager));
+    }
 
-		private FocusManager()
-		{
-		}
-		
-		#endregion Constructors
+    private FocusManager()
+    {
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public static IInputElement GetFocusedElement(DependencyObject d)
-		{
-			return d.GetValue(FocusedElementProperty) as IInputElement;
-		}
+    #region Methods
 
-		public static DependencyObject GetFocusScope(DependencyObject d)
-		{
-			throw new NotImplementedException();
-		}
+    public static IInputElement GetFocusedElement(DependencyObject d)
+    {
+      return d.GetValue(FocusedElementProperty) as IInputElement;
+    }
 
-		public static bool GetIsFocusScope(DependencyObject d)
-		{
-			return (bool)d.GetValue(IsFocusScopeProperty);
-		}
+    public static DependencyObject GetFocusScope(DependencyObject d)
+    {
+      throw new NotImplementedException();
+    }
 
-		public static void SetFocusedElement(DependencyObject d, IInputElement focusedElement)
-		{
-			if(LostFocusEvent != null && _focusedElement != null)
-			{
-				RoutedEventArgs args = new RoutedEventArgs(GotFocusEvent, d);
+    public static bool GetIsFocusScope(DependencyObject d)
+    {
+      return (bool) d.GetValue(IsFocusScopeProperty);
+    }
 
-				args.RoutedEvent = LostFocusEvent;
-				
-				// how to raise the event???
-			}
+    public static void SetFocusedElement(DependencyObject d, IInputElement focusedElement)
+    {
+      if (LostFocusEvent != null && _focusedElement != null)
+      {
+        RoutedEventArgs args = new RoutedEventArgs(GotFocusEvent, d);
 
-			if(GotFocusEvent != null)
-			{
-				RoutedEventArgs args = new RoutedEventArgs(GotFocusEvent, d);
+        args.RoutedEvent = LostFocusEvent;
 
-				args.RoutedEvent = GotFocusEvent;
-				
-				// how to raise the event???
-			}				
+        // how to raise the event???
+      }
 
-			_focusedElement = focusedElement;
+      if (GotFocusEvent != null)
+      {
+        RoutedEventArgs args = new RoutedEventArgs(GotFocusEvent, d);
 
-			d.SetValue(FocusedElementProperty, focusedElement);
-		}
-		
-		public static void SetIsFocusScope(DependencyObject d, bool isFocusScope)
-		{
-			d.SetValue(IsFocusScopeProperty, isFocusScope);
-		}
+        args.RoutedEvent = GotFocusEvent;
 
-		#endregion Methods
+        // how to raise the event???
+      }
 
-		#region Events (Routed)
+      _focusedElement = focusedElement;
 
-		public static readonly RoutedEvent			GotFocusEvent;
-		public static readonly RoutedEvent			LostFocusEvent;
+      d.SetValue(FocusedElementProperty, focusedElement);
+    }
 
-		#endregion Events (Routed)
+    public static void SetIsFocusScope(DependencyObject d, bool isFocusScope)
+    {
+      d.SetValue(IsFocusScopeProperty, isFocusScope);
+    }
 
-		#region Properties (Dependency)
+    #endregion Methods
 
-		public static readonly DependencyProperty	FocusedElementProperty;
-		public static readonly DependencyProperty	IsFocusScopeProperty;
+    #region Events (Routed)
 
-		#endregion Properties (Dependency)
+    public static readonly RoutedEvent GotFocusEvent;
+    public static readonly RoutedEvent LostFocusEvent;
 
-		#region Fields
+    #endregion Events (Routed)
 
-		static IInputElement		_focusedElement;
-		
-		#endregion Fields
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty FocusedElementProperty;
+    public static readonly DependencyProperty IsFocusScopeProperty;
+
+    #endregion Properties (Dependency)
+
+    #region Fields
+
+    private static IInputElement _focusedElement;
+
+    #endregion Fields
+  }
 }

@@ -28,47 +28,47 @@ using System.Windows.Serialization;
 
 namespace MediaPortal.Drawing
 {
-	public sealed class GeometryGroup : Geometry, IAddChild
-	{
-		#region Constructors
+  public sealed class GeometryGroup : Geometry, IAddChild
+  {
+    #region Constructors
 
-		public GeometryGroup()
-		{
-		}
+    public GeometryGroup()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-		}
+    void IAddChild.AddChild(object child)
+    {
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		public override Rect Bounds
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public override Rect Bounds
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		public GeometryCollection Children
-		{
-			get { throw new NotImplementedException(); }
-			set { }
-		}
+    public GeometryCollection Children
+    {
+      get { throw new NotImplementedException(); }
+      set { }
+    }
 
-		public FillRule FillRule
-		{
-			get { throw new NotImplementedException(); }
-			set { }
-		}
+    public FillRule FillRule
+    {
+      get { throw new NotImplementedException(); }
+      set { }
+    }
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

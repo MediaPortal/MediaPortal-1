@@ -23,92 +23,104 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class ResourceDictionaryCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class ResourceDictionaryCollection : CollectionBase
+  {
+    #region Constructors
 
-		public ResourceDictionaryCollection()
-		{
-		}
+    public ResourceDictionaryCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(ResourceDictionary dictionary)
-		{
-			if(dictionary == null)
-				throw new ArgumentNullException("dictionary");
+    public void Add(ResourceDictionary dictionary)
+    {
+      if (dictionary == null)
+      {
+        throw new ArgumentNullException("dictionary");
+      }
 
-			List.Add(dictionary);
-		}
+      List.Add(dictionary);
+    }
 
-		public bool Contains(ResourceDictionary dictionary)
-		{
-			if(dictionary == null)
-				throw new ArgumentNullException("dictionary");
+    public bool Contains(ResourceDictionary dictionary)
+    {
+      if (dictionary == null)
+      {
+        throw new ArgumentNullException("dictionary");
+      }
 
-			return List.Contains(dictionary);
-		}
+      return List.Contains(dictionary);
+    }
 
-		public void CopyTo(ResourceDictionary[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(ResourceDictionary[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public ResourceDictionaryCollection GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
-			
-		public int IndexOf(ResourceDictionary dictionary)
-		{
-			if(dictionary == null)
-				throw new ArgumentNullException("dictionary");
+    public ResourceDictionaryCollection GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-			return List.IndexOf(dictionary);
-		}
+    public int IndexOf(ResourceDictionary dictionary)
+    {
+      if (dictionary == null)
+      {
+        throw new ArgumentNullException("dictionary");
+      }
 
-		public void Insert(int index, ResourceDictionary dictionary)
-		{
-			if(dictionary == null)
-				throw new ArgumentNullException("dictionary");
+      return List.IndexOf(dictionary);
+    }
 
-			List.Insert(index, dictionary);
-		}
+    public void Insert(int index, ResourceDictionary dictionary)
+    {
+      if (dictionary == null)
+      {
+        throw new ArgumentNullException("dictionary");
+      }
 
-		public bool Remove(ResourceDictionary dictionary)
-		{
-			if(dictionary == null)
-				throw new ArgumentNullException("dictionary");
-			
-			if(List.Contains(dictionary) == false)
-				return false;
+      List.Insert(index, dictionary);
+    }
 
-			List.Remove(dictionary);
+    public bool Remove(ResourceDictionary dictionary)
+    {
+      if (dictionary == null)
+      {
+        throw new ArgumentNullException("dictionary");
+      }
 
-			return true;
-		}
+      if (List.Contains(dictionary) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(dictionary);
 
-		#region Properties
+      return true;
+    }
 
-		public ResourceDictionary this[int index]
-		{ 
-			get { return (ResourceDictionary)List[index]; }
-			set { List[index] = value; }
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    public ResourceDictionary this[int index]
+    {
+      get { return (ResourceDictionary) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

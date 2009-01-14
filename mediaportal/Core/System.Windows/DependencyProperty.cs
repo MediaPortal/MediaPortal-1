@@ -23,225 +23,255 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
+using MediaPortal.GUI.Library;
 
 namespace System.Windows
 {
-	[TypeConverter(typeof(DependencyPropertyConverter))]
-	public sealed class DependencyProperty
-	{
-		#region Constructors
+  [TypeConverter(typeof (DependencyPropertyConverter))]
+  public sealed class DependencyProperty
+  {
+    #region Constructors
 
-		private DependencyProperty()
-		{
-		}
+    private DependencyProperty()
+    {
+    }
 
-		private DependencyProperty(DependencyProperty property, PropertyMetadata defaultMetadata)
-		{
-			_defaultMetadata = defaultMetadata;
-			_name = property._name;
-			_ownerType = property._ownerType;
-			_propertyType = property._propertyType;
-			_validateValueCallback = property._validateValueCallback;
+    private DependencyProperty(DependencyProperty property, PropertyMetadata defaultMetadata)
+    {
+      _defaultMetadata = defaultMetadata;
+      _name = property._name;
+      _ownerType = property._ownerType;
+      _propertyType = property._propertyType;
+      _validateValueCallback = property._validateValueCallback;
 
-			_properties[_name + _ownerType] = this;
-		}
+      _properties[_name + _ownerType] = this;
+    }
 
-		private DependencyProperty(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			_name = name;
-			_propertyType = propertyType;
-			_ownerType = ownerType;
-			_defaultMetadata = defaultMetadata;
-			_validateValueCallback = validateValueCallback;
+    private DependencyProperty(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata,
+                               ValidateValueCallback validateValueCallback)
+    {
+      _name = name;
+      _propertyType = propertyType;
+      _ownerType = ownerType;
+      _defaultMetadata = defaultMetadata;
+      _validateValueCallback = validateValueCallback;
 
-			_properties[name + ownerType] = this;
-		}
+      _properties[name + ownerType] = this;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public DependencyProperty AddOwner(Type ownerType)
-		{
-			return AddOwner(ownerType, _defaultMetadata);
-		}
+    public DependencyProperty AddOwner(Type ownerType)
+    {
+      return AddOwner(ownerType, _defaultMetadata);
+    }
 
-		public DependencyProperty AddOwner(Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			OverrideMetadata(ownerType, defaultMetadata);
+    public DependencyProperty AddOwner(Type ownerType, PropertyMetadata defaultMetadata)
+    {
+      OverrideMetadata(ownerType, defaultMetadata);
 
-			return this;
-		}
-			
-		public static DependencyProperty FromName(string name, Type ownerType)
-		{
-			// MPSPECIFIC
-			if(ownerType == typeof(MediaPortal.GUI.Library.GUIControl))
-				return (DependencyProperty)_properties[name + typeof(System.Windows.FrameworkElement)];
+      return this;
+    }
 
-			return (DependencyProperty)_properties[name + ownerType];
-		}
+    public static DependencyProperty FromName(string name, Type ownerType)
+    {
+      // MPSPECIFIC
+      if (ownerType == typeof (GUIControl))
+      {
+        return (DependencyProperty) _properties[name + typeof (FrameworkElement)];
+      }
 
-		public override int GetHashCode()
-		{
-			return _globalIndex;
-		}
+      return (DependencyProperty) _properties[name + ownerType];
+    }
 
-		public PropertyMetadata GetMetadata(DependencyObject d)
-		{
-			return GetMetadata(d.DependencyObjectType.SystemType);
-		}
+    public override int GetHashCode()
+    {
+      return _globalIndex;
+    }
 
-		public PropertyMetadata GetMetadata(DependencyObjectType type)
-		{
-			return GetMetadata(type.SystemType);
-		}
+    public PropertyMetadata GetMetadata(DependencyObject d)
+    {
+      return GetMetadata(d.DependencyObjectType.SystemType);
+    }
 
-		public PropertyMetadata GetMetadata(Type ownerType)
-		{
-			PropertyMetadata metadata = _metadata[ownerType] as PropertyMetadata;
+    public PropertyMetadata GetMetadata(DependencyObjectType type)
+    {
+      return GetMetadata(type.SystemType);
+    }
 
-			if(metadata == null)
-				return _defaultMetadata;
+    public PropertyMetadata GetMetadata(Type ownerType)
+    {
+      PropertyMetadata metadata = _metadata[ownerType] as PropertyMetadata;
 
-			return metadata;
-		}
+      if (metadata == null)
+      {
+        return _defaultMetadata;
+      }
 
-		public bool IsValidType(object value)
-		{
-			return _propertyType.IsInstanceOfType(value);
-		}
+      return metadata;
+    }
 
-		public bool IsValidValue(object value)
-		{
-			if(value == UnsetValue)
-				return false;
+    public bool IsValidType(object value)
+    {
+      return _propertyType.IsInstanceOfType(value);
+    }
 
-			if(_validateValueCallback != null)
-				return _validateValueCallback(value);
+    public bool IsValidValue(object value)
+    {
+      if (value == UnsetValue)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      if (_validateValueCallback != null)
+      {
+        return _validateValueCallback(value);
+      }
 
-		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			_metadata[ownerType] = defaultMetadata;
-		}
+      return true;
+    }
 
-		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata, DependencyPropertyKey key)
-		{
-			if(key.DependencyProperty != this)
-				throw new InvalidOperationException();
+    public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata)
+    {
+      _metadata[ownerType] = defaultMetadata;
+    }
 
-			OverrideMetadata(ownerType, defaultMetadata);
-		}
-		
-		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
-		{
-			return DependencyProperty.Register(name, propertyType, ownerType, null);
-		}
+    public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata, DependencyPropertyKey key)
+    {
+      if (key.DependencyProperty != this)
+      {
+        throw new InvalidOperationException();
+      }
 
-		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			return DependencyProperty.Register(name, propertyType, ownerType, defaultMetadata, null);
-		}
+      OverrideMetadata(ownerType, defaultMetadata);
+    }
 
-		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			return new DependencyProperty(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
-		}
+    public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
+    {
+      return Register(name, propertyType, ownerType, null);
+    }
 
-		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType)
-		{
-			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, null);
-		}
+    public static DependencyProperty Register(string name, Type propertyType, Type ownerType,
+                                              PropertyMetadata defaultMetadata)
+    {
+      return Register(name, propertyType, ownerType, defaultMetadata, null);
+    }
 
-		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, defaultMetadata, null);
-		}
+    public static DependencyProperty Register(string name, Type propertyType, Type ownerType,
+                                              PropertyMetadata defaultMetadata,
+                                              ValidateValueCallback validateValueCallback)
+    {
+      return new DependencyProperty(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
+    }
 
-		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			// TODO: What should differ for attached properties???
-			return Register(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
-		}
+    public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType)
+    {
+      return RegisterAttached(name, propertyType, ownerType, null);
+    }
 
-		public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			return DependencyProperty.RegisterAttachedReadOnly(name, propertyType, ownerType, defaultMetadata, null);
-		}
+    public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType,
+                                                      PropertyMetadata defaultMetadata)
+    {
+      return RegisterAttached(name, propertyType, ownerType, defaultMetadata, null);
+    }
 
-		public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			throw new NotImplementedException();
-		}
+    public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType,
+                                                      PropertyMetadata defaultMetadata,
+                                                      ValidateValueCallback validateValueCallback)
+    {
+      // TODO: What should differ for attached properties???
+      return Register(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
+    }
 
-		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
-		{
-			return DependencyProperty.RegisterReadOnly(name, propertyType, ownerType, defaultMetadata, null);
-		}
+    public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType,
+                                                                 PropertyMetadata defaultMetadata)
+    {
+      return RegisterAttachedReadOnly(name, propertyType, ownerType, defaultMetadata, null);
+    }
 
-		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			return new DependencyPropertyKey(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
-		}
+    public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType,
+                                                                 PropertyMetadata defaultMetadata,
+                                                                 ValidateValueCallback validateValueCallback)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType,
+                                                         PropertyMetadata defaultMetadata)
+    {
+      return RegisterReadOnly(name, propertyType, ownerType, defaultMetadata, null);
+    }
 
-		#region Properties
+    public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType,
+                                                         PropertyMetadata defaultMetadata,
+                                                         ValidateValueCallback validateValueCallback)
+    {
+      return new DependencyPropertyKey(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
+    }
 
-		public PropertyMetadata DefaultMetadata
-		{
-			get { if(_defaultMetadata == null) _defaultMetadata = new PropertyMetadata(); return _defaultMetadata; }
-		}
+    #endregion Methods
 
-		public int GlobalIndex
-		{
-			get { return _globalIndex; }
-		}
+    #region Properties
 
-		public string Name
-		{
-			get { return _name; }
-		}
+    public PropertyMetadata DefaultMetadata
+    {
+      get
+      {
+        if (_defaultMetadata == null)
+        {
+          _defaultMetadata = new PropertyMetadata();
+        }
+        return _defaultMetadata;
+      }
+    }
 
-		public Type OwnerType
-		{
-			get { return _ownerType; }
-		}
+    public int GlobalIndex
+    {
+      get { return _globalIndex; }
+    }
 
-		public Type PropertyType
-		{
-			get { return _propertyType; }
-		}
+    public string Name
+    {
+      get { return _name; }
+    }
 
-		public ValidateValueCallback ValidateValueCallback
-		{
-			get { return _validateValueCallback; }
-		}
+    public Type OwnerType
+    {
+      get { return _ownerType; }
+    }
 
-		#endregion Properties
+    public Type PropertyType
+    {
+      get { return _propertyType; }
+    }
 
-		#region Fields
+    public ValidateValueCallback ValidateValueCallback
+    {
+      get { return _validateValueCallback; }
+    }
 
-		PropertyMetadata			_defaultMetadata = null;
-		readonly int				_globalIndex = _globalIndexNext++;
-		static int					_globalIndexNext = 0;
-		string						_name = string.Empty;
-		Type						_ownerType = null;
-		static Hashtable			_properties = new Hashtable(100);
-		static Hashtable			_propertiesReadOnly = new Hashtable(100);
-		static Hashtable			_propertiesAttached = new Hashtable(100);
-		Hashtable					_metadata = new Hashtable(100);
-		Type						_propertyType = null;
-		ValidateValueCallback		_validateValueCallback = null;
+    #endregion Properties
 
-		public static readonly object UnsetValue = new object();
+    #region Fields
 
-		#endregion Fields
-	}
+    private PropertyMetadata _defaultMetadata = null;
+    private readonly int _globalIndex = _globalIndexNext++;
+    private static int _globalIndexNext = 0;
+    private string _name = string.Empty;
+    private Type _ownerType = null;
+    private static Hashtable _properties = new Hashtable(100);
+    private static Hashtable _propertiesReadOnly = new Hashtable(100);
+    private static Hashtable _propertiesAttached = new Hashtable(100);
+    private Hashtable _metadata = new Hashtable(100);
+    private Type _propertyType = null;
+    private ValidateValueCallback _validateValueCallback = null;
+
+    public static readonly object UnsetValue = new object();
+
+    #endregion Fields
+  }
 }

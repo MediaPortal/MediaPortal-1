@@ -23,13 +23,10 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.IO;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
 using System;
+using System.IO;
+using System.Xml;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
 {
@@ -41,12 +38,21 @@ namespace MediaPortal.Playlists
 
       XmlDocument doc = new XmlDocument();
       doc.Load(fileName);
-      if (doc.DocumentElement == null) return false;
+      if (doc.DocumentElement == null)
+      {
+        return false;
+      }
       string root = doc.DocumentElement.Name;
-      if (root != "WinampXML") return false;
+      if (root != "WinampXML")
+      {
+        return false;
+      }
 
       XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/WinampXML/playlist");
-      if (nodeRoot == null) return false;
+      if (nodeRoot == null)
+      {
+        return false;
+      }
       nodeEntries = nodeRoot.SelectNodes("entry");
       return true;
     }
@@ -62,7 +68,9 @@ namespace MediaPortal.Playlists
       XmlNodeList nodeEntries;
 
       if (!LoadXml(fileName, out nodeEntries))
+      {
         return false;
+      }
 
       try
       {
@@ -72,12 +80,14 @@ namespace MediaPortal.Playlists
           string file = ReadFileName(node);
 
           if (file == null)
+          {
             return false;
+          }
 
           string infoLine = ReadInfoLine(node, file);
           int duration = ReadLength(node);
 
-          MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref file);
+          Util.Utils.GetQualifiedFilename(basePath, ref file);
           PlayListItem newItem = new PlayListItem(infoLine, file, duration);
           playlist.Add(newItem);
         }
@@ -94,7 +104,9 @@ namespace MediaPortal.Playlists
     {
       XmlNode nodeLength = node.SelectSingleNode("Length");
       if (nodeLength == null)
+      {
         return 0;
+      }
       return Int32.Parse(nodeLength.InnerText);
     }
 
@@ -103,9 +115,13 @@ namespace MediaPortal.Playlists
       string infoLine;
       XmlNode nodeName = node.SelectSingleNode("Name");
       if (nodeName == null)
+      {
         infoLine = Path.GetFileName(file);
+      }
       else
+      {
         infoLine = nodeName.InnerText;
+      }
       return infoLine;
     }
 
@@ -114,7 +130,9 @@ namespace MediaPortal.Playlists
       string file = node.Attributes["Playstring"].Value;
 
       if (file == null)
+      {
         return null;
+      }
 
       file = RemovePrefix(file, "file:");
       return file;
@@ -123,7 +141,9 @@ namespace MediaPortal.Playlists
     private static string RemovePrefix(string file, string prefix)
     {
       if (file.StartsWith(prefix))
+      {
         file = file.Substring(prefix.Length);
+      }
       return file;
     }
 
@@ -151,7 +171,6 @@ namespace MediaPortal.Playlists
         writer.WriteEndElement();
         writer.WriteEndElement();
       }
-
     }
   }
 }

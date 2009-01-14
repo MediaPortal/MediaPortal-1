@@ -38,23 +38,17 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIProgressControl : GUIControl
   {
-
-    [XMLSkinElement("label")]
-    string _property = "";
-    [XMLSkinElement("texturebg")]
-    string _backgroundTextureName;
-    [XMLSkinElement("lefttexture")]
-    string _leftTextureName;
-    [XMLSkinElement("midtexture")]
-    string _midTextureName;
-    [XMLSkinElement("righttexture")]
-    string _rightTextureName;
-    GUIAnimation _imageBackGround = null;
-    GUIAnimation _imageLeft = null;
-    GUIAnimation _imageMid = null;
-    GUIAnimation _imageRight = null;
-    int _percentage = 0;
-    bool _containsProperty = false;
+    [XMLSkinElement("label")] private string _property = "";
+    [XMLSkinElement("texturebg")] private string _backgroundTextureName;
+    [XMLSkinElement("lefttexture")] private string _leftTextureName;
+    [XMLSkinElement("midtexture")] private string _midTextureName;
+    [XMLSkinElement("righttexture")] private string _rightTextureName;
+    private GUIAnimation _imageBackGround = null;
+    private GUIAnimation _imageLeft = null;
+    private GUIAnimation _imageMid = null;
+    private GUIAnimation _imageRight = null;
+    private int _percentage = 0;
+    private bool _containsProperty = false;
 
 
     public GUIProgressControl(int dwParentID)
@@ -75,7 +69,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLeftTexture">The left side texture.</param>
     /// <param name="strMidTexture">The middle texture.</param>
     /// <param name="strRightTexture">The right side texture.</param>
-    public GUIProgressControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture, string strLeftTexture, string strMidTexture, string strRightTexture)
+    public GUIProgressControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                              string strBackGroundTexture, string strLeftTexture, string strMidTexture,
+                              string strRightTexture)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _backgroundTextureName = strBackGroundTexture;
@@ -94,27 +90,34 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-			_imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
+      _imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                              _backgroundTextureName);
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);
       _imageLeft.ParentControl = this;
       _imageLeft.DimColor = DimColor;
 
-			_imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
+      _imageMid = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName);
       _imageMid.ParentControl = this;
       _imageMid.DimColor = DimColor;
 
-			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
 
       _imageBackGround.KeepAspectRatio = false;
       _imageMid.KeepAspectRatio = false;
       _imageRight.KeepAspectRatio = false;
-      if (_property == null) _property = string.Empty;
-      if (_property.IndexOf("#") >= 0) _containsProperty = true;
+      if (_property == null)
+      {
+        _property = string.Empty;
+      }
+      if (_property.IndexOf("#") >= 0)
+      {
+        _containsProperty = true;
+      }
     }
 
     /// <summary>
@@ -129,18 +132,30 @@ namespace MediaPortal.GUI.Library
       _imageRight.SetPosition(_positionX, _positionY);
     }
 
-		public override bool Dimmed
-		{
-			get	{	return base.Dimmed;	}
-			set
-			{
-				base.Dimmed = value;
-				if (_imageBackGround != null) _imageBackGround.Dimmed = value;
-				if (_imageLeft != null) _imageLeft.Dimmed = value;
-				if (_imageMid != null) _imageMid.Dimmed = value;
-				if (_imageRight != null) _imageRight.Dimmed = value;
-			}
-		}
+    public override bool Dimmed
+    {
+      get { return base.Dimmed; }
+      set
+      {
+        base.Dimmed = value;
+        if (_imageBackGround != null)
+        {
+          _imageBackGround.Dimmed = value;
+        }
+        if (_imageLeft != null)
+        {
+          _imageLeft.Dimmed = value;
+        }
+        if (_imageMid != null)
+        {
+          _imageMid.Dimmed = value;
+        }
+        if (_imageRight != null)
+        {
+          _imageRight.Dimmed = value;
+        }
+      }
+    }
 
     /// <summary>
     /// Renders the progress control.
@@ -170,7 +185,9 @@ namespace MediaPortal.GUI.Library
           {
             Percentage = Int32.Parse(m_strText);
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
         }
       }
 
@@ -194,14 +211,17 @@ namespace MediaPortal.GUI.Library
       int off = 12;
       GUIGraphicsContext.ScaleHorizontal(ref off);
       int percent = _percentage;
-      if (percent > 100) percent = 100;
-      float fWidth = (float)percent;
+      if (percent > 100)
+      {
+        percent = 100;
+      }
+      float fWidth = (float) percent;
       fWidth /= 100.0f;
-      fWidth *= (float)(_imageBackGround.Width - 2*off - iWidthLeft - iWidthRight);
+      fWidth *= (float) (_imageBackGround.Width - 2*off - iWidthLeft - iWidthRight);
 
       int iXPos = off + _imageBackGround.XPosition;
 
-      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
+      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft)/2;
       //_imageLeft.SetHeight(iHeight);
       _imageLeft.SetPosition(iXPos, iYPos);
       _imageLeft.Height = iHeightLeft;
@@ -210,14 +230,14 @@ namespace MediaPortal.GUI.Library
       _imageLeft.Render(timePassed);
 
       iXPos += iWidthLeft;
-      if (percent > 0 && (int)fWidth > 1)
+      if (percent > 0 && (int) fWidth > 1)
       {
         _imageMid.SetPosition(iXPos, iYPos);
-        _imageMid.Height = iHeightLeft;//_imageMid.TextureHeight;
-        _imageMid.Width = (int)Math.Abs(fWidth);
+        _imageMid.Height = iHeightLeft; //_imageMid.TextureHeight;
+        _imageMid.Width = (int) Math.Abs(fWidth);
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
-        iXPos += (int)fWidth;
+        iXPos += (int) fWidth;
       }
       //_imageRight.SetHeight(iHeight);
       _imageRight.SetPosition(iXPos, iYPos);
@@ -274,23 +294,23 @@ namespace MediaPortal.GUI.Library
     /// Allocates the control its DirectX resources.
     /// </summary>
     public override void AllocResources()
-		{
-			base.AllocResources();
-			_imageBackGround.AllocResources();
-			_imageMid.AllocResources();
-			_imageRight.AllocResources();
-			_imageLeft.AllocResources();
+    {
+      base.AllocResources();
+      _imageBackGround.AllocResources();
+      _imageMid.AllocResources();
+      _imageRight.AllocResources();
+      _imageLeft.AllocResources();
 
-			_imageBackGround.Filtering=false;
-			_imageMid.Filtering=false;
-			_imageRight.Filtering=false;
-			_imageLeft.Filtering=false;
+      _imageBackGround.Filtering = false;
+      _imageMid.Filtering = false;
+      _imageRight.Filtering = false;
+      _imageLeft.Filtering = false;
 
-			_imageBackGround.Height=25;
-			_imageRight.Height=20;
-			_imageLeft.Height=20;
-			_imageMid.Height=20;
-		}
+      _imageBackGround.Height = 25;
+      _imageRight.Height = 20;
+      _imageLeft.Height = 20;
+      _imageMid.Height = 20;
+    }
 
     /// <summary>
     /// Gets the filename of the background texture.
@@ -337,24 +357,41 @@ namespace MediaPortal.GUI.Library
         if (value != null)
         {
           _property = value;
-          if (_property.IndexOf("#") >= 0) _containsProperty = true;
-          else _containsProperty = false;
+          if (_property.IndexOf("#") >= 0)
+          {
+            _containsProperty = true;
+          }
+          else
+          {
+            _containsProperty = false;
+          }
         }
       }
     }
-    
+
     public override int DimColor
     {
       get { return base.DimColor; }
       set
       {
         base.DimColor = value;
-        if (_imageBackGround != null) _imageBackGround.DimColor = value;
-        if (_imageLeft != null) _imageLeft.DimColor = value;
-        if (_imageMid != null) _imageMid.DimColor = value;
-        if (_imageRight != null) _imageRight.DimColor = value;
+        if (_imageBackGround != null)
+        {
+          _imageBackGround.DimColor = value;
+        }
+        if (_imageLeft != null)
+        {
+          _imageLeft.DimColor = value;
+        }
+        if (_imageMid != null)
+        {
+          _imageMid.DimColor = value;
+        }
+        if (_imageRight != null)
+        {
+          _imageRight.DimColor = value;
+        }
       }
     }
-
   }
 }

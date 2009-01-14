@@ -24,6 +24,9 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace MediaPortal.GUI.Library
 {
@@ -34,64 +37,56 @@ namespace MediaPortal.GUI.Library
   {
     #region Variables
 
-    [XMLSkinElement("textureMoveUp")]
-    string TextureMoveUpFileName = "playlist_item_up_nofocus.png";
+    [XMLSkinElement("textureMoveUp")] private string TextureMoveUpFileName = "playlist_item_up_nofocus.png";
 
-    [XMLSkinElement("textureMoveUpFocused")]
-    string TextureMoveUpFocusedFileName = "playlist_item_up_focus.png";
+    [XMLSkinElement("textureMoveUpFocused")] private string TextureMoveUpFocusedFileName = "playlist_item_up_focus.png";
 
-    [XMLSkinElement("textureMoveDown")]
-    string TextureMoveDownFileName = "playlist_item_down_nofocus.png";
+    [XMLSkinElement("textureMoveDown")] private string TextureMoveDownFileName = "playlist_item_down_nofocus.png";
 
-    [XMLSkinElement("textureMoveDownFocused")]
-    string TextureMoveDownFocusedFileName = "playlist_item_down_focus.png";
+    [XMLSkinElement("textureMoveDownFocused")] private string TextureMoveDownFocusedFileName =
+      "playlist_item_down_focus.png";
 
-    [XMLSkinElement("textureDelete")]
-    string TextureDeleteFileName = "playlist_item_delete_nofocus.png";
+    [XMLSkinElement("textureDelete")] private string TextureDeleteFileName = "playlist_item_delete_nofocus.png";
 
-    [XMLSkinElement("textureDeleteFocused")]
-    string TextureDeleteFocusedFileName = "playlist_item_delete_focus.png";
+    [XMLSkinElement("textureDeleteFocused")] private string TextureDeleteFocusedFileName =
+      "playlist_item_delete_focus.png";
 
     //bool _isAscending = true;
-    bool IsEditImageHot = false;
+    private bool IsEditImageHot = false;
 
-    [XMLSkinElement("upBtnWidth")]
-    int UpBtnWidth = 35;
+    [XMLSkinElement("upBtnWidth")] private int UpBtnWidth = 35;
 
-    [XMLSkinElement("downBtnWidth")]
-    int DownBtnWidth = 35;
+    [XMLSkinElement("downBtnWidth")] private int DownBtnWidth = 35;
 
-    [XMLSkinElement("deleteBtnWidth")]
-    int DeleteBtnWidth = 35;
+    [XMLSkinElement("deleteBtnWidth")] private int DeleteBtnWidth = 35;
 
-    [XMLSkinElement("upBtnHeight")]
-    int UpBtnHeight = 38;
+    [XMLSkinElement("upBtnHeight")] private int UpBtnHeight = 38;
 
-    [XMLSkinElement("downBtnHeight")]
-    int DownBtnHeight = 38;
+    [XMLSkinElement("downBtnHeight")] private int DownBtnHeight = 38;
 
-    [XMLSkinElement("deleteBtnHeight")]
-    int DeleteBtnHeight = 38;
+    [XMLSkinElement("deleteBtnHeight")] private int DeleteBtnHeight = 38;
 
-    [XMLSkinElement("upBtnXOffset")]
-    int UpBtnXOffset = 0;
+    [XMLSkinElement("upBtnXOffset")] private int UpBtnXOffset = 0;
 
-    [XMLSkinElement("downBtnXOffset")]
-    int DownBtnXOffset = 0;
+    [XMLSkinElement("downBtnXOffset")] private int DownBtnXOffset = 0;
 
-    [XMLSkinElement("deleteBtnXOffset")]
-    int DeleteBtnXOffset = 0;
+    [XMLSkinElement("deleteBtnXOffset")] private int DeleteBtnXOffset = 0;
 
-    [XMLSkinElement("upBtnYOffset")]
-    int UpBtnYOffset = 0;
+    [XMLSkinElement("upBtnYOffset")] private int UpBtnYOffset = 0;
 
-    [XMLSkinElement("downBtnYOffset")]
-    int DownBtnYOffset = 0;
+    [XMLSkinElement("downBtnYOffset")] private int DownBtnYOffset = 0;
 
-    [XMLSkinElement("deleteBtnYOffset")]
-    int DeleteBtnYOffset = 0;
+    [XMLSkinElement("deleteBtnYOffset")] private int DeleteBtnYOffset = 0;
 
-    public enum ActiveButton { None, Main, Up, Down, Delete }
+    public enum ActiveButton
+    {
+      None,
+      Main,
+      Up,
+      Down,
+      Delete
+    }
+
     private ActiveButton _CurrentActiveButton = ActiveButton.None;
 
     private static ActiveButton _LastActiveButton = ActiveButton.None;
@@ -122,12 +117,10 @@ namespace MediaPortal.GUI.Library
     #endregion Fields
 
     #region Properties
+
     public override bool Disabled
     {
-      get
-      {
-        return base.Disabled;
-      }
+      get { return base.Disabled; }
       set
       {
         base.Disabled = value;
@@ -196,10 +189,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (_SuppressActiveButtonReset)
+        {
           _CurrentActiveButton = _LastActiveButton;
+        }
 
         else
+        {
           _CurrentActiveButton = value;
+        }
       }
     }
 
@@ -210,7 +207,6 @@ namespace MediaPortal.GUI.Library
     public GUIPlayListButtonControl(int parentId)
       : base(parentId)
     {
-
     }
 
 
@@ -225,25 +221,26 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
-    public GUIPlayListButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus,
-       int upBtnWidth,
-       int downBtnWidth,
-       int deleteBtnWidth,
-       int upBtnHeight,
-       int downBtnHeight,
-       int deleteBtnHeight,
-       string strUp,
-       string strDown,
-       string strDelete,
-       string strUpFocus,
-       string strDownFocus,
-       string strDeleteFocus,
-       int upBtnXOffset,
-       int downBtnXOffset,
-       int deleteBtnXOffset,
-       int upBtnYOffset,
-       int downBtnYOffset,
-       int deleteBtnYOffset)
+    public GUIPlayListButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                                    string strTextureFocus, string strTextureNoFocus,
+                                    int upBtnWidth,
+                                    int downBtnWidth,
+                                    int deleteBtnWidth,
+                                    int upBtnHeight,
+                                    int downBtnHeight,
+                                    int deleteBtnHeight,
+                                    string strUp,
+                                    string strDown,
+                                    string strDelete,
+                                    string strUpFocus,
+                                    string strDownFocus,
+                                    string strDeleteFocus,
+                                    int upBtnXOffset,
+                                    int downBtnXOffset,
+                                    int deleteBtnXOffset,
+                                    int upBtnYOffset,
+                                    int downBtnYOffset,
+                                    int deleteBtnYOffset)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus)
     {
       _focusedTextureName = strTextureFocus;
@@ -269,6 +266,7 @@ namespace MediaPortal.GUI.Library
       DeleteBtnYOffset = deleteBtnYOffset;
       FinalizeConstruction();
     }
+
     #endregion Constructors
 
     #region Events
@@ -293,20 +291,28 @@ namespace MediaPortal.GUI.Library
       ImgDeleteButtonFocused.AllocResources();
 
       if (ImgUpButtonDisabled != null)
+      {
         ImgUpButtonDisabled.AllocResources();
+      }
 
       if (ImgDownButtonDisabled != null)
+      {
         ImgDownButtonDisabled.AllocResources();
+      }
 
       if (ImgDeleteButtonDisabled != null)
+      {
         ImgDeleteButtonDisabled.AllocResources();
+      }
     }
 
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      ImgUpButtonNormal = LoadAnimationControl(WindowId, WindowId + 10000, UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight, TextureMoveUpFileName);
-      ImgUpButtonFocused = LoadAnimationControl(WindowId, WindowId + 10001, 0, 0, UpBtnWidth, UpBtnHeight, TextureMoveUpFocusedFileName);
+      ImgUpButtonNormal = LoadAnimationControl(WindowId, WindowId + 10000, UpBtnXOffset, UpBtnYOffset, UpBtnWidth,
+                                               UpBtnHeight, TextureMoveUpFileName);
+      ImgUpButtonFocused = LoadAnimationControl(WindowId, WindowId + 10001, 0, 0, UpBtnWidth, UpBtnHeight,
+                                                TextureMoveUpFocusedFileName);
       ImgUpButtonNormal.ParentControl = this;
       ImgUpButtonFocused.ParentControl = this;
       ImgUpButtonNormal.DimColor = DimColor;
@@ -314,8 +320,10 @@ namespace MediaPortal.GUI.Library
       ImgUpButtonNormal.BringIntoView();
       ImgUpButtonFocused.BringIntoView();
 
-      ImgDownButtonNormal = LoadAnimationControl(WindowId, WindowId + 10003, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight, TextureMoveDownFileName);
-      ImgDownButtonFocused = LoadAnimationControl(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName);
+      ImgDownButtonNormal = LoadAnimationControl(WindowId, WindowId + 10003, DownBtnXOffset, DownBtnYOffset,
+                                                 DownBtnWidth, DownBtnHeight, TextureMoveDownFileName);
+      ImgDownButtonFocused = LoadAnimationControl(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight,
+                                                  TextureMoveDownFocusedFileName);
       ImgDownButtonNormal.ParentControl = this;
       ImgDownButtonFocused.ParentControl = this;
       ImgDownButtonNormal.DimColor = DimColor;
@@ -323,8 +331,10 @@ namespace MediaPortal.GUI.Library
       ImgDownButtonNormal.BringIntoView();
       ImgDownButtonFocused.BringIntoView();
 
-      ImgDeleteButtonNormal = LoadAnimationControl(WindowId, WindowId + 10006, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName);
-      ImgDeleteButtonFocused = LoadAnimationControl(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName);
+      ImgDeleteButtonNormal = LoadAnimationControl(WindowId, WindowId + 10006, DeleteBtnXOffset, DeleteBtnYOffset,
+                                                   DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName);
+      ImgDeleteButtonFocused = LoadAnimationControl(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight,
+                                                    TextureDeleteFocusedFileName);
       ImgDeleteButtonNormal.ParentControl = this;
       ImgDeleteButtonFocused.ParentControl = this;
       ImgDeleteButtonNormal.DimColor = DimColor;
@@ -337,7 +347,8 @@ namespace MediaPortal.GUI.Library
       _NavigateRight = NavigateRight;
 
       string skinFolderPath = String.Format(@"{0}\media\", GUIGraphicsContext.Skin);
-      ImgUpButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002, UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
+      ImgUpButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002,
+                                                     UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
 
       if (ImgUpButtonDisabled != null)
       {
@@ -345,7 +356,9 @@ namespace MediaPortal.GUI.Library
         ImgUpButtonDisabled.BringIntoView();
       }
 
-      ImgDownButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId, WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight);
+      ImgDownButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId,
+                                                       WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth,
+                                                       DownBtnHeight);
 
       if (ImgDownButtonDisabled != null)
       {
@@ -353,7 +366,9 @@ namespace MediaPortal.GUI.Library
         ImgDownButtonDisabled.BringIntoView();
       }
 
-      ImgDeleteButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureDeleteFileName, WindowId, WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight);
+      ImgDeleteButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureDeleteFileName, WindowId,
+                                                         WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset,
+                                                         DeleteBtnWidth, DeleteBtnHeight);
 
       if (ImgDeleteButtonDisabled != null)
       {
@@ -381,13 +396,19 @@ namespace MediaPortal.GUI.Library
       ImgDeleteButtonFocused.FreeResources();
 
       if (ImgUpButtonDisabled != null)
+      {
         ImgUpButtonDisabled.FreeResources();
+      }
 
       if (ImgDownButtonDisabled != null)
+      {
         ImgDownButtonDisabled.FreeResources();
+      }
 
       if (ImgDeleteButtonDisabled != null)
+      {
         ImgDeleteButtonDisabled.FreeResources();
+      }
     }
 
     public override void PreAllocResources()
@@ -404,13 +425,19 @@ namespace MediaPortal.GUI.Library
       ImgDeleteButtonFocused.PreAllocResources();
 
       if (ImgUpButtonDisabled != null)
+      {
         ImgUpButtonDisabled.PreAllocResources();
+      }
 
       if (ImgDownButtonDisabled != null)
+      {
         ImgDownButtonDisabled.PreAllocResources();
+      }
 
       if (ImgDeleteButtonDisabled != null)
+      {
         ImgDeleteButtonDisabled.PreAllocResources();
+      }
     }
 
     public override void Render(float timePassed)
@@ -418,19 +445,27 @@ namespace MediaPortal.GUI.Library
       bool isFocused = this.Focus;
 
       if (!isFocused)
+      {
         _CurrentActiveButton = ActiveButton.Main;
+      }
 
       if (IsEditImageHot)
+      {
         Focus = false;
+      }
 
       int xPos = 0;
       int yPos = 0;
 
       if (!_SuppressActiveButtonReset && Focus && _CurrentActiveButton == ActiveButton.Main)
+      {
         _imageFocused.Render(timePassed);
+      }
 
       else
+      {
         _imageNonFocused.Render(timePassed);
+      }
 
       xPos = _imageNonFocused.XPosition + UpBtnXOffset;
       yPos = _imageNonFocused.YPosition + UpBtnYOffset;
@@ -438,18 +473,26 @@ namespace MediaPortal.GUI.Library
       ImgUpButtonNormal.SetPosition(xPos, yPos);
 
       if (ImgUpButtonDisabled != null)
+      {
         ImgUpButtonDisabled.SetPosition(xPos, yPos);
+      }
 
       if (isFocused && _CurrentActiveButton == ActiveButton.Up && _UpButtonEnabled)
+      {
         ImgUpButtonFocused.Render(timePassed);
+      }
 
       else
       {
         if (!_UpButtonEnabled && ImgUpButtonDisabled != null)
+        {
           ImgUpButtonDisabled.Render(timePassed);
+        }
 
         else
+        {
           ImgUpButtonNormal.Render(timePassed);
+        }
       }
 
       xPos = _imageNonFocused.XPosition + DownBtnXOffset;
@@ -458,18 +501,26 @@ namespace MediaPortal.GUI.Library
       ImgDownButtonNormal.SetPosition(xPos, yPos);
 
       if (ImgDownButtonDisabled != null)
+      {
         ImgDownButtonDisabled.SetPosition(xPos, yPos);
+      }
 
       if (isFocused && _CurrentActiveButton == ActiveButton.Down && _DownButtonEnabled)
+      {
         ImgDownButtonFocused.Render(timePassed);
+      }
 
       else
       {
         if (!_DownButtonEnabled && ImgDownButtonDisabled != null)
+        {
           ImgDownButtonDisabled.Render(timePassed);
+        }
 
         else
+        {
           ImgDownButtonNormal.Render(timePassed);
+        }
       }
 
       xPos = _imageNonFocused.XPosition + DeleteBtnXOffset;
@@ -478,18 +529,26 @@ namespace MediaPortal.GUI.Library
       ImgDeleteButtonNormal.SetPosition(xPos, yPos);
 
       if (ImgDeleteButtonDisabled != null)
+      {
         ImgDeleteButtonDisabled.SetPosition(xPos, yPos);
+      }
 
       if (isFocused && _CurrentActiveButton == ActiveButton.Delete && _DeleteButtonEnabled)
+      {
         ImgDeleteButtonFocused.Render(timePassed);
+      }
 
       else
       {
         if (!_DeleteButtonEnabled && ImgDeleteButtonDisabled != null)
+        {
           ImgDeleteButtonDisabled.Render(timePassed);
+        }
 
         else
+        {
           ImgDeleteButtonNormal.Render(timePassed);
+        }
       }
       base.Render(timePassed);
     }
@@ -551,10 +610,14 @@ namespace MediaPortal.GUI.Library
         else
         {
           if (NavigateLeft != _windowId)
+          {
             _CurrentActiveButton = ActiveButton.None;
+          }
 
           else
+          {
             return;
+          }
         }
       }
 
@@ -570,10 +633,14 @@ namespace MediaPortal.GUI.Library
         else
         {
           if (NavigateRight != _windowId)
+          {
             _CurrentActiveButton = ActiveButton.None;
+          }
 
           else
+          {
             return;
+          }
         }
       }
       base.OnAction(action);
@@ -584,28 +651,40 @@ namespace MediaPortal.GUI.Library
       if (_CurrentActiveButton == ActiveButton.Main)
       {
         if (_UpButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Up;
+        }
 
         else if (_DownButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Down;
+        }
 
         else if (_DeleteButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Delete;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Up)
       {
         if (_DownButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Down;
+        }
 
         else if (_DeleteButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Delete;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Down)
       {
         if (_DeleteButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Delete;
+        }
       }
     }
 
@@ -614,22 +693,32 @@ namespace MediaPortal.GUI.Library
       if (_CurrentActiveButton == ActiveButton.Delete)
       {
         if (_DownButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Down;
+        }
 
         else if (_UpButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Up;
+        }
 
         else
+        {
           _CurrentActiveButton = ActiveButton.Main;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Down)
       {
         if (_UpButtonEnabled)
+        {
           _CurrentActiveButton = ActiveButton.Up;
+        }
 
         else
+        {
           _CurrentActiveButton = ActiveButton.Main;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Up)
@@ -640,8 +729,11 @@ namespace MediaPortal.GUI.Library
 
     public override bool OnMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS || message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS ||
+          message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
+      {
         IsEditImageHot = false;
+      }
 
       else if (message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
       {
@@ -690,28 +782,40 @@ namespace MediaPortal.GUI.Library
       if (_CurrentActiveButton == ActiveButton.Main)
       {
         if (_UpButtonEnabled)
+        {
           return true;
+        }
 
         else if (_DownButtonEnabled)
+        {
           return true;
+        }
 
         else if (_DeleteButtonEnabled)
+        {
           return true;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Up)
       {
         if (_DownButtonEnabled)
+        {
           return true;
+        }
 
         else if (_DeleteButtonEnabled)
+        {
           return true;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Down)
       {
         if (_DeleteButtonEnabled)
+        {
           return true;
+        }
       }
 
       return false;
@@ -722,25 +826,37 @@ namespace MediaPortal.GUI.Library
       if (_CurrentActiveButton == ActiveButton.Delete)
       {
         if (_DownButtonEnabled)
+        {
           return true;
+        }
 
         else if (_UpButtonEnabled)
+        {
           return true;
+        }
 
         else
+        {
           return true;
+        }
       }
 
       else if (_CurrentActiveButton == ActiveButton.Down)
       {
         if (_UpButtonEnabled)
+        {
           return true;
+        }
 
         else
+        {
           return true;
+        }
       }
       else if (_CurrentActiveButton == ActiveButton.Up)
+      {
         return true;
+      }
 
 
       return false;
@@ -760,52 +876,63 @@ namespace MediaPortal.GUI.Library
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <returns>GUIImage</returns>
-    private GUIAnimation CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId, int id, int xOffset, int yOffset, int width, int height)
+    private GUIAnimation CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId,
+                                                  int id, int xOffset, int yOffset, int width, int height)
     {
-      string imagePath = System.IO.Path.Combine(skinFolderImagePath, origImageFileName);
+      string imagePath = Path.Combine(skinFolderImagePath, origImageFileName);
 
       // If the original image doesn't exist bail out.
-      if (!System.IO.File.Exists(imagePath))
+      if (!File.Exists(imagePath))
+      {
         return null;
+      }
 
-      string ext = System.IO.Path.GetExtension(origImageFileName);
-      string baseImgFileName = System.IO.Path.GetFileNameWithoutExtension(origImageFileName);
+      string ext = Path.GetExtension(origImageFileName);
+      string baseImgFileName = Path.GetFileNameWithoutExtension(origImageFileName);
       string dimmedImgFileName = baseImgFileName + "_dimmed" + ext;
-      string fullImagePath = System.IO.Path.Combine(skinFolderImagePath, dimmedImgFileName);
+      string fullImagePath = Path.Combine(skinFolderImagePath, dimmedImgFileName);
       GUIAnimation guiImg = null;
 
       // If the dimmed image already exists, use it to create the GUIImage
-      if (System.IO.File.Exists(fullImagePath))
+      if (File.Exists(fullImagePath))
+      {
         guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
+      }
 
       else
       {
-        System.Drawing.Bitmap origImg = new System.Drawing.Bitmap(imagePath);
-        System.Drawing.Bitmap newImg = new System.Drawing.Bitmap(origImg);
+        Bitmap origImg = new Bitmap(imagePath);
+        Bitmap newImg = new Bitmap(origImg);
 
         if (origImg == null || newImg == null)
+        {
           return null;
+        }
 
         for (int y = 0; y < origImg.Height; y++)
         {
           for (int x = 0; x < origImg.Width; x++)
           {
-            System.Drawing.Color c = origImg.GetPixel(x, y);
+            Color c = origImg.GetPixel(x, y);
 
             byte alpha = c.A;
 
             if (alpha > 50)
-              alpha = (byte)((float)alpha * .5f);
+            {
+              alpha = (byte) ((float) alpha*.5f);
+            }
 
-            newImg.SetPixel(x, y, System.Drawing.Color.FromArgb(alpha, c.R, c.G, c.B));
+            newImg.SetPixel(x, y, Color.FromArgb(alpha, c.R, c.G, c.B));
           }
         }
 
-        newImg.Save(fullImagePath, System.Drawing.Imaging.ImageFormat.Png);
+        newImg.Save(fullImagePath, ImageFormat.Png);
         origImg.Dispose();
 
-        if (System.IO.File.Exists(fullImagePath))
+        if (File.Exists(fullImagePath))
+        {
           guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
+        }
 
         newImg.Dispose();
       }
@@ -819,19 +946,45 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (ImgUpButtonNormal != null) ImgUpButtonNormal.DimColor = value;
-        if (ImgUpButtonFocused != null) ImgUpButtonFocused.DimColor = value;
-        if (ImgUpButtonDisabled != null) ImgUpButtonDisabled.DimColor = value;
+        if (ImgUpButtonNormal != null)
+        {
+          ImgUpButtonNormal.DimColor = value;
+        }
+        if (ImgUpButtonFocused != null)
+        {
+          ImgUpButtonFocused.DimColor = value;
+        }
+        if (ImgUpButtonDisabled != null)
+        {
+          ImgUpButtonDisabled.DimColor = value;
+        }
 
-        if (ImgDownButtonNormal != null) ImgDownButtonNormal.DimColor = value;
-        if (ImgDownButtonFocused != null) ImgDownButtonFocused.DimColor = value;
-        if (ImgDownButtonDisabled != null) ImgDownButtonDisabled.DimColor = value;
+        if (ImgDownButtonNormal != null)
+        {
+          ImgDownButtonNormal.DimColor = value;
+        }
+        if (ImgDownButtonFocused != null)
+        {
+          ImgDownButtonFocused.DimColor = value;
+        }
+        if (ImgDownButtonDisabled != null)
+        {
+          ImgDownButtonDisabled.DimColor = value;
+        }
 
-        if (ImgDeleteButtonNormal != null) ImgDeleteButtonNormal.DimColor = value;
-        if (ImgDeleteButtonFocused != null) ImgDeleteButtonFocused.DimColor = value;
-        if (ImgDeleteButtonDisabled != null) ImgDeleteButtonDisabled.DimColor = value;
+        if (ImgDeleteButtonNormal != null)
+        {
+          ImgDeleteButtonNormal.DimColor = value;
+        }
+        if (ImgDeleteButtonFocused != null)
+        {
+          ImgDeleteButtonFocused.DimColor = value;
+        }
+        if (ImgDeleteButtonDisabled != null)
+        {
+          ImgDeleteButtonDisabled.DimColor = value;
+        }
       }
     }
-
   }
 }

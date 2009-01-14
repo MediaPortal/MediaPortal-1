@@ -25,129 +25,128 @@
 
 #region usings
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.GUI.Library;
 
 #endregion
 
 namespace MediaPortal.Player
 {
-    /// <summary>
-    /// Class which holds crop settings for the PlaneScene
-    /// </summary>
-    public class CropSettings
+  /// <summary>
+  /// Class which holds crop settings for the PlaneScene
+  /// </summary>
+  public class CropSettings
+  {
+    #region vars
+
+    private int _top;
+    private int _bottom;
+    private int _left;
+    private int _right;
+
+    #endregion
+
+    #region Ctor
+
+    public CropSettings() : this(0, 0, 0, 0)
     {
-
-        #region vars
-
-        private int _top;
-        private int _bottom;
-        private int _left;
-        private int _right;
-
-        #endregion
-
-        #region Ctor
-
-        public CropSettings() : this(0, 0, 0, 0) { }
-        public CropSettings(int top, int bottom, int left, int right)
-        {
-            _top = top;
-            _bottom = bottom;
-            _left = left;
-            _right = right;
-        }
-
-        #endregion
-
-        #region properties
-
-        /// <summary>
-        /// Number of scanlines to remove at the top of the picture
-        /// </summary>
-        public int Top
-        {
-            get { return _top; }
-            set { _top = value; }
-        }
-
-        /// <summary>
-        /// Number of scanlines to remove at the bottom of the picture
-        /// </summary>
-        public int Bottom
-        {
-            get { return _bottom; }
-            set { _bottom = value; }
-        }
-
-        /// <summary>
-        /// Number of columns to remove from the left side of the picture
-        /// </summary>
-        public int Left
-        {
-            get { return _left; }
-            set { _left = value; }
-        }
-
-        /// <summary>
-        /// Number of columns to remove from the right side of the picture
-        /// </summary>
-        public int Right
-        {
-            get { return _right; }
-            set { _right = value; }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Ensures that the crop settings makes sense, ie,
-        /// dont crop more than the the available image area.
-        /// Also ensures that the crop values are positive.
-        /// </summary>
-        /// <param name="ScreenWidth"></param>
-        /// <param name="ScreenHeight"></param>
-        public CropSettings EnsureSanity(int ImageWidth, int ImageHeight)
-        {
-            CropSettings S = new CropSettings(_top, _bottom, _left, _right);
-
-            if (S._right < 0)
-            {
-                Log.Warn("Negative right cropping value, setting to 0!");
-                S._right = 0;
-            }
-
-            if (S._left < 0)
-            {
-                Log.Warn("Negative left cropping value, setting to 0!");
-                S._left = 0;
-            }
-
-            if (S._top < 0)
-            {
-                Log.Warn("Negative top cropping value, setting to 0!");
-                S._top = 0;
-            }
-
-            if (S._bottom < 0)
-            {
-                Log.Warn("Negative bottom cropping value, setting to 0!");
-                S._bottom = 0;
-            }
-
-            if (S._right + S._left >= ImageWidth)
-            {
-                Log.Warn("Right + Left cropping larger than screenwidth! Setting to 0");
-                S._right = S._left = 0;
-            }
-            if (S._top + S._bottom >= ImageHeight)
-            {
-                Log.Warn("Top + Bottom cropping larger than screenwidth! Setting to 0");
-                S._top = S._bottom = 0;
-            }
-            return S;
-        }
     }
+
+    public CropSettings(int top, int bottom, int left, int right)
+    {
+      _top = top;
+      _bottom = bottom;
+      _left = left;
+      _right = right;
+    }
+
+    #endregion
+
+    #region properties
+
+    /// <summary>
+    /// Number of scanlines to remove at the top of the picture
+    /// </summary>
+    public int Top
+    {
+      get { return _top; }
+      set { _top = value; }
+    }
+
+    /// <summary>
+    /// Number of scanlines to remove at the bottom of the picture
+    /// </summary>
+    public int Bottom
+    {
+      get { return _bottom; }
+      set { _bottom = value; }
+    }
+
+    /// <summary>
+    /// Number of columns to remove from the left side of the picture
+    /// </summary>
+    public int Left
+    {
+      get { return _left; }
+      set { _left = value; }
+    }
+
+    /// <summary>
+    /// Number of columns to remove from the right side of the picture
+    /// </summary>
+    public int Right
+    {
+      get { return _right; }
+      set { _right = value; }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Ensures that the crop settings makes sense, ie,
+    /// dont crop more than the the available image area.
+    /// Also ensures that the crop values are positive.
+    /// </summary>
+    /// <param name="ScreenWidth"></param>
+    /// <param name="ScreenHeight"></param>
+    public CropSettings EnsureSanity(int ImageWidth, int ImageHeight)
+    {
+      CropSettings S = new CropSettings(_top, _bottom, _left, _right);
+
+      if (S._right < 0)
+      {
+        Log.Warn("Negative right cropping value, setting to 0!");
+        S._right = 0;
+      }
+
+      if (S._left < 0)
+      {
+        Log.Warn("Negative left cropping value, setting to 0!");
+        S._left = 0;
+      }
+
+      if (S._top < 0)
+      {
+        Log.Warn("Negative top cropping value, setting to 0!");
+        S._top = 0;
+      }
+
+      if (S._bottom < 0)
+      {
+        Log.Warn("Negative bottom cropping value, setting to 0!");
+        S._bottom = 0;
+      }
+
+      if (S._right + S._left >= ImageWidth)
+      {
+        Log.Warn("Right + Left cropping larger than screenwidth! Setting to 0");
+        S._right = S._left = 0;
+      }
+      if (S._top + S._bottom >= ImageHeight)
+      {
+        Log.Warn("Top + Bottom cropping larger than screenwidth! Setting to 0");
+        S._top = S._bottom = 0;
+      }
+      return S;
+    }
+  }
 }

@@ -23,156 +23,159 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class ResourceDictionary : IDictionary, ICollection, IEnumerable, INameScope, ISupportInitialize
-	{
-		#region Constructors
+  public class ResourceDictionary : IDictionary, ICollection, IEnumerable, INameScope, ISupportInitialize
+  {
+    #region Constructors
 
-		public ResourceDictionary()
-		{
-		}
+    public ResourceDictionary()
+    {
+    }
 
-		#endregion Constructors
-		
-		#region Methods
+    #endregion Constructors
 
-		public void Add(object key, object value)
-		{
-			_resources[key] = value;
-		}
+    #region Methods
 
-		public void BeginInit()
-		{
-			_beginInitCount++;
-		}
+    public void Add(object key, object value)
+    {
+      _resources[key] = value;
+    }
 
-		public void Clear()
-		{
-			_resources.Clear();
-		}
+    public void BeginInit()
+    {
+      _beginInitCount++;
+    }
 
-		public bool Contains(object key)
-		{
-			return _resources.Contains(key);
-		}
+    public void Clear()
+    {
+      _resources.Clear();
+    }
 
-		public void CopyTo(Array array, int index)
-		{
-			_resources.CopyTo(array, index);
-		}
+    public bool Contains(object key)
+    {
+      return _resources.Contains(key);
+    }
 
-		public void EndInit()
-		{
-			if(_source == null)
-				throw new ArgumentNullException("UriSource");
+    public void CopyTo(Array array, int index)
+    {
+      _resources.CopyTo(array, index);
+    }
 
-			if(_source.IsFile == false)
-				throw new InvalidOperationException("");
+    public void EndInit()
+    {
+      if (_source == null)
+      {
+        throw new ArgumentNullException("UriSource");
+      }
 
-			XamlParser.LoadXml(_source.ToString());
-		}
+      if (_source.IsFile == false)
+      {
+        throw new InvalidOperationException("");
+      }
 
-		public object FindName(string name)
-		{
-			return _resources[name];
-		}
+      XamlParser.LoadXml(_source.ToString());
+    }
 
-		public IDictionaryEnumerator GetEnumerator()
-		{
-			return _resources.GetEnumerator();
-		}
+    public object FindName(string name)
+    {
+      return _resources[name];
+    }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _resources.GetEnumerator();
-		}
+    public IDictionaryEnumerator GetEnumerator()
+    {
+      return _resources.GetEnumerator();
+    }
 
-		public void RegisterName(string name, object ownerContext)
-		{
-			_resources[name] = ownerContext;
-		}
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _resources.GetEnumerator();
+    }
 
-		public void Remove(object key)
-		{
-			_resources.Remove(key);
-		}
+    public void RegisterName(string name, object ownerContext)
+    {
+      _resources[name] = ownerContext;
+    }
 
-		public void UnregisterName(string name)
-		{
-			_resources.Remove(name);
-		}
-		
-		#endregion Methods
+    public void Remove(object key)
+    {
+      _resources.Remove(key);
+    }
 
-		#region Properties
+    public void UnregisterName(string name)
+    {
+      _resources.Remove(name);
+    }
 
-		public int Count
-		{
-			get { return _resources.Count; }
-		}
+    #endregion Methods
 
-		public bool IsFixedSize
-		{
-			get { return false; }
-		}
+    #region Properties
 
-		public bool IsReadOnly
-		{
-			get { return _resources.IsReadOnly; }
-		}
+    public int Count
+    {
+      get { return _resources.Count; }
+    }
 
-		public bool IsSynchronized
-		{
-			get { return _resources.IsSynchronized; }
-		}
+    public bool IsFixedSize
+    {
+      get { return false; }
+    }
 
-		public object this[object key]
-		{
-			get { return _resources[key]; }
-			set { _resources[key] = value; }
-		}
+    public bool IsReadOnly
+    {
+      get { return _resources.IsReadOnly; }
+    }
 
-		public ICollection Keys
-		{
-			get { return _resources.Keys; }
-		}
+    public bool IsSynchronized
+    {
+      get { return _resources.IsSynchronized; }
+    }
 
-		public ICollection Values
-		{
-			get { return _resources.Values; }
-		}
+    public object this[object key]
+    {
+      get { return _resources[key]; }
+      set { _resources[key] = value; }
+    }
 
-		public ResourceDictionaryCollection MergedDictionaries
-		{
-			get { return _mergedDictionaries; }
-		}
+    public ICollection Keys
+    {
+      get { return _resources.Keys; }
+    }
 
-		public object SyncRoot
-		{
-			get { return _resources.SyncRoot; }
-		}
+    public ICollection Values
+    {
+      get { return _resources.Values; }
+    }
 
-		public Uri Source
-		{
-			get { return _source; }
-			set { _source = value; }
-		}
+    public ResourceDictionaryCollection MergedDictionaries
+    {
+      get { return _mergedDictionaries; }
+    }
 
-		#endregion Properties
+    public object SyncRoot
+    {
+      get { return _resources.SyncRoot; }
+    }
 
-		#region Fields
+    public Uri Source
+    {
+      get { return _source; }
+      set { _source = value; }
+    }
 
-		int								_beginInitCount;
-		ResourceDictionaryCollection	_mergedDictionaries = new ResourceDictionaryCollection();
-		Hashtable						_resources = new Hashtable(20);
-		Uri								_source;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private int _beginInitCount;
+    private ResourceDictionaryCollection _mergedDictionaries = new ResourceDictionaryCollection();
+    private Hashtable _resources = new Hashtable(20);
+    private Uri _source;
+
+    #endregion Fields
+  }
 }

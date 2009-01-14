@@ -23,151 +23,149 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public class DoubleAnimation : DoubleAnimationBase
-	{
-		#region Constructors
+  public class DoubleAnimation : DoubleAnimationBase
+  {
+    #region Constructors
 
-		static DoubleAnimation()
-		{
-			ByProperty = DependencyProperty.Register("By", typeof(double), typeof(DoubleAnimation));
-			FromProperty = DependencyProperty.Register("From", typeof(double), typeof(DoubleAnimation));
-			ToProperty = DependencyProperty.Register("To", typeof(double), typeof(DoubleAnimation));
-		}
+    static DoubleAnimation()
+    {
+      ByProperty = DependencyProperty.Register("By", typeof (double), typeof (DoubleAnimation));
+      FromProperty = DependencyProperty.Register("From", typeof (double), typeof (DoubleAnimation));
+      ToProperty = DependencyProperty.Register("To", typeof (double), typeof (DoubleAnimation));
+    }
 
-		public DoubleAnimation()
-		{
-		}
+    public DoubleAnimation()
+    {
+    }
 
-		public DoubleAnimation(double to, Duration duration)
-		{
-			this.To = to;
-			this.Duration = duration;
-		}
+    public DoubleAnimation(double to, Duration duration)
+    {
+      this.To = to;
+      this.Duration = duration;
+    }
 
-		public DoubleAnimation(double from, double to, Duration duration)
-		{
-			this.From = from;
-			this.To = to;
-			this.Duration = duration;
-		}
+    public DoubleAnimation(double from, double to, Duration duration)
+    {
+      this.From = from;
+      this.To = to;
+      this.Duration = duration;
+    }
 
-		public DoubleAnimation(double to, Duration duration, FillBehavior fillBehavior)
-		{
-			this.To = to;
-			this.Duration = duration;
-			this.FillBehavior = fillBehavior;
-		}
+    public DoubleAnimation(double to, Duration duration, FillBehavior fillBehavior)
+    {
+      this.To = to;
+      this.Duration = duration;
+      this.FillBehavior = fillBehavior;
+    }
 
-		public DoubleAnimation(double from, double to, Duration duration, FillBehavior fillBehavior)
-		{
-			this.From = from;
-			this.To = to;
-			this.Duration = duration;
-			this.FillBehavior = fillBehavior;
-		}
-			
-		#endregion Constructors
+    public DoubleAnimation(double from, double to, Duration duration, FillBehavior fillBehavior)
+    {
+      this.From = from;
+      this.To = to;
+      this.Duration = duration;
+      this.FillBehavior = fillBehavior;
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public new DoubleAnimation Copy()
-		{
-			return (DoubleAnimation)base.Copy();
-		}
+    #region Methods
 
-		protected override void CopyCore(Freezable sourceFreezable)
-		{
-			base.CopyCore(sourceFreezable);
+    public new DoubleAnimation Copy()
+    {
+      return (DoubleAnimation) base.Copy();
+    }
 
-			sourceFreezable.SetValue(ByProperty, GetValue(ByProperty));
-			sourceFreezable.SetValue(FromProperty, GetValue(FromProperty));
-			sourceFreezable.SetValue(ToProperty, GetValue(ToProperty));
-		}
+    protected override void CopyCore(Freezable sourceFreezable)
+    {
+      base.CopyCore(sourceFreezable);
 
-		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-		{
-			throw new NotImplementedException();
-		}
-			
-		protected override Freezable CreateInstanceCore()
-		{
-			return new DoubleAnimation();
-		}
+      sourceFreezable.SetValue(ByProperty, GetValue(ByProperty));
+      sourceFreezable.SetValue(FromProperty, GetValue(FromProperty));
+      sourceFreezable.SetValue(ToProperty, GetValue(ToProperty));
+    }
 
-		protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+    {
+      throw new NotImplementedException();
+    }
 
-		// By
-		// animation progresses from the base value, the previous animation's output value,
-		// or a zero value (depending on how the animation is configured) to the sum of that
-		// value and the value specified by the By property
+    protected override Freezable CreateInstanceCore()
+    {
+      return new DoubleAnimation();
+    }
 
-		// AnimationType.From
-		// The animation progresses from the value specified by the From property to the base value, 
-		// the previous animation's output value, or a zero value (depending upon how the animation is configured).
+    protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue,
+                                                  AnimationClock animationClock)
+    {
+      throw new NotImplementedException();
+    }
 
-		// FromBy
-		// animation progresses from the value specified by the From property to the value 
-		// specified by the sum of the From and By properties
+    // By
+    // animation progresses from the base value, the previous animation's output value,
+    // or a zero value (depending on how the animation is configured) to the sum of that
+    // value and the value specified by the By property
 
-		// FromTo
-		// The animation progresses from the value specified by the From property to the value 
-		// specified by the To property.
+    // AnimationType.From
+    // The animation progresses from the value specified by the From property to the base value, 
+    // the previous animation's output value, or a zero value (depending upon how the animation is configured).
 
-		// To
-		// The animation progresses from the base value, the previous animation's output value,
-		// or a zero value (depending on how the animation is configured) to the value 
-		// specified by the To property.
+    // FromBy
+    // animation progresses from the value specified by the From property to the value 
+    // specified by the sum of the From and By properties
 
-		#endregion Methods
+    // FromTo
+    // The animation progresses from the value specified by the From property to the value 
+    // specified by the To property.
 
-		#region Properties
+    // To
+    // The animation progresses from the base value, the previous animation's output value,
+    // or a zero value (depending on how the animation is configured) to the value 
+    // specified by the To property.
 
-		public double By
-		{
-			get { return (double)GetValue(ByProperty); }
-			set { SetValue(ByProperty, value); }
-		}
+    #endregion Methods
 
-		public double From
-		{
-			get { return (double)GetValue(FromProperty); }
-			set { SetValue(FromProperty, value); }
-		}
+    #region Properties
 
-		public bool IsAdditive
-		{
-			get { return (bool)GetValue(IsAdditiveProperty); }
-			set { SetValue(IsAdditiveProperty, value); }
-		}
+    public double By
+    {
+      get { return (double) GetValue(ByProperty); }
+      set { SetValue(ByProperty, value); }
+    }
 
-		public bool IsCumulative
-		{
-			get { return (bool)GetValue(IsCumulativeProperty); }
-			set { SetValue(IsCumulativeProperty, value); }
-		}
+    public double From
+    {
+      get { return (double) GetValue(FromProperty); }
+      set { SetValue(FromProperty, value); }
+    }
 
-		public double To
-		{
-			get { return (double)GetValue(ToProperty); }
-			set { SetValue(ToProperty, value); }
-		}
+    public bool IsAdditive
+    {
+      get { return (bool) GetValue(IsAdditiveProperty); }
+      set { SetValue(IsAdditiveProperty, value); }
+    }
 
-		#endregion Properties
+    public bool IsCumulative
+    {
+      get { return (bool) GetValue(IsCumulativeProperty); }
+      set { SetValue(IsCumulativeProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    public double To
+    {
+      get { return (double) GetValue(ToProperty); }
+      set { SetValue(ToProperty, value); }
+    }
 
-		public static readonly DependencyProperty ByProperty;
-		public static readonly DependencyProperty FromProperty;
-		public static readonly DependencyProperty ToProperty;
-		
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties
+
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty ByProperty;
+    public static readonly DependencyProperty FromProperty;
+    public static readonly DependencyProperty ToProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

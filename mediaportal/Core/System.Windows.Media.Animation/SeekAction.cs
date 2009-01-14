@@ -23,41 +23,39 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class SeekAction : TimelineAction
-	{
-		#region Constructors
+  public class SeekAction : TimelineAction
+  {
+    #region Constructors
 
-		public SeekAction()
-		{
-		}
+    public SeekAction()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public TimeSpan Offset
-		{
-			get { return _offset; }
-			set { _offset = value; }
-		}
+    public TimeSpan Offset
+    {
+      get { return _offset; }
+      set { _offset = value; }
+    }
 
-		public TimeSeekOrigin Origin
-		{
-			get { return _origin; }
-			set { _origin = value; }
-		}
+    public TimeSeekOrigin Origin
+    {
+      get { return _origin; }
+      set { _origin = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		TimeSpan					_offset;
-		TimeSeekOrigin				_origin;
+    private TimeSpan _offset;
+    private TimeSeekOrigin _origin;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

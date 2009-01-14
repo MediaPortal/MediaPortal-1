@@ -24,19 +24,20 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using System.Xml;
 using System.Runtime.InteropServices;
-
+using System.Xml;
+using DShowNET.Helper;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-
+using Filter=Microsoft.DirectX.Direct3D.Filter;
+using Font=Microsoft.DirectX.Direct3D.Font;
+using Matrix=Microsoft.DirectX.Matrix;
 
 namespace MediaPortal.GUI.Library
 {
@@ -46,10 +47,10 @@ namespace MediaPortal.GUI.Library
   public class GUIFontManager
   {
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEnginePresentTextures();
+    private static extern unsafe void FontEnginePresentTextures();
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineSetDevice(void* device);
+    private static extern unsafe void FontEngineSetDevice(void* device);
 
     #region Constructors
 
@@ -68,15 +69,15 @@ namespace MediaPortal.GUI.Library
 
     private struct FontManagerDrawText
     {
-      public Microsoft.DirectX.Direct3D.Font fnt;
+      public Font fnt;
       public float xpos;
       public float ypos;
       public int color;
       public string text;
       public float[,] matrix;
-      public Microsoft.DirectX.Direct3D.Viewport viewport;
+      public Viewport viewport;
       public int fontHeight;
-    };
+    } ;
 
     // This is used for caching font textures (non-latin char support)
     private struct FontTexture
@@ -84,19 +85,19 @@ namespace MediaPortal.GUI.Library
       public int size;
       public string text;
       public Texture texture;
-    };
+    } ;
 
     // This is used for caching system fonts (non-latin char support)
     private struct FontObject
     {
       public int size;
       public System.Drawing.Font font;
-    };
+    } ;
 
     #endregion
 
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
-    private static Microsoft.DirectX.Direct3D.Sprite _d3dxSprite;
+    private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
     private static int _maxCachedTextures = 500;
     private static List<FontManagerDrawText> _listDrawText = new List<FontManagerDrawText>();
@@ -135,10 +136,14 @@ namespace MediaPortal.GUI.Library
         doc.Load(strFilename);
         // Check the root element
         if (doc.DocumentElement == null)
+        {
           return false;
+        }
         string strRoot = doc.DocumentElement.Name;
         if (strRoot != "fonts")
+        {
           return false;
+        }
         // Select the list of fonts
         XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
         foreach (XmlNode node in list)
@@ -155,23 +160,31 @@ namespace MediaPortal.GUI.Library
             bool bold = false;
             bool italic = false;
             if (nodeBold != null && nodeBold.InnerText != null && nodeBold.InnerText.Equals("yes"))
+            {
               bold = true;
+            }
             if (nodeItalics != null && nodeItalics.InnerText != null && nodeItalics.InnerText.Equals("yes"))
+            {
               italic = true;
+            }
             string strName = nodeName.InnerText;
             string strFileName = nodeFileName.InnerText;
             int iHeight = Int32.Parse(nodeHeight.InnerText);
 
             // height is based on 720x576
-            float fPercent = ((float)GUIGraphicsContext.Height) / 576.0f;
+            float fPercent = ((float) GUIGraphicsContext.Height)/576.0f;
             fPercent *= iHeight;
-            iHeight = (int)fPercent;
+            iHeight = (int) fPercent;
             FontStyle style = new FontStyle();
             style = FontStyle.Regular;
             if (bold)
+            {
               style |= FontStyle.Bold;
+            }
             if (italic)
+            {
               style |= FontStyle.Italic;
+            }
             GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
             font.ID = counter++;
             if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
@@ -207,7 +220,9 @@ namespace MediaPortal.GUI.Library
     public static GUIFont GetFont(int iFont)
     {
       if (iFont >= 0 && iFont < _listFonts.Count)
+      {
         return _listFonts[iFont];
+      }
       return GetFont("debug");
     }
 
@@ -222,19 +237,25 @@ namespace MediaPortal.GUI.Library
       {
         GUIFont font = _listFonts[i];
         if (font.FontName == strFontName)
+        {
           return font;
+        }
       }
 
       // just return a font
       return GetFont("debug");
     }
 
-    public static void MeasureText(Microsoft.DirectX.Direct3D.Font fnt, string text, ref float textwidth, ref float textheight, int fontSize)
+    public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, int fontSize)
     {
       if (text[0] == ' ') // anti-trim
+      {
         text = "_" + text.Substring(1);
+      }
       if (text[text.Length - 1] == ' ')
+      {
         text = text.Substring(0, text.Length - 1) + '_';
+      }
 
       // Text drawing doesnt work with DX9Ex & sprite
       if (GUIGraphicsContext.IsDirectX9ExUsed())
@@ -269,7 +290,7 @@ namespace MediaPortal.GUI.Library
         {
           using (Graphics g = Graphics.FromImage(bmp))
           {
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
             g.TextContrast = 0;
 
@@ -311,7 +332,7 @@ namespace MediaPortal.GUI.Library
       return _listFontObjects[cacheSlot].font;
     }
 
-    public static void DrawText(Microsoft.DirectX.Direct3D.Font fnt, float xpos, float ypos, Color color, string text, int maxWidth, int fontHeight)
+    public static void DrawText(Font fnt, float xpos, float ypos, Color color, string text, int maxWidth, int fontHeight)
     {
       FontManagerDrawText draw;
       draw.fontHeight = fontHeight;
@@ -320,10 +341,12 @@ namespace MediaPortal.GUI.Library
       draw.ypos = ypos;
       draw.color = color.ToArgb();
       draw.text = text;
-      draw.matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
+      draw.matrix = (float[,]) GUIGraphicsContext.GetFinalMatrix().Clone();
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
       if (maxWidth >= 0)
-        draw.viewport.Width = ((int)xpos) + maxWidth - draw.viewport.X;
+      {
+        draw.viewport.Width = ((int) xpos) + maxWidth - draw.viewport.X;
+      }
       _listDrawText.Add(draw);
       _d3dxSpriteUsed = true;
     }
@@ -350,8 +373,8 @@ namespace MediaPortal.GUI.Library
         float textwidth = 0, textheight = 0;
 
         MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
-        size.Width = (int)textwidth;
-        size.Height = (int)textheight;
+        size.Width = (int) textwidth;
+        size.Height = (int) textheight;
 
         try
         {
@@ -362,10 +385,11 @@ namespace MediaPortal.GUI.Library
             {
               using (Graphics g = Graphics.FromImage(bitmap))
               {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0), StringFormat.GenericTypographic);
+                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int) 0, (int) 0),
+                             StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
 
@@ -373,24 +397,23 @@ namespace MediaPortal.GUI.Library
                 Format format = Format.Dxt3;
                 if (GUIGraphicsContext.GetTexturePoolType() == Pool.Default)
                 {
-                  format = Microsoft.DirectX.Direct3D.Format.Unknown;
+                  format = Format.Unknown;
                 }
 
                 ImageInformation info = new ImageInformation();
                 try
                 {
-
                   texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-                                              imageStream, (int)imageStream.Length,
-                                              0, 0,
-                                              1,
-                                              0,
-                                              format,
-                                              GUIGraphicsContext.GetTexturePoolType(),
-                                              Filter.None,
-                                              Filter.None,
-                                              0,
-                                              ref info);
+                                                     imageStream, (int) imageStream.Length,
+                                                     0, 0,
+                                                     1,
+                                                     0,
+                                                     format,
+                                                     GUIGraphicsContext.GetTexturePoolType(),
+                                                     Filter.None,
+                                                     Filter.None,
+                                                     0,
+                                                     ref info);
                 }
                 catch (OutOfVideoMemoryException oovme)
                 {
@@ -410,8 +433,8 @@ namespace MediaPortal.GUI.Library
         }
 
         MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
-        size.Width = (int)textwidth;
-        size.Height = (int)textheight;
+        size.Width = (int) textwidth;
+        size.Height = (int) textheight;
 
         FontTexture newTexture;
         newTexture.text = draw.text;
@@ -426,8 +449,8 @@ namespace MediaPortal.GUI.Library
       }
 
       _d3dxSprite.Draw(_listFontTextures[cacheSlot].texture, new Rectangle(0, 0, size.Width, size.Height),
-        Microsoft.DirectX.Vector3.Empty,
-        new Microsoft.DirectX.Vector3((int)draw.xpos, (int)draw.ypos, 0), draw.color);
+                       Vector3.Empty,
+                       new Vector3((int) draw.xpos, (int) draw.ypos, 0), draw.color);
     }
 
     public static void Present()
@@ -453,24 +476,36 @@ namespace MediaPortal.GUI.Library
 
         foreach (FontManagerDrawText draw in _listDrawText)
         {
-          finalm.M11 = draw.matrix[0, 0]; finalm.M12 = draw.matrix[0, 1]; finalm.M13 = draw.matrix[0, 2]; finalm.M14 = draw.matrix[0, 3];
-          finalm.M21 = draw.matrix[1, 0]; finalm.M22 = draw.matrix[1, 1]; finalm.M23 = draw.matrix[1, 2]; finalm.M24 = draw.matrix[1, 3];
-          finalm.M31 = draw.matrix[2, 0]; finalm.M32 = draw.matrix[2, 1]; finalm.M33 = draw.matrix[2, 2]; finalm.M34 = draw.matrix[2, 3];
-          finalm.M41 = 0; finalm.M42 = 0; finalm.M43 = 0; finalm.M44 = 1.0f;
+          finalm.M11 = draw.matrix[0, 0];
+          finalm.M12 = draw.matrix[0, 1];
+          finalm.M13 = draw.matrix[0, 2];
+          finalm.M14 = draw.matrix[0, 3];
+          finalm.M21 = draw.matrix[1, 0];
+          finalm.M22 = draw.matrix[1, 1];
+          finalm.M23 = draw.matrix[1, 2];
+          finalm.M24 = draw.matrix[1, 3];
+          finalm.M31 = draw.matrix[2, 0];
+          finalm.M32 = draw.matrix[2, 1];
+          finalm.M33 = draw.matrix[2, 2];
+          finalm.M34 = draw.matrix[2, 3];
+          finalm.M41 = 0;
+          finalm.M42 = 0;
+          finalm.M43 = 0;
+          finalm.M44 = 1.0f;
           _d3dxSprite.Transform = finalm;
           GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
-          float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
-          float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
-          float xoffset = (float)(orgView.X - draw.viewport.X);
-          float yoffset = (float)(orgView.Y - draw.viewport.Y);
-          projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
-          projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
-          projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
-          projm.M41 = (orgProj.M41 + orgProj.M44 * xoffset) * wfactor;
-          projm.M12 = (orgProj.M12 + orgProj.M14 * yoffset) * hfactor;
-          projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
-          projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
-          projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
+          float wfactor = ((float) orgView.Width)/(float) draw.viewport.Width;
+          float hfactor = ((float) orgView.Height)/(float) draw.viewport.Height;
+          float xoffset = (float) (orgView.X - draw.viewport.X);
+          float yoffset = (float) (orgView.Y - draw.viewport.Y);
+          projm.M11 = (orgProj.M11 + orgProj.M14*xoffset)*wfactor;
+          projm.M21 = (orgProj.M21 + orgProj.M24*xoffset)*wfactor;
+          projm.M31 = (orgProj.M31 + orgProj.M34*xoffset)*wfactor;
+          projm.M41 = (orgProj.M41 + orgProj.M44*xoffset)*wfactor;
+          projm.M12 = (orgProj.M12 + orgProj.M14*yoffset)*hfactor;
+          projm.M22 = (orgProj.M22 + orgProj.M24*yoffset)*hfactor;
+          projm.M32 = (orgProj.M32 + orgProj.M34*yoffset)*hfactor;
+          projm.M42 = (orgProj.M42 + orgProj.M44*yoffset)*hfactor;
           GUIGraphicsContext.DX9Device.Transform.View = projm;
           if (GUIGraphicsContext.IsDirectX9ExUsed())
           {
@@ -478,8 +513,9 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            draw.fnt.DrawText(_d3dxSprite, draw.text, new System.Drawing.Rectangle((int)draw.xpos,
-              (int)draw.ypos, 0, 0), DrawTextFormat.NoClip, draw.color);
+            draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int) draw.xpos,
+                                                                    (int) draw.ypos, 0, 0), DrawTextFormat.NoClip,
+                              draw.color);
           }
 
           _d3dxSprite.Flush();
@@ -520,7 +556,7 @@ namespace MediaPortal.GUI.Library
     public static void SetDevice()
     {
       Log.Info("  fonts.SetDevice()");
-      IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe
       {
@@ -534,7 +570,7 @@ namespace MediaPortal.GUI.Library
     public static void InitializeDeviceObjects()
     {
       Log.Info("  fonts.InitializeDeviceObjects()");
-      IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       unsafe
       {

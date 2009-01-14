@@ -23,23 +23,22 @@
 
 #endregion
 
-using System;
 using System.Text;
 
 namespace MediaPortal.Freedb
 {
-	/// <summary>
-	/// Summary description for CDInfo.
-	/// </summary>
-	public class CDInfo
-	{
+  /// <summary>
+  /// Summary description for CDInfo.
+  /// </summary>
+  public class CDInfo
+  {
     private string m_category;
     private string m_discid;
     private string m_title;
 
-		public CDInfo()
-		{
-		}
+    public CDInfo()
+    {
+    }
 
     public CDInfo(string discid, string category, string title)
     {
@@ -50,38 +49,20 @@ namespace MediaPortal.Freedb
 
     public string Category
     {
-      get
-      {
-        return m_category;
-      }
-      set
-      {
-        m_category = value;
-      }
+      get { return m_category; }
+      set { m_category = value; }
     }
 
     public string DiscId
     {
-      get
-      {
-        return m_discid;
-      }
-      set
-      {
-        m_discid = value;
-      }
+      get { return m_discid; }
+      set { m_discid = value; }
     }
 
     public string Title
     {
-      get
-      {
-        return m_title;
-      }
-      set
-      {
-        m_title = value;
-      }
+      get { return m_title; }
+      set { m_title = value; }
     }
 
     public override string ToString()
@@ -95,6 +76,5 @@ namespace MediaPortal.Freedb
       buff.Append(m_title);
       return buff.ToString();
     }
-
-	}
+  }
 }

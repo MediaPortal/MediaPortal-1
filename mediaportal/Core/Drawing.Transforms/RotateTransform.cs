@@ -23,70 +23,78 @@
 
 #endregion
 
-using System;
-using System.Drawing;
-
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
 namespace MediaPortal.Drawing.Transforms
 {
-	public sealed class RotateTransform : Transform
-	{
-		#region Constructors
+  public sealed class RotateTransform : Transform
+  {
+    #region Constructors
 
-		public RotateTransform()
-		{
-		}
+    public RotateTransform()
+    {
+    }
 
-		public RotateTransform(double angle)
-		{
-			_angle = angle;
-		}
+    public RotateTransform(double angle)
+    {
+      _angle = angle;
+    }
 
-		public RotateTransform(double angle, Point center)
-		{
-			_angle = angle;
-			_center = center;
-		}
-		
-		#endregion Constructors
+    public RotateTransform(double angle, Point center)
+    {
+      _angle = angle;
+      _center = center;
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		protected override Matrix PrepareValue()
-		{
-			Matrix matrix = Matrix.Translation((float)-_center.X, (float)-_center.Y, 0);
+    #region Methods
 
-			matrix *= Matrix.RotationZ(Microsoft.DirectX.Direct3D.Geometry.DegreeToRadian((float)_angle));
-			matrix *= Matrix.Translation((float)_center.X, (float)_center.Y, 0);
+    protected override Matrix PrepareValue()
+    {
+      Matrix matrix = Matrix.Translation((float) -_center.X, (float) -_center.Y, 0);
 
-			return matrix;
-		}
+      matrix *= Matrix.RotationZ(Microsoft.DirectX.Direct3D.Geometry.DegreeToRadian((float) _angle));
+      matrix *= Matrix.Translation((float) _center.X, (float) _center.Y, 0);
 
-		#endregion Methods
+      return matrix;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public double Angle
-		{
-			get { return _angle; }
-			set { if(double.Equals(_angle, value) == false) { _angle = value; RaiseChanged(); } }
-		}
+    #region Properties
 
-		public Point Center
-		{
-			get { return _center; }
-			set { if(double.Equals(_center, value) == false) { _center = value; RaiseChanged(); } }
-		}
+    public double Angle
+    {
+      get { return _angle; }
+      set
+      {
+        if (Equals(_angle, value) == false)
+        {
+          _angle = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		#endregion Properties
+    public Point Center
+    {
+      get { return _center; }
+      set
+      {
+        if (Equals(_center, value) == false)
+        {
+          _center = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		double						_angle;
-		Point						_center = Point.Empty;
+    #region Fields
 
-		#endregion Fields
-	}
+    private double _angle;
+    private Point _center = Point.Empty;
+
+    #endregion Fields
+  }
 }

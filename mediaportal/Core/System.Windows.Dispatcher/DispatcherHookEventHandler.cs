@@ -25,9 +25,10 @@
 
 namespace System.Windows.Dispatcher
 {
-	#region Delegate
 
-	public delegate void DispatcherHookEventHandler(object sender, DispatcherHookEventArgs e);
+  #region Delegate
 
-	#endregion Delegate
+  public delegate void DispatcherHookEventHandler(object sender, DispatcherHookEventArgs e);
+
+  #endregion Delegate
 }

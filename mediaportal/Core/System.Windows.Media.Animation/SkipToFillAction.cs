@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class SkipToFillAction : TimelineAction
-	{
-		#region Constructors
+  public class SkipToFillAction : TimelineAction
+  {
+    #region Constructors
 
-		public SkipToFillAction()
-		{
-		}
+    public SkipToFillAction()
+    {
+    }
 
-		#endregion Constructors
-	}
+    #endregion Constructors
+  }
 }

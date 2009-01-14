@@ -25,41 +25,43 @@
 
 namespace System.Windows.Input
 {
-	public class UICommand : RoutedCommand
-	{
-		#region Constructors
+  public class UICommand : RoutedCommand
+  {
+    #region Constructors
 
-		public UICommand(string name, Type declaringType) : base(name, declaringType)
-		{
-			_text = string.Empty;
-		}
+    public UICommand(string name, Type declaringType) : base(name, declaringType)
+    {
+      _text = string.Empty;
+    }
 
-		public UICommand(string name, Type declaringType, InputGestureCollection inputGestures) : base(name, declaringType, inputGestures)
-		{
-			_text = string.Empty;
-		}
+    public UICommand(string name, Type declaringType, InputGestureCollection inputGestures)
+      : base(name, declaringType, inputGestures)
+    {
+      _text = string.Empty;
+    }
 
-		public UICommand(string name, Type declaringType, InputGestureCollection inputGestures, string text) : base(name, declaringType, inputGestures)
-		{
-			_text = text;
-		}
+    public UICommand(string name, Type declaringType, InputGestureCollection inputGestures, string text)
+      : base(name, declaringType, inputGestures)
+    {
+      _text = text;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public string Text
-		{
-			get { return _text; }
-			set { _text = value; }
-		}
+    public string Text
+    {
+      get { return _text; }
+      set { _text = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		string						_text;
+    private string _text;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

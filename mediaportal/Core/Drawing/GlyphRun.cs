@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public class GlyphRun
-	{
-		public GlyphRun()
-		{
-		}
-	}
+  public class GlyphRun
+  {
+    public GlyphRun()
+    {
+    }
+  }
 }

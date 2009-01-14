@@ -28,73 +28,87 @@ using System.Collections;
 
 namespace MediaPortal.Drawing
 {
-	public sealed class GeometryCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class GeometryCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(Geometry geometry)
-		{
-			if(geometry == null)
-				throw new ArgumentNullException("geometry");
+    public void Add(Geometry geometry)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
 
-			List.Add(geometry);
-		}
+      List.Add(geometry);
+    }
 
-		public bool Contains(Geometry geometry)
-		{
-			if(geometry == null)
-				throw new ArgumentNullException("geometry");
+    public bool Contains(Geometry geometry)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
 
-			return List.Contains(geometry);
-		}
+      return List.Contains(geometry);
+    }
 
-		public void CopyTo(Geometry[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Geometry[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(Geometry geometry)
-		{
-			if(geometry == null)
-				throw new ArgumentNullException("geometry");
+    public int IndexOf(Geometry geometry)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
 
-			return List.IndexOf(geometry);
-		}
+      return List.IndexOf(geometry);
+    }
 
-		public void Insert(int index, Geometry geometry)
-		{
-			if(geometry == null)
-				throw new ArgumentNullException("geometry");
+    public void Insert(int index, Geometry geometry)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
 
-			List.Insert(index, geometry);
-		}
+      List.Insert(index, geometry);
+    }
 
-		public bool Remove(Geometry geometry)
-		{
-			if(geometry == null)
-				throw new ArgumentNullException("geometry");
+    public bool Remove(Geometry geometry)
+    {
+      if (geometry == null)
+      {
+        throw new ArgumentNullException("geometry");
+      }
 
-			if(List.Contains(geometry) == false)
-				return false;
+      if (List.Contains(geometry) == false)
+      {
+        return false;
+      }
 
-			List.Remove(geometry);
+      List.Remove(geometry);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Geometry this[int index]
-		{ 
-			get { return (Geometry)List[index]; }
-			set { List[index] = value; }
-		}
+    public Geometry this[int index]
+    {
+      get { return (Geometry) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

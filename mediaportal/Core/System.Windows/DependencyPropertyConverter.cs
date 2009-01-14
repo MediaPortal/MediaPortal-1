@@ -23,81 +23,90 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
-using System.Reflection;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class DependencyPropertyConverter : TypeConverter, ICanAddNamespaceEntries
-	{
-		#region Methods
+  public sealed class DependencyPropertyConverter : TypeConverter, ICanAddNamespaceEntries
+  {
+    #region Methods
 
-		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
-		{
-			_namespaces = namespaces;
-		}
-		
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
+    {
+      _namespaces = namespaces;
+    }
 
-			return base.CanConvertFrom(context, t);
-		}
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return Parse((string)value);
-				
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		private DependencyProperty Parse(string path)
-		{
-			string[] parts = path.Split('.');
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return Parse((string) value);
+      }
 
-			string typename = parts[0].Trim();
-			string property = parts[1].Trim();
+      return base.ConvertFrom(context, culture, value);
+    }
 
-			if(typename == string.Empty || typename.StartsWith("(") == false)
-				throw new ArgumentException(string.Format("( expected)"));
+    private DependencyProperty Parse(string path)
+    {
+      string[] parts = path.Split('.');
 
-			if(property == string.Empty || property.EndsWith(")") == false)
-				throw new ArgumentException(string.Format(") expected)"));
+      string typename = parts[0].Trim();
+      string property = parts[1].Trim();
 
-			// remove the ( from the type specifier
-			typename = typename.Substring(1);
+      if (typename == string.Empty || typename.StartsWith("(") == false)
+      {
+        throw new ArgumentException(string.Format("( expected)"));
+      }
 
-			Type type = null;
+      if (property == string.Empty || property.EndsWith(")") == false)
+      {
+        throw new ArgumentException(string.Format(") expected)"));
+      }
 
-			foreach(string ns in _namespaces)
-			{
-				type = Type.GetType(ns + "." + typename);
+      // remove the ( from the type specifier
+      typename = typename.Substring(1);
 
-				if(type != null)
-					break;
-			}
+      Type type = null;
 
-			if(type == null)
-				throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+      foreach (string ns in _namespaces)
+      {
+        type = Type.GetType(ns + "." + typename);
 
-			// remove the ) from the property name
-			property = property.Substring(0, property.Length - 1);
+        if (type != null)
+        {
+          break;
+        }
+      }
 
-			return DependencyProperty.FromName(property, type);
-		}
+      if (type == null)
+      {
+        throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+      }
 
-		#endregion Methods
+      // remove the ) from the property name
+      property = property.Substring(0, property.Length - 1);
 
-		#region Fields
+      return DependencyProperty.FromName(property, type);
+    }
 
-		string[]					_namespaces;
+    #endregion Methods
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private string[] _namespaces;
+
+    #endregion Fields
+  }
 }

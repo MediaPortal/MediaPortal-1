@@ -23,27 +23,25 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class ClockGroup : Clock
-	{
-		#region Constructors
+  public class ClockGroup : Clock
+  {
+    #region Constructors
 
-		protected internal ClockGroup(TimelineGroup group) : base(group)
-		{
-		}
+    protected internal ClockGroup(TimelineGroup group) : base(group)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public new TimelineGroup Timeline
-		{
-			get { return (TimelineGroup)base.Timeline; }
-		}
+    public new TimelineGroup Timeline
+    {
+      get { return (TimelineGroup) base.Timeline; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

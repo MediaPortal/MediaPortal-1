@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void RequestBringIntoViewEventHandler(object sender, RequestBringIntoViewEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void RequestBringIntoViewEventHandler(object sender, RequestBringIntoViewEventArgs e);
+
+  #endregion Delegates
 }

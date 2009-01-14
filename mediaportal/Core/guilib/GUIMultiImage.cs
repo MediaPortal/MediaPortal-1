@@ -25,43 +25,33 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Diagnostics;
 using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
-
 
 namespace MediaPortal.GUI.Library
 {
   public class GUIMultiImage : GUIControl
   {
     #region variables
-    [XMLSkinElement("imagepath")]
-    string m_texturePath;
-    [XMLSkinElement("timeperimage")]
-    uint m_timePerImage;
-    [XMLSkinElement("fadetime")]
-    uint m_fadeTime;
-    [XMLSkinElement("randomize")]
-    bool m_randomized;
-    [XMLSkinElement("loop")]
-    bool m_loop;
-    [XMLSkinElement("keepaspectratio")]
-    private bool _keepAspectRatio = false;
 
-    List<GUIImage> m_images = new List<GUIImage>();
-    List<string> m_files = new List<string>();
-    bool m_directoryLoaded;
-    bool _isAllocated;
-    int m_Info;
-    string m_currentPath;
-    int m_currentImage;
-    StopWatch m_imageTimer = new StopWatch();
-    StopWatch m_fadeTimer = new StopWatch();
+    [XMLSkinElement("imagepath")] private string m_texturePath;
+    [XMLSkinElement("timeperimage")] private uint m_timePerImage;
+    [XMLSkinElement("fadetime")] private uint m_fadeTime;
+    [XMLSkinElement("randomize")] private bool m_randomized;
+    [XMLSkinElement("loop")] private bool m_loop;
+    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
+
+    private List<GUIImage> m_images = new List<GUIImage>();
+    private List<string> m_files = new List<string>();
+    private bool m_directoryLoaded;
+    private bool _isAllocated;
+    private int m_Info;
+    private string m_currentPath;
+    private int m_currentImage;
+    private StopWatch m_imageTimer = new StopWatch();
+    private StopWatch m_fadeTimer = new StopWatch();
+
     #endregion
 
     #region ctor
@@ -71,7 +61,8 @@ namespace MediaPortal.GUI.Library
     {
     }
 
-    public GUIMultiImage(int dwParentID, int dwControlId, int iPosX, int iPosY, int dwWidth, int dwHeight, string strTexturePath, uint timePerImage, uint fadeTime, bool randomized, bool loop)
+    public GUIMultiImage(int dwParentID, int dwControlId, int iPosX, int iPosY, int dwWidth, int dwHeight,
+                         string strTexturePath, uint timePerImage, uint fadeTime, bool randomized, bool loop)
       : base(dwParentID, dwControlId, iPosX, iPosY, dwWidth, dwHeight)
     {
       FinalizeConstruction();
@@ -82,6 +73,7 @@ namespace MediaPortal.GUI.Library
       _keepAspectRatio = false;
       m_currentPath = m_texturePath = strTexturePath;
     }
+
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
     /// It allows the control todo any initialization
@@ -89,78 +81,48 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-
     }
+
     #endregion
 
     #region properties
+
     public string TexturePath
     {
-      get
-      {
-        return m_texturePath;
-      }
-      set
-      {
-        m_texturePath = value;
-      }
-    }
-    public uint TimePerImage
-    {
-      get
-      {
-        return m_timePerImage;
-      }
-      set
-      {
-        m_timePerImage = value;
-      }
-    }
-    public uint FadeTime
-    {
-      get
-      {
-        return m_fadeTime;
-      }
-      set
-      {
-        m_fadeTime = value;
-      }
-    }
-    public bool Randomized
-    {
-      get
-      {
-        return m_randomized;
-      }
-      set
-      {
-        m_randomized = value;
-      }
-    }
-    public bool Loop
-    {
-      get
-      {
-        return m_loop;
-      }
-      set
-      {
-        m_loop = value;
-      }
+      get { return m_texturePath; }
+      set { m_texturePath = value; }
     }
 
-    new public int Info
+    public uint TimePerImage
     {
-      get
-      {
-        return m_Info;
-      }
-      set
-      {
-        m_Info = value;
-      }
+      get { return m_timePerImage; }
+      set { m_timePerImage = value; }
     }
+
+    public uint FadeTime
+    {
+      get { return m_fadeTime; }
+      set { m_fadeTime = value; }
+    }
+
+    public bool Randomized
+    {
+      get { return m_randomized; }
+      set { m_randomized = value; }
+    }
+
+    public bool Loop
+    {
+      get { return m_loop; }
+      set { m_loop = value; }
+    }
+
+    public new int Info
+    {
+      get { return m_Info; }
+      set { m_Info = value; }
+    }
+
     #endregion
 
     public override void Render(float timePassed)
@@ -175,7 +137,7 @@ namespace MediaPortal.GUI.Library
       // alloc as this can free our resources
       if (m_Info != 0)
       {
-        string texturePath = "";// g_infoManager.GetImage(m_Info, WINDOW_INVALID);
+        string texturePath = ""; // g_infoManager.GetImage(m_Info, WINDOW_INVALID);
         if (texturePath != m_currentPath && texturePath.Length != 0)
         {
           m_currentPath = texturePath;
@@ -191,7 +153,9 @@ namespace MediaPortal.GUI.Library
       }
 
       if (!_isAllocated)
+      {
         AllocResources();
+      }
 
       if (m_images.Count != 0)
       {
@@ -209,7 +173,9 @@ namespace MediaPortal.GUI.Library
 
         int nextImage = m_currentImage + 1;
         if (nextImage >= m_images.Count)
-          nextImage = m_loop ? 0 : m_currentImage;  // stay on the last image if <loop>no</loop>
+        {
+          nextImage = m_loop ? 0 : m_currentImage; // stay on the last image if <loop>no</loop>
+        }
 
         //Log.WriteFile(MediaPortal.Services.LogType.Log, "next:{0} current:{1}", nextImage, m_currentImage);
         if (nextImage != m_currentImage)
@@ -235,16 +201,17 @@ namespace MediaPortal.GUI.Library
               m_fadeTimer.Stop();
               // swap images
               m_images[m_currentImage].FreeResources();
-              m_images[nextImage].ColourDiffuse = (m_images[nextImage].ColourDiffuse | (long)0xff000000);
+              m_images[nextImage].ColourDiffuse = (m_images[nextImage].ColourDiffuse | (long) 0xff000000);
               m_currentImage = nextImage;
               // start the load timer
               m_imageTimer.StartZero();
               //Log.WriteFile(MediaPortal.Services.LogType.Log, "fade end. current:{0}", m_currentImage);
             }
             else
-            { // perform the fade
-              float fadeAmount = timeFading / ((float)m_fadeTime);
-              long alpha = (int)(255 * fadeAmount);
+            {
+              // perform the fade
+              float fadeAmount = timeFading/((float) m_fadeTime);
+              long alpha = (int) (255*fadeAmount);
               alpha <<= 24;
               alpha += (m_images[nextImage].ColourDiffuse & 0x00ffffff);
               m_images[nextImage].ColourDiffuse = alpha;
@@ -286,11 +253,15 @@ namespace MediaPortal.GUI.Library
       base.AllocResources();
 
       if (!m_directoryLoaded)
+      {
         LoadDirectory();
+      }
 
       // Randomize or sort our images if necessary
       if (m_randomized && m_files.Count > 1)
+      {
         Random_Shuffle(ref m_files);
+      }
 
       for (int i = 0; i < m_files.Count; i++)
       {
@@ -303,7 +274,9 @@ namespace MediaPortal.GUI.Library
       m_fadeTimer.Stop();
       m_currentImage = 0;
       if (m_images.Count == 0)
+      {
         return;
+      }
 
       LoadImage(m_currentImage);
       _isAllocated = true;
@@ -311,8 +284,10 @@ namespace MediaPortal.GUI.Library
 
     public void LoadImage(int image)
     {
-      if (image < 0 || image >= (int)m_images.Count)
+      if (image < 0 || image >= (int) m_images.Count)
+      {
         return;
+      }
 
       m_images[image].AllocResources();
       m_images[image].ColourDiffuse = ColourDiffuse;
@@ -322,18 +297,18 @@ namespace MediaPortal.GUI.Library
       {
         // image is scaled so that the aspect ratio is maintained (taking into account the TV pixel ratio)
         // and so that it fills the allocated space (so is zoomed then cropped)
-        float sourceAspectRatio = (float)m_images[image].TextureWidth / m_images[image].TextureHeight;
-        float aspectRatio = sourceAspectRatio / GUIGraphicsContext.PixelRatio;
+        float sourceAspectRatio = (float) m_images[image].TextureWidth/m_images[image].TextureHeight;
+        float aspectRatio = sourceAspectRatio/GUIGraphicsContext.PixelRatio;
 
         int newWidth = _width;
-        int newHeight = (int)((float)newWidth / aspectRatio);
+        int newHeight = (int) ((float) newWidth/aspectRatio);
         if ((_keepAspectRatio == false && newHeight < _height) ||
             (_keepAspectRatio && newHeight > _height))
         {
           newHeight = _height;
-          newWidth = (int)((float)newHeight * aspectRatio);
+          newWidth = (int) ((float) newHeight*aspectRatio);
         }
-        m_images[image].SetPosition(_positionX - (int)(newWidth - _width) / 2, _positionY - (int)(newHeight - _height) / 2);
+        m_images[image].SetPosition(_positionX - (int) (newWidth - _width)/2, _positionY - (int) (newHeight - _height)/2);
         m_images[image].Width = newWidth;
         m_images[image].Height = newHeight;
       }
@@ -350,7 +325,7 @@ namespace MediaPortal.GUI.Library
       m_currentImage = 0;
       base.FreeResources();
     }
-    
+
     public override bool CanFocus()
     {
       return false;
@@ -358,10 +333,7 @@ namespace MediaPortal.GUI.Library
 
     public bool KeepAspectRatio
     {
-      get
-      {
-        return _keepAspectRatio;
-      }
+      get { return _keepAspectRatio; }
       set
       {
         if (_keepAspectRatio != value)
@@ -379,7 +351,9 @@ namespace MediaPortal.GUI.Library
 
       // don't load any images if our path is empty
       if (m_currentPath.Length == 0)
+      {
         return;
+      }
 
       // check to see if we have a single image or a folder of images
       if (MediaPortal.Util.Utils.IsPicture(m_currentPath))
@@ -387,13 +361,16 @@ namespace MediaPortal.GUI.Library
         m_files.Add(m_currentPath);
       }
       else
-      { // folder of images
+      {
+        // folder of images
         try
         {
           string imageFolder = string.Empty;
           // try to use the provided folder as an absolute path
           if (Directory.Exists(m_currentPath) && Path.IsPathRooted(m_currentPath))
+          {
             imageFolder = m_currentPath;
+          }
 
           // if that didnt work, try to use relative pathing into the skin\media folder
           if (imageFolder.Trim().Length == 0)
@@ -401,7 +378,9 @@ namespace MediaPortal.GUI.Library
             imageFolder = GUIGraphicsContext.Skin + @"\media\animations\" + m_currentPath;
             // if the folder doesnt exist, we have an invalid field, exit
             if (!Directory.Exists(imageFolder))
+            {
               return;
+            }
           }
 
           // load the image files
@@ -414,7 +393,7 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        // if there was some other error accessing the folder, quit
+          // if there was some other error accessing the folder, quit
         catch (UnauthorizedAccessException)
         {
           return;
@@ -444,6 +423,5 @@ namespace MediaPortal.GUI.Library
         listToShuffle[randIndx] = temp;
       }
     }
-
   }
 }

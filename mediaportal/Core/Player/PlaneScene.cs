@@ -25,15 +25,12 @@
 
 using System;
 using System.Drawing;
-using MediaPortal.GUI.Library;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
-using DShowNET;
-using MediaPortal.Util;
 using System.Threading;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
+using Microsoft.DirectX.Direct3D;
+using Geometry=MediaPortal.GUI.Library.Geometry;
 
 namespace MediaPortal.Player
 {
@@ -57,79 +54,91 @@ namespace MediaPortal.Player
   public class PlaneScene : IVMR9PresentCallback, IRenderLayer
   {
     #region imports
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEnginePresentTextures();
+    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
+                                                            float uoff, float voff, float umax, float vmax, int color);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineSetTexture(void* texture);
+    private static extern unsafe void FontEnginePresentTextures();
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
+    private static extern unsafe void FontEngineSetTexture(void* texture);
+
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
                                                             int dstX, int dstY, int dstWidth, int dstHeight,
                                                             void* surface);
+
     #endregion
 
     #region variables
-    bool _stopPainting = false;
-    Surface _renderTarget = null;
-    IRender _renderFrame;
-    long _diffuseColor = 0xFFFFFFFF;
-    int _fadeFrameCounter = 0;
-    bool _fadingIn = true;
-    float _uValue = 1.0f;
-    float _vValue = 1.0f;
-    Rectangle _rectPrevious;
-    bool _renderTexture = false;
-    bool _lastOverlayVisible = false;
-    bool _isEnabled = true;
-    MediaPortal.GUI.Library.Geometry.Type _aspectRatioType;
-    System.Drawing.Rectangle _sourceRect, _destinationRect;
-    MediaPortal.GUI.Library.Geometry _geometry = new MediaPortal.GUI.Library.Geometry();
-    VMR9Util _vmr9Util = null;
-    float _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax;
-    VertexBuffer _vertexBuffer;
-    uint _surfaceAdress, _textureAddress;
 
-    CropSettings _cropSettings;
-    bool updateCrop = false; // indicates that _cropSettings has been updated
-    int _arVideoWidth = 4;
-    int _arVideoHeight = 3;
-    int _prevVideoWidth = 0;
-    int _prevVideoHeight = 0;
-    int _prevArVideoWidth = 0;
-    int _prevArVideoHeight = 0;
-    static bool _reEntrant = false;
-    bool _drawVideoAllowed = true;
-    int _debugStep = 0;
-    GUIImage _blackImage;
+    private bool _stopPainting = false;
+    private Surface _renderTarget = null;
+    private IRender _renderFrame;
+    private long _diffuseColor = 0xFFFFFFFF;
+    private int _fadeFrameCounter = 0;
+    private bool _fadingIn = true;
+    private float _uValue = 1.0f;
+    private float _vValue = 1.0f;
+    private Rectangle _rectPrevious;
+    private bool _renderTexture = false;
+    private bool _lastOverlayVisible = false;
+    private bool _isEnabled = true;
+    private Geometry.Type _aspectRatioType;
+    private Rectangle _sourceRect, _destinationRect;
+    private Geometry _geometry = new Geometry();
+    private VMR9Util _vmr9Util = null;
+    private float _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax;
+    private VertexBuffer _vertexBuffer;
+    private uint _surfaceAdress, _textureAddress;
 
-    FrameGrabber grabber = FrameGrabber.GetInstance();
+    private CropSettings _cropSettings;
+    private bool updateCrop = false; // indicates that _cropSettings has been updated
+    private int _arVideoWidth = 4;
+    private int _arVideoHeight = 3;
+    private int _prevVideoWidth = 0;
+    private int _prevVideoHeight = 0;
+    private int _prevArVideoWidth = 0;
+    private int _prevArVideoHeight = 0;
+    private static bool _reEntrant = false;
+    private bool _drawVideoAllowed = true;
+    private int _debugStep = 0;
+    private GUIImage _blackImage;
+
+    private FrameGrabber grabber = FrameGrabber.GetInstance();
 
     //Additions for Non-Linear Stretch
-    bool _useNonLinearStretch = false;//Should we do NLS for this AR?
-    
+    private bool _useNonLinearStretch = false; //Should we do NLS for this AR?
+
     //These are the partitioning values for the non-linear stretch.
     //TODO: Maybe get these from Geometry class.
     //The horizontal percentage of the source each partition represents (Should be symmetrical and sum up to 100.0)
-    float [] nlsSourcePartitioning = {6.25f, 9.375f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 6.25f ,12.50f, 9.375f, 6.25f};
+    private float[] nlsSourcePartitioning = {
+                                              6.25f, 9.375f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 9.375f,
+                                              6.25f
+                                            };
+
     //The horizontal percentage of the destination to fit each partition into (Should be symmetrical and sum up to 100.0)
-    float [] nlsDestPartitioning   = {7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.59f, 11.47f, 5.88f ,12.65f, 10.15f, 7.06f};
+    private float[] nlsDestPartitioning = {
+                                            7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.59f, 11.47f, 5.88f, 12.65f, 10.15f,
+                                            7.06f
+                                          };
 
     #endregion
 
     #region ctor
+
     public PlaneScene(IRender renderer, VMR9Util util)
     {
       //	Log.Info("PlaneScene: ctor()");
@@ -138,10 +147,10 @@ namespace MediaPortal.Player
       _textureAddress = 0;
       _vmr9Util = util;
       _renderFrame = renderer;
-      _vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-                                    4, GUIGraphicsContext.DX9Device,
-                                    0, CustomVertex.TransformedColoredTextured.Format,
-                                    GUIGraphicsContext.GetTexturePoolType());
+      _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+                                       4, GUIGraphicsContext.DX9Device,
+                                       0, CustomVertex.TransformedColoredTextured.Format,
+                                       GUIGraphicsContext.GetTexturePoolType());
 
       _blackImage = new GUIImage(0);
       _blackImage.SetFileName("black.png");
@@ -149,6 +158,7 @@ namespace MediaPortal.Player
 
       _cropSettings = new CropSettings();
     }
+
     #endregion
 
     #region properties
@@ -157,17 +167,19 @@ namespace MediaPortal.Player
     /// Returns a rectangle specifing the part of the video texture which is 
     /// shown
     /// </summary>
-    public System.Drawing.Rectangle SourceRect
+    public Rectangle SourceRect
     {
       get { return _sourceRect; }
     }
+
     /// <summary>
     /// Returns a rectangle specifing the video window onscreen
     /// </summary>
-    public System.Drawing.Rectangle DestRect
+    public Rectangle DestRect
     {
       get { return _destinationRect; }
     }
+
     public bool DrawVideo
     {
       get { return _drawVideoAllowed; }
@@ -176,7 +188,6 @@ namespace MediaPortal.Player
         _drawVideoAllowed = value;
         //Log.Info("PlaneScene: video draw allowed:{0}", _drawVideoAllowed);
       }
-
     }
 
     public bool InTv
@@ -185,26 +196,31 @@ namespace MediaPortal.Player
       {
         int windowId = GUIWindowManager.ActiveWindow;
         GUIWindow window = GUIWindowManager.GetWindow(windowId);
-        if (window.IsTv) return true;
-        if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
-          windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
-          windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV ||
-          windowId == (int)GUIWindow.Window.WINDOW_TELETEXT ||
-          windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
-          windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
-          windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV ||
-          windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL ||
-          windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL ||
-          windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
+        if (window.IsTv)
+        {
           return true;
+        }
+        if (windowId == (int) GUIWindow.Window.WINDOW_TV ||
+            windowId == (int) GUIWindow.Window.WINDOW_TVGUIDE ||
+            windowId == (int) GUIWindow.Window.WINDOW_SEARCHTV ||
+            windowId == (int) GUIWindow.Window.WINDOW_TELETEXT ||
+            windowId == (int) GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
+            windowId == (int) GUIWindow.Window.WINDOW_SCHEDULER ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
+            windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTV ||
+            windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL ||
+            windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVGENRE ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_CONFLICTS ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_NO_SIGNAL ||
+            windowId == (int) GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
+        {
+          return true;
+        }
         return false;
       }
     }
@@ -218,9 +234,11 @@ namespace MediaPortal.Player
         //Log.Info("planescene: enabled:{0}", _isEnabled);
       }
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// Stop VMR9 rendering
     /// this method will restore the DirectX render target since
@@ -259,7 +277,9 @@ namespace MediaPortal.Player
       {
         //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
         if (!_renderTarget.Disposed)
+        {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+        }
         _renderTarget.Dispose();
         _renderTarget = null;
       }
@@ -297,14 +317,16 @@ namespace MediaPortal.Player
     /// Handles received GUIMessage's from graphics context.
     /// </summary>
     /// <param name="message">GUIMessage</param>
-    void OnMessage(GUIMessage message)
+    private void OnMessage(GUIMessage message)
     {
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP:
           CropSettings cs = message.Object as CropSettings;
           if (cs != null)
+          {
             Crop(cs);
+          }
           break;
       }
     }
@@ -314,7 +336,7 @@ namespace MediaPortal.Player
     /// Crops the current picture..
     /// </summary>
     /// <param name="message">CropSettings</param>
-    void Crop(CropSettings cs)
+    private void Crop(CropSettings cs)
     {
       lock (this)
       {
@@ -347,9 +369,13 @@ namespace MediaPortal.Player
 
         //sanity checks
         if (nw > GUIGraphicsContext.OverScanWidth)
+        {
           nw = GUIGraphicsContext.OverScanWidth;
+        }
         if (nh > GUIGraphicsContext.OverScanHeight)
+        {
           nh = GUIGraphicsContext.OverScanHeight;
+        }
 
         //are we supposed to show video in fullscreen or in a preview window?
         if (GUIGraphicsContext.IsFullScreenVideo || !GUIGraphicsContext.ShowBackground)
@@ -368,25 +394,34 @@ namespace MediaPortal.Player
           {
             //we are not in the my tv module
             //then check if a VideoWindow is defined or video/tv preview window is enable
-            System.Drawing.Rectangle rect = GUIGraphicsContext.VideoWindow;
+            Rectangle rect = GUIGraphicsContext.VideoWindow;
             //BAV: todo -> remove Overlay check -> should no longer be needed
             //if (((rect.Height < 1) && (rect.Width < 1)) || (!GUIGraphicsContext.Overlay)) return false; //not enabled, dont show tv
-            if ((rect.Height < 1) && (rect.Width < 1)) return false;
+            if ((rect.Height < 1) && (rect.Width < 1))
+            {
+              return false;
+            }
           }
         }
 
         //sanity check
-        if (nw <= 10 || nh <= 10) return false;
-        if (x < 0 || y < 0) return false;
+        if (nw <= 10 || nh <= 10)
+        {
+          return false;
+        }
+        if (x < 0 || y < 0)
+        {
+          return false;
+        }
 
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
         if (!updateCrop && x == _rectPrevious.X && y == _rectPrevious.Y &&
-          nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
-          GUIGraphicsContext.ARType == _aspectRatioType &&
-          GUIGraphicsContext.Overlay == _lastOverlayVisible && _renderTexture &&
-          _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
-          _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
+            nw == _rectPrevious.Width && nh == _rectPrevious.Height &&
+            GUIGraphicsContext.ARType == _aspectRatioType &&
+            GUIGraphicsContext.Overlay == _lastOverlayVisible && _renderTexture &&
+            _prevVideoWidth == videoSize.Width && _prevVideoHeight == videoSize.Height &&
+            _prevArVideoWidth == _arVideoWidth && _prevArVideoHeight == _arVideoHeight)
         {
           //not changed, return previous settings
           return _renderTexture;
@@ -394,7 +429,7 @@ namespace MediaPortal.Player
 
         //settings (position,size,aspect ratio) changed.
         //Store these settings and start calucating the new video window
-        _rectPrevious = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
+        _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
         _aspectRatioType = GUIGraphicsContext.ARType;
         _lastOverlayVisible = GUIGraphicsContext.Overlay;
         _prevVideoWidth = videoSize.Width;
@@ -403,24 +438,37 @@ namespace MediaPortal.Player
         _prevArVideoHeight = _arVideoHeight;
 
         //calculate the video window according to the current aspect ratio settings
-        float fVideoWidth = (float)videoSize.Width;
-        float fVideoHeight = (float)videoSize.Height;
-        _geometry.ImageWidth = (int)fVideoWidth;
-        _geometry.ImageHeight = (int)fVideoHeight;
-        _geometry.ScreenWidth = (int)nw;
-        _geometry.ScreenHeight = (int)nh;
+        float fVideoWidth = (float) videoSize.Width;
+        float fVideoHeight = (float) videoSize.Height;
+        _geometry.ImageWidth = (int) fVideoWidth;
+        _geometry.ImageHeight = (int) fVideoHeight;
+        _geometry.ScreenWidth = (int) nw;
+        _geometry.ScreenHeight = (int) nh;
         _geometry.ARType = GUIGraphicsContext.ARType;
         _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
 
-        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect, out _useNonLinearStretch, _cropSettings);
-        _destinationRect.X += (int)x;
-        _destinationRect.Y += (int)y;
+        _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect,
+                            out _useNonLinearStretch, _cropSettings);
+        _destinationRect.X += (int) x;
+        _destinationRect.Y += (int) y;
 
         //sanity check
-        if (_destinationRect.Width < 10) return false;
-        if (_destinationRect.Height < 10) return false;
-        if (_sourceRect.Width < 10) return false;
-        if (_sourceRect.Height < 10) return false;
+        if (_destinationRect.Width < 10)
+        {
+          return false;
+        }
+        if (_destinationRect.Height < 10)
+        {
+          return false;
+        }
+        if (_sourceRect.Width < 10)
+        {
+          return false;
+        }
+        if (_sourceRect.Height < 10)
+        {
+          return false;
+        }
 
         Log.Debug("PlaneScene: crop T, B  : {0}, {1}", _cropSettings.Top, _cropSettings.Bottom);
         Log.Debug("PlaneScene: crop L, R  : {0}, {1}", _cropSettings.Left, _cropSettings.Right);
@@ -431,9 +479,10 @@ namespace MediaPortal.Player
         Log.Debug("PlaneScene: AR type    : {0}", GUIGraphicsContext.ARType);
         Log.Debug("PlaneScene: PixelRatio : {0}", GUIGraphicsContext.PixelRatio);
         Log.Debug("PlaneScene: src        : ({0},{1})-({2},{3})",
-          _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
+                  _sourceRect.X, _sourceRect.Y, _sourceRect.X + _sourceRect.Width, _sourceRect.Y + _sourceRect.Height);
         Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
-          _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width, _destinationRect.Y + _destinationRect.Height);
+                  _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
+                  _destinationRect.Y + _destinationRect.Height);
 
         if (_sourceRect.Y == 0)
         {
@@ -443,10 +492,10 @@ namespace MediaPortal.Player
 
         //next calculate which part of the video texture should be copied
         //into the video window
-        float uoffs = ((float)_sourceRect.X) / (fVideoWidth);
-        float voffs = ((float)_sourceRect.Y) / (fVideoHeight);
-        float u = ((float)_sourceRect.Width) / (fVideoWidth);
-        float v = ((float)_sourceRect.Height) / (fVideoHeight);
+        float uoffs = ((float) _sourceRect.X)/(fVideoWidth);
+        float voffs = ((float) _sourceRect.Y)/(fVideoHeight);
+        float u = ((float) _sourceRect.Width)/(fVideoWidth);
+        float v = ((float) _sourceRect.Height)/(fVideoHeight);
 
         //take in account that the texture might be larger
         //then the video size
@@ -456,10 +505,10 @@ namespace MediaPortal.Player
         v *= _vValue;
 
         //set the video window positions
-        x = (float)_destinationRect.X;
-        y = (float)_destinationRect.Y;
-        nw = (float)_destinationRect.Width;
-        nh = (float)_destinationRect.Height;
+        x = (float) _destinationRect.X;
+        y = (float) _destinationRect.Y;
+        nw = (float) _destinationRect.Width;
+        nh = (float) _destinationRect.Height;
 
         _fx = x;
         _fy = y;
@@ -481,9 +530,19 @@ namespace MediaPortal.Player
 
     public void Repaint()
     {
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) return;
-      if (!_isEnabled) return;
-      if (_stopPainting) return;
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING ||
+          GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      {
+        return;
+      }
+      if (!_isEnabled)
+      {
+        return;
+      }
+      if (_stopPainting)
+      {
+        return;
+      }
       try
       {
         if (!GUIGraphicsContext.InVmr9Render)
@@ -505,7 +564,7 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Log.Error("planescene:Unhandled exception in {0} {1} {2}",
-            ex.Message, ex.Source, ex.StackTrace);
+                  ex.Message, ex.Source, ex.StackTrace);
       }
     }
 
@@ -534,10 +593,14 @@ namespace MediaPortal.Player
           _arVideoHeight = 0;
           return 0;
         }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+        {
+          return 0;
+        }
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
+          Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
+                   _drawVideoAllowed);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -560,9 +623,13 @@ namespace MediaPortal.Player
         try
         {
           if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+          {
             Thread.CurrentThread.Name = "VMRenderer";
+          }
         }
-        catch (InvalidOperationException) { }
+        catch (InvalidOperationException)
+        {
+        }
 
         // if the update crop flag is set (indicating that _cropSettings has changed), call InternalPresentImage to 
         // apply it
@@ -604,13 +671,16 @@ namespace MediaPortal.Player
           _arVideoHeight = arHeight;
         }
 
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
-        
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+        {
+          return 0;
+        }
+
 
         if (!_drawVideoAllowed || !_isEnabled)
         {
           Log.Info("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
-            _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed, width, height);
+                   _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed, width, height);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -657,17 +727,31 @@ namespace MediaPortal.Player
 
         //if we're stopping then just return
         float timePassed = GUIGraphicsContext.TimePassed;
-        if (_stopPainting) return;
+        if (_stopPainting)
+        {
+          return;
+        }
         //sanity checks
-        if (GUIGraphicsContext.DX9Device == null) return;
-        if (GUIGraphicsContext.DX9Device.Disposed) return;
-        if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
+        if (GUIGraphicsContext.DX9Device == null)
+        {
+          return;
+        }
+        if (GUIGraphicsContext.DX9Device.Disposed)
+        {
+          return;
+        }
+        if (GUIWindowManager.IsSwitchingToNewWindow)
+        {
+          return; //dont present video during window transitions
+        }
 
         _debugStep = 1;
         if (_renderTarget != null)
         {
           if (!_renderTarget.Disposed)
+          {
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+          }
         }
 
         _debugStep = 2;
@@ -678,16 +762,16 @@ namespace MediaPortal.Player
         if (_fadeFrameCounter < iMaxSteps)
         {
           // fade in
-          int iStep = 0xff / iMaxSteps;
+          int iStep = 0xff/iMaxSteps;
           if (_fadingIn)
           {
-            _diffuseColor = iStep * _fadeFrameCounter;
+            _diffuseColor = iStep*_fadeFrameCounter;
             _diffuseColor <<= 24;
             _diffuseColor |= 0xffffff;
           }
           else
           {
-            _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
+            _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
             _diffuseColor <<= 24;
             _diffuseColor |= 0xffffff;
           }
@@ -706,7 +790,10 @@ namespace MediaPortal.Player
           Size nativeSize = new Size(width, height);
           _renderTexture = SetVideoWindow(nativeSize);
         }
-        else _renderTexture = false;
+        else
+        {
+          _renderTexture = false;
+        }
 
         //clear screen
         GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
@@ -779,18 +866,32 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = true;
         //if we're stopping then just return
         float timePassed = GUIGraphicsContext.TimePassed;
-        if (_stopPainting) return;
+        if (_stopPainting)
+        {
+          return;
+        }
         //Direct3D.Surface backBuffer=null;
         //sanity checks
-        if (GUIGraphicsContext.DX9Device == null) return;
-        if (GUIGraphicsContext.DX9Device.Disposed) return;
-        if (GUIWindowManager.IsSwitchingToNewWindow) return; //dont present video during window transitions
+        if (GUIGraphicsContext.DX9Device == null)
+        {
+          return;
+        }
+        if (GUIGraphicsContext.DX9Device.Disposed)
+        {
+          return;
+        }
+        if (GUIWindowManager.IsSwitchingToNewWindow)
+        {
+          return; //dont present video during window transitions
+        }
 
         _debugStep = 2;
         if (_renderTarget != null)
         {
           if (!_renderTarget.Disposed)
+          {
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+          }
         }
 
         _debugStep = 3;
@@ -800,16 +901,16 @@ namespace MediaPortal.Player
         if (_fadeFrameCounter < iMaxSteps)
         {
           // fade in
-          int iStep = 0xff / iMaxSteps;
+          int iStep = 0xff/iMaxSteps;
           if (_fadingIn)
           {
-            _diffuseColor = iStep * _fadeFrameCounter;
+            _diffuseColor = iStep*_fadeFrameCounter;
             _diffuseColor <<= 24;
             _diffuseColor |= 0xffffff;
           }
           else
           {
-            _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
+            _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
             _diffuseColor <<= 24;
             _diffuseColor |= 0xffffff;
           }
@@ -828,7 +929,10 @@ namespace MediaPortal.Player
         {
           _renderTexture = SetVideoWindow(nativeSize);
         }
-        else _renderTexture = false;
+        else
+        {
+          _renderTexture = false;
+        }
 
         _debugStep = 5;
         //clear screen
@@ -854,7 +958,7 @@ namespace MediaPortal.Player
             GUIFontManager.Present();
           }
         }
-        // If BeginScene is called we must not return before calling EndScene or we will receive D3DERR_INVALIDCALL
+          // If BeginScene is called we must not return before calling EndScene or we will receive D3DERR_INVALIDCALL
         finally
         {
           GUIGraphicsContext.DX9Device.EndScene();
@@ -882,27 +986,45 @@ namespace MediaPortal.Player
       //}
     }
 
-    private void DrawTexture(uint texAddr, float fx, float fy, float nw, float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
+    private void DrawTexture(uint texAddr, float fx, float fy, float nw, float nh, float uoff, float voff, float umax,
+                             float vmax, long lColorDiffuse)
     {
-      if (texAddr == 0) return;
-      CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])_vertexBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
-      verts[0].X = fx - 0.5f; verts[0].Y = fy + nh - 0.5f; verts[0].Z = 0.0f; verts[0].Rhw = 1.0f;
-      verts[0].Color = (int)lColorDiffuse;
+      if (texAddr == 0)
+      {
+        return;
+      }
+      CustomVertex.TransformedColoredTextured[] verts =
+        (CustomVertex.TransformedColoredTextured[]) _vertexBuffer.Lock(0, 0);
+        // Lock the buffer (which will return our structs)
+      verts[0].X = fx - 0.5f;
+      verts[0].Y = fy + nh - 0.5f;
+      verts[0].Z = 0.0f;
+      verts[0].Rhw = 1.0f;
+      verts[0].Color = (int) lColorDiffuse;
       verts[0].Tu = uoff;
       verts[0].Tv = voff + vmax;
 
-      verts[1].X = fx - 0.5f; verts[1].Y = fy - 0.5f; verts[1].Z = 0.0f; verts[1].Rhw = 1.0f;
-      verts[1].Color = (int)lColorDiffuse;
+      verts[1].X = fx - 0.5f;
+      verts[1].Y = fy - 0.5f;
+      verts[1].Z = 0.0f;
+      verts[1].Rhw = 1.0f;
+      verts[1].Color = (int) lColorDiffuse;
       verts[1].Tu = uoff;
       verts[1].Tv = voff;
 
-      verts[2].X = fx + nw - 0.5f; verts[2].Y = fy + nh - 0.5f; verts[2].Z = 0.0f; verts[2].Rhw = 1.0f;
-      verts[2].Color = (int)lColorDiffuse;
+      verts[2].X = fx + nw - 0.5f;
+      verts[2].Y = fy + nh - 0.5f;
+      verts[2].Z = 0.0f;
+      verts[2].Rhw = 1.0f;
+      verts[2].Color = (int) lColorDiffuse;
       verts[2].Tu = uoff + umax;
       verts[2].Tv = voff + vmax;
 
-      verts[3].X = fx + nw - 0.5f; verts[3].Y = fy - 0.5f; verts[3].Z = 0.0f; verts[3].Rhw = 1.0f;
-      verts[3].Color = (int)lColorDiffuse;
+      verts[3].X = fx + nw - 0.5f;
+      verts[3].Y = fy - 0.5f;
+      verts[3].Z = 0.0f;
+      verts[3].Rhw = 1.0f;
+      verts[3].Color = (int) lColorDiffuse;
       verts[3].Tu = uoff + umax;
       verts[3].Tv = voff;
       _vertexBuffer.Unlock();
@@ -928,9 +1050,13 @@ namespace MediaPortal.Player
       }
     }
 
-    private void DrawSurface(uint texAddr, float fx, float fy, float nw, float nh, float uoff, float voff, float umax, float vmax, long lColorDiffuse)
+    private void DrawSurface(uint texAddr, float fx, float fy, float nw, float nh, float uoff, float voff, float umax,
+                             float vmax, long lColorDiffuse)
     {
-      if (texAddr == 0) return;
+      if (texAddr == 0)
+      {
+        return;
+      }
       unsafe
       {
         IntPtr ptr = new IntPtr(texAddr);
@@ -938,30 +1064,31 @@ namespace MediaPortal.Player
         if (!_useNonLinearStretch)
         {
           FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
-                                _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
+                                _destinationRect.Left, _destinationRect.Top, _destinationRect.Width,
+                                _destinationRect.Height,
                                 ptr.ToPointer());
         }
         else
         {
           //draw/stretch each partition separately according to NLS table
-          
+
           //top and bottom remain untouched.
           //left and right start from the left of the rect.
-          int srcLeft  = _sourceRect.Left;
+          int srcLeft = _sourceRect.Left;
           int srcRight = srcLeft;
-          int dstLeft  = _destinationRect.Left;
-          int dstRight = dstLeft;            
+          int dstLeft = _destinationRect.Left;
+          int dstRight = dstLeft;
           for (int i = 0; i < nlsSourcePartitioning.Length; i++)
           {
             //this left is the previous right
             srcLeft = srcRight;
             dstLeft = dstRight;
             //calculate new right
-            srcRight = srcLeft + (int)(nlsSourcePartitioning[i] * (float)_sourceRect.Width / 100.0f);
-            dstRight = dstLeft + (int)(nlsDestPartitioning[i] * (float)_destinationRect.Width / 100.0f);
+            srcRight = srcLeft + (int) (nlsSourcePartitioning[i]*(float) _sourceRect.Width/100.0f);
+            dstRight = dstLeft + (int) (nlsDestPartitioning[i]*(float) _destinationRect.Width/100.0f);
             FontEngineDrawSurface(srcLeft, _sourceRect.Top, srcRight - srcLeft, _sourceRect.Height,
-                                          dstLeft, _destinationRect.Top, dstRight - dstLeft, _destinationRect.Height,
-                                          ptr.ToPointer());
+                                  dstLeft, _destinationRect.Top, dstRight - dstLeft, _destinationRect.Height,
+                                  ptr.ToPointer());
           }
         }
       }
@@ -970,15 +1097,20 @@ namespace MediaPortal.Player
     #endregion
 
     #region IRenderLayer members
+
     public void RenderLayer(float timePassed)
     {
       // if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
       // Before , we got a black screen until GUI_MSG_NOTIFY command has finished
       // That we don't want ( do we ?) 
-      if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent || VideoRendererStatistics.VideoState == VideoRendererStatistics.State.NoSignal)
+      if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent ||
+          VideoRendererStatistics.VideoState == VideoRendererStatistics.State.NoSignal)
       {
         //Render video texture
-        if (_renderTexture == false) return;
+        if (_renderTexture == false)
+        {
+          return;
+        }
 
         if (_surfaceAdress != 0)
         {
@@ -996,9 +1128,9 @@ namespace MediaPortal.Player
       else
       {
         // Log.Info("render black");
-        _blackImage.SetPosition((int)_fx, (int)_fy);
-        _blackImage.Width = (int)_nw;
-        _blackImage.Height = (int)_nh;
+        _blackImage.SetPosition((int) _fx, (int) _fy);
+        _blackImage.Width = (int) _nw;
+        _blackImage.Height = (int) _nh;
         _blackImage.Render(timePassed);
       }
       SubtitleRenderer.GetInstance().Render();
@@ -1008,6 +1140,7 @@ namespace MediaPortal.Player
     {
       return true;
     }
+
     #endregion
-  }//public class PlaneScene 
-}//namespace MediaPortal.Player 
+  } //public class PlaneScene 
+} //namespace MediaPortal.Player 

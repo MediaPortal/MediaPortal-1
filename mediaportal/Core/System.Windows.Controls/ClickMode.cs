@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum ClickMode
-	{
-		OnHover,
-		OnPress,
-		OnRelease,
-	}
+  public enum ClickMode
+  {
+    OnHover,
+    OnPress,
+    OnRelease,
+  }
 }

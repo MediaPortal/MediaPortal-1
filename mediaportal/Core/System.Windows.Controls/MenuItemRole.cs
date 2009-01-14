@@ -23,19 +23,17 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum MenuItemRole
-	{
-		#region Values
+  public enum MenuItemRole
+  {
+    #region Values
 
-		SubmenuHeader,
-		SubmenuItem,
-		TopLevelHeader,
-		TopLevelItem,
+    SubmenuHeader,
+    SubmenuItem,
+    TopLevelHeader,
+    TopLevelItem,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

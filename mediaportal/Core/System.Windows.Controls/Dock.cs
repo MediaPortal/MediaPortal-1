@@ -23,21 +23,19 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum Dock
-	{
-		#region Values
+  public enum Dock
+  {
+    #region Values
 
-		None,
-		Left,
-		Top,
-		Right,
-		Bottom,
-		Fill,
+    None,
+    Left,
+    Top,
+    Right,
+    Bottom,
+    Fill,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

@@ -25,9 +25,10 @@
 
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void PropertyInvalidatedCallback(DependencyObject d);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void PropertyInvalidatedCallback(DependencyObject d);
+
+  #endregion Delegates
 }

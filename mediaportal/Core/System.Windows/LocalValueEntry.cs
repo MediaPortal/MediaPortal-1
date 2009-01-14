@@ -23,41 +23,39 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public struct LocalValueEntry
-	{
-		#region Constructors
-	
-		internal LocalValueEntry(DependencyProperty property, object value)
-		{
-			_property = property;
-			_value = value;
-		}
+  public struct LocalValueEntry
+  {
+    #region Constructors
 
-		#endregion Constructors
+    internal LocalValueEntry(DependencyProperty property, object value)
+    {
+      _property = property;
+      _value = value;
+    }
 
-		#region Properties
+    #endregion Constructors
 
-		public DependencyProperty Property
-		{
-			get { return _property; }
-		}
-		
-		public object Value
-		{
-			get { return _value; }
-		}
+    #region Properties
 
-		#endregion Properties
+    public DependencyProperty Property
+    {
+      get { return _property; }
+    }
 
-		#region Fields
+    public object Value
+    {
+      get { return _value; }
+    }
 
-		DependencyProperty			_property;
-		object						_value;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private DependencyProperty _property;
+    private object _value;
+
+    #endregion Fields
+  }
 }

@@ -23,67 +23,76 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class RoutedEventConverter : TypeConverter, ICanAddNamespaceEntries
-	{
-		#region Methods
+  public sealed class RoutedEventConverter : TypeConverter, ICanAddNamespaceEntries
+  {
+    #region Methods
 
-		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
-		{
-			_namespaces = namespaces;
-		}
+    void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
+    {
+      _namespaces = namespaces;
+    }
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return Parse((string)value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return Parse((string) value);
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		public RoutedEvent Parse(string text)
-		{
-			string[] tokens = text.Split('.');
+    public RoutedEvent Parse(string text)
+    {
+      string[] tokens = text.Split('.');
 
-			if(tokens.Length != 2)
-				throw new ArgumentException("Expecting 'Type.Name'");
+      if (tokens.Length != 2)
+      {
+        throw new ArgumentException("Expecting 'Type.Name'");
+      }
 
-			Type type = null;
+      Type type = null;
 
-			foreach(string ns in _namespaces)
-			{
-				type = Type.GetType(ns + "." + tokens[0]);
+      foreach (string ns in _namespaces)
+      {
+        type = Type.GetType(ns + "." + tokens[0]);
 
-				if(type != null)
-					break;
-			}
+        if (type != null)
+        {
+          break;
+        }
+      }
 
-			if(type == null)
-				throw new InvalidOperationException(string.Format("The type or namespace '{0}' could not be found", tokens[0]));
+      if (type == null)
+      {
+        throw new InvalidOperationException(string.Format("The type or namespace '{0}' could not be found", tokens[0]));
+      }
 
-			return EventManager.GetRoutedEventFromName(tokens[1], type);
-		}
-		
-		#endregion Methods
+      return EventManager.GetRoutedEventFromName(tokens[1], type);
+    }
 
-		#region Fields
+    #endregion Methods
 
-		string[]					_namespaces = null;
+    #region Fields
 
-		#endregion Fields
-	}
+    private string[] _namespaces = null;
+
+    #endregion Fields
+  }
 }

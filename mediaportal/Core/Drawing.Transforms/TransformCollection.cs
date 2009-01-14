@@ -27,105 +27,120 @@ using System;
 using System.Collections;
 using System.Windows.Serialization;
 
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
 namespace MediaPortal.Drawing.Transforms
 {
-	public sealed class TransformCollection : CollectionBase, IAddChild
-	{
-		#region Constructors
+  public sealed class TransformCollection : CollectionBase, IAddChild
+  {
+    #region Constructors
 
-		public TransformCollection()
-		{
-		}
+    public TransformCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(Transform transform)
-		{
-			if(transform == null)
-				throw new ArgumentNullException("transform");
+    public void Add(Transform transform)
+    {
+      if (transform == null)
+      {
+        throw new ArgumentNullException("transform");
+      }
 
-			List.Add(transform);
-		}
+      List.Add(transform);
+    }
 
-		public bool Contains(Transform transform)
-		{
-			if(transform == null)
-				throw new ArgumentNullException("transform");
+    public bool Contains(Transform transform)
+    {
+      if (transform == null)
+      {
+        throw new ArgumentNullException("transform");
+      }
 
-			return List.Contains(transform);
-		}
+      return List.Contains(transform);
+    }
 
-		public void CopyTo(Transform[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Transform[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public TransformCollection GetCurrentValue()
-		{
-			return null;
-		}
-			
-		void IAddChild.AddChild(object child)
-		{
-			Add((Transform)child);
-		}
+    public TransformCollection GetCurrentValue()
+    {
+      return null;
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddChild(object child)
+    {
+      Add((Transform) child);
+    }
 
-		public int IndexOf(Transform transform)
-		{
-			if(transform == null)
-				throw new ArgumentNullException("transform");
+    void IAddChild.AddText(string text)
+    {
+    }
 
-			return List.IndexOf(transform);
-		}
+    public int IndexOf(Transform transform)
+    {
+      if (transform == null)
+      {
+        throw new ArgumentNullException("transform");
+      }
 
-		public void Insert(int index, Transform transform)
-		{
-			if(transform == null)
-				throw new ArgumentNullException("transform");
+      return List.IndexOf(transform);
+    }
 
-			List.Insert(index, transform);
-		}
+    public void Insert(int index, Transform transform)
+    {
+      if (transform == null)
+      {
+        throw new ArgumentNullException("transform");
+      }
 
-		public bool Remove(Transform transform)
-		{
-			if(transform == null)
-				throw new ArgumentNullException("transform");
-			
-			if(List.Contains(transform) == false)
-				return false;
+      List.Insert(index, transform);
+    }
 
-			List.Remove(transform);
+    public bool Remove(Transform transform)
+    {
+      if (transform == null)
+      {
+        throw new ArgumentNullException("transform");
+      }
 
-			return true;
-		}
+      if (List.Contains(transform) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(transform);
 
-		#region Properties
+      return true;
+    }
 
-		public Matrix Matrix
-		{
-			get { Matrix matrix = Matrix.Identity; /*foreach(Transform t in List) matrix.Multiply(t.Matrix);*/ return matrix; }
-		}
+    #endregion Methods
 
-		public Transform this[int index]
-		{ 
-			get { return (Transform)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public Matrix Matrix
+    {
+      get
+      {
+        Matrix matrix = Matrix.Identity; /*foreach(Transform t in List) matrix.Multiply(t.Matrix);*/
+        return matrix;
+      }
+    }
+
+    public Transform this[int index]
+    {
+      get { return (Transform) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

@@ -23,19 +23,14 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public interface IClock
-	{
-		#region Properties
+  public interface IClock
+  {
+    #region Properties
 
-		int CurrentTime
-		{
-			get;
-		}
+    int CurrentTime { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

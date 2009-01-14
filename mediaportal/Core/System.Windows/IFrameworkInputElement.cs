@@ -23,25 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public interface IFrameworkInputElement
-	{
-		#region Properties
+  public interface IFrameworkInputElement
+  {
+    #region Properties
 
-		bool Focusable
-		{
-			get;
-		}
+    bool Focusable { get; }
 
-		string Name
-		{
-			get;
-			set;
-		}
+    string Name { get; set; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

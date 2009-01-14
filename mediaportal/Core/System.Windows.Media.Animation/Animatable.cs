@@ -23,85 +23,82 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public abstract class Animatable : Freezable, IAnimatable
-	{
-		#region Constructors
+  public abstract class Animatable : Freezable, IAnimatable
+  {
+    #region Constructors
 
-		protected Animatable()
-		{
-		}
+    protected Animatable()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
-		{
-			ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
-		}
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
+    {
+      ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
+    }
 
-		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
-		{
-		}
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
+    {
+    }
 
-		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
-		{
-			BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
-		}
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
+    {
+      BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
+    }
 
-		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
-		{
-		}
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+    {
+    }
 
-		public new Animatable Copy()
-		{
-			return (Animatable)base.Copy();
-		}
+    public new Animatable Copy()
+    {
+      return (Animatable) base.Copy();
+    }
 
-		protected virtual void CopyCurrentValueCore(Animatable sourceAnimatable)
-		{
-			throw new NotImplementedException();
-		}
+    protected virtual void CopyCurrentValueCore(Animatable sourceAnimatable)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override bool FreezeCore(bool isChecking)
-		{
-			// An Animatable will return false from this method if there are any Clocks 
-			// animating any of its properties. If the Animatable has persistent animations specified,
-			// but all of the Clocks have been removed, it may still return true from this method if the
-			// Timelines themselves can be frozen
+    protected override bool FreezeCore(bool isChecking)
+    {
+      // An Animatable will return false from this method if there are any Clocks 
+      // animating any of its properties. If the Animatable has persistent animations specified,
+      // but all of the Clocks have been removed, it may still return true from this method if the
+      // Timelines themselves can be frozen
 
-			throw new NotImplementedException();
-		}
+      throw new NotImplementedException();
+    }
 
-		public object GetAnimationBaseValue(DependencyProperty property)
-		{
-			throw new NotImplementedException();
-		}
+    public object GetAnimationBaseValue(DependencyProperty property)
+    {
+      throw new NotImplementedException();
+    }
 
-		public Animatable GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
+    public Animatable GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			throw new NotImplementedException();
-		}
+    protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public bool HasAnimatedProperties
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public bool HasAnimatedProperties
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

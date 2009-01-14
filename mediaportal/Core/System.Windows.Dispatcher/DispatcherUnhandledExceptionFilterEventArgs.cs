@@ -25,37 +25,37 @@
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherUnhandledExceptionFilterEventArgs : DispatcherEventArgs
-	{
-		#region Constructors
+  public sealed class DispatcherUnhandledExceptionFilterEventArgs : DispatcherEventArgs
+  {
+    #region Constructors
 
-		public DispatcherUnhandledExceptionFilterEventArgs(Dispatcher dispatcher, Exception exception) : base(dispatcher)
-		{
-			_exception = exception;
-		}
+    public DispatcherUnhandledExceptionFilterEventArgs(Dispatcher dispatcher, Exception exception) : base(dispatcher)
+    {
+      _exception = exception;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Exception Exception
-		{
-			get { return _exception; }
-		}
+    public Exception Exception
+    {
+      get { return _exception; }
+    }
 
-		public bool RequestCatch
-		{
-			get { return _isRequestCatch; }
-			set { _isRequestCatch = value; }
-		}
+    public bool RequestCatch
+    {
+      get { return _isRequestCatch; }
+      set { _isRequestCatch = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Exception					_exception;
-		bool						_isRequestCatch = true;
+    private Exception _exception;
+    private bool _isRequestCatch = true;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

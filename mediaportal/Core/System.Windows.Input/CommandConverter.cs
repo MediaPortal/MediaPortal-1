@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
@@ -32,76 +30,94 @@ using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class CommandConverter : TypeConverter, ICanAddNamespaceEntries
-	{
-		#region Methods
+  public sealed class CommandConverter : TypeConverter, ICanAddNamespaceEntries
+  {
+    #region Methods
 
-		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
-		{
-			_namespaces = namespaces;
-		}
-		
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
+    {
+      _namespaces = namespaces;
+    }
 
-			return base.CanConvertFrom(context, t);
-		}
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return Parse((string)value);
-				
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		private object Parse(string path)
-		{
-			string[] parts = path.Split('.');
-			string typename = parts[0].Trim();
-			string property = parts[1].Trim();
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return Parse((string) value);
+      }
 
-			if(typename == string.Empty)
-				throw new ArgumentException(string.Format("Type expected"));
+      return base.ConvertFrom(context, culture, value);
+    }
 
-			if(property == string.Empty)
-				throw new ArgumentException(string.Format("Name expected"));
+    private object Parse(string path)
+    {
+      string[] parts = path.Split('.');
+      string typename = parts[0].Trim();
+      string property = parts[1].Trim();
 
-			Type type = null;
+      if (typename == string.Empty)
+      {
+        throw new ArgumentException(string.Format("Type expected"));
+      }
 
-			foreach(string ns in _namespaces)
-			{
-				type = Type.GetType(ns + "." + typename);
+      if (property == string.Empty)
+      {
+        throw new ArgumentException(string.Format("Name expected"));
+      }
 
-				if(type != null)
-					break;
-			}
+      Type type = null;
 
-			if(type == null)
-				throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+      foreach (string ns in _namespaces)
+      {
+        type = Type.GetType(ns + "." + typename);
 
-			MemberInfo memberInfo = type.GetProperty(property, BindingFlags.Static | BindingFlags.Public);
+        if (type != null)
+        {
+          break;
+        }
+      }
 
-			if(memberInfo == null)
-				memberInfo = type.GetField(property, BindingFlags.Static | BindingFlags.Public);
+      if (type == null)
+      {
+        throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+      }
 
-			if(memberInfo == null)
-				throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
+      MemberInfo memberInfo = type.GetProperty(property, BindingFlags.Static | BindingFlags.Public);
 
-			if(memberInfo is PropertyInfo)
-				return ((PropertyInfo)memberInfo).GetValue(null, null);
+      if (memberInfo == null)
+      {
+        memberInfo = type.GetField(property, BindingFlags.Static | BindingFlags.Public);
+      }
 
-			return ((FieldInfo)memberInfo).GetValue(null);
-		}
+      if (memberInfo == null)
+      {
+        throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
+      }
 
-		#endregion Methods
+      if (memberInfo is PropertyInfo)
+      {
+        return ((PropertyInfo) memberInfo).GetValue(null, null);
+      }
 
-		#region Fields
+      return ((FieldInfo) memberInfo).GetValue(null);
+    }
 
-		string[]					_namespaces;
+    #endregion Methods
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private string[] _namespaces;
+
+    #endregion Fields
+  }
 }

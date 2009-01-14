@@ -23,45 +23,48 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace System.Windows
 {
-	[TypeConverter(typeof(PropertyPathConverter))]
-	public sealed class PropertyPath
-	{
-		#region Constructors
+  [TypeConverter(typeof (PropertyPathConverter))]
+  public sealed class PropertyPath
+  {
+    #region Constructors
 
-		public PropertyPath()
-		{
-		}
+    public PropertyPath()
+    {
+    }
 
-		private PropertyPath(string path, object[] propertyInfoArray)
-		{
-			_path = path;
-			_propertyInfoArray = propertyInfoArray;
-		}
+    private PropertyPath(string path, object[] propertyInfoArray)
+    {
+      _path = path;
+      _propertyInfoArray = propertyInfoArray;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public string Path
-		{
-			get { return _path; }
-			set { if(string.Compare(_path, value, true) == 0) { _propertyInfoArray = null; } }
-		}
+    public string Path
+    {
+      get { return _path; }
+      set
+      {
+        if (string.Compare(_path, value, true) == 0)
+        {
+          _propertyInfoArray = null;
+        }
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		string						_path = string.Empty;
-		object[]					_propertyInfoArray;
+    private string _path = string.Empty;
+    private object[] _propertyInfoArray;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

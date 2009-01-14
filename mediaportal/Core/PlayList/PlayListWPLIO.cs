@@ -24,11 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using System.IO;
-using MediaPortal.Util;
+using System.Xml;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
@@ -50,10 +47,14 @@ namespace MediaPortal.Playlists
         XmlDocument doc = new XmlDocument();
         doc.Load(fileName);
         if (doc.DocumentElement == null)
+        {
           return false;
+        }
         XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/smil/body/seq");
         if (nodeRoot == null)
+        {
           return false;
+        }
         XmlNodeList nodeEntries = nodeRoot.SelectNodes("media");
         foreach (XmlNode node in nodeEntries)
         {
@@ -65,7 +66,7 @@ namespace MediaPortal.Playlists
               if (srcNode.InnerText.Length > 0)
               {
                 fileName = srcNode.InnerText;
-                MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+                Util.Utils.GetQualifiedFilename(basePath, ref fileName);
                 PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
                 newItem.Type = PlayListItem.PlayListItemType.Audio;
                 string description;

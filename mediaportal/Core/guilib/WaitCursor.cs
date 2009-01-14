@@ -27,24 +27,24 @@ using System;
 
 namespace MediaPortal.GUI.Library
 {
-	public class WaitCursor : IDisposable
-	{
-		#region Constructors
+  public class WaitCursor : IDisposable
+  {
+    #region Constructors
 
-		public WaitCursor()
-		{
-			GUIWaitCursor.Show();
-		}
+    public WaitCursor()
+    {
+      GUIWaitCursor.Show();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Dispose()
-		{
-			GUIWaitCursor.Hide();
-		}
+    public void Dispose()
+    {
+      GUIWaitCursor.Hide();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -23,77 +23,75 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class Image : FrameworkElement
-	{
-		#region Constructors
+  public class Image : FrameworkElement
+  {
+    #region Constructors
 
-		static Image()
-		{
-			SourceProperty = DependencyProperty.Register("Source", typeof(ImageSource), typeof(Image));
-			StretchDirectionProperty = DependencyProperty.Register("StretchDirection", typeof(StretchDirection), typeof(Image));
-			StretchProperty = DependencyProperty.Register("Stretch", typeof(Stretch), typeof(Image));
-		}
+    static Image()
+    {
+      SourceProperty = DependencyProperty.Register("Source", typeof (ImageSource), typeof (Image));
+      StretchDirectionProperty = DependencyProperty.Register("StretchDirection", typeof (StretchDirection),
+                                                             typeof (Image));
+      StretchProperty = DependencyProperty.Register("Stretch", typeof (Stretch), typeof (Image));
+    }
 
-		public Image()
-		{
-		}
+    public Image()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override Size ArrangeOverride(Rect finalRect)
-		{
-			throw new NotImplementedException();
-		}
-		
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			throw new NotImplementedException();
-		}
-		
-		protected override void OnRender(DrawingContext dc)
-		{
-			throw new NotImplementedException();
-		}
+    protected override Size ArrangeOverride(Rect finalRect)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      throw new NotImplementedException();
+    }
 
-		#region Properties
+    protected override void OnRender(DrawingContext dc)
+    {
+      throw new NotImplementedException();
+    }
 
-		public ImageSource Source
-		{
-			get { return (ImageSource)GetValue(SourceProperty); }
-			set { SetValue(SourceProperty, value); }
-		}
+    #endregion Methods
 
-		public Stretch Stretch
-		{
-			get { return (Stretch)GetValue(StretchProperty); }
-			set { SetValue(StretchProperty, value); }
-		}
+    #region Properties
 
-		public StretchDirection StretchDirection
-		{
-			get { return (StretchDirection)GetValue(StretchDirectionProperty); }
-			set { SetValue(StretchDirectionProperty, value); }
-		}
+    public ImageSource Source
+    {
+      get { return (ImageSource) GetValue(SourceProperty); }
+      set { SetValue(SourceProperty, value); }
+    }
 
-		#endregion Properties
+    public Stretch Stretch
+    {
+      get { return (Stretch) GetValue(StretchProperty); }
+      set { SetValue(StretchProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    public StretchDirection StretchDirection
+    {
+      get { return (StretchDirection) GetValue(StretchDirectionProperty); }
+      set { SetValue(StretchDirectionProperty, value); }
+    }
 
-		public static readonly DependencyProperty SourceProperty;
-		public static readonly DependencyProperty StretchDirectionProperty;
-		public static readonly DependencyProperty StretchProperty;
+    #endregion Properties
 
-		#endregion Properties (Dependency)
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty SourceProperty;
+    public static readonly DependencyProperty StretchDirectionProperty;
+    public static readonly DependencyProperty StretchProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

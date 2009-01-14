@@ -24,16 +24,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace DShowNET.MPSA
 {
-
   [ComVisible(true), ComImport,
-  Guid("6F78D59C-1066-4e1b-8258-717F33C51F67"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("6F78D59C-1066-4e1b-8258-717F33C51F67"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMHWGrabber
   {
     [PreserveSig]
@@ -46,15 +43,18 @@ namespace DShowNET.MPSA
     int GetMHWTitleCount(out Int16 count);
 
     [PreserveSig]
-    int GetMHWTitle(Int16 program, ref UInt16 id, ref UInt16 transportId, ref UInt16 networkId, ref UInt16 channelId, ref Int16 programId, ref Int16 themeId, ref UInt16 PPV, ref byte Summaries, ref UInt16 duration, ref UInt32 dateStart, ref UInt32 timeStart, out IntPtr title, out IntPtr programName);
+    int GetMHWTitle(Int16 program, ref UInt16 id, ref UInt16 transportId, ref UInt16 networkId, ref UInt16 channelId,
+                    ref Int16 programId, ref Int16 themeId, ref UInt16 PPV, ref byte Summaries, ref UInt16 duration,
+                    ref UInt32 dateStart, ref UInt32 timeStart, out IntPtr title, out IntPtr programName);
 
     [PreserveSig]
-    int GetMHWChannel(UInt16 channelNr, ref UInt16 channelId, ref UInt16 networkId, ref UInt16 transportId, out IntPtr channelName);
+    int GetMHWChannel(UInt16 channelNr, ref UInt16 channelId, ref UInt16 networkId, ref UInt16 transportId,
+                      out IntPtr channelName);
 
     [PreserveSig]
     int GetMHWSummary(Int16 programId, out IntPtr summary);
 
     [PreserveSig]
     int GetMHWTheme(Int16 themeId, out IntPtr theme);
-  };
+  } ;
 }

@@ -23,112 +23,85 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Serialization;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
-
 using Microsoft.DirectX.Direct3D;
+
 namespace MediaPortal.GUI.Library
 {
   public class GUIGridControl : GUIControl
   {
     #region skin elements
-    [XMLSkinElement("HoriziontalScroll")]
-    protected bool _horizontalScroll = true;
 
-    [XMLSkinElement("VerticalScroll")]
-    protected bool _verticalScroll = true;
+    [XMLSkinElement("HoriziontalScroll")] protected bool _horizontalScroll = true;
+
+    [XMLSkinElement("VerticalScroll")] protected bool _verticalScroll = true;
+
     #endregion
 
     #region variables
-    List<GUIGridRow> _rows = new List<GUIGridRow>();
-    int _scrollPositionX = 0;
-    int _scrollPositionY = 0;
-    int _totalWidth = 0;
-    int _cursorPositionX = 0;
-    GUIGridCell _currentSelectedItem;
-    float _scrollTimeElapsed = 0;
+
+    private List<GUIGridRow> _rows = new List<GUIGridRow>();
+    private int _scrollPositionX = 0;
+    private int _scrollPositionY = 0;
+    private int _totalWidth = 0;
+    private int _cursorPositionX = 0;
+    private GUIGridCell _currentSelectedItem;
+    private float _scrollTimeElapsed = 0;
+
     #endregion
+
     #region events
-    public delegate void GridControlEventHandler(object sender, GUIGridCell selectedItem, GUIGridCell previousSelectedItem);
+
+    public delegate void GridControlEventHandler(
+      object sender, GUIGridCell selectedItem, GUIGridCell previousSelectedItem);
+
     public event GridControlEventHandler OnSelectionChanged;
+
     #endregion
 
     #region ctor
+
     public GUIGridControl(int parentId)
       : base(parentId)
     {
     }
+
     #endregion
 
     #region properties
+
     public int TotalWidth
     {
-      get
-      {
-        return _totalWidth;
-      }
-      set
-      {
-        _totalWidth = value;
-      }
+      get { return _totalWidth; }
+      set { _totalWidth = value; }
     }
+
     public bool HoriziontalScroll
     {
-      get
-      {
-        return _horizontalScroll;
-      }
-      set
-      {
-        _horizontalScroll = value;
-      }
+      get { return _horizontalScroll; }
+      set { _horizontalScroll = value; }
     }
 
     public bool VerticalScroll
     {
-      get
-      {
-        return _verticalScroll;
-      }
-      set
-      {
-        _verticalScroll = value;
-      }
+      get { return _verticalScroll; }
+      set { _verticalScroll = value; }
     }
 
     public List<GUIGridRow> Rows
     {
-      get
-      {
-        return _rows;
-      }
-      set
-      {
-        _rows = value;
-      }
+      get { return _rows; }
+      set { _rows = value; }
     }
 
     public int Count
     {
-      get
-      {
-        return _rows.Count;
-      }
+      get { return _rows.Count; }
     }
+
     public GUIGridCell SelectedGridItem
     {
-      get
-      {
-        return _currentSelectedItem;
-      }
+      get { return _currentSelectedItem; }
       set
       {
         if (_currentSelectedItem != value)
@@ -142,9 +115,11 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     #endregion
 
     #region public methods
+
     public override void FinalizeConstruction()
     {
     }
@@ -223,25 +198,33 @@ namespace MediaPortal.GUI.Library
         case Action.ActionType.ACTION_MOVE_DOWN:
           OnDown();
           if (SelectedGridItem == null)
+          {
             base.OnAction(action);
+          }
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
           OnUp();
           if (SelectedGridItem == null)
+          {
             base.OnAction(action);
+          }
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           OnLeft();
           if (SelectedGridItem == null)
+          {
             base.OnAction(action);
+          }
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           OnRight();
           if (SelectedGridItem == null)
+          {
             base.OnAction(action);
+          }
           break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
@@ -255,12 +238,15 @@ namespace MediaPortal.GUI.Library
           break;
       }
     }
+
     public override bool OnMessage(GUIMessage message)
     {
       if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
         if (SelectedGridItem == null)
+        {
           SetInitialSelectedItem();
+        }
         if (SelectedGridItem != null)
         {
           SelectedGridItem.Focus = true;
@@ -280,10 +266,18 @@ namespace MediaPortal.GUI.Library
     public override bool HitTest(int x, int y, out int controlID, out bool focused)
     {
       bool focus = base.HitTest(x, y, out controlID, out focused);
-      if (!focus) return focus;
-      if (Count == 0) return focus;
+      if (!focus)
+      {
+        return focus;
+      }
+      if (Count == 0)
+      {
+        return focus;
+      }
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = false;
+      }
 
       SelectedGridItem = GetItemAt(x, y);
       if (SelectedGridItem != null)
@@ -294,79 +288,121 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
+
     #region private members
-    void SetInitialSelectedItem()
+
+    private void SetInitialSelectedItem()
     {
-      if (SelectedGridItem != null) return;
+      if (SelectedGridItem != null)
+      {
+        return;
+      }
       if (Count > 0)
       {
         GUIGridRow row = _rows[0];
         if (row.Count > 0)
         {
           SelectedGridItem = row.Columns[0];
-          _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
+          _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
         }
       }
     }
 
-    void OnHome()
+    private void OnHome()
     {
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = false;
+      }
       SetInitialSelectedItem();
       SelectedGridItem.Focus = true;
       _scrollPositionX = 0;
       _scrollPositionY = 0;
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
     }
-    void OnUp()
+
+    private void OnUp()
     {
-      if (SelectedGridItem == null) return;
+      if (SelectedGridItem == null)
+      {
+        return;
+      }
       SelectedGridItem.Focus = false;
       SelectedGridItem = SelectedGridItem.OnUp(_cursorPositionX);
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = true;
-
+      }
     }
-    void OnDown()
+
+    private void OnDown()
     {
-      if (SelectedGridItem == null) return;
+      if (SelectedGridItem == null)
+      {
+        return;
+      }
       SelectedGridItem.Focus = false;
       SelectedGridItem = SelectedGridItem.OnDown(_cursorPositionX);
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = true;
+      }
     }
-    void OnLeft()
+
+    private void OnLeft()
     {
-      if (SelectedGridItem == null) return;
+      if (SelectedGridItem == null)
+      {
+        return;
+      }
       SelectedGridItem.Focus = false;
       SelectedGridItem = SelectedGridItem.OnLeft();
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = true;
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
+      }
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
     }
-    void OnRight()
+
+    private void OnRight()
     {
-      if (SelectedGridItem == null) return;
+      if (SelectedGridItem == null)
+      {
+        return;
+      }
       SelectedGridItem.Focus = false;
       SelectedGridItem = SelectedGridItem.OnRight();
       if (SelectedGridItem != null)
+      {
         SelectedGridItem.Focus = true;
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
+      }
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
     }
 
-    GUIGridCell GetItemAt(int x, int y)
+    private GUIGridCell GetItemAt(int x, int y)
     {
-      if (Count == 0) return null;
+      if (Count == 0)
+      {
+        return null;
+      }
       GUIGridRow row = _rows[0].GetRowAt(y);
-      if (row == null) return null;
-      if (row.Count == 0) return null;
+      if (row == null)
+      {
+        return null;
+      }
+      if (row.Count == 0)
+      {
+        return null;
+      }
       return row.Columns[0].GetColumnAt(row, x);
     }
 
-    void ScrollToSelectedItem(float timePassed)
+    private void ScrollToSelectedItem(float timePassed)
     {
-      if (SelectedGridItem == null) return;
+      if (SelectedGridItem == null)
+      {
+        return;
+      }
       int x = SelectedGridItem.Control.XPosition;
       int y = SelectedGridItem.Control.YPosition;
       int width = SelectedGridItem.Control.Width;
@@ -407,22 +443,24 @@ namespace MediaPortal.GUI.Library
       // 1 frame=20 msec;
       // scroll duration=400msec=20 frames
       float timeLeft = 0.4f - _scrollTimeElapsed;
-      int framesLeft = (int)(timeLeft / 0.02f);
-      if (framesLeft<=0)
+      int framesLeft = (int) (timeLeft/0.02f);
+      if (framesLeft <= 0)
       {
         _scrollPositionX += xOffset;
         _scrollPositionY += yOffset;
         return;
       }
-      _scrollPositionX += (int)(((float)xOffset) / ((float)framesLeft));
-      _scrollPositionY += (int)(((float)yOffset) / ((float)framesLeft));
+      _scrollPositionX += (int) (((float) xOffset)/((float) framesLeft));
+      _scrollPositionY += (int) (((float) yOffset)/((float) framesLeft));
       _scrollTimeElapsed += timePassed;
-
     }
 
     public void LayoutRows()
     {
-      if (Count == 0) return;
+      if (Count == 0)
+      {
+        return;
+      }
       int height = 0;
       int rowsLeft = 0;
       for (int row = 0; row < Count; row++)
@@ -461,7 +499,10 @@ namespace MediaPortal.GUI.Library
       {
         int rowWidth;
         LayoutColumns(Rows[row], out rowWidth);
-        if (rowWidth > TotalWidth) TotalWidth = rowWidth;
+        if (rowWidth > TotalWidth)
+        {
+          TotalWidth = rowWidth;
+        }
       }
       //second time to set the width correctly
       for (int row = 0; row < Count; row++)
@@ -471,10 +512,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    void LayoutColumns(GUIGridRow Row, out int rowWidth)
+    private void LayoutColumns(GUIGridRow Row, out int rowWidth)
     {
       rowWidth = TotalWidth;
-      if (Row.Count == 0) return;
+      if (Row.Count == 0)
+      {
+        return;
+      }
       int width = 0;
       int columnsLeft = 0;
       for (int column = 0; column < Row.Count; column++)
@@ -494,7 +538,10 @@ namespace MediaPortal.GUI.Library
         }
       }
       rowWidth = width;
-      if (columnsLeft == 0) return;
+      if (columnsLeft == 0)
+      {
+        return;
+      }
       int widthLeft = TotalWidth - width;
       widthLeft /= columnsLeft;
       if (widthLeft > 0)
@@ -509,6 +556,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     #endregion
   }
 }

@@ -23,57 +23,57 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Windows;
 
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(SolidColorBrushConverter))]
-	public sealed class SolidColorBrush : Brush
-	{
-		#region Constructors
+  [TypeConverter(typeof (SolidColorBrushConverter))]
+  public sealed class SolidColorBrush : Brush
+  {
+    #region Constructors
 
-		public SolidColorBrush()
-		{
-			_color = Color.Transparent;
-		}
+    public SolidColorBrush()
+    {
+      _color = Color.Transparent;
+    }
 
-		public SolidColorBrush(Color color)
-		{
-			_color = color;
-		}
+    public SolidColorBrush(Color color)
+    {
+      _color = color;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override System.Windows.Freezable CreateInstanceCore()
-		{
-			return new SolidColorBrush();
-		}
+    protected override Freezable CreateInstanceCore()
+    {
+      return new SolidColorBrush();
+    }
 
-		public static SolidColorBrush Parse(string color)
-		{
-			return new SolidColorBrush(ColorTranslator.FromHtml(color));
-		}
+    public static SolidColorBrush Parse(string color)
+    {
+      return new SolidColorBrush(ColorTranslator.FromHtml(color));
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
+    public Color Color
+    {
+      get { return _color; }
+      set { _color = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Color						_color;
+    private Color _color;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

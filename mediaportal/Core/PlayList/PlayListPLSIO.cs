@@ -24,19 +24,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Net;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.Text;
 
 namespace MediaPortal.Playlists
 {
   public class PlayListPLSIO : IPlayListIO
   {
-    const string START_PLAYLIST_MARKER = "[playlist]";
-    const string PLAYLIST_NAME = "PlaylistName";
+    private const string START_PLAYLIST_MARKER = "[playlist]";
+    private const string PLAYLIST_NAME = "PlaylistName";
 
     public bool Load(PlayList playlist, string fileName)
     {
@@ -84,8 +81,8 @@ namespace MediaPortal.Playlists
       if (strLine != START_PLAYLIST_MARKER)
       {
         if (strLine.StartsWith("http") || strLine.StartsWith("HTTP") ||
-              strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
-              strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
+            strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
+            strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
         {
           PlayListItem newItem = new PlayListItem(strLine, strLine, 0);
           newItem.Type = PlayListItem.PlayListItemType.AudioStream;
@@ -147,7 +144,9 @@ namespace MediaPortal.Playlists
                 infoLine = label;
               }
               else
-                infoLine = System.IO.Path.GetFileName(fileName);
+              {
+                infoLine = Path.GetFileName(fileName);
+              }
             }
           }
           if (leftPart.StartsWith("length"))
@@ -161,20 +160,22 @@ namespace MediaPortal.Playlists
 
           if (durationLine.Length > 0 && infoLine.Length > 0 && fileName.Length > 0)
           {
-            int duration = System.Int32.Parse(durationLine);
+            int duration = Int32.Parse(durationLine);
 
             // Remove trailing slashes. Might cause playback issues
             if (fileName.EndsWith("/"))
+            {
               fileName = fileName.Substring(0, fileName.Length - 1);
+            }
 
             string tmp = fileName.ToLower();
             PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {
-              MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+              Util.Utils.GetQualifiedFilename(basePath, ref fileName);
               newItem.FileName = fileName;
               newItem.Type = PlayListItem.PlayListItemType.AudioStream;
-            }           
+            }
             playlist.Add(newItem);
             fileName = "";
             infoLine = "";

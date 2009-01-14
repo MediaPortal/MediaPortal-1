@@ -25,9 +25,10 @@
 
 namespace System.Windows.Input
 {
-	#region Delegates
 
-	public delegate void KeyboardFocusChangedEventHandler(object sender, KeyboardFocusChangedEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void KeyboardFocusChangedEventHandler(object sender, KeyboardFocusChangedEventArgs e);
+
+  #endregion Delegates
 }

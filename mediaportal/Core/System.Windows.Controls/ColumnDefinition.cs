@@ -23,72 +23,70 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public class ColumnDefinition : DefinitionBase
-	{
-		#region Constructors
+  public class ColumnDefinition : DefinitionBase
+  {
+    #region Constructors
 
-		static ColumnDefinition()
-		{
-			MaxWidthProperty = DependencyProperty.Register("MaxWidth", typeof(double), typeof(ColumnDefinition));
-			MinWidthProperty = DependencyProperty.Register("MinWidth", typeof(double), typeof(ColumnDefinition));
-			WidthProperty = DependencyProperty.Register("Width", typeof(GridLength), typeof(ColumnDefinition), new PropertyMetadata(new GridLength(GridUnitType.Star)));
-		}
+    static ColumnDefinition()
+    {
+      MaxWidthProperty = DependencyProperty.Register("MaxWidth", typeof (double), typeof (ColumnDefinition));
+      MinWidthProperty = DependencyProperty.Register("MinWidth", typeof (double), typeof (ColumnDefinition));
+      WidthProperty = DependencyProperty.Register("Width", typeof (GridLength), typeof (ColumnDefinition),
+                                                  new PropertyMetadata(new GridLength(GridUnitType.Star)));
+    }
 
-		public ColumnDefinition()
-		{
-		}
+    public ColumnDefinition()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public double ActualWidth
-		{
-			get { return ((GridLength)GetValue(WidthProperty)).Value; }
-		}
+    public double ActualWidth
+    {
+      get { return ((GridLength) GetValue(WidthProperty)).Value; }
+    }
 
-		public double MaxWidth
-		{
-			get { return (double)GetValue(MaxWidthProperty); }
-			set { SetValue(MaxWidthProperty, value); }
-		}
+    public double MaxWidth
+    {
+      get { return (double) GetValue(MaxWidthProperty); }
+      set { SetValue(MaxWidthProperty, value); }
+    }
 
-		public double MinWidth
-		{
-			get { return (double)GetValue(MinWidthProperty); }
-			set { SetValue(MinWidthProperty, value); }
-		}
+    public double MinWidth
+    {
+      get { return (double) GetValue(MinWidthProperty); }
+      set { SetValue(MinWidthProperty, value); }
+    }
 
-		public double Offset
-		{
-			get { return _offset; }
-		}
+    public double Offset
+    {
+      get { return _offset; }
+    }
 
-		public GridLength Width
-		{
-			get { return (GridLength)GetValue(WidthProperty); }
-			set { SetValue(WidthProperty, value); }
-		}
+    public GridLength Width
+    {
+      get { return (GridLength) GetValue(WidthProperty); }
+      set { SetValue(WidthProperty, value); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
-	
-		public static readonly DependencyProperty MaxWidthProperty;
-		public static readonly DependencyProperty MinWidthProperty;
-		public static readonly DependencyProperty WidthProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
+    public static readonly DependencyProperty MaxWidthProperty;
+    public static readonly DependencyProperty MinWidthProperty;
+    public static readonly DependencyProperty WidthProperty;
 
-		#region Fields
+    #endregion Properties (Dependency)
 
-		double						_offset = 0;
+    #region Fields
 
-		#endregion Fields
-	}
+    private double _offset = 0;
+
+    #endregion Fields
+  }
 }

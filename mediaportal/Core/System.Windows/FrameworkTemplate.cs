@@ -23,100 +23,113 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Windows;
 
 namespace System.Windows
 {
-	public abstract class FrameworkTemplate : INameScope, IResourceHost
-	{
-		#region Constructors
+  public abstract class FrameworkTemplate : INameScope, IResourceHost
+  {
+    #region Constructors
 
-		protected FrameworkTemplate()
-		{
-		}
+    protected FrameworkTemplate()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		object INameScope.FindName(string name)
-		{
-			return FindName(name, null);
-		}
+    object INameScope.FindName(string name)
+    {
+      return FindName(name, null);
+    }
 
-		public DependencyObject FindName(string name, FrameworkElement templatedParent)
-		{
-			if(_names == null)
-				return null;
+    public DependencyObject FindName(string name, FrameworkElement templatedParent)
+    {
+      if (_names == null)
+      {
+        return null;
+      }
 
-			return (DependencyObject)_names[name];
-		}
+      return (DependencyObject) _names[name];
+    }
 
-		object IResourceHost.GetResource(object key)
-		{
-			if(_names == null)
-				return null;
+    object IResourceHost.GetResource(object key)
+    {
+      if (_names == null)
+      {
+        return null;
+      }
 
-			return (DependencyObject)_names[key];
-		}
+      return (DependencyObject) _names[key];
+    }
 
-		public void RegisterName(string name, object context)
-		{
-			if(_names == null)
-				_names = new Hashtable();
+    public void RegisterName(string name, object context)
+    {
+      if (_names == null)
+      {
+        _names = new Hashtable();
+      }
 
-			_names[name] = context;
-		}
+      _names[name] = context;
+    }
 
-		public void UnregisterName(string name)
-		{
-			if(_names == null)
-				return;
+    public void UnregisterName(string name)
+    {
+      if (_names == null)
+      {
+        return;
+      }
 
-			_names.Remove(name);
-		}
+      _names.Remove(name);
+    }
 
-		protected virtual void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
+    protected virtual void ValidateTemplatedParent(FrameworkElement templatedParent)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    public bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-		}
+    public ResourceDictionary Resources
+    {
+      get
+      {
+        if (_resources == null)
+        {
+          _resources = new ResourceDictionary();
+        }
+        return _resources;
+      }
+    }
 
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { throw new NotImplementedException(); }
-		}
+    IResourceHost IResourceHost.ParentResourceHost
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		public FrameworkElementFactory VisualTree
-		{
-			get { return _visualTree; }
-			set { _visualTree = value; }
-		}
+    public FrameworkElementFactory VisualTree
+    {
+      get { return _visualTree; }
+      set { _visualTree = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		bool						_isSealed = false;
-		Hashtable					_names;
-		ResourceDictionary			_resources;
-		FrameworkElementFactory		_visualTree;
+    private bool _isSealed = false;
+    private Hashtable _names;
+    private ResourceDictionary _resources;
+    private FrameworkElementFactory _visualTree;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

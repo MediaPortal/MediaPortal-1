@@ -25,56 +25,58 @@
 
 namespace System.Windows.Input
 {
-	public class CommandBinding
-	{
-		#region Constructors
+  public class CommandBinding
+  {
+    #region Constructors
 
-		public CommandBinding()
-		{
-		}
-		
-		public CommandBinding(RoutedCommand command) : this(command, null)
-		{
-		}
+    public CommandBinding()
+    {
+    }
 
-		public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler) : this(command, executeEventHandler, null)
-		{
-		}
+    public CommandBinding(RoutedCommand command) : this(command, null)
+    {
+    }
 
-		public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler, QueryEnabledEventHandler queryEnabledEventHandler)
-		{
-			_command = command;
-			_executeEventHandler = executeEventHandler;
-			_queryEnabledEventHandler = queryEnabledEventHandler;
-		}
+    public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler)
+      : this(command, executeEventHandler, null)
+    {
+    }
 
-		#endregion Constructors
+    public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler,
+                          QueryEnabledEventHandler queryEnabledEventHandler)
+    {
+      _command = command;
+      _executeEventHandler = executeEventHandler;
+      _queryEnabledEventHandler = queryEnabledEventHandler;
+    }
 
-		#region Events (Routed)
+    #endregion Constructors
+
+    #region Events (Routed)
 
 //		public event ExecuteEventHandler		Execute;
 //		public event ExecuteEventHandler		PreviewExecute;
 //		public event QueryEnabledEventHandler	PreviewQueryEnabled;
 //		public event QueryEnabledEventHandler	QueryEnabled;
 
-		#endregion Events (Routed)
+    #endregion Events (Routed)
 
-		#region Properties
+    #region Properties
 
-		public RoutedCommand Command
-		{
-			get { return _command; }
-			set { _command = value; }
-		}
+    public RoutedCommand Command
+    {
+      get { return _command; }
+      set { _command = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		ExecuteEventHandler			_executeEventHandler;
-		RoutedCommand				_command;	
-		QueryEnabledEventHandler	_queryEnabledEventHandler;
+    private ExecuteEventHandler _executeEventHandler;
+    private RoutedCommand _command;
+    private QueryEnabledEventHandler _queryEnabledEventHandler;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

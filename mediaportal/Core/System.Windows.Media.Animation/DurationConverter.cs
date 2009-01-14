@@ -23,32 +23,35 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Windows.Media.Animation
 {
-	public class DurationConverter : TypeConverter
-	{
-		#region Methods
+  public class DurationConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return Duration.Parse((string)value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return Duration.Parse((string) value);
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

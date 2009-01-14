@@ -23,56 +23,54 @@
 
 #endregion
 
-using System;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows
 {
-	public class SizeChangedInfo
-	{
-		#region Constructors
+  public class SizeChangedInfo
+  {
+    #region Constructors
 
-		public SizeChangedInfo(UIElement element, Size previousSize, bool widthChanged, bool heightChanged)
-		{
-			_previousSize = previousSize;
-			_widthChanged = widthChanged;
-			_heightChanged = heightChanged;
-		}
+    public SizeChangedInfo(UIElement element, Size previousSize, bool widthChanged, bool heightChanged)
+    {
+      _previousSize = previousSize;
+      _widthChanged = widthChanged;
+      _heightChanged = heightChanged;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public bool HeightChanged
-		{
-			get { return _heightChanged; }
-		}
+    public bool HeightChanged
+    {
+      get { return _heightChanged; }
+    }
 
-		public Size NewSize
-		{
-			get { return _newSize; }
-		}
+    public Size NewSize
+    {
+      get { return _newSize; }
+    }
 
-		public Size PreviousSize
-		{
-			get { return _previousSize; }
-		}
+    public Size PreviousSize
+    {
+      get { return _previousSize; }
+    }
 
-		public bool WidthChanged
-		{
-			get { return _widthChanged; }
-		}
+    public bool WidthChanged
+    {
+      get { return _widthChanged; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		bool						_heightChanged;
-		Size						_newSize = Size.Empty;
-		Size						_previousSize;
-		bool						_widthChanged;
+    private bool _heightChanged;
+    private Size _newSize = Size.Empty;
+    private Size _previousSize;
+    private bool _widthChanged;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

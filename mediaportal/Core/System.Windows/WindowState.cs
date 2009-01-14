@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public enum WindowState
-	{
-		Maximized,
-		Minimized,
-		Normal = 0,
-	}
+  public enum WindowState
+  {
+    Maximized,
+    Minimized,
+    Normal = 0,
+  }
 }

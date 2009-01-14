@@ -24,14 +24,18 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
+
 namespace DShowNET.Helper
 {
   public class ClassId
   {
     /// <summary>Prevent instantiation.</summary>
-    private ClassId() { }
-    public static readonly Guid SystemDeviceEnum = new Guid(0x62BE5D10, 0x60EB, 0x11d0, 0xBD, 0x3B, 0x00, 0xA0, 0xC9, 0x11, 0xCE, 0x86);
+    private ClassId()
+    {
+    }
+
+    public static readonly Guid SystemDeviceEnum = new Guid(0x62BE5D10, 0x60EB, 0x11d0, 0xBD, 0x3B, 0x00, 0xA0, 0xC9,
+                                                            0x11, 0xCE, 0x86);
 
     /// <summary>The File Writer filter can be used to write files to disc regardless of format. </summary>
     public static readonly Guid FileWriter = new Guid("8596E5F0-0DA5-11D0-BD21-00A0C911CE86");
@@ -53,10 +57,12 @@ namespace DShowNET.Helper
 
     /// <summary>The Decrypter/Detagger filter conditionally decrypts samples that are encrypted by the Encrypter/Tagger filter.</summary>
     public static readonly Guid DecryptTag = new Guid("C4C4C4F2-0049-4E2B-98FB-9537F6CE516D");
+
     public static readonly Guid MPTSWriter = new Guid("8943BEB7-E0BC-453b-9EA5-EB93899FA51C");
     public static readonly Guid MPStreamAnalyzer = new Guid("BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72");
 
-    public static readonly Guid PinCategoryVBI = new Guid(0xfb6c4284, 0x0353, 0x11d1, 0x90, 0x5f, 0x00, 0x00, 0xc0, 0xcc, 0x16, 0xba);
+    public static readonly Guid PinCategoryVBI = new Guid(0xfb6c4284, 0x0353, 0x11d1, 0x90, 0x5f, 0x00, 0x00, 0xc0, 0xcc,
+                                                          0x16, 0xba);
 
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>

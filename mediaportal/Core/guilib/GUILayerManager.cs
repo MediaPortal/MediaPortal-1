@@ -23,10 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
@@ -46,16 +42,17 @@ namespace MediaPortal.GUI.Library
       Dialog,
       MiniEPG
     }
+
     // layers:
     //      [GUI] - [PREVIEW] - [VIDEO] - [OSD] - [TOPBAR1] - [TOPBAR2] - [DIALOG]
 
-    const int MAX_LAYERS = 15;
+    private const int MAX_LAYERS = 15;
 
-    static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
+    private static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
     public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
-      _layers[(int)zOrder] = renderer;
+      _layers[(int) zOrder] = renderer;
     }
 
     public static void UnRegisterLayer(IRenderLayer renderer)
@@ -71,13 +68,16 @@ namespace MediaPortal.GUI.Library
 
     public static IRenderLayer GetLayer(LayerType zOrder)
     {
-      return _layers[(int)zOrder];
+      return _layers[(int) zOrder];
     }
 
     public static void Render(float timePassed)
     {
-      if (GUIGraphicsContext.BlankScreen) return;
-      int videoLayer = (int)LayerType.Video;
+      if (GUIGraphicsContext.BlankScreen)
+      {
+        return;
+      }
+      int videoLayer = (int) LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
       {
         if (_layers[videoLayer] != null)
@@ -95,7 +95,10 @@ namespace MediaPortal.GUI.Library
         {
           if (_layers[i].ShouldRenderLayer())
           {
-            if (GUIGraphicsContext.ShowBackground == false && i == videoLayer) continue;
+            if (GUIGraphicsContext.ShowBackground == false && i == videoLayer)
+            {
+              continue;
+            }
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
           }

@@ -23,49 +23,52 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Input;
 
 namespace System.Windows
 {
-	public sealed class LogicalTreeHelper
-	{
-		#region Constructors
+  public sealed class LogicalTreeHelper
+  {
+    #region Constructors
 
-		private LogicalTreeHelper()
-		{
-		}
+    private LogicalTreeHelper()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static void BringIntoView(DependencyObject current)
-		{
-			if(current is FrameworkElement)
-			{
-				FrameworkElement element = (FrameworkElement)current;
+    public static void BringIntoView(DependencyObject current)
+    {
+      if (current is FrameworkElement)
+      {
+        FrameworkElement element = (FrameworkElement) current;
 
-				RequestBringIntoViewEventArgs args = new RequestBringIntoViewEventArgs(current);
+        RequestBringIntoViewEventArgs args = new RequestBringIntoViewEventArgs(current);
 
-				args.Source = current;
-				args.Handled = false;
-				args.RoutedEvent = FrameworkElement.RequestBringIntoViewEvent;
+        args.Source = current;
+        args.Handled = false;
+        args.RoutedEvent = FrameworkElement.RequestBringIntoViewEvent;
 
-				((IInputElement)element).RaiseEvent(args);
+        ((IInputElement) element).RaiseEvent(args);
 
-				if(args.Handled)
-					element.BringIntoView();
+        if (args.Handled)
+        {
+          element.BringIntoView();
+        }
 
-				return;
-			}
+        return;
+      }
 
-			if(current is FrameworkContentElement)
-				throw new NotImplementedException();
+      if (current is FrameworkContentElement)
+      {
+        throw new NotImplementedException();
+      }
 
-			// TODO:
-			
+      // TODO:
+
 /*			if(current is FrameworkContentElement)
 			{
 				FrameworkContentElement element = (FrameworkContentElement)current;
@@ -83,75 +86,91 @@ namespace System.Windows
 
 				return;
 			}*/
-		}
+    }
 
-		public static DependencyObject FindLogicalNode(DependencyObject current, string name)
-		{
-			if(current is FrameworkElement)
-			{
-				FrameworkElement element = (FrameworkElement)current;
+    public static DependencyObject FindLogicalNode(DependencyObject current, string name)
+    {
+      if (current is FrameworkElement)
+      {
+        FrameworkElement element = (FrameworkElement) current;
 
-				object node = element.FindName(name);
+        object node = element.FindName(name);
 
-				if(node != null)
-					return node as DependencyObject;
+        if (node != null)
+        {
+          return node as DependencyObject;
+        }
 
-				return FindLogicalNode(element.Parent, name);
-			}
+        return FindLogicalNode(element.Parent, name);
+      }
 
-			if(current is FrameworkContentElement)
-			{
-				FrameworkContentElement element = (FrameworkContentElement)current;
+      if (current is FrameworkContentElement)
+      {
+        FrameworkContentElement element = (FrameworkContentElement) current;
 
-				object node = element.FindName(name);
+        object node = element.FindName(name);
 
-				if(node != null)
-					return node as DependencyObject;
+        if (node != null)
+        {
+          return node as DependencyObject;
+        }
 
-				return FindLogicalNode(element.Parent, name);
-			}
+        return FindLogicalNode(element.Parent, name);
+      }
 
-			return null;
-		}			
-			
-		public static IEnumerator GetChildren(DependencyObject parent)
-		{
-			if(parent is FrameworkElement)
-				return ((FrameworkElement)parent).LogicalChildren;
+      return null;
+    }
 
-			if(parent is FrameworkContentElement)
-				return ((FrameworkContentElement)parent).LogicalChildren;
+    public static IEnumerator GetChildren(DependencyObject parent)
+    {
+      if (parent is FrameworkElement)
+      {
+        return ((FrameworkElement) parent).LogicalChildren;
+      }
 
-			return NullEnumerator.Instance;
-		}
-		
-		public static IEnumerator GetChildren(FrameworkElement parent)
-		{
-			if(parent != null)
-				return parent.LogicalChildren;
+      if (parent is FrameworkContentElement)
+      {
+        return ((FrameworkContentElement) parent).LogicalChildren;
+      }
 
-			return NullEnumerator.Instance;
-		}
+      return NullEnumerator.Instance;
+    }
 
-		public static IEnumerator GetChildren(FrameworkContentElement parent)
-		{
-			if(parent != null)
-				return parent.LogicalChildren;
+    public static IEnumerator GetChildren(FrameworkElement parent)
+    {
+      if (parent != null)
+      {
+        return parent.LogicalChildren;
+      }
 
-			return NullEnumerator.Instance;
-		}
+      return NullEnumerator.Instance;
+    }
 
-		public static DependencyObject GetParent(DependencyObject child)
-		{
-			if(child is FrameworkElement)
-				return ((FrameworkElement)child).Parent;
+    public static IEnumerator GetChildren(FrameworkContentElement parent)
+    {
+      if (parent != null)
+      {
+        return parent.LogicalChildren;
+      }
 
-			if(child is FrameworkContentElement)
-				return ((FrameworkContentElement)child).Parent;
+      return NullEnumerator.Instance;
+    }
 
-			return null;
-		}
+    public static DependencyObject GetParent(DependencyObject child)
+    {
+      if (child is FrameworkElement)
+      {
+        return ((FrameworkElement) child).Parent;
+      }
 
-		#endregion Methods
-	}
+      if (child is FrameworkContentElement)
+      {
+        return ((FrameworkContentElement) child).Parent;
+      }
+
+      return null;
+    }
+
+    #endregion Methods
+  }
 }

@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum VerticalAlignment
-	{
-		Top = 0,
-		Center,
-		Bottom,
-		Stretch,
-	}
+  public enum VerticalAlignment
+  {
+    Top = 0,
+    Center,
+    Bottom,
+    Stretch,
+  }
 }

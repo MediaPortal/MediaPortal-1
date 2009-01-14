@@ -23,37 +23,35 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class AnimationClock : Clock
-	{
-		#region Constructors
+  public class AnimationClock : Clock
+  {
+    #region Constructors
 
-		protected internal AnimationClock(AnimationTimeline timeline) : base(timeline)
-		{
-		}
+    protected internal AnimationClock(AnimationTimeline timeline) : base(timeline)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue)
-		{
+    public object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue)
+    {
 //			return ((IAnimatable)Timeline).GetCurrentValue(defaultDestinationValue, this);
-			return defaultDestinationValue;
-		}
+      return defaultDestinationValue;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public new AnimationTimeline Timeline
-		{
-			get { return (AnimationTimeline)base.Timeline; }
-		}
+    public new AnimationTimeline Timeline
+    {
+      get { return (AnimationTimeline) base.Timeline; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

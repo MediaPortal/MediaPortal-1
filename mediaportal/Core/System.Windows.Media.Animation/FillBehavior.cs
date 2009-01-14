@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public enum FillBehavior
-	{
-		Stop,
-		HoldEnd,
-	}
+  public enum FillBehavior
+  {
+    Stop,
+    HoldEnd,
+  }
 }

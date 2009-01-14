@@ -23,56 +23,54 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class TemplateBindingExtension : MarkupExtension
-	{
-		#region Constructors
+  public class TemplateBindingExtension : MarkupExtension
+  {
+    #region Constructors
 
-		public TemplateBindingExtension()
-		{
-		}
+    public TemplateBindingExtension()
+    {
+    }
 
-		public TemplateBindingExtension(DependencyProperty property)
-		{
-		}
+    public TemplateBindingExtension(DependencyProperty property)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public override object ProvideValue(object target, object value)
-		{
-			throw new NotImplementedException();
-		}
+    public override object ProvideValue(object target, object value)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public object ConverterParameter
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+    public object ConverterParameter
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
 
-		public DependencyProperty Property
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+    public DependencyProperty Property
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
 
-		public IValueConverter ValueConverter
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+    public IValueConverter ValueConverter
+    {
+      get { throw new NotImplementedException(); }
+      set { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

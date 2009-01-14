@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate void RoutedEventHandler(RoutedEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void RoutedEventHandler(RoutedEventArgs e);
+
+  #endregion Delegates
 }

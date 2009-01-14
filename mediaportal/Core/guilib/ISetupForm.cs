@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -36,14 +34,14 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public interface ISetupForm
   {
-    string PluginName();  // Returns the name of the plugin which is shown in the plugin menu
+    string PluginName(); // Returns the name of the plugin which is shown in the plugin menu
     string Description(); // Returns the description of the plugin is shown in the plugin menu
-    string Author();      // Returns the author of the plugin which is shown in the plugin menu
-    void ShowPlugin();  // show the setup dialog
-    bool CanEnable();   // Indicates whether plugin can be enabled/disabled
+    string Author(); // Returns the author of the plugin which is shown in the plugin menu
+    void ShowPlugin(); // show the setup dialog
+    bool CanEnable(); // Indicates whether plugin can be enabled/disabled
     int GetWindowId(); // get ID of windowplugin belonging to this setup
     bool DefaultEnabled(); // Indicates if plugin is enabled by default;
-    bool HasSetup();    // indicates if a plugin has its own setup screen
+    bool HasSetup(); // indicates if a plugin has its own setup screen
 
     /// <summary>
     /// If the plugin should have its own button on the home menu of Mediaportal then it
@@ -56,7 +54,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="strPictureImage">subpicture for the button or empty for none</param>
     /// <returns>true  : plugin needs its own button on home
     ///          false : plugin does not need its own button on home</returns>
-    bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage);
+    bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                 out string strPictureImage);
   }
 
   /// <summary>

@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum Orientation
-	{
-		#region Values
+  public enum Orientation
+  {
+    #region Values
 
-		Horizontal,
-		Vertical,
+    Horizontal,
+    Vertical,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

@@ -25,9 +25,10 @@
 
 namespace System.Windows.Input
 {
-	#region Delegate
 
-	public delegate void MouseButtonEventHandler(object sender, MouseButtonEventArgs e);
+  #region Delegate
 
-	#endregion Delegate
+  public delegate void MouseButtonEventHandler(object sender, MouseButtonEventArgs e);
+
+  #endregion Delegate
 }

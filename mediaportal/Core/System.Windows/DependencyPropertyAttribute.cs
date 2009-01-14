@@ -23,28 +23,25 @@
 
 #endregion
 
-using System;
-using System.Reflection;
-
 namespace System.Windows
 {
-	[AttributeUsage(AttributeTargets.Property)]
-	public sealed class DependencyPropertyAttribute : Attribute
-	{
-		#region Constructors
+  [AttributeUsage(AttributeTargets.Property)]
+  public sealed class DependencyPropertyAttribute : Attribute
+  {
+    #region Constructors
 
-		public DependencyPropertyAttribute()
-		{
-		}
+    public DependencyPropertyAttribute()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Fields
+    #region Fields
 
-		public string				Name;
-		public object				DefaultValue = DependencyProperty.UnsetValue;
-		public bool					ReadOnly = false;
+    public string Name;
+    public object DefaultValue = DependencyProperty.UnsetValue;
+    public bool ReadOnly = false;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

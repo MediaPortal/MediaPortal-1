@@ -23,46 +23,44 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows
 {
-	public abstract class Visual : DependencyObject
-	{
-		#region Constructors
+  public abstract class Visual : DependencyObject
+  {
+    #region Constructors
 
-		protected Visual()
-		{
-		}
+    protected Visual()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved, int indexAffected)
-		{
-		}
+    protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved,
+                                                            int indexAffected)
+    {
+    }
 
-		protected internal virtual void OnVisualParentChanged(Visual oldParent)
-		{
-		}
+    protected internal virtual void OnVisualParentChanged(Visual oldParent)
+    {
+    }
 
-		#endregion Methods
-			
-		#region Properties
+    #endregion Methods
 
-		protected internal Visual VisualParent
-		{
-			get { return _visualParent; }
-		}
+    #region Properties
 
-		#endregion Properties
+    protected internal Visual VisualParent
+    {
+      get { return _visualParent; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		Visual						_visualParent = null;
+    #region Fields
 
-		#endregion Fields
-	}
+    private Visual _visualParent = null;
+
+    #endregion Fields
+  }
 }

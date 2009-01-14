@@ -23,16 +23,14 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Automation
 {
-	public interface IInvokeProvider
-	{
-		#region Methods
+  public interface IInvokeProvider
+  {
+    #region Methods
 
-		void Invoke();
+    void Invoke();
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

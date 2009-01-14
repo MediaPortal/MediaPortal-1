@@ -23,13 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Diagnostics;
-using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 
 namespace MediaPortal.GUI.Library
 {
@@ -38,31 +34,31 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIButtonControl : GUIControl
   {
-    [XMLSkinElement("textureFocus")]                  protected string _focusedTextureName = "";
-    [XMLSkinElement("textureNoFocus")]                protected string _nonFocusedTextureName = "";
-    [XMLSkinElement("font")]                          protected string _fontName;
-    [XMLSkinElement("label")]                         protected string _label = "";
-    [XMLSkinElement("textcolor")]                     protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
-    [XMLSkinElement("disabledcolor")]                 protected long _disabledColor = 0xFF606060;
-    [XMLSkinElement("hyperlink")]                     protected int _hyperLinkWindowId = -1;
-    [XMLSkinElement("action")]                        protected int _actionId = -1;
-    [XMLSkinElement("script")]                        protected string _scriptAction = "";
-    [XMLSkinElement("textXOff")]                      protected int _textOffsetX = 0;
-    [XMLSkinElement("textYOff")]                      protected int _textOffsetY = 0;
-    [XMLSkinElement("textalign")]                     protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
-    [XMLSkinElement("application")]                   protected string _application = "";
-    [XMLSkinElement("arguments")]                     protected string _arguments = "";
-    [XMLSkinElement("hover")]                         protected string _hoverFilename = string.Empty;
-    [XMLSkinElement("hoverX")]                        protected int _hoverX;
-    [XMLSkinElement("hoverY")]                        protected int _hoverY;
-    [XMLSkinElement("hoverWidth")]                    protected int _hoverWidth;
-    [XMLSkinElement("hoverHeight")]                   protected int _hoverHeight;
-				
+    [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
+    [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("font")] protected string _fontName;
+    [XMLSkinElement("label")] protected string _label = "";
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("action")] protected int _actionId = -1;
+    [XMLSkinElement("script")] protected string _scriptAction = "";
+    [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("application")] protected string _application = "";
+    [XMLSkinElement("arguments")] protected string _arguments = "";
+    [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
+    [XMLSkinElement("hoverX")] protected int _hoverX;
+    [XMLSkinElement("hoverY")] protected int _hoverY;
+    [XMLSkinElement("hoverWidth")] protected int _hoverWidth;
+    [XMLSkinElement("hoverHeight")] protected int _hoverHeight;
+
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
-		protected GUIAnimation _imageNonFocused = null;
-		protected GUIAnimation _hoverImage = null;
+    protected GUIAnimation _imageNonFocused = null;
+    protected GUIAnimation _hoverImage = null;
     protected GUILabelControl _labelControl = null;
 
     public GUIButtonControl(int dwParentID)
@@ -81,7 +77,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
-    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus)
+    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                            string strTextureFocus, string strTextureNoFocus)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _focusedTextureName = strTextureFocus;
@@ -90,7 +87,8 @@ namespace MediaPortal.GUI.Library
     }
 
     // allow overriding the textcolor if created by GUIMenuControl
-    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus)
+    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                            long ltextColor, long ltextcolorNoFocus, string strTextureFocus, string strTextureNoFocus)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _focusedTextureName = strTextureFocus;
@@ -107,35 +105,39 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-			_imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName);
+      _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                           _focusedTextureName);
       _imageFocused.ParentControl = this;
-			_imageFocused.Filtering = false;
+      _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
-			_imageFocused.ColourDiffuse = ColourDiffuse;
+      _imageFocused.ColourDiffuse = ColourDiffuse;
 
-			_imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName);
+      _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                              _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
-			_imageNonFocused.Filtering = false;
+      _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
-			_imageNonFocused.ColourDiffuse = ColourDiffuse;
+      _imageNonFocused.ColourDiffuse = ColourDiffuse;
 
       if (_hoverFilename != string.Empty)
       {
-         GUIGraphicsContext.ScaleRectToScreenResolution(ref _hoverX, ref _hoverY, ref _hoverWidth, ref _hoverHeight);
-				 _hoverImage = LoadAnimationControl(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename);
+        GUIGraphicsContext.ScaleRectToScreenResolution(ref _hoverX, ref _hoverY, ref _hoverWidth, ref _hoverHeight);
+        _hoverImage = LoadAnimationControl(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight,
+                                           _hoverFilename);
         _hoverImage.ParentControl = this;
-				_hoverImage.DimColor = DimColor;
-				_hoverImage.ColourDiffuse = ColourDiffuse;
+        _hoverImage.DimColor = DimColor;
+        _hoverImage.ColourDiffuse = ColourDiffuse;
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
-      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
+      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                          _label, _textColor, Alignment.ALIGN_LEFT, false);
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
     }
 
-		/// <summary>
+    /// <summary>
     /// This method gets called when the control is created and all properties has been set
     /// It allows the control to scale itself to the current screen resolution
     /// </summary>
@@ -148,23 +150,26 @@ namespace MediaPortal.GUI.Library
 
     public override bool Focus
     {
-      get
-      {
-        return IsFocused;
-      }
+      get { return IsFocused; }
       set
       {
         if (value != IsFocused)
         {
           if (value == true)
-					{
-						if (_imageFocused != null) _imageFocused.Begin();
-						GUIPropertyManager.SetProperty("#highlightedbutton", Label);
-					}
-					else
-					{
-						if (_imageNonFocused != null) _imageNonFocused.Begin();
-					}
+          {
+            if (_imageFocused != null)
+            {
+              _imageFocused.Begin();
+            }
+            GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+          }
+          else
+          {
+            if (_imageNonFocused != null)
+            {
+              _imageNonFocused.Begin();
+            }
+          }
         }
 
         base.Focus = value;
@@ -193,7 +198,9 @@ namespace MediaPortal.GUI.Library
         _imageFocused.Render(timePassed);
 
         if (_hoverImage != null)
+        {
           _hoverImage.Render(timePassed);
+        }
       }
       else
       {
@@ -201,7 +208,7 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      int labelWidth = _width - 2 * _textOffsetX;
+      int labelWidth = _width - 2*_textOffsetX;
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -226,7 +233,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          x = _positionX + ((_width/2) - (labelWidth/2));
           break;
       }
       _labelControl.SetPosition(x, _textOffsetY + _positionY);
@@ -260,13 +267,13 @@ namespace MediaPortal.GUI.Library
             //button should start an external application, so start it
             Process proc = new Process();
 
-            string workingFolder = System.IO.Path.GetFullPath(_application);
-            string fileName = System.IO.Path.GetFileName(_application);
+            string workingFolder = Path.GetFullPath(_application);
+            string fileName = Path.GetFileName(_application);
             workingFolder = workingFolder.Substring(0, workingFolder.Length - (fileName.Length + 1));
             proc.StartInfo.FileName = fileName;
             proc.StartInfo.WorkingDirectory = workingFolder;
             proc.StartInfo.Arguments = _arguments;
-            proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
             proc.StartInfo.CreateNoWindow = true;
             proc.Start();
             //proc.WaitForExit();
@@ -275,13 +282,13 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
             return;
           }
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -292,8 +299,11 @@ namespace MediaPortal.GUI.Library
             // if we got subitems, then change the label of the control to the next
             //subitem
             SelectedItem++;
-            if (SelectedItem >= SubItemCount) SelectedItem = 0;
-            Label = (string)GetSubItem(SelectedItem);
+            if (SelectedItem >= SubItemCount)
+            {
+              SelectedItem = 0;
+            }
+            Label = (string) GetSubItem(SelectedItem);
           }
 
           // send a message to anyone interested 
@@ -312,18 +322,23 @@ namespace MediaPortal.GUI.Library
     /// <returns>true if the message was handled, false if it wasnt</returns>
     public override bool OnMessage(GUIMessage message)
     {
-			// Handle the GUI_MSG_LABEL_SET message
+      // Handle the GUI_MSG_LABEL_SET message
       if (message.TargetControlId == GetID)
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
           if (message.Label != null)
+          {
             Label = message.Label;
+          }
           return true;
         }
       }
       // Let the base class handle the other messages
-      if (base.OnMessage(message)) return true;
+      if (base.OnMessage(message))
+      {
+        return true;
+      }
       return false;
     }
 
@@ -337,7 +352,9 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.PreAllocResources();
 
       if (_hoverImage != null)
+      {
         _hoverImage.PreAllocResources();
+      }
     }
 
     /// <summary>
@@ -351,14 +368,16 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.AllocResources();
 
       if (_hoverImage != null)
+      {
         _hoverImage.AllocResources();
+      }
 
       _width = _imageFocused.Width;
       _height = _imageFocused.Height;
 
       if (SubItemCount > 0)
       {
-        Label = (string)GetSubItem(SelectedItem);
+        Label = (string) GetSubItem(SelectedItem);
       }
       _labelControl.Width = _width;
       _labelControl.Height = _height;
@@ -376,7 +395,9 @@ namespace MediaPortal.GUI.Library
       _labelControl.FreeResources();
 
       if (_hoverImage != null)
+      {
         _hoverImage.FreeResources();
+      }
     }
 
     /// <summary>
@@ -402,7 +423,9 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SetAlpha(dwAlpha);
 
       if (_hoverImage != null)
+      {
         _hoverImage.SetAlpha(dwAlpha);
+      }
     }
 
     /// <summary>
@@ -419,7 +442,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureNoFocusName
     {
-			get { return _nonFocusedTextureName; } //_imageNonFocused.FileName; }
+      get { return _nonFocusedTextureName; } //_imageNonFocused.FileName; }
     }
 
     /// <summary>
@@ -427,14 +450,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureFocusName
     {
-			get { return _focusedTextureName; }  //_imageFocused.FileName; }
+      get { return _focusedTextureName; } //_imageFocused.FileName; }
     }
 
     /// <summary>
     /// Get the filename of the hover texture when the GUIButtonControl.
     /// </summary>
-    public string HoverFilename{
-      get { return _hoverFilename; }  
+    public string HoverFilename
+    {
+      get { return _hoverFilename; }
     }
 
     /// <summary>
@@ -449,7 +473,8 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/Set the color of the text on the GUIButtonControl when it has no focus. 
     /// </summary>
-    public long TextColorNoFocus {
+    public long TextColorNoFocus
+    {
       get { return _textColorNoFocus; }
       set { _textColorNoFocus = value; }
     }
@@ -463,7 +488,10 @@ namespace MediaPortal.GUI.Library
       get { return _fontName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _fontName = value;
         _labelControl.FontName = _fontName;
       }
@@ -477,8 +505,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwColor">The font color.</param>
     public void SetLabel(string strFontName, string strLabel, long dwColor)
     {
-      if (strFontName == null) return;
-      if (strLabel == null) return;
+      if (strFontName == null)
+      {
+        return;
+      }
+      if (strLabel == null)
+      {
+        return;
+      }
       Label = strLabel;
       _textColor = dwColor;
       _fontName = strFontName;
@@ -496,7 +530,10 @@ namespace MediaPortal.GUI.Library
       get { return _label; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
 
         _label = value;
         _labelControl.Label = _label;
@@ -520,7 +557,10 @@ namespace MediaPortal.GUI.Library
       get { return _scriptAction; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _scriptAction = value;
       }
     }
@@ -532,7 +572,6 @@ namespace MediaPortal.GUI.Library
     {
       get { return _actionId; }
       set { _actionId = value; }
-
     }
 
     /// <summary>
@@ -543,10 +582,14 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetX; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         _textOffsetX = value;
       }
     }
+
     /// <summary>
     /// Get/set the Y-offset of the label.
     /// </summary>
@@ -555,7 +598,10 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetY; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         _textOffsetY = value;
       }
     }
@@ -563,10 +609,15 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the X-Position of the hover.
     /// </summary>
-    public int HoverX {
+    public int HoverX
+    {
       get { return _hoverX; }
-      set {
-        if (value < 0) return;
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
         _hoverX = value;
       }
     }
@@ -574,10 +625,15 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the Y-Position of the hover.
     /// </summary>
-    public int HoverY {
+    public int HoverY
+    {
       get { return _hoverY; }
-      set {
-        if (value < 0) return;
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
         _hoverY = value;
       }
     }
@@ -585,10 +641,15 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the width of the hover.
     /// </summary>
-    public int HoverWidth {
+    public int HoverWidth
+    {
       get { return _hoverWidth; }
-      set {
-        if (value < 0) return;
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
         _hoverWidth = value;
       }
     }
@@ -596,15 +657,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the height of the hover.
     /// </summary>
-    public int HoverHeight {
+    public int HoverHeight
+    {
       get { return _hoverHeight; }
-      set {
-        if (value < 0) return;
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
         _hoverHeight = value;
       }
     }
 
-    public GUIControl.Alignment TextAlignment
+    public Alignment TextAlignment
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
@@ -643,7 +709,10 @@ namespace MediaPortal.GUI.Library
       get { return _application; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _application = value;
       }
     }
@@ -657,7 +726,10 @@ namespace MediaPortal.GUI.Library
       get { return _arguments; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _arguments = value;
       }
     }
@@ -674,23 +746,34 @@ namespace MediaPortal.GUI.Library
       get { return _selectedItem; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         if (SubItemCount > 0)
         {
           _selectedItem = value;
-          if (_selectedItem < 0 || _selectedItem >= SubItemCount) _selectedItem = 0;
-          Label = (string)GetSubItem(_selectedItem);
+          if (_selectedItem < 0 || _selectedItem >= SubItemCount)
+          {
+            _selectedItem = 0;
+          }
+          Label = (string) GetSubItem(_selectedItem);
         }
-        else _selectedItem = 0;
+        else
+        {
+          _selectedItem = 0;
+        }
       }
     }
 
-    void DoContextMenu()
+    private void DoContextMenu()
     {
-      IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      IDialogbox dialog = (IDialogbox) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
 
       if (dialog == null)
+      {
         return;
+      }
 
       dialog.Reset();
       dialog.SetHeading(924); // menu
@@ -698,13 +781,17 @@ namespace MediaPortal.GUI.Library
       foreach (object item in ContextMenu.Items)
       {
         if (item is MenuItem)
-          dialog.Add(((MenuItem)item).Header as string);
+        {
+          dialog.Add(((MenuItem) item).Header as string);
+        }
       }
 
       dialog.DoModal(ParentID);
 
       if (dialog.SelectedId == -1)
+      {
         return;
+      }
     }
 
     public override int DimColor
@@ -713,11 +800,19 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_imageFocused != null) _imageFocused.DimColor = value;
-        if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
-        if (_labelControl != null) _labelControl.DimColor = value;
+        if (_imageFocused != null)
+        {
+          _imageFocused.DimColor = value;
+        }
+        if (_imageNonFocused != null)
+        {
+          _imageNonFocused.DimColor = value;
+        }
+        if (_labelControl != null)
+        {
+          _labelControl.DimColor = value;
+        }
       }
     }
-
   }
 }

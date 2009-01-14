@@ -25,152 +25,154 @@
 
 using System;
 using System.Windows;
-
 using System.Windows.Controls;
-using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public class StackLayout : ILayout
-	{
-		#region Constructors
+  public class StackLayout : ILayout
+  {
+    #region Constructors
 
-		public StackLayout()
-		{
-		}
+    public StackLayout()
+    {
+    }
 
-		public StackLayout(int spacing)
-		{
-			_spacing = new Size(Math.Max(0, spacing), Math.Max(0, spacing));
-		}
+    public StackLayout(int spacing)
+    {
+      _spacing = new Size(Math.Max(0, spacing), Math.Max(0, spacing));
+    }
 
-		public StackLayout(int spacing, Orientation orientation)
-		{
-			_spacing = new Size(Math.Max(0, spacing), Math.Max(0, spacing));
-			_orientation = orientation;
-		}
+    public StackLayout(int spacing, Orientation orientation)
+    {
+      _spacing = new Size(Math.Max(0, spacing), Math.Max(0, spacing));
+      _orientation = orientation;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
-		{
-			Rect rect = new Rect(x, y, element.Width, element.Height);
-            
-			switch(element.HorizontalAlignment)
-			{
-				case HorizontalAlignment.Center:
-					rect.X = x + ((w - element.Width) / 2);
-					break;
-				case HorizontalAlignment.Right:
-					rect.X = x + w  - element.Width;
-					break;
-				case HorizontalAlignment.Stretch:
-					rect.Width = w;
-					break;
-			}
+    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    {
+      Rect rect = new Rect(x, y, element.Width, element.Height);
 
-			switch(element.VerticalAlignment)
-			{
-				case VerticalAlignment.Center:
-					rect.Y = y + ((h - element.Height) / 2);
-					break;
-				case VerticalAlignment.Bottom:
-					rect.Y = y + h  - element.Height;
-					break;
-				case VerticalAlignment.Stretch:
-					rect.Height = h;
-					break;
-			}
-		
-			element.Arrange(rect);
-		}
+      switch (element.HorizontalAlignment)
+      {
+        case HorizontalAlignment.Center:
+          rect.X = x + ((w - element.Width)/2);
+          break;
+        case HorizontalAlignment.Right:
+          rect.X = x + w - element.Width;
+          break;
+        case HorizontalAlignment.Stretch:
+          rect.Width = w;
+          break;
+      }
 
-		public void Arrange(GUIGroup element)
-		{
-			Thickness t = element.Margin;
-			Point l = element.Location;
+      switch (element.VerticalAlignment)
+      {
+        case VerticalAlignment.Center:
+          rect.Y = y + ((h - element.Height)/2);
+          break;
+        case VerticalAlignment.Bottom:
+          rect.Y = y + h - element.Height;
+          break;
+        case VerticalAlignment.Stretch:
+          rect.Height = h;
+          break;
+      }
 
-			double x = element.Location.X + t.Left;
-			double y = element.Location.Y + t.Top;
-			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
-			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
+      element.Arrange(rect);
+    }
 
-			foreach(FrameworkElement child in element.Children)
-			{
-				if(child.Visibility == Visibility.Collapsed)
-					continue;
+    public void Arrange(GUIGroup element)
+    {
+      Thickness t = element.Margin;
+      Point l = element.Location;
 
-				if(_orientation == Orientation.Horizontal)
-				{
-					ApplyAlignment(child, t, x, y, w = child.Width, h);
+      double x = element.Location.X + t.Left;
+      double y = element.Location.Y + t.Top;
+      double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
+      double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-					x += w + _spacing.Width;
+      foreach (FrameworkElement child in element.Children)
+      {
+        if (child.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-					continue;
-				}
+        if (_orientation == Orientation.Horizontal)
+        {
+          ApplyAlignment(child, t, x, y, w = child.Width, h);
 
-				ApplyAlignment(child, t, x, y, w, h = child.Height);
+          x += w + _spacing.Width;
 
-				y += h + _spacing.Height;
-			}
-		}
+          continue;
+        }
 
-		public Size Measure(GUIGroup element, Size availableSize)
-		{
-			double w = 0;
-			double h = 0;
+        ApplyAlignment(child, t, x, y, w, h = child.Height);
 
-			foreach(FrameworkElement child in element.Children)
-			{
-				if(child.Visibility == Visibility.Collapsed)
-					continue;
+        y += h + _spacing.Height;
+      }
+    }
 
-				child.Measure(availableSize);
+    public Size Measure(GUIGroup element, Size availableSize)
+    {
+      double w = 0;
+      double h = 0;
 
-				w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + _spacing.Width;
-				h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
-			}
+      foreach (FrameworkElement child in element.Children)
+      {
+        if (child.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-			Thickness t = element.Margin;
+        child.Measure(availableSize);
 
-			_size.Width = w + t.Width;
-			_size.Height = h + t.Height;
+        w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + _spacing.Width;
+        h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
+      }
 
-			return _size;
-		}
+      Thickness t = element.Margin;
 
-		#endregion Methods
+      _size.Width = w + t.Width;
+      _size.Height = h + t.Height;
 
-		#region Properties
+      return _size;
+    }
 
-		public Orientation Orientation
-		{
-			get { return _orientation; }
-			set { _orientation = value; }
-		}
+    #endregion Methods
 
-		public Size Size
-		{
-			get { return _size; }
-		}
+    #region Properties
 
-		public Size Spacing
-		{
-			get { return _spacing; }
-			set { _spacing = value; }
-		}
+    public Orientation Orientation
+    {
+      get { return _orientation; }
+      set { _orientation = value; }
+    }
 
-		#endregion Properties
+    public Size Size
+    {
+      get { return _size; }
+    }
 
-		#region Fields
+    public Size Spacing
+    {
+      get { return _spacing; }
+      set { _spacing = value; }
+    }
 
-		Orientation					_orientation = Orientation.Vertical;
-		Size						_spacing = Size.Empty;
-		Size						_size = Size.Empty;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private Orientation _orientation = Orientation.Vertical;
+    private Size _spacing = Size.Empty;
+    private Size _size = Size.Empty;
+
+    #endregion Fields
+  }
 }

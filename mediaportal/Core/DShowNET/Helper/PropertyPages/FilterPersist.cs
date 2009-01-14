@@ -30,49 +30,48 @@ using MediaPortal.GUI.Library;
 
 namespace DShowNET.Helper
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class FilterPersist
+  /// <summary>
+  /// 
+  /// </summary>
+  public class FilterPersist
   {
-    ICaptureGraphBuilder2		 m_captureGraphBuilder;
-    IBaseFilter              m_videoCompressorFilter;
-    IBaseFilter              m_audioCompressorFilter;
+    private ICaptureGraphBuilder2 m_captureGraphBuilder;
+    private IBaseFilter m_videoCompressorFilter;
+    private IBaseFilter m_audioCompressorFilter;
 
-		public FilterPersist(ICaptureGraphBuilder2		captureGraphBuilder,
-                          IBaseFilter              videoCompressorFilter,
-                          IBaseFilter              audioCompressorFilter)
-		{
-
-
-      m_captureGraphBuilder=captureGraphBuilder;
-      m_videoCompressorFilter=videoCompressorFilter;
-      m_audioCompressorFilter=audioCompressorFilter;
-		}
+    public FilterPersist(ICaptureGraphBuilder2 captureGraphBuilder,
+                         IBaseFilter videoCompressorFilter,
+                         IBaseFilter audioCompressorFilter)
+    {
+      m_captureGraphBuilder = captureGraphBuilder;
+      m_videoCompressorFilter = videoCompressorFilter;
+      m_audioCompressorFilter = audioCompressorFilter;
+    }
 
 
     public void LoadSettings(int ID)
     {
-      Log.Info("Load settings card:{0}",ID);
+      Log.Info("Load settings card:{0}", ID);
       try
       {
-        PropertyPageCollection propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
+        PropertyPageCollection propertyPages = new PropertyPageCollection(m_captureGraphBuilder, m_videoCompressorFilter,
+                                                                          m_audioCompressorFilter);
 
-        foreach ( PropertyPage p in propertyPages )
+        foreach (PropertyPage p in propertyPages)
         {
-          if ( p.SupportsPersisting )
+          if (p.SupportsPersisting)
           {
-            string strFName=String.Format(@"filters\card{0}_{1}.dat",ID, p.Name);
-              using (FileStream fs = new FileStream(strFName, FileMode.Open, FileAccess.Read))
-              {
-                byte[] byData = new byte[fs.Length];
-                fs.Read(byData,0,(int)fs.Length);
-                p.State=byData;
-              }
+            string strFName = String.Format(@"filters\card{0}_{1}.dat", ID, p.Name);
+            using (FileStream fs = new FileStream(strFName, FileMode.Open, FileAccess.Read))
+            {
+              byte[] byData = new byte[fs.Length];
+              fs.Read(byData, 0, (int) fs.Length);
+              p.State = byData;
             }
           }
+        }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
@@ -83,26 +82,27 @@ namespace DShowNET.Helper
     {
       try
       {
-        Log.Info("Save settings card:{0}",ID);
-        System.IO.Directory.CreateDirectory("filters");
-        PropertyPageCollection  propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
-        foreach ( PropertyPage p in propertyPages )
+        Log.Info("Save settings card:{0}", ID);
+        Directory.CreateDirectory("filters");
+        PropertyPageCollection propertyPages = new PropertyPageCollection(m_captureGraphBuilder, m_videoCompressorFilter,
+                                                                          m_audioCompressorFilter);
+        foreach (PropertyPage p in propertyPages)
         {
-          if ( p.SupportsPersisting )
+          if (p.SupportsPersisting)
           {
-            string strFName=String.Format(@"filters\card{0}_{1}.dat",ID,p.Name);
-              using (FileStream fs = new FileStream(strFName, FileMode.Create, FileAccess.Write))
-              {
-                byte[] byData = p.State;
-                fs.Write(byData,0,byData.Length);
-              }
+            string strFName = String.Format(@"filters\card{0}_{1}.dat", ID, p.Name);
+            using (FileStream fs = new FileStream(strFName, FileMode.Create, FileAccess.Write))
+            {
+              byte[] byData = p.State;
+              fs.Write(byData, 0, byData.Length);
+            }
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Info("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
     }
-	}
+  }
 }

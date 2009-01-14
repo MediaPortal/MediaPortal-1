@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum StretchDirection
-	{
-		Both,
-		DownOnly,
-		UpOnly,
-	}
+  public enum StretchDirection
+  {
+    Both,
+    DownOnly,
+    UpOnly,
+  }
 }

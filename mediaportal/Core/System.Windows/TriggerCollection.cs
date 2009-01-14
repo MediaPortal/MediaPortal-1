@@ -23,107 +23,124 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class TriggerCollection : CollectionBase, IAddChild
-	{
-		#region Constructors
+  public sealed class TriggerCollection : CollectionBase, IAddChild
+  {
+    #region Constructors
 
-		public TriggerCollection()
-		{
-		}
+    public TriggerCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(Trigger trigger)
-		{
-			if(trigger == null)
-				throw new ArgumentNullException("trigger");
+    public void Add(Trigger trigger)
+    {
+      if (trigger == null)
+      {
+        throw new ArgumentNullException("trigger");
+      }
 
-			List.Add(trigger);
-		}
+      List.Add(trigger);
+    }
 
-		public bool Contains(Trigger trigger)
-		{
-			if(trigger == null)
-				throw new ArgumentNullException("trigger");
+    public bool Contains(Trigger trigger)
+    {
+      if (trigger == null)
+      {
+        throw new ArgumentNullException("trigger");
+      }
 
-			return List.Contains(trigger);
-		}
+      return List.Contains(trigger);
+    }
 
-		public void CopyTo(Trigger[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Trigger[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public TriggerCollection GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
-			
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    public TriggerCollection GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-			if(child is TriggerBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerBase)));
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			List.Add((TriggerBase)child);
-		}
+      if (child is TriggerBase == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (TriggerBase)));
+      }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+      List.Add((TriggerBase) child);
+    }
 
-		public int IndexOf(Trigger trigger)
-		{
-			if(trigger == null)
-				throw new ArgumentNullException("trigger");
+    void IAddChild.AddText(string text)
+    {
+    }
 
-			return List.IndexOf(trigger);
-		}
+    public int IndexOf(Trigger trigger)
+    {
+      if (trigger == null)
+      {
+        throw new ArgumentNullException("trigger");
+      }
 
-		public void Insert(int index, Trigger trigger)
-		{
-			if(trigger == null)
-				throw new ArgumentNullException("trigger");
+      return List.IndexOf(trigger);
+    }
 
-			List.Insert(index, trigger);
-		}
+    public void Insert(int index, Trigger trigger)
+    {
+      if (trigger == null)
+      {
+        throw new ArgumentNullException("trigger");
+      }
 
-		public bool Remove(Trigger trigger)
-		{
-			if(trigger == null)
-				throw new ArgumentNullException("trigger");
-			
-			if(List.Contains(trigger) == false)
-				return false;
+      List.Insert(index, trigger);
+    }
 
-			List.Remove(trigger);
+    public bool Remove(Trigger trigger)
+    {
+      if (trigger == null)
+      {
+        throw new ArgumentNullException("trigger");
+      }
 
-			return true;
-		}
+      if (List.Contains(trigger) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(trigger);
 
-		#region Properties
+      return true;
+    }
 
-		public Trigger this[int index]
-		{ 
-			get { return (Trigger)List[index]; }
-			set { List[index] = value; }
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    public Trigger this[int index]
+    {
+      get { return (Trigger) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

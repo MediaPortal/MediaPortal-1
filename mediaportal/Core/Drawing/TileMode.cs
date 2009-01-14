@@ -23,16 +23,14 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum TileMode
-	{
-		None = 0,
-		Tile,
-		FlipX,
-		FlipXY,
-		FlipY,
-	}
+  public enum TileMode
+  {
+    None = 0,
+    Tile,
+    FlipX,
+    FlipXY,
+    FlipY,
+  }
 }

@@ -23,79 +23,94 @@
 
 #endregion
 
-using System;
-using System.Drawing;
-
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
 namespace MediaPortal.Drawing.Transforms
 {
-	public sealed class ScaleTransform : Transform 
-	{
-		#region Constructors
+  public sealed class ScaleTransform : Transform
+  {
+    #region Constructors
 
-		public ScaleTransform()
-		{
-		}
+    public ScaleTransform()
+    {
+    }
 
-		public ScaleTransform(double scaleX, double scaleY)
-		{
-			_scaleX = scaleX;
-			_scaleY = scaleY;
-		}
+    public ScaleTransform(double scaleX, double scaleY)
+    {
+      _scaleX = scaleX;
+      _scaleY = scaleY;
+    }
 
-		public ScaleTransform(double scaleX, double scaleY, Point center)
-		{
-			_scaleX = scaleX;
-			_scaleY = scaleY;
-			_center = center;
-		}
+    public ScaleTransform(double scaleX, double scaleY, Point center)
+    {
+      _scaleX = scaleX;
+      _scaleY = scaleY;
+      _center = center;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override Matrix PrepareValue()
-		{
-			Matrix matrix = Matrix.Translation((float)-_center.X, (float)-_center.Y, 0);
+    protected override Matrix PrepareValue()
+    {
+      Matrix matrix = Matrix.Translation((float) -_center.X, (float) -_center.Y, 0);
 
-			matrix *= Matrix.Scaling((float)_scaleX, (float)_scaleY, 1);
-			matrix *= Matrix.Translation((float)_center.X, (float)_center.Y, 0);
+      matrix *= Matrix.Scaling((float) _scaleX, (float) _scaleY, 1);
+      matrix *= Matrix.Translation((float) _center.X, (float) _center.Y, 0);
 
-			return matrix;
-		}
+      return matrix;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Point Center
-		{
-			get { return _center; }
-			set { if(Point.Equals(_center, value) == false) { _center = value; RaiseChanged(); } }
-		}
+    public Point Center
+    {
+      get { return _center; }
+      set
+      {
+        if (Equals(_center, value) == false)
+        {
+          _center = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public double ScaleX
-		{
-			get { return _scaleX; }
-			set { if(double.Equals(_scaleX, value) == false) { _scaleX = value; RaiseChanged(); } }
-		}
+    public double ScaleX
+    {
+      get { return _scaleX; }
+      set
+      {
+        if (Equals(_scaleX, value) == false)
+        {
+          _scaleX = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public double ScaleY
-		{
-			get { return _scaleY; }
-			set { if(double.Equals(_scaleY, value) == false) { _scaleY = value; RaiseChanged(); } }
-		}
+    public double ScaleY
+    {
+      get { return _scaleY; }
+      set
+      {
+        if (Equals(_scaleY, value) == false)
+        {
+          _scaleY = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Point						_center = Point.Empty;
-		double						_scaleX;
-		double						_scaleY;
+    private Point _center = Point.Empty;
+    private double _scaleX;
+    private double _scaleY;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

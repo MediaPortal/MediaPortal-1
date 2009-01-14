@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum GradientSpreadMethod
-	{
-		Pad,
-		Reflect,
-		Repeat,
-	}
+  public enum GradientSpreadMethod
+  {
+    Pad,
+    Reflect,
+    Repeat,
+  }
 }

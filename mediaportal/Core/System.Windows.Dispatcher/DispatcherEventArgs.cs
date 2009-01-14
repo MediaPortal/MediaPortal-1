@@ -25,30 +25,30 @@
 
 namespace System.Windows.Dispatcher
 {
-	public class DispatcherEventArgs : EventArgs
-	{
-		#region Constructors
+  public class DispatcherEventArgs : EventArgs
+  {
+    #region Constructors
 
-		internal DispatcherEventArgs(Dispatcher dispatcher)
-		{
-			_dispatcher = dispatcher;
-		}
+    internal DispatcherEventArgs(Dispatcher dispatcher)
+    {
+      _dispatcher = dispatcher;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Dispatcher Dispatcher
-		{
-			get { return _dispatcher; }
-		}
+    public Dispatcher Dispatcher
+    {
+      get { return _dispatcher; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Dispatcher					_dispatcher;
+    private Dispatcher _dispatcher;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

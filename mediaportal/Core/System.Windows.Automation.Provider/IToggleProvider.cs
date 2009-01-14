@@ -23,29 +23,25 @@
 
 #endregion
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Automation.Provider
 {
-	[ComVisibleAttribute(true)] 
-	[InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)] 
-	[GuidAttribute("56d00bd0-c4f4-433c-a836-1a52a57e0892")] 
-	public interface IToggleProvider
-	{
-		#region Methods
-		
-		void Toggle();
-		
-		#endregion Methods
+  [ComVisible(true)]
+  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Guid("56d00bd0-c4f4-433c-a836-1a52a57e0892")]
+  public interface IToggleProvider
+  {
+    #region Methods
 
-		#region Properties
-		
-		ToggleState ToggleState
-		{
-			get;
-		}
+    void Toggle();
 
-		#endregion Properties
-	}
+    #endregion Methods
+
+    #region Properties
+
+    ToggleState ToggleState { get; }
+
+    #endregion Properties
+  }
 }

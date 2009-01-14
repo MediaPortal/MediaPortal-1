@@ -24,26 +24,24 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
+using System.Threading;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
-using System.Threading;
-using System.Collections.Generic;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
   public class VideoPlayerVMR9 : VideoPlayerVMR7
   {
-    VMR9Util Vmr9 = null;
+    private VMR9Util Vmr9 = null;
+
     public VideoPlayerVMR9()
     {
       _mediaType = g_Player.MediaType.Video;
@@ -74,7 +72,7 @@ namespace MediaPortal.Player
       rect.right = GUIGraphicsContext.form.Width;
       try
       {
-        graphBuilder = (IGraphBuilder)new FilterGraph();
+        graphBuilder = (IGraphBuilder) new FilterGraph();
         // add preferred video & audio codecs
         int hr;
         bool bAutoDecoderSettings = false;
@@ -87,7 +85,7 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
         bool wmvAudio;
         bool useVobSub;
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
@@ -124,11 +122,18 @@ namespace MediaPortal.Player
           Vmr9.AddVMR9(graphBuilder);
           Vmr9.Enable(false);
 
-          string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-          if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
+          string extension = Path.GetExtension(m_strCurrentFile).ToLower();
+          if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") ||
+              extension.Equals(".bin") || extension.Equals(".dat"))
           {
-            if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-            if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            if (strVideoCodec.Length > 0)
+            {
+              videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+            }
+            if (strAudioCodec.Length > 0)
+            {
+              audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
           }
           if (extension.Equals(".wmv"))
           {
@@ -137,8 +142,14 @@ namespace MediaPortal.Player
           }
           if (extension.Equals(".mp4") || extension.Equals(".mkv"))
           {
-            if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-            if (strAACAudioCodec.Length > 0) aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+            if (strH264VideoCodec.Length > 0)
+            {
+              h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+            }
+            if (strAACAudioCodec.Length > 0)
+            {
+              aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+            }
           }
         }
         else
@@ -182,10 +193,11 @@ namespace MediaPortal.Player
                 currentVideoRenderer = filters[0];
               }
               else
+              {
                 DirectShowUtil.ReleaseComObject(filters[0]);
+              }
             }
-          }
-          while (hrFilters == 0 && currentVideoRenderer == null);
+          } while (hrFilters == 0 && currentVideoRenderer == null);
           DirectShowUtil.ReleaseComObject(enumFilters);
           if (currentVideoRenderer != null)
           {
@@ -202,23 +214,30 @@ namespace MediaPortal.Player
               iPinSource = DirectShowUtil.FindSourcePinOf(outputInfo.filter);
               DirectShowUtil.ReleaseComObject(outputInfo.filter);
               if (iPinSource != null)
+              {
                 videoFilterList.Add(info.achName);
-            }
-            while (iPinSource != null);
+              }
+            } while (iPinSource != null);
             // clear up the graph
             if (graphBuilder != null)
             {
-              while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
+              while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
+              {
+                ;
+              }
               graphBuilder = null;
             }
-            graphBuilder = (IGraphBuilder)new FilterGraph();
+            graphBuilder = (IGraphBuilder) new FilterGraph();
             // switch back to directx fullscreen mode
             Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
             GUIWindowManager.SendMessage(msg);
           }
         }
-        if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+        if (strAudiorenderer.Length > 0)
+        {
+          audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
+        }
         //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
         //FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
@@ -236,8 +255,8 @@ namespace MediaPortal.Player
           //Set the filter setting to enable more than 2 audio channels
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
           object val = true;
-          IPropertyBag propBag = (IPropertyBag)baseFilter;
-          hr = propBag.Write(g_wszWMACHiResOutput, ref val);          
+          IPropertyBag propBag = (IPropertyBag) baseFilter;
+          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
           if (hr != 0)
           {
             Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
@@ -275,16 +294,17 @@ namespace MediaPortal.Player
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           return false;
         }
-        mediaCtrl = (IMediaControl)graphBuilder;
-        mediaEvt = (IMediaEventEx)graphBuilder;
-        mediaSeek = (IMediaSeeking)graphBuilder;
-        mediaPos = (IMediaPosition)graphBuilder;
+        mediaCtrl = (IMediaControl) graphBuilder;
+        mediaEvt = (IMediaEventEx) graphBuilder;
+        mediaSeek = (IMediaSeeking) graphBuilder;
+        mediaPos = (IMediaPosition) graphBuilder;
         basicAudio = graphBuilder as IBasicAudio;
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
 
         #region VobSub
+
         // If Vobsub filter is loaded into the graph (either automatically or by adding as
         // 'postprocessing filter' then configure it using settings stored in mediaportal.xml
         if (vob != null) //Release old vobsub com object, if somehow a previous instance exists.
@@ -298,14 +318,14 @@ namespace MediaPortal.Player
         Guid classID = new Guid("9852A670-F845-491B-9BE6-EBD841B8A613");
         DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
         vobSub = null;
-        vobSub = (IDirectVobSub)vob;
+        vobSub = (IDirectVobSub) vob;
         if (vobSub == null)
         {
           //Try the "normal" filter then.
           classID = new Guid("93A22E7A-5091-45ef-BA61-6DA26156A5D0");
           //Log.Info("VideoPlayerVMR9: add normal vob sub filter");
           DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
-          vobSub = (IDirectVobSub)vob;
+          vobSub = (IDirectVobSub) vob;
         }
         //if the directvobsub filter has not been added to the graph. (i.e. with evr)
         //we add a bit more intelligence to determine if subtitles are enabled.
@@ -319,8 +339,8 @@ namespace MediaPortal.Player
             Log.Info("VideoPlayerVMR9: subtitles enabled - checking if subtitles are present");
             //check if a subtitle extension exists
             bool subsPresent = false;
-            string look4sub = System.IO.Path.ChangeExtension(m_strCurrentFile, null).ToLower();
-            if (System.IO.File.Exists(look4sub + ".srt") || System.IO.File.Exists(look4sub + ".sub"))
+            string look4sub = Path.ChangeExtension(m_strCurrentFile, null).ToLower();
+            if (File.Exists(look4sub + ".srt") || File.Exists(look4sub + ".sub"))
             {
               subsPresent = true;
             }
@@ -341,7 +361,7 @@ namespace MediaPortal.Player
               classID = new Guid("93A22E7A-5091-45ef-BA61-6DA26156A5D0");
               Log.Info("VideoPlayerVMR9: add normal vob sub filter");
               DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
-              vobSub = (IDirectVobSub)vob;
+              vobSub = (IDirectVobSub) vob;
             }
           }
           else
@@ -351,7 +371,7 @@ namespace MediaPortal.Player
         }
         if (vobSub != null)
         {
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             if (useVobSub != false)
             {
@@ -366,17 +386,23 @@ namespace MediaPortal.Player
               LOGFONT logFont = new LOGFONT();
               int txtcolor;
               bool fShadow, fOutLine, fAdvancedRenderer = false;
-              int size = Marshal.SizeOf(typeof(LOGFONT));
+              int size = Marshal.SizeOf(typeof (LOGFONT));
               vobSub.get_TextSettings(logFont, size, out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
               FontStyle fontStyle = FontStyle.Regular;
-              if (bBold) fontStyle = FontStyle.Bold;
-              System.Drawing.Font Subfont = new System.Drawing.Font(strFont, iFontSize, fontStyle, System.Drawing.GraphicsUnit.Point, 1);
+              if (bBold)
+              {
+                fontStyle = FontStyle.Bold;
+              }
+              Font Subfont = new Font(strFont, iFontSize, fontStyle, GraphicsUnit.Point, 1);
               Subfont.ToLogFont(logFont);
-              int R = (int)((iColor >> 16) & 0xff);
-              int G = (int)((iColor >> 8) & 0xff);
-              int B = (int)((iColor) & 0xff);
+              int R = (int) ((iColor >> 16) & 0xff);
+              int G = (int) ((iColor >> 8) & 0xff);
+              int B = (int) ((iColor) & 0xff);
               txtcolor = (B << 16) + (G << 8) + R;
-              if (iShadow > 0) fShadow = true;
+              if (iShadow > 0)
+              {
+                fShadow = true;
+              }
               vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
               // Now check if vobsub's video input is not connected.
               // Check only if vmr9 is connected (render was successful).
@@ -423,7 +449,10 @@ namespace MediaPortal.Player
                   }
                   Log.Info("VideoPlayerVMR9: Vobsub connected to Vmr9 Renderer...");
                 }
-                else DirectShowUtil.ReleaseComObject(pinVideoTo);
+                else
+                {
+                  DirectShowUtil.ReleaseComObject(pinVideoTo);
+                }
                 DirectShowUtil.ReleaseComObject(pinVideoIn);
                 // Query VobSub's subtitle input pin (first one).
                 IPin pinSubIn = DirectShowUtil.FindPin(vob, PinDirection.Input, "Input");
@@ -456,13 +485,19 @@ namespace MediaPortal.Player
                         }
                         // Now, connect Haali and Vobsub.
                         hr = graphBuilder.ConnectDirect(pinSubTo, pinSubIn, null);
-                        if (hr != 0) Log.Info("VideoPlayerVMR9: Haali - Vobsub connect failed: {0}", hr);
+                        if (hr != 0)
+                        {
+                          Log.Info("VideoPlayerVMR9: Haali - Vobsub connect failed: {0}", hr);
+                        }
                         DirectShowUtil.ReleaseComObject(pinSubTo);
                       }
                       DirectShowUtil.ReleaseComObject(hms);
                     }
                   }
-                  else DirectShowUtil.ReleaseComObject(pinSubTo);
+                  else
+                  {
+                    DirectShowUtil.ReleaseComObject(pinSubTo);
+                  }
                   DirectShowUtil.ReleaseComObject(pinSubIn);
                 }
                 // Force vobsub to reload available subtitles.
@@ -470,10 +505,11 @@ namespace MediaPortal.Player
                 vobSub.put_FileName(m_strCurrentFile);
               }
             }
-            //subtitles are not enabled, remove DirectVobSub from the graph & reconnect accordingly.
+              //subtitles are not enabled, remove DirectVobSub from the graph & reconnect accordingly.
             else
             {
-              Log.Info("VideoPlayerVMR9: Subtitles are disabled but DirectVobSub is in the graph. Removing it accordingly");
+              Log.Info(
+                "VideoPlayerVMR9: Subtitles are disabled but DirectVobSub is in the graph. Removing it accordingly");
               // Check if video input pin is connected
               // If not just remove the DirectVobSub filter.
               IPin pinVideoIn = DsFindPin.ByDirection(vob, PinDirection.Input, 0);
@@ -496,13 +532,20 @@ namespace MediaPortal.Player
                   hr = pinSubtitleFrom.Disconnect();
                   if (hr != 0)
                   {
-                    Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source subtitle output pin {0}", pininfo.name);
+                    Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source subtitle output pin {0}",
+                             pininfo.name);
                   }
                 }
                 graphBuilder.RemoveFilter(vob);
-                while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
+                {
+                  ;
+                }
                 vobSub = null;
-                while ((hr = DirectShowUtil.ReleaseComObject(vob)) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(vob)) > 0)
+                {
+                  ;
+                }
                 vob = null;
               }
               else
@@ -514,7 +557,8 @@ namespace MediaPortal.Player
                 hr = pinVideoFrom.Disconnect();
                 if (hr != 0)
                 {
-                  Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source video output pin: {0}", pininfo.name);
+                  Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source video output pin: {0}",
+                           pininfo.name);
                 }
                 //check if the subtitle pin is connected also (mkv's), if so disconnect
                 if (pinSubtitleFrom != null)
@@ -523,7 +567,8 @@ namespace MediaPortal.Player
                   hr = pinSubtitleFrom.Disconnect();
                   if (hr != 0)
                   {
-                    Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source subtitle output pin {0}", pininfo.name);
+                    Log.Info("VideoPlayerVMR9: DirectVobSub failed disconnecting source subtitle output pin {0}",
+                             pininfo.name);
                   }
                   DirectShowUtil.ReleaseComObject(pinInputIn);
                   DirectShowUtil.ReleaseComObject(pinSubtitleFrom);
@@ -533,9 +578,15 @@ namespace MediaPortal.Player
                 Vmr9.Dispose();
                 //remove the DirectVobSub filter from the graph
                 graphBuilder.RemoveFilter(vob);
-                while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
+                {
+                  ;
+                }
                 vobSub = null;
-                while ((hr = DirectShowUtil.ReleaseComObject(vob)) > 0) ;
+                while ((hr = DirectShowUtil.ReleaseComObject(vob)) > 0)
+                {
+                  ;
+                }
                 vob = null;
                 //Add vmr9 again
                 Vmr9.AddVMR9(graphBuilder);
@@ -558,6 +609,7 @@ namespace MediaPortal.Player
             }
           }
         }
+
         #endregion //Vobsub
 
         if (!Vmr9.IsVMR9Connected)
@@ -594,16 +646,21 @@ namespace MediaPortal.Player
       Cleanup();
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
-      if (graphBuilder == null) return;
+      if (graphBuilder == null)
+      {
+        return;
+      }
       int hr;
       Log.Info("VideoPlayer9:cleanup DShow graph");
       try
       {
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
+        {
           videoWin.put_Visible(OABool.False);
+        }
         if (Vmr9 != null)
         {
           Vmr9.Enable(false);
@@ -614,8 +671,11 @@ namespace MediaPortal.Player
           while (GUIGraphicsContext.InVmr9Render)
           {
             counter++;
-            System.Threading.Thread.Sleep(100);
-            if (counter > 100) break;
+            Thread.Sleep(100);
+            if (counter > 100)
+            {
+              break;
+            }
           }
           hr = mediaCtrl.Stop();
           FilterState state;
@@ -636,27 +696,42 @@ namespace MediaPortal.Player
         videoWin = null;
         if (videoCodecFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(videoCodecFilter) > 0)
+          {
+            ;
+          }
           videoCodecFilter = null;
         }
         if (h264videoCodecFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(h264videoCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(h264videoCodecFilter) > 0)
+          {
+            ;
+          }
           h264videoCodecFilter = null;
         }
         if (audioCodecFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioCodecFilter) > 0)
+          {
+            ;
+          }
           audioCodecFilter = null;
         }
         if (aacaudioCodecFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(aacaudioCodecFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(aacaudioCodecFilter) > 0)
+          {
+            ;
+          }
           aacaudioCodecFilter = null;
         }
         if (audioRendererFilter != null)
         {
-          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0) ;
+          while (DirectShowUtil.ReleaseComObject(audioRendererFilter) > 0)
+          {
+            ;
+          }
           audioRendererFilter = null;
         }
         // FlipGer: release custom filters
@@ -664,13 +739,19 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
+            {
+              ;
+            }
           }
           customFilters[i] = null;
         }
         if (vobSub != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(vobSub)) > 0)
+          {
+            ;
+          }
           vobSub = null;
         }
         if (vob != null)
@@ -686,7 +767,10 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (graphBuilder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(graphBuilder)) > 0)
+          {
+            ;
+          }
           graphBuilder = null;
         }
         GUIGraphicsContext.form.Invalidate(true);
@@ -705,7 +789,3 @@ namespace MediaPortal.Player
     }
   }
 }
-
-
-
-

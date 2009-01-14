@@ -23,78 +23,91 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows
 {
-	public sealed class VisualCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class VisualCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(Visual visual)
-		{
-			if(visual == null)
-				throw new ArgumentNullException("visual");
+    public void Add(Visual visual)
+    {
+      if (visual == null)
+      {
+        throw new ArgumentNullException("visual");
+      }
 
-			List.Add(visual);
-		}
+      List.Add(visual);
+    }
 
-		public bool Contains(Visual visual)
-		{
-			if(visual == null)
-				throw new ArgumentNullException("visual");
+    public bool Contains(Visual visual)
+    {
+      if (visual == null)
+      {
+        throw new ArgumentNullException("visual");
+      }
 
-			return List.Contains(visual);
-		}
+      return List.Contains(visual);
+    }
 
-		public void CopyTo(Visual[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Visual[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(Visual visual)
-		{
-			if(visual == null)
-				throw new ArgumentNullException("visual");
+    public int IndexOf(Visual visual)
+    {
+      if (visual == null)
+      {
+        throw new ArgumentNullException("visual");
+      }
 
-			return List.IndexOf(visual);
-		}
+      return List.IndexOf(visual);
+    }
 
-		public void Insert(int index, Visual visual)
-		{
-			if(visual == null)
-				throw new ArgumentNullException("visual");
+    public void Insert(int index, Visual visual)
+    {
+      if (visual == null)
+      {
+        throw new ArgumentNullException("visual");
+      }
 
-			List.Insert(index, visual);
-		}
+      List.Insert(index, visual);
+    }
 
-		public bool Remove(Visual visual)
-		{
-			if(visual == null)
-				throw new ArgumentNullException("visual");
-			
-			if(List.Contains(visual) == false)
-				return false;
+    public bool Remove(Visual visual)
+    {
+      if (visual == null)
+      {
+        throw new ArgumentNullException("visual");
+      }
 
-			List.Remove(visual);
+      if (List.Contains(visual) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(visual);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Visual this[int index]
-		{ 
-			get { return (Visual)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public Visual this[int index]
+    {
+      get { return (Visual) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

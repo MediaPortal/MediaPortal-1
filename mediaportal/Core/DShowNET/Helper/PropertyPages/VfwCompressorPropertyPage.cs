@@ -39,7 +39,6 @@ namespace DShowNET.Helper
   /// </summary>
   public class VfwCompressorPropertyPage : PropertyPage
   {
-
     // ---------------- Properties --------------------
 
     /// <summary> Video for Windows compression dialog interface </summary>
@@ -74,11 +73,16 @@ namespace DShowNET.Helper
           {
             data = new byte[size];
             hr = vfwCompressDialogs.GetState(ptrMemory, ref size);
-            if (hr != 0) data = null;
+            if (hr != 0)
+            {
+              data = null;
+            }
             else
             {
               for (int off = 0; off < size; off++)
+              {
                 data[off] = Marshal.ReadByte(ptrMemory, off);
+              }
             }
           }
           finally
@@ -90,13 +94,18 @@ namespace DShowNET.Helper
       }
       set
       {
-        IntPtr ptrMemory=Marshal.AllocCoTaskMem(value.Length);
+        IntPtr ptrMemory = Marshal.AllocCoTaskMem(value.Length);
         try
         {
           for (int off = 0; off < value.Length; off++)
+          {
             Marshal.WriteByte(ptrMemory, off, value[off]);
+          }
           int hr = vfwCompressDialogs.SetState(ptrMemory, value.Length);
-          if (hr != 0) Marshal.ThrowExceptionForHR(hr);
+          if (hr != 0)
+          {
+            Marshal.ThrowExceptionForHR(hr);
+          }
         }
         finally
         {
@@ -117,7 +126,6 @@ namespace DShowNET.Helper
     }
 
 
-
     // ---------------- Public Methods --------------------
 
     /// <summary> 
@@ -128,6 +136,5 @@ namespace DShowNET.Helper
     {
       vfwCompressDialogs.ShowDialog(VfwCompressDialogs.Config, owner.Handle);
     }
-
   }
 }

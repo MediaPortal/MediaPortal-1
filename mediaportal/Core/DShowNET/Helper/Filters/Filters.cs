@@ -23,9 +23,6 @@
 
 #endregion
 
-using System;
-using DirectShowLib;
-
 namespace DShowNET.Helper
 {
   /// <summary>
@@ -51,12 +48,16 @@ namespace DShowNET.Helper
 
     /// <summary> Collection of available video capture devices. </summary>
     public static FilterCollection VideoInputDevices;
+
     /// <summary> Collection of available audio capture devices. </summary>
     public static FilterCollection AudioInputDevices;
+
     /// <summary> Collection of available video compressors. </summary>
     public static FilterCollection VideoCompressors;
+
     /// <summary> Collection of available audio compressors. </summary>
     public static FilterCollection AudioCompressors;
+
     public static FilterCollection LegacyFilters;
     public static FilterCollection AudioRenderers;
     public static FilterCollection WDMEncoders;
@@ -79,6 +80,5 @@ namespace DShowNET.Helper
       BDAReceivers = new FilterCollection(FilterCategory.AM_KS_BDA_RECEIVER_COMPONENT, true);
       AllFilters = new FilterCollection(FilterCategory.ActiveMovieCategory, true);
     }
-
   }
 }

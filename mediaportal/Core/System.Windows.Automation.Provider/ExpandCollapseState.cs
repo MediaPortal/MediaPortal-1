@@ -23,22 +23,21 @@
 
 #endregion
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Automation.Provider
 {
-	[ComVisibleAttribute(true)] 
-	[GuidAttribute("76d12d7e-b227-4417-9ce2-42642ffa896a")] 
-	public enum ExpandCollapseState
-	{
-		#region Values
+  [ComVisible(true)]
+  [Guid("76d12d7e-b227-4417-9ce2-42642ffa896a")]
+  public enum ExpandCollapseState
+  {
+    #region Values
 
-		Collapsed,
-		Expanded,
-		LeafNode,
-		PartiallyExpanded,
+    Collapsed,
+    Expanded,
+    LeafNode,
+    PartiallyExpanded,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

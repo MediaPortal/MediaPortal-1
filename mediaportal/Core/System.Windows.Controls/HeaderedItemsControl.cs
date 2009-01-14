@@ -23,95 +23,101 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows;
 
 namespace System.Windows.Controls
 {
-	public class HeaderedItemsControl : ItemsControl
-	{
-		#region Constructors
+  public class HeaderedItemsControl : ItemsControl
+  {
+    #region Constructors
 
-		static HeaderedItemsControl()
-		{
-			HasHeaderProperty = DependencyProperty.Register("HasHeader", typeof(bool), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
-			HeaderProperty = DependencyProperty.Register("Header", typeof(object), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
-			HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(DataTemplate), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
-			HeaderTemplateSelectorProperty = DependencyProperty.Register("HeaderTemplateSelector", typeof(DataTemplateSelector), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
-		}
+    static HeaderedItemsControl()
+    {
+      HasHeaderProperty = DependencyProperty.Register("HasHeader", typeof (bool), typeof (HeaderedItemsControl),
+                                                      new FrameworkPropertyMetadata());
+      HeaderProperty = DependencyProperty.Register("Header", typeof (object), typeof (HeaderedItemsControl),
+                                                   new FrameworkPropertyMetadata());
+      HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof (DataTemplate),
+                                                           typeof (HeaderedItemsControl),
+                                                           new FrameworkPropertyMetadata());
+      HeaderTemplateSelectorProperty = DependencyProperty.Register("HeaderTemplateSelector",
+                                                                   typeof (DataTemplateSelector),
+                                                                   typeof (HeaderedItemsControl),
+                                                                   new FrameworkPropertyMetadata());
+    }
 
-		public HeaderedItemsControl()
-		{
-		}
+    public HeaderedItemsControl()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected virtual void OnHeaderChanged(object oldHeader, object newHeader)
-		{
-		}
+    protected virtual void OnHeaderChanged(object oldHeader, object newHeader)
+    {
+    }
 
-		protected virtual void OnHeaderTemplateChanged(DataTemplate oldHeaderTemplate, DataTemplate newHeaderTemplate)
-		{
-		}
+    protected virtual void OnHeaderTemplateChanged(DataTemplate oldHeaderTemplate, DataTemplate newHeaderTemplate)
+    {
+    }
 
-		protected virtual void OnHeaderTemplateSelectorChanged(DataTemplateSelector oldHeaderTemplateSelector, DataTemplateSelector newHeaderTemplateSelector)
-		{
-		}
-			
-		public override string ToString()
-		{
-			return base.ToString();
-		}
+    protected virtual void OnHeaderTemplateSelectorChanged(DataTemplateSelector oldHeaderTemplateSelector,
+                                                           DataTemplateSelector newHeaderTemplateSelector)
+    {
+    }
 
-		#endregion Methods
+    public override string ToString()
+    {
+      return base.ToString();
+    }
 
-		#region Properties
+    #endregion Methods
 
-		[BindableAttribute(false)] 
-		public bool HasHeader
-		{
-			get { return (bool)GetValue(HasHeaderProperty); }
-		}
+    #region Properties
 
-		[BindableAttribute(true)] 
-		public object Header
-		{
-			get { return GetValue(HeaderProperty); }
-			set { SetValue(HeaderProperty, value); }
-		}
+    [Bindable(false)]
+    public bool HasHeader
+    {
+      get { return (bool) GetValue(HasHeaderProperty); }
+    }
 
-		[BindableAttribute(true)] 
-		public DataTemplate HeaderTemplate
-		{
-			get { return (DataTemplate)GetValue(HeaderTemplateProperty); }
-			set { SetValue(HeaderTemplateProperty, value); }
-		}
-	
-		[BindableAttribute(true)] 
-		public DataTemplateSelector HeaderTemplateSelector
-		{
-			get { return (DataTemplateSelector)GetValue(HeaderTemplateSelectorProperty); }
-			set { SetValue(HeaderTemplateSelectorProperty, value); }
-		}
+    [Bindable(true)]
+    public object Header
+    {
+      get { return GetValue(HeaderProperty); }
+      set { SetValue(HeaderProperty, value); }
+    }
 
-		protected internal override IEnumerator LogicalChildren
-		{
-			get { return null; }
-		}
+    [Bindable(true)]
+    public DataTemplate HeaderTemplate
+    {
+      get { return (DataTemplate) GetValue(HeaderTemplateProperty); }
+      set { SetValue(HeaderTemplateProperty, value); }
+    }
 
-		#endregion Properties
+    [Bindable(true)]
+    public DataTemplateSelector HeaderTemplateSelector
+    {
+      get { return (DataTemplateSelector) GetValue(HeaderTemplateSelectorProperty); }
+      set { SetValue(HeaderTemplateSelectorProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    protected internal override IEnumerator LogicalChildren
+    {
+      get { return null; }
+    }
 
-		public static readonly DependencyProperty HasHeaderProperty;
-		public static readonly DependencyProperty HeaderProperty;
-		public static readonly DependencyProperty HeaderTemplateProperty;
-		public static readonly DependencyProperty HeaderTemplateSelectorProperty;
+    #endregion Properties
 
-		#endregion Properties (Dependency)
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty HasHeaderProperty;
+    public static readonly DependencyProperty HeaderProperty;
+    public static readonly DependencyProperty HeaderTemplateProperty;
+    public static readonly DependencyProperty HeaderTemplateSelectorProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

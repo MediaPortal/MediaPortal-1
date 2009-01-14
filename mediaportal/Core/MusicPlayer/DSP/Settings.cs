@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 
@@ -41,16 +40,18 @@ namespace MediaPortal.Player.DSP
   public class Settings
   {
     #region Enums
+
     private enum AmplificationPreset
     {
       Soft = 0,
       Medium = 1,
       Hard = 2
     }
+
     #endregion
 
-
     #region Variables
+
     // Private Variables
     private string m_MusicDirectory = "C:\\";
 
@@ -61,6 +62,7 @@ namespace MediaPortal.Player.DSP
     #endregion
 
     #region Singleton implementation
+
     private static Settings m_Instance;
 
     /// <summary>
@@ -78,9 +80,11 @@ namespace MediaPortal.Player.DSP
         return m_Instance;
       }
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// The Initial Music Directory
     /// </summary>
@@ -94,23 +98,22 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// List of Bass Effects
     /// </summary>
-    [XmlElement("BASS", typeof(BassEffect))]
-    public List<BassEffect> BassEffects = new List<BassEffect>();
+    [XmlElement("BASS", typeof (BassEffect))] public List<BassEffect> BassEffects = new List<BassEffect>();
 
-     /// <summary>
+    /// <summary>
     /// List of enabled VST Plugins
     /// </summary>
-    [XmlElement("VST", typeof(VSTPlugin))]
-    public List<VSTPlugin> VSTPlugins = new List<VSTPlugin>();
+    [XmlElement("VST", typeof (VSTPlugin))] public List<VSTPlugin> VSTPlugins = new List<VSTPlugin>();
 
     /// <summary>
     /// List of enabled WinAMp Plugins
     /// </summary>
-    [XmlElement("Winamp", typeof(WinAmpPlugin))]
-    public List<WinAmpPlugin> WinAmpPlugins = new List<WinAmpPlugin>();
+    [XmlElement("Winamp", typeof (WinAmpPlugin))] public List<WinAmpPlugin> WinAmpPlugins = new List<WinAmpPlugin>();
+
     #endregion
 
     #region Serializing / Deserializing
+
     /// <summary>
     /// Load settings from XML file
     /// </summary>
@@ -120,9 +123,9 @@ namespace MediaPortal.Player.DSP
       Settings settings;
       if (File.Exists(Config.GetFile(Config.Dir.Config, "musicdsp.xml")))
       {
-        XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+        XmlSerializer serializer = new XmlSerializer(typeof (Settings));
         XmlTextReader reader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "musicdsp.xml"));
-        settings = (Settings)serializer.Deserialize(reader);
+        settings = (Settings) serializer.Deserialize(reader);
         reader.Close();
         return settings;
       }
@@ -139,13 +142,14 @@ namespace MediaPortal.Player.DSP
     /// </summary>
     public static void SaveSettings()
     {
-      XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+      XmlSerializer serializer = new XmlSerializer(typeof (Settings));
       XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "musicdsp.xml"), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 2;
       serializer.Serialize(writer, Instance);
       writer.Close();
     }
+
     #endregion
   }
 }

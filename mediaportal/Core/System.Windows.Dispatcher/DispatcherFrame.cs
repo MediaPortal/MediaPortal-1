@@ -23,44 +23,41 @@
 
 #endregion
 
-using System;
 using System.Windows.Threading;
 
 namespace System.Windows.Dispatcher
 {
-	public class DispatcherFrame : DispatcherObject
-	{
-		// samples stack
-		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
+  public class DispatcherFrame : DispatcherObject
+  {
+    // samples stack
+    // http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
 
-		#region Constructors
+    #region Constructors
 
-		public DispatcherFrame()
-		{
-		}
+    public DispatcherFrame()
+    {
+    }
 
-		public DispatcherFrame(bool exitWhenRequested)
-		{
-		}
+    public DispatcherFrame(bool exitWhenRequested)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public bool Continue
-		{
-			get { return _isContinue; }
-			set { _isContinue = value; }
-		}
+    public bool Continue
+    {
+      get { return _isContinue; }
+      set { _isContinue = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		bool						_isContinue;
+    private bool _isContinue;
 
-		#endregion Fields
-
-
-	}
+    #endregion Fields
+  }
 }

@@ -23,87 +23,89 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
+using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
-	public class MenuItem : HeaderedItemsControl, IAutomationPatternProvider, IExpandCollapseProvider, IInvokeProvider, IToggleProvider
-	{
-		#region Constructors
+  public class MenuItem : HeaderedItemsControl, IAutomationPatternProvider, IExpandCollapseProvider, IInvokeProvider,
+                          IToggleProvider
+  {
+    #region Constructors
 
-		public MenuItem()
-		{
-		}
+    public MenuItem()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IExpandCollapseProvider.Collapse()
-		{
-			throw new NotImplementedException();
-		}
+    void IExpandCollapseProvider.Collapse()
+    {
+      throw new NotImplementedException();
+    }
 
-		void IExpandCollapseProvider.Expand()
-		{
-			throw new NotImplementedException();
-		}
+    void IExpandCollapseProvider.Expand()
+    {
+      throw new NotImplementedException();
+    }
 
-		object IAutomationPatternProvider.GetPatternProvider(UIElement target, AutomationPattern pattern)
-		{
-			throw new NotImplementedException();
-		}
+    object IAutomationPatternProvider.GetPatternProvider(UIElement target, AutomationPattern pattern)
+    {
+      throw new NotImplementedException();
+    }
 
-		void IInvokeProvider.Invoke()
-		{
-			// async
-		}
+    void IInvokeProvider.Invoke()
+    {
+      // async
+    }
 
-		void IToggleProvider.Toggle()
-		{
-			throw new NotImplementedException();
-		}
+    void IToggleProvider.Toggle()
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		[BindableAttribute(true)] 
-		public ICommand Command
-		{
-			get { return (ICommand)GetValue(CommandProperty); }
-			set { SetValue(CommandProperty, value); }
-		}
+    [Bindable(true)]
+    public ICommand Command
+    {
+      get { return (ICommand) GetValue(CommandProperty); }
+      set { SetValue(CommandProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public object CommandParameter
-		{
-			get { return (object)GetValue(CommandParameterProperty); }
-			set { SetValue(CommandParameterProperty, value); }
-		}
+    [Bindable(true)]
+    public object CommandParameter
+    {
+      get { return (object) GetValue(CommandParameterProperty); }
+      set { SetValue(CommandParameterProperty, value); }
+    }
 
-		ExpandCollapseState IExpandCollapseProvider.ExpandCollapseState
-		{
-			get { throw new NotImplementedException(); }
-		}
+    ExpandCollapseState IExpandCollapseProvider.ExpandCollapseState
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		ToggleState IToggleProvider.ToggleState
-		{
-			get { throw new NotImplementedException(); }
-		}
+    ToggleState IToggleProvider.ToggleState
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(MenuItem)); 
-		public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(MenuItem));
+    public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof (ICommand),
+                                                                                            typeof (MenuItem));
 
-		#endregion Properties (Dependency)
-	}
+    public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
+      "CommandParameter", typeof (object), typeof (MenuItem));
+
+    #endregion Properties (Dependency)
+  }
 }

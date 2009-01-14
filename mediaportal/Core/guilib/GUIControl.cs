@@ -26,13 +26,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using System.Xml;
 using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
+using Point=System.Drawing.Point;
+using Size=MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -41,16 +41,16 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public abstract class GUIControl : Control
   {
-    [XMLSkinElement("subtype")]             protected string _subType = "";
-    [XMLSkinElement("onleft")]              protected int _leftControlId = 0;
-    [XMLSkinElement("onright")]             protected int _rightControlId = 0;
-    [XMLSkinElement("onup")]                protected int _upControlId = 0;
-    [XMLSkinElement("ondown")]              protected int _downControlId = 0;
-    [XMLSkinElement("colordiffuse")]        protected long _diffuseColor = 0xFFFFFFFF;
-    [XMLSkinElement("id")]                  protected int _controlId = 0;
-    [XMLSkinElement("type")]                protected string _controlType = "";
-    [XMLSkinElement("description")]         protected string _description = "";
-    [XMLSkinElement("dimColor")]            protected int _dimColor = 0x60ffffff;
+    [XMLSkinElement("subtype")] protected string _subType = "";
+    [XMLSkinElement("onleft")] protected int _leftControlId = 0;
+    [XMLSkinElement("onright")] protected int _rightControlId = 0;
+    [XMLSkinElement("onup")] protected int _upControlId = 0;
+    [XMLSkinElement("ondown")] protected int _downControlId = 0;
+    [XMLSkinElement("colordiffuse")] protected long _diffuseColor = 0xFFFFFFFF;
+    [XMLSkinElement("id")] protected int _controlId = 0;
+    [XMLSkinElement("type")] protected string _controlType = "";
+    [XMLSkinElement("description")] protected string _description = "";
+    [XMLSkinElement("dimColor")] protected int _dimColor = 0x60ffffff;
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -59,21 +59,21 @@ namespace MediaPortal.GUI.Library
     protected int _windowId;
     protected int _selectedItem = 0;
     protected ArrayList _subItemList = new ArrayList();
-    protected System.Drawing.Rectangle _originalRectangle;
+    protected Rectangle _originalRectangle;
     protected bool _isAnimating = false;
     protected long _originalDiffuseColor;
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
-    bool _hasRendered = false;
-    bool _visibleFromSkinCondition = true;
-    int _visibleCondition = 0;
-    bool _allowHiddenFocus = false;
-    bool _hasCamera = false;
-    System.Drawing.Point _camera;
+    private bool _hasRendered = false;
+    private bool _visibleFromSkinCondition = true;
+    private int _visibleCondition = 0;
+    private bool _allowHiddenFocus = false;
+    private bool _hasCamera = false;
+    private Point _camera;
 
-    List<VisualEffect> _animations = new List<VisualEffect>();
-    List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
-    List<int> _infoList = new List<int>();
+    private List<VisualEffect> _animations = new List<VisualEffect>();
+    private List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
+    private List<int> _infoList = new List<int>();
     //protected int DimColor = 0x60ffffff;
 
     /// <summary>
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Library
     {
       Horizontal,
       Vertical
-    };
+    } ;
 
     /// <summary>
     /// empty constructor
@@ -137,12 +137,10 @@ namespace MediaPortal.GUI.Library
       _visibleFromSkinCondition = true;
       _visibleCondition = 0;
     }
+
     public List<int> Info
     {
-      get
-      {
-        return _infoList;
-      }
+      get { return _infoList; }
       set
       {
         if (value != null)
@@ -151,23 +149,24 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public GUIControl ParentControl
     {
       get { return _parentControl; }
       set { _parentControl = value; }
     }
+
     public virtual bool Dimmed
     {
       get
       {
         if (_parentControl != null)
+        {
           return _parentControl.Dimmed;
+        }
         return _isDimmed;
       }
-      set
-      {
-        _isDimmed = value;
-      }
+      set { _isDimmed = value; }
     }
 
     /// <summary> 
@@ -203,16 +202,21 @@ namespace MediaPortal.GUI.Library
       base.Height = h;
     }
 
-    public virtual void DoRender(float timePassed,uint currentTime)
+    public virtual void DoRender(float timePassed, uint currentTime)
     {
       Animate(currentTime);
       if (_hasCamera)
+      {
         GUIGraphicsContext.SetCameraPosition(_camera);
+      }
       Render(timePassed);
       if (_hasCamera)
+      {
         GUIGraphicsContext.RestoreCameraPosition();
+      }
       GUIGraphicsContext.RemoveTransform();
     }
+
     /// <summary>
     /// The default render method. This needs to be overwritten when inherited to give every control 
     /// its specific look and feel.
@@ -241,7 +245,9 @@ namespace MediaPortal.GUI.Library
     public virtual void OnAction(Action action)
     {
       if (Focus == false)
+      {
         return;
+      }
 
       switch (action.wID)
       {
@@ -269,24 +275,28 @@ namespace MediaPortal.GUI.Library
             }
 
             if (controlId == 0)
-              controlId = Navigate((Direction)action.wID);
+            {
+              controlId = Navigate((Direction) action.wID);
+            }
 
             if (controlId != -1 && controlId != GetID)
-              FocusControl(WindowId, controlId, (Direction)action.wID);
+            {
+              FocusControl(WindowId, controlId, (Direction) action.wID);
+            }
 
             break;
           }
       }
     }
 
-    int Navigate(Direction direction)
+    private int Navigate(Direction direction)
     {
       int currentX = this.XPosition;
       int currentY = this.YPosition;
 
       if (this is GUIListControl)
       {
-        System.Drawing.Rectangle rect = ((GUIListControl)this).SelectedRectangle;
+        Rectangle rect = ((GUIListControl) this).SelectedRectangle;
 
         currentX = rect.X;
         currentY = rect.Y;
@@ -299,29 +309,45 @@ namespace MediaPortal.GUI.Library
       foreach (GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).Children))
       {
         if (control.GetID == GetID)
+        {
           continue;
+        }
 
         if (control.CanFocus() == false)
+        {
           continue;
+        }
 
-        double bearing = CalcBearing(new Point(currentX, currentY), new Point(control.XPosition, control.YPosition));
+        double bearing = CalcBearing(new Drawing.Point(currentX, currentY),
+                                     new Drawing.Point(control.XPosition, control.YPosition));
 
         if (direction == Direction.Left && (bearing < 215 || bearing > 325))
+        {
           continue;
+        }
 
         if (direction == Direction.Right && (bearing < -145 || bearing > -35))
+        {
           continue;
+        }
 
         if (direction == Direction.Up && (bearing < -45 || bearing > 45))
+        {
           continue;
+        }
 
         if (direction == Direction.Down && !(bearing <= -135 || bearing >= 135))
+        {
           continue;
+        }
 
-        double distance = CalcDistance(new Point(currentX, currentY), new Point(control.XPosition, control.YPosition));
+        double distance = CalcDistance(new Drawing.Point(currentX, currentY),
+                                       new Drawing.Point(control.XPosition, control.YPosition));
 
         if (!(distance <= distanceMin && bearing <= bearingMin))
+        {
           continue;
+        }
 
         bearingMin = bearing;
         distanceMin = distance;
@@ -331,29 +357,29 @@ namespace MediaPortal.GUI.Library
       return nearestIndex == -1 ? GetID : nearestIndex;
     }
 
-    static double CalcBearing(Point p1, Point p2)
+    private static double CalcBearing(Drawing.Point p1, Drawing.Point p2)
     {
       double horzDelta = p2.X - p1.X;
       double vertDelta = p2.Y - p1.Y;
 
       // arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
-      double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
+      double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta)/Math.PI*180 + 360)%360;
 
       // normalize
-      bearing = bearing > 180 ? ((bearing + 180) % 360) - 180 : bearing < -180 ? ((bearing - 180) % 360) + 180 : bearing;
+      bearing = bearing > 180 ? ((bearing + 180)%360) - 180 : bearing < -180 ? ((bearing - 180)%360) + 180 : bearing;
 
       return bearing >= 0 ? bearing - 180 : 180 - bearing;
     }
 
-    static double CalcDistance(Point p2, Point p1)
+    private static double CalcDistance(Drawing.Point p2, Drawing.Point p1)
     {
       double horzDelta = p2.X - p1.X;
       double vertDelta = p2.Y - p1.Y;
 
-      return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
+      return Math.Round(Math.Sqrt((horzDelta*horzDelta) + (vertDelta*vertDelta)));
     }
 
-    ArrayList FlattenHierarchy(UIElementCollection elements)
+    private ArrayList FlattenHierarchy(UIElementCollection elements)
     {
       ArrayList targetList = new ArrayList();
 
@@ -362,22 +388,24 @@ namespace MediaPortal.GUI.Library
       return targetList;
     }
 
-    void FlattenHierarchy(ICollection collection, ArrayList targetList)
+    private void FlattenHierarchy(ICollection collection, ArrayList targetList)
     {
       foreach (GUIControl control in collection)
       {
         if (control.GetID == 1)
+        {
           continue;
+        }
 
         if (control is GUIGroup)
         {
-          FlattenHierarchy(((GUIGroup)control).Children, targetList);
+          FlattenHierarchy(((GUIGroup) control).Children, targetList);
           continue;
         }
 
         if (control is GUIFacadeControl)
         {
-          GUIFacadeControl facade = (GUIFacadeControl)control;
+          GUIFacadeControl facade = (GUIFacadeControl) control;
 
           switch (facade.View)
           {
@@ -422,7 +450,7 @@ namespace MediaPortal.GUI.Library
             {
               int controlId = 0;
 
-              switch ((Action.ActionType)message.Param1)
+              switch ((Action.ActionType) message.Param1)
               {
                 case Action.ActionType.ACTION_MOVE_DOWN:
                   controlId = _downControlId;
@@ -439,10 +467,14 @@ namespace MediaPortal.GUI.Library
               }
 
               if (controlId == 0)
-                controlId = Navigate((Direction)message.Param1);
+              {
+                controlId = Navigate((Direction) message.Param1);
+              }
 
               if (controlId != -1 && controlId != GetID)
-                FocusControl(WindowId, controlId, (Direction)message.Param1);
+              {
+                FocusControl(WindowId, controlId, (Direction) message.Param1);
+              }
 
               return true;
             }
@@ -491,12 +523,11 @@ namespace MediaPortal.GUI.Library
           case GUIMessage.MessageType.GUI_MSG_DESELECTED:
             _isSelected = false;
             return true;
-
         }
       }
       return false;
-
     }
+
     /// <summary>
     /// Gets the ID of the control.
     /// </summary>
@@ -524,7 +555,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (Focus && !value)
+        {
           QueueAnimation(AnimationType.Unfocus);
+        }
         else if (!Focus && value)
         {
           QueueAnimation(AnimationType.Focus);
@@ -555,7 +588,9 @@ namespace MediaPortal.GUI.Library
     {
       // Reset our animation states
       for (int i = 0; i < _animations.Count; i++)
+      {
         _animations[i].ResetAnimation();
+      }
       _hasRendered = false;
     }
 
@@ -576,7 +611,10 @@ namespace MediaPortal.GUI.Library
     /// <returns>true or false</returns>
     public virtual bool CanFocus()
     {
-      if (_allowHiddenFocus && Focusable && IsEnabled) return true;
+      if (_allowHiddenFocus && Focusable && IsEnabled)
+      {
+        return true;
+      }
       return Focusable && IsEnabled && IsVisible;
     }
 
@@ -605,7 +643,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position.</param>
     public virtual void SetPosition(int dwPosX, int dwPosY)
     {
-      if (_positionX == dwPosX && _positionY == dwPosY) return;
+      if (_positionX == dwPosX && _positionY == dwPosY)
+      {
+        return;
+      }
       _positionX = dwPosX;
       _positionY = dwPosY;
       Update();
@@ -643,7 +684,14 @@ namespace MediaPortal.GUI.Library
     public virtual int XPosition
     {
       get { return _positionX; }
-      set { if (_positionX != value) { _positionX = Math.Max(0, value); Update(); } }
+      set
+      {
+        if (_positionX != value)
+        {
+          _positionX = Math.Max(0, value);
+          Update();
+        }
+      }
     }
 
     /// <summary>
@@ -652,7 +700,14 @@ namespace MediaPortal.GUI.Library
     public virtual int YPosition
     {
       get { return _positionY; }
-      set { if (_positionY != value) { _positionY = Math.Max(0, value); Update(); } }
+      set
+      {
+        if (_positionY != value)
+        {
+          _positionY = Math.Max(0, value);
+          Update();
+        }
+      }
     }
 
     public bool Visible
@@ -660,11 +715,18 @@ namespace MediaPortal.GUI.Library
       get { return IsVisible; }
       set
       {
-        if (IsVisible == value) return;
+        if (IsVisible == value)
+        {
+          return;
+        }
         if (IsVisible && !value)
+        {
           QueueAnimation(AnimationType.Hidden);
+        }
         else if (!IsVisible && value)
+        {
           QueueAnimation(AnimationType.Visible);
+        }
         IsVisible = value;
       }
     }
@@ -689,16 +751,19 @@ namespace MediaPortal.GUI.Library
       get { return _upControlId; }
       set { _upControlId = value; }
     }
+
     public virtual int NavigateDown
     {
       get { return _downControlId; }
       set { _downControlId = value; }
     }
+
     public virtual int NavigateLeft
     {
       get { return _leftControlId; }
       set { _leftControlId = value; }
     }
+
     public virtual int NavigateRight
     {
       get { return _rightControlId; }
@@ -722,7 +787,10 @@ namespace MediaPortal.GUI.Library
       get { return _controlType; }
       set
       {
-        if (_controlType == null) return;
+        if (_controlType == null)
+        {
+          return;
+        }
         _controlType = value;
       }
     }
@@ -746,9 +814,18 @@ namespace MediaPortal.GUI.Library
     {
       focused = Focus;
       controlID = GetID;
-      if (!IsVisible) return false;
-      if (Disabled) return false;
-      if (CanFocus() == false) return false;
+      if (!IsVisible)
+      {
+        return false;
+      }
+      if (Disabled)
+      {
+        return false;
+      }
+      if (CanFocus() == false)
+      {
+        return false;
+      }
       return InControl(x, y, out controlID);
     }
 
@@ -756,7 +833,9 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Perform an update after a change has occured. E.g. change to a new position.
     /// </summary>
-    protected virtual void Update() { }
+    protected virtual void Update()
+    {
+    }
 
     /// <summary>
     /// Sends a GUI_MSG_HIDDEN message to a control (Hide a control).
@@ -767,7 +846,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -779,8 +861,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
 
@@ -788,8 +872,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -801,9 +887,12 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
+
     /// <summary>
     /// Sends a GUI_MSG_SETFOCUS message to a control (Set the focus on a control).
     /// </summary>
@@ -813,15 +902,21 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     public static void FocusControl(int iWindowId, int iControlId, Direction direction)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, (int)direction, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, (int) direction,
+                                      0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -835,8 +930,10 @@ namespace MediaPortal.GUI.Library
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strText;
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -850,8 +947,10 @@ namespace MediaPortal.GUI.Library
       // TODO The AddListItemControl should use another message type for adding Items. (REQUIRES a check of every GUI_MSG_LABEL_ADD!).
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, item);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -865,8 +964,10 @@ namespace MediaPortal.GUI.Library
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strLabel;
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -878,8 +979,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -890,10 +993,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="iItem">The id of the item that is selected on the control.</param>
     public static void SelectItemControl(int iWindowId, int iControlId, int iItem)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId, 0, iControlId, iItem, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, iWindowId, 0, iControlId, iItem, 0,
+                                      null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -904,10 +1010,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="iItem">The id of the item that should have the selected state.</param>
     public static void FocusItemControl(int iWindowId, int iControlId, int iItem)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, iWindowId, 0, iControlId, iItem, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, iWindowId, 0, iControlId, iItem, 0,
+                                      null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -921,7 +1030,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, lWindowId, 0, iControlId, iItem, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(lWindowId);
-      if (window != null) window.OnMessage(msg);
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
 
       return msg.Object as GUIListItem;
     }
@@ -934,9 +1046,13 @@ namespace MediaPortal.GUI.Library
     /// <returns>The GUIListItem that is selected.</returns>
     public static GUIListItem GetSelectedListItem(int lWindowId, int iControlId)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, 0, lWindowId, iControlId, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, 0, lWindowId, iControlId, 0, 0,
+                                      null);
       GUIWindow window = GUIWindowManager.GetWindow(lWindowId);
-      if (window != null) window.OnMessage(msg);
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
 
       return msg.Object as GUIListItem;
     }
@@ -951,7 +1067,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, lWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(lWindowId);
-      if (window != null) window.OnMessage(msg);
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
 
       return msg.Param1;
     }
@@ -965,8 +1084,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SELECTED, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -978,8 +1099,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DESELECTED, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -991,8 +1114,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -1004,8 +1129,10 @@ namespace MediaPortal.GUI.Library
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
-      if (window != null) window.OnMessage(msg);
-
+      if (window != null)
+      {
+        window.OnMessage(msg);
+      }
     }
 
     /// <summary>
@@ -1045,6 +1172,7 @@ namespace MediaPortal.GUI.Library
     {
       _subItemList.Add(obj);
     }
+
     /// <summary>
     /// Remove an subitem from an control
     /// </summary>
@@ -1060,7 +1188,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="obj">index</param>
     public void RemoveSubItem(int index)
     {
-      if (index <= 0 || index >= _subItemList.Count) return;
+      if (index <= 0 || index >= _subItemList.Count)
+      {
+        return;
+      }
       _subItemList.RemoveAt(index);
     }
 
@@ -1079,9 +1210,13 @@ namespace MediaPortal.GUI.Library
     /// <returns>subitem object</returns>
     public object GetSubItem(int index)
     {
-      if (index < 0 || index >= _subItemList.Count) return null;
+      if (index < 0 || index >= _subItemList.Count)
+      {
+        return null;
+      }
       return _subItemList[index];
     }
+
     /// <summary>
     /// Property to set an subitem
     /// </summary>
@@ -1089,7 +1224,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="o">subitem</param>
     public void SetSubItem(int index, object o)
     {
-      if (index < 0 || index >= _subItemList.Count) return;
+      if (index < 0 || index >= _subItemList.Count)
+      {
+        return;
+      }
       _subItemList[index] = o;
     }
 
@@ -1111,7 +1249,10 @@ namespace MediaPortal.GUI.Library
     /// </returns>
     public virtual GUIControl GetControlById(int ID)
     {
-      if (ID == GetID) return this;
+      if (ID == GetID)
+      {
+        return this;
+      }
       return null;
     }
 
@@ -1139,7 +1280,10 @@ namespace MediaPortal.GUI.Library
       get { return _description; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _description = value;
       }
     }
@@ -1150,7 +1294,7 @@ namespace MediaPortal.GUI.Library
     public virtual void StorePosition()
     {
       _isAnimating = false;
-      _originalRectangle = new System.Drawing.Rectangle(_positionX, _positionY, base.Width, base.Height);
+      _originalRectangle = new Rectangle(_positionX, _positionY, base.Width, base.Height);
       _originalDiffuseColor = _diffuseColor;
     }
 
@@ -1221,8 +1365,14 @@ namespace MediaPortal.GUI.Library
       List<GUIControl> listControls = new List<GUIControl>();
 
 
-      if (doc.DocumentElement == null) return listControls;
-      if (doc.DocumentElement.Name != "window") return listControls;
+      if (doc.DocumentElement == null)
+      {
+        return listControls;
+      }
+      if (doc.DocumentElement.Name != "window")
+      {
+        return listControls;
+      }
 
       // Load Definitions
       Hashtable table = new Hashtable();
@@ -1231,7 +1381,10 @@ namespace MediaPortal.GUI.Library
         foreach (XmlNode node in doc.SelectNodes("/window/define"))
         {
           string[] tokens = node.InnerText.Split(':');
-          if (tokens.Length < 2) continue;
+          if (tokens.Length < 2)
+          {
+            continue;
+          }
           table[tokens[0]] = tokens[1];
         }
       }
@@ -1245,7 +1398,10 @@ namespace MediaPortal.GUI.Library
         try
         {
           GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
-          if (newControl != null) listControls.Add(newControl);
+          if (newControl != null)
+          {
+            listControls.Add(newControl);
+          }
         }
         catch (Exception ex)
         {
@@ -1255,7 +1411,8 @@ namespace MediaPortal.GUI.Library
       return listControls;
     }
 
-    public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height, string texture)
+    public GUIAnimation LoadAnimationControl(int parentID, int controlId, int posX, int posY, int width, int height,
+                                             string texture)
     {
       if ((texture != null) && (texture.Contains(".xml")))
       {
@@ -1279,10 +1436,7 @@ namespace MediaPortal.GUI.Library
 
     public string SubType
     {
-      get
-      {
-        return _subType;
-      }
+      get { return _subType; }
     }
 
     [XMLSkinElement("width")]
@@ -1302,15 +1456,15 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("posX")]
     public int _positionX
     {
-      get { return (int)base.Location.X; }
-      set { base.Location = new Point(value, base.Location.Y); }
+      get { return (int) base.Location.X; }
+      set { base.Location = new Drawing.Point(value, base.Location.Y); }
     }
 
     [XMLSkinElement("posY")]
     public int _positionY
     {
-      get { return (int)base.Location.Y; }
-      set { base.Location = new Point(base.Location.X, value); }
+      get { return (int) base.Location.Y; }
+      set { base.Location = new Drawing.Point(base.Location.X, value); }
     }
 
     /////////////////////////////////////////////
@@ -1346,94 +1500,127 @@ namespace MediaPortal.GUI.Library
     public override int Width
     {
       get { return base.Width; }
-      set { if (base.Width != value) { base.Width = Math.Max(0, value); Update(); } }
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = Math.Max(0, value);
+          Update();
+        }
+      }
     }
 
     public override int Height
     {
       get { return base.Height; }
-      set { if (base.Height != value) { base.Height = Math.Max(0, value); Update(); } }
+      set
+      {
+        if (base.Height != value)
+        {
+          base.Height = Math.Max(0, value);
+          Update();
+        }
+      }
     }
 
     public override double Opacity
     {
-      get { return 255.0 / System.Drawing.Color.FromArgb((int)_diffuseColor).A; }
-      set { _diffuseColor = System.Drawing.Color.FromArgb((int)(255 * value), System.Drawing.Color.FromArgb((int)_diffuseColor)).ToArgb(); }
+      get { return 255.0/Color.FromArgb((int) _diffuseColor).A; }
+      set { _diffuseColor = Color.FromArgb((int) (255*value), Color.FromArgb((int) _diffuseColor)).ToArgb(); }
     }
 
     public Size Size
     {
       get { return new Size(base.Width, base.Height); }
-      set { base.Width = (int)value.Width; base.Height = (int)value.Height; Update(); }
+      set
+      {
+        base.Width = (int) value.Width;
+        base.Height = (int) value.Height;
+        Update();
+      }
     }
 
     #endregion Properties
 
-
     public List<VisualEffect> Animations
     {
-      get
-      {
-        return _animations;
-      }
+      get { return _animations; }
     }
+
     public List<VisualEffect> ThumbAnimations
     {
-      get
-      {
-        return _thumbAnimations;
-      }
+      get { return _thumbAnimations; }
     }
+
     public virtual void SetAnimations(List<VisualEffect> animations)
     {
       _animations = new List<VisualEffect>();
       foreach (VisualEffect effect in animations)
       {
-        _animations.Add((VisualEffect)effect.Clone());
+        _animations.Add((VisualEffect) effect.Clone());
       }
     }
+
     public virtual void AddAnimations(List<VisualEffect> animations)
     {
-      if (animations.Count == 0) return;
-      
-      if (_animations == null) _animations = new List<VisualEffect>();
+      if (animations.Count == 0)
+      {
+        return;
+      }
+
+      if (_animations == null)
+      {
+        _animations = new List<VisualEffect>();
+      }
       foreach (VisualEffect effect in animations)
       {
-        _animations.Add((VisualEffect)effect.Clone());
+        _animations.Add((VisualEffect) effect.Clone());
       }
     }
-    
+
     public virtual void SetThumbAnimations(List<VisualEffect> animations)
     {
       _thumbAnimations = new List<VisualEffect>();
       foreach (VisualEffect effect in animations)
       {
-        _thumbAnimations.Add((VisualEffect)effect.Clone());
+        _thumbAnimations.Add((VisualEffect) effect.Clone());
       }
     }
 
     public virtual void QueueAnimation(AnimationType animType)
     {
-      if (false == GUIGraphicsContext.Animations) return;
+      if (false == GUIGraphicsContext.Animations)
+      {
+        return;
+      }
       // rule out the animations we shouldn't perform
       if (!IsVisible || !HasRendered)
-      { // hidden or never rendered - don't allow exit or entry animations for this control
+      {
+        // hidden or never rendered - don't allow exit or entry animations for this control
         if (animType == AnimationType.WindowClose && !IsEffectAnimating(AnimationType.WindowOpen))
+        {
           return;
+        }
       }
       if (!IsVisible)
-      { // hidden - only allow hidden anims if we're animating a visible anim
+      {
+        // hidden - only allow hidden anims if we're animating a visible anim
         if (animType == AnimationType.Hidden && !IsEffectAnimating(AnimationType.Visible))
+        {
           return;
+        }
         if (animType == AnimationType.WindowOpen)
+        {
           return;
+        }
       }
-      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), false);
+      List<VisualEffect> reverseAnims = GetAnimations((AnimationType) (-(int) animType), false);
       List<VisualEffect> forwardAnims = GetAnimations(animType, false);
       bool done = false;
       foreach (VisualEffect reverseAnim in reverseAnims)
       {
-        if (reverseAnim.IsReversible && (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
+        if (reverseAnim.IsReversible &&
+            (reverseAnim.CurrentState == AnimationState.InProcess || reverseAnim.CurrentState == AnimationState.Delayed))
         {
           reverseAnim.QueuedProcess = AnimationProcess.Reverse;
           foreach (VisualEffect forwardAnim in forwardAnims)
@@ -1486,41 +1673,58 @@ namespace MediaPortal.GUI.Library
     }
        */
     }
+
     public virtual int GetVisibleCondition()
     {
-      return _visibleCondition; ;
+      return _visibleCondition;
+      ;
     }
 
     public virtual List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions /* = true */)
     {
-      if (false == GUIGraphicsContext.Animations) return null;
+      if (false == GUIGraphicsContext.Animations)
+      {
+        return null;
+      }
       List<VisualEffect> effects = new List<VisualEffect>();
       for (int i = 0; i < _animations.Count; i++)
       {
         if (_animations[i].AnimationType == type)
         {
           if (!checkConditions || _animations[i].Condition == 0 || GUIInfoManager.GetBool(_animations[i].Condition, 0))
+          {
             effects.Add(_animations[i]);
+          }
         }
       }
       return effects;
     }
+
     public virtual VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
-      if (false == GUIGraphicsContext.Animations) return null;
+      if (false == GUIGraphicsContext.Animations)
+      {
+        return null;
+      }
       for (int i = 0; i < _animations.Count; i++)
       {
         if (_animations[i].AnimationType == type)
         {
           if (!checkConditions || _animations[i].Condition == 0 || GUIInfoManager.GetBool(_animations[i].Condition, 0))
+          {
             return _animations[i];
+          }
         }
       }
       return null;
     }
-    void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
+
+    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState)
     {
-      if (GUIGraphicsContext.Animations == false) return;
+      if (GUIGraphicsContext.Animations == false)
+      {
+        return;
+      }
       bool visible = IsVisible;
       // Make sure control is hidden or visible at the appropriate times
       // while processing a visible or hidden animation it needs to be visible,
@@ -1530,32 +1734,44 @@ namespace MediaPortal.GUI.Library
         if (currentProcess == AnimationProcess.Reverse)
         {
           if (currentState == AnimationState.StateApplied)
+          {
             IsVisible = false;
+          }
         }
         else if (currentProcess == AnimationProcess.Normal)
         {
           if (currentState == AnimationState.Delayed)
+          {
             IsVisible = false;
+          }
           else
+          {
             IsVisible = _visibleFromSkinCondition;
+          }
         }
       }
       else if (type == AnimationType.Hidden)
       {
-        if (currentProcess == AnimationProcess.Normal)  // a hide animation
+        if (currentProcess == AnimationProcess.Normal) // a hide animation
         {
           if (currentState == AnimationState.StateApplied)
+          {
             IsVisible = false; // finished
+          }
           else
+          {
             IsVisible = true; // have to be visible until we are finished
+          }
         }
-        else if (currentProcess == AnimationProcess.Reverse)  // a visible animation
-        { // no delay involved here - just make sure it's visible
+        else if (currentProcess == AnimationProcess.Reverse) // a visible animation
+        {
+          // no delay involved here - just make sure it's visible
           IsVisible = _visibleFromSkinCondition;
         }
       }
       else if (type == AnimationType.WindowOpen)
-      {/*
+      {
+/*
         if (currentProcess == AnimationProcess.Normal)
         {
           if (currentState == AnimationState.Delayed)
@@ -1569,7 +1785,9 @@ namespace MediaPortal.GUI.Library
         // call the focus function if we have finished a focus animation
         // (buttons can "click" on focus)
         if (currentProcess == AnimationProcess.Normal && currentState == AnimationState.StateApplied)
+        {
           OnFocus();
+        }
       }
       //  if (visible != m_visible)
       //    CLog::DebugLog("UpdateControlState of control id %i - now %s (type=%d, process=%d, state=%d)", m_dwControlID, m_visible ? "visible" : "hidden", type, currentProcess, currentState);
@@ -1577,8 +1795,8 @@ namespace MediaPortal.GUI.Library
 
     public virtual void GetCenter(ref float centerX, ref float centerY)
     {
-      centerX = (float)(XPosition + (Width / 2));
-      centerY = (float)(YPosition + (Height / 2));
+      centerX = (float) (XPosition + (Width/2));
+      centerY = (float) (YPosition + (Height/2));
     }
 
     public TransformMatrix getTransformMatrix(uint currentTime)
@@ -1616,23 +1834,34 @@ namespace MediaPortal.GUI.Library
 
     public virtual bool IsEffectAnimating(AnimationType animType)
     {
-      if (false == GUIGraphicsContext.Animations) return false;
+      if (false == GUIGraphicsContext.Animations)
+      {
+        return false;
+      }
       for (int i = 0; i < _animations.Count; i++)
       {
         VisualEffect anim = _animations[i];
         if (anim.AnimationType == animType)
         {
           if (anim.QueuedProcess == AnimationProcess.Normal)
+          {
             return true;
+          }
           if (anim.CurrentProcess == AnimationProcess.Normal)
+          {
             return true;
+          }
         }
-        else if (anim.AnimationType == (AnimationType)(-(int)animType))
+        else if (anim.AnimationType == (AnimationType) (-(int) animType))
         {
           if (anim.QueuedProcess == AnimationProcess.Reverse)
+          {
             return true;
+          }
           if (anim.CurrentProcess == AnimationProcess.Reverse)
+          {
             return true;
+          }
         }
       }
       return false;
@@ -1640,15 +1869,15 @@ namespace MediaPortal.GUI.Library
 
     public bool HasRendered
     {
-      get
-      {
-        return _hasRendered;
-      }
+      get { return _hasRendered; }
     }
 
     public virtual void UpdateVisibility()
     {
-      if (_visibleCondition == 0) return;
+      if (_visibleCondition == 0)
+      {
+        return;
+      }
       bool bWasVisible = _visibleFromSkinCondition;
       _visibleFromSkinCondition = GUIInfoManager.GetBool(_visibleCondition, ParentID);
       if (GUIGraphicsContext.Animations == false)
@@ -1657,12 +1886,14 @@ namespace MediaPortal.GUI.Library
         return;
       }
       if (!bWasVisible && _visibleFromSkinCondition)
-      { // automatic change of visibility - queue the in effect
+      {
+        // automatic change of visibility - queue the in effect
         //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
         QueueAnimation(AnimationType.Visible);
       }
       else if (bWasVisible && !_visibleFromSkinCondition)
-      { // automatic change of visibility - do the out effect
+      {
+        // automatic change of visibility - do the out effect
         //    CLog::DebugLog("Visibility changed to hidden for control id %i", m_dwControlID);
         QueueAnimation(AnimationType.Hidden);
       }
@@ -1678,8 +1909,11 @@ namespace MediaPortal.GUI.Library
       _visibleFromSkinCondition = Visible = GUIInfoManager.GetBool(_visibleCondition, ParentID);
 
       // no need to enquire every frame if we are always visible or always hidden
-      if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE || _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
+      if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE ||
+          _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
+      {
         _visibleCondition = 0;
+      }
     }
 
 
@@ -1693,39 +1927,30 @@ namespace MediaPortal.GUI.Library
     {
     }
 
-    public System.Drawing.Point Camera
+    public Point Camera
     {
-      get
-      {
-        return _camera;
-      }
-      set
-      {
-        _camera = value;
-      }
+      get { return _camera; }
+      set { _camera = value; }
     }
+
     public bool HasCamera
     {
-      get
-      {
-        return _hasCamera;
-      }
-      set
-      {
-        _hasCamera = value;
-      }
+      get { return _hasCamera; }
+      set { _hasCamera = value; }
     }
 
     public void ResetAnimations()
     {
       if (false == GUIGraphicsContext.Animations)
-        return ;
+      {
+        return;
+      }
       for (int i = 0; i < _animations.Count; i++)
       {
         VisualEffect anim = _animations[i];
         anim.ResetAnimation();
       }
-      return ;
+      return;
     }
   }
 }

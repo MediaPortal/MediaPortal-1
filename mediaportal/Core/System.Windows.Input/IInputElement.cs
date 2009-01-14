@@ -23,29 +23,23 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Input
 {
-	public interface IInputElement
-	{
-		#region Methods
+  public interface IInputElement
+  {
+    #region Methods
 
-		void AddHandler(RoutedEvent routedEvent, Delegate handler);
-		bool Focus();
-		void RaiseEvent(RoutedEventArgs e);
-		void RemoveHandler(RoutedEvent routedEvent, Delegate handler);
+    void AddHandler(RoutedEvent routedEvent, Delegate handler);
+    bool Focus();
+    void RaiseEvent(RoutedEventArgs e);
+    void RemoveHandler(RoutedEvent routedEvent, Delegate handler);
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		bool IsEnabled
-		{
-			get;
-		}
-		
-		#endregion Properties
-	}
+    bool IsEnabled { get; }
+
+    #endregion Properties
+  }
 }

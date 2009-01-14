@@ -26,18 +26,20 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
 using DirectShowLib;
-using System.Windows.Forms;
 using DShowNET.Helper;
+using MediaPortal.GUI.Library;
+using TunerLib;
+using IBaseFilter=DirectShowLib.IBaseFilter;
+using IPin=DirectShowLib.IPin;
 
 namespace DShowNET
 {
   public class TechnoTrend : IksPropertyUtils, IDisposable
   {
-
     #region enums
-    enum TechnoTrendDeviceType
+
+    private enum TechnoTrendDeviceType
     {
       /// not set
       eTypeUnknown = 0,
@@ -52,16 +54,21 @@ namespace DShowNET
     } ;
 
     #endregion
+
     #region structs
+
     [StructLayout(LayoutKind.Sequential), ComVisible(false)]
     public struct SlotInfo
     {
       /// CI status
       public Byte nStatus;
+
       /// menu title string
       public IntPtr pMenuTitleString;
+
       /// cam system ID's
-      unsafe public UInt16* pCaSystemIDs;
+      public unsafe UInt16* pCaSystemIDs;
+
       /// number of cam system ID's
       public UInt16 wNoOfCaSystemIDs;
     }
@@ -70,37 +77,44 @@ namespace DShowNET
     public struct CallbackFunctionsSlim
     {
       /// PCBFCN_CI_OnSlotStatus
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public PCBFCN_CI_OnSlotStatus onSlotStatus;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public PCBFCN_CI_OnSlotStatus onSlotStatus;
+
       /// Context pointer for PCBFCN_CI_OnSlotStatus
       public UInt32 onSlotStatusContext;
+
       /// PCBFCN_CI_OnCAStatus
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public PCBFCN_CI_OnCAStatus onCAStatus;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public PCBFCN_CI_OnCAStatus onCAStatus;
+
       /// Context pointer for PCBFCN_CI_OnCAStatus
       public UInt32 onCAStatusContext;
     }
+
     public unsafe delegate void PCBFCN_CI_OnSlotStatus(UInt32 Context,
-                                          Byte nSlot,
-                                          Byte nStatus,
-                                          SlotInfo* csInfo);
+                                                       Byte nSlot,
+                                                       Byte nStatus,
+                                                       SlotInfo* csInfo);
+
     public unsafe delegate void PCBFCN_CI_OnCAStatus(UInt32 Context,
-                                                  Byte nSlot,
-                                                  Byte nReplyTag,
-                                                  UInt16 wStatus);
+                                                     Byte nSlot,
+                                                     Byte nReplyTag,
+                                                     UInt16 wStatus);
+
     #endregion
 
     #region imports
+
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiOpenHWIdx", CallingConvention = CallingConvention.StdCall)]
     public static extern uint bdaapiOpenHWIdx(uint DevType, uint uiDevID);
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiOpenCISlim", CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiOpenCISlim(uint hOpen, CallbackFunctionsSlim CbFuncPointer);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiOpenCIWithoutPointer", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiOpenCIWithoutPointer",
+      CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiOpenCIWithoutPointer(uint hOpen);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIGetSlotStatus", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIGetSlotStatus",
+      CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiCIGetSlotStatus(uint hOpen, byte nSlot);
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCloseCI", CallingConvention = CallingConvention.StdCall)]
@@ -109,30 +123,38 @@ namespace DShowNET
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiClose", CallingConvention = CallingConvention.StdCall)]
     public static extern void bdaapiClose(uint hOpen);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIReadPSIFastDrvDemux", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIReadPSIFastDrvDemux",
+      CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiCIReadPSIFastDrvDemux(uint hOpen, int PNR);
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDiSEqCMsg", CallingConvention = CallingConvention.StdCall)]
-    public static extern int bdaapiSetDiSEqCMsg(uint hOpen, IntPtr data, byte length, byte repeat, byte toneburst, int polarity);
+    public static extern int bdaapiSetDiSEqCMsg(uint hOpen, IntPtr data, byte length, byte repeat, byte toneburst,
+                                                int polarity);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)
+    ]
     public static extern int bdaapiSetDVBTAntPwr(uint hOpen, bool bAntPwrOnOff);
 
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)
+    ]
     public static extern int bdaapiGetDVBTAntPwr(uint hOpen, ref int uiAntPwrOnOff);
+
     //public static extern int bdaapiGetDVBTAntPwr(uint hOpen, UIntPtr uiAntPwrOnOff);
 
     #endregion
 
     #region variables
-    TechnoTrendDeviceType _deviceType = TechnoTrendDeviceType.eTypeUnknown;
-    CallbackFunctionsSlim _technoTrendStructure = new CallbackFunctionsSlim();
-    uint _handle = 0xffffffff;
-    bool _hasCam = false;
-    static Hashtable _isCamInitializedTable = new Hashtable();
+
+    private TechnoTrendDeviceType _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+    private CallbackFunctionsSlim _technoTrendStructure = new CallbackFunctionsSlim();
+    private uint _handle = 0xffffffff;
+    private bool _hasCam = false;
+    private static Hashtable _isCamInitializedTable = new Hashtable();
+
     #endregion
 
     #region constants
+
     public const string BUDGET2_CAPTURE = "TechnoTrend BDA/DVB Capture";
     public const string BUDGET2_C_TUNER = "TechnoTrend BDA/DVB-C Tuner";
     public const string BUDGET2_S_TUNER = "TechnoTrend BDA/DVB-S Tuner";
@@ -147,34 +169,38 @@ namespace DShowNET
     public const string USB2_T_TUNER = "USB 2.0 BDA DVB-T Tuner";
     public const string USB2_PINNACLE_CAPTURE = "Pinnacle PCTV 400e Capture";
     public const string USB2_PINNACLE_TUNER = "Pinnacle PCTV 400e Tuner";
+
     #endregion
 
     public TechnoTrend(IBaseFilter filter)
       : base(filter)
     {
-      if (captureFilter == null) return;
+      if (captureFilter == null)
+      {
+        return;
+      }
       FilterInfo info;
       filter.QueryFilterInfo(out info);
-      if ((info.achName == TechnoTrend.USB2_C_TUNER) ||
-          (info.achName == TechnoTrend.USB2_T_TUNER) ||
-          (info.achName == TechnoTrend.USB2_S_TUNER))
+      if ((info.achName == USB2_C_TUNER) ||
+          (info.achName == USB2_T_TUNER) ||
+          (info.achName == USB2_S_TUNER))
       {
         Log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
       }
-      else if (info.achName == TechnoTrend.BUDGET3_TUNER)
+      else if (info.achName == BUDGET3_TUNER)
       {
         Log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
         _deviceType = TechnoTrendDeviceType.eDevTypeB3;
       }
-      else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
-                (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
-                (info.achName == TechnoTrend.BUDGET2_T_TUNER))
+      else if ((info.achName == BUDGET2_C_TUNER) ||
+               (info.achName == BUDGET2_S_TUNER) ||
+               (info.achName == BUDGET2_T_TUNER))
       {
         Log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
         _deviceType = TechnoTrendDeviceType.eDevTypeB2;
       }
-      else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
+      else if (info.achName == USB2_PINNACLE_TUNER)
       {
         Log.Info("TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
         _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
@@ -185,11 +211,14 @@ namespace DShowNET
         _deviceType = TechnoTrendDeviceType.eTypeUnknown;
       }
 
-      if (!IsTechnoTrend) return;
+      if (!IsTechnoTrend)
+      {
+        return;
+      }
       try
       {
-        uint deviceId = (uint)GetDeviceID(filter);
-        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, deviceId);
+        uint deviceId = (uint) GetDeviceID(filter);
+        _handle = bdaapiOpenHWIdx((UInt32) _deviceType, deviceId);
         if (_handle != 0xffffffff)
         {
           Log.Info("Technotrend: card detected");
@@ -218,12 +247,14 @@ namespace DShowNET
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
     }
 
-    int GetDeviceID(IBaseFilter tunerfilter)
+    private int GetDeviceID(IBaseFilter tunerfilter)
     {
       Log.Info("TechnoTrend: Looking Device ID");
-      IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
+      IPin outputPin = DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
+      {
         return -1;
+      }
       Log.Info("TechnoTrend: Got Pin");
       IKsPin iKsPin = outputPin as IKsPin;
       KSMULTIPLE_ITEM pmi;
@@ -233,9 +264,9 @@ namespace DShowNET
       if (hr != 0)
       {
         Log.Info("TechnoTrend: Pin does not support Mediums");
-        return -1;  // Pin does not support mediums.
+        return -1; // Pin does not support mediums.
       }
-      pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
+      pmi = (KSMULTIPLE_ITEM) Marshal.PtrToStructure(pDataReturned, typeof (KSMULTIPLE_ITEM));
       Log.Info("TechnoTrend: Got Mediums:{0}", pmi.Count);
       if (pmi.Count != 0)
       {
@@ -244,8 +275,8 @@ namespace DShowNET
         int address = pDataReturned.ToInt32() + sizeProperty;
         IntPtr ptrData = new IntPtr(address);
 
-        REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
-        int id = (int)medium.dw1;
+        REGPINMEDIUM medium = (REGPINMEDIUM) Marshal.PtrToStructure(ptrData, typeof (REGPINMEDIUM));
+        int id = (int) medium.dw1;
         Marshal.FreeCoTaskMem(pDataReturned);
         Log.Info("TechnoTrend: Device ID:{0}", id);
         return id;
@@ -278,23 +309,17 @@ namespace DShowNET
 
     public bool IsTechnoTrend
     {
-      get
-      {
-        return (_deviceType != TechnoTrendDeviceType.eTypeUnknown);
-      }
+      get { return (_deviceType != TechnoTrendDeviceType.eTypeUnknown); }
     }
 
     public bool IsTechnoTrendUSBDVBT
     {
-      get
-      {
-        return (_deviceType == TechnoTrendDeviceType.eDevTypeUsb2);
-      }
+      get { return (_deviceType == TechnoTrendDeviceType.eDevTypeUsb2); }
     }
 
     public bool SendPMT(int serviceId)
     {
-      if ((bool)_isCamInitializedTable[_handle] == false)
+      if ((bool) _isCamInitializedTable[_handle] == false)
       {
         Log.Info("Technotrend: service cannot be decoded because the CAM is not ready yet");
         return false;
@@ -342,27 +367,27 @@ namespace DShowNET
       {
         case 0:
           goto case 1;
-        case 1://simple A
+        case 1: //simple A
           position = 0;
           option = 0;
           break;
-        case 2://simple B
+        case 2: //simple B
           position = 0;
           option = 0;
           break;
-        case 3://Level 1 A/A
+        case 3: //Level 1 A/A
           position = 0;
           option = 0;
           break;
-        case 4://Level 1 B/A
+        case 4: //Level 1 B/A
           position = 1;
           option = 0;
           break;
-        case 5://Level 1 A/B
+        case 5: //Level 1 A/B
           position = 0;
           option = 1;
           break;
-        case 6://Level 1 B/B
+        case 6: //Level 1 B/B
           position = 1;
           option = 1;
           break;
@@ -373,35 +398,55 @@ namespace DShowNET
         int pol;
         uint diseqc = 0xE01038F0;
 
-        if (frequency > switchingFrequency)                 // high band
+        if (frequency > switchingFrequency) // high band
+        {
           diseqc |= 0x00000001;
-        else                        // low band
+        }
+        else // low band
+        {
           diseqc &= 0xFFFFFFFE;
+        }
 
-        if (polarisation == 1)             // vertikal
+        if (polarisation == 1) // vertikal
+        {
           diseqc &= 0xFFFFFFFD;
-        else                        // horizontal
+        }
+        else // horizontal
+        {
           diseqc |= 0x00000002;
+        }
 
-        if (position != 0)             // Sat B
+        if (position != 0) // Sat B
+        {
           diseqc |= 0x00000004;
-        else                        // Sat A
+        }
+        else // Sat A
+        {
           diseqc &= 0xFFFFFFFB;
+        }
 
-        if (option != 0)               // option B
+        if (option != 0) // option B
+        {
           diseqc |= 0x00000008;
-        else                        // option A
+        }
+        else // option A
+        {
           diseqc &= 0xFFFFFFF7;
+        }
 
-        if (polarisation == 0)//horizontal
-          pol = (int)TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+        if (polarisation == 0) //horizontal
+        {
+          pol = (int) Polarisation.BDA_POLARISATION_LINEAR_H;
+        }
         else
-          pol = (int)TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+        {
+          pol = (int) Polarisation.BDA_POLARISATION_LINEAR_V;
+        }
 
-        Marshal.WriteByte(ptrData, 0, (byte)((diseqc >> 24) & 0xff));
-        Marshal.WriteByte(ptrData, 1, (byte)((diseqc >> 16) & 0xff));
-        Marshal.WriteByte(ptrData, 2, (byte)((diseqc >> 8) & 0xff));
-        Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
+        Marshal.WriteByte(ptrData, 0, (byte) ((diseqc >> 24) & 0xff));
+        Marshal.WriteByte(ptrData, 1, (byte) ((diseqc >> 16) & 0xff));
+        Marshal.WriteByte(ptrData, 2, (byte) ((diseqc >> 8) & 0xff));
+        Marshal.WriteByte(ptrData, 3, (byte) ((diseqc) & 0xff));
 
         bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, pol);
         Log.Info("Technotrend: Diseqc Command Send");
@@ -425,13 +470,22 @@ namespace DShowNET
       Log.Info("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
       bdaapiSetDVBTAntPwr(_handle, onOff);
       bdaapiGetDVBTAntPwr(_handle, ref uiAntPwrOnOff);
-      if (uiAntPwrOnOff == 0) Get5vAntennae = "Disabled";
-      if (uiAntPwrOnOff == 1) Get5vAntennae = "Enabled";
-      if (uiAntPwrOnOff == 2) Get5vAntennae = "Not Connected";
+      if (uiAntPwrOnOff == 0)
+      {
+        Get5vAntennae = "Disabled";
+      }
+      if (uiAntPwrOnOff == 1)
+      {
+        Get5vAntennae = "Enabled";
+      }
+      if (uiAntPwrOnOff == 2)
+      {
+        Get5vAntennae = "Not Connected";
+      }
       Log.Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
-    unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
+    public static unsafe void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
     {
       if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
       {
@@ -443,10 +497,9 @@ namespace DShowNET
         Log.Info("Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
         _isCamInitializedTable[Context] = false;
       }
-
     }
 
-    unsafe public static void OnCAStatus(UInt32 Context, Byte nSlot, Byte nReplyTag, UInt16 wStatus)
+    public static unsafe void OnCAStatus(UInt32 Context, Byte nSlot, Byte nReplyTag, UInt16 wStatus)
     {
     }
   }

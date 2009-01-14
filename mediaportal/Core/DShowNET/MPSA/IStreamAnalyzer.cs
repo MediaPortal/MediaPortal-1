@@ -24,25 +24,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace DShowNET.MPSA
 {
   [ComVisible(true), ComImport,
-  Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IHardwarePidFiltering
   {
     [PreserveSig]
     int FilterPids(short count, IntPtr pids);
-  };
+  } ;
 
   //IMPDST
   [ComVisible(true), ComImport,
-  Guid("FB1EF498-2C7D-4fed-B2AA-B8F9E199F074"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("FB1EF498-2C7D-4fed-B2AA-B8F9E199F074"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IStreamAnalyzer
   {
     [PreserveSig]
@@ -89,9 +87,8 @@ namespace DShowNET.MPSA
 
     [PreserveSig]
     int GetLCN(Int16 channel, out Int16 networkId, out Int16 transportId, out Int16 serviceID, out Int16 LCN);
-    
+
     [PreserveSig]
     int SetPidFilterCallback(IHardwarePidFiltering callback);
   }
-
 }

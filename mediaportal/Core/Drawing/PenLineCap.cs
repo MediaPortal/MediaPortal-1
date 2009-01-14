@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum PenLineCap
-	{
-		Flat,
-		Round,
-		Square,
-		Triangle,
-	}
+  public enum PenLineCap
+  {
+    Flat,
+    Round,
+    Square,
+    Triangle,
+  }
 }

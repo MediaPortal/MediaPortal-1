@@ -23,72 +23,70 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public class Storyboard : ParallelTimeline
-	{
-		#region Constructors
+  public class Storyboard : ParallelTimeline
+  {
+    #region Constructors
 
-		static Storyboard()
-		{
-			TargetNameProperty = DependencyProperty.Register("TargetName", typeof(string), typeof(Storyboard));
-			TargetPropertyProperty = DependencyProperty.Register("TargetProperty", typeof(DependencyProperty), typeof(Storyboard));
-		}
+    static Storyboard()
+    {
+      TargetNameProperty = DependencyProperty.Register("TargetName", typeof (string), typeof (Storyboard));
+      TargetPropertyProperty = DependencyProperty.Register("TargetProperty", typeof (DependencyProperty),
+                                                           typeof (Storyboard));
+    }
 
-		public Storyboard()
-		{
-		}
+    public Storyboard()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
-		
-		public static string GetTargetName(DependencyObject d)
-		{
-			return (string)d.GetValue(TargetNameProperty);
-		}
+    #region Methods
 
-		public static string GetTargetProperty(DependencyObject d)
-		{
-			return (string)d.GetValue(TargetPropertyProperty);
-		}
+    public static string GetTargetName(DependencyObject d)
+    {
+      return (string) d.GetValue(TargetNameProperty);
+    }
 
-		public static void SetTargetName(DependencyObject d, string name)
-		{
-			d.SetValue(TargetNameProperty, name);
-		}
+    public static string GetTargetProperty(DependencyObject d)
+    {
+      return (string) d.GetValue(TargetPropertyProperty);
+    }
 
-		public static void SetTargetProperty(DependencyObject d, DependencyProperty property)
-		{
-			d.SetValue(TargetPropertyProperty, property);
-		}
+    public static void SetTargetName(DependencyObject d, string name)
+    {
+      d.SetValue(TargetNameProperty, name);
+    }
 
-		#endregion Methods
+    public static void SetTargetProperty(DependencyObject d, DependencyProperty property)
+    {
+      d.SetValue(TargetPropertyProperty, property);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public string TargetName
-		{
-			get { return (string)GetValue(TargetNameProperty); }
-			set { SetValue(TargetNameProperty, value); }
-		}
+    #region Properties
 
-		public string TargetProperty
-		{
-			get { return (string)GetValue(TargetPropertyProperty); }
-			set { SetValue(TargetPropertyProperty, value); }
-		}
+    public string TargetName
+    {
+      get { return (string) GetValue(TargetNameProperty); }
+      set { SetValue(TargetNameProperty, value); }
+    }
 
-		#endregion Properties
+    public string TargetProperty
+    {
+      get { return (string) GetValue(TargetPropertyProperty); }
+      set { SetValue(TargetPropertyProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty TargetNameProperty;
-		public static readonly DependencyProperty TargetPropertyProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
-	}
+    public static readonly DependencyProperty TargetNameProperty;
+    public static readonly DependencyProperty TargetPropertyProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

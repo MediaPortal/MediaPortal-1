@@ -23,101 +23,110 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Serialization;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public abstract class Panel : FrameworkElement, IAddChild
-	{
-		#region Constructors
+  public abstract class Panel : FrameworkElement, IAddChild
+  {
+    #region Constructors
 
-		static Panel()
-		{
-			BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(Panel));
-			IsItemsHostProperty = DependencyProperty.Register("IsItemsHostProperty", typeof(bool), typeof(Panel), new PropertyMetadata(false));
-		}
+    static Panel()
+    {
+      BackgroundProperty = DependencyProperty.Register("Background", typeof (Brush), typeof (Panel));
+      IsItemsHostProperty = DependencyProperty.Register("IsItemsHostProperty", typeof (bool), typeof (Panel),
+                                                        new PropertyMetadata(false));
+    }
 
-		public Panel()
-		{
-		}
-		
-		#endregion Constructors
+    public Panel()
+    {
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    #region Methods
 
-			if(child is UIElement == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(UIElement)));
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			Children.Add((UIElement)child);
-		}
+      if (child is UIElement == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (UIElement)));
+      }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+      Children.Add((UIElement) child);
+    }
+
+    void IAddChild.AddText(string text)
+    {
+    }
 
 //		protected virtual UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
 
-		public static Brush GetBackground(DependencyObject d)
-		{
-			return (Brush)d.GetValue(BackgroundProperty);
-		}
+    public static Brush GetBackground(DependencyObject d)
+    {
+      return (Brush) d.GetValue(BackgroundProperty);
+    }
 
 //		protected virtual void OnIsItemsHostChanged(bool oldIsItemsHost, bool newIsItemsHost)
-			
-		protected override void OnRender(DrawingContext dc)
-		{
-		}
 
-		public static void SetBackground(DependencyObject d, Brush background)
-		{
-			d.SetValue(BackgroundProperty, background);
-		}
+    protected override void OnRender(DrawingContext dc)
+    {
+    }
 
-		#endregion Methods
+    public static void SetBackground(DependencyObject d, Brush background)
+    {
+      d.SetValue(BackgroundProperty, background);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Brush Background
-		{
-			get { return (Brush)GetValue(BackgroundProperty); }
-			set { SetValue(BackgroundProperty, value); }
-		}
+    #region Properties
 
-		public UIElementCollection Children
-		{
-			get { if(_children == null) _children = new UIElementCollection(); return _children; }
-		}
+    public Brush Background
+    {
+      get { return (Brush) GetValue(BackgroundProperty); }
+      set { SetValue(BackgroundProperty, value); }
+    }
 
-		[BindableAttribute(false)] 
-		public bool IsItemsHost
-		{
-			get { return (bool)GetValue(IsItemsHostProperty); }
-			set { SetValue(IsItemsHostProperty, value); }
-		}
+    public UIElementCollection Children
+    {
+      get
+      {
+        if (_children == null)
+        {
+          _children = new UIElementCollection();
+        }
+        return _children;
+      }
+    }
 
-		#endregion Properties
+    [Bindable(false)]
+    public bool IsItemsHost
+    {
+      get { return (bool) GetValue(IsItemsHostProperty); }
+      set { SetValue(IsItemsHostProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty BackgroundProperty;
-		public static readonly DependencyProperty IsItemsHostProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
+    public static readonly DependencyProperty BackgroundProperty;
+    public static readonly DependencyProperty IsItemsHostProperty;
 
-		#region Fields
+    #endregion Properties (Dependency)
 
-		UIElementCollection			_children;
+    #region Fields
 
-		#endregion Fields
-	}
+    private UIElementCollection _children;
+
+    #endregion Fields
+  }
 }

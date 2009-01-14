@@ -23,208 +23,221 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Windows;
 using System.Windows.Serialization;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class Grid : Panel, IAddChild
-	{
-		#region Constructors
+  public class Grid : Panel, IAddChild
+  {
+    #region Constructors
 
-		static Grid()
-		{
-			ColumnProperty = DependencyProperty.RegisterAttached("Column", typeof(int), typeof(Grid));
-			ColumnSpanProperty = DependencyProperty.RegisterAttached("ColumnSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
-			IsSharedSizeScopeProperty = DependencyProperty.RegisterAttached("IsSharedSizeScope", typeof(bool), typeof(Grid), new PropertyMetadata(false));
-			RowProperty = DependencyProperty.RegisterAttached("Row", typeof(int), typeof(Grid));
-			RowSpanProperty = DependencyProperty.RegisterAttached("RowSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
-			ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), typeof(Grid), new PropertyMetadata(false));
-		}
+    static Grid()
+    {
+      ColumnProperty = DependencyProperty.RegisterAttached("Column", typeof (int), typeof (Grid));
+      ColumnSpanProperty = DependencyProperty.RegisterAttached("ColumnSpan", typeof (int), typeof (Grid),
+                                                               new PropertyMetadata((int) 1));
+      IsSharedSizeScopeProperty = DependencyProperty.RegisterAttached("IsSharedSizeScope", typeof (bool), typeof (Grid),
+                                                                      new PropertyMetadata(false));
+      RowProperty = DependencyProperty.RegisterAttached("Row", typeof (int), typeof (Grid));
+      RowSpanProperty = DependencyProperty.RegisterAttached("RowSpan", typeof (int), typeof (Grid),
+                                                            new PropertyMetadata((int) 1));
+      ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof (bool), typeof (Grid),
+                                                          new PropertyMetadata(false));
+    }
 
-		public Grid()
-		{
-		}
+    public Grid()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child is ColumnDefinition)
-			{
-				ColumnDefinitions.Add((ColumnDefinition)child);
-			}
-			else if(child is RowDefinition)
-			{
-				RowDefinitions.Add((RowDefinition)child);
-			}
-			else if(child is UIElement)
-			{
-				Children.Add((UIElement)child);
-			}
-			else
-			{
-				throw new ArgumentException("");
-			}
-		}
+    void IAddChild.AddChild(object child)
+    {
+      if (child is ColumnDefinition)
+      {
+        ColumnDefinitions.Add((ColumnDefinition) child);
+      }
+      else if (child is RowDefinition)
+      {
+        RowDefinitions.Add((RowDefinition) child);
+      }
+      else if (child is UIElement)
+      {
+        Children.Add((UIElement) child);
+      }
+      else
+      {
+        throw new ArgumentException("");
+      }
+    }
 
-		void ApplyAlignment(FrameworkElement element, double x, double y, double w, double h)
-		{
-			Rect rect = new Rect(x, y, element.Width, element.Height);
-            
-			switch(element.HorizontalAlignment)
-			{
-				case HorizontalAlignment.Center:
-					rect.X = x + ((w - element.Width) / 2);
-					break;
-				case HorizontalAlignment.Right:
-					rect.X = x + w  - element.Width;
-					break;
-				case HorizontalAlignment.Stretch:
-					rect.Width = w;
-					break;
-			}
+    private void ApplyAlignment(FrameworkElement element, double x, double y, double w, double h)
+    {
+      Rect rect = new Rect(x, y, element.Width, element.Height);
 
-			switch(element.VerticalAlignment)
-			{
-				case VerticalAlignment.Center:
-					rect.Y = y + ((h - element.Height) / 2);
-					break;
-				case VerticalAlignment.Bottom:
-					rect.Y = y + h  - element.Height;
-					break;
-				case VerticalAlignment.Stretch:
-					rect.Height = h;
-					break;
-			}
-		
-			element.Arrange(rect);
-		}
+      switch (element.HorizontalAlignment)
+      {
+        case HorizontalAlignment.Center:
+          rect.X = x + ((w - element.Width)/2);
+          break;
+        case HorizontalAlignment.Right:
+          rect.X = x + w - element.Width;
+          break;
+        case HorizontalAlignment.Stretch:
+          rect.Width = w;
+          break;
+      }
 
-		protected override Size ArrangeOverride(Rect finalRect)
-		{
-			int rows = _rowDefinitions.Count;
-			int cols = _colDefinitions.Count;
+      switch (element.VerticalAlignment)
+      {
+        case VerticalAlignment.Center:
+          rect.Y = y + ((h - element.Height)/2);
+          break;
+        case VerticalAlignment.Bottom:
+          rect.Y = y + h - element.Height;
+          break;
+        case VerticalAlignment.Stretch:
+          rect.Height = h;
+          break;
+      }
 
-			if(rows > 0)
-				cols = (Children.Count + rows - 1) / rows;
-			else
-				rows = (Children.Count + cols - 1) / cols;
+      element.Arrange(rect);
+    }
 
-			double w = (Width - Margin.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (Height - Margin.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = Location.Y + Margin.Top;
+    protected override Size ArrangeOverride(Rect finalRect)
+    {
+      int rows = _rowDefinitions.Count;
+      int cols = _colDefinitions.Count;
 
-			for(int row = 0; row < rows; row++)
-			{
-				double x = Location.X + Margin.Left;
+      if (rows > 0)
+      {
+        cols = (Children.Count + rows - 1)/rows;
+      }
+      else
+      {
+        rows = (Children.Count + cols - 1)/cols;
+      }
 
-				for(int col = 0; col < cols; col++)
-				{
-					int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
+      double w = (Width - Margin.Width - (cols - 1)*_spacing.Width)/cols;
+      double h = (Height - Margin.Height - (rows - 1)*_spacing.Height)/rows;
+      double y = Location.Y + Margin.Top;
 
-					if(index < Children.Count)
-					{
-						FrameworkElement element = (FrameworkElement)Children[index];
+      for (int row = 0; row < rows; row++)
+      {
+        double x = Location.X + Margin.Left;
 
-						if(element.Visibility == System.Windows.Visibility.Collapsed)
-							continue;
+        for (int col = 0; col < cols; col++)
+        {
+          int index = _orientation == Orientation.Vertical ? col*rows + row : row*cols + col;
 
-						ApplyAlignment(element, x, y, w, h); 
-					}
+          if (index < Children.Count)
+          {
+            FrameworkElement element = (FrameworkElement) Children[index];
 
-					x += w + _spacing.Width;
-				}
+            if (element.Visibility == Visibility.Collapsed)
+            {
+              continue;
+            }
 
-				y += h + _spacing.Height;
-			}
+            ApplyAlignment(element, x, y, w, h);
+          }
 
-			return Size.Empty;
-		}
+          x += w + _spacing.Width;
+        }
 
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			double w = 0;
-			double h = 0;
+        y += h + _spacing.Height;
+      }
 
-			int rows = RowDefinitions.Count;
-			int cols = ColumnDefinitions.Count;
+      return Size.Empty;
+    }
 
-			if(rows > 0)
-				cols = (Children.Count + rows - 1) / rows;
-			else
-				rows = (Children.Count + cols - 1) / cols;
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      double w = 0;
+      double h = 0;
 
-			foreach(FrameworkElement element in Children)
-			{
-				if(element.Visibility == System.Windows.Visibility.Collapsed)
-					continue;
+      int rows = RowDefinitions.Count;
+      int cols = ColumnDefinitions.Count;
 
-				element.Measure(availableSize);
+      if (rows > 0)
+      {
+        cols = (Children.Count + rows - 1)/rows;
+      }
+      else
+      {
+        rows = (Children.Count + cols - 1)/cols;
+      }
 
-				w = Math.Max(w, element.Width);
-				h = Math.Max(h, element.Height);
-			}
+      foreach (FrameworkElement element in Children)
+      {
+        if (element.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-			w = (w * cols + _spacing.Width * (cols - 1)) + Margin.Width;
-			h = (h * rows + _spacing.Height * (rows - 1)) + Margin.Height;
+        element.Measure(availableSize);
 
-			return new Size(w, h);
-		}
+        w = Math.Max(w, element.Width);
+        h = Math.Max(h, element.Height);
+      }
 
-		#endregion Methods
+      w = (w*cols + _spacing.Width*(cols - 1)) + Margin.Width;
+      h = (h*rows + _spacing.Height*(rows - 1)) + Margin.Height;
 
-		#region Properties
+      return new Size(w, h);
+    }
 
-		public ColumnDefinitionCollection ColumnDefinitions
-		{
-			get { return _colDefinitions; }
-		}
+    #endregion Methods
 
-		protected internal override IEnumerator LogicalChildren
-		{
-			get { throw new NotImplementedException(); }
-		}
+    #region Properties
 
-		public RowDefinitionCollection RowDefinitions
-		{
-			get { return _rowDefinitions; }
-		}
+    public ColumnDefinitionCollection ColumnDefinitions
+    {
+      get { return _colDefinitions; }
+    }
 
-		public bool ShowGridLines
-		{
-			get { return (bool)GetValue(ShowGridLinesProperty); }
-			set { SetValue(ShowGridLinesProperty, value); }
-		}
+    protected internal override IEnumerator LogicalChildren
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
+    public RowDefinitionCollection RowDefinitions
+    {
+      get { return _rowDefinitions; }
+    }
 
-		#region Properties (Dependency)
+    public bool ShowGridLines
+    {
+      get { return (bool) GetValue(ShowGridLinesProperty); }
+      set { SetValue(ShowGridLinesProperty, value); }
+    }
 
-		public static readonly DependencyProperty ColumnProperty;
-		public static readonly DependencyProperty ColumnSpanProperty;
-		public static readonly DependencyProperty IsSharedSizeScopeProperty;
-		public static readonly DependencyProperty RowProperty;
-		public static readonly DependencyProperty RowSpanProperty;
-		public static readonly DependencyProperty ShowGridLinesProperty;
+    #endregion Properties
 
-		#endregion Properties (Dependency)
+    #region Properties (Dependency)
 
-		#region Fields
+    public static readonly DependencyProperty ColumnProperty;
+    public static readonly DependencyProperty ColumnSpanProperty;
+    public static readonly DependencyProperty IsSharedSizeScopeProperty;
+    public static readonly DependencyProperty RowProperty;
+    public static readonly DependencyProperty RowSpanProperty;
+    public static readonly DependencyProperty ShowGridLinesProperty;
 
-		ColumnDefinitionCollection	_colDefinitions = new ColumnDefinitionCollection();
-		RowDefinitionCollection		_rowDefinitions = new RowDefinitionCollection();
+    #endregion Properties (Dependency)
 
-		#endregion Fields
+    #region Fields
 
-		// temporary
-		Size _spacing = Size.Empty;
-		Orientation _orientation = Orientation.Vertical;
-	}
+    private ColumnDefinitionCollection _colDefinitions = new ColumnDefinitionCollection();
+    private RowDefinitionCollection _rowDefinitions = new RowDefinitionCollection();
+
+    #endregion Fields
+
+    // temporary
+    private Size _spacing = Size.Empty;
+    private Orientation _orientation = Orientation.Vertical;
+  }
 }

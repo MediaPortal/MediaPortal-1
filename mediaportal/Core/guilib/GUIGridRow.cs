@@ -25,67 +25,49 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Serialization;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
   public class GUIGridRow
   {
     #region variables
-    
-    List<GUIGridCell> _cells = new List<GUIGridCell>();
-    int _absoluteHeight = 0;
-    int _relativeHeight = 0;
-    int _calculatedHeight = 0;
-    
-    int _positionY;
-    GUIGridControl _gridControl;
+
+    private List<GUIGridCell> _cells = new List<GUIGridCell>();
+    private int _absoluteHeight = 0;
+    private int _relativeHeight = 0;
+    private int _calculatedHeight = 0;
+
+    private int _positionY;
+    private GUIGridControl _gridControl;
+
     #endregion
-    
+
     #region ctor
+
     public GUIGridRow(GUIGridControl gridControl)
     {
       _gridControl = gridControl;
     }
+
     #endregion
 
     #region properties
+
     public int CalculatedHeight
     {
-      get
-      {
-        return _calculatedHeight;
-      }
-      set
-      {
-        _calculatedHeight = value;
-      }
+      get { return _calculatedHeight; }
+      set { _calculatedHeight = value; }
     }
 
     public GUIGridControl GridControl
     {
-      get
-      {
-        return _gridControl;
-      }
-      set
-      {
-        _gridControl = value;
-      }
+      get { return _gridControl; }
+      set { _gridControl = value; }
     }
 
     public int AbsoluteHeight
     {
-      get
-      {
-        return _absoluteHeight;
-      }
+      get { return _absoluteHeight; }
       set
       {
         _absoluteHeight = value;
@@ -95,14 +77,13 @@ namespace MediaPortal.GUI.Library
 
     public int RelativeHeight
     {
-      get
-      {
-        return _relativeHeight;
-      }
+      get { return _relativeHeight; }
       set
       {
         if (_relativeHeight < 0 || _relativeHeight > 100)
+        {
           throw new ArgumentOutOfRangeException("_relativeHeight");
+        }
         _relativeHeight = value;
         _absoluteHeight = 0;
       }
@@ -113,12 +94,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (AbsoluteHeight > 0) return AbsoluteHeight;
+        if (AbsoluteHeight > 0)
+        {
+          return AbsoluteHeight;
+        }
         if (RelativeHeight > 0)
         {
-          float height = ((float)GridControl.Height) / ((float)(GridControl.Count));
-          height *= (((float)RelativeHeight) / 100.0f);
-          return (int)height;
+          float height = ((float) GridControl.Height)/((float) (GridControl.Count));
+          height *= (((float) RelativeHeight)/100.0f);
+          return (int) height;
         }
         return _calculatedHeight;
       }
@@ -126,26 +110,19 @@ namespace MediaPortal.GUI.Library
 
     public List<GUIGridCell> Columns
     {
-      get
-      {
-        return _cells;
-      }
-      set
-      {
-        _cells = value;
-      }
+      get { return _cells; }
+      set { _cells = value; }
     }
 
     public int Count
     {
-      get
-      {
-        return _cells.Count;
-      }
+      get { return _cells.Count; }
     }
+
     #endregion
 
     #region public members
+
     public void FreeResources()
     {
       for (int column = 0; column < _cells.Count; ++column)
@@ -163,12 +140,13 @@ namespace MediaPortal.GUI.Library
       }
       offsetY += RenderHeight;
     }
-    
+
     public GUIGridRow GetRowAt(int y)
     {
       for (int row = 0; row < GridControl.Rows.Count; row++)
       {
-        if (y >= GridControl.Rows[row]._positionY && y < GridControl.Rows[row]._positionY + GridControl.Rows[row].RenderHeight)
+        if (y >= GridControl.Rows[row]._positionY &&
+            y < GridControl.Rows[row]._positionY + GridControl.Rows[row].RenderHeight)
         {
           return GridControl.Rows[row];
         }
@@ -179,6 +157,7 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region private members
+
     #endregion
   }
 }

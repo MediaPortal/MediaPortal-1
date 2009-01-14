@@ -23,100 +23,112 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.ComponentModel;
 
 namespace System.Windows.Media.Animation
 {
-	public sealed class ClockCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class ClockCollection : CollectionBase
+  {
+    #region Constructors
 
-		public ClockCollection()
-		{
-		}
+    public ClockCollection()
+    {
+    }
 
-		public ClockCollection(Clock parent)
-		{
-			_parent = parent;
-		}
+    public ClockCollection(Clock parent)
+    {
+      _parent = parent;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(Clock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public void Add(Clock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			List.Add(clock);
-		}
+      List.Add(clock);
+    }
 
-		public bool Contains(Clock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public bool Contains(Clock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			return List.Contains(clock);
-		}
+      return List.Contains(clock);
+    }
 
-		public void CopyTo(Clock[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Clock[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public override bool Equals(object other)
-		{
-			throw new NotImplementedException();
-		}
+    public override bool Equals(object other)
+    {
+      throw new NotImplementedException();
+    }
 
-		public static bool Equals(ClockCollection l, ClockCollection r)
-		{
-			throw new NotImplementedException();
-		}
+    public static bool Equals(ClockCollection l, ClockCollection r)
+    {
+      throw new NotImplementedException();
+    }
 
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
-		}
-			
-		public int IndexOf(Clock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+    public override int GetHashCode()
+    {
+      throw new NotImplementedException();
+    }
 
-			return List.IndexOf(clock);
-		}
+    public int IndexOf(Clock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-		public void Insert(int index, Clock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
+      return List.IndexOf(clock);
+    }
 
-			List.Insert(index, clock);
-		}
+    public void Insert(int index, Clock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-		public bool Remove(Clock clock)
-		{
-			if(clock == null)
-				throw new ArgumentNullException("clock");
-			
-			if(List.Contains(clock) == false)
-				return false;
+      List.Insert(index, clock);
+    }
 
-			List.Remove(clock);
+    public bool Remove(Clock clock)
+    {
+      if (clock == null)
+      {
+        throw new ArgumentNullException("clock");
+      }
 
-			return true;
-		}
+      if (List.Contains(clock) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(clock);
 
-		#region Operators
+      return true;
+    }
+
+    #endregion Methods
+
+    #region Operators
 
 //		public static bool operator == (ClockCollection l, ClockCollection r)
 //		{
@@ -128,22 +140,22 @@ namespace System.Windows.Media.Animation
 //			throw new NotImplementedException();
 //		}
 
-		#endregion Operators
+    #endregion Operators
 
-		#region Properties
+    #region Properties
 
-		public Clock this[int index]
-		{ 
-			get { return (Clock)List[index]; }
-			set { List[index] = value; }
-		}
+    public Clock this[int index]
+    {
+      get { return (Clock) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Clock						_parent;		
+    private Clock _parent;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

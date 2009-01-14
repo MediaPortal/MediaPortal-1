@@ -23,50 +23,48 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public class ParallelTimeline : TimelineGroup
-	{
-		#region Constructors
+  public class ParallelTimeline : TimelineGroup
+  {
+    #region Constructors
 
-		public ParallelTimeline()
-		{
-		}
+    public ParallelTimeline()
+    {
+    }
 
-		public ParallelTimeline(Nullable<TimeSpan> beginTime) : base(beginTime)
-		{
-		}
+    public ParallelTimeline(Nullable<TimeSpan> beginTime) : base(beginTime)
+    {
+    }
 
-		public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
-		{
-		}
+    public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
+    {
+    }
 
-		public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
-		{
-		}
+    public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
+      : base(beginTime, duration, repeatBehavior)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public new ParallelTimeline Copy()
-		{
-			return (ParallelTimeline)base.Copy();
-		}
+    public new ParallelTimeline Copy()
+    {
+      return (ParallelTimeline) base.Copy();
+    }
 
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ParallelTimeline();
-		}
+    protected override Freezable CreateInstanceCore()
+    {
+      return new ParallelTimeline();
+    }
 
-		protected override Duration GetNaturalDurationCore(Clock clock)
-		{
-			throw new NotImplementedException();
-		}
+    protected override Duration GetNaturalDurationCore(Clock clock)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

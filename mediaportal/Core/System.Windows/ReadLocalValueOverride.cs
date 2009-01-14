@@ -23,13 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	#region Delegates
 
-	public delegate object ReadLocalValueOverride(DependencyObject d);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate object ReadLocalValueOverride(DependencyObject d);
+
+  #endregion Delegates
 }

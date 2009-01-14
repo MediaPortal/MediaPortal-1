@@ -23,85 +23,80 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
-
-using MediaPortal.Dispatcher;
-
 namespace System.Windows.Media.Animation
 {
-	public sealed class ClockController
-	{
-		#region Constructors
+  public sealed class ClockController
+  {
+    #region Constructors
 
-		internal ClockController(Clock clock)
-		{
-			_clock = clock;
-		}
+    internal ClockController(Clock clock)
+    {
+      _clock = clock;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Begin()
-		{
-		}
+    public void Begin()
+    {
+    }
 
-		public void Pause()
-		{
-		}
+    public void Pause()
+    {
+    }
 
-		public void Resume()
-		{
+    public void Resume()
+    {
 //			_isPaused = false;
-		}
+    }
 
-		public void Reverse()
-		{
+    public void Reverse()
+    {
 //			_isReversed = !_isReversed;
-		}
+    }
 
-		public void Seek(TimeSpan offset, TimeSeekOrigin origin)
-		{
-			throw new NotImplementedException();
-		}
+    public void Seek(TimeSpan offset, TimeSeekOrigin origin)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SeekAlignedToLastTick(TimeSpan offset, TimeSeekOrigin origin)
-		{
-		}
+    public void SeekAlignedToLastTick(TimeSpan offset, TimeSeekOrigin origin)
+    {
+    }
 
-		public void SkipToFill()
-		{
+    public void SkipToFill()
+    {
 //			if(blahblah == RepeatBehavior.Forever)
 //				throw new InvalidOperationException();
-		}
+    }
 
-		public void Stop()
-		{
-		}
+    public void Stop()
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
-	
-		public Clock Clock
-		{
-			get { return _clock; }
-		}
+    #region Properties
 
-		public double SpeedRatio
-		{ 
-			get { return _speedRatio; }
-			set { _speedRatio = value; }
-		}
+    public Clock Clock
+    {
+      get { return _clock; }
+    }
 
-		#endregion Properties
-        
-		#region Fields
-		
-		Clock					_clock = null;
-		double					_speedRatio = 1;
+    public double SpeedRatio
+    {
+      get { return _speedRatio; }
+      set { _speedRatio = value; }
+    }
 
-		#endregion Fields
-	}
+    #endregion Properties
+
+    #region Fields
+
+    private Clock _clock = null;
+    private double _speedRatio = 1;
+
+    #endregion Fields
+  }
 }

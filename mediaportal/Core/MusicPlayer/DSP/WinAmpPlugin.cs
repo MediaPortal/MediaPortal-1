@@ -24,9 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MediaPortal.Player.DSP
@@ -40,7 +37,6 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// The Dll to load for the Plugin
     /// </summary>
-    [XmlAttribute]
-    public string PluginDll = string.Empty;
+    [XmlAttribute] public string PluginDll = string.Empty;
   }
 }

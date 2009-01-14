@@ -23,86 +23,99 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Controls
 {
-	public sealed class ColumnDefinitionCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class ColumnDefinitionCollection : CollectionBase
+  {
+    #region Constructors
 
-		public ColumnDefinitionCollection()
-		{
-		}
+    public ColumnDefinitionCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(ColumnDefinition column)
-		{
-			if(column == null)
-				throw new ArgumentNullException("column");
+    public void Add(ColumnDefinition column)
+    {
+      if (column == null)
+      {
+        throw new ArgumentNullException("column");
+      }
 
-			List.Add(column);
-		}
+      List.Add(column);
+    }
 
-		public bool Contains(ColumnDefinition column)
-		{
-			if(column == null)
-				throw new ArgumentNullException("column");
+    public bool Contains(ColumnDefinition column)
+    {
+      if (column == null)
+      {
+        throw new ArgumentNullException("column");
+      }
 
-			return List.Contains(column);
-		}
+      return List.Contains(column);
+    }
 
-		public void CopyTo(ColumnDefinition[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(ColumnDefinition[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(ColumnDefinition column)
-		{
-			if(column == null)
-				throw new ArgumentNullException("column");
+    public int IndexOf(ColumnDefinition column)
+    {
+      if (column == null)
+      {
+        throw new ArgumentNullException("column");
+      }
 
-			return List.IndexOf(column);
-		}
+      return List.IndexOf(column);
+    }
 
-		public void Insert(int index, ColumnDefinition column)
-		{
-			if(column == null)
-				throw new ArgumentNullException("column");
+    public void Insert(int index, ColumnDefinition column)
+    {
+      if (column == null)
+      {
+        throw new ArgumentNullException("column");
+      }
 
-			List.Insert(index, column);
-		}
+      List.Insert(index, column);
+    }
 
-		public bool Remove(ColumnDefinition column)
-		{
-			if(column == null)
-				throw new ArgumentNullException("column");
-			
-			if(List.Contains(column) == false)
-				return false;
+    public bool Remove(ColumnDefinition column)
+    {
+      if (column == null)
+      {
+        throw new ArgumentNullException("column");
+      }
 
-			List.Remove(column);
+      if (List.Contains(column) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(column);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public ColumnDefinition this[int index]
-		{ 
-			get { return (ColumnDefinition)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public ColumnDefinition this[int index]
+    {
+      get { return (ColumnDefinition) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

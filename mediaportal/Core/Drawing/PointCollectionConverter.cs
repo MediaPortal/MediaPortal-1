@@ -24,50 +24,55 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace MediaPortal.Drawing
 {
-	public class PointCollectionConverter : TypeConverter
-	{
-		#region Methods
+  public class PointCollectionConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value == null)
-				throw base.GetConvertFromException(value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value == null)
+      {
+        throw base.GetConvertFromException(value);
+      }
 
-			if(value is string)
-			{
-				PointCollection points = new PointCollection();
+      if (value is string)
+      {
+        PointCollection points = new PointCollection();
 
-				// TODO: this should be improved upon
-				foreach(string token in ((string)value).Split(' '))
-				{
-					if(token == string.Empty)
-						continue;
+        // TODO: this should be improved upon
+        foreach (string token in ((string) value).Split(' '))
+        {
+          if (token == string.Empty)
+          {
+            continue;
+          }
 
-					string[] coords = token.Split(',');
+          string[] coords = token.Split(',');
 
-					points.Add(new Point(Convert.ToDouble(coords[0]), Convert.ToDouble(coords[1])));
-				}
+          points.Add(new Point(Convert.ToDouble(coords[0]), Convert.ToDouble(coords[1])));
+        }
 
-				return points;
-			}
+        return points;
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

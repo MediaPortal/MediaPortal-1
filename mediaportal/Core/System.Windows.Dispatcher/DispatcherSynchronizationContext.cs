@@ -23,24 +23,21 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherSynchronizationContext
-	{
-		#region Constructors
+  public sealed class DispatcherSynchronizationContext
+  {
+    #region Constructors
 
-		public DispatcherSynchronizationContext()
-		{
-		}
+    public DispatcherSynchronizationContext()
+    {
+    }
 
-		public DispatcherSynchronizationContext(Dispatcher dispatcher)
-		{
-		}
+    public DispatcherSynchronizationContext(Dispatcher dispatcher)
+    {
+    }
 
-
-		#endregion Constructors
+    #endregion Constructors
 
 //		public override SynchronizationContext CreateCopy()
 //		{
@@ -53,5 +50,5 @@ namespace System.Windows.Dispatcher
 //		public override int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
 //		{
 //		}
-	}
+  }
 }

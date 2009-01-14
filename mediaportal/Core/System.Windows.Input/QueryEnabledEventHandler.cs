@@ -25,9 +25,10 @@
 
 namespace System.Windows.Input
 {
-	#region Delegate
-	
-	public delegate void QueryEnabledEventHandler(object sender, QueryEnabledEventArgs e);
 
-	#endregion Delegate
+  #region Delegate
+
+  public delegate void QueryEnabledEventHandler(object sender, QueryEnabledEventArgs e);
+
+  #endregion Delegate
 }

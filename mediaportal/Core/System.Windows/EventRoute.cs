@@ -23,40 +23,38 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public sealed class EventRoute
-	{
-		#region Constructors
+  public sealed class EventRoute
+  {
+    #region Constructors
 
-		public EventRoute(RoutedEvent routedEvent)
-		{
-		}
+    public EventRoute(RoutedEvent routedEvent)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(object target, Delegate handler, bool handledEventsToo)
-		{
-		}
+    public void Add(object target, Delegate handler, bool handledEventsToo)
+    {
+    }
 
-		public object PeekBranchNode()
-		{
-			throw new NotImplementedException();
-		}
+    public object PeekBranchNode()
+    {
+      throw new NotImplementedException();
+    }
 
-		public object PeekBranchSource()
-		{
-			throw new NotImplementedException();
-		}
+    public object PeekBranchSource()
+    {
+      throw new NotImplementedException();
+    }
 
-		public void PushBranchNode(object node, object source)
-		{
-		}
+    public void PushBranchNode(object node, object source)
+    {
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -23,137 +23,151 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public sealed class TimeManager
-	{
-		#region Constructors
+  public sealed class TimeManager
+  {
+    #region Constructors
 
-		public TimeManager()
-		{
-		}
+    public TimeManager()
+    {
+    }
 
-		public TimeManager(Clock clock)
-		{
-			_clock = clock;
-		}
+    public TimeManager(Clock clock)
+    {
+      _clock = clock;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Pause()
-		{
-			if(_isStarted == false)
-				return;
-			
-			if(_isPaused)
-				return;
+    public void Pause()
+    {
+      if (_isStarted == false)
+      {
+        return;
+      }
 
-			_pauseTick = _clock.CurrentTime.Milliseconds;
-			_isPaused = true;
-		}
+      if (_isPaused)
+      {
+        return;
+      }
 
-		public void Restart()
-		{
-			Stop();
-			Start();
-		}
+      _pauseTick = _clock.CurrentTime.Milliseconds;
+      _isPaused = true;
+    }
 
-		public void Resume()
-		{
-			if(_isPaused == false)
-				return;
+    public void Restart()
+    {
+      Stop();
+      Start();
+    }
 
-			_startTick = _startTick +  _pauseTick;
-			_isPaused = false;
-		}
+    public void Resume()
+    {
+      if (_isPaused == false)
+      {
+        return;
+      }
 
-		public void Seek(int offset, TimeSeekOrigin origin)
-		{
-			// This method seeks the global clock. The timelines of all timelines in the timing tree are 
-			// also updated accordingly. Any events that those timelines would have fired in between the
-			// old and new clock positions are skipped. Because the global clock is infinite there is no
-			// defined end point, therefore seeking from the end position has no effect.
+      _startTick = _startTick + _pauseTick;
+      _isPaused = false;
+    }
 
-			// docs state that Seek while paused involes resume and seek
-			if(_isStarted == false)
-				return;
+    public void Seek(int offset, TimeSeekOrigin origin)
+    {
+      // This method seeks the global clock. The timelines of all timelines in the timing tree are 
+      // also updated accordingly. Any events that those timelines would have fired in between the
+      // old and new clock positions are skipped. Because the global clock is infinite there is no
+      // defined end point, therefore seeking from the end position has no effect.
 
-			throw new NotImplementedException();
-		}
+      // docs state that Seek while paused involes resume and seek
+      if (_isStarted == false)
+      {
+        return;
+      }
 
-		public void Start()
-		{
-			if(_isStarted)
-				return;
+      throw new NotImplementedException();
+    }
 
-			_isStarted = true;
-			_startTick = _clock.CurrentTime.Milliseconds;
-		}
+    public void Start()
+    {
+      if (_isStarted)
+      {
+        return;
+      }
 
-		public void Stop()
-		{
-			if(_isStarted == false)
-				return;
+      _isStarted = true;
+      _startTick = _clock.CurrentTime.Milliseconds;
+    }
 
-			_isStarted = false;
-			_isPaused = false;
-		}
+    public void Stop()
+    {
+      if (_isStarted == false)
+      {
+        return;
+      }
 
-		public void Tick()
-		{
-			if(_isStarted == false)
-				return;
+      _isStarted = false;
+      _isPaused = false;
+    }
 
-			if(_isPaused)
-				return;
+    public void Tick()
+    {
+      if (_isStarted == false)
+      {
+        return;
+      }
 
-			// The associated reference clock is used to determine the current time,
-			// The new position of the clock will be equal to the difference between
-			// the starting system time and the current system time. The time manager requires 
-			// the system time to move forward.
-		}
+      if (_isPaused)
+      {
+        return;
+      }
 
-		#endregion Methods
+      // The associated reference clock is used to determine the current time,
+      // The new position of the clock will be equal to the difference between
+      // the starting system time and the current system time. The time manager requires 
+      // the system time to move forward.
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Clock Clock
-		{
-			get { return _clock; }
-			set { _clock = value; }
-		}
+    #region Properties
 
-		public static TimeSpan CurrentGlobalTime
-		{
-			get { return TimeSpan.Zero; }
-		}
-		
-		public TimeSpan CurrentTime
-		{
-			get { return TimeSpan.Zero; }
-		}
+    public Clock Clock
+    {
+      get { return _clock; }
+      set { _clock = value; }
+    }
 
-		public bool IsDirty
-		{
-			// True if the structure of the timing tree has changed since the last tick.
-			get { return _isDirty; }
-		}
+    public static TimeSpan CurrentGlobalTime
+    {
+      get { return TimeSpan.Zero; }
+    }
 
-		#endregion Properties
+    public TimeSpan CurrentTime
+    {
+      get { return TimeSpan.Zero; }
+    }
 
-		#region Fields
+    public bool IsDirty
+    {
+      // True if the structure of the timing tree has changed since the last tick.
+      get { return _isDirty; }
+    }
 
-		Clock						_clock;
-		bool						_isDirty = false;
-		bool						_isPaused;
-		bool						_isStarted;
-		long						_startTick;
-		long						_pauseTick;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private Clock _clock;
+    private bool _isDirty = false;
+    private bool _isPaused;
+    private bool _isStarted;
+    private long _startTick;
+    private long _pauseTick;
+
+    #endregion Fields
+  }
 }

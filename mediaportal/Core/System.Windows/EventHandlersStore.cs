@@ -23,89 +23,99 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.ComponentModel;
 
 namespace System.Windows
 {
-	public class EventHandlersStore
-	{
-		#region Constructors
+  public class EventHandlersStore
+  {
+    #region Constructors
 
-		public EventHandlersStore()
-		{
-		}
+    public EventHandlersStore()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(EventPrivateKey key, Delegate handler)
-		{
-			if(_directEventHandlers == null)
-				_directEventHandlers = new EventHandlerList();
+    public void Add(EventPrivateKey key, Delegate handler)
+    {
+      if (_directEventHandlers == null)
+      {
+        _directEventHandlers = new EventHandlerList();
+      }
 
-			_directEventHandlers.AddHandler(key, handler);
-		}
+      _directEventHandlers.AddHandler(key, handler);
+    }
 
-		public void AddRoutedEventHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
-			if(_routedEventHandlers == null)
-				_routedEventHandlers = new RoutedEventHandlerInfoList();
+    public void AddRoutedEventHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+    {
+      if (_routedEventHandlers == null)
+      {
+        _routedEventHandlers = new RoutedEventHandlerInfoList();
+      }
 
-			_routedEventHandlers.AddHandler(routedEvent, handler, handledEventsToo);
-		}
+      _routedEventHandlers.AddHandler(routedEvent, handler, handledEventsToo);
+    }
 
-		public bool Contains(RoutedEvent routedEvent)
-		{
-			if(_routedEventHandlers == null)
-				return false;
+    public bool Contains(RoutedEvent routedEvent)
+    {
+      if (_routedEventHandlers == null)
+      {
+        return false;
+      }
 
-			return _routedEventHandlers.Contains(routedEvent);
-		}
+      return _routedEventHandlers.Contains(routedEvent);
+    }
 
-		public Delegate Get(EventPrivateKey key)
-		{
-			if(_directEventHandlers == null)
-				return null;
+    public Delegate Get(EventPrivateKey key)
+    {
+      if (_directEventHandlers == null)
+      {
+        return null;
+      }
 
-			return _directEventHandlers[key];
-		}
+      return _directEventHandlers[key];
+    }
 
-		public RoutedEventHandlerInfo[] GetRoutedEventHandlers(RoutedEvent routedEvent)
-		{
-			throw new NotImplementedException();
-		}
+    public RoutedEventHandlerInfo[] GetRoutedEventHandlers(RoutedEvent routedEvent)
+    {
+      throw new NotImplementedException();
+    }
 
-		public RoutedEvent[] GetRoutedEventsWithHandlers()
-		{
-			throw new NotImplementedException();
-		}
+    public RoutedEvent[] GetRoutedEventsWithHandlers()
+    {
+      throw new NotImplementedException();
+    }
 
-		public void Remove(EventPrivateKey key, Delegate handler)
-		{
-			if(_directEventHandlers == null)
-				return;
+    public void Remove(EventPrivateKey key, Delegate handler)
+    {
+      if (_directEventHandlers == null)
+      {
+        return;
+      }
 
-			_directEventHandlers.RemoveHandler(key, handler);
-		}
+      _directEventHandlers.RemoveHandler(key, handler);
+    }
 
-		public void RemoveRoutedEventHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-			if(_routedEventHandlers == null)
-				return;
+    public void RemoveRoutedEventHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+      if (_routedEventHandlers == null)
+      {
+        return;
+      }
 
-			_routedEventHandlers.RemoveHandler(routedEvent, handler);
-		}
+      _routedEventHandlers.RemoveHandler(routedEvent, handler);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		EventHandlerList			_directEventHandlers;
-		RoutedEventHandlerInfoList	_routedEventHandlers;
+    private EventHandlerList _directEventHandlers;
+    private RoutedEventHandlerInfoList _routedEventHandlers;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

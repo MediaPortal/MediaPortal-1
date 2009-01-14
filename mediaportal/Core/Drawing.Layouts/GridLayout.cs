@@ -25,209 +25,244 @@
 
 using System;
 using System.Windows;
-
 using System.Windows.Controls;
-using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public class GridLayout : ILayout
-	{
-		#region Constructors
+  public class GridLayout : ILayout
+  {
+    #region Constructors
 
-		public GridLayout() : this(1, 0, 0, 0)
-		{
-		}
+    public GridLayout() : this(1, 0, 0, 0)
+    {
+    }
 
-		public GridLayout(int columns) : this(columns, 0, 0, 0)
-		{
-		}
+    public GridLayout(int columns) : this(columns, 0, 0, 0)
+    {
+    }
 
-		public GridLayout(int columns, int rows) : this(columns, rows, 0, 0)
-		{
-		}
+    public GridLayout(int columns, int rows) : this(columns, rows, 0, 0)
+    {
+    }
 
-		public GridLayout(int columns, int rows, double spacing) : this(columns, rows, spacing, spacing)
-		{
-		}
+    public GridLayout(int columns, int rows, double spacing) : this(columns, rows, spacing, spacing)
+    {
+    }
 
-		public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing)  : this(columns, rows, horizontalSpacing, verticalSpacing, Orientation.Horizontal)
-		{
-		}
+    public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing)
+      : this(columns, rows, horizontalSpacing, verticalSpacing, Orientation.Horizontal)
+    {
+    }
 
-		public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing, Orientation orientation)
-		{
-			if(rows < 0)
-				throw new ArgumentOutOfRangeException("rows");
+    public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing, Orientation orientation)
+    {
+      if (rows < 0)
+      {
+        throw new ArgumentOutOfRangeException("rows");
+      }
 
-			if(columns < 0)
-				throw new ArgumentOutOfRangeException("columns");
+      if (columns < 0)
+      {
+        throw new ArgumentOutOfRangeException("columns");
+      }
 
-			if(columns == 0 && rows == 0)
-				throw new ArgumentException("rows and columns cannot both be zero");
+      if (columns == 0 && rows == 0)
+      {
+        throw new ArgumentException("rows and columns cannot both be zero");
+      }
 
-			_cols = columns;
-			_rows = rows;
-			_spacing.Width = Math.Max(0, horizontalSpacing);
-			_spacing.Height = Math.Max(0, verticalSpacing);
-			_orientation = orientation;
-		}
+      _cols = columns;
+      _rows = rows;
+      _spacing.Width = Math.Max(0, horizontalSpacing);
+      _spacing.Height = Math.Max(0, verticalSpacing);
+      _orientation = orientation;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
-		{
-			Rect rect = new Rect(x, y, element.Width, element.Height);
-            
-			switch(element.HorizontalAlignment)
-			{
-				case HorizontalAlignment.Center:
-					rect.X = x + ((w - element.Width) / 2);
-					break;
-				case HorizontalAlignment.Right:
-					rect.X = x + w  - element.Width;
-					break;
-				case HorizontalAlignment.Stretch:
-					rect.Width = w;
-					break;
-			}
+    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    {
+      Rect rect = new Rect(x, y, element.Width, element.Height);
 
-			switch(element.VerticalAlignment)
-			{
-				case VerticalAlignment.Center:
-					rect.Y = y + ((h - element.Height) / 2);
-					break;
-				case VerticalAlignment.Bottom:
-					rect.Y = y + h  - element.Height;
-					break;
-				case VerticalAlignment.Stretch:
-					rect.Height = h;
-					break;
-			}
-		
-			element.Arrange(rect);
-		}
+      switch (element.HorizontalAlignment)
+      {
+        case HorizontalAlignment.Center:
+          rect.X = x + ((w - element.Width)/2);
+          break;
+        case HorizontalAlignment.Right:
+          rect.X = x + w - element.Width;
+          break;
+        case HorizontalAlignment.Stretch:
+          rect.Width = w;
+          break;
+      }
 
-		public void Arrange(GUIGroup element)
-		{
-			Point location = element.Location;
-			Thickness t = element.Margin;
+      switch (element.VerticalAlignment)
+      {
+        case VerticalAlignment.Center:
+          rect.Y = y + ((h - element.Height)/2);
+          break;
+        case VerticalAlignment.Bottom:
+          rect.Y = y + h - element.Height;
+          break;
+        case VerticalAlignment.Stretch:
+          rect.Height = h;
+          break;
+      }
 
-			int rows = _rows;
-			int cols = _cols;
+      element.Arrange(rect);
+    }
 
-			if(rows > 0)
-				cols = (element.Children.Count + rows - 1) / rows;
-			else
-				rows = (element.Children.Count + cols - 1) / cols;
+    public void Arrange(GUIGroup element)
+    {
+      Point location = element.Location;
+      Thickness t = element.Margin;
 
-			double w = (element.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (element.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = element.Location.Y + t.Top;
+      int rows = _rows;
+      int cols = _cols;
 
-			for(int row = 0; row < rows; row++)
-			{
-				double x = element.Location.X + t.Left;
+      if (rows > 0)
+      {
+        cols = (element.Children.Count + rows - 1)/rows;
+      }
+      else
+      {
+        rows = (element.Children.Count + cols - 1)/cols;
+      }
 
-				for(int col = 0; col < cols; col++)
-				{
-					int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
+      double w = (element.Width - t.Width - (cols - 1)*_spacing.Width)/cols;
+      double h = (element.Height - t.Height - (rows - 1)*_spacing.Height)/rows;
+      double y = element.Location.Y + t.Top;
 
-					if(index < element.Children.Count)
-					{
-						FrameworkElement component = (FrameworkElement)element.Children[index];
+      for (int row = 0; row < rows; row++)
+      {
+        double x = element.Location.X + t.Left;
 
-						if(component.Visibility == Visibility.Collapsed)
-							continue;
+        for (int col = 0; col < cols; col++)
+        {
+          int index = _orientation == Orientation.Vertical ? col*rows + row : row*cols + col;
 
-						ApplyAlignment(component, t, x, y, w, h); 
-					}
+          if (index < element.Children.Count)
+          {
+            FrameworkElement component = (FrameworkElement) element.Children[index];
 
-					x += w + _spacing.Width;
-				}
+            if (component.Visibility == Visibility.Collapsed)
+            {
+              continue;
+            }
 
-				y += h + _spacing.Height;
-			}
-		}
+            ApplyAlignment(component, t, x, y, w, h);
+          }
 
-		public Size Measure(GUIGroup element, Size availableSize)
-		{
-			double w = 0;
-			double h = 0;
+          x += w + _spacing.Width;
+        }
 
-			int rows = _rows;
-			int cols = _cols;
+        y += h + _spacing.Height;
+      }
+    }
 
-			if(rows > 0)
-				cols = (element.Children.Count + rows - 1) / rows;
-			else
-				rows = (element.Children.Count + cols - 1) / cols;
+    public Size Measure(GUIGroup element, Size availableSize)
+    {
+      double w = 0;
+      double h = 0;
 
-			foreach(FrameworkElement child in element.Children)
-			{
-				if(child.Visibility == Visibility.Collapsed)
-					continue;
+      int rows = _rows;
+      int cols = _cols;
 
-				child.Measure(availableSize);
+      if (rows > 0)
+      {
+        cols = (element.Children.Count + rows - 1)/rows;
+      }
+      else
+      {
+        rows = (element.Children.Count + cols - 1)/cols;
+      }
 
-				w = Math.Max(w, child.Width);
-				h = Math.Max(h, child.Height);
-			}
+      foreach (FrameworkElement child in element.Children)
+      {
+        if (child.Visibility == Visibility.Collapsed)
+        {
+          continue;
+        }
 
-			Thickness t = element.Margin;
+        child.Measure(availableSize);
 
-			_size.Width = (w * cols + _spacing.Width * (cols - 1)) + t.Width;
-			_size.Height = (h * rows + _spacing.Height * (rows - 1)) + t.Height;
+        w = Math.Max(w, child.Width);
+        h = Math.Max(h, child.Height);
+      }
 
-			return _size;
-		}
+      Thickness t = element.Margin;
 
-		#endregion Methods
+      _size.Width = (w*cols + _spacing.Width*(cols - 1)) + t.Width;
+      _size.Height = (h*rows + _spacing.Height*(rows - 1)) + t.Height;
 
-		#region Properties
+      return _size;
+    }
 
-		public int Columns
-		{
-			get { return _cols; }
-			set { if(value != _cols) { _cols = value; } }
-		}
+    #endregion Methods
 
-		public Orientation Orientation
-		{
-			get { return _orientation; }
-			set { _orientation = value; }
-		}
-	
-		public int Rows
-		{
-			get { return _rows; }
-			set { if(value != _rows) { _rows = value; } }
-		}
+    #region Properties
 
-		public Size Size
-		{
-			get { return _size; }
-		}
+    public int Columns
+    {
+      get { return _cols; }
+      set
+      {
+        if (value != _cols)
+        {
+          _cols = value;
+        }
+      }
+    }
 
-		public Size Spacing
-		{
-			get { return _spacing; }
-			set { if(Size.Equals(_spacing, value) == false) { _spacing = value; } }
-		}
+    public Orientation Orientation
+    {
+      get { return _orientation; }
+      set { _orientation = value; }
+    }
 
-		#endregion Properties
+    public int Rows
+    {
+      get { return _rows; }
+      set
+      {
+        if (value != _rows)
+        {
+          _rows = value;
+        }
+      }
+    }
 
-		#region Fields
+    public Size Size
+    {
+      get { return _size; }
+    }
 
-		int							_cols;
-		Orientation					_orientation;
-		int							_rows;
-		Size						_size = Size.Empty;
-		Size						_spacing = Size.Empty;
+    public Size Spacing
+    {
+      get { return _spacing; }
+      set
+      {
+        if (Equals(_spacing, value) == false)
+        {
+          _spacing = value;
+        }
+      }
+    }
 
-		#endregion Fields
-	}
+    #endregion Properties
+
+    #region Fields
+
+    private int _cols;
+    private Orientation _orientation;
+    private int _rows;
+    private Size _size = Size.Empty;
+    private Size _spacing = Size.Empty;
+
+    #endregion Fields
+  }
 }

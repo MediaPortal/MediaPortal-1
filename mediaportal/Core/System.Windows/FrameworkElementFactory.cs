@@ -23,118 +23,117 @@
 
 #endregion
 
-using System;
 using System.Windows.Data;
 
 namespace System.Windows
 {
-	public class FrameworkElementFactory
-	{
-		#region Constructors
+  public class FrameworkElementFactory
+  {
+    #region Constructors
 
-		public FrameworkElementFactory()
-		{
-		}
+    public FrameworkElementFactory()
+    {
+    }
 
-		public FrameworkElementFactory(string text)
-		{
-			_text = text;
-		}
+    public FrameworkElementFactory(string text)
+    {
+      _text = text;
+    }
 
-		public FrameworkElementFactory(Type type)		
-		{
-			_type = type;
-		}
+    public FrameworkElementFactory(Type type)
+    {
+      _type = type;
+    }
 
-		public FrameworkElementFactory(Type type, string name)
-		{
-			_type = type;
-			_name = name;
-		}
+    public FrameworkElementFactory(Type type, string name)
+    {
+      _type = type;
+      _name = name;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-		}
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+    }
 
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
-		}
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+    {
+    }
 
-		public void AppendChild(FrameworkElementFactory child)
-		{
-		}
-			
-		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-		}
-			
-		public void SetBinding(DependencyProperty dp, Binding binding)
-		{
-		}
-			
-		public void SetResourceReference(DependencyProperty dp, object name)
-		{
-		}
-			
-		public void SetValue(DependencyProperty dp, object value)
-		{
-		}
-			
-		#endregion Methods
+    public void AppendChild(FrameworkElementFactory child)
+    {
+    }
 
-		#region Properties
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+    }
 
-		public FrameworkElementFactory FirstChild
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public void SetBinding(DependencyProperty dp, Binding binding)
+    {
+    }
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    public void SetResourceReference(DependencyProperty dp, object name)
+    {
+    }
 
-		public string Name
-		{
-			get { return _name; }
-			set { _name = value; }
-		}
+    public void SetValue(DependencyProperty dp, object value)
+    {
+    }
 
-		public FrameworkElementFactory NextSibling
-		{
-			get { throw new NotImplementedException(); }
-		}
+    #endregion Methods
 
-		public FrameworkElementFactory Parent
-		{
-			get { throw new NotImplementedException(); }
-		}
+    #region Properties
 
-		public string Text
-		{
-			get { return _text; }
-			set { _text = value; }
-		}
-		
-		public Type Type
-		{
-			get { return _type; }
-			set { _type = value; }
-		}
+    public FrameworkElementFactory FirstChild
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
+    public bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		#region Fields
+    public string Name
+    {
+      get { return _name; }
+      set { _name = value; }
+    }
 
-		bool						_isSealed = false;
-		string						_name = string.Empty;
-		string						_text = string.Empty;
-		Type						_type = null;
+    public FrameworkElementFactory NextSibling
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Fields
-	}
+    public FrameworkElementFactory Parent
+    {
+      get { throw new NotImplementedException(); }
+    }
+
+    public string Text
+    {
+      get { return _text; }
+      set { _text = value; }
+    }
+
+    public Type Type
+    {
+      get { return _type; }
+      set { _type = value; }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private bool _isSealed = false;
+    private string _name = string.Empty;
+    private string _text = string.Empty;
+    private Type _type = null;
+
+    #endregion Fields
+  }
 }

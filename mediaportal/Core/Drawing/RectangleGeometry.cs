@@ -23,58 +23,60 @@
 
 #endregion
 
-using System;
-
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing
 {
-	public class RectangleGeometry : Geometry
-	{
-		#region Constructors
+  public class RectangleGeometry : Geometry
+  {
+    #region Constructors
 
-		public RectangleGeometry()
-		{
-		}
+    public RectangleGeometry()
+    {
+    }
 
-		public RectangleGeometry(Rect rect)
-		{
-			_rect = rect;
-		}
+    public RectangleGeometry(Rect rect)
+    {
+      _rect = rect;
+    }
 
-		public RectangleGeometry(Rect rect, double radiusX, double radiusY)
-		{
-			_rect = rect;
-			_radiusX = radiusX;
-			_radiusY = radiusY;
-		}
-		
-		public RectangleGeometry(Rect rect, double radiusX, double radiusY, Transform transform)
-		{
-			_rect = rect;
-			_radiusX = radiusX;
-			_radiusY = radiusY;
-			_transform = transform;
-		}
-		
-		#endregion Constructors
+    public RectangleGeometry(Rect rect, double radiusX, double radiusY)
+    {
+      _rect = rect;
+      _radiusX = radiusX;
+      _radiusY = radiusY;
+    }
 
-		#region Methods
+    public RectangleGeometry(Rect rect, double radiusX, double radiusY, Transform transform)
+    {
+      _rect = rect;
+      _radiusX = radiusX;
+      _radiusY = radiusY;
+      _transform = transform;
+    }
 
-		public void blah()
-		{
+    #endregion Constructors
+
+    #region Methods
+
+    public void blah()
+    {
 //			_svg_cairo_length_to_pixel (svg_cairo, x_len, &x);
 //			_svg_cairo_length_to_pixel (svg_cairo, y_len, &y);
 //			_svg_cairo_length_to_pixel (svg_cairo, width_len, &width);
 //			_svg_cairo_length_to_pixel (svg_cairo, height_len, &height);
 //			_svg_cairo_length_to_pixel (svg_cairo, _radiusX_len, &_radiusX);
 //			_svg_cairo_length_to_pixel (svg_cairo, _radiusY_len, &_radiusY);
- 
-			if(_radiusX > _rect.Width / 2.0)
-				_radiusX = _rect.Width / 2.0;
 
-			if(_radiusY > _rect.Height / 2.0)
-				_radiusY = _rect.Height / 2.0;
+      if (_radiusX > _rect.Width/2.0)
+      {
+        _radiusX = _rect.Width/2.0;
+      }
+
+      if (_radiusY > _rect.Height/2.0)
+      {
+        _radiusY = _rect.Height/2.0;
+      }
 
 /*			PathFigure figure = new PathFigure();
 
@@ -102,45 +104,46 @@ namespace MediaPortal.Drawing
 				figure.Segments.Add(new LineSegment(new Point(_rect.Left, _rect.Bottom), true));
 				figure.Segments.Add(new CloseSegment(true));
 			}
-*/		}
+*/
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
 //		public override Rect Bounds
 //		{
 //			get ;
 //		}
 
-		public double RadiusX
-		{
-			get { return _radiusX; }
-			set { }
-		}
+    public double RadiusX
+    {
+      get { return _radiusX; }
+      set { }
+    }
 
-		public double RadiusY
-		{
-			get { return _radiusY; }
-			set { }
-		}
+    public double RadiusY
+    {
+      get { return _radiusY; }
+      set { }
+    }
 
-		public Rect Rect
-		{
-			get { return _rect; }
-			set { }
-		}
+    public Rect Rect
+    {
+      get { return _rect; }
+      set { }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Transform					_transform;
-		double						_radiusX;
-		double						_radiusY;
-		Rect						_rect;
+    private Transform _transform;
+    private double _radiusX;
+    private double _radiusY;
+    private Rect _rect;
 //		PathFigure					_pathFigure;
-		
-		#endregion Fields
-	}
+
+    #endregion Fields
+  }
 }

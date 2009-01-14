@@ -23,55 +23,54 @@
 
 #endregion
 
-using System;
-using Color=System.Drawing.Color;
+using System.Drawing;
 
 namespace MediaPortal.Drawing
 {
-	public sealed class GradientStop
-	{
-		#region Constructors
+  public sealed class GradientStop
+  {
+    #region Constructors
 
-		public GradientStop()
-		{
-		}
+    public GradientStop()
+    {
+    }
 
-		public GradientStop(Color color, double offset)
-		{
-			_color = color;
-			_offset = offset;
-		}
+    public GradientStop(Color color, double offset)
+    {
+      _color = color;
+      _offset = offset;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
+    public Color Color
+    {
+      get { return _color; }
+      set { _color = value; }
+    }
 
-		public double Offset
-		{
-			get { return _offset; }
-			set { _offset = value; }
-		}
+    public double Offset
+    {
+      get { return _offset; }
+      set { _offset = value; }
+    }
 
-		public byte[] color
-		{
-			get { return _xolor; }
-		}
+    public byte[] color
+    {
+      get { return _xolor; }
+    }
 
-		byte[] _xolor = new byte[4];
-		
-		#endregion Properties
+    private byte[] _xolor = new byte[4];
 
-		#region Fields
+    #endregion Properties
 
-		Color						_color;
-		double						_offset;
+    #region Fields
 
-		#endregion Fields
-	}
+    private Color _color;
+    private double _offset;
+
+    #endregion Fields
+  }
 }

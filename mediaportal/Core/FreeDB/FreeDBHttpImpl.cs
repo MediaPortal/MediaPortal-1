@@ -24,40 +24,41 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Collections;
+using System.Windows.Forms;
+using MediaPortal.Player;
+using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
-
-using MediaPortal.Ripper;
 
 namespace MediaPortal.Freedb
 {
-	/// <summary>
-	/// Summary description for FreeDBHttpImpl.
-	/// </summary>
-	public class FreeDBHttpImpl //: IFreeDB
-	{
-    const string APPNAME="MediaPortal";
-    const string APPVERSION="1.0";
+  /// <summary>
+  /// Summary description for FreeDBHttpImpl.
+  /// </summary>
+  public class FreeDBHttpImpl //: IFreeDB
+  {
+    private const string APPNAME = "MediaPortal";
+    private const string APPVERSION = "1.0";
     private FreeDBSite m_server = null;
     private string m_serverURL = null;
     private string m_idStr = null;
     private string m_message = null;
     private int m_code = 0;
 
-		public FreeDBHttpImpl()
-		{
+    public FreeDBHttpImpl()
+    {
       // if BASS is not the default audio engine, we need to load the CD Plugin first
-      if (!MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
+      if (!BassMusicPlayer.IsDefaultMusicPlayer)
       {
         // Load the CD Plugin
-        string appPath = System.Windows.Forms.Application.StartupPath;       
-        string decoderFolderPath = System.IO.Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
+        string appPath = Application.StartupPath;
+        string decoderFolderPath = Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
 
         BassRegistration.BassRegistration.Register();
-        int pluginHandle = Un4seen.Bass.Bass.BASS_PluginLoad(decoderFolderPath + "\\basscd.dll");
+        int pluginHandle = Bass.BASS_PluginLoad(decoderFolderPath + "\\basscd.dll");
       }
 
       StringBuilder buff = new StringBuilder(512);
@@ -71,15 +72,15 @@ namespace MediaPortal.Freedb
       buff.Append(APPVERSION);
       buff.Append('+');
       buff.Append("&proto=5");
-      m_idStr =  buff.ToString();
-		}
+      m_idStr = buff.ToString();
+    }
 
     public bool Connect()
     {
       m_server = new FreeDBSite("freedb.freedb.org", FreeDBSite.FreeDBProtocol.HTTP, 80, "/~cddb/cddb.cgi",
                                 "N000.00", "W000.00", "Random freedb server");
 
-      m_serverURL = "http://"+m_server.Host+":"+m_server.Port+m_server.URI;
+      m_serverURL = "http://" + m_server.Host + ":" + m_server.Port + m_server.URI;
 
       return true;
     }
@@ -87,7 +88,7 @@ namespace MediaPortal.Freedb
     public bool Connect(FreeDBSite site)
     {
       m_server = site;
-      m_serverURL = "http://"+m_server.Host+":"+m_server.Port+m_server.URI;
+      m_serverURL = "http://" + m_server.Host + ":" + m_server.Port + m_server.URI;
       return true;
     }
 
@@ -102,17 +103,17 @@ namespace MediaPortal.Freedb
       StreamReader urlRdr = GetStreamFromSite("sites");
       m_message = urlRdr.ReadLine();
       int code = GetCode(m_message);
-      m_message = m_message.Substring(4);  // remove the code...
+      m_message = m_message.Substring(4); // remove the code...
       char[] sep = {' '};
 
 
-      switch(code)
+      switch (code)
       {
         case 210: // OK, Site Information Follows.
           // Read in all sites.
           string[] sites = ParseMultiLine(urlRdr);
           retval = new FreeDBSite[sites.Length];
-          int index =0;
+          int index = 0;
           // Loop through server list and extract different parts.
           foreach (string site in sites)
           {
@@ -120,20 +121,24 @@ namespace MediaPortal.Freedb
             string[] siteInfo = site.Split(sep);
             retval[index] = new FreeDBSite();
             retval[index].Host = siteInfo[0];
-            retval[index].Protocol = (FreeDBSite.FreeDBProtocol) Enum.Parse(typeof(FreeDBSite.FreeDBProtocol), siteInfo[1], true);
+            retval[index].Protocol =
+              (FreeDBSite.FreeDBProtocol) Enum.Parse(typeof (FreeDBSite.FreeDBProtocol), siteInfo[1], true);
             retval[index].Port = Convert.ToInt32(siteInfo[2]);
             retval[index].URI = siteInfo[3];
             retval[index].Latitude = siteInfo[4];
             retval[index].Longitude = siteInfo[5];
 
-            for(int i = 6; i < siteInfo.Length; i++)
-              loc += retval[i]+" ";
+            for (int i = 6; i < siteInfo.Length; i++)
+            {
+              loc += retval[i] + " ";
+            }
             retval[index].Location = loc;
             index++;
           }
           break;
         case 401: // No Site Information Available.
-          break;;
+          break;
+          ;
         default:
           break;
       }
@@ -196,7 +201,7 @@ namespace MediaPortal.Freedb
       StreamReader urlRdr = GetStreamFromSite(command);
       m_message = urlRdr.ReadLine();
       int code = GetCode(m_message);
-      m_message = m_message.Substring(4);  // remove the code...
+      m_message = m_message.Substring(4); // remove the code...
 
       char[] sep = {' '};
       string title = "";
@@ -204,7 +209,7 @@ namespace MediaPortal.Freedb
       string[] match;
       string[] matches;
 
-      switch(code)
+      switch (code)
       {
         case 200: // Exact Match...
           match = m_message.Split(sep);
@@ -213,8 +218,10 @@ namespace MediaPortal.Freedb
           retval[0] = new CDInfo();
           retval[0].Category = match[0];
           retval[0].DiscId = match[1];
-          for(int i=2; i<match.Length; i++)
+          for (int i = 2; i < match.Length; i++)
+          {
             title += match[i] + " ";
+          }
           retval[0].Title = title.Trim();
           break;
         case 202: // no match found
@@ -223,15 +230,17 @@ namespace MediaPortal.Freedb
         case 210: // Found Exact Matches. List Follows.
           matches = ParseMultiLine(urlRdr);
           retval = new CDInfo[matches.Length];
-          foreach(string line in matches)
+          foreach (string line in matches)
           {
             match = line.Split(sep);
 
             retval[index] = new CDInfo();
             retval[index].Category = match[0];
             retval[index].DiscId = match[1];
-            for(int i=2; i<match.Length; i++)
+            for (int i = 2; i < match.Length; i++)
+            {
               title += match[i] + " ";
+            }
             retval[index].Title = title.Trim();
             index++;
           }
@@ -256,7 +265,7 @@ namespace MediaPortal.Freedb
       StreamReader urlRdr = GetStreamFromSite(command);
       m_message = urlRdr.ReadLine();
       int code = GetCode(m_message);
-      m_message = m_message.Substring(4);  // remove the code...
+      m_message = m_message.Substring(4); // remove the code...
 
       char[] sep = {' '};
       string title = "";
@@ -264,7 +273,7 @@ namespace MediaPortal.Freedb
       string[] match;
       string[] matches;
 
-      switch(code)
+      switch (code)
       {
         case 200: // Exact Match...
           match = m_message.Split(sep);
@@ -273,8 +282,10 @@ namespace MediaPortal.Freedb
           retval[0] = new CDInfo();
           retval[0].Category = match[0];
           retval[0].DiscId = match[1];
-          for(int i=2; i<match.Length; i++)
+          for (int i = 2; i < match.Length; i++)
+          {
             title += match[i] + " ";
+          }
           retval[0].Title = title.Trim();
           break;
         case 202: // no match found
@@ -283,15 +294,17 @@ namespace MediaPortal.Freedb
         case 210: // Found Exact Matches. List Follows.
           matches = ParseMultiLine(urlRdr);
           retval = new CDInfo[matches.Length];
-          foreach(string line in matches)
+          foreach (string line in matches)
           {
             match = line.Split(sep);
 
             retval[index] = new CDInfo();
             retval[index].Category = match[0];
             retval[index].DiscId = match[1];
-            for(int i=2; i<match.Length; i++)
+            for (int i = 2; i < match.Length; i++)
+            {
               title += match[i] + " ";
+            }
             retval[index].Title = title.Trim();
             index++;
           }
@@ -320,9 +333,9 @@ namespace MediaPortal.Freedb
       StreamReader urlRdr = GetStreamFromSite(command);
       m_message = urlRdr.ReadLine();
       int code = GetCode(m_message);
-      m_message = m_message.Substring(4);  // remove the code...
+      m_message = m_message.Substring(4); // remove the code...
 
-      switch(code/100)
+      switch (code/100)
       {
         case 2: // no problem
           retval = ParseMultiLine(urlRdr);
@@ -342,17 +355,18 @@ namespace MediaPortal.Freedb
 
     private StreamReader GetStreamFromSite(string command)
     {
-      System.Uri url = new System.Uri(m_serverURL + "?cmd=" + command +  m_idStr);
-      
+      Uri url = new Uri(m_serverURL + "?cmd=" + command + m_idStr);
+
       WebRequest req = WebRequest.Create(url);
-      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream, Encoding.GetEncoding(0));
+      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream,
+                                             Encoding.GetEncoding(0));
 
       return urlRdr;
     }
 
     private int GetCode(string content)
     {
-      m_code = Convert.ToInt32(content.Substring(0,3));
+      m_code = Convert.ToInt32(content.Substring(0, 3));
       return m_code;
     }
 
@@ -366,13 +380,15 @@ namespace MediaPortal.Freedb
       ArrayList strarray = new ArrayList();
       string curLine;
 
-      while ((curLine = streamReader.ReadLine()) != null) 
+      while ((curLine = streamReader.ReadLine()) != null)
       {
         curLine = curLine.Trim();
-        if(curLine.Trim().Length > 0 && !curLine.Trim().Equals("."))
+        if (curLine.Trim().Length > 0 && !curLine.Trim().Equals("."))
+        {
           strarray.Add(curLine);
+        }
       }
-      return (string[])strarray.ToArray(typeof(string));
+      return (string[]) strarray.ToArray(typeof (string));
     }
 
     private int Drive2BassID(char driveLetter)
@@ -380,7 +396,9 @@ namespace MediaPortal.Freedb
       for (int i = 0; i < 25; i++)
       {
         if (BassCd.BASS_CD_GetDriveLetterChar(i) == driveLetter)
+        {
           return i;
+        }
       }
       return -1;
     }
@@ -464,6 +482,5 @@ namespace MediaPortal.Freedb
 			return retval;
 		}
     */
-
-	}
+  }
 }

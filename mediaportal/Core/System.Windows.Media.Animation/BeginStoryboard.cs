@@ -23,79 +23,81 @@
 
 #endregion
 
-using System;
-using System.Windows;
 using System.Windows.Serialization;
 
 namespace System.Windows.Media.Animation
 {
-	public sealed class BeginStoryboard : TriggerAction, IAddChild
-	{
-		#region Constructors
+  public sealed class BeginStoryboard : TriggerAction, IAddChild
+  {
+    #region Constructors
 
-		static BeginStoryboard()
-		{
-			StoryboardProperty = DependencyProperty.Register("Storyboard", typeof(Storyboard), typeof(BeginStoryboard));
-		}
+    static BeginStoryboard()
+    {
+      StoryboardProperty = DependencyProperty.Register("Storyboard", typeof (Storyboard), typeof (BeginStoryboard));
+    }
 
-		public BeginStoryboard()
-		{
-		}
+    public BeginStoryboard()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			if(child is Storyboard == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Storyboard)));
+      if (child is Storyboard == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (Storyboard)));
+      }
 
-			SetValue(StoryboardProperty, child);
-		}
+      SetValue(StoryboardProperty, child);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public HandoffBehavior HandoffBehavior
-		{
-			get { return _handoffBehavior; }
-			set { _handoffBehavior = value; }
-		}
+    public HandoffBehavior HandoffBehavior
+    {
+      get { return _handoffBehavior; }
+      set { _handoffBehavior = value; }
+    }
 
-		public Storyboard Storyboard
-		{
-			get { return (Storyboard)GetValue(StoryboardProperty); }
-			set { SetValue(StoryboardProperty, value); }
-		}
+    public Storyboard Storyboard
+    {
+      get { return (Storyboard) GetValue(StoryboardProperty); }
+      set { SetValue(StoryboardProperty, value); }
+    }
 
-		public string Name
-		{
-			get { return _name; }
-			set { _name = value; }
-		}
+    public string Name
+    {
+      get { return _name; }
+      set { _name = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty StoryboardProperty;
+    public static readonly DependencyProperty StoryboardProperty;
 
-		#endregion Properties (Dependency)
+    #endregion Properties (Dependency)
 
-		#region Fields
+    #region Fields
 
-		HandoffBehavior				_handoffBehavior;
-		string						_name = string.Empty;
+    private HandoffBehavior _handoffBehavior;
+    private string _name = string.Empty;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

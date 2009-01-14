@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
-using System.Drawing;
 using System.Diagnostics;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+using System.IO;
 
 namespace MediaPortal.GUI.Library
 {
@@ -45,20 +41,13 @@ namespace MediaPortal.GUI.Library
   public class GUIButton3PartControl : GUIControl
   {
     //TODO: make use of GUILabelControl to draw all text
-    [XMLSkinElement("textureFocusedLeft")]
-    protected string _textureFocusedLeft;
-    [XMLSkinElement("textureNonFocusedLeft")]
-    protected string _textureNonFocusedLeft;
-    [XMLSkinElement("textureFocusedMid")]
-    protected string _textureFocusedMid;
-    [XMLSkinElement("textureNonFocusedMid")]
-    protected string _textureNonFocusedMid;
-    [XMLSkinElement("textureFocusedRight")]
-    protected string _textureFocusedRight;
-    [XMLSkinElement("textureNonFocusedRight")]
-    protected string _textureNonFocusedRight;
-    [XMLSkinElement("textureIcon")]
-    protected string _textureIcon;
+    [XMLSkinElement("textureFocusedLeft")] protected string _textureFocusedLeft;
+    [XMLSkinElement("textureNonFocusedLeft")] protected string _textureNonFocusedLeft;
+    [XMLSkinElement("textureFocusedMid")] protected string _textureFocusedMid;
+    [XMLSkinElement("textureNonFocusedMid")] protected string _textureNonFocusedMid;
+    [XMLSkinElement("textureFocusedRight")] protected string _textureFocusedRight;
+    [XMLSkinElement("textureNonFocusedRight")] protected string _textureNonFocusedRight;
+    [XMLSkinElement("textureIcon")] protected string _textureIcon;
     protected GUIImage _imageNonFocusedMid = null;
     protected GUIImage _imageFocusedRight = null;
     protected GUIImage _imageNonFocusedRight = null;
@@ -66,60 +55,43 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageNonFocusedLeft = null;
     protected GUIImage _imageFocusedMid = null;
     protected GUIImage _imageIcon = null;
-    [XMLSkinElement("label1")]
-    protected string _tagLabel1 = "";
-    [XMLSkinElement("label2")]
-    protected string _tagLabel2 = "";
-    [XMLSkinElement("font1")]
-    protected string _fontName1 = string.Empty;
-    [XMLSkinElement("font2")]
-    protected string _fontName2 = string.Empty;
-    [XMLSkinElement("textcolor1")]
-    protected long _textColor1 = (long)0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")]
-    protected long _textColor2 = (long)0xFFFFFFFF;
-    [XMLSkinElement("disabledColor")]                  
-    protected long _disabledColor = (long)0xFF606060;
+    [XMLSkinElement("label1")] protected string _tagLabel1 = "";
+    [XMLSkinElement("label2")] protected string _tagLabel2 = "";
+    [XMLSkinElement("font1")] protected string _fontName1 = string.Empty;
+    [XMLSkinElement("font2")] protected string _fontName2 = string.Empty;
+    [XMLSkinElement("textcolor1")] protected long _textColor1 = (long) 0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")] protected long _textColor2 = (long) 0xFFFFFFFF;
+    [XMLSkinElement("disabledColor")] protected long _disabledColor = (long) 0xFF606060;
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
-    [XMLSkinElement("textOffsetX1")]
-    protected int _textOffsetX1 = 10;
-    [XMLSkinElement("textOffsetY1")]
-    protected int _textOffsetY1 = 2;
-    [XMLSkinElement("textOffsetX2")]
-    protected int _textOffsetX2 = 10;
-    [XMLSkinElement("textOffsetY2")]
-    protected int _textOffsetY2 = 2;
+    [XMLSkinElement("textOffsetX1")] protected int _textOffsetX1 = 10;
+    [XMLSkinElement("textOffsetY1")] protected int _textOffsetY1 = 2;
+    [XMLSkinElement("textOffsetX2")] protected int _textOffsetX2 = 10;
+    [XMLSkinElement("textOffsetY2")] protected int _textOffsetY2 = 2;
     protected string _cachedTextLabel1;
     protected string _cachedTextLabel2;
     protected string _application = "";
     protected string _arguments = "";
-    [XMLSkinElement("iconOffsetX")]
-    protected int _iconOffsetX = -1;
-    [XMLSkinElement("iconOffsetY")]
-    protected int _iconOffsetY = -1;
-    [XMLSkinElement("iconWidth")]
-    protected int _iconWidth = -1;
-    [XMLSkinElement("iconHeight")]
-    protected int _iconHeight = -1;
-    [XMLSkinElement("iconKeepAspectRatio")]
-    protected bool _iconKeepAspectRatio = false;
-    [XMLSkinElement("iconCentered")]
-    protected bool _iconCentered = false;
-    [XMLSkinElement("iconZoomed")]
-    protected bool _iconZoomed = false;
-    GUILabelControl _labelControl1 = null;
-    GUILabelControl _labelControl2 = null;
-    bool _containsProperty1 = false;
-    bool _containsProperty2 = false;
-    bool renderLeftPart = true;
-    bool renderRightPart = true;
+    [XMLSkinElement("iconOffsetX")] protected int _iconOffsetX = -1;
+    [XMLSkinElement("iconOffsetY")] protected int _iconOffsetY = -1;
+    [XMLSkinElement("iconWidth")] protected int _iconWidth = -1;
+    [XMLSkinElement("iconHeight")] protected int _iconHeight = -1;
+    [XMLSkinElement("iconKeepAspectRatio")] protected bool _iconKeepAspectRatio = false;
+    [XMLSkinElement("iconCentered")] protected bool _iconCentered = false;
+    [XMLSkinElement("iconZoomed")] protected bool _iconZoomed = false;
+
+    private GUILabelControl _labelControl1 = null;
+    private GUILabelControl _labelControl2 = null;
+    private bool _containsProperty1 = false;
+    private bool _containsProperty2 = false;
+    private bool renderLeftPart = true;
+    private bool renderRightPart = true;
     //Sprite                           sprite=null;
-    bool _property1Changed = false;
-    bool _property2Changed = false;
-    bool _reCalculate = false;
-    
+    private bool _property1Changed = false;
+    private bool _property2Changed = false;
+    private bool _reCalculate = false;
+
     /// <summary>
     /// empty constructor
     /// </summary>
@@ -148,13 +120,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
     public GUIButton3PartControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                                  string strTextureFocusLeft,
-                                  string strTextureFocusMid,
-                                  string strTextureFocusRight,
-                                  string strTextureNoFocusLeft,
-                                  string strTextureNoFocusMid,
-                                  string strTextureNoFocusRight,
-                                  string strTextureIcon)
+                                 string strTextureFocusLeft,
+                                 string strTextureFocusMid,
+                                 string strTextureFocusRight,
+                                 string strTextureNoFocusLeft,
+                                 string strTextureNoFocusMid,
+                                 string strTextureNoFocusRight,
+                                 string strTextureIcon)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _textureFocusedLeft = strTextureFocusLeft;
@@ -165,12 +137,17 @@ namespace MediaPortal.GUI.Library
       _textureNonFocusedRight = strTextureNoFocusRight;
       _textureIcon = strTextureIcon;
       _imageIcon = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, 0, 0, strTextureIcon, 0);
-      _imageFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusLeft, 0);
+      _imageFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusLeft,
+                                       0);
       _imageFocusedMid = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusMid, 0);
-      _imageFocusedRight = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusRight, 0);
-      _imageNonFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureNoFocusLeft, 0);
-      _imageNonFocusedMid = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureNoFocusMid, 0);
-      _imageNonFocusedRight = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureNoFocusRight, 0);
+      _imageFocusedRight = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusRight,
+                                        0);
+      _imageNonFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                                          strTextureNoFocusLeft, 0);
+      _imageNonFocusedMid = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                                         strTextureNoFocusMid, 0);
+      _imageNonFocusedRight = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight,
+                                           strTextureNoFocusRight, 0);
       _isSelected = false;
       _labelControl1 = new GUILabelControl(dwParentID);
       _labelControl2 = new GUILabelControl(dwParentID);
@@ -207,9 +184,12 @@ namespace MediaPortal.GUI.Library
       _imageFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedLeft, 0);
       _imageFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedMid, 0);
       _imageFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedRight, 0);
-      _imageNonFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedLeft, 0);
-      _imageNonFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedMid, 0);
-      _imageNonFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedRight, 0);
+      _imageNonFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedLeft,
+                                          0);
+      _imageNonFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureNonFocusedMid,
+                                         0);
+      _imageNonFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height,
+                                           _textureNonFocusedRight, 0);
       _isSelected = false;
       _labelControl1 = new GUILabelControl(ParentID);
       _labelControl2 = new GUILabelControl(ParentID);
@@ -233,6 +213,7 @@ namespace MediaPortal.GUI.Library
       _labelControl1.DimColor = DimColor;
       _labelControl2.DimColor = DimColor;
     }
+
     /// <summary>
     /// Renders the GUIButton3PartControl.
     /// </summary>
@@ -250,19 +231,24 @@ namespace MediaPortal.GUI.Library
       {
         _property1Changed = false;
         _cachedTextLabel1 = GUIPropertyManager.Parse(_tagLabel1);
-        if (_cachedTextLabel1 == null) _cachedTextLabel1 = "";
+        if (_cachedTextLabel1 == null)
+        {
+          _cachedTextLabel1 = "";
+        }
         _reCalculate = true;
       }
       if (_containsProperty2 && _property2Changed)
       {
         _property2Changed = false;
         _cachedTextLabel2 = GUIPropertyManager.Parse(_tagLabel2);
-        if (_cachedTextLabel2 == null) _cachedTextLabel2 = "";
+        if (_cachedTextLabel2 == null)
+        {
+          _cachedTextLabel2 = "";
+        }
         _reCalculate = true;
       }
       if (_reCalculate)
       {
-
         Calculate();
       }
 
@@ -271,18 +257,30 @@ namespace MediaPortal.GUI.Library
       {
         //render the focused images
         //if (_imageIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-        if (renderLeftPart) _imageFocusedLeft.Render(timePassed);
+        if (renderLeftPart)
+        {
+          _imageFocusedLeft.Render(timePassed);
+        }
         _imageFocusedMid.Render(timePassed);
-        if (renderRightPart) _imageFocusedRight.Render(timePassed);
+        if (renderRightPart)
+        {
+          _imageFocusedRight.Render(timePassed);
+        }
         GUIPropertyManager.SetProperty("#highlightedbutton", _cachedTextLabel1);
       }
       else
       {
         //else render the non-focus images
         //if (_imageIcon!=null) GUIFontManager.Present();//TODO:not nice. but needed for the tvguide
-        if (renderLeftPart) _imageNonFocusedLeft.Render(timePassed);
+        if (renderLeftPart)
+        {
+          _imageNonFocusedLeft.Render(timePassed);
+        }
         _imageNonFocusedMid.Render(timePassed);
-        if (renderRightPart) _imageNonFocusedRight.Render(timePassed);
+        if (renderRightPart)
+        {
+          _imageNonFocusedRight.Render(timePassed);
+        }
       }
 
       //render the icon
@@ -294,18 +292,26 @@ namespace MediaPortal.GUI.Library
 
       // render the 1st line of text on the button
       int iWidth = _imageNonFocusedMid.Width - 10 - _textOffsetX1;
-      if (iWidth <= 0) iWidth = 1;
+      if (iWidth <= 0)
+      {
+        iWidth = 1;
+      }
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel1.Length > 0)
       {
-        int widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        int widthLeft =
+          (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX1 + widthLeft;
 
         if (Disabled)
+        {
           _labelControl1.TextColor = _disabledColor;
+        }
         else
+        {
           _labelControl1.TextColor = _textColor1;
+        }
         _labelControl1.SetPosition(xoff + _positionX, _textOffsetY1 + _positionY);
-        _labelControl1.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+        _labelControl1.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl1.FontName = _fontName1;
         _labelControl1.Label = _cachedTextLabel1;
         _labelControl1.Width = iWidth;
@@ -315,15 +321,20 @@ namespace MediaPortal.GUI.Library
       // render the 2nd line of text on the button
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel2.Length > 0)
       {
-        int widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        int widthLeft =
+          (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX2 + widthLeft;
 
         if (Disabled)
+        {
           _labelControl2.TextColor = _disabledColor;
+        }
         else
+        {
           _labelControl2.TextColor = _textColor2;
+        }
         _labelControl2.SetPosition(xoff + _positionX, _textOffsetY2 + _positionY);
-        _labelControl2.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+        _labelControl2.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl2.FontName = _fontName1;
         _labelControl2.Label = _cachedTextLabel2;
         _labelControl2.Width = iWidth - 10;
@@ -353,13 +364,13 @@ namespace MediaPortal.GUI.Library
           {
             //button should start an external application, so start it
             Process proc = new Process();
-            string strWorkingDir = System.IO.Path.GetFullPath(_application);
-            string strFileName = System.IO.Path.GetFileName(_application);
+            string strWorkingDir = Path.GetFullPath(_application);
+            string strFileName = Path.GetFileName(_application);
             strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
             proc.StartInfo.FileName = strFileName;
             proc.StartInfo.WorkingDirectory = strWorkingDir;
             proc.StartInfo.Arguments = _arguments;
-            proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
             proc.StartInfo.CreateNoWindow = true;
             proc.Start();
             //proc.WaitForExit();
@@ -369,14 +380,14 @@ namespace MediaPortal.GUI.Library
           if (_hyperLinkWindowId >= 0)
           {
             //then switch to the other window
-            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
             return;
           }
 
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -411,7 +422,10 @@ namespace MediaPortal.GUI.Library
         }
       }
       // Let the base class handle the other messages
-      if (base.OnMessage(message)) return true;
+      if (base.OnMessage(message))
+      {
+        return true;
+      }
       return false;
     }
 
@@ -450,19 +464,29 @@ namespace MediaPortal.GUI.Library
       _property2Changed = true;
       _reCalculate = true;
 
-      GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      GUIPropertyManager.OnPropertyChanged +=
+        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
     }
 
-    void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
+    private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
-      if (tag == null) return;
+      if (tag == null)
+      {
+        return;
+      }
       if (_containsProperty1)
       {
-        if (_tagLabel1.IndexOf(tag) >= 0) _property1Changed = true;
+        if (_tagLabel1.IndexOf(tag) >= 0)
+        {
+          _property1Changed = true;
+        }
       }
       if (_containsProperty2)
       {
-        if (_tagLabel2.IndexOf(tag) >= 0) _property2Changed = true;
+        if (_tagLabel2.IndexOf(tag) >= 0)
+        {
+          _property2Changed = true;
+        }
       }
     }
 
@@ -483,8 +507,8 @@ namespace MediaPortal.GUI.Library
 
       _labelControl1.FreeResources();
       _labelControl2.FreeResources();
-      GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-
+      GUIPropertyManager.OnPropertyChanged -=
+        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
     }
 
     /// <summary>
@@ -493,7 +517,8 @@ namespace MediaPortal.GUI.Library
     public long DisabledColor
     {
       get { return _disabledColor; }
-      set {
+      set
+      {
         if (_disabledColor != value)
         {
           _disabledColor = value;
@@ -510,25 +535,36 @@ namespace MediaPortal.GUI.Library
       get { return _imageNonFocusedLeft.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageNonFocusedLeft.SetFileName(value);
       }
     }
+
     public string TexutureNoFocusMidName
     {
       get { return _imageNonFocusedMid.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageNonFocusedMid.SetFileName(value);
       }
     }
+
     public string TexutureNoFocusRightName
     {
       get { return _imageNonFocusedRight.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageNonFocusedRight.SetFileName(value);
       }
     }
@@ -541,28 +577,36 @@ namespace MediaPortal.GUI.Library
       get { return _imageFocusedLeft.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageFocusedLeft.SetFileName(value);
       }
     }
+
     public string TexutureFocusMidName
     {
       get { return _imageFocusedMid.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageFocusedMid.SetFileName(value);
       }
     }
+
     public string TexutureFocusRightName
     {
-      get
-      {
-        return _imageFocusedRight.FileName;
-      }
+      get { return _imageFocusedRight.FileName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _imageFocusedRight.SetFileName(value);
       }
     }
@@ -574,7 +618,10 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_imageIcon == null) return string.Empty;
+        if (_imageIcon == null)
+        {
+          return string.Empty;
+        }
         return _imageIcon.FileName;
       }
       set
@@ -603,6 +650,7 @@ namespace MediaPortal.GUI.Library
       get { return _textColor1; }
       set { _textColor1 = value; }
     }
+
     public long TextColor2
     {
       get { return _textColor2; }
@@ -614,26 +662,26 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string FontName1
     {
-      get
-      {
-        return _fontName1;
-      }
+      get { return _fontName1; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _fontName1 = value;
       }
     }
 
     public string FontName2
     {
-      get
-      {
-        return _fontName2;
-      }
+      get { return _fontName2; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _fontName2 = value;
       }
     }
@@ -646,8 +694,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="color">The font color.</param>
     public void SetLabel1(string fontName, string label, long color)
     {
-      if (fontName == null) return;
-      if (label == null) return;
+      if (fontName == null)
+      {
+        return;
+      }
+      if (label == null)
+      {
+        return;
+      }
       if (fontName != _fontName1 || label != _tagLabel1 || color != _textColor1)
       {
         _tagLabel1 = label;
@@ -660,8 +714,14 @@ namespace MediaPortal.GUI.Library
 
     public void SetLabel2(string fontName, string label, long color)
     {
-      if (fontName == null) return;
-      if (label == null) return;
+      if (fontName == null)
+      {
+        return;
+      }
+      if (label == null)
+      {
+        return;
+      }
       if (fontName != _fontName2 || label != _tagLabel2 || color != _textColor2)
       {
         _tagLabel2 = label;
@@ -680,7 +740,10 @@ namespace MediaPortal.GUI.Library
       get { return _tagLabel1; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         if (_tagLabel1 != value)
         {
           _tagLabel1 = value;
@@ -689,12 +752,16 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public string Label2
     {
       get { return _tagLabel2; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         if (_tagLabel2 != value)
         {
           _tagLabel2 = value;
@@ -721,7 +788,10 @@ namespace MediaPortal.GUI.Library
       get { return _scriptAction; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _scriptAction = value;
       }
     }
@@ -733,7 +803,6 @@ namespace MediaPortal.GUI.Library
     {
       get { return _actionId; }
       set { _actionId = value; }
-
     }
 
     /// <summary>
@@ -744,7 +813,10 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetX1; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         if (_textOffsetX1 != value)
         {
           _textOffsetX1 = value;
@@ -752,12 +824,16 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public int TextOffsetX2
     {
       get { return _textOffsetX2; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         if (_textOffsetX2 != value)
         {
           _textOffsetX2 = value;
@@ -765,6 +841,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     /// <summary>
     /// Get/set the Y-offset of the label.
     /// </summary>
@@ -773,7 +850,10 @@ namespace MediaPortal.GUI.Library
       get { return _textOffsetY1; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         if (_textOffsetY1 != value)
         {
           _textOffsetY1 = value;
@@ -781,12 +861,16 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public int TextOffsetY2
     {
       get { return _textOffsetY2; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         if (_textOffsetY1 != value)
         {
           _textOffsetY2 = value;
@@ -818,49 +902,102 @@ namespace MediaPortal.GUI.Library
       _imageFocusedRight.Refresh();
       int width;
 
-      int widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
-      int widthRight = (int)((float)_imageFocusedRight.TextureWidth * ((float)_height / (float)_imageFocusedRight.TextureHeight));
+      int widthLeft =
+        (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
+      int widthRight =
+        (int) ((float) _imageFocusedRight.TextureWidth*((float) _height/(float) _imageFocusedRight.TextureHeight));
       int widthMid = _width - widthLeft - widthRight;
-      if (widthMid < 0) widthMid = 0;
+      if (widthMid < 0)
+      {
+        widthMid = 0;
+      }
 
       while (true)
       {
         width = widthLeft + widthRight + widthMid;
         if (width > _width)
         {
-          if (widthMid > 0) widthMid--;
+          if (widthMid > 0)
+          {
+            widthMid--;
+          }
           else
           {
-            if (widthLeft > 0) widthLeft--;
-            if (widthRight > 0) widthRight--;
+            if (widthLeft > 0)
+            {
+              widthLeft--;
+            }
+            if (widthRight > 0)
+            {
+              widthRight--;
+            }
           }
         }
-        else break;
+        else
+        {
+          break;
+        }
       }
 
       _imageFocusedLeft.Width = widthLeft;
       _imageFocusedMid.Width = widthMid;
       _imageFocusedRight.Width = widthRight;
-      if (widthLeft == 0) _imageFocusedLeft.IsVisible = false;
-      else _imageFocusedLeft.IsVisible = true;
+      if (widthLeft == 0)
+      {
+        _imageFocusedLeft.IsVisible = false;
+      }
+      else
+      {
+        _imageFocusedLeft.IsVisible = true;
+      }
 
-      if (widthMid == 0) _imageFocusedMid.IsVisible = false;
-      else _imageFocusedMid.IsVisible = true;
+      if (widthMid == 0)
+      {
+        _imageFocusedMid.IsVisible = false;
+      }
+      else
+      {
+        _imageFocusedMid.IsVisible = true;
+      }
 
-      if (widthRight == 0) _imageFocusedRight.IsVisible = false;
-      else _imageFocusedRight.IsVisible = true;
+      if (widthRight == 0)
+      {
+        _imageFocusedRight.IsVisible = false;
+      }
+      else
+      {
+        _imageFocusedRight.IsVisible = true;
+      }
 
       _imageNonFocusedLeft.Width = widthLeft;
       _imageNonFocusedMid.Width = widthMid;
       _imageNonFocusedRight.Width = widthRight;
-      if (widthLeft == 0) _imageNonFocusedLeft.IsVisible = false;
-      else _imageNonFocusedLeft.IsVisible = true;
+      if (widthLeft == 0)
+      {
+        _imageNonFocusedLeft.IsVisible = false;
+      }
+      else
+      {
+        _imageNonFocusedLeft.IsVisible = true;
+      }
 
-      if (widthMid == 0) _imageNonFocusedMid.IsVisible = false;
-      else _imageNonFocusedMid.IsVisible = true;
+      if (widthMid == 0)
+      {
+        _imageNonFocusedMid.IsVisible = false;
+      }
+      else
+      {
+        _imageNonFocusedMid.IsVisible = true;
+      }
 
-      if (widthRight == 0) _imageNonFocusedRight.IsVisible = false;
-      else _imageNonFocusedRight.IsVisible = true;
+      if (widthRight == 0)
+      {
+        _imageNonFocusedRight.IsVisible = false;
+      }
+      else
+      {
+        _imageNonFocusedRight.IsVisible = true;
+      }
 
       _imageFocusedLeft.SetPosition(_positionX, _positionY);
       _imageFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
@@ -870,7 +1007,6 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedLeft.SetPosition(_positionX, _positionY);
       _imageNonFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageNonFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
-
 
 
       if (_imageIcon != null)
@@ -887,16 +1023,18 @@ namespace MediaPortal.GUI.Library
             _imageIcon.Width = _width;
             iWidth = _width;
           }
-          int offset = (iWidth + iWidth / 2);
-          if (offset > _width) offset = _width;
+          int offset = (iWidth + iWidth/2);
+          if (offset > _width)
+          {
+            offset = _width;
+          }
           _imageIcon.SetPosition(_positionX + (_width) - offset,
-                                _positionY + (_height / 2) - (_imageIcon.TextureHeight / 2));
+                                 _positionY + (_height/2) - (_imageIcon.TextureHeight/2));
         }
         else
         {
           _imageIcon.SetPosition(_positionX + IconOffsetX, _positionY + IconOffsetY);
         }
-
       }
     }
 
@@ -911,7 +1049,8 @@ namespace MediaPortal.GUI.Library
     public bool IconZoom
     {
       get { return _iconZoomed; }
-      set {
+      set
+      {
         if (_iconZoomed != value)
         {
           _iconZoomed = value;
@@ -919,13 +1058,15 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     /// <summary>
     /// Get/Set the icon to keep it's aspectratio in the dest. rectangle
     /// </summary>
     public bool IconKeepAspectRatio
     {
       get { return _iconKeepAspectRatio; }
-      set {
+      set
+      {
         if (_iconKeepAspectRatio != value)
         {
           _iconKeepAspectRatio = value;
@@ -933,13 +1074,15 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     /// <summary>
     /// Get/Set the icon centered in the dest. rectangle
     /// </summary>
     public bool IconCentered
     {
       get { return _iconCentered; }
-      set {
+      set
+      {
         if (_iconCentered != value)
         {
           _iconCentered = value;
@@ -947,6 +1090,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     /// <summary>
     /// Get/Set the the application filename
     /// which should be launched when this button gets clicked
@@ -956,7 +1100,10 @@ namespace MediaPortal.GUI.Library
       get { return _application; }
       set
       {
-        if (_application == null) return;
+        if (_application == null)
+        {
+          return;
+        }
         _application = value;
       }
     }
@@ -970,7 +1117,10 @@ namespace MediaPortal.GUI.Library
       get { return _arguments; }
       set
       {
-        if (_arguments == null) return;
+        if (_arguments == null)
+        {
+          return;
+        }
         _arguments = value;
       }
     }
@@ -981,8 +1131,8 @@ namespace MediaPortal.GUI.Library
     public int IconOffsetX
     {
       get { return _iconOffsetX; }
-      set {
-
+      set
+      {
         if (_iconOffsetX != value)
         {
           _iconOffsetX = value;
@@ -997,7 +1147,8 @@ namespace MediaPortal.GUI.Library
     public int IconOffsetY
     {
       get { return _iconOffsetY; }
-      set {
+      set
+      {
         if (_iconOffsetY != value)
         {
           _iconOffsetY = value;
@@ -1030,7 +1181,10 @@ namespace MediaPortal.GUI.Library
       get { return _iconHeight; }
       set
       {
-        if (value < 0) return;
+        if (value < 0)
+        {
+          return;
+        }
         _iconHeight = value;
         if (_imageIcon != null)
         {
@@ -1039,10 +1193,16 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    bool ContainsProperty(string text)
+    private bool ContainsProperty(string text)
     {
-      if (text == null) return false;
-      if (text.IndexOf("#") >= 0) return true;
+      if (text == null)
+      {
+        return false;
+      }
+      if (text.IndexOf("#") >= 0)
+      {
+        return true;
+      }
       return false;
     }
 
@@ -1060,10 +1220,7 @@ namespace MediaPortal.GUI.Library
 
     public override int Width
     {
-      get
-      {
-        return base.Width;
-      }
+      get { return base.Width; }
       set
       {
         if (base.Width != value)
@@ -1076,10 +1233,7 @@ namespace MediaPortal.GUI.Library
 
     public override int Height
     {
-      get
-      {
-        return base.Height;
-      }
+      get { return base.Height; }
       set
       {
         if (base.Height != value)
@@ -1092,10 +1246,7 @@ namespace MediaPortal.GUI.Library
 
     public override long ColourDiffuse
     {
-      get
-      {
-        return base.ColourDiffuse;
-      }
+      get { return base.ColourDiffuse; }
       set
       {
         if (base.ColourDiffuse != value)
@@ -1105,9 +1256,13 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public override void SetPosition(int dwPosX, int dwPosY)
     {
-      if (_positionX == dwPosX && _positionY == dwPosY) return;
+      if (_positionX == dwPosX && _positionY == dwPosY)
+      {
+        return;
+      }
       _positionX = dwPosX;
       _positionY = dwPosY;
       _reCalculate = true;
@@ -1119,17 +1274,43 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_imageFocusedLeft != null) _imageFocusedLeft.DimColor = value;
-        if (_imageFocusedMid != null) _imageFocusedMid.DimColor = value;
-        if (_imageFocusedRight != null) _imageFocusedRight.DimColor = value;
-        if (_imageNonFocusedLeft != null) _imageNonFocusedLeft.DimColor = value;
-        if (_imageNonFocusedMid != null) _imageNonFocusedMid.DimColor = value;
-        if (_imageNonFocusedRight != null) _imageNonFocusedRight.DimColor = value;
-        if (_imageIcon != null) _imageIcon.DimColor = value;
-        if (_labelControl1 != null) _labelControl1.DimColor = value;
-        if (_labelControl2 != null) _labelControl2.DimColor = value;
+        if (_imageFocusedLeft != null)
+        {
+          _imageFocusedLeft.DimColor = value;
+        }
+        if (_imageFocusedMid != null)
+        {
+          _imageFocusedMid.DimColor = value;
+        }
+        if (_imageFocusedRight != null)
+        {
+          _imageFocusedRight.DimColor = value;
+        }
+        if (_imageNonFocusedLeft != null)
+        {
+          _imageNonFocusedLeft.DimColor = value;
+        }
+        if (_imageNonFocusedMid != null)
+        {
+          _imageNonFocusedMid.DimColor = value;
+        }
+        if (_imageNonFocusedRight != null)
+        {
+          _imageNonFocusedRight.DimColor = value;
+        }
+        if (_imageIcon != null)
+        {
+          _imageIcon.DimColor = value;
+        }
+        if (_labelControl1 != null)
+        {
+          _labelControl1.DimColor = value;
+        }
+        if (_labelControl2 != null)
+        {
+          _labelControl2.DimColor = value;
+        }
       }
     }
-
   }
 }

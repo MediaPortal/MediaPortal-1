@@ -27,152 +27,173 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Threading;
-using Microsoft.Win32;
 
 namespace MediaPortal.Dispatcher
 {
-	public sealed class JobDispatcher
-	{
-		#region Methods
+  public sealed class JobDispatcher
+  {
+    #region Methods
 
-		void Clear()
-		{
-			_jobs.Clear();
-		}
+    private void Clear()
+    {
+      _jobs.Clear();
+    }
 
-		void Dispatch()
-		{
-			_isRunning = true;
+    private void Dispatch()
+    {
+      _isRunning = true;
 
-			try
-			{
-				Job job = null;
+      try
+      {
+        Job job = null;
 
-				for(;;)
-				{
-					lock(_dispatcher)
-					{
-						if(_isPaused || _jobs.Count == 0)
-							Monitor.Wait(_dispatcher);
+        for (;;)
+        {
+          lock (_dispatcher)
+          {
+            if (_isPaused || _jobs.Count == 0)
+            {
+              Monitor.Wait(_dispatcher);
+            }
 
-						if(_isRunning == false)
-							break;
-						
-						job = (Job)_jobs.Peek();
-						
-						if(job.IsReady == false)
-							Monitor.Wait(_dispatcher, job.Next.Subtract(DateTime.Now));
+            if (_isRunning == false)
+            {
+              break;
+            }
 
-						if(_isRunning == false)
-							break;
+            job = (Job) _jobs.Peek();
 
-						if(job.IsReady == false)
-							continue;
+            if (job.IsReady == false)
+            {
+              Monitor.Wait(_dispatcher, job.Next.Subtract(DateTime.Now));
+            }
 
-						_jobs.Dequeue();
-					}
+            if (_isRunning == false)
+            {
+              break;
+            }
 
-					job.Run();
-					job = null;
-				}
-			}
-			catch(ThreadInterruptedException)
-			{
-				Trace.WriteLine("JobDispatcher.Dispatch: ThreadInterruptException");
-			}
-			catch(Exception e)
-			{
-				Trace.WriteLine("JobDispatcher.Dispatch: {0}", e.Message);
-			}
+            if (job.IsReady == false)
+            {
+              continue;
+            }
 
-			_isRunning = false;
-		}
+            _jobs.Dequeue();
+          }
 
-		internal static void Dispatch(Job job)
-		{
-			lock(_dispatcher)
-			{
-				_jobs.Enqueue(job);
+          job.Run();
+          job = null;
+        }
+      }
+      catch (ThreadInterruptedException)
+      {
+        Trace.WriteLine("JobDispatcher.Dispatch: ThreadInterruptException");
+      }
+      catch (Exception e)
+      {
+        Trace.WriteLine("JobDispatcher.Dispatch: {0}", e.Message);
+      }
 
-				Monitor.Pulse(_dispatcher);
-			}
-		}
+      _isRunning = false;
+    }
 
-		public static void Init()
-		{
-			lock(_dispatcher)
-			{
-				if(_isRunning)
-					throw new InvalidOperationException("Dispatcher is already initialized.");
+    internal static void Dispatch(Job job)
+    {
+      lock (_dispatcher)
+      {
+        _jobs.Enqueue(job);
 
-				_dispatcherThread = new Thread(new ThreadStart(_dispatcher.Dispatch));
-				_dispatcherThread.IsBackground = true;
-				_dispatcherThread.Priority = ThreadPriority.AboveNormal;
-				_dispatcherThread.Name = "Dispatcher";
-				_dispatcherThread.Start();
+        Monitor.Pulse(_dispatcher);
+      }
+    }
 
-				// wait for the dispatcher thread to get going
-				while(_isRunning == false)
-					Thread.Sleep(100);
-			}
-		}
+    public static void Init()
+    {
+      lock (_dispatcher)
+      {
+        if (_isRunning)
+        {
+          throw new InvalidOperationException("Dispatcher is already initialized.");
+        }
 
-		public static void Pause()
-		{
-			lock(_dispatcher)
-			{
-				if(_isRunning == false)
-					throw new InvalidOperationException("Dispatcher is not running.");
+        _dispatcherThread = new Thread(new ThreadStart(_dispatcher.Dispatch));
+        _dispatcherThread.IsBackground = true;
+        _dispatcherThread.Priority = ThreadPriority.AboveNormal;
+        _dispatcherThread.Name = "Dispatcher";
+        _dispatcherThread.Start();
 
-				if(_isPaused)
-					throw new InvalidOperationException("Dispatcher is already paused.");
+        // wait for the dispatcher thread to get going
+        while (_isRunning == false)
+        {
+          Thread.Sleep(100);
+        }
+      }
+    }
 
-				_isPaused = true;
-			}
-		}
+    public static void Pause()
+    {
+      lock (_dispatcher)
+      {
+        if (_isRunning == false)
+        {
+          throw new InvalidOperationException("Dispatcher is not running.");
+        }
 
-		public static void Resume()
-		{
-			lock(_dispatcher)
-			{
-				if(_isRunning == false)
-					throw new InvalidOperationException("Dispatcher is not running.");
+        if (_isPaused)
+        {
+          throw new InvalidOperationException("Dispatcher is already paused.");
+        }
 
-				if(_isPaused == false)
-					throw new InvalidOperationException("Dispatcher is already running.");
+        _isPaused = true;
+      }
+    }
 
-				_isPaused = false;
+    public static void Resume()
+    {
+      lock (_dispatcher)
+      {
+        if (_isRunning == false)
+        {
+          throw new InvalidOperationException("Dispatcher is not running.");
+        }
 
-				Monitor.Pulse(_dispatcher);
-			}
-		}
+        if (_isPaused == false)
+        {
+          throw new InvalidOperationException("Dispatcher is already running.");
+        }
 
-		public static void Term()
-		{
-			lock(_dispatcher)
-			{
-				//if(_isRunning == false)
-				//	throw new InvalidOperationException("Dispatcher is already shutdown.");
+        _isPaused = false;
 
-				_isRunning = false;
-				_dispatcher.Clear();
+        Monitor.Pulse(_dispatcher);
+      }
+    }
 
-				Monitor.Pulse(_dispatcher);
+    public static void Term()
+    {
+      lock (_dispatcher)
+      {
+        //if(_isRunning == false)
+        //	throw new InvalidOperationException("Dispatcher is already shutdown.");
 
-				_dispatcherThread = null;
-			}
-		}
+        _isRunning = false;
+        _dispatcher.Clear();
 
-		#endregion Methods
+        Monitor.Pulse(_dispatcher);
 
-		#region Fields
+        _dispatcherThread = null;
+      }
+    }
 
-		static JobDispatcher		_dispatcher = new JobDispatcher();
-		static Thread				_dispatcherThread;
-		static volatile bool		_isRunning;
-		static volatile bool		_isPaused;
-		static PriorityQueue		_jobs = new PriorityQueue(new JobComparer());
+    #endregion Methods
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private static JobDispatcher _dispatcher = new JobDispatcher();
+    private static Thread _dispatcherThread;
+    private static volatile bool _isRunning;
+    private static volatile bool _isPaused;
+    private static PriorityQueue _jobs = new PriorityQueue(new JobComparer());
+
+    #endregion Fields
+  }
 }

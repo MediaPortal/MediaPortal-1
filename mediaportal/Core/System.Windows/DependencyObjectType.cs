@@ -23,76 +23,74 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public class DependencyObjectType
-	{
-		#region Constructors
+  public class DependencyObjectType
+  {
+    #region Constructors
 
-		public DependencyObjectType()
-		{
-		}
+    public DependencyObjectType()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
-		
-		public static DependencyObjectType FromSystemType(Type systemType)
-		{
-			throw new NotImplementedException();
-		}
+    #region Methods
 
-		public override int GetHashCode()
-		{
-			return _id;
-		}
+    public static DependencyObjectType FromSystemType(Type systemType)
+    {
+      throw new NotImplementedException();
+    }
 
-		public bool IsInstanceOfType(DependencyObject d)
-		{
-			throw new NotImplementedException();
-		}
+    public override int GetHashCode()
+    {
+      return _id;
+    }
 
-		public bool IsSubclassOf(DependencyObjectType dependencyObjectType)
-		{
-			throw new NotImplementedException();
-		}
+    public bool IsInstanceOfType(DependencyObject d)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    public bool IsSubclassOf(DependencyObjectType dependencyObjectType)
+    {
+      throw new NotImplementedException();
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public DependencyObjectType BaseType
-		{
-			get { return _baseType; }
-		}
+    #region Properties
 
-		public int Id
-		{
-			get { return _id; }
-		}
+    public DependencyObjectType BaseType
+    {
+      get { return _baseType; }
+    }
 
-		public string Name
-		{
-			get { return _name; }
-		}
+    public int Id
+    {
+      get { return _id; }
+    }
 
-		public Type SystemType
-		{
-			get { return _systemType; }
-		}
+    public string Name
+    {
+      get { return _name; }
+    }
 
-		#endregion Properties
+    public Type SystemType
+    {
+      get { return _systemType; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		DependencyObjectType		_baseType = null;
-		int							_id = ++_idNext;
-		static int					_idNext = 0;
-		string						_name = string.Empty;
-		Type						_systemType = null;
+    #region Fields
 
-		#endregion Fields
-	}
+    private DependencyObjectType _baseType = null;
+    private int _id = ++_idNext;
+    private static int _idNext = 0;
+    private string _name = string.Empty;
+    private Type _systemType = null;
+
+    #endregion Fields
+  }
 }

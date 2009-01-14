@@ -24,23 +24,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
-
-using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Vis;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass.AddOn.Tags;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 using System.Runtime.InteropServices;
+using MediaPortal.Player;
 
 namespace MediaPortal.Visualization
 {
-
-  abstract public class VisualizationBase : IDisposable, IVisualization
+  public abstract class VisualizationBase : IDisposable, IVisualization
   {
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
@@ -55,10 +45,12 @@ namespace MediaPortal.Visualization
     {
       WindowHandle = 1,
       DeviceContext = 2,
-    };
+    } ;
 
     protected delegate int ThreadSafeRenderDelegate();
+
     public delegate void VisualizationCreatedDelegate(object sender);
+
     public event VisualizationCreatedDelegate VisualizationCreated;
 
     protected VisualizationInfo VizPluginInfo = null;
@@ -66,7 +58,6 @@ namespace MediaPortal.Visualization
     protected static BassAudioEngine _Bass = null;
     protected bool _Initialized = false;
     protected bool _IsPreviewVisualization = false;
-
 
     #region Properties
 
@@ -87,12 +78,12 @@ namespace MediaPortal.Visualization
       get { return _Initialized; }
     }
 
-    virtual public bool PreRenderRequired
+    public virtual bool PreRenderRequired
     {
       get { return false; }
     }
 
-    virtual public bool IsPreviewVisualization
+    public virtual bool IsPreviewVisualization
     {
       get { return _IsPreviewVisualization; }
       set { _IsPreviewVisualization = value; }
@@ -113,7 +104,7 @@ namespace MediaPortal.Visualization
 
     #region IDisposable Members
 
-    virtual public void Dispose()
+    public virtual void Dispose()
     {
     }
 
@@ -122,78 +113,81 @@ namespace MediaPortal.Visualization
     protected void VisualizationLoaded()
     {
       if (this.VisualizationCreated != null)
+      {
         VisualizationCreated(this);
+      }
     }
 
     #region IVisualization Members
-    virtual public bool IsEngineInstalled()
+
+    public virtual bool IsEngineInstalled()
     {
       return false;
     }
 
-    virtual public bool IsWinampVis()
+    public virtual bool IsWinampVis()
     {
       return false;
     }
 
-    virtual public bool Initialize()
+    public virtual bool Initialize()
     {
       return false;
     }
 
-    virtual public bool InitializePreview()
+    public virtual bool InitializePreview()
     {
       _IsPreviewVisualization = true;
       return false;
     }
 
-    virtual public bool Config()
+    public virtual bool Config()
     {
       return false;
     }
 
-    virtual public int PreRenderVisualization()
+    public virtual int PreRenderVisualization()
     {
       return 0;
     }
 
-    virtual public int RenderVisualization()
+    public virtual int RenderVisualization()
     {
       return 0;
     }
 
-    virtual public bool Start()
+    public virtual bool Start()
     {
       return false;
     }
 
-    virtual public bool Pause()
+    public virtual bool Pause()
     {
       return false;
     }
 
-    virtual public bool Stop()
+    public virtual bool Stop()
     {
       return false;
     }
 
-    virtual public bool WindowSizeChanged(Size newSize)
+    public virtual bool WindowSizeChanged(Size newSize)
     {
       return true;
     }
 
-    virtual public bool WindowChanged(VisualizationWindow vizWindow)
+    public virtual bool WindowChanged(VisualizationWindow vizWindow)
     {
       VisualizationWindow = vizWindow;
       return false;
     }
 
-    virtual public bool SetOutputContext(VisualizationBase.OutputContextType outputType)
+    public virtual bool SetOutputContext(OutputContextType outputType)
     {
       return false;
     }
 
-    virtual public bool Close()
+    public virtual bool Close()
     {
       return false;
     }

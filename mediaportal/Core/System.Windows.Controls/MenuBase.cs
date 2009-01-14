@@ -23,60 +23,58 @@
 
 #endregion
 
-using System;
-using System.Windows;
 using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
-	public abstract class MenuBase : ItemsControl
-	{
-		#region Constructors
+  public abstract class MenuBase : ItemsControl
+  {
+    #region Constructors
 
-		protected MenuBase()
-		{
-		}
+    protected MenuBase()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override DependencyObject GetContainerForItemOverride(object item)
-		{
-			throw new NotImplementedException();
-		}
+    protected override DependencyObject GetContainerForItemOverride(object item)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected virtual void HandleMouseButton(MouseButtonEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    protected virtual void HandleMouseButton(MouseButtonEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override bool IsItemItsOwnContainerOverride(object item)
-		{
-			// Returns true if the item is its own ItemContainer;
-			throw new NotImplementedException();
-		}
+    protected override bool IsItemItsOwnContainerOverride(object item)
+    {
+      // Returns true if the item is its own ItemContainer;
+      throw new NotImplementedException();
+    }
 
-		protected override void OnInitialized(EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-		
-		protected internal override void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void OnInitialized(EventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    protected internal override void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override void OnMouseLeave(MouseEventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-	}
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+      throw new NotImplementedException();
+    }
+
+    #endregion Methods
+  }
 }

@@ -23,27 +23,25 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public sealed class BrushFactory
-	{
-		#region Constructors
+  public sealed class BrushFactory
+  {
+    #region Constructors
 
-		private BrushFactory()
-		{
-		}
+    private BrushFactory()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static Brush CreateImageBrush(string filename)
-		{
-			return null;
-		}
+    public static Brush CreateImageBrush(string filename)
+    {
+      return null;
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

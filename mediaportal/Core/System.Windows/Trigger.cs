@@ -23,87 +23,100 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class Trigger : TriggerBase, IAddChild
-	{
-		#region Constructors
+  public sealed class Trigger : TriggerBase, IAddChild
+  {
+    #region Constructors
 
-		public Trigger()
-		{
-			// TODO: prevent unused compiler warning
-			if(Invalidated != null)
-				Invalidated(null, null);
-		}
+    public Trigger()
+    {
+      // TODO: prevent unused compiler warning
+      if (Invalidated != null)
+      {
+        Invalidated(null, null);
+      }
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event TriggerInvalidatedEventHandler Invalidated;
+    public event TriggerInvalidatedEventHandler Invalidated;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			if(child is SetterBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
+      if (child is SetterBase == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (SetterBase)));
+      }
 
-			if(_setters == null)
-				_setters = new SetterBaseCollection();
+      if (_setters == null)
+      {
+        _setters = new SetterBaseCollection();
+      }
 
-			_setters.Add((SetterBase)child);
-		}
+      _setters.Add((SetterBase) child);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
-		
-		public DependencyProperty Property
-		{
-			get { return _property; }
-			set { _property = value; }
-		}
+    #region Properties
 
-		public SetterBaseCollection Setters
-		{
-			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
-		}
+    public DependencyProperty Property
+    {
+      get { return _property; }
+      set { _property = value; }
+    }
 
-		public string SourceName
-		{
-			get { return _sourceName; }
-			set { _sourceName = value; }
-		}
+    public SetterBaseCollection Setters
+    {
+      get
+      {
+        if (_setters == null)
+        {
+          _setters = new SetterBaseCollection();
+        }
+        return _setters;
+      }
+    }
 
-		public object Value
-		{ 
-			get { return _value; }
-			set { _value = value; }
-		}
+    public string SourceName
+    {
+      get { return _sourceName; }
+      set { _sourceName = value; }
+    }
 
-		#endregion Properties
+    public object Value
+    {
+      get { return _value; }
+      set { _value = value; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		DependencyProperty			_property;
-		SetterBaseCollection		_setters;
-		string						_sourceName;
-		object						_value;
+    #region Fields
 
-		#endregion Fields
-	}
+    private DependencyProperty _property;
+    private SetterBaseCollection _setters;
+    private string _sourceName;
+    private object _value;
+
+    #endregion Fields
+  }
 }

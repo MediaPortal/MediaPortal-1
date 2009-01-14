@@ -23,46 +23,44 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Animation;
 
 namespace MediaPortal.Drawing
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
-	{
-		#region Properties
+  public class ImageBrush : TileBrush, ISupportInitialize
+  {
+    #region Properties
 
-		public ImageSource ImageSource
-		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
-		}
+    public ImageSource ImageSource
+    {
+      get { return _imageSource; }
+      set { _imageSource = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Methods
+    #region Methods
 
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ImageBrush();
-		}
+    protected override Freezable CreateInstanceCore()
+    {
+      return new ImageBrush();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		void ISupportInitialize.BeginInit()
-		{
-		}
+    void ISupportInitialize.BeginInit()
+    {
+    }
 
-		void ISupportInitialize.EndInit()
-		{
-		}
+    void ISupportInitialize.EndInit()
+    {
+    }
 
-		#region Fields
+    #region Fields
 
-		ImageSource					_imageSource;	
+    private ImageSource _imageSource;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

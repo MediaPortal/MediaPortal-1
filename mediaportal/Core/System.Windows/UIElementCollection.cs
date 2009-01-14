@@ -23,79 +23,91 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows
 {
-	public sealed class UIElementCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class UIElementCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(UIElement element)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public void Add(UIElement element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			List.Add(element);
-		}
+      List.Add(element);
+    }
 
-		public bool Contains(UIElement element)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public bool Contains(UIElement element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			return List.Contains(element);
-		}
+      return List.Contains(element);
+    }
 
-		public void CopyTo(UIElement[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(UIElement[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(UIElement element)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public int IndexOf(UIElement element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			return List.IndexOf(element);
-		}
+      return List.IndexOf(element);
+    }
 
-		public void Insert(int index, UIElement element)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public void Insert(int index, UIElement element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			List.Insert(index, element);
-		}
+      List.Insert(index, element);
+    }
 
-		public bool Remove(UIElement element)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public bool Remove(UIElement element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			if(List.Contains(element) == false)
-				return false;
+      if (List.Contains(element) == false)
+      {
+        return false;
+      }
 
-			List.Remove(element);
+      List.Remove(element);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public UIElement this[int index]
-		{ 
-			get { return (UIElement)List[index]; }
-			set { List[index] = value; }
-		}
+    public UIElement this[int index]
+    {
+      get { return (UIElement) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }
-

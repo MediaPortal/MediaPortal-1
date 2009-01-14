@@ -23,86 +23,99 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Controls
 {
-	public sealed class RowDefinitionCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class RowDefinitionCollection : CollectionBase
+  {
+    #region Constructors
 
-		public RowDefinitionCollection()
-		{
-		}
+    public RowDefinitionCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(RowDefinition row)
-		{
-			if(row == null)
-				throw new ArgumentNullException("row");
+    public void Add(RowDefinition row)
+    {
+      if (row == null)
+      {
+        throw new ArgumentNullException("row");
+      }
 
-			List.Add(row);
-		}
+      List.Add(row);
+    }
 
-		public bool Contains(RowDefinition row)
-		{
-			if(row == null)
-				throw new ArgumentNullException("row");
+    public bool Contains(RowDefinition row)
+    {
+      if (row == null)
+      {
+        throw new ArgumentNullException("row");
+      }
 
-			return List.Contains(row);
-		}
+      return List.Contains(row);
+    }
 
-		public void CopyTo(RowDefinition[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(RowDefinition[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(RowDefinition row)
-		{
-			if(row == null)
-				throw new ArgumentNullException("row");
+    public int IndexOf(RowDefinition row)
+    {
+      if (row == null)
+      {
+        throw new ArgumentNullException("row");
+      }
 
-			return List.IndexOf(row);
-		}
+      return List.IndexOf(row);
+    }
 
-		public void Insert(int index, RowDefinition row)
-		{
-			if(row == null)
-				throw new ArgumentNullException("row");
+    public void Insert(int index, RowDefinition row)
+    {
+      if (row == null)
+      {
+        throw new ArgumentNullException("row");
+      }
 
-			List.Insert(index, row);
-		}
+      List.Insert(index, row);
+    }
 
-		public bool Remove(RowDefinition row)
-		{
-			if(row == null)
-				throw new ArgumentNullException("row");
-			
-			if(List.Contains(row) == false)
-				return false;
+    public bool Remove(RowDefinition row)
+    {
+      if (row == null)
+      {
+        throw new ArgumentNullException("row");
+      }
 
-			List.Remove(row);
+      if (List.Contains(row) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(row);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public RowDefinition this[int index]
-		{ 
-			get { return (RowDefinition)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public RowDefinition this[int index]
+    {
+      get { return (RowDefinition) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

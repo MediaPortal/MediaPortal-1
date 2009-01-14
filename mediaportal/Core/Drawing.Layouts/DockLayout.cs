@@ -24,43 +24,39 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Windows;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public class DockLayout : ILayout
-	{
-		#region Constructors
+  public class DockLayout : ILayout
+  {
+    #region Constructors
 
-		public DockLayout()
-		{
-			_spacing = new Size(0, 0);
-		}
+    public DockLayout()
+    {
+      _spacing = new Size(0, 0);
+    }
 
-		public DockLayout(int horizontalSpacing, int verticalSpacing)
-		{
-			_spacing = new Size(Math.Max(0, horizontalSpacing), Math.Max(0, verticalSpacing));
-		}
+    public DockLayout(int horizontalSpacing, int verticalSpacing)
+    {
+      _spacing = new Size(Math.Max(0, horizontalSpacing), Math.Max(0, verticalSpacing));
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Arrange(GUIGroup element)
-		{
-			FrameworkElement l = null;
-			FrameworkElement t = null;
-			FrameworkElement r = null;
-			FrameworkElement b = null;
-			FrameworkElement f = null;
+    public void Arrange(GUIGroup element)
+    {
+      FrameworkElement l = null;
+      FrameworkElement t = null;
+      FrameworkElement r = null;
+      FrameworkElement b = null;
+      FrameworkElement f = null;
 
 //			foreach(FrameworkElement child in element.Children)
-			{
+      {
 //				if(child.Dock == Dock.Left)
 //					l = child;
 
@@ -75,59 +71,61 @@ namespace MediaPortal.Drawing.Layouts
 
 //				if(child.Dock == Dock.Fill)
 //					f = child;
-			}
+      }
 
-			Thickness m = element.Margin;
-			Size size = element.RenderSize;
-			Point location = element.Location;
+      Thickness m = element.Margin;
+      Size size = element.RenderSize;
+      Point location = element.Location;
 
-			double top = location.Y + m.Top;
-			double bottom = location.Y + size.Height - m.Bottom;
-			double left = location.X + m.Left;
-			double right = location.X + size.Width - m.Right;
+      double top = location.Y + m.Top;
+      double bottom = location.Y + size.Height - m.Bottom;
+      double left = location.X + m.Left;
+      double right = location.X + size.Width - m.Right;
 
-			if(t != null)
-			{
-				t.Arrange(new Rect(left, top, right - left, t.Height));
+      if (t != null)
+      {
+        t.Arrange(new Rect(left, top, right - left, t.Height));
 
-				top = top + t.Height + _spacing.Height;
-			}
+        top = top + t.Height + _spacing.Height;
+      }
 
-			if(b != null)
-			{
-				b.Arrange(new Rect(left, bottom - b.Height, right - left, b.Height));
+      if (b != null)
+      {
+        b.Arrange(new Rect(left, bottom - b.Height, right - left, b.Height));
 
-				bottom = bottom - (b.Height + _spacing.Height);
-			}
+        bottom = bottom - (b.Height + _spacing.Height);
+      }
 
-			if(r != null)
-			{
-				r.Arrange(new Rect(right - r.Width, top, r.Width, bottom - top));
+      if (r != null)
+      {
+        r.Arrange(new Rect(right - r.Width, top, r.Width, bottom - top));
 
-				right = right - (r.Width + _spacing.Width);
-			}
+        right = right - (r.Width + _spacing.Width);
+      }
 
-			if(l != null)
-			{
-				l.Arrange(new Rect(left, top, l.Width, bottom - top));
+      if (l != null)
+      {
+        l.Arrange(new Rect(left, top, l.Width, bottom - top));
 
-				left = left + l.Width + _spacing.Width;
-			}
+        left = left + l.Width + _spacing.Width;
+      }
 
-			if(f != null)
-				f.Arrange(new Rect(left, top, right - left, bottom - top));
-		}
-	
-		public Size Measure(GUIGroup element, Size availableSize)
-		{
-			FrameworkElement l = null;
-			FrameworkElement t = null;
-			FrameworkElement r = null;
-			FrameworkElement b = null;
-			FrameworkElement f = null;
+      if (f != null)
+      {
+        f.Arrange(new Rect(left, top, right - left, bottom - top));
+      }
+    }
+
+    public Size Measure(GUIGroup element, Size availableSize)
+    {
+      FrameworkElement l = null;
+      FrameworkElement t = null;
+      FrameworkElement r = null;
+      FrameworkElement b = null;
+      FrameworkElement f = null;
 
 //			foreach(FrameworkElement child in element.Children)
-			{
+      {
 //				if(child.Dock == Dock.Left)
 //					l = child;
 
@@ -142,83 +140,89 @@ namespace MediaPortal.Drawing.Layouts
 
 //				if(child.Dock == Dock.Fill)
 //					f = child;
-			}
+      }
 
-			double w = 0;
-			double h = 0;
+      double w = 0;
+      double h = 0;
 
-			Size s = Size.Empty;
+      Size s = Size.Empty;
 
-			if(r != null)
-			{
-				r.Measure(availableSize);
+      if (r != null)
+      {
+        r.Measure(availableSize);
 
-				w = r.Width + _spacing.Width;
-				h = Math.Max(h, r.Height);
-			}
+        w = r.Width + _spacing.Width;
+        h = Math.Max(h, r.Height);
+      }
 
-			if(l != null)
-			{
-				l.Measure(availableSize);
+      if (l != null)
+      {
+        l.Measure(availableSize);
 
-				w = l.Width + _spacing.Width;
-				h = Math.Max(h, l.Height);
-			}
+        w = l.Width + _spacing.Width;
+        h = Math.Max(h, l.Height);
+      }
 
-			if(f != null)
-			{
-				f.Measure(availableSize);
+      if (f != null)
+      {
+        f.Measure(availableSize);
 
-				w = w + f.Width;
-				h = Math.Max(h, f.Height);
-			}
+        w = w + f.Width;
+        h = Math.Max(h, f.Height);
+      }
 
-			if(t != null)
-			{
-				t.Measure(availableSize);
+      if (t != null)
+      {
+        t.Measure(availableSize);
 
-				w = Math.Max(w, t.Width);
-				h = h + t.Height + _spacing.Height;
-			}
+        w = Math.Max(w, t.Width);
+        h = h + t.Height + _spacing.Height;
+      }
 
-			if(b != null)
-			{
-				b.Measure(availableSize);
+      if (b != null)
+      {
+        b.Measure(availableSize);
 
-				w = Math.Max(w, b.Width);
-				h = h + b.Height + _spacing.Height;
-			}
+        w = Math.Max(w, b.Width);
+        h = h + b.Height + _spacing.Height;
+      }
 
-			Thickness m = element.Margin;
+      Thickness m = element.Margin;
 
-			_size.Width = w + m.Width;
-			_size.Height = h + m.Height;
+      _size.Width = w + m.Width;
+      _size.Height = h + m.Height;
 
-			return _size;
-		}
+      return _size;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Size Size
-		{
-			get { return _size; }
-		}
+    public Size Size
+    {
+      get { return _size; }
+    }
 
-		public Size Spacing
-		{
-			get { return _spacing; }
-			set { if(Size.Equals(_spacing, value) == false) { _spacing = value; } }
-		}
+    public Size Spacing
+    {
+      get { return _spacing; }
+      set
+      {
+        if (Equals(_spacing, value) == false)
+        {
+          _spacing = value;
+        }
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Size						_spacing = Size.Empty;
-		Size						_size = Size.Empty;
+    private Size _spacing = Size.Empty;
+    private Size _size = Size.Empty;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

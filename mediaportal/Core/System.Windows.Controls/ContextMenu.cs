@@ -23,58 +23,55 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.Windows;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-	public class ContextMenu : MenuBase
-	{
-		#region Constructors
+  public class ContextMenu : MenuBase
+  {
+    #region Constructors
 
-		static ContextMenu()
-		{
-			HasDropShadowProperty = ContextMenuService.HasDropShadowProperty.AddOwner(typeof(ContextMenu));
-			HorizontalOffsetProperty = ContextMenuService.HorizontalOffsetProperty.AddOwner(typeof(ContextMenu));
-			PlacementProperty = ContextMenuService.PlacementProperty.AddOwner(typeof(ContextMenu));
-			PlacementRectangleProperty = ContextMenuService.PlacementRectangleProperty.AddOwner(typeof(ContextMenu));
-			PlacementTargetProperty = ContextMenuService.PlacementTargetProperty.AddOwner(typeof(UIElement));
-			VerticalOffsetProperty = ContextMenuService.VerticalOffsetProperty.AddOwner(typeof(ContextMenu));
-		}
+    static ContextMenu()
+    {
+      HasDropShadowProperty = ContextMenuService.HasDropShadowProperty.AddOwner(typeof (ContextMenu));
+      HorizontalOffsetProperty = ContextMenuService.HorizontalOffsetProperty.AddOwner(typeof (ContextMenu));
+      PlacementProperty = ContextMenuService.PlacementProperty.AddOwner(typeof (ContextMenu));
+      PlacementRectangleProperty = ContextMenuService.PlacementRectangleProperty.AddOwner(typeof (ContextMenu));
+      PlacementTargetProperty = ContextMenuService.PlacementTargetProperty.AddOwner(typeof (UIElement));
+      VerticalOffsetProperty = ContextMenuService.VerticalOffsetProperty.AddOwner(typeof (ContextMenu));
+    }
 
-		public ContextMenu()
-		{
-		}
+    public ContextMenu()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event RoutedEventHandler Closed
-		{
-			add	   { AddHandler(ClosedEvent, value); }
-			remove { AddHandler(ClosedEvent, value); }
-		}
+    public event RoutedEventHandler Closed
+    {
+      add { AddHandler(ClosedEvent, value); }
+      remove { AddHandler(ClosedEvent, value); }
+    }
 
-		public event RoutedEventHandler Opened
-		{
-			add	   { AddHandler(OpenedEvent, value); }
-			remove { AddHandler(OpenedEvent, value); }
-		}
+    public event RoutedEventHandler Opened
+    {
+      add { AddHandler(OpenedEvent, value); }
+      remove { AddHandler(OpenedEvent, value); }
+    }
 
-		#endregion Events
+    #endregion Events
 
-		#region Events (Routed)
+    #region Events (Routed)
 
-		public static readonly RoutedEvent ClosedEvent;
-		public static readonly RoutedEvent OpenedEvent;
+    public static readonly RoutedEvent ClosedEvent;
+    public static readonly RoutedEvent OpenedEvent;
 
-		#endregion Events (Routed)
+    #endregion Events (Routed)
 
-		#region Methods
+    #region Methods
 
 /*		protected override void AddChild(object child)
 		{
@@ -87,29 +84,30 @@ namespace System.Windows.Controls
 			Items.Add((MenuItem)child);
 		}
 */
-		protected virtual void OnClosed(RoutedEventArgs e)
-		{
-		}
+
+    protected virtual void OnClosed(RoutedEventArgs e)
+    {
+    }
 
 //		protected override void OnKeyDown(KeyEventArgs e)
 //		{
 //		}
 
-		protected virtual void OnOpened(RoutedEventArgs e)
-		{
-		}
-		
-		protected internal override void OnVisualParentChanged(Visual oldParent)
-		{
-		}
+    protected virtual void OnOpened(RoutedEventArgs e)
+    {
+    }
+
+    protected internal override void OnVisualParentChanged(Visual oldParent)
+    {
+    }
 
 //		protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
 //		{
 //		}
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
 //		[BindableAttribute(false)] 
 //		public CustomPopupPlacementCallback CustomPopupPlacementCallback
@@ -118,75 +116,75 @@ namespace System.Windows.Controls
 //			set { SetValue(CustomPopupPlacementCallbackProperty, value); }
 //		}
 
-		public bool HasDropShadow
-		{
-			get { return (bool)GetValue(HasDropShadowProperty); }
-			set { SetValue(HasDropShadowProperty, value); }
-		}
+    public bool HasDropShadow
+    {
+      get { return (bool) GetValue(HasDropShadowProperty); }
+      set { SetValue(HasDropShadowProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public double HorizontalOffset
-		{
-			get { return (double)GetValue(HorizontalOffsetProperty); }
-			set { SetValue(HorizontalOffsetProperty, value); }
-		}
+    [Bindable(true)]
+    public double HorizontalOffset
+    {
+      get { return (double) GetValue(HorizontalOffsetProperty); }
+      set { SetValue(HorizontalOffsetProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public bool IsOpen
-		{
-			get { return (bool)GetValue(IsOpenProperty); }
-			set { SetValue(IsOpenProperty, value); }
-		}
+    [Bindable(true)]
+    public bool IsOpen
+    {
+      get { return (bool) GetValue(IsOpenProperty); }
+      set { SetValue(IsOpenProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public PlacementMode Placement
-		{
-			get { return (PlacementMode)GetValue(PlacementProperty); }
-			set { SetValue(PlacementProperty, value); }
-		}
+    [Bindable(true)]
+    public PlacementMode Placement
+    {
+      get { return (PlacementMode) GetValue(PlacementProperty); }
+      set { SetValue(PlacementProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public Rect PlacementRectangle
-		{
-			get { return (Rect)GetValue(PlacementRectangleProperty); }
-			set { SetValue(PlacementRectangleProperty, value); }
-		}
+    [Bindable(true)]
+    public Rect PlacementRectangle
+    {
+      get { return (Rect) GetValue(PlacementRectangleProperty); }
+      set { SetValue(PlacementRectangleProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public UIElement PlacementTarget
-		{
-			get { return (UIElement)GetValue(PlacementTargetProperty); }
-			set { SetValue(PlacementTargetProperty, value); }
-		}
+    [Bindable(true)]
+    public UIElement PlacementTarget
+    {
+      get { return (UIElement) GetValue(PlacementTargetProperty); }
+      set { SetValue(PlacementTargetProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public bool StaysOpen
-		{
-			get { return (bool)GetValue(StaysOpenProperty); }
-			set { SetValue(StaysOpenProperty, value); }
-		}
+    [Bindable(true)]
+    public bool StaysOpen
+    {
+      get { return (bool) GetValue(StaysOpenProperty); }
+      set { SetValue(StaysOpenProperty, value); }
+    }
 
-		[BindableAttribute(true)] 
-		public double VerticalOffset
-		{
-			get { return (double)GetValue(VerticalOffsetProperty); }
-			set { SetValue(VerticalOffsetProperty, value); }
-		}
+    [Bindable(true)]
+    public double VerticalOffset
+    {
+      get { return (double) GetValue(VerticalOffsetProperty); }
+      set { SetValue(VerticalOffsetProperty, value); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty CustomPopupPlacementCallbackProperty;
-		public static readonly DependencyProperty HasDropShadowProperty;
-		public static readonly DependencyProperty HorizontalOffsetProperty;
-		public static readonly DependencyProperty IsOpenProperty;
-		public static readonly DependencyProperty PlacementProperty;
-		public static readonly DependencyProperty PlacementRectangleProperty;
-		public static readonly DependencyProperty PlacementTargetProperty;
-		public static readonly DependencyProperty StaysOpenProperty;
-		public static readonly DependencyProperty VerticalOffsetProperty;
+    public static readonly DependencyProperty CustomPopupPlacementCallbackProperty;
+    public static readonly DependencyProperty HasDropShadowProperty;
+    public static readonly DependencyProperty HorizontalOffsetProperty;
+    public static readonly DependencyProperty IsOpenProperty;
+    public static readonly DependencyProperty PlacementProperty;
+    public static readonly DependencyProperty PlacementRectangleProperty;
+    public static readonly DependencyProperty PlacementTargetProperty;
+    public static readonly DependencyProperty StaysOpenProperty;
+    public static readonly DependencyProperty VerticalOffsetProperty;
 
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties (Dependency)
+  }
 }

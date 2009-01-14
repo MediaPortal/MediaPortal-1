@@ -24,26 +24,20 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
+using System.Threading;
 using DirectShowLib;
 using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
-
-    VMR9Util _vmr9 = null;
-    IPin _pinVmr9ConnectedTo = null;
+    private VMR9Util _vmr9 = null;
+    private IPin _pinVmr9ConnectedTo = null;
 
     public StreamBufferPlayer9()
     {
@@ -51,31 +45,33 @@ namespace MediaPortal.Player
 
     protected override void OnInitialized()
     {
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _vmr9.Enable(true);
         _updateNeeded = true;
         SetVideoWindow();
       }
     }
+
     public override void SetVideoWindow()
     {
-      if ( GUIGraphicsContext.IsFullScreenVideo != _isFullscreen )
+      if (GUIGraphicsContext.IsFullScreenVideo != _isFullscreen)
       {
         _isFullscreen = GUIGraphicsContext.IsFullScreenVideo;
         _updateNeeded = true;
       }
 
-      if ( !_updateNeeded )
+      if (!_updateNeeded)
+      {
         return;
+      }
 
       _updateNeeded = false;
       _isStarted = true;
-
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected override bool GetInterfaces( string filename )
+    protected override bool GetInterfaces(string filename)
     {
       Speed = 1;
       Log.Info("StreamBufferPlayer9: GetInterfaces()");
@@ -91,7 +87,7 @@ namespace MediaPortal.Player
 
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
         //Log.Info("StreamBufferPlayer9: add _vmr9");
 
         _vmr9 = new VMR9Util();
@@ -102,11 +98,11 @@ namespace MediaPortal.Player
         int hr;
         m_StreamBufferConfig = new StreamBufferConfig();
         streamConfig2 = m_StreamBufferConfig as IStreamBufferConfigure2;
-        if ( streamConfig2 != null )
+        if (streamConfig2 != null)
         {
           // setting the StreamBufferEngine registry key
-          IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
-          IStreamBufferInitialize pTemp = (IStreamBufferInitialize)streamConfig2;
+          IntPtr HKEY = (IntPtr) unchecked((int) 0x80000002L);
+          IStreamBufferInitialize pTemp = (IStreamBufferInitialize) streamConfig2;
           IntPtr subKey = IntPtr.Zero;
 
           RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
@@ -119,29 +115,28 @@ namespace MediaPortal.Player
 
           streamConfig2.GetBackingFileCount(out _minBackingFiles, out _maxBackingFiles);
           streamConfig2.GetBackingFileDuration(out _backingFileDuration);
-
         }
         //Log.Info("StreamBufferPlayer9: add sbe");
 
         // create SBE source
-        _bufferSource = (IStreamBufferSource)new StreamBufferSource();
-        if ( _bufferSource == null )
+        _bufferSource = (IStreamBufferSource) new StreamBufferSource();
+        if (_bufferSource == null)
         {
           Log.Error("StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
           return false;
         }
 
 
-        IBaseFilter filter = (IBaseFilter)_bufferSource;
+        IBaseFilter filter = (IBaseFilter) _bufferSource;
         hr = _graphBuilder.AddFilter(filter, "SBE SOURCE");
-        if ( hr != 0 )
+        if (hr != 0)
         {
           Log.Error("StreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }
 
-        IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
-        if ( fileSource == null )
+        IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
+        if (fileSource == null)
         {
           Log.Error("StreamBufferPlayer9:Failed to get IFileSourceFilter");
           return false;
@@ -150,7 +145,7 @@ namespace MediaPortal.Player
 
         //Log.Info("StreamBufferPlayer9: open file:{0}",filename);
         hr = fileSource.Load(filename, null);
-        if ( hr != 0 )
+        if (hr != 0)
         {
           Log.Error("StreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
@@ -164,69 +159,88 @@ namespace MediaPortal.Player
         string strAudioRenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           // FlipGer: load infos for custom filters
           int intCount = 0;
           while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-              if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-              {
-                  strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-                  intFilters++;
-              }
-              intCount++;
+            if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
+            {
+              strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
+              intFilters++;
+            }
+            intCount++;
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-          if ( strValue.Equals("zoom") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-          if ( strValue.Equals("stretch") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-          if ( strValue.Equals("normal") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-          if ( strValue.Equals("original") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-          if ( strValue.Equals("letterbox") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-          if ( strValue.Equals("panscan") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
-          if ( strValue.Equals("zoom149") )
-            GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-
+          if (strValue.Equals("zoom"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.Zoom;
+          }
+          if (strValue.Equals("stretch"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.Stretch;
+          }
+          if (strValue.Equals("normal"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.Normal;
+          }
+          if (strValue.Equals("original"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.Original;
+          }
+          if (strValue.Equals("letterbox"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
+          }
+          if (strValue.Equals("panscan"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+          }
+          if (strValue.Equals("zoom149"))
+          {
+            GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
+          }
         }
-        if ( strVideoCodec.Length > 0 )
+        if (strVideoCodec.Length > 0)
+        {
           _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-        if ( strAudioCodec.Length > 0 )
+        }
+        if (strAudioCodec.Length > 0)
+        {
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        if ( strAudioRenderer.Length > 0 )
+        }
+        if (strAudioRenderer.Length > 0)
+        {
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
+        }
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
         {
-            customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+          customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         // render output pins of SBE
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)fileSource);
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter) fileSource);
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _mediaCtrl = (IMediaControl) _graphBuilder;
+        _mediaEvt = (IMediaEventEx) _graphBuilder;
         _mediaSeeking = _bufferSource as IStreamBufferMediaSeeking;
         _mediaSeeking2 = _bufferSource as IStreamBufferMediaSeeking2;
-        if ( _mediaSeeking == null )
+        if (_mediaSeeking == null)
         {
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
-        if ( _mediaSeeking2 == null )
+        if (_mediaSeeking2 == null)
         {
           Log.Error("Unable to get IMediaSeeking interface#2");
         }
-        if ( _audioRendererFilter != null )
+        if (_audioRendererFilter != null)
         {
           IMediaFilter mp = _graphBuilder as IMediaFilter;
           IReferenceClock clock = _audioRendererFilter as IReferenceClock;
@@ -235,14 +249,14 @@ namespace MediaPortal.Player
 
         // Set the IBasicAudioInterface
 
-        _basicAudio = (IBasicAudio)_graphBuilder;
+        _basicAudio = (IBasicAudio) _graphBuilder;
 
         //        Log.Info("StreamBufferPlayer9:SetARMode");
         //        DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
 
         //Log.Info("StreamBufferPlayer9: set Deinterlace");
 
-        if ( !_vmr9.IsVMR9Connected )
+        if (!_vmr9.IsVMR9Connected)
         {
           //_vmr9 is not supported, switch to overlay
           Log.Info("StreamBufferPlayer9: switch to overlay");
@@ -253,16 +267,13 @@ namespace MediaPortal.Player
         _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
         _vmr9.SetDeinterlaceMode();
         return true;
-
       }
-      catch ( Exception ex )
+      catch (Exception ex)
       {
         Log.Error("StreamBufferPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         return false;
       }
     }
-
-
 
 
     /// <summary> do cleanup and release DirectShow. </summary>
@@ -271,9 +282,9 @@ namespace MediaPortal.Player
       Cleanup();
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
-      if ( _graphBuilder == null )
+      if (_graphBuilder == null)
       {
         Log.Info("StreamBufferPlayer9:grapbuilder=null");
         return;
@@ -283,21 +294,23 @@ namespace MediaPortal.Player
       Log.Info("StreamBufferPlayer9:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
-        if ( _vmr9 != null )
+        if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
           _vmr9.Enable(false);
         }
         int counter = 0;
-        while ( GUIGraphicsContext.InVmr9Render )
+        while (GUIGraphicsContext.InVmr9Render)
         {
           counter++;
-          System.Threading.Thread.Sleep(100);
-          if ( counter > 100 )
+          Thread.Sleep(100);
+          if (counter > 100)
+          {
             break;
+          }
         }
 
-        if ( _mediaCtrl != null )
+        if (_mediaCtrl != null)
         {
           hr = _mediaCtrl.Stop();
         }
@@ -311,67 +324,80 @@ namespace MediaPortal.Player
         _bufferSource = null;
         _pinVmr9ConnectedTo = null;
 
-        if ( _pinVmr9ConnectedTo != null )
+        if (_pinVmr9ConnectedTo != null)
         {
           DirectShowUtil.ReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
-        if ( streamConfig2 != null )
+        if (streamConfig2 != null)
         {
-          while ( ( hr = DirectShowUtil.ReleaseComObject(streamConfig2) ) > 0 )
+          while ((hr = DirectShowUtil.ReleaseComObject(streamConfig2)) > 0)
+          {
             ;
+          }
           streamConfig2 = null;
         }
 
         m_StreamBufferConfig = null;
 
-        if ( _vmr9 != null )
+        if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
         }
-        if ( _videoCodecFilter != null )
+        if (_videoCodecFilter != null)
         {
-          while ( ( hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter) ) > 0 )
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
+          {
             ;
+          }
           _videoCodecFilter = null;
         }
-        if ( _audioCodecFilter != null )
+        if (_audioCodecFilter != null)
         {
-          while ( ( hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter) ) > 0 )
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
+          {
             ;
+          }
           _audioCodecFilter = null;
         }
 
-        if ( _audioRendererFilter != null )
+        if (_audioRendererFilter != null)
         {
-          while ( ( hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter) ) > 0 )
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
+          {
             ;
+          }
           _audioRendererFilter = null;
         }
 
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
-            if (customFilters[i] != null)
+          if (customFilters[i] != null)
+          {
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
             {
-                while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0);
+              ;
             }
-            customFilters[i] = null;
+          }
+          customFilters[i] = null;
         }
         DirectShowUtil.RemoveFilters(_graphBuilder);
 
-        if ( _rotEntry != null )
+        if (_rotEntry != null)
         {
           _rotEntry.Dispose();
         }
         _rotEntry = null;
-        if ( _graphBuilder != null )
+        if (_graphBuilder != null)
         {
-          while ( ( hr = DirectShowUtil.ReleaseComObject(_graphBuilder) ) > 0 )
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
             ;
+          }
           _graphBuilder = null;
         }
 
@@ -382,7 +408,7 @@ namespace MediaPortal.Player
         //GC.Collect();
         //GC.Collect();
       }
-      catch ( Exception ex )
+      catch (Exception ex)
       {
         Log.Error("StreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
@@ -397,7 +423,7 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
@@ -405,13 +431,13 @@ namespace MediaPortal.Player
     }
 
 
-    public override void SeekAbsolute( double dTimeInSecs )
+    public override void SeekAbsolute(double dTimeInSecs)
     {
-      if ( IsTimeShifting && IsTV && dTimeInSecs == 0 )
+      if (IsTimeShifting && IsTV && dTimeInSecs == 0)
       {
-        if ( Duration < 5 )
+        if (Duration < 5)
         {
-          if ( _vmr9 != null )
+          if (_vmr9 != null)
           {
             _vmr9.Enable(false);
           }
@@ -421,18 +447,22 @@ namespace MediaPortal.Player
       }
       _seekToBegin = false;
 
-      if ( _vmr9 != null )
+      if (_vmr9 != null)
       {
         _vmr9.Enable(true);
       }
-      if ( _state != PlayState.Init )
+      if (_state != PlayState.Init)
       {
-        if ( _mediaCtrl != null && _mediaSeeking != null )
+        if (_mediaCtrl != null && _mediaSeeking != null)
         {
-          if ( dTimeInSecs < 0.0d )
+          if (dTimeInSecs < 0.0d)
+          {
             dTimeInSecs = 0.0d;
-          if ( dTimeInSecs > Duration )
+          }
+          if (dTimeInSecs > Duration)
+          {
             dTimeInSecs = Duration;
+          }
           dTimeInSecs = Math.Floor(dTimeInSecs);
           //Log.Info("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
@@ -444,16 +474,16 @@ namespace MediaPortal.Player
           fContentEnd = lContentEnd;
 
           dTimeInSecs += fContentStart;
-          long lTime = (long)dTimeInSecs;
-          int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          if ( hr != 0 )
+          long lTime = (long) dTimeInSecs;
+          int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
+                                              new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          if (hr != 0)
           {
             Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
           }
         }
         UpdateCurrentPosition();
         //Log.Info("StreamBufferPlayer: current pos:{0}", CurrentPosition);
-
       }
     }
 
@@ -475,34 +505,38 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
-      if ( SupportsReplay )
+      if (SupportsReplay)
       {
         Log.Info("StreamBufferPlayer:stop");
-        if ( _mediaCtrl == null )
+        if (_mediaCtrl == null)
+        {
           return;
+        }
 
-        if ( _vmr9 != null )
+        if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
           _vmr9.Enable(false);
         }
         int counter = 0;
-        while ( GUIGraphicsContext.InVmr9Render )
+        while (GUIGraphicsContext.InVmr9Render)
         {
           counter++;
-          System.Threading.Thread.Sleep(100);
-          if ( counter > 100 )
+          Thread.Sleep(100);
+          if (counter > 100)
+          {
             break;
+          }
         }
 
         _mediaCtrl.Stop();
 
-        if ( _vmr9 != null )
+        if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
-        }        
+        }
       }
       else
       {

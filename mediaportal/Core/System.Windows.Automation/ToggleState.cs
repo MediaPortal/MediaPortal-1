@@ -23,21 +23,20 @@
 
 #endregion
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Automation
 {
-	[GuidAttribute("ad7db4af-7166-4478-a402-ad5b77eab2fa")] 
-	[ComVisibleAttribute(true)] 
-	public enum ToggleState
-	{
-		#region Properties
+  [Guid("ad7db4af-7166-4478-a402-ad5b77eab2fa")]
+  [ComVisible(true)]
+  public enum ToggleState
+  {
+    #region Properties
 
-		Indeterminate,
-		Off,
-		On,
+    Indeterminate,
+    Off,
+    On,
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

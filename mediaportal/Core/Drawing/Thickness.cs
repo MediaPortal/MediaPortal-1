@@ -28,129 +28,137 @@ using System.ComponentModel;
 
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(ThicknessConverter))]
-	public struct Thickness
-	{
-		#region Constructors
+  [TypeConverter(typeof (ThicknessConverter))]
+  public struct Thickness
+  {
+    #region Constructors
 
-		public Thickness(double thickness) : this(thickness, thickness, thickness, thickness)
-		{
-		}
+    public Thickness(double thickness) : this(thickness, thickness, thickness, thickness)
+    {
+    }
 
-		public Thickness(double w, double h) : this(w, h, w, h)
-		{
-		}
+    public Thickness(double w, double h) : this(w, h, w, h)
+    {
+    }
 
-		public Thickness(double l, double t, double r, double b)
-		{
-			_l = l;
-			_t = t;
-			_r = r;
-			_b = b;
-		}
+    public Thickness(double l, double t, double r, double b)
+    {
+      _l = l;
+      _t = t;
+      _r = r;
+      _b = b;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Operators
+    #region Operators
 
-		public static bool operator ==(Thickness l, Thickness r)
-		{
-			return l._l == r._l && l._t == r._t && l._r == r._r && l._b == r._b;
-		}
+    public static bool operator ==(Thickness l, Thickness r)
+    {
+      return l._l == r._l && l._t == r._t && l._r == r._r && l._b == r._b;
+    }
 
-		public static bool operator !=(Thickness l, Thickness r)
-		{
-			return !(l._l == r._l && l._r == r._r && l._r == r._r && l._b == r._b);
-		}
+    public static bool operator !=(Thickness l, Thickness r)
+    {
+      return !(l._l == r._l && l._r == r._r && l._r == r._r && l._b == r._b);
+    }
 
-		#endregion Operators
+    #endregion Operators
 
-		#region Methods
+    #region Methods
 
-		public override bool Equals(object o)
-		{
-			return o is Thickness && ((Thickness)o)._l == _l && ((Thickness)o)._t == _t && ((Thickness)o)._r == _r && ((Thickness)o)._b == _b;
-		}
+    public override bool Equals(object o)
+    {
+      return o is Thickness && ((Thickness) o)._l == _l && ((Thickness) o)._t == _t && ((Thickness) o)._r == _r &&
+             ((Thickness) o)._b == _b;
+    }
 
-		public override int GetHashCode()
-		{
-			return (int)((uint)_l ^ (uint)_t ^ (uint)_r ^ (uint)_b);
-		}
+    public override int GetHashCode()
+    {
+      return (int) ((uint) _l ^ (uint) _t ^ (uint) _r ^ (uint) _b);
+    }
 
-		public static Thickness Parse(string source)
-		{
-			return Thickness.Parse(source, null);
-		}
+    public static Thickness Parse(string source)
+    {
+      return Parse(source, null);
+    }
 
-		public static Thickness Parse(string source, IFormatProvider formatProvider)
-		{
-			string[] tokens = source.Split(',');
+    public static Thickness Parse(string source, IFormatProvider formatProvider)
+    {
+      string[] tokens = source.Split(',');
 
-			if(tokens.Length == 4)
-				return new Thickness(double.Parse(tokens[0], formatProvider), double.Parse(tokens[1], formatProvider), double.Parse(tokens[2], formatProvider), double.Parse(tokens[3], formatProvider));
+      if (tokens.Length == 4)
+      {
+        return new Thickness(double.Parse(tokens[0], formatProvider), double.Parse(tokens[1], formatProvider),
+                             double.Parse(tokens[2], formatProvider), double.Parse(tokens[3], formatProvider));
+      }
 
-			if(tokens.Length == 2)
-				return new Thickness(double.Parse(tokens[0], formatProvider), double.Parse(tokens[1], formatProvider));
+      if (tokens.Length == 2)
+      {
+        return new Thickness(double.Parse(tokens[0], formatProvider), double.Parse(tokens[1], formatProvider));
+      }
 
-			if(tokens.Length == 1)
-				return new Thickness(double.Parse(tokens[0], formatProvider));
+      if (tokens.Length == 1)
+      {
+        return new Thickness(double.Parse(tokens[0], formatProvider));
+      }
 
-			return Thickness.Empty;
-		}
+      return Empty;
+    }
 
-		public override string ToString()
-		{
-			return string.Format("{{Left={0},Top={1},Right={2},Bottom={3}}}", _l, _t, _r, _b);
-		}
+    public override string ToString()
+    {
+      return string.Format("{{Left={0},Top={1},Right={2},Bottom={3}}}", _l, _t, _r, _b);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public double Bottom
-		{
-			get { return _b; }
-			set { _b = value; }
-		}
+    public double Bottom
+    {
+      get { return _b; }
+      set { _b = value; }
+    }
 
-		public double Height
-		{
-			get { return _t + _b; }
-		}
+    public double Height
+    {
+      get { return _t + _b; }
+    }
 
-		public double Left
-		{
-			get { return _l; }
-			set { _l = value; }
-		}
+    public double Left
+    {
+      get { return _l; }
+      set { _l = value; }
+    }
 
-		public double Right
-		{
-			get { return _r; }
-			set { _r = value; }
-		}
+    public double Right
+    {
+      get { return _r; }
+      set { _r = value; }
+    }
 
-		public double Top
-		{
-			get { return _t; }
-			set { _t = value; }
-		}
+    public double Top
+    {
+      get { return _t; }
+      set { _t = value; }
+    }
 
-		public double Width
-		{
-			get { return _l + _r; }
-		}
+    public double Width
+    {
+      get { return _l + _r; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		double								_b;
-		double								_l;
-		double								_r;
-		double								_t;
-		public static readonly Thickness	Empty = new Thickness();
+    private double _b;
+    private double _l;
+    private double _r;
+    private double _t;
+    public static readonly Thickness Empty = new Thickness();
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

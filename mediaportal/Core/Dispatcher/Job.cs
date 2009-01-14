@@ -25,195 +25,207 @@
 
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Runtime.Remoting.Messaging;
 
 namespace MediaPortal.Dispatcher
 {
-	public sealed class Job
-	{
-		#region Events
+  public sealed class Job
+  {
+    #region Events
 
-		public event				DoWorkEventHandler DoWork;
-		public event				ProgressChangedEventHandler ProgressChanged;
-		public event				RunWorkerCompletedEventHandler RunWorkerCompleted;
+    public event DoWorkEventHandler DoWork;
+    public event ProgressChangedEventHandler ProgressChanged;
+    public event RunWorkerCompletedEventHandler RunWorkerCompleted;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public void Cancel()
-		{
-			lock(this)
-				_isCancelPending = true;
-		}
+    public void Cancel()
+    {
+      lock (this)
+        _isCancelPending = true;
+    }
 
-		public void Dispatch()
-		{
-			Dispatch(DateTime.Now);
-		}
+    public void Dispatch()
+    {
+      Dispatch(DateTime.Now);
+    }
 
-		public void Dispatch(int ticks)
-		{
-			Dispatch(DateTime.Now + TimeSpan.FromMilliseconds(ticks));
-		}
+    public void Dispatch(int ticks)
+    {
+      Dispatch(DateTime.Now + TimeSpan.FromMilliseconds(ticks));
+    }
 
-		public void Dispatch(TimeSpan timespan)
-		{
-			Dispatch(DateTime.Now + timespan);
-		}
+    public void Dispatch(TimeSpan timespan)
+    {
+      Dispatch(DateTime.Now + timespan);
+    }
 
-		public void Dispatch(DateTime dateTime)
-		{
-			if(DoWork == null)
-				return;
+    public void Dispatch(DateTime dateTime)
+    {
+      if (DoWork == null)
+      {
+        return;
+      }
 
-			lock(this)
-				_dateTime = dateTime;
+      lock (this)
+        _dateTime = dateTime;
 
-			JobDispatcher.Dispatch(this);
-		}
+      JobDispatcher.Dispatch(this);
+    }
 
-		void InvokeDelegate(Delegate handler, object[] e)
-		{
-			ISynchronizeInvoke synchronizer = (ISynchronizeInvoke)handler.Target;
+    private void InvokeDelegate(Delegate handler, object[] e)
+    {
+      ISynchronizeInvoke synchronizer = (ISynchronizeInvoke) handler.Target;
 
-			if(synchronizer == null)
-			{
-				handler.DynamicInvoke(e);
-				return;
-			}
+      if (synchronizer == null)
+      {
+        handler.DynamicInvoke(e);
+        return;
+      }
 
-			if(synchronizer.InvokeRequired == false)
-			{
-				handler.DynamicInvoke(e);
-				return;
-			}
+      if (synchronizer.InvokeRequired == false)
+      {
+        handler.DynamicInvoke(e);
+        return;
+      }
 
-			synchronizer.Invoke(handler, e);
-		}
+      synchronizer.Invoke(handler, e);
+    }
 
-		void InvokeDelegate(Delegate[] handlers, object[] e)
-		{
-			foreach(Delegate handler in handlers)
-				InvokeDelegate(handler, e);
-		}
-	
-		void ReportCompletion(IAsyncResult asyncResult)
-		{
-			AsyncResult ar = (AsyncResult)asyncResult;
+    private void InvokeDelegate(Delegate[] handlers, object[] e)
+    {
+      foreach (Delegate handler in handlers)
+      {
+        InvokeDelegate(handler, e);
+      }
+    }
 
-			DoWorkEventHandler handler = (DoWorkEventHandler)ar.AsyncDelegate;
-			DoWorkEventArgs args = (DoWorkEventArgs)ar.AsyncState;
+    private void ReportCompletion(IAsyncResult asyncResult)
+    {
+      AsyncResult ar = (AsyncResult) asyncResult;
 
-			object result = null;
+      DoWorkEventHandler handler = (DoWorkEventHandler) ar.AsyncDelegate;
+      DoWorkEventArgs args = (DoWorkEventArgs) ar.AsyncState;
 
-			Exception error = null;
+      object result = null;
 
-			try
-			{
-				handler.EndInvoke(asyncResult);
-				result = args.Result;
-			}
-			catch(Exception exception)
-			{
-				error = exception;
-			}
+      Exception error = null;
 
-			if(RunWorkerCompleted != null)
-				InvokeDelegate(RunWorkerCompleted.GetInvocationList(), new object[] { this, new RunWorkerCompletedEventArgs(result, error, args.Cancel) });
-		}
+      try
+      {
+        handler.EndInvoke(asyncResult);
+        result = args.Result;
+      }
+      catch (Exception exception)
+      {
+        error = exception;
+      }
 
-		public void ReportProgress(int percent)
-		{
-			if(_isProgressReported == false)
-				throw new InvalidOperationException("Job does not report its progress");
+      if (RunWorkerCompleted != null)
+      {
+        InvokeDelegate(RunWorkerCompleted.GetInvocationList(),
+                       new object[] {this, new RunWorkerCompletedEventArgs(result, error, args.Cancel)});
+      }
+    }
 
-			object[] e = new object[] { this, new ProgressChangedEventArgs(percent, null) };
+    public void ReportProgress(int percent)
+    {
+      if (_isProgressReported == false)
+      {
+        throw new InvalidOperationException("Job does not report its progress");
+      }
 
-			foreach(Delegate handler in ProgressChanged.GetInvocationList())
-				InvokeDelegate(handler, e);
-		}
+      object[] e = new object[] {this, new ProgressChangedEventArgs(percent, null)};
 
-		internal void Run()
-		{
-			if(DoWork == null)
-				return;
-			
-			_isCancelPending = false;
+      foreach (Delegate handler in ProgressChanged.GetInvocationList())
+      {
+        InvokeDelegate(handler, e);
+      }
+    }
 
-			DoWorkEventArgs args = new DoWorkEventArgs(_argument);
-			DoWork.BeginInvoke(this, args, new AsyncCallback(ReportCompletion), args);
-		}
+    internal void Run()
+    {
+      if (DoWork == null)
+      {
+        return;
+      }
 
-		#endregion Methods
+      _isCancelPending = false;
 
-		#region Properties
+      DoWorkEventArgs args = new DoWorkEventArgs(_argument);
+      DoWork.BeginInvoke(this, args, new AsyncCallback(ReportCompletion), args);
+    }
 
-		public bool IsCancelPending
-		{
-			get { lock(this) return _isCancelPending; }
-		}
+    #endregion Methods
 
-		public object Argument
-		{
-			get { lock(this) return _argument; }
-			set { lock(this) _argument = value; }
-		}
+    #region Properties
 
-		public JobFlags Flags
-		{
-			get { lock(this) return _flags; }
-			set { lock(this) _flags = value; }
-		}
+    public bool IsCancelPending
+    {
+      get { lock (this) return _isCancelPending; }
+    }
 
-		public bool IsReady
-		{
-			get { lock(this) return _isCancelPending == false && DateTime.Compare(_dateTime, DateTime.Now) <= 0; }
-		}
+    public object Argument
+    {
+      get { lock (this) return _argument; }
+      set { lock (this) _argument = value; }
+    }
 
-		public string Name
-		{
-			get { lock(this) return _name; }
-			set { lock(this) _name = value; }
-		}
+    public JobFlags Flags
+    {
+      get { lock (this) return _flags; }
+      set { lock (this) _flags = value; }
+    }
 
-		public DateTime Next
-		{
-			get { lock(this) return _dateTime; }
-		}
+    public bool IsReady
+    {
+      get { lock (this) return _isCancelPending == false && DateTime.Compare(_dateTime, DateTime.Now) <= 0; }
+    }
 
-		public JobPriority Priority
-		{
-			get { lock(this) return _priority; }
-			set { lock(this) _priority = value; }
-		}
+    public string Name
+    {
+      get { lock (this) return _name; }
+      set { lock (this) _name = value; }
+    }
 
-		public bool JobSupportsCancellation
-		{
-			get { lock(this) return _isCancellationSupported; } 
-			set { lock(this) _isCancellationSupported = value; } 
-		}
+    public DateTime Next
+    {
+      get { lock (this) return _dateTime; }
+    }
 
-		public bool JobReportsProgress
-		{
-			get { lock(this) return _isProgressReported; }
-			set { lock(this) _isProgressReported = value; }
-		}
+    public JobPriority Priority
+    {
+      get { lock (this) return _priority; }
+      set { lock (this) _priority = value; }
+    }
 
-		#endregion Properties
+    public bool JobSupportsCancellation
+    {
+      get { lock (this) return _isCancellationSupported; }
+      set { lock (this) _isCancellationSupported = value; }
+    }
 
-		#region Fields
+    public bool JobReportsProgress
+    {
+      get { lock (this) return _isProgressReported; }
+      set { lock (this) _isProgressReported = value; }
+    }
 
-		DateTime					_dateTime = DateTime.Now;
-		JobFlags					_flags;
-		bool						_isCancelPending = false;
-		bool						_isProgressReported = false;
-		bool						_isCancellationSupported = false;
-		string						_name = string.Empty;
-		JobPriority					_priority = JobPriority.Lowest;
-		object						_argument;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private DateTime _dateTime = DateTime.Now;
+    private JobFlags _flags;
+    private bool _isCancelPending = false;
+    private bool _isProgressReported = false;
+    private bool _isCancellationSupported = false;
+    private string _name = string.Empty;
+    private JobPriority _priority = JobPriority.Lowest;
+    private object _argument;
+
+    #endregion Fields
+  }
 }

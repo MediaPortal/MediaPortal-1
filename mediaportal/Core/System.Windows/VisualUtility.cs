@@ -23,44 +23,47 @@
 
 #endregion
 
-using System;
 using System.Xml;
 
 namespace System.Windows
 {
-	// Gaston Milano's Blog
-	// http://weblogs.asp.net/gmilano/archive/2004/11/28/271383.aspx
-	public sealed class VisualUtility
-	{
-		#region Constructors
+  // Gaston Milano's Blog
+  // http://weblogs.asp.net/gmilano/archive/2004/11/28/271383.aspx
+  public sealed class VisualUtility
+  {
+    #region Constructors
 
-		private VisualUtility()
-		{
-		}
+    private VisualUtility()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static void GetVisualTreeInfo(Visual element, XmlWriter writer)
-		{
-			if(element == null)
-				throw new ArgumentNullException("element");
+    public static void GetVisualTreeInfo(Visual element, XmlWriter writer)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
 
-			writer.WriteStartElement("VisualElement");
-			writer.WriteElementString("Type", element.GetType().ToString());
+      writer.WriteStartElement("VisualElement");
+      writer.WriteElementString("Type", element.GetType().ToString());
 
-			VisualCollection children = VisualOperations.GetChildren(element);
+      VisualCollection children = VisualOperations.GetChildren(element);
 
-			if(children != null && children.Count != 0)
-			{
-				foreach(Visual visual in children)
-					GetVisualTreeInfo(visual, writer);
-			}
+      if (children != null && children.Count != 0)
+      {
+        foreach (Visual visual in children)
+        {
+          GetVisualTreeInfo(visual, writer);
+        }
+      }
 
-			writer.WriteEndElement();
-		}
+      writer.WriteEndElement();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

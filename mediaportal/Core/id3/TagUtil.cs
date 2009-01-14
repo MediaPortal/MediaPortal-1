@@ -23,75 +23,78 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Text;
 
 namespace Roger.ID3
 {
-	/// <summary>
-	/// Summary description for TagUtil.
-	/// </summary>
-	public class TagUtil
-	{
-		public static long GetTagEndOffset(Stream stream)
-		{
-			long returnPos = stream.Position;
+  /// <summary>
+  /// Summary description for TagUtil.
+  /// </summary>
+  public class TagUtil
+  {
+    public static long GetTagEndOffset(Stream stream)
+    {
+      long returnPos = stream.Position;
 
-			byte[] magicBuffer = new byte[3];
-			stream.Read(magicBuffer, 0, 3);
+      byte[] magicBuffer = new byte[3];
+      stream.Read(magicBuffer, 0, 3);
 
-			string magic = Encoding.ASCII.GetString(magicBuffer, 0, 3);
-			if (magic != "ID3")
-			{
-				// It's not got tags: backup a little bit and leave it alone.
-				stream.Seek(returnPos, SeekOrigin.Begin);
-				return 0;
-			}
+      string magic = Encoding.ASCII.GetString(magicBuffer, 0, 3);
+      if (magic != "ID3")
+      {
+        // It's not got tags: backup a little bit and leave it alone.
+        stream.Seek(returnPos, SeekOrigin.Begin);
+        return 0;
+      }
 
-			// Figure out the version number.
-			int majorVersion = stream.ReadByte();
-			int minorVersion = stream.ReadByte();
+      // Figure out the version number.
+      int majorVersion = stream.ReadByte();
+      int minorVersion = stream.ReadByte();
 
-			// Get the flags
-			int tagFlags = stream.ReadByte();
+      // Get the flags
+      int tagFlags = stream.ReadByte();
 
-			if (tagFlags != 0)
-				throw new TagsException("We only know how to deal with tagFlags == 0");
+      if (tagFlags != 0)
+      {
+        throw new TagsException("We only know how to deal with tagFlags == 0");
+      }
 
-			// TODO: Does 2.3.0 define this value as non-sync-safe?
-			// Figure out the length.
-			int tagLength = ReadInt28(stream);
+      // TODO: Does 2.3.0 define this value as non-sync-safe?
+      // Figure out the length.
+      int tagLength = ReadInt28(stream);
 
-			// That tagLength doesn't include the 10 bytes of _this_ header, but does include padding.
+      // That tagLength doesn't include the 10 bytes of _this_ header, but does include padding.
 
-			// Back up again.
-			stream.Seek(returnPos, SeekOrigin.Begin);
-			return tagLength + 10;
-		}
+      // Back up again.
+      stream.Seek(returnPos, SeekOrigin.Begin);
+      return tagLength + 10;
+    }
 
-		public static void SkipTags(Stream stream)
-		{
-			long tagEndOffset = GetTagEndOffset(stream);
-			stream.Seek(tagEndOffset, SeekOrigin.Current);
-		}
+    public static void SkipTags(Stream stream)
+    {
+      long tagEndOffset = GetTagEndOffset(stream);
+      stream.Seek(tagEndOffset, SeekOrigin.Current);
+    }
 
-		// TODO: Remove duplication.
-		/// <summary>
-		/// Read a sync-safe integer (i.e. 28 bits stashed in 32-bits).
-		/// </summary>
-		/// <param name="stream">The stream from which to read the integer.</param>
-		/// <returns>The value of the sync-safe integer.</returns>
-		public static int ReadInt28(Stream stream)
-		{
-			byte[] buffer = new byte[4];
-			stream.Read(buffer, 0, 4);
+    // TODO: Remove duplication.
+    /// <summary>
+    /// Read a sync-safe integer (i.e. 28 bits stashed in 32-bits).
+    /// </summary>
+    /// <param name="stream">The stream from which to read the integer.</param>
+    /// <returns>The value of the sync-safe integer.</returns>
+    public static int ReadInt28(Stream stream)
+    {
+      byte[] buffer = new byte[4];
+      stream.Read(buffer, 0, 4);
 
-			if ((buffer[0] & 0x80) != 0 || (buffer[1] & 0x80) != 0 || (buffer[2] & 0x80) != 0 || (buffer[3] & 0x80) != 0)
-				throw new TagsException("Found invalid syncsafe integer");
+      if ((buffer[0] & 0x80) != 0 || (buffer[1] & 0x80) != 0 || (buffer[2] & 0x80) != 0 || (buffer[3] & 0x80) != 0)
+      {
+        throw new TagsException("Found invalid syncsafe integer");
+      }
 
-			int result = (buffer[0] << 21) | (buffer[1] << 14) | (buffer[2] << 7) | buffer[3];
-			return result;
-		}
-	}
+      int result = (buffer[0] << 21) | (buffer[1] << 14) | (buffer[2] << 7) | buffer[3];
+      return result;
+    }
+  }
 }

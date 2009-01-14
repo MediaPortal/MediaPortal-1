@@ -23,48 +23,48 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public sealed class DependencyPropertyKey
-	{
-		#region Constructors
+  public sealed class DependencyPropertyKey
+  {
+    #region Constructors
 
-		private DependencyPropertyKey()
-		{
-		}
+    private DependencyPropertyKey()
+    {
+    }
 
-		internal DependencyPropertyKey(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			_dependencyProperty = DependencyProperty.Register(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
-		}
+    internal DependencyPropertyKey(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata,
+                                   ValidateValueCallback validateValueCallback)
+    {
+      _dependencyProperty = DependencyProperty.Register(name, propertyType, ownerType, defaultMetadata,
+                                                        validateValueCallback);
+    }
 
-		#endregion Constructors
-			
-		#region Methods
+    #endregion Constructors
 
-		public void OverrideMetadata(Type ownerType, PropertyMetadata metadata)
-		{
-			// somehow this isn't correct!
-			_dependencyProperty.OverrideMetadata(ownerType, metadata, this);
-		}
+    #region Methods
 
-		#endregion Methods
+    public void OverrideMetadata(Type ownerType, PropertyMetadata metadata)
+    {
+      // somehow this isn't correct!
+      _dependencyProperty.OverrideMetadata(ownerType, metadata, this);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public DependencyProperty DependencyProperty
-		{
-			get { return _dependencyProperty; }
-		}
+    #region Properties
 
-		#endregion Properties
+    public DependencyProperty DependencyProperty
+    {
+      get { return _dependencyProperty; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		DependencyProperty			_dependencyProperty = null;
+    #region Fields
 
-		#endregion Fields
-	}
+    private DependencyProperty _dependencyProperty = null;
+
+    #endregion Fields
+  }
 }

@@ -24,26 +24,24 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Windows.Media.Animation;
-using MediaPortal.Drawing;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Drawing;
+using MediaPortal.Profile;
 
 namespace MediaPortal.GUI.Library
 {
   public class GUIAnimation : GUIControl
   {
-
     protected bool _flipX = false;
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
 
     #region Constructors
+
     public GUIAnimation()
     {
     }
@@ -75,7 +73,8 @@ namespace MediaPortal.GUI.Library
       InitTriggerList();
     }
 
-    public GUIAnimation(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureNames)
+    public GUIAnimation(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                        string strTextureNames)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _animating = false;
@@ -86,6 +85,7 @@ namespace MediaPortal.GUI.Library
       _textureNames = strTextureNames;
       InitTriggerList();
     }
+
     #endregion Constructors
 
     public bool FlipY
@@ -93,11 +93,13 @@ namespace MediaPortal.GUI.Library
       get { return _flipY; }
       set { _flipY = value; }
     }
+
     public bool FlipX
     {
       get { return _flipX; }
       set { _flipX = value; }
     }
+
     public string DiffuseFileName
     {
       get { return _diffuseFileName; }
@@ -109,14 +111,21 @@ namespace MediaPortal.GUI.Library
     protected void InitTriggerList()
     {
       _triggerList.Clear();
-      if (_triggerNames == string.Empty) return;
+      if (_triggerNames == string.Empty)
+      {
+        return;
+      }
 
       foreach (string trigger in _triggerNames.Split(';'))
       {
         switch ((trigger.Trim()).ToUpper())
         {
-          case "INIT": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT); break;
-          case "FOCUS": _triggerList.Add(GUIMessage.MessageType.GUI_MSG_SETFOCUS); break;
+          case "INIT":
+            _triggerList.Add(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT);
+            break;
+          case "FOCUS":
+            _triggerList.Add(GUIMessage.MessageType.GUI_MSG_SETFOCUS);
+            break;
         }
       }
     }
@@ -129,8 +138,10 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
         _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
+      }
 
       if (_filenames == null)
       {
@@ -138,10 +149,12 @@ namespace MediaPortal.GUI.Library
 
         foreach (string filename in _textureNames.Split(';'))
         {
-          if (filename.IndexOfAny(new char[] { '?', '*' }) != -1)
+          if (filename.IndexOfAny(new char[] {'?', '*'}) != -1)
           {
             foreach (string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
+            {
               _filenames.Add(Path.GetFileName(match));
+            }
           }
           else
           {
@@ -158,7 +171,7 @@ namespace MediaPortal.GUI.Library
       for (int index = 0; index < _images.Length; index++)
       {
         _imageId++;
-        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], 0);
+        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string) _filenames[index], 0);
         _images[index].ParentControl = this;
         _images[index].ColourDiffuse = ColourDiffuse;
         _images[index].DimColor = DimColor;
@@ -177,7 +190,6 @@ namespace MediaPortal.GUI.Library
         _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
         _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
         _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
-
       }
 
       int x = _positionX;
@@ -185,7 +197,7 @@ namespace MediaPortal.GUI.Library
 
       if (_horizontalAlignment == HorizontalAlignment.Center)
       {
-        x = x - (w / 2);
+        x = x - (w/2);
       }
       else if (_horizontalAlignment == HorizontalAlignment.Right)
       {
@@ -194,7 +206,7 @@ namespace MediaPortal.GUI.Library
 
       if (_verticalAlignment == VerticalAlignment.Center)
       {
-        y = y - (h / 2);
+        y = y - (h/2);
       }
       else if (_verticalAlignment == VerticalAlignment.Bottom)
       {
@@ -210,10 +222,14 @@ namespace MediaPortal.GUI.Library
     public override void FreeResources()
     {
       if (_images == null)
+      {
         return;
+      }
 
       for (int index = 0; index < _images.Length; index++)
+      {
         _images[index].FreeResources();
+      }
 
       _images = null;
     }
@@ -221,9 +237,14 @@ namespace MediaPortal.GUI.Library
     // recalculate the image dimensions & position
     public void Refresh()
     {
-      if (_images == null) return;
+      if (_images == null)
+      {
+        return;
+      }
       for (int index = 0; index < _images.Length; index++)
+      {
         _images[index].Refresh();
+      }
     }
 
     public void SetFileName(string newFilename)
@@ -238,38 +259,46 @@ namespace MediaPortal.GUI.Library
       base.SetPosition(dwPosX, dwPosY);
 
       if (_images == null)
+      {
         return;
+      }
       for (int index = 0; index < _images.Length; index++)
+      {
         _images[index].SetPosition(dwPosX, dwPosY);
+      }
     }
 
     public override int Width
     {
-      get
-      {
-        return base.Width;
-      }
+      get { return base.Width; }
       set
       {
         base.Width = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].Width = value;
+        }
       }
     }
 
     public override int Height
     {
-      get
-      {
-        return base.Height;
-      }
+      get { return base.Height; }
       set
       {
         base.Height = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].Height = value;
+        }
       }
     }
 
@@ -277,14 +306,22 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if ((_images != null) && (_images.Length > 0)) return _images[0].Filtering;
+        if ((_images != null) && (_images.Length > 0))
+        {
+          return _images[0].Filtering;
+        }
         return false;
       }
       set
       {
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].Filtering = value;
+        }
       }
     }
 
@@ -297,10 +334,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _keepAspectRatio = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].KeepAspectRatio = value;
-
+        }
       }
     }
 
@@ -330,10 +371,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _textureWidth = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].TextureWidth = value;
-
+        }
       }
     }
 
@@ -346,39 +391,48 @@ namespace MediaPortal.GUI.Library
       set
       {
         _textureHeight = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].TextureHeight = value;
+        }
       }
     }
 
     public override int DimColor
     {
-      get
-      {
-        return base.DimColor;
-      }
+      get { return base.DimColor; }
       set
       {
         base.DimColor = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].DimColor = value;
+        }
       }
     }
 
     public override long ColourDiffuse
     {
-      get
-      {
-        return base.ColourDiffuse;
-      }
+      get { return base.ColourDiffuse; }
       set
       {
         base.ColourDiffuse = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].ColourDiffuse = value;
+        }
       }
     }
 
@@ -386,7 +440,10 @@ namespace MediaPortal.GUI.Library
     {
       foreach (GUIMessage.MessageType triggerMsg in _triggerList)
       {
-        if (triggerMsg == message.Message) Begin();
+        if (triggerMsg == message.Message)
+        {
+          Begin();
+        }
       }
 
       return (base.OnMessage(message));
@@ -414,7 +471,9 @@ namespace MediaPortal.GUI.Library
       }
 
       if (_hidePngAnimations)
+      {
         _animating = false;
+      }
 
       double elapsedTicks = AnimationTimer.TickCount - _startTick;
       double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
@@ -426,20 +485,30 @@ namespace MediaPortal.GUI.Library
         _iterationCount++;
 
         if (_repeatBehavior.IsIterationCount && _repeatBehavior.IterationCount <= _iterationCount)
+        {
           _animating = false;
+        }
         else if (_repeatBehavior.IsRepeatDuration && _repeatBehavior.RepeatDuration <= elapsedTicks)
+        {
           _animating = false;
+        }
         if (_animating)
+        {
           _startTick = AnimationTimer.TickCount;
+        }
       }
 
       int index = _fillBehavior == FillBehavior.Stop ? 0 : _images.Length - 1;
 
       if (_animating && progress <= 1)
-        index = (int)(progress * _images.Length);
+      {
+        index = (int) (progress*_images.Length);
+      }
 
       if (index >= _images.Length)
+      {
         index = _images.Length - 1;
+      }
       //if (_animating) _images[index].BeginAnimation();
 
 
@@ -465,7 +534,14 @@ namespace MediaPortal.GUI.Library
 
     public ArrayList Filenames
     {
-      get { if (_filenames == null) _filenames = new ArrayList(); return _filenames; }
+      get
+      {
+        if (_filenames == null)
+        {
+          _filenames = new ArrayList();
+        }
+        return _filenames;
+      }
     }
 
     public string FileName
@@ -485,9 +561,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _repeatBehavior = value;
-        if (_images == null) return;
+        if (_images == null)
+        {
+          return;
+        }
         for (int index = 0; index < _images.Length; index++)
+        {
           _images[index].RepeatBehavior = value;
+        }
       }
     }
 
@@ -501,53 +582,44 @@ namespace MediaPortal.GUI.Library
 
     #region Properties (Skin)
 
-    [XMLSkinElement("Easing")]
-    protected Easing _easing = Easing.Linear;
+    [XMLSkinElement("Easing")] protected Easing _easing = Easing.Linear;
 
-    [XMLSkinElement("FillBehavior")]
-    protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
+    [XMLSkinElement("FillBehavior")] protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
 
-    [XMLSkinElement("HorizontalAlignment")]
-    protected HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
+    [XMLSkinElement("HorizontalAlignment")] protected HorizontalAlignment _horizontalAlignment =
+      HorizontalAlignment.Left;
 
-    [XMLSkinElement("textures")]
-    protected string _textureNames = string.Empty;
+    [XMLSkinElement("textures")] protected string _textureNames = string.Empty;
 
-    [XMLSkinElement("rate")]
-    protected double _rate = 1;
+    [XMLSkinElement("rate")] protected double _rate = 1;
 
-    [XMLSkinElement("Duration")]
-    protected Duration _duration = Duration.Automatic;
+    [XMLSkinElement("Duration")] protected Duration _duration = Duration.Automatic;
 
-    [XMLSkinElement("RepeatBehavior")]
-    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
 
-    [XMLSkinElement("VerticalAlignment")]
-    protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
+    [XMLSkinElement("VerticalAlignment")] protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
 
-    [XMLSkinElement("Triggers")]
-    protected string _triggerNames = "init";
+    [XMLSkinElement("Triggers")] protected string _triggerNames = "init";
 
-    [XMLSkinElement("keepaspectratio")]
-    private bool _keepAspectRatio = false;
+    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
 
     #endregion Properties (Skin)
 
     #region Fields
 
-    ArrayList _filenames;
-    GUIImage[] _images;
-    bool _animating = false;
-    bool _isFirstRender = true;
-    int _iterationCount = 0;
-    static int _imageId = 200000;
-    double _startTick = 0;
-    bool _hidePngAnimations = false;
+    private ArrayList _filenames;
+    private GUIImage[] _images;
+    private bool _animating = false;
+    private bool _isFirstRender = true;
+    private int _iterationCount = 0;
+    private static int _imageId = 200000;
+    private double _startTick = 0;
+    private bool _hidePngAnimations = false;
     protected List<GUIMessage.MessageType> _triggerList = new List<GUIMessage.MessageType>();
-    int _renderWidth = 0;
-    int _renderHeight = 0;
-    int _textureWidth = 0;
-    int _textureHeight = 0;
+    private int _renderWidth = 0;
+    private int _renderHeight = 0;
+    private int _textureWidth = 0;
+    private int _textureHeight = 0;
 
     #endregion Fields
   }

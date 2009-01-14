@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows.Forms;
 
 namespace MediaPortal.GUI.Library
 {
@@ -34,7 +35,6 @@ namespace MediaPortal.GUI.Library
     public GUISortButtonControl(int parentId)
       : base(parentId)
     {
-
     }
 
     #endregion Constructors
@@ -66,10 +66,14 @@ namespace MediaPortal.GUI.Library
       int w = _sortButtonWidth;
       int h = _sortButtonHeight;
 
-      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename); //, 0xFFFFFFFF);
-      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename); //, 0xFFFFFFFF);
-      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename); //, 0xFFFFFFFF);
-      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h, _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
+      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h,
+                                            _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
       _sortImages[0].ParentControl = this;
       _sortImages[1].ParentControl = this;
       _sortImages[2].ParentControl = this;
@@ -79,6 +83,7 @@ namespace MediaPortal.GUI.Library
       _sortImages[2].DimColor = DimColor;
       _sortImages[3].DimColor = DimColor;
     }
+
     public override void ScaleToScreenResolution()
     {
       base.ScaleToScreenResolution();
@@ -173,12 +178,15 @@ namespace MediaPortal.GUI.Library
 
     public override void OnAction(Action action)
     {
-      if (_isSortImageHot && action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM && _isSortImageHot)
+      if (_isSortImageHot && action.wID == Action.ActionType.ACTION_MOUSE_CLICK ||
+          action.wID == Action.ActionType.ACTION_SELECT_ITEM && _isSortImageHot)
       {
         _isAscending = !_isAscending;
 
         if (SortChanged != null)
-          SortChanged(this, new SortEventArgs(_isAscending ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending));
+        {
+          SortChanged(this, new SortEventArgs(_isAscending ? SortOrder.Ascending : SortOrder.Descending));
+        }
 
         return;
       }
@@ -203,8 +211,11 @@ namespace MediaPortal.GUI.Library
 
     public override bool OnMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS || message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS ||
+          message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
+      {
         _isSortImageHot = false;
+      }
 
       return base.OnMessage(message);
     }
@@ -236,19 +247,25 @@ namespace MediaPortal.GUI.Library
 
     #region Fields
 
-    bool _isAscending = true;
-    bool _isSortImageHot = false;
+    private bool _isAscending = true;
+    private bool _isSortImageHot = false;
 
-    [XMLSkinElement("textureAscending")]              string _ascendingTextureFilename = "arrow_round_up_nofocus.png";
-    [XMLSkinElement("textureAscendingFocused")]       string _ascendingTextureFocusedFilename = "arrow_round_up_focus.png";
-    [XMLSkinElement("textureDescending")]             string _descendingTextureFilename = "arrow_round_down_nofocus.png";
-    [XMLSkinElement("textureDescendingFocused")]      string _descendingTextureFocusedFilename = "arrow_round_down_focus.png";    
-    [XMLSkinElement("offsetSortButtonX")]             int _sortButtonOffsetX = 0;
-    [XMLSkinElement("offsetSortButtonY")]             int _sortButtonOffsetY = 0;
-    [XMLSkinElement("offsetSortButtonHeight")]        int _sortButtonHeight = 16;
-    [XMLSkinElement("offsetSortButtonWidth")]         int _sortButtonWidth = 16;
+    [XMLSkinElement("textureAscending")] private string _ascendingTextureFilename = "arrow_round_up_nofocus.png";
 
-    GUIAnimation[] _sortImages = new GUIAnimation[4];
+    [XMLSkinElement("textureAscendingFocused")] private string _ascendingTextureFocusedFilename =
+      "arrow_round_up_focus.png";
+
+    [XMLSkinElement("textureDescending")] private string _descendingTextureFilename = "arrow_round_down_nofocus.png";
+
+    [XMLSkinElement("textureDescendingFocused")] private string _descendingTextureFocusedFilename =
+      "arrow_round_down_focus.png";
+
+    [XMLSkinElement("offsetSortButtonX")] private int _sortButtonOffsetX = 0;
+    [XMLSkinElement("offsetSortButtonY")] private int _sortButtonOffsetY = 0;
+    [XMLSkinElement("offsetSortButtonHeight")] private int _sortButtonHeight = 16;
+    [XMLSkinElement("offsetSortButtonWidth")] private int _sortButtonWidth = 16;
+
+    private GUIAnimation[] _sortImages = new GUIAnimation[4];
 
     #endregion Fields
   }

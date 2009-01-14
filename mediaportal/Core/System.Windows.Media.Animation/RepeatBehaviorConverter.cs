@@ -23,29 +23,30 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Windows.Media.Animation
 {
-	public class RepeatBehaviorConverter : TypeConverter
-	{
-		#region Methods
+  public class RepeatBehaviorConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-		{
-			return sourceType == typeof(String);
-		}
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+    {
+      return sourceType == typeof (String);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-				return RepeatBehavior.Parse((string)value);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        return RepeatBehavior.Parse((string) value);
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -23,49 +23,54 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Input
 {
-	public sealed class CommandManager
-	{
-		#region Constructors
+  public sealed class CommandManager
+  {
+    #region Constructors
 
-		private CommandManager()
-		{
-		}
+    private CommandManager()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public static event EventHandler StatusInvalidated;
+    public static event EventHandler StatusInvalidated;
 
-		#endregion Events
-			
-		#region Methods
-	
-		public static void InvalidateStatus()
-		{
-			// post idle item in dispatcher to query command status
+    #endregion Events
 
-			if(StatusInvalidated != null)
-				StatusInvalidated(null, EventArgs.Empty);
-		}
+    #region Methods
 
-		public static void RegisterClassCommandBinding(Type type, CommandBinding commandBinding)
-		{
-			if(type == null)
-				throw new ArgumentNullException("type");
+    public static void InvalidateStatus()
+    {
+      // post idle item in dispatcher to query command status
 
-			CommandBindingCollection bindings = _commandBindings[type] as CommandBindingCollection;
+      if (StatusInvalidated != null)
+      {
+        StatusInvalidated(null, EventArgs.Empty);
+      }
+    }
 
-			if(bindings == null)
-				_commandBindings[type] = bindings = new CommandBindingCollection();
+    public static void RegisterClassCommandBinding(Type type, CommandBinding commandBinding)
+    {
+      if (type == null)
+      {
+        throw new ArgumentNullException("type");
+      }
 
-			 bindings.Add(commandBinding);
-		}
+      CommandBindingCollection bindings = _commandBindings[type] as CommandBindingCollection;
+
+      if (bindings == null)
+      {
+        _commandBindings[type] = bindings = new CommandBindingCollection();
+      }
+
+      bindings.Add(commandBinding);
+    }
 
 //		public static void RegisterClassInputBinding(Type type, InputBinding inputBinding)
 //		{
@@ -78,13 +83,13 @@ namespace System.Windows.Input
 //				_inputBindings[type] = inputBinding;
 //		}
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		static Hashtable			_commandBindings = new Hashtable(50);
-		static Hashtable			_inputBindings = new Hashtable(50);
+    private static Hashtable _commandBindings = new Hashtable(50);
+    private static Hashtable _inputBindings = new Hashtable(50);
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

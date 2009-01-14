@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public interface INameScope
-	{
-		#region Methods
-			
-		object FindName(string name);
-		void RegisterName(string name, object scopedElement);
+  public interface INameScope
+  {
+    #region Methods
 
-		#endregion Methods
-	}
+    object FindName(string name);
+    void RegisterName(string name, object scopedElement);
+
+    #endregion Methods
+  }
 }

@@ -23,68 +23,45 @@
 
 #endregion
 
-using MediaPortal.Drawing;
-
 namespace System.Windows.Controls
 {
-	public interface IScrollInfo
-	{
-		#region Methods
+  public interface IScrollInfo
+  {
+    #region Methods
 
-		void LineDown();
-		void LineLeft();
-		void LineRight();
-		void LineUp();
+    void LineDown();
+    void LineLeft();
+    void LineRight();
+    void LineUp();
 //		Rect MakeVisible(Visual visual, Rect rectangle);
-		void MouseWheelDown();
-		void MouseWheelLeft();
-		void MouseWheelRight();
-		void MouseWheelUp();
-		void PageDown();
-		void PageLeft();
-		void PageRight();
-		void PageUp();
+    void MouseWheelDown();
+    void MouseWheelLeft();
+    void MouseWheelRight();
+    void MouseWheelUp();
+    void PageDown();
+    void PageLeft();
+    void PageRight();
+    void PageUp();
 
-		// are these document incorrectly?
-		void SetHorizontalOffset(double offset);
-		void SetVerticalOffset(double offset);
+    // are these document incorrectly?
+    void SetHorizontalOffset(double offset);
+    void SetVerticalOffset(double offset);
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		bool CanScrollHorizontally
-		{
-			get;
-			set;
-		}
+    bool CanScrollHorizontally { get; set; }
 
-		bool CanScrollVertically
-		{
-			get;
-			set;
-		}
+    bool CanScrollVertically { get; set; }
 
-		double ExtentHeight
-		{
-			get;
-		}
+    double ExtentHeight { get; }
 
-		double ExtentWidth
-		{
-			get;
-		}
+    double ExtentWidth { get; }
 
-		double HorizontalOffset
-		{
-			get;
-		}
+    double HorizontalOffset { get; }
 
-		Orientation Orientation
-		{
-			get;
-			set;
-		}
+    Orientation Orientation { get; set; }
 
 //		ScrollViewer ScrollOwner
 //		{
@@ -92,21 +69,12 @@ namespace System.Windows.Controls
 //			set;
 //		}
 
-		double VerticalOffset
-		{
-			get;
-		}
+    double VerticalOffset { get; }
 
-		double ViewportHeight
-		{
-			get;
-		}
+    double ViewportHeight { get; }
 
-		double ViewportWidth
-		{
-			get;
-		}
+    double ViewportWidth { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

@@ -29,33 +29,40 @@ using System.Globalization;
 
 namespace MediaPortal.Drawing
 {
-	public class RectConverter : TypeConverter
-	{
-		#region Methods
+  public class RectConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-			{
-				if(string.Compare("Empty", (string)value) == 0)
-					return Rect.Empty;
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        if (string.Compare("Empty", (string) value) == 0)
+        {
+          return Rect.Empty;
+        }
 
-				string[] param = ((string)value).Split(' ');
+        string[] param = ((string) value).Split(' ');
 
-				return new Rect(Convert.ToDouble(param[0], CultureInfo.CurrentCulture), Convert.ToDouble(param[1], CultureInfo.CurrentCulture), Convert.ToDouble(param[2], CultureInfo.CurrentCulture), Convert.ToDouble(param[3], CultureInfo.CurrentCulture));
-			}
+        return new Rect(Convert.ToDouble(param[0], CultureInfo.CurrentCulture),
+                        Convert.ToDouble(param[1], CultureInfo.CurrentCulture),
+                        Convert.ToDouble(param[2], CultureInfo.CurrentCulture),
+                        Convert.ToDouble(param[3], CultureInfo.CurrentCulture));
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

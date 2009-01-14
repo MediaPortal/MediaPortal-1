@@ -23,70 +23,68 @@
 
 #endregion
 
-using System;
 using System.IO;
-using System.Text;
 
 namespace Roger.ID3
 {
-	/// <summary>
-	/// Summary description for TagCopier.
-	/// </summary>
-	public class TagCopier
-	{
-		public static void Copy(string source, string destination)
-		{
-			// TODO: Exception handler, or finally block, to clean up on failures?
+  /// <summary>
+  /// Summary description for TagCopier.
+  /// </summary>
+  public class TagCopier
+  {
+    public static void Copy(string source, string destination)
+    {
+      // TODO: Exception handler, or finally block, to clean up on failures?
 
-			// We need to copy the tags from the source file to a temporary file.
-			FileStream sourceStream = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read);
-			sourceStream.Seek(0, SeekOrigin.Begin);
+      // We need to copy the tags from the source file to a temporary file.
+      FileStream sourceStream = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read);
+      sourceStream.Seek(0, SeekOrigin.Begin);
 
-			// Create a temporary file:
-			TemporaryFile tempFile = new TemporaryFile(destination);
-			
-			// Open it.
-			FileStream tempStream = new FileStream(tempFile.Path, FileMode.Create, FileAccess.Write, FileShare.None);
+      // Create a temporary file:
+      TemporaryFile tempFile = new TemporaryFile(destination);
 
-			// Copy the tags.
-			CopyTags(sourceStream, tempStream);
+      // Open it.
+      FileStream tempStream = new FileStream(tempFile.Path, FileMode.Create, FileAccess.Write, FileShare.None);
 
-			// We don't need the source file any more.
-			sourceStream.Close();
+      // Copy the tags.
+      CopyTags(sourceStream, tempStream);
 
-			// Get the destination file open:
-			FileStream destinationStream = new FileStream(destination, FileMode.Open, FileAccess.Read, FileShare.None);
+      // We don't need the source file any more.
+      sourceStream.Close();
 
-			// Now we need to skip the tags in the destination.
-			TagUtil.SkipTags(destinationStream);
+      // Get the destination file open:
+      FileStream destinationStream = new FileStream(destination, FileMode.Open, FileAccess.Read, FileShare.None);
 
-			// Copy the remainder of the output file into the temporary file.
-			StreamCopier.Copy(destinationStream, tempStream);
+      // Now we need to skip the tags in the destination.
+      TagUtil.SkipTags(destinationStream);
 
-			// We don't need the destination file any more.
-			destinationStream.Close();
+      // Copy the remainder of the output file into the temporary file.
+      StreamCopier.Copy(destinationStream, tempStream);
 
-			// We don't need the temp file any more.
-			tempStream.Close();
+      // We don't need the destination file any more.
+      destinationStream.Close();
 
-			// Do the rename shuffle.
-			tempFile.Swap();
-		}
+      // We don't need the temp file any more.
+      tempStream.Close();
 
-		/// <summary>
-		/// Copy ID3v2 tags from one stream to another.
-		/// </summary>
-		/// <param name="source">The source stream. Assumed positioned at the 'ID3' header, i.e. the start of the file.</param>
-		/// <param name="dest">The destination stream.</param>
-		static void CopyTags(Stream source, Stream dest)
-		{
-			// Figure out the length of the ID3 header in the source stream:
-			long returnPos = source.Position;
-			long tagEndOffset = TagUtil.GetTagEndOffset(source);
-			source.Seek(returnPos, SeekOrigin.Begin);
+      // Do the rename shuffle.
+      tempFile.Swap();
+    }
 
-			// Now copy that many bytes into the destination:
-			StreamCopier.Copy(source, dest, tagEndOffset);
-		}
-	}
+    /// <summary>
+    /// Copy ID3v2 tags from one stream to another.
+    /// </summary>
+    /// <param name="source">The source stream. Assumed positioned at the 'ID3' header, i.e. the start of the file.</param>
+    /// <param name="dest">The destination stream.</param>
+    private static void CopyTags(Stream source, Stream dest)
+    {
+      // Figure out the length of the ID3 header in the source stream:
+      long returnPos = source.Position;
+      long tagEndOffset = TagUtil.GetTagEndOffset(source);
+      source.Seek(returnPos, SeekOrigin.Begin);
+
+      // Now copy that many bytes into the destination:
+      StreamCopier.Copy(source, dest, tagEndOffset);
+    }
+  }
 }

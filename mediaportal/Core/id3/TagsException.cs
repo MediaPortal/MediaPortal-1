@@ -27,12 +27,11 @@ using System;
 
 namespace Roger.ID3
 {
-	public class TagsException : Exception
-	{
-		public TagsException(string message)
-			: base(message)
-		{
-		}
-	}
-
+  public class TagsException : Exception
+  {
+    public TagsException(string message)
+      : base(message)
+    {
+    }
+  }
 }

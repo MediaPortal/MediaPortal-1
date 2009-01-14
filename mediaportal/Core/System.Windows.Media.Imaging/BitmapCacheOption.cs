@@ -25,15 +25,15 @@
 
 namespace System.Windows.Media.Imaging
 {
-	public enum BitmapCacheOption
-	{
-		#region Values
+  public enum BitmapCacheOption
+  {
+    #region Values
 
-		Default,
-		None,
-		OnDemand,
-		OnLoad,
+    Default,
+    None,
+    OnDemand,
+    OnLoad,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

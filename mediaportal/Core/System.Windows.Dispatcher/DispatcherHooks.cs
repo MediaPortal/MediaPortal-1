@@ -25,9 +25,9 @@
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherHooks
-	{
-		#region Events
+  public sealed class DispatcherHooks
+  {
+    #region Events
 
 //		public event EventHandler				DispatcherInactive;
 //		public event DispatcherHookEventHandler OperationAborted;
@@ -35,6 +35,6 @@ namespace System.Windows.Dispatcher
 //		public event DispatcherHookEventHandler OperationPosted;
 //		public event DispatcherHookEventHandler OperationPriorityChanged;
 
-		#endregion Events
-	}
+    #endregion Events
+  }
 }

@@ -25,9 +25,11 @@
 
 namespace System.Windows.Dispatcher
 {
-	#region Delegate
 
-	public delegate void DispatcherUnhandledExceptionFilterEventHandler(object sender, DispatcherUnhandledExceptionFilterEventArgs e);
+  #region Delegate
 
-	#endregion Delegate
+  public delegate void DispatcherUnhandledExceptionFilterEventHandler(
+    object sender, DispatcherUnhandledExceptionFilterEventArgs e);
+
+  #endregion Delegate
 }

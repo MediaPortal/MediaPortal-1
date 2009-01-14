@@ -23,45 +23,43 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public sealed class DependencySource
-	{
-		#region Constructors
+  public sealed class DependencySource
+  {
+    #region Constructors
 
-		private DependencySource()
-		{
-		}
+    private DependencySource()
+    {
+    }
 
-		public DependencySource(DependencyObject dependencyObject, DependencyProperty dependencyProperty)
-		{
-			_dependencyObject = dependencyObject;
-			_dependencyProperty = dependencyProperty;
-		}
+    public DependencySource(DependencyObject dependencyObject, DependencyProperty dependencyProperty)
+    {
+      _dependencyObject = dependencyObject;
+      _dependencyProperty = dependencyProperty;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public DependencyObject DependencyObject
-		{
-			get { return _dependencyObject; }
-		}
+    public DependencyObject DependencyObject
+    {
+      get { return _dependencyObject; }
+    }
 
-		public DependencyProperty DependencyProperty
-		{
-			get { return _dependencyProperty; }
-		}
+    public DependencyProperty DependencyProperty
+    {
+      get { return _dependencyProperty; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		DependencyObject			_dependencyObject;
-		DependencyProperty			_dependencyProperty;
+    private DependencyObject _dependencyObject;
+    private DependencyProperty _dependencyProperty;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

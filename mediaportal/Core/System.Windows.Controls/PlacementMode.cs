@@ -25,23 +25,23 @@
 
 namespace System.Windows.Controls
 {
-	public enum PlacementMode
-	{
-		#region Fields
+  public enum PlacementMode
+  {
+    #region Fields
 
-		Absolute,
-		AbsolutePoint,
-		Bottom,
-		Center,
-		Custom,
-		Left,
-		Mouse,
-		MousePoint,
-		Relative,
-		RelativePoint,
-		Right,
-		Top,
+    Absolute,
+    AbsolutePoint,
+    Bottom,
+    Center,
+    Custom,
+    Left,
+    Mouse,
+    MousePoint,
+    Relative,
+    RelativePoint,
+    Right,
+    Top,
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

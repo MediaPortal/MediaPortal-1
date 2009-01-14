@@ -24,18 +24,12 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Drawing;
-using System.Runtime.InteropServices;
-//using DirectX.Capture;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.Util;
+using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using DirectShowLib;
+using MediaPortal.Profile;
+//using DirectX.Capture;
 
 namespace MediaPortal.Player
 {
@@ -44,14 +38,14 @@ namespace MediaPortal.Player
   /// </summary>
   public class RadioTuner : IPlayer
   {
-    RadioGraph m_capture = null;
-    string m_strFile;
-    bool m_bInternal = false;
-    Process m_player = null;
-    DateTime m_dtTime = new DateTime();
-    string m_strRadioDevice = "";
-    string m_strAudioDevice = "";
-    string m_strLineInput = "";
+    private RadioGraph m_capture = null;
+    private string m_strFile;
+    private bool m_bInternal = false;
+    private Process m_player = null;
+    private DateTime m_dtTime = new DateTime();
+    private string m_strRadioDevice = "";
+    private string m_strAudioDevice = "";
+    private string m_strLineInput = "";
 
     public RadioTuner()
     {
@@ -59,7 +53,7 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
-      int iChannel = Convert.ToInt32(System.IO.Path.GetFileNameWithoutExtension(strFile));
+      int iChannel = Convert.ToInt32(Path.GetFileNameWithoutExtension(strFile));
 
       Log.Info("Radiotuner: tune to channel:{0}", iChannel);
       try
@@ -69,7 +63,7 @@ namespace MediaPortal.Player
 
         int iTunerCountry = 31;
         string strTunerType = "Antenna";
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           m_bInternal = xmlreader.GetValueAsBool("radio", "internal", true);
           strPlayerFile = xmlreader.GetValueAsString("radio", "player", "");
@@ -84,7 +78,7 @@ namespace MediaPortal.Player
         m_dtTime = DateTime.Now;
         if (!m_bInternal)
         {
-          double dFreq = (double)iChannel;
+          double dFreq = (double) iChannel;
           dFreq /= 1000000d;
           string strFreq = dFreq.ToString();
 
@@ -97,7 +91,7 @@ namespace MediaPortal.Player
           strFreq = iChannel.ToString();
           strPlayerArgs = strPlayerArgs.Replace("%HZ%", strFreq);
 
-          m_player = MediaPortal.Util.Utils.StartProcess(strPlayerFile, strPlayerArgs, false, true);
+          m_player = Util.Utils.StartProcess(strPlayerFile, strPlayerArgs, false, true);
           if (m_player == null)
           {
             Log.Info("Unable to start external radio player:{0} {1}", strPlayerFile, strPlayerArgs);
@@ -112,7 +106,9 @@ namespace MediaPortal.Player
         AllocCard(m_strRadioDevice);
         bool bAntenna = false;
         if (strTunerType.Equals("Antenna"))
+        {
           bAntenna = true;
+        }
 
         m_capture = new RadioGraph(m_strRadioDevice, m_strAudioDevice, m_strLineInput);
         if (!m_capture.Create(!bAntenna, 0, iTunerCountry))
@@ -126,7 +122,6 @@ namespace MediaPortal.Player
         m_capture.Tune(iChannel);
 
         Log.Info("RadioTuner:Frequency:{0} Hz tuned to:{1} Hz", m_capture.Channel, m_capture.AudioFrequency);
-
       }
       catch (Exception ex)
       {
@@ -150,7 +145,9 @@ namespace MediaPortal.Player
         if (m_bInternal)
         {
           if (m_capture != null)
+          {
             return true;
+          }
           return false; //TEST
         }
         else
@@ -164,7 +161,10 @@ namespace MediaPortal.Player
     {
       if (m_bInternal)
       {
-        if (m_capture != null) m_capture.DeleteGraph();
+        if (m_capture != null)
+        {
+          m_capture.DeleteGraph();
+        }
         m_capture = null;
         FreeCard(m_strRadioDevice);
       }
@@ -176,15 +176,18 @@ namespace MediaPortal.Player
           {
             m_player.CloseMainWindow();
           }
-          catch (Exception) { }
+          catch (Exception)
+          {
+          }
           if (!m_player.HasExited)
           {
             try
             {
               m_player.Kill();
             }
-            catch (Exception) { }
-
+            catch (Exception)
+            {
+            }
           }
           m_player = null;
         }
@@ -196,19 +199,18 @@ namespace MediaPortal.Player
     {
       get { return m_strFile; }
     }
+
     public override bool IsRadio
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     public override double CurrentPosition
     {
       get
       {
         TimeSpan ts = DateTime.Now - m_dtTime;
-        return (double)ts.TotalSeconds;
+        return (double) ts.TotalSeconds;
       }
     }
 
@@ -224,20 +226,34 @@ namespace MediaPortal.Player
       }
     }
 
-    void AllocCard(string strDevice)
+    private void AllocCard(string strDevice)
     {
-      if (strDevice == null) return;
-      if (strDevice.Length == 0) return;
+      if (strDevice == null)
+      {
+        return;
+      }
+      if (strDevice.Length == 0)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD, 0, 0, 0, 0, 0, null);
       msg.Label = strDevice;
       GUIWindowManager.SendMessage(msg);
-      GC.Collect(); GC.Collect(); GC.Collect();
+      GC.Collect();
+      GC.Collect();
+      GC.Collect();
     }
 
-    void FreeCard(string strDevice)
+    private void FreeCard(string strDevice)
     {
-      if (strDevice == null) return;
-      if (strDevice.Length == 0) return;
+      if (strDevice == null)
+      {
+        return;
+      }
+      if (strDevice.Length == 0)
+      {
+        return;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_FREE_CARD, 0, 0, 0, 0, 0, null);
       msg.Label = strDevice;
       GUIWindowManager.SendMessage(msg);

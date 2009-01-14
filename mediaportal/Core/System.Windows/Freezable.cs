@@ -23,163 +23,182 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public abstract class Freezable : DependencyObject
-	{
-		#region Constructors
+  public abstract class Freezable : DependencyObject
+  {
+    #region Constructors
 
-		protected Freezable()
-		{
-		}
+    protected Freezable()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler	Changed;
+    public event EventHandler Changed;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public Freezable Copy()
-		{
-			Freezable freezable = CreateInstance();
+    public Freezable Copy()
+    {
+      Freezable freezable = CreateInstance();
 
-			freezable.CopyCore(this);
+      freezable.CopyCore(this);
 
-			return freezable;;
-		}
+      return freezable;
+      ;
+    }
 
-		protected virtual void CopyCore(Freezable sourceFreezable)
-		{
-			// no default implementation
-		}
+    protected virtual void CopyCore(Freezable sourceFreezable)
+    {
+      // no default implementation
+    }
 
-		protected Freezable CreateInstance()
-		{
-			return CreateInstanceCore();
-		}
+    protected Freezable CreateInstance()
+    {
+      return CreateInstanceCore();
+    }
 
-		protected abstract Freezable CreateInstanceCore();
+    protected abstract Freezable CreateInstanceCore();
 
-		public void Freeze()
-		{
-			FreezeCore(false);
-		}
+    public void Freeze()
+    {
+      FreezeCore(false);
+    }
 
-		protected internal static bool Freeze(Freezable freezable, bool isChecking)
-		{
-			return freezable.FreezeCore(isChecking);
-		}
+    protected internal static bool Freeze(Freezable freezable, bool isChecking)
+    {
+      return freezable.FreezeCore(isChecking);
+    }
 
-		protected virtual bool FreezeCore(bool isChecking)
-		{
-			if(!isChecking && _isFrozen)
-				throw new InvalidOperationException("This instance is already unmodifiable");
+    protected virtual bool FreezeCore(bool isChecking)
+    {
+      if (!isChecking && _isFrozen)
+      {
+        throw new InvalidOperationException("This instance is already unmodifiable");
+      }
 
-			if(isChecking && _isFrozen)
-				return false;
+      if (isChecking && _isFrozen)
+      {
+        return false;
+      }
 
-			_isFrozen = true;
+      _isFrozen = true;
 
-			return _isFrozen;
-		}
+      return _isFrozen;
+    }
 
-		public static Freezable GetAsFrozen(Freezable freezable)
-		{
-			Freezable freezableCopy = freezable.Copy();
+    public static Freezable GetAsFrozen(Freezable freezable)
+    {
+      Freezable freezableCopy = freezable.Copy();
 
-			freezableCopy.Freeze();
+      freezableCopy.Freeze();
 
-			return freezableCopy;
-		}
-	
-		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			ReadPreamble();
+      return freezableCopy;
+    }
 
-			return base.GetValueCore(property, baseValue, metadata);
-		}
+    protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      ReadPreamble();
 
-		protected static void ModifyHandlerIfNotFrozen(Freezable freezable, EventHandler handler, bool isAdding)
-		{
-			if(freezable.IsFrozen)
-				return;
+      return base.GetValueCore(property, baseValue, metadata);
+    }
 
-			if(isAdding)
-				freezable.Changed += handler;
-			else
-				freezable.Changed -= handler;
-		}
+    protected static void ModifyHandlerIfNotFrozen(Freezable freezable, EventHandler handler, bool isAdding)
+    {
+      if (freezable.IsFrozen)
+      {
+        return;
+      }
 
-		protected virtual void OnChanged()
-		{
-			if(Changed != null)
-				Changed(this, EventArgs.Empty);
-		}
+      if (isAdding)
+      {
+        freezable.Changed += handler;
+      }
+      else
+      {
+        freezable.Changed -= handler;
+      }
+    }
 
-		protected void PropagateChangedHandlers(Freezable oldValue, Freezable newValue)
-		{
-			foreach(Delegate handler in oldValue.Changed.GetInvocationList())
-				newValue.PropagateChangedHandlersCore((EventHandler)handler, true);
+    protected virtual void OnChanged()
+    {
+      if (Changed != null)
+      {
+        Changed(this, EventArgs.Empty);
+      }
+    }
 
-			foreach(Delegate handler in newValue.Changed.GetInvocationList())
-				oldValue.PropagateChangedHandlersCore((EventHandler)handler, false);
-		}
+    protected void PropagateChangedHandlers(Freezable oldValue, Freezable newValue)
+    {
+      foreach (Delegate handler in oldValue.Changed.GetInvocationList())
+      {
+        newValue.PropagateChangedHandlersCore((EventHandler) handler, true);
+      }
 
-		protected virtual void PropagateChangedHandlersCore(EventHandler handler, bool isAdding)
-		{
-			if(isAdding)
-				Changed += handler;
-			else
-				Changed -= handler;
-		}
+      foreach (Delegate handler in newValue.Changed.GetInvocationList())
+      {
+        oldValue.PropagateChangedHandlersCore((EventHandler) handler, false);
+      }
+    }
 
-		protected void ReadPreamble()
-		{
-			CheckAccess();
-		}
+    protected virtual void PropagateChangedHandlersCore(EventHandler handler, bool isAdding)
+    {
+      if (isAdding)
+      {
+        Changed += handler;
+      }
+      else
+      {
+        Changed -= handler;
+      }
+    }
 
-		protected virtual void ValidateObjectState()
-		{
-			// no default implementation
-		}
+    protected void ReadPreamble()
+    {
+      CheckAccess();
+    }
 
-		protected void WritePostscript()
-		{
-			ValidateObjectState();
-			OnChanged();
-		}
+    protected virtual void ValidateObjectState()
+    {
+      // no default implementation
+    }
 
-		protected void WritePreamble()
-		{
-			CheckAccess();
-		}
+    protected void WritePostscript()
+    {
+      ValidateObjectState();
+      OnChanged();
+    }
 
-		#endregion Methods
+    protected void WritePreamble()
+    {
+      CheckAccess();
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public bool CanFreeze
-		{
-			get { return _isFrozen == false; }
-		}
+    #region Properties
 
-		public bool IsFrozen
-		{
-			get { return _isFrozen; }
-		}
+    public bool CanFreeze
+    {
+      get { return _isFrozen == false; }
+    }
 
-		#endregion Properties
+    public bool IsFrozen
+    {
+      get { return _isFrozen; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		bool						_isFrozen = false;
+    #region Fields
 
-		#endregion Fields
-	}
+    private bool _isFrozen = false;
+
+    #endregion Fields
+  }
 }

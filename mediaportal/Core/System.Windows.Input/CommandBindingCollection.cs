@@ -23,91 +23,104 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows.Input
 {
-	public sealed class CommandBindingCollection : CollectionBase
-	{
-		#region Constructors
+  public sealed class CommandBindingCollection : CollectionBase
+  {
+    #region Constructors
 
-		public CommandBindingCollection()
-		{
-		}
+    public CommandBindingCollection()
+    {
+    }
 
-		public CommandBindingCollection(IList commandBindings)
-		{
-			throw new NotImplementedException();
-		}
+    public CommandBindingCollection(IList commandBindings)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(CommandBinding binding)
-		{
-			if(binding == null)
-				throw new ArgumentNullException("binding");
+    public void Add(CommandBinding binding)
+    {
+      if (binding == null)
+      {
+        throw new ArgumentNullException("binding");
+      }
 
-			List.Add(binding);
-		}
+      List.Add(binding);
+    }
 
-		public bool Contains(CommandBinding binding)
-		{
-			if(binding == null)
-				throw new ArgumentNullException("binding");
+    public bool Contains(CommandBinding binding)
+    {
+      if (binding == null)
+      {
+        throw new ArgumentNullException("binding");
+      }
 
-			return List.Contains(binding);
-		}
+      return List.Contains(binding);
+    }
 
-		public void CopyTo(CommandBinding[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(CommandBinding[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(CommandBinding binding)
-		{
-			if(binding == null)
-				throw new ArgumentNullException("binding");
+    public int IndexOf(CommandBinding binding)
+    {
+      if (binding == null)
+      {
+        throw new ArgumentNullException("binding");
+      }
 
-			return List.IndexOf(binding);
-		}
+      return List.IndexOf(binding);
+    }
 
-		public void Insert(int index, CommandBinding binding)
-		{
-			if(binding == null)
-				throw new ArgumentNullException("binding");
+    public void Insert(int index, CommandBinding binding)
+    {
+      if (binding == null)
+      {
+        throw new ArgumentNullException("binding");
+      }
 
-			List.Insert(index, binding);
-		}
+      List.Insert(index, binding);
+    }
 
-		public bool Remove(CommandBinding binding)
-		{
-			if(binding == null)
-				throw new ArgumentNullException("binding");
-			
-			if(List.Contains(binding) == false)
-				return false;
+    public bool Remove(CommandBinding binding)
+    {
+      if (binding == null)
+      {
+        throw new ArgumentNullException("binding");
+      }
 
-			List.Remove(binding);
+      if (List.Contains(binding) == false)
+      {
+        return false;
+      }
 
-			return true;
-		}
+      List.Remove(binding);
 
-		#endregion Methods
+      return true;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public CommandBinding this[int index]
-		{ 
-			get { return (CommandBinding)List[index]; }
-			set { List[index] = value; }
-		}
+    #region Properties
 
-		#endregion Properties
-	}
+    public CommandBinding this[int index]
+    {
+      get { return (CommandBinding) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

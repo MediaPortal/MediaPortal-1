@@ -23,25 +23,20 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public interface IResourceHost
-	{
-		#region Methods
+  public interface IResourceHost
+  {
+    #region Methods
 
-		object GetResource(object key);
+    object GetResource(object key);
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		IResourceHost ParentResourceHost
-		{
-			get;
-		}
+    IResourceHost ParentResourceHost { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

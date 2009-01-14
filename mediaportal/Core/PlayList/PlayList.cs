@@ -24,10 +24,11 @@
 #endregion
 
 using System;
-using MediaPortal.GUI.Library;
-using System.Collections.Generic;
-using MediaPortal.TagReader;
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using MediaPortal.GUI.Library;
+using MediaPortal.TagReader;
 using MediaPortal.Util;
 
 namespace MediaPortal.Playlists
@@ -47,7 +48,10 @@ namespace MediaPortal.Playlists
     {
       foreach (PlayListItem item in _listPlayListItems)
       {
-        if (!item.Played) return false;
+        if (!item.Played)
+        {
+          return false;
+        }
       }
       return true;
     }
@@ -62,7 +66,10 @@ namespace MediaPortal.Playlists
 
     public void Add(PlayListItem item)
     {
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
       //Log.Debug("Playlist: add {0}", item.FileName);
       _listPlayListItems.Add(item);
     }
@@ -71,7 +78,9 @@ namespace MediaPortal.Playlists
     {
       bool success = false;
       if (item == null)
-        return success;  
+      {
+        return success;
+      }
 
       Log.Info("Playlist: Insert {0} at {1}", item.FileName, Convert.ToString(currentSong));
       if (currentSong < _listPlayListItems.Count)
@@ -91,14 +100,16 @@ namespace MediaPortal.Playlists
     {
       bool success = false;
       if (item == null)
-        return success;      
+      {
+        return success;
+      }
 
       for (int i = 0; i < _listPlayListItems.Count; ++i)
       {
         if (afterThisItem.FileName == _listPlayListItems[i].FileName)
         {
           Log.Info("Playlist: Insert {0} after {1}", item.FileName, afterThisItem.FileName);
-          _listPlayListItems.Insert(i+1, item);
+          _listPlayListItems.Insert(i + 1, item);
           success = true;
         }
       }
@@ -110,14 +121,20 @@ namespace MediaPortal.Playlists
       get { return _playListName; }
       set
       {
-        if (value == null) return;
+        if (value == null)
+        {
+          return;
+        }
         _playListName = value;
       }
     }
 
     public int Remove(string fileName)
     {
-      if (fileName == null) return -1;
+      if (fileName == null)
+      {
+        return -1;
+      }
 
       for (int i = 0; i < _listPlayListItems.Count; ++i)
       {
@@ -160,7 +177,7 @@ namespace MediaPortal.Playlists
       // iterate through each catalogue item performing arbitrary swaps
       if (Count > 1)
       {
-        for (int item = 0 ; item < Count ; item++)
+        for (int item = 0; item < Count; item++)
         {
           int nArbitrary = r.Next(0, Count - 1);
 
@@ -174,12 +191,11 @@ namespace MediaPortal.Playlists
     public IEnumerator<PlayListItem> GetEnumerator()
     {
       return _listPlayListItems.GetEnumerator();
-
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      IEnumerable enumerable = (IEnumerable)_listPlayListItems;
+      IEnumerable enumerable = (IEnumerable) _listPlayListItems;
       return enumerable.GetEnumerator();
     }
 
@@ -188,23 +204,30 @@ namespace MediaPortal.Playlists
       int selectedItemIndex = -1;
 
       if (iItem < 0 || iItem >= _listPlayListItems.Count)
+      {
         return -1;
+      }
 
       int iPreviousItem = iItem - 1;
 
       if (iPreviousItem < 0)
+      {
         iPreviousItem = _listPlayListItems.Count - 1;
+      }
 
       PlayListItem playListItem1 = _listPlayListItems[iItem];
       PlayListItem playListItem2 = _listPlayListItems[iPreviousItem];
 
       if (playListItem1 == null || playListItem2 == null)
+      {
         return -1;
+      }
 
       try
       {
-        Log.Info("Moving playlist item {0} up. Old index:{1}, new index{2}", playListItem1.Description, iItem, iPreviousItem);
-        System.Threading.Monitor.Enter(this);
+        Log.Info("Moving playlist item {0} up. Old index:{1}, new index{2}", playListItem1.Description, iItem,
+                 iPreviousItem);
+        Monitor.Enter(this);
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iPreviousItem] = playListItem1;
         selectedItemIndex = iPreviousItem;
@@ -218,7 +241,7 @@ namespace MediaPortal.Playlists
 
       finally
       {
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
 
       return selectedItemIndex;
@@ -229,23 +252,30 @@ namespace MediaPortal.Playlists
       int selectedItemIndex = -1;
 
       if (iItem < 0 || iItem >= _listPlayListItems.Count)
+      {
         return -1;
+      }
 
       int iNextItem = iItem + 1;
 
       if (iNextItem >= _listPlayListItems.Count)
+      {
         iNextItem = 0;
+      }
 
       PlayListItem playListItem1 = _listPlayListItems[iItem];
       PlayListItem playListItem2 = _listPlayListItems[iNextItem];
 
       if (playListItem1 == null || playListItem2 == null)
+      {
         return -1;
+      }
 
       try
       {
-        Log.Info("Moving playlist item {0} down. Old index:{1}, new index{2}", playListItem1.Description, iItem, iNextItem);
-        System.Threading.Monitor.Enter(this);
+        Log.Info("Moving playlist item {0} down. Old index:{1}, new index{2}", playListItem1.Description, iItem,
+                 iNextItem);
+        Monitor.Enter(this);
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iNextItem] = playListItem1;
         selectedItemIndex = iNextItem;
@@ -259,7 +289,7 @@ namespace MediaPortal.Playlists
 
       finally
       {
-        System.Threading.Monitor.Exit(this);
+        Monitor.Exit(this);
       }
 
       return selectedItemIndex;
@@ -271,9 +301,15 @@ namespace MediaPortal.Playlists
     }
   }
 
-  class PlayListItemComparer : IComparer<PlayListItem>
+  internal class PlayListItemComparer : IComparer<PlayListItem>
   {
-    public enum SortMethod { Alpha, ArtistByTrack, ArtistByAlbum };
+    public enum SortMethod
+    {
+      Alpha,
+      ArtistByTrack,
+      ArtistByAlbum
+    } ;
+
     private SortMethod _SortBy = SortMethod.ArtistByAlbum;
 
     public SortMethod SortBy
@@ -293,18 +329,24 @@ namespace MediaPortal.Playlists
     public int Compare(PlayListItem item1, PlayListItem item2)
     {
       if (item1.MusicTag == null || item2.MusicTag == null)
+      {
         return 0;
+      }
 
-      MusicTag tag1 = (MusicTag)item1.MusicTag;
-      MusicTag tag2 = (MusicTag)item2.MusicTag;
+      MusicTag tag1 = (MusicTag) item1.MusicTag;
+      MusicTag tag2 = (MusicTag) item2.MusicTag;
 
       int stringCompareResults = tag1.Album.CompareTo(tag2.Album);
 
       if (stringCompareResults == 0)
+      {
         return tag1.Track.CompareTo(tag2.Track);
+      }
 
       else
+      {
         return stringCompareResults;
+      }
     }
   }
 }

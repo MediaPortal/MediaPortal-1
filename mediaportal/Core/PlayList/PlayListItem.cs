@@ -24,9 +24,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using MediaPortal.TagReader;
 
 namespace MediaPortal.Playlists
 {
@@ -50,8 +47,8 @@ namespace MediaPortal.Playlists
     protected string _description = "";
     protected int _duration = 0;
     protected object _musicTag = null;
-    bool _isPlayed = false;
-    PlayListItemType _itemType = PlayListItemType.Unknown;
+    private bool _isPlayed = false;
+    private PlayListItemType _itemType = PlayListItemType.Unknown;
 
     public PlayListItem()
     {
@@ -65,15 +62,19 @@ namespace MediaPortal.Playlists
     public PlayListItem(string description, string fileName, int duration)
     {
       if (description == null)
+      {
         return;
+      }
       if (fileName == null)
+      {
         return;
+      }
       _description = description;
       _fileName = fileName;
       _duration = duration;
     }
 
-    public PlayListItem.PlayListItemType Type
+    public PlayListItemType Type
     {
       get { return _itemType; }
       set { _itemType = value; }
@@ -85,7 +86,9 @@ namespace MediaPortal.Playlists
       set
       {
         if (value == null)
+        {
           return;
+        }
         _fileName = value;
       }
     }
@@ -96,7 +99,9 @@ namespace MediaPortal.Playlists
       set
       {
         if (value == null)
+        {
           return;
+        }
         _description = value;
       }
     }
@@ -118,6 +123,5 @@ namespace MediaPortal.Playlists
       get { return _musicTag; }
       set { _musicTag = value; }
     }
-  };
-
+  } ;
 }

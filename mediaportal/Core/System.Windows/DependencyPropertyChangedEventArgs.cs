@@ -23,54 +23,54 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace System.Windows
 {
-	public class DependencyPropertyChangedEventArgs : PropertyChangedEventArgs
-	{
-		#region Constructors
+  public class DependencyPropertyChangedEventArgs : PropertyChangedEventArgs
+  {
+    #region Constructors
 
-		public DependencyPropertyChangedEventArgs(DependencyProperty property, object oldValue, object newValue) : base(string.Empty)
-		{
-			_property = property;
-			_oldValue = oldValue;
-			_newValue = newValue;
-		}
+    public DependencyPropertyChangedEventArgs(DependencyProperty property, object oldValue, object newValue)
+      : base(string.Empty)
+    {
+      _property = property;
+      _oldValue = oldValue;
+      _newValue = newValue;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public object NewValue
-		{
-			get { return _newValue; }
-		}
+    public object NewValue
+    {
+      get { return _newValue; }
+    }
 
-		public object OldValue
-		{
-			get { return _oldValue; }
-		}
+    public object OldValue
+    {
+      get { return _oldValue; }
+    }
 
-		public DependencyProperty Property
-		{
-			get { return _property; }
-		}
+    public DependencyProperty Property
+    {
+      get { return _property; }
+    }
 
-		public override string PropertyName
-		{
-			get { return _property.Name; }
-		}
+    public override string PropertyName
+    {
+      get { return _property.Name; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		object						_newValue;
-		object						_oldValue;
-		DependencyProperty			_property;
+    private object _newValue;
+    private object _oldValue;
+    private DependencyProperty _property;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

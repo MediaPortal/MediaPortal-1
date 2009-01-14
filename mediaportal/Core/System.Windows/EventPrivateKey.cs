@@ -25,8 +25,8 @@
 
 namespace System.Windows
 {
-	public class EventPrivateKey
-	{
-		// this class is intentionally empty and is used to provide unique keys for a hashtable 
-	}
+  public class EventPrivateKey
+  {
+    // this class is intentionally empty and is used to provide unique keys for a hashtable 
+  }
 }

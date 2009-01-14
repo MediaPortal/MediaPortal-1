@@ -23,107 +23,124 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Serialization;
 
 namespace System.Windows.Media.Animation
 {
-	public sealed class StoryboardCollection : CollectionBase, IAddChild
-	{
-		#region Constructors
+  public sealed class StoryboardCollection : CollectionBase, IAddChild
+  {
+    #region Constructors
 
-		public StoryboardCollection()
-		{
-		}
+    public StoryboardCollection()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Add(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public void Add(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			List.Add(timeline);
-		}
+      List.Add(timeline);
+    }
 
-		public bool Contains(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    public bool Contains(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			return List.Contains(timeline);
-		}
+      return List.Contains(timeline);
+    }
 
-		public void CopyTo(Timeline[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(Timeline[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public StoryboardCollection GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
-			
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    public StoryboardCollection GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-			if(child is Timeline == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Timeline)));
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			List.Add((Timeline)child);
-		}
+      if (child is Timeline == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (Timeline)));
+      }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+      List.Add((Timeline) child);
+    }
 
-		public int IndexOf(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+    void IAddChild.AddText(string text)
+    {
+    }
 
-			return List.IndexOf(timeline);
-		}
+    public int IndexOf(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-		public void Insert(int index, Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
+      return List.IndexOf(timeline);
+    }
 
-			List.Insert(index, timeline);
-		}
+    public void Insert(int index, Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-		public bool Remove(Timeline timeline)
-		{
-			if(timeline == null)
-				throw new ArgumentNullException("timeline");
-			
-			if(List.Contains(timeline) == false)
-				return false;
+      List.Insert(index, timeline);
+    }
 
-			List.Remove(timeline);
+    public bool Remove(Timeline timeline)
+    {
+      if (timeline == null)
+      {
+        throw new ArgumentNullException("timeline");
+      }
 
-			return true;
-		}
+      if (List.Contains(timeline) == false)
+      {
+        return false;
+      }
 
-		#endregion Methods
+      List.Remove(timeline);
 
-		#region Properties
+      return true;
+    }
 
-		public Timeline this[int index]
-		{ 
-			get { return (Timeline)List[index]; }
-			set { List[index] = value; }
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    public Timeline this[int index]
+    {
+      get { return (Timeline) List[index]; }
+      set { List[index] = value; }
+    }
+
+    #endregion Properties
+  }
 }

@@ -23,114 +23,129 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Serialization;
 
 namespace System.Windows.Controls
 {
-	public class ItemsControl : Control, IAddChild //, IGeneratorHost
-	{
-		#region Constructors
+  public class ItemsControl : Control, IAddChild //, IGeneratorHost
+  {
+    #region Constructors
 
-		static ItemsControl()
-		{
-			HasItemsProperty = DependencyProperty.Register("HasItems", typeof(bool), typeof(ItemsControl), new PropertyMetadata(false));
-		}
+    static ItemsControl()
+    {
+      HasItemsProperty = DependencyProperty.Register("HasItems", typeof (bool), typeof (ItemsControl),
+                                                     new PropertyMetadata(false));
+    }
 
-		public ItemsControl()
-		{
-		}
+    public ItemsControl()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			AddChild(child);
-		}
+    void IAddChild.AddChild(object child)
+    {
+      AddChild(child);
+    }
 
-		protected virtual void AddChild(object child)
-		{
-			if(_items == null)
-				_items = new ItemCollection();
+    protected virtual void AddChild(object child)
+    {
+      if (_items == null)
+      {
+        _items = new ItemCollection();
+      }
 
-			_items.Add(child);
-		}
+      _items.Add(child);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-			AddText(text);
-		}
+    void IAddChild.AddText(string text)
+    {
+      AddText(text);
+    }
 
-		protected virtual void AddText(string text)
-		{
-			// no default implementation
-		}
+    protected virtual void AddText(string text)
+    {
+      // no default implementation
+    }
 
-		public override void BeginInit()
-		{
-		}
+    public override void BeginInit()
+    {
+    }
 
-		public override void EndInit()
-		{
-		}
+    public override void EndInit()
+    {
+    }
 
-		protected virtual DependencyObject GetContainerForItemOverride(object item)
-		{
-			throw new NotImplementedException();
-		}
-		
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-		}
-			
-		protected virtual void PrepareContainerForItemOverride(DependencyObject element, object item)
-		{
-		}
-			
-		protected virtual bool IsItemItsOwnContainerOverride(object item)
-		{
-			throw new NotImplementedException();
-		}
-			
-		#endregion Methods
+    protected virtual DependencyObject GetContainerForItemOverride(object item)
+    {
+      throw new NotImplementedException();
+    }
 
-		#region Properties
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+    }
 
-		public bool HasItems
-		{
-			get { return (bool)GetValue(HasItemsProperty); }
-			set { SetValue(HasItemsProperty, value); }
-		}
+    protected virtual void PrepareContainerForItemOverride(DependencyObject element, object item)
+    {
+    }
 
-		[BindableAttribute(true)] 
-		public ItemCollection Items
-		{
-			get { if(_items == null) _items = new ItemCollection(); return _items; }
-		}
+    protected virtual bool IsItemItsOwnContainerOverride(object item)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected internal override IEnumerator LogicalChildren
-		{
-			get { if(_items == null) return NullEnumerator.Instance; return _items.GetEnumerator(); }
-		}
+    #endregion Methods
 
-		#endregion Properties
+    #region Properties
 
-		#region Properties (Dependency)
+    public bool HasItems
+    {
+      get { return (bool) GetValue(HasItemsProperty); }
+      set { SetValue(HasItemsProperty, value); }
+    }
 
-		public static readonly DependencyProperty HasItemsProperty;
+    [Bindable(true)]
+    public ItemCollection Items
+    {
+      get
+      {
+        if (_items == null)
+        {
+          _items = new ItemCollection();
+        }
+        return _items;
+      }
+    }
 
-		#endregion Properties (Dependency)
+    protected internal override IEnumerator LogicalChildren
+    {
+      get
+      {
+        if (_items == null)
+        {
+          return NullEnumerator.Instance;
+        }
+        return _items.GetEnumerator();
+      }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		ItemCollection				_items;
+    #region Properties (Dependency)
 
-		#endregion Fields
-	}
+    public static readonly DependencyProperty HasItemsProperty;
+
+    #endregion Properties (Dependency)
+
+    #region Fields
+
+    private ItemCollection _items;
+
+    #endregion Fields
+  }
 }

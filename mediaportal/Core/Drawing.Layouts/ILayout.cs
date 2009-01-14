@@ -23,31 +23,23 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
-
-using System.Windows.Controls;
-using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public interface ILayout
-	{
-		#region Methods
+  public interface ILayout
+  {
+    #region Methods
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+    void Arrange(GUIGroup element);
+    Size Measure(GUIGroup element, Size availableSize);
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		Size Size
-		{
-			get;
-		}
+    Size Size { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

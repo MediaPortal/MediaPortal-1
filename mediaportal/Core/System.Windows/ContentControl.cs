@@ -23,204 +23,214 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Serialization;
-
 using System.Windows.Controls;
+using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class ContentControl : Control, IAddChild
-	{
-		#region Constructors
+  public class ContentControl : Control, IAddChild
+  {
+    #region Constructors
 
-		static ContentControl()
-		{
-			FrameworkPropertyMetadata metadata;
+    static ContentControl()
+    {
+      FrameworkPropertyMetadata metadata;
 
-			#region Content
+      #region Content
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.GetValueOverride = new GetValueOverride(OnContentPropertyGetValue);
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnContentPropertyInvalidated);
+      metadata = new FrameworkPropertyMetadata();
+      metadata.GetValueOverride = new GetValueOverride(OnContentPropertyGetValue);
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnContentPropertyInvalidated);
 
-			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(ContentControl), metadata);
+      ContentProperty = DependencyProperty.Register("Content", typeof (object), typeof (ContentControl), metadata);
 
-			#endregion Content
+      #endregion Content
 
-			#region ContentTemplate
+      #region ContentTemplate
 
-			metadata = new FrameworkPropertyMetadata();
+      metadata = new FrameworkPropertyMetadata();
 
-			ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(ContentControl), metadata);
+      ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof (DataTemplate),
+                                                            typeof (ContentControl), metadata);
 
-			#endregion ContentTemplate
+      #endregion ContentTemplate
 
-			#region ContentTemplateSelector
+      #region ContentTemplateSelector
 
-			metadata = new FrameworkPropertyMetadata();
+      metadata = new FrameworkPropertyMetadata();
 
-			ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector", typeof(DataTemplateSelector), typeof(ContentControl), metadata);
+      ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector",
+                                                                    typeof (DataTemplateSelector),
+                                                                    typeof (ContentControl), metadata);
 
-			#endregion ContentTemplateSelector
+      #endregion ContentTemplateSelector
 
-			#region HasContent
+      #region HasContent
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.GetValueOverride = new GetValueOverride(OnHasContentPropertyGetValue);
-			metadata.SetReadOnly();
+      metadata = new FrameworkPropertyMetadata();
+      metadata.GetValueOverride = new GetValueOverride(OnHasContentPropertyGetValue);
+      metadata.SetReadOnly();
 
-			HasContentProperty = DependencyProperty.Register("HasContent", typeof(bool), typeof(ContentControl), metadata);
+      HasContentProperty = DependencyProperty.Register("HasContent", typeof (bool), typeof (ContentControl), metadata);
 
-			#endregion HasContent
-		}
+      #endregion HasContent
+    }
 
-		public ContentControl()
-		{
-		}
+    public ContentControl()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			AddChild(child);
-		}
+    void IAddChild.AddChild(object child)
+    {
+      AddChild(child);
+    }
 
-		protected virtual void AddChild(object child)
-		{
-		}		
+    protected virtual void AddChild(object child)
+    {
+    }
 
-		void IAddChild.AddText(string text)
-		{
-			AddText(text);
-		}
+    void IAddChild.AddText(string text)
+    {
+      AddText(text);
+    }
 
-		protected virtual void AddText(string text)
-		{
-		}
+    protected virtual void AddText(string text)
+    {
+    }
 
-		protected static void ContentChanged(DependencyObject d)
-		{
-			((ContentControl)d).OnContentChanged(null, null);
-		}		
+    protected static void ContentChanged(DependencyObject d)
+    {
+      ((ContentControl) d).OnContentChanged(null, null);
+    }
 
-		protected static void ContentTemplateChanged(DependencyObject d)
-		{
-			((ContentControl)d).OnContentTemplateChanged(null, null);
-		}		
-		
-		protected static void ContentTemplateSelectorChanged(DependencyObject d)
-		{
-			((ContentControl)d).OnContentTemplateChanged(null, null);
-		}		
-		
-		public static object GetContent(DependencyObject d)
-		{
-			return d.GetValue(ContentProperty);
-		}
-			
-		public static DataTemplateSelector GetContentTemplateSelector(DependencyObject d)
-		{
-			return (DataTemplateSelector)d.GetValue(ContentTemplateProperty);
-		}
+    protected static void ContentTemplateChanged(DependencyObject d)
+    {
+      ((ContentControl) d).OnContentTemplateChanged(null, null);
+    }
 
-		protected virtual void OnContentChanged(object oldContent, object newContent)
-		{
-		}
+    protected static void ContentTemplateSelectorChanged(DependencyObject d)
+    {
+      ((ContentControl) d).OnContentTemplateChanged(null, null);
+    }
 
-		protected virtual void OnContentTemplateChanged(DataTemplate oldContentTemplate, DataTemplate newContentTemplate)
-		{
-		}
+    public static object GetContent(DependencyObject d)
+    {
+      return d.GetValue(ContentProperty);
+    }
 
-		protected virtual void OnContentTemplateSelectorChanged(DataTemplateSelector oldContentTemplateSelector, DataTemplateSelector newContentTemplateSelector)
-		{
-		}
-	
-		private static object OnContentPropertyGetValue(DependencyObject d)
-		{
-			return ((ContentControl)d).Content;
-		}
-	
-		private static void OnContentPropertyInvalidated(DependencyObject d)
-		{
-			((ContentControl)d)._contentDirty = true;
-		}
+    public static DataTemplateSelector GetContentTemplateSelector(DependencyObject d)
+    {
+      return (DataTemplateSelector) d.GetValue(ContentTemplateProperty);
+    }
 
-		private static object OnHasContentPropertyGetValue(DependencyObject d)
-		{
-			return ((ContentControl)d).HasContent;
-		}
+    protected virtual void OnContentChanged(object oldContent, object newContent)
+    {
+    }
 
-		public static void SetContent(DependencyObject d, object content)
-		{
-			d.SetValue(ContentProperty, content);
-		}
+    protected virtual void OnContentTemplateChanged(DataTemplate oldContentTemplate, DataTemplate newContentTemplate)
+    {
+    }
 
-		public static void SetContentTemplate(DependencyObject d, DataTemplate contentTemplate)
-		{
-			d.SetValue(ContentTemplateProperty, contentTemplate);
-		}
+    protected virtual void OnContentTemplateSelectorChanged(DataTemplateSelector oldContentTemplateSelector,
+                                                            DataTemplateSelector newContentTemplateSelector)
+    {
+    }
 
-		public static void SetContentTemplateSelector(DependencyObject d, DataTemplateSelector dataTemplateSelector)
-		{
-			d.SetValue(ContentTemplateSelectorProperty, dataTemplateSelector);
-		}
+    private static object OnContentPropertyGetValue(DependencyObject d)
+    {
+      return ((ContentControl) d).Content;
+    }
 
-		#endregion Methods
+    private static void OnContentPropertyInvalidated(DependencyObject d)
+    {
+      ((ContentControl) d)._contentDirty = true;
+    }
 
-		#region Properties
+    private static object OnHasContentPropertyGetValue(DependencyObject d)
+    {
+      return ((ContentControl) d).HasContent;
+    }
 
-		[BindableAttribute(true)]
-		public object Content
-		{
-			get { if(_contentDirty) { _contentCache = GetValueBase(ContentProperty); _contentDirty = false; } return _contentCache; }
-			set { SetValue(ContentProperty, value); }
-		}
+    public static void SetContent(DependencyObject d, object content)
+    {
+      d.SetValue(ContentProperty, content);
+    }
 
-		[BindableAttribute(true)] 
-		public DataTemplate ContentTemplate
-		{
-			get { return GetValue(ContentTemplateProperty) as DataTemplate; }
-			set { SetValue(ContentTemplateProperty, value); }
-		}
+    public static void SetContentTemplate(DependencyObject d, DataTemplate contentTemplate)
+    {
+      d.SetValue(ContentTemplateProperty, contentTemplate);
+    }
 
-		[BindableAttribute(true)] 
-		public DataTemplateSelector ContentTemplateSelector
-		{
-			get { return GetValue(ContentTemplateSelectorProperty) as DataTemplateSelector; }
-			set { SetValue(ContentTemplateSelectorProperty, value); }
-		}
+    public static void SetContentTemplateSelector(DependencyObject d, DataTemplateSelector dataTemplateSelector)
+    {
+      d.SetValue(ContentTemplateSelectorProperty, dataTemplateSelector);
+    }
 
-		public bool HasContent
-		{
-			get { return Content != null; }
-		}
+    #endregion Methods
 
-		protected internal override IEnumerator LogicalChildren
-		{
-			get { return NullEnumerator.Instance; }
-		}
+    #region Properties
 
-		#endregion Properties
+    [Bindable(true)]
+    public object Content
+    {
+      get
+      {
+        if (_contentDirty)
+        {
+          _contentCache = GetValueBase(ContentProperty);
+          _contentDirty = false;
+        }
+        return _contentCache;
+      }
+      set { SetValue(ContentProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    [Bindable(true)]
+    public DataTemplate ContentTemplate
+    {
+      get { return GetValue(ContentTemplateProperty) as DataTemplate; }
+      set { SetValue(ContentTemplateProperty, value); }
+    }
 
-		public static readonly DependencyProperty ContentProperty;
-		public static readonly DependencyProperty ContentTemplateProperty;
-		public static readonly DependencyProperty ContentTemplateSelectorProperty;
-		public static readonly DependencyProperty HasContentProperty;
+    [Bindable(true)]
+    public DataTemplateSelector ContentTemplateSelector
+    {
+      get { return GetValue(ContentTemplateSelectorProperty) as DataTemplateSelector; }
+      set { SetValue(ContentTemplateSelectorProperty, value); }
+    }
 
-		#endregion Properties (Dependency)
+    public bool HasContent
+    {
+      get { return Content != null; }
+    }
 
-		#region Fields
+    protected internal override IEnumerator LogicalChildren
+    {
+      get { return NullEnumerator.Instance; }
+    }
 
-		object						_contentCache;
-		bool						_contentDirty;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty ContentProperty;
+    public static readonly DependencyProperty ContentTemplateProperty;
+    public static readonly DependencyProperty ContentTemplateSelectorProperty;
+    public static readonly DependencyProperty HasContentProperty;
+
+    #endregion Properties (Dependency)
+
+    #region Fields
+
+    private object _contentCache;
+    private bool _contentDirty;
+
+    #endregion Fields
+  }
 }

@@ -23,10 +23,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace MediaPortal.Player
 {
   public class DummyPlayerFactory : IPlayerFactory
@@ -35,7 +31,8 @@ namespace MediaPortal.Player
     {
       return new DummyPlayer(fileName);
     }
-    public IPlayer Create(string fileName,g_Player.MediaType type)
+
+    public IPlayer Create(string fileName, g_Player.MediaType type)
     {
       return new DummyPlayer(fileName);
     }

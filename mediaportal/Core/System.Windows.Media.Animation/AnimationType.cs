@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public enum AnimationType
-	{
-		None,
-		To,
-		From,
-		FromTo,
-		FromBy,
-		By,
-	}
+  public enum AnimationType
+  {
+    None,
+    To,
+    From,
+    FromTo,
+    FromBy,
+    By,
+  }
 }

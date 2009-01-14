@@ -25,7 +25,7 @@
 
 namespace System.Windows.Input
 {
-	public class KeyboardFocusChangedEventArgs //: KeyboardEventArgs
-	{
-	}
+  public class KeyboardFocusChangedEventArgs //: KeyboardEventArgs
+  {
+  }
 }

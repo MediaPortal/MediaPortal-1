@@ -25,18 +25,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Threading;
-using Microsoft.Win32;
-using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Vis;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass.AddOn.Tags;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using Microsoft.Win32;
+using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Visualization
 {
@@ -59,13 +55,19 @@ namespace MediaPortal.Visualization
       set
       {
         if (_TargetFPS == value)
+        {
           return;
+        }
 
         if (_TargetFPS > 60)
+        {
           _TargetFPS = 60;
+        }
 
         else if (_TargetFPS < 5)
+        {
           _TargetFPS = 5;
+        }
 
         _TargetFPS = value;
         SetVisualizationFPS(_TargetFPS);
@@ -77,7 +79,9 @@ namespace MediaPortal.Visualization
       get
       {
         if (_VisualizationPluginsInfo.Count == 0)
+        {
           GetVisualizationPluginsInfo();
+        }
 
         return _VisualizationPluginsInfo;
       }
@@ -97,7 +101,9 @@ namespace MediaPortal.Visualization
       VizRenderWindow = vizWindow;
 
       if (bass != null)
+      {
         Bass.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(OnPlaybackStateChanged);
+      }
 
       SetVisualizationFPS(_TargetFPS);
     }
@@ -107,18 +113,25 @@ namespace MediaPortal.Visualization
       Stop();
 
       if (Viz != null)
-        ((VisualizationBase)Viz).Dispose();
+      {
+        ((VisualizationBase) Viz).Dispose();
+      }
     }
 
-    void OnPlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState, BassAudioEngine.PlayState newState)
+    private void OnPlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
+                                        BassAudioEngine.PlayState newState)
     {
       if (Viz == null)
+      {
         return;
+      }
 
       // Start the visualization render thread the first time an audio file starts playing.
       // Subsequent play state changes will be managed by the VisualizationWindow.
       if (!Viz.Initialized || newState == BassAudioEngine.PlayState.Playing)
+      {
         VizRenderWindow.Run = true;
+      }
     }
 
     private bool IsGForceInstalled()
@@ -126,9 +139,12 @@ namespace MediaPortal.Visualization
       string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
 
       if (!File.Exists(mpVizDll))
+      {
         return false;
+      }
 
-      SoundSpectrumViz viz = new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.GForce, "", "g-force", "", 0));
+      SoundSpectrumViz viz =
+        new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.GForce, "", "g-force", "", 0));
       bool engineInstalled = viz.IsEngineInstalled();
       viz.Dispose();
 
@@ -140,9 +156,12 @@ namespace MediaPortal.Visualization
       string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
 
       if (!File.Exists(mpVizDll))
+      {
         return false;
+      }
 
-      SoundSpectrumViz viz = new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.WhiteCap, "", "whitecap", "", 0));
+      SoundSpectrumViz viz =
+        new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.WhiteCap, "", "whitecap", "", 0));
       bool engineInstalled = viz.IsEngineInstalled();
       viz.Dispose();
 
@@ -173,22 +192,34 @@ namespace MediaPortal.Visualization
       VisualizationInfo.PluginType vizType = VisualizationInfo.PluginType.None;
 
       if (path.Length == 0)
+      {
         vizType = VisualizationInfo.PluginType.None;
+      }
 
       else if (Path.GetExtension(path).ToLower().CompareTo(".svp") == 0)
+      {
         vizType = VisualizationInfo.PluginType.Sonique;
+      }
 
       else if (path.ToLower().CompareTo("g-force") == 0)
+      {
         vizType = VisualizationInfo.PluginType.GForce;
+      }
 
       else if (path.ToLower().CompareTo("whitecap") == 0)
+      {
         vizType = VisualizationInfo.PluginType.WhiteCap;
+      }
 
       else if (path.ToLower().CompareTo("softskies") == 0)
+      {
         vizType = VisualizationInfo.PluginType.SoftSkies;
+      }
 
       else
+      {
         vizType = VisualizationInfo.PluginType.Unknown;
+      }
 
       Log.Info("Visualization Manager: Visualization type is {0}", vizType);
       return vizType;
@@ -197,7 +228,9 @@ namespace MediaPortal.Visualization
     private void SetVisualizationFPS(int targetFPS)
     {
       if (VizRenderWindow != null)
+      {
         VizRenderWindow.SetVisualizationTimer(targetFPS);
+      }
     }
 
     private void CloseCurrentVisualization()
@@ -214,7 +247,9 @@ namespace MediaPortal.Visualization
       }
 
       else
+      {
         Log.Info("Visualization Manager: Visualization plugin close not required - nothing loaded");
+      }
     }
 
     #region IVisualizationManager Members
@@ -225,28 +260,38 @@ namespace MediaPortal.Visualization
       _VisualizationPluginsInfo.Add(new VisualizationInfo("None", true));
 
       string skinFolderPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\visualizations");
-      string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath, BASSWINAMPFindPlugin.BASS_VIS_FIND_SONIQUE | BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE); ;
+      string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath,
+                                                              BASSWINAMPFindPlugin.BASS_VIS_FIND_SONIQUE |
+                                                              BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE);
+      ;
       // Init winamp Support, otherwise we won't get any infos about winamp plugins
-      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
-      string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath, BASSWINAMPFindPlugin.BASS_VIS_FIND_WINAMP | BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE); ;
+      BassVis.BASS_WINAMPVIS_Init(
+        BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int) GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
+      string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath,
+                                                             BASSWINAMPFindPlugin.BASS_VIS_FIND_WINAMP |
+                                                             BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE);
+      ;
 
       List<VisualizationInfo> wmpPluginsInfo = GetWMPPluginInfo();
 
       if (IsGForceInstalled())
       {
-        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.GForce, string.Empty, "G-Force", string.Empty, null);
+        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.GForce, string.Empty, "G-Force",
+                                                          string.Empty, null);
         _VisualizationPluginsInfo.Add(vizInfo);
       }
 
       if (IsWhiteCapInstalled())
       {
-        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.WhiteCap, string.Empty, "WhiteCap", string.Empty, null);
+        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.WhiteCap, string.Empty,
+                                                          "WhiteCap", string.Empty, null);
         _VisualizationPluginsInfo.Add(vizInfo);
       }
 
       if (IsSoftSkiesInstalled())
       {
-        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.SoftSkies, string.Empty, "SoftSkies", string.Empty, null);
+        VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.SoftSkies, string.Empty,
+                                                          "SoftSkies", string.Empty, null);
         _VisualizationPluginsInfo.Add(vizInfo);
       }
 
@@ -267,9 +312,12 @@ namespace MediaPortal.Visualization
           int visPlugin = BassVis.BASS_SONIQUEVIS_CreateVis(filePath, "vis.ini", BASSVISCreate.BASS_VIS_NOINIT, 0, 0);
           string pluginname = BassVis.BASS_SONIQUEVIS_GetName(visPlugin);
           if (pluginname != null)
+          {
             name = pluginname;
+          }
           BassVis.BASS_SONIQUEVIS_Free(visPlugin);
-          VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name, string.Empty, null);
+          VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name,
+                                                            string.Empty, null);
           _VisualizationPluginsInfo.Add(vizInfo);
         }
       }
@@ -286,18 +334,25 @@ namespace MediaPortal.Visualization
           {
             string pluginname = BassVis.BASS_WINAMPVIS_GetName(visPlugin);
             if (pluginname != null)
+            {
               name = pluginname;
+            }
             // Get modules
             int numModules = BassVis.BASS_WINAMPVIS_GetNumModules(filePath);
             if (numModules > 0)
             {
               for (int j = 0; j < numModules; j++)
+              {
                 presets.Add(BassVis.BASS_WINAMPVIS_GetModuleName(visPlugin, j));
+              }
             }
-            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Winamp, filePath, name, string.Empty, presets);
+            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Winamp, filePath, name,
+                                                              string.Empty, presets);
             if (!vizInfo.IsBlackListed)
+            {
               _VisualizationPluginsInfo.Add(vizInfo);
-            
+            }
+
             BassVis.BASS_WINAMPVIS_Free(visPlugin);
           }
         }
@@ -319,11 +374,13 @@ namespace MediaPortal.Visualization
 
         subKey = key.OpenSubKey(subKeyNames[i] + "\\Properties");
 
-        string sCLSID = (string)subKey.GetValue("classid");
+        string sCLSID = (string) subKey.GetValue("classid");
         VisualizationInfo wmpVizInfo = LoadWMPPlugin(sCLSID);
 
         if (wmpVizInfo != null && !wmpVizInfo.IsBlackListed)
+        {
           wmpPlugins.Add(wmpVizInfo);
+        }
       }
 
       return wmpPlugins;
@@ -340,12 +397,15 @@ namespace MediaPortal.Visualization
           wmpVizInfo = new WMPVisualizationInfo(sCLSID);
 
           if (wmpVizInfo == null)
+          {
             return null;
+          }
 
           string vizName = wmpVizInfo.Title;
           List<string> presets = wmpVizInfo.Presets;
 
-          VisualizationInfo vizPluginInfo = new VisualizationInfo(VisualizationInfo.PluginType.WMP, "", vizName, sCLSID, presets);
+          VisualizationInfo vizPluginInfo = new VisualizationInfo(VisualizationInfo.PluginType.WMP, "", vizName, sCLSID,
+                                                                  presets);
           return vizPluginInfo;
         }
 
@@ -366,7 +426,7 @@ namespace MediaPortal.Visualization
 
       catch (Exception ex)
       {
-        System.Diagnostics.Debug.WriteLine(ex.Message);
+        Debug.WriteLine(ex.Message);
         return null;
       }
     }
@@ -431,9 +491,12 @@ namespace MediaPortal.Visualization
       VizRenderWindow.Visualization = Viz;
 
       if (Viz == null)
+      {
         return false;
+      }
 
-      ((VisualizationBase)Viz).VisualizationCreated += new VisualizationBase.VisualizationCreatedDelegate(OnVisualizationCreated);
+      ((VisualizationBase) Viz).VisualizationCreated +=
+        new VisualizationBase.VisualizationCreatedDelegate(OnVisualizationCreated);
 
       bool result = false;
 
@@ -462,12 +525,14 @@ namespace MediaPortal.Visualization
       return InternalCreateVisualization(vizPluginInfo, true);
     }
 
-    void OnVisualizationCreated(object sender)
+    private void OnVisualizationCreated(object sender)
     {
       if (Bass.Playing)
       {
         if (Viz != null && Viz.Initialized)
+        {
           VizRenderWindow.StartVisualization();
+        }
       }
     }
 
@@ -481,13 +546,17 @@ namespace MediaPortal.Visualization
       }
 
       else
+      {
         return false;
+      }
     }
 
     public bool Start()
     {
       if (Viz != null)
+      {
         return Viz.Start();
+      }
 
       return false;
     }
@@ -495,7 +564,9 @@ namespace MediaPortal.Visualization
     public bool Pause()
     {
       if (Viz != null)
+      {
         return Viz.Pause();
+      }
 
       return false;
     }
@@ -503,7 +574,9 @@ namespace MediaPortal.Visualization
     public bool Stop()
     {
       if (Viz != null)
+      {
         return Viz.Stop();
+      }
 
       return false;
     }
@@ -521,8 +594,11 @@ namespace MediaPortal.Visualization
     public void InitWinampVis()
     {
       if (Viz.IsWinampVis())
+      {
         Viz.SetOutputContext(VizRenderWindow.OutputContextType);
+      }
     }
+
     #endregion
   }
 }

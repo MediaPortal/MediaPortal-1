@@ -25,98 +25,107 @@
 
 using System;
 using System.Windows.Serialization;
-
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing
 {
-	public class CombinedGeometry : Geometry, IAddChild
-	{
-		#region Constructors
+  public class CombinedGeometry : Geometry, IAddChild
+  {
+    #region Constructors
 
-		public CombinedGeometry()
-		{
-		}
+    public CombinedGeometry()
+    {
+    }
 
-		public CombinedGeometry(Geometry geometry1, Geometry geometry2)
-		{
-			_geometry1 = geometry1;
-			_geometry2 = geometry2;
-		}
+    public CombinedGeometry(Geometry geometry1, Geometry geometry2)
+    {
+      _geometry1 = geometry1;
+      _geometry2 = geometry2;
+    }
 
-		public CombinedGeometry(GeometryCombineMode mode, Geometry geometry1, Geometry geometry2)
-		{
-			_mode = mode;
-			_geometry1 = geometry1;
-			_geometry2 = geometry2;
-		}
+    public CombinedGeometry(GeometryCombineMode mode, Geometry geometry1, Geometry geometry2)
+    {
+      _mode = mode;
+      _geometry1 = geometry1;
+      _geometry2 = geometry2;
+    }
 
-		public CombinedGeometry(GeometryCombineMode mode, Geometry geometry1, Geometry geometry2, Transform transform)
-		{
-			_mode = mode;
-			_geometry1 = geometry1;
-			_geometry2 = geometry2;
-			_transform = transform;
-		}
+    public CombinedGeometry(GeometryCombineMode mode, Geometry geometry1, Geometry geometry2, Transform transform)
+    {
+      _mode = mode;
+      _geometry1 = geometry1;
+      _geometry2 = geometry2;
+      _transform = transform;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			if(child is Geometry == false)
-				throw new ArgumentException("child");
+      if (child is Geometry == false)
+      {
+        throw new ArgumentException("child");
+      }
 
-			if(_geometryIndex == 0)
-				_geometry1 = (Geometry)child;
+      if (_geometryIndex == 0)
+      {
+        _geometry1 = (Geometry) child;
+      }
 
-			if(_geometryIndex == 1)
-				_geometry2 = (Geometry)child;
+      if (_geometryIndex == 1)
+      {
+        _geometry2 = (Geometry) child;
+      }
 
-			if(_geometryIndex++ == 1)
-				_geometryIndex = 0;
-		}
+      if (_geometryIndex++ == 1)
+      {
+        _geometryIndex = 0;
+      }
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public GeometryCombineMode GeometryCombineMode
-		{
-			get { return _mode; }
-			set { }
-		}
+    public GeometryCombineMode GeometryCombineMode
+    {
+      get { return _mode; }
+      set { }
+    }
 
-		public Geometry Geometry1
-		{
-			get { return _geometry1; }
-			set { }
-		}
+    public Geometry Geometry1
+    {
+      get { return _geometry1; }
+      set { }
+    }
 
-		public Geometry Geometry2
-		{
-			get { return _geometry2; }
-			set { }
-		}
+    public Geometry Geometry2
+    {
+      get { return _geometry2; }
+      set { }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		GeometryCombineMode			_mode;
-		Geometry					_geometry1;
-		Geometry					_geometry2;
-		int							_geometryIndex;
-		Transform					_transform;
+    private GeometryCombineMode _mode;
+    private Geometry _geometry1;
+    private Geometry _geometry2;
+    private int _geometryIndex;
+    private Transform _transform;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

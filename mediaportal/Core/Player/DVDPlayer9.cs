@@ -25,24 +25,15 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Data;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Globalization;
-using System.Text;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using DShowNET.Helper;
+using System.Windows.Forms;
 using DirectShowLib;
 using DirectShowLib.Dvd;
-using Microsoft.Win32;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using Microsoft.Win32;
 
 namespace MediaPortal.Player
 {
@@ -51,10 +42,11 @@ namespace MediaPortal.Player
   /// </summary>
   public class DVDPlayer9 : DVDPlayer
   {
-    const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
-    const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
+    private const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
+    private const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
 
-    VMR9Util _vmr9 = null;
+    private VMR9Util _vmr9 = null;
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string path)
     {
@@ -72,11 +64,11 @@ namespace MediaPortal.Player
       int codecValue = 0;
       string codecType = "";
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
-        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)" )
+        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)")
           // Not supported currently. The navigator doesnt work properly even in the GraphEdit  
           // || dvdDNavigator == "CyberLink DVD Navigator (PDVD8)")
         {
@@ -84,16 +76,40 @@ namespace MediaPortal.Player
         }
 
         aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
-        if (aspectRatio == "crop") arMode = AspectRatioMode.Crop;
-        if (aspectRatio == "letterbox") arMode = AspectRatioMode.LetterBox;
-        if (aspectRatio == "stretch") arMode = AspectRatioMode.Stretched;
-        if (aspectRatio == "follow stream") arMode = AspectRatioMode.StretchedAsPrimary;
+        if (aspectRatio == "crop")
+        {
+          arMode = AspectRatioMode.Crop;
+        }
+        if (aspectRatio == "letterbox")
+        {
+          arMode = AspectRatioMode.LetterBox;
+        }
+        if (aspectRatio == "stretch")
+        {
+          arMode = AspectRatioMode.Stretched;
+        }
+        if (aspectRatio == "follow stream")
+        {
+          arMode = AspectRatioMode.StretchedAsPrimary;
+        }
 
         displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLower();
-        if (displayMode == "default") _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;
-        if (displayMode == "16:9") _videoPref = DvdPreferredDisplayMode.Display16x9;
-        if (displayMode == "4:3 pan scan") _videoPref = DvdPreferredDisplayMode.Display4x3PanScanPreferred;
-        if (displayMode == "4:3 letterbox") _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
+        if (displayMode == "default")
+        {
+          _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;
+        }
+        if (displayMode == "16:9")
+        {
+          _videoPref = DvdPreferredDisplayMode.Display16x9;
+        }
+        if (displayMode == "4:3 pan scan")
+        {
+          _videoPref = DvdPreferredDisplayMode.Display4x3PanScanPreferred;
+        }
+        if (displayMode == "4:3 letterbox")
+        {
+          _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
+        }
 
         turnoffDXVA = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
         Log.Info("DVDPlayer9:Turn off DXVA value = {0}", turnoffDXVA);
@@ -107,11 +123,17 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Info("DVDPlayer9:Turning InterVideo DXVA off");
-              using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+              using (
+                RegistryKey subkey =
+                  Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+              {
                 subkey.SetValue("DXVA", 0);
+              }
             }
             if (codecValue == 0)
+            {
               Log.Info("DVDPlayer9:InterVideo DXVA already off");
+            }
           }
           if (codecType == "CyberLink Video/SP Decoder")
           {
@@ -119,11 +141,16 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Info("DVDPlayer9:Turning CyberLink DXVA off");
-              using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+              using (
+                RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+              {
                 subkey.SetValue("UIUseHVA", 0);
+              }
             }
             if (codecValue == 0)
+            {
               Log.Info("DVDPlayer9:CyberLink DXVA already off");
+            }
           }
           if (codecType == "NVIDIA Video Decoder")
           {
@@ -131,11 +158,16 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Info("DVDPlayer9:Turning NVIDIA DXVA off");
-              using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+              using (
+                RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+              {
                 subkey.SetValue("EnableDXVA", 0);
+              }
             }
             if (codecValue == 0)
+            {
               Log.Info("DVDPlayer9:NVIDIA DXVA already off");
+            }
           }
         }
       }
@@ -147,13 +179,15 @@ namespace MediaPortal.Player
       try
       {
         _vmr9 = new VMR9Util();
-        _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
+        _dvdGraph = (IDvdGraphBuilder) new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
         if (hr != 0)
+        {
           Marshal.ThrowExceptionForHR(hr);
+        }
 
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
 
         _vmr9.AddVMR9(_graphBuilder);
 
@@ -171,9 +205,11 @@ namespace MediaPortal.Player
               if (path != null)
               {
                 if (path.Length != 0)
+                {
                   hr = _dvdCtrl.SetDVDDirectory(path);
+                }
               }
-              _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true);	// use new HMSF timecode format
+              _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true); // use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
               DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
 
@@ -191,31 +227,41 @@ namespace MediaPortal.Player
         if (_dvdInfo == null)
         {
           Log.Info("Dvdplayer9:volume rendered, get interfaces");
-          riid = typeof(IDvdInfo2).GUID;
+          riid = typeof (IDvdInfo2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
+          {
             Marshal.ThrowExceptionForHR(hr);
-          _dvdInfo = (IDvdInfo2)comobj; comobj = null;
+          }
+          _dvdInfo = (IDvdInfo2) comobj;
+          comobj = null;
         }
 
         if (_dvdCtrl == null)
         {
           Log.Info("Dvdplayer9: get IDvdControl2");
-          riid = typeof(IDvdControl2).GUID;
+          riid = typeof (IDvdControl2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
+          {
             Marshal.ThrowExceptionForHR(hr);
-          _dvdCtrl = (IDvdControl2)comobj; comobj = null;
+          }
+          _dvdCtrl = (IDvdControl2) comobj;
+          comobj = null;
           if (_dvdCtrl != null)
+          {
             Log.Info("Dvdplayer9: get IDvdControl2");
+          }
           else
+          {
             Log.Error("Dvdplayer9: FAILED TO get get IDvdControl2");
+          }
         }
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _mediaCtrl = (IMediaControl) _graphBuilder;
+        _mediaEvt = (IMediaEventEx) _graphBuilder;
         _basicAudio = _graphBuilder as IBasicAudio;
-        _mediaPos = (IMediaPosition)_graphBuilder;
+        _mediaPos = (IMediaPosition) _graphBuilder;
         _basicVideo = _graphBuilder as IBasicVideo2;
 
         Log.Info("Dvdplayer9:disable line 21");
@@ -223,10 +269,12 @@ namespace MediaPortal.Player
         IBaseFilter basefilter;
         _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
         if (basefilter == null)
+        {
           _graphBuilder.FindFilterByName("Line21 Decoder", out basefilter);
+        }
         if (basefilter != null)
         {
-          _line21Decoder = (IAMLine21Decoder)basefilter;
+          _line21Decoder = (IAMLine21Decoder) basefilter;
           if (_line21Decoder != null)
           {
             AMLine21CCState state = AMLine21CCState.Off;
@@ -272,17 +320,21 @@ namespace MediaPortal.Player
       {
       }
     }
+
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
     {
       Cleanup();
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
-      if (_graphBuilder == null) return;
+      if (_graphBuilder == null)
+      {
+        return;
+      }
       int hr;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int codecValue = 0;
         string codecType = "";
@@ -292,22 +344,29 @@ namespace MediaPortal.Player
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "intervideo", 1);
           Log.Info("DVDPlayer9:Resetting InterVideo DXVA to {0}", codecValue);
-          using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+          using (
+            RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+          {
             subkey.SetValue("DXVA", codecValue);
+          }
         }
         if (codecType == "CyberLink Video/SP Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
           Log.Info("DVDPlayer9:Resetting CyberLink DXVA to {0}", codecValue);
           using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+          {
             subkey.SetValue("UIUseHVA", codecValue);
+          }
         }
         if (codecType == "NVIDIA Video Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "nvidia", 1);
           Log.Info("DVDPlayer9:Resetting NVIDIA DXVA to {0}", codecValue);
           using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+          {
             subkey.SetValue("EnableDXVA", codecValue);
+          }
         }
       }
       try
@@ -334,21 +393,30 @@ namespace MediaPortal.Player
           _vmr9.Dispose();
         }
         _vmr9 = null;
-        
+
         if (_videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
+          {
+            ;
+          }
           _videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
+          {
+            ;
+          }
           _audioCodecFilter = null;
         }
 
         if (_audioRendererFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
+          {
+            ;
+          }
           _audioRendererFilter = null;
         }
 
@@ -357,30 +425,44 @@ namespace MediaPortal.Player
         {
           if (customFilters[i] != null)
           {
-            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0) ;
+            while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
+            {
+              ;
+            }
           }
           customFilters[i] = null;
         }
 
         if (_cmdOption != null)
+        {
           DirectShowUtil.ReleaseComObject(_cmdOption);
+        }
         _cmdOption = null;
         _pendingCmd = false;
 
         if (_dvdbasefilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0)
+          {
+            ;
+          }
           _dvdbasefilter = null;
         }
 
         if (_dvdGraph != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_dvdGraph)) > 0)
+          {
+            ;
+          }
           _dvdGraph = null;
         }
         if (_line21Decoder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0)
+          {
+            ;
+          }
           _line21Decoder = null;
         }
 
@@ -393,7 +475,10 @@ namespace MediaPortal.Player
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
           _graphBuilder = null;
         }
 
@@ -420,14 +505,23 @@ namespace MediaPortal.Player
 
     protected override void Repaint()
     {
-      if (_vmr9 == null) return;
+      if (_vmr9 == null)
+      {
+        return;
+      }
       _vmr9.Repaint();
     }
 
     public override void Process()
     {
-      if (!Playing) return;
-      if (!_started) return;
+      if (!Playing)
+      {
+        return;
+      }
+      if (!_started)
+      {
+        return;
+      }
       // BAV, 02.03.08: checking GUIGraphicsContext.InVmr9Render makes no sense here, there are no changes in render items
       //                removing this should solve 1 min delays in skip steps
       //if (GUIGraphicsContext.InVmr9Render) return;
@@ -435,21 +529,24 @@ namespace MediaPortal.Player
       OnProcess();
     }
 
-    void HandleMouseMessages()
+    private void HandleMouseMessages()
     {
-      if (!GUIGraphicsContext.IsFullScreenVideo) return;
+      if (!GUIGraphicsContext.IsFullScreenVideo)
+      {
+        return;
+      }
       //if (GUIGraphicsContext.Vmr9Active) return;
       try
       {
-        System.Drawing.Point pt;
+        Point pt;
         foreach (Message m in _mouseMsg)
         {
           long lParam = m.LParam.ToInt32();
-          double x = (double)(lParam & 0xffff);
-          double y = (double)(lParam >> 16);
+          double x = (double) (lParam & 0xffff);
+          double y = (double) (lParam >> 16);
           double arx, ary;
 
-          Rectangle src,dst;
+          Rectangle src, dst;
 
           // Transform back to original window position / aspect ratio
           // in order to know the intended position
@@ -457,12 +554,12 @@ namespace MediaPortal.Player
 
           x -= dst.X;
           y -= dst.Y;
-          arx = (double)dst.Width / (double)src.Width;
-          ary = (double)dst.Height / (double)src.Height;
+          arx = (double) dst.Width/(double) src.Width;
+          ary = (double) dst.Height/(double) src.Height;
           x /= arx;
           y /= ary;
 
-          pt = new System.Drawing.Point((int)x, (int)y);
+          pt = new Point((int) x, (int) y);
 
           if (m.Msg == WM_MOUSEMOVE)
           {

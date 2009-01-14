@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,13 +20,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
@@ -34,27 +36,34 @@ namespace DShowNET
   /// </summary>
   public class Twinhan : IksPropertyUtils
   {
-    int _prevDisEqcType = -1;
-    int _prevFrequency = -1;
-    int _prevPolarisation = -1;
-    IBaseFilter _captureFilter;
-    IntPtr _ptrPmt;
-    IntPtr _ptrDiseqc;
-    IntPtr _ptrDwBytesReturned;
-    IntPtr _thbdaBuf;
-    IntPtr _ptrOutBuffer;
-    IntPtr _ptrOutBuffer2;
-    readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
-    readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
-    readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
-    readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
-    readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;//CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
-    readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;//CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
-    readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;//CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+    private int _prevDisEqcType = -1;
+    private int _prevFrequency = -1;
+    private int _prevPolarisation = -1;
+    private IBaseFilter _captureFilter;
+    private IntPtr _ptrPmt;
+    private IntPtr _ptrDiseqc;
+    private IntPtr _ptrDwBytesReturned;
+    private IntPtr _thbdaBuf;
+    private IntPtr _ptrOutBuffer;
+    private IntPtr _ptrOutBuffer2;
+    private readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
+    private readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
+    private readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
+    private readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
 
-    bool _initialized;
-    bool _isTwinHanCard;
-    bool _camPresent;
+    private readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;
+                          //CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+    private readonly uint THBDA_IOCTL_SET_DiSEqC = 0xaa0001a0;
+                          //CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+
+    private readonly uint THBDA_IOCTL_SET_LNB_DATA = 0xaa000200;
+                          //CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+
+    private bool _initialized;
+    private bool _isTwinHanCard;
+    private bool _camPresent;
+
     public Twinhan(IBaseFilter filter)
       : base(filter)
     {
@@ -77,14 +86,16 @@ namespace DShowNET
         }
       }
       _initialized = true;
-
     }
 
     public bool IsTwinhan
     {
       get
       {
-        if (_initialized) return _isTwinHanCard;
+        if (_initialized)
+        {
+          return _isTwinHanCard;
+        }
 
         bool result = IsTwinhanCard();
         if (result)
@@ -115,7 +126,8 @@ namespace DShowNET
           try
           {
             int thbdaLen = 0x28;
-            Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+            Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);
+              //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
             Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
             Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
             Marshal.WriteByte(thbdaBuf, 8, 0x90);
@@ -126,19 +138,19 @@ namespace DShowNET
             Marshal.WriteByte(thbdaBuf, 13, 0xcb);
             Marshal.WriteByte(thbdaBuf, 14, 0x3d);
             Marshal.WriteByte(thbdaBuf, 15, 0x67);
-            Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_GET_STATE);//control code
-            Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero); //LPVOID inbuffer
-            Marshal.WriteInt32(thbdaBuf, 24, 0);                //DWORD inbuffersize
+            Marshal.WriteInt32(thbdaBuf, 16, (int) THBDA_IOCTL_CI_GET_STATE); //control code
+            Marshal.WriteInt32(thbdaBuf, 20, (int) IntPtr.Zero); //LPVOID inbuffer
+            Marshal.WriteInt32(thbdaBuf, 24, 0); //DWORD inbuffersize
             Marshal.WriteInt32(thbdaBuf, 28, ptrOutBuffer.ToInt32()); //LPVOID outbuffer
-            Marshal.WriteInt32(thbdaBuf, 32, 4096);                //DWORD outbuffersize
-            Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//LPVOID bytesreturned
+            Marshal.WriteInt32(thbdaBuf, 32, 4096); //DWORD outbuffersize
+            Marshal.WriteInt32(thbdaBuf, 36, (int) ptrDwBytesReturned); //LPVOID bytesreturned
 
             int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
             if (hr == 0)
             {
               int bytesReturned = Marshal.ReadInt32(ptrDwBytesReturned);
-              CIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 0);
-              MMIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 4);
+              CIState = (uint) Marshal.ReadInt32(ptrOutBuffer, 0);
+              MMIState = (uint) Marshal.ReadInt32(ptrOutBuffer, 4);
               Log.Info("Twinhan: CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
             }
             else
@@ -159,11 +171,17 @@ namespace DShowNET
 
     public bool IsCamPresent()
     {
-      if (_initialized) return _camPresent;
+      if (_initialized)
+      {
+        return _camPresent;
+      }
       uint CIState;
       uint MMIState;
       GetCAMStatus(out CIState, out MMIState);
-      if (CIState != 0) return true;
+      if (CIState != 0)
+      {
+        return true;
+      }
       return false;
     }
 
@@ -174,7 +192,10 @@ namespace DShowNET
 
     public bool IsTwinhanCard()
     {
-      if (_initialized) return _isTwinHanCard;
+      if (_initialized)
+      {
+        return _isTwinHanCard;
+      }
       Log.Info("Twinhan: check for Twinhan driver");
 
       bool success = false;
@@ -185,7 +206,8 @@ namespace DShowNET
         IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
         try
         {
-          Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+          Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);
+            //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
           Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
           Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
           Marshal.WriteByte(thbdaBuf, 8, 0x90);
@@ -196,12 +218,12 @@ namespace DShowNET
           Marshal.WriteByte(thbdaBuf, 13, 0xcb);
           Marshal.WriteByte(thbdaBuf, 14, 0x3d);
           Marshal.WriteByte(thbdaBuf, 15, 0x67);
-          Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CHECK_INTERFACE);//control code
-          Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero);
+          Marshal.WriteInt32(thbdaBuf, 16, (int) THBDA_IOCTL_CHECK_INTERFACE); //control code
+          Marshal.WriteInt32(thbdaBuf, 20, (int) IntPtr.Zero);
           Marshal.WriteInt32(thbdaBuf, 24, 0);
-          Marshal.WriteInt32(thbdaBuf, 28, (int)IntPtr.Zero);
+          Marshal.WriteInt32(thbdaBuf, 28, (int) IntPtr.Zero);
           Marshal.WriteInt32(thbdaBuf, 32, 0);
-          Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
+          Marshal.WriteInt32(thbdaBuf, 36, (int) ptrDwBytesReturned);
 
           IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
           if (pin != null)
@@ -236,17 +258,36 @@ namespace DShowNET
 
     public void SendPMT(string camType, uint videoPid, uint audioPid, byte[] caPMT, int caPMTLen)
     {
-      if (IsCamPresent() == false) return;
+      if (IsCamPresent() == false)
+      {
+        return;
+      }
       int camNumber = 0;
       camType = camType.ToLower();
-      if (camType.ToLower() == "default") camNumber = 0;
-      if (camType.ToLower() == "viaccess") camNumber = 1;
-      else if (camType.ToLower() == "aston") camNumber = 2;
-      else if (camType.ToLower() == "conax") camNumber = 3;
-      else if (camType.ToLower() == "cryptoworks") camNumber = 4;
+      if (camType.ToLower() == "default")
+      {
+        camNumber = 0;
+      }
+      if (camType.ToLower() == "viaccess")
+      {
+        camNumber = 1;
+      }
+      else if (camType.ToLower() == "aston")
+      {
+        camNumber = 2;
+      }
+      else if (camType.ToLower() == "conax")
+      {
+        camNumber = 3;
+      }
+      else if (camType.ToLower() == "cryptoworks")
+      {
+        camNumber = 4;
+      }
 
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(caPMTLen);
-      Log.Info("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, caPMTLen, videoPid, audioPid);
+      Log.Info("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType, camNumber, caPMTLen,
+               videoPid, audioPid);
 
       string line = "";
       for (int i = 0; i < caPMTLen; ++i)
@@ -256,7 +297,9 @@ namespace DShowNET
       }
       Log.Info("Twinhan: capmt:{0}", line);
       if (caPMT.Length == 0)
+      {
         return;
+      }
       Marshal.Copy(caPMT, 0, ptrPMT, caPMTLen);
       IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
       if (ptrDwBytesReturned == IntPtr.Zero)
@@ -280,7 +323,8 @@ namespace DShowNET
         Marshal.FreeCoTaskMem(ksBla);
         return;
       }
-      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);
+        //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(thbdaBuf, 8, 0x90);
@@ -291,12 +335,12 @@ namespace DShowNET
       Marshal.WriteByte(thbdaBuf, 13, 0xcb);
       Marshal.WriteByte(thbdaBuf, 14, 0x3d);
       Marshal.WriteByte(thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_SEND_PMT);//dwIoControlCode
-      Marshal.WriteInt32(thbdaBuf, 20, (int)ptrPMT);//lpInBuffer
-      Marshal.WriteInt32(thbdaBuf, 24, caPMTLen);//nInBufferSize
-      Marshal.WriteInt32(thbdaBuf, 28, 0);//lpOutBuffer
-      Marshal.WriteInt32(thbdaBuf, 32, 0);//nOutBufferSize
-      Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//lpBytesReturned
+      Marshal.WriteInt32(thbdaBuf, 16, (int) THBDA_IOCTL_CI_SEND_PMT); //dwIoControlCode
+      Marshal.WriteInt32(thbdaBuf, 20, (int) ptrPMT); //lpInBuffer
+      Marshal.WriteInt32(thbdaBuf, 24, caPMTLen); //nInBufferSize
+      Marshal.WriteInt32(thbdaBuf, 28, 0); //lpOutBuffer
+      Marshal.WriteInt32(thbdaBuf, 32, 0); //nOutBufferSize
+      Marshal.WriteInt32(thbdaBuf, 36, (int) ptrDwBytesReturned); //lpBytesReturned
 
       IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -305,7 +349,7 @@ namespace DShowNET
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-          int hr = propertySet.RemoteSet(ref propertyGuid, 0, ksBla, 0x18, thbdaBuf, (uint)thbdaLen);
+          int hr = propertySet.RemoteSet(ref propertyGuid, 0, ksBla, 0x18, thbdaBuf, (uint) thbdaLen);
           int back = Marshal.ReadInt32(ptrDwBytesReturned);
           int ksBlaVal = Marshal.ReadInt32(ksBla);
           if (hr != 0)
@@ -313,7 +357,9 @@ namespace DShowNET
             Log.Info("Twinhan: SetStructure() failed 0x{0:X}", hr);
           }
           else
+          {
             Log.Info("Twinhan: SetStructure() returned ok 0x{0:X}", hr);
+          }
           DirectShowUtil.ReleaseComObject(propertySet);
         }
         DirectShowUtil.ReleaseComObject(pin);
@@ -324,11 +370,14 @@ namespace DShowNET
       Marshal.FreeCoTaskMem(ksBla);
     }
 
-    protected override void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
+    protected override void SetStructure(Guid guidPropSet, uint propId, Type structureType, object structValue)
     {
       Guid propertyGuid = guidPropSet;
       IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
-      if (pin == null) return;
+      if (pin == null)
+      {
+        return;
+      }
       IKsPropertySet propertySet = pin as IKsPropertySet;
       if (propertySet == null)
       {
@@ -339,17 +388,21 @@ namespace DShowNET
       Log.Info("Twinhan: size:{0}", iSize);
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
       Marshal.StructureToPtr(structValue, pDataReturned, true);
-      int hr = propertySet.RemoteSet(ref propertyGuid, propId, IntPtr.Zero, 0, pDataReturned, (uint)Marshal.SizeOf(structureType));
+      int hr = propertySet.RemoteSet(ref propertyGuid, propId, IntPtr.Zero, 0, pDataReturned,
+                                     (uint) Marshal.SizeOf(structureType));
       if (hr != 0)
       {
         Log.Info("Twinhan: SetStructure() failed 0x{0:X}", hr);
       }
       else
+      {
         Log.Info("Twinhan: SetStructure() returned ok 0x{0:X}", hr);
+      }
       Marshal.FreeCoTaskMem(pDataReturned);
     }
 
-    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int disEqcType, int lowOsc, int hiOsc)
+    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int disEqcType,
+                                 int lowOsc, int hiOsc)
     {
       Log.Debug("Twinhan: DiSEqC command for type={0}, freq={1}, pol={2}", disEqcType, frequency, polarisation);
       //if (_prevDisEqcType == disEqcType && _prevFrequency == frequency && _prevPolarisation == polarisation)
@@ -360,7 +413,7 @@ namespace DShowNET
       //Only universal
       Int32 LNBLOFLowBand = lowOsc;
       Int32 LNBLOFHighBand = hiOsc;
-      Int32 LNBLOFHiLoSW = switchingFrequency / 1000;
+      Int32 LNBLOFHiLoSW = switchingFrequency/1000;
 
       byte disEqcPort = 0;
       switch (disEqcType)
@@ -389,7 +442,7 @@ namespace DShowNET
       }
       byte turnon22Khz = 0;
       bool isHiBand = false;
-      if (frequency >= (LNBLOFHiLoSW * 1000))
+      if (frequency >= (LNBLOFHiLoSW*1000))
       {
         isHiBand = true;
         turnon22Khz = 2;
@@ -405,23 +458,27 @@ namespace DShowNET
       _prevPolarisation = polarisation;
     }
 
-    void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort)
+    private void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz,
+                            int disEqcPort)
     {
-      Log.Info("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
+      Log.Info("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz,
+               LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
-      Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0));              // 0: LNB_POWER
-      Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte) (lnbPower ? 1 : 0)); // 0: LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 1, 0); // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
       Marshal.WriteByte(_ptrDiseqc, 2, 0);
       Marshal.WriteByte(_ptrDiseqc, 3, 0);
       Marshal.WriteInt32(_ptrDiseqc, 4, LNBLOFLowBand); // 4: ulLNBLOFLowBand   LNBLOF LowBand MHz
-      Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand);// 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
+      Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand); // 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
-      Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
-      Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
+      Marshal.WriteByte(_ptrDiseqc, 16, (byte) turnon22Khz);
+        //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
+      Marshal.WriteByte(_ptrDiseqc, 17, (byte) disEqcPort); //17: DiSEqC_Port
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
-      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);
+        //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(_thbdaBuf, 8, 0x90);
@@ -432,12 +489,12 @@ namespace DShowNET
       Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
       Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
       Marshal.WriteByte(_thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_SET_LNB_DATA);//dwIoControlCode
-      Marshal.WriteInt32(_thbdaBuf, 20, (int)_ptrDiseqc.ToInt32());//lpInBuffer
-      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen);//nInBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
-      Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+      Marshal.WriteInt32(_thbdaBuf, 16, (int) THBDA_IOCTL_SET_LNB_DATA); //dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int) _ptrDiseqc.ToInt32()); //lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen); //nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, (int) IntPtr.Zero); //lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, 0); //nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int) _ptrDwBytesReturned); //lpBytesReturned
 
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);
       if (pin != null)
@@ -452,7 +509,9 @@ namespace DShowNET
             Log.Info("TwinHan SetLNB failed 0x{0:X}", hr);
           }
           else
+          {
             Log.Info("TwinHan SetLNB ok 0x{0:X}", hr);
+          }
           DirectShowUtil.ReleaseComObject(propertySet);
         }
         DirectShowUtil.ReleaseComObject(pin);
@@ -461,7 +520,7 @@ namespace DShowNET
 
     public void SendDiseqcCommandTest(byte disEqcPort, bool isHiBand, int frequency, int polarisation)
     {
-      int antennaNr = (int)disEqcPort;
+      int antennaNr = (int) disEqcPort;
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
 
 
@@ -478,9 +537,9 @@ namespace DShowNET
 
       bool isHorizontal = (polarisation == 0); // Polarisation.LinearH                                 
       byte cmd = 0xf0;
-      cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((isHorizontal) ? 2 : 0);
-      cmd |= (byte)((antennaNr - 1) << 2);
+      cmd |= (byte) (hiBand ? 1 : 0);
+      cmd |= (byte) ((isHorizontal) ? 2 : 0);
+      cmd |= (byte) ((antennaNr - 1) << 2);
       byte[] diseqc = new byte[4];
       diseqc[0] = 0xe0;
       diseqc[1] = 0x10;
@@ -499,8 +558,10 @@ namespace DShowNET
       int thbdaLen = 0x28;
       int disEqcLen = 16;
       for (int i = 0; i < 12; ++i)
+      {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, 0);
-      Marshal.WriteInt32(_ptrDiseqc, 0, (int)diSEqC.Length);//command len
+      }
+      Marshal.WriteInt32(_ptrDiseqc, 0, (int) diSEqC.Length); //command len
       for (int i = 0; i < diSEqC.Length; ++i)
       {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
@@ -511,7 +572,8 @@ namespace DShowNET
         byte k = Marshal.ReadByte(_ptrDiseqc, i);
         line += String.Format("{0:X} ", k);
       }
-      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);
+        //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(_thbdaBuf, 8, 0x90);
@@ -522,12 +584,12 @@ namespace DShowNET
       Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
       Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
       Marshal.WriteByte(_thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(_thbdaBuf, 16, (int)THBDA_IOCTL_SET_DiSEqC);//dwIoControlCode
-      Marshal.WriteInt32(_thbdaBuf, 20, (int)_ptrDiseqc.ToInt32());//lpInBuffer
-      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen);//nInBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 28, (int)IntPtr.Zero);//lpOutBuffer
-      Marshal.WriteInt32(_thbdaBuf, 32, 0);//nOutBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+      Marshal.WriteInt32(_thbdaBuf, 16, (int) THBDA_IOCTL_SET_DiSEqC); //dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, (int) _ptrDiseqc.ToInt32()); //lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, disEqcLen); //nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, (int) IntPtr.Zero); //lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, 0); //nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int) _ptrDwBytesReturned); //lpBytesReturned
 
       bool success = false;
       IPin pin = DsFindPin.ByDirection(_captureFilter, PinDirection.Input, 0);

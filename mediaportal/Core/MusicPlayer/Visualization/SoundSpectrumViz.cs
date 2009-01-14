@@ -24,13 +24,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using Un4seen.Bass;
 
 namespace MediaPortal.Visualization
 {
@@ -41,21 +41,31 @@ namespace MediaPortal.Visualization
     // SS_GetSoundData_Params -- see SS_GetSoundData.
     public struct SS_GetSoundData_Params
     {
-      public int mSize;					// Init to sizeof( SS_GetSoundData_Params )
+      public int mSize; // Init to sizeof( SS_GetSoundData_Params )
 
       // PCM data...
-      public int inN;					    // Number of samples requested (ie, number of elements in outSamples[])
-      public float inScale;    			// Scales what gets returned in outSamples[];
-      public IntPtr outSamples;	    	// IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
-      public int outN;					// Number of elements of outSamples filled/returned by the SSVisualAPI host.
+      public int inN; // Number of samples requested (ie, number of elements in outSamples[])
+      public float inScale; // Scales what gets returned in outSamples[];
+
+      public IntPtr outSamples;
+                    // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
+
+      public int outN; // Number of elements of outSamples filled/returned by the SSVisualAPI host.
 
       // FFT data...
-      public int inNumBins;				// Number of bins requested (ie, the number of elements in outFFT[])
-      public int inStepsPerBin;			// The freq span of the spectrum -- this is used when an FFT array is already available.
-      public int inStartBin;				// The bin num the spectrum starts at -- this is used when an FFT array is already available.
-      public IntPtr inFFTParams;          // SSFFTParams* - Params to use for an FFT -- this is used when only a PCM array is available.
-      public IntPtr outFFT;				// IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
-      public int outNumBins;				// Number of elements of outFT filled/returned by the SSVisualAPI host.
+      public int inNumBins; // Number of bins requested (ie, the number of elements in outFFT[])
+      public int inStepsPerBin; // The freq span of the spectrum -- this is used when an FFT array is already available.
+
+      public int inStartBin;
+                 // The bin num the spectrum starts at -- this is used when an FFT array is already available.
+
+      public IntPtr inFFTParams;
+                    // SSFFTParams* - Params to use for an FFT -- this is used when only a PCM array is available.
+
+      public IntPtr outFFT;
+                    // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
+
+      public int outNumBins; // Number of elements of outFT filled/returned by the SSVisualAPI host.
     } ;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -66,7 +76,7 @@ namespace MediaPortal.Visualization
       public Int32 mWidth;
       public Int32 mHeight;
       public IntPtr mBits;
-    };
+    } ;
 
     public const int SS_GetSoundData = 1197831251;
 
@@ -74,7 +84,10 @@ namespace MediaPortal.Visualization
     internal static extern bool IsVisualizationInstalled(string vizName);
 
     [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
-    internal static extern bool InitEngine([MarshalAs(UnmanagedType.LPWStr)] string vizName, VisualizationBase.OutputContextType outputContextType, SSCallbackDelegate ssCallback, IntPtr hOutput, ref VisualizationBase.RECT rect);
+    internal static extern bool InitEngine([MarshalAs(UnmanagedType.LPWStr)] string vizName,
+                                           VisualizationBase.OutputContextType outputContextType,
+                                           SSCallbackDelegate ssCallback, IntPtr hOutput,
+                                           ref VisualizationBase.RECT rect);
 
     [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
     internal static extern bool IsInitialized();
@@ -83,7 +96,8 @@ namespace MediaPortal.Visualization
     internal static extern int Render();
 
     [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
-    internal static extern bool SetOutput(string vizName, VisualizationBase.OutputContextType outputContextType, IntPtr hOutput, ref VisualizationBase.RECT rect);
+    internal static extern bool SetOutput(string vizName, VisualizationBase.OutputContextType outputContextType,
+                                          IntPtr hOutput, ref VisualizationBase.RECT rect);
 
     [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
     internal static extern bool Resize(IntPtr hVizWndOrBuffer, ref VisualizationBase.RECT rect, bool isFullscreen);
@@ -96,8 +110,9 @@ namespace MediaPortal.Visualization
     [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
     internal static extern void ShutDown();
 
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate int SSCallbackDelegate(int inCallbackParam, int inMessage, int inParam1, int inParam2);
+
     internal static SSCallbackDelegate SSCallback = null;
 
     #endregion
@@ -132,7 +147,9 @@ namespace MediaPortal.Visualization
       Log.Info("Visualization Manager: Creating {0} callback...", vizPluginInfo.Name);
       SoundSpectrumInterop.SSCallback = new SoundSpectrumInterop.SSCallbackDelegate(SSCallbackFunc);
       SSVisualizationName = vizPluginInfo.Name;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+      using (
+        Settings xmlreader =
+          new Settings(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml")))
       {
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
       }
@@ -169,20 +186,26 @@ namespace MediaPortal.Visualization
         rect.right = VisualizationWindow.Width;
         rect.bottom = VisualizationWindow.Height;
 
-        VisualizationBase.OutputContextType outputType = VisualizationWindow.OutputContextType;
-        result = SoundSpectrumInterop.InitEngine(SSVisualizationName, outputType, SoundSpectrumInterop.SSCallback, VisualizationWindow.CompatibleDC, ref rect);
+        OutputContextType outputType = VisualizationWindow.OutputContextType;
+        result = SoundSpectrumInterop.InitEngine(SSVisualizationName, outputType, SoundSpectrumInterop.SSCallback,
+                                                 VisualizationWindow.CompatibleDC, ref rect);
 
         // Soundspectrum Graphics always show the cursor, so let's hide it here
         if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
+        {
           Cursor.Hide();
+        }
 
-        Log.Info("Visualization Manager: {0} visualization engine initialization {1}", VizPluginInfo.Name, (result ? "succeeded." : "failed!"));
+        Log.Info("Visualization Manager: {0} visualization engine initialization {1}", VizPluginInfo.Name,
+                 (result ? "succeeded." : "failed!"));
       }
 
       catch (Exception ex)
       {
         Console.WriteLine("CreateGForceVisualization failed with the following exception: {0}", ex);
-        Log.Error("  Visualization Manager: {0} visualization engine initialization failed with the following exception {1}", VizPluginInfo.Name, ex);
+        Log.Error(
+          "  Visualization Manager: {0} visualization engine initialization failed with the following exception {1}",
+          VizPluginInfo.Name, ex);
         return false;
       }
 
@@ -210,7 +233,9 @@ namespace MediaPortal.Visualization
       {
         // Soundspectrum Graphics always show the cursor, so let's hide it here
         if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
+        {
           Cursor.Hide();
+        }
 
         return SoundSpectrumInterop.Render();
       }
@@ -237,7 +262,9 @@ namespace MediaPortal.Visualization
       try
       {
         if (VisualizationWindow == null || !VisualizationWindow.Visible)
+        {
           return 0;
+        }
 
         int sleepMS = SoundSpectrumInterop.Render();
         return sleepMS;
@@ -277,21 +304,27 @@ namespace MediaPortal.Visualization
       base.WindowChanged(vizWindow);
 
       if (vizWindow == null)
+      {
         return false;
+      }
 
       bool result = SetOutputContext(VisualizationWindow.OutputContextType);
       return result;
     }
 
-    public override bool SetOutputContext(VisualizationBase.OutputContextType outputType)
+    public override bool SetOutputContext(OutputContextType outputType)
     {
       if (VisualizationWindow == null)
+      {
         return false;
+      }
 
       // If width or height are 0 the call will fail.  If width or height are equal to 1 
       // the window is in transition.  
       if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
+      {
         return false;
+      }
 
       RECT rect = new RECT();
       rect.left = 0;
@@ -299,18 +332,21 @@ namespace MediaPortal.Visualization
       rect.right = VisualizationWindow.Width;
       rect.bottom = VisualizationWindow.Height;
 
-      bool result = SoundSpectrumInterop.SetOutput(SSVisualizationName, outputType, VisualizationWindow.CompatibleDC, ref rect);
-      
+      bool result = SoundSpectrumInterop.SetOutput(SSVisualizationName, outputType, VisualizationWindow.CompatibleDC,
+                                                   ref rect);
+
       // Soundspectrum Graphics always show the cursor, so let's hide it here
       if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
+      {
         Cursor.Hide();
+      }
 
       return result;
     }
 
     #region SoundSpectrum Callback
 
-    int NotImplemented = -55012;
+    private int NotImplemented = -55012;
     //int NoError = 0;
 
     private int SSCallbackFunc(int inCallbackParam, int inMessage, int inParam1, int inParam2)
@@ -327,9 +363,11 @@ namespace MediaPortal.Visualization
       if (inMessage == SoundSpectrumInterop.SS_GetSoundData)
       {
         SoundSpectrumInterop.SS_GetSoundData_Params soundDataParams;
-        soundDataParams = (SoundSpectrumInterop.SS_GetSoundData_Params)Marshal.PtrToStructure((IntPtr)inParam1, typeof(SoundSpectrumInterop.SS_GetSoundData_Params));
+        soundDataParams =
+          (SoundSpectrumInterop.SS_GetSoundData_Params)
+          Marshal.PtrToStructure((IntPtr) inParam1, typeof (SoundSpectrumInterop.SS_GetSoundData_Params));
 
-        if (!IsPreviewVisualization && Bass.State != MediaPortal.Player.BassAudioEngine.PlayState.Playing)
+        if (!IsPreviewVisualization && Bass.State != BassAudioEngine.PlayState.Playing)
         {
           soundDataParams.outN = 0;
           return 0;
@@ -341,13 +379,15 @@ namespace MediaPortal.Visualization
         bool hasData = false;
 
         if (!_IsPreviewVisualization)
-          stream = (int)Bass.GetCurrentVizStream();
+        {
+          stream = (int) Bass.GetCurrentVizStream();
+        }
 
         if (soundDataParams.inN > 0)
         {
           // Set the PCM data
 
-          int reqDataLen = soundDataParams.inN * multiplier;
+          int reqDataLen = soundDataParams.inN*multiplier;
           float[] pcm = new float[reqDataLen];
           int len = 0;
 
@@ -361,27 +401,27 @@ namespace MediaPortal.Visualization
               return 0;
             }
 
-            fDataLen = len / multiplier;
+            fDataLen = len/multiplier;
           }
 
-        // We're in preview mode so we'll generate dummy FFT data so the viz
-          // looks like it's doing something...
+            // We're in preview mode so we'll generate dummy FFT data so the viz
+            // looks like it's doing something...
           else
           {
             Random rand = new Random();
 
             for (int i = 0; i < pcm.Length; i++)
             {
-              float val = 1.0f / (float)rand.Next(0, 32768);
+              float val = 1.0f/(float) rand.Next(0, 32768);
 
               // Left Channel
-              if (i % 2 == 0)
+              if (i%2 == 0)
               {
                 //pcm[i] = (short)rand.Next(-32767, 1);
                 pcm[i] = val;
               }
 
-            // Right Channel
+                // Right Channel
               else
               {
                 //pcm[i] = (short)rand.Next(0, 32767);
@@ -393,7 +433,7 @@ namespace MediaPortal.Visualization
           }
 
           // Copy the PCM data to the SS_GetSoundData_Params object
-          IntPtr pPCMData = (IntPtr)soundDataParams.outSamples;
+          IntPtr pPCMData = (IntPtr) soundDataParams.outSamples;
           Marshal.Copy(pcm, 0, pPCMData, fDataLen);
           soundDataParams.outN = fDataLen;
           hasData = true;
@@ -415,33 +455,33 @@ namespace MediaPortal.Visualization
           int actualFFTSize = 512;
           const int fftScalingFactor = 100000;
 
-          Un4seen.Bass.BASSData binSizeFlag = Un4seen.Bass.BASSData.BASS_DATA_FFT1024;
+          BASSData binSizeFlag = BASSData.BASS_DATA_FFT1024;
 
           if (totalRequestedBins < 512)
           {
-            binSizeFlag = Un4seen.Bass.BASSData.BASS_DATA_FFT512;
+            binSizeFlag = BASSData.BASS_DATA_FFT512;
             actualFFTSize = 256;
           }
 
           else if (totalRequestedBins < 1024)
           {
-            binSizeFlag = Un4seen.Bass.BASSData.BASS_DATA_FFT1024;
+            binSizeFlag = BASSData.BASS_DATA_FFT1024;
             actualFFTSize = 512;
           }
 
           else if (totalRequestedBins < 2048)
           {
-            binSizeFlag = Un4seen.Bass.BASSData.BASS_DATA_FFT2048;
+            binSizeFlag = BASSData.BASS_DATA_FFT2048;
             actualFFTSize = 1024;
           }
 
           else if (totalRequestedBins < 4096)
           {
-            binSizeFlag = Un4seen.Bass.BASSData.BASS_DATA_FFT4096;
+            binSizeFlag = BASSData.BASS_DATA_FFT4096;
             actualFFTSize = 2048;
           }
 
-          float[] fft = new float[actualFFTSize * 2];
+          float[] fft = new float[actualFFTSize*2];
           float[] outFFT = null;
 
           fDataLen = requestedFFTBins;
@@ -449,18 +489,18 @@ namespace MediaPortal.Visualization
 
           if (!IsPreviewVisualization)
           {
-            bytesRead = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fft[0], (int)binSizeFlag);
+            bytesRead = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fft[0], (int) binSizeFlag);
 
             // The number of "bins" requested is likely to be smaller than the number we get
             // from BASS so we'll need to average some of the bins...
             outFFT = new float[totalRequestedBins];
-            float fStep = (float)actualFFTSize / (float)totalRequestedBins;
+            float fStep = (float) actualFFTSize/(float) totalRequestedBins;
             int lastBin = 0;
 
             for (int i = 0; i < outFFT.Length; i++)
             {
               int startBin = lastBin;
-              int stopBin = (int)(((float)(i + 1) * fStep) + .5f);
+              int stopBin = (int) (((float) (i + 1)*fStep) + .5f);
               int totalBins = stopBin - startBin;
               float tempBinValTotal = 0;
               float avgBinVal = 0;
@@ -471,17 +511,16 @@ namespace MediaPortal.Visualization
                 tempBinValTotal += curFftVal;
               }
 
-              avgBinVal = tempBinValTotal / totalBins;
+              avgBinVal = tempBinValTotal/totalBins;
               lastBin = stopBin;
 
               // Scale the output to it's large enough to be visible
-              outFFT[i] = avgBinVal * fftScalingFactor;
+              outFFT[i] = avgBinVal*fftScalingFactor;
             }
-
           }
 
-      // We're in preview mode so we'll generate dummy FFT data so the viz
-          // looks like it's doing something...
+            // We're in preview mode so we'll generate dummy FFT data so the viz
+            // looks like it's doing something...
           else
           {
             outFFT = new float[totalRequestedBins];
@@ -489,13 +528,13 @@ namespace MediaPortal.Visualization
 
             for (int i = 0; i < outFFT.Length; i++)
             {
-              float val = (float)rand.Next(100, fftScalingFactor);
+              float val = (float) rand.Next(100, fftScalingFactor);
               outFFT[i] = val;
             }
           }
 
           // Copy the FFT data to the SS_GetSoundData_Params object
-          Marshal.Copy(outFFT, soundDataParams.inStartBin, (IntPtr)soundDataParams.outFFT, fDataLen);
+          Marshal.Copy(outFFT, soundDataParams.inStartBin, (IntPtr) soundDataParams.outFFT, fDataLen);
           soundDataParams.outNumBins = fDataLen;
           hasData = true;
         }
@@ -509,12 +548,14 @@ namespace MediaPortal.Visualization
         if (hasData)
         {
           soundDataParams.mSize = Marshal.SizeOf(soundDataParams);
-          Marshal.StructureToPtr(soundDataParams, (IntPtr)inParam1, false);
+          Marshal.StructureToPtr(soundDataParams, (IntPtr) inParam1, false);
         }
       }
 
       else
+      {
         returnCode = NotImplemented;
+      }
 
       return returnCode;
     }

@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public class ReverseAction : TimelineAction
-	{
-		#region Constructors
+  public class ReverseAction : TimelineAction
+  {
+    #region Constructors
 
-		public ReverseAction()
-		{
-		}
+    public ReverseAction()
+    {
+    }
 
-		#endregion Constructors
-	}
+    #endregion Constructors
+  }
 }

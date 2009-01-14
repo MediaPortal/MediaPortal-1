@@ -23,16 +23,15 @@
 
 #endregion
 
-using System;
 using System.IO;
 
 namespace MediaPortal.Playlists
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class PlayListFactory
-	{
+  /// <summary>
+  /// 
+  /// </summary>
+  public class PlayListFactory
+  {
     public static IPlayListIO CreateIO(string fileName)
     {
       string extension = GetLowerCaseExtension(fileName);
@@ -61,14 +60,26 @@ namespace MediaPortal.Playlists
       return extension.ToLower();
     }
 
-		public static bool IsPlayList(string fileName)
-		{
-      string extension = GetLowerCaseExtension(fileName); 
-      if (extension == ".m3u") return true;
-			if (extension==".pls") return true;
-			if (extension==".b4s") return true;
-			if (extension==".wpl") return true;
-			return false;
-		}
-	}
+    public static bool IsPlayList(string fileName)
+    {
+      string extension = GetLowerCaseExtension(fileName);
+      if (extension == ".m3u")
+      {
+        return true;
+      }
+      if (extension == ".pls")
+      {
+        return true;
+      }
+      if (extension == ".b4s")
+      {
+        return true;
+      }
+      if (extension == ".wpl")
+      {
+        return true;
+      }
+      return false;
+    }
+  }
 }

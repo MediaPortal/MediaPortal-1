@@ -23,7 +23,6 @@
 
 #endregion
 
-
 //
 //  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
 //  KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
@@ -52,50 +51,46 @@
 //
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using Yeti.MMedia;
-using Yeti.MMedia.Mp3;
-using WaveLib;
+using MediaPortal.UserInterface.Controls;
+using Yeti.Lame;
 
 namespace Yeti.MMedia.Mp3
 {
   /// <summary>
   /// Summary description for EditMp3Writer.
   /// </summary>
-  public class EditMp3Writer : System.Windows.Forms.UserControl, IEditAudioWriterConfig
+  public class EditMp3Writer : UserControl, IEditAudioWriterConfig
   {
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
-    private Yeti.MMedia.EditFormat editFormat1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxMpegVersion;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxBitRate;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxVBR;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxMaxBitRate;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxVBRMethod;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAvgBitrate;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCopyRight;
-    private System.Windows.Forms.ToolTip toolTip1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCRC;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOriginal;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPrivate;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.Windows.Forms.TrackBar trackBarVBRQuality;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxVBR;
-    private System.ComponentModel.IContainer components;
+    private MPTabControl tabControl1;
+    private MPTabPage tabPage1;
+    private MPTabPage tabPage2;
+    private EditFormat editFormat1;
+    private MPLabel label1;
+    private MPLabel label2;
+    private MPTextBox textBoxMpegVersion;
+    private MPComboBox comboBoxBitRate;
+    private MPCheckBox checkBoxVBR;
+    private MPComboBox comboBoxMaxBitRate;
+    private MPLabel label3;
+    private MPComboBox comboBoxVBRMethod;
+    private MPLabel label4;
+    private MPComboBox comboBoxAvgBitrate;
+    private MPLabel label5;
+    private MPCheckBox checkBoxCopyRight;
+    private ToolTip toolTip1;
+    private MPCheckBox checkBoxCRC;
+    private MPCheckBox checkBoxOriginal;
+    private MPCheckBox checkBoxPrivate;
+    private MPLabel label6;
+    private TrackBar trackBarVBRQuality;
+    private MPLabel label7;
+    private MPLabel label8;
+    private MPGroupBox groupBoxVBR;
+    private IContainer components;
 
-    private Lame.BE_CONFIG m_Config = null;
+    private BE_CONFIG m_Config = null;
     private const string Mpeg1BitRates = "32,40,48,56,64,80,96,112,128,160,192,224,256,320";
     private const string Mpeg2BitRates = "8,16,24,32,40,48,56,64,80,96,112,128,144,160";
 
@@ -104,7 +99,7 @@ namespace Yeti.MMedia.Mp3
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-      m_Config = new Yeti.Lame.BE_CONFIG(editFormat1.Format);
+      m_Config = new BE_CONFIG(editFormat1.Format);
       DoSetInitialValues();
     }
 
@@ -126,6 +121,7 @@ namespace Yeti.MMedia.Mp3
     private bool m_FireConfigChangeEvent = true;
 
     #region Component Designer generated code
+
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -162,7 +158,7 @@ namespace Yeti.MMedia.Mp3
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.groupBoxVBR.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarVBRQuality)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarVBRQuality)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -282,7 +278,8 @@ namespace Yeti.MMedia.Mp3
       // 
       // label8
       // 
-      this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold,
+                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
       this.label8.Location = new System.Drawing.Point(256, 64);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(32, 16);
@@ -291,7 +288,8 @@ namespace Yeti.MMedia.Mp3
       // 
       // label7
       // 
-      this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold,
+                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
       this.label7.Location = new System.Drawing.Point(152, 64);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(56, 16);
@@ -301,13 +299,15 @@ namespace Yeti.MMedia.Mp3
       // comboBoxVBRMethod
       // 
       this.comboBoxVBRMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxVBRMethod.Items.AddRange(new object[] {
-                                                           "NONE",
-                                                           "DEFAULT",
-                                                           "OLD",
-                                                           "NEW",
-                                                           "MTRH",
-                                                           "ABR"});
+      this.comboBoxVBRMethod.Items.AddRange(new object[]
+                                              {
+                                                "NONE",
+                                                "DEFAULT",
+                                                "OLD",
+                                                "NEW",
+                                                "MTRH",
+                                                "ABR"
+                                              });
       this.comboBoxVBRMethod.Location = new System.Drawing.Point(8, 32);
       this.comboBoxVBRMethod.Name = "comboBoxVBRMethod";
       this.comboBoxVBRMethod.Size = new System.Drawing.Size(121, 21);
@@ -418,10 +418,10 @@ namespace Yeti.MMedia.Mp3
       this.tabPage1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.groupBoxVBR.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.trackBarVBRQuality)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarVBRQuality)).EndInit();
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     #region IEditAudioWriterConfig Members
@@ -430,7 +430,7 @@ namespace Yeti.MMedia.Mp3
     {
       get
       {
-        Lame.BE_CONFIG cfg = new Yeti.Lame.BE_CONFIG(editFormat1.Format, uint.Parse(comboBoxBitRate.SelectedItem.ToString()));
+        BE_CONFIG cfg = new BE_CONFIG(editFormat1.Format, uint.Parse(comboBoxBitRate.SelectedItem.ToString()));
         cfg.format.lhv1.bCopyright = checkBoxCopyRight.Checked ? 1 : 0;
         cfg.format.lhv1.bCRC = checkBoxCRC.Checked ? 1 : 0;
         cfg.format.lhv1.bOriginal = checkBoxOriginal.Checked ? 1 : 0;
@@ -440,11 +440,11 @@ namespace Yeti.MMedia.Mp3
           cfg.format.lhv1.bEnableVBR = 1;
           if (comboBoxVBRMethod.SelectedIndex > 0)
           {
-            cfg.format.lhv1.nVbrMethod = (Lame.VBRMETHOD)(comboBoxVBRMethod.SelectedIndex + 1);
+            cfg.format.lhv1.nVbrMethod = (VBRMETHOD) (comboBoxVBRMethod.SelectedIndex + 1);
           }
           else
           {
-            cfg.format.lhv1.nVbrMethod = Lame.VBRMETHOD.VBR_METHOD_DEFAULT;
+            cfg.format.lhv1.nVbrMethod = VBRMETHOD.VBR_METHOD_DEFAULT;
           }
           cfg.format.lhv1.dwMaxBitrate = uint.Parse(comboBoxMaxBitRate.SelectedItem.ToString());
           if (cfg.format.lhv1.dwMaxBitrate < cfg.format.lhv1.dwBitrate)
@@ -467,7 +467,7 @@ namespace Yeti.MMedia.Mp3
       set
       {
         editFormat1.Format = value.Format;
-        m_Config = ((Mp3WriterConfig)value).Mp3Config;
+        m_Config = ((Mp3WriterConfig) value).Mp3Config;
         DoSetInitialValues();
       }
     }
@@ -483,20 +483,14 @@ namespace Yeti.MMedia.Mp3
 
     public string ControlName
     {
-      get
-      {
-        return "MP3 Writer config";
-      }
+      get { return "MP3 Writer config"; }
     }
 
-    public event System.EventHandler ConfigChange;
+    public event EventHandler ConfigChange;
 
     public Control ConfigControl
     {
-      get
-      {
-        return this;
-      }
+      get { return this; }
     }
 
     public void DoSetInitialValues()
@@ -506,9 +500,9 @@ namespace Yeti.MMedia.Mp3
       {
         int i;
         string[] rates;
-        Lame.LHV1 hv = m_Config.format.lhv1;
+        LHV1 hv = m_Config.format.lhv1;
         editFormat1.DoSetInitialValues();
-        if (hv.dwMpegVersion == Lame.LHV1.MPEG2)
+        if (hv.dwMpegVersion == LHV1.MPEG2)
         {
           textBoxMpegVersion.Text = "MPEG2";
           rates = Mpeg2BitRates.Split(',');
@@ -532,7 +526,7 @@ namespace Yeti.MMedia.Mp3
         checkBoxCRC.Checked = hv.bCRC != 0;
         checkBoxOriginal.Checked = hv.bOriginal != 0;
         checkBoxPrivate.Checked = hv.bPrivate != 0;
-        comboBoxVBRMethod.SelectedIndex = (int)hv.nVbrMethod + 1;
+        comboBoxVBRMethod.SelectedIndex = (int) hv.nVbrMethod + 1;
         if ((hv.nVBRQuality >= 0) && (hv.nVBRQuality <= 9))
         {
           trackBarVBRQuality.Value = hv.nVBRQuality;
@@ -551,7 +545,7 @@ namespace Yeti.MMedia.Mp3
 
     #endregion
 
-    protected virtual void DoConfigChange(System.EventArgs e)
+    protected virtual void DoConfigChange(EventArgs e)
     {
       if (m_FireConfigChangeEvent && (ConfigChange != null))
       {
@@ -559,7 +553,7 @@ namespace Yeti.MMedia.Mp3
       }
     }
 
-    private void checkBoxVBR_CheckedChanged(object sender, System.EventArgs e)
+    private void checkBoxVBR_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxVBR.Checked)
       {
@@ -576,12 +570,12 @@ namespace Yeti.MMedia.Mp3
       DoConfigChange(e);
     }
 
-    private void Control_Changed(object sender, System.EventArgs e)
+    private void Control_Changed(object sender, EventArgs e)
     {
       DoConfigChange(e);
     }
 
-    private void BitRateChange(object sender, System.EventArgs e)
+    private void BitRateChange(object sender, EventArgs e)
     {
       if (comboBoxMaxBitRate.SelectedIndex < comboBoxBitRate.SelectedIndex)
       {
@@ -590,7 +584,7 @@ namespace Yeti.MMedia.Mp3
       DoConfigChange(e);
     }
 
-    private void comboBoxVBRMethod_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBoxVBRMethod_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (checkBoxVBR.Checked && (comboBoxVBRMethod.SelectedIndex == 0))
       {
@@ -598,6 +592,5 @@ namespace Yeti.MMedia.Mp3
       }
       DoConfigChange(e);
     }
-
   }
 }

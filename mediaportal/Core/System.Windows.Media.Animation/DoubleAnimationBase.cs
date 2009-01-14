@@ -23,44 +23,43 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public abstract class DoubleAnimationBase : AnimationTimeline
-	{
-		#region Constructors
+  public abstract class DoubleAnimationBase : AnimationTimeline
+  {
+    #region Constructors
 
-		protected DoubleAnimationBase()
-		{
-		}
+    protected DoubleAnimationBase()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public new DoubleAnimationBase Copy()
-		{
-			return (DoubleAnimationBase)base.Copy();
-		}
+    public new DoubleAnimationBase Copy()
+    {
+      return (DoubleAnimationBase) base.Copy();
+    }
 
-		public double GetCurrentValue(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
-		{
-			return GetCurrentValueCore(defaultOriginValue, defaultDestinationValue, animationClock);	
-		}
+    public double GetCurrentValue(double defaultOriginValue, double defaultDestinationValue,
+                                  AnimationClock animationClock)
+    {
+      return GetCurrentValueCore(defaultOriginValue, defaultDestinationValue, animationClock);
+    }
 
-		protected abstract double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock);
+    protected abstract double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue,
+                                                  AnimationClock animationClock);
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public override sealed Type TargetPropertyType
-		{
-			get { return typeof(double); }
-		}
+    public override sealed Type TargetPropertyType
+    {
+      get { return typeof (double); }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

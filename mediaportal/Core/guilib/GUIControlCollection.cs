@@ -28,74 +28,87 @@ using System.Collections;
 
 namespace MediaPortal.GUI.Library
 {
-	public sealed class GUIControlCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class GUIControlCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(GUIControl control)
-		{
-			if(control == null)
-				throw new ArgumentNullException("control");
+    public void Add(GUIControl control)
+    {
+      if (control == null)
+      {
+        throw new ArgumentNullException("control");
+      }
 
-			List.Add(control);
-		}
+      List.Add(control);
+    }
 
-		public bool Contains(GUIControl control)
-		{
-			if(control == null)
-				throw new ArgumentNullException("control");
+    public bool Contains(GUIControl control)
+    {
+      if (control == null)
+      {
+        throw new ArgumentNullException("control");
+      }
 
-			return List.Contains(control);
-		}
+      return List.Contains(control);
+    }
 
-		public void CopyTo(GUIControl[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(GUIControl[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(GUIControl control)
-		{
-			if(control == null)
-				throw new ArgumentNullException("control");
+    public int IndexOf(GUIControl control)
+    {
+      if (control == null)
+      {
+        throw new ArgumentNullException("control");
+      }
 
-			return List.IndexOf(control);
-		}
+      return List.IndexOf(control);
+    }
 
-		public void Insert(int index, GUIControl control)
-		{
-			if(control == null)
-				throw new ArgumentNullException("control");
+    public void Insert(int index, GUIControl control)
+    {
+      if (control == null)
+      {
+        throw new ArgumentNullException("control");
+      }
 
-			List.Insert(index, control);
-		}
+      List.Insert(index, control);
+    }
 
-		public bool Remove(GUIControl control)
-		{
-			if(control == null)
-				throw new ArgumentNullException("control");
+    public bool Remove(GUIControl control)
+    {
+      if (control == null)
+      {
+        throw new ArgumentNullException("control");
+      }
 
-			if(List.Contains(control) == false)
-				return false;
+      if (List.Contains(control) == false)
+      {
+        return false;
+      }
 
-			List.Remove(control);
+      List.Remove(control);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public GUIControl this[int index]
-		{ 
-			get { return (GUIControl)List[index]; }
-			set { List[index] = value; }
-		}
+    public GUIControl this[int index]
+    {
+      get { return (GUIControl) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }
-

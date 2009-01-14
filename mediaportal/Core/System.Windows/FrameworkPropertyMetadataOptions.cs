@@ -23,28 +23,26 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	[FlagsAttribute] 
-	public enum FrameworkPropertyMetadataOptions
-	{
-		#region Values
+  [Flags]
+  public enum FrameworkPropertyMetadataOptions
+  {
+    #region Values
 
-		AffectsArrange,
-		AffectsMeasure,
-		AffectsParentArrange,
-		AffectsParentMeasure,
-		AffectsRender,
-		BindsTwoWayByDefault,
-		Inherits,
-		Journal,
-		None,
-		NotDataBindable,
-		SpanSeparatedTrees,
-		UpdatesSourceOnLostFocusByDefault,
+    AffectsArrange,
+    AffectsMeasure,
+    AffectsParentArrange,
+    AffectsParentMeasure,
+    AffectsRender,
+    BindsTwoWayByDefault,
+    Inherits,
+    Journal,
+    None,
+    NotDataBindable,
+    SpanSeparatedTrees,
+    UpdatesSourceOnLostFocusByDefault,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

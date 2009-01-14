@@ -23,14 +23,10 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Serialization;
-
-using System.Windows.Controls;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 
@@ -64,20 +60,17 @@ namespace MediaPortal.GUI.Library
     {
       //control.AddAnimations(base.Animations);
       if (base.Animations.Count != 0)
+      {
         control.Animations.AddRange(base.Animations);
+      }
       control.DimColor = DimColor;
       Children.Add(control);
     }
 
     public override bool Dimmed
     {
-      get
-      {
-        return (GetFocusControlId() == -1);
-      }
-      set
-      {
-      }
+      get { return (GetFocusControlId() == -1); }
+      set { }
     }
 
     public override void Render(float timePassed)
@@ -95,18 +88,20 @@ namespace MediaPortal.GUI.Library
           foreach (GUIControl control in Children)
           {
             if (control != null)
+            {
               control.Animate(timePassed, _animator);
+            }
           }
 
           _animator.Advance(timePassed);
         }
       }
 
-      uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
+      uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
       foreach (GUIControl control in Children)
       {
         control.UpdateVisibility();
-        control.DoRender(timePassed,currentTime);
+        control.DoRender(timePassed, currentTime);
       }
 
       if (_animator != null && _animator.IsDone())
@@ -126,7 +121,9 @@ namespace MediaPortal.GUI.Library
       }
 
       foreach (GUIControl control in Children)
+      {
         control.FreeResources();
+      }
       base.FreeResources();
     }
 
@@ -143,7 +140,9 @@ namespace MediaPortal.GUI.Library
     public override void PreAllocResources()
     {
       foreach (GUIControl control in Children)
+      {
         control.PreAllocResources();
+      }
     }
 
     public override GUIControl GetControlById(int ID)
@@ -153,7 +152,9 @@ namespace MediaPortal.GUI.Library
         GUIControl childControl = control.GetControlById(ID);
 
         if (childControl != null)
+        {
           return childControl;
+        }
       }
 
       return null;
@@ -164,7 +165,9 @@ namespace MediaPortal.GUI.Library
       foreach (GUIControl control in Children)
       {
         if (control.NeedRefresh())
+        {
           return true;
+        }
       }
 
       return false;
@@ -177,8 +180,10 @@ namespace MediaPortal.GUI.Library
 
       for (int index = Children.Count - 1; index >= 0; index--)
       {
-        if ((((GUIControl)Children[index])).HitTest(x, y, out controlID, out focused))
+        if ((((GUIControl) Children[index])).HitTest(x, y, out controlID, out focused))
+        {
           return true;
+        }
       }
 
       return false;
@@ -189,7 +194,9 @@ namespace MediaPortal.GUI.Library
       foreach (GUIControl control in Children)
       {
         if (control.Focus)
+        {
           control.OnAction(action);
+        }
       }
     }
 
@@ -199,7 +206,7 @@ namespace MediaPortal.GUI.Library
       {
         if (control is GUIGroup)
         {
-          ((GUIGroup)control).Remove(controlId);
+          ((GUIGroup) control).Remove(controlId);
           break;
         }
         else if (control.GetID == controlId)
@@ -216,10 +223,12 @@ namespace MediaPortal.GUI.Library
       {
         if (control is GUIGroup)
         {
-          int focusedId = ((GUIGroup)control).GetFocusControlId();
+          int focusedId = ((GUIGroup) control).GetFocusControlId();
 
           if (focusedId != -1)
+          {
             return focusedId;
+          }
         }
         else if (control.Focus)
         {
@@ -233,13 +242,17 @@ namespace MediaPortal.GUI.Library
     public override void DoUpdate()
     {
       foreach (GUIControl control in Children)
+      {
         control.DoUpdate();
+      }
     }
 
     public override void StorePosition()
     {
       foreach (GUIControl control in Children)
+      {
         control.StorePosition();
+      }
 
       base.StorePosition();
     }
@@ -247,7 +260,9 @@ namespace MediaPortal.GUI.Library
     public override void ReStorePosition()
     {
       foreach (GUIControl control in Children)
+      {
         control.ReStorePosition();
+      }
 
       base.ReStorePosition();
     }
@@ -255,7 +270,9 @@ namespace MediaPortal.GUI.Library
     public override void Animate(float timePassed, Animator animator)
     {
       foreach (GUIControl control in Children)
+      {
         control.Animate(timePassed, animator);
+      }
 
       base.Animate(timePassed, animator);
     }
@@ -277,7 +294,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl this[int index]
     {
-      get { return (GUIControl)Children[index]; }
+      get { return (GUIControl) Children[index]; }
     }
 
     /// <summary>
@@ -287,7 +304,14 @@ namespace MediaPortal.GUI.Library
     public override int WindowId
     {
       get { return base.WindowId; }
-      set { base.WindowId = value; foreach (GUIControl control in Children) control.WindowId = value; }
+      set
+      {
+        base.WindowId = value;
+        foreach (GUIControl control in Children)
+        {
+          control.WindowId = value;
+        }
+      }
     }
 
     #endregion Properties
@@ -299,11 +323,15 @@ namespace MediaPortal.GUI.Library
     void IAddChild.AddChild(object value)
     {
       if (value is GUIControl == false)
+      {
         return;
-      GUIControl cntl = (GUIControl)value;
+      }
+      GUIControl cntl = (GUIControl) value;
       //cntl.AddAnimations(base.Animations);
       if (base.Animations.Count != 0)
+      {
         cntl.Animations.AddRange(base.Animations);
+      }
       cntl.DimColor = DimColor;
       Children.Add(cntl);
     }
@@ -315,10 +343,14 @@ namespace MediaPortal.GUI.Library
     protected void Arrange()
     {
       if (_beginInitCount != 0)
+      {
         return;
+      }
 
       if (_layout == null)
+      {
         return;
+      }
 
       this.Size = _layout.Measure(this, this.Size);
 
@@ -331,7 +363,9 @@ namespace MediaPortal.GUI.Library
       this.Size = finalRect.Size;
 
       if (_layout == null)
+      {
         return this.Size;
+      }
 
       _layout.Arrange(this);
 
@@ -346,13 +380,17 @@ namespace MediaPortal.GUI.Library
     void ISupportInitialize.EndInit()
     {
       if (--_beginInitCount == 0)
+      {
         Arrange();
+      }
     }
 
     protected override Size MeasureOverride(Size availableSize)
     {
       if (_layout == null)
+      {
         return Size.Empty;
+      }
 
       _layout.Measure(this, this.Size);
 
@@ -367,11 +405,13 @@ namespace MediaPortal.GUI.Library
         base.DimColor = value;
         foreach (GUIControl control in Children)
         {
-          if (control != null) control.DimColor = value;
+          if (control != null)
+          {
+            control.DimColor = value;
+          }
         }
       }
     }
-
 
     #endregion Methods
 
@@ -385,39 +425,44 @@ namespace MediaPortal.GUI.Library
 
     public UIElementCollection Children
     {
-      get { if (_children == null) _children = new UIElementCollection(); return _children; }
+      get
+      {
+        if (_children == null)
+        {
+          _children = new UIElementCollection();
+        }
+        return _children;
+      }
     }
 
     #endregion Properties
 
     #region Fields
 
-    Animator _animator;
-    int _beginInitCount = 0;
-    UIElementCollection _children;
+    private Animator _animator;
+    private int _beginInitCount = 0;
+    private UIElementCollection _children;
 
-    [XMLSkinElement("layout")]
-    ILayout _layout;
+    [XMLSkinElement("layout")] private ILayout _layout;
 
-    [XMLSkinElement("animation")]
-    Animator.AnimationType _animatorType = Animator.AnimationType.None;
+    [XMLSkinElement("animation")] private Animator.AnimationType _animatorType = Animator.AnimationType.None;
 
-    bool _startAnimation;
+    private bool _startAnimation;
 
     #endregion Fields
 
     public override void QueueAnimation(AnimationType animType)
     {
-      
       foreach (GUIControl control in Children)
       {
         control.QueueAnimation(animType);
       }
     }
+
     public override List<VisualEffect> GetAnimations(AnimationType type, bool checkConditions)
     {
       List<VisualEffect> effects = new List<VisualEffect>();
-      
+
       foreach (GUIControl control in Children)
       {
         if (control != null)
@@ -428,6 +473,7 @@ namespace MediaPortal.GUI.Library
       }
       return effects;
     }
+
     public override VisualEffect GetAnimation(AnimationType type, bool checkConditions /* = true */)
     {
       VisualEffect effect = null;
@@ -436,11 +482,15 @@ namespace MediaPortal.GUI.Library
         if (control != null)
         {
           effect = control.GetAnimation(type, checkConditions);
-          if (effect != null) return effect;
+          if (effect != null)
+          {
+            return effect;
+          }
         }
       }
       return null;
     }
+
     public override bool IsEffectAnimating(AnimationType animType)
     {
       foreach (GUIControl control in Children)
@@ -448,12 +498,13 @@ namespace MediaPortal.GUI.Library
         if (control != null)
         {
           bool yes = control.IsEffectAnimating(animType);
-          if (yes) return true;
+          if (yes)
+          {
+            return true;
+          }
         }
       }
       return false;
     }
-
-
   }
 }

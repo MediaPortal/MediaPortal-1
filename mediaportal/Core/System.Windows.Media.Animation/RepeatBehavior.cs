@@ -23,78 +23,83 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace System.Windows.Media.Animation
 {
-	[TypeConverter(typeof(RepeatBehaviorConverter))]
-	public struct RepeatBehavior
-	{
-		#region Constructors
+  [TypeConverter(typeof (RepeatBehaviorConverter))]
+  public struct RepeatBehavior
+  {
+    #region Constructors
 
-		public RepeatBehavior(double iterationCount)
-		{
-			if(iterationCount <= 0)
-				throw new ArgumentNullException("iterationCount");
+    public RepeatBehavior(double iterationCount)
+    {
+      if (iterationCount <= 0)
+      {
+        throw new ArgumentNullException("iterationCount");
+      }
 
-			_iterationCount = iterationCount;
-			_duration = null;
-		}
+      _iterationCount = iterationCount;
+      _duration = null;
+    }
 
-		public RepeatBehavior(Duration duration)
-		{
-			if(duration == null)
-				throw new ArgumentNullException("duration");
+    public RepeatBehavior(Duration duration)
+    {
+      if (duration == null)
+      {
+        throw new ArgumentNullException("duration");
+      }
 
-			_iterationCount = 0;
-			_duration = duration;
-		}
+      _iterationCount = 0;
+      _duration = duration;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static RepeatBehavior Parse(string text)
-		{
-			if(string.Compare(text, "Forever", true) == 0)
-				return RepeatBehavior.Forever;
+    public static RepeatBehavior Parse(string text)
+    {
+      if (string.Compare(text, "Forever", true) == 0)
+      {
+        return Forever;
+      }
 
-			return new RepeatBehavior(double.Parse((string)text));
-		}
+      return new RepeatBehavior(double.Parse((string) text));
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public bool IsIterationCount
-		{ 
-			get { return _iterationCount != 0; }
-		}
+    public bool IsIterationCount
+    {
+      get { return _iterationCount != 0; }
+    }
 
-		public bool IsRepeatDuration 
-		{ 
-			get { return _duration != null; } 
-		}
+    public bool IsRepeatDuration
+    {
+      get { return _duration != null; }
+    }
 
-		public double IterationCount 
-		{ 
-			get { return _iterationCount; }
-		}
+    public double IterationCount
+    {
+      get { return _iterationCount; }
+    }
 
-		public Duration RepeatDuration 
-		{ 
-			get { return _duration; } 
-		}
+    public Duration RepeatDuration
+    {
+      get { return _duration; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Members
+    #region Members
 
-		double									_iterationCount;
-		Duration								_duration;
-		public static readonly RepeatBehavior	Forever = new RepeatBehavior();
+    private double _iterationCount;
+    private Duration _duration;
+    public static readonly RepeatBehavior Forever = new RepeatBehavior();
 
-		#endregion Members
-	}
+    #endregion Members
+  }
 }

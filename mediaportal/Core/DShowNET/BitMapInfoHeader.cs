@@ -23,14 +23,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace DShowNET
 {
-
   //---------------------------------------------------------------------------------------
 
   [StructLayout(LayoutKind.Sequential, Pack = 2), ComVisible(false)]
@@ -48,6 +44,4 @@ namespace DShowNET
     public int ClrUsed;
     public int ClrImportant;
   }
-
-
 }

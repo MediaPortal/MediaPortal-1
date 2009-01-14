@@ -25,50 +25,51 @@
 
 using System;
 using System.Collections;
-using System.Net;
 using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.View
 {
-	/// <summary>
-	/// Summary description for ViewDefinition.
-	/// </summary>
-	[Serializable]
-	public class ViewDefinition
-	{
-		protected ArrayList listFilters = new ArrayList();
-		string							name;
-		public ViewDefinition()
-		{
-		}
+  /// <summary>
+  /// Summary description for ViewDefinition.
+  /// </summary>
+  [Serializable]
+  public class ViewDefinition
+  {
+    protected ArrayList listFilters = new ArrayList();
+    private string name;
 
-		[XmlElement("Name")]
-		public string Name
-		{
-			get { return name;}
-			set { name=value;}
-		}
+    public ViewDefinition()
+    {
+    }
 
-		[XmlElement("Filters")]
-		public ArrayList Filters
-		{
-			get { return listFilters;}
-			set { listFilters=value;}
-		}
-        public string LocalizedName
-        {
-            get
-            {
-                String localizedName = this.name;
-                GUILocalizeStrings.LocalizeLabel(ref localizedName);
-                return localizedName;
-            }
-        }
+    [XmlElement("Name")]
+    public string Name
+    {
+      get { return name; }
+      set { name = value; }
+    }
 
-        public override string ToString()
-        {
-            return LocalizedName;
-        }
-	}
+    [XmlElement("Filters")]
+    public ArrayList Filters
+    {
+      get { return listFilters; }
+      set { listFilters = value; }
+    }
+
+    public string LocalizedName
+    {
+      get
+      {
+        String localizedName = this.name;
+        GUILocalizeStrings.LocalizeLabel(ref localizedName);
+        return localizedName;
+      }
+    }
+
+    public override string ToString()
+    {
+      return LocalizedName;
+    }
+  }
 }

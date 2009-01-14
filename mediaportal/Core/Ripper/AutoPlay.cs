@@ -24,14 +24,14 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Util;
+using MediaPortal.Profile;
 using Win32.Utils.Cd;
-using MediaPortal.Configuration;
 
 namespace MediaPortal.Ripper
 {
@@ -42,12 +42,13 @@ namespace MediaPortal.Ripper
   {
     #region base variables
 
-    static DeviceVolumeMonitor _deviceMonitor;
-    static string m_dvd = "No";
-    static string m_audiocd = "No";
+    private static DeviceVolumeMonitor _deviceMonitor;
+    private static string m_dvd = "No";
+    private static string m_audiocd = "No";
 
-    static ArrayList allfiles;
-    enum MediaType
+    private static ArrayList allfiles;
+
+    private enum MediaType
     {
       UNKNOWN = 0,
       DVD = 1,
@@ -99,13 +100,13 @@ namespace MediaPortal.Ripper
     public static void StopListening()
     {
       StopListeningForEvents();
-
     }
 
     #region initialization + serialization
+
     private static void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
@@ -128,7 +129,9 @@ namespace MediaPortal.Ripper
     private static void StopListeningForEvents()
     {
       if (_deviceMonitor != null)
+      {
         _deviceMonitor.Dispose();
+      }
       _deviceMonitor = null;
     }
 
@@ -145,15 +148,15 @@ namespace MediaPortal.Ripper
     {
       Log.Info("media removed from drive {0}", DriveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
-                                      (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
+                                      (int) GUIWindow.Window.WINDOW_MUSIC_FILES,
                                       GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
-      msg.Label = String.Format("{0}", DriveLetter);  
+      msg.Label = String.Format("{0}", DriveLetter);
       msg.SendToTargetWindow = true;
       GUIWindowManager.SendThreadMessage(msg);
 
       msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
-        (int)GUIWindow.Window.WINDOW_VIDEOS,
-        GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                           (int) GUIWindow.Window.WINDOW_VIDEOS,
+                           GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
       msg.Label = DriveLetter;
       msg.SendToTargetWindow = true;
       GUIWindowManager.SendThreadMessage(msg);
@@ -168,11 +171,10 @@ namespace MediaPortal.Ripper
     {
       Log.Info("media inserted in drive {0}", DriveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_INSERTED,
-                                            (int)0,
-                                            GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                      (int) 0,
+                                      GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
       msg.Label = DriveLetter;
       GUIWindowManager.SendThreadMessage(msg);
-
     }
 
     /// <summary>
@@ -184,8 +186,8 @@ namespace MediaPortal.Ripper
 
       Log.Info("volume removed drive {0}", driveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED,
-                                (int)0,
-                                GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                      (int) 0,
+                                      GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
       msg.Label = driveLetter;
       GUIWindowManager.SendThreadMessage(msg);
       CDRemoved(driveLetter);
@@ -199,17 +201,20 @@ namespace MediaPortal.Ripper
       string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
       Log.Info("volume inserted drive {0}", driveLetter);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED,
-        (int)0,
-        GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                      (int) 0,
+                                      GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
       msg.Label = driveLetter;
       GUIWindowManager.SendThreadMessage(msg);
       CDInserted(driveLetter);
     }
 
-    static bool ShouldWeAutoPlay(MediaType iMedia)
+    private static bool ShouldWeAutoPlay(MediaType iMedia)
     {
       Log.Info("Check if we want to autoplay a {0}", iMedia);
-      if (GUIWindowManager.IsRouted) return false;
+      if (GUIWindowManager.IsRouted)
+      {
+        return false;
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, null);
       msg.Param1 = 713;
       switch (iMedia)
@@ -248,8 +253,14 @@ namespace MediaPortal.Ripper
 
     public static void ExamineCD(string strDrive)
     {
-      if (strDrive == null) return;
-      if (strDrive.Length == 0) return;
+      if (strDrive == null)
+      {
+        return;
+      }
+      if (strDrive.Length == 0)
+      {
+        return;
+      }
 
       StopListening();
 
@@ -274,13 +285,16 @@ namespace MediaPortal.Ripper
           if (PlayAudioCd)
           {
             // The user wants to play the Audio CD
-            if (g_Player.Playing) g_Player.Stop();
+            if (g_Player.Playing)
+            {
+              g_Player.Stop();
+            }
 
             // Send a message with the drive to the message handler. 
             // The message handler will play the CD
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
-              (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-              GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                 (int) GUIWindow.Window.WINDOW_MUSIC_FILES,
+                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             msg.Label2 = m_audiocd;
@@ -293,10 +307,10 @@ namespace MediaPortal.Ripper
           if (ShouldWeAutoPlay(MediaType.PHOTOS))
           {
             Log.Info("CD/DVD with photo's inserted into drive {0}", strDrive);
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURES);
+            GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_PICTURES);
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME,
-              (int)GUIWindow.Window.WINDOW_PICTURES,
-              GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                 (int) GUIWindow.Window.WINDOW_PICTURES,
+                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             GUIWindowManager.SendThreadMessage(msg);
@@ -326,8 +340,14 @@ namespace MediaPortal.Ripper
 
     public static void ExamineVolume(string strDrive)
     {
-      if (strDrive == null) return;
-      if (strDrive.Length == 0) return;
+      if (strDrive == null)
+      {
+        return;
+      }
+      if (strDrive.Length == 0)
+      {
+        return;
+      }
       GUIMessage msg;
       switch (DetectMediaType(strDrive))
       {
@@ -350,7 +370,10 @@ namespace MediaPortal.Ripper
           if (m_dvd == "Yes")
           {
             // dont interrupt if we're already playing
-            if (g_Player.Playing && g_Player.IsDVD) return;
+            if (g_Player.Playing && g_Player.IsDVD)
+            {
+              return;
+            }
             Log.Info("Autoplay: Yes, start DVD in {0}", strDrive);
             g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
           }
@@ -372,10 +395,10 @@ namespace MediaPortal.Ripper
           Log.Info("Photo volume inserted {0}", strDrive);
           if (ShouldWeAutoPlay(MediaType.PHOTOS))
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PICTURES);
+            GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_PICTURES);
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-              (int)GUIWindow.Window.WINDOW_PICTURES,
-              GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                 (int) GUIWindow.Window.WINDOW_PICTURES,
+                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             GUIWindowManager.SendThreadMessage(msg);
@@ -386,10 +409,10 @@ namespace MediaPortal.Ripper
           Log.Info("Video volume inserted {0}", strDrive);
           if (ShouldWeAutoPlay(MediaType.VIDEOS))
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
+            GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_VIDEOS);
             msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-              (int)GUIWindow.Window.WINDOW_VIDEOS,
-              GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                 (int) GUIWindow.Window.WINDOW_VIDEOS,
+                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             GUIWindowManager.SendThreadMessage(msg);
@@ -402,10 +425,10 @@ namespace MediaPortal.Ripper
           {
             if (ShouldWeAutoPlay(MediaType.AUDIO))
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+              GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_FILES);
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-                (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-                GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+                                   (int) GUIWindow.Window.WINDOW_MUSIC_FILES,
+                                   GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
               msg.Label = strDrive;
               msg.SendToTargetWindow = true;
               GUIWindowManager.SendThreadMessage(msg);
@@ -423,21 +446,30 @@ namespace MediaPortal.Ripper
     {
       try
       {
-        if (driveLetter.Length < 1) return false;
+        if (driveLetter.Length < 1)
+        {
+          return false;
+        }
         int cddaTracks = 0;
         CDDrive m_Drive = new CDDrive();
 
         if (m_Drive.IsOpened)
+        {
           m_Drive.Close();
+        }
         if (m_Drive.Open(driveLetter[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
         {
           cddaTracks = m_Drive.GetNumAudioTracks();
           m_Drive.Close();
         }
         if (cddaTracks > 0)
+        {
           return true;
+        }
         else
+        {
           return false;
+        }
       }
       catch (Exception)
       {
@@ -447,20 +479,35 @@ namespace MediaPortal.Ripper
 
     private static void GetAllFiles(string strFolder, ref ArrayList allfiles)
     {
-      if (strFolder == null) return;
-      if (strFolder.Length == 0) return;
-      if (allfiles == null) return;
+      if (strFolder == null)
+      {
+        return;
+      }
+      if (strFolder.Length == 0)
+      {
+        return;
+      }
+      if (allfiles == null)
+      {
+        return;
+      }
       try
       {
-        string[] files = System.IO.Directory.GetFiles(strFolder);
+        string[] files = Directory.GetFiles(strFolder);
         if (files != null && files.Length > 0)
         {
-          for (int i = 0; i < files.Length; ++i) allfiles.Add(files[i]);
+          for (int i = 0; i < files.Length; ++i)
+          {
+            allfiles.Add(files[i]);
+          }
         }
-        string[] folders = System.IO.Directory.GetDirectories(strFolder);
+        string[] folders = Directory.GetDirectories(strFolder);
         if (folders != null && folders.Length > 0)
         {
-          for (int i = 0; i < folders.Length; ++i) GetAllFiles(folders[i], ref allfiles);
+          for (int i = 0; i < folders.Length; ++i)
+          {
+            GetAllFiles(folders[i], ref allfiles);
+          }
         }
       }
       catch (Exception)
@@ -476,40 +523,61 @@ namespace MediaPortal.Ripper
     private static MediaType DetectMediaType(string strDrive)
     {
       if (strDrive == null)
+      {
         return MediaType.UNKNOWN;
+      }
       if (strDrive == string.Empty)
+      {
         return MediaType.UNKNOWN;
+      }
       try
       {
         if (Directory.Exists(strDrive + "\\VIDEO_TS"))
+        {
           return MediaType.DVD;
+        }
 
         if (File.Exists(strDrive + "\\BDMV\\index.bdmv"))
+        {
           return MediaType.BLURAY;
+        }
 
         if (Directory.Exists(strDrive + "\\HVDVD_TS"))
+        {
           return MediaType.HDDVD;
+        }
 
         if (isARedBookCD(strDrive))
+        {
           return MediaType.AUDIO_CD;
+        }
 
         allfiles.Clear();
         GetAllFiles(strDrive + "\\", ref allfiles);
         foreach (string FileName in allfiles)
         {
-          string ext = System.IO.Path.GetExtension(FileName).ToLower();
-          if (MediaPortal.Util.Utils.IsVideo(FileName)) return MediaType.VIDEOS;
+          string ext = Path.GetExtension(FileName).ToLower();
+          if (Util.Utils.IsVideo(FileName))
+          {
+            return MediaType.VIDEOS;
+          }
         }
 
         foreach (string FileName in allfiles)
         {
-          string ext = System.IO.Path.GetExtension(FileName).ToLower();
-          if (MediaPortal.Util.Utils.IsAudio(FileName)) return MediaType.AUDIO;
+          string ext = Path.GetExtension(FileName).ToLower();
+          if (Util.Utils.IsAudio(FileName))
+          {
+            return MediaType.AUDIO;
+          }
         }
 
         foreach (string FileName in allfiles)
         {
-          if (MediaPortal.Util.Utils.IsPicture(FileName)) return MediaType.PHOTOS;
+          if (Util.Utils.IsPicture(FileName))
+          {
+            return MediaType.PHOTOS;
+          }
         }
       }
       catch (Exception)
@@ -525,8 +593,10 @@ namespace MediaPortal.Ripper
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
       foreach (string file in allfiles)
       {
-        if (!MediaPortal.Util.Utils.IsAudio(file))
+        if (!Util.Utils.IsAudio(file))
+        {
           continue;
+        }
 
         PlayListItem item = new PlayListItem();
         item.FileName = file;
@@ -544,9 +614,10 @@ namespace MediaPortal.Ripper
         playlistPlayer.Play(0);
 
         // and activate the playlist window
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+        GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
       }
     }
+
     #endregion
   }
 }

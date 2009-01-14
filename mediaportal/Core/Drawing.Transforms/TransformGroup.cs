@@ -26,68 +26,78 @@
 using System;
 using System.Windows.Serialization;
 
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
 namespace MediaPortal.Drawing.Transforms
 {
-	public sealed class TransformGroup : Transform, IAddChild
-	{
-		#region Constructors
+  public sealed class TransformGroup : Transform, IAddChild
+  {
+    #region Constructors
 
-		public TransformGroup()
-		{
-		}
+    public TransformGroup()
+    {
+    }
 
-		public TransformGroup(TransformCollection transforms)
-		{
-			_children = transforms;
-		}
+    public TransformGroup(TransformCollection transforms)
+    {
+      _children = transforms;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override Matrix PrepareValue()
-		{
-			Matrix matrix = Matrix.Identity;
-			
-			for(int index = 0; index < ((_children != null) ? _children.Count : 0); index++)
-				matrix.Multiply(_children[index].Value);
-	
-			return matrix;
-		}
+    protected override Matrix PrepareValue()
+    {
+      Matrix matrix = Matrix.Identity;
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child is Transform == false)
-				throw new ArgumentException(string.Format("must be of type {0}", this.GetType()));
+      for (int index = 0; index < ((_children != null) ? _children.Count : 0); index++)
+      {
+        matrix.Multiply(_children[index].Value);
+      }
 
-			if(_children == null)
-				_children = new TransformCollection();
-			
-			_children.Add((Transform)child);
-		}
+      return matrix;
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddChild(object child)
+    {
+      if (child is Transform == false)
+      {
+        throw new ArgumentException(string.Format("must be of type {0}", this.GetType()));
+      }
 
-		#endregion Methods
+      if (_children == null)
+      {
+        _children = new TransformCollection();
+      }
 
-		#region Properties
-	
-		public TransformCollection Children
-		{
-			get { if(_children == null) _children = new TransformCollection(); return _children; }
-		}
+      _children.Add((Transform) child);
+    }
 
-		#endregion Properties
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		#region Fields
+    #endregion Methods
 
-		TransformCollection			_children;
+    #region Properties
 
-		#endregion Fields
-	}
+    public TransformCollection Children
+    {
+      get
+      {
+        if (_children == null)
+        {
+          _children = new TransformCollection();
+        }
+        return _children;
+      }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private TransformCollection _children;
+
+    #endregion Fields
+  }
 }

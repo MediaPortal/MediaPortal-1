@@ -23,49 +23,46 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public class DataTemplate : FrameworkTemplate
-	{
-		#region Constructors
+  public class DataTemplate : FrameworkTemplate
+  {
+    #region Constructors
 
-		public DataTemplate()
-		{
-		}
+    public DataTemplate()
+    {
+    }
 
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
+    public DataTemplate(object dataType)
+    {
+      _dataType = dataType;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
+    public object DataType
+    {
+      get { return _dataType; }
+      set { _dataType = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		object						_dataType;
+    private object _dataType;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

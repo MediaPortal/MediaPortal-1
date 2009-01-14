@@ -25,66 +25,66 @@
 
 namespace System.Windows.Input
 {
-	public sealed class ApplicationCommands
-	{
-		#region Constructors
+  public sealed class ApplicationCommands
+  {
+    #region Constructors
 
-		static ApplicationCommands()
-		{
-			Open = new UICommand("Open", typeof(ApplicationCommands));
-			Close = new UICommand("Close", typeof(ApplicationCommands));
-			ContextMenu = new UICommand("ContextMenu", typeof(ApplicationCommands));
-			Copy = new UICommand("Copy", typeof(ApplicationCommands));
-			CorrectionList = new UICommand("CorrectionList", typeof(ApplicationCommands));
-			Cut = new UICommand("Cut", typeof(ApplicationCommands));
-			Delete = new UICommand("Delete", typeof(ApplicationCommands));
-			Find = new UICommand("Find", typeof(ApplicationCommands));
-			Help = new UICommand("Help", typeof(ApplicationCommands));
-			New = new UICommand("New", typeof(ApplicationCommands));
-			Open = new UICommand("Open", typeof(ApplicationCommands));
-			Paste = new UICommand("Paste", typeof(ApplicationCommands));
-			Print = new UICommand("Print", typeof(ApplicationCommands));
-			PrintPreview = new UICommand("PrintPreview", typeof(ApplicationCommands));
-			Properties = new UICommand("Properies", typeof(ApplicationCommands));
-			Redo = new UICommand("Redo", typeof(ApplicationCommands));
-			Replace = new UICommand("Replace", typeof(ApplicationCommands));
-			Save = new UICommand("Save", typeof(ApplicationCommands));
-			SaveAs = new UICommand("SaveAs", typeof(ApplicationCommands));
-			SelectAll = new UICommand("SelectAll", typeof(ApplicationCommands));
-			Stop = new UICommand("Stop", typeof(ApplicationCommands));
-			Undo = new UICommand("Undo", typeof(ApplicationCommands));
-		}
+    static ApplicationCommands()
+    {
+      Open = new UICommand("Open", typeof (ApplicationCommands));
+      Close = new UICommand("Close", typeof (ApplicationCommands));
+      ContextMenu = new UICommand("ContextMenu", typeof (ApplicationCommands));
+      Copy = new UICommand("Copy", typeof (ApplicationCommands));
+      CorrectionList = new UICommand("CorrectionList", typeof (ApplicationCommands));
+      Cut = new UICommand("Cut", typeof (ApplicationCommands));
+      Delete = new UICommand("Delete", typeof (ApplicationCommands));
+      Find = new UICommand("Find", typeof (ApplicationCommands));
+      Help = new UICommand("Help", typeof (ApplicationCommands));
+      New = new UICommand("New", typeof (ApplicationCommands));
+      Open = new UICommand("Open", typeof (ApplicationCommands));
+      Paste = new UICommand("Paste", typeof (ApplicationCommands));
+      Print = new UICommand("Print", typeof (ApplicationCommands));
+      PrintPreview = new UICommand("PrintPreview", typeof (ApplicationCommands));
+      Properties = new UICommand("Properies", typeof (ApplicationCommands));
+      Redo = new UICommand("Redo", typeof (ApplicationCommands));
+      Replace = new UICommand("Replace", typeof (ApplicationCommands));
+      Save = new UICommand("Save", typeof (ApplicationCommands));
+      SaveAs = new UICommand("SaveAs", typeof (ApplicationCommands));
+      SelectAll = new UICommand("SelectAll", typeof (ApplicationCommands));
+      Stop = new UICommand("Stop", typeof (ApplicationCommands));
+      Undo = new UICommand("Undo", typeof (ApplicationCommands));
+    }
 
-		private ApplicationCommands()
-		{
-		}
+    private ApplicationCommands()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Fields
+    #region Fields
 
-		public static readonly UICommand Close;
-		public static readonly UICommand ContextMenu;
-		public static readonly UICommand Copy;
-		public static readonly UICommand CorrectionList;
-		public static readonly UICommand Cut;
-		public static readonly UICommand Delete;
-		public static readonly UICommand Find;
-		public static readonly UICommand Help;
-		public static readonly UICommand New;
-		public static readonly UICommand Open;
-		public static readonly UICommand Paste;
-		public static readonly UICommand Print;
-		public static readonly UICommand PrintPreview;
-		public static readonly UICommand Properties;
-		public static readonly UICommand Redo;
-		public static readonly UICommand Replace;
-		public static readonly UICommand Save;
-		public static readonly UICommand SaveAs;
-		public static readonly UICommand SelectAll;
-		public static readonly UICommand Stop;
-		public static readonly UICommand Undo;
+    public static readonly UICommand Close;
+    public static readonly UICommand ContextMenu;
+    public static readonly UICommand Copy;
+    public static readonly UICommand CorrectionList;
+    public static readonly UICommand Cut;
+    public static readonly UICommand Delete;
+    public static readonly UICommand Find;
+    public static readonly UICommand Help;
+    public static readonly UICommand New;
+    public static readonly UICommand Open;
+    public static readonly UICommand Paste;
+    public static readonly UICommand Print;
+    public static readonly UICommand PrintPreview;
+    public static readonly UICommand Properties;
+    public static readonly UICommand Redo;
+    public static readonly UICommand Replace;
+    public static readonly UICommand Save;
+    public static readonly UICommand SaveAs;
+    public static readonly UICommand SelectAll;
+    public static readonly UICommand Stop;
+    public static readonly UICommand Undo;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

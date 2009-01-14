@@ -23,57 +23,50 @@
 
 #endregion
 
-using System;
 using System.IO;
 
 namespace Roger.ID3
 {
-	/// <summary>
-	/// Utility class to encapsulate handling temporary files.
-	/// </summary>
-	class TemporaryFile
-	{
-		string path;
-		string original;
+  /// <summary>
+  /// Utility class to encapsulate handling temporary files.
+  /// </summary>
+  internal class TemporaryFile
+  {
+    private string path;
+    private string original;
 
-		/// <summary>
-		/// Create a temporary file with a name based on the name of an original file.
-		/// </summary>
-		/// <param name="original">The template filename, essentially</param>
-		public TemporaryFile(string original)
-		{
-			string temp_suffix = ".new";
+    /// <summary>
+    /// Create a temporary file with a name based on the name of an original file.
+    /// </summary>
+    /// <param name="original">The template filename, essentially</param>
+    public TemporaryFile(string original)
+    {
+      string temp_suffix = ".new";
 
-			this.original = original;
-			this.path = original + temp_suffix;
-		}
+      this.original = original;
+      this.path = original + temp_suffix;
+    }
 
-		public void Swap()
-		{
-			// Then we can swap the files over.  It's a three step process:
-			// foo -> foo.old
-			// foo.new -> foo
-			// delete foo.old
-			string old = original + ".old";
-			File.Move(original, old);
-			File.Move(path, original);
-			File.Delete(old);
-		}
+    public void Swap()
+    {
+      // Then we can swap the files over.  It's a three step process:
+      // foo -> foo.old
+      // foo.new -> foo
+      // delete foo.old
+      string old = original + ".old";
+      File.Move(original, old);
+      File.Move(path, original);
+      File.Delete(old);
+    }
 
-		public string Path
-		{
-			get
-			{
-				return this.path;
-			}
-		}
+    public string Path
+    {
+      get { return this.path; }
+    }
 
-		public string OriginalPath
-		{
-			get
-			{
-				return this.original;
-			}
-		}
-	}
+    public string OriginalPath
+    {
+      get { return this.original; }
+    }
+  }
 }

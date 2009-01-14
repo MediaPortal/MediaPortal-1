@@ -25,167 +25,170 @@
 
 namespace System.Windows
 {
-	public class PropertyMetadata
-	{
-		#region Constructors
+  public class PropertyMetadata
+  {
+    #region Constructors
 
-		public PropertyMetadata()
-		{
-		}
+    public PropertyMetadata()
+    {
+    }
 
-		public PropertyMetadata(GetValueOverride getValueOverride)
-		{
-			_getValueOverride = getValueOverride;
-		}
+    public PropertyMetadata(GetValueOverride getValueOverride)
+    {
+      _getValueOverride = getValueOverride;
+    }
 
-		public PropertyMetadata(object defaultValue)
-		{
-			_defaultValue = defaultValue;
-		}
+    public PropertyMetadata(object defaultValue)
+    {
+      _defaultValue = defaultValue;
+    }
 
-		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
-		{
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-		}
+    public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
+    {
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+    }
 
-		public PropertyMetadata(SetValueOverride setValueOverride)
-		{
-			_setValueOverride = setValueOverride;
-		}
+    public PropertyMetadata(SetValueOverride setValueOverride)
+    {
+      _setValueOverride = setValueOverride;
+    }
 
-		public PropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
-		{
-			_getValueOverride = getValueOverride;
-			_setValueOverride = setValueOverride;
-		}
+    public PropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+    {
+      _getValueOverride = getValueOverride;
+      _setValueOverride = setValueOverride;
+    }
 
-		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
-		{
-			_defaultValue = defaultValue;
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-		}
+    public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
+    {
+      _defaultValue = defaultValue;
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+    }
 
-		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
-		{
-			_defaultValue = defaultValue;
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-		}
+    public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                            GetValueOverride getValueOverride)
+    {
+      _defaultValue = defaultValue;
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+    }
 
-		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
-		{
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-			_getValueOverride = getValueOverride;
-		}
+    public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
+    {
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+      _getValueOverride = getValueOverride;
+    }
 
-		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride)
-		{
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-			_getValueOverride = getValueOverride;
-			_setValueOverride = setValueOverride;
-		}
+    public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride,
+                            SetValueOverride setValueOverride)
+    {
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+      _getValueOverride = getValueOverride;
+      _setValueOverride = setValueOverride;
+    }
 
-		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride)
-		{
-			_defaultValue = defaultValue;
-			_propertyInvalidatedCallback = propertyInvalidatedCallback;
-		}
+    public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                            GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+    {
+      _defaultValue = defaultValue;
+      _propertyInvalidatedCallback = propertyInvalidatedCallback;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected void ClearCachedDefaultValue(DependencyObject owner)
-		{
-			_defaultValue = null;
-		}
+    protected void ClearCachedDefaultValue(DependencyObject owner)
+    {
+      _defaultValue = null;
+    }
 
-		protected virtual object CreateDefaultValue(DependencyObject owner, DependencyProperty property)
-		{
-			throw new NotImplementedException();
-		}
+    protected virtual object CreateDefaultValue(DependencyObject owner, DependencyProperty property)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected virtual PropertyMetadata CreateInstance()
-		{
-			return new PropertyMetadata();
-		}
+    protected virtual PropertyMetadata CreateInstance()
+    {
+      return new PropertyMetadata();
+    }
 
-		protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty property)
-		{
-		}
+    protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty property)
+    {
+    }
 
-		protected virtual void OnApply(DependencyProperty dp, Type targetType)
-		{
-			_isSealed = true;
-		}
+    protected virtual void OnApply(DependencyProperty dp, Type targetType)
+    {
+      _isSealed = true;
+    }
 
-		protected internal void SetReadOnly()
-		{
-			_isReadOnly = true;
-		}
+    protected internal void SetReadOnly()
+    {
+      _isReadOnly = true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public object DefaultValue
-		{
-			get { return _defaultValue; }
-			set { _defaultValue = value; }
-		}
+    public object DefaultValue
+    {
+      get { return _defaultValue; }
+      set { _defaultValue = value; }
+    }
 
-		public GetValueOverride GetValueOverride
-		{
-			get { return _getValueOverride; }
-			set { _getValueOverride = value; }
-		}
+    public GetValueOverride GetValueOverride
+    {
+      get { return _getValueOverride; }
+      set { _getValueOverride = value; }
+    }
 
-		protected bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    protected bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		public PropertyInvalidatedCallback PropertyInvalidatedCallback
-		{
-			get { return _propertyInvalidatedCallback; }
-			set { _propertyInvalidatedCallback = value; }
-		}
+    public PropertyInvalidatedCallback PropertyInvalidatedCallback
+    {
+      get { return _propertyInvalidatedCallback; }
+      set { _propertyInvalidatedCallback = value; }
+    }
 
-		public ReadLocalValueOverride ReadLocalValueOverride
-		{
-			get { return _readLocalValueOverride; }
-			set { _readLocalValueOverride = value; }
-		}
+    public ReadLocalValueOverride ReadLocalValueOverride
+    {
+      get { return _readLocalValueOverride; }
+      set { _readLocalValueOverride = value; }
+    }
 
-		public bool ReadOnly
-		{
-			get { return _isReadOnly; }
-		}
+    public bool ReadOnly
+    {
+      get { return _isReadOnly; }
+    }
 
-		public SetValueOverride SetValueOverride
-		{
-			get { return _setValueOverride; }
-			set { _setValueOverride = value; }
-		}
+    public SetValueOverride SetValueOverride
+    {
+      get { return _setValueOverride; }
+      set { _setValueOverride = value; }
+    }
 
-		public WriteLocalValueOverride WriteLocalValueOverride
-		{
-			get { return _writeLocalValueOverride; }
-			set { _writeLocalValueOverride = value; }
-		}
+    public WriteLocalValueOverride WriteLocalValueOverride
+    {
+      get { return _writeLocalValueOverride; }
+      set { _writeLocalValueOverride = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
-	
-		object						_defaultValue = DependencyProperty.UnsetValue;
-		GetValueOverride			_getValueOverride;
-		bool						_isSealed;
-		PropertyInvalidatedCallback _propertyInvalidatedCallback;
-		ReadLocalValueOverride		_readLocalValueOverride;
-		bool						_isReadOnly = false;
-		SetValueOverride			_setValueOverride;
-		WriteLocalValueOverride		_writeLocalValueOverride;
+    #region Fields
 
-		#endregion Fields
-	}
+    private object _defaultValue = DependencyProperty.UnsetValue;
+    private GetValueOverride _getValueOverride;
+    private bool _isSealed;
+    private PropertyInvalidatedCallback _propertyInvalidatedCallback;
+    private ReadLocalValueOverride _readLocalValueOverride;
+    private bool _isReadOnly = false;
+    private SetValueOverride _setValueOverride;
+    private WriteLocalValueOverride _writeLocalValueOverride;
+
+    #endregion Fields
+  }
 }

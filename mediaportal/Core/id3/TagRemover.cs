@@ -23,36 +23,35 @@
 
 #endregion
 
-using System;
 using System.IO;
 
 namespace Roger.ID3
 {
-	class TagRemover
-	{
-		public static void Remove(string path)
-		{
-			// TODO: Exception handler to clean up on failures.
+  internal class TagRemover
+  {
+    public static void Remove(string path)
+    {
+      // TODO: Exception handler to clean up on failures.
 
-			// Open the source file, and then skip over any tags.
-			FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+      // Open the source file, and then skip over any tags.
+      FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-			// Go back to the beginning of the stream.
-			stream.Seek(0, SeekOrigin.Begin);
+      // Go back to the beginning of the stream.
+      stream.Seek(0, SeekOrigin.Begin);
 
-			TagUtil.SkipTags(stream);
+      TagUtil.SkipTags(stream);
 
-			// Create a temporary file:
-			TemporaryFile tempFile = new TemporaryFile(path);
-		
-			FileStream dest = new FileStream(tempFile.Path, FileMode.Create, FileAccess.Write, FileShare.None);
+      // Create a temporary file:
+      TemporaryFile tempFile = new TemporaryFile(path);
 
-			StreamCopier.Copy(stream, dest);
+      FileStream dest = new FileStream(tempFile.Path, FileMode.Create, FileAccess.Write, FileShare.None);
 
-			stream.Close();
-			dest.Close();
+      StreamCopier.Copy(stream, dest);
 
-			tempFile.Swap();
-		}
-	}
+      stream.Close();
+      dest.Close();
+
+      tempFile.Swap();
+    }
+  }
 }

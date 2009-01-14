@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Controls
 {
-	public enum MenuItemMode
-	{
-		#region Values
-		
-		Checkable,
-		Default,
-		Separator,
+  public enum MenuItemMode
+  {
+    #region Values
 
-		#endregion Values
-	}
+    Checkable,
+    Default,
+    Separator,
+
+    #endregion Values
+  }
 }

@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -76,7 +74,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_PLAY_AUDIO_CD = 38,
       GUI_MSG_CD_REMOVED = 39,
       GUI_MSG_CD_INSERTED = 40,
-      GUI_MSG_PLAYING_10SEC = 41,//file is playing 10 sec
+      GUI_MSG_PLAYING_10SEC = 41, //file is playing 10 sec
       GUI_MSG_PLAY_RADIO_STATION = 42,
       GUI_MSG_SHOW_WARNING = 43,
       GUI_MSG_RESUME_TV = 44,
@@ -127,9 +125,9 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_STOP_SERVER_TIMESHIFTING = 89, //joboehl
       GUI_MSG_AUDIOVOLUME_CHANGED = 90, //joboehl 
       GUI_MSG_CALLBACK = 91, // dero: callback in MPMain thread
-      GUI_MSG_BLURAY_DISK_INSERTED =92,
+      GUI_MSG_BLURAY_DISK_INSERTED = 92,
       GUI_MSG_HDDVD_DISK_INSERTED = 93
-    };
+    } ;
 
     private string _label = "";
     private string _label2 = "";
@@ -183,6 +181,7 @@ namespace MediaPortal.GUI.Library
       get { return _object; }
       set { _object = value; }
     }
+
     public object Object2
     {
       get { return _object2; }
@@ -206,11 +205,13 @@ namespace MediaPortal.GUI.Library
       get { return _parameter2; }
       set { _parameter2 = value; }
     }
+
     public int Param3
     {
       get { return _parameter3; }
       set { _parameter3 = value; }
     }
+
     public int Param4
     {
       get { return _parameter4; }
@@ -291,7 +292,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwParam1">The first parameter.</param>
     /// <param name="dwParam2">The second parameter.</param>
     /// <param name="lpVoid">An object containing data that is carried in the message.</param>
-    public GUIMessage(MessageType dwMsg, int iWindowId, int dwSenderId, int dwControlID, int dwParam1, int dwParam2, object lpVoid)
+    public GUIMessage(MessageType dwMsg, int iWindowId, int dwSenderId, int dwControlID, int dwParam1, int dwParam2,
+                      object lpVoid)
     {
       _targetWindowId = iWindowId;
       _messageType = dwMsg;

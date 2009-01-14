@@ -23,78 +23,81 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
 namespace System.Windows.Media.Animation
 {
-	[TypeConverter(typeof(DurationConverter))]
-	public class Duration
-	{
-		#region Constructors
+  [TypeConverter(typeof (DurationConverter))]
+  public class Duration
+  {
+    #region Constructors
 
-		public Duration()
-		{
-		}
+    public Duration()
+    {
+    }
 
-		public Duration(double duration)
-		{
-			// according to docs this isn't a constructor in Avalon
-			_timeSpan = TimeSpan.FromMilliseconds(duration);
-		}
+    public Duration(double duration)
+    {
+      // according to docs this isn't a constructor in Avalon
+      _timeSpan = TimeSpan.FromMilliseconds(duration);
+    }
 
-		public Duration(TimeSpan timeSpan)
-		{
-			_timeSpan = timeSpan;
-		}
+    public Duration(TimeSpan timeSpan)
+    {
+      _timeSpan = timeSpan;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static Duration Parse(string text)
-		{
-			if(string.Compare(text, "Automatic", true) == 0)
-				return Duration.Automatic;
+    public static Duration Parse(string text)
+    {
+      if (string.Compare(text, "Automatic", true) == 0)
+      {
+        return Automatic;
+      }
 
-			if(string.Compare(text, "Forever", true) == 0)
-				return Duration.Forever;
+      if (string.Compare(text, "Forever", true) == 0)
+      {
+        return Forever;
+      }
 
-			return new Duration(TimeSpan.Parse(text));
-		}
+      return new Duration(TimeSpan.Parse(text));
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Operators
-        
-		public static implicit operator double(Duration duration) 
-		{
-			return duration.TimeSpan.TotalMilliseconds;
-		}
+    #region Operators
 
-		#endregion Operators
+    public static implicit operator double(Duration duration)
+    {
+      return duration.TimeSpan.TotalMilliseconds;
+    }
 
-		#region Properties
+    #endregion Operators
 
-		public bool HasTimeSpan
-		{
-			get { return _timeSpan.TotalMilliseconds != 0; }
-		}
+    #region Properties
 
-		public TimeSpan TimeSpan
-		{
-			get { return _timeSpan; }
-		}
+    public bool HasTimeSpan
+    {
+      get { return _timeSpan.TotalMilliseconds != 0; }
+    }
 
-		#endregion Properties
+    public TimeSpan TimeSpan
+    {
+      get { return _timeSpan; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		TimeSpan							_timeSpan;
+    #region Fields
 
-		public static readonly Duration		Automatic = new Duration();
-		public static readonly Duration		Forever = new Duration();
+    private TimeSpan _timeSpan;
 
-		#endregion Fields
-	}
+    public static readonly Duration Automatic = new Duration();
+    public static readonly Duration Forever = new Duration();
+
+    #endregion Fields
+  }
 }

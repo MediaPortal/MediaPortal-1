@@ -23,30 +23,24 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public interface IAnimatable
-	{
-		#region Methods
+  public interface IAnimatable
+  {
+    #region Methods
 
-		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock);
-		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior);
-		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation);
-		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior);
-		object GetAnimationBaseValue(DependencyProperty dp);
-			
-		#endregion Methods
-						
-		#region Properties
+    void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock);
+    void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior);
+    void BeginAnimation(DependencyProperty dp, AnimationTimeline animation);
+    void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior);
+    object GetAnimationBaseValue(DependencyProperty dp);
 
-		bool HasAnimatedProperties
-		{
-			get;
-		}
+    #endregion Methods
 
-		#endregion Properties
-	}
+    #region Properties
+
+    bool HasAnimatedProperties { get; }
+
+    #endregion Properties
+  }
 }

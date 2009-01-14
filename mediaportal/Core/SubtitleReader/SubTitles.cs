@@ -24,75 +24,81 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
+using System.Drawing;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Subtitle
 {
-	/// <summary>
-	/// 
-	/// </summary>
+  /// <summary>
+  /// 
+  /// </summary>
   public class SubTitles
   {
     public class Line
     {
-        string m_strLine="";
-        int    m_iStartTime=0;
-        int    m_iEndTime=0;
-     
-        public Line()
-        {
-        }
-        public Line(string strLine, int iStart, int iEnd)
-        {
-          m_strLine=strLine;
-          m_iStartTime=iStart;
-          m_iEndTime=iEnd;
-        }
-        public int StartTime
-        {
-          get { return m_iStartTime;}
-          set { m_iStartTime=value;}
-        }
-        public int EndTime
-        {
-          get { return m_iEndTime;}
-          set { m_iEndTime=value;}
-        }
-        public string Text
-        {
-          get { return m_strLine;}
-          set { m_strLine=value;}
-        }
-    };
+      private string m_strLine = "";
+      private int m_iStartTime = 0;
+      private int m_iEndTime = 0;
 
-    ArrayList m_subs =new ArrayList();
-    string    _fontName="Arial";
-    int       m_iFontSize=14;
-    bool      m_bBold=true;
-    long      m_iColor=0xffffffff;
-    int       m_iShadow=5;
-    GUIFont   m_font=null;
+      public Line()
+      {
+      }
 
-		public SubTitles()
-		{
-			m_subs.Clear();
+      public Line(string strLine, int iStart, int iEnd)
+      {
+        m_strLine = strLine;
+        m_iStartTime = iStart;
+        m_iEndTime = iEnd;
+      }
+
+      public int StartTime
+      {
+        get { return m_iStartTime; }
+        set { m_iStartTime = value; }
+      }
+
+      public int EndTime
+      {
+        get { return m_iEndTime; }
+        set { m_iEndTime = value; }
+      }
+
+      public string Text
+      {
+        get { return m_strLine; }
+        set { m_strLine = value; }
+      }
+    } ;
+
+    private ArrayList m_subs = new ArrayList();
+    private string _fontName = "Arial";
+    private int m_iFontSize = 14;
+    private bool m_bBold = true;
+    private long m_iColor = 0xffffffff;
+    private int m_iShadow = 5;
+    private GUIFont m_font = null;
+
+    public SubTitles()
+    {
+      m_subs.Clear();
     }
+
     public SubTitles(SubTitles subs)
     {
-      m_subs=(ArrayList)subs.m_subs.Clone();
+      m_subs = (ArrayList) subs.m_subs.Clone();
     }
 
     public void Clear()
     {
       m_subs.Clear();
     }
+
     public int Count
     {
-      get { return m_subs.Count;}
+      get { return m_subs.Count; }
     }
 
     public void Add(Line line)
@@ -102,54 +108,60 @@ namespace MediaPortal.Subtitle
 
     public void Render(double dTime)
     {
-      int lTime=(int)(1000.0d * dTime);
+      int lTime = (int) (1000.0d*dTime);
       foreach (Line line in m_subs)
       {
         if (lTime >= line.StartTime && lTime <= line.EndTime)
         {
-          if (m_font!=null)
+          if (m_font != null)
           {
             try
             {
-              float fw=0,fh=0;
+              float fw = 0, fh = 0;
               m_font.GetTextExtent(line.Text, ref fw, ref fh);
-              int iposx=(GUIGraphicsContext.OverScanWidth-(int)fw)/2;
-              int iposy=(GUIGraphicsContext.Subtitles-(int)fh);
-              m_font.DrawShadowText( (float)iposx,(float)iposy,m_iColor,line.Text,GUIControl.Alignment.ALIGN_LEFT,m_iShadow,m_iShadow,0xff000000);
-            } 
+              int iposx = (GUIGraphicsContext.OverScanWidth - (int) fw)/2;
+              int iposy = (GUIGraphicsContext.Subtitles - (int) fh);
+              m_font.DrawShadowText((float) iposx, (float) iposy, m_iColor, line.Text, GUIControl.Alignment.ALIGN_LEFT,
+                                    m_iShadow, m_iShadow, 0xff000000);
+            }
             catch (Exception)
             {
             }
           }
         }
-        if (line.StartTime > lTime) return;
+        if (line.StartTime > lTime)
+        {
+          return;
+        }
       }
     }
+
     #region Serialisation
+
     public void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strTmp="";
-        _fontName=xmlreader.GetValueAsString("subtitles","fontface","Arial");
-        m_iFontSize=xmlreader.GetValueAsInt("subtitles","fontsize",18);
-        m_bBold=xmlreader.GetValueAsBool("subtitles","bold",true);
-        strTmp=xmlreader.GetValueAsString("subtitles","color","ffffff");
-        m_iColor=Convert.ToInt64(strTmp,16);
-        
-        m_iShadow=xmlreader.GetValueAsInt("subtitles","shadow",5);
+        string strTmp = "";
+        _fontName = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
+        m_iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
+        m_bBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
+        strTmp = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
+        m_iColor = Convert.ToInt64(strTmp, 16);
 
-        FontStyle style=FontStyle.Regular;
+        m_iShadow = xmlreader.GetValueAsInt("subtitles", "shadow", 5);
+
+        FontStyle style = FontStyle.Regular;
         if (m_bBold)
-          style=FontStyle.Bold;
-        m_font=new GUIFont("subFont",_fontName,m_iFontSize,style);
+        {
+          style = FontStyle.Bold;
+        }
+        m_font = new GUIFont("subFont", _fontName, m_iFontSize, style);
         m_font.Load();
         m_font.InitializeDeviceObjects();
       }
     }
 
     #endregion
-
-
-	}
+  }
 }

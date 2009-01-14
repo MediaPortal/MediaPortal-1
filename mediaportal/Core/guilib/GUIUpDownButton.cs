@@ -23,160 +23,159 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Drawing;
-using System.Diagnostics;
-
-
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Summary description for GUIUpDownButton.
-	/// </summary>
-	public class GUIUpDownButton : GUIButtonControl
-	{
-		[XMLSkinElement("spinColor")]		protected long		_colorSpinColor;
-		[XMLSkinElement("spinHeight")]		protected int		_spinControlHeight;
-		[XMLSkinElement("spinWidth")]		protected int		_spinControlWidth;
-		[XMLSkinElement("spinPosX")]		protected int		_spinControlPositionX;
-		[XMLSkinElement("spinPosY")]		protected int		_spinControlPositionY;
-		[XMLSkinElement("textureUp")]		protected string	_upTextureName="";
-		[XMLSkinElement("textureDown")]		protected string	_downTextureName="";
-		[XMLSkinElement("textureUpFocus")]	protected string	_upTextureNameFocus=""; 
-		[XMLSkinElement("textureDownFocus")]protected string	_downTextureNameFocus="";
+  /// <summary>
+  /// Summary description for GUIUpDownButton.
+  /// </summary>
+  public class GUIUpDownButton : GUIButtonControl
+  {
+    [XMLSkinElement("spinColor")] protected long _colorSpinColor;
+    [XMLSkinElement("spinHeight")] protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")] protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")] protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")] protected int _spinControlPositionY;
+    [XMLSkinElement("textureUp")] protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")] protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
 
-		GUISpinControl _spinControl;
-		public GUIUpDownButton(int dwParentID) : base(dwParentID)
-		{
-		}
+    private GUISpinControl _spinControl;
 
-		public GUIUpDownButton(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,  string strTextureFocus, string strTextureNoFocus,
-			int dwSpinWidth, int dwSpinHeight, 
-			string strUp, string strDown, 
-			string strUpFocus, string strDownFocus, 
-			long dwSpinColor, int dwSpinX, int dwSpinY)
-			:base(dwParentID)
-		{
-			_spinControlWidth = dwSpinWidth;
-			_spinControlHeight = dwSpinHeight;
-			_upTextureName = strUp;
-			_downTextureName = strDown;
-			_upTextureNameFocus = strUpFocus;
-			_downTextureNameFocus = strDownFocus;
-			_colorSpinColor = dwSpinColor;
-			_spinControlPositionX = dwSpinX;
-			_spinControlPositionY = dwSpinY;
-			
-			_parentControlId = dwParentID;
-			_controlId = dwControlId;
-			_positionX = dwPosX;
-			_positionY = dwPosY;
-			_width = dwWidth;
-			_height = dwHeight;
+    public GUIUpDownButton(int dwParentID) : base(dwParentID)
+    {
+    }
 
-			_focusedTextureName = strTextureFocus;
-			_nonFocusedTextureName = strTextureNoFocus;
-			FinalizeConstruction();
+    public GUIUpDownButton(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                           string strTextureFocus, string strTextureNoFocus,
+                           int dwSpinWidth, int dwSpinHeight,
+                           string strUp, string strDown,
+                           string strUpFocus, string strDownFocus,
+                           long dwSpinColor, int dwSpinX, int dwSpinY)
+      : base(dwParentID)
+    {
+      _spinControlWidth = dwSpinWidth;
+      _spinControlHeight = dwSpinHeight;
+      _upTextureName = strUp;
+      _downTextureName = strDown;
+      _upTextureNameFocus = strUpFocus;
+      _downTextureNameFocus = strDownFocus;
+      _colorSpinColor = dwSpinColor;
+      _spinControlPositionX = dwSpinX;
+      _spinControlPositionY = dwSpinY;
+
+      _parentControlId = dwParentID;
+      _controlId = dwControlId;
+      _positionX = dwPosX;
+      _positionY = dwPosY;
+      _width = dwWidth;
+      _height = dwHeight;
+
+      _focusedTextureName = strTextureFocus;
+      _nonFocusedTextureName = strTextureNoFocus;
+      FinalizeConstruction();
       DimColor = base.DimColor;
-		}
+    }
 
-		public override void FinalizeConstruction()
-		{
-				base.FinalizeConstruction();
-				_spinControl= new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_RIGHT);
-				_spinControl.WindowId=WindowId;
-				_spinControl.AutoCheck=false;
-        _spinControl.ParentControl = this;
-		}
-		
-		public override void AllocResources()
-		{
-			base.AllocResources ();
-			_spinControl.AllocResources();
-		}
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+      _spinControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth,
+                                        _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus,
+                                        _downTextureNameFocus, _fontName, _colorSpinColor,
+                                        GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, Alignment.ALIGN_RIGHT);
+      _spinControl.WindowId = WindowId;
+      _spinControl.AutoCheck = false;
+      _spinControl.ParentControl = this;
+    }
 
-		public override void FreeResources()
-		{
-			base.FreeResources ();
-			_spinControl.FreeResources();
-		}
+    public override void AllocResources()
+    {
+      base.AllocResources();
+      _spinControl.AllocResources();
+    }
+
+    public override void FreeResources()
+    {
+      base.FreeResources();
+      _spinControl.FreeResources();
+    }
 
 
-
-		/// <summary>
-		/// Renders the GUIButtonControl.
-		/// </summary>
-		public override void Render(float timePassed)
-		{
-			// Do not render if not visible.
-			if (GUIGraphicsContext.EditMode==false)
-			{
+    /// <summary>
+    /// Renders the GUIButtonControl.
+    /// </summary>
+    public override void Render(float timePassed)
+    {
+      // Do not render if not visible.
+      if (GUIGraphicsContext.EditMode == false)
+      {
         if (!IsVisible)
         {
           base.Render(timePassed);
           return;
         }
-			}
+      }
       base.Render(timePassed);
 
-			// The GUIButtonControl has the focus
-			if (Focus)
-			{
-				//render the focused image
-				_imageFocused.Render(timePassed);
-				GUIPropertyManager.SetProperty("#highlightedbutton", Label);
-			}
-			else 
-			{
-				//render the non-focused image
-				_imageNonFocused.Render(timePassed);  		
-			}
+      // The GUIButtonControl has the focus
+      if (Focus)
+      {
+        //render the focused image
+        _imageFocused.Render(timePassed);
+        GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+      }
+      else
+      {
+        //render the non-focused image
+        _imageNonFocused.Render(timePassed);
+      }
 
-			// render the text on the button
-			if (Disabled )
-			{
-				_labelControl.Label=_label;
-				_labelControl.TextColor=_disabledColor;
-				_labelControl.SetPosition(_textOffsetX+_positionX, _textOffsetY+_positionY);
-				_labelControl.Render(timePassed);
-			}
-			else
-			{
-				_labelControl.Label=_label;
-				_labelControl.TextColor=_textColor;
-				_labelControl.SetPosition(_textOffsetX+_positionX, _textOffsetY+_positionY);
-				_labelControl.Render(timePassed);
-			}
-			base.Render(timePassed);
-			if (_spinControl!=null)
-			{
-				int off=5;
-				GUIGraphicsContext.ScaleHorizontal(ref off);
-				_spinControl.SetPosition(_imageNonFocused.XPosition+_imageNonFocused.Width-off-2*_spinControlWidth, 
-																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
-				_spinControl.Render(timePassed);
+      // render the text on the button
+      if (Disabled)
+      {
+        _labelControl.Label = _label;
+        _labelControl.TextColor = _disabledColor;
+        _labelControl.SetPosition(_textOffsetX + _positionX, _textOffsetY + _positionY);
+        _labelControl.Render(timePassed);
+      }
+      else
+      {
+        _labelControl.Label = _label;
+        _labelControl.TextColor = _textColor;
+        _labelControl.SetPosition(_textOffsetX + _positionX, _textOffsetY + _positionY);
+        _labelControl.Render(timePassed);
+      }
+      base.Render(timePassed);
+      if (_spinControl != null)
+      {
+        int off = 5;
+        GUIGraphicsContext.ScaleHorizontal(ref off);
+        _spinControl.SetPosition(_imageNonFocused.XPosition + _imageNonFocused.Width - off - 2*_spinControlWidth,
+                                 _imageNonFocused.YPosition + (_imageNonFocused.Height - _spinControlHeight)/2);
+        _spinControl.Render(timePassed);
       }
       //base.Render(timePassed);
-		}
-		public override bool HitTest(int x, int y, out int controlID, out bool focused)
-		{
-			if (_spinControl.HitTest(x,y,out controlID, out focused)) 
-			{
-				_spinControl.Focus=true;
-				return true;
-			}
-			else
-			{
-				_spinControl.Focus=false;
-			}
-			return base.HitTest (x, y, out controlID, out focused);
-		}
+    }
 
-		public GUISpinControl UpDownControl
-		{
-			get { return _spinControl;}
-		}
+    public override bool HitTest(int x, int y, out int controlID, out bool focused)
+    {
+      if (_spinControl.HitTest(x, y, out controlID, out focused))
+      {
+        _spinControl.Focus = true;
+        return true;
+      }
+      else
+      {
+        _spinControl.Focus = false;
+      }
+      return base.HitTest(x, y, out controlID, out focused);
+    }
+
+    public GUISpinControl UpDownControl
+    {
+      get { return _spinControl; }
+    }
 
     public override int DimColor
     {
@@ -184,9 +183,11 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        if (_spinControl != null) _spinControl.DimColor = value;
+        if (_spinControl != null)
+        {
+          _spinControl.DimColor = value;
+        }
       }
     }
-
-	}
+  }
 }

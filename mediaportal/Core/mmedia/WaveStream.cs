@@ -24,290 +24,240 @@
 #endregion
 
 using System;
-
 using System.IO;
-
-
+using System.Text;
 
 namespace WaveLib
 
 {
+  public class WaveStream : Stream, IDisposable
 
-	public class WaveStream : Stream, IDisposable
+  {
+    private Stream m_Stream;
 
-	{
+    private long _dataPos;
 
-		private Stream m_Stream;
-
-		private long _dataPos;
-
-		private long m_Length;
+    private long m_Length;
 
 
-
-		private WaveFormat m_Format;
-
+    private WaveFormat m_Format;
 
 
-		public WaveFormat Format
+    public WaveFormat Format
 
-		{
-
-			get { return m_Format; }
-
-		}
+    {
+      get { return m_Format; }
+    }
 
 
+    private string ReadChunk(BinaryReader reader)
 
-		private string ReadChunk(BinaryReader reader)
+    {
+      byte[] ch = new byte[4];
 
-		{
+      reader.Read(ch, 0, ch.Length);
 
-			byte[] ch = new byte[4];
-
-			reader.Read(ch, 0, ch.Length);
-
-			return System.Text.Encoding.ASCII.GetString(ch);
-
-		}
+      return Encoding.ASCII.GetString(ch);
+    }
 
 
+    private void ReadHeader()
 
-		private void ReadHeader()
+    {
+      BinaryReader Reader = new BinaryReader(m_Stream);
 
-		{
-
-			BinaryReader Reader = new BinaryReader(m_Stream);
-
-			if (ReadChunk(Reader) != "RIFF")
-
-				throw new Exception("Invalid file format");
-
-
-
-			Reader.ReadInt32(); // File length minus first 8 bytes of RIFF description, we don't use it
-
-
-
-			if (ReadChunk(Reader) != "WAVE")
-
-				throw new Exception("Invalid file format");
-
-
-
-			if (ReadChunk(Reader) != "fmt ")
-
-				throw new Exception("Invalid file format");
-
-
-
-			int FormatLength = Reader.ReadInt32();
-
-      if ( FormatLength < 16) // bad format chunk length
-
-				throw new Exception("Invalid file format");
-
-
-
-			m_Format = new WaveFormat(22050, 16, 2); // initialize to any format
-
-			m_Format.wFormatTag = Reader.ReadInt16();
-
-			m_Format.nChannels = Reader.ReadInt16();
-
-			m_Format.nSamplesPerSec = Reader.ReadInt32();
-
-			m_Format.nAvgBytesPerSec = Reader.ReadInt32();
-
-			m_Format.nBlockAlign = Reader.ReadInt16();
-
-			m_Format.wBitsPerSample = Reader.ReadInt16(); 
-
-      if ( FormatLength > 16)
-
+      if (ReadChunk(Reader) != "RIFF")
       {
-
-        m_Stream.Position += (FormatLength-16);
-
+        throw new Exception("Invalid file format");
       }
 
-			// assume the data chunk is aligned
 
-			while(m_Stream.Position < m_Stream.Length && ReadChunk(Reader) != "data")
-
-				;
+      Reader.ReadInt32(); // File length minus first 8 bytes of RIFF description, we don't use it
 
 
-
-			if (m_Stream.Position >= m_Stream.Length)
-
-				throw new Exception("Invalid file format");
-
-
-
-			m_Length = Reader.ReadInt32();
-
-			_dataPos = m_Stream.Position;
+      if (ReadChunk(Reader) != "WAVE")
+      {
+        throw new Exception("Invalid file format");
+      }
 
 
+      if (ReadChunk(Reader) != "fmt ")
+      {
+        throw new Exception("Invalid file format");
+      }
 
-			Position = 0;
 
-		}
+      int FormatLength = Reader.ReadInt32();
+
+      if (FormatLength < 16) // bad format chunk length
+      {
+        throw new Exception("Invalid file format");
+      }
 
 
+      m_Format = new WaveFormat(22050, 16, 2); // initialize to any format
 
-		public WaveStream(string fileName) : this(new FileStream(fileName, FileMode.Open))
+      m_Format.wFormatTag = Reader.ReadInt16();
 
-		{
+      m_Format.nChannels = Reader.ReadInt16();
 
-		}
+      m_Format.nSamplesPerSec = Reader.ReadInt32();
 
-		public WaveStream(Stream S)
+      m_Format.nAvgBytesPerSec = Reader.ReadInt32();
 
-		{
+      m_Format.nBlockAlign = Reader.ReadInt16();
 
-			m_Stream = S;
+      m_Format.wBitsPerSample = Reader.ReadInt16();
 
-			ReadHeader();
+      if (FormatLength > 16)
 
-		}
+      {
+        m_Stream.Position += (FormatLength - 16);
+      }
 
-		~WaveStream()
+      // assume the data chunk is aligned
 
-		{
+      while (m_Stream.Position < m_Stream.Length && ReadChunk(Reader) != "data")
+      {
+        ;
+      }
 
-			Dispose();
 
-		}
+      if (m_Stream.Position >= m_Stream.Length)
+      {
+        throw new Exception("Invalid file format");
+      }
 
-		public new void Dispose()
-		{
+
+      m_Length = Reader.ReadInt32();
+
+      _dataPos = m_Stream.Position;
+
+
+      Position = 0;
+    }
+
+
+    public WaveStream(string fileName) : this(new FileStream(fileName, FileMode.Open))
+
+    {
+    }
+
+    public WaveStream(Stream S)
+
+    {
+      m_Stream = S;
+
+      ReadHeader();
+    }
+
+    ~WaveStream()
+
+    {
+      Dispose();
+    }
+
+    public new void Dispose()
+    {
       base.Dispose();
-			if (m_Stream != null)
+      if (m_Stream != null)
+      {
+        m_Stream.Close();
+      }
 
-				m_Stream.Close();
-
-			GC.SuppressFinalize(this);
-		}
+      GC.SuppressFinalize(this);
+    }
 
 
+    public override bool CanRead
 
-		public override bool CanRead
+    {
+      get { return true; }
+    }
 
-		{
+    public override bool CanSeek
 
-			get { return true; }
+    {
+      get { return true; }
+    }
 
-		}
+    public override bool CanWrite
 
-		public override bool CanSeek
+    {
+      get { return false; }
+    }
 
-		{
+    public override long Length
 
-			get { return true; }
+    {
+      get { return m_Length; }
+    }
 
-		}
+    public override long Position
 
-		public override bool CanWrite
+    {
+      get { return m_Stream.Position - _dataPos; }
 
-		{
+      set { Seek(value, SeekOrigin.Begin); }
+    }
 
-			get { return false; }
+    public override void Close()
 
-		}
+    {
+      Dispose();
+    }
 
-		public override long Length
+    public override void Flush()
 
-		{
+    {
+    }
 
-			get { return m_Length; }
+    public override void SetLength(long len)
 
-		}
+    {
+      throw new InvalidOperationException();
+    }
 
-		public override long Position
+    public override long Seek(long pos, SeekOrigin o)
 
-		{
+    {
+      switch (o)
 
-			get { return m_Stream.Position - _dataPos; }
+      {
+        case SeekOrigin.Begin:
 
-			set { Seek(value, SeekOrigin.Begin); }
+          m_Stream.Position = pos + _dataPos;
 
-		}
+          break;
 
-		public override void Close()
+        case SeekOrigin.Current:
 
-		{
+          m_Stream.Seek(pos, SeekOrigin.Current);
 
-			Dispose();
+          break;
 
-		}
+        case SeekOrigin.End:
 
-		public override void Flush()
+          m_Stream.Position = _dataPos + m_Length - pos;
 
-		{
+          break;
+      }
 
-		}
+      return this.Position;
+    }
 
-		public override void SetLength(long len)
+    public override int Read(byte[] buf, int ofs, int count)
 
-		{
+    {
+      int toread = (int) Math.Min(count, m_Length - Position);
 
-			throw new InvalidOperationException();
+      return m_Stream.Read(buf, ofs, toread);
+    }
 
-		}
+    public override void Write(byte[] buf, int ofs, int count)
 
-		public override long Seek(long pos, SeekOrigin o)
-
-		{
-
-			switch(o)
-
-			{
-
-				case SeekOrigin.Begin:
-
-					m_Stream.Position = pos + _dataPos;
-
-					break;
-
-				case SeekOrigin.Current:
-
-					m_Stream.Seek(pos, SeekOrigin.Current);
-
-					break;
-
-				case SeekOrigin.End:
-
-					m_Stream.Position = _dataPos + m_Length - pos;
-
-					break;
-
-			}
-
-			return this.Position;
-
-		}
-
-		public override int Read(byte[] buf, int ofs, int count)
-
-		{
-
-			int toread = (int)Math.Min(count, m_Length - Position);
-
-			return m_Stream.Read(buf, ofs, toread);
-
-		}
-
-		public override void Write(byte[] buf, int ofs, int count)
-
-		{
-
-			throw new InvalidOperationException();
-
-		}
-
-	}
-
+    {
+      throw new InvalidOperationException();
+    }
+  }
 }
-

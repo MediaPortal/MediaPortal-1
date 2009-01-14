@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Collections.Generic;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using DShowNET.Helper;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
@@ -41,24 +39,29 @@ namespace MediaPortal.GUI.Library
   public class CachedTexture
   {
     #region imports
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float[,] matrix);
+    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
+
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
+                                                            float uoff, float voff, float umax, float vmax, int color,
+                                                            float[,] matrix);
 
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEnginePresentTextures();
+    private static extern unsafe void FontEnginePresentTextures();
+
     #endregion
 
     #region Frame class
+
     /// <summary>
     /// Class which contains a single frame
     /// A cached texture can contain more then 1 frames for example when its an animated gif
@@ -66,22 +69,25 @@ namespace MediaPortal.GUI.Library
     public class Frame
     {
       #region variables
-      Texture _image;			//texture of current frame
-      int _duration;	//duration of current frame
-      int _textureNumber=-1;
+
+      private Texture _image; //texture of current frame
+      private int _duration; //duration of current frame
+      private int _textureNumber = -1;
       public readonly bool UseNewTextureEngine = true;
-      string _imageName = string.Empty;
+      private string _imageName = string.Empty;
       private static bool logTextures = false;
+
       #endregion
 
       #region events
+
       public event EventHandler Disposing;
       public event EventHandler Disposed;
+
       #endregion
 
       public Frame(string name, Texture image, int duration)
       {
-
         _imageName = name;
         _image = image;
         _duration = duration;
@@ -89,12 +95,16 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
-            IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
-            _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-            if (logTextures) Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+            IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
+            _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*) ptr.ToPointer());
+            if (logTextures)
+            {
+              Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+            }
           }
         }
       }
+
       public string ImageName
       {
         get { return _imageName; }
@@ -111,20 +121,31 @@ namespace MediaPortal.GUI.Library
         {
           if (_image != null)
           {
-            if (Disposing != null) Disposing(this, new EventArgs());
+            if (Disposing != null)
+            {
+              Disposing(this, new EventArgs());
+            }
             try
             {
-              if (logTextures) Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              if (logTextures)
+              {
+                Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              }
               FontEngineRemoveTexture(_textureNumber);
               if (!_image.Disposed)
+              {
                 _image.Dispose();
+              }
               _textureNumber = -1;
             }
             catch (Exception)
             {
               //already disposed?
             }
-            if (Disposed != null) Disposed(this, new EventArgs());
+            if (Disposed != null)
+            {
+              Disposed(this, new EventArgs());
+            }
           }
           _image = value;
 
@@ -132,9 +153,12 @@ namespace MediaPortal.GUI.Library
           {
             unsafe
             {
-              IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
-              _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              if (logTextures) Log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
+              _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*) ptr.ToPointer());
+              if (logTextures)
+              {
+                Log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              }
             }
           }
         }
@@ -149,14 +173,21 @@ namespace MediaPortal.GUI.Library
         get { return _duration; }
         set { _duration = value; }
       }
+
       #region IDisposable Members
 
       public void Dispose()
       {
         if (_image != null)
         {
-          if (Disposing != null) Disposing(this, new EventArgs());
-          if (logTextures) Log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
+          if (Disposing != null)
+          {
+            Disposing(this, new EventArgs());
+          }
+          if (logTextures)
+          {
+            Log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
+          }
           try
           {
             if (!_image.Disposed)
@@ -174,7 +205,10 @@ namespace MediaPortal.GUI.Library
             FontEngineRemoveTexture(_textureNumber);
             _textureNumber = -1;
           }
-          if (Disposed != null) Disposed(this, new EventArgs());
+          if (Disposed != null)
+          {
+            Disposed(this, new EventArgs());
+          }
         }
       }
 
@@ -182,11 +216,9 @@ namespace MediaPortal.GUI.Library
 
       public int TextureNumber
       {
-        get
-        {
-          return _textureNumber;
-        }
+        get { return _textureNumber; }
       }
+
       public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
       {
         //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
@@ -198,32 +230,40 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (logTextures) Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+          if (logTextures)
+          {
+            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+          }
         }
       }
     }
+
     #endregion
 
     #region variables
-    string _fileName = "";								// filename of the texture
-    List<Frame> _listFrames = new List<Frame>();	  // array to hold all frames
-    int _textureWidth = 0;									// width of the texture
-    int _textureHeight = 0;								// height of the texture
-    int _frameCount = 0;								// number of frames in the animation
-    Image _gdiBitmap = null;								// GDI image of the texture
+
+    private string _fileName = ""; // filename of the texture
+    private List<Frame> _listFrames = new List<Frame>(); // array to hold all frames
+    private int _textureWidth = 0; // width of the texture
+    private int _textureHeight = 0; // height of the texture
+    private int _frameCount = 0; // number of frames in the animation
+    private Image _gdiBitmap = null; // GDI image of the texture
+
     #endregion
 
     #region ctor/dtor
+
     /// <summary>
     /// The (emtpy) constructor of the CachedTexture class.
     /// </summary>
     public CachedTexture()
     {
     }
+
     #endregion
 
-
     #region properties
+
     /// <summary>
     /// Get/set the filename/location of the texture.
     /// </summary>
@@ -240,12 +280,15 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_listFrames.Count == 0) return null;
+        if (_listFrames.Count == 0)
+        {
+          return null;
+        }
         return _listFrames[0];
       }
       set
       {
-        Dispose();      // cleanup..
+        Dispose(); // cleanup..
         _listFrames.Clear();
         _listFrames.Add(value);
       }
@@ -308,15 +351,23 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (index < 0 || index >= _listFrames.Count) return null;
+        if (index < 0 || index >= _listFrames.Count)
+        {
+          return null;
+        }
         return _listFrames[index];
       }
       set
       {
-        if (index < 0) return;
+        if (index < 0)
+        {
+          return;
+        }
 
         if (_listFrames.Count <= index)
+        {
           _listFrames.Add(value);
+        }
         else
         {
           Frame frame = _listFrames[index];
@@ -328,15 +379,16 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     #endregion
 
     #region IDisposable Members
+
     /// <summary>
     /// Releases the resources used by the texture.
     /// </summary>
     public void Dispose()
     {
-
       foreach (Frame tex in _listFrames)
       {
         if (tex != null)
@@ -358,6 +410,7 @@ namespace MediaPortal.GUI.Library
         _gdiBitmap = null;
       }
     }
+
     #endregion
   }
 }

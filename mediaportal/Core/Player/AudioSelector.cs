@@ -1,34 +1,28 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
-{        
-
-    class AudioSelector
+{
+  internal class AudioSelector
+  {
+    public AudioSelector(TSReaderPlayer.IAudioStream dvbStreams)
     {
-
-      public AudioSelector(MediaPortal.Player.TSReaderPlayer.IAudioStream dvbStreams)
+      if (dvbStreams == null)
       {
-        if (dvbStreams == null)
-        {
-          throw new Exception("Nullpointer input not allowed ( IAudioStream )");
-        }            
-        else {
-            this.dvbStreams = dvbStreams;                
-        }            
+        throw new Exception("Nullpointer input not allowed ( IAudioStream )");
       }
-
-      public int GetAudioStream()
+      else
       {
-        int audioIndex = 0;
-        dvbStreams.GetAudioStream(ref audioIndex);
-        return audioIndex;
+        this.dvbStreams = dvbStreams;
       }
-       
-      private MediaPortal.Player.TSReaderPlayer.IAudioStream dvbStreams;        
-        
     }
+
+    public int GetAudioStream()
+    {
+      int audioIndex = 0;
+      dvbStreams.GetAudioStream(ref audioIndex);
+      return audioIndex;
+    }
+
+    private TSReaderPlayer.IAudioStream dvbStreams;
+  }
 }

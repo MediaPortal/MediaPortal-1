@@ -23,14 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public enum RoutingStrategy
-	{
-		Bubble,
-		Direct,
-		Tunnel,
-	}
+  public enum RoutingStrategy
+  {
+    Bubble,
+    Direct,
+    Tunnel,
+  }
 }

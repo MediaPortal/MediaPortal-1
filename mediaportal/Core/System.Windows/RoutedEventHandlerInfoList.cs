@@ -25,20 +25,19 @@
 
 namespace System.Windows
 {
-	internal class RoutedEventHandlerInfoList
-	{
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
-			
-		}
+  internal class RoutedEventHandlerInfoList
+  {
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+    {
+    }
 
-		public bool Contains(RoutedEvent routedEvent)
-		{
-			return false;
-		}
+    public bool Contains(RoutedEvent routedEvent)
+    {
+      return false;
+    }
 
-		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-		{
-		}
-	}
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+    }
+  }
 }

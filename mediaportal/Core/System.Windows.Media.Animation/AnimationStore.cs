@@ -23,98 +23,114 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Diagnostics;
 
 namespace System.Windows.Media.Animation
 {
-	internal class AnimationStore
-	{
-		#region Methods
+  internal class AnimationStore
+  {
+    #region Methods
 
-		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
-		{
-			if(_clocks == null)
-				_clocks = new Hashtable();
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
+    {
+      if (_clocks == null)
+      {
+        _clocks = new Hashtable();
+      }
 
-			AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
+      AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
 
-			if(clocks == null)
-				_clocks[property.GlobalIndex] = clocks = new AnimationClockCollection();
+      if (clocks == null)
+      {
+        _clocks[property.GlobalIndex] = clocks = new AnimationClockCollection();
+      }
 
-			if(handoffBehavior == HandoffBehavior.SnapshotAndReplace)
-				clocks.Clear();
-			
-			clocks.Add(clock);
-		}
+      if (handoffBehavior == HandoffBehavior.SnapshotAndReplace)
+      {
+        clocks.Clear();
+      }
 
-		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
-		{
-			if(_animations == null)
-				_animations = new Hashtable();
+      clocks.Add(clock);
+    }
 
-			AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+    {
+      if (_animations == null)
+      {
+        _animations = new Hashtable();
+      }
 
-			if(timelines == null)
-				_animations[property.GlobalIndex] = timelines = new AnimationTimelineCollection();
+      AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
 
-			timelines.Add(animation);
-		}
-			
-		public object GetValue(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			if(_animations == null)
-				return baseValue;
-			
-			AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
-			
-			if(timelines == null)
-				return baseValue;
+      if (timelines == null)
+      {
+        _animations[property.GlobalIndex] = timelines = new AnimationTimelineCollection();
+      }
 
-			foreach(AnimationClock clock in timelines)
-			{
-				if(clock.CurrentState == ClockState.Stopped)
-					continue;
+      timelines.Add(animation);
+    }
 
-				baseValue = clock.GetCurrentValue(null, baseValue);
-			}
+    public object GetValue(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      if (_animations == null)
+      {
+        return baseValue;
+      }
 
-			return baseValue;
-		}
+      AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
 
-		public void RemoveAnimationClock(DependencyProperty property, AnimationClock clock)
-		{
-			if(_clocks == null)
-				throw new InvalidOperationException();
+      if (timelines == null)
+      {
+        return baseValue;
+      }
 
-			if(clock == null)
-			{
-				_clocks.Remove(property);
-				return;
-			}
-		
-			AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
+      foreach (AnimationClock clock in timelines)
+      {
+        if (clock.CurrentState == ClockState.Stopped)
+        {
+          continue;
+        }
 
-			clocks.Remove(clock);
-		}
+        baseValue = clock.GetCurrentValue(null, baseValue);
+      }
 
-		#endregion Methods
+      return baseValue;
+    }
 
-		#region Propertiess
+    public void RemoveAnimationClock(DependencyProperty property, AnimationClock clock)
+    {
+      if (_clocks == null)
+      {
+        throw new InvalidOperationException();
+      }
 
-		public bool HasAnimatedProperties
-		{
-			get { return _animations != null && _animations.Count != 0; }
-		}
+      if (clock == null)
+      {
+        _clocks.Remove(property);
+        return;
+      }
 
-		#endregion Propertiess
+      AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
 
-		#region Fields
+      clocks.Remove(clock);
+    }
 
-		Hashtable					_clocks;
-		Hashtable					_animations;
+    #endregion Methods
 
-		#endregion Fields
-	}
+    #region Propertiess
+
+    public bool HasAnimatedProperties
+    {
+      get { return _animations != null && _animations.Count != 0; }
+    }
+
+    #endregion Propertiess
+
+    #region Fields
+
+    private Hashtable _clocks;
+    private Hashtable _animations;
+
+    #endregion Fields
+  }
 }

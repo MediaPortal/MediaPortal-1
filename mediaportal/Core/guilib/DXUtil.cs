@@ -23,9 +23,9 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32;
 
 /// <summary>
@@ -40,7 +40,7 @@ public enum DirectXTimer
   GetAbsoluteTime,
   GetApplicationTime,
   GetElapsedTime
-};
+} ;
 
 
 /// <summary>
@@ -49,15 +49,19 @@ public enum DirectXTimer
 public class DXUtil
 {
   #region Timer Internal Stuff
-  [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+
+  [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
   [DllImport("kernel32")]
   private static extern bool QueryPerformanceFrequency(ref long PerformanceFrequency);
-  [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+
+  [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
   [DllImport("kernel32")]
   private static extern bool QueryPerformanceCounter(ref long PerformanceCount);
-  [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
+
+  [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
   [DllImport("winmm.dll")]
   public static extern int timeGetTime();
+
   // Of course we want to use ACCURATE timing - see e.g this: http://www.geisswerks.com/ryan/FAQS/timing.html
   private static bool m_bUsingQPF = true;
   private static bool m_bTimerStopped = true;
@@ -68,16 +72,22 @@ public class DXUtil
   private static double m_fLastElapsedTime = 0.0;
   private static double m_fBaseTime = 0.0;
   private static double m_fStopTime = 0.0;
-  public static long TicksPerSecond { get { return m_llQPFTicksPerSec; } }
+
+  public static long TicksPerSecond
+  {
+    get { return m_llQPFTicksPerSec; }
+  }
+
   #endregion
 
   // Constants for SDK Path registry keys
   private const string sdkPath = "Software\\Microsoft\\DirectX SDK";
   private const string sdkKey = "DX9J3SDK Samples Path";
 
-  private DXUtil() { /* Private Constructor */ }
-
-
+  private DXUtil()
+  {
+    /* Private Constructor */
+  }
 
 
   /// <summary>
@@ -91,19 +101,23 @@ public class DXUtil
       {
         string sReg = string.Empty;
         if (rKey != null)
-          sReg = (string)rKey.GetValue(sdkKey);
+        {
+          sReg = (string) rKey.GetValue(sdkKey);
+        }
 
         if (sReg != null)
+        {
           sReg += @"\Media\";
+        }
         else
+        {
           return string.Empty;
+        }
 
         return sReg;
       }
     }
   }
-
-
 
 
   /// <summary>
@@ -138,23 +152,27 @@ public class DXUtil
       // Get either the current time or the stop time, depending
       // on whether we're stopped and what command was sent
       if (m_llStopTime != 0 && command != DirectXTimer.Start && command != DirectXTimer.GetAbsoluteTime)
+      {
         qwTime = m_llStopTime;
+      }
       else
+      {
         QueryPerformanceCounter(ref qwTime);
+      }
 
       // Return the elapsed time
       if (command == DirectXTimer.GetElapsedTime)
       {
-        fElapsedTime = (double)(qwTime - m_llLastElapsedTime) / (double)m_llQPFTicksPerSec;
+        fElapsedTime = (double) (qwTime - m_llLastElapsedTime)/(double) m_llQPFTicksPerSec;
         m_llLastElapsedTime = qwTime;
-        return (float)fElapsedTime;
+        return (float) fElapsedTime;
       }
 
       // Return the current time
       if (command == DirectXTimer.GetApplicationTime)
       {
-        double fAppTime = (double)(qwTime - m_llBaseTime) / (double)m_llQPFTicksPerSec;
-        return (float)fAppTime;
+        double fAppTime = (double) (qwTime - m_llBaseTime)/(double) m_llQPFTicksPerSec;
+        return (float) fAppTime;
       }
 
       // Reset the timer
@@ -171,7 +189,9 @@ public class DXUtil
       if (command == DirectXTimer.Start)
       {
         if (m_bTimerStopped)
+        {
           m_llBaseTime += qwTime - m_llStopTime;
+        }
         m_llStopTime = 0;
         m_llLastElapsedTime = qwTime;
         m_bTimerStopped = false;
@@ -193,14 +213,14 @@ public class DXUtil
       // Advance the timer by 1/10th second
       if (command == DirectXTimer.Advance)
       {
-        m_llStopTime += m_llQPFTicksPerSec / 10;
+        m_llStopTime += m_llQPFTicksPerSec/10;
         return 0.0f;
       }
 
       if (command == DirectXTimer.GetAbsoluteTime)
       {
-        time = qwTime / (double)m_llQPFTicksPerSec;
-        return (float)time;
+        time = qwTime/(double) m_llQPFTicksPerSec;
+        return (float) time;
       }
 
       return -1.0f; // Invalid command specified
@@ -214,22 +234,26 @@ public class DXUtil
       // Get either the current time or the stop time, depending
       // on whether we're stopped and what command was sent
       if (m_fStopTime != 0.0 && command != DirectXTimer.Start && command != DirectXTimer.GetAbsoluteTime)
+      {
         time = m_fStopTime;
+      }
       else
-        time = timeGetTime() * 0.001;
+      {
+        time = timeGetTime()*0.001;
+      }
 
       // Return the elapsed time
       if (command == DirectXTimer.GetElapsedTime)
       {
-        fElapsedTime = (double)(time - m_fLastElapsedTime);
+        fElapsedTime = (double) (time - m_fLastElapsedTime);
         m_fLastElapsedTime = time;
-        return (float)fElapsedTime;
+        return (float) fElapsedTime;
       }
 
       // Return the current time
       if (command == DirectXTimer.GetApplicationTime)
       {
-        return (float)(time - m_fBaseTime);
+        return (float) (time - m_fBaseTime);
       }
 
       // Reset the timer
@@ -246,7 +270,9 @@ public class DXUtil
       if (command == DirectXTimer.Start)
       {
         if (m_bTimerStopped)
+        {
           m_fBaseTime += time - m_fStopTime;
+        }
         m_fStopTime = 0.0f;
         m_fLastElapsedTime = time;
         m_bTimerStopped = false;
@@ -274,14 +300,12 @@ public class DXUtil
 
       if (command == DirectXTimer.GetAbsoluteTime)
       {
-        return (float)time;
+        return (float) time;
       }
 
       return -1.0f; // Invalid command specified
     }
   }
-
-
 
 
   /// <summary>
@@ -296,21 +320,25 @@ public class DXUtil
     if (path != null)
     {
       if (File.Exists(AppendDirectorySeparator(path) + filename))
+      {
         return AppendDirectorySeparator(path) + filename;
+      }
     }
 
     // if not try to find the filename in the current folder.
     if (File.Exists(filename))
+    {
       return AppendDirectorySeparator(Directory.GetCurrentDirectory()) + filename;
+    }
 
     // last, check if the file exists in the media directory
     if (File.Exists(AppendDirectorySeparator(SdkMediaPath) + filename))
+    {
       return AppendDirectorySeparator(SdkMediaPath) + filename;
+    }
 
     throw new FileNotFoundException("Could not find this file.", filename);
   }
-
-
 
 
   /// <summary>
@@ -319,7 +347,9 @@ public class DXUtil
   private static string AppendDirectorySeparator(string filename)
   {
     if (!filename.EndsWith(@"\"))
+    {
       return filename + @"\";
+    }
 
     return filename;
   }

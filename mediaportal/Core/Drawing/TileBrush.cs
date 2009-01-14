@@ -23,75 +23,73 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public abstract class TileBrush : Brush
-	{
-		#region Properties
+  public abstract class TileBrush : Brush
+  {
+    #region Properties
 
-		public AlignmentX AlignmentX
-		{
-			get { return _alignmentX; }
-			set { _alignmentX = value; }
-		}
+    public AlignmentX AlignmentX
+    {
+      get { return _alignmentX; }
+      set { _alignmentX = value; }
+    }
 
-		public AlignmentY AlignmentY
-		{
-			get { return _alignmentY; }
-			set { _alignmentY = value; }
-		}
+    public AlignmentY AlignmentY
+    {
+      get { return _alignmentY; }
+      set { _alignmentY = value; }
+    }
 
-		public Stretch Stretch
-		{
-			get { return _stretch; }
-			set { _stretch = value; }
-		}
+    public Stretch Stretch
+    {
+      get { return _stretch; }
+      set { _stretch = value; }
+    }
 
-		public TileMode	TileMode
-		{
-			get { return _tileMode; }
-			set { _tileMode = value; }
-		}
+    public TileMode TileMode
+    {
+      get { return _tileMode; }
+      set { _tileMode = value; }
+    }
 
-		public Rect Viewbox
-		{ 
-			get { return _viewbox; }
-			set { _viewbox = value; }
-		}
+    public Rect Viewbox
+    {
+      get { return _viewbox; }
+      set { _viewbox = value; }
+    }
 
-		public BrushMappingMode ViewboxUnits
-		{
-			get { return _viewboxUnits; }
-			set { _viewboxUnits = value; }
-		}
+    public BrushMappingMode ViewboxUnits
+    {
+      get { return _viewboxUnits; }
+      set { _viewboxUnits = value; }
+    }
 
-		public Rect Viewport
-		{
-			get { return _viewport; }
-			set { _viewport = value; }
-		}
+    public Rect Viewport
+    {
+      get { return _viewport; }
+      set { _viewport = value; }
+    }
 
-		public BrushMappingMode ViewportUnits
-		{
-			get { return _viewportUnits; }
-			set { _viewportUnits = value; }
-		}
+    public BrushMappingMode ViewportUnits
+    {
+      get { return _viewportUnits; }
+      set { _viewportUnits = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		AlignmentX					_alignmentX;
-		AlignmentY					_alignmentY;
-		Stretch						_stretch;
-		TileMode					_tileMode;
-		Rect						_viewbox;
-		BrushMappingMode			_viewboxUnits;
-		Rect						_viewport;
-		BrushMappingMode			_viewportUnits;
+    private AlignmentX _alignmentX;
+    private AlignmentY _alignmentY;
+    private Stretch _stretch;
+    private TileMode _tileMode;
+    private Rect _viewbox;
+    private BrushMappingMode _viewboxUnits;
+    private Rect _viewport;
+    private BrushMappingMode _viewportUnits;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

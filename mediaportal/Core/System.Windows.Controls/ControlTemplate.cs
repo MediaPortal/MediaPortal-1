@@ -23,55 +23,59 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public class ControlTemplate : FrameworkTemplate
-	{
-		#region Constructors
+  public class ControlTemplate : FrameworkTemplate
+  {
+    #region Constructors
 
-		public ControlTemplate()
-		{
-		}
+    public ControlTemplate()
+    {
+    }
 
-		public ControlTemplate(Type targetType)
-		{
-			_targetType = targetType;
-		}
+    public ControlTemplate(Type targetType)
+    {
+      _targetType = targetType;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
+    protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Type TargetType
-		{
-			get { return _targetType; }
-			set { _targetType = value; }
-		}
+    public Type TargetType
+    {
+      get { return _targetType; }
+      set { _targetType = value; }
+    }
 
-		public TriggerCollection Triggers
-		{
-			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
-		}
+    public TriggerCollection Triggers
+    {
+      get
+      {
+        if (_triggers == null)
+        {
+          _triggers = new TriggerCollection();
+        }
+        return _triggers;
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Type						_targetType;
-		TriggerCollection			_triggers;
+    private Type _targetType;
+    private TriggerCollection _triggers;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -23,32 +23,30 @@
 
 #endregion
 
-using System;
-using System.Globalization;
 using System.ComponentModel;
 
 namespace System.Windows
 {
-	[TypeConverter(typeof(RoutedEventConverter))]
-	public sealed class RoutedEvent
-	{
-		#region Constructors
+  [TypeConverter(typeof (RoutedEventConverter))]
+  public sealed class RoutedEvent
+  {
+    #region Constructors
 
-		public RoutedEvent()
-		{
-		}
+    public RoutedEvent()
+    {
+    }
 
-		internal RoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
-		{
-			_name = name;
-			_routingStrategy = routingStrategy;
-			_handlerType = handlerType;
-			_ownerType = ownerType;
-		}
+    internal RoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
+    {
+      _name = name;
+      _routingStrategy = routingStrategy;
+      _handlerType = handlerType;
+      _ownerType = ownerType;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
 //		public event EventHandler			Activated;
 //		public event EventHandler			Closed;
@@ -59,61 +57,61 @@ namespace System.Windows
 //		public event EventHandler			StateChanged;
 //		public event EventHandler			WindowSizeChanged;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public RoutedEvent AddOwner(Type ownerType)
-		{
-			return EventManager.RegisterRoutedEvent(_name, _routingStrategy, _handlerType, ownerType);
-		}
+    public RoutedEvent AddOwner(Type ownerType)
+    {
+      return EventManager.RegisterRoutedEvent(_name, _routingStrategy, _handlerType, ownerType);
+    }
 
-		public override int GetHashCode()
-		{
-			return _globalIndex;
-		}
+    public override int GetHashCode()
+    {
+      return _globalIndex;
+    }
 
-		public override string ToString()
-		{
-			// TODO: what should this look like???
-			return string.Format("{0}.{1}", _ownerType.Name, _name);
-		}
+    public override string ToString()
+    {
+      // TODO: what should this look like???
+      return string.Format("{0}.{1}", _ownerType.Name, _name);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Type HandlerType
-		{
-			get { return _handlerType; }
-		}
+    public Type HandlerType
+    {
+      get { return _handlerType; }
+    }
 
-		public string Name
-		{
-			get { return _name; }
-		}
+    public string Name
+    {
+      get { return _name; }
+    }
 
-		public Type OwnerType
-		{
-			get { return _ownerType; }
-		}
+    public Type OwnerType
+    {
+      get { return _ownerType; }
+    }
 
-		public RoutingStrategy RoutingStrategy
-		{
-			get { return _routingStrategy; }
-		}
+    public RoutingStrategy RoutingStrategy
+    {
+      get { return _routingStrategy; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		readonly int				_globalIndex = _globalIndexNext++;
-		static int					_globalIndexNext = 0;
-		Type						_handlerType;
-		string						_name;
-		Type						_ownerType;
-		RoutingStrategy				_routingStrategy;
+    private readonly int _globalIndex = _globalIndexNext++;
+    private static int _globalIndexNext = 0;
+    private Type _handlerType;
+    private string _name;
+    private Type _ownerType;
+    private RoutingStrategy _routingStrategy;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -25,37 +25,37 @@
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherUnhandledExceptionEventArgs : DispatcherEventArgs
-	{
-		#region Constructors
+  public sealed class DispatcherUnhandledExceptionEventArgs : DispatcherEventArgs
+  {
+    #region Constructors
 
-		internal DispatcherUnhandledExceptionEventArgs(Dispatcher dispatcher, Exception exception) : base(dispatcher)
-		{
-			_exception = exception;
-		}
+    internal DispatcherUnhandledExceptionEventArgs(Dispatcher dispatcher, Exception exception) : base(dispatcher)
+    {
+      _exception = exception;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Exception Exception
-		{
-			get { return _exception; }
-		}
+    public Exception Exception
+    {
+      get { return _exception; }
+    }
 
-		public bool Handled
-		{
-			get { return _handled; }
-			set { _handled = value; }
-		}
+    public bool Handled
+    {
+      get { return _handled; }
+      set { _handled = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Exception					_exception;
-		bool						_handled = false;
+    private Exception _exception;
+    private bool _handled = false;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

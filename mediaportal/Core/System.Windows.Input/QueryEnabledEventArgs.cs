@@ -25,37 +25,37 @@
 
 namespace System.Windows.Input
 {
-	public class QueryEnabledEventArgs : EventArgs
-	{		
-		#region Constructors
+  public class QueryEnabledEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public QueryEnabledEventArgs(ICommand command)
-		{
-			_command = command;
-		}
+    public QueryEnabledEventArgs(ICommand command)
+    {
+      _command = command;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public ICommand Command
-		{
-			get { return _command; }
-		}
+    public ICommand Command
+    {
+      get { return _command; }
+    }
 
-		public bool IsEnabled
-		{
-			get { return _isEnabled; }
-			set { _isEnabled = value; }
-		}
+    public bool IsEnabled
+    {
+      get { return _isEnabled; }
+      set { _isEnabled = value; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		ICommand					_command;
-		bool						_isEnabled;
+    private ICommand _command;
+    private bool _isEnabled;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace DShowNET.Helper
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DirectShowVolume
-	{
+  /// <summary>
+  /// 
+  /// </summary>
+  public class DirectShowVolume
+  {
     /// <summary>
     /// Maxmum value of DirectShow volume
     /// </summary>
@@ -43,11 +41,12 @@ namespace DShowNET.Helper
     /// </summary>
     /// <value>-10000</value>
     public const int VOLUME_MIN = -10000;
+
     public DirectShowVolume()
-		{
-			// 
-			// TODO: Add constructor logic here
-			//
-		}
-	}
+    {
+      // 
+      // TODO: Add constructor logic here
+      //
+    }
+  }
 }

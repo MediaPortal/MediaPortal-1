@@ -23,40 +23,45 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Windows.Controls
 {
-	public class GridLengthConverter : TypeConverter
-	{
-		#region Methods
+  public class GridLengthConverter : TypeConverter
+  {
+    #region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
-		{
-			if(t == typeof(string))
-				return true;
+    public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
+    {
+      if (t == typeof (string))
+      {
+        return true;
+      }
 
-			return base.CanConvertFrom(context, t);
-		}
+      return base.CanConvertFrom(context, t);
+    }
 
-		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if(value is string)
-			{
-				if(string.Compare((string)value, "*") == 0)
-					return new GridLength(GridUnitType.Star);
+    public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+    {
+      if (value is string)
+      {
+        if (string.Compare((string) value, "*") == 0)
+        {
+          return new GridLength(GridUnitType.Star);
+        }
 
-				if(string.Compare((string)value, "Auto", true) == 0)
-					return new GridLength(GridUnitType.Auto);
+        if (string.Compare((string) value, "Auto", true) == 0)
+        {
+          return new GridLength(GridUnitType.Auto);
+        }
 
-				return new GridLength(double.Parse((string)value));
-			}
+        return new GridLength(double.Parse((string) value));
+      }
 
-			return base.ConvertFrom(context, culture, value);
-		}
+      return base.ConvertFrom(context, culture, value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

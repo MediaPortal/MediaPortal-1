@@ -23,289 +23,301 @@
 
 #endregion
 
-using System;
-
 namespace System.Collections
 {
-	public interface IPriorityQueue : ICollection, ICloneable, IList
-	{
-		int Enqueue(object O);
-		object Dequeue();
-		object Peek();
-		void Update(int i);
-	}
+  public interface IPriorityQueue : ICollection, ICloneable, IList
+  {
+    int Enqueue(object O);
+    object Dequeue();
+    object Peek();
+    void Update(int i);
+  }
 
-	public class PriorityQueue : IPriorityQueue, ICollection, ICloneable, IList
-	{
-		#region Contructors
-		
-		public PriorityQueue()
-		{
-			_comparer = Comparer.Default;
-		}
-		
-		public PriorityQueue(IComparer comparer)
-		{
-			_comparer = comparer;
-		}
-		
-		public PriorityQueue(int capacity)
-		{
-			_comparer = Comparer.Default;
-			_innerList.Capacity = capacity;
-		}
+  public class PriorityQueue : IPriorityQueue, ICollection, ICloneable, IList
+  {
+    #region Contructors
 
-		public PriorityQueue(IComparer comparer, int capacity)
-		{
-			_comparer = comparer;
-			_innerList.Capacity = capacity;
-		}
+    public PriorityQueue()
+    {
+      _comparer = Comparer.Default;
+    }
 
-		private PriorityQueue(ArrayList array, IComparer comparer, bool copy)
-		{
-			_innerList = copy ? (ArrayList)array.Clone() : array;
-			_comparer = comparer;
-		}
+    public PriorityQueue(IComparer comparer)
+    {
+      _comparer = comparer;
+    }
 
-		#endregion
+    public PriorityQueue(int capacity)
+    {
+      _comparer = Comparer.Default;
+      _innerList.Capacity = capacity;
+    }
 
-		void Swap(int l, int r)
-		{
-			object temp = _innerList[l];
+    public PriorityQueue(IComparer comparer, int capacity)
+    {
+      _comparer = comparer;
+      _innerList.Capacity = capacity;
+    }
 
-			_innerList[l] = _innerList[r];
-			_innerList[r] = temp;
-		}
+    private PriorityQueue(ArrayList array, IComparer comparer, bool copy)
+    {
+      _innerList = copy ? (ArrayList) array.Clone() : array;
+      _comparer = comparer;
+    }
 
-		#region public methods
+    #endregion
 
-		/// <summary>
-		/// Enqueue an object onto the PQ
-		/// </summary>
-		/// <param name="O">The new object</param>
-		/// <returns>The index in the list where the object is _now_. This will change when objects are taken from or put onto the PQ.</returns>
-		public int Enqueue(object O)
-		{
-			int p = _innerList.Count,p2;
+    private void Swap(int l, int r)
+    {
+      object temp = _innerList[l];
 
-			_innerList.Add(O);
+      _innerList[l] = _innerList[r];
+      _innerList[r] = temp;
+    }
 
-			do
-			{
-				if(p==0)
-					break;
+    #region public methods
 
-				p2 = (p - 1) / 2;
+    /// <summary>
+    /// Enqueue an object onto the PQ
+    /// </summary>
+    /// <param name="O">The new object</param>
+    /// <returns>The index in the list where the object is _now_. This will change when objects are taken from or put onto the PQ.</returns>
+    public int Enqueue(object O)
+    {
+      int p = _innerList.Count, p2;
 
-				if(_comparer.Compare(_innerList[p], _innerList[p2]) < 0)
-				{
-					Swap(p,p2);
-					p = p2;
-				}
-				else
-					break;
-			}while(true);
-			return p;
-		}
+      _innerList.Add(O);
 
-		/// <summary>
-		/// Get the smallest object and remove it.
-		/// </summary>
-		/// <returns>The smallest object</returns>
-		public object Dequeue()
-		{
-			object result = _innerList[0];
-			int p = 0,p1,p2,pn;
-			_innerList[0] = _innerList[_innerList.Count-1];
-			_innerList.RemoveAt(_innerList.Count-1);
-			do
-			{
-				pn = p;
-				p1 = 2*p+1;
-				p2 = 2*p+2;
-				if(_innerList.Count>p1 && _comparer.Compare(_innerList[p], _innerList[p1]) > 0) 
-					p = p1;
-				if(_innerList.Count>p2 && _comparer.Compare(_innerList[p], _innerList[p2]) > 0) 
-					p = p2;
-			
-				if(p==pn)
-					break;
-				Swap(p,pn);
-			}while(true);
-			return result;
-		}
+      do
+      {
+        if (p == 0)
+        {
+          break;
+        }
 
-		/// <summary>
-		/// Notify the PQ that the object at position i has changed
-		/// and the PQ needs to restore order.
-		/// Since you dont have access to any indexes (except by using the
-		/// explicit IList.this) you should not call this function without knowing exactly
-		/// what you do.
-		/// </summary>
-		/// <param name="i">The index of the changed object.</param>
-		public void Update(int i)
-		{
-			int p = i,pn;
-			int p1,p2;
-			do	
-			{
-				if(p==0)
-					break;
-				p2 = (p-1)/2;
-				if(_comparer.Compare(_innerList[p],_innerList[p2])<0)
-				{
-					Swap(p,p2);
-					p = p2;
-				}
-				else
-					break;
-			}while(true);
-			if(p<i)
-				return;
-			do	   
-			{
-				pn = p;
-				p1 = 2*p+1;
-				p2 = 2*p+2;
-				if(_innerList.Count>p1 && _comparer.Compare(_innerList[p],_innerList[p1])>0) 
-					p = p1;
-				if(_innerList.Count>p2 && _comparer.Compare(_innerList[p],_innerList[p2])>0) 
-					p = p2;
-			
-				if(p==pn)
-					break;
+        p2 = (p - 1)/2;
 
-				Swap(p,pn);
-			}while(true);
-		}
+        if (_comparer.Compare(_innerList[p], _innerList[p2]) < 0)
+        {
+          Swap(p, p2);
+          p = p2;
+        }
+        else
+        {
+          break;
+        }
+      } while (true);
+      return p;
+    }
 
-		/// <summary>
-		/// Get the smallest object without removing it.
-		/// </summary>
-		/// <returns>The smallest object</returns>
-		public object Peek()
-		{
-			if(_innerList.Count>0)
-				return _innerList[0];
-			return null;
-		}
+    /// <summary>
+    /// Get the smallest object and remove it.
+    /// </summary>
+    /// <returns>The smallest object</returns>
+    public object Dequeue()
+    {
+      object result = _innerList[0];
+      int p = 0, p1, p2, pn;
+      _innerList[0] = _innerList[_innerList.Count - 1];
+      _innerList.RemoveAt(_innerList.Count - 1);
+      do
+      {
+        pn = p;
+        p1 = 2*p + 1;
+        p2 = 2*p + 2;
+        if (_innerList.Count > p1 && _comparer.Compare(_innerList[p], _innerList[p1]) > 0)
+        {
+          p = p1;
+        }
+        if (_innerList.Count > p2 && _comparer.Compare(_innerList[p], _innerList[p2]) > 0)
+        {
+          p = p2;
+        }
 
-		public bool Contains(object value)
-		{
-			return _innerList.Contains(value);
-		}
+        if (p == pn)
+        {
+          break;
+        }
+        Swap(p, pn);
+      } while (true);
+      return result;
+    }
 
-		public void Clear()
-		{
-			_innerList.Clear();
-		}
+    /// <summary>
+    /// Notify the PQ that the object at position i has changed
+    /// and the PQ needs to restore order.
+    /// Since you dont have access to any indexes (except by using the
+    /// explicit IList.this) you should not call this function without knowing exactly
+    /// what you do.
+    /// </summary>
+    /// <param name="i">The index of the changed object.</param>
+    public void Update(int i)
+    {
+      int p = i, pn;
+      int p1, p2;
+      do
+      {
+        if (p == 0)
+        {
+          break;
+        }
+        p2 = (p - 1)/2;
+        if (_comparer.Compare(_innerList[p], _innerList[p2]) < 0)
+        {
+          Swap(p, p2);
+          p = p2;
+        }
+        else
+        {
+          break;
+        }
+      } while (true);
+      if (p < i)
+      {
+        return;
+      }
+      do
+      {
+        pn = p;
+        p1 = 2*p + 1;
+        p2 = 2*p + 2;
+        if (_innerList.Count > p1 && _comparer.Compare(_innerList[p], _innerList[p1]) > 0)
+        {
+          p = p1;
+        }
+        if (_innerList.Count > p2 && _comparer.Compare(_innerList[p], _innerList[p2]) > 0)
+        {
+          p = p2;
+        }
 
-		public int Count
-		{
-			get
-			{
-				return _innerList.Count;
-			}
-		}
+        if (p == pn)
+        {
+          break;
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _innerList.GetEnumerator();
-		}
+        Swap(p, pn);
+      } while (true);
+    }
 
-		public void CopyTo(Array array, int index)
-		{
-			_innerList.CopyTo(array,index);
-		}
+    /// <summary>
+    /// Get the smallest object without removing it.
+    /// </summary>
+    /// <returns>The smallest object</returns>
+    public object Peek()
+    {
+      if (_innerList.Count > 0)
+      {
+        return _innerList[0];
+      }
+      return null;
+    }
 
-		public object Clone()
-		{
-			return new PriorityQueue(_innerList, _comparer, true);	
-		}
+    public bool Contains(object value)
+    {
+      return _innerList.Contains(value);
+    }
 
-		public bool IsSynchronized
-		{
-			get { return _innerList.IsSynchronized; }
-		}
+    public void Clear()
+    {
+      _innerList.Clear();
+    }
 
-		public object SyncRoot
-		{
-			get { return this; }
-		}
-		#endregion
+    public int Count
+    {
+      get { return _innerList.Count; }
+    }
 
-		#region explicit implementation
-		bool IList.IsReadOnly
-		{
-			get
-			{
-				return false;
-			}
-		}
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _innerList.GetEnumerator();
+    }
 
-		object IList.this[int index]
-		{
-			get
-			{
-				return _innerList[index];
-			}
-			set
-			{
-				_innerList[index] = value;
-				Update(index);
-			}
-		}
+    public void CopyTo(Array array, int index)
+    {
+      _innerList.CopyTo(array, index);
+    }
 
-		int IList.Add(object o)
-		{
-			return Enqueue(o);
-		}
+    public object Clone()
+    {
+      return new PriorityQueue(_innerList, _comparer, true);
+    }
 
-		void IList.RemoveAt(int index)
-		{
-			throw new NotSupportedException();
-		}
+    public bool IsSynchronized
+    {
+      get { return _innerList.IsSynchronized; }
+    }
 
-		void IList.Insert(int index, object value)
-		{
-			throw new NotSupportedException();
-		}
+    public object SyncRoot
+    {
+      get { return this; }
+    }
 
-		void IList.Remove(object value)
-		{
-			throw new NotSupportedException();
-		}
+    #endregion
 
-		int IList.IndexOf(object value)
-		{
-			throw new NotSupportedException();
-		}
+    #region explicit implementation
 
-		bool IList.IsFixedSize
-		{
-			get
-			{
-				return false;
-			}
-		}
+    bool IList.IsReadOnly
+    {
+      get { return false; }
+    }
 
-		public static PriorityQueue Syncronized(PriorityQueue P)
-		{
-			return new PriorityQueue(ArrayList.Synchronized(P._innerList), P._comparer, false);
-		}
+    object IList.this[int index]
+    {
+      get { return _innerList[index]; }
+      set
+      {
+        _innerList[index] = value;
+        Update(index);
+      }
+    }
 
-		public static PriorityQueue ReadOnly(PriorityQueue P)
-		{
-			return new PriorityQueue(ArrayList.ReadOnly(P._innerList), P._comparer, false);
-		}
+    int IList.Add(object o)
+    {
+      return Enqueue(o);
+    }
 
-		#endregion
+    void IList.RemoveAt(int index)
+    {
+      throw new NotSupportedException();
+    }
 
-		#region Fields
+    void IList.Insert(int index, object value)
+    {
+      throw new NotSupportedException();
+    }
 
-		ArrayList					_innerList = new ArrayList();
-		IComparer					_comparer;
+    void IList.Remove(object value)
+    {
+      throw new NotSupportedException();
+    }
 
-		#endregion Fields
-	}
+    int IList.IndexOf(object value)
+    {
+      throw new NotSupportedException();
+    }
+
+    bool IList.IsFixedSize
+    {
+      get { return false; }
+    }
+
+    public static PriorityQueue Syncronized(PriorityQueue P)
+    {
+      return new PriorityQueue(ArrayList.Synchronized(P._innerList), P._comparer, false);
+    }
+
+    public static PriorityQueue ReadOnly(PriorityQueue P)
+    {
+      return new PriorityQueue(ArrayList.ReadOnly(P._innerList), P._comparer, false);
+    }
+
+    #endregion
+
+    #region Fields
+
+    private ArrayList _innerList = new ArrayList();
+    private IComparer _comparer;
+
+    #endregion Fields
+  }
 }

@@ -27,37 +27,37 @@ using System;
 
 namespace MediaPortal.Mixer
 {
-	public class MixerEventArgs : EventArgs
-	{
-		#region Constructors
+  public class MixerEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public MixerEventArgs(IntPtr handle, int id)
-		{
-			_handle = handle;
-			_id = id;
-		}
+    public MixerEventArgs(IntPtr handle, int id)
+    {
+      _handle = handle;
+      _id = id;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public IntPtr Handle
-		{
-			get { return _handle; }
-		}
+    public IntPtr Handle
+    {
+      get { return _handle; }
+    }
 
-		public int Id
-		{
-			get { return _id; }
-		}
+    public int Id
+    {
+      get { return _id; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		IntPtr						_handle;
-		int							_id;
+    private IntPtr _handle;
+    private int _id;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public enum FillRule
-	{
-		#region Values
+  public enum FillRule
+  {
+    #region Values
 
-		EvenOdd,
-		Nonzero,
+    EvenOdd,
+    Nonzero,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

@@ -23,89 +23,143 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public sealed class Pen : PenBase
-	{
-		#region Constructors
+  public sealed class Pen : PenBase
+  {
+    #region Constructors
 
-		public Pen()
-		{
-		}
+    public Pen()
+    {
+    }
 
-		public Pen(Brush brush, double thickness)
-		{
-			_brush = brush;
-			_thickness = thickness;
-		}
+    public Pen(Brush brush, double thickness)
+    {
+      _brush = brush;
+      _thickness = thickness;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Brush Brush
-		{
-			get { return _brush; }
-			set { if(!Brush.Equals(_brush, value)) { _brush = value; RaiseChanged(); } }
-		}
+    public Brush Brush
+    {
+      get { return _brush; }
+      set
+      {
+        if (!Equals(_brush, value))
+        {
+          _brush = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public PenLineCap DashCap
-		{
-			get { return _dashCap; }
-			set { if(_dashCap != value) { _dashCap = value; RaiseChanged(); } }
-		}
+    public PenLineCap DashCap
+    {
+      get { return _dashCap; }
+      set
+      {
+        if (_dashCap != value)
+        {
+          _dashCap = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public DashStyle DashStyle
-		{
-			get { return _dashStyle; }
-			set { if(!DashStyle.Equals(_dashStyle, value)) { _dashStyle = value; RaiseChanged(); } }
-		}
+    public DashStyle DashStyle
+    {
+      get { return _dashStyle; }
+      set
+      {
+        if (!Equals(_dashStyle, value))
+        {
+          _dashStyle = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public PenLineCap EndLineCap
-		{
-			get { return _endLineCap; }
-			set { if(_endLineCap != value) { _endLineCap = value; RaiseChanged(); } }
-		}
+    public PenLineCap EndLineCap
+    {
+      get { return _endLineCap; }
+      set
+      {
+        if (_endLineCap != value)
+        {
+          _endLineCap = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public PenLineJoin LineJoin
-		{
-			get { return _lineJoin; }
-			set { if(_lineJoin != value) { _lineJoin = value; RaiseChanged(); } }
-		}
+    public PenLineJoin LineJoin
+    {
+      get { return _lineJoin; }
+      set
+      {
+        if (_lineJoin != value)
+        {
+          _lineJoin = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public double MiterLimit
-		{
-			get { return _miterLimit; }
-			set { if(!double.Equals(_miterLimit, value)) { _miterLimit = value; RaiseChanged(); } }
-		}
+    public double MiterLimit
+    {
+      get { return _miterLimit; }
+      set
+      {
+        if (!Equals(_miterLimit, value))
+        {
+          _miterLimit = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public PenLineCap StartLineCap
-		{
-			get { return _startLineCap; }
-			set { if(_startLineCap != value) { _startLineCap = value; RaiseChanged(); } }
-		}
+    public PenLineCap StartLineCap
+    {
+      get { return _startLineCap; }
+      set
+      {
+        if (_startLineCap != value)
+        {
+          _startLineCap = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		public double Thickness
-		{
-			get { return _thickness; }
-			set { if(!double.Equals(_thickness, value)) { _thickness = value; RaiseChanged(); } }
-		}
+    public double Thickness
+    {
+      get { return _thickness; }
+      set
+      {
+        if (!Equals(_thickness, value))
+        {
+          _thickness = value;
+          RaiseChanged();
+        }
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Brush						_brush;
-		PenLineCap					_dashCap;
-		DashStyle					_dashStyle;
-		PenLineCap					_endLineCap;
-		PenLineJoin					_lineJoin;
-		double						_miterLimit;
-		PenLineCap					_startLineCap;
-		double						_thickness;
+    private Brush _brush;
+    private PenLineCap _dashCap;
+    private DashStyle _dashStyle;
+    private PenLineCap _endLineCap;
+    private PenLineJoin _lineJoin;
+    private double _miterLimit;
+    private PenLineCap _startLineCap;
+    private double _thickness;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

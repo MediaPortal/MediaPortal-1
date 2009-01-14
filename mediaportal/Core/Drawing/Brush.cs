@@ -27,103 +27,103 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(BrushConverter))]
-	public abstract class Brush : Animatable, IFormattable
-	{
-		#region Constructors
+  [TypeConverter(typeof (BrushConverter))]
+  public abstract class Brush : Animatable, IFormattable
+  {
+    #region Constructors
 
-		static Brush()
-		{
-			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(Brush), new PropertyMetadata(1.0));
-			RelativeTransformProperty = DependencyProperty.Register("RelativeTransform", typeof(Transform), typeof(Brush)); 
-			TransformProperty = DependencyProperty.Register("Transform", typeof(Transform), typeof(Brush));
-		}
+    static Brush()
+    {
+      OpacityProperty = DependencyProperty.Register("Opacity", typeof (double), typeof (Brush),
+                                                    new PropertyMetadata(1.0));
+      RelativeTransformProperty = DependencyProperty.Register("RelativeTransform", typeof (Transform), typeof (Brush));
+      TransformProperty = DependencyProperty.Register("Transform", typeof (Transform), typeof (Brush));
+    }
 
-		protected Brush()
-		{
-		}
+    protected Brush()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public new Brush Copy()
-		{
-			return (Brush)base.Copy();											
-		}
+    public new Brush Copy()
+    {
+      return (Brush) base.Copy();
+    }
 
-		protected override void CopyCore(Freezable sourceFreezable)
-		{
-		}
+    protected override void CopyCore(Freezable sourceFreezable)
+    {
+    }
 
-		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-		{
-		}
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+    {
+    }
 
-		protected override bool FreezeCore(bool isChecking)
-		{
-			throw new NotImplementedException();
-		}
+    protected override bool FreezeCore(bool isChecking)
+    {
+      throw new NotImplementedException();
+    }
 
-		public new Brush GetCurrentValue()
-		{
-			throw new NotImplementedException();
-		}
+    public new Brush GetCurrentValue()
+    {
+      throw new NotImplementedException();
+    }
 
-		protected override void PropagateChangedHandlersCore(EventHandler handler, bool adding)
-		{
-		}
+    protected override void PropagateChangedHandlersCore(EventHandler handler, bool adding)
+    {
+    }
 
-		string IFormattable.ToString(string format, IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
+    string IFormattable.ToString(string format, IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
 
-		public override string ToString()
-		{
-			return base.ToString();
-		}
+    public override string ToString()
+    {
+      return base.ToString();
+    }
 
-		public string ToString(IFormatProvider provider)
-		{
-			throw new NotImplementedException();
-		}
+    public string ToString(IFormatProvider provider)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public double Opacity
-		{
-			get { return (double)GetValue(OpacityProperty); }
-			set { SetValue(OpacityProperty, value); }
-		}
+    public double Opacity
+    {
+      get { return (double) GetValue(OpacityProperty); }
+      set { SetValue(OpacityProperty, value); }
+    }
 
-		public Transform RelativeTransform
-		{
-			get { return (Transform)GetValue(RelativeTransformProperty); }
-			set { SetValue(RelativeTransformProperty, value); }
-		}
+    public Transform RelativeTransform
+    {
+      get { return (Transform) GetValue(RelativeTransformProperty); }
+      set { SetValue(RelativeTransformProperty, value); }
+    }
 
-		public Transform Transform
-		{
-			get { return (Transform)GetValue(TransformProperty); }
-			set { SetValue(TransformProperty, value); }
-		}
+    public Transform Transform
+    {
+      get { return (Transform) GetValue(TransformProperty); }
+      set { SetValue(TransformProperty, value); }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
+    #region Properties (Dependency)
 
-		public static readonly DependencyProperty OpacityProperty;
-		public static readonly DependencyProperty RelativeTransformProperty;
-		public static readonly DependencyProperty TransformProperty;
+    public static readonly DependencyProperty OpacityProperty;
+    public static readonly DependencyProperty RelativeTransformProperty;
+    public static readonly DependencyProperty TransformProperty;
 
-		#endregion Properties (Dependency)
-	}
+    #endregion Properties (Dependency)
+  }
 }

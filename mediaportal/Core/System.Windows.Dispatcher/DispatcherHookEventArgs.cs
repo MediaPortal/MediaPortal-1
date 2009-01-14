@@ -25,35 +25,35 @@
 
 namespace System.Windows.Dispatcher
 {
-	public sealed class DispatcherHookEventArgs : EventArgs
-	{
-		#region Constructors
+  public sealed class DispatcherHookEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public DispatcherHookEventArgs(DispatcherOperation operation)
-		{
-			_operation = operation;
-		}
+    public DispatcherHookEventArgs(DispatcherOperation operation)
+    {
+      _operation = operation;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public Dispatcher Dispatcher
-		{
-			get { throw new NotImplementedException(); }
-		}
+    public Dispatcher Dispatcher
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		public DispatcherOperation Operation
-		{
-			get { return _operation; }
-		}
+    public DispatcherOperation Operation
+    {
+      get { return _operation; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		DispatcherOperation			_operation;
+    private DispatcherOperation _operation;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

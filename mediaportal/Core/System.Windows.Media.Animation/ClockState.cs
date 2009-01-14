@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public enum ClockState
-	{
-		#region Values
-		
-		Active,
-		Filling,
-		Stopped = 0,
+  public enum ClockState
+  {
+    #region Values
 
-		#endregion Values
-	}
+    Active,
+    Filling,
+    Stopped = 0,
+
+    #endregion Values
+  }
 }

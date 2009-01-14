@@ -23,86 +23,88 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	// http://channel9.msdn.com/ShowPost.aspx?PostID=73455
-	public struct RoutedEventHandlerInfo
-	{
-		#region Constructors
-		
-		internal RoutedEventHandlerInfo(Delegate handler, bool isInvokeHandledEventsToo)
-		{
-			_handler = handler;
-			_isInvokeHandledEventsToo = isInvokeHandledEventsToo;
-			_globalIndex = _globalIndexNext++;
-		}
+  // http://channel9.msdn.com/ShowPost.aspx?PostID=73455
+  public struct RoutedEventHandlerInfo
+  {
+    #region Constructors
 
-		#endregion Constructors
+    internal RoutedEventHandlerInfo(Delegate handler, bool isInvokeHandledEventsToo)
+    {
+      _handler = handler;
+      _isInvokeHandledEventsToo = isInvokeHandledEventsToo;
+      _globalIndex = _globalIndexNext++;
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public override bool Equals(Object other)
-		{
-			if(other is RoutedEventHandlerInfo)
-				return this.Equals((RoutedEventHandlerInfo)other);
+    #region Methods
 
-			return false;
-		}
+    public override bool Equals(Object other)
+    {
+      if (other is RoutedEventHandlerInfo)
+      {
+        return this.Equals((RoutedEventHandlerInfo) other);
+      }
 
-		public bool Equals(RoutedEventHandlerInfo handlerInfo)
-		{
-			return this == handlerInfo;
-		}
+      return false;
+    }
 
-		public override int GetHashCode()
-		{
-			return _handler.GetHashCode();
-		}
+    public bool Equals(RoutedEventHandlerInfo handlerInfo)
+    {
+      return this == handlerInfo;
+    }
 
-		internal void InvokeHandler(object target, RoutedEventArgs routedEventArgs)
-		{
-			_handler.Method.Invoke(target, new object[] { routedEventArgs });
-		}
-	
-		#endregion Methods
+    public override int GetHashCode()
+    {
+      return _handler.GetHashCode();
+    }
 
-		#region Operators
+    internal void InvokeHandler(object target, RoutedEventArgs routedEventArgs)
+    {
+      _handler.Method.Invoke(target, new object[] {routedEventArgs});
+    }
 
-		public static bool operator ==(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
-		{
-			return handlerInfo1._handler == handlerInfo2._handler && handlerInfo1._isInvokeHandledEventsToo == handlerInfo2._isInvokeHandledEventsToo;
-		}
+    #endregion Methods
 
-		public static bool operator !=(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
-		{
-			return handlerInfo1._handler != handlerInfo2._handler && handlerInfo1._isInvokeHandledEventsToo != handlerInfo2._isInvokeHandledEventsToo;
-		}
+    #region Operators
 
-		#endregion Operators
+    public static bool operator ==(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
+    {
+      return handlerInfo1._handler == handlerInfo2._handler &&
+             handlerInfo1._isInvokeHandledEventsToo == handlerInfo2._isInvokeHandledEventsToo;
+    }
 
-		#region Properties
+    public static bool operator !=(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
+    {
+      return handlerInfo1._handler != handlerInfo2._handler &&
+             handlerInfo1._isInvokeHandledEventsToo != handlerInfo2._isInvokeHandledEventsToo;
+    }
 
-		public Delegate Handler
-		{
-			get { return _handler; }
-		}
+    #endregion Operators
 
-		public bool InvokeHandledEventsToo
-		{
-			get { return _isInvokeHandledEventsToo; }
-		}
+    #region Properties
 
-		#endregion Properties
+    public Delegate Handler
+    {
+      get { return _handler; }
+    }
 
-		#region Fields
+    public bool InvokeHandledEventsToo
+    {
+      get { return _isInvokeHandledEventsToo; }
+    }
 
-		Delegate					_handler;
-		bool						_isInvokeHandledEventsToo;
-		readonly int				_globalIndex;
-		static int					_globalIndexNext = 0;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private Delegate _handler;
+    private bool _isInvokeHandledEventsToo;
+    private readonly int _globalIndex;
+    private static int _globalIndexNext = 0;
+
+    #endregion Fields
+  }
 }

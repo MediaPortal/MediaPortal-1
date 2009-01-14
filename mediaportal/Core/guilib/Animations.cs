@@ -23,38 +23,41 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Windows.Media.Animation;
-using System.Text;
 
 namespace MediaPortal.GUI.Library
 {
   public class Animation
   {
     #region Fields
-    protected double   _start     = 0;
-    protected double   _stop      = 0;
-    protected Duration _duration  = Duration.Automatic;
-    protected double   _startTick = 0;
-    protected Easing   _easing    = Easing.Linear;
-    protected bool     _running = false;
+
+    protected double _start = 0;
+    protected double _stop = 0;
+    protected Duration _duration = Duration.Automatic;
+    protected double _startTick = 0;
+    protected Easing _easing = Easing.Linear;
+    protected bool _running = false;
+
     #endregion
 
     #region Constructors
+
     public Animation()
     {
     }
-    
+
     public Animation(double duration, int StartValue, int StopValue)
     {
       _duration = new Duration(duration);
       _start = StartValue;
       _stop = StopValue;
     }
+
     #endregion
 
     #region Methods
+
     public virtual void Begin()
     {
       _startTick = AnimationTimer.TickCount;
@@ -66,15 +69,16 @@ namespace MediaPortal.GUI.Library
       Begin();
       _startTick = StartTick;
     }
-    
+
     public virtual void Stop()
-    { 
+    {
       _running = false;
     }
-    
+
     #endregion
 
     #region Properties
+
     public virtual bool Running
     {
       get { return _running; }
@@ -94,17 +98,20 @@ namespace MediaPortal.GUI.Library
     {
       get { return _start; }
     }
-    
+
     public virtual double StopValue
     {
       get { return _stop; }
     }
-               
+
     public virtual double Value
     {
       get
       {
-        if (!_running) return _stop;
+        if (!_running)
+        {
+          return _stop;
+        }
 
         if (ElapsedTicks <= _duration)
         {
@@ -114,25 +121,32 @@ namespace MediaPortal.GUI.Library
         return _stop;
       }
     }
-    #endregion
 
+    #endregion
   }
 
-  public class AnimationGroup: Animation
+  public class AnimationGroup : Animation
   {
     #region Fields
+
     protected List<Animation> _animationList = new List<Animation>();
     protected int _currentIndex = 0;
     protected double _lastValue = 0;
+
     #endregion
 
     #region Constructors
+
     #endregion
 
     #region Methods
+
     public override void Begin()
     {
-      if (_animationList.Count < 1) return;
+      if (_animationList.Count < 1)
+      {
+        return;
+      }
       base.Begin();
       _currentIndex = 0;
       InitValues();
@@ -150,7 +164,10 @@ namespace MediaPortal.GUI.Library
     public override void Stop()
     {
       base.Stop();
-      foreach (Animation animation in _animationList) animation.Stop();
+      foreach (Animation animation in _animationList)
+      {
+        animation.Stop();
+      }
       //_animationList[_currentIndex].Stop();
     }
 
@@ -158,7 +175,7 @@ namespace MediaPortal.GUI.Library
     {
       _animationList.Add(item);
     }
-    
+
     public void Clear()
     {
       Stop();
@@ -166,10 +183,10 @@ namespace MediaPortal.GUI.Library
       _start = _stop = _startTick = 0;
     }
 
-    
     #endregion
 
     #region Properties
+
     public int Count
     {
       get { return _animationList.Count; }
@@ -186,33 +203,50 @@ namespace MediaPortal.GUI.Library
       {
         foreach (Animation item in _animationList)
         {
-          if (item.Running) return true;
+          if (item.Running)
+          {
+            return true;
+          }
         }
         return false;
       }
     }
 
 
-
     public override double Value
     {
-      get 
+      get
       {
-        if (_animationList.Count <= 0) return _stop;
-        if ((!Running) || (_currentIndex >= _animationList.Count))  return _stop;
-        
+        if (_animationList.Count <= 0)
+        {
+          return _stop;
+        }
+        if ((!Running) || (_currentIndex >= _animationList.Count))
+        {
+          return _stop;
+        }
+
         if ((!_animationList[_currentIndex].Running) ||
             (_animationList[_currentIndex].ElapsedTicks > _animationList[_currentIndex].duration))
         {
           double elapsedTicks = _animationList[_currentIndex].ElapsedTicks - _animationList[_currentIndex].duration;
-          if (elapsedTicks < 0) elapsedTicks = 0;
+          if (elapsedTicks < 0)
+          {
+            elapsedTicks = 0;
+          }
           _animationList[_currentIndex].Stop();
 
-          if (_currentIndex + 1 >= _animationList.Count) return _stop;
+          if (_currentIndex + 1 >= _animationList.Count)
+          {
+            return _stop;
+          }
           _currentIndex++;
           while (_animationList[_currentIndex].duration < elapsedTicks)
           {
-            if (_currentIndex + 1 >= _animationList.Count) return _stop;
+            if (_currentIndex + 1 >= _animationList.Count)
+            {
+              return _stop;
+            }
             elapsedTicks -= _animationList[_currentIndex].duration;
             _currentIndex++;
           }
@@ -226,5 +260,4 @@ namespace MediaPortal.GUI.Library
 
     #endregion
   }
-
 }

@@ -23,42 +23,42 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows
 {
-	internal class RoutedEventHandlerInfoStore
-	{
-		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-		{
-			RoutedEventHandlerInfoList list = _handlers[routedEvent] as RoutedEventHandlerInfoList;
+  internal class RoutedEventHandlerInfoStore
+  {
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+    {
+      RoutedEventHandlerInfoList list = _handlers[routedEvent] as RoutedEventHandlerInfoList;
 
-			if(list == null)
-				_handlers[routedEvent] = list = new RoutedEventHandlerInfoList();
+      if (list == null)
+      {
+        _handlers[routedEvent] = list = new RoutedEventHandlerInfoList();
+      }
 
-			list.AddHandler(routedEvent, handler, handledEventsToo);
-		}
+      list.AddHandler(routedEvent, handler, handledEventsToo);
+    }
 
-		public bool Contains(RoutedEvent routedEvent)
-		{
-			return _handlers.ContainsKey(routedEvent);
-		}
+    public bool Contains(RoutedEvent routedEvent)
+    {
+      return _handlers.ContainsKey(routedEvent);
+    }
 
-		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-		{
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+    {
+    }
 
-		}
+    public RoutedEventHandlerInfoList this[RoutedEvent routedEvent]
+    {
+      get { return _handlers[routedEvent] as RoutedEventHandlerInfoList; }
+    }
 
-		public RoutedEventHandlerInfoList this[RoutedEvent routedEvent]
-		{
-			get { return _handlers[routedEvent] as RoutedEventHandlerInfoList; }
-		}
+    #region Fields
 
-		#region Fields
+    private Hashtable _handlers = new Hashtable();
 
-		Hashtable					_handlers = new Hashtable();
-
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

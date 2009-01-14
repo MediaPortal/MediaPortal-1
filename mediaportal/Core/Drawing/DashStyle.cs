@@ -23,46 +23,44 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public class DashStyle
-	{
-		#region Constructors
+  public class DashStyle
+  {
+    #region Constructors
 
-		public DashStyle()
-		{
-			_dashes = new double[] { 0 };
-		}
+    public DashStyle()
+    {
+      _dashes = new double[] {0};
+    }
 
-		public DashStyle(double[] dashes, double offset)
-		{
-			_dashes = dashes;
-			_offset = offset;
-		}
+    public DashStyle(double[] dashes, double offset)
+    {
+      _dashes = dashes;
+      _offset = offset;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public double[] Dashes
-		{
-			get { return _dashes; }
-		}
+    public double[] Dashes
+    {
+      get { return _dashes; }
+    }
 
-		public double Offset
-		{
-			get { return _offset; }
-		}
+    public double Offset
+    {
+      get { return _offset; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		double[]					_dashes;
-		double						_offset;
+    private double[] _dashes;
+    private double _offset;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

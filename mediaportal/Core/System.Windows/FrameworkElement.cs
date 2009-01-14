@@ -23,273 +23,298 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
 using System.Collections;
-using System.Windows;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing;
-using MediaPortal.Drawing.Layouts;
 
 namespace System.Windows
 {
-	public class FrameworkElement : UIElement, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
-	{
-		#region Constructors
+  public class FrameworkElement : UIElement, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
+  {
+    #region Constructors
 
-		static FrameworkElement()
-		{
-			FrameworkPropertyMetadata metadata;
+    static FrameworkElement()
+    {
+      FrameworkPropertyMetadata metadata;
 
-			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualHeightPropertyInvalidated)));
-			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualWidthPropertyInvalidated)));
+      ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof (double), typeof (FrameworkElement),
+                                                         new FrameworkPropertyMetadata(0.0,
+                                                                                       new PropertyInvalidatedCallback(
+                                                                                         ActualHeightPropertyInvalidated)));
+      ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof (double), typeof (FrameworkElement),
+                                                        new FrameworkPropertyMetadata(0.0,
+                                                                                      new PropertyInvalidatedCallback(
+                                                                                        ActualWidthPropertyInvalidated)));
 
-			#region ContextMenu
+      #region ContextMenu
 
-			ContextMenuProperty = ContextMenuService.ContextMenuProperty.AddOwner(typeof(FrameworkElement));
+      ContextMenuProperty = ContextMenuService.ContextMenuProperty.AddOwner(typeof (FrameworkElement));
 
-			#endregion ContextMenu
+      #endregion ContextMenu
 
-			FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof(FlowDirection), typeof(FrameworkElement), new FrameworkPropertyMetadata(FlowDirection.LeftToRight));
+      FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof (FlowDirection),
+                                                          typeof (FrameworkElement),
+                                                          new FrameworkPropertyMetadata(FlowDirection.LeftToRight));
 
-			#region Focusable
+      #region Focusable
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = true;
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnFocusablePropertyInvalidated);
-			metadata.GetValueOverride = new GetValueOverride(OnFocusablePropertyGetValue);
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = true;
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnFocusablePropertyInvalidated);
+      metadata.GetValueOverride = new GetValueOverride(OnFocusablePropertyGetValue);
 
-			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), metadata);
+      FocusableProperty = DependencyProperty.Register("Focusable", typeof (bool), typeof (FrameworkElement), metadata);
 
-			#endregion Focusable
+      #endregion Focusable
 
-			#region HeightProperty
+      #region HeightProperty
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = 0.0;
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnHeightPropertyInvalidated);
-			metadata.GetValueOverride = new GetValueOverride(OnHeightPropertyGetValue);
-			metadata.AffectsArrange = true;
-			metadata.AffectsMeasure = true;
-			metadata.AffectsParentArrange = true;
-			metadata.AffectsParentMeasure = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = 0.0;
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnHeightPropertyInvalidated);
+      metadata.GetValueOverride = new GetValueOverride(OnHeightPropertyGetValue);
+      metadata.AffectsArrange = true;
+      metadata.AffectsMeasure = true;
+      metadata.AffectsParentArrange = true;
+      metadata.AffectsParentMeasure = true;
 
-			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), metadata);
+      HeightProperty = DependencyProperty.Register("Height", typeof (double), typeof (FrameworkElement), metadata);
 
-			#endregion HeightProperty
+      #endregion HeightProperty
 
-			HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(FrameworkElement), new FrameworkPropertyMetadata(HorizontalAlignment.Stretch, FrameworkPropertyMetadataOptions.AffectsArrange));
-			MarginProperty = DependencyProperty.Register("Margin", typeof(Thickness), typeof(FrameworkElement), new FrameworkPropertyMetadata(Thickness.Empty));
-			NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(FrameworkElement), new FrameworkPropertyMetadata(string.Empty));
-			StyleProperty = DependencyProperty.Register("Style", typeof(Style), typeof(FrameworkElement), new FrameworkPropertyMetadata());
-			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new FrameworkPropertyMetadata(VerticalAlignment.Stretch));
+      HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof (HorizontalAlignment),
+                                                                typeof (FrameworkElement),
+                                                                new FrameworkPropertyMetadata(
+                                                                  HorizontalAlignment.Stretch,
+                                                                  FrameworkPropertyMetadataOptions.AffectsArrange));
+      MarginProperty = DependencyProperty.Register("Margin", typeof (Thickness), typeof (FrameworkElement),
+                                                   new FrameworkPropertyMetadata(Thickness.Empty));
+      NameProperty = DependencyProperty.Register("Name", typeof (string), typeof (FrameworkElement),
+                                                 new FrameworkPropertyMetadata(string.Empty));
+      StyleProperty = DependencyProperty.Register("Style", typeof (Style), typeof (FrameworkElement),
+                                                  new FrameworkPropertyMetadata());
+      VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof (VerticalAlignment),
+                                                              typeof (FrameworkElement),
+                                                              new FrameworkPropertyMetadata(VerticalAlignment.Stretch));
 
-			#region WidthProperty
+      #region WidthProperty
 
-			metadata = new FrameworkPropertyMetadata();
-			metadata.DefaultValue = 0.0;
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnWidthPropertyInvalidated);
-			metadata.GetValueOverride = new GetValueOverride(OnWidthPropertyGetValue);
-			metadata.AffectsArrange = true;
-			metadata.AffectsMeasure = true;
-			metadata.AffectsParentArrange = true;
-			metadata.AffectsParentMeasure = true;
+      metadata = new FrameworkPropertyMetadata();
+      metadata.DefaultValue = 0.0;
+      metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnWidthPropertyInvalidated);
+      metadata.GetValueOverride = new GetValueOverride(OnWidthPropertyGetValue);
+      metadata.AffectsArrange = true;
+      metadata.AffectsMeasure = true;
+      metadata.AffectsParentArrange = true;
+      metadata.AffectsParentMeasure = true;
 
-			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), metadata);
+      WidthProperty = DependencyProperty.Register("Width", typeof (double), typeof (FrameworkElement), metadata);
 
-			#endregion WidthProperty
+      #endregion WidthProperty
 
-			LoadedEvent = EventManager.RegisterRoutedEvent("Loaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
-			RequestBringIntoViewEvent = EventManager.RegisterRoutedEvent("RequestBringIntoView", RoutingStrategy.Direct, typeof(RequestBringIntoViewEventHandler), typeof(FrameworkElement));
-			SizeChangedEvent = EventManager.RegisterRoutedEvent("SizeChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
-			UnloadedEvent = EventManager.RegisterRoutedEvent("Unloaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
-		}
+      LoadedEvent = EventManager.RegisterRoutedEvent("Loaded", RoutingStrategy.Direct, typeof (RoutedEventHandler),
+                                                     typeof (FrameworkElement));
+      RequestBringIntoViewEvent = EventManager.RegisterRoutedEvent("RequestBringIntoView", RoutingStrategy.Direct,
+                                                                   typeof (RequestBringIntoViewEventHandler),
+                                                                   typeof (FrameworkElement));
+      SizeChangedEvent = EventManager.RegisterRoutedEvent("SizeChanged", RoutingStrategy.Direct,
+                                                          typeof (RoutedEventHandler), typeof (FrameworkElement));
+      UnloadedEvent = EventManager.RegisterRoutedEvent("Unloaded", RoutingStrategy.Direct, typeof (RoutedEventHandler),
+                                                       typeof (FrameworkElement));
+    }
 
-		public FrameworkElement()
-		{
-		}
+    public FrameworkElement()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler Initialized;
+    public event EventHandler Initialized;
 
-		public event RoutedEventHandler Loaded
-		{
-			add		{ AddHandler(LoadedEvent, value); } 
-			remove	{ RemoveHandler(LoadedEvent, value); }
-		}
+    public event RoutedEventHandler Loaded
+    {
+      add { AddHandler(LoadedEvent, value); }
+      remove { RemoveHandler(LoadedEvent, value); }
+    }
 
-		public event RequestBringIntoViewEventHandler RequestBringIntoView
-		{
-			add		{ AddHandler(RequestBringIntoViewEvent, value); } 
-			remove	{ RemoveHandler(RequestBringIntoViewEvent, value); }
-		}
+    public event RequestBringIntoViewEventHandler RequestBringIntoView
+    {
+      add { AddHandler(RequestBringIntoViewEvent, value); }
+      remove { RemoveHandler(RequestBringIntoViewEvent, value); }
+    }
 
-		public event RoutedEventHandler SizeChanged
-		{
-			add		{ AddHandler(SizeChangedEvent, value); } 
-			remove	{ RemoveHandler(SizeChangedEvent, value); }
-		}
+    public event RoutedEventHandler SizeChanged
+    {
+      add { AddHandler(SizeChangedEvent, value); }
+      remove { RemoveHandler(SizeChangedEvent, value); }
+    }
 
-		public event RoutedEventHandler Unloaded
-		{
-			add		{ AddHandler(UnloadedEvent, value); } 
-			remove	{ RemoveHandler(UnloadedEvent, value); }
-		}
+    public event RoutedEventHandler Unloaded
+    {
+      add { AddHandler(UnloadedEvent, value); }
+      remove { RemoveHandler(UnloadedEvent, value); }
+    }
 
-		#endregion Events
+    #endregion Events
 
-		#region Events (Routed)
+    #region Events (Routed)
 
-		public static readonly RoutedEvent LoadedEvent;
-		public static readonly RoutedEvent RequestBringIntoViewEvent;
-		public static readonly RoutedEvent SizeChangedEvent;
-		public static readonly RoutedEvent UnloadedEvent;
+    public static readonly RoutedEvent LoadedEvent;
+    public static readonly RoutedEvent RequestBringIntoViewEvent;
+    public static readonly RoutedEvent SizeChangedEvent;
+    public static readonly RoutedEvent UnloadedEvent;
 
-		#endregion Events (Routed)
+    #endregion Events (Routed)
 
-		#region Methods
+    #region Methods
 
-		protected internal void AddLogicalChild(object child)
-		{
-			
-		}
+    protected internal void AddLogicalChild(object child)
+    {
+    }
 
-		protected internal override object AdjustEventSource(RoutedEventArgs args)
-		{
-			// return null if no change occurred
-			return null;
-		}
+    protected internal override object AdjustEventSource(RoutedEventArgs args)
+    {
+      // return null if no change occurred
+      return null;
+    }
 
-		private static void ActualHeightPropertyInvalidated(DependencyObject d)
-		{
-			FrameworkElement element = (FrameworkElement)d;
+    private static void ActualHeightPropertyInvalidated(DependencyObject d)
+    {
+      FrameworkElement element = (FrameworkElement) d;
 
-			element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
-		}
+      element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
+    }
 
-		private static void ActualWidthPropertyInvalidated(DependencyObject d)
-		{
-			FrameworkElement element = (FrameworkElement)d;
+    private static void ActualWidthPropertyInvalidated(DependencyObject d)
+    {
+      FrameworkElement element = (FrameworkElement) d;
 
-			element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
-		}
+      element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
+    }
 
-		protected override sealed void ArrangeCore(Rect finalRect)
-		{
-			ArrangeOverride(finalRect);
-		}
+    protected override sealed void ArrangeCore(Rect finalRect)
+    {
+      ArrangeOverride(finalRect);
+    }
 
-		// TODO: finalRect is wrong, this should be using Size finalSize
-		protected virtual Size ArrangeOverride(Rect finalRect)
-		{
-			_location = finalRect.Location;
+    // TODO: finalRect is wrong, this should be using Size finalSize
+    protected virtual Size ArrangeOverride(Rect finalRect)
+    {
+      _location = finalRect.Location;
 
-			SetValue(WidthProperty, finalRect.Width);
-			SetValue(HeightProperty, finalRect.Height);
+      SetValue(WidthProperty, finalRect.Width);
+      SetValue(HeightProperty, finalRect.Height);
 
-			return finalRect.Size;
-		}
+      return finalRect.Size;
+    }
 
-		void ISupportInitialize.BeginInit()
-		{
-			BeginInit();
-		}
+    void ISupportInitialize.BeginInit()
+    {
+      BeginInit();
+    }
 
-		public virtual void BeginInit()
-		{
-			if(_isInitializing)
-				throw new InvalidOperationException();
+    public virtual void BeginInit()
+    {
+      if (_isInitializing)
+      {
+        throw new InvalidOperationException();
+      }
 
-			_isInitializing = true;
-		}
+      _isInitializing = true;
+    }
 
-		public void BeginStoryboard(Storyboard storyboard)
-		{
-			BeginStoryboard(storyboard, HandoffBehavior.SnapshotAndReplace, false);
-		}
+    public void BeginStoryboard(Storyboard storyboard)
+    {
+      BeginStoryboard(storyboard, HandoffBehavior.SnapshotAndReplace, false);
+    }
 
-		public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior)
-		{
-			BeginStoryboard(storyboard, handoffBehavior, false);
-		}
+    public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior)
+    {
+      BeginStoryboard(storyboard, handoffBehavior, false);
+    }
 
-		public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior, bool isControllable)
-		{
-			// For the signatures that do not use the isControllable, parameter, or when that 
-			// parameter is specified false, the timeline clocks associated with the animation
-			// are removed as soon as it reaches the "Fill" period. Therefore the animation can't
-			// be restarted after running once. Note that controlling an animation also requires
-			// that the storyboard be named or accessible as an instance in procedural code.
+    public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior, bool isControllable)
+    {
+      // For the signatures that do not use the isControllable, parameter, or when that 
+      // parameter is specified false, the timeline clocks associated with the animation
+      // are removed as soon as it reaches the "Fill" period. Therefore the animation can't
+      // be restarted after running once. Note that controlling an animation also requires
+      // that the storyboard be named or accessible as an instance in procedural code.
+    }
 
+    public void BringIntoView()
+    {
+      BringIntoView(new Rect(Point.Empty, RenderSize));
+    }
 
-		}
+    public void BringIntoView(Rect targetRectangle)
+    {
+      // ScrollContentPresenter.MakeVisible
+    }
 
-		public void BringIntoView()
-		{
-			BringIntoView(new Rect(Point.Empty, RenderSize));
-		}
+    protected override sealed bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
+    {
+      return VisualParent == null;
+    }
 
-		public void BringIntoView(Rect targetRectangle)
-		{
-			// ScrollContentPresenter.MakeVisible
-		}
+    void ISupportInitialize.EndInit()
+    {
+      EndInit();
+    }
 
-		protected override sealed bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
-		{
-			return VisualParent == null;
-		}
+    public virtual void EndInit()
+    {
+      if (_isInitializing == false)
+      {
+        return;
+      }
 
-		void ISupportInitialize.EndInit()
-		{
-			EndInit();
-		}
+      RaiseEvent(new RoutedEventArgs(LoadedEvent, this));
 
-		public virtual void EndInit()
-		{
-			if(_isInitializing == false)
-				return;
+      OnInitialized(EventArgs.Empty);
+    }
 
-			RaiseEvent(new RoutedEventArgs(LoadedEvent, this));
+    public virtual bool EnsureVisuals()
+    {
+      return false;
+    }
 
-			OnInitialized(EventArgs.Empty);
-		}
+    public object FindName(string name)
+    {
+      object namedObject = null;
 
-		public virtual bool EnsureVisuals()
-		{
-			return false;
-		}
-			
-		public object FindName(string name)
-		{
-			object namedObject = null;
-
-			if(_names != null)
-				namedObject = _names[name];
+      if (_names != null)
+      {
+        namedObject = _names[name];
+      }
 
 //			if(namedObject == null)
 //				namedObject = LogicalTreeHelper.GetChildren(this);
 
-			return namedObject;
-		}
+      return namedObject;
+    }
 
-		public object FindResource(object key)
-		{
-			object resource = null;
+    public object FindResource(object key)
+    {
+      object resource = null;
 
-			if(_resources != null)
-				resource = _resources[key];
+      if (_resources != null)
+      {
+        resource = _resources[key];
+      }
 
-			if(resource == null)
-				resource = LogicalTreeHelper.FindLogicalNode(this, (string)key);
+      if (resource == null)
+      {
+        resource = LogicalTreeHelper.FindLogicalNode(this, (string) key);
+      }
 
-			return resource;
-		}
+      return resource;
+    }
 
 //		protected internal override IAutomationPropertyProvider GetAutomationProvider ()
 //		{
@@ -299,302 +324,353 @@ namespace System.Windows
 //		{
 //		}
 
-		public static FlowDirection GetFlowDirection(DependencyObject d)
-		{
-			return (FlowDirection)d.GetValue(FlowDirectionProperty);
-		}
+    public static FlowDirection GetFlowDirection(DependencyObject d)
+    {
+      return (FlowDirection) d.GetValue(FlowDirectionProperty);
+    }
 
-		protected override Geometry GetLayoutClip(Size layoutSlotSize)
-		{
-			return null;
-		}
+    protected override Geometry GetLayoutClip(Size layoutSlotSize)
+    {
+      return null;
+    }
 
-		object IResourceHost.GetResource(object key)
-		{
-			return FindResource(key);
-		}
+    object IResourceHost.GetResource(object key)
+    {
+      return FindResource(key);
+    }
 
-		// MSDN states to use FindName instead
-		protected internal DependencyObject GetTemplateChild(string childName)
-		{
-			return FindName(childName) as DependencyObject;
-		}
+    // MSDN states to use FindName instead
+    protected internal DependencyObject GetTemplateChild(string childName)
+    {
+      return FindName(childName) as DependencyObject;
+    }
 
-		protected internal override DependencyObject GetUIParentCore()
-		{
-			return this.VisualParent;
-		}
-	
-		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			return base.GetValueCore(property, baseValue, metadata);
-		}
+    protected internal override DependencyObject GetUIParentCore()
+    {
+      return this.VisualParent;
+    }
 
-		protected override sealed Size MeasureCore(Size availableSize)
-		{
-			return MeasureOverride(availableSize);
-		}
+    protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      return base.GetValueCore(property, baseValue, metadata);
+    }
 
-		protected virtual Size MeasureOverride(Size availableSize)
-		{
-			return availableSize;
-		}
+    protected override sealed Size MeasureCore(Size availableSize)
+    {
+      return MeasureOverride(availableSize);
+    }
 
-		private static object OnHeightPropertyGetValue(DependencyObject d)
-		{
-			return ((FrameworkElement)d).Height;
-		}
+    protected virtual Size MeasureOverride(Size availableSize)
+    {
+      return availableSize;
+    }
 
-		private static void OnHeightPropertyInvalidated(DependencyObject d)
-		{
-			((FrameworkElement)d)._heightDirty = true;
-		}
+    private static object OnHeightPropertyGetValue(DependencyObject d)
+    {
+      return ((FrameworkElement) d).Height;
+    }
 
-		protected virtual void OnInitialized(EventArgs e)
-		{
-			_isInitialized = true;
+    private static void OnHeightPropertyInvalidated(DependencyObject d)
+    {
+      ((FrameworkElement) d)._heightDirty = true;
+    }
 
-			if(Initialized != null)
-				Initialized(this, EventArgs.Empty);
-		}
+    protected virtual void OnInitialized(EventArgs e)
+    {
+      _isInitialized = true;
 
-		private static object OnFocusablePropertyGetValue(DependencyObject d)
-		{
-			return ((FrameworkElement)d)._focusableCache;
-		}
-			
-		private static void OnFocusablePropertyInvalidated(DependencyObject d)
-		{
-			((FrameworkElement)d)._focusableDirty = true;
-		}
+      if (Initialized != null)
+      {
+        Initialized(this, EventArgs.Empty);
+      }
+    }
 
-		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
-		{
-		}
-			
-		protected internal override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-		{
-		}
-			
-		protected internal override void OnVisualParentChanged(Visual oldParent)
-		{
-			// the default implementation of this virtual method queries for the new parent,
-			// and raises various initialization events/sets internal flags about initialization
-			// state as appropriate. Always call base() to preserve this behavior.
+    private static object OnFocusablePropertyGetValue(DependencyObject d)
+    {
+      return ((FrameworkElement) d)._focusableCache;
+    }
 
-			OnInitialized(EventArgs.Empty);
-		}
-			
-		private static object OnWidthPropertyGetValue(DependencyObject d)
-		{
-			return ((FrameworkElement)d).Width;
-		}
+    private static void OnFocusablePropertyInvalidated(DependencyObject d)
+    {
+      ((FrameworkElement) d)._focusableDirty = true;
+    }
 
-		private static void OnWidthPropertyInvalidated(DependencyObject d)
-		{
-			((FrameworkElement)d)._widthDirty = true;
-		}
+    protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
+    {
+    }
 
-		protected internal virtual void ParentLayoutInvalidated(UIElement child)
-		{
-		}
+    protected internal override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+    }
 
-		protected internal void RemoveLogicalChild(object child)
-		{
-		}
-			
-		public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
-		{
-			d.SetValue(FlowDirectionProperty, flowDirection);
-		}
+    protected internal override void OnVisualParentChanged(Visual oldParent)
+    {
+      // the default implementation of this virtual method queries for the new parent,
+      // and raises various initialization events/sets internal flags about initialization
+      // state as appropriate. Always call base() to preserve this behavior.
 
-		public void SetResourceReference(DependencyProperty property, object name)
-		{
-		}
+      OnInitialized(EventArgs.Empty);
+    }
 
-		#endregion Methods
+    private static object OnWidthPropertyGetValue(DependencyObject d)
+    {
+      return ((FrameworkElement) d).Width;
+    }
 
-		#region Properties
+    private static void OnWidthPropertyInvalidated(DependencyObject d)
+    {
+      ((FrameworkElement) d)._widthDirty = true;
+    }
 
-		// TODO: should not be virtual and must be double
-		public virtual int ActualHeight
-		{
-			get { return (int)(double)GetValue(ActualHeightProperty); }
-		}
+    protected internal virtual void ParentLayoutInvalidated(UIElement child)
+    {
+    }
 
-		// TODO: should not be virtual and must be double
-		public virtual int ActualWidth
-		{
-			get { return (int)(double)GetValue(ActualWidthProperty); }
-		}
+    protected internal void RemoveLogicalChild(object child)
+    {
+    }
 
-		public ContextMenu ContextMenu
-		{
-			get { return GetValue(ContextMenuProperty) as ContextMenu; }
-			set { SetValue(ContextMenuProperty, value); InsertTestAnimation(); }
-		}
+    public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
+    {
+      d.SetValue(FlowDirectionProperty, flowDirection);
+    }
 
-		void InsertTestAnimation()
-		{
-			DoubleAnimation myDoubleAnimation = new DoubleAnimation();
+    public void SetResourceReference(DependencyProperty property, object name)
+    {
+    }
 
-			myDoubleAnimation.From = 75;
-			myDoubleAnimation.To = 300;
-			myDoubleAnimation.Duration =  new Duration(TimeSpan.FromMilliseconds(20000));
-			myDoubleAnimation.AutoReverse = true;
-			myDoubleAnimation.RepeatBehavior = RepeatBehavior.Forever;
-	
-			BeginAnimation(WidthProperty, myDoubleAnimation);
-			ApplyAnimationClock(WidthProperty, myDoubleAnimation.CreateClock());
-		}
+    #endregion Methods
 
-		public FlowDirection FlowDirection
-		{
-			get { return (FlowDirection)GetValue(FlowDirectionProperty); }
-			set { SetValue(FlowDirectionProperty, value); }
-		}
+    #region Properties
 
-		public bool Focusable
-		{
-			get { if(_focusableDirty) { _focusableCache = (bool)GetValueBase(FocusableProperty); _focusableDirty = false; } return _focusableCache; }
-			set { SetValue(FocusableProperty, value); }
-		}
-		
-		// TODO: should not be virtual and must be double
-		public virtual int Height
-		{
-			get { if(_heightDirty) { _heightCache = (double)GetValueBase(HeightProperty); _heightDirty = false; } return (int)_heightCache; }
-			set { SetValue(HeightProperty, (double)value); }
-		}
+    // TODO: should not be virtual and must be double
+    public virtual int ActualHeight
+    {
+      get { return (int) (double) GetValue(ActualHeightProperty); }
+    }
 
-		public HorizontalAlignment HorizontalAlignment
-		{
-			get { return (HorizontalAlignment)GetValue(HorizontalAlignmentProperty); }
-			set { SetValue(HorizontalAlignmentProperty, value); }
-		}
+    // TODO: should not be virtual and must be double
+    public virtual int ActualWidth
+    {
+      get { return (int) (double) GetValue(ActualWidthProperty); }
+    }
 
-		public bool IsInitialized
-		{
-			get { return _isInitialized; }
-		}
+    public ContextMenu ContextMenu
+    {
+      get { return GetValue(ContextMenuProperty) as ContextMenu; }
+      set
+      {
+        SetValue(ContextMenuProperty, value);
+        InsertTestAnimation();
+      }
+    }
 
-		public bool IsLoaded
-		{
-			get { return _isLoaded; }
-		}
+    private void InsertTestAnimation()
+    {
+      DoubleAnimation myDoubleAnimation = new DoubleAnimation();
 
-		protected bool IsTreeSeperator
-		{
-			get { return _isTreeSeperator; }
-			set { if(_isLoaded == false) throw new InvalidOperationException(); _isTreeSeperator = value; }
-		}
+      myDoubleAnimation.From = 75;
+      myDoubleAnimation.To = 300;
+      myDoubleAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(20000));
+      myDoubleAnimation.AutoReverse = true;
+      myDoubleAnimation.RepeatBehavior = RepeatBehavior.Forever;
 
-		// TODO: Remove this
-		public virtual Point Location
-		{
-			get { return _location; }
-			set { _location = value; }
-		}
+      BeginAnimation(WidthProperty, myDoubleAnimation);
+      ApplyAnimationClock(WidthProperty, myDoubleAnimation.CreateClock());
+    }
 
-		protected internal virtual IEnumerator LogicalChildren
-		{
-			get { return NullEnumerator.Instance; }
-		}
+    public FlowDirection FlowDirection
+    {
+      get { return (FlowDirection) GetValue(FlowDirectionProperty); }
+      set { SetValue(FlowDirectionProperty, value); }
+    }
 
-		public Thickness Margin
-		{
-			get { return (Thickness)GetValue(MarginProperty); }
-			set { SetValue(MarginProperty, value); }
-		}
+    public bool Focusable
+    {
+      get
+      {
+        if (_focusableDirty)
+        {
+          _focusableCache = (bool) GetValueBase(FocusableProperty);
+          _focusableDirty = false;
+        }
+        return _focusableCache;
+      }
+      set { SetValue(FocusableProperty, value); }
+    }
 
-		public string Name
-		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
+    // TODO: should not be virtual and must be double
+    public virtual int Height
+    {
+      get
+      {
+        if (_heightDirty)
+        {
+          _heightCache = (double) GetValueBase(HeightProperty);
+          _heightDirty = false;
+        }
+        return (int) _heightCache;
+      }
+      set { SetValue(HeightProperty, (double) value); }
+    }
 
-		public DependencyObject Parent
-		{	
-			get { throw new NotImplementedException(); }
-		}
+    public HorizontalAlignment HorizontalAlignment
+    {
+      get { return (HorizontalAlignment) GetValue(HorizontalAlignmentProperty); }
+      set { SetValue(HorizontalAlignmentProperty, value); }
+    }
 
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { return base.VisualParent as IResourceHost; }
-		}
-		
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-			set { _resources = value; }
-		}
+    public bool IsInitialized
+    {
+      get { return _isInitialized; }
+    }
 
-		public Style Style
-		{
-			get { return (Style)GetValue(StyleProperty); }
-			set { SetValue(StyleProperty, value); }
-		}
+    public bool IsLoaded
+    {
+      get { return _isLoaded; }
+    }
 
-		public DependencyObject TemplatedParent
-		{
-			get { return _templatedParent; }
-		}
+    protected bool IsTreeSeperator
+    {
+      get { return _isTreeSeperator; }
+      set
+      {
+        if (_isLoaded == false)
+        {
+          throw new InvalidOperationException();
+        }
+        _isTreeSeperator = value;
+      }
+    }
 
-		public TriggerCollection Triggers
-		{
-			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
-		}
+    // TODO: Remove this
+    public virtual Point Location
+    {
+      get { return _location; }
+      set { _location = value; }
+    }
 
-		public VerticalAlignment VerticalAlignment
-		{
-			get { return (VerticalAlignment)GetValue(VerticalAlignmentProperty); }
-			set { SetValue(VerticalAlignmentProperty, value); }
-		}
+    protected internal virtual IEnumerator LogicalChildren
+    {
+      get { return NullEnumerator.Instance; }
+    }
 
-		// TODO: should not be virtual and must be double
-		public virtual int Width
-		{
-			get { if(_widthDirty) { _widthCache = (double)GetValueBase(WidthProperty); _widthDirty = false; } return (int)_widthCache; }
-			set { SetValue(WidthProperty, (double)value); }
-		}
+    public Thickness Margin
+    {
+      get { return (Thickness) GetValue(MarginProperty); }
+      set { SetValue(MarginProperty, value); }
+    }
 
-		#endregion Properties
+    public string Name
+    {
+      get { return (string) GetValue(NameProperty); }
+      set { SetValue(NameProperty, value); }
+    }
 
-		#region Properties (Dependency)
+    public DependencyObject Parent
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		public static readonly DependencyProperty ActualHeightProperty;
-		public static readonly DependencyProperty ActualWidthProperty;
-		public static readonly DependencyProperty ContextMenuProperty;
-		public static readonly DependencyProperty FlowDirectionProperty;
-		public static readonly DependencyProperty FocusableProperty;
-		public static readonly DependencyProperty HeightProperty;
-		public static readonly DependencyProperty HorizontalAlignmentProperty;
-		public static readonly DependencyProperty MarginProperty;
-		public static readonly DependencyProperty NameProperty;
-		public static readonly DependencyProperty StyleProperty;
-		public static readonly DependencyProperty VerticalAlignmentProperty;
-		public static readonly DependencyProperty WidthProperty;
+    IResourceHost IResourceHost.ParentResourceHost
+    {
+      get { return base.VisualParent as IResourceHost; }
+    }
 
-		#endregion Properties (Dependency)
+    public ResourceDictionary Resources
+    {
+      get
+      {
+        if (_resources == null)
+        {
+          _resources = new ResourceDictionary();
+        }
+        return _resources;
+      }
+      set { _resources = value; }
+    }
 
-		#region Fields
+    public Style Style
+    {
+      get { return (Style) GetValue(StyleProperty); }
+      set { SetValue(StyleProperty, value); }
+    }
 
-		bool						_focusableCache;
-		bool						_focusableDirty = true;
-		double						_heightCache;
-		bool						_heightDirty = true;
-		bool						_isInitialized = false;
-		bool						_isInitializing = false;
-		bool						_isLoaded = false;
-		bool						_isTreeSeperator = false;
-		Hashtable					_names = null;
-		Point						_location = Point.Empty;
-		ResourceDictionary			_resources;
-		DependencyObject			_templatedParent = null;
-		TriggerCollection			_triggers;
-		double						_widthCache;
-		bool						_widthDirty = true;
+    public DependencyObject TemplatedParent
+    {
+      get { return _templatedParent; }
+    }
 
-		#endregion Fields
-	}
+    public TriggerCollection Triggers
+    {
+      get
+      {
+        if (_triggers == null)
+        {
+          _triggers = new TriggerCollection();
+        }
+        return _triggers;
+      }
+    }
+
+    public VerticalAlignment VerticalAlignment
+    {
+      get { return (VerticalAlignment) GetValue(VerticalAlignmentProperty); }
+      set { SetValue(VerticalAlignmentProperty, value); }
+    }
+
+    // TODO: should not be virtual and must be double
+    public virtual int Width
+    {
+      get
+      {
+        if (_widthDirty)
+        {
+          _widthCache = (double) GetValueBase(WidthProperty);
+          _widthDirty = false;
+        }
+        return (int) _widthCache;
+      }
+      set { SetValue(WidthProperty, (double) value); }
+    }
+
+    #endregion Properties
+
+    #region Properties (Dependency)
+
+    public static readonly DependencyProperty ActualHeightProperty;
+    public static readonly DependencyProperty ActualWidthProperty;
+    public static readonly DependencyProperty ContextMenuProperty;
+    public static readonly DependencyProperty FlowDirectionProperty;
+    public static readonly DependencyProperty FocusableProperty;
+    public static readonly DependencyProperty HeightProperty;
+    public static readonly DependencyProperty HorizontalAlignmentProperty;
+    public static readonly DependencyProperty MarginProperty;
+    public static readonly DependencyProperty NameProperty;
+    public static readonly DependencyProperty StyleProperty;
+    public static readonly DependencyProperty VerticalAlignmentProperty;
+    public static readonly DependencyProperty WidthProperty;
+
+    #endregion Properties (Dependency)
+
+    #region Fields
+
+    private bool _focusableCache;
+    private bool _focusableDirty = true;
+    private double _heightCache;
+    private bool _heightDirty = true;
+    private bool _isInitialized = false;
+    private bool _isInitializing = false;
+    private bool _isLoaded = false;
+    private bool _isTreeSeperator = false;
+    private Hashtable _names = null;
+    private Point _location = Point.Empty;
+    private ResourceDictionary _resources;
+    private DependencyObject _templatedParent = null;
+    private TriggerCollection _triggers;
+    private double _widthCache;
+    private bool _widthDirty = true;
+
+    #endregion Fields
+  }
 }

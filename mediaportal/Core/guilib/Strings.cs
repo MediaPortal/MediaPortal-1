@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Summary description for Strings.
-	/// </summary>
-	public class Strings
-	{
-		public static readonly string Unknown="unknown";
-	}
+  /// <summary>
+  /// Summary description for Strings.
+  /// </summary>
+  public class Strings
+  {
+    public static readonly string Unknown = "unknown";
+  }
 }

@@ -25,11 +25,11 @@
 
 namespace System.Windows.Input
 {
-	// not implemented - declared for other classes' compilability
-	public class InputGestureCollection
-	{
-		public InputGestureCollection()
-		{
-		}
-	}
+  // not implemented - declared for other classes' compilability
+  public class InputGestureCollection
+  {
+    public InputGestureCollection()
+    {
+    }
+  }
 }

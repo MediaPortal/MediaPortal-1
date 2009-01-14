@@ -23,101 +23,105 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public class RoutedEventArgs : EventArgs
-	{
-		#region Constructors
+  public class RoutedEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public RoutedEventArgs()
-		{
-		}
+    public RoutedEventArgs()
+    {
+    }
 
-		public RoutedEventArgs(RoutedEvent routedEvent)
-		{
-			_routedEvent = routedEvent;
-		}
+    public RoutedEventArgs(RoutedEvent routedEvent)
+    {
+      _routedEvent = routedEvent;
+    }
 
-		public RoutedEventArgs(RoutedEvent routedEvent, object source)
-		{
-			_routedEvent = routedEvent;
-			_source = source;
-			_originalSource = source;
-		}
+    public RoutedEventArgs(RoutedEvent routedEvent, object source)
+    {
+      _routedEvent = routedEvent;
+      _source = source;
+      _originalSource = source;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected virtual void InvokeEventHandler(Delegate handler, object target)
-		{
-			// Roy Osherove
-			// http://weblogs.asp.net/rosherove/articles/DefensiveEventPublishing.aspx
-	
-			if(handler == null)
-				return;
+    protected virtual void InvokeEventHandler(Delegate handler, object target)
+    {
+      // Roy Osherove
+      // http://weblogs.asp.net/rosherove/articles/DefensiveEventPublishing.aspx
 
-			foreach(Delegate sink in handler.GetInvocationList())
-			{
-				try
-				{
-					sink.Method.Invoke(target, new object[] { _source, this });
+      if (handler == null)
+      {
+        return;
+      }
 
-					if(_isHandled)
-						return;
-				}
-				catch
-				{
-				}
-			}
-		}
+      foreach (Delegate sink in handler.GetInvocationList())
+      {
+        try
+        {
+          sink.Method.Invoke(target, new object[] {_source, this});
 
-		protected virtual void OnSetSource(object source)
-		{
-			if(_originalSource == null)
-				_originalSource = source;
+          if (_isHandled)
+          {
+            return;
+          }
+        }
+        catch
+        {
+        }
+      }
+    }
 
-			_source = source;
-		}
+    protected virtual void OnSetSource(object source)
+    {
+      if (_originalSource == null)
+      {
+        _originalSource = source;
+      }
 
-		#endregion Methods
+      _source = source;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public bool Handled
-		{
-			get { return _isHandled; }
-			set { _isHandled = value; }
-		}
+    #region Properties
 
-		public object OriginalSource
-		{
-			get { return _originalSource; }
-		}
+    public bool Handled
+    {
+      get { return _isHandled; }
+      set { _isHandled = value; }
+    }
 
-		public RoutedEvent RoutedEvent
-		{
-			get { return _routedEvent; }
-			set { _routedEvent = value; }
-		}
+    public object OriginalSource
+    {
+      get { return _originalSource; }
+    }
 
-		public object Source
-		{
-			get { return _source; }
-			set { OnSetSource(value); }
-		}
+    public RoutedEvent RoutedEvent
+    {
+      get { return _routedEvent; }
+      set { _routedEvent = value; }
+    }
 
-		#endregion Properties
+    public object Source
+    {
+      get { return _source; }
+      set { OnSetSource(value); }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		bool						_isHandled;
-		object						_originalSource;
-		RoutedEvent					_routedEvent;
-		object						_source;
+    #region Fields
 
-		#endregion Fields
-	}
+    private bool _isHandled;
+    private object _originalSource;
+    private RoutedEvent _routedEvent;
+    private object _source;
+
+    #endregion Fields
+  }
 }

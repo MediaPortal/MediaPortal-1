@@ -23,92 +23,93 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Dispatcher
 {
-	public class DispatcherTimer
-	{
-		#region Constructors
+  public class DispatcherTimer
+  {
+    #region Constructors
 
-		public DispatcherTimer() : this(DispatcherPriority.Background)
-		{
-		}
+    public DispatcherTimer() : this(DispatcherPriority.Background)
+    {
+    }
 
-		public DispatcherTimer(DispatcherPriority priority) : this(priority, null)
-		{
-		}
+    public DispatcherTimer(DispatcherPriority priority) : this(priority, null)
+    {
+    }
 
-		public DispatcherTimer(DispatcherPriority priority, Dispatcher dispatcher) : this(TimeSpan.Zero, priority, null, dispatcher)
-		{
-		}
+    public DispatcherTimer(DispatcherPriority priority, Dispatcher dispatcher)
+      : this(TimeSpan.Zero, priority, null, dispatcher)
+    {
+    }
 
-		public DispatcherTimer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
-		{
-			_interval = interval;
-			_priority = priority;
+    public DispatcherTimer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
+    {
+      _interval = interval;
+      _priority = priority;
 
-			if(callback != null)
-				Tick += callback;
+      if (callback != null)
+      {
+        Tick += callback;
+      }
 
-			_dispatcher = dispatcher;
-		}
+      _dispatcher = dispatcher;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler Tick;
+    public event EventHandler Tick;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public void Start()
-		{
-		}
+    public void Start()
+    {
+    }
 
-		public void Stop()
-		{
-		}
+    public void Stop()
+    {
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Dispatcher Dispatcher
-		{
-			get { return _dispatcher; }
-		}
+    public Dispatcher Dispatcher
+    {
+      get { return _dispatcher; }
+    }
 
-		public TimeSpan Interval
-		{
-			get { return _interval; }
-			set { _interval = value; }
-		}
+    public TimeSpan Interval
+    {
+      get { return _interval; }
+      set { _interval = value; }
+    }
 
-		public bool IsEnabled
-		{
-			get { return _isEnabled; }
-			set { _isEnabled = true; }
-		}
-		
-		public object Tag
-		{
-			get { return _tag; }
-			set { _tag = value; }
-		}
+    public bool IsEnabled
+    {
+      get { return _isEnabled; }
+      set { _isEnabled = true; }
+    }
 
-		#endregion Properties
+    public object Tag
+    {
+      get { return _tag; }
+      set { _tag = value; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		Dispatcher					_dispatcher;
-		bool						_isEnabled;
-		TimeSpan					_interval;
-		DispatcherPriority			_priority;
-		object						_tag;
+    #region Fields
 
-		#endregion Fields
-	}
+    private Dispatcher _dispatcher;
+    private bool _isEnabled;
+    private TimeSpan _interval;
+    private DispatcherPriority _priority;
+    private object _tag;
+
+    #endregion Fields
+  }
 }

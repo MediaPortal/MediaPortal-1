@@ -23,66 +23,65 @@
 
 #endregion
 
-using System;
 using System.Collections;
 
 namespace System.Windows
 {
-	public struct LocalValueEnumerator : IEnumerable, IEnumerator
-	{
-		#region Constructors
+  public struct LocalValueEnumerator : IEnumerable, IEnumerator
+  {
+    #region Constructors
 
-		internal LocalValueEnumerator(Hashtable properties)
-		{
-			_properties = properties;
-			_enumerator = properties.GetEnumerator();
-		}
+    internal LocalValueEnumerator(Hashtable properties)
+    {
+      _properties = properties;
+      _enumerator = properties.GetEnumerator();
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this;
-		}
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return this;
+    }
 
-		public bool MoveNext()
-		{
-			return _enumerator.MoveNext();
-		}
+    public bool MoveNext()
+    {
+      return _enumerator.MoveNext();
+    }
 
-		public void Reset()
-		{
-			_enumerator.Reset();
-		}
+    public void Reset()
+    {
+      _enumerator.Reset();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
-		
-		public int Count
-		{
-			get { return _properties.Count; }
-		}
+    #region Properties
 
-		public LocalValueEntry Current
-		{
-			get { return new LocalValueEntry((DependencyProperty)_enumerator.Key, _enumerator.Value); }
-		}
+    public int Count
+    {
+      get { return _properties.Count; }
+    }
 
-		object IEnumerator.Current
-		{
-			get { return this.Current; }
-		}
+    public LocalValueEntry Current
+    {
+      get { return new LocalValueEntry((DependencyProperty) _enumerator.Key, _enumerator.Value); }
+    }
 
-		#endregion Properties
+    object IEnumerator.Current
+    {
+      get { return this.Current; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		IDictionaryEnumerator		_enumerator;
-		Hashtable					_properties;
+    #region Fields
 
-		#endregion Fields
-	}
+    private IDictionaryEnumerator _enumerator;
+    private Hashtable _properties;
+
+    #endregion Fields
+  }
 }

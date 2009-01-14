@@ -23,51 +23,53 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public sealed class AnimationTimer
-	{
-		#region Constructors
+  public sealed class AnimationTimer
+  {
+    #region Constructors
 
-		static AnimationTimer()
-		{
-			long frequency = 0;
+    static AnimationTimer()
+    {
+      long frequency = 0;
 
-			if(NativeMethods.QueryPerformanceFrequency(ref frequency) == false)
-				throw new NotSupportedException("Hi-res timer");
+      if (NativeMethods.QueryPerformanceFrequency(ref frequency) == false)
+      {
+        throw new NotSupportedException("Hi-res timer");
+      }
 
-			_frequency = frequency;
-		}
+      _frequency = frequency;
+    }
 
-		private AnimationTimer()
-		{
-		}
+    private AnimationTimer()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public static double TickCount
-		{
-			get
-			{
-				long tick = 0;
+    public static double TickCount
+    {
+      get
+      {
+        long tick = 0;
 
-				if(NativeMethods.QueryPerformanceCounter(ref tick) == false)
-					throw new NotSupportedException("Hi-res timer");
+        if (NativeMethods.QueryPerformanceCounter(ref tick) == false)
+        {
+          throw new NotSupportedException("Hi-res timer");
+        }
 
-				return TweenHelper.TickCount = ((double)tick / _frequency) * 1000;
-			}
-		}
+        return TweenHelper.TickCount = ((double) tick/_frequency)*1000;
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		static double				_frequency = 0;
+    private static double _frequency = 0;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

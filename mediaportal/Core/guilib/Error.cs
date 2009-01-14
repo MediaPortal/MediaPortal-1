@@ -23,68 +23,68 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Summary description for Error.
-	/// </summary>
-	public class Error
-	{
-    static string errorReason=string.Empty;
-    static string errorDescription=string.Empty;
-		
+  /// <summary>
+  /// Summary description for Error.
+  /// </summary>
+  public class Error
+  {
+    private static string errorReason = string.Empty;
+    private static string errorDescription = string.Empty;
+
     public static string Description
     {
-      get { return errorDescription;}
-      set 
-      { 
-        if (value==null) return;
-        errorDescription=value;
+      get { return errorDescription; }
+      set
+      {
+        if (value == null)
+        {
+          return;
+        }
+        errorDescription = value;
       }
     }
-    
+
     public static string Reason
     {
-      get { return errorReason;}
-      set 
-      { 
-        if (value==null) return;
-        errorReason=value;
+      get { return errorReason; }
+      set
+      {
+        if (value == null)
+        {
+          return;
+        }
+        errorReason = value;
       }
     }
+
     public static int ReasonId
     {
-      set 
-      { 
-        Reason=GUILocalizeStrings.Get(value);
-      }
+      set { Reason = GUILocalizeStrings.Get(value); }
     }
+
     public static int DescriptionId
     {
-      set 
-      { 
-        Description=GUILocalizeStrings.Get(value);
-      }
+      set { Description = GUILocalizeStrings.Get(value); }
     }
 
     public static void SetError(string reason, string description)
     {
-      Reason=reason;
-      Description=description;
+      Reason = reason;
+      Description = description;
     }
-    
+
     public static void SetError(int reasonId, int descriptionId)
     {
-      ReasonId=reasonId;
-      DescriptionId=descriptionId;
+      ReasonId = reasonId;
+      DescriptionId = descriptionId;
     }
 
     public static void Clear()
     {
-      Reason=string.Empty;
-      Description=string.Empty;
+      Reason = string.Empty;
+      Description = string.Empty;
     }
-	}
+  }
 }

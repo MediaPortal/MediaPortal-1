@@ -23,20 +23,20 @@
 
 #endregion
 
-using System;
 using System.Windows.Serialization;
+using MediaPortal;
 
 namespace System.Windows
 {
-	public class StaticResourceExtension : MarkupExtension
-	{
-		#region Methods
+  public class StaticResourceExtension : MarkupExtension
+  {
+    #region Methods
 
-		public override object ProvideValue(object target, object value)
-		{
-			return MediaPortal.App.Current.FindResource(value);
-		}
+    public override object ProvideValue(object target, object value)
+    {
+      return App.Current.FindResource(value);
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -23,49 +23,82 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public class DashStyles
-	{
-		#region Properties
+  public class DashStyles
+  {
+    #region Properties
 
-		public static DashStyle Dash
-		{
-			get { if(_dash == null) _dash = new DashStyle(new double[] { 2, 2 }, 1); return _dash; }
-		}
-			
-		public static DashStyle DashDot
-		{
-			get { if(_dashDot == null) _dashDot = new DashStyle(new double[] { 2, 2, 0, 2 }, 1); return _dashDot; }
-		}
-		
-		public static DashStyle DashDotDot
-		{
-			get { if(_dashDotDot == null) _dashDotDot = new DashStyle(new double[] { 2, 2, 0, 2, 0, 2 }, 1); return _dashDotDot; }
-		}
+    public static DashStyle Dash
+    {
+      get
+      {
+        if (_dash == null)
+        {
+          _dash = new DashStyle(new double[] {2, 2}, 1);
+        }
+        return _dash;
+      }
+    }
 
-		public static DashStyle Dot
-		{
-			get { if(_dot == null) _dot = new DashStyle(new double[] { 0, 2 }, 1); return _dot; }
-		}
+    public static DashStyle DashDot
+    {
+      get
+      {
+        if (_dashDot == null)
+        {
+          _dashDot = new DashStyle(new double[] {2, 2, 0, 2}, 1);
+        }
+        return _dashDot;
+      }
+    }
 
-		public static DashStyle Solid
-		{
-			get { if(_solid == null) _solid = new DashStyle(); return _solid; }
-		}
+    public static DashStyle DashDotDot
+    {
+      get
+      {
+        if (_dashDotDot == null)
+        {
+          _dashDotDot = new DashStyle(new double[] {2, 2, 0, 2, 0, 2}, 1);
+        }
+        return _dashDotDot;
+      }
+    }
 
-		#endregion Properties
+    public static DashStyle Dot
+    {
+      get
+      {
+        if (_dot == null)
+        {
+          _dot = new DashStyle(new double[] {0, 2}, 1);
+        }
+        return _dot;
+      }
+    }
 
-		#region Fields
-	
-		static DashStyle			_dash;
-		static DashStyle			_dashDot;
-		static DashStyle			_dashDotDot;
-		static DashStyle			_dot;
-		static DashStyle			_solid;
+    public static DashStyle Solid
+    {
+      get
+      {
+        if (_solid == null)
+        {
+          _solid = new DashStyle();
+        }
+        return _solid;
+      }
+    }
 
-		#endregion Fields
-	}
+    #endregion Properties
+
+    #region Fields
+
+    private static DashStyle _dash;
+    private static DashStyle _dashDot;
+    private static DashStyle _dashDotDot;
+    private static DashStyle _dot;
+    private static DashStyle _solid;
+
+    #endregion Fields
+  }
 }

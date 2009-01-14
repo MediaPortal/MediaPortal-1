@@ -23,71 +23,86 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace MediaPortal
 {
-	public class App : DispatcherObject, IResourceHost
-	{
-		#region Constructors
+  public class App : DispatcherObject, IResourceHost
+  {
+    #region Constructors
 
-		protected App()
-		{
-		}
+    protected App()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public object FindResource(object key)
-		{
-			if(_resources == null)
-				return null;
+    public object FindResource(object key)
+    {
+      if (_resources == null)
+      {
+        return null;
+      }
 
-			return _resources[key];
-		}
+      return _resources[key];
+    }
 
-		object IResourceHost.GetResource(object key)
-		{
-			return FindResource(key);
-		}
+    object IResourceHost.GetResource(object key)
+    {
+      return FindResource(key);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public static App Current
-		{
-			get { if(_current == null) _current = new App(); return _current; }
-		}
+    public static App Current
+    {
+      get
+      {
+        if (_current == null)
+        {
+          _current = new App();
+        }
+        return _current;
+      }
+    }
 
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-			set { _resources = value; }
-		}
+    public ResourceDictionary Resources
+    {
+      get
+      {
+        if (_resources == null)
+        {
+          _resources = new ResourceDictionary();
+        }
+        return _resources;
+      }
+      set { _resources = value; }
+    }
 
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { return null; }
-		}
+    IResourceHost IResourceHost.ParentResourceHost
+    {
+      get { return null; }
+    }
 
-		public IDictionary Properties
-		{
-			get { return _properties; }
-		}
+    public IDictionary Properties
+    {
+      get { return _properties; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		static App 			_current;
-		Hashtable					_properties = new Hashtable(100);
-		ResourceDictionary			_resources;
+    private static App _current;
+    private Hashtable _properties = new Hashtable(100);
+    private ResourceDictionary _resources;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

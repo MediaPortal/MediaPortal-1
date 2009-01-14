@@ -25,22 +25,14 @@
 
 namespace System.Windows.Input
 {
-	public interface IFrameworkInputElement : IInputElement
-	{
-		#region Properties
+  public interface IFrameworkInputElement : IInputElement
+  {
+    #region Properties
 
-		bool Focusable
-		{
-			get;
-			set;
-		}
+    bool Focusable { get; set; }
 
-		string Name
-		{
-			get;
-			set;
-		}
+    string Name { get; set; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

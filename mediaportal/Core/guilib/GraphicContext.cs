@@ -26,22 +26,24 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Configuration;
+using MediaPortal.Configuration;
+using MediaPortal.Player;
+using MediaPortal.Profile;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using AMS.Profile;
-using System.Runtime.InteropServices;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
-using System.Runtime.CompilerServices;
 
 namespace MediaPortal.GUI.Library
 {
   public delegate void OnActionHandler(Action action);
+
   public delegate void SendMessageHandler(GUIMessage message);
+
   public delegate void VideoWindowChangedHandler();
+
   public delegate void VideoGammaContrastBrightnessHandler();
 
   /// <summary>
@@ -49,19 +51,20 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
-    static List<Point> _cameras = new List<Point>();
-    static List<TransformMatrix> _groupTransforms = new List<TransformMatrix>();
-    static TransformMatrix _guiTransform = new TransformMatrix();
-    static TransformMatrix _finalTransform = new TransformMatrix();
+    private static List<Point> _cameras = new List<Point>();
+    private static List<TransformMatrix> _groupTransforms = new List<TransformMatrix>();
+    private static TransformMatrix _guiTransform = new TransformMatrix();
+    private static TransformMatrix _finalTransform = new TransformMatrix();
     //enum containing current state of mediaportal
     public enum State
     {
-      STARTING,		// starting up
-      RUNNING,		// running
-      STOPPING,		// stopping
+      STARTING, // starting up
+      RUNNING, // running
+      STOPPING, // stopping
       SUSPENDING, // system in suspend mode
       LOST
     }
+
     /// <summary>
     /// Event which will be triggered when a message has arrived
     /// </summary>
@@ -84,82 +87,90 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged;
 
-    public static Direct3D.Device DX9Device = null;								// pointer to current DX9 device
-    private static string m_strSkin = "";									// name of the current skin
-    private static bool m_bFullScreenVideo = false;			// boolean indicating if we're in GUI or fullscreen video/tv mode
-    private static System.IntPtr m_ipActiveForm;						// pointer to the current GDI window
-    static System.Drawing.Rectangle m_RectVideo;									// rectangle of the video preview window
-    static Geometry.Type m_ARType = Geometry.Type.Normal;// current video transformation type (see geometry.cs)
-    static int m_iOSDOffset = 0;								// y-offset of the video/tv OSD
-    static int m_iOverScanLeft = 0;						// x offset screen calibration
-    static int m_iOverScanTop = 0;							// y offset screen calibration
-    static int m_iOverScanWidth = 0;						// width screen calibratoin
-    static int m_iOverScanHeight = 0;					// height screen calibratoin
-    static float m_fPixelRatio = 1.0f;						// current pixel ratio correction
-    static State m_eState;											// state of application
-    static bool m_bOverlay = true;							// boolean indicating if the overlay window is allowed to be shown
-    static int m_iOffsetX = 0;						// x offset of GUI calibration
-    static int m_iOffsetY = 0;						// y offset of GUI calibration
-    static float m_fZoomHorizontal = 1.0f;           // x zoom of GUI calibration
-    static float m_fZoomVertical = 1.0f;             // y zoom of GUI calibration
-    static bool m_bTopBarHidden = false; 				// Topbar hidden status for autohide
-    static bool m_bAutoHideTopBar = false;      // Topbar autohide status
-    static bool m_bDefaultTopBarHide = false;      // Topbar.xml default autohide status
-    static DateTime m_dtTopBarTimeOut = DateTime.Now; // Topbar timeout timer
-    static bool _disableTopBar = false;        // Topbar diaanled view status   
-    static int m_iSubtitles = 550; 						// Y position for subtitles
-    static bool m_bCalibrating = false;					// boolean indicating if we are in calibration mode or in normal mode
-    static bool m_bPlaying;										// boolean indicating if we are playing any media or not
-    public static Graphics graphics = null;							// GDI+ Graphics object
-    public static Form form = null;									// Current GDI form
-    static int m_iBrightness = -1;							// brightness value
-    static int m_iGamma = -1;										// gamma value
-    static int m_iContrast = -1;								// contrast value
-    static int m_iSaturation = -1;							// saturation value
-    static int m_Sharpness = -1;								// sharpness value
-    static bool m_bMouseSupport = true;					// boolean indicating if we should present mouse controls like scrollbars
-    static bool m_bDBLClickAsRightclick = false;	// boolean indicating that we want to use double click to open a context menu
-    static Size m_skinSize = new Size(720, 576);// original width/height for which the skin was designed
-    static bool m_bShowBackGround = true;				//boolean indicating if we should show the GUI background or if we should show live tv in the background
-    static bool m_bPlayingVideo = false;				//boolean indicating if we are playing a movie
-    static int m_iScrollSpeedVertical = 2;							//scroll speed for controls which scroll
-    static int m_iScrollSpeedHorizontal = 8;							//scroll speed for controls which scroll
-    static int m_iCharsInCharacterSet = 255;		//number of characters for current fonts
-    static bool m_bEditMode = false;						//boolean indicating if we are in skin edit mode
-    static bool m_bAnimations = true;						//boolean indicating animiations are turned on or off
-    static IRender m_renderFrame = null;
-    static bool vmr9Active = false;
-    static bool m_bisvmr9Exclusive = false;
-    static bool m_bisevr = false;
-    static int m_iMaxFPS = 20;
-    static long m_iDesiredFrameTime = 100;
-    static float m_fCurrentFPS = 0;
-    static float m_fVMR9FPS = 0;
-    static float lasttime = 0f;
-    static bool vmr9RenderBusy = false;
-    static bool blankScreen = false;
-    static bool turnOffMonitor = false;
-    static PresentParameters presentParameters;
-    static bool vmr9Allowed = true;
-    static Size videoSize;
-    static bool hasFocus = false;
-    static DateTime _lastActivity = DateTime.Now;
-    public static MediaPortal.Player.IAutoCrop autoCropper = null;
-    const uint SC_MONITORPOWER = 0xF170;
-    const uint WM_SYSCOMMAND = 0x0112;
-    const int MONITOR_ON = -1;
-    const int MONITOR_OFF = 2;
-    static bool _useSeparateRenderThread = false;
+    public static Device DX9Device = null; // pointer to current DX9 device
+    private static string m_strSkin = ""; // name of the current skin
+    private static bool m_bFullScreenVideo = false; // boolean indicating if we're in GUI or fullscreen video/tv mode
+    private static IntPtr m_ipActiveForm; // pointer to the current GDI window
+    private static Rectangle m_RectVideo; // rectangle of the video preview window
+    private static Geometry.Type m_ARType = Geometry.Type.Normal; // current video transformation type (see geometry.cs)
+    private static int m_iOSDOffset = 0; // y-offset of the video/tv OSD
+    private static int m_iOverScanLeft = 0; // x offset screen calibration
+    private static int m_iOverScanTop = 0; // y offset screen calibration
+    private static int m_iOverScanWidth = 0; // width screen calibratoin
+    private static int m_iOverScanHeight = 0; // height screen calibratoin
+    private static float m_fPixelRatio = 1.0f; // current pixel ratio correction
+    private static State m_eState; // state of application
+    private static bool m_bOverlay = true; // boolean indicating if the overlay window is allowed to be shown
+    private static int m_iOffsetX = 0; // x offset of GUI calibration
+    private static int m_iOffsetY = 0; // y offset of GUI calibration
+    private static float m_fZoomHorizontal = 1.0f; // x zoom of GUI calibration
+    private static float m_fZoomVertical = 1.0f; // y zoom of GUI calibration
+    private static bool m_bTopBarHidden = false; // Topbar hidden status for autohide
+    private static bool m_bAutoHideTopBar = false; // Topbar autohide status
+    private static bool m_bDefaultTopBarHide = false; // Topbar.xml default autohide status
+    private static DateTime m_dtTopBarTimeOut = DateTime.Now; // Topbar timeout timer
+    private static bool _disableTopBar = false; // Topbar diaanled view status   
+    private static int m_iSubtitles = 550; // Y position for subtitles
+    private static bool m_bCalibrating = false; // boolean indicating if we are in calibration mode or in normal mode
+    private static bool m_bPlaying; // boolean indicating if we are playing any media or not
+    public static Graphics graphics = null; // GDI+ Graphics object
+    public static Form form = null; // Current GDI form
+    private static int m_iBrightness = -1; // brightness value
+    private static int m_iGamma = -1; // gamma value
+    private static int m_iContrast = -1; // contrast value
+    private static int m_iSaturation = -1; // saturation value
+    private static int m_Sharpness = -1; // sharpness value
+
+    private static bool m_bMouseSupport = true;
+                        // boolean indicating if we should present mouse controls like scrollbars
+
+    private static bool m_bDBLClickAsRightclick = false;
+                        // boolean indicating that we want to use double click to open a context menu
+
+    private static Size m_skinSize = new Size(720, 576); // original width/height for which the skin was designed
+
+    private static bool m_bShowBackGround = true;
+                        //boolean indicating if we should show the GUI background or if we should show live tv in the background
+
+    private static bool m_bPlayingVideo = false; //boolean indicating if we are playing a movie
+    private static int m_iScrollSpeedVertical = 2; //scroll speed for controls which scroll
+    private static int m_iScrollSpeedHorizontal = 8; //scroll speed for controls which scroll
+    private static int m_iCharsInCharacterSet = 255; //number of characters for current fonts
+    private static bool m_bEditMode = false; //boolean indicating if we are in skin edit mode
+    private static bool m_bAnimations = true; //boolean indicating animiations are turned on or off
+    private static IRender m_renderFrame = null;
+    private static bool vmr9Active = false;
+    private static bool m_bisvmr9Exclusive = false;
+    private static bool m_bisevr = false;
+    private static int m_iMaxFPS = 20;
+    private static long m_iDesiredFrameTime = 100;
+    private static float m_fCurrentFPS = 0;
+    private static float m_fVMR9FPS = 0;
+    private static float lasttime = 0f;
+    private static bool vmr9RenderBusy = false;
+    private static bool blankScreen = false;
+    private static bool turnOffMonitor = false;
+    private static PresentParameters presentParameters;
+    private static bool vmr9Allowed = true;
+    private static Size videoSize;
+    private static bool hasFocus = false;
+    private static DateTime _lastActivity = DateTime.Now;
+    public static IAutoCrop autoCropper = null;
+    private const uint SC_MONITORPOWER = 0xF170;
+    private const uint WM_SYSCOMMAND = 0x0112;
+    private const int MONITOR_ON = -1;
+    private const int MONITOR_OFF = 2;
+    private static bool _useSeparateRenderThread = false;
     public static bool _useScreenSelector = false;
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
-    private static bool _isDX9EXused = System.Environment.OSVersion.Version.Major >= 6;
+    private static bool _isDX9EXused = Environment.OSVersion.Version.Major >= 6;
 
     private static Point _screenCenterPos = new Point();
 
     [DllImport("user32.dll")]
-    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
+    private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
     // singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
@@ -180,19 +191,19 @@ namespace MediaPortal.GUI.Library
 
     public static bool UseSeparateRenderThread
     {
-      get
-      {
-        return _useSeparateRenderThread;
-      }
+      get { return _useSeparateRenderThread; }
       set
       {
         _useSeparateRenderThread = value;
         if (_useSeparateRenderThread)
+        {
           Log.Warn("GraphicContext: Using separate thread for GUI rendering");
+        }
         //else
         //  Log.Info("GraphicContext: not using separate thread for GUI rendering");
       }
     }
+
     /// <summary>
     /// Enable/disable screen output
     /// </summary>
@@ -208,13 +219,20 @@ namespace MediaPortal.GUI.Library
             if (turnOffMonitor)
             {
               if (Form.ActiveForm.Handle != IntPtr.Zero)
-                SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, value ? (IntPtr)MONITOR_ON : (IntPtr)MONITOR_OFF);
+              {
+                SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
+                            value ? (IntPtr) MONITOR_ON : (IntPtr) MONITOR_OFF);
+              }
               else
+              {
                 Log.Warn("GraphicContext: Could not power monitor {0}", value ? "off" : "on");
+              }
             }
             blankScreen = value;
             if (OnVideoWindowChanged != null)
+            {
               OnVideoWindowChanged();
+            }
           }
           catch (Exception ex)
           {
@@ -250,14 +268,15 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentFullscreenAdapterInfo != null)
+        {
           return _currentFullscreenAdapterInfo;
+        }
         else
+        {
           return Manager.Adapters.Default;
+        }
       }
-      set
-      {
-        _currentFullscreenAdapterInfo = value;
-      }
+      set { _currentFullscreenAdapterInfo = value; }
     }
 
     public static int currentScreenNumber
@@ -265,14 +284,15 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentScreen != null)
+        {
           return _currentScreenNumber;
+        }
         else
+        {
           return 0;
+        }
       }
-      set
-      {
-        _currentScreenNumber = value;
-      }
+      set { _currentScreenNumber = value; }
     }
 
     /// <summary>
@@ -283,14 +303,15 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_currentScreen != null)
+        {
           return _currentScreen;
+        }
         else
+        {
           return Screen.PrimaryScreen;
+        }
       }
-      set
-      {
-        _currentScreen = value;
-      }
+      set { _currentScreen = value; }
     }
 
     /// <summary>
@@ -300,10 +321,7 @@ namespace MediaPortal.GUI.Library
     //static bool Fullscreen
     public static bool Fullscreen
     {
-      get
-      {
-        return ((Width == currentScreen.Bounds.Width) && (Height == currentScreen.Bounds.Height));
-      }
+      get { return ((Width == currentScreen.Bounds.Width) && (Height == currentScreen.Bounds.Height)); }
     }
 
     /// <summary>
@@ -312,7 +330,7 @@ namespace MediaPortal.GUI.Library
     public static void ResetLastActivity()
     {
       _lastActivity = DateTime.Now;
-      GUIGraphicsContext.BlankScreen = false;
+      BlankScreen = false;
     }
 
     /// <summary>
@@ -324,24 +342,28 @@ namespace MediaPortal.GUI.Library
     {
       string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       if (Fullscreen)
+      {
         strFileName += ".fs.xml";
+      }
       else
+      {
         strFileName += ".xml";
+      }
 
       // Log.Info("save {0}" ,strFileName);
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(strFileName))
+      using (Settings xmlWriter = new Settings(strFileName))
       {
         xmlWriter.SetValue("screen", "offsetx", m_iOffsetX.ToString());
         xmlWriter.SetValue("screen", "offsety", m_iOffsetY.ToString());
 
         float zoomHorizontal = m_fZoomHorizontal;
         zoomHorizontal *= 10000f;
-        int intZoomHorizontal = (int)zoomHorizontal;
+        int intZoomHorizontal = (int) zoomHorizontal;
         xmlWriter.SetValue("screen", "zoomhorizontal", intZoomHorizontal.ToString());
 
         float zoomVertical = m_fZoomVertical;
         zoomVertical *= 10000f;
-        int intZoomVertical = (int)zoomVertical;
+        int intZoomVertical = (int) zoomVertical;
         xmlWriter.SetValue("screen", "zoomvertical", intZoomVertical.ToString());
 
         xmlWriter.SetValue("screen", "offsetosd", m_iOSDOffset.ToString());
@@ -352,7 +374,7 @@ namespace MediaPortal.GUI.Library
 
         float pixelRatio = m_fPixelRatio;
         pixelRatio *= 10000f;
-        int intPixelRatio = (int)pixelRatio;
+        int intPixelRatio = (int) pixelRatio;
         xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString());
         xmlWriter.SetValue("screen", "subtitles", m_iSubtitles.ToString());
 
@@ -377,16 +399,24 @@ namespace MediaPortal.GUI.Library
 
       string strFileName = Config.GetFile(Config.Dir.Config, String.Format("ScreenCalibration{0}x{1}", Width, Height));
       if (Fullscreen)
+      {
         strFileName += ".fs.xml";
+      }
       else
+      {
         strFileName += ".xml";
+      }
 
-      if (!System.IO.File.Exists(strFileName))
+      if (!File.Exists(strFileName))
+      {
         Log.Warn("GraphicContext: NO screen calibration file found for resolution {0}x{1}!", Width, Height);
+      }
       else
+      {
         Log.Debug("GraphicContext: Loading settings from {0}", strFileName);
+      }
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(strFileName))
+      using (Settings xmlReader = new Settings(strFileName))
       {
         try
         {
@@ -400,15 +430,15 @@ namespace MediaPortal.GUI.Library
           m_iOverScanHeight = xmlReader.GetValueAsInt("screen", "overscanheight", Height);
           m_iSubtitles = xmlReader.GetValueAsInt("screen", "subtitles", Height - 50);
           int intPixelRation = xmlReader.GetValueAsInt("screen", "pixelratio", 10000);
-          m_fPixelRatio = (float)intPixelRation;
+          m_fPixelRatio = (float) intPixelRation;
           m_fPixelRatio /= 10000f;
 
           int intZoomHorizontal = xmlReader.GetValueAsInt("screen", "zoomhorizontal", 10000);
-          m_fZoomHorizontal = (float)intZoomHorizontal;
+          m_fZoomHorizontal = (float) intZoomHorizontal;
           m_fZoomHorizontal /= 10000f;
 
           int intZoomVertical = xmlReader.GetValueAsInt("screen", "zoomvertical", 10000);
-          m_fZoomVertical = (float)intZoomVertical;
+          m_fZoomVertical = (float) intZoomVertical;
           m_fZoomVertical /= 10000f;
         }
         catch (Exception ex)
@@ -417,7 +447,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();
@@ -426,7 +456,8 @@ namespace MediaPortal.GUI.Library
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 
-        Log.Info("GraphicContext: MP will render at {0} FPS, use animations = {1}", m_iMaxFPS, Convert.ToString(m_bAnimations));
+        Log.Info("GraphicContext: MP will render at {0} FPS, use animations = {1}", m_iMaxFPS,
+                 Convert.ToString(m_bAnimations));
       }
     }
 
@@ -491,10 +522,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        int borderWidth = (form.Size.Width - form.ClientRectangle.Width) / 2;
+        int borderWidth = (form.Size.Width - form.ClientRectangle.Width)/2;
         // we can only assume that the title bar occupies this space
-        int borderHeight = (form.Size.Height - form.ClientRectangle.Height) + (2 * borderWidth);
-        _screenCenterPos = new Point((form.ClientRectangle.Width / 2) + borderWidth + form.Location.X, (form.ClientRectangle.Height / 2) + borderHeight + form.Location.Y);
+        int borderHeight = (form.Size.Height - form.ClientRectangle.Height) + (2*borderWidth);
+        _screenCenterPos = new Point((form.ClientRectangle.Width/2) + borderWidth + form.Location.X,
+                                     (form.ClientRectangle.Height/2) + borderHeight + form.Location.Y);
 
         return _screenCenterPos;
       }
@@ -507,14 +539,22 @@ namespace MediaPortal.GUI.Library
       {
         Point oldPos = Cursor.Position;
         if (form.ClientRectangle.Width - oldPos.X < OutputScreenCenter.X)
-          newX = OutputScreenCenter.X + (int)((oldPos.X - OutputScreenCenter.X) / 2);
+        {
+          newX = OutputScreenCenter.X + (int) ((oldPos.X - OutputScreenCenter.X)/2);
+        }
         else
-          newX = OutputScreenCenter.X - (int)((OutputScreenCenter.X - oldPos.X) / 2);
+        {
+          newX = OutputScreenCenter.X - (int) ((OutputScreenCenter.X - oldPos.X)/2);
+        }
 
         if (form.ClientRectangle.Height - oldPos.Y < OutputScreenCenter.Y)
-          newY = OutputScreenCenter.Y + (int)((oldPos.Y - OutputScreenCenter.Y) / 2);
+        {
+          newY = OutputScreenCenter.Y + (int) ((oldPos.Y - OutputScreenCenter.Y)/2);
+        }
         else
-          newY = OutputScreenCenter.Y - (int)((OutputScreenCenter.Y - oldPos.Y) / 2);
+        {
+          newY = OutputScreenCenter.Y - (int) ((OutputScreenCenter.Y - oldPos.Y)/2);
+        }
       }
       else
       {
@@ -535,8 +575,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="fy">Y correction.</param>
     public static void Correct(ref float fx, ref float fy)
     {
-      fx += (float)OffsetX;
-      fy += (float)OffsetY;
+      fx += (float) OffsetX;
+      fy += (float) OffsetY;
     }
 
     /// <summary>
@@ -549,21 +589,21 @@ namespace MediaPortal.GUI.Library
     public static void ScaleRectToScreenResolution(ref int left, ref int top, ref int right, ref int bottom)
     {
       // Adjust for global zoom.
-      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
-      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+      float fZoomedScreenWidth = (float) Width*ZoomHorizontal;
+      float fZoomedScreenHeight = (float) Height*ZoomVertical;
 
       // Get skin size
-      float fSkinWidth = (float)m_skinSize.Width;
-      float fSkinHeight = (float)m_skinSize.Height;
+      float fSkinWidth = (float) m_skinSize.Width;
+      float fSkinHeight = (float) m_skinSize.Height;
 
       // X
-      float fPercentX = fZoomedScreenWidth / fSkinWidth;
-      left = (int)Math.Round(((float)left) * fPercentX);
-      right = (int)Math.Round(((float)right) * fPercentX);
+      float fPercentX = fZoomedScreenWidth/fSkinWidth;
+      left = (int) Math.Round(((float) left)*fPercentX);
+      right = (int) Math.Round(((float) right)*fPercentX);
       // Y
-      float fPercentY = fZoomedScreenHeight / fSkinHeight;
-      top = (int)Math.Round(((float)top) * fPercentY);
-      bottom = (int)Math.Round(((float)bottom) * fPercentY);
+      float fPercentY = fZoomedScreenHeight/fSkinHeight;
+      top = (int) Math.Round(((float) top)*fPercentY);
+      bottom = (int) Math.Round(((float) bottom)*fPercentY);
     }
 
     /// <summary>
@@ -574,17 +614,17 @@ namespace MediaPortal.GUI.Library
     public static void ScalePosToScreenResolution(ref int x, ref int y)
     {
       // Adjust for global zoom.
-      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
-      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+      float fZoomedScreenWidth = (float) Width*ZoomHorizontal;
+      float fZoomedScreenHeight = (float) Height*ZoomVertical;
 
-      float fSkinWidth = (float)m_skinSize.Width;
-      float fSkinHeight = (float)m_skinSize.Height;
+      float fSkinWidth = (float) m_skinSize.Width;
+      float fSkinHeight = (float) m_skinSize.Height;
 
       // X,Y
-      float fPercentX = fZoomedScreenWidth / fSkinWidth;
-      float fPercentY = fZoomedScreenHeight / fSkinHeight;
-      x = (int)Math.Round(((float)x) * fPercentX);
-      y = (int)Math.Round(((float)y) * fPercentY);
+      float fPercentX = fZoomedScreenWidth/fSkinWidth;
+      float fPercentY = fZoomedScreenHeight/fSkinHeight;
+      x = (int) Math.Round(((float) x)*fPercentX);
+      y = (int) Math.Round(((float) y)*fPercentY);
     }
 
     /// <summary>
@@ -594,23 +634,23 @@ namespace MediaPortal.GUI.Library
     public static void ScaleVertical(ref int y)
     {
       // Adjust for global zoom.
-      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+      float fZoomedScreenHeight = (float) Height*ZoomVertical;
 
-      float fSkinHeight = (float)m_skinSize.Height;
+      float fSkinHeight = (float) m_skinSize.Height;
 
-      float fPercentY = fZoomedScreenHeight / fSkinHeight;
-      y = (int)Math.Round(((float)y) * fPercentY);
+      float fPercentY = fZoomedScreenHeight/fSkinHeight;
+      y = (int) Math.Round(((float) y)*fPercentY);
     }
 
     public static void ScaleVertical(ref float y)
     {
       // Adjust for global zoom.
-      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+      float fZoomedScreenHeight = (float) Height*ZoomVertical;
 
-      float fSkinHeight = (float)m_skinSize.Height;
+      float fSkinHeight = (float) m_skinSize.Height;
 
-      float fPercentY = fZoomedScreenHeight / fSkinHeight;
-      y = (float)Math.Round(((float)y) * fPercentY);
+      float fPercentY = fZoomedScreenHeight/fSkinHeight;
+      y = (float) Math.Round(((float) y)*fPercentY);
     }
 
     /// <summary>
@@ -631,24 +671,25 @@ namespace MediaPortal.GUI.Library
     public static void ScaleHorizontal(ref int x)
     {
       // Adjust for global zoom.
-      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+      float fZoomedScreenWidth = (float) Width*ZoomHorizontal;
 
-      float fSkinWidth = (float)m_skinSize.Width;
+      float fSkinWidth = (float) m_skinSize.Width;
 
       // X
-      float fPercentX = (fZoomedScreenWidth) / fSkinWidth;
-      x = (int)Math.Round(((float)x) * fPercentX);
+      float fPercentX = (fZoomedScreenWidth)/fSkinWidth;
+      x = (int) Math.Round(((float) x)*fPercentX);
     }
+
     public static void ScaleHorizontal(ref float x)
     {
       // Adjust for global zoom.
-      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+      float fZoomedScreenWidth = (float) Width*ZoomHorizontal;
 
-      float fSkinWidth = (float)m_skinSize.Width;
+      float fSkinWidth = (float) m_skinSize.Width;
 
       // X
-      float fPercentX = (fZoomedScreenWidth) / fSkinWidth;
-      x = (float)Math.Round(((float)x) * fPercentX);
+      float fPercentX = (fZoomedScreenWidth)/fSkinWidth;
+      x = (float) Math.Round(((float) x)*fPercentX);
     }
 
 
@@ -671,16 +712,16 @@ namespace MediaPortal.GUI.Library
     public static void DescalePosToScreenResolution(ref int x, ref int y)
     {
       // Adjust for global zoom.
-      float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
-      float fZoomedScreenHeight = (float)Height * ZoomVertical;
+      float fZoomedScreenWidth = (float) Width*ZoomHorizontal;
+      float fZoomedScreenHeight = (float) Height*ZoomVertical;
 
-      float fSkinWidth = (float)m_skinSize.Width;
-      float fSkinHeight = (float)m_skinSize.Height;
+      float fSkinWidth = (float) m_skinSize.Width;
+      float fSkinHeight = (float) m_skinSize.Height;
 
-      float fPercentX = fSkinWidth / fZoomedScreenWidth;
-      float fPercentY = fSkinHeight / fZoomedScreenHeight;
-      x = (int)Math.Round(((float)x) * fPercentX);
-      y = (int)Math.Round(((float)y) * fPercentY);
+      float fPercentX = fSkinWidth/fZoomedScreenWidth;
+      float fPercentY = fSkinHeight/fZoomedScreenHeight;
+      x = (int) Math.Round(((float) x)*fPercentX);
+      y = (int) Math.Round(((float) y)*fPercentY);
     }
 
     /// <summary>
@@ -692,7 +733,10 @@ namespace MediaPortal.GUI.Library
       set
       {
         m_ARType = value;
-        if (OnVideoWindowChanged != null) OnVideoWindowChanged();
+        if (OnVideoWindowChanged != null)
+        {
+          OnVideoWindowChanged();
+        }
       }
     }
 
@@ -783,7 +827,10 @@ namespace MediaPortal.GUI.Library
         if (value != m_bFullScreenVideo)
         {
           m_bFullScreenVideo = value;
-          if (OnVideoWindowChanged != null) OnVideoWindowChanged();
+          if (OnVideoWindowChanged != null)
+          {
+            OnVideoWindowChanged();
+          }
         }
       }
     }
@@ -791,17 +838,26 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/Set video window rectangle
     /// </summary>
-    public static System.Drawing.Rectangle VideoWindow
+    public static Rectangle VideoWindow
     {
       get { return m_RectVideo; }
       set
       {
         if (!m_RectVideo.Equals(value))
         {
-          if (m_RectVideo.Width == 0) m_RectVideo.Width = 1;
-          if (m_RectVideo.Height == 0) m_RectVideo.Height = 1;
+          if (m_RectVideo.Width == 0)
+          {
+            m_RectVideo.Width = 1;
+          }
+          if (m_RectVideo.Height == 0)
+          {
+            m_RectVideo.Height = 1;
+          }
           m_RectVideo = value;
-          if (OnVideoWindowChanged != null) OnVideoWindowChanged();
+          if (OnVideoWindowChanged != null)
+          {
+            OnVideoWindowChanged();
+          }
         }
       }
     }
@@ -812,10 +868,7 @@ namespace MediaPortal.GUI.Library
     public static State CurrentState
     {
       get { return m_eState; }
-      set
-      {
-        m_eState = value;
-      }
+      set { m_eState = value; }
     }
 
     /// <summary>
@@ -852,7 +905,10 @@ namespace MediaPortal.GUI.Library
             m_RectVideo.Width = 1;
             m_RectVideo.Height = 1;
           }
-          if (!ShowBackground) m_bOverlay = false;
+          if (!ShowBackground)
+          {
+            m_bOverlay = false;
+          }
           if (OnVideoWindowChanged != null)
           {
             OnVideoWindowChanged();
@@ -960,19 +1016,20 @@ namespace MediaPortal.GUI.Library
     /// <param name="iMaxHeight">max. height allowed</param>
     /// <param name="width">returned width of calculated rectangle</param>
     /// <param name="height">returned height of calculated rectangle</param>
-    public static void GetOutputRect(int iSourceWidth, int iSourceHeight, int iMaxWidth, int iMaxHeight, out int width, out int height)
+    public static void GetOutputRect(int iSourceWidth, int iSourceHeight, int iMaxWidth, int iMaxHeight, out int width,
+                                     out int height)
     {
       // calculate aspect ratio correction factor
-      float fPixelRatio = GUIGraphicsContext.PixelRatio;
+      float fPixelRatio = PixelRatio;
 
-      float fSourceFrameAR = (float)iSourceWidth / iSourceHeight;
-      float fOutputFrameAR = fSourceFrameAR / fPixelRatio;
+      float fSourceFrameAR = (float) iSourceWidth/iSourceHeight;
+      float fOutputFrameAR = fSourceFrameAR/fPixelRatio;
       width = iMaxWidth;
-      height = (int)(width / fOutputFrameAR);
+      height = (int) (width/fOutputFrameAR);
       if (height > iMaxHeight)
       {
         height = iMaxHeight;
-        width = (int)(height * fOutputFrameAR);
+        width = (int) (height*fOutputFrameAR);
       }
     }
 
@@ -985,7 +1042,10 @@ namespace MediaPortal.GUI.Library
       set
       {
         m_bPlaying = value;
-        if (!m_bPlaying) IsPlayingVideo = false;
+        if (!m_bPlaying)
+        {
+          IsPlayingVideo = false;
+        }
       }
     }
 
@@ -996,10 +1056,7 @@ namespace MediaPortal.GUI.Library
     public static bool IsPlayingVideo
     {
       get { return m_bPlayingVideo; }
-      set
-      {
-        m_bPlayingVideo = value;
-      }
+      set { m_bPlayingVideo = value; }
     }
 
     /// <summary>
@@ -1007,14 +1064,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static int Brightness
     {
-      get
-      { return m_iBrightness; }
+      get { return m_iBrightness; }
       set
       {
         if (m_iBrightness != value)
         {
           m_iBrightness = value;
-          if (OnGammaContrastBrightnessChanged != null) OnGammaContrastBrightnessChanged();
+          if (OnGammaContrastBrightnessChanged != null)
+          {
+            OnGammaContrastBrightnessChanged();
+          }
         }
       }
     }
@@ -1024,14 +1083,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static int Contrast
     {
-      get
-      { return m_iContrast; }
+      get { return m_iContrast; }
       set
       {
         if (m_iContrast != value)
         {
           m_iContrast = value;
-          if (OnGammaContrastBrightnessChanged != null) OnGammaContrastBrightnessChanged();
+          if (OnGammaContrastBrightnessChanged != null)
+          {
+            OnGammaContrastBrightnessChanged();
+          }
         }
       }
     }
@@ -1041,14 +1102,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static int Gamma
     {
-      get
-      { return m_iGamma; }
+      get { return m_iGamma; }
       set
       {
         if (m_iGamma != value)
         {
           m_iGamma = value;
-          if (OnGammaContrastBrightnessChanged != null) OnGammaContrastBrightnessChanged();
+          if (OnGammaContrastBrightnessChanged != null)
+          {
+            OnGammaContrastBrightnessChanged();
+          }
         }
       }
     }
@@ -1058,14 +1121,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static int Saturation
     {
-      get
-      { return m_iSaturation; }
+      get { return m_iSaturation; }
       set
       {
         if (m_iSaturation != value)
         {
           m_iSaturation = value;
-          if (OnGammaContrastBrightnessChanged != null) OnGammaContrastBrightnessChanged();
+          if (OnGammaContrastBrightnessChanged != null)
+          {
+            OnGammaContrastBrightnessChanged();
+          }
         }
       }
     }
@@ -1075,14 +1140,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static int Sharpness
     {
-      get
-      { return m_Sharpness; }
+      get { return m_Sharpness; }
       set
       {
         if (m_Sharpness != value)
         {
           m_Sharpness = value;
-          if (OnGammaContrastBrightnessChanged != null) OnGammaContrastBrightnessChanged();
+          if (OnGammaContrastBrightnessChanged != null)
+          {
+            OnGammaContrastBrightnessChanged();
+          }
         }
       }
     }
@@ -1124,7 +1191,10 @@ namespace MediaPortal.GUI.Library
       set
       {
         m_bShowBackGround = value;
-        if (!m_bShowBackGround) Overlay = false;
+        if (!m_bShowBackGround)
+        {
+          Overlay = false;
+        }
       }
     }
 
@@ -1136,7 +1206,10 @@ namespace MediaPortal.GUI.Library
       get { return m_iScrollSpeedVertical; }
       set
       {
-        if (m_iScrollSpeedVertical < 0) return;
+        if (m_iScrollSpeedVertical < 0)
+        {
+          return;
+        }
         m_iScrollSpeedVertical = value;
       }
     }
@@ -1149,7 +1222,10 @@ namespace MediaPortal.GUI.Library
       get { return m_iScrollSpeedHorizontal; }
       set
       {
-        if (m_iScrollSpeedHorizontal < 0) return;
+        if (m_iScrollSpeedHorizontal < 0)
+        {
+          return;
+        }
         m_iScrollSpeedHorizontal = value;
       }
     }
@@ -1162,7 +1238,10 @@ namespace MediaPortal.GUI.Library
       get { return m_iMaxFPS; }
       set
       {
-        if (m_iMaxFPS < 0) return;
+        if (m_iMaxFPS < 0)
+        {
+          return;
+        }
         m_iMaxFPS = value;
         SyncFrameTime();
       }
@@ -1184,7 +1263,10 @@ namespace MediaPortal.GUI.Library
       get { return m_fCurrentFPS; }
       set
       {
-        if (m_fCurrentFPS < 0) return;
+        if (m_fCurrentFPS < 0)
+        {
+          return;
+        }
         m_fCurrentFPS = value;
       }
     }
@@ -1197,10 +1279,14 @@ namespace MediaPortal.GUI.Library
       get { return m_iCharsInCharacterSet; }
       set
       {
-        if (m_iCharsInCharacterSet < 128) return;
+        if (m_iCharsInCharacterSet < 128)
+        {
+          return;
+        }
         m_iCharsInCharacterSet = value;
       }
     }
+
     public static IRender RenderGUI
     {
       get { return m_renderFrame; }
@@ -1215,45 +1301,34 @@ namespace MediaPortal.GUI.Library
 
     public static bool Vmr9Active
     {
-      get
-      {
-        return vmr9Active;
-      }
+      get { return vmr9Active; }
       set
       {
         if (value != vmr9Active)
         {
           vmr9Active = value;
           if (vmr9Active)
+          {
             Log.Debug("VMR9: Now active");
+          }
           else
+          {
             Log.Debug("VMR9: Inactive");
+          }
         }
       }
     }
 
     public static bool IsVMR9Exclusive
     {
-      get
-      {
-        return m_bisvmr9Exclusive;
-      }
-      set
-      {
-        m_bisvmr9Exclusive = value;
-      }
+      get { return m_bisvmr9Exclusive; }
+      set { m_bisvmr9Exclusive = value; }
     }
 
     public static bool IsEvr
     {
-      get
-      {
-        return m_bisevr;
-      }
-      set
-      {
-        m_bisevr = value;
-      }
+      get { return m_bisevr; }
+      set { m_bisevr = value; }
     }
 
     public static float TimePassed
@@ -1270,19 +1345,13 @@ namespace MediaPortal.GUI.Library
     public static bool InVmr9Render
     {
       [MethodImpl(MethodImplOptions.Synchronized)]
-      get
-      {
-        return vmr9RenderBusy;
-      }
-      set
-      {
-        vmr9RenderBusy = value;
-      }
+      get { return vmr9RenderBusy; }
+      set { vmr9RenderBusy = value; }
     }
 
-    static void SyncFrameTime()
+    private static void SyncFrameTime()
     {
-      m_iDesiredFrameTime = DXUtil.TicksPerSecond / m_iMaxFPS;
+      m_iDesiredFrameTime = DXUtil.TicksPerSecond/m_iMaxFPS;
     }
 
     public static PresentParameters DirectXPresentParameters
@@ -1318,35 +1387,92 @@ namespace MediaPortal.GUI.Library
     /// false: does not belong to the my tv plugin</returns>
     public static bool IsTvWindow(int windowId)
     {
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TVGUIDE)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTV)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_SCHEDULER)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_SEARCHTV)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TELETEXT)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_CONFLICTS)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_NO_SIGNAL)
+      {
+        return true;
+      }
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
+      {
+        return true;
+      }
 
       return false;
     }
 
-    static public bool IsDirectX9ExUsed()
+    public static bool IsDirectX9ExUsed()
     {
       return _isDX9EXused;
     }
 
-    static public Microsoft.DirectX.Direct3D.Pool GetTexturePoolType()
+    public static Pool GetTexturePoolType()
     {
       // DirectX9 Ex device works only with Pool.Default
       if (IsDirectX9ExUsed())
@@ -1358,17 +1484,11 @@ namespace MediaPortal.GUI.Library
 
     public static TransformMatrix ControlTransform
     {
-      get
-      {
-        return _finalTransform;
-      }
-      set
-      {
-        _finalTransform = value;
-      }
+      get { return _finalTransform; }
+      set { _finalTransform = value; }
     }
 
-    public static void SetScalingResolution(/*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
+    public static void SetScalingResolution( /*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
       //m_windowResolution = res;
       if (needsScaling)
@@ -1405,13 +1525,13 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _guiTransform = TransformMatrix.CreateTranslation((float)posX, (float)posY, 0);
+        _guiTransform = TransformMatrix.CreateTranslation((float) posX, (float) posY, 0);
         //_windowScaleX = 1.0f;
         //_windowScaleY = 1.0f;
       }
 
       _cameras.Clear();
-      _cameras.Add(new Point(Width / 2, Height / 2));
+      _cameras.Add(new Point(Width/2, Height/2));
       UpdateCameraPosition(_cameras[0]);
       // reset the final transform and window transforms
       UpdateFinalTransform(_guiTransform);
@@ -1454,7 +1574,8 @@ namespace MediaPortal.GUI.Library
     }
 
     public static void SetWindowTransform(TransformMatrix matrix)
-    { // reset the group transform stack
+    {
+      // reset the group transform stack
 
       _groupTransforms.Clear();
       _groupTransforms.Add(_guiTransform.multiply(matrix));
@@ -1464,20 +1585,30 @@ namespace MediaPortal.GUI.Library
     public static void AddTransform(TransformMatrix matrix)
     {
       if (_groupTransforms.Count > 0)
+      {
         _groupTransforms.Add(_groupTransforms[_groupTransforms.Count - 1].multiply(matrix));
+      }
       else
+      {
         _groupTransforms.Add(matrix);
+      }
       UpdateFinalTransform(_groupTransforms[_groupTransforms.Count - 1]);
     }
 
     public static void RemoveTransform()
     {
       if (_groupTransforms.Count > 0)
+      {
         _groupTransforms.RemoveAt(_groupTransforms.Count - 1);
+      }
       if (_groupTransforms.Count > 0)
+      {
         UpdateFinalTransform(_groupTransforms[_groupTransforms.Count - 1]);
+      }
       else
+      {
         UpdateFinalTransform(new TransformMatrix());
+      }
     }
 
     public static void SetCameraPosition(Point camera)
@@ -1508,12 +1639,12 @@ namespace MediaPortal.GUI.Library
       //       to cut down on one setting)
 
       // and calculate the offset from the screen center
-      Point offset = new Point(camera.X - (Width / 2), camera.Y - (Height / 2));
+      Point offset = new Point(camera.X - (Width/2), camera.Y - (Height/2));
 
       // grab the viewport dimensions and location
       Viewport viewport = DX9Device.Viewport;
-      float w = viewport.Width * 0.5f;
-      float h = viewport.Height * 0.5f;
+      float w = viewport.Width*0.5f;
+      float h = viewport.Height*0.5f;
 
       // world view.  Until this is moved onto the GPU (via a vertex shader for instance), we set it to the identity
       // here.
@@ -1524,19 +1655,18 @@ namespace MediaPortal.GUI.Library
       // position.
       Matrix flipY, translate, mtxView;
       flipY = Matrix.Scaling(1.0f, -1.0f, 1.0f);
-      translate = Matrix.Translation(-(viewport.X + w + offset.X), -(viewport.Y + h + offset.Y), 2 * h);
+      translate = Matrix.Translation(-(viewport.X + w + offset.X), -(viewport.Y + h + offset.Y), 2*h);
       mtxView = Matrix.Multiply(translate, flipY);
       DX9Device.Transform.View = mtxView;
 
       // projection onto screen space
-      Matrix mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X) * 0.5f, //Minimum x-value of the view volume.
-                                                    (w - offset.X) * 0.5f, //Maximum x-value of the view volume.
-                                                    (-h + offset.Y) * 0.5f,//Minimum y-value of the view volume.
-                                                    (h + offset.Y) * 0.5f,//Maximum y-value of the view volume.
-                                                    h,//Minimum z-value of the view volume.
-                                                    100 * h);//Maximum z-value of the view volume.
+      Matrix mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X)*0.5f, //Minimum x-value of the view volume.
+                                                           (w - offset.X)*0.5f, //Maximum x-value of the view volume.
+                                                           (-h + offset.Y)*0.5f, //Minimum y-value of the view volume.
+                                                           (h + offset.Y)*0.5f, //Maximum y-value of the view volume.
+                                                           h, //Minimum z-value of the view volume.
+                                                           100*h); //Maximum z-value of the view volume.
       DX9Device.Transform.Projection = mtxProjection;
-
     }
   }
 }

@@ -23,7 +23,6 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
 
 namespace MediaPortal.GUI.Library
@@ -33,27 +32,24 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIHorizontalScrollbar : GUIControl
   {
-    [XMLSkinElement("buddycontrol")]
-    int _buddyControlId = -1;
-    [XMLSkinElement("texturebg")]
-    string _backgroundTextureName;
-    [XMLSkinElement("lefttexture")]
-    string _leftTextureName;
-    [XMLSkinElement("righttexture")]
-    string _rightTextureName;
-    GUIAnimation _imageBackGround = null;
-    GUIAnimation _imageLeft = null;
-    GUIAnimation _imageRight = null;
-    float _percentage = 0;
-    int _startX = 0;
-    int _endX = 0;
-    int _widthKnob = 0;
-    int _startPositionXKnob = 0;
+    [XMLSkinElement("buddycontrol")] private int _buddyControlId = -1;
+    [XMLSkinElement("texturebg")] private string _backgroundTextureName;
+    [XMLSkinElement("lefttexture")] private string _leftTextureName;
+    [XMLSkinElement("righttexture")] private string _rightTextureName;
+    private GUIAnimation _imageBackGround = null;
+    private GUIAnimation _imageLeft = null;
+    private GUIAnimation _imageRight = null;
+    private float _percentage = 0;
+    private int _startX = 0;
+    private int _endX = 0;
+    private int _widthKnob = 0;
+    private int _startPositionXKnob = 0;
 
     public GUIHorizontalScrollbar(int dwParentID)
       : base(dwParentID)
     {
     }
+
     /// <summary>
     /// The constructor of the GUIHorizontalScrollbar class.
     /// </summary>
@@ -66,7 +62,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="strBackGroundTexture">The background texture of the scrollbar.</param>
     /// <param name="strLeftTexture">The left texture of the scrollbar indicator.</param>
     /// <param name="strRightTexture">The right texture of the scrolbar indicator.</param>
-    public GUIHorizontalScrollbar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture, string strLeftTexture, string strRightTexture)
+    public GUIHorizontalScrollbar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
+                                  string strBackGroundTexture, string strLeftTexture, string strRightTexture)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _backgroundTextureName = strBackGroundTexture;
@@ -74,35 +71,57 @@ namespace MediaPortal.GUI.Library
       _leftTextureName = strLeftTexture;
       FinalizeConstruction();
     }
+
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      if (_backgroundTextureName == null) _backgroundTextureName = "";
-      if (_rightTextureName == null) _rightTextureName = "";
-      if (_leftTextureName == null) _leftTextureName = "";
-			_imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName);
+      if (_backgroundTextureName == null)
+      {
+        _backgroundTextureName = "";
+      }
+      if (_rightTextureName == null)
+      {
+        _rightTextureName = "";
+      }
+      if (_leftTextureName == null)
+      {
+        _leftTextureName = "";
+      }
+      _imageBackGround = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                              _backgroundTextureName);
       _imageBackGround.ParentControl = this;
       _imageBackGround.DimColor = DimColor;
 
-			_imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _leftTextureName);
+      _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                        _leftTextureName);
       _imageLeft.ParentControl = this;
       _imageLeft.DimColor = DimColor;
-			_imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _rightTextureName);
+      _imageRight = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
+                                         _rightTextureName);
       _imageRight.ParentControl = this;
       _imageRight.DimColor = DimColor;
     }
 
-		public override bool Dimmed
-		{
-			get {	return base.Dimmed;	}
-			set
-			{
-				base.Dimmed = value;
-				if (_imageBackGround != null) _imageBackGround.Dimmed = value;
-				if (_imageLeft != null) _imageLeft.Dimmed = value;
-				if (_imageRight != null) _imageRight.Dimmed = value;
-			}
-		}
+    public override bool Dimmed
+    {
+      get { return base.Dimmed; }
+      set
+      {
+        base.Dimmed = value;
+        if (_imageBackGround != null)
+        {
+          _imageBackGround.Dimmed = value;
+        }
+        if (_imageLeft != null)
+        {
+          _imageLeft.Dimmed = value;
+        }
+        if (_imageRight != null)
+        {
+          _imageRight.Dimmed = value;
+        }
+      }
+    }
 
     /// Renders the control.
     /// </summary>
@@ -129,23 +148,23 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.Render(timePassed);
       _imageBackGround.Height = iHeight;
 
-      float fPercent = (float)_percentage;
-      float fPosXOff = (fPercent / 100.0f);
+      float fPercent = (float) _percentage;
+      float fPosXOff = (fPercent/100.0f);
 
-      _widthKnob = (int)(2 * _imageLeft.TextureWidth);
+      _widthKnob = (int) (2*_imageLeft.TextureWidth);
       int inset = 4;
       GUIGraphicsContext.ScaleHorizontal(ref inset);
-      inset += (_widthKnob / 2);
+      inset += (_widthKnob/2);
 
       inset = 0;
       _startX = inset + _imageBackGround.XPosition;
       _endX = _startX + (_imageBackGround.Width - inset);
 
-      fPosXOff *= (float)(_endX - _startX - _widthKnob);
+      fPosXOff *= (float) (_endX - _startX - _widthKnob);
 
-      _startPositionXKnob = _startX + (int)fPosXOff;
+      _startPositionXKnob = _startX + (int) fPosXOff;
       int iXPos = _startPositionXKnob;
-      int iYPos = _imageBackGround.YPosition + ((_imageBackGround.Height / 2) - (_imageLeft.TextureHeight / 2));
+      int iYPos = _imageBackGround.YPosition + ((_imageBackGround.Height/2) - (_imageLeft.TextureHeight/2));
 
       _imageLeft.SetPosition(iXPos, iYPos);
       _imageLeft.Height = _imageLeft.TextureHeight;
@@ -179,8 +198,14 @@ namespace MediaPortal.GUI.Library
       set
       {
         _percentage = value;
-        if (_percentage < 0) _percentage = 0;
-        if (_percentage > 100) _percentage = 100;
+        if (_percentage < 0)
+        {
+          _percentage = 0;
+        }
+        if (_percentage > 100)
+        {
+          _percentage = 100;
+        }
       }
     }
 
@@ -215,7 +240,6 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.AllocResources();
       _imageRight.AllocResources();
       _imageLeft.AllocResources();
-
     }
 
     /// <summary>
@@ -268,18 +292,18 @@ namespace MediaPortal.GUI.Library
       {
         int id;
         bool focus;
-        if (HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
+        if (HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out focus))
         {
           if (action.MouseButton == MouseButtons.Left)
           {
-            float fWidth = (float)(_endX - _startX);
-            _percentage = (action.fAmount1 - (float)_startX);
+            float fWidth = (float) (_endX - _startX);
+            _percentage = (action.fAmount1 - (float) _startX);
             _percentage /= fWidth;
             _percentage *= 100.0f;
 
-            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID, GetID, (int)_percentage, 0, null);
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID,
+                                                GetID, (int) _percentage, 0, null);
             GUIGraphicsContext.SendMessage(message);
-
           }
         }
       }
@@ -288,13 +312,13 @@ namespace MediaPortal.GUI.Library
       {
         if (action.MouseButton == MouseButtons.Left)
         {
-          float fWidth = (float)(_endX - _startX);
-          _percentage = (action.fAmount1 - (float)_startX);
+          float fWidth = (float) (_endX - _startX);
+          _percentage = (action.fAmount1 - (float) _startX);
           _percentage /= fWidth;
           _percentage *= 100.0f;
-          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID, GetID, (int)_percentage, 0, null);
+          GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID, GetID,
+                                              (int) _percentage, 0, null);
           GUIGraphicsContext.SendMessage(message);
-
         }
       }
       base.OnAction(action);
@@ -310,7 +334,10 @@ namespace MediaPortal.GUI.Library
     {
       controlID = GetID;
       focused = Focus;
-      if (!IsVisible) return false;
+      if (!IsVisible)
+      {
+        return false;
+      }
       if (x >= _startX && x < _endX)
       {
         if (y >= YPosition && y < YPosition + Height)
@@ -320,18 +347,26 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-    
+
     public override int DimColor
     {
       get { return base.DimColor; }
       set
       {
         base.DimColor = value;
-        if (_imageBackGround != null) _imageBackGround.DimColor = value;
-        if (_imageLeft != null) _imageLeft.DimColor = value;
-        if (_imageRight != null) _imageRight.DimColor = value;
+        if (_imageBackGround != null)
+        {
+          _imageBackGround.DimColor = value;
+        }
+        if (_imageLeft != null)
+        {
+          _imageLeft.DimColor = value;
+        }
+        if (_imageRight != null)
+        {
+          _imageRight.DimColor = value;
+        }
       }
     }
-
   }
 }

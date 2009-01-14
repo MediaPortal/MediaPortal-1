@@ -24,18 +24,19 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
   public enum VideoStreamType
   {
-    MPEG2=1,
-    H264=2,
+    MPEG2 = 1,
+    H264 = 2,
     MPEG4
   }
+
   public class VideoStreamFormat
   {
     public VideoStreamType streamType;
@@ -50,21 +51,17 @@ namespace MediaPortal.Player
 
     public bool IsValid
     {
-      get
-      {
-        return _valid;
-      }
-      set
-      {
-        _valid = value;
-      }
+      get { return _valid; }
+      set { _valid = value; }
     }
 
     public VideoStreamFormat()
     {
-      IsValid=false;
+      IsValid = false;
     }
-    public VideoStreamFormat(VideoStreamType streamType, int width, int height, int arX, int arY, int bitrate, bool isInterlaced)
+
+    public VideoStreamFormat(VideoStreamType streamType, int width, int height, int arX, int arY, int bitrate,
+                             bool isInterlaced)
     {
       IsValid = true;
       this.streamType = streamType;
@@ -75,9 +72,11 @@ namespace MediaPortal.Player
       this.bitrate = bitrate;
       this.isInterlaced = isInterlaced;
     }
+
     public override string ToString()
     {
-      return String.Format("streamtype={0} resolution={1}x{2} aspect ratio={3}:{4} bitrate={5} isInterlaced={6}",streamType.ToString(), width, height, arX,arY, bitrate, isInterlaced);
+      return String.Format("streamtype={0} resolution={1}x{2} aspect ratio={3}:{4} bitrate={5} isInterlaced={6}",
+                           streamType.ToString(), width, height, arX, arY, bitrate, isInterlaced);
     }
   }
 
@@ -132,17 +131,14 @@ namespace MediaPortal.Player
     /// true: file is playing
     /// false: unable to play file
     /// </returns>
-    public virtual bool PlayStream(string strFile,string streamName)
+    public virtual bool PlayStream(string strFile, string streamName)
     {
-        return false;
+      return false;
     }
 
     public virtual bool SupportsReplay
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -150,10 +146,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool IsCDA
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -161,10 +154,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool IsDVD
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -172,10 +162,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool IsDVDMenu
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -183,10 +170,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool IsTV
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -194,10 +178,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool IsRadio
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -253,7 +234,10 @@ namespace MediaPortal.Player
       get { return _isVisible; }
       set
       {
-        if (value == _isVisible) return;
+        if (value == _isVisible)
+        {
+          return;
+        }
         _isVisible = value;
       }
     }
@@ -397,7 +381,7 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool Initializing
     {
-        get { return false; }
+      get { return false; }
     }
 
     /// <summary>
@@ -414,9 +398,7 @@ namespace MediaPortal.Player
     public virtual Geometry.Type ARType
     {
       get { return GUIGraphicsContext.ARType; }
-      set
-      {
-      }
+      set { }
     }
 
     /// <summary>
@@ -511,13 +493,13 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
-        /// <summary>
+    /// <summary>
     /// Property to get the type of an audio stream
     /// </summary>
     public virtual string AudioType(int iStream)
     {
       return Strings.Unknown;
-    }    
+    }
 
     /// <summary>
     /// Property to get the total number of subtitle streams
@@ -565,13 +547,8 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual int Contrast
     {
-      get
-      {
-        return 0;
-      }
-      set
-      {
-      }
+      get { return 0; }
+      set { }
     }
 
     /// <summary>
@@ -579,13 +556,8 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual int Brightness
     {
-      get
-      {
-        return 0;
-      }
-      set
-      {
-      }
+      get { return 0; }
+      set { }
     }
 
     /// <summary>
@@ -593,13 +565,8 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual int Gamma
     {
-      get
-      {
-        return 0;
-      }
-      set
-      {
-      }
+      get { return 0; }
+      set { }
     }
 
     /// <summary>
@@ -609,6 +576,7 @@ namespace MediaPortal.Player
     {
       get { return _videoRectangle; }
     }
+
     public Rectangle SourceWindow
     {
       get { return _sourceRectangle; }
@@ -619,19 +587,15 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool EnableSubtitle
     {
-      get
-      {
-        return true;
-      }
-      set
-      {
-      }
+      get { return true; }
+      set { }
     }
 
     public virtual int GetHDC()
     {
       return 0;
     }
+
     public virtual void ReleaseHDC(int HDC)
     {
     }
@@ -659,18 +623,18 @@ namespace MediaPortal.Player
     {
       get { return false; }
     }
+
     public virtual void ContinueGraph()
     {
     }
+
     public virtual void PauseGraph()
     {
     }
+
     public virtual bool IsExternal
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     public virtual VideoStreamFormat GetVideoFormat()
@@ -682,17 +646,19 @@ namespace MediaPortal.Player
     {
       return eAudioDualMonoMode.UNSUPPORTED;
     }
+
     public virtual bool SetAudioDualMonoMode(eAudioDualMonoMode mode)
     {
       return false;
     }
 
-
     #region IDisposable Members
+
     public virtual void Release()
     {
       // TODO:  Add IPlayer.Dispose implementation
     }
+
     #endregion
   }
 }

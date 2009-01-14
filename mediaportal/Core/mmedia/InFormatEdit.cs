@@ -24,12 +24,10 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
 using System.Globalization;
+using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 using WaveLib;
 
 namespace Yeti.MMedia
@@ -37,18 +35,18 @@ namespace Yeti.MMedia
   /// <summary>
   /// Summary description for EditFormat.
   /// </summary>
-  public class EditFormat : System.Windows.Forms.UserControl, IEditFormat
+  public class EditFormat : UserControl, IEditFormat
   {
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxChannels;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxBitsPerSample;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox textBoxSampleRate;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private System.Windows.Forms.ToolTip toolTip1;
-    private System.ComponentModel.IContainer components;
+    private MPComboBox comboBoxChannels;
+    private MPComboBox comboBoxBitsPerSample;
+    private MPLabel label3;
+    private MPLabel label2;
+    private MPNumericTextBox textBoxSampleRate;
+    private MPLabel label1;
+    private ToolTip toolTip1;
+    private IContainer components;
     private WaveFormat m_OrigFormat;
-    private System.Windows.Forms.ErrorProvider errorProvider1;
+    private ErrorProvider errorProvider1;
 
     private bool m_FireConfigChangeEvent = true;
 
@@ -76,10 +74,7 @@ namespace Yeti.MMedia
 
     public bool ReadOnly
     {
-      get
-      {
-        return textBoxSampleRate.ReadOnly;
-      }
+      get { return textBoxSampleRate.ReadOnly; }
       set
       {
         textBoxSampleRate.ReadOnly = value;
@@ -88,6 +83,7 @@ namespace Yeti.MMedia
     }
 
     #region Component Designer generated code
+
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -108,9 +104,11 @@ namespace Yeti.MMedia
       // comboBoxChannels
       // 
       this.comboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxChannels.Items.AddRange(new object[] {
-                                                          "MONO",
-                                                          "STEREO"});
+      this.comboBoxChannels.Items.AddRange(new object[]
+                                             {
+                                               "MONO",
+                                               "STEREO"
+                                             });
       this.comboBoxChannels.Location = new System.Drawing.Point(96, 56);
       this.comboBoxChannels.Name = "comboBoxChannels";
       this.comboBoxChannels.Size = new System.Drawing.Size(112, 21);
@@ -120,14 +118,17 @@ namespace Yeti.MMedia
       // comboBoxBitsPerSample
       // 
       this.comboBoxBitsPerSample.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxBitsPerSample.Items.AddRange(new object[] {
-                                                               "8 bits per sample",
-                                                               "16 bits per sample"});
+      this.comboBoxBitsPerSample.Items.AddRange(new object[]
+                                                  {
+                                                    "8 bits per sample",
+                                                    "16 bits per sample"
+                                                  });
       this.comboBoxBitsPerSample.Location = new System.Drawing.Point(96, 96);
       this.comboBoxBitsPerSample.Name = "comboBoxBitsPerSample";
       this.comboBoxBitsPerSample.Size = new System.Drawing.Size(112, 21);
       this.comboBoxBitsPerSample.TabIndex = 12;
-      this.comboBoxBitsPerSample.SelectedIndexChanged += new System.EventHandler(this.comboBoxBitsPerSample_SelectedIndexChanged);
+      this.comboBoxBitsPerSample.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxBitsPerSample_SelectedIndexChanged);
       // 
       // label3
       // 
@@ -181,7 +182,6 @@ namespace Yeti.MMedia
       this.Name = "EditFormat";
       this.Size = new System.Drawing.Size(288, 200);
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -221,24 +221,20 @@ namespace Yeti.MMedia
         m_FireConfigChangeEvent = true;
       }
     }
+
     [Browsable(false)]
     public Control ConfigControl
     {
-      get
-      {
-        return this;
-      }
+      get { return this; }
     }
+
     [Browsable(false)]
     public string ControlName
     {
-      get
-      {
-        return "Input Format";
-      }
+      get { return "Input Format"; }
     }
 
-    public event System.EventHandler ConfigChange;
+    public event EventHandler ConfigChange;
 
     #endregion
 
@@ -280,7 +276,7 @@ namespace Yeti.MMedia
 
     #endregion
 
-    private void OnConfigChange(System.EventArgs e)
+    private void OnConfigChange(EventArgs e)
     {
       if (m_FireConfigChangeEvent && (ConfigChange != null))
       {
@@ -288,28 +284,28 @@ namespace Yeti.MMedia
       }
     }
 
-    private void textBoxSampleRate_TextChanged(object sender, System.EventArgs e)
+    private void textBoxSampleRate_TextChanged(object sender, EventArgs e)
     {
       // TODO: Validate text
       OnConfigChange(EventArgs.Empty);
     }
 
-    private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBoxChannels_SelectedIndexChanged(object sender, EventArgs e)
     {
       OnConfigChange(EventArgs.Empty);
     }
 
-    private void comboBoxBitsPerSample_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBoxBitsPerSample_SelectedIndexChanged(object sender, EventArgs e)
     {
       OnConfigChange(EventArgs.Empty);
     }
 
-    private void textBoxSampleRate_FormatError(object sender, System.EventArgs e)
+    private void textBoxSampleRate_FormatError(object sender, EventArgs e)
     {
       errorProvider1.SetError(textBoxSampleRate, "Number expected");
     }
 
-    private void textBoxSampleRate_FormatValid(object sender, System.EventArgs e)
+    private void textBoxSampleRate_FormatValid(object sender, EventArgs e)
     {
       errorProvider1.SetError(textBoxSampleRate, "");
     }

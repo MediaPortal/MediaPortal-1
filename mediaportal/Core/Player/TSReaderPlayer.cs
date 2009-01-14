@@ -24,137 +24,135 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Microsoft.Win32;
-using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
+using System.Threading;
+using System.Windows.Forms;
 using DirectShowLib;
-using DirectShowLib.BDA;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
-using MediaPortal.Player.Teletext;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Player.Teletext;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
-  class TSReaderPlayer : BaseTSReaderPlayer
+  internal class TSReaderPlayer : BaseTSReaderPlayer
   {
     #region structs
-    static byte[] Mpeg2ProgramVideo = 
-    {
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
-          0xd0, 0x02, 0x00, 0x00,							//  .hdr.rcSource.right
-          0x40, 0x02, 0x00, 0x00,							//  .hdr.rcSource.bottom
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.left
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.top
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.right
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.bottom
-          0xc0, 0xe1, 0xe4, 0x00,							//  .hdr.dwBitRate
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwBitErrorRate
-          0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwInterlaceFlags
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwCopyProtectFlags
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioX
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioY
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved1
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved2
-          0x28, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSize
-          0xd0, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biWidth
-          0x40, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biHeight
-          0x00, 0x00,										//  .hdr.bmiHeader.biPlanes
-          0x00, 0x00,										//  .hdr.bmiHeader.biBitCount
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biCompression
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSizeImage
-          0xd0, 0x07, 0x00, 0x00,							//  .hdr.bmiHeader.biXPelsPerMeter
-          0x42, 0xd8, 0x00, 0x00,							//  .hdr.bmiHeader.biYPelsPerMeter
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrUsed
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrImportant
-          0x00, 0x00, 0x00, 0x00,							//  .dwStartTimeCode
-          0x4c, 0x00, 0x00, 0x00,							//  .cbSequenceHeader
-          0x00, 0x00, 0x00, 0x00,							//  .dwProfile
-          0x00, 0x00, 0x00, 0x00,							//  .dwLevel
-          0x00, 0x00, 0x00, 0x00,							//  .Flags
-					                        //  .dwSequenceHeader [1]
-          0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33, 
-          0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12, 
-          0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14, 
-          0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 
-          0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 
-          0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 
-          0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19, 
-          0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b, 
-          0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e, 
-          0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    };
 
-    static byte[] MPEG2AudioFormat =
-      {	
-        0x50, 0x00,				//wFormatTag
-	      0x02, 0x00,				//nChannels
-	      0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
-	      0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
-	      0x01, 0x00,				//nBlockAlign
-	      0x00, 0x00,				//wBitsPerSample
-	      0x16, 0x00,				//cbSize
-	      0x02, 0x00,				//wValidBitsPerSample
-	      0x00, 0xe8,				//wSamplesPerBlock
-	      0x03, 0x00,				//wReserved
-	      0x01, 0x00, 0x01, 0x00, //dwChannelMask
-	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    private static byte[] Mpeg2ProgramVideo =
+      {
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top
+        0xd0, 0x02, 0x00, 0x00, //  .hdr.rcSource.right
+        0x40, 0x02, 0x00, 0x00, //  .hdr.rcSource.bottom
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom
+        0xc0, 0xe1, 0xe4, 0x00, //  .hdr.dwBitRate
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate
+        0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwInterlaceFlags
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwCopyProtectFlags
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioX
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioY
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved1
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved2
+        0x28, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize
+        0xd0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth
+        0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight
+        0x00, 0x00, //  .hdr.bmiHeader.biPlanes
+        0x00, 0x00, //  .hdr.bmiHeader.biBitCount
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biCompression
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage
+        0xd0, 0x07, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter
+        0x42, 0xd8, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant
+        0x00, 0x00, 0x00, 0x00, //  .dwStartTimeCode
+        0x4c, 0x00, 0x00, 0x00, //  .cbSequenceHeader
+        0x00, 0x00, 0x00, 0x00, //  .dwProfile
+        0x00, 0x00, 0x00, 0x00, //  .dwLevel
+        0x00, 0x00, 0x00, 0x00, //  .Flags
+        //  .dwSequenceHeader [1]
+        0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33,
+        0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12,
+        0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14,
+        0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15,
+        0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16,
+        0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
+        0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19,
+        0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b,
+        0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e,
+        0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
+
+    private static byte[] MPEG2AudioFormat =
+      {
+        0x50, 0x00, //wFormatTag
+        0x02, 0x00, //nChannels
+        0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
+        0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
+        0x01, 0x00, //nBlockAlign
+        0x00, 0x00, //wBitsPerSample
+        0x16, 0x00, //cbSize
+        0x02, 0x00, //wValidBitsPerSample
+        0x00, 0xe8, //wSamplesPerBlock
+        0x03, 0x00, //wReserved
+        0x01, 0x00, 0x01, 0x00, //dwChannelMask
+        0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      };
+
     #endregion
 
     #region variables
-    VMR9Util _vmr9 = null;
-    IPin _pinAudio = null;
-    IPin _pinVideo = null;
+
+    private VMR9Util _vmr9 = null;
+    private IPin _pinAudio = null;
+    private IPin _pinVideo = null;
     protected IBaseFilter _audioSwitcherFilter = null;
     protected IAudioStream _audioStream = null;
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
     protected ITeletextSource _teletextSource = null;
-    bool enableDVBBitmapSubtitles = false;
-    bool enableDVBTtxtSubtitles = false;
-    bool enableMPAudioSwitcher = false;
+    private bool enableDVBBitmapSubtitles = false;
+    private bool enableDVBTtxtSubtitles = false;
+    private bool enableMPAudioSwitcher = false;
+
     #endregion
 
     [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAudioStream
     {
       void GetAudioStream(ref Int32 stream);
@@ -166,7 +164,7 @@ namespace MediaPortal.Player
     /// </summary>
     /// 
     [Guid("43FED769-C5EE-46aa-912D-7EBDAE4EE93A"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ISubtitleStream
     {
       void SetSubtitleStream(Int32 stream);
@@ -184,19 +182,21 @@ namespace MediaPortal.Player
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SUBTITLE_LANGUAGE
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
-      public string lang;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)] public string lang;
     }
 
     #region ctor
+
     public TSReaderPlayer()
       : base()
     {
     }
+
     public TSReaderPlayer(g_Player.MediaType type)
       : base(type)
     {
     }
+
     #endregion
 
     public override eAudioDualMonoMode GetAudioDualMonoMode()
@@ -213,16 +213,17 @@ namespace MediaPortal.Player
         return eAudioDualMonoMode.UNSUPPORTED;
       }
       uint iMode = 0;
-      int hr=mpSwitcher.GetAudioDualMonoMode(out iMode);
+      int hr = mpSwitcher.GetAudioDualMonoMode(out iMode);
       if (hr != 0)
       {
         Log.Info("TsReaderPlayer: GetAudioDualMonoMode failed 0x{0:X}", hr);
         return eAudioDualMonoMode.UNSUPPORTED;
       }
-      eAudioDualMonoMode mode = (eAudioDualMonoMode)iMode;
+      eAudioDualMonoMode mode = (eAudioDualMonoMode) iMode;
       Log.Info("TsReaderPlayer: GetAudioDualMonoMode mode={0} succeeded", iMode.ToString(), hr);
       return mode;
     }
+
     public override bool SetAudioDualMonoMode(eAudioDualMonoMode mode)
     {
       if (_audioSwitcherFilter == null)
@@ -236,29 +237,36 @@ namespace MediaPortal.Player
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
         return false;
       }
-      int hr=mpSwitcher.SetAudioDualMonoMode((uint)mode);
+      int hr = mpSwitcher.SetAudioDualMonoMode((uint) mode);
       if (hr != 0)
       {
         Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} failed 0x{1:X}", mode.ToString(), hr);
       }
       else
+      {
         Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
+      }
       return (hr == 0);
-    }	
+    }
 
     protected bool IsVideoFile(string filename)
     {
-      bool isTimeShiftStream=false;
+      bool isTimeShiftStream = false;
       if (filename.ToLower().StartsWith("rtsp://"))
       {
-        string url=filename.Remove(0,filename.LastIndexOf('/')+1);
-        isTimeShiftStream=(url.Substring(0, 6) == "stream");
+        string url = filename.Remove(0, filename.LastIndexOf('/') + 1);
+        isTimeShiftStream = (url.Substring(0, 6) == "stream");
       }
-      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0 && !isTimeShiftStream && !IsTV);
+      return (filename.ToLower().IndexOf(".tsbuffer") < 0 && filename.ToLower().IndexOf("radio.tsbuffer") < 0 &&
+              !isTimeShiftStream && !IsTV);
     }
-    protected void LoadMyTvFilterSettings(ref int intFilters,ref string strFilters,ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+
+    protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
+                                          ref string strAudioCodec, ref string strAACAudioCodec,
+                                          ref string strH264VideoCodec, ref string strAudioRenderer,
+                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // FlipGer: load infos for custom filters
         int intCount = 0;
@@ -278,28 +286,46 @@ namespace MediaPortal.Player
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-        enableMPAudioSwitcher=xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
+        enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Zoom;
+        }
         if (strValue.Equals("stretch"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Stretch;
+        }
         if (strValue.Equals("normal"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Normal;
+        }
         if (strValue.Equals("original"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Original;
+        }
         if (strValue.Equals("letterbox"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
+        }
         if (strValue.Equals("panscan"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.SmartStretch;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+        }
         if (strValue.Equals("zoom149"))
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        {
+          GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
+        }
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
-    protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec, ref string strAudioCodec, ref string strAACAudioCodec, ref string strH264VideoCodec, ref string strAudioRenderer, ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+
+    protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
+                                              ref string strAudioCodec, ref string strAACAudioCodec,
+                                              ref string strH264VideoCodec, ref string strAudioRenderer,
+                                              ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // FlipGer: load infos for custom filters
         int intCount = 0;
@@ -315,11 +341,11 @@ namespace MediaPortal.Player
         strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-        
+
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-        enableMPAudioSwitcher=xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
+        enableMPAudioSwitcher = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
@@ -360,10 +386,11 @@ namespace MediaPortal.Player
       try
       {
         Cleanup(); //before adding vmr9 - make sure that cleanup is done, otherwise MP could hang in (_vmr9.AddVMR9)
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
+        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
 
         #region add vmr9
+
         if (_isRadio == false)
         {
           Log.Info("TSReaderPlayer: add _vmr9");
@@ -371,9 +398,11 @@ namespace MediaPortal.Player
           _vmr9.AddVMR9(_graphBuilder);
           _vmr9.Enable(false);
         }
+
         #endregion
 
         #region add codecs
+
         Log.Info("TSReaderPlayer: add codecs");
         // add preferred video & audio codecs
         string strVideoCodec = "";
@@ -385,16 +414,26 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
 
         if (IsVideoFile(filename))
-          LoadMyVideosFilterSettings(ref intFilters,ref strFilters,ref strVideoCodec, ref strAudioCodec, ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer, ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+        {
+          LoadMyVideosFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
+                                     ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                                     ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+        }
         else
-          LoadMyTvFilterSettings(ref intFilters,ref strFilters,ref strVideoCodec, ref strAudioCodec, ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer, ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+        {
+          LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
+                                 ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+        }
 
         if (_isRadio == false)
         {
           try
           {
             if (strVideoCodec.Length > 0)
+            {
               _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+            }
           }
           catch (Exception ex)
           {
@@ -402,8 +441,10 @@ namespace MediaPortal.Player
           }
           try
           {
-          if (strH264VideoCodec.Length > 0)
-            _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+            if (strH264VideoCodec.Length > 0)
+            {
+              _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+            }
           }
           catch (Exception ex)
           {
@@ -411,11 +452,17 @@ namespace MediaPortal.Player
           }
         }
         if (strAudioCodec.Length > 0)
+        {
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        }
         if (strAACAudioCodec.Length > 0)
+        {
           _aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+        }
         if (strAudioRenderer.Length > 0)
+        {
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
+        }
         if (enableDVBBitmapSubtitles)
         {
           try
@@ -434,9 +481,11 @@ namespace MediaPortal.Player
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
+
         #endregion
 
         #region add AudioSwitcher
+
         if (enableMPAudioSwitcher)
         {
           Log.Info("Adding audio switcher to graph");
@@ -446,25 +495,29 @@ namespace MediaPortal.Player
             Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
           }
         }
+
         #endregion
 
         #region add TsReader
+
         TsReader reader = new TsReader();
-        _fileSource = (IBaseFilter)reader;
-        ITSReader ireader = (ITSReader)reader;
+        _fileSource = (IBaseFilter) reader;
+        ITSReader ireader = (ITSReader) reader;
         ireader.SetTsReaderCallback(this);
         ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");
-        int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
+        int hr = _graphBuilder.AddFilter((IBaseFilter) _fileSource, "TsReader");
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to add TsReader to graph");
           return false;
         }
+
         #endregion
 
         #region load file in TsReader
-        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
+
+        IFileSourceFilter interfaceFile = (IFileSourceFilter) _fileSource;
         if (interfaceFile == null)
         {
           Log.Error("TSReaderPlayer:Failed to get IFileSourceFilter");
@@ -477,9 +530,11 @@ namespace MediaPortal.Player
           Log.Error("TSReaderPlayer:Failed to open file:{0} :0x{1:x}", filename, hr);
           return false;
         }
+
         #endregion
 
         #region render TsReader output pins
+
         if (_isRadio)
         {
           IEnumPins enumPins;
@@ -488,10 +543,16 @@ namespace MediaPortal.Player
           int fetched = 0;
           while (enumPins.Next(1, pins, out fetched) == 0)
           {
-            if (fetched != 1) break;
+            if (fetched != 1)
+            {
+              break;
+            }
             PinDirection direction;
             pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Input) continue;
+            if (direction == PinDirection.Input)
+            {
+              continue;
+            }
             IEnumMediaTypes enumMediaTypes;
             pins[0].EnumMediaTypes(out enumMediaTypes);
             AMMediaType[] mediaTypes = new AMMediaType[20];
@@ -516,7 +577,10 @@ namespace MediaPortal.Player
           int fetched = 0;
           while (enumPins.Next(1, pins, out fetched) == 0)
           {
-            if (fetched != 1) break;
+            if (fetched != 1)
+            {
+              break;
+            }
             PinDirection direction;
             pins[0].QueryDirection(out direction);
             if (direction == PinDirection.Input)
@@ -530,17 +594,20 @@ namespace MediaPortal.Player
             }
             catch (Exception ex)
             {
-              Log.Warn("Failed to render an output pin of TsReader. Maybe it's a radio recording and we try to render the video pin.\nMessage: {0}", ex.Message);
+              Log.Warn(
+                "Failed to render an output pin of TsReader. Maybe it's a radio recording and we try to render the video pin.\nMessage: {0}",
+                ex.Message);
             }
-            
+
             DirectShowUtil.ReleaseComObject(pins[0]);
           }
           DirectShowUtil.ReleaseComObject(enumPins);
         }
+
         #endregion
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _mediaCtrl = (IMediaControl) _graphBuilder;
+        _mediaEvt = (IMediaEventEx) _graphBuilder;
         _mediaSeeking = _graphBuilder as IMediaSeeking;
         if (_mediaSeeking == null)
         {
@@ -600,7 +667,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
-          _basicAudio = (IBasicAudio)_graphBuilder;
+          _basicAudio = (IBasicAudio) _graphBuilder;
           //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
         }
         if (_isRadio == false)
@@ -614,7 +681,8 @@ namespace MediaPortal.Player
               Application.DoEvents();
               if (count > 20)
               {
-                Log.Debug("TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
+                Log.Debug(
+                  "TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
                 //gemx: we have to return TRUE here because otherwise we won't be able to play recoded radio from the RecordedTV screen
                 return true;
                 /*if (g_Player.IsRadio)
@@ -630,7 +698,7 @@ namespace MediaPortal.Player
                 //return false;
               }
               count++;
-              System.Threading.Thread.Sleep(100);
+              Thread.Sleep(100);
             }
           }
           _vmr9.SetDeinterlaceMode();
@@ -669,7 +737,7 @@ namespace MediaPortal.Player
       GUIWindowManager.SendMessage(msg);
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
       int hr;
       Log.Info("TSReaderPlayer:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
@@ -679,7 +747,9 @@ namespace MediaPortal.Player
         {
           _videoWin = _graphBuilder as IVideoWindow;
           if (_videoWin != null)
+          {
             _videoWin.put_Visible(OABool.False);
+          }
         }
         else
         {
@@ -696,8 +766,11 @@ namespace MediaPortal.Player
           while (GUIGraphicsContext.InVmr9Render)
           {
             counter++;
-            System.Threading.Thread.Sleep(100);
-            if (counter > 100) break;
+            Thread.Sleep(100);
+            if (counter > 100)
+            {
+              break;
+            }
             break;
           }
           hr = _mediaCtrl.Stop();
@@ -718,7 +791,10 @@ namespace MediaPortal.Player
         }
         if (_fileSource != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0) ;
+          while ((hr = DirectShowUtil.ReleaseComObject(_fileSource)) > 0)
+          {
+            ;
+          }
           _fileSource = null;
         }
         if (_pinAudio != null)
@@ -733,34 +809,55 @@ namespace MediaPortal.Player
         }
         if (_videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_videoCodecFilter)) > 0)
+          {
+            ;
+          }
           _videoCodecFilter = null;
         }
         if (_h264videoCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_h264videoCodecFilter)) > 0)
+          {
+            ;
+          }
           _h264videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioCodecFilter)) > 0)
+          {
+            ;
+          }
           _audioCodecFilter = null;
         }
         if (_aacaudioCodecFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_aacaudioCodecFilter)) > 0)
+          {
+            ;
+          }
           _aacaudioCodecFilter = null;
         }
         if (_audioRendererFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_audioRendererFilter)) > 0)
+          {
+            ;
+          }
           _audioRendererFilter = null;
         }
         if (_subtitleFilter != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_subtitleFilter)) > 0)
+          {
+            ;
+          }
           _subtitleFilter = null;
-          if (this._dvbSubRenderer != null) this._dvbSubRenderer.SetPlayer(null);
+          if (this._dvbSubRenderer != null)
+          {
+            this._dvbSubRenderer.SetPlayer(null);
+          }
           this._dvbSubRenderer = null;
         }
         // FlipGer: release custom filters
@@ -770,14 +867,20 @@ namespace MediaPortal.Player
           {
             if (customFilters[i] != null)
             {
-              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0);
+              while ((hr = DirectShowUtil.ReleaseComObject(customFilters[i])) > 0)
+              {
+                ;
+              }
             }
             customFilters[i] = null;
           }
         }
         if (_mpegDemux != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_mpegDemux)) > 0)
+          {
+            ;
+          }
           _mpegDemux = null;
         }
         //	DsUtils.RemoveFilters(graphBuilder);
@@ -788,7 +891,10 @@ namespace MediaPortal.Player
         _rotEntry = null;
         if (_graphBuilder != null)
         {
-          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0);
+          while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
+          {
+            ;
+          }
           _graphBuilder = null;
         }
         GUIGraphicsContext.form.Invalidate(true);
@@ -821,9 +927,12 @@ namespace MediaPortal.Player
           lock (_mediaCtrl)
           {
             UpdateCurrentPosition();
-            if (dTimeInSecs < 0) dTimeInSecs = 0;
+            if (dTimeInSecs < 0)
+            {
+              dTimeInSecs = 0;
+            }
             dTimeInSecs *= 10000000d;
-            long lTime = (long)dTimeInSecs;
+            long lTime = (long) dTimeInSecs;
             long pStop = 0;
             long lContentStart, lContentEnd;
             _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
@@ -835,7 +944,8 @@ namespace MediaPortal.Player
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               lTime = lContentEnd;
             }*/
-            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
+                                                new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
             Log.Info("TsReaderPlayer seek done:{0:X}", hr);
             if (VMR9Util.g_vmr9 != null)
             {
@@ -845,7 +955,10 @@ namespace MediaPortal.Player
         }
 
         UpdateCurrentPosition();
-        if (_dvbSubRenderer != null) _dvbSubRenderer.OnSeek(CurrentPosition);
+        if (_dvbSubRenderer != null)
+        {
+          _dvbSubRenderer.OnSeek(CurrentPosition);
+        }
         _state = PlayState.Playing;
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }

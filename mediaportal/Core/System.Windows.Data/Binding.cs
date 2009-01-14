@@ -23,20 +23,19 @@
 
 #endregion
 
-using System;
 using System.Windows.Serialization;
 
 namespace System.Windows.Data
 {
-	public class Binding : MarkupExtension
-	{
-		#region Methods
+  public class Binding : MarkupExtension
+  {
+    #region Methods
 
-		public override object ProvideValue(object target, object value)
-		{
-			throw new NotImplementedException();
-		}
+    public override object ProvideValue(object target, object value)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

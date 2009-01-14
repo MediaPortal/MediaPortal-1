@@ -23,139 +23,169 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class Style : IAddChild, INameScope, IResourceHost
-	{
-		#region Constructors
+  public class Style : IAddChild, INameScope, IResourceHost
+  {
+    #region Constructors
 
-		public Style()
-		{
-		}
+    public Style()
+    {
+    }
 
-		public Style(Type targetType)
-		{
-			if(targetType == null)
-				throw new ArgumentNullException("targetType");
+    public Style(Type targetType)
+    {
+      if (targetType == null)
+      {
+        throw new ArgumentNullException("targetType");
+      }
 
-			_targetType = targetType;
-		}
+      _targetType = targetType;
+    }
 
-		public Style(Type targetType, Style basedOn)
-		{
-			if(targetType == null)
-				throw new ArgumentNullException("targetType");
+    public Style(Type targetType, Style basedOn)
+    {
+      if (targetType == null)
+      {
+        throw new ArgumentNullException("targetType");
+      }
 
-			if(basedOn == null)
-				throw new ArgumentNullException("basedOn");
+      if (basedOn == null)
+      {
+        throw new ArgumentNullException("basedOn");
+      }
 
-			_targetType = targetType;
-			_basedOn = basedOn;
-		}
+      _targetType = targetType;
+      _basedOn = basedOn;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
+    void IAddChild.AddChild(object child)
+    {
+      if (child == null)
+      {
+        throw new ArgumentNullException("child");
+      }
 
-			if(child is SetterBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
+      if (child is SetterBase == false)
+      {
+        throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (SetterBase)));
+      }
 
-			Setters.Add((SetterBase)child);
-		}
+      Setters.Add((SetterBase) child);
+    }
 
-		void IAddChild.AddText(string text)
-		{
-		}
+    void IAddChild.AddText(string text)
+    {
+    }
 
-		object INameScope.FindName(string name)
-		{
-			return _styles[name];				
-		}
+    object INameScope.FindName(string name)
+    {
+      return _styles[name];
+    }
 
-		public override int GetHashCode()
-		{
-			return _globalIndex;
-		}
+    public override int GetHashCode()
+    {
+      return _globalIndex;
+    }
 
-		object IResourceHost.GetResource(object key)
-		{
-			return _styles[key];
-		}
+    object IResourceHost.GetResource(object key)
+    {
+      return _styles[key];
+    }
 
-		public void RegisterName(string name, object context)
-		{
-			_styles[name] = context;
-		}
+    public void RegisterName(string name, object context)
+    {
+      _styles[name] = context;
+    }
 
-		public void UnregisterName(string name)
-		{
-			_styles.Remove(name);
-		}
+    public void UnregisterName(string name)
+    {
+      _styles.Remove(name);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Style BasedOn
-		{
-			get { return _basedOn; }
-			set { _basedOn = value; }
-		}
+    public Style BasedOn
+    {
+      get { return _basedOn; }
+      set { _basedOn = value; }
+    }
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    public bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { return _basedOn; }
-		}
+    IResourceHost IResourceHost.ParentResourceHost
+    {
+      get { return _basedOn; }
+    }
 
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-		}
+    public ResourceDictionary Resources
+    {
+      get
+      {
+        if (_resources == null)
+        {
+          _resources = new ResourceDictionary();
+        }
+        return _resources;
+      }
+    }
 
-		public SetterBaseCollection Setters
-		{ 
-			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
-		}
+    public SetterBaseCollection Setters
+    {
+      get
+      {
+        if (_setters == null)
+        {
+          _setters = new SetterBaseCollection();
+        }
+        return _setters;
+      }
+    }
 
-		public Type TargetType
-		{ 
-			get { return _targetType; }
-			set { _targetType = value; }
-		}
+    public Type TargetType
+    {
+      get { return _targetType; }
+      set { _targetType = value; }
+    }
 
-		public TriggerCollection Triggers
-		{
-			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
-		}
+    public TriggerCollection Triggers
+    {
+      get
+      {
+        if (_triggers == null)
+        {
+          _triggers = new TriggerCollection();
+        }
+        return _triggers;
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		Style						_basedOn;
-		readonly int				_globalIndex = _globalIndexNext++;
-		static int					_globalIndexNext = 0;
-		bool						_isSealed = false;
-		ResourceDictionary			_resources;
-		SetterBaseCollection		_setters;
-		static Hashtable			_styles = new Hashtable(100);
-		TriggerCollection			_triggers;
-		Type						_targetType;
+    private Style _basedOn;
+    private readonly int _globalIndex = _globalIndexNext++;
+    private static int _globalIndexNext = 0;
+    private bool _isSealed = false;
+    private ResourceDictionary _resources;
+    private SetterBaseCollection _setters;
+    private static Hashtable _styles = new Hashtable(100);
+    private TriggerCollection _triggers;
+    private Type _targetType;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

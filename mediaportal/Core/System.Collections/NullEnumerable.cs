@@ -23,43 +23,47 @@
 
 #endregion
 
-using System;
-using System.Collections;
-
 namespace System.Collections
 {
-	public sealed class NullEnumerable : IEnumerable
-	{
-		#region Constructors
+  public sealed class NullEnumerable : IEnumerable
+  {
+    #region Constructors
 
-		private NullEnumerable()
-		{
-		}
-		
-		#endregion Constructors
+    private NullEnumerable()
+    {
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public IEnumerator GetEnumerator()
-		{
-			return NullEnumerator.Instance;
-		}
+    #region Methods
 
-		#endregion Methods
+    public IEnumerator GetEnumerator()
+    {
+      return NullEnumerator.Instance;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public static IEnumerable Instance
-		{
-			get { if(_instance == null) _instance = new NullEnumerable(); return _instance; }
-		}
+    #region Properties
 
-		#endregion Properties
+    public static IEnumerable Instance
+    {
+      get
+      {
+        if (_instance == null)
+        {
+          _instance = new NullEnumerable();
+        }
+        return _instance;
+      }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		static NullEnumerable		_instance;		
+    #region Fields
 
-		#endregion Fields
-	}
+    private static NullEnumerable _instance;
+
+    #endregion Fields
+  }
 }

@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Drawing
 {
-	public class StretchHelper
-	{
-		public StretchHelper()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-	}
+  public class StretchHelper
+  {
+    public StretchHelper()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
+  }
 }

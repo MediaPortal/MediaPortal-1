@@ -23,17 +23,15 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Media.Animation
 {
-	public enum HandoffBehavior
-	{
-		#region Fields
+  public enum HandoffBehavior
+  {
+    #region Fields
 
-		Compose,
-		SnapshotAndReplace = 0,
+    Compose,
+    SnapshotAndReplace = 0,
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

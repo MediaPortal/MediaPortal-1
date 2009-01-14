@@ -23,16 +23,14 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Automation.Provider
 {
-	public interface IAutomationPatternProvider
-	{
-		#region Methods
+  public interface IAutomationPatternProvider
+  {
+    #region Methods
 
-		object GetPatternProvider(UIElement target, AutomationPattern pattern);
+    object GetPatternProvider(UIElement target, AutomationPattern pattern);
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

@@ -24,18 +24,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
 using System.Threading;
+using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal
 {
-
   /// <summary>
   /// Provides functionality for grabbing the next video frame handed by the VMR to MediaPortal.
   /// </summary>
@@ -44,13 +41,16 @@ namespace MediaPortal
     [DllImport("DXUtil.dll", PreserveSig = false, CharSet = CharSet.Auto)]
     private static extern void VideoSurfaceToRGBSurface(IntPtr src, IntPtr dst);
 
-    private Surface rgbSurface = null;   // surface used to hold frame grabs
+    private Surface rgbSurface = null; // surface used to hold frame grabs
     private bool grabSucceeded = false; // indicates success/failure of framegrabs
-    private bool grabSample = false;   // flag to indicate that a frame must be grabbed
+    private bool grabSample = false; // flag to indicate that a frame must be grabbed
     private object grabNotifier = new object(); // Wait/Notify object for waiting for the grab to complete
 
     private static FrameGrabber instance = null;
-    private FrameGrabber() { }
+
+    private FrameGrabber()
+    {
+    }
 
     public static FrameGrabber GetInstance()
     {
@@ -70,7 +70,6 @@ namespace MediaPortal
     {
       try
       {
-
         //Log.Debug("GetCurrentImage called");
 
         lock (grabNotifier)
@@ -107,6 +106,7 @@ namespace MediaPortal
         return null;
       }
     }
+
     /// <summary>
     /// Suggests that the FrameGrabber releases resources.
     /// </summary>
@@ -131,14 +131,18 @@ namespace MediaPortal
     public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
     {
       // Is GetCurrentImage() requesting a frame grab?
-      if (!grabSample) return;
+      if (!grabSample)
+      {
+        return;
+      }
 
       //Log.Debug("PlaneScene: grabSample is true");
       try
       {
         // if we havent already allocated a surface or the surface dimensions dont match
         // allocate a new surface to store the grabbed frame in
-        if (rgbSurface == null || rgbSurface.Disposed || rgbSurface.Description.Height != height || rgbSurface.Description.Width != width)
+        if (rgbSurface == null || rgbSurface.Disposed || rgbSurface.Description.Height != height ||
+            rgbSurface.Description.Width != width)
         {
           Log.Debug("FrameGrabber: Creating new frame grabbing surface");
           // Bug fix for Mantis issue: 0001571: AutoCropperr is not working with EVR
@@ -146,18 +150,20 @@ namespace MediaPortal
           // Old rgbsurface is used for VMR9 since the new surface randomly gave problems with some drivers
           if (GUIGraphicsContext.IsEvr)
           {
-            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8, MultiSampleType.None, 0, true);
+            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
+                                                                         MultiSampleType.None, 0, true);
           }
           else
           {
-            rgbSurface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(width, height, Format.A8R8G8B8, Pool.Default);
+            rgbSurface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(width, height, Format.A8R8G8B8,
+                                                                                  Pool.Default);
           }
         }
         unsafe
         {
           // copy the YUV video surface to our managed ARGB surface
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
-          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr)rgbSurface.UnmanagedComPointer);
+          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
           lock (grabNotifier)
           {
             grabSample = false;
@@ -166,8 +172,8 @@ namespace MediaPortal
           }
         }
       }
-      // The loss of the D3DX device or similar can cause exceptions, catch any such
-      // exception and report failure to GetCurrentImage
+        // The loss of the D3DX device or similar can cause exceptions, catch any such
+        // exception and report failure to GetCurrentImage
       catch (Exception e)
       {
         rgbSurface.Dispose(); // get rid of rgbSurface just to make sure

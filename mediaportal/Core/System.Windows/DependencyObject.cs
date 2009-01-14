@@ -23,126 +23,138 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace System.Windows
 {
-	public class DependencyObject : DispatcherObject
-	{
-		#region Constructors
+  public class DependencyObject : DispatcherObject
+  {
+    #region Constructors
 
-		public DependencyObject()
-		{
-		}
+    public DependencyObject()
+    {
+    }
 
-		public DependencyObject(bool canBeUnbound)
-		{
-			// specifies whether this object can be detached from main thread
-			_isCanBeUnbound = canBeUnbound;
-		}
+    public DependencyObject(bool canBeUnbound)
+    {
+      // specifies whether this object can be detached from main thread
+      _isCanBeUnbound = canBeUnbound;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void ClearValue(DependencyProperty property)
-		{
-			_localValues.Remove(property);
-		}
+    public void ClearValue(DependencyProperty property)
+    {
+      _localValues.Remove(property);
+    }
 
-		public void ClearValue(DependencyPropertyKey key)
-		{
-			_localValues.Remove(key.DependencyProperty);
-		}
+    public void ClearValue(DependencyPropertyKey key)
+    {
+      _localValues.Remove(key.DependencyProperty);
+    }
 
-		public LocalValueEnumerator GetLocalValueEnumerator()
-		{
-			return new LocalValueEnumerator(_localValues);
-		}
+    public LocalValueEnumerator GetLocalValueEnumerator()
+    {
+      return new LocalValueEnumerator(_localValues);
+    }
 
-		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
-		public object GetValue(DependencyProperty property)
-		{
-			PropertyMetadata metadata = property.GetMetadata(this.GetType());
+    // http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
+    public object GetValue(DependencyProperty property)
+    {
+      PropertyMetadata metadata = property.GetMetadata(this.GetType());
 
-			if(metadata.GetValueOverride != null)
-				return metadata.GetValueOverride(this);
+      if (metadata.GetValueOverride != null)
+      {
+        return metadata.GetValueOverride(this);
+      }
 
-			return GetValueCommon(property, metadata);
-		}
+      return GetValueCommon(property, metadata);
+    }
 
-		public object GetValueBase(DependencyProperty property)
-		{
-			return GetValueCommon(property, property.GetMetadata(this.GetType()));
-		}
+    public object GetValueBase(DependencyProperty property)
+    {
+      return GetValueCommon(property, property.GetMetadata(this.GetType()));
+    }
 
-		private object GetValueCommon(DependencyProperty property, PropertyMetadata metadata)
-		{
-			object commonValue = DependencyProperty.UnsetValue;
-			
-			if(_localValues.ContainsKey(property.GlobalIndex))
-				commonValue = _localValues[property.GlobalIndex];
+    private object GetValueCommon(DependencyProperty property, PropertyMetadata metadata)
+    {
+      object commonValue = DependencyProperty.UnsetValue;
 
-			if(commonValue != DependencyProperty.UnsetValue)
-				return commonValue;
+      if (_localValues.ContainsKey(property.GlobalIndex))
+      {
+        commonValue = _localValues[property.GlobalIndex];
+      }
 
-			if(metadata.ReadLocalValueOverride != null)
-				commonValue = metadata.ReadLocalValueOverride(this);
+      if (commonValue != DependencyProperty.UnsetValue)
+      {
+        return commonValue;
+      }
 
-			if(commonValue != DependencyProperty.UnsetValue)
-				return commonValue;
+      if (metadata.ReadLocalValueOverride != null)
+      {
+        commonValue = metadata.ReadLocalValueOverride(this);
+      }
 
-			commonValue = GetValueCore(property, commonValue, metadata);
+      if (commonValue != DependencyProperty.UnsetValue)
+      {
+        return commonValue;
+      }
 
-			if(commonValue != DependencyProperty.UnsetValue)
-				return commonValue;
+      commonValue = GetValueCore(property, commonValue, metadata);
 
-			return metadata.DefaultValue;
-		}
+      if (commonValue != DependencyProperty.UnsetValue)
+      {
+        return commonValue;
+      }
 
-		// ms-help://MS.WinFXSDK.1033/Wcp_conceptual/html/1fbada8e-4867-4ed1-8d97-62c07dad7ebc.htm
-		// - Animations
-		// - Local
-		// - Property triggers (TemplatedParent, Template, Style, ThemeStyle)
-		// - TemplatedParent's template (ie, that template includes <Setter>s) 
-		// - Style property 
-		// - ThemeStyle 
-		// - Inheritance ("property inheritance" -- from your parent element, not your superclass) 
-		// - DefaultValue specified when you registered the property (or override metadata)
+      return metadata.DefaultValue;
+    }
 
-		protected virtual object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
-		{
-			return baseValue;
-		}
+    // ms-help://MS.WinFXSDK.1033/Wcp_conceptual/html/1fbada8e-4867-4ed1-8d97-62c07dad7ebc.htm
+    // - Animations
+    // - Local
+    // - Property triggers (TemplatedParent, Template, Style, ThemeStyle)
+    // - TemplatedParent's template (ie, that template includes <Setter>s) 
+    // - Style property 
+    // - ThemeStyle 
+    // - Inheritance ("property inheritance" -- from your parent element, not your superclass) 
+    // - DefaultValue specified when you registered the property (or override metadata)
 
-		public void InvalidateProperty(DependencyProperty property)
-		{
-			InvalidateProperty(property, property.GetMetadata(GetType()));
-		}
+    protected virtual object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+    {
+      return baseValue;
+    }
 
-		private void InvalidateProperty(DependencyProperty property, PropertyMetadata metadata)
-		{
-			if(metadata != null)
-			{
-				if(metadata.PropertyInvalidatedCallback != null)
-					metadata.PropertyInvalidatedCallback(this);
-			}
-			
-			OnPropertyInvalidated(property, metadata);
-		}
+    public void InvalidateProperty(DependencyProperty property)
+    {
+      InvalidateProperty(property, property.GetMetadata(GetType()));
+    }
 
-		protected virtual void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
-		{
-			// no default implementation
-		}
+    private void InvalidateProperty(DependencyProperty property, PropertyMetadata metadata)
+    {
+      if (metadata != null)
+      {
+        if (metadata.PropertyInvalidatedCallback != null)
+        {
+          metadata.PropertyInvalidatedCallback(this);
+        }
+      }
 
-		public object ReadLocalValue(DependencyProperty property)
-		{
-			// this needs to be rewritten
-			throw new NotImplementedException();
+      OnPropertyInvalidated(property, metadata);
+    }
+
+    protected virtual void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
+    {
+      // no default implementation
+    }
+
+    public object ReadLocalValue(DependencyProperty property)
+    {
+      // this needs to be rewritten
+      throw new NotImplementedException();
 
 /*			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
 				return property.DefaultMetadata.ReadLocalValueOverride(this);
@@ -154,68 +166,72 @@ namespace System.Windows
 				value = property.DefaultMetadata.DefaultValue;
 
 			return value;
-*/		}
+*/
+    }
 
-		public void SetValue(DependencyProperty property, object value)
-		{
-			PropertyMetadata metadata = property.GetMetadata(GetType());
+    public void SetValue(DependencyProperty property, object value)
+    {
+      PropertyMetadata metadata = property.GetMetadata(GetType());
 
-			if(metadata != null)
-			{
-				if(metadata.ReadOnly)
-					throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", property.Name));
+      if (metadata != null)
+      {
+        if (metadata.ReadOnly)
+        {
+          throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only",
+                                                            property.Name));
+        }
 
-				if(metadata.SetValueOverride != null)
-				{
-					metadata.SetValueOverride(this, value);
-					return;
-				}
-			}
+        if (metadata.SetValueOverride != null)
+        {
+          metadata.SetValueOverride(this, value);
+          return;
+        }
+      }
 
-			SetValueCommon(property, metadata, value);
-		}
+      SetValueCommon(property, metadata, value);
+    }
 
-		public void SetValue(DependencyPropertyKey key, object value)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetValue(DependencyPropertyKey key, object value)
+    {
+      throw new NotImplementedException();
+    }
 
-		public void SetValueBase(DependencyProperty property, object value)
-		{
-			PropertyMetadata metadata = property.GetMetadata(GetType());
+    public void SetValueBase(DependencyProperty property, object value)
+    {
+      PropertyMetadata metadata = property.GetMetadata(GetType());
 
-			SetValueCommon(property, metadata, value);
-		}
+      SetValueCommon(property, metadata, value);
+    }
 
-		public void SetValueBase(DependencyPropertyKey key, object value)
-		{
-			throw new NotImplementedException();
-		}
+    public void SetValueBase(DependencyPropertyKey key, object value)
+    {
+      throw new NotImplementedException();
+    }
 
-		protected void SetValueCommon(DependencyProperty property, PropertyMetadata metadata, object value)
-		{
-			_localValues[property.GlobalIndex] = value;
+    protected void SetValueCommon(DependencyProperty property, PropertyMetadata metadata, object value)
+    {
+      _localValues[property.GlobalIndex] = value;
 
-			InvalidateProperty(property, metadata);
-		}
+      InvalidateProperty(property, metadata);
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public DependencyObjectType DependencyObjectType
-		{
-			get { return _dependencyObjectType; }
-		}
+    public DependencyObjectType DependencyObjectType
+    {
+      get { return _dependencyObjectType; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		DependencyObjectType		_dependencyObjectType = null;
-		bool						_isCanBeUnbound = false;
-		Hashtable					_localValues = new Hashtable();
+    private DependencyObjectType _dependencyObjectType = null;
+    private bool _isCanBeUnbound = false;
+    private Hashtable _localValues = new Hashtable();
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

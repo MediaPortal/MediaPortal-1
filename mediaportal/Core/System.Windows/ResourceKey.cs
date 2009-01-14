@@ -23,38 +23,34 @@
 
 #endregion
 
-using System;
 using System.Reflection;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public abstract class ResourceKey : MarkupExtension
-	{
-		#region Constructors
+  public abstract class ResourceKey : MarkupExtension
+  {
+    #region Constructors
 
-		protected ResourceKey()
-		{
-		}
+    protected ResourceKey()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public override object ProvideValue(object targetObject, object targetProperty)
-		{
-			throw new NotImplementedException();
-		}
+    public override object ProvideValue(object targetObject, object targetProperty)
+    {
+      throw new NotImplementedException();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public abstract Assembly Assembly
-		{
-			get;
-		}
+    public abstract Assembly Assembly { get; }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }

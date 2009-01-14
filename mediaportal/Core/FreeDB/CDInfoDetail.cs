@@ -23,15 +23,13 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Freedb
 {
-	/// <summary>
-	/// Summary description for CDInfoDetail.
-	/// </summary>
-	public class CDInfoDetail
-	{
+  /// <summary>
+  /// Summary description for CDInfoDetail.
+  /// </summary>
+  public class CDInfoDetail
+  {
     private string m_discId;
     private string m_artist;
     private string m_title;
@@ -43,11 +41,11 @@ namespace MediaPortal.Freedb
     private int[] m_playorder;
 
     public CDInfoDetail()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
     public CDInfoDetail(string discID, string artist, string title,
                         string genre, int year, int duration, CDTrackDetail[] tracks,
@@ -66,115 +64,61 @@ namespace MediaPortal.Freedb
 
     public string DiscID
     {
-      get
-      {
-        return m_discId;
-      }
-      set
-      {
-        m_discId = value;
-      }
+      get { return m_discId; }
+      set { m_discId = value; }
     }
 
     public string Artist
     {
-      get
-      {
-        return m_artist;
-      }
-      set
-      {
-        m_artist = value;
-      }
+      get { return m_artist; }
+      set { m_artist = value; }
     }
 
     public string Title
     {
-      get
-      {
-        return m_title;
-      }
-      set
-      {
-        m_title = value;
-      }
+      get { return m_title; }
+      set { m_title = value; }
     }
 
     public string Genre
     {
-      get
-      {
-        return m_genre;
-      }
-      set
-      {
-        m_genre = value;
-      }
+      get { return m_genre; }
+      set { m_genre = value; }
     }
 
     public int Year
     {
-      get
-      {
-        return m_year;
-      }
-      set
-      {
-        m_year = value;
-      }
+      get { return m_year; }
+      set { m_year = value; }
     }
 
     public int Duration
     {
-      get
-      {
-        return m_duration;
-      }
-      set
-      {
-        m_duration = value;
-      }
+      get { return m_duration; }
+      set { m_duration = value; }
     }
 
     public CDTrackDetail getTrack(int index)
     {
-      return m_tracks[index-1];
+      return m_tracks[index - 1];
     }
 
     public CDTrackDetail[] Tracks
     {
-      get
-      {
-        return m_tracks;
-      }
-      set
-      {
-        m_tracks = value;
-      }
+      get { return m_tracks; }
+      set { m_tracks = value; }
     }
 
     public string EXTD
     {
-      get
-      {
-        return m_extd;
-      }
-      set
-      {
-        m_extd = value;
-      }
+      get { return m_extd; }
+      set { m_extd = value; }
     }
 
     public int[] PlayOrder
     {
-      get
-      {
-        return m_playorder;
-      }
-      set
-      {
-        m_playorder = value;
-      }
+      get { return m_playorder; }
+      set { m_playorder = value; }
     }
-	}
+  }
 }

@@ -28,74 +28,87 @@ using System.Collections;
 
 namespace MediaPortal.Drawing
 {
-	public sealed class GradientStopCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class GradientStopCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(GradientStop stop)
-		{
-			if(stop == null)
-				throw new ArgumentNullException("stop");
+    public void Add(GradientStop stop)
+    {
+      if (stop == null)
+      {
+        throw new ArgumentNullException("stop");
+      }
 
-			List.Add(stop);
-		}
+      List.Add(stop);
+    }
 
-		public bool Contains(GradientStop stop)
-		{
-			if(stop == null)
-				throw new ArgumentNullException("stop");
+    public bool Contains(GradientStop stop)
+    {
+      if (stop == null)
+      {
+        throw new ArgumentNullException("stop");
+      }
 
-			return List.Contains(stop);
-		}
+      return List.Contains(stop);
+    }
 
-		public void CopyTo(GradientStop[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(GradientStop[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(GradientStop stop)
-		{
-			if(stop == null)
-				throw new ArgumentNullException("stop");
+    public int IndexOf(GradientStop stop)
+    {
+      if (stop == null)
+      {
+        throw new ArgumentNullException("stop");
+      }
 
-			return List.IndexOf(stop);
-		}
+      return List.IndexOf(stop);
+    }
 
-		public void Insert(int index, GradientStop stop)
-		{
-			if(stop == null)
-				throw new ArgumentNullException("stop");
+    public void Insert(int index, GradientStop stop)
+    {
+      if (stop == null)
+      {
+        throw new ArgumentNullException("stop");
+      }
 
-			List.Insert(index, stop);
-		}
+      List.Insert(index, stop);
+    }
 
-		public bool Remove(GradientStop stop)
-		{
-			if(stop == null)
-				throw new ArgumentNullException("stop");
+    public bool Remove(GradientStop stop)
+    {
+      if (stop == null)
+      {
+        throw new ArgumentNullException("stop");
+      }
 
-			if(List.Contains(stop) == false)
-				return false;
+      if (List.Contains(stop) == false)
+      {
+        return false;
+      }
 
-			List.Remove(stop);
+      List.Remove(stop);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public GradientStop this[int index]
-		{ 
-			get { return (GradientStop)List[index]; }
-			set { List[index] = value; }
-		}
+    public GradientStop this[int index]
+    {
+      get { return (GradientStop) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }
-

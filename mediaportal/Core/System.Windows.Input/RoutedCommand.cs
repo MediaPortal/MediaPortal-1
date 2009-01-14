@@ -23,124 +23,122 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Input
 {
-	public class RoutedCommand : ICommand
-	{
-		#region Constructors
+  public class RoutedCommand : ICommand
+  {
+    #region Constructors
 
-		static RoutedCommand()
-		{
-			TargetProperty = DependencyProperty.RegisterAttached("Target", typeof(IInputElement), typeof(RoutedCommand));
-		}
+    static RoutedCommand()
+    {
+      TargetProperty = DependencyProperty.RegisterAttached("Target", typeof (IInputElement), typeof (RoutedCommand));
+    }
 
-		public RoutedCommand()
-		{
-			_name = string.Empty;
-		}
+    public RoutedCommand()
+    {
+      _name = string.Empty;
+    }
 
-		public RoutedCommand(string name, Type declaringType) : this(name, declaringType, null)
-		{
-		}
-		
-		public RoutedCommand(string name, Type declaringType, InputGestureCollection inputGestures)
-		{
-			_name = name;
-			_declaringType = declaringType;
-			_inputGestures = inputGestures;
-		}
+    public RoutedCommand(string name, Type declaringType) : this(name, declaringType, null)
+    {
+    }
 
-		#endregion Constructors
+    public RoutedCommand(string name, Type declaringType, InputGestureCollection inputGestures)
+    {
+      _name = name;
+      _declaringType = declaringType;
+      _inputGestures = inputGestures;
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public bool Execute()
-		{
-			return Execute(null, null);
-		}
+    #region Methods
 
-		public bool Execute(IInputElement target)
-		{
-			return Execute(target, null);
-		}
+    public bool Execute()
+    {
+      return Execute(null, null);
+    }
 
-		public bool Execute(object data)
-		{
-			return Execute(null, data);
-		}
+    public bool Execute(IInputElement target)
+    {
+      return Execute(target, null);
+    }
 
-		public bool Execute(IInputElement target, object data)
-		{
-			// returns response from PreviewExecute event
-			throw new NotImplementedException();
-		}
+    public bool Execute(object data)
+    {
+      return Execute(null, data);
+    }
 
-		public static IInputElement GetTarget(DependencyObject d)
-		{
-			return (IInputElement)d.GetValue(TargetProperty);
-		}
+    public bool Execute(IInputElement target, object data)
+    {
+      // returns response from PreviewExecute event
+      throw new NotImplementedException();
+    }
 
-		public bool QueryEnabled(IInputElement target)
-		{
-			// returns the state of the target's IsEnabled property
-			// by sending the QueryEnabled event to the target.
-			return target.IsEnabled;
-		}
+    public static IInputElement GetTarget(DependencyObject d)
+    {
+      return (IInputElement) d.GetValue(TargetProperty);
+    }
 
-		public static void SetTarget(DependencyObject d, IInputElement target)
-		{
-			d.SetValue(TargetProperty, target);
-		}
+    public bool QueryEnabled(IInputElement target)
+    {
+      // returns the state of the target's IsEnabled property
+      // by sending the QueryEnabled event to the target.
+      return target.IsEnabled;
+    }
 
-		#endregion Methods
+    public static void SetTarget(DependencyObject d, IInputElement target)
+    {
+      d.SetValue(TargetProperty, target);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Type DeclaringType
-		{
-			get { return _declaringType; }
-		}
+    #region Properties
 
-		public InputGestureCollection InputGestures
-		{
-			get { return _inputGestures; }
-		}
+    public Type DeclaringType
+    {
+      get { return _declaringType; }
+    }
 
-		public bool IsBlockedByRM
-		{
-			get { return _isBlockedByRM; }
-			set { _isBlockedByRM = false; }
-		}
+    public InputGestureCollection InputGestures
+    {
+      get { return _inputGestures; }
+    }
 
-		// TODO: Query target's IsEnabledProperty value
-		public bool IsEnabled
-		{
-			get { return _isEnabled; }
-		}
+    public bool IsBlockedByRM
+    {
+      get { return _isBlockedByRM; }
+      set { _isBlockedByRM = false; }
+    }
 
-		public string Name
-		{
-			get { return _name; }
-		}
+    // TODO: Query target's IsEnabledProperty value
+    public bool IsEnabled
+    {
+      get { return _isEnabled; }
+    }
 
-		#endregion Properties
+    public string Name
+    {
+      get { return _name; }
+    }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty TargetProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
+    public static readonly DependencyProperty TargetProperty;
 
-		#region Fields
+    #endregion Properties (Dependency)
 
-		Type						_declaringType;
-		InputGestureCollection		_inputGestures;
-		string						_name;
-		bool						_isBlockedByRM;
-		bool						_isEnabled = true;
+    #region Fields
 
-		#endregion Fields
-	}
+    private Type _declaringType;
+    private InputGestureCollection _inputGestures;
+    private string _name;
+    private bool _isBlockedByRM;
+    private bool _isEnabled = true;
+
+    #endregion Fields
+  }
 }

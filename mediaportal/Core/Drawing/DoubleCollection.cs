@@ -28,59 +28,62 @@ using System.Collections;
 
 namespace MediaPortal.Drawing
 {
-	public sealed class DoubleCollection : CollectionBase
-	{
-		#region Methods
+  public sealed class DoubleCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(double value)
-		{
-			List.Add(value);
-		}
+    public void Add(double value)
+    {
+      List.Add(value);
+    }
 
-		public bool Contains(double value)
-		{
-			return List.Contains(value);
-		}
+    public bool Contains(double value)
+    {
+      return List.Contains(value);
+    }
 
-		public void CopyTo(double[] array, int arrayIndex)
-		{
-			if(array == null)
-				throw new ArgumentNullException("array");
+    public void CopyTo(double[] array, int arrayIndex)
+    {
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
 
-			List.CopyTo(array, arrayIndex);
-		}
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(double value)
-		{
-			return List.IndexOf(value);
-		}
+    public int IndexOf(double value)
+    {
+      return List.IndexOf(value);
+    }
 
-		public void Insert(int index, Double value)
-		{
-			List.Insert(index, value);
-		}
+    public void Insert(int index, Double value)
+    {
+      List.Insert(index, value);
+    }
 
-		public bool Remove(double value)
-		{
-			if(List.Contains(value) == false)
-				return false;
+    public bool Remove(double value)
+    {
+      if (List.Contains(value) == false)
+      {
+        return false;
+      }
 
-			List.Remove(value);
+      List.Remove(value);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Double this[int index]
-		{ 
-			get { return (double)List[index]; }
-			set { List[index] = value; }
-		}
+    public Double this[int index]
+    {
+      get { return (double) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }
-

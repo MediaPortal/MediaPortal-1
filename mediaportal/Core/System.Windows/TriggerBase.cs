@@ -23,25 +23,23 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public abstract class TriggerBase : DependencyObject
-	{
-		#region Properties
+  public abstract class TriggerBase : DependencyObject
+  {
+    #region Properties
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+    public bool IsSealed
+    {
+      get { return _isSealed; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		bool						_isSealed = false;
+    private bool _isSealed = false;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

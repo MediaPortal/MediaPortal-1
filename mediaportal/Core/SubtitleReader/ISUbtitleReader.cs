@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace MediaPortal.Subtitle
 {
   /// <summary>
@@ -40,6 +38,7 @@ namespace MediaPortal.Subtitle
     {
       return false;
     }
+
     public virtual bool ReadSubtitles(string strFileName)
     {
       return false;
@@ -47,7 +46,7 @@ namespace MediaPortal.Subtitle
 
     public virtual SubTitles Subs
     {
-      get { return null;}
+      get { return null; }
     }
   }
 }

@@ -25,18 +25,17 @@
 
 using System;
 using System.Runtime.InteropServices;
-using MediaPortal.GUI.Library;
 using DirectShowLib;
+using MediaPortal.GUI.Library;
 
 namespace DShowNET
 {
-	/// <summary>
-	/// Summary description for IksPropertyUtils.
-	/// </summary>
-	public class IksPropertyUtils2
-	{
-    
-		protected IBaseFilter captureFilter;
+  /// <summary>
+  /// Summary description for IksPropertyUtils.
+  /// </summary>
+  public class IksPropertyUtils2
+  {
+    protected IBaseFilter captureFilter;
 
 
     [StructLayout(LayoutKind.Sequential), ComVisible(false)]
@@ -45,57 +44,55 @@ namespace DShowNET
       public Guid Set;
       public int Id;
       public int Flags;
-    };
+    } ;
 
 
     [ComImport,
-   Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IKsPropertySet
     {
       [PreserveSig]
       int Set(
-          [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-          [In] int dwPropID,
-          [In] IntPtr pInstanceData,
-          [In] int cbInstanceData,
-          [In] IntPtr pPropData,
-          [In] int cbPropData
-          );
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+        [In] int dwPropID,
+        [In] IntPtr pInstanceData,
+        [In] int cbInstanceData,
+        [In] IntPtr pPropData,
+        [In] int cbPropData
+        );
 
       [PreserveSig]
       int Get(
-          [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-          [In] int dwPropID,
-          [In] IntPtr pInstanceData,
-          [In] int cbInstanceData,
-          [In, Out] IntPtr pPropData,
-          [In] int cbPropData,
-          [Out] out int pcbReturned
-          );
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+        [In] int dwPropID,
+        [In] IntPtr pInstanceData,
+        [In] int cbInstanceData,
+        [In, Out] IntPtr pPropData,
+        [In] int cbPropData,
+        [Out] out int pcbReturned
+        );
 
       [PreserveSig]
       int QuerySupported(
-          [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-          [In] int dwPropID,
-          [Out] out KSPropertySupport pTypeSupport
-          );
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+        [In] int dwPropID,
+        [Out] out KSPropertySupport pTypeSupport
+        );
     }
 
 
-		public IksPropertyUtils2(IBaseFilter filter)
-		{
+    public IksPropertyUtils2(IBaseFilter filter)
+    {
+      captureFilter = filter;
+    }
 
-			captureFilter=filter;
-		}
 
-   
-
-		protected int GetIntValue(Guid guidPropSet, int propId)
-		{
-      int returnValue=0;
-      IKsPropertySet propertySet= (IKsPropertySet)captureFilter;
-      KSPropertySupport IsTypeSupported=0;
+    protected int GetIntValue(Guid guidPropSet, int propId)
+    {
+      int returnValue = 0;
+      IKsPropertySet propertySet = (IKsPropertySet) captureFilter;
+      KSPropertySupport IsTypeSupported = 0;
       int iSize;
       if (propertySet == null)
       {
@@ -103,22 +100,23 @@ namespace DShowNET
         return 0;
       }
       int hr = propertySet.QuerySupported(guidPropSet, propId, out IsTypeSupported);
-      if (hr != 0 && ((int)IsTypeSupported & (int)KSPropertySupport.Get) == 0)
+      if (hr != 0 && ((int) IsTypeSupported & (int) KSPropertySupport.Get) == 0)
       {
         Log.Info("KS Test: GetIntValue() property is not supported");
         return 0;
       }
-      else{
+      else
+      {
         Log.Info("Ks Test: GetIntValue() property is supported");
       }
 
-     
+
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(4);
       hr = propertySet.Get(guidPropSet, propId, IntPtr.Zero, 0, pDataReturned, 4, out iSize);
 
       Log.Info("Ks Test: hr - 0x{0:X}", hr);
       Log.Info("Ks Test: usize = {0}", iSize);
-      
+
       if (hr == 0 && iSize == 4)
       {
         returnValue = Marshal.ReadInt32(pDataReturned);
@@ -130,22 +128,22 @@ namespace DShowNET
         Log.Info("KS Test read byte - prop - {0}, value - {1}", propId, returnValue);
       }
       Marshal.FreeCoTaskMem(pDataReturned);
-			return returnValue;
-		}
+      return returnValue;
+    }
 
-		protected void SetIntValue(Guid guidPropSet, int propId, int intValue)
-		{
-			IKsPropertySet propertySet= (IKsPropertySet)captureFilter ;
+    protected void SetIntValue(Guid guidPropSet, int propId, int intValue)
+    {
+      IKsPropertySet propertySet = (IKsPropertySet) captureFilter;
 
       if (propertySet == null)
       {
         Log.Info("Ks Test: SetIntValue() properySet=null");
         return;
       }
-      KSPropertySupport IsTypeSupported=0;
+      KSPropertySupport IsTypeSupported = 0;
 
       int hr = propertySet.QuerySupported(guidPropSet, propId, out IsTypeSupported);
-      if (hr != 0 && ((int)IsTypeSupported & (int)KSPropertySupport.Set) == 0)
+      if (hr != 0 && ((int) IsTypeSupported & (int) KSPropertySupport.Set) == 0)
       {
         Log.Info("Ks Test: SetIntValue() property is not supported");
         return;
@@ -166,41 +164,41 @@ namespace DShowNET
 
     protected string GetString(Guid guidPropSet, uint propId)
     {
-      Guid propertyGuid=guidPropSet;
-      IKsPropertySet propertySet= captureFilter as IKsPropertySet;
+      Guid propertyGuid = guidPropSet;
+      IKsPropertySet propertySet = captureFilter as IKsPropertySet;
       string returnedText = string.Empty;
-   //   uint IsTypeSupported=0;
-   //   uint uiSize;
-    //  if (propertySet==null) 
-    //  {
-    //    Log.Info("GetString() properySet=null");
-    //    return string.Empty;
-    //  }
-    //  int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
-    //  if (hr!=0 && (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
-    //  {
-    //    Log.Info("GetString() property is not supported");
-    //    return string.Empty;
-    //  }
+      //   uint IsTypeSupported=0;
+      //   uint uiSize;
+      //  if (propertySet==null) 
+      //  {
+      //    Log.Info("GetString() properySet=null");
+      //    return string.Empty;
+      //  }
+      //  int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
+      //  if (hr!=0 && (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
+      //  {
+      //    Log.Info("GetString() property is not supported");
+      //    return string.Empty;
+      //  }
 
-    //  IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
-    //  
-    //  hr=propertySet.Get(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,100,out uiSize);
-    //  if (hr==0)
-    //  {
-    //    returnedText=Marshal.PtrToStringAnsi(pDataReturned,(int)uiSize);
-    //  }
-    //  Marshal.FreeCoTaskMem(pDataReturned);
-			return returnedText;
-		}
+      //  IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
+      //  
+      //  hr=propertySet.Get(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,100,out uiSize);
+      //  if (hr==0)
+      //  {
+      //    returnedText=Marshal.PtrToStringAnsi(pDataReturned,(int)uiSize);
+      //  }
+      //  Marshal.FreeCoTaskMem(pDataReturned);
+      return returnedText;
+    }
 
 
-		protected object GetStructure(Guid guidPropSet, int propId, System.Type structureType, int structsize)
-		{
+    protected object GetStructure(Guid guidPropSet, int propId, Type structureType, int structsize)
+    {
       //Guid propertyGuid=guidPropSet;
-      IKsPropertySet propertySet= (IKsPropertySet)captureFilter ;
+      IKsPropertySet propertySet = (IKsPropertySet) captureFilter;
       object objReturned = null;
-      KSPropertySupport IsTypeSupported=0;
+      KSPropertySupport IsTypeSupported = 0;
       int iSize;
       if (propertySet == null)
       {
@@ -209,7 +207,7 @@ namespace DShowNET
       }
       int hr = propertySet.QuerySupported(guidPropSet, propId, out IsTypeSupported);
       Log.Info("IKS: typesupported - {0}", IsTypeSupported);
-      if (hr != 0 && ((int)IsTypeSupported & (int)KSPropertySupport.Get) == 0)
+      if (hr != 0 && ((int) IsTypeSupported & (int) KSPropertySupport.Get) == 0)
       {
         Log.Info("GetStructure is not supported");
         return null;
@@ -218,11 +216,11 @@ namespace DShowNET
       //hr = propertySet.Get(ref propertyGuid, propId, IntPtr.Zero, 0, IntPtr.Zero, 0, out uiSize);
       //Log.Info("IVAC: needed uisize - {0} ", uiSize);
       //Log.Info("IVAC: hr - 0x{0:X}", hr);
-     // 
+      // 
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(1000);
-     
-     //Log.Info("IVAC: 0x{0:X}", hr);
-      hr=propertySet.Get(guidPropSet,propId,IntPtr.Zero,0, pDataReturned,structsize,out iSize);
+
+      //Log.Info("IVAC: 0x{0:X}", hr);
+      hr = propertySet.Get(guidPropSet, propId, IntPtr.Zero, 0, pDataReturned, structsize, out iSize);
       if (hr == 0)
       {
         Log.Info("Ks Test: Returned struct size succeeded - uisize - {0}", iSize);
@@ -235,22 +233,22 @@ namespace DShowNET
         Log.Info("Ks Test: GetStructure() failed 0x{0:X}", hr);
       }
       Marshal.FreeCoTaskMem(pDataReturned);
-		return objReturned;
-		}
+      return objReturned;
+    }
 
-		protected virtual void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
-		{
-			Guid propertyGuid=guidPropSet;
-			IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-			KSPropertySupport IsTypeSupported=0;
+    protected virtual void SetStructure(Guid guidPropSet, uint propId, Type structureType, object structValue)
+    {
+      Guid propertyGuid = guidPropSet;
+      IKsPropertySet propertySet = captureFilter as IKsPropertySet;
+      KSPropertySupport IsTypeSupported = 0;
       if (propertySet == null)
       {
         Log.Info("SetStructure() properySet=null");
         return;
       }
 
-      int hr = propertySet.QuerySupported( propertyGuid, (int)propId, out IsTypeSupported);
-      if (hr != 0 && ((int)IsTypeSupported & (int)KSPropertySupport.Set) == 0)
+      int hr = propertySet.QuerySupported(propertyGuid, (int) propId, out IsTypeSupported);
+      if (hr != 0 && ((int) IsTypeSupported & (int) KSPropertySupport.Set) == 0)
       {
         Log.Info("GetString() GetStructure is not supported");
         return;
@@ -259,32 +257,33 @@ namespace DShowNET
       int iSize = Marshal.SizeOf(structureType);
       IntPtr pDataReturned = Marshal.AllocCoTaskMem(iSize);
       Marshal.StructureToPtr(structValue, pDataReturned, true);
-      hr = propertySet.Set(propertyGuid, (int)propId, pDataReturned, iSize, pDataReturned,iSize);
+      hr = propertySet.Set(propertyGuid, (int) propId, pDataReturned, iSize, pDataReturned, iSize);
       if (hr != 0)
       {
         Log.Info("SetStructure() failed 0x{0:X}", hr);
       }
       Marshal.FreeCoTaskMem(pDataReturned);
-		}
+    }
 
 
-		/// <summary>
-		/// Checks if the card specified supports getting/setting properties using the IKsPropertySet interface
-		/// </summary>
-		/// <returns>
-		/// true:		IKsPropertySet is supported
-		/// false:	IKsPropertySet is not supported
-		/// </returns>
-		public bool SupportsProperties
-		{
-			get 
-			{
-				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-				if (propertySet==null) return false;
-				return true;
-			}
-		}
-
-
-	}
+    /// <summary>
+    /// Checks if the card specified supports getting/setting properties using the IKsPropertySet interface
+    /// </summary>
+    /// <returns>
+    /// true:		IKsPropertySet is supported
+    /// false:	IKsPropertySet is not supported
+    /// </returns>
+    public bool SupportsProperties
+    {
+      get
+      {
+        IKsPropertySet propertySet = captureFilter as IKsPropertySet;
+        if (propertySet == null)
+        {
+          return false;
+        }
+        return true;
+      }
+    }
+  }
 }

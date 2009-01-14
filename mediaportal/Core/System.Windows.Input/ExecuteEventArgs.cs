@@ -25,43 +25,43 @@
 
 namespace System.Windows.Input
 {
-	public class ExecuteEventArgs : EventArgs
-	{
-		#region Constructors
+  public class ExecuteEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public ExecuteEventArgs(ICommand command)
-		{
-			_command = command;
-		}
-		
-		#endregion Constructors
+    public ExecuteEventArgs(ICommand command)
+    {
+      _command = command;
+    }
 
-		#region Properties
+    #endregion Constructors
 
-		public ICommand Command
-		{
-			get { return _command; }
-		}
+    #region Properties
 
-		public object Data
-		{
-			get { return _data;  }
-			set { _data = value; }
-		}
+    public ICommand Command
+    {
+      get { return _command; }
+    }
 
-		public object Source
-		{
-			get { return _source; }
-		}
+    public object Data
+    {
+      get { return _data; }
+      set { _data = value; }
+    }
 
-		#endregion Properties
+    public object Source
+    {
+      get { return _source; }
+    }
 
-		#region Fields
+    #endregion Properties
 
-		ICommand					_command;
-		object						_data;
-		object						_source = null;
+    #region Fields
 
-		#endregion Fields
-	}
+    private ICommand _command;
+    private object _data;
+    private object _source = null;
+
+    #endregion Fields
+  }
 }

@@ -24,16 +24,7 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-
 using System.Collections;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-
 
 namespace MediaPortal.GUI.Library
 {
@@ -42,16 +33,16 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIImageList : GUIControl
   {
-    [XMLSkinElement("align")]         Alignment _alignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("orientation")]   eOrientation _orientation = eOrientation.Horizontal;
-    [XMLSkinElement("textureWidth")]  int _textureWidth = 32;
-    [XMLSkinElement("textureHeight")] int _textureHeight = 32;
-    [XMLSkinElement("percentage")]    string _tagLine = string.Empty;
-  	[XMLSkinElement("imagesToDraw")]  int _imagesToDraw = -1;
+    [XMLSkinElement("align")] private Alignment _alignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("orientation")] private eOrientation _orientation = eOrientation.Horizontal;
+    [XMLSkinElement("textureWidth")] private int _textureWidth = 32;
+    [XMLSkinElement("textureHeight")] private int _textureHeight = 32;
+    [XMLSkinElement("percentage")] private string _tagLine = string.Empty;
+    [XMLSkinElement("imagesToDraw")] private int _imagesToDraw = -1;
 
-    int m_iPercentage;
+    private int m_iPercentage;
 
-    ArrayList _itemList = new ArrayList();
+    private ArrayList _itemList = new ArrayList();
 
     public GUIImageList(int dwParentID)
       : base(dwParentID)
@@ -65,8 +56,9 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
       for (int i = 0; i < SubItemCount; ++i)
       {
-        string strTexture = (string)GetSubItem(i);
-        GUIImage img = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight, strTexture, 0);
+        string strTexture = (string) GetSubItem(i);
+        GUIImage img = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight,
+                                    strTexture, 0);
         img.ParentControl = this;
         img.DimColor = DimColor;
         _itemList.Add(img);
@@ -81,6 +73,7 @@ namespace MediaPortal.GUI.Library
         img.AllocResources();
       }
     }
+
     public override void FreeResources()
     {
       foreach (GUIImage img in _itemList)
@@ -101,9 +94,11 @@ namespace MediaPortal.GUI.Library
         string percent = GUIPropertyManager.Parse(_tagLine);
         try
         {
-          Percentage = (int)Math.Floor(Double.Parse(percent) * 10d);
+          Percentage = (int) Math.Floor(Double.Parse(percent)*10d);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+        }
       }
       if (_orientation == eOrientation.Horizontal)
       {
@@ -116,43 +111,58 @@ namespace MediaPortal.GUI.Library
       base.Render(timePassed);
     }
 
-    void RenderHorizontal(float timePassed)
+    private void RenderHorizontal(float timePassed)
     {
       int startx = _positionX;
-    	int imagesToDraw = _width / _textureWidth;             // in case no fixed value exists => calculate it
-			if (_imagesToDraw > -1) imagesToDraw = _imagesToDraw;  // we have a fixed value
+      int imagesToDraw = _width/_textureWidth; // in case no fixed value exists => calculate it
+      if (_imagesToDraw > -1)
+      {
+        imagesToDraw = _imagesToDraw; // we have a fixed value
+      }
 
       for (int i = 0; i < imagesToDraw; ++i)
       {
         int texture = 0;
-        int currentPercent = ((i + 1) * 100) / imagesToDraw;
+        int currentPercent = ((i + 1)*100)/imagesToDraw;
         if (_alignment == Alignment.ALIGN_RIGHT)
-          currentPercent = ((imagesToDraw - i) * 100) / (imagesToDraw);
+        {
+          currentPercent = ((imagesToDraw - i)*100)/(imagesToDraw);
+        }
         if (currentPercent < Percentage)
         {
           int textureCount = _itemList.Count - 1;
           float fcurrentPercent = currentPercent;
           fcurrentPercent /= 100f;
-          fcurrentPercent *= ((float)textureCount);
-          texture = (int)fcurrentPercent;
+          fcurrentPercent *= ((float) textureCount);
+          texture = (int) fcurrentPercent;
 
           //if (_alignment==Alignment.ALIGN_RIGHT)
           //	texture=textureCount-texture;
-          if (texture < 1) texture = 1;
-          if (texture >= _itemList.Count) texture = _itemList.Count - 1;
+          if (texture < 1)
+          {
+            texture = 1;
+          }
+          if (texture >= _itemList.Count)
+          {
+            texture = _itemList.Count - 1;
+          }
         }
 
-        GUIImage img = (GUIImage)_itemList[texture];
+        GUIImage img = (GUIImage) _itemList[texture];
         img.SetPosition(startx, _positionY);
         img.Render(timePassed);
         if (_alignment == Alignment.ALIGN_LEFT)
+        {
           startx += _textureWidth;
+        }
         else
+        {
           startx -= _textureWidth;
+        }
       }
     }
 
-    void RenderVertical(float timePassed)
+    private void RenderVertical(float timePassed)
     {
     }
 
@@ -168,9 +178,11 @@ namespace MediaPortal.GUI.Library
       set
       {
         base.DimColor = value;
-        foreach (GUIImage img in _itemList) img.DimColor = value;
+        foreach (GUIImage img in _itemList)
+        {
+          img.DimColor = value;
+        }
       }
     }
-
   }
 }

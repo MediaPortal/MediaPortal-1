@@ -23,66 +23,62 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Media.Animation
 {
-	public abstract class AnimationTimeline : Timeline
-	{	
-		#region Constructors
+  public abstract class AnimationTimeline : Timeline
+  {
+    #region Constructors
 
-		static AnimationTimeline()
-		{
-			IsAdditiveProperty = DependencyProperty.Register("IsAdditive", typeof(bool), typeof(AnimationTimeline), new PropertyMetadata(false));
-			IsCumulativeProperty = DependencyProperty.Register("IsCumulative", typeof(bool), typeof(AnimationTimeline), new PropertyMetadata(false));
-		}
+    static AnimationTimeline()
+    {
+      IsAdditiveProperty = DependencyProperty.Register("IsAdditive", typeof (bool), typeof (AnimationTimeline),
+                                                       new PropertyMetadata(false));
+      IsCumulativeProperty = DependencyProperty.Register("IsCumulative", typeof (bool), typeof (AnimationTimeline),
+                                                         new PropertyMetadata(false));
+    }
 
-		protected AnimationTimeline()
-		{
-		}
+    protected AnimationTimeline()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected internal override Clock AllocateClock()
-		{
-			return CreateClock();
-		}
-		
-		public new AnimationClock CreateClock()
-		{
-			return new AnimationClock(this);
-		}
+    protected internal override Clock AllocateClock()
+    {
+      return CreateClock();
+    }
 
-		protected override Duration GetNaturalDurationCore(Clock clock)
-		{
-			// default duration for an animation is 1 second
-			return new Duration(1000);
-		}
+    public new AnimationClock CreateClock()
+    {
+      return new AnimationClock(this);
+    }
 
-		#endregion Methods
+    protected override Duration GetNaturalDurationCore(Clock clock)
+    {
+      // default duration for an animation is 1 second
+      return new Duration(1000);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public virtual bool IsDestinationDefault
-		{
-			get { throw new NotImplementedException(); }
-		}
+    #region Properties
 
-		public abstract Type TargetPropertyType
-		{
-			get;
-		}
+    public virtual bool IsDestinationDefault
+    {
+      get { throw new NotImplementedException(); }
+    }
 
-		#endregion Properties
+    public abstract Type TargetPropertyType { get; }
 
-		#region Properties (Dependency)
+    #endregion Properties
 
-		public static readonly DependencyProperty IsAdditiveProperty;
-		public static readonly DependencyProperty IsCumulativeProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
-	}
+    public static readonly DependencyProperty IsAdditiveProperty;
+    public static readonly DependencyProperty IsCumulativeProperty;
+
+    #endregion Properties (Dependency)
+  }
 }

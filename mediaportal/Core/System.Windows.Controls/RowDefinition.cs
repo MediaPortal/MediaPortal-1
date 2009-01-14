@@ -23,72 +23,70 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
 namespace System.Windows.Controls
 {
-	public class RowDefinition : DefinitionBase
-	{
-		#region Constructors
+  public class RowDefinition : DefinitionBase
+  {
+    #region Constructors
 
-		static RowDefinition()
-		{
-			MaxHeightProperty = DependencyProperty.Register("MaxHeight", typeof(double), typeof(RowDefinition));
-			MinHeightProperty = DependencyProperty.Register("MinHeight", typeof(double), typeof(RowDefinition));
-			HeightProperty = DependencyProperty.Register("Height", typeof(GridLength), typeof(RowDefinition), new PropertyMetadata(new GridLength(GridUnitType.Star)));
-		}
+    static RowDefinition()
+    {
+      MaxHeightProperty = DependencyProperty.Register("MaxHeight", typeof (double), typeof (RowDefinition));
+      MinHeightProperty = DependencyProperty.Register("MinHeight", typeof (double), typeof (RowDefinition));
+      HeightProperty = DependencyProperty.Register("Height", typeof (GridLength), typeof (RowDefinition),
+                                                   new PropertyMetadata(new GridLength(GridUnitType.Star)));
+    }
 
-		public RowDefinition()
-		{
-		}
+    public RowDefinition()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public double ActualHeight
-		{
-			get { return ((GridLength)GetValue(HeightProperty)).Value; }
-		}
+    public double ActualHeight
+    {
+      get { return ((GridLength) GetValue(HeightProperty)).Value; }
+    }
 
-		public GridLength Height
-		{
-			get { return (GridLength)GetValue(HeightProperty); }
-			set { SetValue(HeightProperty, value); }
-		}
+    public GridLength Height
+    {
+      get { return (GridLength) GetValue(HeightProperty); }
+      set { SetValue(HeightProperty, value); }
+    }
 
-		public double MaxHeight
-		{
-			get { return (double)GetValue(MaxHeightProperty); }
-			set { SetValue(MaxHeightProperty, value); }
-		}
+    public double MaxHeight
+    {
+      get { return (double) GetValue(MaxHeightProperty); }
+      set { SetValue(MaxHeightProperty, value); }
+    }
 
-		public double MinHeight
-		{
-			get { return (double)GetValue(MinHeightProperty); }
-			set { SetValue(MinHeightProperty, value); }
-		}
+    public double MinHeight
+    {
+      get { return (double) GetValue(MinHeightProperty); }
+      set { SetValue(MinHeightProperty, value); }
+    }
 
-		public double Offset
-		{
-			get { return _offset; }
-		}
+    public double Offset
+    {
+      get { return _offset; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Properties (Dependency)
-	
-		public static readonly DependencyProperty HeightProperty;
-		public static readonly DependencyProperty MaxHeightProperty;
-		public static readonly DependencyProperty MinHeightProperty;
+    #region Properties (Dependency)
 
-		#endregion Properties (Dependency)
+    public static readonly DependencyProperty HeightProperty;
+    public static readonly DependencyProperty MaxHeightProperty;
+    public static readonly DependencyProperty MinHeightProperty;
 
-		#region Fields
+    #endregion Properties (Dependency)
 
-		double						_offset = 0;
+    #region Fields
 
-		#endregion Fields
-	}
+    private double _offset = 0;
+
+    #endregion Fields
+  }
 }

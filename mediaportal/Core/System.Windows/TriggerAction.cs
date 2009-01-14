@@ -23,18 +23,16 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
-	public abstract class TriggerAction : DependencyObject
-	{
-		#region Constructors
+  public abstract class TriggerAction : DependencyObject
+  {
+    #region Constructors
 
-		public TriggerAction()
-		{
-		}
+    public TriggerAction()
+    {
+    }
 
-		#endregion Constructors
-	}
+    #endregion Constructors
+  }
 }

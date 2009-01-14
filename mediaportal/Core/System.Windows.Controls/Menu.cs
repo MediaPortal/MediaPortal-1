@@ -23,60 +23,59 @@
 
 #endregion
 
-using System;
 using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
-	public class Menu : MenuBase
-	{
-		#region Constructors
+  public class Menu : MenuBase
+  {
+    #region Constructors
 
-		static Menu()
-		{
-			IsMainMenuProperty = DependencyProperty.Register("IsMainMenu", typeof(bool), typeof(Menu));
-		}
+    static Menu()
+    {
+      IsMainMenuProperty = DependencyProperty.Register("IsMainMenu", typeof (bool), typeof (Menu));
+    }
 
-		public Menu()
-		{
-		}
+    public Menu()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		protected override void HandleMouseButton(MouseButtonEventArgs e)
-		{
-		}
-		
-		protected override void OnInitialized(EventArgs e)
-		{
-		}
-		
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-		}
+    protected override void HandleMouseButton(MouseButtonEventArgs e)
+    {
+    }
 
-		protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
-		{
-		}
+    protected override void OnInitialized(EventArgs e)
+    {
+    }
 
-		#endregion Methods
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+    }
 
-		#region Properties (Dependency)
+    protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
+    {
+    }
 
-		public static readonly DependencyProperty IsMainMenuProperty;
+    #endregion Methods
 
-		#endregion Properties (Dependency)
+    #region Properties (Dependency)
 
-		#region Fields
+    public static readonly DependencyProperty IsMainMenuProperty;
 
-		public bool IsMainMenu
-		{
-			get { return (bool)GetValue(IsMainMenuProperty); }
-			set { SetValue(IsMainMenuProperty, value); }
-		}
+    #endregion Properties (Dependency)
 
-		#endregion Fields
-	}
+    #region Fields
+
+    public bool IsMainMenu
+    {
+      get { return (bool) GetValue(IsMainMenuProperty); }
+      set { SetValue(IsMainMenuProperty, value); }
+    }
+
+    #endregion Fields
+  }
 }

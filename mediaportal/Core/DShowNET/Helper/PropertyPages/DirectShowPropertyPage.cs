@@ -30,110 +30,114 @@ using DirectShowLib;
 
 namespace DShowNET.Helper
 {
-    /// <summary>
-    ///  Property pages for a DirectShow filter (e.g. hardware device). These
-    ///  property pages do not support persisting their settings. 
-    /// </summary>
-    public class DirectShowPropertyPage : PropertyPage
+  /// <summary>
+  ///  Property pages for a DirectShow filter (e.g. hardware device). These
+  ///  property pages do not support persisting their settings. 
+  /// </summary>
+  public class DirectShowPropertyPage : PropertyPage
+  {
+    // ---------------- Properties --------------------
+
+    /// <summary> COM ISpecifyPropertyPages interface </summary>
+    protected ISpecifyPropertyPages specifyPropertyPages;
+
+
+    // ---------------- Constructors --------------------
+
+    /// <summary> Constructor </summary>
+    public DirectShowPropertyPage(string name, ISpecifyPropertyPages specifyPropertyPages)
     {
-        // ---------------- Properties --------------------
-
-        /// <summary> COM ISpecifyPropertyPages interface </summary>
-        protected ISpecifyPropertyPages specifyPropertyPages;
-
-
-        // ---------------- Constructors --------------------
-
-        /// <summary> Constructor </summary>
-        public DirectShowPropertyPage(string name, ISpecifyPropertyPages specifyPropertyPages)
-        {
-            Name = name;
-            SupportsPersisting = false;
-            this.specifyPropertyPages = specifyPropertyPages;
-        }
-
-        /// <summary> Constructor </summary>
-        /// <param name="filter"> Shows the PropertyPages of the specific IBaseFilter</param>
-        public DirectShowPropertyPage(IBaseFilter filter)
-        {
-            Name = filter.ToString();
-            SupportsPersisting = false;
-            this.specifyPropertyPages = filter as ISpecifyPropertyPages;
-        }
-
-        /// <summary> Constructor </summary>
-        /// <param name="dev"> Shows the PropertyPages of a specific DsDevice </param>
-        public DirectShowPropertyPage(DsDevice dev)
-        {
-            try
-            {
-                object l_Source = null;
-                Guid l_Iid = typeof(IBaseFilter).GUID;
-                dev.Mon.BindToObject(null, null, ref l_Iid, out l_Source);
-                if (l_Source != null)
-                {
-                    Name = dev.Name;
-                    IBaseFilter filter = (IBaseFilter)l_Source;
-                    SupportsPersisting = false;
-                    this.specifyPropertyPages = filter as ISpecifyPropertyPages;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("This filter has no property page!");
-            }
-        }
-
-
-
-        // ---------------- Public Methods --------------------
-
-        /// <summary> 
-        ///  Show the property page. Some property pages cannot be displayed 
-        ///  while previewing and/or capturing. 
-        /// </summary>
-        public override void Show(Control owner)
-        {
-            DsCAUUID cauuid = new DsCAUUID();
-            try
-            {
-                int hr = specifyPropertyPages.GetPages(out cauuid);
-                if (hr != 0) Marshal.ThrowExceptionForHR(hr);
-
-                object o = specifyPropertyPages;
-                hr = OleCreatePropertyFrame(owner.Handle, 30, 30, null, 1,
-                    ref o, cauuid.cElems, cauuid.pElems, 0, 0, IntPtr.Zero);
-                DsError.ThrowExceptionForHR(hr);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("This filter has no property page!");
-            }
-            finally
-            {
-                if (cauuid.pElems != IntPtr.Zero)
-                    Marshal.FreeCoTaskMem(cauuid.pElems);
-            }
-        }
-
-        /// <summary> Release unmanaged resources </summary>
-        public new void Dispose()
-        {
-            if (specifyPropertyPages != null)
-                DirectShowUtil.ReleaseComObject(specifyPropertyPages); specifyPropertyPages = null;
-        }
-
-
-
-        // ---------------- DLL Imports --------------------
-
-        [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        private static extern int OleCreatePropertyFrame(
-            IntPtr hwndOwner, int x, int y,
-            string lpszCaption, int cObjects,
-            [In, MarshalAs(UnmanagedType.Interface)] ref object ppUnk,
-            int cPages, IntPtr pPageClsID, int lcid, int dwReserved, IntPtr pvReserved);
-
-
+      Name = name;
+      SupportsPersisting = false;
+      this.specifyPropertyPages = specifyPropertyPages;
     }
+
+    /// <summary> Constructor </summary>
+    /// <param name="filter"> Shows the PropertyPages of the specific IBaseFilter</param>
+    public DirectShowPropertyPage(IBaseFilter filter)
+    {
+      Name = filter.ToString();
+      SupportsPersisting = false;
+      this.specifyPropertyPages = filter as ISpecifyPropertyPages;
+    }
+
+    /// <summary> Constructor </summary>
+    /// <param name="dev"> Shows the PropertyPages of a specific DsDevice </param>
+    public DirectShowPropertyPage(DsDevice dev)
+    {
+      try
+      {
+        object l_Source = null;
+        Guid l_Iid = typeof (IBaseFilter).GUID;
+        dev.Mon.BindToObject(null, null, ref l_Iid, out l_Source);
+        if (l_Source != null)
+        {
+          Name = dev.Name;
+          IBaseFilter filter = (IBaseFilter) l_Source;
+          SupportsPersisting = false;
+          this.specifyPropertyPages = filter as ISpecifyPropertyPages;
+        }
+      }
+      catch
+      {
+        MessageBox.Show("This filter has no property page!");
+      }
+    }
+
+
+    // ---------------- Public Methods --------------------
+
+    /// <summary> 
+    ///  Show the property page. Some property pages cannot be displayed 
+    ///  while previewing and/or capturing. 
+    /// </summary>
+    public override void Show(Control owner)
+    {
+      DsCAUUID cauuid = new DsCAUUID();
+      try
+      {
+        int hr = specifyPropertyPages.GetPages(out cauuid);
+        if (hr != 0)
+        {
+          Marshal.ThrowExceptionForHR(hr);
+        }
+
+        object o = specifyPropertyPages;
+        hr = OleCreatePropertyFrame(owner.Handle, 30, 30, null, 1,
+                                    ref o, cauuid.cElems, cauuid.pElems, 0, 0, IntPtr.Zero);
+        DsError.ThrowExceptionForHR(hr);
+      }
+      catch (Exception)
+      {
+        MessageBox.Show("This filter has no property page!");
+      }
+      finally
+      {
+        if (cauuid.pElems != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(cauuid.pElems);
+        }
+      }
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public new void Dispose()
+    {
+      if (specifyPropertyPages != null)
+      {
+        DirectShowUtil.ReleaseComObject(specifyPropertyPages);
+      }
+      specifyPropertyPages = null;
+    }
+
+
+    // ---------------- DLL Imports --------------------
+
+    [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    private static extern int OleCreatePropertyFrame(
+      IntPtr hwndOwner, int x, int y,
+      string lpszCaption, int cObjects,
+      [In, MarshalAs(UnmanagedType.Interface)] ref object ppUnk,
+      int cPages, IntPtr pPageClsID, int lcid, int dwReserved, IntPtr pvReserved);
+  }
 }

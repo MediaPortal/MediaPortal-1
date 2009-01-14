@@ -23,62 +23,71 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
-
 namespace System.Windows
 {
-	public sealed class Setter : SetterBase
-	{
-		#region Constructors
+  public sealed class Setter : SetterBase
+  {
+    #region Constructors
 
-		public Setter()
-		{
-		}
+    public Setter()
+    {
+    }
 
-		public Setter(DependencyProperty property, object value)
-		{
-			_property = property;
-			_value = value;
-		}
+    public Setter(DependencyProperty property, object value)
+    {
+      _property = property;
+      _value = value;
+    }
 
-		public Setter(DependencyProperty property, object value, string targetName)
-		{
-			_property = property;
-			_value = value;
-			_targetName = targetName;
-		}
+    public Setter(DependencyProperty property, object value, string targetName)
+    {
+      _property = property;
+      _value = value;
+      _targetName = targetName;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public DependencyProperty Property
-		{
-			get { return _property; }
-			set { CheckSealed(); _property = value; }
-		}
+    public DependencyProperty Property
+    {
+      get { return _property; }
+      set
+      {
+        CheckSealed();
+        _property = value;
+      }
+    }
 
-		public string TargetName
-		{
-			get { return _targetName; }
-			set { CheckSealed(); _targetName = value; }
-		}
+    public string TargetName
+    {
+      get { return _targetName; }
+      set
+      {
+        CheckSealed();
+        _targetName = value;
+      }
+    }
 
-		public object Value
-		{
-			get { return _value; }
-			set { CheckSealed(); _value = value; }
-		}
+    public object Value
+    {
+      get { return _value; }
+      set
+      {
+        CheckSealed();
+        _value = value;
+      }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		DependencyProperty			_property;
-		string						_targetName = string.Empty;
-		object						_value;
+    private DependencyProperty _property;
+    private string _targetName = string.Empty;
+    private object _value;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

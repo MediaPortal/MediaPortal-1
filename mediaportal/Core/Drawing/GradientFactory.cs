@@ -23,20 +23,19 @@
 
 #endregion
 
-using System;
 using System.Drawing;
 
 namespace MediaPortal.Drawing
 {
-	public class GradientFactory
-	{
-		public GradientFactory()
-		{
-		}
+  public class GradientFactory
+  {
+    public GradientFactory()
+    {
+    }
 
-		public static GradientBrush CreateGradient(Point sp, Point ep, Color sc, Color ec, GradientStopCollection stops)
-		{
-			return null;
-		}
-	}
+    public static GradientBrush CreateGradient(Point sp, Point ep, Color sc, Color ec, GradientStopCollection stops)
+    {
+      return null;
+    }
+  }
 }

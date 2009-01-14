@@ -23,9 +23,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace MediaPortal.Visualization
@@ -34,14 +32,15 @@ namespace MediaPortal.Visualization
   {
     List<VisualizationInfo> GetVisualizationPluginsInfo();
     bool CreateVisualization(VisualizationInfo vizPluginInfo);
-    bool CreatePreviewVisualization(VisualizationInfo vizPluginInfo);   // Used to preview visualizations when in the configuration app
+    bool CreatePreviewVisualization(VisualizationInfo vizPluginInfo);
+    // Used to preview visualizations when in the configuration app
     bool ResizeVisualizationWindow(Size newSize);
     bool Start();
     bool Pause();
     bool Stop();
     void ShutDown();
-    int TargetFPS { get; set;}
-    List<VisualizationInfo> VisualizationPluginsInfo { get;}
+    int TargetFPS { get; set; }
+    List<VisualizationInfo> VisualizationPluginsInfo { get; }
     VisualizationInfo.PluginType CurrentVisualizationType { get; }
     void ConfigWinampViz();
     void InitWinampVis();

@@ -24,13 +24,13 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Reflection;
-using MediaPortal.Util;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using System.Runtime.CompilerServices;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player
 {
@@ -39,8 +39,8 @@ namespace MediaPortal.Player
   /// </summary>
   public class PlayerFactory : IPlayerFactory
   {
-    static ArrayList _externalPlayerList = new ArrayList();
-    static bool _externalPlayersLoaded = false;
+    private static ArrayList _externalPlayerList = new ArrayList();
+    private static bool _externalPlayersLoaded = false;
 
     public PlayerFactory()
     {
@@ -53,25 +53,49 @@ namespace MediaPortal.Player
       VMR7 = 2,
       RTSP = 3,
     }
+
     private bool CheckMpgFile(string fileName)
     {
       try
       {
-        if (!System.IO.File.Exists(fileName)) return false;
+        if (!File.Exists(fileName))
+        {
+          return false;
+        }
         using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
           using (BinaryReader reader = new BinaryReader(stream))
           {
             stream.Seek(0, SeekOrigin.Begin);
             byte[] header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
-            if ((header[4] & 0x40) == 0) return false;
-            stream.Seek(0x800, SeekOrigin.Begin); header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
-            if ((header[4] & 0x40) == 0) return false;
-            stream.Seek(0x8000, SeekOrigin.Begin); header = reader.ReadBytes(5);
-            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba) return false;
-            if ((header[4] & 0x40) == 0) return false;
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
+            {
+              return false;
+            }
+            if ((header[4] & 0x40) == 0)
+            {
+              return false;
+            }
+            stream.Seek(0x800, SeekOrigin.Begin);
+            header = reader.ReadBytes(5);
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
+            {
+              return false;
+            }
+            if ((header[4] & 0x40) == 0)
+            {
+              return false;
+            }
+            stream.Seek(0x8000, SeekOrigin.Begin);
+            header = reader.ReadBytes(5);
+            if (header[0] != 0 || header[1] != 0 || header[2] != 1 || header[3] != 0xba)
+            {
+              return false;
+            }
+            if ((header[4] & 0x40) == 0)
+            {
+              return false;
+            }
             return true;
           }
         }
@@ -81,7 +105,9 @@ namespace MediaPortal.Player
         // If an IOException is raised, the file may be in use/being recorded so we assume that it is a correct mpeg file
         // This fixes replaying mpeg files while being recorded
         if (e.GetType().ToString() == "System.IO.IOException")
+        {
           return true;
+        }
         Log.Info("Exception in CheckMpgFile with message: {0}", e.Message);
       }
       return false;
@@ -90,7 +116,7 @@ namespace MediaPortal.Player
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");
-      string[] fileList = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "*.dll");
+      string[] fileList = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "*.dll");
       foreach (string fileName in fileList)
       {
         try
@@ -105,12 +131,12 @@ namespace MediaPortal.Player
               {
                 if (t.IsClass)
                 {
-                  if (t.IsSubclassOf(typeof(IExternalPlayer)))
+                  if (t.IsSubclassOf(typeof (IExternalPlayer)))
                   {
-                    object newObj = (object)Activator.CreateInstance(t);
+                    object newObj = (object) Activator.CreateInstance(t);
                     Log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 
-                    IExternalPlayer player = (IExternalPlayer)newObj;
+                    IExternalPlayer player = (IExternalPlayer) newObj;
                     Log.Info("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
                     _externalPlayerList.Add(player);
                   }
@@ -141,7 +167,7 @@ namespace MediaPortal.Player
 
       foreach (IExternalPlayer player in _externalPlayerList)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
           player.Enabled = enabled;
@@ -170,9 +196,13 @@ namespace MediaPortal.Player
       {
         g_Player.MediaType? paramType = type as g_Player.MediaType?;
         if (paramType.HasValue)
+        {
           newPlayer = Create(fileName, paramType);
+        }
         else
+        {
           newPlayer = Create(fileName, null);
+        }
       }
       catch (Exception ex)
       {
@@ -195,10 +225,12 @@ namespace MediaPortal.Player
         // Set to anything here as it will only be passed if aMediaType is not null
         g_Player.MediaType localType = g_Player.MediaType.Video;
         if (aMediaType != null)
-          localType = (g_Player.MediaType)aMediaType;
+        {
+          localType = (g_Player.MediaType) aMediaType;
+        }
 
         // Get settings only once
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
@@ -208,27 +240,38 @@ namespace MediaPortal.Player
           if (BassMusicPlayer.IsDefaultMusicPlayer)
           {
             if (!Util.Utils.IsAudio(aFileName))
+            {
               BassMusicPlayer.Player.FreeBass();
+            }
           }
 
           if (aFileName.ToLower().IndexOf("rtsp:") >= 0)
           {
             if (aMediaType != null)
+            {
               return new TSReaderPlayer(localType);
+            }
             else
+            {
               return new TSReaderPlayer();
+            }
           }
 
           if (aFileName.StartsWith("mms:") && aFileName.EndsWith(".ymvp"))
           {
             if (Vmr9Enabled)
+            {
               return new VideoPlayerVMR9();
+            }
             else
+            {
               return new AudioPlayerWMP9();
+            }
           }
 
           string extension = Path.GetExtension(aFileName).ToLower();
-          if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" && aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+          if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
+              aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
           {
             IPlayer newPlayer = GetExternalPlayer(aFileName);
             if (newPlayer != null)
@@ -249,7 +292,7 @@ namespace MediaPortal.Player
               //  //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
               //  //GUIWindowManager.SendMessage(msg);
               //}
-              return new Player.StreamBufferPlayer9();
+              return new StreamBufferPlayer9();
             }
           }
 
@@ -259,29 +302,39 @@ namespace MediaPortal.Player
             if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
             {
               if (aMediaType != null)
+              {
                 return new BaseTSReaderPlayer(localType);
+              }
               else
-                return new Player.BaseTSReaderPlayer();
+              {
+                return new BaseTSReaderPlayer();
+              }
             }
             if (aMediaType != null)
-              return new Player.TSReaderPlayer(localType);
+            {
+              return new TSReaderPlayer(localType);
+            }
             else
-              return new Player.TSReaderPlayer();
+            {
+              return new TSReaderPlayer();
+            }
           }
 
           if (!Util.Utils.IsAVStream(aFileName) && Util.Utils.IsVideo(aFileName))
           {
             if (aMediaType != null)
             {
-              return new Player.VideoPlayerVMR9(localType);
+              return new VideoPlayerVMR9(localType);
             }
             else
-              return new Player.VideoPlayerVMR9();
+            {
+              return new VideoPlayerVMR9();
+            }
           }
 
           if (extension == ".radio")
           {
-            return new Player.RadioTuner();
+            return new RadioTuner();
           }
 
           if (Util.Utils.IsCDDA(aFileName))
@@ -290,12 +343,16 @@ namespace MediaPortal.Player
             if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
             {
               if (BassMusicPlayer.BassFreed)
+              {
                 BassMusicPlayer.Player.InitBass();
+              }
 
               return BassMusicPlayer.Player;
             }
             else
-              return new Player.AudioPlayerWMP9();
+            {
+              return new AudioPlayerWMP9();
+            }
           }
 
           if (Util.Utils.IsAudio(aFileName))
@@ -323,20 +380,24 @@ namespace MediaPortal.Player
             if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
             {
               if (BassMusicPlayer.BassFreed)
+              {
                 BassMusicPlayer.Player.InitBass();
+              }
 
               return BassMusicPlayer.Player;
             }
             else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
             {
-              return new Player.AudioPlayerWMP9();
+              return new AudioPlayerWMP9();
             }
             else
-              return new Player.AudioPlayerVMR7();
+            {
+              return new AudioPlayerVMR7();
+            }
           }
 
           // Use WMP Player as Default
-          return new Player.AudioPlayerWMP9();
+          return new AudioPlayerWMP9();
         }
       }
       finally
@@ -344,6 +405,5 @@ namespace MediaPortal.Player
         Log.Debug("PlayerFactory: Successfully created player instance for file - {0}", aFileName);
       }
     }
-
   }
 }

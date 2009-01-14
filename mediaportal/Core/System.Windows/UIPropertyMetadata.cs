@@ -25,80 +25,92 @@
 
 namespace System.Windows
 {
-	public class UIPropertyMetadata : PropertyMetadata
-	{
-		#region Constructors
+  public class UIPropertyMetadata : PropertyMetadata
+  {
+    #region Constructors
 
-		public UIPropertyMetadata()
-		{
-		}
-		
-		public UIPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride)
-		{
-		}
+    public UIPropertyMetadata()
+    {
+    }
 
-		public UIPropertyMetadata(object defaultValue) : base(defaultValue)
-		{
-		}
+    public UIPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride)
+    {
+    }
 
-		public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback) : base(propertyInvalidatedCallback)
-		{
-		}
-		
-		public UIPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride)
-		{
-		}
-		
-		public UIPropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(getValueOverride, setValueOverride)
-		{
-		}
+    public UIPropertyMetadata(object defaultValue) : base(defaultValue)
+    {
+    }
 
-		public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback) : base(defaultValue, propertyInvalidatedCallback)
-		{
-		}
+    public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
+      : base(propertyInvalidatedCallback)
+    {
+    }
 
-		public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
-		{
-		}
-		
-		public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride)  : base(propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-		}
+    public UIPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride)
+    {
+    }
 
-		public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride) : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-		}
+    public UIPropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(getValueOverride, setValueOverride)
+    {
+    }
 
-		public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride, bool isAnimationProhibited) : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
-		{
-			_isAnimationProhibited = isAnimationProhibited;
-		}
+    public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
+      : base(defaultValue, propertyInvalidatedCallback)
+    {
+    }
 
-		#endregion Constructors
+    public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                              GetValueOverride getValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
+    {
+    }
 
-		#region Methods
+    public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride,
+                              SetValueOverride setValueOverride)
+      : base(propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+    }
 
-		protected override PropertyMetadata CreateInstance()
-		{
-			return new UIPropertyMetadata();
-		}
+    public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                              GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+    }
 
-		#endregion Methods
+    public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
+                              GetValueOverride getValueOverride, SetValueOverride setValueOverride,
+                              bool isAnimationProhibited)
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
+    {
+      _isAnimationProhibited = isAnimationProhibited;
+    }
 
-		#region Properties
+    #endregion Constructors
 
-		public bool IsAnimationProhibited
-		{
-			get { return _isAnimationProhibited; }
-			set { _isAnimationProhibited = value; }
-		}
+    #region Methods
 
-		#endregion Properties
+    protected override PropertyMetadata CreateInstance()
+    {
+      return new UIPropertyMetadata();
+    }
 
-		#region Fields
+    #endregion Methods
 
-		bool						_isAnimationProhibited = false;
+    #region Properties
 
-		#endregion Fields
-	}
+    public bool IsAnimationProhibited
+    {
+      get { return _isAnimationProhibited; }
+      set { _isAnimationProhibited = value; }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private bool _isAnimationProhibited = false;
+
+    #endregion Fields
+  }
 }

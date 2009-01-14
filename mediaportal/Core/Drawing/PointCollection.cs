@@ -23,63 +23,63 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 
 namespace MediaPortal.Drawing
 {
-	[TypeConverter(typeof(PointCollectionConverter))]
-	public sealed class PointCollection : CollectionBase
-	{
-		#region Methods
+  [TypeConverter(typeof (PointCollectionConverter))]
+  public sealed class PointCollection : CollectionBase
+  {
+    #region Methods
 
-		public void Add(Point point)
-		{
-			List.Add(point);
-		}
+    public void Add(Point point)
+    {
+      List.Add(point);
+    }
 
-		public bool Contains(Point point)
-		{
-			return List.Contains(point);
-		}
+    public bool Contains(Point point)
+    {
+      return List.Contains(point);
+    }
 
-		public void CopyTo(Point[] array, int arrayIndex)
-		{
-			List.CopyTo(array, arrayIndex);
-		}
+    public void CopyTo(Point[] array, int arrayIndex)
+    {
+      List.CopyTo(array, arrayIndex);
+    }
 
-		public int IndexOf(Point point)
-		{
-			return List.IndexOf(point);
-		}
+    public int IndexOf(Point point)
+    {
+      return List.IndexOf(point);
+    }
 
-		public void Insert(int index, Point point)
-		{
-			List.Insert(index, point);
-		}
+    public void Insert(int index, Point point)
+    {
+      List.Insert(index, point);
+    }
 
-		public bool Remove(Point point)
-		{
-			if(List.Contains(point) == false)
-				return false;
+    public bool Remove(Point point)
+    {
+      if (List.Contains(point) == false)
+      {
+        return false;
+      }
 
-			List.Remove(point);
+      List.Remove(point);
 
-			return true;
-		}
+      return true;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public Point this[int index]
-		{ 
-			get { return (Point)List[index]; }
-			set { List[index] = value; }
-		}
+    public Point this[int index]
+    {
+      get { return (Point) List[index]; }
+      set { List[index] = value; }
+    }
 
-		#endregion Properties
-	}
+    #endregion Properties
+  }
 }
-

@@ -23,137 +23,141 @@
 
 #endregion
 
-using System;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace System.Windows.Media.Animation
 {
-	public class Clock : DispatcherObject
-	{
-		#region Constructors
+  public class Clock : DispatcherObject
+  {
+    #region Constructors
 
-		protected internal Clock(Timeline timeline)
-		{
-			_timeline = timeline;
-			_timeline.CurrentGlobalSpeedInvalidated += new EventHandler(TimelineCurrentGlobalSpeedInvalidated);
-			_timeline.CurrentStateInvalidated += new EventHandler(TimelineCurrentStateInvalidated);
-			_timeline.CurrentTimeInvalidated += new EventHandler(TimelineCurrentTimeInvalidated);
-		}
+    protected internal Clock(Timeline timeline)
+    {
+      _timeline = timeline;
+      _timeline.CurrentGlobalSpeedInvalidated += new EventHandler(TimelineCurrentGlobalSpeedInvalidated);
+      _timeline.CurrentStateInvalidated += new EventHandler(TimelineCurrentStateInvalidated);
+      _timeline.CurrentTimeInvalidated += new EventHandler(TimelineCurrentTimeInvalidated);
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public event EventHandler CurrentGlobalSpeedInvalidated;
-		public event EventHandler CurrentStateInvalidated;
-		public event EventHandler CurrentTimeInvalidated;
-		
-		#endregion Events
+    public event EventHandler CurrentGlobalSpeedInvalidated;
+    public event EventHandler CurrentStateInvalidated;
+    public event EventHandler CurrentTimeInvalidated;
 
-		#region Methods
+    #endregion Events
 
-		protected virtual void DiscontinuousTimeMovement()
-		{
-		}
+    #region Methods
 
-		protected virtual void SpeedChanged()
-		{
-		}
+    protected virtual void DiscontinuousTimeMovement()
+    {
+    }
 
-		protected virtual void Stopped()
-		{
-		}
-		
-		private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
-		{
-			SpeedChanged();
+    protected virtual void SpeedChanged()
+    {
+    }
 
-			if(CurrentGlobalSpeedInvalidated != null)
-				CurrentGlobalSpeedInvalidated(this, e);
-		}
+    protected virtual void Stopped()
+    {
+    }
 
-		private void TimelineCurrentStateInvalidated(object sender, EventArgs e)
-		{
-			if(CurrentStateInvalidated != null)
-				CurrentStateInvalidated(this, e);
-		}
+    private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
+    {
+      SpeedChanged();
 
-		private void TimelineCurrentTimeInvalidated(object sender, EventArgs e)
-		{
-			if(CurrentTimeInvalidated != null)
-				CurrentTimeInvalidated(this, e);
-		}
+      if (CurrentGlobalSpeedInvalidated != null)
+      {
+        CurrentGlobalSpeedInvalidated(this, e);
+      }
+    }
 
-		#endregion Methods
+    private void TimelineCurrentStateInvalidated(object sender, EventArgs e)
+    {
+      if (CurrentStateInvalidated != null)
+      {
+        CurrentStateInvalidated(this, e);
+      }
+    }
 
-		#region Properties
+    private void TimelineCurrentTimeInvalidated(object sender, EventArgs e)
+    {
+      if (CurrentTimeInvalidated != null)
+      {
+        CurrentTimeInvalidated(this, e);
+      }
+    }
 
-		public ClockController Controller
-		{ 
-			get { return null; }
-		}
+    #endregion Methods
 
-		// should be Nullable<double> or Nullable<double>
-		public double CurrentGlobalSpeed
-		{
-			// if the clock is stopped this should return null (when using appropriate nullable type)
-			get { return 1; }
-		}
+    #region Properties
 
-		public int CurrentIteration
-		{ 
-			// if the timeline is not active, the value of this property is only valid if the fill attribute specifies that the timing attributes should be extended. Otherwise, the property returns -1. 
-			get { return 1; }
-		}
+    public ClockController Controller
+    {
+      get { return null; }
+    }
 
-		public double CurrentProgress
-		{ 
-			// If the clock is active, the progress is always a value between 0 and 1, inclusive
-			// If the clock is inactive and the fill attribute is not in effect, this property returns null
-			get { return 1; }
-		}
+    // should be Nullable<double> or Nullable<double>
+    public double CurrentGlobalSpeed
+    {
+      // if the clock is stopped this should return null (when using appropriate nullable type)
+      get { return 1; }
+    }
 
-		public ClockState CurrentState
-		{ 
-			get { return _currentState; }
-		}
+    public int CurrentIteration
+    {
+      // if the timeline is not active, the value of this property is only valid if the fill attribute specifies that the timing attributes should be extended. Otherwise, the property returns -1. 
+      get { return 1; }
+    }
 
-		public TimeSpan CurrentTime
-		{
-			get { return _currentTime; }
-		}
+    public double CurrentProgress
+    {
+      // If the clock is active, the progress is always a value between 0 and 1, inclusive
+      // If the clock is inactive and the fill attribute is not in effect, this property returns null
+      get { return 1; }
+    }
 
-		public bool IsPaused
-		{ 
-			get { return _isPaused; }
-		}
+    public ClockState CurrentState
+    {
+      get { return _currentState; }
+    }
 
-		public Duration NaturalDuration
-		{
-			get { return _timeline.Duration; }
-		}
+    public TimeSpan CurrentTime
+    {
+      get { return _currentTime; }
+    }
 
-		public Clock Parent
-		{
-			get { return null; }
-		}
+    public bool IsPaused
+    {
+      get { return _isPaused; }
+    }
 
-		public Timeline Timeline
-		{
-			get { return _timeline; }
-		}
+    public Duration NaturalDuration
+    {
+      get { return _timeline.Duration; }
+    }
 
-		#endregion Properties
+    public Clock Parent
+    {
+      get { return null; }
+    }
 
-		#region Fields
+    public Timeline Timeline
+    {
+      get { return _timeline; }
+    }
 
-		ClockState					_currentState = ClockState.Stopped;
-		TimeSpan					_currentTime = TimeSpan.Zero;
-		bool						_isPaused = false;
-		Duration					_naturalDuration = Duration.Automatic;
-		Timeline					_timeline = null;
+    #endregion Properties
 
-		#endregion Fields
-	}
+    #region Fields
+
+    private ClockState _currentState = ClockState.Stopped;
+    private TimeSpan _currentTime = TimeSpan.Zero;
+    private bool _isPaused = false;
+    private Duration _naturalDuration = Duration.Automatic;
+    private Timeline _timeline = null;
+
+    #endregion Fields
+  }
 }

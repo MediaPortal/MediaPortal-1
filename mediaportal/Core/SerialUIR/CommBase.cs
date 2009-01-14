@@ -24,13 +24,11 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.IO;
 using System.Xml.Serialization;
-
-using Microsoft.Win32.SafeHandles;
 
 //JH 1.1: Version 1.1 changes labelled thus.
 //JH 1.2: Version 1.2 changes labelled thus.
@@ -38,7 +36,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace JH.CommBase
 {
-
   /// <summary>
   /// Lowest level Com driver handling all Win32 API calls and processing send and receive in terms of
   /// individual bytes. Used as a base class for higher level drivers.
@@ -90,7 +87,7 @@ namespace JH.CommBase
       /// The parity bit is always 0.
       /// </summary>
       space = 4
-    };
+    } ;
 
     /// <summary>
     /// Stop bit settings
@@ -109,7 +106,7 @@ namespace JH.CommBase
       /// Line is asserted for 2 bit duration at end of each character
       /// </summary>
       two = 2
-    };
+    } ;
 
     /// <summary>
     /// Uses for RTS or DTR pins
@@ -132,7 +129,7 @@ namespace JH.CommBase
       /// Pin is never asserted.
       /// </summary>
       none = 0
-    };
+    } ;
 
     /// <summary>
     /// Standard handshake methods
@@ -166,91 +163,112 @@ namespace JH.CommBase
       /// Port Name (default: "COM1:")
       /// </summary>
       public string port = "COM1:";
+
       /// <summary>
       /// Baud Rate (default: 2400) unsupported rates will throw "Bad settings"
       /// </summary>
       public int baudRate = 9600;
+
       /// <summary>
       /// The parity checking scheme (default: none)
       /// </summary>
       public Parity parity = Parity.none;
+
       /// <summary>
       /// Number of databits 1..8 (default: 8) unsupported values will throw "Bad settings"
       /// </summary>
       public int dataBits = 8;
+
       /// <summary>
       /// Number of stop bits (default: one)
       /// </summary>
       public StopBits stopBits = StopBits.one;
+
       /// <summary>
       /// If true, transmission is halted unless CTS is asserted by the remote station (default: false)
       /// </summary>
       public bool txFlowCTS = false;
+
       /// <summary>
       /// If true, transmission is halted unless DSR is asserted by the remote station (default: false)
       /// </summary>
       public bool txFlowDSR = false;
+
       /// <summary>
       /// If true, transmission is halted when Xoff is received and restarted when Xon is received (default: false)
       /// </summary>
       public bool txFlowX = false;
+
       /// <summary>
       /// If false, transmission is suspended when this station has sent Xoff to the remote station (default: true)
       /// Set false if the remote station treats any character as an Xon.
       /// </summary>
       public bool txWhenRxXoff = true;
+
       /// <summary>
       /// If true, received characters are ignored unless DSR is asserted by the remote station (default: false)
       /// </summary>
       public bool rxGateDSR = false;
+
       /// <summary>
       /// If true, Xon and Xoff characters are sent to control the data flow from the remote station (default: false)
       /// </summary>
       public bool rxFlowX = false;
+
       /// <summary>
       /// Specifies the use to which the RTS output is put (default: none)
       /// </summary>
       public HSOutput useRTS = HSOutput.none;
+
       /// <summary>
       /// Specidies the use to which the DTR output is put (default: none)
       /// </summary>
       public HSOutput useDTR = HSOutput.none;
+
       /// <summary>
       /// The character used to signal Xon for X flow control (default: DC1)
       /// </summary>
       public ASCII XonChar = ASCII.DC1;
+
       /// <summary>
       /// The character used to signal Xoff for X flow control (default: DC3)
       /// </summary>
       public ASCII XoffChar = ASCII.DC3;
+
       //JH 1.2: Next two defaults changed to 0 to use new defaulting mechanism dependant on queue size.
       /// <summary>
       /// The number of free bytes in the reception queue at which flow is disabled
       /// (Default: 0 = Set to 1/10th of actual rxQueue size)
       /// </summary>
       public int rxHighWater = 0;
+
       /// <summary>
       /// The number of bytes in the reception queue at which flow is re-enabled
       /// (Default: 0 = Set to 1/10th of actual rxQueue size)
       /// </summary>
       public int rxLowWater = 0;
+
       /// <summary>
       /// Multiplier. Max time for Send in ms = (Multiplier * Characters) + Constant
       /// (default: 0 = No timeout)
       /// </summary>
       public uint sendTimeoutMultiplier = 0;
+
       /// <summary>
       /// Constant.  Max time for Send in ms = (Multiplier * Characters) + Constant (default: 0)
       /// </summary>
       public uint sendTimeoutConstant = 0;
+
       /// <summary>
       /// Requested size for receive queue (default: 0 = use operating system default)
       /// </summary>
       public int rxQueue = 0;
+
       /// <summary>
       /// Requested size for transmit queue (default: 0 = use operating system default)
       /// </summary>
       public int txQueue = 0;
+
       /// <summary>
       /// If true, the port will automatically re-open on next send if it was previously closed due
       /// to an error (default: false)
@@ -273,30 +291,54 @@ namespace JH.CommBase
       /// <param name="Hs">The handshake protocol</param>
       public void SetStandard(string Port, int Baud, Handshake Hs)
       {
-        dataBits = 8; stopBits = StopBits.one; parity = Parity.none;
-        port = Port; baudRate = Baud;
+        dataBits = 8;
+        stopBits = StopBits.one;
+        parity = Parity.none;
+        port = Port;
+        baudRate = Baud;
         switch (Hs)
         {
           case Handshake.none:
-            txFlowCTS = false; txFlowDSR = false; txFlowX = false;
-            rxFlowX = false; useRTS = HSOutput.online; useDTR = HSOutput.online;
-            txWhenRxXoff = true; rxGateDSR = false;
+            txFlowCTS = false;
+            txFlowDSR = false;
+            txFlowX = false;
+            rxFlowX = false;
+            useRTS = HSOutput.online;
+            useDTR = HSOutput.online;
+            txWhenRxXoff = true;
+            rxGateDSR = false;
             break;
           case Handshake.XonXoff:
-            txFlowCTS = false; txFlowDSR = false; txFlowX = true;
-            rxFlowX = true; useRTS = HSOutput.online; useDTR = HSOutput.online;
-            txWhenRxXoff = true; rxGateDSR = false;
-            XonChar = ASCII.DC1; XoffChar = ASCII.DC3;
+            txFlowCTS = false;
+            txFlowDSR = false;
+            txFlowX = true;
+            rxFlowX = true;
+            useRTS = HSOutput.online;
+            useDTR = HSOutput.online;
+            txWhenRxXoff = true;
+            rxGateDSR = false;
+            XonChar = ASCII.DC1;
+            XoffChar = ASCII.DC3;
             break;
           case Handshake.CtsRts:
-            txFlowCTS = true; txFlowDSR = false; txFlowX = false;
-            rxFlowX = false; useRTS = HSOutput.handshake; useDTR = HSOutput.online;
-            txWhenRxXoff = true; rxGateDSR = false;
+            txFlowCTS = true;
+            txFlowDSR = false;
+            txFlowX = false;
+            rxFlowX = false;
+            useRTS = HSOutput.handshake;
+            useDTR = HSOutput.online;
+            txWhenRxXoff = true;
+            rxGateDSR = false;
             break;
           case Handshake.DsrDtr:
-            txFlowCTS = false; txFlowDSR = true; txFlowX = false;
-            rxFlowX = false; useRTS = HSOutput.online; useDTR = HSOutput.handshake;
-            txWhenRxXoff = true; rxGateDSR = false;
+            txFlowCTS = false;
+            txFlowDSR = true;
+            txFlowX = false;
+            rxFlowX = false;
+            useRTS = HSOutput.online;
+            useDTR = HSOutput.handshake;
+            txWhenRxXoff = true;
+            rxGateDSR = false;
             break;
         }
       }
@@ -318,7 +360,7 @@ namespace JH.CommBase
       /// <returns>CommBaseSettings object</returns>
       public static CommBaseSettings LoadFromXML(Stream s)
       {
-        return LoadFromXML(s, typeof(CommBaseSettings));
+        return LoadFromXML(s, typeof (CommBaseSettings));
       }
 
       /// <summary>
@@ -334,7 +376,7 @@ namespace JH.CommBase
         XmlSerializer sr = new XmlSerializer(t);
         try
         {
-          return (CommBaseSettings)sr.Deserialize(s);
+          return (CommBaseSettings) sr.Deserialize(s);
         }
         catch
         {
@@ -349,10 +391,39 @@ namespace JH.CommBase
     /// </summary>
     public enum ASCII : byte
     {
-      NULL = 0x00, SOH = 0x01, STX = 0x02, ETX = 0x03, EOT = 0x04, ENQ = 0x05, ACK = 0x06, BELL = 0x07,
-      BS = 0x08, HT = 0x09, LF = 0x0A, VT = 0x0B, FF = 0x0C, CR = 0x0D, SO = 0x0E, SI = 0x0F, DC1 = 0x11,
-      DC2 = 0x12, DC3 = 0x13, DC4 = 0x14, NAK = 0x15, SYN = 0x16, ETB = 0x17, CAN = 0x18, EM = 0x19,
-      SUB = 0x1A, ESC = 0x1B, FS = 0x1C, GS = 0x1D, RS = 0x1E, US = 0x1F, SP = 0x20, DEL = 0x7F
+      NULL = 0x00,
+      SOH = 0x01,
+      STX = 0x02,
+      ETX = 0x03,
+      EOT = 0x04,
+      ENQ = 0x05,
+      ACK = 0x06,
+      BELL = 0x07,
+      BS = 0x08,
+      HT = 0x09,
+      LF = 0x0A,
+      VT = 0x0B,
+      FF = 0x0C,
+      CR = 0x0D,
+      SO = 0x0E,
+      SI = 0x0F,
+      DC1 = 0x11,
+      DC2 = 0x12,
+      DC3 = 0x13,
+      DC4 = 0x14,
+      NAK = 0x15,
+      SYN = 0x16,
+      ETB = 0x17,
+      CAN = 0x18,
+      EM = 0x19,
+      SUB = 0x1A,
+      ESC = 0x1B,
+      FS = 0x1C,
+      GS = 0x1D,
+      RS = 0x1E,
+      US = 0x1F,
+      SP = 0x20,
+      DEL = 0x7F
     }
 
 
@@ -367,8 +438,14 @@ namespace JH.CommBase
     private string AltName(string s)
     {
       string r = s.Trim();
-      if (s.EndsWith(":")) s = s.Substring(0, s.Length - 1);
-      if (s.StartsWith(@"\")) return s;
+      if (s.EndsWith(":"))
+      {
+        s = s.Substring(0, s.Length - 1);
+      }
+      if (s.StartsWith(@"\"))
+      {
+        return s;
+      }
       return @"\\.\" + s;
     }
 
@@ -401,8 +478,8 @@ namespace JH.CommBase
       IntPtr h;
 
       h = Win32Com.CreateFile(s, Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
-          Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-      if (h == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
+                              Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
+      if (h == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
       {
         if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
         {
@@ -412,8 +489,8 @@ namespace JH.CommBase
         {
           //JH 1.3: Automatically try AltName if supplied name fails:
           h = Win32Com.CreateFile(AltName(s), Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
-              Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-          if (h == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
+                                  Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
+          if (h == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
           {
             if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
             {
@@ -442,12 +519,15 @@ namespace JH.CommBase
       Win32Com.OVERLAPPED wo = new Win32Com.OVERLAPPED();
       Win32Com.COMMPROP cp;
 
-      if (online) return false;
+      if (online)
+      {
+        return false;
+      }
       cs = CommSettings();
 
       hPort = Win32Com.CreateFile(cs.port, Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
-          Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-      if (hPort == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
+                                  Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
+      if (hPort == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
       {
         if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
         {
@@ -457,8 +537,8 @@ namespace JH.CommBase
         {
           //JH 1.3: Try alternative name form if main one fails:
           hPort = Win32Com.CreateFile(AltName(cs.port), Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
-              Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-          if (hPort == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
+                                      Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
+          if (hPort == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
           {
             if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
             {
@@ -483,7 +563,7 @@ namespace JH.CommBase
       //seconds per byte which should be enough for anyone.
       if (cs.sendTimeoutMultiplier == 0)
       {
-        if (System.Environment.OSVersion.Platform == System.PlatformID.Win32NT)
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
           CommTimeouts.WriteTotalTimeoutMultiplier = 0;
         }
@@ -499,27 +579,35 @@ namespace JH.CommBase
       CommTimeouts.WriteTotalTimeoutConstant = cs.sendTimeoutConstant;
 
       PortDCB.init(((cs.parity == Parity.odd) || (cs.parity == Parity.even)), cs.txFlowCTS, cs.txFlowDSR,
-          (int)cs.useDTR, cs.rxGateDSR, !cs.txWhenRxXoff, cs.txFlowX, cs.rxFlowX, (int)cs.useRTS);
+                   (int) cs.useDTR, cs.rxGateDSR, !cs.txWhenRxXoff, cs.txFlowX, cs.rxFlowX, (int) cs.useRTS);
       PortDCB.BaudRate = cs.baudRate;
-      PortDCB.ByteSize = (byte)cs.dataBits;
-      PortDCB.Parity = (byte)cs.parity;
-      PortDCB.StopBits = (byte)cs.stopBits;
-      PortDCB.XoffChar = (byte)cs.XoffChar;
-      PortDCB.XonChar = (byte)cs.XonChar;
+      PortDCB.ByteSize = (byte) cs.dataBits;
+      PortDCB.Parity = (byte) cs.parity;
+      PortDCB.StopBits = (byte) cs.stopBits;
+      PortDCB.XoffChar = (byte) cs.XoffChar;
+      PortDCB.XonChar = (byte) cs.XonChar;
       if ((cs.rxQueue != 0) || (cs.txQueue != 0))
-        if (!Win32Com.SetupComm(hPort, (uint)cs.rxQueue, (uint)cs.txQueue)) ThrowException("Bad queue settings");
+      {
+        if (!Win32Com.SetupComm(hPort, (uint) cs.rxQueue, (uint) cs.txQueue))
+        {
+          ThrowException("Bad queue settings");
+        }
+      }
 
       //JH 1.2: Defaulting mechanism for handshake thresholds - prevents problems of setting specific
       //defaults which may violate the size of the actually granted queue. If the user specifically sets
       //these values, it's their problem!
       if ((cs.rxLowWater == 0) || (cs.rxHighWater == 0))
       {
-        if (!Win32Com.GetCommProperties(hPort, out cp)) cp.dwCurrentRxQueue = 0;
+        if (!Win32Com.GetCommProperties(hPort, out cp))
+        {
+          cp.dwCurrentRxQueue = 0;
+        }
         if (cp.dwCurrentRxQueue > 0)
         {
           //If we can determine the queue size, default to 1/10th, 8/10ths, 1/10th.
           //Note that HighWater is measured from top of queue.
-          PortDCB.XoffLim = PortDCB.XonLim = (short)((int)cp.dwCurrentRxQueue / 10);
+          PortDCB.XoffLim = PortDCB.XonLim = (short) ((int) cp.dwCurrentRxQueue/10);
         }
         else
         {
@@ -529,26 +617,48 @@ namespace JH.CommBase
       }
       else
       {
-        PortDCB.XoffLim = (short)cs.rxHighWater;
-        PortDCB.XonLim = (short)cs.rxLowWater;
+        PortDCB.XoffLim = (short) cs.rxHighWater;
+        PortDCB.XonLim = (short) cs.rxLowWater;
       }
 
-      if (!Win32Com.SetCommState(hPort, ref PortDCB)) ThrowException("Bad com settings");
-      if (!Win32Com.SetCommTimeouts(hPort, ref CommTimeouts)) ThrowException("Bad timeout settings");
+      if (!Win32Com.SetCommState(hPort, ref PortDCB))
+      {
+        ThrowException("Bad com settings");
+      }
+      if (!Win32Com.SetCommTimeouts(hPort, ref CommTimeouts))
+      {
+        ThrowException("Bad timeout settings");
+      }
 
       stateBRK = 0;
-      if (cs.useDTR == HSOutput.none) stateDTR = 0;
-      if (cs.useDTR == HSOutput.online) stateDTR = 1;
-      if (cs.useRTS == HSOutput.none) stateRTS = 0;
-      if (cs.useRTS == HSOutput.online) stateRTS = 1;
+      if (cs.useDTR == HSOutput.none)
+      {
+        stateDTR = 0;
+      }
+      if (cs.useDTR == HSOutput.online)
+      {
+        stateDTR = 1;
+      }
+      if (cs.useRTS == HSOutput.none)
+      {
+        stateRTS = 0;
+      }
+      if (cs.useRTS == HSOutput.online)
+      {
+        stateRTS = 1;
+      }
 
       checkSends = cs.checkAllSends;
       wo.Offset = 0;
       wo.OffsetHigh = 0;
       if (checkSends)
+      {
         wo.hEvent = writeEvent.SafeWaitHandle.DangerousGetHandle();
+      }
       else
+      {
         wo.hEvent = IntPtr.Zero;
+      }
 
       ptrUWO = Marshal.AllocHGlobal(Marshal.SizeOf(wo));
 
@@ -580,7 +690,6 @@ namespace JH.CommBase
         Close();
         return false;
       }
-
     }
 
     /// <summary>
@@ -608,7 +717,10 @@ namespace JH.CommBase
         rxThread = null;
       }
       Win32Com.CloseHandle(hPort);
-      if (ptrUWO != IntPtr.Zero) Marshal.FreeHGlobal(ptrUWO);
+      if (ptrUWO != IntPtr.Zero)
+      {
+        Marshal.FreeHGlobal(ptrUWO);
+      }
       stateRTS = 2;
       stateDTR = 2;
       stateBRK = 2;
@@ -618,17 +730,36 @@ namespace JH.CommBase
     /// <summary>
     /// For IDisposable
     /// </summary>
-    public void Dispose() { Close(); }
+    public void Dispose()
+    {
+      Close();
+    }
 
     /// <summary>
     /// Destructor (just in case)
     /// </summary>
-    ~CommBase() { Close(); }
+    ~CommBase()
+    {
+      Close();
+    }
 
     /// <summary>
     /// True if online.
     /// </summary>
-    public bool Online { get { if (!online) return false; else return CheckOnline(); } }
+    public bool Online
+    {
+      get
+      {
+        if (!online)
+        {
+          return false;
+        }
+        else
+        {
+          return CheckOnline();
+        }
+      }
+    }
 
     /// <summary>
     /// Block until all bytes in the queue have been transmitted.
@@ -678,13 +809,16 @@ namespace JH.CommBase
       CheckOnline();
       CheckResult();
       writeCount = tosend.GetLength(0);
-      if (Win32Com.WriteFile(hPort, tosend, (uint)writeCount, out sent, ptrUWO))
+      if (Win32Com.WriteFile(hPort, tosend, (uint) writeCount, out sent, ptrUWO))
       {
-        writeCount -= (int)sent;
+        writeCount -= (int) sent;
       }
       else
       {
-        if (Marshal.GetLastWin32Error() != Win32Com.ERROR_IO_PENDING) ThrowException("Send failed");
+        if (Marshal.GetLastWin32Error() != Win32Com.ERROR_IO_PENDING)
+        {
+          ThrowException("Send failed");
+        }
         //JH1.3:
         dataQueued = true;
       }
@@ -715,14 +849,20 @@ namespace JH.CommBase
         {
           if (checkSends)
           {
-            writeCount -= (int)sent;
-            if (writeCount != 0) ThrowException("Send Timeout");
+            writeCount -= (int) sent;
+            if (writeCount != 0)
+            {
+              ThrowException("Send Timeout");
+            }
             writeCount = 0;
           }
         }
         else
         {
-          if (Marshal.GetLastWin32Error() != Win32Com.ERROR_IO_INCOMPLETE) ThrowException("Write Error");
+          if (Marshal.GetLastWin32Error() != Win32Com.ERROR_IO_INCOMPLETE)
+          {
+            ThrowException("Write Error");
+          }
         }
       }
     }
@@ -734,7 +874,10 @@ namespace JH.CommBase
     protected void SendImmediate(byte tosend)
     {
       CheckOnline();
-      if (!Win32Com.TransmitCommChar(hPort, tosend)) ThrowException("Transmission failure");
+      if (!Win32Com.TransmitCommChar(hPort, tosend))
+      {
+        ThrowException("Transmission failure");
+      }
     }
 
     /// <summary>
@@ -752,23 +895,43 @@ namespace JH.CommBase
     public struct ModemStatus
     {
       private uint status;
-      internal ModemStatus(uint val) { status = val; }
+
+      internal ModemStatus(uint val)
+      {
+        status = val;
+      }
+
       /// <summary>
       /// Condition of the Clear To Send signal.
       /// </summary>
-      public bool cts { get { return ((status & Win32Com.MS_CTS_ON) != 0); } }
+      public bool cts
+      {
+        get { return ((status & Win32Com.MS_CTS_ON) != 0); }
+      }
+
       /// <summary>
       /// Condition of the Data Set Ready signal.
       /// </summary>
-      public bool dsr { get { return ((status & Win32Com.MS_DSR_ON) != 0); } }
+      public bool dsr
+      {
+        get { return ((status & Win32Com.MS_DSR_ON) != 0); }
+      }
+
       /// <summary>
       /// Condition of the Receive Line Status Detection signal.
       /// </summary>
-      public bool rlsd { get { return ((status & Win32Com.MS_RLSD_ON) != 0); } }
+      public bool rlsd
+      {
+        get { return ((status & Win32Com.MS_RLSD_ON) != 0); }
+      }
+
       /// <summary>
       /// Condition of the Ring Detection signal.
       /// </summary>
-      public bool ring { get { return ((status & Win32Com.MS_RING_ON) != 0); } }
+      public bool ring
+      {
+        get { return ((status & Win32Com.MS_RING_ON) != 0); }
+      }
     }
 
     /// <summary>
@@ -780,7 +943,10 @@ namespace JH.CommBase
       uint f;
 
       CheckOnline();
-      if (!Win32Com.GetCommModemStatus(hPort, out f)) ThrowException("Unexpected failure");
+      if (!Win32Com.GetCommModemStatus(hPort, out f))
+      {
+        ThrowException("Unexpected failure");
+      }
       return new ModemStatus(f);
     }
 
@@ -796,49 +962,93 @@ namespace JH.CommBase
       private uint outQueueSize;
 
       internal QueueStatus(uint stat, uint inQ, uint outQ, uint inQs, uint outQs)
-      { status = stat; inQueue = inQ; outQueue = outQ; inQueueSize = inQs; outQueueSize = outQs; }
+      {
+        status = stat;
+        inQueue = inQ;
+        outQueue = outQ;
+        inQueueSize = inQs;
+        outQueueSize = outQs;
+      }
+
       /// <summary>
       /// Output is blocked by CTS handshaking.
       /// </summary>
-      public bool ctsHold { get { return ((status & Win32Com.COMSTAT.fCtsHold) != 0); } }
+      public bool ctsHold
+      {
+        get { return ((status & Win32Com.COMSTAT.fCtsHold) != 0); }
+      }
+
       /// <summary>
       /// Output is blocked by DRS handshaking.
       /// </summary>
-      public bool dsrHold { get { return ((status & Win32Com.COMSTAT.fDsrHold) != 0); } }
+      public bool dsrHold
+      {
+        get { return ((status & Win32Com.COMSTAT.fDsrHold) != 0); }
+      }
+
       /// <summary>
       /// Output is blocked by RLSD handshaking.
       /// </summary>
-      public bool rlsdHold { get { return ((status & Win32Com.COMSTAT.fRlsdHold) != 0); } }
+      public bool rlsdHold
+      {
+        get { return ((status & Win32Com.COMSTAT.fRlsdHold) != 0); }
+      }
+
       /// <summary>
       /// Output is blocked because software handshaking is enabled and XOFF was received.
       /// </summary>
-      public bool xoffHold { get { return ((status & Win32Com.COMSTAT.fXoffHold) != 0); } }
+      public bool xoffHold
+      {
+        get { return ((status & Win32Com.COMSTAT.fXoffHold) != 0); }
+      }
+
       /// <summary>
       /// Output was blocked because XOFF was sent and this station is not yet ready to receive.
       /// </summary>
-      public bool xoffSent { get { return ((status & Win32Com.COMSTAT.fXoffSent) != 0); } }
+      public bool xoffSent
+      {
+        get { return ((status & Win32Com.COMSTAT.fXoffSent) != 0); }
+      }
 
       /// <summary>
       /// There is a character waiting for transmission in the immediate buffer.
       /// </summary>
-      public bool immediateWaiting { get { return ((status & Win32Com.COMSTAT.fTxim) != 0); } }
+      public bool immediateWaiting
+      {
+        get { return ((status & Win32Com.COMSTAT.fTxim) != 0); }
+      }
 
       /// <summary>
       /// Number of bytes waiting in the input queue.
       /// </summary>
-      public long InQueue { get { return (long)inQueue; } }
+      public long InQueue
+      {
+        get { return (long) inQueue; }
+      }
+
       /// <summary>
       /// Number of bytes waiting for transmission.
       /// </summary>
-      public long OutQueue { get { return (long)outQueue; } }
+      public long OutQueue
+      {
+        get { return (long) outQueue; }
+      }
+
       /// <summary>
       /// Total size of input queue (0 means information unavailable)
       /// </summary>
-      public long InQueueSize { get { return (long)inQueueSize; } }
+      public long InQueueSize
+      {
+        get { return (long) inQueueSize; }
+      }
+
       /// <summary>
       /// Total size of output queue (0 means information unavailable)
       /// </summary>
-      public long OutQueueSize { get { return (long)outQueueSize; } }
+      public long OutQueueSize
+      {
+        get { return (long) outQueueSize; }
+      }
 
       public override string ToString()
       {
@@ -893,11 +1103,26 @@ namespace JH.CommBase
           if (ctsHold || dsrHold || rlsdHold || xoffHold || xoffSent)
           {
             m.Append("holding on");
-            if (ctsHold) m.Append(" CTS");
-            if (dsrHold) m.Append(" DSR");
-            if (rlsdHold) m.Append(" RLSD");
-            if (xoffHold) m.Append(" Rx XOff");
-            if (xoffSent) m.Append(" Tx XOff");
+            if (ctsHold)
+            {
+              m.Append(" CTS");
+            }
+            if (dsrHold)
+            {
+              m.Append(" DSR");
+            }
+            if (rlsdHold)
+            {
+              m.Append(" RLSD");
+            }
+            if (xoffHold)
+            {
+              m.Append(" Rx XOff");
+            }
+            if (xoffSent)
+            {
+              m.Append(" Tx XOff");
+            }
           }
           else
           {
@@ -906,9 +1131,13 @@ namespace JH.CommBase
         }
         m.Append(". The immediate buffer is ");
         if (immediateWaiting)
+        {
           m.Append("full.");
+        }
         else
+        {
           m.Append("empty.");
+        }
         return m.ToString();
       }
     }
@@ -924,8 +1153,14 @@ namespace JH.CommBase
       uint er;
 
       CheckOnline();
-      if (!Win32Com.ClearCommError(hPort, out er, out cs)) ThrowException("Unexpected failure");
-      if (!Win32Com.GetCommProperties(hPort, out cp)) ThrowException("Unexpected failure");
+      if (!Win32Com.ClearCommError(hPort, out er, out cs))
+      {
+        ThrowException("Unexpected failure");
+      }
+      if (!Win32Com.GetCommProperties(hPort, out cp))
+      {
+        ThrowException("Unexpected failure");
+      }
       return new QueueStatus(cs.Flags, cs.cbInQue, cs.cbOutQue, cp.dwCurrentRxQueue, cp.dwCurrentTxQueue);
     }
 
@@ -940,8 +1175,15 @@ namespace JH.CommBase
     protected bool IsCongested()
     {
       bool e;
-      if (!dataQueued) return false;
-      lock (empty) { e = empty[0]; empty[0] = false; }
+      if (!dataQueued)
+      {
+        return false;
+      }
+      lock (empty)
+      {
+        e = empty[0];
+        empty[0] = false;
+      }
       dataQueued = false;
       return !e;
     }
@@ -949,7 +1191,10 @@ namespace JH.CommBase
     /// <summary>
     /// True if the RTS pin is controllable via the RTS property
     /// </summary>
-    protected bool RTSavailable { get { return (stateRTS < 2); } }
+    protected bool RTSavailable
+    {
+      get { return (stateRTS < 2); }
+    }
 
     /// <summary>
     /// Set the state of the RTS modem control output
@@ -958,34 +1203,45 @@ namespace JH.CommBase
     {
       set
       {
-        if (stateRTS > 1) return;
+        if (stateRTS > 1)
+        {
+          return;
+        }
         CheckOnline();
         if (value)
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.SETRTS))
+          {
             stateRTS = 1;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
         else
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.CLRRTS))
+          {
             //JH 1.3: Was 1, should be 0:
             stateRTS = 0;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
       }
-      get
-      {
-        return (stateRTS == 1);
-      }
+      get { return (stateRTS == 1); }
     }
 
     /// <summary>
     /// True if the DTR pin is controllable via the DTR property
     /// </summary>
-    protected bool DTRavailable { get { return (stateDTR < 2); } }
+    protected bool DTRavailable
+    {
+      get { return (stateDTR < 2); }
+    }
 
     /// <summary>
     /// The state of the DTR modem control output
@@ -994,27 +1250,35 @@ namespace JH.CommBase
     {
       set
       {
-        if (stateDTR > 1) return;
+        if (stateDTR > 1)
+        {
+          return;
+        }
         CheckOnline();
         if (value)
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.SETDTR))
+          {
             stateDTR = 1;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
         else
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.CLRDTR))
+          {
             stateDTR = 0;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
       }
-      get
-      {
-        return (stateDTR == 1);
-      }
+      get { return (stateDTR == 1); }
     }
 
     /// <summary>
@@ -1024,64 +1288,86 @@ namespace JH.CommBase
     {
       set
       {
-        if (stateBRK > 1) return;
+        if (stateBRK > 1)
+        {
+          return;
+        }
         CheckOnline();
         if (value)
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.SETBREAK))
+          {
             stateBRK = 0;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
         else
         {
           if (Win32Com.EscapeCommFunction(hPort, Win32Com.CLRBREAK))
+          {
             stateBRK = 0;
+          }
           else
+          {
             ThrowException("Unexpected Failure");
+          }
         }
       }
-      get
-      {
-        return (stateBRK == 1);
-      }
+      get { return (stateBRK == 1); }
     }
 
     /// <summary>
     /// Override this to provide settings. (NB this is called during Open method)
     /// </summary>
     /// <returns>CommBaseSettings, or derived object with required settings initialised</returns>
-    protected virtual CommBaseSettings CommSettings() { return new CommBaseSettings(); }
+    protected virtual CommBaseSettings CommSettings()
+    {
+      return new CommBaseSettings();
+    }
 
     /// <summary>
     /// Override this to provide processing after the port is openned (i.e. to configure remote
     /// device or just check presence).
     /// </summary>
     /// <returns>false to close the port again</returns>
-    protected virtual bool AfterOpen() { return true; }
+    protected virtual bool AfterOpen()
+    {
+      return true;
+    }
 
     /// <summary>
     /// Override this to provide processing prior to port closure.
     /// </summary>
     /// <param name="error">True if closing due to an error</param>
-    protected virtual void BeforeClose(bool error) { }
+    protected virtual void BeforeClose(bool error)
+    {
+    }
 
     /// <summary>
     /// Override this to process received bytes.
     /// </summary>
     /// <param name="ch">The byte that was received</param>
-    protected virtual void OnRxChar(byte ch) { }
+    protected virtual void OnRxChar(byte ch)
+    {
+    }
 
     /// <summary>
     /// Override this to take action when transmission is complete (i.e. all bytes have actually
     /// been sent, not just queued).
     /// </summary>
-    protected virtual void OnTxDone() { }
+    protected virtual void OnTxDone()
+    {
+    }
 
     /// <summary>
     /// Override this to take action when a break condition is detected on the input line.
     /// </summary>
-    protected virtual void OnBreak() { }
+    protected virtual void OnBreak()
+    {
+    }
 
     //JH 1.3: Deleted OnRing() which was never called: use OnStatusChange instead (Thanks Jim Foster)
 
@@ -1090,13 +1376,17 @@ namespace JH.CommBase
     /// </summary>
     /// <param name="mask">The status inputs that have changed state</param>
     /// <param name="state">The state of the status inputs</param>
-    protected virtual void OnStatusChange(ModemStatus mask, ModemStatus state) { }
+    protected virtual void OnStatusChange(ModemStatus mask, ModemStatus state)
+    {
+    }
 
     /// <summary>
     /// Override this to take action when the reception thread closes due to an exception being thrown.
     /// </summary>
     /// <param name="e">The exception which was thrown</param>
-    protected virtual void OnRxException(Exception e) { }
+    protected virtual void OnRxException(Exception e)
+    {
+    }
 
     private void ReceiveThread()
     {
@@ -1114,7 +1404,8 @@ namespace JH.CommBase
       unmanagedOv = Marshal.AllocHGlobal(Marshal.SizeOf(ov));
       uMask = Marshal.AllocHGlobal(Marshal.SizeOf(eventMask));
 
-      ov.Offset = 0; ov.OffsetHigh = 0;
+      ov.Offset = 0;
+      ov.OffsetHigh = 0;
       ov.hEvent = sg.SafeWaitHandle.DangerousGetHandle();
       Marshal.StructureToPtr(ov, unmanagedOv, true);
 
@@ -1123,13 +1414,17 @@ namespace JH.CommBase
         while (true)
         {
           if (!Win32Com.SetCommMask(hPort, Win32Com.EV_RXCHAR | Win32Com.EV_TXEMPTY | Win32Com.EV_CTS | Win32Com.EV_DSR
-              | Win32Com.EV_BREAK | Win32Com.EV_RLSD | Win32Com.EV_RING | Win32Com.EV_ERR))
+                                           | Win32Com.EV_BREAK | Win32Com.EV_RLSD | Win32Com.EV_RING | Win32Com.EV_ERR))
           {
             throw new CommPortException("IO Error [001]");
           }
           Marshal.WriteInt32(uMask, 0);
           //JH 1.2: Tells the main thread that this thread is ready for action.
-          if (starting) { startEvent.Set(); starting = false; }
+          if (starting)
+          {
+            startEvent.Set();
+            starting = false;
+          }
           if (!Win32Com.WaitCommEvent(hPort, uMask, unmanagedOv))
           {
             if (Marshal.GetLastWin32Error() == Win32Com.ERROR_IO_PENDING)
@@ -1141,7 +1436,7 @@ namespace JH.CommBase
               throw new CommPortException("IO Error [002]");
             }
           }
-          eventMask = (uint)Marshal.ReadInt32(uMask);
+          eventMask = (uint) Marshal.ReadInt32(uMask);
           if ((eventMask & Win32Com.EV_ERR) != 0)
           {
             UInt32 errs;
@@ -1153,12 +1448,36 @@ namespace JH.CommBase
               //error was present in the flags. (Thanks to Fred Pittroff for finding this problem!)
               int ec = 0;
               StringBuilder s = new StringBuilder("UART Error: ", 40);
-              if ((errs & Win32Com.CE_FRAME) != 0) { s = s.Append("Framing,"); ec++; }
-              if ((errs & Win32Com.CE_IOE) != 0) { s = s.Append("IO,"); ec++; }
-              if ((errs & Win32Com.CE_OVERRUN) != 0) { s = s.Append("Overrun,"); ec++; }
-              if ((errs & Win32Com.CE_RXOVER) != 0) { s = s.Append("Receive Cverflow,"); ec++; }
-              if ((errs & Win32Com.CE_RXPARITY) != 0) { s = s.Append("Parity,"); ec++; }
-              if ((errs & Win32Com.CE_TXFULL) != 0) { s = s.Append("Transmit Overflow,"); ec++; }
+              if ((errs & Win32Com.CE_FRAME) != 0)
+              {
+                s = s.Append("Framing,");
+                ec++;
+              }
+              if ((errs & Win32Com.CE_IOE) != 0)
+              {
+                s = s.Append("IO,");
+                ec++;
+              }
+              if ((errs & Win32Com.CE_OVERRUN) != 0)
+              {
+                s = s.Append("Overrun,");
+                ec++;
+              }
+              if ((errs & Win32Com.CE_RXOVER) != 0)
+              {
+                s = s.Append("Receive Cverflow,");
+                ec++;
+              }
+              if ((errs & Win32Com.CE_RXPARITY) != 0)
+              {
+                s = s.Append("Parity,");
+                ec++;
+              }
+              if ((errs & Win32Com.CE_TXFULL) != 0)
+              {
+                s = s.Append("Transmit Overflow,");
+                ec++;
+              }
               if (ec > 0)
               {
                 s.Length = s.Length - 1;
@@ -1198,7 +1517,9 @@ namespace JH.CommBase
                 throw new CommPortException("IO Error [004]");
               }
               if (gotbytes == 1)
+              {
                 OnRxChar(buf[0]);
+              }
             } while (gotbytes > 0);
           }
           if ((eventMask & Win32Com.EV_TXEMPTY) != 0)
@@ -1207,17 +1528,35 @@ namespace JH.CommBase
             lock (empty) empty[0] = true;
             OnTxDone();
           }
-          if ((eventMask & Win32Com.EV_BREAK) != 0) OnBreak();
+          if ((eventMask & Win32Com.EV_BREAK) != 0)
+          {
+            OnBreak();
+          }
 
           uint i = 0;
-          if ((eventMask & Win32Com.EV_CTS) != 0) i |= Win32Com.MS_CTS_ON;
-          if ((eventMask & Win32Com.EV_DSR) != 0) i |= Win32Com.MS_DSR_ON;
-          if ((eventMask & Win32Com.EV_RLSD) != 0) i |= Win32Com.MS_RLSD_ON;
-          if ((eventMask & Win32Com.EV_RING) != 0) i |= Win32Com.MS_RING_ON;
+          if ((eventMask & Win32Com.EV_CTS) != 0)
+          {
+            i |= Win32Com.MS_CTS_ON;
+          }
+          if ((eventMask & Win32Com.EV_DSR) != 0)
+          {
+            i |= Win32Com.MS_DSR_ON;
+          }
+          if ((eventMask & Win32Com.EV_RLSD) != 0)
+          {
+            i |= Win32Com.MS_RLSD_ON;
+          }
+          if ((eventMask & Win32Com.EV_RING) != 0)
+          {
+            i |= Win32Com.MS_RING_ON;
+          }
           if (i != 0)
           {
             uint f;
-            if (!Win32Com.GetCommModemStatus(hPort, out f)) throw new CommPortException("IO Error [005]");
+            if (!Win32Com.GetCommModemStatus(hPort, out f))
+            {
+              throw new CommPortException("IO Error [005]");
+            }
             OnStatusChange(new ModemStatus(i), new ModemStatus(f));
           }
         }
@@ -1226,8 +1565,14 @@ namespace JH.CommBase
       {
         //JH 1.3: Added for shutdown robustness (Thanks to Fred Pittroff, Mark Behner and Kevin Williamson!), .
         Win32Com.CancelIo(hPort);
-        if (uMask != IntPtr.Zero) Marshal.FreeHGlobal(uMask);
-        if (unmanagedOv != IntPtr.Zero) Marshal.FreeHGlobal(unmanagedOv);
+        if (uMask != IntPtr.Zero)
+        {
+          Marshal.FreeHGlobal(uMask);
+        }
+        if (unmanagedOv != IntPtr.Zero)
+        {
+          Marshal.FreeHGlobal(unmanagedOv);
+        }
 
         if (!(e is ThreadAbortException))
         {
@@ -1247,7 +1592,10 @@ namespace JH.CommBase
       if (online)
       {
         //JH 1.1: Avoid use of GetHandleInformation for W98 compatability.
-        if (hPort != (System.IntPtr)Win32Com.INVALID_HANDLE_VALUE) return true;
+        if (hPort != (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+        {
+          return true;
+        }
         ThrowException("Offline");
         return false;
       }
@@ -1255,13 +1603,15 @@ namespace JH.CommBase
       {
         if (auto)
         {
-          if (Open()) return true;
+          if (Open())
+          {
+            return true;
+          }
         }
         ThrowException("Offline");
         return false;
       }
     }
-
   }
 
   /// <summary>
@@ -1283,32 +1633,36 @@ namespace JH.CommBase
     /// <summary>
     /// Extends CommBaseSettings to add the settings used by CommLine.
     /// </summary>
-    public class CommLineSettings : CommBase.CommBaseSettings
+    public class CommLineSettings : CommBaseSettings
     {
       /// <summary>
       /// Maximum size of received string (default: 256)
       /// </summary>
       public int rxStringBufferSize = 256;
+
       /// <summary>
       /// ASCII code that terminates a received string (default: CR)
       /// </summary>
       public ASCII rxTerminator = ASCII.CR;
+
       /// <summary>
       /// ASCII codes that will be ignored in received string (default: null)
       /// </summary>
       public ASCII[] rxFilter;
+
       /// <summary>
       /// Maximum time (ms) for the Transact method to complete (default: 500)
       /// </summary>
       public int transactTimeout = 500;
+
       /// <summary>
       /// ASCII codes transmitted after each Send string (default: null)
       /// </summary>
       public ASCII[] txTerminator;
 
-      public static new CommLineSettings LoadFromXML(Stream s)
+      public new static CommLineSettings LoadFromXML(Stream s)
       {
-        return (CommLineSettings)LoadFromXML(s, typeof(CommLineSettings));
+        return (CommLineSettings) LoadFromXML(s, typeof (CommLineSettings));
       }
     }
 
@@ -1319,13 +1673,25 @@ namespace JH.CommBase
     protected void Send(string toSend)
     {
       //JH 1.1: Use static encoder for efficiency. Thanks to Prof. Dr. Peter Jesorsky!
-      uint l = (uint)Encoding.ASCII.GetByteCount(toSend);
-      if (TxTerm != null) l += (uint)TxTerm.GetLength(0);
+      uint l = (uint) Encoding.ASCII.GetByteCount(toSend);
+      if (TxTerm != null)
+      {
+        l += (uint) TxTerm.GetLength(0);
+      }
       byte[] b = new byte[l];
       byte[] s = Encoding.ASCII.GetBytes(toSend);
       int i;
-      for (i = 0; (i <= s.GetUpperBound(0)); i++) b[i] = s[i];
-      if (TxTerm != null) for (int j = 0; (j <= TxTerm.GetUpperBound(0)); j++, i++) b[i] = (byte)TxTerm[j];
+      for (i = 0; (i <= s.GetUpperBound(0)); i++)
+      {
+        b[i] = s[i];
+      }
+      if (TxTerm != null)
+      {
+        for (int j = 0; (j <= TxTerm.GetUpperBound(0)); j++, i++)
+        {
+          b[i] = (byte) TxTerm[j];
+        }
+      }
       Send(b);
     }
 
@@ -1339,9 +1705,15 @@ namespace JH.CommBase
     {
       Send(toSend);
       TransFlag.Reset();
-      if (!TransFlag.WaitOne((int)TransTimeout, false)) ThrowException("Timeout");
+      if (!TransFlag.WaitOne((int) TransTimeout, false))
+      {
+        ThrowException("Timeout");
+      }
       string s;
-      lock (RxString) { s = RxString; }
+      lock (RxString)
+      {
+        s = RxString;
+      }
       return s;
     }
 
@@ -1355,7 +1727,7 @@ namespace JH.CommBase
       RxBuffer = new byte[s.rxStringBufferSize];
       RxTerm = s.rxTerminator;
       RxFilter = s.rxFilter;
-      TransTimeout = (uint)s.transactTimeout;
+      TransTimeout = (uint) s.transactTimeout;
       TxTerm = s.txTerminator;
     }
 
@@ -1363,15 +1735,20 @@ namespace JH.CommBase
     /// Override this to process unsolicited input lines (not a result of Transact).
     /// </summary>
     /// <param name="s">String containing the received ASCII text.</param>
-    protected virtual void OnRxLine(string s) { }
+    protected virtual void OnRxLine(string s)
+    {
+    }
 
     protected override void OnRxChar(byte ch)
     {
-      ASCII ca = (ASCII)ch;
+      ASCII ca = (ASCII) ch;
       if ((ca == RxTerm) || (RxBufferP > RxBuffer.GetUpperBound(0)))
       {
         //JH 1.1: Use static encoder for efficiency. Thanks to Prof. Dr. Peter Jesorsky!
-        lock (RxString) { RxString = Encoding.ASCII.GetString(RxBuffer, 0, (int)RxBufferP); }
+        lock (RxString)
+        {
+          RxString = Encoding.ASCII.GetString(RxBuffer, 0, (int) RxBufferP);
+        }
         RxBufferP = 0;
         if (TransFlag.WaitOne(0, false))
         {
@@ -1387,7 +1764,13 @@ namespace JH.CommBase
         bool wr = true;
         if (RxFilter != null)
         {
-          for (int i = 0; i <= RxFilter.GetUpperBound(0); i++) if (RxFilter[i] == ca) wr = false;
+          for (int i = 0; i <= RxFilter.GetUpperBound(0); i++)
+          {
+            if (RxFilter[i] == ca)
+            {
+              wr = false;
+            }
+          }
         }
         if (wr)
         {
@@ -1407,25 +1790,29 @@ namespace JH.CommBase
     /// Constructor for raising direct exceptions
     /// </summary>
     /// <param name="desc">Description of error</param>
-    public CommPortException(string desc) : base(desc) { }
+    public CommPortException(string desc) : base(desc)
+    {
+    }
 
     /// <summary>
     /// Constructor for re-raising exceptions from receive thread
     /// </summary>
     /// <param name="e">Inner exception raised on receive thread</param>
-    public CommPortException(Exception e) : base("Receive Thread Exception", e) { }
+    public CommPortException(Exception e) : base("Receive Thread Exception", e)
+    {
+    }
   }
 
   internal class Win32Com
   {
-
     /// <summary>
     /// Opening Testing and Closing the Port Handle.
     /// </summary>
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern IntPtr CreateFile(String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode,
-        IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes,
-			IntPtr hTemplateFile);
+                                             IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition,
+                                             UInt32 dwFlagsAndAttributes,
+                                             IntPtr hTemplateFile);
 
     //Constants for errors:
     internal const UInt32 ERROR_FILE_NOT_FOUND = 2;
@@ -1453,7 +1840,6 @@ namespace JH.CommBase
     /// <summary>
     /// Manipulating the communications settings.
     /// </summary>
-
     [DllImport("kernel32.dll")]
     internal static extern Boolean GetCommState(IntPtr hFile, ref DCB lpDCB);
 
@@ -1482,6 +1868,7 @@ namespace JH.CommBase
       internal UInt32 WriteTotalTimeoutMultiplier;
       internal UInt32 WriteTotalTimeoutConstant;
     }
+
     //JH 1.1: Added to enable use of "return immediately" timeout.
     internal const UInt32 MAXDWORD = 0xffffffff;
 
@@ -1505,20 +1892,41 @@ namespace JH.CommBase
       internal Int16 wReserved1;
 
       internal void init(bool parity, bool outCTS, bool outDSR, int dtr, bool inDSR, bool txc, bool xOut,
-				bool xIn, int rts)
+                         bool xIn, int rts)
       {
         //JH 1.3: Was 0x8001 ans so not setting fAbortOnError - Thanks Larry Delby!
-        DCBlength = 28; PackedValues = 0x4001;
-        if (parity) PackedValues |= 0x0002;
-        if (outCTS) PackedValues |= 0x0004;
-        if (outDSR) PackedValues |= 0x0008;
+        DCBlength = 28;
+        PackedValues = 0x4001;
+        if (parity)
+        {
+          PackedValues |= 0x0002;
+        }
+        if (outCTS)
+        {
+          PackedValues |= 0x0004;
+        }
+        if (outDSR)
+        {
+          PackedValues |= 0x0008;
+        }
         PackedValues |= ((dtr & 0x0003) << 4);
-        if (inDSR) PackedValues |= 0x0040;
-        if (txc) PackedValues |= 0x0080;
-        if (xOut) PackedValues |= 0x0100;
-        if (xIn) PackedValues |= 0x0200;
+        if (inDSR)
+        {
+          PackedValues |= 0x0040;
+        }
+        if (txc)
+        {
+          PackedValues |= 0x0080;
+        }
+        if (xOut)
+        {
+          PackedValues |= 0x0100;
+        }
+        if (xIn)
+        {
+          PackedValues |= 0x0200;
+        }
         PackedValues |= ((rts & 0x0003) << 12);
-
       }
     }
 
@@ -1527,7 +1935,7 @@ namespace JH.CommBase
     /// </summary>
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern Boolean WriteFile(IntPtr fFile, Byte[] lpBuffer, UInt32 nNumberOfBytesToWrite,
-			out UInt32 lpNumberOfBytesWritten, IntPtr lpOverlapped);
+                                             out UInt32 lpNumberOfBytesWritten, IntPtr lpOverlapped);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct OVERLAPPED
@@ -1565,7 +1973,7 @@ namespace JH.CommBase
 
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern Boolean ReadFile(IntPtr hFile, [Out] Byte[] lpBuffer, UInt32 nNumberOfBytesToRead,
-			out UInt32 nNumberOfBytesRead, IntPtr lpOverlapped);
+                                            out UInt32 nNumberOfBytesRead, IntPtr lpOverlapped);
 
     [DllImport("kernel32.dll")]
     internal static extern Boolean TransmitCommChar(IntPtr hFile, Byte cChar);
@@ -1601,10 +2009,11 @@ namespace JH.CommBase
     /// </summary>
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern Boolean GetOverlappedResult(IntPtr hFile, IntPtr lpOverlapped,
-			out UInt32 nNumberOfBytesTransferred, Boolean bWait);
+                                                       out UInt32 nNumberOfBytesTransferred, Boolean bWait);
 
     [DllImport("kernel32.dll")]
     internal static extern Boolean ClearCommError(IntPtr hFile, out UInt32 lpErrors, IntPtr lpStat);
+
     [DllImport("kernel32.dll")]
     internal static extern Boolean ClearCommError(IntPtr hFile, out UInt32 lpErrors, out COMSTAT cs);
 
@@ -1635,6 +2044,7 @@ namespace JH.CommBase
       internal UInt32 cbInQue;
       internal UInt32 cbOutQue;
     }
+
     [DllImport("kernel32.dll")]
     internal static extern Boolean GetCommProperties(IntPtr hFile, out COMMPROP cp);
 
@@ -1660,7 +2070,5 @@ namespace JH.CommBase
       internal UInt32 dwProvSpec2;
       internal Byte wcProvChar;
     }
-
   }
-
 }
