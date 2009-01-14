@@ -118,7 +118,23 @@ namespace MediaPortal.DeployTool
           MessageBox.Show(Utils.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
       }
-      
+
+      // 
+      // check if there's is sufficient hard disk space for installation
+      // 
+      if (_currentDialog.type == DialogType.DBMSSettings || _currentDialog.type == DialogType.TvServerSettings || _currentDialog.type == DialogType.MPSettings)
+      {
+        // at least 0.5 GB free disk space are required for installation
+        const double requiredDiskSpace = 0.5;
+        double actualDiskSpace = InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
+        
+        if (actualDiskSpace < requiredDiskSpace)
+        {
+          MessageBox.Show(string.Format(Utils.GetBestTranslation("DiskSpace_Error"),requiredDiskSpace*1000),"MediaPortal",MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+      }
+
       if (nextButton.Text == Utils.GetBestTranslation("MainWindow_buttonClose"))
       {
         //
@@ -132,7 +148,7 @@ namespace MediaPortal.DeployTool
           process.StartInfo.UseShellExecute = true;
           process.Start();
         }
-
+        
         //
         // If in install mode, start the included setup guide
         //

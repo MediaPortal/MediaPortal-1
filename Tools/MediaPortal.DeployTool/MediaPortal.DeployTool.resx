@@ -513,4 +513,7 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
     <value>No Internet connection found! To continue the installation an active connection is required.</value>
   </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>There is not enough disk space left on the specified drive! For the installation of MediaPortal you need at least {0} MB of free disk space.</value>
+  </data>
 </root>

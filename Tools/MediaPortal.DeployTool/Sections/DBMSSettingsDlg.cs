@@ -35,9 +35,9 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.DBMSSettings;
       if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-        textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server";
+        textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server";
       else
-        textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.0";
+        textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.0";
       UpdateUI();
     }
 
@@ -90,7 +90,7 @@ namespace MediaPortal.DeployTool.Sections
       dlg.Description = Utils.GetBestTranslation("DBMSSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = dlg.SelectedPath;
+        textBoxDir.Text = this.installationPath = dlg.SelectedPath;
     }
   }
 }

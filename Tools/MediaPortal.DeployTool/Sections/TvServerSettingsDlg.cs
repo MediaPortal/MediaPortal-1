@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.TvServerSettings;
-      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+      textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
       UpdateUI();
     }
 
@@ -77,9 +77,9 @@ namespace MediaPortal.DeployTool.Sections
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         if (dlg.SelectedPath.EndsWith("\\"))
-          textBoxDir.Text = dlg.SelectedPath + "MediaPortal TV Server";
+          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "MediaPortal TV Server";
         else
-          textBoxDir.Text = dlg.SelectedPath + "\\MediaPortal TV Server";
+          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "\\MediaPortal TV Server";
       }
     }
   }

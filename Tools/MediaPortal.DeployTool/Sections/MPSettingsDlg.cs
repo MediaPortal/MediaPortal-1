@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.MPSettings;
-      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
       checkBoxFirewall.Text = Utils.GetBestTranslation("MPSettings_checkBoxFirewall");
       UpdateUI();
     }
@@ -83,9 +83,9 @@ namespace MediaPortal.DeployTool.Sections
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         if (dlg.SelectedPath.EndsWith("\\"))
-          textBoxDir.Text = dlg.SelectedPath + "MediaPortal";
+          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "MediaPortal";
         else
-          textBoxDir.Text = dlg.SelectedPath + "\\MediaPortal";
+          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "\\MediaPortal";
       }
     }
 

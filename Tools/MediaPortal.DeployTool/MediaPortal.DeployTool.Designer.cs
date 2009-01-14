@@ -297,6 +297,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is not enough disk space left on the specified drive! For the installation of MediaPortal you need at least {0} MB of free disk space..
+        /// </summary>
+        internal static string DiskSpace_Error {
+            get {
+                return ResourceManager.GetString("DiskSpace_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Current download settings: lang={0}, arch={1}.
         /// </summary>
         internal static string DownloadOnly_CurrentSettings {

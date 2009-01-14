@@ -23,39 +23,33 @@
 
 #endregion
 
+using System;
+using System.IO;
 using System.Windows.Forms;
-
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
-  public partial class DeployDialog : UserControl, IDeployDialog
+  class DiskSpaceChecker
   {
-    public DialogType type;
-    public string installationPath = "";
-
-    public DeployDialog()
+    //
+    // returns the remaining hard disk capacity of the given drive 
+    //
+    public static double GetRemainingHardDiskCapacity(string driveName)
     {
-      InitializeComponent();
-      labelSectionHeader.Text = InstallationProperties.Instance["InstallTypeHeader"];
-    }
+      long capacityInB;
+      double capacityInGB;
 
-    #region IDeployDialog interface
-    public virtual void UpdateUI()
-    {
+      DriveInfo driveInfo = new DriveInfo(driveName);
+      try
+      {
+        capacityInB = driveInfo.TotalFreeSpace;
+      }
+      catch (IOException)
+      {
+        capacityInB = 0;
+      }
+      capacityInGB = (double) capacityInB/(1024*1024*1024);
+      capacityInGB = Math.Round(capacityInGB, 3);
+      return capacityInGB;
     }
-
-    public virtual DeployDialog GetNextDialog()
-    {
-      return null;
-    }
-
-    public virtual bool SettingsValid()
-    {
-      return false;
-    }
-
-    public virtual void SetProperties()
-    {
-    }
-    #endregion
   }
 }
