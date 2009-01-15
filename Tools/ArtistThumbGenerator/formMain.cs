@@ -131,7 +131,7 @@ namespace ArtistThumbGenerator
           int dirPos = thumbFiles[i].LastIndexOf('\\');
           if (dirPos > 1)
           {
-            string thumbPath = thumbFiles[i].Substring(dirPos + 1);
+            string thumbPath = thumbFiles[i].Substring(dirPos + 1).ToLowerInvariant();
             allArtistThumbs[thumbPath] = thumbFiles[i];
           }
         }
@@ -147,7 +147,7 @@ namespace ArtistThumbGenerator
           {
             string artistName = currentartistpath.Substring(dirPos + 1);
             string displayString = artistName;
-            string highResPath = string.Format("{0}{1}", artistName, "L.jpg");
+            string highResPath = string.Format("{0}{1}", artistName, "L.jpg").ToLowerInvariant();
             string target = string.Format("{0}\\{1}.jpg", currentartistpath, artistName);
             if (allArtistThumbs.ContainsKey(highResPath))
             {
