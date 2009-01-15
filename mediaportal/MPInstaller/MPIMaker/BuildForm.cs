@@ -107,65 +107,6 @@ namespace MediaPortal.MPInstaller
           listBox1.Refresh();
           listBox1.Update();
         }
-        else
-        {
-          _struct.BuildFileName = textBox1.Text;
-          _struct.BuilFile(listBox1, progressBar1);
-          listBox1.Items.Add("Upload begin...");
-          listBox1.SelectedIndex = listBox1.Items.Count - 1;
-          listBox1.Refresh();
-          listBox1.Update();
-          if (download_form.FtpUpload(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text))
-          {
-            listBox1.Items.Add("Upload done.");
-            listBox1.Refresh();
-            listBox1.Update();
-            if (true)
-            {
-              string tempfile = Path.GetTempPath() + @"\" + Path.GetFileNameWithoutExtension(textBox1.Text) + ".xml";
-              string configfile = textBox2.Text + "/" + Path.GetFileNameWithoutExtension(textBox1.Text) + ".xml";
-              MPInstallHelper temp_mpih = new MPInstallHelper();
-              MPpackageStruct pk = new MPpackageStruct();
-              pk.LoadFromFile(textBox1.Text);
-              temp_mpih.Add(pk);
-              temp_mpih.FileName = tempfile;
-              temp_mpih.SaveToFile();
-              download_form.FtpUpload(tempfile, textBox2.Text, textBox3.Text, textBox4.Text);
-              listBox1.Items.Add("List file uploaded !");
-              listBox1.Refresh();
-              listBox1.Update();
-            }
-
-            // TODO
-
-            //else
-            //{
-            //  string tempfile = Path.GetTempPath() + @"\MPExtensionFileList.xml";
-            //  string configfile = textBox2.Text + "/MPExtensionFileList.xml";
-            //  if (download_form.FtpDownload(configfile, tempfile, textBox3.Text, textBox4.Text))
-            //  {
-            //    listBox1.Items.Add("List file downloaded !");
-            //    listBox1.SelectedIndex = listBox1.Items.Count - 1;
-            //    listBox1.Refresh();
-            //    listBox1.Update();
-            //    MPInstallHelper temp_mpih = new MPInstallHelper();
-            //    temp_mpih.LoadFromFile(tempfile);
-            //    MPpackageStruct pk = new MPpackageStruct();
-            //    pk.LoadFromFile(textBox1.Text);
-            //    temp_mpih.Add(pk);
-            //    temp_mpih.SaveToFile();
-            //    download_form.FtpRenam(configfile, "MPExtensionFileList_old.xml", textBox3.Text, textBox4.Text);
-            //    listBox1.Items.Add("List file renamed !");
-            //    listBox1.Refresh();
-            //    listBox1.Update();
-            //    download_form.FtpUpload(tempfile, textBox2.Text, textBox3.Text, textBox4.Text);
-            //    listBox1.Items.Add("List file uploaded !");
-            //    listBox1.Refresh();
-            //    listBox1.Update();
-            //  }
-            //}
-          }
-        }
       }
       else
       {

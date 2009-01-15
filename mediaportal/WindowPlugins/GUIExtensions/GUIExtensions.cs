@@ -640,8 +640,6 @@ namespace WindowPlugins.GUI.Extensions
           {
             return String.Compare(pk2._intalerStruct.Group, pk1._intalerStruct.Group, true);
           }
-          break;
-
         case SortMethod.Date:
           if (bAscending)
           {
@@ -651,7 +649,6 @@ namespace WindowPlugins.GUI.Extensions
           {
             return DateTime.Compare(pk2._intalerStruct.ProiectProperties.CreationDate, pk1._intalerStruct.ProiectProperties.CreationDate);
           }
-          break;
       }
       return 0;
     }

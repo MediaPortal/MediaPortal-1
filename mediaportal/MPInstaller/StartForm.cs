@@ -36,13 +36,13 @@ namespace MediaPortal.MPInstaller
       InitializeComponent();
     }
 
-    private void button1_Click(object sender, EventArgs e)
-    {
-      EditForm create_dlg = new EditForm();
-      this.Hide();
-      create_dlg.ShowDialog();
-      this.Show();
-    }
+    //private void button1_Click(object sender, EventArgs e)
+    //{
+    //  EditForm create_dlg = new EditForm();
+    //  this.Hide();
+    //  create_dlg.ShowDialog();
+    //  this.Show();
+    //}
 
     private void button2_Click(object sender, EventArgs e)
     {

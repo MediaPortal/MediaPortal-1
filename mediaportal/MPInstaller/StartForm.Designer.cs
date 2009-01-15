@@ -50,7 +50,6 @@ namespace MediaPortal.MPInstaller
           this.button1.Text = "&Create extension";
           this.button1.UseVisualStyleBackColor = true;
           this.button1.Visible = false;
-          this.button1.Click += new System.EventHandler(this.button1_Click);
           // 
           // button2
           // 
@@ -123,8 +122,6 @@ namespace MediaPortal.MPInstaller
           this.label2.Text = "&Create extension";
           this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
           this.label2.MouseLeave += new System.EventHandler(this.label1_MouseLeave);
-          this.label2.Click += new System.EventHandler(this.button1_Click);
-          this.label2.MouseEnter += new System.EventHandler(this.label1_MouseEnter);
           // 
           // label3
           // 

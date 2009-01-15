@@ -65,12 +65,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BuildForm.Designer.cs">
-      <DependentUpon>BuildForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ImageListPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -91,48 +85,14 @@
     <Compile Include="download_form.Designer.cs">
       <DependentUpon>download_form.cs</DependentUpon>
     </Compile>
-    <Compile Include="GroupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GroupForm.Designer.cs">
-      <DependentUpon>GroupForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EditForm.Designer.cs">
-      <DependentUpon>EditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LanguageForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LanguageForm.Designer.cs">
-      <DependentUpon>LanguageForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="login_form.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="login_form.Designer.cs">
       <DependentUpon>login_form.cs</DependentUpon>
     </Compile>
-    <Compile Include="OptionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OptionForm.Designer.cs">
-      <DependentUpon>OptionForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="post_setup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="post_setup.Designer.cs">
-      <DependentUpon>post_setup.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="BuildForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>BuildForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ImageListPanel.resx">
       <DependentUpon>ImageListPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -153,29 +113,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>download_form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>EditForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GroupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GroupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LanguageForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="login_form.resx">
       <SubType>Designer</SubType>
       <DependentUpon>login_form.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OptionForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>OptionForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="post_setup.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>post_setup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

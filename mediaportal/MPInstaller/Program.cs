@@ -28,9 +28,10 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+
 using MediaPortal.MPInstaller;
 using MediaPortal.Configuration;
-using System.Threading;
+
 
 namespace MediaPortal.MPInstaller
 {
@@ -73,15 +74,15 @@ namespace MediaPortal.MPInstaller
             MessageBox.Show("Invalid package !");
           }
         }
-        if (Path.GetExtension(fil) == ".xmp")
-        {
-          EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
-          create_dlg.ShowDialog();
-        }
+        //if (Path.GetExtension(fil) == ".xmp")
+        //{
+        //  EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
+        //  create_dlg.ShowDialog();
+        //}
       }
       else
       {
-        Application.Run(new start_form());
+        Application.Run(new controlp());
       }
     }
   }

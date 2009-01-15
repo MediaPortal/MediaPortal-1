@@ -166,7 +166,7 @@ namespace MediaPortal.MPInstaller
           // 
           // newToolStripMenuItem
           // 
-          this.newToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.newButton_image;
+          this.newToolStripMenuItem.Image = global::MPIMaker.Properties.Resources.newButton_image;
           this.newToolStripMenuItem.Name = "newToolStripMenuItem";
           this.newToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.newToolStripMenuItem.Text = "New Proiect";
@@ -174,7 +174,7 @@ namespace MediaPortal.MPInstaller
           // 
           // openProiectToolStripMenuItem
           // 
-          this.openProiectToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.openButton_Image;
+          this.openProiectToolStripMenuItem.Image = global::MPIMaker.Properties.Resources.openButton_Image;
           this.openProiectToolStripMenuItem.Name = "openProiectToolStripMenuItem";
           this.openProiectToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.openProiectToolStripMenuItem.Text = "Open Project ..";
@@ -182,7 +182,7 @@ namespace MediaPortal.MPInstaller
           // 
           // sToolStripMenuItem
           // 
-          this.sToolStripMenuItem.Image = global::MPInstaller.Properties.Resources.saveButton_Image;
+          this.sToolStripMenuItem.Image = global::MPIMaker.Properties.Resources.saveButton_Image;
           this.sToolStripMenuItem.Name = "sToolStripMenuItem";
           this.sToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
           this.sToolStripMenuItem.Text = "Save Project";
@@ -967,7 +967,7 @@ namespace MediaPortal.MPInstaller
           // newToolStripButton
           // 
           this.newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.newToolStripButton.Image = global::MPInstaller.Properties.Resources.newButton_image;
+          this.newToolStripButton.Image = global::MPIMaker.Properties.Resources.newButton_image;
           this.newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.newToolStripButton.Name = "newToolStripButton";
           this.newToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -977,7 +977,7 @@ namespace MediaPortal.MPInstaller
           // openToolStripButton
           // 
           this.openToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.openToolStripButton.Image = global::MPInstaller.Properties.Resources.openButton_Image;
+          this.openToolStripButton.Image = global::MPIMaker.Properties.Resources.openButton_Image;
           this.openToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.openToolStripButton.Name = "openToolStripButton";
           this.openToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -987,7 +987,7 @@ namespace MediaPortal.MPInstaller
           // saveToolStripButton
           // 
           this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.saveToolStripButton.Image = global::MPInstaller.Properties.Resources.saveButton_Image;
+          this.saveToolStripButton.Image = global::MPIMaker.Properties.Resources.saveButton_Image;
           this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.saveToolStripButton.Name = "saveToolStripButton";
           this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);

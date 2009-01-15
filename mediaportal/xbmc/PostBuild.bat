@@ -96,3 +96,4 @@ xcopy /y %1\WatchDog\bin\%2\MediaFoundation.dll .
 REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
+xcopy /y %1\MPInstaller\bin\%2\MPIMaker.* .
