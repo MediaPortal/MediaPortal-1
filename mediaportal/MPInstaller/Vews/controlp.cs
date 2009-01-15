@@ -74,7 +74,7 @@ namespace MediaPortal.MPInstaller
       LoadListFiles();
       //LoadToListview("All");
       comboBox_filter.SelectedIndex = 0;
-      comboBox_view.SelectedIndex = 1;
+      comboBox_view.SelectedIndex = 0;
     }
 
     public void LoadToListview(string strgroup)
@@ -546,6 +546,30 @@ namespace MediaPortal.MPInstaller
       MPpackageStruct pk = lst.Find(listView1.SelectedItems[0].Text);
       Info dlg = new Info(pk);
       dlg.ShowDialog();
+    }
+
+    private void button_local_Click(object sender, EventArgs e)
+    {
+      if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+      {
+        this.Hide();
+        install_Package(openFileDialog1.FileName);
+        this.Show();
+      }
+    }
+
+    private void install_Package(string fil)
+    {
+      wizard_1 wiz = new wizard_1();
+      wiz.package.LoadFromFile(fil);
+      if (wiz.package.isValid)
+      {
+        wiz.starStep();
+      }
+      else
+      {
+        MessageBox.Show("Invalid package !");
+      }
     }
   }
 

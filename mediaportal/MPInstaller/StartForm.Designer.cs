@@ -77,7 +77,7 @@ namespace MediaPortal.MPInstaller
           // 
           // openFileDialog1
           // 
-          this.openFileDialog1.Filter = "MPI files|*.mpi|ZIP files|*.zip|All files|*.*";
+          this.openFileDialog1.Filter = "MPE1 files|*.mpe1|All files|*.*";
           // 
           // button4
           // 

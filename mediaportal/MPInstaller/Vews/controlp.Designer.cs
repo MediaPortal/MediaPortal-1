@@ -45,6 +45,7 @@ namespace MediaPortal.MPInstaller
           this.button4 = new System.Windows.Forms.Button();
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage1 = new System.Windows.Forms.TabPage();
+          this.button_local = new System.Windows.Forms.Button();
           this.label3 = new System.Windows.Forms.Label();
           this.comboBox_filter = new System.Windows.Forms.ComboBox();
           this.button6 = new System.Windows.Forms.Button();
@@ -55,6 +56,7 @@ namespace MediaPortal.MPInstaller
           this.button5 = new System.Windows.Forms.Button();
           this.comboBox_view = new System.Windows.Forms.ComboBox();
           this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+          this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
           this.contextMenuStrip1.SuspendLayout();
           this.tabControl1.SuspendLayout();
           this.tabPage1.SuspendLayout();
@@ -82,7 +84,7 @@ namespace MediaPortal.MPInstaller
           this.listView1.MultiSelect = false;
           this.listView1.Name = "listView1";
           this.listView1.ShowItemToolTips = true;
-          this.listView1.Size = new System.Drawing.Size(619, 339);
+          this.listView1.Size = new System.Drawing.Size(698, 339);
           this.listView1.SmallImageList = this.imageList1;
           this.listView1.TabIndex = 0;
           this.listView1.UseCompatibleStateImageBehavior = false;
@@ -149,7 +151,7 @@ namespace MediaPortal.MPInstaller
           // button2
           // 
           this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-          this.button2.Location = new System.Drawing.Point(700, 358);
+          this.button2.Location = new System.Drawing.Point(779, 358);
           this.button2.Name = "button2";
           this.button2.Size = new System.Drawing.Size(75, 23);
           this.button2.TabIndex = 2;
@@ -190,11 +192,12 @@ namespace MediaPortal.MPInstaller
           this.tabControl1.Location = new System.Drawing.Point(1, 1);
           this.tabControl1.Name = "tabControl1";
           this.tabControl1.SelectedIndex = 0;
-          this.tabControl1.Size = new System.Drawing.Size(791, 415);
+          this.tabControl1.Size = new System.Drawing.Size(870, 415);
           this.tabControl1.TabIndex = 5;
           // 
           // tabPage1
           // 
+          this.tabPage1.Controls.Add(this.button_local);
           this.tabPage1.Controls.Add(this.label3);
           this.tabPage1.Controls.Add(this.comboBox_filter);
           this.tabPage1.Controls.Add(this.button6);
@@ -211,17 +214,28 @@ namespace MediaPortal.MPInstaller
           this.tabPage1.Location = new System.Drawing.Point(4, 22);
           this.tabPage1.Name = "tabPage1";
           this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage1.Size = new System.Drawing.Size(783, 389);
+          this.tabPage1.Size = new System.Drawing.Size(862, 389);
           this.tabPage1.TabIndex = 0;
           this.tabPage1.Text = "Extensions";
           this.tabPage1.UseVisualStyleBackColor = true;
           this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
           // 
+          // button_local
+          // 
+          this.button_local.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+          this.button_local.Location = new System.Drawing.Point(476, 358);
+          this.button_local.Name = "button_local";
+          this.button_local.Size = new System.Drawing.Size(157, 23);
+          this.button_local.TabIndex = 12;
+          this.button_local.Text = "Install local extension ...";
+          this.button_local.UseVisualStyleBackColor = true;
+          this.button_local.Click += new System.EventHandler(this.button_local_Click);
+          // 
           // label3
           // 
           this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
           this.label3.AutoSize = true;
-          this.label3.Location = new System.Drawing.Point(479, 342);
+          this.label3.Location = new System.Drawing.Point(651, 342);
           this.label3.Name = "label3";
           this.label3.Size = new System.Drawing.Size(29, 13);
           this.label3.TabIndex = 11;
@@ -237,9 +251,9 @@ namespace MediaPortal.MPInstaller
             "Local",
             "Updates",
             "Online"});
-          this.comboBox_filter.Location = new System.Drawing.Point(482, 358);
+          this.comboBox_filter.Location = new System.Drawing.Point(654, 358);
           this.comboBox_filter.Name = "comboBox_filter";
-          this.comboBox_filter.Size = new System.Drawing.Size(121, 21);
+          this.comboBox_filter.Size = new System.Drawing.Size(119, 21);
           this.comboBox_filter.TabIndex = 10;
           this.comboBox_filter.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
           // 
@@ -304,11 +318,12 @@ namespace MediaPortal.MPInstaller
           // 
           this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
           this.label2.AutoSize = true;
-          this.label2.Location = new System.Drawing.Point(609, 342);
+          this.label2.Location = new System.Drawing.Point(651, 200);
           this.label2.Name = "label2";
           this.label2.Size = new System.Drawing.Size(36, 13);
           this.label2.TabIndex = 7;
           this.label2.Text = "View :";
+          this.label2.Visible = false;
           // 
           // button5
           // 
@@ -329,10 +344,11 @@ namespace MediaPortal.MPInstaller
           this.comboBox_view.Items.AddRange(new object[] {
             "List",
             "Icons"});
-          this.comboBox_view.Location = new System.Drawing.Point(612, 358);
+          this.comboBox_view.Location = new System.Drawing.Point(654, 216);
           this.comboBox_view.Name = "comboBox_view";
           this.comboBox_view.Size = new System.Drawing.Size(82, 21);
           this.comboBox_view.TabIndex = 6;
+          this.comboBox_view.Visible = false;
           this.comboBox_view.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
           // 
           // linkLabel1
@@ -346,11 +362,16 @@ namespace MediaPortal.MPInstaller
           this.linkLabel1.TabStop = true;
           this.linkLabel1.Text = "http://dukus.extra.hu/";
           // 
+          // openFileDialog1
+          // 
+          this.openFileDialog1.FileName = "openFileDialog1";
+          this.openFileDialog1.Filter = "MPE1 files|*.mpe1|All files|*.*";
+          // 
           // controlp
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.ClientSize = new System.Drawing.Size(792, 416);
+          this.ClientSize = new System.Drawing.Size(871, 416);
           this.Controls.Add(this.tabControl1);
           this.MinimumSize = new System.Drawing.Size(800, 450);
           this.Name = "controlp";
@@ -394,5 +415,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ComboBox comboBox_filter;
       private System.Windows.Forms.ToolStripMenuItem informationToolStripMenuItem;
       private System.Windows.Forms.ImageList imageList2;
+      private System.Windows.Forms.Button button_local;
+      private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
