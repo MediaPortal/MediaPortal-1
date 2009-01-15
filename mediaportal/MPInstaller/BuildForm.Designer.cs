@@ -49,7 +49,7 @@ namespace MediaPortal.MPInstaller
       // saveFileDialog1
       // 
       this.saveFileDialog1.DefaultExt = "mpi";
-      this.saveFileDialog1.Filter = "MPI files|*.mpi|ZIP files|*.zip|All files|*.*";
+      this.saveFileDialog1.Filter = "MPE1 files|*.MPE1|ZIP files|*.zip|All files|*.*";
       // 
       // textBox1
       // 

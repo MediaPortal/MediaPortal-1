@@ -925,9 +925,9 @@ namespace MediaPortal.Configuration.Sections
     public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
     {
       lv.Items.Clear();
-      for (int i = 0; i < mpih.lst.Count; i++)
+      for (int i = 0; i < mpih.Items.Count; i++)
       {
-        MPpackageStruct pk = (MPpackageStruct) mpih.lst[i];
+        MPpackageStruct pk = (MPpackageStruct) mpih.Items[i];
         if ((pk._intalerStruct.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
         {
           ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name,

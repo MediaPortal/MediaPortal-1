@@ -50,6 +50,7 @@ namespace MediaPortal.Configuration
       Config,
       CustomInputDefault,
       BurnerSupport,
+      Installer,
     }
 
     #endregion
@@ -344,6 +345,7 @@ private Config()
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
       Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
+      Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
     }
 
 

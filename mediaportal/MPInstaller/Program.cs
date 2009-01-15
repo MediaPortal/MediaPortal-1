@@ -27,6 +27,10 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using MediaPortal.MPInstaller;
+using MediaPortal.Configuration;
+using System.Threading;
 
 namespace MediaPortal.MPInstaller
 {
@@ -46,10 +50,17 @@ namespace MediaPortal.MPInstaller
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Thread.CurrentThread.Name = "MPInstaller";
+     
+      if (fil == @"/queue")
+      {
+        Application.Run(new QueueInstaller());
+        System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
+        return;
+      }
 
       if (!String.IsNullOrEmpty(fil))
       {
-        if (Path.GetExtension(fil) == ".mpi")
+        if (Path.GetExtension(fil) == ".mpi" && Path.GetExtension(fil) == ".mpe1")
         {
           wizard_1 wiz = new wizard_1();
           wiz.package.LoadFromFile(fil);

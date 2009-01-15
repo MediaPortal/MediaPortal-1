@@ -1,18 +1,21 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Net;
+using System.Collections;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.IO;
+using System.Net;
 using System.Xml;
+using System.Xml.Serialization;
+using System.Drawing;
+using System.Globalization;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Util;
+using MediaPortal;
+
 
 namespace MediaPortal.MPInstaller
 {
@@ -57,110 +60,105 @@ namespace MediaPortal.MPInstaller
       get
       {
         if (_intalerStruct.Group == "Skins")
-        {
           return true;
-        }
         else
-        {
           return false;
-        }
       }
     }
+   //public void instal_file(ProgressBar pb, ListBox lb, MPIFileList fl)
+   // {
+   //   string fil = FileName;
+   //   byte[] data = new byte[2048];
+   //   int nb = data.Length;
+   //   ZipEntry entry;
+   //   try
+   //   {
+   //     if (File.Exists(fil))
+   //     {
+   //       ZipInputStream s = new ZipInputStream(File.OpenRead(fil));
+   //       while ((entry = s.GetNextEntry()) != null)
+   //       {
+   //         //MessageBox.Show(entry.Name);
+   //         if (test_file(fl, entry))
+   //         {
+   //           string tpf;
+   //           if (InstallableSkinList.Contains(fl.SubType) || !fl.SkinType)
+   //           {
+   //             tpf = Path.GetFullPath(MPinstallerStruct.GetDirEntry(fl));
+   //           }
+   //           else
+   //           {
+   //             tpf = Path.GetTempFileName();
+   //           }
+   //           //if (fl.SkinType)
+   //           //{
+   //           if (!Directory.Exists(Path.GetDirectoryName(tpf)))
+   //             Directory.CreateDirectory(Path.GetDirectoryName(tpf));
+   //           //}
+   //           //MessageBox.Show(tpf);
+   //           FileStream fs = new FileStream(tpf, FileMode.Create);
+   //           if (pb != null)
+   //           {
+   //             pb.Minimum = 0;
+   //             pb.Maximum = (int)entry.Size;
+   //             pb.Value = 0;
+   //           }
+   //           while ((nb = s.Read(data, 0, data.Length)) > 0)
+   //           {
+   //             if (pb != null)
+   //             {
+   //               //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
+   //               pb.Value += nb;
+   //               pb.Refresh();
+   //               pb.Update();
+   //             }
+   //             fs.Write(data, 0, nb);
+   //           }
+   //           fs.Close();
+   //           if (fl.SkinType && fl.FileProperties.DefaultFile)
+   //           {
+   //             foreach (string sd in this.InstallableSkinList)
+   //               if (!this.SkinList.Contains(sd))
+   //               {
+   //                 string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl, sd));
+   //                 if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
+   //                   Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
+   //                 File.Copy(tpf, newtpf, true);
+   //                 this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
+   //                 if (lb != null)
+   //                 {
+   //                   lb.Items.Add(newtpf);
+   //                   lb.Refresh();
+   //                   lb.Update();
+   //                 }
 
-    //public void instal_file(ProgressBar pb, ListBox lb, MPIFileList fl)
-    // {
-    //   string fil = FileName;
-    //   byte[] data = new byte[2048];
-    //   int nb = data.Length;
-    //   ZipEntry entry;
-    //   try
-    //   {
-    //     if (File.Exists(fil))
-    //     {
-    //       ZipInputStream s = new ZipInputStream(File.OpenRead(fil));
-    //       while ((entry = s.GetNextEntry()) != null)
-    //       {
-    //         //MessageBox.Show(entry.Name);
-    //         if (test_file(fl, entry))
-    //         {
-    //           string tpf;
-    //           if (InstallableSkinList.Contains(fl.SubType) || !fl.SkinType)
-    //           {
-    //             tpf = Path.GetFullPath(MPinstallerStruct.GetDirEntry(fl));
-    //           }
-    //           else
-    //           {
-    //             tpf = Path.GetTempFileName();
-    //           }
-    //           //if (fl.SkinType)
-    //           //{
-    //           if (!Directory.Exists(Path.GetDirectoryName(tpf)))
-    //             Directory.CreateDirectory(Path.GetDirectoryName(tpf));
-    //           //}
-    //           //MessageBox.Show(tpf);
-    //           FileStream fs = new FileStream(tpf, FileMode.Create);
-    //           if (pb != null)
-    //           {
-    //             pb.Minimum = 0;
-    //             pb.Maximum = (int)entry.Size;
-    //             pb.Value = 0;
-    //           }
-    //           while ((nb = s.Read(data, 0, data.Length)) > 0)
-    //           {
-    //             if (pb != null)
-    //             {
-    //               //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
-    //               pb.Value += nb;
-    //               pb.Refresh();
-    //               pb.Update();
-    //             }
-    //             fs.Write(data, 0, nb);
-    //           }
-    //           fs.Close();
-    //           if (fl.SkinType && fl.FileProperties.DefaultFile)
-    //           {
-    //             foreach (string sd in this.InstallableSkinList)
-    //               if (!this.SkinList.Contains(sd))
-    //               {
-    //                 string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl, sd));
-    //                 if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
-    //                   Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
-    //                 File.Copy(tpf, newtpf, true);
-    //                 this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
-    //                 if (lb != null)
-    //                 {
-    //                   lb.Items.Add(newtpf);
-    //                   lb.Refresh();
-    //                   lb.Update();
-    //                 }
-
-    //               }
-    //           }
-    //           if (!InstallableSkinList.Contains(fl.SubType) && fl.SkinType)
-    //           {
-    //             File.Delete(tpf);
-    //           }
-    //           else
-    //           {
-    //             this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
-    //             if (lb != null)
-    //             {
-    //               lb.Items.Add(tpf);
-    //               lb.Refresh();
-    //               lb.Update();
-    //             }
-    //           }
-    //         }
-    //       }
-    //       s.Close();
-    //       load();
-    //     }
-    //   }
-    //   catch (Exception ex)
-    //   {
-    //     MessageBox.Show(ex.Message);
-    //   }
-    // }
+   //               }
+   //           }
+   //           if (!InstallableSkinList.Contains(fl.SubType) && fl.SkinType)
+   //           {
+   //             File.Delete(tpf);
+   //           }
+   //           else
+   //           {
+   //             this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
+   //             if (lb != null)
+   //             {
+   //               lb.Items.Add(tpf);
+   //               lb.Refresh();
+   //               lb.Update();
+   //             }
+   //           }
+   //         }
+   //       }
+   //       s.Close();
+   //       load();
+   //     }
+   //   }
+   //   catch (Exception ex)
+   //   {
+   //     MessageBox.Show(ex.Message);
+   //   }
+   // }
 
     public void instal_file(ProgressBar pb, ProgressBar pb1, ListBox lb)
     {
@@ -177,7 +175,7 @@ namespace MediaPortal.MPInstaller
           {
             MPIFileList fl = _intalerStruct.FindFileFromZipEntry(entry.Name);
             //MessageBox.Show(entry.Name+fl.FileName);
-            if ((fl != null) && test_file(fl, entry))
+            if ((fl!=null)&&test_file(fl, entry))
             {
               string tpf;
               if (InstallableSkinList.Contains(fl.SubType) || !fl.SkinType)
@@ -191,16 +189,14 @@ namespace MediaPortal.MPInstaller
               //if (fl.SkinType)
               //{
               if (!Directory.Exists(Path.GetDirectoryName(tpf)))
-              {
                 Directory.CreateDirectory(Path.GetDirectoryName(tpf));
-              }
               //}
               //MessageBox.Show(tpf);
               FileStream fs = new FileStream(tpf, FileMode.Create);
               if (pb != null)
               {
                 pb.Minimum = 0;
-                pb.Maximum = (int) entry.Size;
+                pb.Maximum = (int)entry.Size;
                 pb.Value = 0;
               }
               while ((nb = s.Read(data, 0, data.Length)) > 0)
@@ -218,14 +214,11 @@ namespace MediaPortal.MPInstaller
               if (fl.SkinType && fl.FileProperties.DefaultFile)
               {
                 foreach (string sd in this.InstallableSkinList)
-                {
                   if (!this.SkinList.Contains(sd))
                   {
                     string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl, sd));
                     if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
-                    {
                       Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
-                    }
                     File.Copy(tpf, newtpf, true);
                     this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
                     if (lb != null)
@@ -235,8 +228,8 @@ namespace MediaPortal.MPInstaller
                       lb.Update();
                       lb.Refresh();
                     }
+
                   }
-                }
               }
               if (!InstallableSkinList.Contains(fl.SubType) && fl.SkinType)
               {
@@ -253,10 +246,10 @@ namespace MediaPortal.MPInstaller
                 }
               }
             }
-            if (pb1 != null)
+            if (pb1 != null && pb1.Minimum > pb1.Value)
             {
               //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
-              pb1.Value ++;
+              pb1.Value++;
               pb1.Refresh();
               pb1.Update();
               pb1.Parent.Refresh();
@@ -269,11 +262,11 @@ namespace MediaPortal.MPInstaller
       }
       catch (Exception ex)
       {
-        MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+        MessageBox.Show(ex.Message+"\n"+ex.StackTrace);
       }
     }
 
-    private bool test_file(MPIFileList fl, ZipEntry ze)
+    bool test_file(MPIFileList fl, ZipEntry ze)
     {
       if ((fl.Type != MPinstallerStruct.INTERNAL_TYPE) && (_intalerStruct.FindFileInGroupState(fl)))
       {
@@ -283,27 +276,17 @@ namespace MediaPortal.MPInstaller
           {
             return true;
           }
-          else
-          {
-            return false;
-          }
+          else return false;
         }
         else
         {
           if (ze.Name.Contains(MPinstallerStruct.GetZipEntry(fl)))
-          {
             return true;
-          }
-          else
-          {
-            return false;
-          }
+          else return false;
         }
       }
       else
-      {
         return false;
-      }
     }
 
     public void installLanguage(ListBox lb)
@@ -314,18 +297,14 @@ namespace MediaPortal.MPInstaller
         LanguageString firstLs = this._intalerStruct.Language[0];
         mpih.Load(firstLs.language);
         if (lb != null)
-        {
           lb.Items.Add("Adding language :" + firstLs.language);
-        }
         foreach (LanguageString ls in this._intalerStruct.Language)
         {
           if (firstLs.language != ls.language)
           {
             mpih.Language.Sort(new LanguageStringComparer());
             if (lb != null)
-            {
               lb.Items.Add("Adding language :" + ls.language);
-            }
             mpih.Save();
             mpih.Load(ls.language);
           }
@@ -352,7 +331,7 @@ namespace MediaPortal.MPInstaller
               MPIFileList fl = _intalerStruct.FindFileFromZipEntry(entry.Name);
               if (fl != null)
               {
-                if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_EULA_TYPE)
+                if (fl.Type==MPinstallerStruct.TEXT_TYPE && fl.SubType==MPinstallerStruct.TEXT_EULA_TYPE)
                 {
                   txt_EULA = string.Empty;
                   while ((nb = s.Read(data, 0, data.Length)) > 0)
@@ -383,6 +362,7 @@ namespace MediaPortal.MPInstaller
         }
         catch (Exception)
         {
+          
         }
       }
     }
@@ -449,8 +429,7 @@ namespace MediaPortal.MPInstaller
                       }
                       catch (Exception setupFormException)
                       {
-                        MessageBox.Show(string.Format("Exception in plugin SetupForm loading : {0} ",
-                                                      setupFormException.Message));
+                        MessageBox.Show(string.Format("Exception in plugin SetupForm loading : {0} ", setupFormException.Message));
                       }
                     }
                   }
@@ -479,9 +458,7 @@ namespace MediaPortal.MPInstaller
           if (fl.Type == MPinstallerStruct.SKIN_TYPE || fl.Type == MPinstallerStruct.SKIN_MEDIA_TYPE)
           {
             if (!SkinList.Contains(fl.SubType))
-            {
               SkinList.Add(fl.SubType);
-            }
             containsSkin = true;
           }
           if (fl.Type == MPinstallerStruct.PLUGIN_TYPE)
@@ -498,7 +475,7 @@ namespace MediaPortal.MPInstaller
           foreach (string skinFolder in skinFolders)
           {
             bool isInvalidDirectory = false;
-            string[] invalidDirectoryNames = new string[] {"cvs"};
+            string[] invalidDirectoryNames = new string[] { "cvs" };
 
             string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
 
@@ -535,85 +512,85 @@ namespace MediaPortal.MPInstaller
 
   public class MPInstallHelper
   {
-    public ArrayList lst = new ArrayList();
-    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
+    public ArrayList items = new ArrayList();
+    string InstallDir = Config.GetFolder(Config.Dir.Installer);
     public string FileName = "";
+
+    public ArrayList Items
+    {
+      get { return items; }
+      set { items = value; }
+    }
+
 
     public MPInstallHelper()
     {
-      FileName = InstalDir + @"\" + "config.xml";
+      FileName = MpiFileList.LOCAL_LISTING;
       //LoadFromFile();
     }
-
+    
     public void NormalizeNames()
     {
-      string rfile = InstalDir + @"\cleanup.xml";
+      string rfile = InstallDir + @"\cleanup.xml";
       MpInstallerNameReplace replecer = new MpInstallerNameReplace();
       if (File.Exists(rfile))
       {
         replecer.Load(rfile);
       }
-      foreach (MPpackageStruct pk in this.lst)
+      foreach (MPpackageStruct pk in this.Items)
       {
         if (replecer.GroupSubstitutions.ContainsKey(pk._intalerStruct.Group))
         {
           pk._intalerStruct.Group = replecer.GroupSubstitutions[pk._intalerStruct.Group];
         }
-
-        foreach (KeyValuePair<string, string> kpv in replecer.NameCleanups)
+        
+        foreach(KeyValuePair<string,string> kpv in replecer.NameCleanups)
         {
           Regex replacregex = new Regex(kpv.Key);
           pk._intalerStruct.Name = replacregex.Replace(pk._intalerStruct.Name, kpv.Value);
         }
       }
     }
-
+    
     public void Compare(MPInstallHelper mp)
     {
-      foreach (MPpackageStruct pk in this.lst)
+      foreach (MPpackageStruct pk in this.Items)
       {
         pk.isNew = true;
       }
-      foreach (MPpackageStruct pk in mp.lst)
+      foreach (MPpackageStruct pk in mp.Items)
       {
         int idx = this.IndexOf(pk);
         if (idx > -1)
         {
-          if (((MPpackageStruct) this.lst[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
-          {
-            ((MPpackageStruct) this.lst[idx]).isUpdated = true;
-          }
-          ((MPpackageStruct) this.lst[idx]).isNew = false;
+          if (((MPpackageStruct)this.Items[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
+            ((MPpackageStruct)this.Items[idx]).isUpdated = true;
+          ((MPpackageStruct)this.Items[idx]).isNew = false;
+
         }
       }
     }
 
     public void Add(MPpackageStruct pk)
     {
-      for (int i = 0; i < lst.Count; i++)
+      for (int i = 0; i < Items.Count; i++)
       {
-        if (((MPpackageStruct) lst[i])._intalerStruct.Name.Trim().ToUpper() == pk._intalerStruct.Name.Trim().ToUpper())
-        {
-          lst.RemoveAt(i);
-        }
+        if (((MPpackageStruct)Items[i])._intalerStruct.Name.Trim().ToUpper() == pk._intalerStruct.Name.Trim().ToUpper())
+          Items.RemoveAt(i);
       }
-      lst.Add(pk);
-      if (!Directory.Exists(InstalDir))
+      Items.Add(pk);
+      if (!Directory.Exists(InstallDir))
       {
-        Directory.CreateDirectory(InstalDir);
+        Directory.CreateDirectory(InstallDir);
       }
-      if (Path.GetFullPath(pk.FileName) != Path.GetFullPath(InstalDir + @"\" + Path.GetFileName(pk.FileName)))
-      {
+      if (Path.GetFullPath(pk.FileName) != Path.GetFullPath(InstallDir + @"\" + pk._intalerStruct.Name + " " + pk._intalerStruct.Version + ".mpi"))
         if (File.Exists(Path.GetFullPath(pk.FileName)))
-        {
-          File.Copy(pk.FileName, InstalDir + @"\" + Path.GetFileName(pk.FileName), true);
-        }
-      }
+          File.Copy(pk.FileName, InstallDir + @"\" + pk._intalerStruct.Name + " " + pk._intalerStruct.Version + ".mpi", true);
     }
 
     public void AddRange(MPInstallHelper mpih)
     {
-      foreach (MPpackageStruct pk in mpih.lst)
+      foreach (MPpackageStruct pk in mpih.Items)
       {
         this.Add(pk);
       }
@@ -621,33 +598,35 @@ namespace MediaPortal.MPInstaller
 
     public int IndexOf(MPpackageStruct pk)
     {
-      for (int i = 0; i < lst.Count; i++)
+      for (int i = 0; i < Items.Count; i++)
       {
-        if (((MPpackageStruct) lst[i])._intalerStruct.Name.Trim() == pk._intalerStruct.Name.Trim())
-        {
+        if (((MPpackageStruct)Items[i])._intalerStruct.Name.Trim() == pk._intalerStruct.Name.Trim())
           return i;
-        }
       }
       return -1;
     }
 
+    /// <summary>
+    /// Finds the specified named package.
+    /// If not found return null
+    /// </summary>
+    /// <param name="name">The name of package</param>
+    /// <returns></returns>
     public MPpackageStruct Find(string name)
     {
-      for (int i = 0; i < lst.Count; i++)
+      for (int i = 0; i < Items.Count; i++)
       {
-        if (((MPpackageStruct) lst[i])._intalerStruct.Name.Trim() == name.Trim())
-        {
-          return (MPpackageStruct) lst[i];
-        }
+        if (((MPpackageStruct)Items[i])._intalerStruct.Name.Trim().ToUpper() == name.Trim().ToUpper())
+          return (MPpackageStruct)Items[i];
       }
       return null;
     }
 
     public void SaveToFile()
     {
-      if (!Directory.Exists(InstalDir))
+      if (!Directory.Exists(InstallDir))
       {
-        Directory.CreateDirectory(InstalDir);
+        Directory.CreateDirectory(InstallDir);
       }
       Stream myStream;
       if ((myStream = File.Open(FileName, FileMode.Create, FileAccess.Write, FileShare.None)) != null)
@@ -668,9 +647,9 @@ namespace MediaPortal.MPInstaller
           writer.WriteStartElement("MPinstalerS");
           writer.WriteElementString("ver", "1.00.000");
           writer.WriteStartElement("ExtensionList");
-          for (int i = 0; i < this.lst.Count; i++)
+          for (int i = 0; i < this.Items.Count; i++)
           {
-            MPpackageStruct it = (MPpackageStruct) this.lst[i];
+            MPpackageStruct it = (MPpackageStruct)this.Items[i];
             writer.WriteStartElement("Extension");
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Name", it._intalerStruct.Name);
@@ -687,10 +666,8 @@ namespace MediaPortal.MPInstaller
             for (int j = 0; j < it._intalerStruct.Uninstall.Count; j++)
             {
               writer.WriteStartElement("FileInfo");
-              writer.WriteElementString("FileName", ((UninstallInfo) it._intalerStruct.Uninstall[j]).Path);
-              writer.WriteElementString("Date",
-                                        Path.GetFileName(
-                                          ((UninstallInfo) it._intalerStruct.Uninstall[j]).Date.ToFileTime().ToString()));
+              writer.WriteElementString("FileName", ((UninstallInfo)it._intalerStruct.Uninstall[j]).Path);
+              writer.WriteElementString("Date", Path.GetFileName(((UninstallInfo)it._intalerStruct.Uninstall[j]).Date.ToFileTime().ToString()));
               writer.WriteEndElement();
             }
             writer.WriteEndElement();
@@ -705,9 +682,7 @@ namespace MediaPortal.MPInstaller
         finally
         {
           if (writer != null)
-          {
             writer.Close();
-          }
         }
         myStream.Close();
       }
@@ -743,7 +718,7 @@ namespace MediaPortal.MPInstaller
 
     /// <summary>
     /// Loads from FileName specified file.
-    /// By default from <b>InstalDir + @"\" + "config.xml</b>"
+    /// By default from <b>InstallDir + @"\" + "config.xml</b>"
     /// </summary>
     public void LoadFromFile()
     {
@@ -753,7 +728,7 @@ namespace MediaPortal.MPInstaller
         try
         {
           doc.Load(FileName);
-          lst.Clear();
+          Items.Clear();
           XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstalerS");
           XmlNodeList fileList = ver.SelectNodes("ExtensionList/Extension");
           foreach (XmlNode nodefile in fileList)
@@ -766,9 +741,7 @@ namespace MediaPortal.MPInstaller
             pkg._intalerStruct.UpdateURL = nodefile.SelectSingleNode("URL").InnerText;
             XmlNode grup_node = nodefile.SelectSingleNode("Group");
             if (grup_node != null)
-            {
               pkg._intalerStruct.Group = grup_node.InnerText;
-            }
             XmlNode node_logo = nodefile.SelectSingleNode("Logo");
             if (node_logo != null)
             {
@@ -784,34 +757,33 @@ namespace MediaPortal.MPInstaller
               }
               catch (Exception)
               {
+
               }
             }
             XmlNode node_des = nodefile.SelectSingleNode("Description");
             XmlNodeList uninstallList = nodefile.SelectNodes("Uninstall/FileInfo");
             foreach (XmlNode un in uninstallList)
             {
-              pkg._intalerStruct.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText,
-                                                                 un.SelectSingleNode("Date").InnerText));
+              pkg._intalerStruct.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText, un.SelectSingleNode("Date").InnerText));
             }
             if (node_des != null)
-            {
               pkg._intalerStruct.Description = node_des.InnerText;
-            }
             XmlNode nodeproperties = nodefile.SelectSingleNode("Properties");
             pkg._intalerStruct.ProiectProperties.Load(nodeproperties);
 
-            this.lst.Add(pkg);
+            this.Items.Add(pkg);
           }
           //XmlNode nodeoption = ver.SelectSingleNode("Option");
           //this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
           NormalizeNames();
         }
-        catch (Exception)
+        catch(Exception)
         {
-          MessageBox.Show("List loading error", "Error");
+          MessageBox.Show("List loading error","Error");
         }
       }
     }
+
   }
 
   public class MPLanguageHelper
@@ -823,8 +795,7 @@ namespace MediaPortal.MPInstaller
     public bool isLoaded = false;
     public bool oldFormat = false;
     private Dictionary<String, String> _availableLanguages;
-    private Encoding docencoding = null;
-
+    Encoding docencoding = null;
     public MPLanguageHelper()
     {
       Language = new List<LanguageString>();
@@ -840,6 +811,7 @@ namespace MediaPortal.MPInstaller
 
     public void Load_Names()
     {
+
       _availableLanguages = new Dictionary<string, string>();
 
       DirectoryInfo dir = new DirectoryInfo(Config.GetFolder(Config.Dir.Language));
@@ -856,25 +828,21 @@ namespace MediaPortal.MPInstaller
         catch (ArgumentException)
         {
         }
+
       }
     }
-
     public void Add(LanguageString ls)
     {
       this.Language.Sort(new LanguageStringComparer());
-      int idx = -1; // this.Language.BinarySearch(ls, new LanguageStringComparer());
+      int idx = -1;// this.Language.BinarySearch(ls, new LanguageStringComparer());
       for (int i = 0; i < this.Language.Count; i++)
-      {
         if (this.Language[i].dwCode.Trim() == ls.dwCode.Trim())
         {
           idx = i;
           break;
         }
-      }
       if (idx < 0)
-      {
         this.Language.Add(ls);
-      }
       else
       {
         this.Language[idx].language = ls.language;
@@ -882,8 +850,8 @@ namespace MediaPortal.MPInstaller
         this.Language[idx].sufix = ls.sufix;
         this.Language[idx].mapSting = ls.mapSting;
       }
-    }
 
+    }
     public void Load(string lg)
     {
       if (oldFormat)
@@ -900,32 +868,19 @@ namespace MediaPortal.MPInstaller
         }
       }
     }
-
     public void Save()
     {
       if (isLoaded)
-      {
         if (oldFormat)
-        {
           SaveMap_old(fileName);
-        }
         else
-        {
           SaveMap(fileName);
-        }
-      }
     }
 
     public bool SaveMap_old(string strFileName)
     {
-      if (strFileName == null)
-      {
-        return false;
-      }
-      if (strFileName == string.Empty)
-      {
-        return false;
-      }
+      if (strFileName == null) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         this.Language.Sort(new LanguageStringComparer());
@@ -938,9 +893,7 @@ namespace MediaPortal.MPInstaller
 
 
         if (!String.IsNullOrEmpty(this.iChars))
-        {
           writer.WriteElementString("characters", this.iChars.Trim());
-        }
 
 
         foreach (LanguageString ls in this.Language)
@@ -948,16 +901,13 @@ namespace MediaPortal.MPInstaller
           writer.WriteStartElement("string");
 
           if (!String.IsNullOrEmpty(ls.prefix))
-          {
             writer.WriteAttributeString("Prefix", ls.prefix);
-          }
           if (!String.IsNullOrEmpty(ls.sufix))
-          {
             writer.WriteAttributeString("Suffix", ls.sufix);
-          }
           writer.WriteElementString("id", ls.dwCode);
           writer.WriteElementString("value", ls.mapSting);
           writer.WriteEndElement();
+
         }
         writer.WriteEndElement();
 
@@ -974,14 +924,8 @@ namespace MediaPortal.MPInstaller
 
     public bool SaveMap(string strFileName)
     {
-      if (strFileName == null)
-      {
-        return false;
-      }
-      if (strFileName == string.Empty)
-      {
-        return false;
-      }
+      if (strFileName == null) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         this.Language.Sort(new LanguageStringComparer());
@@ -992,13 +936,9 @@ namespace MediaPortal.MPInstaller
         writer.WriteStartDocument();
         writer.WriteStartElement("Language");
         if (!String.IsNullOrEmpty(this.iName))
-        {
           writer.WriteAttributeString("name", this.iName.Trim());
-        }
         if (!String.IsNullOrEmpty(this.iChars))
-        {
           writer.WriteAttributeString("characters", this.iChars.Trim());
-        }
         writer.WriteStartElement("Section");
         writer.WriteAttributeString("name", "unmapped");
         foreach (LanguageString ls in this.Language)
@@ -1006,15 +946,12 @@ namespace MediaPortal.MPInstaller
           writer.WriteStartElement("String");
           writer.WriteAttributeString("id", ls.dwCode);
           if (!String.IsNullOrEmpty(ls.prefix))
-          {
             writer.WriteAttributeString("prefix", ls.prefix);
-          }
           if (!String.IsNullOrEmpty(ls.sufix))
-          {
             writer.WriteAttributeString("suffix", ls.sufix);
-          }
           writer.WriteValue(ls.mapSting);
           writer.WriteEndElement();
+
         }
         writer.WriteEndElement();
         writer.WriteEndElement();
@@ -1035,34 +972,23 @@ namespace MediaPortal.MPInstaller
         //            bool isPrefixEnabled = true;
         this.iChars = string.Empty;
         this.Language.Clear();
-        if (strFileName == null)
-        {
-          return false;
-        }
-        if (strFileName == string.Empty)
-        {
-          return false;
-        }
+        if (strFileName == null) return false;
+        if (strFileName == string.Empty) return false;
         try
         {
           XmlDocument doc = new XmlDocument();
           XmlTextReader reader = new XmlTextReader(strFileName);
           docencoding = reader.Encoding;
           doc.Load(reader);
-          if (doc.DocumentElement == null)
-          {
-            return false;
-          }
+          if (doc.DocumentElement == null) return false;
           string strRoot = doc.DocumentElement.Name;
-          if (strRoot != "strings")
-          {
-            return false;
-          }
+          if (strRoot != "strings") return false;
           XmlNode nodeChars = doc.DocumentElement.SelectSingleNode("/strings/characters");
 
           if (nodeChars != null)
           {
             iChars = nodeChars.InnerText;
+
           }
           XmlNodeList list = doc.DocumentElement.SelectNodes("/strings/string");
           foreach (XmlNode node in list)
@@ -1073,23 +999,14 @@ namespace MediaPortal.MPInstaller
 
             XmlAttribute prefix = node.Attributes["Prefix"];
             if (prefix != null)
-            {
               ls.prefix = prefix.Value;
-            }
-            else
-            {
-              ls.prefix = string.Empty;
-            }
+            else ls.prefix = string.Empty;
             ls.mapSting = node.SelectSingleNode("value").InnerText;
             XmlAttribute suffix = node.Attributes["Suffix"];
             if (suffix != null)
-            {
               ls.sufix = suffix.Value;
-            }
             else
-            {
               ls.sufix = string.Empty;
-            }
             this.Language.Add(ls);
           }
           reader.Close();
@@ -1101,6 +1018,7 @@ namespace MediaPortal.MPInstaller
           return false;
         }
       }
+
     }
 
     public bool LoadMap(string strFileName)
@@ -1108,29 +1026,17 @@ namespace MediaPortal.MPInstaller
       //            bool isPrefixEnabled = true;
       this.iChars = string.Empty;
       this.Language.Clear();
-      if (strFileName == null)
-      {
-        return false;
-      }
-      if (strFileName == string.Empty)
-      {
-        return false;
-      }
+      if (strFileName == null) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         XmlDocument doc = new XmlDocument();
         XmlTextReader reader = new XmlTextReader(strFileName);
         docencoding = reader.Encoding;
         doc.Load(reader);
-        if (doc.DocumentElement == null)
-        {
-          return false;
-        }
+        if (doc.DocumentElement == null) return false;
         string strRoot = doc.DocumentElement.Name;
-        if (strRoot != "Language")
-        {
-          return false;
-        }
+        if (strRoot != "Language") return false;
         //XmlNode nodeChars = doc.DocumentElement.SelectSingleNode("Language");
         XmlNode nodeChars = doc.DocumentElement;
         if (nodeChars != null)
@@ -1145,23 +1051,14 @@ namespace MediaPortal.MPInstaller
           ls.dwCode = node.Attributes["id"].Value;
           XmlAttribute prefix = node.Attributes["prefix"];
           if (prefix != null)
-          {
             ls.prefix = prefix.Value;
-          }
-          else
-          {
-            ls.prefix = string.Empty;
-          }
+          else ls.prefix = string.Empty;
           ls.mapSting = node.InnerText;
           XmlAttribute suffix = node.Attributes["suffix"];
           if (suffix != null)
-          {
             ls.sufix = suffix.Value;
-          }
           else
-          {
             ls.sufix = string.Empty;
-          }
           this.Language.Add(ls);
         }
         reader.Close();

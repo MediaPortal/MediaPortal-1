@@ -25,9 +25,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.IO;
+using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
@@ -35,33 +40,26 @@ namespace MediaPortal.MPInstaller
   {
     public int step = 0;
     public MPpackageStruct package;
-    private MPInstallHelper inst = new MPInstallHelper();
-    private List<ActionInfo> actions = new List<ActionInfo>();
+    MPInstallHelper inst = new MPInstallHelper();
+    List<ActionInfo> actions = new List<ActionInfo>();
 
-    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
-    private bool update = false;
-    private bool working = false;
-
+    string InstalDir = Config.GetFolder(Config.Dir.Installer);
+    bool update = false;
+    bool working = false;
     public wizard_1()
     {
       package = new MPpackageStruct();
       InitializeComponent();
     }
-
     public void starStep()
     {
       inst.LoadFromFile();
       if (inst.IndexOf(package) < 0)
-      {
         nextStep(1);
-      }
-      else if (MessageBox.Show("Extension already installed. Do you want continue ?", "", MessageBoxButtons.YesNo) ==
-               DialogResult.Yes)
-      {
-        nextStep(1);
-      }
+      else
+        if (MessageBox.Show("Extension already installed. Do you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+          nextStep(1);
     }
-
     public void StartUpdate()
     {
       update = true;
@@ -117,9 +115,7 @@ namespace MediaPortal.MPInstaller
             try
             {
               if (package.InstallPlugin != null)
-              {
                 package.InstallPlugin.OnStartInstall(ref package);
-              }
             }
             catch (Exception)
             {
@@ -146,32 +142,20 @@ namespace MediaPortal.MPInstaller
             {
               pictureBox2.Visible = false;
             }
-            richTextBox1.Text =
-              String.Format("  Name : {0} \n\n  Author : {1} \n\n  Version : {2} \n\n  Description :\n {3} \n",
-                            package._intalerStruct.Name, package._intalerStruct.Author, package._intalerStruct.Version,
-                            package._intalerStruct.Description);
+            richTextBox1.Text = String.Format("  Name : {0} \n\n  Author : {1} \n\n  Version : {2} \n\n  Description :\n {3} \n", package._intalerStruct.Name, package._intalerStruct.Author, package._intalerStruct.Version, package._intalerStruct.Description);
             foreach (string sk in package.SkinList)
             {
               if (package.InstalledSkinList.Contains(sk))
-              {
                 skinlister.Items.Add(sk, true);
-              }
               else
-              {
                 skinlister.Items.Add(sk, false);
-              }
             }
             foreach (string sk in package.InstalledSkinList)
             {
               if (!package.SkinList.Contains(sk))
-              {
                 skinlister.Items.Add(sk, true);
-              }
             }
-            if (!this.Visible)
-            {
-              this.ShowDialog();
-            }
+            if (!this.Visible) this.ShowDialog();
             break;
           }
         case 2:
@@ -234,20 +218,14 @@ namespace MediaPortal.MPInstaller
             foreach (string sk in package.SkinList)
             {
               if (package.InstalledSkinList.Contains(sk))
-              {
-                skinlister.Items.Add(sk, true);
-              }
+                  skinlister.Items.Add(sk, true);
               else
-              {
-                skinlister.Items.Add(sk, false);
-              }
+                  skinlister.Items.Add(sk, false);
             }
             foreach (string sk in package.InstalledSkinList)
             {
               if (!package.SkinList.Contains(sk))
-              {
                 skinlister.Items.Add(sk, true);
-              }
             }
             break;
           }
@@ -270,11 +248,8 @@ namespace MediaPortal.MPInstaller
             {
               Customize_list.Items.Add(gs.Name, !package._intalerStruct.ProiectProperties.SingleGroupSelect);
             }
-            if (package._intalerStruct.ProiectProperties.SingleGroupSelect &&
-                package._intalerStruct.SetupGroups.Count > 0)
-            {
+            if (package._intalerStruct.ProiectProperties.SingleGroupSelect && package._intalerStruct.SetupGroups.Count > 0)
               Customize_list.SetItemChecked(0, true);
-            }
             break;
           }
         case 7:
@@ -290,18 +265,15 @@ namespace MediaPortal.MPInstaller
             button_back.Visible = true;
             richTextBox1.Visible = true;
             richTextBox1.Text = String.Format("Install paths : \n");
-            foreach (Config.Dir option in Enum.GetValues(typeof (Config.Dir)))
+            foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
             {
-              richTextBox1.Text += String.Format("{0} - {1}\n", option, Config.GetFolder(option));
+                richTextBox1.Text += String.Format("{0} - {1}\n", option, Config.GetFolder(option));
             }
             break;
           }
         case 8:
           {
-            if (!this.Visible)
-            {
-              this.ShowDialog();
-            }
+            if (!this.Visible) this.ShowDialog();
             if (package.IsSkinPackage)
             {
               package.InstallableSkinList.AddRange(package.SkinList);
@@ -311,9 +283,7 @@ namespace MediaPortal.MPInstaller
               for (int i = 0; i < skinlister.Items.Count; i++)
               {
                 if (skinlister.GetItemChecked(i))
-                {
                   package.InstallableSkinList.Add(skinlister.Items[i].ToString());
-                }
               }
             }
             for (int i = 0; i < Customize_list.Items.Count; i++)
@@ -324,8 +294,7 @@ namespace MediaPortal.MPInstaller
             Customize_list.Visible = false;
             progressBar1.Visible = true;
             progressBar2.Visible = true;
-            listBox1.Visible = true;
-            ;
+            listBox1.Visible = true; ;
             label2.Text = "Instaling ...";
             button_next.Visible = false;
             button_back.Visible = true;
@@ -334,6 +303,7 @@ namespace MediaPortal.MPInstaller
             install();
             break;
           }
+
       }
     }
 
@@ -345,14 +315,14 @@ namespace MediaPortal.MPInstaller
       if (progressBar1 != null)
       {
         progressBar1.Minimum = 0;
-        progressBar1.Maximum = package._intalerStruct.FileList.Count + 1;
+        progressBar1.Maximum = package._intalerStruct.FileList.Count+1;
       }
       //for (int i = 0; i < package._intalerStruct.FileList.Count; i++)
       //{
       package.instal_file(progressBar2, progressBar1, listBox1);
-      //progressBar1.Value++;
-      //this.Refresh();
-      //this.Update();
+        //progressBar1.Value++;
+        //this.Refresh();
+        //this.Update();
       //}
       package.installLanguage(listBox1);
       button_next.Visible = false;
@@ -375,16 +345,15 @@ namespace MediaPortal.MPInstaller
       try
       {
         if (package.InstallPlugin != null)
-        {
           package.InstallPlugin.OnEndInstall(ref package);
-        }
         if (package._intalerStruct.ProiectProperties.ClearSkinCache)
         {
-          Directory.Delete(Config.GetFolder(Config.Dir.Cache), true);
+          Directory.Delete(Config.GetFolder(Config.Dir.Cache),true);
         }
       }
       catch (Exception)
       {
+        
       }
     }
 
@@ -399,10 +368,7 @@ namespace MediaPortal.MPInstaller
         case 1:
           break;
         case 2:
-          if (update)
-          {
-            step = 7;
-          }
+          if (update) step = 7;
           if (String.IsNullOrEmpty(package.txt_EULA))
           {
             step += m;
@@ -455,9 +421,7 @@ namespace MediaPortal.MPInstaller
         {
           int i = skinlister.Items.IndexOf(ac.ToString());
           if (skinlister.GetSelected(i))
-          {
             ac.ExecuteAction(package._intalerStruct);
-          }
         }
 
         this.Close();
@@ -478,7 +442,7 @@ namespace MediaPortal.MPInstaller
       inst.LoadFromFile();
       int index = -1;
       int ind = -1;
-      foreach (MPpackageStruct p in inst.lst)
+      foreach (MPpackageStruct p in inst.Items)
       {
         ind++;
         if (p._intalerStruct.Name.Trim() == tit.Trim())
@@ -488,30 +452,20 @@ namespace MediaPortal.MPInstaller
         }
       }
       if (index > -1)
-      {
-        if (((MPpackageStruct) inst.lst[index])._intalerStruct.Uninstall.Count > 0)
+        if (((MPpackageStruct)inst.Items[index])._intalerStruct.Uninstall.Count > 0)
         {
-          if (
-            MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) ==
-            DialogResult.Yes)
+          if (MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
           {
-            if (!this.Visible)
-            {
-              this.Show();
-            }
-            MPpackageStruct p = (MPpackageStruct) inst.lst[index];
+            if (!this.Visible) this.Show();
+            MPpackageStruct p = (MPpackageStruct)inst.Items[index];
             MPpackageStruct p_temp = new MPpackageStruct();
 
             if (File.Exists(InstalDir + @"\" + p.FileName))
-            {
               p_temp.LoadFromFile(InstalDir + @"\" + p.FileName);
-            }
             try
             {
               if (p_temp.InstallPlugin != null)
-              {
                 p_temp.InstallPlugin.OnStartUnInstall(ref p);
-              }
             }
             catch (Exception)
             {
@@ -530,17 +484,17 @@ namespace MediaPortal.MPInstaller
             progressBar1.Maximum = p._intalerStruct.Uninstall.Count;
             for (int i = 0; i < p._intalerStruct.Uninstall.Count; i++)
             {
-              UninstallInfo u = (UninstallInfo) p._intalerStruct.Uninstall[i];
+              UninstallInfo u = (UninstallInfo)p._intalerStruct.Uninstall[i];
               progressBar1.Value++;
               progressBar1.Update();
               progressBar1.Refresh();
-              if (File.Exists(u.Path))
+              if (System.IO.File.Exists(u.Path))
               {
-                if (File.GetCreationTime(u.Path) == u.Date)
+                if (System.IO.File.GetCreationTime(u.Path) == u.Date)
                 {
                   try
                   {
-                    File.Delete(u.Path);
+                    System.IO.File.Delete(u.Path);
                     listBox1.Items.Add(u.Path);
                     listBox1.Update();
                     listBox1.Refresh();
@@ -552,61 +506,46 @@ namespace MediaPortal.MPInstaller
                   }
                 }
                 else
-                {
                   listBox1.Items.Add("File date changed :" + u.Path);
-                }
               }
-              else
-              {
-                listBox1.Items.Add("File not found :" + u.Path);
-              }
+              else listBox1.Items.Add("File not found :" + u.Path);
             }
-            inst.lst.RemoveAt(index);
+            inst.Items.RemoveAt(index);
             inst.SaveToFile();
             if (p_temp.InstallPlugin != null)
             {
               try
               {
                 if (p_temp.InstallPlugin != null)
-                {
                   p_temp.InstallPlugin.OnEndUnInstall(ref p);
-                }
               }
               catch (Exception)
               {
+
               }
             }
           }
         }
         else
-        {
           MessageBox.Show("Uninstall information not found !");
-        }
-      }
       else
-      {
         MessageBox.Show("Uninstall information not found !");
-      }
 
       button_cancel.Text = "Finish";
     }
 
     private void Customize_list_ItemCheck(object sender, ItemCheckEventArgs e)
     {
-      if (working)
-      {
-        return;
-      }
+      if (working) return;
       working = true;
       if (package._intalerStruct.ProiectProperties.SingleGroupSelect)
       {
         for (int i = 0; i < Customize_list.Items.Count; i++)
-        {
           Customize_list.SetItemChecked(i, false);
-        }
       }
       Customize_list.SetItemChecked(e.Index, true);
       working = false;
     }
+
   }
 }

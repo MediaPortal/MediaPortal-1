@@ -48,7 +48,7 @@ namespace MediaPortal.MPInstaller
     {
       proiect_file_name = fil;
       InitializeComponent();
-      proiectt_textBox6.Items.AddRange(MPinstallerStruct.CategoriListing);
+      proiectt_textBox6.Items.AddRange(MPinstallerStruct.CategoryListing);
 
       OpenProjectFile(fil);
     }

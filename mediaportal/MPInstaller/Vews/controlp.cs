@@ -24,11 +24,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Collections;
-using System.Drawing;
+using System.ComponentModel;
 using System.IO;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Reflection;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.Util;
 using Pabo.MozBar;
 
 namespace MediaPortal.MPInstaller
@@ -37,14 +44,15 @@ namespace MediaPortal.MPInstaller
   {
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
-    private string InstallDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
+    private string InstallDir = Config.GetFolder(Config.Dir.Installer);
     private Hashtable[] groupTables;
-    private int groupColumn = 0;
+    int groupColumn = 0;
 
 
     public controlp()
     {
       InitializeComponent();
+
     }
 
     private void button2_Click(object sender, EventArgs e)
@@ -73,8 +81,8 @@ namespace MediaPortal.MPInstaller
     {
       LoadToListview(lst, listView1, strgroup);
     }
-
-    public bool TestView(MPpackageStruct pk, int idx)
+    
+    public bool TestView(MPpackageStruct pk, int idx )
     {
       switch (idx)
       {
@@ -83,25 +91,19 @@ namespace MediaPortal.MPInstaller
         case 1:
           {
             if (!pk.isNew)
-            {
               return true;
-            }
             break;
           }
         case 2:
           {
             if (pk.isUpdated)
-            {
               return true;
-            }
             break;
           }
         case 3:
           {
             if (pk.isNew)
-            {
               return true;
-            }
             break;
           }
       }
@@ -117,10 +119,10 @@ namespace MediaPortal.MPInstaller
     public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
     {
       lv.Items.Clear();
-      for (int i = 0; i < mpih.lst.Count; i++)
+      for (int i = 0; i < mpih.Items.Count; i++)
       {
-        MPpackageStruct pk = (MPpackageStruct) mpih.lst[i];
-        if ((pk._intalerStruct.Group == strgroup || strgroup == "All") && TestView(pk, comboBox_filter.SelectedIndex))
+        MPpackageStruct pk = (MPpackageStruct)mpih.Items[i];
+        if ((pk._intalerStruct.Group == strgroup || strgroup == "All")&&TestView(pk,comboBox_filter.SelectedIndex))
         {
           ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, 0);
           if (pk._intalerStruct.Logo != null)
@@ -128,20 +130,14 @@ namespace MediaPortal.MPInstaller
             imageList1.Images.Add(pk._intalerStruct.Logo);
             item1.ImageIndex = imageList1.Images.Count - 1;
           }
-          if (pk.isNew)
-          {
-            item1.ForeColor = Color.Blue;
-          }
-          if (pk.isUpdated)
-          {
-            item1.ForeColor = Color.BlueViolet;
-          }
+          if (pk.isNew) item1.ForeColor = Color.Blue;
+          if (pk.isUpdated) item1.ForeColor = Color.BlueViolet;
           item1.ToolTipText = pk._intalerStruct.Description;
           item1.SubItems.Add(pk._intalerStruct.Author);
           item1.SubItems.Add(pk._intalerStruct.Version);
           item1.SubItems.Add(Path.GetFileName(pk.FileName));
           item1.SubItems.Add(pk._intalerStruct.Group);
-          lv.Items.AddRange(new ListViewItem[] {item1});
+          lv.Items.AddRange(new ListViewItem[] { item1 });
         }
       }
       //lv.Items.AddRange(itemlist);
@@ -162,6 +158,7 @@ namespace MediaPortal.MPInstaller
 
       // Start with the groups created for the Title column.
       SetGroups(0, myListView);
+
     }
 
     private void SetGroups(int column, ListView myListView)
@@ -170,7 +167,7 @@ namespace MediaPortal.MPInstaller
       myListView.Groups.Clear();
 
       // Retrieve the hash table corresponding to the column.
-      Hashtable groups = (Hashtable) groupTables[column];
+      Hashtable groups = (Hashtable)groupTables[column];
 
       // Copy the groups for the column to an array.
       ListViewGroup[] groupsArray = new ListViewGroup[groups.Count];
@@ -195,10 +192,9 @@ namespace MediaPortal.MPInstaller
         }
 
         // Assign the item to the matching group.
-        item.Group = (ListViewGroup) groups[subItemText];
+        item.Group = (ListViewGroup)groups[subItemText];
       }
     }
-
     private Hashtable CreateGroupsTable(int column, ListView myListView)
     {
       // Create a Hashtable object.
@@ -222,7 +218,7 @@ namespace MediaPortal.MPInstaller
         if (!groups.Contains(subItemText))
         {
           groups.Add(subItemText, new ListViewGroup(subItemText,
-                                                    HorizontalAlignment.Left));
+              HorizontalAlignment.Left));
         }
       }
 
@@ -245,9 +241,9 @@ namespace MediaPortal.MPInstaller
       public int Compare(object x, object y)
       {
         int result = String.Compare(
-          ((ListViewGroup) x).Header,
-          ((ListViewGroup) y).Header
-          );
+            ((ListViewGroup)x).Header,
+            ((ListViewGroup)y).Header
+        );
         if (order == SortOrder.Ascending)
         {
           return result;
@@ -268,27 +264,23 @@ namespace MediaPortal.MPInstaller
     private void button4_Click(object sender, EventArgs e)
     {
       wizard_1 wiz = new wizard_1();
-      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Base) + @"\" + "Installer" + @"\" +
-                               listView1.SelectedItems[0].SubItems[3].Text);
+      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
       if (wiz.package.isValid)
       {
         wiz.starStep();
       }
       else
-      {
         MessageBox.Show("Invalid package !");
-      }
+
     }
 
-    private void button5_Click(object sender, EventArgs e)
+     private void button5_Click(object sender, EventArgs e)
     {
       if (listView1.SelectedItems.Count > 0)
       {
         MPpackageStruct pk = lst.Find(listView1.SelectedItems[0].SubItems[0].Text);
         if (pk == null)
-        {
           return;
-        }
         string file_name = pk.FileName;
         string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
         download_form dw = new download_form(pk._intalerStruct.UpdateURL, temp_file);
@@ -305,9 +297,7 @@ namespace MediaPortal.MPInstaller
             LoadToListview("All");
           }
           else
-          {
             MessageBox.Show("Invalid package !");
-          }
         }
       }
     }
@@ -315,8 +305,7 @@ namespace MediaPortal.MPInstaller
     private void button1_Click(object sender, EventArgs e)
     {
       wizard_1 wiz = new wizard_1();
-      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Base) + @"\" + "Installer" + @"\" +
-                               listView1.SelectedItems[0].SubItems[3].Text);
+      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
       if (wiz.package.isValid)
       {
         wiz.uninstall(listView1.SelectedItems[0].Text);
@@ -325,9 +314,8 @@ namespace MediaPortal.MPInstaller
         LoadToListview("All");
       }
       else
-      {
         MessageBox.Show("Invalid package !");
-      }
+
     }
 
     private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -347,6 +335,7 @@ namespace MediaPortal.MPInstaller
 
       // Set the groups to those created for the clicked column.
       SetGroups(e.Column, listView1);
+
     }
 
     private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -354,12 +343,9 @@ namespace MediaPortal.MPInstaller
       if (comboBox_view.Text == "Icons")
       {
         SetGroups(4, listView1);
-        listView1.View = View.LargeIcon;
+        listView1.View = System.Windows.Forms.View.LargeIcon;
       }
-      else
-      {
-        listView1.View = View.Details;
-      }
+      else listView1.View = System.Windows.Forms.View.Details;
     }
 
     private void tabPage1_Enter(object sender, EventArgs e)
@@ -392,35 +378,31 @@ namespace MediaPortal.MPInstaller
               int idx = temp_mpih.IndexOf(pk);
               if (idx > -1)
               {
-                //if (((MPpackageStruct)temp_mpih.lst[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
+               //if (((MPpackageStruct)temp_mpih.lst[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
                 //{
-                if (
-                  MessageBox.Show("New version found!. Do you want download and install ?", "", MessageBoxButtons.YesNo) ==
-                  DialogResult.Yes)
-                {
-                  MPpackageStruct pk1 = ((MPpackageStruct) temp_mpih.lst[idx]);
-                  file_name = pk1.FileName;
-                  temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-                  download_form dw1 = new download_form(pk1._intalerStruct.UpdateURL, temp_file);
-                  dw1.Text = pk1._intalerStruct.UpdateURL + "/" + pk1.FileName + "/" + pk1._intalerStruct.Version;
-                  dw1.ShowDialog();
-                  if (File.Exists(temp_file))
+                  if (MessageBox.Show("New version found!. Do you want download and install ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
                   {
-                    wizard_1 wiz = new wizard_1();
-                    wiz.package.LoadFromFile(temp_file);
-                    if (wiz.package.isValid)
+                    MPpackageStruct pk1 = ((MPpackageStruct)temp_mpih.Items[idx]);
+                    file_name = pk1.FileName;
+                    temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
+                    download_form dw1 = new download_form(pk1._intalerStruct.UpdateURL , temp_file);
+                    dw1.Text = pk1._intalerStruct.UpdateURL + "/" + pk1.FileName + "/" + pk1._intalerStruct.Version;
+                    dw1.ShowDialog();
+                    if (File.Exists(temp_file))
                     {
-                      wiz.starStep();
-                      listView1.Items.Clear();
-                      lst.LoadFromFile();
-                      LoadToListview("All");
-                    }
-                    else
-                    {
-                      MessageBox.Show("Invalid package !");
+                      wizard_1 wiz = new wizard_1();
+                      wiz.package.LoadFromFile(temp_file);
+                      if (wiz.package.isValid)
+                      {
+                        wiz.starStep();
+                        listView1.Items.Clear();
+                        lst.LoadFromFile();
+                        LoadToListview("All");
+                      }
+                      else
+                        MessageBox.Show("Invalid package !");
                     }
                   }
-                }
                 //}
                 //else
                 //{
@@ -455,14 +437,14 @@ namespace MediaPortal.MPInstaller
       it1.Images.NormalImage = null;
       it1.Images.Selected = 0;
       it1.Images.SelectedImage = null;
-      it1.Location = new Point(2, 2);
-      it1.Size = new Size(151, 57);
+      it1.Location = new System.Drawing.Point(2, 2);
+      it1.Size = new System.Drawing.Size(151, 57);
       it1.TabIndex = 0;
       it1.Text = "All";
-      it1.TextAlign = MozTextAlign.Right;
-      mozPane1.Items.AddRange(new MozItem[] {it1});
+      it1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
+      mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] { it1 });
       int cn = 1;
-      foreach (string s in MPinstallerStruct.CategoriListing)
+      foreach (string s in MPinstallerStruct.CategoryListing)
       {
         MozItem it = new MozItem();
         it.Images.Focus = cn;
@@ -471,12 +453,12 @@ namespace MediaPortal.MPInstaller
         it.Images.NormalImage = null;
         it.Images.Selected = cn;
         it.Images.SelectedImage = null;
-        it.Location = new Point(2, 2);
-        it.Size = new Size(151, 57);
+        it.Location = new System.Drawing.Point(2, 2);
+        it.Size = new System.Drawing.Size(151, 57);
         it.TabIndex = 0;
         it.Text = s;
-        it.TextAlign = MozTextAlign.Right;
-        mozPane1.Items.AddRange(new MozItem[] {it});
+        it.TextAlign = Pabo.MozBar.MozTextAlign.Right;
+        mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] { it });
         cn++;
       }
     }
@@ -495,16 +477,14 @@ namespace MediaPortal.MPInstaller
       contextMenuStrip1.Enabled = false;
       if (listView1.SelectedItems.Count > 0)
       {
-        MPpackageStruct pk = lst.Find(listView1.SelectedItems[0].Text);
-        contextMenuStrip1.Enabled = true;
+        MPpackageStruct pk=lst.Find(listView1.SelectedItems[0].Text);
+        contextMenuStrip1.Enabled= true; 
         if (!pk.isNew)
         {
           button1.Enabled = true;
           button4.Enabled = true;
           if (pk.isUpdated)
-          {
             button3.Enabled = true;
-          }
         }
         else
         {
@@ -522,13 +502,12 @@ namespace MediaPortal.MPInstaller
 
     private void button6_Click(object sender, EventArgs e)
     {
-      string temp_file = InstallDir + @"\online.xml";
+      string temp_file = MpiFileList.ONLINE_LISTING;
       if (!Directory.Exists(InstallDir))
       {
         Directory.CreateDirectory(InstallDir);
       }
-      download_form dw = new download_form(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml",
-                                           temp_file);
+      download_form dw = new download_form(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
       dw.Text = "Download online list";
       dw.ShowDialog();
       LoadListFiles();
@@ -540,12 +519,12 @@ namespace MediaPortal.MPInstaller
     {
       lst.LoadFromFile();
       lst.NormalizeNames();
-      for (int i = 0; i < lst.lst.Count; i++)
+      for (int i = 0; i < lst.Items.Count; i++)
       {
-        ((MPpackageStruct) lst.lst[i]).isInstalled = true;
-        ((MPpackageStruct) lst.lst[i]).isLocal = true;
+        ((MPpackageStruct)lst.Items[i]).isInstalled = true;
+        ((MPpackageStruct)lst.Items[i]).isLocal = true;
       }
-      string temp_file = InstallDir + @"\online.xml";
+      string temp_file = MpiFileList.ONLINE_LISTING;
       if (File.Exists(temp_file))
       {
         lst_online.LoadFromFile(temp_file);
@@ -585,9 +564,9 @@ namespace MediaPortal.MPInstaller
     public int Compare(object x, object y)
     {
       int result = String.Compare(
-        ((ListViewGroup) x).Header,
-        ((ListViewGroup) y).Header
-        );
+          ((ListViewGroup)x).Header,
+          ((ListViewGroup)y).Header
+      );
       if (order == SortOrder.Ascending)
       {
         return result;

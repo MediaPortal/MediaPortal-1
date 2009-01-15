@@ -253,6 +253,10 @@
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
+      <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>
+      <Name>MPInstaller.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
       <Name>RemotePlugins</Name>
@@ -307,6 +311,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
+    <Compile Include="GUIExtensions\GUIExtensions.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
     <Compile Include="GUIPictures\GUISlidePicture.cs" />
     <Compile Include="GUIPictures\SlideCache.cs" />

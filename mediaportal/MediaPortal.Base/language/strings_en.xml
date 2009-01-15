@@ -1468,6 +1468,17 @@
     <String id="13033">Most Recently Launched</String>
     <String id="13034">Title</String>
     <String id="13041">Show File Info</String>
+	<String id="14001" prefix="My ">Extensions</String>
+	<String id="14002">Views</String>
+    <String id="14003">Installed extensions</String>	
+    <String id="14004">Online extensions</String>	
+    <String id="14005">Install extension</String>		
+    <String id="14006">UnInstall extension</String>			
+    <String id="14007">ReInstall extension</String>			
+    <String id="14008">Revoke last action</String>		
+	<String id="14009">In next restart This action will be executed</String>		
+	<String id="14010">Download extension</String>	
+	<String id="14011">Select a option</String>		
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
