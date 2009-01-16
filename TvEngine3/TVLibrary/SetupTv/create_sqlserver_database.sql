@@ -50,6 +50,11 @@ CREATE TABLE Setting(
 )
 GO
 
+CREATE NONCLUSTERED INDEX IDX_Setting_Tag ON Setting
+(
+	tag ASC
+)
+GO
 
 CREATE TABLE TvMovieMapping(
 	idMapping int IDENTITY(1,1) NOT NULL,
@@ -403,7 +408,7 @@ CREATE TABLE Program(
 	startTime datetime NOT NULL,
 	endTime datetime NOT NULL,
 	title varchar(2000) NOT NULL,
-	description varchar(8000) NOT NULL,
+	description varchar(20000) NOT NULL,
 	seriesNum varchar(200) NOT NULL,
 	episodeNum varchar(200) NOT NULL,
 	genre varchar(200) NOT NULL,
@@ -466,6 +471,18 @@ CREATE TABLE Schedule(
 )
 GO
 
+CREATE NONCLUSTERED INDEX IDX_Schedule_ScheduleType ON Schedule
+(
+	scheduleType ASC
+)
+INCLUDE
+(
+    idChannel,
+    programName,
+    startTime,
+    endTime
+)
+GO
 
 CREATE TABLE TuningDetail(
 	idTuning int IDENTITY(1,1) NOT NULL,

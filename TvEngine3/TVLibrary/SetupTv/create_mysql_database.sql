@@ -117,7 +117,8 @@ CREATE TABLE "Channel" (
   "displayName" varchar(200) NOT NULL,
   "epgHasGaps" bit(1) default NULL,
   PRIMARY KEY  ("idChannel"),
-  KEY "idxChannel" ("isTv","sortOrder")
+  KEY "idxChannel" ("isTv","sortOrder"),
+  KEY "idxChannelRadio" ("isRadio")
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
@@ -328,7 +329,7 @@ CREATE TABLE "Program" (
   "startTime" datetime NOT NULL,
   "endTime" datetime NOT NULL,
   "title" varchar(2000) NOT NULL,
-  "description" varchar(8000) NOT NULL,
+  "description" varchar(20000) NOT NULL,
   "seriesNum" varchar(200) NOT NULL,
   "episodeNum" varchar(200) NOT NULL,
   "genre" varchar(200) NOT NULL,
@@ -372,7 +373,8 @@ CREATE TABLE "RadioGroupMap" (
   "SortOrder" int(11) NOT NULL,
   PRIMARY KEY  ("idMap"),
   KEY "FK_RadioGroupMap_Channel" ("idChannel"),
-  KEY "FK_RadioGroupMap_ChannelGroup" ("idGroup")
+  KEY "FK_RadioGroupMap_ChannelGroup" ("idGroup"),
+  KEY "IDX_RadioGroupMap_SortOrder" ("SortOrder")
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
@@ -443,7 +445,11 @@ CREATE TABLE "Schedule" (
   "canceled" datetime NOT NULL,
   "recommendedCard" int(11) NOT NULL,
   PRIMARY KEY  ("id_Schedule"),
-  KEY "FK_Schedule_Channel" ("idChannel")
+  KEY "FK_Schedule_Channel" ("idChannel"),
+  KEY "IDX_Schedule_ScheduleType" ("scheduleType"),
+  KEY "IDX_Schedule_ProgramName" ("programName"),
+  KEY "IDX_Schedule_StartTime" ("startTime"),
+  KEY "IDX_Schedule_EndTime" ("endTime")
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
@@ -473,7 +479,8 @@ CREATE TABLE "Setting" (
   "idSetting" int(11) NOT NULL auto_increment,
   "tag" varchar(200) NOT NULL,
   "value" varchar(4096) NOT NULL,
-  PRIMARY KEY  ("idSetting")
+  PRIMARY KEY  ("idSetting"),
+  KEY "IDX_Setting_Tag" ("tag")
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
@@ -538,7 +545,8 @@ CREATE TABLE "TuningDetail" (
   "url" varchar(200) NOT NULL,
   "bitrate" int(11) NOT NULL,
   PRIMARY KEY  ("idTuning"),
-  KEY "IDX_TuningDetail1" ("idChannel")
+  KEY "IDX_TuningDetail1" ("idChannel"),
+  KEY "IDX_TuningDetail_Edit" ("networkId","transportId","serviceId")
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 #
 
