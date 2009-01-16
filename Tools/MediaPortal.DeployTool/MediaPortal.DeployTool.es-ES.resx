@@ -504,4 +504,10 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Por favor, selecciona la configuración para las descargas:</value>
   </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>No hay espacio suficiente en el disco especificado! Para la instalación de MediaPortal son necesarios {0} MB de espacio libre en el disco.</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>No se ha encontrado conexión a Internet! Para continuar con la instalación es necesaria una conexión activa.</value>
+  </data>
 </root>
