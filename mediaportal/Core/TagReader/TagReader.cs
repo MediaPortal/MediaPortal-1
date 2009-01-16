@@ -76,7 +76,15 @@ namespace MediaPortal.TagReader
         MusicTag musictag = new MusicTag();
         string[] artists = tag.Tag.Performers;
         if (artists.Length > 0)
+        {
           musictag.Artist = String.Join(";", artists).Trim(trimChars);
+          // The AC/DC exception
+          if (musictag.Artist.Contains("AC;DC"))
+          {
+            musictag.Artist = musictag.Artist.Replace("AC;DC", "AC/DC");
+          }
+        }
+
         musictag.Album = tag.Tag.Album;
         musictag.HasAlbumArtist = false;
         string[] albumartists = tag.Tag.AlbumArtists;
@@ -84,6 +92,11 @@ namespace MediaPortal.TagReader
         {
           musictag.AlbumArtist = String.Join(";", albumartists).Trim(trimChars);
           musictag.HasAlbumArtist = true;
+          // The AC/DC exception
+          if (musictag.AlbumArtist.Contains("AC;DC"))
+          {
+            musictag.AlbumArtist = musictag.AlbumArtist.Replace("AC;DC", "AC/DC");
+          }
         }
         musictag.BitRate = tag.Properties.AudioBitrate;
         musictag.Comment = tag.Tag.Comment;
