@@ -510,4 +510,7 @@ Proseguire l'installazione è un vostro rischio.</value>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
     <value>Connessione internet non trovata ! Per continuare l'installazione è necessaria una connessione internet.</value>
   </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Non c'è spazio libero sufficiente sul disco specificato! L'installazione di MediaPortal necessita di almeno {0} MB di spazio libero.</value>
+  </data>
 </root>
