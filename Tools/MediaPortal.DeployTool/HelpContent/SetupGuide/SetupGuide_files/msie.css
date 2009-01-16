@@ -1,8 +1,8 @@
-#pagetrail LI {
-	PADDING-RIGHT: 0.3em; PADDING-LEFT: 0.3em; PADDING-BOTTOM: 0px; BORDER-LEFT: #aaa 1px solid; PADDING-TOP: 0px
+*#pagetrail LI {
+	BORDER-LEFT: #aaa 1px solid; PADDING-BOTTOM: 0px; PADDING-LEFT: 0.3em; PADDING-RIGHT: 0.3em; PADDING-TOP: 0px
 }
-#pagelocation LI {
-	PADDING-RIGHT: 0.3em; PADDING-LEFT: 0.3em; PADDING-BOTTOM: 0px; BORDER-LEFT: #aaa 1px solid; PADDING-TOP: 0px
+*#pagelocation LI {
+	BORDER-LEFT: #aaa 1px solid; PADDING-BOTTOM: 0px; PADDING-LEFT: 0.3em; PADDING-RIGHT: 0.3em; PADDING-TOP: 0px
 }
 SPAN.anchor {
 	DISPLAY: none
