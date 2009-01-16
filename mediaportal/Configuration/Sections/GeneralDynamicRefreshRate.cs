@@ -26,11 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -70,8 +66,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://wiki.team-mediaportal.com/");
       dataGridViewRR.Rows.Clear();
     }
-    
-    
+
 
     /// <summary>
     /// Clean up any resources being used.
@@ -123,28 +118,28 @@ namespace MediaPortal.Configuration.Sections
         parameters[1] = cinemaFPS; // fps
         parameters[2] = cinemaHz; //hz
         parameters[3] = cinemaExtCmd; //action
-        dataGridViewRR.Rows.Add( (object[]) parameters);
+        dataGridViewRR.Rows.Add((object[]) parameters);
 
         parameters = new String[4];
         parameters[0] = "PAL";
         parameters[1] = palFPS; // fps
         parameters[2] = palHz; //hz
         parameters[3] = palExtCmd; //action
-        dataGridViewRR.Rows.Add((object[])parameters);
+        dataGridViewRR.Rows.Add((object[]) parameters);
 
         parameters = new String[4];
         parameters[0] = "NTSC";
         parameters[1] = ntscFPS; // fps
         parameters[2] = ntscHz; //hz
         parameters[3] = ntscExtCmd; //action
-        dataGridViewRR.Rows.Add((object[])parameters);
+        dataGridViewRR.Rows.Add((object[]) parameters);
 
         parameters = new String[4];
         parameters[0] = "TV";
         parameters[1] = tvFPS; // fps
         parameters[2] = tvHz; //hz
         parameters[3] = tvExtCmd; //action
-        dataGridViewRR.Rows.Add((object[])parameters);
+        dataGridViewRR.Rows.Add((object[]) parameters);
       }
 
       updateStates();
@@ -177,20 +172,20 @@ namespace MediaPortal.Configuration.Sections
         string tvHz = "";
 
         cinemaFPS = (string) dataGridViewRR.Rows[0].Cells[1].Value;
-        cinemaHz = (string)dataGridViewRR.Rows[0].Cells[2].Value;
-        cinemaExtCmd = (string)dataGridViewRR.Rows[0].Cells[3].Value;
+        cinemaHz = (string) dataGridViewRR.Rows[0].Cells[2].Value;
+        cinemaExtCmd = (string) dataGridViewRR.Rows[0].Cells[3].Value;
 
-        palFPS = (string)dataGridViewRR.Rows[1].Cells[1].Value;
-        palHz = (string)dataGridViewRR.Rows[1].Cells[2].Value;
-        palExtCmd = (string)dataGridViewRR.Rows[1].Cells[3].Value;
+        palFPS = (string) dataGridViewRR.Rows[1].Cells[1].Value;
+        palHz = (string) dataGridViewRR.Rows[1].Cells[2].Value;
+        palExtCmd = (string) dataGridViewRR.Rows[1].Cells[3].Value;
 
-        ntscFPS = (string)dataGridViewRR.Rows[2].Cells[1].Value;
-        ntscHz = (string)dataGridViewRR.Rows[2].Cells[2].Value;
-        ntscExtCmd = (string)dataGridViewRR.Rows[2].Cells[3].Value;
+        ntscFPS = (string) dataGridViewRR.Rows[2].Cells[1].Value;
+        ntscHz = (string) dataGridViewRR.Rows[2].Cells[2].Value;
+        ntscExtCmd = (string) dataGridViewRR.Rows[2].Cells[3].Value;
 
-        tvFPS = (string)dataGridViewRR.Rows[3].Cells[1].Value;
-        tvHz = (string)dataGridViewRR.Rows[3].Cells[2].Value;
-        tvExtCmd = (string)dataGridViewRR.Rows[3].Cells[3].Value;
+        tvFPS = (string) dataGridViewRR.Rows[3].Cells[1].Value;
+        tvHz = (string) dataGridViewRR.Rows[3].Cells[2].Value;
+        tvExtCmd = (string) dataGridViewRR.Rows[3].Cells[3].Value;
 
 
         xmlwriter.SetValue("general", "cinema_fps", cinemaFPS);
@@ -206,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("general", "ntsc_ext", ntscExtCmd);
 
         xmlwriter.SetValue("general", "tv_fps", tvFPS);
-        xmlwriter.SetValue("general", "tv_ext", tvExtCmd);        
+        xmlwriter.SetValue("general", "tv_ext", tvExtCmd);
         xmlwriter.SetValue("general", "tv_hz", tvHz);
       }
     }
@@ -224,8 +219,10 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GeneralDynamicRefreshRate));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (GeneralDynamicRefreshRate));
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 =
+        new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBoxRR = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtDefaultHz = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblDescription = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -241,14 +238,16 @@ namespace MediaPortal.Configuration.Sections
       this.gridColRR = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.gridColAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.groupBoxRR.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRR)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.dataGridViewRR)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxRR
       // 
-      this.groupBoxRR.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRR.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRR.Controls.Add(this.txtDefaultHz);
       this.groupBoxRR.Controls.Add(this.lblDescription);
       this.groupBoxRR.Controls.Add(this.dataGridViewRR);
@@ -268,8 +267,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtDefaultHz
       // 
-      this.txtDefaultHz.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtDefaultHz.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtDefaultHz.BorderColor = System.Drawing.Color.Empty;
       this.txtDefaultHz.Location = new System.Drawing.Point(245, 350);
       this.txtDefaultHz.Name = "txtDefaultHz";
@@ -289,15 +290,20 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.dataGridViewRR.AllowUserToAddRows = false;
       this.dataGridViewRR.AllowUserToDeleteRows = false;
-      this.dataGridViewRR.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this.dataGridViewRR.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.gridColType,
-            this.gridColFramerates,
-            this.gridColRR,
-            this.gridColAction});
+      this.dataGridViewRR.ColumnHeadersHeightSizeMode =
+        System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dataGridViewRR.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[]
+                                             {
+                                               this.gridColType,
+                                               this.gridColFramerates,
+                                               this.gridColRR,
+                                               this.gridColAction
+                                             });
       dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
       dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                            System.Drawing.FontStyle.Regular,
+                                                            System.Drawing.GraphicsUnit.Point, ((byte) (0)));
       dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
       dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
       dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -367,7 +373,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
       this.linkLabel1.Location = new System.Drawing.Point(16, 375);
       this.linkLabel1.Name = "linkLabel1";
@@ -410,9 +418,8 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxRR.ResumeLayout(false);
       this.groupBoxRR.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRR)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.dataGridViewRR)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -440,9 +447,6 @@ namespace MediaPortal.Configuration.Sections
       {
         txtDefaultHz.Enabled = chkUseDefaultRR.Checked;
       }
-
     }
-
-    
   }
 }
