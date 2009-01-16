@@ -124,8 +124,9 @@ a mutiple of the video framerate.
 This will eliminate any judder or jerky video playback you might have.
 
 NOTE; It's important that your display device (eg. TV) is able to utilize these
-different refreshrates.
-24hz is often called 24p mode.</value>
+different refreshrates. eg. 24hz is often called 24p mode.
+Keep the action fields empty and an internal refresh rate change will be done.
+Otherwise specify a commandline with parameters for a batch file, powerstrip etc.</value>
   </data>
   <metadata name="gridColType.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

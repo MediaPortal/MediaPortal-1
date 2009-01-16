@@ -33,11 +33,180 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
+using System.Runtime.InteropServices;
 
 #endregion
 
 namespace MediaPortal.Player
 {
+
+  // http://forum.team-mediaportal.com/plugins-47/very-simple-refreshrate-changer-39790/
+  public sealed class Win32
+  {
+
+    public const int CCHDEVICENAME = 32;
+    public const int CCHFORMNAME = 32;
+
+    [Flags]
+    public enum DISPLAY_DEVICE_StateFlags : uint
+    {
+      None = 0x00000000,
+      DISPLAY_DEVICE_ATTACHED_TO_DESKTOP = 0x00000001,
+      DISPLAY_DEVICE_MULTI_DRIVER = 0x00000002,
+      DISPLAY_DEVICE_PRIMARY_DEVICE = 0x00000004,
+      DISPLAY_DEVICE_MIRRORING_DRIVER = 0x00000008,
+      DISPLAY_DEVICE_VGA_COMPATIBLE = 0x00000010,
+      DISPLAY_DEVICE_REMOVABLE = 0x00000020,
+      DISPLAY_DEVICE_MODESPRUNED = 0x08000000,
+      DISPLAY_DEVICE_REMOTE = 0x04000000,
+      DISPLAY_DEVICE_DISCONNECT = 0x02000000
+    }
+
+    [Flags]
+    public enum DEVMODE_Fields : uint
+    {
+      None = 0x00000000,
+      DM_POSITION = 0x00000020,
+      DM_BITSPERPEL = 0x00040000,
+      DM_PELSWIDTH = 0x00080000,
+      DM_PELSHEIGHT = 0x00100000,
+      DM_DISPLAYFLAGS = 0x00200000,
+      DM_DISPLAYFREQUENCY = 0x00400000
+    }
+
+
+    [Flags]
+    public enum ChangeDisplaySettings_Flags : uint
+    {
+      None = 0x00000000,
+      CDS_UPDATEREGISTRY = 0x00000001,
+      CDS_TEST = 0x00000002,
+      CDS_FULLSCREEN = 0x00000004,
+      CDS_GLOBAL = 0x00000008,
+      CDS_SET_PRIMARY = 0x00000010,
+      CDS_VIDEOPARAMETERS = 0x00000020,
+      CDS_RESET = 0x40000000,
+      CDS_NORESET = 0x10000000
+    }
+
+
+    public enum ChangeDisplaySettings_Result : int
+    {
+      DISP_CHANGE_SUCCESSFUL = 0,
+      DISP_CHANGE_RESTART = 1,
+      DISP_CHANGE_FAILED = -1,
+      DISP_CHANGE_BADMODE = -2,
+      DISP_CHANGE_NOTUPDATED = -3,
+      DISP_CHANGE_BADFLAGS = -4,
+      DISP_CHANGE_BADPARAM = -5,
+      DISP_CHANGE_BADDUALVIEW = -6
+    }
+
+
+    public enum EnumDisplaySettings_EnumMode : uint
+    {
+      ENUM_CURRENT_SETTINGS = uint.MaxValue,
+      ENUM_REGISTRY_SETTINGS = uint.MaxValue - 1
+    }
+
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public class DISPLAY_DEVICE
+    {
+      public uint cb = (uint)Marshal.SizeOf(typeof(DISPLAY_DEVICE));
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+      public string DeviceName = "";
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceString = "";
+      public DISPLAY_DEVICE_StateFlags StateFlags = 0;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceID = "";
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceKey = "";
+    }
+
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINTL
+    {
+      public POINTL(int x, int y)
+      {
+        this.x = x;
+        this.y = y;
+      }
+      public int x;
+      public int y;
+    }
+
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public class DEVMODE_Display
+    {
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
+      public string dmDeviceName = null;
+      public ushort dmSpecVersion = 0;
+      public ushort dmDriverVersion = 0;
+      public ushort dmSize = (ushort)Marshal.SizeOf(typeof(DEVMODE_Display));
+      public ushort dmDriverExtra = 0;
+      public DEVMODE_Fields dmFields = DEVMODE_Fields.None;
+      public POINTL dmPosition = new POINTL();
+      public uint dmDisplayOrientation = 0;
+      public uint dmDisplayFixedOutput = 0;
+      public short dmColor = 0;
+      public short dmDuplex = 0;
+      public short dmYResolution = 0;
+      public short dmTTOption = 0;
+      public short dmCollate = 0;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
+      public string dmFormName = null;
+      public ushort dmLogPixels = 0;
+      public uint dmBitsPerPel = 0;
+      public uint dmPelsWidth = 0;
+      public uint dmPelsHeight = 0;
+      public uint dmDisplayFlags = 0;
+      public uint dmDisplayFrequency = 0;
+      public uint dmICMMethod = 0;
+      public uint dmICMIntent = 0;
+      public uint dmMediaType = 0;
+      public uint dmDitherType = 0;
+      public uint dmReserved1 = 0;
+      public uint dmReserved2 = 0;
+      public uint dmPanningWidth = 0;
+      public uint dmPanningHeight = 0;
+    }
+
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public extern static int EnumDisplayDevices([In] string lpDevice, [In]uint iDevNum, [In][Out] DISPLAY_DEVICE lpDisplayDevice, [In] uint dwFlags);
+
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public extern static int EnumDisplaySettingsEx([In] string lpszDeviceName,
+    [In] EnumDisplaySettings_EnumMode iModeNum, [In][Out] DEVMODE_Display
+    lpDevMode, [In] uint dwFlags);
+
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public extern static ChangeDisplaySettings_Result
+    ChangeDisplaySettingsEx([In] string lpszDeviceName, [In] DEVMODE_Display
+    lpDevMode, [In] IntPtr hwnd, [In] ChangeDisplaySettings_Flags dwFlags, [In]IntPtr lParam);
+
+
+    public static void CycleRefreshRate(uint monitorIndex, uint refreshRate)
+    {
+      Win32.DISPLAY_DEVICE displayDevice = new Win32.DISPLAY_DEVICE();
+      int result = Win32.EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
+
+      if (result != 0)
+      {
+        Win32.DEVMODE_Display devMode = new Win32.DEVMODE_Display();
+        devMode.dmFields = Win32.DEVMODE_Fields.DM_DISPLAYFREQUENCY;
+        devMode.dmDisplayFrequency = refreshRate;
+        Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode, IntPtr.Zero, Win32.ChangeDisplaySettings_Flags.None, IntPtr.Zero);
+      }
+    }
+  }
+
   public static class RefreshRateChanger
   {
     #region public constants
@@ -309,7 +478,7 @@ namespace MediaPortal.Player
     }
 
     private static bool RunExternalJob(string newExtCmd, string strFile, MediaType type, bool deviceReset)
-    {
+    {      
       Log.Info("RefreshRateChanger.RunExternalJob: running external job in order to change refreshrate {0}", newExtCmd);
 
 
@@ -437,8 +606,7 @@ namespace MediaPortal.Player
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
           return;
         }
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
-        ;
+        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);        
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
@@ -452,11 +620,19 @@ namespace MediaPortal.Player
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
                  currentRR, newRR);
-        if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
+
+        if (newExtCmd.Length == 0)
+        {
+          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",currentRR, newRR);
+          Win32.CycleRefreshRate((uint)currentScreenNr, (uint)newRR);
+          NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
+        }
+        else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
       }
+      else
       {
         Log.Info(
           "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",

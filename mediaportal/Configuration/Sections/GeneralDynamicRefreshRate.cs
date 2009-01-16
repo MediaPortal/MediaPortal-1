@@ -103,10 +103,10 @@ namespace MediaPortal.Configuration.Sections
         string ntscFPS = xmlreader.GetValueAsString("general", "ntsc_fps", "29.97;30");
         string tvFPS = xmlreader.GetValueAsString("general", "tv_fps", "25");
 
-        string cinemaExtCmd = xmlreader.GetValueAsString("general", "cinema_ext", "c:\\cinema.cmd");
-        string palExtCmd = xmlreader.GetValueAsString("general", "pal_ext", "c:\\pal.cmd");
-        string ntscExtCmd = xmlreader.GetValueAsString("general", "ntsc_ext", "c:\\ntsc.cmd");
-        string tvExtCmd = xmlreader.GetValueAsString("general", "tv_ext", "c:\\tv.cmd");
+        string cinemaExtCmd = xmlreader.GetValueAsString("general", "cinema_ext", "");
+        string palExtCmd = xmlreader.GetValueAsString("general", "pal_ext", "");
+        string ntscExtCmd = xmlreader.GetValueAsString("general", "ntsc_ext", "");
+        string tvExtCmd = xmlreader.GetValueAsString("general", "tv_ext", "");
 
         string cinemaHz = xmlreader.GetValueAsString("general", "cinema_hz", "24");
         string palHz = xmlreader.GetValueAsString("general", "pal_hz", "50");
@@ -227,16 +227,16 @@ namespace MediaPortal.Configuration.Sections
       this.txtDefaultHz = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblDescription = new MediaPortal.UserInterface.Controls.MPLabel();
       this.dataGridViewRR = new System.Windows.Forms.DataGridView();
+      this.gridColType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColFramerates = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColRR = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.gridColAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.chkUseDefaultRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkForceRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkUseDeviceReset = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkNotifyOnRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkEnableDynamicRR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.gridColType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColFramerates = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColRR = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.gridColAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.groupBoxRR.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize) (this.dataGridViewRR)).BeginInit();
       this.SuspendLayout();
@@ -282,7 +282,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblDescription.AutoSize = true;
       this.lblDescription.Location = new System.Drawing.Point(16, 25);
       this.lblDescription.Name = "lblDescription";
-      this.lblDescription.Size = new System.Drawing.Size(386, 104);
+      this.lblDescription.Size = new System.Drawing.Size(386, 117);
       this.lblDescription.TabIndex = 18;
       this.lblDescription.Text = resources.GetString("lblDescription.Text");
       // 
@@ -313,6 +313,32 @@ namespace MediaPortal.Configuration.Sections
       this.dataGridViewRR.Name = "dataGridViewRR";
       this.dataGridViewRR.Size = new System.Drawing.Size(434, 147);
       this.dataGridViewRR.TabIndex = 17;
+      // 
+      // gridColType
+      // 
+      this.gridColType.Frozen = true;
+      this.gridColType.HeaderText = "Type";
+      this.gridColType.Name = "gridColType";
+      this.gridColType.ReadOnly = true;
+      this.gridColType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColFramerates
+      // 
+      this.gridColFramerates.HeaderText = "Framerates";
+      this.gridColFramerates.Name = "gridColFramerates";
+      this.gridColFramerates.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColRR
+      // 
+      this.gridColRR.HeaderText = "Refreshrate";
+      this.gridColRR.Name = "gridColRR";
+      this.gridColRR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // gridColAction
+      // 
+      this.gridColAction.HeaderText = "Action";
+      this.gridColAction.Name = "gridColAction";
+      this.gridColAction.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       // 
       // chkUseDefaultRR
       // 
@@ -383,32 +409,6 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.TabIndex = 10;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "more info in the wiki ...";
-      // 
-      // gridColType
-      // 
-      this.gridColType.Frozen = true;
-      this.gridColType.HeaderText = "Type";
-      this.gridColType.Name = "gridColType";
-      this.gridColType.ReadOnly = true;
-      this.gridColType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColFramerates
-      // 
-      this.gridColFramerates.HeaderText = "Framerates";
-      this.gridColFramerates.Name = "gridColFramerates";
-      this.gridColFramerates.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColRR
-      // 
-      this.gridColRR.HeaderText = "Refreshrate";
-      this.gridColRR.Name = "gridColRR";
-      this.gridColRR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      // 
-      // gridColAction
-      // 
-      this.gridColAction.HeaderText = "Action";
-      this.gridColAction.Name = "gridColAction";
-      this.gridColAction.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       // 
       // GeneralDynamicRefreshRate
       // 
