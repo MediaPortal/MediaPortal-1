@@ -504,4 +504,10 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Vennligst velg instillinger for nedlasting</value>
   </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Ingen Internett tilkobling funnet! For å kune fortsette innstallasjonen kreves en tilkobling.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Det er ikke nok plass på valgte harddisk! For innstallasjon av MediaPortal kreves {0} MB fri plass.</value>
+  </data>
 </root>
