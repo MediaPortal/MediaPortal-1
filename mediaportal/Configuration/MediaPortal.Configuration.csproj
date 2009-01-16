@@ -251,6 +251,9 @@
     </Compile>
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
+    <Compile Include="Sections\GeneralDynamicRefreshRate.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\FiltersPowerDVD8Decoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -645,6 +648,10 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralDynamicRefreshRate.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralDynamicRefreshRate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
       <SubType>Designer</SubType>

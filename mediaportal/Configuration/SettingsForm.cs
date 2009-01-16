@@ -636,6 +636,10 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(general, new GeneralWatchdog(), true));
       AddSection(new ConfigPage(general, new GeneralDaemonTools(), true));
       AddSection(new ConfigPage(general, new GeneralFileMenu(), true));
+
+      GeneralDynamicRefreshRate dynRRConfig = new GeneralDynamicRefreshRate();
+      AddSection(new ConfigPage(general, dynRRConfig, true));
+
       // Removed because of various issues with DVD playback
       // AddSection(new ConfigPage(general, new GeneralCDSpeed(), true));
     }
