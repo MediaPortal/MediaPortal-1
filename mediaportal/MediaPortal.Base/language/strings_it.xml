@@ -1468,6 +1468,17 @@
     <String id="13033">Eseguito più di recente</String>
     <String id="13034">Titolo</String>
     <String id="13041">Mostra informazioni file</String>
+    <String id="14001" prefix="Le mie">estensioni</String>
+    <String id="14002">Viste</String>
+    <String id="14003">Estensioni installate</String>
+    <String id="14004">Estensioni online</String>
+    <String id="14005">Installazione estensione</String>
+    <String id="14006">Rimuovi estensione</String>
+    <String id="14007">Reinstalla estensione</String>
+    <String id="14008">Revoca l'ultima azione</String>
+    <String id="14009">Al prossimo riavvio questa azine verrà eseguita</String>
+    <String id="14010">Scarica estensione</String>
+    <String id="14011">Selezione un'opzione</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Il Mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
