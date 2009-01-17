@@ -2757,16 +2757,12 @@ namespace MediaPortal.Player
       {
         MediaInfo mI = new MediaInfo();
         mI.Open(FileName);
-        string VideoCodec = "";
-        if (type != MediaType.Music && type != MediaType.Radio)
-        {
-          VideoCodec = mI.Get(StreamKind.Video, 0, "Codec");
-        }
+        string VideoCodec = mI.Get(StreamKind.Video, 0, "Codec");
         string AudioCodec = mI.Get(StreamKind.Audio, 0, "Codec");
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Path.GetFileName(FileName));
-        msg.Label2 = string.Format("Video codec: {0}", VideoCodec);
+        msg.Label2 = string.IsNullOrEmpty(VideoCodec) ? string.Empty : string.Format("Video codec: {0}", VideoCodec);
         msg.Label3 = string.Format("Audio codec: {0}", AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
       }
