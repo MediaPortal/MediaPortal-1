@@ -27,6 +27,7 @@
 #include <initguid.h>
 #include <ks.h>
 #include <ksproxy.h>
+#include <stdio.h>
 #include "knc.h"
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -39,18 +40,18 @@ CKnc::CKnc(LPUNKNOWN pUnk, HRESULT *phr)
 {
   m_bIsKNC                  =false;
   KNCBDA_CI_Enable		      =NULL;
-	KNCBDA_CI_Disable		      =NULL;
-	KNCBDA_CI_IsAvailable	    =NULL;
-	KNCBDA_CI_IsReady		      =NULL;
-	KNCBDA_CI_HW_Enable		    =NULL;
-	KNCBDA_CI_GetName		      =NULL;
-	KNCBDA_CI_SendPMTCommand  =NULL;
-	KNCBDA_CI_EnterMenu		    =NULL;
-	KNCBDA_CI_SelectMenu	    =NULL;
-	KNCBDA_CI_CloseMenu		    =NULL;
-	KNCBDA_CI_SendMenuAnswer  =NULL;
-	KNCBDA_HW_Enable          =NULL;
-	KNCBDA_HW_DiSEqCWrite     =NULL;
+  KNCBDA_CI_Disable		      =NULL;
+  KNCBDA_CI_IsAvailable	    =NULL;
+  KNCBDA_CI_IsReady		      =NULL;
+  KNCBDA_CI_HW_Enable		    =NULL;
+  KNCBDA_CI_GetName		      =NULL;
+  KNCBDA_CI_SendPMTCommand  =NULL;
+  KNCBDA_CI_EnterMenu		    =NULL;
+  KNCBDA_CI_SelectMenu	    =NULL;
+  KNCBDA_CI_CloseMenu		    =NULL;
+  KNCBDA_CI_SendMenuAnswer  =NULL;
+  KNCBDA_HW_Enable          =NULL;
+  KNCBDA_HW_DiSEqCWrite     =NULL;
   m_hMod					          =NULL;
   m_slot                    =0;
   m_verboseLogging          =false;
@@ -101,7 +102,7 @@ STDMETHODIMP CKnc::IsCamReady( BOOL* yesNo)
   *yesNo=FALSE;
   if (m_bIsKNC)
   {
-    if (KNCBDA_CI_IsAvailable(m_slot) ==FALSE)
+    if (KNCBDA_CI_IsAvailable(m_slot) == FALSE)
     {
       *yesNo=FALSE;
     }
@@ -143,8 +144,17 @@ STDMETHODIMP CKnc::SetDisEqc(UCHAR* pBuffer, ULONG nLen, ULONG nRepeatCount)
 {	
   if (m_bIsKNC)
   {
+    char buffer[129];
+    strcpy(buffer,"");
+    for (int i=0; i < (int)nLen;++i)
+    {
+      char tmp[30];
+      sprintf(tmp,"%02.2x",(int)pBuffer[i]);
+      strcat(buffer,tmp);
+    }
+    LogDebug("KNC: SetDiseqc:%s length:%d repeat:%d",buffer,nLen,nRepeatCount);
     BOOL result = KNCBDA_HW_DiSEqCWrite(m_slot,pBuffer,nLen,nRepeatCount);
-    LogDebug("KNCBDA_HW_DiSEqCWrite: pBuffer:%d, result:%d",pBuffer,result);
+    LogDebug("KNCBDA_HW_DiSEqCWrite: result:%d",result);
   }
   return S_OK;
 }
@@ -174,12 +184,6 @@ STDMETHODIMP CKnc::DescrambleService( BYTE* pmt, int PMTLength,BOOL* succeeded)
     BOOL result=KNCBDA_CI_SendPMTCommand(m_slot,pmt, PMTLength);
     LogDebug("KNCBDA_CI_SendPMTCommand #1 PMTLength:%d, result:%d",PMTLength,result);
     *succeeded = (result==TRUE);
-
-    //// Trying simple delay after sending PMT; didn't change result
-    //for (int i=1; i<=20; i++) {
-    //  Sleep(100);
-    //  LogDebug("Sleeped for %d ms; KNCBDA_CI_IsReady #1: %d",(100*i),KNCBDA_CI_IsReady(m_slot));
-    //}
   }
   else
   {
@@ -234,7 +238,6 @@ void OnKncCiCloseDisplay(UCHAR slot,UINT nDelay,PVOID pParam)
 STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
 {
   BOOL result;
-
   m_bIsKNC=false;
   m_hMod=LoadLibrary("KNCBDACTRL.dll");
   if (m_hMod!=NULL)
@@ -317,20 +320,18 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     }
 
     KNCBDA_HW_Enable=(TKNCBDA_HW_Enable*)GetProcAddress(m_hMod,"KNCBDA_HW_Enable");
-		if(KNCBDA_HW_Enable==NULL)
-		{
+    if(KNCBDA_HW_Enable==NULL)
+    {
       LogDebug("KNCBDA_HW_Enable not found in dll");
       return FreeKNCLibrary();
-		}
+    }
 
-		KNCBDA_HW_DiSEqCWrite=(TKNCBDA_HW_DiSEqCWrite*)GetProcAddress(m_hMod,"KNCBDA_HW_DiSEqCWrite");
-		if(KNCBDA_HW_DiSEqCWrite==NULL)
-		{
+    KNCBDA_HW_DiSEqCWrite=(TKNCBDA_HW_DiSEqCWrite*)GetProcAddress(m_hMod,"KNCBDA_HW_DiSEqCWrite");
+    if(KNCBDA_HW_DiSEqCWrite==NULL)
+    {
       LogDebug("KNCBDA_HW_DiSEqCWrite not found in dll");
       return FreeKNCLibrary();
-		}
-    LogDebug("KNCBDA_CI_Enable");
-    
+    }
     LogDebug("KNCBDA_CI_MemSet");
     memset(&m_callback,0,sizeof(m_callback));
     m_callback.pParam               = this;
@@ -341,7 +342,8 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     m_callback.OnKncCiMenuChoice    =OnKncCiMenuChoice;
     m_callback.OnKncCiRequest       =OnKncCiRequest;
     m_callback.OnKncCiCloseDisplay  =OnKncCiCloseDisplay;
-    if (m_verboseLogging) {
+    if (m_verboseLogging)
+    {
       LogDebug("Callback struct:");
       LogDebug("m_callback.pParam:             %x",             m_callback.pParam);
       LogDebug("m_callback.OnKncCiState:       %x",       m_callback.OnKncCiState);
@@ -351,16 +353,25 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       LogDebug("m_callback.OnKncCiRequest:     %x",     m_callback.OnKncCiRequest);
       LogDebug("m_callback.OnKncCiCloseDisplay:%x",m_callback.OnKncCiCloseDisplay);
     }
-    if ( KNCBDA_CI_Enable(m_slot,tunerFilter,&m_callback))
+    LogDebug("KNCBDA_HW_Enable");
+    if (KNCBDA_HW_Enable(m_slot,tunerFilter))
     {
-      LogDebug("KNC ci enabled successful");
+      LogDebug("KNC card HW Enabled");
+      m_bIsKNC=true;
+    }
+    LogDebug("KNCBDA_CI_Enable");
+    if (KNCBDA_CI_Enable(m_slot,tunerFilter,&m_callback))
+    {
+      LogDebug("KNC CI enabled successfully");
       if (KNCBDA_CI_IsReady(m_slot))
       {
         m_bIsKNC=true;
+        LogDebug("KNCBDA_CI_HW_Enable");
         result = KNCBDA_CI_HW_Enable(m_slot,TRUE);
         LogDebug("KNC card detected with CAM; CI_HW_Enable result:%d", result);
         try
         {
+          LogDebug("KNCBDA_CI_GetName");
           char nameBuffer[100];
           result = KNCBDA_CI_GetName(m_slot, nameBuffer, sizeof(nameBuffer));
           LogDebug("CAM Type: %s", nameBuffer);
@@ -373,9 +384,11 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       else
       {
         LogDebug("KNC card detected without CAM");
+        m_bIsKNC=true;
       }
     }
-    if(m_bIsKNC == false){
+    if (m_bIsKNC == false)
+    {
       LogDebug("KNC not detected. releasing library");
       return FreeKNCLibrary();
     }
