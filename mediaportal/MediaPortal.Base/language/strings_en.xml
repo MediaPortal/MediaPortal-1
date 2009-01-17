@@ -954,6 +954,7 @@
     <String id="1448">Select None</String>
     <String id="1449">Stop recording</String>
     <String id="1450">Are you sure you want to stop recording?</String>
+    <String id="1451">Unable to play</String>
     <String id="1499">No signal</String>
     <String id="1500">Unable to start timeshifting</String>
     <String id="1501">Card is disabled</String>
@@ -1470,15 +1471,15 @@
     <String id="13041">Show File Info</String>
 	<String id="14001" prefix="My ">Extensions</String>
 	<String id="14002">Views</String>
-    <String id="14003">Installed extensions</String>	
-    <String id="14004">Online extensions</String>	
-    <String id="14005">Install extension</String>		
-    <String id="14006">UnInstall extension</String>			
-    <String id="14007">ReInstall extension</String>			
-    <String id="14008">Revoke last action</String>		
-	<String id="14009">In next restart This action will be executed</String>		
-	<String id="14010">Download extension</String>	
-	<String id="14011">Select a option</String>		
+    <String id="14003">Installed extensions</String>
+    <String id="14004">Online extensions</String>
+    <String id="14005">Install extension</String>
+    <String id="14006">UnInstall extension</String>	
+    <String id="14007">ReInstall extension</String>
+    <String id="14008">Revoke last action</String>
+	<String id="14009">On next restart this action will be executed</String>
+	<String id="14010">Download extension</String>
+	<String id="14011">Select an option</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
@@ -1656,8 +1657,8 @@
     <String id="100033">MSN Messenger chat</String>
     <String id="100034" prefix="My ">Plugins</String>
     <String id="100035">Basic home</String>
-    <String id="100100">Yes/No dialogue</String>
-    <String id="100101">Progress dialogue</String>
+    <String id="100100">Yes/No dialog</String>
+    <String id="100101">Progress dialog</String>
     <String id="100102">Play/Stop dialog</String>
     <String id="100500">Music/playlist</String>
     <String id="100501">Music/shares</String>
@@ -1725,7 +1726,7 @@
     <String id="100755">Status</String>
     <String id="100756">Status details</String>
     <String id="100757">Status preferences</String>
-    <String id="100758">File dialogue</String>
+    <String id="100758">File dialog</String>
     <String id="100759">Recorded Tv Info.</String>
     <String id="100760">Burner</String>
     <String id="100761">TV guide</String>
@@ -1735,16 +1736,16 @@
     <String id="101002">Virtual Standard Keyboard</String>
     <String id="101003">Virtual Web Keyboard</String>
     <String id="101004">Virtual SMS Keyboard</String>
-    <String id="102000">Select dialogue</String>
+    <String id="102000">Select dialog</String>
     <String id="102001" prefix="My ">Music/info</String>
-    <String id="102002">Dialogue OK</String>
+    <String id="102002">Dialog OK</String>
     <String id="102003" prefix="My ">Videos/Info</String>
     <String id="102004" prefix="My ">Scripts/Info</String>
     <String id="102005">Fullscreen video</String>
     <String id="102006">Audio visualisation</String>
     <String id="102007" prefix="My ">Picture/slideshow</String>
-    <String id="102008">Filestacking dialogue</String>
-    <String id="102009">Selection dialogue</String>
+    <String id="102008">Filestacking dialog</String>
+    <String id="102009">Selection dialog</String>
     <String id="102010">Date/Time</String>
     <String id="102011">Artist info.</String>
     <String id="102012">Context menu</String>
@@ -1766,7 +1767,7 @@
     <String id="103012">TV tuning details</String>
     <String id="104711" prefix="My ">Wikipedia</String>
     <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Alarm Details</String>
+    <String id="105001">Alarm - Alarm details</String>
     <String id="105002">Alarm - Sleeptime</String>
     <String id="105900" prefix="My ">Trailers</String>
     <String id="106666">Power Scheduler Waiting</String>

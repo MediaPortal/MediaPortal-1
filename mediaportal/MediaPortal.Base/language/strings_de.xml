@@ -955,6 +955,7 @@
         <String id="1448">Nichts auswählen</String>
         <String id="1449">Aufnahme beenden</String>
         <String id="1450">Aufnahme wirklich beenden?</String>
+        <String id="1451">Abspielen nicht möglich</String>
         <String id="1499">Kein Signal</String>
         <String id="1500">Timeshift konnte nicht gestartet werden</String>
         <String id="1501">Die Karte ist deaktiviert</String>
@@ -1296,7 +1297,7 @@
         <String id="5923">Diese Woche auf DVD</String>
         <String id="5924">Nächste Woche auf DVD</String>
         <String id="5925">DVD Vorbestellungen</String>
-        <String id="6000">Video Codec</String>
+        <String id="6000">MPEG-2 Video Codec</String>
         <String id="6001">Audio Codec</String>
         <String id="6002">Audio Gerät</String>
         <String id="6003">Kammfilter</String>
@@ -1469,6 +1470,17 @@
         <String id="13033">Zuletzt gestartet</String>
         <String id="13034">Alle Spiele</String>
         <String id="13041">Zeige Infos zur Datei</String>
+        <String id="14001" prefix="Meine ">Erweiterungen</String>
+        <String id="14002">Views</String>
+        <String id="14003">Installierte Erweiterungen</String>
+        <String id="14004">Online Erweiterungen</String>
+        <String id="14005">Installiere Erweiterung</String>
+        <String id="14006">Entferne Erweiterung</String>	
+        <String id="14007">Repariere Erweiterung</String>
+        <String id="14008">Rückgängig</String>
+        <String id="14009">Diese Aktion wird beim nächsten Start durchgeführt</String>
+        <String id="14010">Lade Erweiterung herunter</String>
+        <String id="14011">Option wählen</String>        
         <String id="16001">Partymix</String>
         <String id="19001" prefix="Mein ">Tetris</String>
         <String id="19002">Neues Spiel</String>
@@ -1722,9 +1734,9 @@
         <String id="100762" prefix="Mein ">Radio-Programm</String>
         <String id="100770" prefix="Mein ">Datei-Manager</String>
         <String id="101000">Tastatur</String>
-		<String id="101002">Standard Bildschirm-Tastatur</String>
-		<String id="101003">Web Bildschirm-Tastatur</String>
-		<String id="101004">SMS Bildschirm-Tastatur</String>
+        <String id="101002">Standard Bildschirm-Tastatur</String>
+        <String id="101003">Web Bildschirm-Tastatur</String>
+        <String id="101004">SMS Bildschirm-Tastatur</String>
         <String id="102000">Auswahldialog</String>
         <String id="102001" prefix="Meine ">Musik/Info</String>
         <String id="102002">Dialog Ok</String>
@@ -1753,7 +1765,11 @@
         <String id="103007" prefix="Mein ">TV/Zap OSD</String>
         <String id="103009" prefix="Meine ">TV/Kanal-Liste</String>
         <String id="103011" prefix="Meine ">TV/Bereichs-Einstellungen</String>
+        <String id="103012">TV-Empfangs-Daten</String>
         <String id="104711" prefix="Meine ">Wikipedia</String>
+        <String id="105000">Alarm</String>
+        <String id="105001">Alarm - Alarm Details</String>
+        <String id="105002">Alarm - Sleeptimer</String>
         <String id="105900" prefix="Meine ">Kino-Vorschau</String>
         <String id="106666">Power Scheduler wartet</String>
         <String id="107700" prefix="Mein ">TV/Videotext</String>

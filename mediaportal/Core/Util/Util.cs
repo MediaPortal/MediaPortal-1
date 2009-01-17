@@ -1362,10 +1362,14 @@ namespace MediaPortal.Util
       return true;
     }
 
+    /// <summary>
+    /// Use external player for movie playback (configured by the user)
+    /// </summary>
+    /// <param name="strFile">Full path to the video file</param>
+    /// <returns>Whether the player was successfully used</returns>
     public static bool PlayMovie(string strFile)
     {
-      if (strFile == null) return false;
-      if (strFile.Length == 0) return false;
+      if (String.IsNullOrEmpty(strFile)) return false;
 
       try
       {
@@ -1422,18 +1426,19 @@ namespace MediaPortal.Util
               {
                 OnStopExternal(movieplayer, true);		// Event: External process stopped
               }
-              Log.Info("{0} done", strPath);
+              Log.Debug("Util: External player stopped on {0}", strPath);
               return true;
             }
             else
             {
-              Log.Info("file {0} does not exists", strPath);
+              Log.Warn("Util: External player {0} does not exists", strPath);
             }
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Warn("Util: Error using external player - {0}", ex.ToString());
       }
       return false;
     }

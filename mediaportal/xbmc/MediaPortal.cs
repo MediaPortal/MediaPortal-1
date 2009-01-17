@@ -3156,7 +3156,7 @@ public class MediaPortalApp : D3DApp, IRender
           return;
         }
         bool fullscreen = (message.Param1 != 0);
-        Log.Info("Main: Received DX exclusive mode switch message. Fullscreen && maximized == {0}",
+        Log.Debug("Main: Received DX exclusive mode switch message. Fullscreen && maximized == {0}",
                  fullscreen && isMaximized);
         if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
@@ -3186,7 +3186,7 @@ public class MediaPortalApp : D3DApp, IRender
         break;
 
       case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
-        Log.Info("Main: Setting focus");
+        Log.Debug("Main: Setting focus");
         if (WindowState == FormWindowState.Minimized)
         {
           if (m_iVolume > 0 && (g_Player.IsVideo || g_Player.IsTV))
