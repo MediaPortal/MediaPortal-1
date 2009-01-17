@@ -208,8 +208,8 @@ MediaPortals brugerflade.</value>
     <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
  og giver mulighed for TV på andre PC'er (klienter) i netværket. (Installation af database er nødvendig)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Browse</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Gennemse</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurer Windows Firewall til at give ekstern adgang til database serveren</value>
@@ -373,9 +373,6 @@ MediaPortals brugerflade.</value>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Manuel download</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Gennemse</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Angiv installationsfolder for MediaPortal</value>
   </data>
@@ -387,9 +384,6 @@ MediaPortals brugerflade.</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Vælg installationsfolder for MediaPortal</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Gennemse</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurer Windows Firewall til at tillade adgang til TV-Server</value>
@@ -497,5 +491,23 @@ Fortsæt for egen risiko!</value>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>Denne applikation vil nu lukke, og åbne folderen "MediaPortal Installation".
 Overfør folderen til din HTPC. Start installationen ved at køre "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Springes over</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Vil du afbryde installationen af MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Nuværende download instillinger: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Vælg indstillinger for download:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Kunne ikke etablere forbindelse til internettet. Dette kræves for at fortsætte installationen.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Der er ikke nok ledig plads på den valgte harddisk! Installationen af MediaPortal kræver {0} MB ledig harddisk plads.</value>
   </data>
 </root>
