@@ -449,26 +449,16 @@ namespace TvPlugin
       {
         btnCompress.Visible = false;
       }
-      //DiskManagement.ImportDvrMsFiles();
+
       LoadSettings();
       LoadDirectory();
 
-      /*
-      if (!g_Player.IsTVRecording && !g_Player.Playing)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-        msg.SendToTargetWindow = true;
-        GUIWindowManager.SendThreadMessage(msg);
-      }
-      */
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
         m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      //CreateThumbnails();
-      //if (GlobalServiceProvider.Get<IThreadPool>().BusyThreadCount == 0)
-      //{
+
       if (thumbworker == null)
       {
         if (_createRecordedThumbs)
@@ -476,17 +466,15 @@ namespace TvPlugin
       }
       else
         Log.Info("GUIRecordedTV: thumbworker already running - didn't start another one");
-      //}
-      //else
-      //  Log.Info("GUIRecordedTV: threadpool busy - didn't start thumb creation");
     }
 
     protected bool AllowView(GUIFacadeControl.ViewMode view)
     {
-      //if (view == GUIFacadeControl.ViewMode.Playlist)
-      //{
-      //  return false;
-      //}
+      // Disable playlist for now as it makes no sense to move recording entries
+      if (view == GUIFacadeControl.ViewMode.Playlist)
+      {
+        return false;
+      }
       return true;
     }
 
@@ -513,73 +501,46 @@ namespace TvPlugin
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-
             case GUIFacadeControl.ViewMode.Playlist:
               currentViewMethod = GUIFacadeControl.ViewMode.SmallIcons;
               if (!AllowView(currentViewMethod) || facadeView.ThumbnailView == null)
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-
             case GUIFacadeControl.ViewMode.SmallIcons:
-              currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
+              currentViewMethod = GUIFacadeControl.ViewMode.LargeIcons;
               if (!AllowView(currentViewMethod) || facadeView.ThumbnailView == null)
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-
             case GUIFacadeControl.ViewMode.LargeIcons:
               currentViewMethod = GUIFacadeControl.ViewMode.AlbumView;
               if (!AllowView(currentViewMethod) || facadeView.AlbumListView == null)
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-
             case GUIFacadeControl.ViewMode.AlbumView:
               currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
               if (!AllowView(currentViewMethod) || facadeView.FilmstripView == null)
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-
             case GUIFacadeControl.ViewMode.Filmstrip:
               currentViewMethod = GUIFacadeControl.ViewMode.List;
               if (!AllowView(currentViewMethod) || facadeView.ListView == null)
               {
                 shouldContinue = true;
               }
-              else
-              {
-                facadeView.View = currentViewMethod;
-              }
               break;
-          }
+          }          
         } while (shouldContinue);
+
+        facadeView.View = currentViewMethod;
 
         LoadDirectory();
       }
