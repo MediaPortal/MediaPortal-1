@@ -318,7 +318,7 @@ namespace TvLibrary.Implementations.DVB
           return true;
         if (_knc != null)
         {
-          Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
+          //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
           return _knc.IsCamReady();
         }
         if (_digitalEveryWhere != null)
@@ -815,6 +815,31 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
           Log.Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          return channel;
+        }
+        if (_knc != null)
+        {
+          //Set KNC modulation tuning settings
+          if (channel.ModulationType == ModulationType.ModQpsk)
+          {
+            channel.ModulationType = ModulationType.Mod8Vsb;
+          }
+          if (channel.ModulationType == ModulationType.Mod8Psk)
+          {
+            channel.ModulationType = ModulationType.Mod8Vsb;
+          }
+          if (channel.ModulationType == ModulationType.Mod16Apsk)
+          {
+            channel.ModulationType = ModulationType.Mod16Vsb;
+          }
+          if (channel.ModulationType == ModulationType.Mod32Apsk)
+          {
+            channel.ModulationType = ModulationType.ModOqpsk;
+          }
+          Log.Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_digitalEveryWhere != null)

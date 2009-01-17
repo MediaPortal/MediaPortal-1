@@ -68,7 +68,7 @@ Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
     /// <param name="nRepeatCount">The repeat count of the command</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetDisEqc(IntPtr pBuffer, short nLen, short nRepeatCount);
+    int SetDisEqc(IntPtr pBuffer, uint nLen, uint nRepeatCount);
     /// <summary>
     /// Descramble a service
     /// </summary>

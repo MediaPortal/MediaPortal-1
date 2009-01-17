@@ -50,6 +50,7 @@ namespace TvLibrary.Implementations.DVB
         _KNCInterface.SetTunerFilter(tunerFilter);
       }
       ptrPmt = Marshal.AllocCoTaskMem(1024);
+      _ptrDataInstance = Marshal.AllocCoTaskMem(1024);
     }
 
     /// <summary>
@@ -59,6 +60,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _KNCInterface = null;
       Marshal.FreeCoTaskMem(ptrPmt);
+      Marshal.FreeCoTaskMem(_ptrDataInstance);
     }
 
     /// <summary>
@@ -112,7 +114,7 @@ namespace TvLibrary.Implementations.DVB
         Marshal.WriteByte(ptrPmt, i, pmt[i]);
       }
       _KNCInterface.DescrambleService(ptrPmt, (short)PMTlength, ref succeeded);
-      Log.Log.Info("KNC: SendPMT {0}", succeeded);
+      Log.Log.Info("KNC: SendPMT success = {0}", succeeded);
       return succeeded;
     }
 
@@ -177,7 +179,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
       Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile("KNC SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
+      Log.Log.WriteFile("KNC: SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
