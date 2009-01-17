@@ -2104,12 +2104,16 @@ namespace MediaPortal.GUI.Pictures
       }
       if (Util.Utils.FileDelete(_backgroundSlide.FilePath) == true)
       {
-        if (_currentSlideIndex < _slideList.Count)
+        try
         {
-          _slideList.RemoveAt(_currentSlideIndex);
+          _slideList.Remove(_backgroundSlide.FilePath);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("GUISlideShow: Could not remove deleted picture from slidelist {0}", ex.ToString());
         }
 
-        _slideTime = (int) (DateTime.Now.Ticks/10000);
+        _slideTime = (int) (DateTime.Now.Ticks / 10000);
         _lastSlideShown = -1;
         _update = true;
       }
