@@ -119,8 +119,8 @@ namespace MediaPortal.Core.Transcoding
         string strAudioCodec = "";
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "MPEG2Dec Filter");
-          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "MPA Decoder Filter");
+          strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "MPC - MPEG-2 Video Decoder (Gabest)");
+          strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "MPC - MPA Decoder Filter");
         }
         Log.Info("DVRMS2WMV: add mpeg2 video codec:{0}", strVideoCodec);
         Mpeg2VideoCodec = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);

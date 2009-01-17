@@ -346,7 +346,7 @@ namespace MediaPortal.Configuration
             FiltersPowerDVD8Decoder pdvdConfig = new FiltersPowerDVD8Decoder();
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
-          if (filter.Equals("MPA Decoder Filter"))
+          if (filter.Equals("MPC - MPA Decoder Filter"))
           {
             FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
             AddSection(new ConfigPage(filterSection, mpaConfig, false));
@@ -381,7 +381,7 @@ namespace MediaPortal.Configuration
         }
         foreach (string filter in availableVideoFilters)
         {
-          if (filter.Equals("MPV Decoder Filter"))
+          if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
           {
             FiltersMPEG2DecVideo mpvConfig = new FiltersMPEG2DecVideo();
             AddSection(new ConfigPage(filterSection, mpvConfig, true));

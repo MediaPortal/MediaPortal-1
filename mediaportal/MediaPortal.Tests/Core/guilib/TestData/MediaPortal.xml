@@ -1431,8 +1431,8 @@
     <entry name="armode">Stretch</entry>
     <entry name="displaymode">Default</entry>
     <entry name="audiorenderer">Default DirectSound Device</entry>
-    <entry name="videocodec">MPV Decoder Filter</entry>
-    <entry name="audiocodec">MPA Decoder Filter</entry>
+    <entry name="videocodec">MPC - MPEG-2 Video Decoder (Gabest)</entry>
+    <entry name="audiocodec">MPC - MPA Decoder Filter</entry>
     <entry name="navigator">DVD Navigator</entry>
     <entry name="ac3">no</entry>
     <entry name="path">
@@ -1583,8 +1583,8 @@
     <entry name="autoturnontv">no</entry>
     <entry name="defaultar">normal</entry>
     <entry name="vmr9">0</entry>
-    <entry name="audiocodec">MPA Decoder Filter</entry>
-    <entry name="videocodec">MPV Decoder Filter</entry>
+    <entry name="audiocodec">MPC - MPA Decoder Filter</entry>
+    <entry name="videocodec">MPC - MPEG-2 Video Decoder (Gabest)</entry>
     <entry name="ffdshow">no</entry>
   </section>
   <section name="USBUIRT">

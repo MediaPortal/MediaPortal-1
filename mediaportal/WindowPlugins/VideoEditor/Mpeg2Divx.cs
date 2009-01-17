@@ -153,7 +153,7 @@ namespace WindowPlugins.VideoEditor
         //add mpeg2 audio/video codecs
         string strVideoCodecMoniker =
           @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{39F498AF-1A09-4275-B193-673B0BA3D478}";
-        string strAudioCodec = "MPA Decoder Filter";
+        string strAudioCodec = "MPC - MPA Decoder Filter";
         Log.Info("MPEG2DIVX: add MPV mpeg2 video decoder");
         Mpeg2VideoCodec = Marshal.BindToMoniker(strVideoCodecMoniker) as IBaseFilter;
         if (Mpeg2VideoCodec == null)
@@ -162,7 +162,7 @@ namespace WindowPlugins.VideoEditor
           Cleanup();
           return false;
         }
-        hr = graphBuilder.AddFilter(Mpeg2VideoCodec, "MPV Decoder Filter");
+        hr = graphBuilder.AddFilter(Mpeg2VideoCodec, "MPC - MPEG-2 Video Decoder (Gabest)");
         if (hr != 0)
         {
           Log.Error("MPEG2DIVX:FAILED:Add MPV mpeg2 video  to filtergraph :0x{0:X}", hr);
