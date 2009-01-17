@@ -481,6 +481,15 @@ namespace TvPlugin
       //  Log.Info("GUIRecordedTV: threadpool busy - didn't start thumb creation");
     }
 
+    protected bool AllowView(GUIFacadeControl.ViewMode view)
+    {
+      //if (view == GUIFacadeControl.ViewMode.Playlist)
+      //{
+      //  return false;
+      //}
+      return true;
+    }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
@@ -492,30 +501,85 @@ namespace TvPlugin
 
       if (control == btnViewAs)
       {
-        switch (currentViewMethod)
+        bool shouldContinue = false;
+        do
         {
-          case GUIFacadeControl.ViewMode.AlbumView:
-            currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
-            break;
-          case GUIFacadeControl.ViewMode.Filmstrip:
-            currentViewMethod = GUIFacadeControl.ViewMode.List;
-            break;
-          case GUIFacadeControl.ViewMode.LargeIcons:
-            currentViewMethod = GUIFacadeControl.ViewMode.AlbumView;
-            //currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
-            break;
-          case GUIFacadeControl.ViewMode.List:
-            currentViewMethod = GUIFacadeControl.ViewMode.SmallIcons;
-            break;
-          case GUIFacadeControl.ViewMode.SmallIcons:
-            currentViewMethod = GUIFacadeControl.ViewMode.LargeIcons;
-            break;
-          default:
-            currentViewMethod = GUIFacadeControl.ViewMode.List;
-            break;
-        }
+          shouldContinue = false;
+          switch (currentViewMethod)
+          {
+            case GUIFacadeControl.ViewMode.List:
+              currentViewMethod = GUIFacadeControl.ViewMode.Playlist;
+              if (!AllowView(currentViewMethod) || facadeView.PlayListView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
 
-        facadeView.View = currentViewMethod;
+            case GUIFacadeControl.ViewMode.Playlist:
+              currentViewMethod = GUIFacadeControl.ViewMode.SmallIcons;
+              if (!AllowView(currentViewMethod) || facadeView.ThumbnailView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
+
+            case GUIFacadeControl.ViewMode.SmallIcons:
+              currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
+              if (!AllowView(currentViewMethod) || facadeView.ThumbnailView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
+
+            case GUIFacadeControl.ViewMode.LargeIcons:
+              currentViewMethod = GUIFacadeControl.ViewMode.AlbumView;
+              if (!AllowView(currentViewMethod) || facadeView.AlbumListView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
+
+            case GUIFacadeControl.ViewMode.AlbumView:
+              currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
+              if (!AllowView(currentViewMethod) || facadeView.FilmstripView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
+
+            case GUIFacadeControl.ViewMode.Filmstrip:
+              currentViewMethod = GUIFacadeControl.ViewMode.List;
+              if (!AllowView(currentViewMethod) || facadeView.ListView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = currentViewMethod;
+              }
+              break;
+          }
+        } while (shouldContinue);
 
         LoadDirectory();
       }
@@ -641,36 +705,43 @@ namespace TvPlugin
 
     private void ShowViews()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
-      dlg.Reset();
-      dlg.SetHeading(652); // my recorded tv
-      dlg.AddLocalizedString(914);
-      dlg.AddLocalizedString(135);
-      dlg.AddLocalizedString(915);
-      dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1)
-        return;
-      int nNewWindow = GetID;
-      switch (dlg.SelectedId)
+      try
       {
-        case 914: //	all
-          nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
-          break;
-        case 135: //	genres
-          nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE;
-          break;
-        case 915: //	channel
-          nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL;
-          break;
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+          return;
+        dlg.Reset();
+        dlg.SetHeading(652); // my recorded tv
+        dlg.AddLocalizedString(914);
+        dlg.AddLocalizedString(135);
+        dlg.AddLocalizedString(915);
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel == -1)
+          return;
+        int nNewWindow = GetID;
+        switch (dlg.SelectedId)
+        {
+          case 914: //	all
+            nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
+            break;
+          case 135: //	genres
+            nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE;
+            break;
+          case 915: //	channel
+            nNewWindow = (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL;
+            break;
+        }
+        if (nNewWindow != GetID)
+        {
+          GUIWindowManager.ReplaceWindow(nNewWindow);
+          Restore();
+          PreInit();
+          ResetAllControls();
+        }
       }
-      if (nNewWindow != GetID)
+      catch (Exception ex)
       {
-        GUIWindowManager.ReplaceWindow(nNewWindow);
-        Restore();
-        PreInit();
-        ResetAllControls();
+        Log.Error("TvRecorded: Error in ShowViews - {0}", ex.ToString());
       }
     }
 
@@ -703,6 +774,7 @@ namespace TvPlugin
                     {
                       item.IsFolder = true;
                       Utils.SetDefaultIcons(item);
+                      item.ThumbnailImage = item.IconImageBig;
 
                       // NO thumbnails for folders please so we can distinguish between single files and folders
 
@@ -873,34 +945,37 @@ namespace TvPlugin
         {
           item = new GUIListItem(aRecording.Title);
           item.TVTag = aRecording;
-          string strLogo = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
 
-          if (!File.Exists(strLogo))
+          // Set a default logo indicating the watched status
+          string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+          string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
+          
+          // Get the channel logo for the small icons
+          Channel refCh = aRecording.ReferencedChannel();
+          if (refCh != null)
           {
-            Channel refCh = aRecording.ReferencedChannel();
-            if (refCh != null)
-            {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, aRecording.ReferencedChannel().DisplayName);
-            }
+            string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, refCh.DisplayName);
+            if (File.Exists(StationLogo))
+              SmallThumb = StationLogo;
+          }          
 
-            if (refCh == null || !File.Exists(strLogo))
-              strLogo = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+          if (File.Exists(PreviewThumb))
+          {
+            // Search a larger one
+            string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
+            if (File.Exists(PreviewThumbLarge))
+            {
+              PreviewThumb = PreviewThumbLarge;
+            }
           }
           else
           {
-            string strLogoL = Utils.ConvertToLargeCoverArt(strLogo);
-            if (File.Exists(strLogoL))
-            {
-              item.IconImageBig = strLogoL;
-              item.ThumbnailImage = strLogoL;
-            }
-            else
-            {
-              item.IconImageBig = strLogo;
-              item.ThumbnailImage = strLogo;
-            }
+            // Fallback to Logo/Default icon
+            PreviewThumb = SmallThumb;
           }
-          item.IconImage = strLogo;
+
+          item.IconImage = SmallThumb;
+          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
 
           //Mark the recording with a "rec. symbol" if it is an active recording.
           if (IsRecordingActual(aRecording))
@@ -925,55 +1000,59 @@ namespace TvPlugin
       try
       {
         string strLine = string.Empty;
-        switch (currentSortMethod)
+        if (btnSortBy != null)
         {
-          case SortMethod.Channel:
-            strLine = GUILocalizeStrings.Get(620);//Sort by: Channel
-            break;
-          case SortMethod.Date:
-            strLine = GUILocalizeStrings.Get(621);//Sort by: Date
-            break;
-          case SortMethod.Name:
-            strLine = GUILocalizeStrings.Get(268);//Sort by: Title
-            break;
-          case SortMethod.Genre:
-            strLine = GUILocalizeStrings.Get(678);//Sort by: Genre
-            break;
-          case SortMethod.Played:
-            strLine = GUILocalizeStrings.Get(671);//Sort by: Watched
-            break;
-          case SortMethod.Duration:
-            strLine = GUILocalizeStrings.Get(1017);//Sort by: Duration
-            break;
+          switch (currentSortMethod)
+          {
+            case SortMethod.Channel:
+              strLine = GUILocalizeStrings.Get(620);//Sort by: Channel
+              break;
+            case SortMethod.Date:
+              strLine = GUILocalizeStrings.Get(621);//Sort by: Date
+              break;
+            case SortMethod.Name:
+              strLine = GUILocalizeStrings.Get(268);//Sort by: Title
+              break;
+            case SortMethod.Genre:
+              strLine = GUILocalizeStrings.Get(678);//Sort by: Genre
+              break;
+            case SortMethod.Played:
+              strLine = GUILocalizeStrings.Get(671);//Sort by: Watched
+              break;
+            case SortMethod.Duration:
+              strLine = GUILocalizeStrings.Get(1017);//Sort by: Duration
+              break;
+          }
+          GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
+          btnSortBy.IsAscending = m_bSortAscending;
         }
-        GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
-        switch (currentViewMethod)
+        if (btnViewAs != null)
         {
-          case GUIFacadeControl.ViewMode.AlbumView:
-            strLine = GUILocalizeStrings.Get(529);
-            break;
-          case GUIFacadeControl.ViewMode.Filmstrip:
-            strLine = GUILocalizeStrings.Get(733);
-            break;
-          case GUIFacadeControl.ViewMode.LargeIcons:
-            strLine = GUILocalizeStrings.Get(417);
-            break;
-          case GUIFacadeControl.ViewMode.List:
-            strLine = GUILocalizeStrings.Get(101);
-            break;
-          //case GUIFacadeControl.ViewMode.Playlist:
-          //  break;
-          case GUIFacadeControl.ViewMode.SmallIcons:
-            strLine = GUILocalizeStrings.Get(100);
-            break;
-          default:
-            strLine = GUILocalizeStrings.Get(101);
-            break;
+          switch (currentViewMethod)
+          {
+            case GUIFacadeControl.ViewMode.AlbumView:
+              strLine = GUILocalizeStrings.Get(529);
+              break;
+            case GUIFacadeControl.ViewMode.Filmstrip:
+              strLine = GUILocalizeStrings.Get(733);
+              break;
+            case GUIFacadeControl.ViewMode.LargeIcons:
+              strLine = GUILocalizeStrings.Get(417);
+              break;
+            case GUIFacadeControl.ViewMode.List:
+              strLine = GUILocalizeStrings.Get(101);
+              break;
+            //case GUIFacadeControl.ViewMode.Playlist:
+            //  break;
+            case GUIFacadeControl.ViewMode.SmallIcons:
+              strLine = GUILocalizeStrings.Get(100);
+              break;
+            default:
+              strLine = GUILocalizeStrings.Get(101);
+              break;
+          }
+          GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
         }
-
-        GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
-
-        btnSortBy.IsAscending = m_bSortAscending;
 
         GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
         GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
