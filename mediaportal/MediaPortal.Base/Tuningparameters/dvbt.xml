@@ -17,6 +17,7 @@
 <!--   - New Zealand   -->
 <!--   - Norway   -->
 <!--   - Singapore   -->
+<!--   - South Africa -->
 <!--   - Spain   -->
 <!--   - Sweden   -->
 <!--   - Taiwan   -->
@@ -2469,6 +2470,10 @@
     <carrier frequency="538000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="South Africa - Gauteng" offset="125">
+	<carrier frequency="770000" bandwidth="8"></carrier>
+	<carrier frequency="554000" bandwidth="8"></carrier>
   </country>
   <country name="Spain – All Regions">
     <carrier frequency="474000" bandwidth="8"></carrier>
