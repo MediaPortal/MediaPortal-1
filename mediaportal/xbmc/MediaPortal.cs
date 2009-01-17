@@ -238,7 +238,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         //test if exist mpi installer queue
         Log.Info("MPI queue not empty, Launching MPI installer tool .... ");
-        System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "MPInstaller.exe"), @"/queue");
+        Process.Start(Config.GetFile(Config.Dir.Base, "MPInstaller.exe"), @"/queue");
         return;
       }
 
@@ -1679,7 +1679,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: DX9 size: {0}x{1}", GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight);
       Log.Info("Main: Video memory left: {0} MB", GUIGraphicsContext.DX9Device.AvailableTextureMemory/1048576);
-        // consider the aperture size
+      // consider the aperture size
     }
     SetupCamera2D();
     g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
@@ -3204,6 +3204,16 @@ public class MediaPortalApp : D3DApp, IRender
           Activate();
         }
         //Force.SetForegroundWindow(this.Handle, true);
+        break;
+
+      case GUIMessage.MessageType.GUI_MSG_CODEC_MISSING:
+        GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(string.Empty);
+        dlgOk.SetLine(1, message.Label);
+        dlgOk.SetLine(2, string.Empty);
+        dlgOk.SetLine(3, message.Label2);
+        dlgOk.SetLine(4, message.Label3);
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
         break;
     }
   }

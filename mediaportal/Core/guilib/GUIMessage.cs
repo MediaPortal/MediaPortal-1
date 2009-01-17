@@ -126,7 +126,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_AUDIOVOLUME_CHANGED = 90, //joboehl 
       GUI_MSG_CALLBACK = 91, // dero: callback in MPMain thread
       GUI_MSG_BLURAY_DISK_INSERTED = 92,
-      GUI_MSG_HDDVD_DISK_INSERTED = 93
+      GUI_MSG_HDDVD_DISK_INSERTED = 93,
+      GUI_MSG_CODEC_MISSING = 94   // chemelli
     } ;
 
     private string _label = "";

@@ -64,7 +64,7 @@ namespace MediaPortal.Player
 
     #endregion
 
-    #region variables            
+    #region variables
 
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
@@ -92,7 +92,7 @@ namespace MediaPortal.Player
     private static string _currentTitle = ""; //actual program metadata - usefull for tv - avoids extra DB lookups
 
     private static string _currentDescription = "";
-                          //actual program metadata - usefull for tv - avoids extra DB Lookups. 
+    //actual program metadata - usefull for tv - avoids extra DB Lookups. 
 
     private static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     private static double[] _chapters = null;
@@ -126,7 +126,7 @@ namespace MediaPortal.Player
 
     #endregion
 
-    #region Delegates    
+    #region Delegates
 
     #endregion
 
@@ -821,7 +821,7 @@ namespace MediaPortal.Player
         if (RefreshRateChanger.RefreshRateChangePending)
         {
           TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-            //_refreshrateChangeExecutionTime;
+          //_refreshrateChangeExecutionTime;
           if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
           {
             Log.Info(
@@ -992,6 +992,10 @@ namespace MediaPortal.Player
           OnStarted();
         }
         _isInitalized = false;
+        if (!bResult)
+        {
+          UnableToPlay(strURL, MediaType.Unknown);
+        }
         return bResult;
       }
       finally
@@ -1017,14 +1021,12 @@ namespace MediaPortal.Player
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
-        if (strURL == null)
+        if (string.IsNullOrEmpty(strURL))
         {
+          UnableToPlay(strURL, MediaType.Unknown);
           return false;
         }
-        if (strURL.Length == 0)
-        {
-          return false;
-        }
+
         _isInitalized = true;
         _subs = null;
         Log.Info("g_Player.PlayVideoStream({0})", strURL);
@@ -1101,6 +1103,10 @@ namespace MediaPortal.Player
           OnStarted();
         }
         _isInitalized = false;
+        if (!isPlaybackPossible)
+        {
+          UnableToPlay(strURL, MediaType.Unknown);
+        }
         return isPlaybackPossible;
       }
       finally
@@ -1178,12 +1184,9 @@ namespace MediaPortal.Player
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
-        if (strFile == null)
+        if (string.IsNullOrEmpty(strFile))
         {
-          return false;
-        }
-        if (strFile.Length == 0)
-        {
+          UnableToPlay(strFile, type);
           return false;
         }
         _isInitalized = true;
@@ -1204,7 +1207,7 @@ namespace MediaPortal.Player
           GC.Collect();
           GC.Collect();
           GC.Collect();
-            //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
+          //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
         }
 
         if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
@@ -1212,6 +1215,7 @@ namespace MediaPortal.Player
           if (Util.Utils.PlayMovie(strFile))
           {
             _isInitalized = false;
+            UnableToPlay(strFile, type);
             return false;
           }
           string extension = Path.GetExtension(strFile).ToLower();
@@ -1244,6 +1248,10 @@ namespace MediaPortal.Player
               GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
             }
             _isInitalized = false;
+            if (!_isPlaybackPossible)
+            {
+              UnableToPlay(strFile, type);
+            }
             return _isPlaybackPossible;
           }
         }
@@ -1276,6 +1284,10 @@ namespace MediaPortal.Player
             OnStarted();
           }
           _isInitalized = false;
+          if (!bResult)
+          {
+            UnableToPlay(strFile, type);
+          }
           return bResult;
         }
         _isInitalized = false;
@@ -1284,6 +1296,7 @@ namespace MediaPortal.Player
       {
         Starting = false;
       }
+      UnableToPlay(strFile, type);
       return false;
     }
 
@@ -1319,12 +1332,9 @@ namespace MediaPortal.Player
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
-        if (strFile == null)
+        if (string.IsNullOrEmpty(strFile))
         {
-          return false;
-        }
-        if (strFile.Length == 0)
-        {
+          UnableToPlay(strFile, MediaType.Unknown);
           return false;
         }
         _isInitalized = true;
@@ -1346,7 +1356,7 @@ namespace MediaPortal.Player
           GC.Collect();
           GC.Collect();
           GC.Collect();
-            //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
+          //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
           bool doStop = true;
           if (Util.Utils.IsAudio(strFile))
           {
@@ -1399,6 +1409,7 @@ namespace MediaPortal.Player
           if (Util.Utils.PlayMovie(strFile))
           {
             _isInitalized = false;
+            UnableToPlay(strFile, MediaType.Unknown);
             return false;
           }
           string extension = Path.GetExtension(strFile).ToLower();
@@ -1431,6 +1442,10 @@ namespace MediaPortal.Player
               GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
             }
             _isInitalized = false;
+            if (!_isPlaybackPossible)
+            {
+              UnableToPlay(strFile, MediaType.Unknown);
+            }
             return _isPlaybackPossible;
           }
         }
@@ -1461,6 +1476,10 @@ namespace MediaPortal.Player
             OnStarted();
           }
           _isInitalized = false;
+          if (!bResult)
+          {
+            UnableToPlay(strFile, MediaType.Unknown);
+          }
           return bResult;
         }
         _isInitalized = false;
@@ -1469,6 +1488,7 @@ namespace MediaPortal.Player
       {
         Starting = false;
       }
+      UnableToPlay(strFile, MediaType.Unknown);
       return false;
     }
 
@@ -2726,6 +2746,24 @@ namespace MediaPortal.Player
       }
 
       return false;
+    }
+
+    public static void UnableToPlay(string FileName, MediaType type)
+    {
+      MediaInfo mI = new MediaInfo();
+      mI.Open(FileName);
+      string VideoCodec = "";
+      if (type != MediaType.Music && type != MediaType.Radio)
+      {
+        VideoCodec = mI.Get(StreamKind.Video, 0, "Codec");
+      }
+      string AudioCodec = mI.Get(StreamKind.Audio, 0, "Codec");
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
+      msg.Label = string.Format("Unable to play: {0}", Path.GetFileName(FileName));
+      msg.Label2 = string.Format("Video codec: {0}", VideoCodec);
+      msg.Label3 = string.Format("Audio codec: {0}", AudioCodec);
+      GUIGraphicsContext.SendMessage(msg);
     }
 
     #endregion
