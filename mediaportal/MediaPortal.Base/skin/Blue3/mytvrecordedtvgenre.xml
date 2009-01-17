@@ -13,7 +13,7 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>40</posX>
       <posY>10</posY>
       <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -50,7 +50,7 @@
       <posX>260</posX>
       <posY>410</posY>
       <label>#itemcount</label>
-      <textcolor>ffffffff</textcolor>
+      <visible>false</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -58,9 +58,11 @@
       <type>fadelabel</type>
       <description>Selected item Label</description>
       <id>1</id>
-      <posX>660</posX>
-      <posY>70</posY>
+      <posX>680</posX>
+      <posY>68</posY>
+      <width>350</width>
       <label>#selecteditem</label>
+      <font>font14</font>
       <align>right</align>
       <disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -79,7 +81,7 @@
         <type>sortbutton</type>
         <id>3</id>
         <onleft>3</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>5</onup>
         <ondown>5</ondown>
         <font>font13</font>
@@ -90,7 +92,7 @@
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>6</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>3</onup>
         <ondown>6</ondown>
         <label>457</label>
@@ -100,7 +102,7 @@
         <description>cleanup button</description>
         <id>6</id>
         <onleft>3</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>5</onup>
         <ondown>99</ondown>
         <label>624</label>
@@ -127,54 +129,16 @@
           <left>0</left>
         </padding>
       </mpe>
-      <control>
-        <type>listcontrol</type>
-        <description>scheduler recordings listcontrol</description>
-        <id>10</id>
-        <height>370</height>
-        <onleft>3</onleft>
-        <onright>11</onright>
-<!--         <onup>3</onup>
-        <ondown>3</ondown> -->
-        <font3>font10</font3>
-        <font2>font10</font2>
-        <textYOff3>29</textYOff3>
-        <textXOff2>420</textXOff2>
-        <textYOff>2</textYOff>
-        <textureFocus>recording_background_focus.png</textureFocus>
-        <font>font13</font>
-        <textXOff>50</textXOff>
-        <itemHeight>35</itemHeight>
-        <keepaspectratio>no</keepaspectratio>
-        <textXOff3>100</textXOff3>
-        <textureHeight>50</textureHeight>
-        <itemWidth>35</itemWidth>
-        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
-        <IconXOff>12</IconXOff>
-        <spaceBetweenItems>5</spaceBetweenItems>
-        <spinPosX>606</spinPosX>
-        <spinPosY>418</spinPosY>
-        <textYOff2>29</textYOff2>
-      </control>
-      <control>
-        <type>listcontrol</type>
-        <description>listcontrol</description>
-        <id>11</id>
-        <onleft>3</onleft>
-        <onright>10</onright>
-        <onup>10</onup>
-        <ondown>3</ondown>
-        <textcolor>FFFFFFFF</textcolor>
-        <font>font13</font>
-      </control>
+      
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
         <id>13</id>
-        <posX>260</posX>
-        <posY>440</posY>
+        <posX>800</posX>
+        <posY>600</posY>
         <label>#TV.RecordedTV.Title</label>
-        <disabledcolor>ff808080</disabledcolor>
+        <disabledcolor>00808080</disabledcolor>
+        <textcolor>00b2d4f5</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -184,19 +148,20 @@
         <posY>460</posY>
         <label>#TV.RecordedTV.Time</label>
         <textcolor>ffb2d4f5</textcolor>
+        <visible>false</visible>
       </control>
       <control>
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>260</posX>
-        <posY>485</posY>
-        <width>430</width>
-        <height>65</height>
+        <posX>265</posX>
+        <posY>428</posY>
+        <width>417</width>
+        <height>100</height>
         <colordiffuse>ffffffff</colordiffuse>
-        <font>font13</font>
+        <font>font12</font>
         <label>#TV.RecordedTV.Description</label>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>ffb2d4f5</textcolor>
       </control>
       <!--          <control>
             <type>label</type>
@@ -209,5 +174,6 @@
             <textcolor>ffb2d4f5</textcolor>
          </control> -->
     </control>
+    <import>common.facade.recordings.xml</import>
   </controls>
 </window>

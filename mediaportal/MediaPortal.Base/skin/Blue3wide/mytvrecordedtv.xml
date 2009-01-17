@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
@@ -93,7 +92,7 @@
       <control>
         <type>sortbutton</type>
         <id>3</id>
-        <onleft>2</onleft>
+        <onleft>3</onleft>
         <onright>50</onright>
         <onup>2</onup>
         <ondown>5</ondown>
@@ -104,9 +103,9 @@
         <type>button</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
-        <onleft>6</onleft>
+        <onleft>5</onleft>
         <onright>50</onright>
-        <onup>2</onup>
+        <onup>3</onup>
         <ondown>6</ondown>
         <label>457</label>
       </control> -->
@@ -114,7 +113,7 @@
         <type>button</type>
         <description>cleanup button</description>
         <id>6</id>
-        <onleft>2</onleft>
+        <onleft>6</onleft>
         <onright>50</onright>
         <onup>5</onup>
         <ondown>7</ondown>
@@ -125,7 +124,7 @@
         <type>button</type>
         <description>compress button</description>
         <id>7</id>
-        <onleft>2</onleft>
+        <onleft>7</onleft>
         <onright>50</onright>
         <onup>6</onup>
         <ondown>99</ondown>

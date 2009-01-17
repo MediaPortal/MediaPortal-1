@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>603</id>
-  <defaultcontrol>11</defaultcontrol>
+  <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.time.xml</import>
@@ -82,7 +82,7 @@
         <description>View-As button</description>
         <id>2</id>
         <onleft>2</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
         <label>100</label>
@@ -91,28 +91,28 @@
         <type>sortbutton</type>
         <id>3</id>
         <onleft>2</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>2</onup>
         <ondown>5</ondown>
         <font>font13</font>
         <label>620</label>
       </control>
-      <control>
+<!--       <control>
         <type>button</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>6</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>2</onup>
         <ondown>6</ondown>
         <label>457</label>
-      </control>
+      </control> -->
       <control>
         <type>button</type>
         <description>cleanup button</description>
         <id>6</id>
         <onleft>2</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>5</onup>
         <ondown>7</ondown>
         <label>624</label>
@@ -123,7 +123,7 @@
         <description>compress button</description>
         <id>7</id>
         <onleft>2</onleft>
-        <onright>10</onright>
+        <onright>50</onright>
         <onup>6</onup>
         <ondown>99</ondown>
         <hyperlink>609</hyperlink>
@@ -151,54 +151,7 @@
           <left>0</left>
         </padding>
       </mpe>
-      <control>
-        <type>listcontrol</type>
-        <description>scheduler recordings listcontrol</description>
-        <id>10</id>
-        <posY>92</posY>
-        <height>440</height>
-        <onleft>2</onleft>
-        <onright>11</onright>
-<!--         <onup>2</onup>
-        <ondown>2</ondown> -->
-        <font>font14</font>
-        <font2>font12</font2>
-        <font3>font12</font3>
-<!--         <textcolor>ffb2d4f5</textcolor> -->
-        <textcolor2>ffb2d4f5</textcolor2>
-        <textcolor3>cfb2d4f5</textcolor3>
-        <textXOff>30</textXOff>
-        <textXOff2>418</textXOff2>
-        <textXOff3>125</textXOff3>
-        <textYOff>6</textYOff>
-        <textYOff2>52</textYOff2>
-        <textYOff3>33</textYOff3>
-        <IconXOff>12</IconXOff>
-        <textureFocus>album_background_focus.png</textureFocus>
-        <keepaspectratio>no</keepaspectratio>
-        <textureHeight>82</textureHeight>
-        <itemHeight>64</itemHeight>
-        <itemWidth>70</itemWidth>
-        <textureNoFocus>album_background_nofocus.png</textureNoFocus>
-        <spaceBetweenItems>4</spaceBetweenItems>
-
-      </control>
-      <control>
-        <type>listcontrol</type>
-        <description>listcontrol</description>
-        <id>11</id>
-        <height>350</height>
-        <onleft>10</onleft>
-        <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-        <font>font13</font>
-        <spinColor>FFFFFFFF</spinColor>
-        <PinIconXOff>20</PinIconXOff>
-        <PinIconYOff>10</PinIconYOff>
-        <PinIconWidth>10</PinIconWidth>
-      	<PinIconHeight>10</PinIconHeight>
-      </control>
+      
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
@@ -243,5 +196,6 @@
             <textcolor>ffb2d4f5</textcolor>
          </control> -->
     </control>
+    <import>common.facade.recordings.xml</import>
   </controls>
 </window>
