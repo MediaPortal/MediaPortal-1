@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
+using MediaPortal.Profile;
 
 
 namespace MediaPortal.Util
@@ -38,20 +39,43 @@ namespace MediaPortal.Util
   {
     static string ExtractApp = "mtn.exe";
     static string ExtractorPath = Config.GetFile(Config.Dir.Base, "MovieThumbnailer", ExtractApp);
-    static int PreviewColumns = 1;
+    static int PreviewColumns = 2;
     static int PreviewRows = 2;
+    static bool LeaveShareThumb = false;
+
+    static VideoThumbCreator()
+    {
+      LoadSettings();
+    }
+    private VideoThumbCreator()
+    {
+    }
+
+    #region Serialisation
+    
+    private static void LoadSettings()
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
+        PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);
+        LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+      }
+    }
+
+    #endregion
 
     #region Public methods
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    public static bool CreateVideoThumb(string aVideoPath, bool aOmitCredits)
-    {
-      string sharethumb = Path.ChangeExtension(aVideoPath, ".jpg");
-      if (File.Exists(sharethumb))
-        return true;
-      else
-        return CreateVideoThumb(aVideoPath, sharethumb, false, aOmitCredits);
-    }
+    //[MethodImpl(MethodImplOptions.Synchronized)]
+    //public static bool CreateVideoThumb(string aVideoPath, bool aOmitCredits)
+    //{
+    //  string sharethumb = Path.ChangeExtension(aVideoPath, ".jpg");
+    //  if (File.Exists(sharethumb))
+    //    return true;
+    //  else
+    //    return CreateVideoThumb(aVideoPath, sharethumb, false, aOmitCredits);
+    //}
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static bool CreateVideoThumb(string aVideoPath, string aThumbPath, bool aCacheThumb, bool aOmitCredits)
@@ -64,6 +88,11 @@ namespace MediaPortal.Util
       if (!File.Exists(ExtractorPath))
       {
         Log.Warn("VideoThumbCreator: No {0} found to generate thumbnails of your video!", ExtractApp);
+        return false;
+      }
+      if (!LeaveShareThumb && !aCacheThumb)
+      {
+        Log.Warn("VideoThumbCreator: No share thumbs wanted by config option AND no caching wanted - where should the thumb go then? Aborting..");
         return false;
       }
 
@@ -103,7 +132,8 @@ namespace MediaPortal.Util
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        if (!File.Exists(ShareThumb))
+        if ((LeaveShareThumb && !File.Exists(ShareThumb))    // No thumb in share although it should be there
+        || (!LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
 
@@ -128,17 +158,27 @@ namespace MediaPortal.Util
             {
               // Clean up
               File.Delete(OutputThumb);
-              Thread.Sleep(100);
+              Thread.Sleep(50);
             }
             catch (Exception) { }
           }
         }
-        Thread.Sleep(0);
+        Thread.Sleep(30);
 
         if (aCacheThumb)
         {
           if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, false))
             Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+        }
+
+        if (!LeaveShareThumb)
+        {
+          try
+          {
+            File.Delete(ShareThumb);
+            Thread.Sleep(30);
+          }
+          catch (Exception) { }
         }
       }
       catch (Exception ex)

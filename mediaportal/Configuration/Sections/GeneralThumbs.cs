@@ -62,6 +62,12 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxTVThumbs;
     private MPButton buttonClearTVThumbs;
     private MPCheckBox checkBoxTVThumbs;
+    private MPCheckBox checkBoxShareThumb;
+    private MPLabel labelRows;
+    private MPNumericUpDown numericUpDownThumbRows;
+    private MPLabel labelCol;
+    private MPNumericUpDown numericUpDownThumbColumns;
+    private MPLabel mpLabel1;
     private TabPage tabPageThumbQuality;
 
     public GeneralThumbs()
@@ -95,6 +101,9 @@ namespace MediaPortal.Configuration.Sections
         checkBoxFolderThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         checkBoxPicThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
         checkBoxTVThumbs.Checked = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        checkBoxShareThumb.Checked = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+        numericUpDownThumbColumns.Value = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
+        numericUpDownThumbRows.Value = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);
       }
     }
 
@@ -106,6 +115,9 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", checkBoxFolderThumbOnDemand.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", checkBoxPicThumbOnDemand.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", checkBoxTVThumbs.Checked);
+        xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", checkBoxShareThumb.Checked);
+        xmlwriter.SetValue("thumbnails", "tvthumbcols", numericUpDownThumbColumns.Value);
+        xmlwriter.SetValue("thumbnails", "tvthumbrows", numericUpDownThumbRows.Value);
       }
     }
 
@@ -158,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
           labelCurrentCompositing.Text = "Default";
           labelCurrentInterpolation.Text = "Default";
           labelCurrentSmoothing.Text = "Default";
-          labelRecommendedCurrent.Text = "Large wide CRTs, small TFTs";
+          labelRecommendedCurrent.Text = "Large wide CRTs, small LCDs";
           break;
         case 3:
           labelCurrentResolution.Text = Convert.ToString((int) Thumbs.ThumbResolution) + " + " +
@@ -166,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
           labelCurrentCompositing.Text = "Assume Linear";
           labelCurrentInterpolation.Text = "High Quality";
           labelCurrentSmoothing.Text = "High Quality";
-          labelRecommendedCurrent.Text = "Small wide TFTs, Plasmas";
+          labelRecommendedCurrent.Text = "LCDs, Plasmas";
           break;
         case 4:
           labelCurrentResolution.Text = Convert.ToString((int) Thumbs.ThumbResolution) + " + " +
@@ -174,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
           labelCurrentCompositing.Text = "High Quality";
           labelCurrentInterpolation.Text = "High Quality Bicubic";
           labelCurrentSmoothing.Text = "High Quality";
-          labelRecommendedCurrent.Text = "Very large TFTs, Projectors";
+          labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
           break;
       }
     }
@@ -182,51 +194,59 @@ namespace MediaPortal.Configuration.Sections
     // designer generated code
     private void InitializeComponent()
     {
-      this.tabControlThumbnailSettings = new MPTabControl();
-      this.tabPageThumbQuality = new TabPage();
-      this.groupBoxTVThumbs = new MPGroupBox();
-      this.buttonClearTVThumbs = new MPButton();
-      this.checkBoxTVThumbs = new MPCheckBox();
-      this.groupBoxPictureThumbs = new MPGroupBox();
-      this.buttonClearPictureThumbs = new MPButton();
-      this.checkBoxPicThumbOnDemand = new MPCheckBox();
-      this.groupBoxMusicThumbs = new MPGroupBox();
-      this.buttonClearMusicCache = new MPButton();
-      this.checkBoxFolderThumbOnDemand = new MPCheckBox();
-      this.groupBoxThumbQuality = new MPGroupBox();
-      this.labelRecommendedCurrent = new MPLabel();
-      this.labelRecommendedHint = new MPLabel();
-      this.labelCurrentSmoothing = new MPLabel();
-      this.labelCurrentInterpolation = new MPLabel();
-      this.labelCurrentCompositing = new MPLabel();
-      this.labelCurrentResolution = new MPLabel();
-      this.labelSmoothing = new MPLabel();
-      this.labelInterpolation = new MPLabel();
-      this.labelCompositing = new MPLabel();
-      this.labelResolution = new MPLabel();
-      this.labelHigh = new MPLabel();
-      this.labelLow = new MPLabel();
-      this.labelQualityHint = new MPLabel();
-      this.trackBarQuality = new TrackBar();
+      this.tabControlThumbnailSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageThumbQuality = new System.Windows.Forms.TabPage();
+      this.groupBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonClearTVThumbs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxPictureThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonClearPictureThumbs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxPicThumbOnDemand = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxMusicThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonClearMusicCache = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxFolderThumbOnDemand = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxThumbQuality = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelRecommendedCurrent = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelRecommendedHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentResolution = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelResolution = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelHigh = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelLow = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelQualityHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.trackBarQuality = new System.Windows.Forms.TrackBar();
+      this.checkBoxShareThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.numericUpDownThumbColumns = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.labelCol = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelRows = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.numericUpDownThumbRows = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControlThumbnailSettings.SuspendLayout();
       this.tabPageThumbQuality.SuspendLayout();
       this.groupBoxTVThumbs.SuspendLayout();
       this.groupBoxPictureThumbs.SuspendLayout();
       this.groupBoxMusicThumbs.SuspendLayout();
       this.groupBoxThumbQuality.SuspendLayout();
-      ((ISupportInitialize) (this.trackBarQuality)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarQuality)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownThumbColumns)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownThumbRows)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControlThumbnailSettings
       // 
-      this.tabControlThumbnailSettings.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                                   | AnchorStyles.Left)
-                                                                  | AnchorStyles.Right)));
+      this.tabControlThumbnailSettings.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlThumbnailSettings.Controls.Add(this.tabPageThumbQuality);
-      this.tabControlThumbnailSettings.Location = new Point(0, 0);
+      this.tabControlThumbnailSettings.Location = new System.Drawing.Point(0, 0);
       this.tabControlThumbnailSettings.Name = "tabControlThumbnailSettings";
       this.tabControlThumbnailSettings.SelectedIndex = 0;
-      this.tabControlThumbnailSettings.Size = new Size(472, 408);
+      this.tabControlThumbnailSettings.Size = new System.Drawing.Size(472, 408);
       this.tabControlThumbnailSettings.TabIndex = 0;
       // 
       // tabPageThumbQuality
@@ -235,123 +255,129 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageThumbQuality.Controls.Add(this.groupBoxPictureThumbs);
       this.tabPageThumbQuality.Controls.Add(this.groupBoxMusicThumbs);
       this.tabPageThumbQuality.Controls.Add(this.groupBoxThumbQuality);
-      this.tabPageThumbQuality.Location = new Point(4, 22);
+      this.tabPageThumbQuality.Location = new System.Drawing.Point(4, 22);
       this.tabPageThumbQuality.Name = "tabPageThumbQuality";
-      this.tabPageThumbQuality.Padding = new Padding(3);
-      this.tabPageThumbQuality.Size = new Size(464, 382);
+      this.tabPageThumbQuality.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageThumbQuality.Size = new System.Drawing.Size(464, 382);
       this.tabPageThumbQuality.TabIndex = 0;
       this.tabPageThumbQuality.Text = "Thumbnails";
       this.tabPageThumbQuality.UseVisualStyleBackColor = true;
       // 
       // groupBoxTVThumbs
       // 
-      this.groupBoxTVThumbs.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.groupBoxTVThumbs.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.groupBoxTVThumbs.Controls.Add(this.mpLabel1);
+      this.groupBoxTVThumbs.Controls.Add(this.labelRows);
+      this.groupBoxTVThumbs.Controls.Add(this.numericUpDownThumbRows);
+      this.groupBoxTVThumbs.Controls.Add(this.labelCol);
+      this.groupBoxTVThumbs.Controls.Add(this.numericUpDownThumbColumns);
+      this.groupBoxTVThumbs.Controls.Add(this.checkBoxShareThumb);
       this.groupBoxTVThumbs.Controls.Add(this.buttonClearTVThumbs);
       this.groupBoxTVThumbs.Controls.Add(this.checkBoxTVThumbs);
-      this.groupBoxTVThumbs.FlatStyle = FlatStyle.Popup;
-      this.groupBoxTVThumbs.Location = new Point(16, 288);
+      this.groupBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxTVThumbs.Location = new System.Drawing.Point(16, 280);
       this.groupBoxTVThumbs.Name = "groupBoxTVThumbs";
-      this.groupBoxTVThumbs.Size = new Size(207, 82);
+      this.groupBoxTVThumbs.Size = new System.Drawing.Size(428, 94);
       this.groupBoxTVThumbs.TabIndex = 3;
       this.groupBoxTVThumbs.TabStop = false;
       this.groupBoxTVThumbs.Text = "TV thumbs";
       // 
       // buttonClearTVThumbs
       // 
-      this.buttonClearTVThumbs.Location = new Point(13, 46);
+      this.buttonClearTVThumbs.Location = new System.Drawing.Point(13, 63);
       this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
-      this.buttonClearTVThumbs.Size = new Size(178, 23);
+      this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
       this.buttonClearTVThumbs.TabIndex = 1;
       this.buttonClearTVThumbs.Text = "Clear recorded TV thumbs";
       this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
-      this.buttonClearTVThumbs.Click += new EventHandler(this.buttonClearTVThumbs_Click);
+      this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
       // 
       // checkBoxTVThumbs
       // 
       this.checkBoxTVThumbs.AutoSize = true;
       this.checkBoxTVThumbs.Checked = true;
-      this.checkBoxTVThumbs.CheckState = CheckState.Checked;
-      this.checkBoxTVThumbs.FlatStyle = FlatStyle.Popup;
-      this.checkBoxTVThumbs.Location = new Point(13, 23);
+      this.checkBoxTVThumbs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTVThumbs.Location = new System.Drawing.Point(13, 19);
       this.checkBoxTVThumbs.Name = "checkBoxTVThumbs";
-      this.checkBoxTVThumbs.Size = new Size(180, 17);
+      this.checkBoxTVThumbs.Size = new System.Drawing.Size(177, 17);
       this.checkBoxTVThumbs.TabIndex = 0;
-      this.checkBoxTVThumbs.Text = "Auto-create thumbs of recordings";
+      this.checkBoxTVThumbs.Text = "Autocreate thumbs of recordings";
       this.checkBoxTVThumbs.UseVisualStyleBackColor = true;
       // 
       // groupBoxPictureThumbs
       // 
-      this.groupBoxPictureThumbs.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.groupBoxPictureThumbs.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxPictureThumbs.Controls.Add(this.buttonClearPictureThumbs);
       this.groupBoxPictureThumbs.Controls.Add(this.checkBoxPicThumbOnDemand);
-      this.groupBoxPictureThumbs.FlatStyle = FlatStyle.Popup;
-      this.groupBoxPictureThumbs.Location = new Point(237, 201);
+      this.groupBoxPictureThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxPictureThumbs.Location = new System.Drawing.Point(237, 201);
       this.groupBoxPictureThumbs.Name = "groupBoxPictureThumbs";
-      this.groupBoxPictureThumbs.Size = new Size(207, 82);
+      this.groupBoxPictureThumbs.Size = new System.Drawing.Size(207, 74);
       this.groupBoxPictureThumbs.TabIndex = 2;
       this.groupBoxPictureThumbs.TabStop = false;
       this.groupBoxPictureThumbs.Text = "Picture thumbs";
       // 
       // buttonClearPictureThumbs
       // 
-      this.buttonClearPictureThumbs.Location = new Point(14, 46);
+      this.buttonClearPictureThumbs.Location = new System.Drawing.Point(14, 42);
       this.buttonClearPictureThumbs.Name = "buttonClearPictureThumbs";
-      this.buttonClearPictureThumbs.Size = new Size(178, 23);
+      this.buttonClearPictureThumbs.Size = new System.Drawing.Size(178, 23);
       this.buttonClearPictureThumbs.TabIndex = 1;
       this.buttonClearPictureThumbs.Text = "Clear picture cache";
       this.buttonClearPictureThumbs.UseVisualStyleBackColor = true;
-      this.buttonClearPictureThumbs.Click += new EventHandler(this.buttonClearPictureThumbs_Click);
+      this.buttonClearPictureThumbs.Click += new System.EventHandler(this.buttonClearPictureThumbs_Click);
       // 
       // checkBoxPicThumbOnDemand
       // 
       this.checkBoxPicThumbOnDemand.AutoSize = true;
-      this.checkBoxPicThumbOnDemand.FlatStyle = FlatStyle.Popup;
-      this.checkBoxPicThumbOnDemand.Location = new Point(14, 23);
+      this.checkBoxPicThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPicThumbOnDemand.Location = new System.Drawing.Point(14, 19);
       this.checkBoxPicThumbOnDemand.Name = "checkBoxPicThumbOnDemand";
-      this.checkBoxPicThumbOnDemand.Size = new Size(164, 17);
+      this.checkBoxPicThumbOnDemand.Size = new System.Drawing.Size(164, 17);
       this.checkBoxPicThumbOnDemand.TabIndex = 0;
       this.checkBoxPicThumbOnDemand.Text = "Auto-create only small thumbs";
       this.checkBoxPicThumbOnDemand.UseVisualStyleBackColor = true;
       // 
       // groupBoxMusicThumbs
       // 
-      this.groupBoxMusicThumbs.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.groupBoxMusicThumbs.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.groupBoxMusicThumbs.Controls.Add(this.buttonClearMusicCache);
       this.groupBoxMusicThumbs.Controls.Add(this.checkBoxFolderThumbOnDemand);
-      this.groupBoxMusicThumbs.FlatStyle = FlatStyle.Popup;
-      this.groupBoxMusicThumbs.Location = new Point(16, 202);
+      this.groupBoxMusicThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMusicThumbs.Location = new System.Drawing.Point(16, 201);
       this.groupBoxMusicThumbs.Name = "groupBoxMusicThumbs";
-      this.groupBoxMusicThumbs.Size = new Size(207, 81);
+      this.groupBoxMusicThumbs.Size = new System.Drawing.Size(207, 73);
       this.groupBoxMusicThumbs.TabIndex = 1;
       this.groupBoxMusicThumbs.TabStop = false;
       this.groupBoxMusicThumbs.Text = "Music thumbs";
       // 
       // buttonClearMusicCache
       // 
-      this.buttonClearMusicCache.Location = new Point(13, 46);
+      this.buttonClearMusicCache.Location = new System.Drawing.Point(13, 42);
       this.buttonClearMusicCache.Name = "buttonClearMusicCache";
-      this.buttonClearMusicCache.Size = new Size(178, 23);
+      this.buttonClearMusicCache.Size = new System.Drawing.Size(178, 23);
       this.buttonClearMusicCache.TabIndex = 1;
       this.buttonClearMusicCache.Text = "Delete all music thumbs";
       this.buttonClearMusicCache.UseVisualStyleBackColor = true;
-      this.buttonClearMusicCache.Click += new EventHandler(this.buttonClearMusicCache_Click);
+      this.buttonClearMusicCache.Click += new System.EventHandler(this.buttonClearMusicCache_Click);
       // 
       // checkBoxFolderThumbOnDemand
       // 
       this.checkBoxFolderThumbOnDemand.AutoSize = true;
-      this.checkBoxFolderThumbOnDemand.FlatStyle = FlatStyle.Popup;
-      this.checkBoxFolderThumbOnDemand.Location = new Point(13, 23);
+      this.checkBoxFolderThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxFolderThumbOnDemand.Location = new System.Drawing.Point(13, 19);
       this.checkBoxFolderThumbOnDemand.Name = "checkBoxFolderThumbOnDemand";
-      this.checkBoxFolderThumbOnDemand.Size = new Size(173, 17);
+      this.checkBoxFolderThumbOnDemand.Size = new System.Drawing.Size(173, 17);
       this.checkBoxFolderThumbOnDemand.TabIndex = 0;
       this.checkBoxFolderThumbOnDemand.Text = "Create folder cache on demand";
       this.checkBoxFolderThumbOnDemand.UseVisualStyleBackColor = true;
       // 
       // groupBoxThumbQuality
       // 
-      this.groupBoxThumbQuality.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                            | AnchorStyles.Left)
-                                                           | AnchorStyles.Right)));
+      this.groupBoxThumbQuality.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedCurrent);
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedHint);
       this.groupBoxThumbQuality.Controls.Add(this.labelCurrentSmoothing);
@@ -366,175 +392,257 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxThumbQuality.Controls.Add(this.labelLow);
       this.groupBoxThumbQuality.Controls.Add(this.labelQualityHint);
       this.groupBoxThumbQuality.Controls.Add(this.trackBarQuality);
-      this.groupBoxThumbQuality.FlatStyle = FlatStyle.Popup;
-      this.groupBoxThumbQuality.Location = new Point(16, 16);
+      this.groupBoxThumbQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxThumbQuality.Location = new System.Drawing.Point(16, 16);
       this.groupBoxThumbQuality.Name = "groupBoxThumbQuality";
-      this.groupBoxThumbQuality.Size = new Size(428, 179);
+      this.groupBoxThumbQuality.Size = new System.Drawing.Size(428, 179);
       this.groupBoxThumbQuality.TabIndex = 0;
       this.groupBoxThumbQuality.TabStop = false;
       this.groupBoxThumbQuality.Text = "Quality settings";
       // 
       // labelRecommendedCurrent
       // 
-      this.labelRecommendedCurrent.Anchor = AnchorStyles.None;
+      this.labelRecommendedCurrent.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelRecommendedCurrent.AutoSize = true;
-      this.labelRecommendedCurrent.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point,
-                                                   ((byte) (0)));
-      this.labelRecommendedCurrent.Location = new Point(10, 155);
+      this.labelRecommendedCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelRecommendedCurrent.Location = new System.Drawing.Point(10, 155);
       this.labelRecommendedCurrent.Name = "labelRecommendedCurrent";
-      this.labelRecommendedCurrent.Size = new Size(141, 13);
+      this.labelRecommendedCurrent.Size = new System.Drawing.Size(141, 13);
       this.labelRecommendedCurrent.TabIndex = 2;
       this.labelRecommendedCurrent.Text = "Large wide CRTs, small TFT";
       // 
       // labelRecommendedHint
       // 
-      this.labelRecommendedHint.Anchor = AnchorStyles.None;
+      this.labelRecommendedHint.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelRecommendedHint.AutoSize = true;
-      this.labelRecommendedHint.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                                ((byte) (0)));
-      this.labelRecommendedHint.Location = new Point(10, 133);
+      this.labelRecommendedHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelRecommendedHint.Location = new System.Drawing.Point(10, 133);
       this.labelRecommendedHint.Name = "labelRecommendedHint";
-      this.labelRecommendedHint.Size = new Size(113, 13);
+      this.labelRecommendedHint.Size = new System.Drawing.Size(113, 13);
       this.labelRecommendedHint.TabIndex = 1;
       this.labelRecommendedHint.Text = "Recommended for:";
       // 
       // labelCurrentSmoothing
       // 
-      this.labelCurrentSmoothing.Anchor = AnchorStyles.None;
+      this.labelCurrentSmoothing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentSmoothing.AutoSize = true;
-      this.labelCurrentSmoothing.Location = new Point(317, 134);
+      this.labelCurrentSmoothing.Location = new System.Drawing.Point(317, 134);
       this.labelCurrentSmoothing.Name = "labelCurrentSmoothing";
-      this.labelCurrentSmoothing.Size = new Size(41, 13);
+      this.labelCurrentSmoothing.Size = new System.Drawing.Size(41, 13);
       this.labelCurrentSmoothing.TabIndex = 13;
       this.labelCurrentSmoothing.Text = "Default";
       // 
       // labelCurrentInterpolation
       // 
-      this.labelCurrentInterpolation.Anchor = AnchorStyles.None;
+      this.labelCurrentInterpolation.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentInterpolation.AutoSize = true;
-      this.labelCurrentInterpolation.Location = new Point(317, 102);
+      this.labelCurrentInterpolation.Location = new System.Drawing.Point(317, 102);
       this.labelCurrentInterpolation.Name = "labelCurrentInterpolation";
-      this.labelCurrentInterpolation.Size = new Size(41, 13);
+      this.labelCurrentInterpolation.Size = new System.Drawing.Size(41, 13);
       this.labelCurrentInterpolation.TabIndex = 11;
       this.labelCurrentInterpolation.Text = "Default";
       // 
       // labelCurrentCompositing
       // 
-      this.labelCurrentCompositing.Anchor = AnchorStyles.None;
+      this.labelCurrentCompositing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentCompositing.AutoSize = true;
-      this.labelCurrentCompositing.Location = new Point(317, 71);
+      this.labelCurrentCompositing.Location = new System.Drawing.Point(317, 71);
       this.labelCurrentCompositing.Name = "labelCurrentCompositing";
-      this.labelCurrentCompositing.Size = new Size(41, 13);
+      this.labelCurrentCompositing.Size = new System.Drawing.Size(41, 13);
       this.labelCurrentCompositing.TabIndex = 9;
       this.labelCurrentCompositing.Text = "Default";
       // 
       // labelCurrentResolution
       // 
-      this.labelCurrentResolution.Anchor = AnchorStyles.None;
+      this.labelCurrentResolution.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentResolution.AutoSize = true;
-      this.labelCurrentResolution.Location = new Point(317, 41);
+      this.labelCurrentResolution.Location = new System.Drawing.Point(317, 41);
       this.labelCurrentResolution.Name = "labelCurrentResolution";
-      this.labelCurrentResolution.Size = new Size(55, 13);
+      this.labelCurrentResolution.Size = new System.Drawing.Size(55, 13);
       this.labelCurrentResolution.TabIndex = 7;
       this.labelCurrentResolution.Text = "120 + 500";
       // 
       // labelSmoothing
       // 
-      this.labelSmoothing.Anchor = AnchorStyles.None;
+      this.labelSmoothing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelSmoothing.AutoSize = true;
-      this.labelSmoothing.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                          ((byte) (0)));
-      this.labelSmoothing.Location = new Point(235, 133);
+      this.labelSmoothing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelSmoothing.Location = new System.Drawing.Point(235, 133);
       this.labelSmoothing.Name = "labelSmoothing";
-      this.labelSmoothing.Size = new Size(66, 13);
+      this.labelSmoothing.Size = new System.Drawing.Size(66, 13);
       this.labelSmoothing.TabIndex = 12;
       this.labelSmoothing.Text = "Smoothing";
       // 
       // labelInterpolation
       // 
-      this.labelInterpolation.Anchor = AnchorStyles.None;
+      this.labelInterpolation.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelInterpolation.AutoSize = true;
-      this.labelInterpolation.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                              ((byte) (0)));
-      this.labelInterpolation.Location = new Point(235, 101);
+      this.labelInterpolation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelInterpolation.Location = new System.Drawing.Point(235, 101);
       this.labelInterpolation.Name = "labelInterpolation";
-      this.labelInterpolation.Size = new Size(78, 13);
+      this.labelInterpolation.Size = new System.Drawing.Size(78, 13);
       this.labelInterpolation.TabIndex = 10;
       this.labelInterpolation.Text = "Interpolation";
       // 
       // labelCompositing
       // 
-      this.labelCompositing.Anchor = AnchorStyles.None;
+      this.labelCompositing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCompositing.AutoSize = true;
-      this.labelCompositing.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                            ((byte) (0)));
-      this.labelCompositing.Location = new Point(235, 70);
+      this.labelCompositing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelCompositing.Location = new System.Drawing.Point(235, 70);
       this.labelCompositing.Name = "labelCompositing";
-      this.labelCompositing.Size = new Size(75, 13);
+      this.labelCompositing.Size = new System.Drawing.Size(75, 13);
       this.labelCompositing.TabIndex = 8;
       this.labelCompositing.Text = "Compositing";
       // 
       // labelResolution
       // 
-      this.labelResolution.Anchor = AnchorStyles.None;
+      this.labelResolution.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelResolution.AutoSize = true;
-      this.labelResolution.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                           ((byte) (0)));
-      this.labelResolution.Location = new Point(235, 40);
+      this.labelResolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+      this.labelResolution.Location = new System.Drawing.Point(235, 40);
       this.labelResolution.Name = "labelResolution";
-      this.labelResolution.Size = new Size(67, 13);
+      this.labelResolution.Size = new System.Drawing.Size(67, 13);
       this.labelResolution.TabIndex = 6;
       this.labelResolution.Text = "Resolution";
       // 
       // labelHigh
       // 
-      this.labelHigh.Anchor = AnchorStyles.None;
+      this.labelHigh.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelHigh.AutoSize = true;
-      this.labelHigh.Location = new Point(177, 18);
+      this.labelHigh.Location = new System.Drawing.Point(177, 18);
       this.labelHigh.Name = "labelHigh";
-      this.labelHigh.Size = new Size(39, 13);
+      this.labelHigh.Size = new System.Drawing.Size(39, 13);
       this.labelHigh.TabIndex = 3;
       this.labelHigh.Text = "Quality";
       // 
       // labelLow
       // 
-      this.labelLow.Anchor = AnchorStyles.None;
+      this.labelLow.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelLow.AutoSize = true;
-      this.labelLow.Location = new Point(177, 155);
+      this.labelLow.Location = new System.Drawing.Point(177, 155);
       this.labelLow.Name = "labelLow";
-      this.labelLow.Size = new Size(38, 13);
+      this.labelLow.Size = new System.Drawing.Size(38, 13);
       this.labelLow.TabIndex = 5;
       this.labelLow.Text = "Speed";
       // 
       // labelQualityHint
       // 
-      this.labelQualityHint.Anchor = AnchorStyles.None;
-      this.labelQualityHint.Location = new Point(10, 28);
+      this.labelQualityHint.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.labelQualityHint.Location = new System.Drawing.Point(10, 28);
       this.labelQualityHint.Name = "labelQualityHint";
-      this.labelQualityHint.Size = new Size(163, 76);
+      this.labelQualityHint.Size = new System.Drawing.Size(163, 76);
       this.labelQualityHint.TabIndex = 0;
-      this.labelQualityHint.Text =
-        "Depending on your display size \r\nyou might want to decrease \r\nthumbnail quality f" +
-        "or faster \r\nthumbnail generation and \r\nbetter browsing / scrolling";
+      this.labelQualityHint.Text = "Depending on your display size \r\nyou might want to decrease \r\nthumbnail quality f" +
+          "or faster \r\nthumbnail generation and \r\nbetter browsing / scrolling";
       // 
       // trackBarQuality
       // 
-      this.trackBarQuality.Anchor = AnchorStyles.None;
+      this.trackBarQuality.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.trackBarQuality.LargeChange = 2;
-      this.trackBarQuality.Location = new Point(180, 35);
+      this.trackBarQuality.Location = new System.Drawing.Point(180, 35);
       this.trackBarQuality.Maximum = 4;
       this.trackBarQuality.Name = "trackBarQuality";
-      this.trackBarQuality.Orientation = Orientation.Vertical;
-      this.trackBarQuality.Size = new Size(40, 116);
+      this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
+      this.trackBarQuality.Size = new System.Drawing.Size(40, 116);
       this.trackBarQuality.TabIndex = 4;
       this.trackBarQuality.Value = 2;
-      this.trackBarQuality.ValueChanged += new EventHandler(this.trackBarQuality_ValueChanged);
+      this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
+      // 
+      // checkBoxShareThumb
+      // 
+      this.checkBoxShareThumb.AutoSize = true;
+      this.checkBoxShareThumb.Checked = true;
+      this.checkBoxShareThumb.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxShareThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShareThumb.Location = new System.Drawing.Point(13, 40);
+      this.checkBoxShareThumb.Name = "checkBoxShareThumb";
+      this.checkBoxShareThumb.Size = new System.Drawing.Size(182, 17);
+      this.checkBoxShareThumb.TabIndex = 2;
+      this.checkBoxShareThumb.Text = "Leave a thumb in recording folder";
+      this.checkBoxShareThumb.UseVisualStyleBackColor = true;
+      // 
+      // numericUpDownThumbColumns
+      // 
+      this.numericUpDownThumbColumns.Location = new System.Drawing.Point(358, 40);
+      this.numericUpDownThumbColumns.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbColumns.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbColumns.Name = "numericUpDownThumbColumns";
+      this.numericUpDownThumbColumns.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownThumbColumns.TabIndex = 3;
+      this.numericUpDownThumbColumns.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbColumns.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+      // 
+      // labelCol
+      // 
+      this.labelCol.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.labelCol.AutoSize = true;
+      this.labelCol.Location = new System.Drawing.Point(232, 42);
+      this.labelCol.Name = "labelCol";
+      this.labelCol.Size = new System.Drawing.Size(98, 13);
+      this.labelCol.TabIndex = 10;
+      this.labelCol.Text = "Number of columns";
+      // 
+      // labelRows
+      // 
+      this.labelRows.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.labelRows.AutoSize = true;
+      this.labelRows.Location = new System.Drawing.Point(232, 68);
+      this.labelRows.Name = "labelRows";
+      this.labelRows.Size = new System.Drawing.Size(81, 13);
+      this.labelRows.TabIndex = 12;
+      this.labelRows.Text = "Number of rows";
+      // 
+      // numericUpDownThumbRows
+      // 
+      this.numericUpDownThumbRows.Location = new System.Drawing.Point(358, 66);
+      this.numericUpDownThumbRows.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbRows.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbRows.Name = "numericUpDownThumbRows";
+      this.numericUpDownThumbRows.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownThumbRows.TabIndex = 11;
+      this.numericUpDownThumbRows.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbRows.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(232, 21);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(106, 13);
+      this.mpLabel1.TabIndex = 13;
+      this.mpLabel1.Text = "Preview Appearance";
       // 
       // GeneralThumbs
       // 
       this.Controls.Add(this.tabControlThumbnailSettings);
       this.Name = "GeneralThumbs";
-      this.Size = new Size(472, 408);
+      this.Size = new System.Drawing.Size(472, 408);
       this.tabControlThumbnailSettings.ResumeLayout(false);
       this.tabPageThumbQuality.ResumeLayout(false);
       this.groupBoxTVThumbs.ResumeLayout(false);
@@ -545,8 +653,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxMusicThumbs.PerformLayout();
       this.groupBoxThumbQuality.ResumeLayout(false);
       this.groupBoxThumbQuality.PerformLayout();
-      ((ISupportInitialize) (this.trackBarQuality)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.trackBarQuality)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownThumbColumns)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownThumbRows)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     private void buttonClearMusicCache_Click(object sender, EventArgs e)
