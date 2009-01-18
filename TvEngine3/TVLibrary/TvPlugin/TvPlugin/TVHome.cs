@@ -249,6 +249,16 @@ namespace TvPlugin
 
         m_navigator = new ChannelNavigator();
         LoadSettings();
+        string pluginVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        string tvServerVersion = RemoteControl.Instance.GetAssemblyVersion;
+        if (pluginVersion != tvServerVersion)
+        {
+          string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
+          strLine += "Please update the older component to the same version as the newer one.\r\n";
+          strLine += "TvServer Version: " + tvServerVersion + "\r\n";
+          strLine += "TvPlugin Version: " + pluginVersion;
+          throw new Exception(strLine);
+        }
       }
       catch (Exception ex)
       {

@@ -27,6 +27,7 @@ using System.Xml;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Reflection;
 using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
@@ -711,6 +712,18 @@ namespace TvService
     #region IController Members
 
     #region internal interface
+    /// <summary>
+    /// Gets the assembly of tvservice.exe
+    /// </summary>
+    /// <value>Returns the AssemblyVersion of tvservice.exe</value>
+    public string GetAssemblyVersion 
+    {
+      get
+      {
+        return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+      }
+    }
+    
     /// <summary>
     /// Gets the server.
     /// </summary>

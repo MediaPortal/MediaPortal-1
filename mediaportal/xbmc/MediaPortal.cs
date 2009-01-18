@@ -145,6 +145,7 @@ public class MediaPortalApp : D3DApp, IRender
   private DateTime m_updateTimer = DateTime.MinValue;
   private int m_iDateLayout;
   private static SplashScreen splashScreen;
+  private static bool _avoidVersionChecking;
 
   #endregion
 
@@ -200,6 +201,11 @@ public class MediaPortalApp : D3DApp, IRender
         {
           string skinOverrideArg = arg.Remove(0, 6); // remove /?= from the argument
           _strSkinOverride = skinOverrideArg;
+        }
+        _avoidVersionChecking = false;
+        if (arg.ToLowerInvariant() == "/avoidversioncheck")
+        {
+          _avoidVersionChecking = true;
         }
       }
     }
@@ -465,6 +471,22 @@ public class MediaPortalApp : D3DApp, IRender
             strLine = strLine + "MediaPortal cannot run without Windows Media Player " + WMP_Main_Ver;
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
             //return;
+          }
+
+          // Check TvPlugin version
+          if (!_avoidVersionChecking &&  File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+          {
+            string tvPluginVersion = Assembly.LoadFile(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll").GetName().Version.ToString();
+            string mpVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            if (mpVersion != tvPluginVersion)
+            {
+              string strLine = "Versions of TvPlugin and MediaPortal don't don't match.\r\n";
+              strLine += "Please update the older component to the same version as the newer one.\r\n";
+              strLine += "MP Version: " + mpVersion + "\r\n";
+              strLine += "TvPlugin Version: " + tvPluginVersion;
+              MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              return;
+            }
           }
         }
 

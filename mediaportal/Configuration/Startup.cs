@@ -202,6 +202,22 @@ namespace MediaPortal.Configuration
         return;
       }
 
+      // Check TvPlugin version
+      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+      {
+        string tvPluginVersion = Assembly.LoadFile(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll").GetName().Version.ToString();
+        string mpVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        if (mpVersion != tvPluginVersion)
+        {
+          string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
+          strLine += "Please update the older component to the same version as the newer one.\r\n";
+          strLine += "MP Version: " + mpVersion + "\r\n";
+          strLine += "TvPlugin Version: " + tvPluginVersion;
+          MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+      }
+
       FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
       Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 

@@ -143,6 +143,12 @@ namespace TvControl
     #region internal interface
 
     /// <summary>
+    /// Gets the assembly of tvservice.exe
+    /// </summary>
+    /// <value>Returns the AssemblyVersion of tvservice.exe</value>
+    string GetAssemblyVersion { get; }
+
+    /// <summary>
     /// Gets the server.
     /// </summary>
     /// <value>The server.</value>
