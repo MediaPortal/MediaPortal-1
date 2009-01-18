@@ -2544,7 +2544,7 @@ namespace MediaPortal
       }
       catch (Exception ex)
       {
-        Log.Error("d3dapp: An error occured in OnResize - {0}", ex.Message);
+        Log.Error("d3dapp: An error occured in OnResize - {0}", ex.ToString());
       }
     }
 
