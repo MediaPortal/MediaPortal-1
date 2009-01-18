@@ -23,6 +23,7 @@ namespace MediaPortal.Player
     private int _audiorate = 0;
     private int _audiochannels = 0;
     private string _aspectRatio = "";
+    private string _videoCodec = "";
     private bool _isAC3 = false;  // AC3
     private bool _isMP3 = false; // MPEG-1 Audio layer 3
     private bool _isMP2 = false; // MPEG-1 Audio layer 2
@@ -57,6 +58,7 @@ namespace MediaPortal.Player
         providerNumber.NumberDecimalSeparator = ".";
 
         double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber, out _framerate);
+        _videoCodec = _mI.Get(StreamKind.Video, 0, "Codec"); 
         Int32.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), NumberStyles.Integer, providerNumber, out _width);
         Int32.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), NumberStyles.Integer, providerNumber, out _height);
         Int32.TryParse(_mI.Get(StreamKind.Audio, 0, "Audiochannels"), NumberStyles.Integer, providerNumber, out _audiochannels);
@@ -112,6 +114,11 @@ namespace MediaPortal.Player
     public string AspectRatio
     {
       get { return _aspectRatio; }
+    }
+
+    public string VideoCodec
+    {
+      get { return _videoCodec; }
     }
 
     public double Framerate
