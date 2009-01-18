@@ -228,6 +228,7 @@ namespace MediaPortal.Configuration
         advancedMode = xmlreader.GetValueAsBool("general", "AdvancedConfigMode", false);
       }
       toolStripButtonSwitchAdvanced.Text = AdvancedMode ? "Switch to standard mode" : "Switch to expert mode";
+      toolStripButtonSwitchAdvanced.Checked = AdvancedMode;
       GUILocalizeStrings.Load(strLanguage);
       // Register Bass.Net
       BassRegistration.BassRegistration.Register();
