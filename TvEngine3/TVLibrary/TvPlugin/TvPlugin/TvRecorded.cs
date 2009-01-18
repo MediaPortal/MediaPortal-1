@@ -75,11 +75,11 @@ namespace TvPlugin
 
       void PerformRequest()
       {
-        if (_creatingThumbNails)
+        if (_thumbCreationActive)
           return;
         try
         {
-          _creatingThumbNails = true;
+          _thumbCreationActive = true;
 
           IList<Recording> recordings = Recording.ListAll();
           foreach (Recording rec in recordings)
@@ -134,7 +134,7 @@ namespace TvPlugin
         }
         finally
         {
-          _creatingThumbNails = false;
+          _thumbCreationActive = false;
         }
       }
     }
@@ -165,26 +165,21 @@ namespace TvPlugin
     SortMethod currentSortMethod = SortMethod.Date;
     private static Recording m_oActiveRecording = null;
     private static bool m_bIsLiveRecording = false;
+    private static bool _thumbCreationActive = false;
+    private static bool _createRecordedThumbs = true;
     bool m_bSortAscending = true;
-    bool _deleteWatchedShows = false;
-    bool _createRecordedThumbs = true;
+    bool _deleteWatchedShows = false;    
     int m_iSelectedItem = 0;
     string currentShow = string.Empty;
-    private static bool _creatingThumbNails = false;
+    
     RecordingThumbCacher thumbworker = null;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnCompress = null;
-    [SkinControlAttribute(50)]
-    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]    protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnCompress = null;
+    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
 
     #endregion
 
@@ -918,9 +913,10 @@ namespace TvPlugin
             string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, refCh.DisplayName);
             if (File.Exists(StationLogo))
               SmallThumb = StationLogo;
-          }          
+          }
 
-          if (File.Exists(PreviewThumb))
+          // Display previews only if the option to create them is active
+          if (File.Exists(PreviewThumb) && _createRecordedThumbs)
           {
             // Search a larger one
             string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
