@@ -231,6 +231,7 @@ namespace MediaPortal.Player
 
     #region private static vars
 
+    private static double _refreshrateChangeCurrentRR = 0;
     private static string _refreshrateChangeStrFile = "";
     private static MediaType _refreshrateChangeMediaType;
     private static bool _refreshrateChangePending = false;
@@ -593,6 +594,8 @@ namespace MediaPortal.Player
         currentRR = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
       }
 
+      _refreshrateChangeCurrentRR = currentRR;
+
       bool enabled = false;
       bool deviceReset = false;
       bool force_refresh_rate = false;
@@ -911,6 +914,11 @@ namespace MediaPortal.Player
     {
       get { return _refreshrateChangeFullscreenVideo; }
       set { _refreshrateChangeFullscreenVideo = value; }
+    }
+
+    public static double RefreshRateChangeCurrentRR
+    {
+      get { return _refreshrateChangeCurrentRR; }
     }
 
     #endregion
