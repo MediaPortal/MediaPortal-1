@@ -798,6 +798,16 @@ namespace MediaPortal.Player
 
       if ((isVideo || isDVD) && (!IsAVStream && !isTV))
       {
+        if (g_Player.MediaInfo != null)
+        {
+          fps = g_Player.MediaInfo.Framerate;
+        }
+        else
+        {
+          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null.");
+          return;
+        }
+        /*
         MediaInfo mI = null;
         try
         {
@@ -818,6 +828,7 @@ namespace MediaPortal.Player
             mI.Close();
           }
         }
+        */
       }
       else if (isTV || IsAVStream)
       {

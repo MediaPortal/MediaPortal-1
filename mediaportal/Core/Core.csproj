@@ -274,6 +274,7 @@
     </Compile>
     <Compile Include="DShowNET\Helper\cards\TechnoTrend.cs" />
     <Compile Include="DShowNET\Helper\IksPropertyUtils2.cs" />
+    <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />

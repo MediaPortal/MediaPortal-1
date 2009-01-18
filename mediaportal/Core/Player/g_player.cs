@@ -66,6 +66,7 @@ namespace MediaPortal.Player
 
     #region variables
 
+    private static MediaInfoWrapper _mediaInfo = null;
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
     private static DateTime _seekTimer = DateTime.MinValue;
@@ -478,6 +479,7 @@ namespace MediaPortal.Player
           PlayBackStopped(_currentMedia, (int) CurrentPosition, CurrentFile);
         }
       }
+      _mediaInfo = null;
     }
 
     //called when current playing file is stopped
@@ -491,6 +493,7 @@ namespace MediaPortal.Player
         RefreshRateChanger.AdaptRefreshRate();
         PlayBackEnded(_currentMedia, _currentFilePlaying);
       }
+      _mediaInfo = null;
     }
 
     //called when starting playing a file
@@ -815,6 +818,7 @@ namespace MediaPortal.Player
     {
       try
       {
+        _mediaInfo = new MediaInfoWrapper(strPath);
         Starting = true;
 
         RefreshRateChanger.AdaptRefreshRate(strPath, RefreshRateChanger.MediaType.Video);
@@ -920,6 +924,7 @@ namespace MediaPortal.Player
     {
       try
       {
+        _mediaInfo = null;
         string strAudioPlayer = string.Empty;
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -1014,6 +1019,7 @@ namespace MediaPortal.Player
     {
       try
       {
+        _mediaInfo = null;
         Starting = true;
         //stop radio
         GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
@@ -1144,6 +1150,8 @@ namespace MediaPortal.Player
     {
       try
       {
+        _mediaInfo = new MediaInfoWrapper(strFile);
+
         Starting = true;
         ChangeDriveSpeed(strFile, DriveType.CD);
         //stop radio
@@ -1311,6 +1319,8 @@ namespace MediaPortal.Player
           g_Player.Stop();
         }
         */
+
+        _mediaInfo = new MediaInfoWrapper(strFile);
 
         Starting = true;
         ChangeDriveSpeed(strFile, DriveType.CD);
@@ -2520,6 +2530,14 @@ namespace MediaPortal.Player
           return false;
         }
         return (_player.CanSeek() && !_player.IsDVDMenu);
+      }
+    }
+
+    public static MediaInfoWrapper MediaInfo
+    {
+      get
+      {
+        return _mediaInfo;
       }
     }
 
