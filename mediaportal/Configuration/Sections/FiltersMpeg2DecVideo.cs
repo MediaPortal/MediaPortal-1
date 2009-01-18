@@ -59,7 +59,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersMPEG2DecVideo()
-      : this("MPV Decoder")
+      : this("MPC - MPEG-2 Video Decoder (Gabest)")
     {
     }
 

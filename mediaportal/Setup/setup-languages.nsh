@@ -30,7 +30,7 @@
 #**********************************************************************************************************#
 
 # ENGLISH
-LangString DESC_SecGabest                         ${LANG_ENGLISH} "Installs the Gabest MPA/MPV decoder"
+LangString DESC_SecGabest                         ${LANG_ENGLISH} "Installs the MPC-HC audio/video decoders"
 LangString ^UninstallLink                         ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 LangString TEXT_MSGBOX_REMOVE_ALL                 ${LANG_ENGLISH} "!!! ATTENTION !!!$\r$\nDo you want to make a complete cleanup?$\r$\nThis removes completly the registry keys, the installation and the common app data directory, inclusive thumbs, databases, skins and plugins!"

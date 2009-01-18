@@ -33,7 +33,7 @@
 #---------------------------------------------------------------------------
 # SPECIAL BUILDS
 #---------------------------------------------------------------------------
-# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without Gabest Filters)
+# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
 ;!define HEISE_BUILD
 # swtich for command line execution: /DHEISE_BUILD
 
@@ -684,9 +684,9 @@ SectionEnd
 !macroend
 
 !ifndef HEISE_BUILD
-${MementoSection} "Gabest MPA/MPV decoder" SecGabest
+${MementoSection} "MPC-HC audio/video decoders" SecGabest
   ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
-  ${LOG_TEXT} "INFO" "Installing Gabest MPA/MPV decoder..."
+  ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
 
   SetOutPath "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax"   "$MPdir.Base"
@@ -725,7 +725,7 @@ ${MementoSection} "Gabest MPA/MPV decoder" SecGabest
 ${MementoSectionEnd}
 !macro Remove_${SecGabest}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecGabest}"
-  ${LOG_TEXT} "INFO" "Uninstalling Gabest MPA/MPV decoder..."
+  ${LOG_TEXT} "INFO" "Uninstalling MPC-HC audio/video decoders..."
 
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
