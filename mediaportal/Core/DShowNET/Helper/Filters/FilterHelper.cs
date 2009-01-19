@@ -163,9 +163,8 @@ namespace DShowNET.Helper
             String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
             String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
             String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD6)", true) == 0 ||
-            String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD7)", true) == 0)
-          // Not supported currently. The navigator doesnt work properly even in the GraphEdit  
-          //|| String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD8)", true) == 0)
+            String.Compare(filter.Name, "Cyberlink DVD Navigator (PDVD7)", true) == 0 ||            
+            String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD8)", true) == 0)
         {
           navigators.Add(filter.Name);
         }

@@ -68,9 +68,9 @@ namespace MediaPortal.Player
       {
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
-        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" || dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)")
-          // Not supported currently. The navigator doesnt work properly even in the GraphEdit  
-          // || dvdDNavigator == "CyberLink DVD Navigator (PDVD8)")
+        if (dvdDNavigator == "Cyberlink DVD Navigator (PDVD7)" ||
+            dvdDNavigator == "Cyberlink DVD Navigator (PDVD6)" ||
+            dvdDNavigator == "CyberLink DVD Navigator (PDVD8)")
         {
           _cyberlinkDVDNavigator = true;
         }
