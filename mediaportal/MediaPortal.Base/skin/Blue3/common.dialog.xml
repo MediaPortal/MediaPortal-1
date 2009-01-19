@@ -71,5 +71,18 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    <control>
+      <description>dialog line 4</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>210</posX>
+      <posY>318</posY>
+      <label>0</label>
+      <width>295</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
   </controls>
 </window>
