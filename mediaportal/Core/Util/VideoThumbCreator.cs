@@ -42,14 +42,7 @@ namespace MediaPortal.Util
     static int PreviewColumns = 2;
     static int PreviewRows = 2;
     static bool LeaveShareThumb = false;
-
-    static VideoThumbCreator()
-    {
-      LoadSettings();
-    }
-    private VideoThumbCreator()
-    {
-    }
+    static bool NeedsConfigRefresh = true;
 
     #region Serialisation
     
@@ -60,6 +53,8 @@ namespace MediaPortal.Util
         PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
         PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);
         LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+        Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}", PreviewColumns, PreviewRows, LeaveShareThumb);
+        NeedsConfigRefresh = false;
       }
     }
 
@@ -80,6 +75,8 @@ namespace MediaPortal.Util
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static bool CreateVideoThumb(string aVideoPath, string aThumbPath, bool aCacheThumb, bool aOmitCredits)
     {
+      if (NeedsConfigRefresh)
+        LoadSettings();
       if (String.IsNullOrEmpty(aVideoPath) || String.IsNullOrEmpty(aThumbPath))
       {
         Log.Warn("VideoThumbCreator: Invalid arguments to generate thumbnails of your video!");
@@ -121,8 +118,9 @@ namespace MediaPortal.Util
         preGapSec = 420;
         postGapSec = 600;
       }
-
-      string ExtractorArgs = string.Format(" -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, PreviewColumns, PreviewRows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "720", aVideoPath);
+      bool Success = false;
+      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, PreviewColumns, PreviewRows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
+      string ExtractorFallbackArgs = string.Format(" -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, "60", /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -136,9 +134,15 @@ namespace MediaPortal.Util
         || (!LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
-
-          if (!Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 60000, true, GetMtnConditions()))
-            Log.Warn("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp, ExtractorArgs);
+          Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
+          if (!Success)
+          {
+            // Maybe the pre-gap was too large or not enough sharp & light scenes could be caught
+            Thread.Sleep(100);
+            Success = Utils.StartProcess(ExtractorPath, ExtractorFallbackArgs, TempPath, 30000, true, GetMtnConditions());
+            if (!Success)
+              Log.Info("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp, ExtractorFallbackArgs);
+          }
           // give the system a few IO cycles
           Thread.Sleep(100);
           // make sure there's no process hanging
@@ -165,7 +169,7 @@ namespace MediaPortal.Util
         }
         Thread.Sleep(30);
 
-        if (aCacheThumb)
+        if (aCacheThumb && Success)
         {
           if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, false))
             Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);

@@ -2,7 +2,7 @@
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <controls>
     <import>common.time.xml</import>
     <control>
@@ -95,8 +95,7 @@
         <onleft>3</onleft>
         <onright>50</onright>
         <onup>2</onup>
-        <ondown>5</ondown>
-        <font>font13</font>
+        <ondown>6</ondown>
         <label>620</label>
       </control>
 <!--       <control>
@@ -115,7 +114,7 @@
         <id>6</id>
         <onleft>6</onleft>
         <onright>50</onright>
-        <onup>5</onup>
+        <onup>3</onup>
         <ondown>7</ondown>
         <label>624</label>
         <!-- <visible>false</visible> -->
