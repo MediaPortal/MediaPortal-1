@@ -206,6 +206,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (arg.ToLowerInvariant() == "/avoidversioncheck")
         {
           _avoidVersionChecking = true;
+          Log.Warn("Version check is disabled by command line switch \"/avoidVersionCheck\"");
         }
       }
     }
@@ -473,21 +474,27 @@ public class MediaPortalApp : D3DApp, IRender
             //return;
           }
 
+#if !DEBUG
           // Check TvPlugin version
-          if (!_avoidVersionChecking &&  File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+          string MpExe = Assembly.GetExecutingAssembly().Location;
+          string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
+          if (File.Exists(tvPlugin) && !_avoidVersionChecking)
           {
-            string tvPluginVersion = Assembly.LoadFile(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll").GetName().Version.ToString();
-            string mpVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            if (mpVersion != tvPluginVersion)
+            string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
+            string MpVersion = FileVersionInfo.GetVersionInfo(MpExe).ProductVersion;
+            if (MpVersion != tvPluginVersion)
             {
-              string strLine = "Versions of TvPlugin and MediaPortal don't don't match.\r\n";
+              string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
               strLine += "Please update the older component to the same version as the newer one.\r\n";
-              strLine += "MP Version: " + mpVersion + "\r\n";
-              strLine += "TvPlugin Version: " + tvPluginVersion;
+              strLine += "MediaPortal Version: " + MpVersion + "\r\n";
+              strLine += "TvPlugin    Version: " + tvPluginVersion;
               MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              Log.Info(strLine);
               return;
             }
           }
+#endif
+
         }
 
         catch (Exception)

@@ -53,6 +53,8 @@ namespace MediaPortal.Configuration
 
     private string sectionsConfiguration = string.Empty;
 
+    private bool _avoidVersionChecking = false;
+
     public delegate bool IECallBack(int hwnd, int lParam);
 
     private const int SW_SHOWNORMAL = 1;
@@ -132,6 +134,12 @@ namespace MediaPortal.Configuration
               sectionsConfiguration = subArguments[1];
             }
           }
+
+          if (trimmedArgument.ToLowerInvariant() == "/avoidversioncheck")
+          {
+            _avoidVersionChecking = true;
+            Log.Warn("Version check is disabled by command line switch \"/avoidVersionCheck\"");
+          }
         }
       }
       GC.Collect();
@@ -202,24 +210,29 @@ namespace MediaPortal.Configuration
         return;
       }
 
+      string MpConfig = Assembly.GetExecutingAssembly().Location;
+
+#if !DEBUG
       // Check TvPlugin version
       string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
-      if (File.Exists(tvPlugin))
+      if (File.Exists(tvPlugin) && !_avoidVersionChecking)
       {
         string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
-        string mpVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-        if (mpVersion != tvPluginVersion)
+        string CfgVersion = FileVersionInfo.GetVersionInfo(MpConfig).ProductVersion;
+        if (CfgVersion != tvPluginVersion)
         {
           string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
           strLine += "Please update the older component to the same version as the newer one.\r\n";
-          strLine += "MP Version: " + mpVersion + "\r\n";
+          strLine += "MpConfig Version: " + CfgVersion + "\r\n";
           strLine += "TvPlugin Version: " + tvPluginVersion;
           MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          Log.Info(strLine);
           return;
         }
       }
+#endif
 
-      FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
+      FileInfo mpFi = new FileInfo(MpConfig);
       Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
       Form applicationForm = null;
