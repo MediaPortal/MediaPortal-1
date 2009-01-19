@@ -276,7 +276,7 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>165</posX>
+      <posX>190</posX>
       <posY>600</posY>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -291,7 +291,7 @@
       <id>1</id>
       <width>266</width>
       <height>37</height>
-      <posX>165</posX>
+      <posX>190</posX>
       <posY>625</posY>
       <label>#TV.View.start - #TV.View.stop</label>
       <align>left</align>
@@ -304,7 +304,7 @@
       <description>Channel label</description>
       <type>label</type>
       <id>13</id>
-      <posX>165</posX>
+      <posX>190</posX>
       <posY>575</posY>
       <label>602</label>
       <font>font13</font>
