@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Video
     private bool _markWatchedFiles = true;
     private bool _eachFolderIsMovie = false;
     private ArrayList _conflictFiles = new ArrayList();
-
+    private bool _switchRemovableDrives;
     #endregion
 
     #region constructors
@@ -230,6 +230,7 @@ namespace MediaPortal.GUI.Video
             _currentFolder = lastFolder;
           }
         }
+        _switchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
       }
 
       if (_currentFolder.Length > 0)
@@ -357,6 +358,29 @@ namespace MediaPortal.GUI.Video
             GUIWindowManager.ReplaceWindow(GetID);
           }
           _currentFolder = message.Label;
+          LoadDirectory(_currentFolder);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
+          if (_switchRemovableDrives)
+          {
+            _currentFolder = message.Label;
+            if (!Util.Utils.IsRemovable(message.Label))
+            {
+              _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
+            }
+          }
+          LoadDirectory(_currentFolder);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
+          if (!Util.Utils.IsRemovable(message.Label))
+          {
+            _virtualDirectory.Remove(message.Label);
+          }
+          if (_currentFolder.Contains(message.Label))
+          {
+            _currentFolder = string.Empty;
+          }
           LoadDirectory(_currentFolder);
           break;
 
@@ -1692,6 +1716,10 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(347); //Unstack
       }
+      if (Util.Utils.IsRemovable(item.Path))
+      {
+        dlg.AddLocalizedString(831);
+      }
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -1804,6 +1832,24 @@ namespace MediaPortal.GUI.Video
             {
               OnShowFileMenu();
             }
+          }
+          break;
+        case 831:
+          string message;
+          if(!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+            pDlgOK.SetLine(2, string.Empty);
+            pDlgOK.SetLine(3, message);
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }else
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
       }

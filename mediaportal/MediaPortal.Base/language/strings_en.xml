@@ -687,6 +687,9 @@
     <String id="810">Card</String>
     <String id="820">Delete unwatched recording?</String>
     <String id="830">Reset watched status</String>
+    <String id="831">Eject removable drive</String>
+    <String id="832">Can't remove drive: </String>
+    <String id="833">Drive can now safely be removed</String>
     <String id="850" prefix="My ">Alarm</String>
     <String id="851">Playlist</String>
     <String id="852">Alarm On</String>

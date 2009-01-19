@@ -125,6 +125,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int WM_SYSCOMMAND = 0x0112;
   private const int WM_POWERBROADCAST = 0x0218;
   private const int WM_ENDSESSION = 0x0016;
+  private const int WM_DEVICECHANGE = 0x0219;
   private const int WM_QUERYENDSESSION = 0x0011;
   private const int PBT_APMQUERYSUSPEND = 0x0000;
   private const int PBT_APMQUERYSTANDBY = 0x0001;
@@ -934,8 +935,13 @@ public class MediaPortalApp : D3DApp, IRender
         tMouseClickTimer.Dispose();
         Application.ExitThread();
         Application.Exit();
+      } else if (msg.Msg == WM_DEVICECHANGE)
+      {
+        if(RemovableDriveHelper.HandleDeviceChangedMessage(msg))
+        {
+          return;
+        }
       }
-
       if (PluginManager.WndProc(ref msg))
       {
         // msg.Result = new IntPtr(0); <-- do plugins really set it on their own?

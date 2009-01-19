@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.Pictures
     private bool _autocreateLargeThumbs = true;
     //bool _hideExtensions = true;
     private Display disp = Display.Files;
-
+    private bool _switchRemovableDrives;
     private int CountOfNonImageItems = 0; // stores the count of items in a folder that are no images (folders etc...)
 
     #endregion
@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.Pictures
             currentFolder = lastFolder;
           }
         }
-
+        _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
         //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
       }
     }
@@ -591,6 +591,28 @@ namespace MediaPortal.GUI.Pictures
           LoadDirectory(currentFolder);
           break;
 
+        case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
+          if (_switchRemovableDrives)
+          {
+            currentFolder = message.Label;
+            if (!Util.Utils.IsRemovable(message.Label))
+            {
+              virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
+            }
+          }
+          LoadDirectory(currentFolder);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
+          if (!Util.Utils.IsRemovable(message.Label))
+          {
+            virtualDirectory.Remove(message.Label);
+          }
+          if (currentFolder.Contains(message.Label))
+          {
+            currentFolder = string.Empty;
+          }
+          LoadDirectory(currentFolder);
+          break;
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
           GUIFacadeControl pControl = (GUIFacadeControl) GetControl(facadeView.GetID);
           pControl.OnMessage(message);
@@ -661,6 +683,11 @@ namespace MediaPortal.GUI.Pictures
       {
         dlg.AddLocalizedString(500); // FileMenu      
       }
+      if (Util.Utils.IsRemovable(item.Path))
+      {
+        dlg.AddLocalizedString(831);
+      }
+
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -720,6 +747,25 @@ namespace MediaPortal.GUI.Pictures
           break;
         case 457: // Test change view
           OnSwitchView();
+          break;
+        case 831:
+          string message;
+          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+            pDlgOK.SetLine(2, string.Empty);
+            pDlgOK.SetLine(3, message);
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          else
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
           break;
       }
     }

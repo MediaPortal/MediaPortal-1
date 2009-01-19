@@ -52,24 +52,18 @@ namespace MediaPortal.Util
     const int MaximumShares = 128;
 
     List<Share> m_shares = new List<Share>();
-    List<string> m_extensions = null;
+    List<string> m_extensions;
     string m_strPreviousDir = string.Empty;
     string currentShare = string.Empty;
     string previousShare = string.Empty;
     string m_strLocalFolder = string.Empty;
-    Share defaultshare = null;
-    bool showFilesWithoutExtension = false;
-    /// <summary>
-    /// constructor
-    /// </summary>
-    public VirtualDirectory()
-    {
-    }
+    Share defaultshare;
+    bool showFilesWithoutExtension;
 
     public void LoadSettings(string section)
     {
       Clear();
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strDefault = xmlreader.GetValueAsString(section, "default", string.Empty);
         for (int i = 0; i < MaximumShares; i++)
@@ -89,7 +83,7 @@ namespace MediaPortal.Util
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
-          string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
+          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
           else
@@ -219,7 +213,7 @@ namespace MediaPortal.Util
       }
       for (int i = 0; i < m_extensions.Count; ++i)
       {
-        m_extensions[i] = ((string)m_extensions[i]).ToLower();
+        m_extensions[i] = m_extensions[i].ToLower();
       }
     }
     /// <summary>
@@ -243,6 +237,41 @@ namespace MediaPortal.Util
       m_shares.Add(share);
     }
 
+    public void AddRemovableDrive(String path, String name)
+    {
+      bool driveFound = false;
+      foreach (Share share in m_shares)
+      {
+        if (share.Path == path)
+        {
+          driveFound = true;
+          break;
+        }
+      }
+      if (!driveFound)
+      {
+        Share share = new Share(name, path);
+        share.RuntimeAdded = true;
+        m_shares.Add(share);
+      }
+
+    }
+    public void Remove(String path)
+    {
+      Share shareToRemove = null;
+      foreach (Share share in m_shares)
+      {
+        if (share.Path == path && share.RuntimeAdded)
+        {
+          shareToRemove = share;
+          break;
+        }
+      }
+      if(shareToRemove != null)
+      {
+        m_shares.Remove(shareToRemove);
+      }
+    }
     /// <summary>
     /// This method removes all shares from the virtual directory
     /// </summary>
@@ -573,7 +602,7 @@ namespace MediaPortal.Util
                 shareName.FtpPort,
                 shareName.FtpLoginName,
                 shareName.FtpPassword,
-                MediaPortal.Util.Utils.RemoveTrailingSlash(shareName.FtpFolder));
+                Utils.RemoveTrailingSlash(shareName.FtpFolder));
     }
 
     ///// <summary>
@@ -983,7 +1012,7 @@ namespace MediaPortal.Util
         }
       }
 
-      GUIListItem item = null;
+      GUIListItem item;
       if (!IsRootShare(strDir) || VirtualShare)
       {
         item = new GUIListItem();
@@ -992,12 +1021,7 @@ namespace MediaPortal.Util
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
 
-        if (strParent == strDir)
-        {
-          item.Path = "";
-        }
-        else
-          item.Path = strParent;
+        item.Path = strParent == strDir ? "" : strParent;
         items.Add(item);
       }
       else
@@ -1197,7 +1221,7 @@ namespace MediaPortal.Util
         strParent = strDir.Substring(0, ipos);
       }
 
-      GUIListItem item = null;
+      GUIListItem item;
       if (IsRemote(strDir))
       {
         #region Remote files
@@ -1402,7 +1426,7 @@ namespace MediaPortal.Util
         }
         Utils.SetDefaultIcons(item);
 
-        if (share.Pincode < 0 && !Util.Utils.IsNetwork(share.Path))
+        if (share.Pincode < 0 && !Utils.IsNetwork(share.Path))
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
@@ -1429,10 +1453,10 @@ namespace MediaPortal.Util
       string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
-        if (drive[0] > 'B' && Util.Utils.getDriveType(drive) == Removable)
+        if (drive[0] > 'B' && Utils.getDriveType(drive) == Removable)
         {
           bool driveFound = false;
-          string driveName = Util.Utils.GetDriveName(drive);
+          string driveName = Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
           if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
 
@@ -1460,7 +1484,7 @@ namespace MediaPortal.Util
             // dont add removable shares without media
             // virtual cd/dvd drive (daemontools) without mounted image
             if (!Directory.Exists(item.Path))
-              break;
+              continue;
 
             items.Add(item);
           }
@@ -1644,7 +1668,7 @@ namespace MediaPortal.Util
 
     private void StartVolumeListener()
     {
-      Thread VirtDirListener = new Thread(new ThreadStart(this._startListening));
+      Thread VirtDirListener = new Thread(_startListening);
       VirtDirListener.IsBackground = true;
       VirtDirListener.Name = "VirtualDirectoryListener";
       VirtDirListener.Start();
@@ -1950,7 +1974,7 @@ namespace MediaPortal.Util
 
     private void _startListening()
     {
-      System.Threading.Thread.Sleep(5000);
+      Thread.Sleep(5000);
       AutoPlay.StartListening();
       Log.Info("*****Start listening to drives");
     }
@@ -1967,7 +1991,7 @@ namespace MediaPortal.Util
         string[] drives = Environment.GetLogicalDrives();
         foreach (string drive in drives)
         {
-          int driveType = Util.Utils.getDriveType(drive);
+          int driveType = Utils.getDriveType(drive);
           if (driveType == (int)DriveType.CDRom)
           {
             string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
@@ -1980,28 +2004,28 @@ namespace MediaPortal.Util
       }
 
       // add user profile dirs
-      string MusicProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC);
+      string MusicProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYMUSIC);
       if (addMusic)
       {
         Share MusicShare = new Share(GetShareNameDefault(MusicProfilePath), MusicProfilePath, -1);
         sharesMusic.Add(MusicShare);
       }
 
-      string PicturesProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES);
+      string PicturesProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYPICTURES);
       if (addPictures)
       {
         Share PicShare = new Share(GetShareNameDefault(PicturesProfilePath), PicturesProfilePath, -1);
         sharesPhotos.Add(PicShare);
       }
 
-      string VideoProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO);
+      string VideoProfilePath = Win32API.GetFolderPath(Win32API.CSIDL_MYVIDEO);
       if (addVideos)
       {
         Share VidShare = new Share(GetShareNameDefault(VideoProfilePath), VideoProfilePath, -1);
         sharesVideos.Add(VidShare);
       }
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (addMusic)
         {
@@ -2032,9 +2056,9 @@ namespace MediaPortal.Util
       return name;
     }
 
-    static void SaveShare(ArrayList sharesList, string mediaType)
+    static void SaveShare(IList sharesList, string mediaType)
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -2104,11 +2128,11 @@ namespace MediaPortal.Util
 
   public class VirtualDirectories
   {
-    internal static VirtualDirectories _Instance = null;
+    internal static VirtualDirectories _Instance;
 
-    VirtualDirectory _Music = null;
-    VirtualDirectory _Movies = null;
-    VirtualDirectory _Pictures = null;
+    VirtualDirectory _Music;
+    VirtualDirectory _Movies;
+    VirtualDirectory _Pictures;
 
     private VirtualDirectories()
     {
@@ -2146,7 +2170,7 @@ namespace MediaPortal.Util
           _Movies = new VirtualDirectory();
           _Movies.LoadSettings("movies");
           _Movies.AddDrives();
-          _Movies.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+          _Movies.SetExtensions(Utils.VideoExtensions);
           _Movies.AddExtension(".m3u");
         }
         return _Movies;

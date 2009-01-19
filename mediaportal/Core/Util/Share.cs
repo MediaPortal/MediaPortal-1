@@ -56,6 +56,7 @@ namespace MediaPortal.Util
     private string remotePassword = string.Empty;
     private string remoteFolder = string.Empty;
     private int remotePort = 21;
+    private bool runtimeAdded;
     public Views DefaultView = Views.List;
     /// <summary>
     /// empty constructor
@@ -221,6 +222,12 @@ namespace MediaPortal.Util
     {
       get { return m_bDefault; }
       set { m_bDefault = value; }
+    }
+
+    public bool RuntimeAdded
+    {
+      get { return runtimeAdded; }
+      set { runtimeAdded = value; }
     }
   }
 }

@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.Music
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
-
+    private bool _switchRemovableDrives;
     #endregion
 
     public GUIMusicFiles()
@@ -281,6 +281,7 @@ namespace MediaPortal.GUI.Music
             currentFolder = lastFolder;
           }
         }
+        _switchRemovableDrives = xmlreader.GetValueAsBool("music", "SwitchRemovableDrives", true);
       }
     }
 
@@ -527,6 +528,29 @@ namespace MediaPortal.GUI.Music
           LoadDirectory(currentFolder);
           break;
 
+        case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
+          if (_switchRemovableDrives)
+          {
+            currentFolder = message.Label;
+            if (!Util.Utils.IsRemovable(message.Label))
+            {
+              _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
+            }
+          }
+          LoadDirectory(currentFolder);
+          break;
+        case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
+          if (!Util.Utils.IsRemovable(message.Label))
+          {
+            _virtualDirectory.Remove(message.Label);
+          }
+          if (currentFolder.Contains(message.Label))
+          {
+            currentFolder = string.Empty;
+          }
+          LoadDirectory(currentFolder);
+          break;
+
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
         case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
           if (currentFolder == string.Empty || currentFolder.Substring(0, 2) == message.Label)
@@ -637,6 +661,11 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(751); // Show all songs from current artist
         }
       }
+      if (Util.Utils.IsRemovable(item.Path))
+      {
+        dlg.AddLocalizedString(831);
+      }
+
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -784,6 +813,25 @@ namespace MediaPortal.GUI.Music
             }
           }
 
+          break;
+        case 831:
+          string message;
+          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+            pDlgOK.SetLine(2, string.Empty);
+            pDlgOK.SetLine(3, message);
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          else
+          {
+            GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            pDlgOK.SetHeading(831);
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+          }
           break;
       }
     }

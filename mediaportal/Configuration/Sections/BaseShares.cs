@@ -85,6 +85,7 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader3;
     private MPCheckBox checkBoxRemember;
     private MPCheckBox checkBoxAddOpticalDiskDrives;
+    private MPCheckBox checkBoxSwitchRemovableDrive;
     private IContainer components = null;
 
     public BaseShares()
@@ -129,6 +130,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxSwitchRemovableDrive = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAddOpticalDiskDrives = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxRemember = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -137,17 +140,15 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.checkBoxAddOpticalDiskDrives = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxSwitchRemovableDrive);
       this.groupBox1.Controls.Add(this.checkBoxAddOpticalDiskDrives);
       this.groupBox1.Controls.Add(this.checkBoxRemember);
       this.groupBox1.Controls.Add(this.deleteButton);
@@ -161,11 +162,37 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
+      // checkBoxSwitchRemovableDrive
+      // 
+      this.checkBoxSwitchRemovableDrive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxSwitchRemovableDrive.AutoSize = true;
+      this.checkBoxSwitchRemovableDrive.Checked = true;
+      this.checkBoxSwitchRemovableDrive.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxSwitchRemovableDrive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxSwitchRemovableDrive.Location = new System.Drawing.Point(16, 380);
+      this.checkBoxSwitchRemovableDrive.Name = "checkBoxSwitchRemovableDrive";
+      this.checkBoxSwitchRemovableDrive.Size = new System.Drawing.Size(254, 17);
+      this.checkBoxSwitchRemovableDrive.TabIndex = 6;
+      this.checkBoxSwitchRemovableDrive.Text = "Automatically switch to inserted removable drives";
+      this.checkBoxSwitchRemovableDrive.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxAddOpticalDiskDrives
+      // 
+      this.checkBoxAddOpticalDiskDrives.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxAddOpticalDiskDrives.AutoSize = true;
+      this.checkBoxAddOpticalDiskDrives.Checked = true;
+      this.checkBoxAddOpticalDiskDrives.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxAddOpticalDiskDrives.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxAddOpticalDiskDrives.Location = new System.Drawing.Point(16, 357);
+      this.checkBoxAddOpticalDiskDrives.Name = "checkBoxAddOpticalDiskDrives";
+      this.checkBoxAddOpticalDiskDrives.Size = new System.Drawing.Size(194, 17);
+      this.checkBoxAddOpticalDiskDrives.TabIndex = 5;
+      this.checkBoxAddOpticalDiskDrives.Text = "Automatically add optical disk drives";
+      this.checkBoxAddOpticalDiskDrives.UseVisualStyleBackColor = true;
+      // 
       // checkBoxRemember
       // 
-      this.checkBoxRemember.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.checkBoxRemember.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxRemember.AutoSize = true;
       this.checkBoxRemember.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRemember.Location = new System.Drawing.Point(16, 334);
@@ -177,9 +204,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(384, 331);
       this.deleteButton.Name = "deleteButton";
@@ -191,9 +216,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // editButton
       // 
-      this.editButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
       this.editButton.Location = new System.Drawing.Point(304, 331);
       this.editButton.Name = "editButton";
@@ -205,9 +228,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Location = new System.Drawing.Point(224, 331);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -220,18 +241,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.sharesListView.AllowDrop = true;
       this.sharesListView.AllowRowReorder = true;
-      this.sharesListView.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
-      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                             {
-                                               this.columnHeader1,
-                                               this.columnHeader3,
-                                               this.columnHeader2
-                                             });
+      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader3,
+            this.columnHeader2});
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
@@ -257,22 +274,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader2.Text = "Folder";
       this.columnHeader2.Width = 273;
       // 
-      // checkBoxAddOpticalDiskDrives
-      // 
-      this.checkBoxAddOpticalDiskDrives.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.checkBoxAddOpticalDiskDrives.AutoSize = true;
-      this.checkBoxAddOpticalDiskDrives.Checked = true;
-      this.checkBoxAddOpticalDiskDrives.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxAddOpticalDiskDrives.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAddOpticalDiskDrives.Location = new System.Drawing.Point(16, 357);
-      this.checkBoxAddOpticalDiskDrives.Name = "checkBoxAddOpticalDiskDrives";
-      this.checkBoxAddOpticalDiskDrives.Size = new System.Drawing.Size(194, 17);
-      this.checkBoxAddOpticalDiskDrives.TabIndex = 5;
-      this.checkBoxAddOpticalDiskDrives.Text = "Automatically add optical disk drives";
-      this.checkBoxAddOpticalDiskDrives.UseVisualStyleBackColor = true;
-      // 
       // BaseShares
       // 
       this.Controls.Add(this.groupBox1);
@@ -281,6 +282,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -452,6 +454,11 @@ namespace MediaPortal.Configuration.Sections
       set { checkBoxAddOpticalDiskDrives.Checked = value; }
     }
 
+    public bool SwitchRemovableDrives
+    {
+      get { return checkBoxSwitchRemovableDrive.Checked; }
+      set { checkBoxSwitchRemovableDrive.Checked = value; }
+    }
     public enum DriveType
     {
       Removable = 2,
@@ -553,6 +560,7 @@ namespace MediaPortal.Configuration.Sections
         string defaultShare = xmlreader.GetValueAsString(section, "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
         AddOpticalDiskDrives = xmlreader.GetValueAsBool(section, "AddOpticalDiskDrives", true);
+        SwitchRemovableDrives = xmlreader.GetValueAsBool(section, "SwitchRemovableDrives", true);
 
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -687,6 +695,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue(section, "default", defaultShare);
         xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
         xmlwriter.SetValueAsBool(section, "AddOpticalDiskDrives", AddOpticalDiskDrives);
+        xmlwriter.SetValueAsBool(section, "SwitchRemovableDrives", SwitchRemovableDrives);
       }
     }
   }

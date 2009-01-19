@@ -687,6 +687,9 @@
         <String id="810">Karte</String>
         <String id="820">Noch nicht gesehene Aufnahme löschen?</String>
         <String id="830">Als ungesehen markieren</String>
+	    <String id="831">Wechseldatenträger auswefern</String>
+		<String id="832">Wechseldatenträger konnte nicht entfernt werden: </String>
+		<String id="833">Wechseldatenträger kann jetzt entfernt werden</String>
         <String id="850" prefix="Mein ">Alarm</String>
         <String id="851">Wiedergabeliste</String>
         <String id="852">Alarm aktiv</String>
