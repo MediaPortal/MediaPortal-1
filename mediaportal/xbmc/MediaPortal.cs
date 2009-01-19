@@ -139,6 +139,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int BROADCAST_QUERY_DENY = 0x424D5144;
   private const int SC_SCREENSAVE = 0xF140;
   private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
+  private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
   private bool supportsFiltering = false;
   private bool bSupportsAlphaBlend = false;
   private int g_nAnisotropy;
@@ -335,7 +336,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (processLock.AlreadyExists)
         {
           Log.Warn("Main: MediaPortal is already running");
-          ActivatePreviousInstance();
+          Win32API.ActivatePreviousInstance();
         }
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -630,52 +631,6 @@ public class MediaPortalApp : D3DApp, IRender
           @"\Team MediaPortal\MediaPortalDirs.xml using notepad.exe", "Error", MessageBoxButtons.OK,
           MessageBoxIcon.Error);
       }
-    }
-  }
-
-  private static void ActivatePreviousInstance()
-  {
-    //Find the previous instance's process
-    List<Process> processes = new List<Process>();
-    string processName = Process.GetCurrentProcess().ProcessName;
-    if (processName.EndsWith(".vshost"))
-    {
-      processName = processName.Substring(0, processName.Length - 7);
-    }
-    //processName = "mediaportal";
-    processes.AddRange(Process.GetProcessesByName(processName));
-    processes.AddRange(Process.GetProcessesByName(processName + ".vshost"));
-    //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
-    foreach (Process process in processes)
-    {
-      if (process.Id == Process.GetCurrentProcess().Id)
-      {
-        continue;
-      }
-      //Instructs the process to go to the foreground 
-      SetForeGround(process);
-      Environment.Exit(0);
-    }
-    Log.Info("Main: Could not activate running instance");
-    MessageBox.Show("Could not activate running instance.", "MediaPortal is already running", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-    Environment.Exit(0);
-  }
-
-  /// <summary>
-  /// Brings the previous MP instance to the front.
-  /// </summary>
-  /// <param name="_process">The <see cref="Process"/> that represents the previous MP instance</param>
-  /// <remarks>
-  /// We bring the application to the front by sending a WM_SHOWWINDOW message to all of it's threads.
-  /// The main thread will detect this message using the <see cref="ThreadMessageFilter"/> and
-  /// will instruct it's main window to show and activate itself.
-  /// </remarks>
-  private static void SetForeGround(Process _process)
-  {
-    foreach (ProcessThread thread in _process.Threads)
-    {
-      Win32API.PostThreadMessage(thread.Id, Win32API.WM_SHOWWINDOW, 0, 0);
     }
   }
 

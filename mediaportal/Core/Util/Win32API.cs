@@ -26,6 +26,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics;
+using System.Windows.Forms;
+using MediaPortal.ServiceImplementations;
+using System.Collections.Generic;
 
 namespace MediaPortal.Util
 {
@@ -227,8 +231,6 @@ namespace MediaPortal.Util
     }
     #endregion
 
-
-
     //Checks if the computer is connected to the internet...
     public static bool IsConnectedToInternet()
     {
@@ -320,6 +322,52 @@ namespace MediaPortal.Util
           // bring it to the front. 
           SetForegroundWindow(_hWnd);
           break;
+      }
+    }
+
+    public static void ActivatePreviousInstance()
+    {
+      //Find the previous instance's process
+      List<Process> processes = new List<Process>();
+      string processName = Process.GetCurrentProcess().ProcessName;
+      if (processName.EndsWith(".vshost"))
+      {
+        processName = processName.Substring(0, processName.Length - 7);
+      }
+      //processName = "mediaportal";
+      processes.AddRange(Process.GetProcessesByName(processName));
+      processes.AddRange(Process.GetProcessesByName(processName + ".vshost"));
+      //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
+      foreach (Process process in processes)
+      {
+        if (process.Id == Process.GetCurrentProcess().Id)
+        {
+          continue;
+        }
+        //Instructs the process to go to the foreground 
+        SetForeGround(process);
+        Environment.Exit(0);
+      }
+      Log.Info("Main: Could not activate running instance");
+      MessageBox.Show("Could not activate running instance.", string.Format("{0} is already running", processName), MessageBoxButtons.OK,
+                      MessageBoxIcon.Warning);
+      Environment.Exit(0);
+    }
+
+    /// <summary>
+    /// Brings the previous MP instance to the front.
+    /// </summary>
+    /// <param name="_process">The <see cref="Process"/> that represents the previous MP instance</param>
+    /// <remarks>
+    /// We bring the application to the front by sending a WM_SHOWWINDOW message to all of it's threads.
+    /// The main thread will detect this message using the <see cref="ThreadMessageFilter"/> and
+    /// will instruct it's main window to show and activate itself.
+    /// </remarks>
+    private static void SetForeGround(Process _process)
+    {
+      foreach (ProcessThread thread in _process.Threads)
+      {
+        Win32API.PostThreadMessage(thread.Id, Win32API.WM_SHOWWINDOW, 0, 0);
       }
     }
 

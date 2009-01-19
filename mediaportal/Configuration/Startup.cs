@@ -50,35 +50,12 @@ namespace MediaPortal.Configuration
     }
 
     private StartupMode startupMode = StartupMode.Normal;
-
     private string sectionsConfiguration = string.Empty;
-
     private bool _avoidVersionChecking = false;
+    
+    private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
+    private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
 
-    public delegate bool IECallBack(int hwnd, int lParam);
-
-    private const int SW_SHOWNORMAL = 1;
-
-    [DllImport("user32.dll")]
-    public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
-
-    [DllImport("user32.dll")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.Dll")]
-    public static extern int EnumWindows(IECallBack x, int y);
-
-    [DllImport("User32.Dll")]
-    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
-
-    [DllImport("User32.Dll")]
-    public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
       Thread.CurrentThread.Name = "Config Main";
@@ -102,9 +79,9 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("Using Directories:");
-      foreach (string options in Enum.GetNames(typeof (Config.Dir)))
+      foreach (string options in Enum.GetNames(typeof(Config.Dir)))
       {
-        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir) Enum.Parse(typeof (Config.Dir), options)));
+        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
       }
 
       // rtv: disabled Wizard due to frequent bug reports on serveral sections.
@@ -142,7 +119,6 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      GC.Collect();
     }
 
     /// <summary>
@@ -150,112 +126,91 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
-      OSVersionInfo os = new OperatingSystemVersion();
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      string ServicePack = "";
-      if (!String.IsNullOrEmpty(os.OSCSDVersion))
+      using (ProcessLock processLock = new ProcessLock(configMutex))
       {
-        ServicePack = " (" + os.OSCSDVersion + ")";
-      }
-      Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
-
-      bool exitConfiguration = false;
-
-      // Check for a MediaPortal Instance running and don't allow Configuration to start
-      try
-      {
-        string processName = "MediaPortal";
-
-        foreach (Process process in Process.GetProcesses())
+        if (processLock.AlreadyExists)
         {
-          if (process.ProcessName.Equals(processName))
+          Log.Warn("Main: Configuration is already running");
+          Win32API.ActivatePreviousInstance();
+        }
+
+        OSVersionInfo os = new OperatingSystemVersion();
+        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+        string ServicePack = "";
+        if (!String.IsNullOrEmpty(os.OSCSDVersion))
+        {
+          ServicePack = " (" + os.OSCSDVersion + ")";
+        }
+        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + os.OSVersionString + ServicePack);
+
+        // Check for a MediaPortal Instance running and don't allow Configuration to start
+        using (ProcessLock mpLock = new ProcessLock(mpMutex))
+        {
+          if (mpLock.AlreadyExists)
           {
-            DialogResult dialogResult =
-              MessageBox.Show(
-                "MediaPortal has to be closed for configuration.\nClose MediaPortal and start Configuration?",
-                "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dialogResult = MessageBox.Show(
+              "MediaPortal has to be closed for configuration.\nClose MediaPortal and start Configuration?",
+              "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialogResult == DialogResult.Yes)
             {
-              try
-              {
-                //
-                // Terminate the MediaPortal process by finding window and sending ALT+F4 to it.
-                //
-                IECallBack ewp = new IECallBack(EnumWindowCallBack);
-                EnumWindows(ewp, 0);
-                process.CloseMainWindow();
-              }
-              catch
-              {
-              }
+              Util.Utils.KillProcess("MediaPortal");
               Log.Info("MediaPortal closed, continue running Configuration.");
-              break;
             }
             else
             {
-              exitConfiguration = true;
-              break;
+              Log.Warn("Main: MediaPortal is running - start of Configuration aborted");
+              return;
             }
           }
         }
-      }
-      catch (Exception)
-      {
-      }
 
-      if (exitConfiguration)
-      {
-        Log.Info("Configuration ended, due to a running MediaPortal.");
-        return;
-      }
-
-      string MpConfig = Assembly.GetExecutingAssembly().Location;
-
+string MpConfig = Assembly.GetExecutingAssembly().Location;
 #if !DEBUG
-      // Check TvPlugin version
-      string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
+        // Check TvPlugin version
+        string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
       if (File.Exists(tvPlugin) && !_avoidVersionChecking)
-      {
-        string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
+        {
+          string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
         string CfgVersion = FileVersionInfo.GetVersionInfo(MpConfig).ProductVersion;
         if (CfgVersion != tvPluginVersion)
-        {
-          string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
-          strLine += "Please update the older component to the same version as the newer one.\r\n";
+          {
+            string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
+            strLine += "Please update the older component to the same version as the newer one.\r\n";
           strLine += "MpConfig Version: " + CfgVersion + "\r\n";
-          strLine += "TvPlugin Version: " + tvPluginVersion;
-          MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            strLine += "TvPlugin Version: " + tvPluginVersion;
+            MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
           Log.Info(strLine);
-          return;
+            return;
+          }
         }
-      }
 #endif
 
       FileInfo mpFi = new FileInfo(MpConfig);
-      Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
+        Log.Info("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
-      Form applicationForm = null;
+        Form applicationForm = null;
 
-      Thumbs.CreateFolders();
+        Thumbs.CreateFolders();
 
-      switch (startupMode)
-      {
-        case StartupMode.Normal:
-          Log.Info("Create new standard setup");
-          applicationForm = new SettingsForm();
-          break;
+        switch (startupMode)
+        {
+          case StartupMode.Normal:
+            Log.Info("Create new standard setup");
+            applicationForm = new SettingsForm();
+            break;
 
-        case StartupMode.Wizard:
-          Log.Info("Create new wizard setup");
-          applicationForm = new WizardForm(sectionsConfiguration);
-          break;
-      }
+          case StartupMode.Wizard:
+            Log.Info("Create new wizard setup");
+            applicationForm = new WizardForm(sectionsConfiguration);
+            break;
+        }
 
-      if (applicationForm != null)
-      {
-        Log.Info("start application");
-        Application.Run(applicationForm);
+        if (applicationForm != null)
+        {
+          Log.Info("start application");
+          Application.Run(applicationForm);
+        }
       }
     }
 
@@ -294,19 +249,6 @@ namespace MediaPortal.Configuration
       return null;
     }
 
-    private bool EnumWindowCallBack(int hwnd, int lParam)
-    {
-      IntPtr windowHandle = (IntPtr) hwnd;
-      StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int) windowHandle, sb, sb.Capacity);
-      string window = sb.ToString().ToLower();
-      if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
-      {
-        ShowWindow(windowHandle, SW_SHOWNORMAL);
-      }
-      return true;
-    }
-
     private static void CheckPrerequisites()
     {
       OSVersionInfo os = new OperatingSystemVersion();
@@ -325,7 +267,7 @@ namespace MediaPortal.Configuration
       }
       string MsgOsVersion = os.OSVersionString + ServicePack;
 
-      int ver = (os.OSMajorVersion*10) + os.OSMinorVersion;
+      int ver = (os.OSMajorVersion * 10) + os.OSMinorVersion;
 
       // Disable OS if < XP
       if (ver < 51)
