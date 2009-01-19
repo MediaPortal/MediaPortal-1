@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Italian" characters="255">
   <Section name="unmapped">
-    <String id="0" prefix="I Miei ">Programmi</String>
-    <String id="1" prefix="Le Mie ">Immagini</String>
-    <String id="2" prefix="La Mia ">Musica</String>
-    <String id="3" prefix="I Miei ">Filmati</String>
+    <String id="0" prefix="I miei ">Programmi</String>
+    <String id="1" prefix="Le mie ">Immagini</String>
+    <String id="2" prefix="La mia ">Musica</String>
+    <String id="3" prefix="I miei ">Filmati</String>
     <String id="4">Guida TV</String>
     <String id="5">Impostazioni</String>
     <String id="6">Etichetta Mancante!</String>
-    <String id="7" prefix="I Miei ">File</String>
-    <String id="8" prefix="Il Mio ">Meteo</String>
-    <String id="9" prefix="Le Mie ">Notizie</String>
-    <String id="10" prefix="Le Mie ">Ricette</String>
+    <String id="7" prefix="I miei ">File</String>
+    <String id="8" prefix="Il mio ">Meteo</String>
+    <String id="9" prefix="Le mie ">Notizie</String>
+    <String id="10" prefix="Le mie ">Ricette</String>
     <String id="11">Lunedì</String>
     <String id="12">Martedì</String>
     <String id="13">Mercoledì</String>
@@ -31,7 +31,7 @@
     <String id="30">Ottobre</String>
     <String id="31">Novembre</String>
     <String id="32">Dicembre</String>
-    <String id="50" prefix="I Miei ">DVD</String>
+    <String id="50" prefix="I miei ">DVD</String>
     <String id="100">Vista: Icone</String>
     <String id="101">Vista: Elenco</String>
     <String id="102">Aggiorna</String>
@@ -45,8 +45,8 @@
     <String id="110">Crea anteprime</String>
     <String id="111">Scorciatoie</String>
     <String id="112">IN PAUSA</String>
-    <String id="113" prefix="I Miei ">File : Origine</String>
-    <String id="114" prefix="I Miei ">File : Destinazione</String>
+    <String id="113" prefix="I miei ">Files : Origine</String>
+    <String id="114" prefix="I miei ">Files : Destinazione</String>
     <String id="115">Copia</String>
     <String id="116">Sposta</String>
     <String id="117">Elimina</String>
@@ -347,10 +347,10 @@
     <String id="415">Scarico anteprima...</String>
     <String id="416">Non disponibile</String>
     <String id="417">Vista: Icone Grandi</String>
-    <String id="418" prefix="I Miei ">Filmati/Generi</String>
-    <String id="419" prefix="I Miei ">Filmati/Attori</String>
-    <String id="420" prefix="I Miei ">Filmati/Anni</String>
-    <String id="421" prefix="I Miei ">Filmati/Titoli</String>
+    <String id="418" prefix="I miei ">Filmati/Generi</String>
+    <String id="419" prefix="I miei ">Filmati/Attori</String>
+    <String id="420" prefix="I miei ">Filmati/Anni</String>
+    <String id="421" prefix="I miei ">Filmati/Titoli</String>
     <String id="422">Elimina info album</String>
     <String id="423">Elimina info CDDB</String>
     <String id="424">Seleziona</String>
@@ -499,7 +499,7 @@
     <String id="602">Canale:</String>
     <String id="603">Programmazione</String>
     <String id="604">TV Registrata</String>
-    <String id="605" prefix="La Mia ">TV</String>
+    <String id="605" prefix="La mia ">TV</String>
     <String id="606">Caricamento nuova Guida TV</String>
     <String id="607">Carica</String>
     <String id="608">Importazione Guida TV fallita</String>
@@ -559,7 +559,7 @@
     <String id="662">Sab</String>
     <String id="663">Dom</String>
     <String id="664">Eliminare questa immagine?</String>
-    <String id="665" prefix="La Mia ">Radio</String>
+    <String id="665" prefix="La mia ">Radio</String>
     <String id="666">Stazioni</String>
     <String id="667">Sintonia Automatica</String>
     <String id="668">Ordina per: Tipo</String>
@@ -687,7 +687,10 @@
     <String id="810">Sintonizzatore</String>
     <String id="820">Cancellare registrazioni non viste?</String>
     <String id="830">Azzera stato "già visto"</String>
-    <String id="850" prefix="I Miei ">Allarmi</String>
+    <String id="831">Espelli disco removibile</String>
+    <String id="832">Impossibile rimuove disco:</String>
+    <String id="833">Il disco può essere rimosso in modo sicuro</String>
+    <String id="850" prefix="I miei ">Allarmi</String>
     <String id="851">Lista di riproduzione</String>
     <String id="852">Allarme attivo</String>
     <String id="853">Nome:</String>
@@ -750,7 +753,7 @@
     <String id="910">Mi sto autenticando...</String>
     <String id="911">Nessun canale</String>
     <String id="912">Non posso scaricare le ultime notizie</String>
-    <String id="913" prefix="I Miei ">Plugins</String>
+    <String id="913" prefix="I miei ">Plugins</String>
     <String id="914">Registrazioni</String>
     <String id="915">Canali TV</String>
     <String id="916">File remoto</String>
@@ -816,7 +819,7 @@
     <String id="980">Riproduci da ultimo punto visto</String>
     <String id="981">Cancella questo spettacolo</String>
     <String id="982">Cancella intera registrazione</String>
-    <String id="983" prefix="Le Mie ">Liste di riproduzione</String>
+    <String id="983" prefix="Le mie ">Liste di riproduzione</String>
     <String id="984">Download dell'elenco film</String>
     <String id="985">Download dettagli film</String>
     <String id="986">Download attore</String>
@@ -860,7 +863,7 @@
     <String id="1024">da</String>
     <String id="1025">Si è verificato un errore.</String>
     <String id="1026">Vedi i file di log per dettagli</String>
-    <String id="1027" prefix="I Miei ">DVD</String>
+    <String id="1027" prefix="I miei ">DVD</String>
     <String id="1028">Città</String>
     <String id="1029">Lingua Sottotitoli</String>
     <String id="1030">Shutdown</String>
@@ -870,7 +873,7 @@
     <String id="1034">Nessun segnale!</String>
     <String id="1035">Il canale TV è codificato!</String>
     <String id="1036">Nessun video trovato</String>
-    <String id="1037" prefix="La Mia ">TV - Informazioni programma</String>
+    <String id="1037" prefix="La mia ">TV - Informazioni programma</String>
     <String id="1038">Registrazione avanzata</String>
     <String id="1039">Non registrare</String>
     <String id="1040">Avvisami</String>
@@ -942,8 +945,8 @@
     <String id="1197">Disabilita DXVA</String>
     <String id="1198">Navigatore del DVD</String>
     <String id="1200">Wizard delle impostazioni</String>
-    <String id="1300" prefix="Le Mie ">Serie TV</String>
-    <String id="1440" prefix="Il Mio ">Televideo</String>
+    <String id="1300" prefix="Le mie ">Serie TV</String>
+    <String id="1440" prefix="Il mio ">Televideo</String>
     <String id="1441">Televideo</String>
     <String id="1442">Velocità scorrimento (orrizzontale)</String>
     <String id="1443">Velocità scorrimento (verticale)</String>
@@ -974,7 +977,7 @@
     <String id="1515">Buffer TV fermato dal\rServer TV</String>
     <String id="1516">Buffer TV fermato per una\rragione sconosciuta</String>
     <String id="1517">Buffer TV fermato da un\raltro utente</String>
-    <String id="1950" prefix="Il Mio ">Stato</String>
+    <String id="1950" prefix="Il mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
     <String id="1953">Libero</String>
@@ -1088,7 +1091,7 @@
     <String id="2087">indietro</String>
     <String id="2088">Ritagli:</String>
     <String id="2089">personalizza qualità</String>
-    <String id="2090" prefix="Il Mio ">Editor Filmati</String>
+    <String id="2090" prefix="Il mio ">Editor Filmati</String>
     <String id="2091">Il processo è stato annullato</String>
     <String id="2092">Scegliere il file che si desidera modificare:</String>
     <String id="2093">aggiungi</String>
@@ -1097,7 +1100,7 @@
     <String id="2097">durata (originale):</String>
     <String id="2098">durata (modificato):</String>
     <String id="2099">posizione corrente:</String>
-    <String id="2100" prefix="Il Mio ">Masterizzatore</String>
+    <String id="2100" prefix="Il mio ">Masterizzatore</String>
     <String id="2101">Copia CD/DVD</String>
     <String id="2102">Crea CD Audio</String>
     <String id="2103">Crea CD Video</String>
@@ -1145,7 +1148,7 @@
     <String id="2145">Importa la Playlist attuale</String>
     <String id="2146">Spazio insufficiente sul CD</String>
     <String id="2147">Spazio insufficiente sul DVD</String>
-    <String id="2200" prefix="Il Mio ">Explorer</String>
+    <String id="2200" prefix="Il mio ">Explorer</String>
     <String id="2201">Seleziona l'origine</String>
     <String id="2202">Seleziona la destinazione</String>
     <String id="2203">Copia i dati</String>
@@ -1187,7 +1190,7 @@
     <String id="2513">Controllare il file di log.</String>
     <String id="2514">Ritorna all'articolo</String>
     <String id="2515">Immagini</String>
-    <String id="2516" prefix="La Mia ">Wikipedia</String>
+    <String id="2516" prefix="La mia ">Wikipedia</String>
     <String id="2550">Si vuole veramente fermare la TV in diretta ?</String>
     <String id="2551">(il file di timeshift verrà perso)</String>
     <String id="2552">Stop</String>
@@ -1270,7 +1273,7 @@
     <String id="4554">Cerca informazioni sul CD</String>
     <String id="4555">Playlist attuale</String>
     <String id="4557">Aggiungi tutto alla playlist</String>
-    <String id="5900" prefix="I Miei ">Trailers</String>
+    <String id="5900" prefix="I miei ">Trailers</String>
     <String id="5901">Mostra film</String>
     <String id="5902">Mostra quali film?</String>
     <String id="5903">Trailers appena aggiunti</String>
@@ -1336,7 +1339,7 @@
     <String id="6037">Film raggruppato</String>
     <String id="6038">Selezionare il disco da riprodurre.</String>
     <String id="6039">Codec Audio LATM AAC</String>
-    <String id="8000" prefix="Le Mie ">Email</String>
+    <String id="8000" prefix="Le mie ">Email</String>
     <String id="8001">Controlla la Posta</String>
     <String id="8002">Contr. autom. disattivo</String>
     <String id="8003">Contr. autom. attivo</String>
@@ -1436,7 +1439,7 @@
     <String id="10100">Mine nascoste</String>
     <String id="10101">Tempo brano</String>
     <String id="10102">Tempo più veloce</String>
-    <String id="10103" prefix="Il Mio ">Campo Minato</String>
+    <String id="10103" prefix="Il mio ">Campo Minato</String>
     <String id="10104">Mini EPG</String>
     <String id="10105">In onda</String>
     <String id="11000">Impostazioni ritaglio</String>
@@ -1469,7 +1472,7 @@
     <String id="13033">Eseguito più di recente</String>
     <String id="13034">Titolo</String>
     <String id="13041">Mostra informazioni file</String>
-    <String id="14001" prefix="Le mie">estensioni</String>
+    <String id="14001" prefix="Le mie ">Estensioni</String>
     <String id="14002">Viste</String>
     <String id="14003">Estensioni installate</String>
     <String id="14004">Estensioni online</String>
@@ -1481,7 +1484,7 @@
     <String id="14010">Scarica estensione</String>
     <String id="14011">Selezione un'opzione</String>
     <String id="16001">Party Shuffle</String>
-    <String id="19001" prefix="Il Mio ">Tetris</String>
+    <String id="19001" prefix="Il mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
     <String id="19003">Musica</String>
     <String id="19004">Suoni</String>
@@ -1494,7 +1497,7 @@
     <String id="19011">Pausa</String>
     <String id="19012">Game Over</String>
     <String id="19100">Orologio Terrestre</String>
-    <String id="19101" prefix="Il Mio ">Sudoku</String>
+    <String id="19101" prefix="Il mio ">Sudoku</String>
     <String id="19102">Nuova Partita</String>
     <String id="19103">Risolvi</String>
     <String id="19104">Ripulisci</String>
@@ -1546,7 +1549,7 @@
     <String id="19150">alternative possibili</String>
     <String id="19151">Aggiungi/Rimuovi alternative possibili</String>
     <String id="25001">In attesa della pagina {0:X}...!</String>
-    <String id="30000" prefix="I Miei ">Video Musicali</String>
+    <String id="30000" prefix="I miei ">Video Musicali</String>
     <String id="30001">Più richiesti</String>
     <String id="30002">Nuovi su Yahoo</String>
     <String id="30003">Ascolta tutti</String>
@@ -1642,20 +1645,20 @@
     <String id="100016">Impostazioni-&gt;Schermo-&gt;Salvaschermo</String>
     <String id="100017">Impostazioni-&gt;Meteo</String>
     <String id="100020">Impostazioni-&gt;Script</String>
-    <String id="100021" prefix="I Miei ">Filmati/Genere</String>
-    <String id="100022" prefix="I Miei ">Filmati/Attore</String>
-    <String id="100023" prefix="I Miei ">Filmati/Anno</String>
+    <String id="100021" prefix="I miei ">Filmati/Genere</String>
+    <String id="100022" prefix="I miei ">Filmati/Attore</String>
+    <String id="100023" prefix="I miei ">Filmati/Anno</String>
     <String id="100024">Impostazioni-&gt;Programmi</String>
-    <String id="100025" prefix="I Miei ">Filmati/Titolo</String>
+    <String id="100025" prefix="I miei ">Filmati/Titolo</String>
     <String id="100026">Impostazioni-&gt;Generali-&gt;Cache</String>
     <String id="100027">Impostazioni-&gt;Generali-&gt;Esecuzione automatica</String>
-    <String id="100028" prefix="I Miei ">Filmati/Playlist</String>
+    <String id="100028" prefix="I miei ">Filmati/Playlist</String>
     <String id="100029">Impostazioni-&gt;Generali-&gt;LCD</String>
-    <String id="100030" prefix="La Mia ">Radio</String>
+    <String id="100030" prefix="La mia ">Radio</String>
     <String id="100031">Impostazioni-&gt;Schermo-&gt;Velocità di scorrimento</String>
     <String id="100032">MSN Messenger</String>
     <String id="100033">Conversazione di MSN Messenger</String>
-    <String id="100034" prefix="I Miei ">Plugins</String>
+    <String id="100034" prefix="I miei ">Plugins</String>
     <String id="100035">Home semplificata</String>
     <String id="100100">Dialogo Sì/No</String>
     <String id="100101">Dialogo di progresso</String>
@@ -1737,13 +1740,13 @@
     <String id="101003">Tastiera virtuale WEB</String>
     <String id="101004">Tastiera virtuale SMS</String>
     <String id="102000">Dialogo di selezione</String>
-    <String id="102001" prefix="La Mia ">Musica/Info</String>
+    <String id="102001" prefix="La mia ">Musica/Info</String>
     <String id="102002">Dialogo OK</String>
-    <String id="102003" prefix="I Miei ">Filmati/Info</String>
-    <String id="102004" prefix="I Miei ">Script/Info</String>
+    <String id="102003" prefix="I miei ">Filmati/Info</String>
+    <String id="102004" prefix="I miei ">Script/Info</String>
     <String id="102005">Filmati a schermo intero</String>
     <String id="102006">Visualizzazione audio</String>
-    <String id="102007" prefix="Le Mie ">Immagini/Presentazione</String>
+    <String id="102007" prefix="Le mie ">Immagini/Presentazione</String>
     <String id="102008">Dialogo di raggruppamento</String>
     <String id="102009">Dialogo selezione</String>
     <String id="102010">Data/Ora</String>
@@ -1753,7 +1756,7 @@
     <String id="102014">Informazioni sull'Immagine</String>
     <String id="102015">Mini Menu</String>
     <String id="102016">Notifica</String>
-    <String id="102600" prefix="Il Mio ">Meteo</String>
+    <String id="102600" prefix="Il mio ">Meteo</String>
     <String id="102700" prefix="Le Mie ">Notizie</String>
     <String id="102900">Salvaschermo</String>
     <String id="102901">OSD a schermo intero</String>
