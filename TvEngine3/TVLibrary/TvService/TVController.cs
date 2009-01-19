@@ -720,7 +720,7 @@ namespace TvService
     {
       get
       {
-        return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
       }
     }
     

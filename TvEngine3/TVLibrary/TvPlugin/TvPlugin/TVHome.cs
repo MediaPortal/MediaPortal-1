@@ -27,6 +27,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
@@ -249,7 +250,7 @@ namespace TvPlugin
 
         m_navigator = new ChannelNavigator();
         LoadSettings();
-        string pluginVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
         string tvServerVersion = RemoteControl.Instance.GetAssemblyVersion;
         if (pluginVersion != tvServerVersion)
         {
