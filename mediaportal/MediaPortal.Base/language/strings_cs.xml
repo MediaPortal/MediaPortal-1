@@ -484,8 +484,8 @@
     <String id="609">TVGuide import OK</String>
     <String id="610">Nenahrávat</String>
     <String id="611">Nahrát jednou</String>
-    <String id="612">Nahrát podle časů tento kanál</String>
-    <String id="613">Nahrát podle časů tyto kanály</String>
+    <String id="612">Nahrát pokaždé na tomto kanálu</String>
+    <String id="613">Nahrát pokaždé na všech kanálech</String>
     <String id="614">Nahrát každý týden v tento čas</String>
     <String id="615">Nahrát každý den v tento čas</String>
     <String id="616">Vyberte typ nahrávání</String>
@@ -522,8 +522,8 @@
     <String id="647">Jednou</String>
     <String id="648">Denně</String>
     <String id="649">Každý</String>
-    <String id="650">Pokaždé na tomto proígramu</String>
-    <String id="651">Pokaždé na jakémkoliv programu</String>
+    <String id="650">Pokaždé na {0}</String>
+    <String id="651">Pokaždé na jakémkoliv kanálu</String>
     <String id="652">Nahrané TV programy</String>
     <String id="653">Zrušení záznamu</String>
     <String id="654">Vysunout</String>
@@ -544,7 +544,7 @@
     <String id="669">Třídit podle: Žánru</String>
     <String id="670">Třídit podle: Datového toku</String>
     <String id="671">Třídit podle: Shlédnuto</String>
-    <String id="672">Zaznamenávat Po - Pá</String>
+    <String id="672">Nahrávat Po-Pá</String>
     <String id="673">Rychlost scrolování</String>
     <String id="674">Nastavení GUI</String>
     <String id="675">Příklad:</String>
@@ -697,7 +697,7 @@
     <String id="888">Správce epizod</String>
     <String id="889">Všechny epizody</String>
     <String id="890">Přehrát CD</String>
-    <String id="891">Vyberte program</String>
+    <String id="891">Vyberte TV kanál</String>
     <String id="892">Konflikty</String>
     <String id="894">Komprimovat TV záznam</String>
     <String id="895">Automatická komprese</String>
@@ -754,7 +754,7 @@
     <String id="973">maximální FPS</String>
     <String id="974">Základní menu</String>
     <String id="975">Předchozí kapitola</String>
-    <String id="976">Dálší kapitola</String>
+    <String id="976">Další kapitola</String>
     <String id="977">Žádná karta není dostupná</String>
     <String id="979">Přehrát záznam od začátku</String>
     <String id="980">Přehrát záznam od bodu živého vysílání</String>
@@ -816,7 +816,7 @@
     <String id="1048">Nastavení</String>
     <String id="1049">Hibernace</String>
     <String id="1050">So-Ne</String>
-    <String id="1051">Nahránání So-Ne</String>
+    <String id="1051">Nahrávat So-Ne</String>
     <String id="1052">skladeb</String>
     <String id="1062">položka</String>
     <String id="1064">Záložky</String>
@@ -868,8 +868,8 @@
     <String id="1441">Teletext</String>
     <String id="1442">Rychlost horizontálního posouvání</String>
     <String id="1443">Rychlost vertikálního posouvání</String>
-    <String id="1444">Před nahráváním</String>
-    <String id="1445">Po nahrávání</String>
+    <String id="1444">Spustit nahrávání</String>
+    <String id="1445">Ukončit nahrávání</String>
     <String id="1446">Nahrávání začíná</String>
     <String id="1447">Stop nahrávání:</String>
     <String id="1448">Žádný</String>
@@ -1202,7 +1202,7 @@
     <String id="6014">Nastavit TV</String>
     <String id="6015">Nastavit DVD</String>
     <String id="6016">Po shlédnutí automaticky smazat záznam</String>
-    <String id="6017">Přidat záznam</String>
+    <String id="6017">Přidat záznam do filmové databáze</String>
     <String id="6018">minut před začátkem pořadu</String>
     <String id="6019">minut po ukončení pořadu</String>
     <String id="6020">Opakovat prezentaci</String>
