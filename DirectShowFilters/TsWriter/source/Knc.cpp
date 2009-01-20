@@ -357,7 +357,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
     if (KNCBDA_HW_Enable(m_slot,tunerFilter))
     {
       LogDebug("KNC card HW Enabled");
-      m_bIsKNC=true;
+      //m_bIsKNC=true;
     }
     LogDebug("KNCBDA_CI_Enable");
     if (KNCBDA_CI_Enable(m_slot,tunerFilter,&m_callback))
@@ -384,7 +384,7 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       else
       {
         LogDebug("KNC card detected without CAM");
-        m_bIsKNC=true;
+        //m_bIsKNC=true;
       }
     }
     if (m_bIsKNC == false)
