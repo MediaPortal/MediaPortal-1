@@ -24,9 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace TvLibrary.Teletext
 {
@@ -47,21 +45,21 @@ namespace TvLibrary.Teletext
 
     #region variables
     //regional stuff
-    bool _isRegionalDK = false;
+    readonly bool _isRegionalDK;
 
-    Bitmap _pageBitmap = null;
-    Graphics _renderGraphics = null;
-    Font _fontTeletext = null;
+    Bitmap _pageBitmap;
+    Graphics _renderGraphics;
+    Font _fontTeletext;
 
     bool _hiddenMode = true;
-    bool _transparentMode = false;
-    bool _fullscreenMode = false;
+    bool _transparentMode ;
+    bool _fullscreenMode;
 
     string _selectedPageText = "";
 
-    int _pageRenderWidth = 1920;
+    int _pageRenderWidth = 1440;
     int _pageRenderHeight = 1080;
-    int _percentageOfMaximumHeight = 80;
+    int _percentageOfMaximumHeight = 100;
     #endregion
 
     #region enums
@@ -124,12 +122,15 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region character and other tables for multi-language support. Referring the bits C12-C14 in the header
-    char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
+
+    readonly char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
 	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
 	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
 	};
-    char[] m_charTableB = new char[] { '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C', 'É', '\u0130' };
-    char[,] m_charTableC = new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
+
+    readonly char[] m_charTableB = new char[] { '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C', 'É', '\u0130' };
+
+    readonly char[,] m_charTableC = new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
 	{ 'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161' },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
 	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
 	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
@@ -140,14 +141,15 @@ namespace TvLibrary.Teletext
     { 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' }
     };
 
-    char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
+    readonly char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
 	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
 	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
 	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
 	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' },
     { 'æ', 'ø', 'å', 'ü' }
     };
-    char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
+
+    readonly char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
     #endregion
 
     #region properties
@@ -257,7 +259,7 @@ namespace TvLibrary.Teletext
     /// <param name="txtLanguage">Teletext language</param>
     private void Render(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
     {
-      bool charReady = false;
+      bool charReady;
       char chr2 = '?';
 
       // Skip the character if 0xFF
@@ -323,12 +325,8 @@ namespace TvLibrary.Teletext
           x += w;
           return;
         }
-        int factor = 0;
 
-        if ((attrib & 1 << 10) > 0)
-          factor = 2;
-        else
-          factor = 1;
+        int factor = (attrib & 1 << 10) > 0 ? 2 : 1;
 
         charReady = false;
         // If character is still not drawn, then we analyse it again
@@ -475,7 +473,7 @@ namespace TvLibrary.Teletext
           string text = "" + chr2;
           graph.FillRectangle(backBrush, x, y, w, h);
           SizeF width = graph.MeasureString(text, _fontTeletext);
-          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
+          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), y);
           graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
           if (factor == 2)
           {
@@ -525,7 +523,7 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
-    private Color GetColor(int colorNumber)
+    private static Color GetColor(int colorNumber)
     {
 
       switch (colorNumber)
@@ -558,23 +556,11 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <param name="i">Pagenumber to check</param>
     /// <returns>True, if page should be displayed</returns>
-    private bool IsDecimalPage(int i)
+    private static bool IsDecimalPage(int i)
     {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+      return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90);
     }
 
-    /// <summary>
-    /// Checks if is a valid subpage 
-    /// </summary>
-    /// <param name="i">Subpagenumber to check</param>
-    /// <returns>True, if subpage is valid</returns>
-    private bool IsDecimalSubPage(int i)
-    {
-      if (i >= 0x80)
-        return false;
-
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
-    }
     #endregion
 
     #region public methods
@@ -596,7 +582,7 @@ namespace TvLibrary.Teletext
       if (_renderGraphics == null)
         _renderGraphics = Graphics.FromImage(_pageBitmap);
 
-      int row, col;
+      int col;
       int hold;
       int foreground, background, doubleheight, charset, mosaictype;
       byte held_mosaic;
@@ -633,10 +619,10 @@ namespace TvLibrary.Teletext
         if (packetNumber == 24)
           row24 = true;
       }
-      row = col = 0;
-      int txtLanguage = 0;
+      int row;
+      int txtLanguage;
       // language detection. Extract the bit C12-C14 from the teletext header and set the language code
-      int languageCode = 0;
+      int languageCode;
       byte byte1 = Hamming.Decode[byPage[9]];
       if (byte1 == 0xFF)
         languageCode = 0;
@@ -652,14 +638,7 @@ namespace TvLibrary.Teletext
           txtLanguage = 4;
           break;
         case 2:
-          if (_isRegionalDK)
-          {
-            txtLanguage = 13;
-          }
-          else
-          {
-            txtLanguage = 11;
-          }
+          txtLanguage = _isRegionalDK ? 13 : 11;
           break;
         case 3:
           txtLanguage = 5;
@@ -989,8 +968,8 @@ namespace TvLibrary.Teletext
       if (IsDecimalPage(mPage) && displayHeaderAndTopText)
       {
         int i;
-        string pageNumber = "";
-        int lineColor = 0;
+        string pageNumber;
+        int lineColor;
         // Determine the state, of the header line.
         // Red=Incomplete page number
         // Yellow=Waiting for page
@@ -1016,7 +995,7 @@ namespace TvLibrary.Teletext
         string headline = "MediaPortal P." + pageNumber;
         headline += new string((char)32, 32 - headline.Length);
         byte[] mpText = System.Text.Encoding.ASCII.GetBytes(headline);
-        System.Array.Copy(mpText, 0, pageChars, 0, mpText.Length);
+        Array.Copy(mpText, 0, pageChars, 0, mpText.Length);
         for (i = 0; i < 11; i++)
           pageAttribs[i] = ((int)TextColors.Black << 4) | lineColor;
         for (i = 12; i < 40; i++)
@@ -1027,17 +1006,18 @@ namespace TvLibrary.Teletext
       int y = 0;
       int x;
       int width = _pageRenderWidth / 40;
-      int height = (_pageRenderHeight - 2) / 25;
-      float fntSize = Math.Min(width, height);
+      int height = _pageRenderHeight / 25;
+      float fntSize = height;//Math.Min(width, height);
       float nPercentage = ((float)_percentageOfMaximumHeight / 100);
-      _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+      _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
       float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
-      while (fntHeight > nPercentage * height || fntHeight > nPercentage * width)
+      while (fntHeight > nPercentage * height)// || fntHeight > nPercentage * width)
       {
         fntSize -= 0.1f;
-        _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+        _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Bold, GraphicsUnit.Pixel);
         fntHeight = _fontTeletext.GetHeight(_renderGraphics);
       }
+      MediaPortal.GUI.Library.Log.Debug("FONT SIZE OF TELETEXT: " + fntSize);
       SolidBrush brush = null;
       try
       {
@@ -1070,7 +1050,6 @@ namespace TvLibrary.Teletext
       {
         if (brush != null)
           brush.Dispose();
-        brush = null;
         _fontTeletext.Dispose();
         _fontTeletext = null;
       }

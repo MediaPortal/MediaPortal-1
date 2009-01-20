@@ -18,10 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace TvLibrary.Teletext
 {
   public class Hamming
@@ -141,11 +137,10 @@ namespace TvLibrary.Teletext
     {
       // decode the subpage number
       // SubPageNumber = 4 Bits SubPageNumber_Byte1 - 3 Bits SubPageNumber_Byte2 - 4 Bits SubPageNumber_Byte3 - 2 Bits SubPageNumber_Byte4
-      int subPageNumber = 0;
-      subPageNumber = ((Decode[rowData[offset + SUBPAGENUMBER_BYTE4_OFFSET]] & 3) << 12) +  //3
-                        (Decode[rowData[offset + SUBPAGENUMBER_BYTE3_OFFSET]] << 8) +        //f
-                       ((Decode[rowData[offset + SUBPAGENUMBER_BYTE2_OFFSET]] & 7) << 4) +   //7
-                        (Decode[rowData[offset + SUBPAGENUMBER_BYTE1_OFFSET]] & 0xf);        //f
+      int subPageNumber = ((Decode[rowData[offset + SUBPAGENUMBER_BYTE4_OFFSET]] & 3) << 12) +  //3
+                          (Decode[rowData[offset + SUBPAGENUMBER_BYTE3_OFFSET]] << 8) +        //f
+                          ((Decode[rowData[offset + SUBPAGENUMBER_BYTE2_OFFSET]] & 7) << 4) +   //7
+                          (Decode[rowData[offset + SUBPAGENUMBER_BYTE1_OFFSET]] & 0xf);
       return subPageNumber;
     }
 
@@ -238,7 +233,7 @@ namespace TvLibrary.Teletext
     /// Sets a page header into the given data stream
     /// </summary>
     /// <param name="offset">Offset in the data stream</param>
-    /// <param name="rowData">Teletext data</param>
+    /// <param name="byData">Teletext data</param>
     /// <param name="pagenr">PageNumber</param>
     /// <param name="subnr">SubPageNumber</param>
     static public void SetHeader(int offset, ref byte[] byData, int pagenr, int subnr)
@@ -287,8 +282,8 @@ namespace TvLibrary.Teletext
     /// Sets a packet number in teletext header into the given data stream
     /// </summary>
     /// <param name="offset">Offset in the data stream</param>
-    /// <param name="rowData">Teletext data</param>
-    /// <param name="pagenr">PageNumber (needed for magazin number)</param>
+    /// <param name="byData">Teletext data</param>
+    /// <param name="pageNumber">PageNumber (needed for magazin number)</param>
     /// <param name="packetNumber">PacketNumber</param>
     static public void SetPacketNumber(int offset, ref byte[] byData, int pageNumber, int packetNumber)
     {
@@ -296,10 +291,7 @@ namespace TvLibrary.Teletext
       if (iMagazine == 8)
         iMagazine = 0;
 
-      if ((packetNumber % 2) == 0)
-        byData[offset + 0] = Encode[iMagazine];
-      else
-        byData[offset + 0] = Encode[iMagazine + 8];
+      byData[offset + 0] = (packetNumber % 2) == 0 ? Encode[iMagazine] : Encode[iMagazine + 8];
       byData[offset + 1] = Encode[packetNumber / 2];
     }
 

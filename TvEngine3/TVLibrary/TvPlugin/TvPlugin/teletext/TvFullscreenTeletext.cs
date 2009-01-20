@@ -23,26 +23,7 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using MediaPortal.GUI.Pictures;
-using MediaPortal.Configuration;
-
-using TvDatabase;
-
-using Gentle.Common;
-using Gentle.Framework;
 
 namespace TvPlugin {
   /// <summary>
@@ -50,12 +31,12 @@ namespace TvPlugin {
   /// </summary>
   public class TVTeletextFullScreen : TvTeletextBase, IRenderLayer {
     #region variables
-    bool _isFullScreenVideo = false;
+    bool _isFullScreenVideo;
     #endregion
 
     #region ctor
     public TVTeletextFullScreen() {
-      GetID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
+      GetID = (int)Window.WINDOW_FULLSCREEN_TELETEXT;
     }
     #endregion
 
@@ -65,7 +46,7 @@ namespace TvPlugin {
     }
 
     public override void OnAdded() {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT, this);
+      GUIWindowManager.Replace((int)Window.WINDOW_FULLSCREEN_TELETEXT, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -83,18 +64,6 @@ namespace TvPlugin {
     protected override void OnPageLoad() {
       _isFullScreenVideo = GUIGraphicsContext.IsFullScreenVideo;
       base.OnPageLoad();
-      int left = GUIGraphicsContext.Width / 20;
-      int top = GUIGraphicsContext.Height / 20;
-      if (imgTeletextForeground != null) {
-        imgTeletextForeground.Width = GUIGraphicsContext.Width - (2 * left);
-        imgTeletextForeground.Height = GUIGraphicsContext.Height - (2 * top);
-        imgTeletextForeground.SetPosition(left, top);
-      }
-      if (imgTeletextBackground != null) {
-        imgTeletextBackground.Width = GUIGraphicsContext.Width - (2 * left);
-        imgTeletextBackground.Height = GUIGraphicsContext.Height - (2 * top);
-        imgTeletextBackground.SetPosition(left, top);
-      }
       InitializeWindow(true);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
     }

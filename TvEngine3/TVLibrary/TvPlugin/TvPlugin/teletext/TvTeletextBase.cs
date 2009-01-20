@@ -24,19 +24,11 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Threading;
-using System.Collections;
 using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
 using System.IO;
-using System.Globalization;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using MediaPortal.GUI.Pictures;
 using MediaPortal.Configuration;
 
 
@@ -70,20 +62,20 @@ namespace TvPlugin
     protected Bitmap bmpTeletextPage;
     protected string inputLine = String.Empty;
     protected int currentPageNumber = 0x100;
-    protected int currentSubPageNumber = 0;
+    protected int currentSubPageNumber;
     protected int receivedPageNumber = 0x100;
-    protected int receivedSubPageNumber = 0;
+    protected int receivedSubPageNumber;
     protected byte[] receivedPage;
     protected bool _updatingForegroundImage;
     protected bool _updatingBackgroundImage;
-    protected bool _waiting = false;
+    protected bool _waiting;
     protected DateTime _startTime = DateTime.MinValue;
     protected TvLibrary.Teletext.TeletextPageRenderer _renderer = new TvLibrary.Teletext.TeletextPageRenderer();
     protected bool _hiddenMode;
     protected bool _transparentMode;
     protected Thread _updateThread;
     protected bool _updateThreadStop;
-    protected int _numberOfRequestedUpdates = 0;
+    protected int _numberOfRequestedUpdates;
     protected bool _rememberLastValues;
     protected int _percentageOfMaximumHeight;
     #endregion
@@ -136,13 +128,13 @@ namespace TvPlugin
       // Initialize the images
       if (imgTeletextForeground != null)
       {
-        imgTeletextForeground.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        imgTeletextForeground.ColorKey = Color.HotPink.ToArgb();
         _renderer.Width = imgTeletextForeground.Width;
         _renderer.Height = imgTeletextForeground.Height;
       }
       if (imgTeletextBackground != null)
       {
-        imgTeletextBackground.ColorKey = System.Drawing.Color.HotPink.ToArgb();
+        imgTeletextBackground.ColorKey = Color.HotPink.ToArgb();
         _renderer.Width = imgTeletextBackground.Width;
         _renderer.Height = imgTeletextBackground.Height;
       }
@@ -470,7 +462,7 @@ namespace TvPlugin
         _updatingForegroundImage = true;
         imgTeletextForeground.IsVisible = false;
         // Clear the old image
-        System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
+        Image img = (Image)bmpTeletextPage.Clone();
         imgTeletextForeground.FileName = "";
         GUITextureManager.ReleaseTexture("[teletextpage]");
         // Set the new image and make the image visible again
@@ -484,7 +476,7 @@ namespace TvPlugin
         _updatingBackgroundImage = true;
         imgTeletextBackground.IsVisible = false;
         // Clear the old image
-        System.Drawing.Image img2 = (Image)bmpTeletextPage.Clone();
+        Image img2 = (Image)bmpTeletextPage.Clone();
         imgTeletextBackground.FileName = "";
         GUITextureManager.ReleaseTexture("[teletextpage2]");
         // Set the new image and make the image visible again
@@ -558,7 +550,7 @@ namespace TvPlugin
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         _rememberLastValues = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
-        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextFontSize", 80);
+        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextMaxFontSize", 100);
       }
     }
 

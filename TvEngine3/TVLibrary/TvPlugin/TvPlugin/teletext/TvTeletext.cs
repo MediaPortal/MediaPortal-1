@@ -50,7 +50,7 @@ namespace TvPlugin.teletext
     #region ctor
     public TVTeletext() 
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TELETEXT;
+      GetID = (int)Window.WINDOW_TELETEXT;
     }
     #endregion
 
@@ -61,7 +61,7 @@ namespace TvPlugin.teletext
     }
     public override void OnAdded() 
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TELETEXT, this);
+      GUIWindowManager.Replace((int)Window.WINDOW_TELETEXT, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -157,16 +157,9 @@ namespace TvPlugin.teletext
       {
         // First the fullscreen video and then switch to the new window. Otherwise the teletext isn't displayed
         GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_TELETEXT);
       }
       base.OnClicked(controlId, control, actionType);
-    }
-    #endregion
-
-    #region Rendering method
-    public override void Render(float timePassed) 
-    {
-      base.Render(timePassed);
     }
     #endregion
 
