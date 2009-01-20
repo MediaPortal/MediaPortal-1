@@ -20,7 +20,7 @@
       <posY>188</posY>
      <control>
         <description>Skin</description>
-        <type>selectbutton</type>
+        <type>button</type>
         <id>10</id>
         <posX>99</posX>
         <posY>188</posY>

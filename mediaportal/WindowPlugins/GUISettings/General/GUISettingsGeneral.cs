@@ -43,14 +43,14 @@ namespace WindowPlugins.GUISettings
   /// </summary>
   public class GUISettingsGeneral : GUIWindow
   {
-    [SkinControl(10)] protected GUISelectButtonControl btnSkin = null;
+    [SkinControl(10)] protected GUIButtonControl btnSkin = null;
     [SkinControl(11)] protected GUISelectButtonControl btnLanguage = null;
     [SkinControl(12)] protected GUIToggleButtonControl btnFullscreen = null;
     [SkinControl(13)] protected GUIToggleButtonControl btnScreenSaver = null;
     [SkinControl(20)] protected GUIImage imgSkinPreview = null;
 
     private int selectedLangIndex;
-    private int selectedSkinIndex;
+    private string selectedSkinName;
     private bool selectedFullScreen;
     private bool selectedScreenSaver;
 
@@ -104,9 +104,9 @@ namespace WindowPlugins.GUISettings
         {
           return;
         }
-        if (String.Compare(dlg.SelectedLabelText, btnSkin.SelectedLabel, true) != 0)
+        if (String.Compare(dlg.SelectedLabelText, btnSkin.Label, true) != 0)
         {
-          btnSkin.SelectedItem = dlg.SelectedLabel;
+          btnSkin.Label = dlg.SelectedLabelText;
           OnSkinChanged();
         }
         return;
@@ -127,13 +127,11 @@ namespace WindowPlugins.GUISettings
       SetScreenSaver();
       SetLanguages();
       SetSkins();
-      btnSkin.CaptionChanged += new EventHandler(RefreshSkinPreview);
-      GUIControl.FocusControl(GetID, btnSkin.GetID);
+      //GUIControl.FocusControl(GetID, btnSkin.GetID);
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      btnSkin.CaptionChanged -= new EventHandler(RefreshSkinPreview);
       base.OnPageDestroy(newWindowId);
       SaveSettings();
     }
@@ -145,7 +143,7 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "screensaver", btnScreenSaver.Selected);
         xmlwriter.SetValue("skin", "language", btnLanguage.SelectedLabel);
-        xmlwriter.SetValue("skin", "name", btnSkin.SelectedLabel);
+        xmlwriter.SetValue("skin", "name", btnSkin.Label);
       }
     }
 
@@ -196,24 +194,19 @@ namespace WindowPlugins.GUISettings
     {
       List<string> installedSkins = new List<string>();
       string currentSkin = "";
-      int skinNo = 0;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+        currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3wide");
       }
-
-      GUIControl.ClearControl(GetID, btnSkin.GetID);
       installedSkins = GetInstalledSkins();
 
       foreach (string skin in installedSkins)
       {
-        GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, skin);
         if (String.Compare(skin, currentSkin, true) == 0)
         {
-          GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
+          btnSkin.Label = skin;
           imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skin, @"media\preview.png"));
         }
-        skinNo++;
       }
     }
 
@@ -246,16 +239,16 @@ namespace WindowPlugins.GUISettings
 
     private void BackupButtons()
     {
+      selectedSkinName = btnSkin.Label;
       selectedLangIndex = btnLanguage.SelectedItem;
-      selectedSkinIndex = btnSkin.SelectedItem;
       selectedFullScreen = btnFullscreen.Selected;
       selectedScreenSaver = btnScreenSaver.Selected;
     }
 
     private void RestoreButtons()
     {
+      btnSkin.Label = selectedSkinName;
       GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
-      GUIControl.SelectItemControl(GetID, btnSkin.GetID, selectedSkinIndex);
       if (selectedFullScreen)
       {
         GUIControl.SelectControl(GetID, btnFullscreen.GetID);
@@ -266,10 +259,10 @@ namespace WindowPlugins.GUISettings
       }
     }
 
-    private void RefreshSkinPreview(object sender, EventArgs e)
-    {
-      imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
-    }
+    //private void RefreshSkinPreview(object sender, EventArgs e)
+    //{
+    //  imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.Label, @"media\preview.png"));
+    //}
 
     private void OnSkinChanged()
     {
@@ -277,7 +270,7 @@ namespace WindowPlugins.GUISettings
       BackupButtons();
 
       // Set the skin to the selected skin and reload GUI
-      GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
+      GUIGraphicsContext.Skin = btnSkin.Label;
       SaveSettings();
       GUITextureManager.Clear();
       GUITextureManager.Init();

@@ -20,7 +20,7 @@
       <layout>StackLayout</layout>
       <control>
         <description>Skin</description>
-        <type>selectbutton</type>
+        <type>button</type>
         <id>10</id>
         <width>210</width>
         <label>166</label>
