@@ -12,6 +12,10 @@ goto START
 
 
 :START
+REM Select program path based on current machine environment
+set progpath=%ProgramFiles%
+if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
+
 
 echo.
 echo -= MediaPortal =-
@@ -29,7 +33,6 @@ echo Writing SVN revision assemblies...
 echo.
 echo Building MediaPortal...
 "%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 MediaPortal.sln >> build.log
-
 
 echo.
 echo Reverting assemblies...

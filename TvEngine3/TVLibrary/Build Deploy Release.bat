@@ -12,6 +12,9 @@ goto START
 
 
 :START
+REM Select program path based on current machine environment
+set progpath=%ProgramFiles%
+if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
 echo.
