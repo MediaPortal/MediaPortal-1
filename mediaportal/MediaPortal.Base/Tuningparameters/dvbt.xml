@@ -1822,6 +1822,13 @@
     <carrier frequency="858000" bandwidth="8"></carrier>
     <carrier frequency="866000" bandwidth="8"></carrier>
   </country>
+  <country name="Italy - Asciano (Pisa)" offset="125">
+    <carrier frequency="578000" bandwidth="8"></carrier>
+    <carrier frequency="642000" bandwidth="8"></carrier>
+    <carrier frequency="714000" bandwidth="8"></carrier>
+    <carrier frequency="738000" bandwidth="8"></carrier>
+    <carrier frequency="834000" bandwidth="8"></carrier>
+  </country>
   <country name="Italy - Milano" offset="125">
     <carrier frequency="186000" bandwidth="7"></carrier>
     <carrier frequency="219500" bandwidth="7"></carrier>
