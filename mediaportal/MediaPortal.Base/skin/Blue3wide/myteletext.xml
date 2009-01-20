@@ -27,9 +27,9 @@
       <id>500</id>
       <posX>435</posX>
       <posY>121</posY>
-      <width>817</width>
-      <height>575</height>
-      <texture>button_small_settings_nofocus.png</texture>
+      <width>760</width>
+      <height>570</height>
+      <texture>black.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -39,9 +39,9 @@
       <id>501</id>
       <posX>435</posX>
       <posY>121</posY>
-      <width>817</width>
-      <height>575</height>
-      <texture>button_small_settings_nofocus.png</texture>
+      <width>760</width>
+      <height>570</height>
+      <texture>black.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

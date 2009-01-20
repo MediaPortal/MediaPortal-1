@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7701</id>
   <defaultcontrol>500</defaultcontrol>
@@ -9,20 +8,20 @@
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
-      <posX>435</posX>
-      <posY>121</posY>
-      <width>817</width>
-      <height>575</height>
+      <posX>160</posX>
+      <posY>0</posY>
+      <width>960</width>
+      <height>720</height>
       <texture>-</texture>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
       <type>image</type>
       <id>501</id>
-      <posX>435</posX>
-      <posY>121</posY>
-      <width>817</width>
-      <height>575</height>
+      <posX>160</posX>
+      <posY>0</posY>
+      <width>960</width>
+      <height>720</height>
       <texture>-</texture>
     </control>
     <control>

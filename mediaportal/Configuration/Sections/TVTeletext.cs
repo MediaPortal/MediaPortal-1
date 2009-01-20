@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
         cbHiddenMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         cbTransparentMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         cbRememberValue.Checked = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
-        nudFontSize.Value = xmlreader.GetValueAsInt("mytv", "teletextFontSize", 80);
+        nudFontSize.Value = xmlreader.GetValueAsInt("mytv", "teletextMaxFontSize", 100);
       }
     }
 
@@ -244,7 +244,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "teletextHidden", cbHiddenMode.Checked);
         xmlwriter.SetValueAsBool("mytv", "teletextTransparent", cbTransparentMode.Checked);
         xmlwriter.SetValueAsBool("mytv", "teletextRemember", cbRememberValue.Checked);
-        xmlwriter.SetValue("mytv", "teletextFontSize", nudFontSize.Value);
+        xmlwriter.SetValue("mytv", "teletextMaxFontSize", nudFontSize.Value);
       }
     }
   }

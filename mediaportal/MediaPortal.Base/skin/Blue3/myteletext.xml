@@ -29,7 +29,7 @@
       <posX>245</posX>
       <posY>97</posY>
       <width>460</width>
-      <height>460</height>
+      <height>345</height>
       <texture>button_small_settings_nofocus.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -41,7 +41,7 @@
       <posX>245</posX>
       <posY>97</posY>
       <width>460</width>
-      <height>460</height>
+      <height>345</height>
       <texture>button_small_settings_nofocus.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>

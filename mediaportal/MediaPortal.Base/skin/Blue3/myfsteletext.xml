@@ -8,20 +8,20 @@
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
-      <posX>245</posX>
-      <posY>97</posY>
-      <width>460</width>
-      <height>460</height>
+      <posX>0</posX>
+      <posY>18</posY>
+      <width>720</width>
+      <height>540</height>
       <texture>-</texture>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
       <type>image</type>
       <id>501</id>
-      <posX>245</posX>
-      <posY>97</posY>
-      <width>460</width>
-      <height>460</height>
+      <posX>0</posX>
+      <posY>18</posY>
+      <width>720</width>
+      <height>540</height>
       <texture>-</texture>
     </control>
     <control>

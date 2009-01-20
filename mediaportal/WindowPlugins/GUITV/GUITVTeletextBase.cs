@@ -503,7 +503,7 @@ namespace MediaPortal.GUI.TV
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         _rememberLastValues = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
-        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextFontSize", 80);
+        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextMaxFontSize", 100);
       }
     }
 
