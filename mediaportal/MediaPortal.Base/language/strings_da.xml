@@ -686,7 +686,10 @@
     <String id="809">Retningslinier</String>
     <String id="810">Kort</String>
     <String id="820">Slet usét optagelse?</String>
-    <String id="830">Sæt 'set'-status tilbage</String>
+    <String id="830">Sæt 'set'-status tilbage</String>    
+    <String id="831">Fjern flytbar drev</String>
+    <String id="832">Kan ikke fjerne drev: </String>
+    <String id="833">Drevet kan nu sikkert fjernes</String>            
     <String id="850" prefix="Min ">Alarm</String>
     <String id="851">Playlist</String>
     <String id="852">Alarm Til</String>
@@ -783,7 +786,7 @@
     <String id="943">Normal</String>
     <String id="944">Original</String>
     <String id="945">Letterbox 4:3</String>
-    <String id="946">Pan og Scan</String>
+    <String id="946">Smart Zoom</String>
     <String id="947">Zoom</String>
     <String id="948">Online</String>
     <String id="949">Optaget</String>
@@ -926,6 +929,7 @@
     <String id="1448">Vælg intet</String>
     <String id="1449">Stop optagelse</String>
     <String id="1450">Er du sikker på du vil stoppe optagelse?</String>
+    <String id="1451">Kunne ikke afspille</String>
     <String id="1499">Intet signal</String>
     <String id="1500">Kan ikke starte tidsforskudt optagelse</String>
     <String id="1501">Kort er inaktivt</String>
@@ -1306,7 +1310,7 @@
     <String id="6036">H.264 video codec</String>
     <String id="6037">Filmstabel</String>
     <String id="6038">Vælg venligst hvilken disk der skal afspilles.</String>
-    <String id="6039">LATM AAC Lyd codec</String>
+    <String id="6039">AAC Lyd codec</String>
     <String id="8000" prefix="Min ">E-mail</String>
     <String id="8001">Hent post</String>
     <String id="8002">Automatisk kontrol fra</String>
@@ -1630,6 +1634,9 @@
     <String id="100762" prefix="Min ">Radioguide</String>
     <String id="100770" prefix="Min ">Explorer</String>
     <String id="101000">tastatur</String>
+    <String id="101002">Virtuelt Standard Tastatur</String>
+    <String id="101003">Virtuelt Web Tastatur</String>
+    <String id="101004">Virtuelt SMS Tastatur</String>
     <String id="102000">Vælg dialog</String>
     <String id="102001" prefix="Min ">Musik/Info</String>
     <String id="102002">OK Dialog</String>
@@ -1658,6 +1665,7 @@
     <String id="103007" prefix="Mit ">TV/Zap OSD</String>
     <String id="103009" prefix="Mit ">TV/Mini EPG</String>
     <String id="103011" prefix="Min ">TV/Beskæringsopsætning</String>
+    <String id="103012">TV modtager detaljer</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
     <String id="105900" prefix="Mine ">Trailere</String>
     <String id="106666">Strømstyring Venter</String>
