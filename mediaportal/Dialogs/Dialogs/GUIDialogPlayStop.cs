@@ -154,6 +154,7 @@ namespace MediaPortal.Dialogs
       SetLine(1, string.Empty);
       SetLine(2, string.Empty);
       SetLine(3, string.Empty);
+      SetLine(4, string.Empty);
     }
 
     public void SetHeading(int iString)

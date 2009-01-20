@@ -302,9 +302,10 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
 
-      SetLine(1, "");
-      SetLine(2, "");
-      SetLine(3, "");
+      SetLine(1, string.Empty);
+      SetLine(2, string.Empty);
+      SetLine(3, string.Empty);
+      SetLine(4, string.Empty);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
       msg.Label = strLine;
       OnMessage(msg);

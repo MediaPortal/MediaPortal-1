@@ -245,10 +245,11 @@ namespace MediaPortal.Dialogs
       Percentage = 0;
       DisplayProgressBar = true;
       ShowWaitCursor = false;
-      SetHeading("");
-      SetLine(1, "");
-      SetLine(2, "");
-      SetLine(3, "");
+      SetHeading(string.Empty);
+      SetLine(1, string.Empty);
+      SetLine(2, string.Empty);
+      SetLine(3, string.Empty);
+      SetLine(4, string.Empty);
     }
 
     public override bool OnMessage(GUIMessage message)
