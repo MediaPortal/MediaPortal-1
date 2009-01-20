@@ -1585,7 +1585,7 @@
     <String id="33033">esiste nella tua collezione!</String>
     <String id="33040">Copia In ascolto ora nella clipboard</String>
     <String id="33041">Aggiungi quest'album alla lista di riproduzione</String>
-    <String id="34000" prefix="La Mia ">Last.fm</String>
+    <String id="34000" prefix="La mia ">Last.fm</String>
     <String id="34001">Attiva / Cambia Flusso</String>
     <String id="34002">Amico:</String>
     <String id="34003">Vicino:</String>
@@ -1627,12 +1627,12 @@
     <String id="40002">MediaPortal non è in uso, ma è ancora occupato.</String>
     <String id="40003">Quanto tutte le attività correnti saranno concluse, MediaPortal andrà in modalità Standby.</String>
     <String id="100000">Home</String>
-    <String id="100001" prefix="La Mia ">TV</String>
-    <String id="100002" prefix="Le Mie ">Immagini</String>
-    <String id="100003" prefix="I Miei ">File</String>
+    <String id="100001" prefix="La mia ">TV</String>
+    <String id="100002" prefix="Le mie ">Immagini</String>
+    <String id="100003" prefix="I miei ">File</String>
     <String id="100004">Impostazioni</String>
-    <String id="100005" prefix="La Mia ">Musica</String>
-    <String id="100006" prefix="I Miei ">Filmati</String>
+    <String id="100005" prefix="La mia ">Musica</String>
+    <String id="100006" prefix="I miei ">Filmati</String>
     <String id="100007">Informazioni sul sistema</String>
     <String id="100008">Impostazioni-&gt;Generali</String>
     <String id="100009">Impostazioni-&gt;Schermo</String>
@@ -1757,27 +1757,27 @@
     <String id="102015">Mini Menu</String>
     <String id="102016">Notifica</String>
     <String id="102600" prefix="Il mio ">Meteo</String>
-    <String id="102700" prefix="Le Mie ">Notizie</String>
+    <String id="102700" prefix="Le mie ">Notizie</String>
     <String id="102900">Salvaschermo</String>
     <String id="102901">OSD a schermo intero</String>
-    <String id="102959" prefix="Il Mio ">Editor Video</String>
-    <String id="103001" prefix="I Miei ">DVD</String>
-    <String id="103003" prefix="La Mia ">TV/OSD</String>
-    <String id="103006" prefix="La Mia ">TV/OSD MSN</String>
-    <String id="103007" prefix="La Mia ">TV/OSD Zap</String>
-    <String id="103009" prefix="La Mia ">TV/Mini EPG</String>
-    <String id="103011" prefix="La Mia ">TV/Impostazioni Ritaglio</String>
+    <String id="102959" prefix="Il mio ">Editor Video</String>
+    <String id="103001" prefix="I miei ">DVD</String>
+    <String id="103003" prefix="La mia ">TV/OSD</String>
+    <String id="103006" prefix="La mia ">TV/OSD MSN</String>
+    <String id="103007" prefix="La mia ">TV/OSD Zap</String>
+    <String id="103009" prefix="La mia ">TV/Mini EPG</String>
+    <String id="103011" prefix="La mia ">TV/Impostazioni Ritaglio</String>
     <String id="103012">TV - Dettagli sintonizzazione</String>
-    <String id="104711" prefix="La Mia ">Wikipedia</String>
+    <String id="104711" prefix="La mia ">Wikipedia</String>
     <String id="105000">Allarme</String>
     <String id="105001">Allarme - Dettagli allarme</String>
     <String id="105002">Allarme - Tempo di sleep</String>
-    <String id="105900" prefix="I Miei ">Trailers</String>
+    <String id="105900" prefix="I miei ">Trailers</String>
     <String id="106666">Power Scheduler in attesa</String>
-    <String id="107700" prefix="La Mia ">TV/Televideo</String>
-    <String id="107701" prefix="La Mia ">TV/Televideo</String>
-    <String id="107777" prefix="Il Mio ">Sudoku</String>
-    <String id="107890" prefix="La Mia ">Radio Last.fm</String>
+    <String id="107700" prefix="La mia ">TV/Televideo</String>
+    <String id="107701" prefix="La mia ">TV/Televideo</String>
+    <String id="107777" prefix="Il mio ">Sudoku</String>
+    <String id="107890" prefix="La mia ">Radio Last.fm</String>
     <String id="108888">Menù Musica</String>
     <String id="109000">MiniDisplay - Configurazione</String>
     <String id="109001">MiniDisplay - Configurazione - Retroilluminazione</String>
