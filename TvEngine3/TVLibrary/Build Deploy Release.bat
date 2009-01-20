@@ -12,9 +12,6 @@ goto START
 
 
 :START
-REM Select program path based on current machine environment
-set progpath=%ProgramFiles%
-if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
 echo.
@@ -24,7 +21,7 @@ echo.
 
 echo.
 echo Building DeployVersionSVN...
-"%progpath%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild Release "..\..\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN.sln" > build.log
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "..\..\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN.sln" > build.log
 
 echo.
 echo Writing SVN revision assemblies...
@@ -32,10 +29,10 @@ echo Writing SVN revision assemblies...
 
 echo.
 echo Building TV Server...
-"%progpath%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "%BUILD_TYPE%|x86" TvLibrary.sln >> build.log
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 TvLibrary.sln >> build.log
 echo.
 echo Building TV Client plugin...
-"%progpath%\Microsoft Visual Studio 8\Common7\IDE\devenv.com" /rebuild "%BUILD_TYPE%|x86" TvPlugin\TvPlugin.sln >> build.log
+"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 TvPlugin\TvPlugin.sln >> build.log
 
 echo.
 echo Reverting assemblies...
