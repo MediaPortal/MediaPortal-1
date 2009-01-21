@@ -7,7 +7,7 @@
     <String id="3" prefix="Mine ">Filmer</String>
     <String id="4">TV-guide</String>
     <String id="5">Innstillinger</String>
-    <String id="6" prefix="Finn denne ">ERRORRRRREN</String>
+    <String id="6">TV-Server ikke tigjengelig</String>
     <String id="7" prefix="Mine ">Filer</String>
     <String id="8" prefix="Mitt ">Vær</String>
     <String id="9" prefix="Mine ">Nyheter</String>
@@ -783,7 +783,7 @@
     <String id="943">Normal</String>
     <String id="944">Original</String>
     <String id="945">Letterbox</String>
-    <String id="946">Pan and Scan</String>
+    <String id="946">Smart Strekk</String>
     <String id="947">Zoom</String>
     <String id="948">Online</String>
     <String id="949">Opptatt</String>
