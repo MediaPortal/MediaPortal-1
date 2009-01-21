@@ -213,6 +213,16 @@ namespace MediaPortal.Player
        get { return _is1080I; }
     }
 
+    public bool IsHDTV
+    {
+       get { return _isHDTV; }
+    }
+
+    public bool IsSDTV
+    {
+       get { return _isSDTV; }
+    }
+
     public bool IsInterlaced
     {
        get { return _isInterlaced; }
