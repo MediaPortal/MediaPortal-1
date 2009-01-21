@@ -118,42 +118,6 @@ namespace TvLibrary.Implementations.DVB
       return succeeded;
     }
 
-
-    /// <summary>
-    /// Instructs the KNC card to descramble all programs mentioned in subChannels.
-    /// </summary>
-    /// <param name="subChannels">The sub channels.</param>
-    /// <returns></returns>
-    public bool DescrambleMultiple(Dictionary<int, ConditionalAccessContext> subChannels)
-    {
-      if (_KNCInterface == null)
-        return true;
-      List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
-      bool succeeded = true;
-      Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
-      while (en.MoveNext())
-      {
-        bool exists = false;
-        ConditionalAccessContext context = en.Current.Value;
-        foreach (ConditionalAccessContext c in filteredChannels)
-        {
-          if (c.Channel.Equals(context.Channel))
-            exists = true;
-        }
-        if (!exists)
-        {
-          filteredChannels.Add(context);
-        }
-      }
-      for (int i = 0; i < filteredChannels.Count; ++i)
-      {
-        ConditionalAccessContext context = filteredChannels[i];
-        Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.ServiceId);
-      }
-      _KNCInterface.DescrambleMultiple(ptrPmt, (short)filteredChannels.Count, ref succeeded);
-      return succeeded;
-    }
-
     /// <summary>
     /// Sends the diseq command.
     /// </summary>

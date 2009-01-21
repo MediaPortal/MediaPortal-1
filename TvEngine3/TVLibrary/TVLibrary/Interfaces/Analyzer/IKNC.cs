@@ -78,14 +78,5 @@ Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
     /// <returns></returns>
     [PreserveSig]
     int DescrambleService(IntPtr pmt, short pmtLen, ref bool succeeded);
-    /// <summary>
-    /// Descrambles multiple services
-    /// </summary>
-    /// <param name="serviceIds">The service ids</param>
-    /// <param name="nrOfServiceIds">Length of the service ids</param>
-    /// <param name="succeeded">Result: true, if succeeded</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int DescrambleMultiple(IntPtr serviceIds, short nrOfServiceIds, ref bool succeeded);
   };
 }
