@@ -28,6 +28,7 @@
 #include <ks.h>
 #include <ksproxy.h>
 #include <stdio.h>
+#include <atlbase.h>
 #include "knc.h"
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -159,17 +160,6 @@ STDMETHODIMP CKnc::SetDisEqc(UCHAR* pBuffer, ULONG nLen, ULONG nRepeatCount)
   return S_OK;
 }
 
-//**************************************************************************************************
-//* DescrambleMultiple()
-//* Descrambles one or more programs
-//* pNrs           : array containing service ids
-//* NrOfOfPrograms : number of service ids in pNrs
-//* succeeded      : on return specifies if decoding succeeded or not
-//**************************************************************************************************
-STDMETHODIMP CKnc::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOOL* succeeded)
-{ 
-  return S_OK;
-}
 //**************************************************************************************************
 //* DescrambleService()
 //* Sends the PMT to the CAM so it can start decoding the channel
@@ -353,11 +343,29 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       LogDebug("m_callback.OnKncCiRequest:     %x",     m_callback.OnKncCiRequest);
       LogDebug("m_callback.OnKncCiCloseDisplay:%x",m_callback.OnKncCiCloseDisplay);
     }
+    //Detect if parsed filter is a KNC1 filter by known filter names.
+    FILTER_INFO info;
+    if (!SUCCEEDED(tunerFilter->QueryFilterInfo(&info)))
+    {
+      LogDebug("KNC QueryFilterInfo failed.");
+      return FreeKNCLibrary();
+    }
+    USES_CONVERSION; // for logging WCHAR 
+    LogDebug("KNC: Filtername to check: %s", W2A(info.achName));
+    if (wcscmp(info.achName,KNC1DVBSTuner) ==0 || wcscmp(info.achName,KNC1DVBS2Tuner) ==0 ||
+        wcscmp(info.achName,KNC1DVBCTuner) ==0 || wcscmp(info.achName,KNC1DVBTTuner) ==0)
+    {
+      m_bIsKNC=true;
+    }
+    if (m_bIsKNC==false)
+    {
+      LogDebug("KNC not detected");
+      return FreeKNCLibrary();
+    }
     LogDebug("KNCBDA_HW_Enable");
     if (KNCBDA_HW_Enable(m_slot,tunerFilter))
     {
       LogDebug("KNC card HW Enabled");
-      //m_bIsKNC=true;
     }
     LogDebug("KNCBDA_CI_Enable");
     if (KNCBDA_CI_Enable(m_slot,tunerFilter,&m_callback))
@@ -384,7 +392,6 @@ STDMETHODIMP CKnc::SetTunerFilter(IBaseFilter* tunerFilter)
       else
       {
         LogDebug("KNC card detected without CAM");
-        //m_bIsKNC=true;
       }
     }
     if (m_bIsKNC == false)
