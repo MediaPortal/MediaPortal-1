@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Library
 {
   /// <summary>
   /// Class which can do transformations for video windows
-  /// currently it supports Zoom, Zoom 14:9, normal, stretch, original, letterbox 4:3 and panscan 4:3
+  /// currently it supports Zoom, Zoom 14:9, normal, stretch, original, letterbox 4:3 and non linear stretching
   /// </summary>
   public class Geometry
   {
@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Library
       Zoom14to9, // 4:3 on 16:9 screens
       Stretch, // letterbox
       LetterBox43, // letterbox 4:3
-      SmartStretch // smart stretch zoom
+      NonLinearStretch // stretch and crop
     }
 
     private int _imageWidth = 100; // width of the video window or image
@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.Library
           }
           break;
 
-        case Type.SmartStretch:
+        case Type.NonLinearStretch:
           {
             // If screen is 16:9 do non-linear stretch, otherwise panscan
             float fScreenRatio = (float) ScreenWidth/ScreenHeight;

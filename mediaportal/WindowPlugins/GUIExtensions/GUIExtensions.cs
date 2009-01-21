@@ -142,7 +142,7 @@ namespace WindowPlugins.GUI.Extensions
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
       strPictureImage = @"hover_my radio.png";
-      return true;
+      return false;
     }
 
     public string Author()
@@ -166,7 +166,7 @@ namespace WindowPlugins.GUI.Extensions
 
     public bool ShowDefaultHome()
     {
-      return true;
+      return false;
     }
 
     #endregion

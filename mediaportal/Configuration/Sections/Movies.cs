@@ -72,7 +72,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox cbAllowZoom;
     private MPCheckBox cbAllowLetterbox;
     private MPCheckBox cbAllowStretch;
-    private MPCheckBox cbAllowSmartStretch;
+    private MPCheckBox cbAllowNonLinearStretch;
     private string m_strDefaultRegionLanguage = "English";
     private MPCheckBox checkBoxEachFolderIsMovie;
     private MPLabel labelsubsinfo;
@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
-        cbAllowSmartStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarpanscan", true);
+        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("movies", "allownonlinear", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
 
         checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
@@ -224,7 +224,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "allowarzoom", cbAllowZoom.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
-        xmlwriter.SetValueAsBool("movies", "allowarpanscan", cbAllowSmartStretch.Checked);
+        xmlwriter.SetValueAsBool("movies", "allownonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
 
         xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
@@ -254,8 +254,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (Movies));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Movies));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -285,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowZoom = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowLetterbox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbAllowStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbAllowSmartStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbAllowNonLinearStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -302,10 +301,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
@@ -348,22 +345,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[]
-                                                    {
-                                                      "Normal",
-                                                      "Original Source Format",
-                                                      "Zoom",
-                                                      "Zoom 14:9",
-                                                      "Stretch",
-                                                      "Non-linear Smart Zoom",
-                                                      "4:3 Letterbox"
-                                                    });
+      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+            "Normal",
+            "Original Source Format",
+            "Zoom",
+            "Zoom 14:9",
+            "Stretch",
+            "Non-linear Smart Zoom",
+            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);
@@ -379,9 +372,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(344, 61);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -392,10 +383,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderNameTextBox.Location = new System.Drawing.Point(136, 63);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -423,10 +412,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label7);
       this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.mpGroupBox1.Controls.Add(this.dropShadowTextBox);
@@ -453,10 +440,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
@@ -467,10 +452,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dropShadowTextBox
       // 
-      this.dropShadowTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.dropShadowTextBox.BorderColor = System.Drawing.Color.Empty;
       this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
       this.dropShadowTextBox.Name = "dropShadowTextBox";
@@ -498,9 +481,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesButton
       // 
-      this.subtitlesButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
       this.subtitlesButton.Name = "subtitlesButton";
       this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
@@ -511,10 +492,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -532,11 +511,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -564,14 +541,14 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowZoom);
       this.gAllowedModes.Controls.Add(this.cbAllowLetterbox);
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
-      this.gAllowedModes.Controls.Add(this.cbAllowSmartStretch);
+      this.gAllowedModes.Controls.Add(this.cbAllowNonLinearStretch);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gAllowedModes.Location = new System.Drawing.Point(16, 190);
       this.gAllowedModes.Name = "gAllowedModes";
       this.gAllowedModes.Size = new System.Drawing.Size(186, 189);
       this.gAllowedModes.TabIndex = 1;
       this.gAllowedModes.TabStop = false;
-      this.gAllowedModes.Text = "Allowed Zoom Modes";
+      this.gAllowedModes.Text = "Allowed zoom modes";
       // 
       // cbAllowNormal
       // 
@@ -579,9 +556,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowNormal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowNormal.Location = new System.Drawing.Point(15, 22);
       this.cbAllowNormal.Name = "cbAllowNormal";
-      this.cbAllowNormal.Size = new System.Drawing.Size(57, 17);
+      this.cbAllowNormal.Size = new System.Drawing.Size(151, 17);
       this.cbAllowNormal.TabIndex = 0;
-      this.cbAllowNormal.Text = "Normal";
+      this.cbAllowNormal.Text = "Normal (aspect auto mode)";
       this.cbAllowNormal.UseVisualStyleBackColor = true;
       // 
       // cbAllowZoom149
@@ -590,9 +567,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowZoom149.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowZoom149.Location = new System.Drawing.Point(15, 91);
       this.cbAllowZoom149.Name = "cbAllowZoom149";
-      this.cbAllowZoom149.Size = new System.Drawing.Size(75, 17);
+      this.cbAllowZoom149.Size = new System.Drawing.Size(73, 17);
       this.cbAllowZoom149.TabIndex = 3;
-      this.cbAllowZoom149.Text = "14:9 Zoom";
+      this.cbAllowZoom149.Text = "14:9 zoom";
       this.cbAllowZoom149.UseVisualStyleBackColor = true;
       // 
       // cbAllowOriginal
@@ -601,9 +578,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowOriginal.Location = new System.Drawing.Point(15, 45);
       this.cbAllowOriginal.Name = "cbAllowOriginal";
-      this.cbAllowOriginal.Size = new System.Drawing.Size(131, 17);
+      this.cbAllowOriginal.Size = new System.Drawing.Size(126, 17);
       this.cbAllowOriginal.TabIndex = 1;
-      this.cbAllowOriginal.Text = "Original Source Format";
+      this.cbAllowOriginal.Text = "Original source format";
       this.cbAllowOriginal.UseVisualStyleBackColor = true;
       // 
       // cbAllowZoom
@@ -634,21 +611,21 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowStretch.Location = new System.Drawing.Point(15, 114);
       this.cbAllowStretch.Name = "cbAllowStretch";
-      this.cbAllowStretch.Size = new System.Drawing.Size(58, 17);
+      this.cbAllowStretch.Size = new System.Drawing.Size(107, 17);
       this.cbAllowStretch.TabIndex = 4;
-      this.cbAllowStretch.Text = "Stretch";
+      this.cbAllowStretch.Text = "Fullscreen stretch";
       this.cbAllowStretch.UseVisualStyleBackColor = true;
       // 
-      // cbAllowSmartStretch
+      // cbAllowNonLinearStretch
       // 
-      this.cbAllowSmartStretch.AutoSize = true;
-      this.cbAllowSmartStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbAllowSmartStretch.Location = new System.Drawing.Point(15, 137);
-      this.cbAllowSmartStretch.Name = "cbAllowSmartStretch";
-      this.cbAllowSmartStretch.Size = new System.Drawing.Size(132, 17);
-      this.cbAllowSmartStretch.TabIndex = 5;
-      this.cbAllowSmartStretch.Text = "Non-linear Smart Zoom";
-      this.cbAllowSmartStretch.UseVisualStyleBackColor = true;
+      this.cbAllowNonLinearStretch.AutoSize = true;
+      this.cbAllowNonLinearStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowNonLinearStretch.Location = new System.Drawing.Point(15, 137);
+      this.cbAllowNonLinearStretch.Name = "cbAllowNonLinearStretch";
+      this.cbAllowNonLinearStretch.Size = new System.Drawing.Size(140, 17);
+      this.cbAllowNonLinearStretch.TabIndex = 5;
+      this.cbAllowNonLinearStretch.Text = "Non-linear stretch && crop";
+      this.cbAllowNonLinearStretch.UseVisualStyleBackColor = true;
       // 
       // tabPage3
       // 
@@ -664,10 +641,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.mpLabel1);
       this.mpGroupBox2.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -688,10 +663,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(136, 28);
@@ -724,6 +697,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage3.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion

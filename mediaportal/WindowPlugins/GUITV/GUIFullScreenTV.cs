@@ -224,9 +224,9 @@ namespace MediaPortal.GUI.TV
         {
           GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
         }
-        if (strValue.Equals("panscan"))
+        if (strValue.Equals("nonlinear"))
         {
-          GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+          GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
         }
         if (strValue.Equals("zoom149"))
         {
@@ -272,8 +272,8 @@ namespace MediaPortal.GUI.TV
             xmlwriter.SetValue("mytv", "defaultar", "letterbox");
             break;
 
-          case Geometry.Type.SmartStretch:
-            xmlwriter.SetValue("mytv", "defaultar", "panscan");
+          case Geometry.Type.NonLinearStretch:
+            xmlwriter.SetValue("mytv", "defaultar", "nonlinear");
             break;
 
           case Geometry.Type.Zoom14to9:
@@ -533,9 +533,9 @@ namespace MediaPortal.GUI.TV
               {
                 allowedModes.Add(Geometry.Type.LetterBox43);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allowarpanscan", true))
+              if (xmlreader.GetValueAsBool("mytv", "allownonlinear", true))
               {
-                allowedModes.Add(Geometry.Type.SmartStretch);
+                allowedModes.Add(Geometry.Type.NonLinearStretch);
               }
               if (xmlreader.GetValueAsBool("mytv", "allowarzoom149", true))
               {
@@ -580,7 +580,7 @@ namespace MediaPortal.GUI.TV
                 status = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
                 break;
 
-              case Geometry.Type.SmartStretch:
+              case Geometry.Type.NonLinearStretch:
                 status = GUILocalizeStrings.Get(946); //"Non-linear smart stretch";
                 break;
 
@@ -1599,7 +1599,7 @@ namespace MediaPortal.GUI.TV
           break;
 
         case 946: // Pan and scan
-          GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+          GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
           strStatus = "Smart Stretch";
           SaveSettings();
           break;

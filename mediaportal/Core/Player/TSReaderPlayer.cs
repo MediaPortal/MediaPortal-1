@@ -308,9 +308,9 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
         }
-        if (strValue.Equals("panscan"))
+        if (strValue.Equals("nonlinear"))
         {
-          GUIGraphicsContext.ARType = Geometry.Type.SmartStretch;
+          GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
         }
         if (strValue.Equals("zoom149"))
         {

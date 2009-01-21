@@ -174,9 +174,9 @@ namespace MediaPortal.GUI.Video
         {
           _allowedArModes.Add(Geometry.Type.LetterBox43);
         }
-        if (xmlreader.GetValueAsBool("movies", "allowarpanscan", true))
+        if (xmlreader.GetValueAsBool("movies", "allownonlinear", true))
         {
-          _allowedArModes.Add(Geometry.Type.SmartStretch);
+          _allowedArModes.Add(Geometry.Type.NonLinearStretch);
         }
         if (xmlreader.GetValueAsBool("movies", "allowarzoom149", true))
         {
@@ -1255,7 +1255,7 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(945); // Letterbox
       }
-      if (_allowedArModes.Contains(Geometry.Type.SmartStretch))
+      if (_allowedArModes.Contains(Geometry.Type.NonLinearStretch))
       {
         dlg.AddLocalizedString(946); // Smart stretch
       }
