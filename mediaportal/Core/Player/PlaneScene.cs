@@ -131,7 +131,7 @@ namespace MediaPortal.Player
 
     //The horizontal percentage of the destination to fit each partition into (Should be symmetrical and sum up to 100.0)
     private float[] nlsDestPartitioning = {
-                                            7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.59f, 11.47f, 5.88f, 12.65f, 10.15f,
+                                            7.06f, 10.15f, 12.65f, 5.88f, 11.47f, 5.58f, 11.47f, 5.88f, 12.65f, 10.15f,
                                             7.06f
                                           };
 
@@ -1075,20 +1075,31 @@ namespace MediaPortal.Player
           //top and bottom remain untouched.
           //left and right start from the left of the rect.
           int srcLeft = _sourceRect.Left;
+          float srcLeftFloat = (float)_sourceRect.Left;
           int srcRight = srcLeft;
+          float srcRightFloat = (float)srcLeft;
           int dstLeft = _destinationRect.Left;
+          float dstLeftFloat = _destinationRect.Left;
           int dstRight = dstLeft;
+          float dstRightFloat = (float)dstLeft;
           for (int i = 0; i < nlsSourcePartitioning.Length; i++)
           {
             //this left is the previous right
             srcLeft = srcRight;
             dstLeft = dstRight;
+            srcLeftFloat = srcRightFloat;
+            dstLeftFloat = dstRightFloat;
+            
             //calculate new right
-            srcRight = srcLeft + (int) (nlsSourcePartitioning[i]*(float) _sourceRect.Width/100.0f);
-            dstRight = dstLeft + (int) (nlsDestPartitioning[i]*(float) _destinationRect.Width/100.0f);
+            srcRightFloat = srcLeftFloat + (int) (nlsSourcePartitioning[i]*(float) _sourceRect.Width/100.0f);
+            dstRightFloat = dstLeftFloat + (int) (nlsDestPartitioning[i]*(float) _destinationRect.Width/100.0f);
+            srcRight = (int)srcRightFloat;
+            dstRight = (int)dstRightFloat;
             FontEngineDrawSurface(srcLeft, _sourceRect.Top, srcRight - srcLeft, _sourceRect.Height,
                                   dstLeft, _destinationRect.Top, dstRight - dstLeft, _destinationRect.Height,
                                   ptr.ToPointer());
+            
+
           }
         }
       }
