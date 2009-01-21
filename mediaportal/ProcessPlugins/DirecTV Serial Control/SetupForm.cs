@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal - micheloe, patrick, diehard2
+ *	Copyright (C) 2005-2009 Team MediaPortal - micheloe, patrick, diehard2
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
