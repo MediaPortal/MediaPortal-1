@@ -213,21 +213,7 @@ namespace MediaPortal.Player
 
     public const int WAIT_FOR_REFRESHRATE_RESET_MAX = 10; //10 secs
 
-    #endregion
-
-    #region private delegates
-
-    private delegate void NotifyRefreshRateChangedSuccessful(string msg, bool waitForFullScreen);
-
-    private delegate void NotifyRefreshRateInteractGUI(string msg, bool waitForFullScreen);
-
-    #endregion
-
-    #region private events
-
-    private static event NotifyRefreshRateChangedSuccessful OnNotifyRefreshRateChangedCompleted;
-
-    #endregion
+    #endregion        
 
     #region private static vars
 
@@ -255,20 +241,7 @@ namespace MediaPortal.Player
     #endregion
 
     #region private static methods
-
-    private static void NotifyRefreshRateChangedCompleted(string msg, bool waitForFullScreen)
-    {
-      try
-      {
-        GUIGraphicsContext.form.Invoke(new NotifyRefreshRateInteractGUI(RefreshRateShowNotification),
-                                       new object[] {msg, waitForFullScreen});
-      }
-      catch (Exception)
-      {
-      }
-    }
-
-
+    
     private static void RefreshRateShowNotification(string msg, bool waitForFullscreen)
     {
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullscreen)
@@ -309,10 +282,7 @@ namespace MediaPortal.Player
 
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullScreen)
       {
-        if (OnNotifyRefreshRateChangedCompleted != null)
-        {
-          OnNotifyRefreshRateChangedCompleted(msg, waitForFullScreen);
-        }
+        RefreshRateShowNotification(msg, waitForFullScreen);
       }
       Thread.CurrentThread.Abort();
     }
@@ -324,13 +294,7 @@ namespace MediaPortal.Player
         bool notify = xmlreader.GetValueAsBool("general", "notify_on_refreshrate", false);
 
         if (notify)
-        {
-          if (OnNotifyRefreshRateChangedCompleted == null)
-          {
-            OnNotifyRefreshRateChangedCompleted +=
-              new NotifyRefreshRateChangedSuccessful(NotifyRefreshRateChangedCompleted);
-          }
-
+        {          
           ThreadStart starter = delegate { NotifyRefreshRateChangedThread((object) msg, (object) waitForFullScreen); };
           Thread notifyRefreshRateChangedThread = new Thread(starter);
           notifyRefreshRateChangedThread.IsBackground = true;
@@ -771,9 +735,9 @@ namespace MediaPortal.Player
         }
         else
         {
+          System.Diagnostics.Debugger.Break();
           StackTrace st = new StackTrace(true);
-          StackFrame sf = st.GetFrame(0);
-
+          StackFrame sf = st.GetFrame(0);          
 
           Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile, sf.GetMethod().Name);
           return;
