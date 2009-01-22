@@ -405,9 +405,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(192, 189);
+      this.groupBox4.Location = new System.Drawing.Point(192, 341);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(280, 71);
+      this.groupBox4.Size = new System.Drawing.Size(277, 71);
       this.groupBox4.TabIndex = 2;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
@@ -431,7 +431,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 43);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
-      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(71, 20);
+      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(68, 20);
       this.textBoxTimeShiftBuffer.TabIndex = 2;
       this.textBoxTimeShiftBuffer.Text = "30";
       this.textBoxTimeShiftBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -453,9 +453,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
       this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(192, 264);
+      this.groupBox3.Location = new System.Drawing.Point(192, 191);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(280, 94);
+      this.groupBox3.Size = new System.Drawing.Size(277, 94);
       this.groupBox3.TabIndex = 3;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Channel numbers";
@@ -521,7 +521,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(192, 363);
+      this.groupBox5.Location = new System.Drawing.Point(192, 291);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(277, 44);
       this.groupBox5.TabIndex = 4;
@@ -685,6 +685,7 @@ namespace MediaPortal.Configuration.Sections
         case 3:
           // timeshifting section. 
           groupBox4.Enabled = false;
+          groupBox4.Visible = false;
           //h.264 section 
           labelH264Decoder.Enabled = true;
           h264videoCodecComboBox.Enabled = true;
@@ -694,6 +695,7 @@ namespace MediaPortal.Configuration.Sections
         case 2:
           // timeshifting section. 
           groupBox4.Enabled = true;
+          groupBox4.Visible = true;
           //h.264 section 
           labelH264Decoder.Enabled = false;
           h264videoCodecComboBox.Enabled = false;
