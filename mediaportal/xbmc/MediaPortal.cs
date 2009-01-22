@@ -3205,6 +3205,21 @@ public class MediaPortalApp : D3DApp, IRender
         dlgOk.SetLine(4, message.Label3);
         dlgOk.DoModal(GUIWindowManager.ActiveWindow);
         break;
+
+      case GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED:
+
+        GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (dlgNotify != null)
+        {
+          dlgNotify.Reset();
+          dlgNotify.ClearAll();
+          dlgNotify.SetHeading(message.Label);
+          dlgNotify.SetText(message.Label2);
+          dlgNotify.TimeOut = message.Param1;
+          dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+        }
+
+        break;
     }
   }
 

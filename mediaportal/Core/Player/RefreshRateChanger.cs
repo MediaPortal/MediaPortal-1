@@ -273,19 +273,12 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.IsFullScreenVideo == waitForFullscreen)
       {
-        /*
-        Dialogs.GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        if (pDlgNotify != null)
-        {
-          pDlgNotify.Reset();
-          pDlgNotify.ClearAll();
-          pDlgNotify.SetHeading("Refreshrate");
-          pDlgNotify.SetText(msg);
-          pDlgNotify.TimeOut = 5;
-          pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-        }
+        GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
+        guiMsg.Label = "Refreshrate";
+        guiMsg.Label2 = msg;
+        guiMsg.Param1 = 5;
 
-        pDlgNotify = null;*/
+        GUIGraphicsContext.SendMessage(guiMsg);         
       }
     }
 
@@ -342,6 +335,8 @@ namespace MediaPortal.Player
           Thread notifyRefreshRateChangedThread = new Thread(starter);
           notifyRefreshRateChangedThread.IsBackground = true;
           notifyRefreshRateChangedThread.Start();
+
+          //Log.Info("RefreshRateChanger.NotifyRefreshRateChanged");          
         }
       }
     }
@@ -619,7 +614,7 @@ namespace MediaPortal.Player
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
       if ((currentRR != newRR && newRR > 0) || force_refresh_rate)
-        // //run external command in order to change refresh rate.
+      //run external command in order to change refresh rate.
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
                  currentRR, newRR);
@@ -670,10 +665,8 @@ namespace MediaPortal.Player
         }
 
         force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
-        ;
-
         bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
-        ;
+
         if (!useDefaultHz)
         {
           Log.Info(
@@ -726,36 +719,7 @@ namespace MediaPortal.Player
       }
 
       SetRefreshRateBasedOnFPS(defaultFPS, "", MediaType.Unknown);
-      /*
-      double currentRR = 0;
-      int currentScreenNr = GUIGraphicsContext.currentScreenNumber;      
-      
-      if ((currentScreenNr == -1) || (Microsoft.DirectX.Direct3D.Manager.Adapters.Count <= currentScreenNr))
-      {
-        Log.Info("g_Player could not aquire current screen number, or current screen number bigger than number of adapters available.");
-      }
-      else
-      {
-        currentRR = Microsoft.DirectX.Direct3D.Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
-      }      
-
-      if ((defaultHZ > 0 && defaultHZ != currentRR) || force_refresh_rate)
-      {
-        Log.Info("g_Player changing back refreshrate to {0}hz", defaultHZ);
-        double newRR = 0;
-        string newExtCmd = "";
-        string newRRDescription = "";
-        FindExtCmdfromSettings(defaultFPS, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
-
-        if ((currentRR != newRR && newRR > 0) || force_refresh_rate) //run external command in order to change refresh rate.
-        {
-          if (RunExternalJob(newExtCmd, "", MediaType.Unknown, deviceReset) && newRR != currentRR)
-          {          
-            NotifyRefreshRateChanged(newRRDescription, false);
-          }
-        }
-      } 
-      */
+     
     }
 
     // change screen refresh rate based on media framerate
@@ -807,31 +771,13 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null.");
+          StackTrace st = new StackTrace(true);
+          StackFrame sf = st.GetFrame(0);
+
+
+          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile, sf.GetMethod().Name);
           return;
-        }
-        /*
-        MediaInfo mI = null;
-        try
-        {
-          mI = new MediaInfo();
-          mI.Open(strFile);
-          double.TryParse(mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, provider, out fps);
-        }
-        catch (Exception ex)
-        {
-          Log.Error(
-            "RefreshRateChanger.AdaptRefreshRate: unable to call external DLL - medialib info (make sure 'MediaInfo.dll' is located in MP root dir.) {0}",
-            ex.Message);
-        }
-        finally
-        {
-          if (mI != null)
-          {
-            mI.Close();
-          }
-        }
-        */
+        }       
       }
       else if (isTV || IsAVStream)
       {
@@ -850,38 +796,7 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.AdaptRefreshRate: framerate on file {0} is {1}", strFile, fps);
       }
 
-      SetRefreshRateBasedOnFPS(fps, strFile, type);
-
-      /*
-      int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
-      double currentRR = 0;
-      if ((currentScreenNr == -1) || (Microsoft.DirectX.Direct3D.Manager.Adapters.Count <= currentScreenNr))
-      {
-        Log.Info("g_Player could not aquire current screen number, or current screen number bigger than number of adapters available.");        
-      }
-      else
-      {
-        currentRR = Microsoft.DirectX.Direct3D.Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
-      }
-      
-      double newRR = 0;      
-      string newExtCmd = "";
-
-      string newRRDescription = "";
-      FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
-
-      if ((currentRR != newRR && newRR > 0) || force_refresh_rate)// //run external command in order to change refresh rate.
-      {        
-        Log.Info("g_Player current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
-        if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
-        {          
-          NotifyRefreshRateChanged(newRRDescription, true);
-        }
-      }
-      {
-        Log.Info("g_Player no refreshrate change required. current is {0}hz, desired is {1}", currentRR, newRR);
-      }
-      */
+      SetRefreshRateBasedOnFPS(fps, strFile, type);    
     }
 
     #endregion
