@@ -23,8 +23,8 @@ namespace MediaPortal.Player
     private int _audiorate = 0;
     private int _audiochannels = 0;
     private string _aspectRatio = "";
-    private string _videoCodec = "";
-    private string _scanType = "";
+    private string _videoCodec = string.Empty;
+    private string _scanType = string.Empty;
     private bool _isXVID = false; // mpeg4 asp
     private bool _isH264 = false; // mpeg4 avc h264/x264
     private bool _isMP1V = false; // mpeg1 video (VCD)
