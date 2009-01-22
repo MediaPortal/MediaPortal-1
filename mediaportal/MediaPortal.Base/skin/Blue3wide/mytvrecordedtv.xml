@@ -2,7 +2,7 @@
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.time.xml</import>
     <control>
@@ -95,10 +95,10 @@
         <onleft>3</onleft>
         <onright>50</onright>
         <onup>2</onup>
-        <ondown>6</ondown>
+        <ondown>5</ondown>
         <label>620</label>
       </control>
-<!--       <control>
+      <control>
         <type>button</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
@@ -107,14 +107,14 @@
         <onup>3</onup>
         <ondown>6</ondown>
         <label>457</label>
-      </control> -->
+      </control>
       <control>
         <type>button</type>
         <description>cleanup button</description>
         <id>6</id>
         <onleft>6</onleft>
         <onright>50</onright>
-        <onup>3</onup>
+        <onup>5</onup>
         <ondown>7</ondown>
         <label>624</label>
         <!-- <visible>false</visible> -->
@@ -167,8 +167,8 @@
         <type>label</type>
         <description>Current program time</description>
         <id>14</id>
-        <posX>75</posX>
-        <posY>280</posY>
+        <posX>462</posX>
+        <posY>575</posY>
         <label>#TV.RecordedTV.Time</label>
         <textcolor>ffb2d4f5</textcolor>
         <visible>false</visible>
@@ -177,10 +177,10 @@
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>75</posX>
-        <posY>300</posY>
-        <width>255</width>
-        <height>388</height>
+        <posX>471</posX>
+        <posY>535</posY>
+        <width>741</width>
+        <height>125</height>
         <colordiffuse>ffffffff</colordiffuse>
         <font>font11</font>
         <label>#TV.RecordedTV.Description</label>

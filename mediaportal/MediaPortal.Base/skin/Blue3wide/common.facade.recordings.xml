@@ -23,6 +23,8 @@
                     <onleft>2</onleft>
                     <onright>2</onright>
                     <scrollOffset>2</scrollOffset>
+                    <width>755</width>
+                    <height>460</height>
                 </control>
                 <control>
                     <description>album view listcontrol</description>
@@ -30,7 +32,7 @@
                     <subtype>album</subtype>
                     <id>50</id>
                     <width>755</width>
-                    <height>593</height>
+                    <height>460</height>
                     <font>font13</font>
                     <font2>font13</font2>
                     <selectedColor>80000000</selectedColor>
@@ -39,13 +41,13 @@
                     <textcolor2>ffffffff</textcolor2>
                     <textXOff2>746</textXOff2>
                     <textXOff3>108</textXOff3>
-                    <textYOff2>75</textYOff2>
-                    <itemWidth>90</itemWidth>
-                    <itemHeight>90</itemHeight>
+                    <textYOff2>35</textYOff2>
+                    <itemWidth>50</itemWidth>
+                    <itemHeight>50</itemHeight>
                     <IconXOff>12</IconXOff>
                     <IconYOff>9</IconYOff>
-                    <spaceBetweenItems>24</spaceBetweenItems>
-                    <textureHeight>112</textureHeight>
+                    <spaceBetweenItems>5</spaceBetweenItems>
+                    <textureHeight>72</textureHeight>
                     <scrollOffset>1</scrollOffset>
                     <textureFocus>album_background_focus.png</textureFocus>
                     <textureNoFocus>album_background_nofocus.png</textureNoFocus>
@@ -61,28 +63,29 @@
                     <posX>462</posX>
                     <posY>121</posY>
                     <width>755</width>
-                    <height>593</height>
+                    <height>460</height>
                     <scrollOffset>0</scrollOffset>
                     <onleft>2</onleft>
                     <onright>50</onright>
-                    <itemWidth>250</itemWidth>
-                    <itemHeight>169</itemHeight>
-                    <textureWidth>242</textureWidth>
-                    <textureHeight>136</textureHeight>
-                    <thumbWidth>235</thumbWidth>
-                    <thumbHeight>130</thumbHeight>
+                    <itemWidth>188</itemWidth>
+                    <itemHeight>130</itemHeight>
+                    <textureWidth>175</textureWidth>
+                    <textureHeight>100</textureHeight>
+                    <thumbWidth>160</thumbWidth>
+                    <thumbHeight>90</thumbHeight>
                     <thumbPosX>5</thumbPosX>
                     <thumbPosY>5</thumbPosY>
                     <itemWidthBig>375</itemWidthBig>
-                    <itemHeightBig>230</itemHeightBig>
-                    <textureWidthBig>365</textureWidthBig>
-                    <textureHeightBig>200</textureHeightBig>
-                    <thumbWidthBig>360</thumbWidthBig>
-                    <thumbHeightBig>195</thumbHeightBig>
+                    <itemHeightBig>210</itemHeightBig>
+                    <textureWidthBig>315</textureWidthBig>
+                    <textureHeightBig>180</textureHeightBig>
+                    <thumbWidthBig>300</thumbWidthBig>
+                    <thumbHeightBig>170</thumbHeightBig>
                     <thumbPosXBig>5</thumbPosXBig>
                     <thumbPosYBig>5</thumbPosYBig>
                     <zoomXPixels>24</zoomXPixels>
-                    <thumbZoom>false</thumbZoom>
+                    <thumbZoom>no</thumbZoom>
+                    <enableFocusZoom>false</enableFocusZoom>
                     <keepaspectratio>no</keepaspectratio>
                     <hideUnfocusTexture>no</hideUnfocusTexture>
                     <renderFocusText>no</renderFocusText>
