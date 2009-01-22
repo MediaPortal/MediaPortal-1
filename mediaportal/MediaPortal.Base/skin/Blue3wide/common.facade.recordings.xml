@@ -5,13 +5,6 @@
         <control>
             <description>group element</description>
             <type>group</type>
-            <visible>!Control.HasFocus(50)</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
-            <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
-            <animation effect="slide" time="250" end="800,0">WindowClose</animation>
-            <!--             <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="500" reversible="false">hidden</animation>
-            <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="500" reversible="false">visible</animation> -->
             <control>
                 <description>composite control consisting of a list control and a thumbnail panel</description>
                 <type>facadeview</type>
@@ -20,11 +13,27 @@
                     <description>listcontrol</description>
                     <type>listcontrol</type>
                     <id>50</id>
+                    <posX>400</posX>
+        			<posY>121</posY>
                     <onleft>2</onleft>
                     <onright>2</onright>
                     <scrollOffset>2</scrollOffset>
-                    <width>755</width>
+                    <width>775</width>
                     <height>460</height>
+                    <PinIconWidth>35</PinIconWidth>
+					<PinIconHeight>25</PinIconHeight>
+					<PinIconXOff>49</PinIconXOff>
+					<PinIconYOff>11</PinIconYOff>
+					<itemWidth>32</itemWidth>
+        			<itemHeight>32</itemHeight>
+        			<IconXOff>12</IconXOff>
+        			<IconYOff>4</IconYOff>
+        			<textXOff>48</textXOff>
+        			<textYOff>3</textYOff>
+        			<textXOff2>0</textXOff2>
+        			<textYOff2>5</textYOff2>
+        			<font2>font11</font2>
+        			<keepaspectratio>yes</keepaspectratio>
                 </control>
                 <control>
                     <description>album view listcontrol</description>
@@ -55,7 +64,7 @@
                     <onright>50</onright>
                     <onup>2</onup>
                     <ondown>2</ondown>
-                </control>        
+                </control>
                 <control>
                     <description>Thumbnail Panel</description>
                     <type>thumbnailpanel</type>
