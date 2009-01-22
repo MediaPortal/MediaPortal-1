@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Video
         {
           _allowedArModes.Add(Geometry.Type.LetterBox43);
         }
-        if (xmlreader.GetValueAsBool("movies", "allownonlinear", true))
+        if (xmlreader.GetValueAsBool("movies", "allowarnonlinear", true))
         {
           _allowedArModes.Add(Geometry.Type.NonLinearStretch);
         }

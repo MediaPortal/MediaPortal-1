@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -51,16 +52,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel label6;
     private IContainer components = null;
 
-    private string[] aspectRatio = {
-                                     "normal",
-                                     "original",
-                                     "zoom",
-                                     "zoom149",
-                                     "stretch",
-                                     "smartstretch",
-                                     "letterbox"
-                                   };
-
     public DVDPlayer()
       : this("DVD Player")
     {
@@ -83,26 +74,30 @@ namespace MediaPortal.Configuration.Sections
         fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
         parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
 
-
         //
         // Fake a check changed to force a CheckChanged event
         //
         internalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
         internalPlayerCheckBox.Checked = !internalPlayerCheckBox.Checked;
+        
+        //
+        // Load all available aspect ratio
+        //
+        defaultZoomModeComboBox.Items.Clear();
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        {
+          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
+        }
 
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", "normal");
-
-        for (int index = 0; index < aspectRatio.Length; index++)
+        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());    
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (aspectRatio[index].Equals(defaultAspectRatio))
+          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
           {
-            if (index < defaultZoomModeComboBox.Items.Count)
-            {
-              defaultZoomModeComboBox.SelectedIndex = index;
-            }
+            defaultZoomModeComboBox.SelectedItem = item;
             break;
           }
         }
@@ -121,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
 
-        xmlwriter.SetValue("dvdplayer", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+        xmlwriter.SetValue("dvdplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
       }
     }
 
@@ -272,14 +267,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Zoom",
-            "Zoom 14:9",
-            "Stretch",
-            "Non-linear Smart Zoom",
-            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);

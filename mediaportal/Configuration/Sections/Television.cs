@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -75,17 +76,6 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox cbAllowNonLinearStretch;
     private MPComboBox h264videoCodecComboBox;
     private MPLabel labelH264Decoder;
-
-    private string[] aspectRatio = {
-                                     "normal",
-                                     "original",
-                                     "zoom",
-                                     "zoom149",
-                                     "stretch",
-                                     "smartstretch",
-                                     "letterbox"
-                                   };
-
     private MPCheckBox cbAutoFullscreen;
     private MPLabel labelAACDecoder;
     private MPComboBox aacAudioCodecComboBox;
@@ -161,6 +151,24 @@ namespace MediaPortal.Configuration.Sections
         aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
+        //
+        // Load all available aspect ratio
+        //
+        defaultZoomModeComboBox.Items.Clear();
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        {
+          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
+        }
+        //
+        // Change aspect ratio labels to the current core proj description
+        //
+        cbAllowNormal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Normal);
+        cbAllowOriginal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Original);
+        cbAllowZoom.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom);
+        cbAllowZoom149.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom14to9);
+        cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
+        cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
+        cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
         LoadSettings();
       }
     }
@@ -337,14 +345,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Zoom",
-            "14:9 Zoom",
-            "Stretch",
-            "Non-linear Smart Zoom",
-            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 157);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
@@ -734,7 +734,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
-        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allownonlinear", false);
+        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarnonlinear", false);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", false);
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -873,12 +873,12 @@ namespace MediaPortal.Configuration.Sections
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        for (int index = 0; index < aspectRatio.Length; index++)
+        string defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (aspectRatio[index].Equals(defaultAspectRatio))
+          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
           {
-            defaultZoomModeComboBox.SelectedIndex = index;
+            defaultZoomModeComboBox.SelectedItem = item;
             break;
           }
         }
@@ -914,7 +914,7 @@ namespace MediaPortal.Configuration.Sections
         catch (Exception)
         {
         }
-        xmlwriter.SetValue("mytv", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+        xmlwriter.SetValue("mytv", "defaultar", defaultZoomModeComboBox.SelectedItem);
         //
         // Set codecs
         //
@@ -929,7 +929,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "allowarzoom", cbAllowZoom.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarzoom149", cbAllowZoom149.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
-        xmlwriter.SetValueAsBool("mytv", "allownonlinear", cbAllowNonLinearStretch.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
       }
     }

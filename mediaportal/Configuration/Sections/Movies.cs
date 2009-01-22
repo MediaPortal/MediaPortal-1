@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -79,17 +80,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox mpGroupBox2;
     private MPLabel mpLabel1;
     private MPComboBox defaultAudioLanguageComboBox;
-
-    private string[] aspectRatio = {
-                                     "normal",
-                                     "original",
-                                     "zoom",
-                                     "zoom149",
-                                     "stretch",
-                                     "smartstretch",
-                                     "letterbox"
-                                   };
-
     private string m_strDefaultAudioLanguage = "English";
 
     public Movies()
@@ -109,6 +99,24 @@ namespace MediaPortal.Configuration.Sections
       defaultAudioLanguageComboBox.Text = m_strDefaultAudioLanguage;
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultAudioLanguage);
+      //
+      // Load all available aspect ratio
+      //
+      defaultZoomModeComboBox.Items.Clear();
+      foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+      {
+        defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
+      }
+      //
+      // Change aspect ratio labels to the current core proj description
+      //
+      cbAllowNormal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Normal);
+      cbAllowOriginal.Text = Util.Utils.GetAspectRatio(Geometry.Type.Original);
+      cbAllowZoom.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom);
+      cbAllowZoom149.Text = Util.Utils.GetAspectRatio(Geometry.Type.Zoom14to9);
+      cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
+      cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
+      cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
     }
 
     public override void LoadSettings()
@@ -120,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("movies", "allowarzoom149", true);
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarstretch", true);
-        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("movies", "allownonlinear", true);
+        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("movies", "allowarnonlinear", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("movies", "allowarletterbox", true);
 
         checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
@@ -181,15 +189,23 @@ namespace MediaPortal.Configuration.Sections
         }
 
         //
+        // Load all available aspect ratio
+        //
+        defaultZoomModeComboBox.Items.Clear();
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        {
+          defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
+        }
+
+        //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", "normal");
-
-        for (int index = 0; index < aspectRatio.Length; index++)
+        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
+        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (aspectRatio[index].Equals(defaultAspectRatio))
+          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
           {
-            defaultZoomModeComboBox.SelectedIndex = index;
+            defaultZoomModeComboBox.SelectedItem = item;
             break;
           }
         }
@@ -217,14 +233,14 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("subtitles", "bold", fontIsBold);
         xmlwriter.SetValue("subtitles", "fontsize", fontSize);
 
-        xmlwriter.SetValue("movieplayer", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+        xmlwriter.SetValue("movieplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
 
         xmlwriter.SetValueAsBool("movies", "allowarnormal", cbAllowNormal.Checked);
         xmlwriter.SetValueAsBool("movies", "allowaroriginal", cbAllowOriginal.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarzoom", cbAllowZoom.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarzoom149", cbAllowZoom149.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarstretch", cbAllowStretch.Checked);
-        xmlwriter.SetValueAsBool("movies", "allownonlinear", cbAllowNonLinearStretch.Checked);
+        xmlwriter.SetValueAsBool("movies", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("movies", "allowarletterbox", cbAllowLetterbox.Checked);
 
         xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
@@ -349,14 +365,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-            "Normal",
-            "Original Source Format",
-            "Zoom",
-            "Zoom 14:9",
-            "Stretch",
-            "Non-linear Smart Zoom",
-            "4:3 Letterbox"});
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(136, 24);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(280, 21);

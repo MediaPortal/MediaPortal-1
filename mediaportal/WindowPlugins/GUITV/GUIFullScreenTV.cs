@@ -533,7 +533,7 @@ namespace MediaPortal.GUI.TV
               {
                 allowedModes.Add(Geometry.Type.LetterBox43);
               }
-              if (xmlreader.GetValueAsBool("mytv", "allownonlinear", true))
+              if (xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true))
               {
                 allowedModes.Add(Geometry.Type.NonLinearStretch);
               }
