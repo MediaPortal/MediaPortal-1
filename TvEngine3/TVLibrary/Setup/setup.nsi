@@ -744,76 +744,10 @@ Function .onInit
     Abort
   ${EndIf}
 
-  ; show error that the OS is not supported and abort the installation
-  ${If} ${AtMostWin2000Srv}
-    StrCpy $0 "OSabort"
-  ${ElseIf} ${IsWinXP}
-    !insertmacro GetServicePack $R1 $R2
-    ${If} $R2 > 0
-      StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 2
-      StrCpy $0 "OSabort"
-    ${Else}
-      StrCpy $0 "OSok"
-    ${EndIf}
 
-  ${ElseIf} ${IsWinXP64}
-    StrCpy $0 "OSabort"
+  ; OS and other common initialization checks are done in the following NSIS header file
+  !include "${svn_InstallScripts}\include-MP-OSCheck.nsh"
 
-  ${ElseIf} ${IsWin2003}
-    StrCpy $0 "OSwarn"
-
-  ${ElseIf} ${IsWinVISTA}
-    !insertmacro GetServicePack $R1 $R2
-    ${If} $R2 > 0
-      StrCpy $0 "OSwarnBetaSP"
-    ${ElseIf} $R1 < 1
-      StrCpy $0 "OSwarn"
-    ${Else}
-      StrCpy $0 "OSok"
-    ${EndIf}
-
-  ${ElseIf} ${IsWin2008}
-    StrCpy $0 "OSwarn"
-
-  ${Else}
-    StrCpy $0 "OSabort"
-  ${EndIf}
-
-  ; show warnings for some OS
-  ${If} $0 == "OSabort"
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${ElseIf} $0 == "OSwarn"
-    ${If} $DeployMode == 0
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-    ${EndIf}
-  ${ElseIf} $0 == "OSwarnBetaSP"
-    ${If} $DeployMode == 0
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "You are using a beta Service Pack! $(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-    ${EndIf}
-  ${Else}
-    ; do nothing
-  ${EndIf}
-
-  ; check if current user is admin
-  UserInfo::GetOriginalAccountType
-  Pop $0
-  #StrCmp $0 "Admin" 0 +3
-  ${IfNot} $0 == "Admin"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_ADMIN)"
-    Abort
-  ${EndIf}
-
-  ; check if VC Redist 2005 SP1 is installed
-  ${IfNot} ${VCRedistIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${EndIf}
 
   ; check if reboot is required
   ${If} ${FileExists} "$INSTDIR\rebootflag"
