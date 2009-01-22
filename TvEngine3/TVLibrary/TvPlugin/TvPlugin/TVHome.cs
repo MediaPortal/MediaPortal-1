@@ -2642,6 +2642,7 @@ namespace TvPlugin
 
     private static void ChannelTuneFailedNotifyUser(TvResult succeeded, bool wasPlaying, Channel channel)
     {
+      GUIGraphicsContext.RenderBlackImage = false;
       string errorMessage = GUILocalizeStrings.Get(1500);
       switch (succeeded)
       {
@@ -2795,6 +2796,7 @@ namespace TvPlugin
 
     public static bool ViewChannelAndCheck(Channel channel)
     {
+           
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
       //System.Diagnostics.Debugger.Launch();
@@ -2904,7 +2906,7 @@ namespace TvPlugin
         TvServer server = new TvServer();
         VirtualCard card;
         bool cardChanged = false;
-        int newCardId = -1;        
+        int newCardId = -1;
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
@@ -2935,6 +2937,7 @@ namespace TvPlugin
           else //card "probably" not changed.
           {
             // PauseGraph & ContinueGraph does add a bit overhead to channel change times
+            GUIGraphicsContext.RenderBlackImage = true;
             g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
@@ -2952,7 +2955,7 @@ namespace TvPlugin
               else if (succeeded == TvResult.Succeeded) // no card change occured, so carry on.
               {
                 cardChanged = false;
-                SeekToEnd(true);                
+                SeekToEnd(true);
                 g_Player.ContinueGraph();
               }
             }
@@ -2963,7 +2966,7 @@ namespace TvPlugin
 
           }
         }
-        else
+        else //was not playing
         {
           succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
         }
@@ -2991,9 +2994,13 @@ namespace TvPlugin
 
           if (!g_Player.Playing || cardChanged)
           {
+            if (cardChanged)
+            {
+              GUIGraphicsContext.RenderBlackImage = true;
+            }
             StartPlay();
           }
-         
+
           _playbackStopped = false;
 
           //GUIWaitCursor.Hide();
@@ -3039,6 +3046,10 @@ namespace TvPlugin
         TVHome.Card.User.Name = new User().Name;
         TVHome.Card.StopTimeShifting();
         return false;
+      }
+      finally
+      {
+        GUIGraphicsContext.RenderBlackImage = false;
       }
     }
 
