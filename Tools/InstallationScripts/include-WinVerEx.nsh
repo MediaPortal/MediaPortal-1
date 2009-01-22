@@ -109,6 +109,10 @@
 
 !include LogicLib.nsh
 
+!include WordFunc.nsh
+!insertmacro WordFind
+!insertmacro un.WordFind
+
 !define WINVER_95      0x4000
 !define WINVER_98      0x40A0 ;4.10
 !define WINVER_ME      0x45A0 ;4.90

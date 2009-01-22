@@ -43,6 +43,11 @@
 
 #**********************************************************************************************************#
 
+!ifndef ___FILE_ASSOCIATION__NSH___
+!define ___FILE_ASSOCIATION__NSH___
+
+
+
 
 !define registerExtension "!insertmacro registerExtension"
 !define unregisterExtension "!insertmacro unregisterExtension"
@@ -105,3 +110,6 @@ Function un.unregisterExtension
 "${Index}-NoOwn:"
 !undef Index
 FunctionEnd
+
+!endif # !___FILE_ASSOCIATION__NSH___
+

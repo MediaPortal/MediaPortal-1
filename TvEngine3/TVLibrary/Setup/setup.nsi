@@ -80,8 +80,6 @@ Var DeployMode
 !define COMPANY "Team MediaPortal"
 !define URL     "www.team-mediaportal.com"
 
-!define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements/OperatingSystems"
-
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
@@ -110,23 +108,22 @@ Name          "${NAME}"
 SetCompressor /SOLID lzma
 BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 
-
-!define INSTALL_LOG
-
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
 !include MUI2.nsh
 !include Sections.nsh
-!include LogicLib.nsh
 !include Library.nsh
 !include FileFunc.nsh
-;!include WinVer.nsh
-!define WinVer++
 !include Memento.nsh
 
-!include "${svn_InstallScripts}\include-AddRemovePage.nsh"
+
+!define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
+!define USE_INSTALL_LOG ; enables logging during installation and uninstallation
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
+
+
+!include "${svn_InstallScripts}\include-AddRemovePage.nsh"
 !include "${svn_InstallScripts}\include-UninstallModePage.nsh"
 !include setup-languages.nsh
 
@@ -746,7 +743,7 @@ Function .onInit
 
 
   ; OS and other common initialization checks are done in the following NSIS header file
-  !include "${svn_InstallScripts}\include-MP-OSCheck.nsh"
+  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
 
 
   ; check if reboot is required

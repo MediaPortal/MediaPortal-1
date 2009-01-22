@@ -24,34 +24,47 @@
 #endregion
 
 
+!ifndef ___COMMON_MP_MACROS__NSH___
+!define ___COMMON_MP_MACROS__NSH___
+
+
+!include LogicLib.nsh
+
+
+!ifndef COMPANY
+  !define COMPANY "Team MediaPortal"
+!endif
+!ifndef URL
+  !define URL "www.team-mediaportal.com"
+!endif
+!ifndef WEB_REQUIREMENTS
+  !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements/OperatingSystems"
+!endif
+
+
+!ifndef MP_REG_UNINSTALL
+  !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!endif
+!ifndef TV3_REG_UNINSTALL
+  !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!endif
+
+
+
+
 # references to additional plugins, if not used, these won't be included
 !AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
 !AddPluginDir "${svn_InstallScripts}\XML-plugin\Plugin"
 !include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
 
 
-!insertmacro un.GetParent
-
-
-!insertmacro GetRoot
-!insertmacro un.GetRoot
-
-!include WordFunc.nsh
-!insertmacro WordFind
-!insertmacro un.WordFind
-!insertmacro WordReplace
-!insertmacro un.WordReplace
-
-
-!include "${svn_InstallScripts}\include-FileAssociation.nsh"
-
-
-#**********************************************************************************************************#
+#---------------------------------------------------------------------------
+#   NSIS logging system
 #
-# logging system
-#
-#**********************************************************************************************************#
-!ifdef INSTALL_LOG
+#           enable it by defining         USE_INSTALL_LOG      in parent script
+#---------------------------------------------------------------------------
+!ifdef USE_INSTALL_LOG
+
 !include FileFunc.nsh
 !insertmacro GetTime
 !insertmacro un.GetTime
@@ -126,7 +139,7 @@ Var TempInstallLog
 
 !macroend
 
-!else
+!else #!USE_INSTALL_LOG
 
 !define LOG_OPEN `!insertmacro LOG_OPEN`
 !macro LOG_OPEN
@@ -142,13 +155,9 @@ Var TempInstallLog
 
 !endif
 
-
-
-#**********************************************************************************************************#
-#
-# killing a process
-#
-#**********************************************************************************************************#
+#---------------------------------------------------------------------------
+#   KILL Process       macro for common usage
+#---------------------------------------------------------------------------
 !define KILLPROCESS `!insertmacro KILLPROCESS`
 !macro KILLPROCESS PROCESS
 /*
@@ -168,14 +177,6 @@ Var TempInstallLog
   ${LOG_TEXT} "DEBUG" "KILLPROCESS result: $0"
 
 !macroend
-
-
-
-
-
-
-
-
 
 
 
@@ -253,12 +254,6 @@ Var TempInstallLog
 #
 #**********************************************************************************************************#
 
-!ifndef MP_REG_UNINSTALL
-  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-!endif
-!ifndef TV3_REG_UNINSTALL
-  !define TV3_REG_UNINSTALL     "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!endif
 
 #**********************************************************************************************************#
 # LOGICLIB EXPRESSIONS
@@ -447,6 +442,7 @@ Var TempInstallLog
 
 !macroend
 
+!include FileFunc.nsh
 !insertmacro GetTime
 !macro GET_BACKUP_POSTFIX _var
 
@@ -520,10 +516,12 @@ LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is r
 !define MPIsInstalled "!insertmacro _MPIsInstalled"
   */
 
-
-
-#***************************
-#***************************
+#---------------------------------------------------------------------------
+#   Read      Special MediaPortal directories from  xml
+#
+#           enable it by defining         USE_READ_MP_DIRS      in parent script
+#---------------------------------------------------------------------------
+!ifdef USE_READ_MP_DIRS
   
 Var MyDocs
 Var UserAppData
@@ -611,6 +609,12 @@ FunctionEnd
 #***************************
 #***************************
 
+!include FileFunc.nsh
+!insertmacro GetRoot
+!insertmacro un.GetRoot
+!include WordFunc.nsh
+!insertmacro WordReplace
+!insertmacro un.WordReplace
 !macro ReadMPdir UNINSTALL_PREFIX DIR
   ${LOG_TEXT} "DEBUG" "macro: ReadMPdir | DIR: ${DIR}"
 
@@ -713,9 +717,6 @@ FunctionEnd
 
 !macroend
 
-#***************************
-#***************************
-
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
 !macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
@@ -770,10 +771,21 @@ FunctionEnd
   ${LOG_TEXT} "INFO" "          BurnerSupport: $MPdir.BurnerSupport"
 !macroend
 
+!endif # !USE_READ_MP_DIRS
+
+#---------------------------------------------------------------------------
+#   Windows Version checks
+#---------------------------------------------------------------------------
+# TODO :::    rework win version detection, or the way it is imported
+;!include WinVer.nsh
+!define WinVer++
 !ifdef WINVER++
   !include "${svn_InstallScripts}\include-WinVerEx.nsh"
 !else
 
+!include WordFunc.nsh
+!insertmacro WordFind
+!insertmacro un.WordFind
 !macro GetServicePack _major _minor
   Push $0
   Push $1
@@ -814,6 +826,14 @@ FunctionEnd
 
 !endif
 
+
+
+#**********************************************************************************************************#
+#
+#
+#
+#
+#**********************************************************************************************************#
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP
 #---------------------------------------------------------------------------
@@ -866,6 +886,8 @@ DeleteRegKey HKCU "Software\MediaPortal"
 
 !macroend
 
+!include FileFunc.nsh
+!insertmacro un.GetParent
 !macro NSISuninstall REG_KEY
 
   ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
@@ -888,4 +910,86 @@ DeleteRegKey HKCU "Software\MediaPortal"
     */
   ${EndIf}
 !macroend
+
+
+#---------------------------------------------------------------------------
+#   MediaPortal specific OS SystemCheck
+#---------------------------------------------------------------------------
+!macro MediaPortalOperatingSystemCheck HideWarnings
+# HideWarnings   is used to disable some Warning MessageBoxes if needed, for example:     if $DeployMode = 1
+
+  ; show error that the OS is not supported and abort the installation
+  ${If} ${AtMostWin2000Srv}
+    StrCpy $0 "OSabort"
+  ${ElseIf} ${IsWinXP}
+    !insertmacro GetServicePack $R1 $R2
+    ${If} $R2 > 0
+      StrCpy $0 "OSwarnBetaSP"
+    ${ElseIf} $R1 < 2
+      StrCpy $0 "OSabort"
+    ${Else}
+      StrCpy $0 "OSok"
+    ${EndIf}
+
+  ${ElseIf} ${IsWinXP64}
+    StrCpy $0 "OSabort"
+
+  ${ElseIf} ${IsWin2003}
+    StrCpy $0 "OSwarn"
+
+  ${ElseIf} ${IsWinVISTA}
+    !insertmacro GetServicePack $R1 $R2
+    ${If} $R2 > 0
+      StrCpy $0 "OSwarnBetaSP"
+    ${ElseIf} $R1 < 1
+      StrCpy $0 "OSwarn"
+    ${Else}
+      StrCpy $0 "OSok"
+    ${EndIf}
+
+  ${ElseIf} ${IsWin2008}
+    StrCpy $0 "OSwarn"
+
+  ${Else}
+    StrCpy $0 "OSabort"
+  ${EndIf}
+
+  ; show warnings for some OS
+  ${If} $0 == "OSabort"
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${ElseIf} $0 == "OSwarn"
+    ${If} ${HideWarnings} == 0
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+    ${EndIf}
+  ${ElseIf} $0 == "OSwarnBetaSP"
+    ${If} ${HideWarnings} == 0
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "You are using a beta Service Pack! $(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+    ${EndIf}
+  ${Else}
+    ; do nothing
+  ${EndIf}
+
+  ; check if current user is admin
+  UserInfo::GetOriginalAccountType
+  Pop $0
+  #StrCmp $0 "Admin" 0 +3
+  ${IfNot} $0 == "Admin"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_ADMIN)"
+    Abort
+  ${EndIf}
+
+  ; check if VC Redist 2005 SP1 is installed
+  ${IfNot} ${VCRedistIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
+
+!macroend
+
+!endif # !___COMMON_MP_MACROS__NSH___
 
