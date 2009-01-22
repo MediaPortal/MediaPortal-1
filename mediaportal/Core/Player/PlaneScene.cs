@@ -1105,6 +1105,24 @@ namespace MediaPortal.Player
       }
     }
 
+    private void RenderBlackImage(float timePassed)
+    {
+      /*if (!GUIGraphicsContext.RenderBlackImage)
+      {
+        return;
+      }
+      */
+
+      // Log.Info("render black");
+      if (_blackImage != null)
+      {
+        _blackImage.SetPosition((int)_fx, (int)_fy);
+        _blackImage.Width = (int)_nw;
+        _blackImage.Height = (int)_nh;
+        _blackImage.Render(timePassed);
+      }
+    }
+
     #endregion
 
     #region IRenderLayer members
@@ -1117,6 +1135,11 @@ namespace MediaPortal.Player
       if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent ||
           VideoRendererStatistics.VideoState == VideoRendererStatistics.State.NoSignal)
       {
+        if (GUIGraphicsContext.RenderBlackImage)
+        {
+          RenderBlackImage(timePassed);
+        }
+
         //Render video texture
         if (_renderTexture == false)
         {
@@ -1138,11 +1161,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        // Log.Info("render black");
-        _blackImage.SetPosition((int) _fx, (int) _fy);
-        _blackImage.Width = (int) _nw;
-        _blackImage.Height = (int) _nh;
-        _blackImage.Render(timePassed);
+        RenderBlackImage(timePassed);        
       }
       SubtitleRenderer.GetInstance().Render();
     }

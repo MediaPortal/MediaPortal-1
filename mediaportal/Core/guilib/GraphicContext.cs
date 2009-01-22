@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    private static bool _renderBlackImage = false;
     private static List<Point> _cameras = new List<Point>();
     private static List<TransformMatrix> _groupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
@@ -722,6 +723,12 @@ namespace MediaPortal.GUI.Library
       float fPercentY = fSkinHeight/fZoomedScreenHeight;
       x = (int) Math.Round(((float) x)*fPercentX);
       y = (int) Math.Round(((float) y)*fPercentY);
+    }
+
+    public static bool RenderBlackImage
+    {
+      get { return _renderBlackImage; }
+      set { _renderBlackImage = value; }
     }
 
     /// <summary>
