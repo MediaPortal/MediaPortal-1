@@ -12,7 +12,7 @@ using MediaPortal.MPInstaller;
 
 namespace WindowPlugins.GUI.Extensions
 {
-  public class GUIExtensions : GUIWindow, ISetupForm, IShowPlugin, IComparer<GUIListItem>
+  public class GUIExtensions : GUIWindow, ISetupForm, IComparer<GUIListItem>, IShowPlugin
   {
     #region enums
     enum SortMethod
@@ -141,8 +141,8 @@ namespace WindowPlugins.GUI.Extensions
       strButtonText = GUILocalizeStrings.Get(14001);
       strButtonImage = string.Empty;
       strButtonImageFocus = string.Empty;
-      strPictureImage = @"hover_my radio.png";
-      return false;
+      strPictureImage = "";
+      return true;
     }
 
     public string Author()

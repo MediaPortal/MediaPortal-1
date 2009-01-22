@@ -833,6 +833,7 @@ namespace MediaPortal.MPInstaller
       }
       if (flst.Type == SKIN_SYSTEMFONT_TYPE)
       {
+
         ret = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot"), "Fonts") + @"\";
       }
 

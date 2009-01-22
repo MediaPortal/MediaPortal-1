@@ -319,7 +319,7 @@ namespace MediaPortal.MPInstaller
       }
       //for (int i = 0; i < package._intalerStruct.FileList.Count; i++)
       //{
-      package.instal_file(progressBar2, progressBar1, listBox1);
+      package.install_file(progressBar2, progressBar1, listBox1);
         //progressBar1.Value++;
         //this.Refresh();
         //this.Update();

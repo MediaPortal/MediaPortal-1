@@ -63,7 +63,7 @@ namespace MediaPortal.MPInstaller
                   package._intalerStruct.SetupGroups = item.SetupGroups;
                   package.InstallableSkinList.AddRange(package.SkinList);
                   progressBar2.Maximum = package._intalerStruct.FileList.Count + 1;
-                  package.instal_file(progressBar3, progressBar2, listBox2);
+                  package.install_file(progressBar3, progressBar2, listBox2);
                   package.installLanguage(listBox2);
                   inst.Add(package);
                   inst.SaveToFile();

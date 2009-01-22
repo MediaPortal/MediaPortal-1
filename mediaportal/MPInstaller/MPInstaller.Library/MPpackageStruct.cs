@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Windows.Forms;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,10 +9,13 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Runtime.InteropServices;
+
 using System.Drawing;
 using System.Globalization;
+
 using ICSharpCode.SharpZipLib.Zip;
-using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.Util;
 using MediaPortal;
@@ -37,6 +41,11 @@ namespace MediaPortal.MPInstaller
     public List<string> SkinList;
     public List<string> InstallableSkinList;
     public List<string> InstalledSkinList;
+
+    [DllImport("gdi32")]
+    public static extern int AddFontResource(string lpFileName);
+    [DllImport("gdi32")]
+    public static extern int RemoveFontResource(string lpFileName); 
 
     public MPpackageStruct()
     {
@@ -160,7 +169,7 @@ namespace MediaPortal.MPInstaller
    //   }
    // }
 
-    public void instal_file(ProgressBar pb, ProgressBar pb1, ListBox lb)
+    public void install_file(ProgressBar pb, ProgressBar pb1, ListBox lb)
     {
       string fil = FileName;
       byte[] data = new byte[2048];
@@ -186,12 +195,12 @@ namespace MediaPortal.MPInstaller
               {
                 tpf = Path.GetTempFileName();
               }
-              //if (fl.SkinType)
-              //{
+
+             
+
               if (!Directory.Exists(Path.GetDirectoryName(tpf)))
                 Directory.CreateDirectory(Path.GetDirectoryName(tpf));
-              //}
-              //MessageBox.Show(tpf);
+  
               FileStream fs = new FileStream(tpf, FileMode.Create);
               if (pb != null)
               {
@@ -231,12 +240,17 @@ namespace MediaPortal.MPInstaller
 
                   }
               }
+
               if (!InstallableSkinList.Contains(fl.SubType) && fl.SkinType)
               {
                 File.Delete(tpf);
               }
               else
               {
+                if (fl.Type == MPinstallerStruct.SKIN_SYSTEMFONT_TYPE)
+                {
+                  AddFontResource(tpf);
+                }
                 this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
                 if (lb != null)
                 {

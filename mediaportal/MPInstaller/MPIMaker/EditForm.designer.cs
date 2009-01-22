@@ -29,6 +29,9 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
+          System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Plugins");
+          System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Skins");
+          System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Thumbs");
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,6 +125,7 @@ namespace MediaPortal.MPInstaller
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
           this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+          this.treeView1 = new System.Windows.Forms.TreeView();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -144,7 +148,7 @@ namespace MediaPortal.MPInstaller
             this.customizationToolStripMenuItem});
           this.menuStrip1.Location = new System.Drawing.Point(0, 0);
           this.menuStrip1.Name = "menuStrip1";
-          this.menuStrip1.Size = new System.Drawing.Size(675, 24);
+          this.menuStrip1.Size = new System.Drawing.Size(988, 24);
           this.menuStrip1.TabIndex = 1;
           this.menuStrip1.Text = "menuStrip1";
           // 
@@ -309,42 +313,42 @@ namespace MediaPortal.MPInstaller
           // componentToolStripMenuItem
           // 
           this.componentToolStripMenuItem.Name = "componentToolStripMenuItem";
-          this.componentToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.componentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.componentToolStripMenuItem.Text = "Component";
           this.componentToolStripMenuItem.Click += new System.EventHandler(this.componentToolStripMenuItem_Click);
           // 
           // mediaToolStripMenuItem
           // 
           this.mediaToolStripMenuItem.Name = "mediaToolStripMenuItem";
-          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.mediaToolStripMenuItem.Text = "Media";
           this.mediaToolStripMenuItem.Click += new System.EventHandler(this.mediaToolStripMenuItem_Click);
           // 
           // soundsToolStripMenuItem
           // 
           this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
-          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.soundsToolStripMenuItem.Text = "Sounds";
           this.soundsToolStripMenuItem.Click += new System.EventHandler(this.soundsToolStripMenuItem_Click);
           // 
           // animationsToolStripMenuItem
           // 
           this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
-          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.animationsToolStripMenuItem.Text = "Animations";
           this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
           // 
           // tetrisToolStripMenuItem
           // 
           this.tetrisToolStripMenuItem.Name = "tetrisToolStripMenuItem";
-          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.tetrisToolStripMenuItem.Text = "Tetris";
           this.tetrisToolStripMenuItem.Click += new System.EventHandler(this.tetrisToolStripMenuItem_Click);
           // 
           // systemFontToolStripMenuItem
           // 
           this.systemFontToolStripMenuItem.Name = "systemFontToolStripMenuItem";
-          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.systemFontToolStripMenuItem.Text = "System Font";
           this.systemFontToolStripMenuItem.Click += new System.EventHandler(this.systemFontToolStripMenuItem_Click);
           // 
@@ -439,9 +443,8 @@ namespace MediaPortal.MPInstaller
           // 
           // bossview
           // 
-          this.bossview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.bossview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)));
           this.bossview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -455,7 +458,7 @@ namespace MediaPortal.MPInstaller
           this.bossview.HideSelection = false;
           this.bossview.Location = new System.Drawing.Point(12, 52);
           this.bossview.Name = "bossview";
-          this.bossview.Size = new System.Drawing.Size(651, 182);
+          this.bossview.Size = new System.Drawing.Size(662, 182);
           this.bossview.Sorting = System.Windows.Forms.SortOrder.Ascending;
           this.bossview.TabIndex = 2;
           this.bossview.UseCompatibleStateImageBehavior = false;
@@ -526,7 +529,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Skin.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Skin.Name = "tabPage_Skin";
           this.tabPage_Skin.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_Skin.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Skin.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Skin.TabIndex = 1;
           this.tabPage_Skin.Text = "Skin Properties";
           this.tabPage_Skin.UseVisualStyleBackColor = true;
@@ -574,15 +577,14 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Plugin.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Plugin.Name = "tabPage_Plugin";
           this.tabPage_Plugin.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_Plugin.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Plugin.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Plugin.TabIndex = 0;
           this.tabPage_Plugin.Text = "Plugin Properties";
           this.tabPage_Plugin.UseVisualStyleBackColor = true;
           // 
           // tabControl1
           // 
-          this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
           this.tabControl1.Controls.Add(this.tabPage_Plugin);
           this.tabControl1.Controls.Add(this.tabPage_Skin);
           this.tabControl1.Controls.Add(this.tabPage_Text);
@@ -593,7 +595,7 @@ namespace MediaPortal.MPInstaller
           this.tabControl1.Location = new System.Drawing.Point(12, 240);
           this.tabControl1.Name = "tabControl1";
           this.tabControl1.SelectedIndex = 0;
-          this.tabControl1.Size = new System.Drawing.Size(651, 179);
+          this.tabControl1.Size = new System.Drawing.Size(666, 179);
           this.tabControl1.TabIndex = 3;
           // 
           // tabPage_Text
@@ -602,7 +604,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Text.Controls.Add(this.label1);
           this.tabPage_Text.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Text.Name = "tabPage_Text";
-          this.tabPage_Text.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Text.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Text.TabIndex = 2;
           this.tabPage_Text.Text = "Text Properties";
           this.tabPage_Text.UseVisualStyleBackColor = true;
@@ -712,7 +714,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Proiect.Controls.Add(this.label2);
           this.tabPage_Proiect.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Proiect.Name = "tabPage_Proiect";
-          this.tabPage_Proiect.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Proiect.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Proiect.TabIndex = 4;
           this.tabPage_Proiect.Text = "Proiect Properties";
           this.tabPage_Proiect.UseVisualStyleBackColor = true;
@@ -790,7 +792,7 @@ namespace MediaPortal.MPInstaller
           this.proiectt_textBox5.Location = new System.Drawing.Point(398, 33);
           this.proiectt_textBox5.Multiline = true;
           this.proiectt_textBox5.Name = "proiectt_textBox5";
-          this.proiectt_textBox5.Size = new System.Drawing.Size(242, 99);
+          this.proiectt_textBox5.Size = new System.Drawing.Size(257, 99);
           this.proiectt_textBox5.TabIndex = 8;
           this.proiectt_textBox5.TextChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
           // 
@@ -869,7 +871,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Thumbs.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Thumbs.Name = "tabPage_Thumbs";
           this.tabPage_Thumbs.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_Thumbs.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Thumbs.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Thumbs.TabIndex = 5;
           this.tabPage_Thumbs.Text = "Thumbs Properties";
           this.tabPage_Thumbs.UseVisualStyleBackColor = true;
@@ -912,7 +914,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Other.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Other.Name = "tabPage_Other";
           this.tabPage_Other.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_Other.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Other.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Other.TabIndex = 6;
           this.tabPage_Other.Text = "Properties";
           this.tabPage_Other.UseVisualStyleBackColor = true;
@@ -960,7 +962,7 @@ namespace MediaPortal.MPInstaller
           this.toolStrip1.Location = new System.Drawing.Point(0, 24);
           this.toolStrip1.Name = "toolStrip1";
           this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip1.Size = new System.Drawing.Size(675, 25);
+          this.toolStrip1.Size = new System.Drawing.Size(988, 25);
           this.toolStrip1.TabIndex = 4;
           this.toolStrip1.Text = "toolStrip1";
           // 
@@ -1010,11 +1012,29 @@ namespace MediaPortal.MPInstaller
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
           // 
+          // treeView1
+          // 
+          this.treeView1.Location = new System.Drawing.Point(685, 49);
+          this.treeView1.Name = "treeView1";
+          treeNode4.Name = "Node0";
+          treeNode4.Text = "Plugins";
+          treeNode5.Name = "Node1";
+          treeNode5.Text = "Skins";
+          treeNode6.Name = "Node2";
+          treeNode6.Text = "Thumbs";
+          this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode4,
+            treeNode5,
+            treeNode6});
+          this.treeView1.Size = new System.Drawing.Size(293, 365);
+          this.treeView1.TabIndex = 6;
+          // 
           // EditForm
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.ClientSize = new System.Drawing.Size(675, 431);
+          this.ClientSize = new System.Drawing.Size(988, 431);
+          this.Controls.Add(this.treeView1);
           this.Controls.Add(this.toolStrip1);
           this.Controls.Add(this.bossview);
           this.Controls.Add(this.tabControl1);
@@ -1146,6 +1166,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolStripMenuItem internalPluginToolStripMenuItem;
       private System.Windows.Forms.ToolStripMenuItem systemFontToolStripMenuItem;
       private System.Windows.Forms.ToolTip toolTip1;
+      private System.Windows.Forms.TreeView treeView1;
     }
 }
 

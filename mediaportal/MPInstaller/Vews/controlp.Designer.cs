@@ -56,12 +56,15 @@ namespace MediaPortal.MPInstaller
           this.button5 = new System.Windows.Forms.Button();
           this.comboBox_view = new System.Windows.Forms.ComboBox();
           this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+          this.tabPage2 = new System.Windows.Forms.TabPage();
+          this.controlListView1 = new MediaPortal.MPInstaller.Controls.ControlListView();
           this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
           this.contextMenuStrip1.SuspendLayout();
           this.tabControl1.SuspendLayout();
           this.tabPage1.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.mozPane1)).BeginInit();
           this.mozPane1.SuspendLayout();
+          this.tabPage2.SuspendLayout();
           this.SuspendLayout();
           // 
           // listView1
@@ -189,6 +192,7 @@ namespace MediaPortal.MPInstaller
                       | System.Windows.Forms.AnchorStyles.Left)
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.tabControl1.Controls.Add(this.tabPage1);
+          this.tabControl1.Controls.Add(this.tabPage2);
           this.tabControl1.Location = new System.Drawing.Point(1, 1);
           this.tabControl1.Name = "tabControl1";
           this.tabControl1.SelectedIndex = 0;
@@ -362,10 +366,42 @@ namespace MediaPortal.MPInstaller
           this.linkLabel1.TabStop = true;
           this.linkLabel1.Text = "http://dukus.extra.hu/";
           // 
+          // tabPage2
+          // 
+          this.tabPage2.Controls.Add(this.controlListView1);
+          this.tabPage2.Location = new System.Drawing.Point(4, 22);
+          this.tabPage2.Name = "tabPage2";
+          this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+          this.tabPage2.Size = new System.Drawing.Size(862, 389);
+          this.tabPage2.TabIndex = 1;
+          this.tabPage2.Text = "New View";
+          this.tabPage2.UseVisualStyleBackColor = true;
+          // 
+          // controlListView1
+          // 
+          this.controlListView1.AutoAdjustHeight = false;
+          this.controlListView1.AutoResize = false;
+          this.controlListView1.AutoScroll = true;
+          this.controlListView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+          this.controlListView1.HorizontalSpacing = 5;
+          this.controlListView1.ItemHeight = 100;
+          this.controlListView1.ItemHorverColor = System.Drawing.Color.Snow;
+          this.controlListView1.ItemNormalColor = System.Drawing.Color.White;
+          this.controlListView1.ItemSelectionColor = System.Drawing.Color.WhiteSmoke;
+          this.controlListView1.ItemWidth = 640;
+          this.controlListView1.Location = new System.Drawing.Point(126, 6);
+          this.controlListView1.Name = "controlListView1";
+          this.controlListView1.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+          this.controlListView1.Selected = false;
+          this.controlListView1.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(216)))), ((int)(((byte)(216)))));
+          this.controlListView1.Size = new System.Drawing.Size(728, 351);
+          this.controlListView1.TabIndex = 0;
+          this.controlListView1.VerticleSpacing = 5;
+          // 
           // openFileDialog1
           // 
-          this.openFileDialog1.FileName = "openFileDialog1";
-          this.openFileDialog1.Filter = "MPE1 files|*.mpe1|All files|*.*";
+          this.openFileDialog1.FileName = "";
+          this.openFileDialog1.Filter = "MPE1 files|*.mpe1|MPI files|*.mpi|All files|*.*";
           // 
           // controlp
           // 
@@ -384,6 +420,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage1.PerformLayout();
           ((System.ComponentModel.ISupportInitialize)(this.mozPane1)).EndInit();
           this.mozPane1.ResumeLayout(false);
+          this.tabPage2.ResumeLayout(false);
           this.ResumeLayout(false);
 
         }
@@ -417,5 +454,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ImageList imageList2;
       private System.Windows.Forms.Button button_local;
       private System.Windows.Forms.OpenFileDialog openFileDialog1;
+      private System.Windows.Forms.TabPage tabPage2;
+      private MediaPortal.MPInstaller.Controls.ControlListView controlListView1;
     }
 }

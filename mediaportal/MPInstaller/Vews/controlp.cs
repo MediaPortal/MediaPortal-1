@@ -36,6 +36,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Util;
+using MediaPortal.MPInstaller.Controls;
 using Pabo.MozBar;
 
 namespace MediaPortal.MPInstaller
@@ -138,6 +139,15 @@ namespace MediaPortal.MPInstaller
           item1.SubItems.Add(Path.GetFileName(pk.FileName));
           item1.SubItems.Add(pk._intalerStruct.Group);
           lv.Items.AddRange(new ListViewItem[] { item1 });
+          //----------------------
+          TileListItem item = new TileListItem();
+          item.Title = pk._intalerStruct.Name;
+          item.Author = pk._intalerStruct.Author;
+          item.Version = pk._intalerStruct.Version;
+          item.Description = pk._intalerStruct.Description;
+          controlListView1.Add(item);
+          //--------------------
+
         }
       }
       //lv.Items.AddRange(itemlist);
