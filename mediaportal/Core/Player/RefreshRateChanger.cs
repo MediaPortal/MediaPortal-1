@@ -735,7 +735,6 @@ namespace MediaPortal.Player
         }
         else
         {
-          System.Diagnostics.Debugger.Break();
           StackTrace st = new StackTrace(true);
           StackFrame sf = st.GetFrame(0);          
 

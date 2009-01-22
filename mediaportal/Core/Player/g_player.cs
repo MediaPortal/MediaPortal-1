@@ -477,9 +477,10 @@ namespace MediaPortal.Player
         if (PlayBackStopped != null)
         {
           PlayBackStopped(_currentMedia, (int) CurrentPosition, CurrentFile);
+          _mediaInfo = null;
         }
       }
-      _mediaInfo = null;
+      
     }
 
     //called when current playing file is stopped
@@ -492,8 +493,8 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnEnded()");
         RefreshRateChanger.AdaptRefreshRate();
         PlayBackEnded(_currentMedia, _currentFilePlaying);
-      }
-      _mediaInfo = null;
+        _mediaInfo = null;
+      }      
     }
 
     //called when starting playing a file
