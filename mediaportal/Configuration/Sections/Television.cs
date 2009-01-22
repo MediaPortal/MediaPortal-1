@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using DirectShowLib;
@@ -51,7 +50,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel labelMPEG2Decoder;
     private MPComboBox defaultZoomModeComboBox;
     private MPLabel label6;
-    private IContainer components = null;
     private MPGroupBox groupBox4;
     private MPLabel label7;
     private MPTextBox textBoxTimeShiftBuffer;
@@ -62,7 +60,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox showChannelNumberCheckBox;
     private Label lblChanNumMaxLen;
     private NumericUpDown channelNumberMaxLengthNumUpDn;
-    private bool _init = false;
+    private bool _init;
     private MPCheckBox cbTurnOnTimeShift;
     private MPGroupBox groupBox5;
     private MPCheckBox cbTurnOnTv;
@@ -171,21 +169,6 @@ namespace MediaPortal.Configuration.Sections
         cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
         LoadSettings();
       }
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     #region Designer generated code
@@ -693,14 +676,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      if (File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
-      {
-        pluginVersion = 3;
-      }
-      else
-      {
-        pluginVersion = 2;
-      }
+      pluginVersion = File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll") ? 3 : 2;
 
       //Add call to enable/disable objects. 
       // test call ony
@@ -876,9 +852,10 @@ namespace MediaPortal.Configuration.Sections
         string defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
         foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
+          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
+          if (defaultAspectRatio == currentAspectRatio)
           {
-            defaultZoomModeComboBox.SelectedItem = item;
+            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
             break;
           }
         }
@@ -911,7 +888,7 @@ namespace MediaPortal.Configuration.Sections
           int buffer = Int32.Parse(textBoxTimeShiftBuffer.Text);
           xmlwriter.SetValue("capture", "timeshiftbuffer", buffer.ToString());
         }
-        catch (Exception)
+        catch
         {
         }
         xmlwriter.SetValue("mytv", "defaultar", defaultZoomModeComboBox.SelectedItem);
@@ -938,12 +915,6 @@ namespace MediaPortal.Configuration.Sections
     {
       //if ( cbTurnOnTimeShift.Checked )
       //  cbTurnOnTv.Checked = true;
-    }
-
-    private void cbTurnOnTv_CheckedChanged(object sender, EventArgs e)
-    {
-      //if ( !cbTurnOnTv.Checked )
-      //  cbTurnOnTimeShift.Checked = false;
     }
 
     private void cbAutoFullscreen_CheckedChanged(object sender, EventArgs e)

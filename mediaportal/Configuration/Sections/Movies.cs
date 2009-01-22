@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -52,7 +51,6 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox subtitlesFontTextBox;
     private FolderBrowserDialog folderBrowserDialog;
     private FontDialog fontDialog;
-    private IContainer components = null;
     private string fontName;
     private string fontColor;
     private bool fontIsBold;
@@ -74,13 +72,13 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox cbAllowLetterbox;
     private MPCheckBox cbAllowStretch;
     private MPCheckBox cbAllowNonLinearStretch;
-    private string m_strDefaultRegionLanguage = "English";
+    private readonly string m_strDefaultRegionLanguage = "English";
     private MPCheckBox checkBoxEachFolderIsMovie;
     private MPLabel labelsubsinfo;
     private MPGroupBox mpGroupBox2;
     private MPLabel mpLabel1;
     private MPComboBox defaultAudioLanguageComboBox;
-    private string m_strDefaultAudioLanguage = "English";
+    private readonly string m_strDefaultAudioLanguage = "English";
 
     public Movies()
       : this("Videos")
@@ -146,7 +144,7 @@ namespace MediaPortal.Configuration.Sections
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception)
+            catch
             {
             }
           }
@@ -175,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Try to parse the specified color into a valid color
         //
-        if (fontColor != null && fontColor.Length > 0)
+        if (!string.IsNullOrEmpty(fontColor))
         {
           try
           {
@@ -203,9 +201,10 @@ namespace MediaPortal.Configuration.Sections
         string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
         foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
+          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
+          if (defaultAspectRatio == currentAspectRatio)
           {
-            defaultZoomModeComboBox.SelectedItem = item;
+            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
             break;
           }
         }
@@ -245,21 +244,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("movieplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
       }
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     #region Designer generated code
@@ -745,9 +729,9 @@ namespace MediaPortal.Configuration.Sections
         fontDialog.FontMustExist = true;
         fontDialog.ShowEffects = true;
 
-        fontDialog.Font = new Font(fontName, (float) fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
+        fontDialog.Font = new Font(fontName, fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
 
-        if (fontColor != null && fontColor.Length > 0)
+        if (!string.IsNullOrEmpty(fontColor))
         {
           fontDialog.Color = subtitlesFontTextBox.BackColor;
         }
@@ -766,7 +750,7 @@ namespace MediaPortal.Configuration.Sections
           //
           // Try to parse the specified color into a valid color
           //
-          if (fontColor != null && fontColor.Length > 0)
+          if (!string.IsNullOrEmpty(fontColor))
           {
             try
             {

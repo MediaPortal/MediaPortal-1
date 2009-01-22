@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -50,7 +49,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox mpGroupBox3;
     private MPComboBox defaultZoomModeComboBox;
     private MPLabel label6;
-    private IContainer components = null;
 
     public DVDPlayer()
       : this("DVD Player")
@@ -95,9 +93,10 @@ namespace MediaPortal.Configuration.Sections
         string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());    
         foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
         {
-          if (defaultAspectRatio == Util.Utils.GetAspectRatio(item))
+          string currentAspectRatio = Util.Utils.GetAspectRatio(item);
+          if (defaultAspectRatio == currentAspectRatio)
           {
-            defaultZoomModeComboBox.SelectedItem = item;
+            defaultZoomModeComboBox.SelectedItem = currentAspectRatio;
             break;
           }
         }
@@ -118,21 +117,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("dvdplayer", "defaultar", defaultZoomModeComboBox.SelectedItem);
       }
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     /// <summary>
