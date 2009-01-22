@@ -59,29 +59,33 @@
 #include <atlbase.h>            // for the bdaapiReadPSIFast()
 #include <windows.h>
 #include "bdaapi_Typedefs.h"
+#include "bda_drvinoutstructs.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // open and close functions
 
-TTBDADRVAPI UINT     bdaapiEnumerate (DEVICE_CAT DevType);
-TTBDADRVAPI HANDLE   bdaapiOpen      (DEVICE_CAT DevType,
-                                      UINT        uiDevID);
-TTBDADRVAPI HANDLE   bdaapiOpenHWIdx (DEVICE_CAT DevType,
-                                      UINT        uiDevID);
-TTBDADRVAPI void     bdaapiClose     (HANDLE      hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenIR    (HANDLE      hOpen,
-                                      PIRCBFCN    CallbackFcn = NULL,
-                                      PVOID       Context = NULL);
-TTBDADRVAPI TYPE_RET_VAL bdaapiCloseIR   (HANDLE      hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI(HANDLE            hOpen,
-                                      TS_CiCbFcnPointer CbFuncPointer);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCISlim(HANDLE                hOpen,
-                                          TS_CiCbFcnPointerSlim CbFuncPointer);
-TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCIWithoutPointer(HANDLE hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiCloseCI   (HANDLE   hOpen);
-TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent(HANDLE   hOpen,
-                                                 PIRCBFCN CallbackFcn = NULL,
-                                                 PVOID    Context = NULL);
+TTBDADRVAPI UINT     bdaapiEnumerate    (DEVICE_CAT DevType);
+TTBDADRVAPI HANDLE   bdaapiOpen         (DEVICE_CAT DevType,
+                                         UINT       uiDevID);
+TTBDADRVAPI HANDLE   bdaapiOpenHWIdx    (DEVICE_CAT DevType,
+                                         UINT       uiDevID);
+TTBDADRVAPI void     bdaapiClose        (HANDLE     hOpen);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenIR   (HANDLE     hOpen,
+                                         PIRCBFCN   CallbackFcn = NULL,
+                                         PVOID      Context = NULL);
+TTBDADRVAPI TYPE_RET_VAL bdaapiCloseIR  (HANDLE     hOpen);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCI   (HANDLE               hOpen,
+                                         TS_CiCbFcnPointer    CbFuncPointer);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCIext(HANDLE               hOpen,
+                                         TS_CiCbFcnPointer    CbFuncPointer,
+                                         PCBFCN_CI_MsgHandler CbMessageHandler);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCISlim             (HANDLE                hOpen,
+                                                       TS_CiCbFcnPointerSlim CbFuncPointer);
+TTBDADRVAPI TYPE_RET_VAL bdaapiOpenCIWithoutPointer   (HANDLE   hOpen);
+TTBDADRVAPI TYPE_RET_VAL bdaapiCloseCI                (HANDLE   hOpen);
+TTBDADRVAPI TYPE_RET_VAL bdaapiInstallDemuxReadEvent  (HANDLE   hOpen,
+                                                       PIRCBFCN CallbackFcn = NULL,
+                                                       PVOID    Context = NULL);
 TTBDADRVAPI TYPE_RET_VAL bdaapiUninstallDemuxReadEvent(HANDLE   hOpen);
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -198,8 +202,7 @@ TTBDADRVAPI TYPE_RET_VAL bdaapiUserEEPROM_Read (HANDLE hOpen,
 /////////////////////////////////////////////////////////////////////////////
 // tuning via IOCTL
 TTBDADRVAPI TYPE_RET_VAL bdaapiTune(HANDLE  hOpen,
-						            PVOID   pTune,
-						            int     iSize);
+						 pstructDVB_TunReq pTune);
 TTBDADRVAPI TYPE_RET_VAL bdaapiGetTuneStats(HANDLE  hOpen,
 								            DWORD  *pStats,
 								            int     iSize);

@@ -32,6 +32,18 @@ typedef struct _TYP_SLOT_INFO
 	WORD	wNoOfCaSystemIDs;
 } TYP_SLOT_INFO;
 
+/////////////////////////////////////////////////////////////////////////////
+/// \brief
+///     msg handler tag
+/////////////////////////////////////////////////////////////////////////////
+typedef enum
+{
+	CI_DEBUG_STRING,
+	CI_MESSAGE,
+	CI_OUTPUT_MSG,
+	CI_PSI
+}typ_CiMsgHandlerTag;
+
 #endif // #ifndef TYP_SLOTINFO_H
 
 // eof

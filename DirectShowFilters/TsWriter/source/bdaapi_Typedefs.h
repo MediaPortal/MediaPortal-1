@@ -20,7 +20,9 @@
 
 #define BDG2_NAME                       TEXT("TechnoTrend BDA/DVB Capture")
 #define BDG2_NAME_C_TUNER               TEXT("TechnoTrend BDA/DVB-C Tuner")
+#define BDG2_NAME_C_TUNER_FAKE          TEXT("ttBudget BDA (DVB-T Fake) DVB-T Tuner")
 #define BDG2_NAME_S_TUNER               TEXT("TechnoTrend BDA/DVB-S Tuner")
+#define BDG2_NAME_S_TUNER_FAKE          TEXT("ttBudget BDA (DVB-T Fake) DVB-T Tuner")
 #define BDG2_NAME_T_TUNER               TEXT("TechnoTrend BDA/DVB-T Tuner")
 #define BDG2_NAME_NEW                   TEXT("ttBudget2 BDA DVB Capture")
 #define BDG2_NAME_C_TUNER_NEW           TEXT("ttBudget2 BDA DVB-C Tuner")
@@ -35,11 +37,15 @@
 #define USB2BDA_DSS_NAME                TEXT("USB 2.0 BDA DSS Capture")
 #define USB2BDA_DSS_NAME_TUNER          TEXT("USB 2.0 BDA DSS Tuner")
 #define USB2BDA_DVB_NAME_C_TUNER        TEXT("USB 2.0 BDA DVB-C Tuner")
+#define USB2BDA_DVB_NAME_C_TUNER_FAKE   TEXT("USB 2.0 BDA (DVB-T Fake) DVB-T Tuner")
 #define USB2BDA_DVB_NAME_S_TUNER        TEXT("USB 2.0 BDA DVB-S Tuner")
 #define USB2BDA_DVB_NAME_S_TUNER_FAKE   TEXT("USB 2.0 BDA (DVB-T Fake) DVB-T Tuner")
 #define USB2BDA_DVB_NAME_T_TUNER        TEXT("USB 2.0 BDA DVB-T Tuner")
 #define USB2BDA_DVBS_NAME_PIN           TEXT("Pinnacle PCTV 4XXe Capture")
 #define USB2BDA_DVBS_NAME_PIN_TUNER     TEXT("Pinnacle PCTV 4XXe Tuner")
+#define PREMIUM_NAME_DIGITAL_CAPTURE    TEXT("TT-premium STi7109 Capture")
+#define PREMIUM_NAME_DIGITAL_TS_CAPTURE TEXT("TT-premium BDA Digital Capture DVBS")
+#define PREMIUM_NAME_DIGITAL_TUNER      TEXT("TT-premium BDA DVBS Tuner")
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -61,8 +67,8 @@ typedef enum
     USB_2_PINNACLE,
     /// USB 2.0 DSS
     USB_2_DSS,
-    /// Budget 2 - new driver with only one sys file
-    //BUDGET_2_NEW
+    /// Premium
+    PREMIUM
 } DEVICE_CAT;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -85,7 +91,9 @@ typedef enum
     /// DSS
     TYPE_FE_DSS,
     /// DVB-C and DVB-T
-    TYPE_FE_DVB_CT
+    TYPE_FE_DVB_CT,
+    /// TT-premium with Dual DVB-S2 and digital capture
+    TYPE_FE_DVB_S2_PREM
 } TYPE_FRONT_END;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -103,7 +111,7 @@ typedef enum
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
-///     Lists all possible return values of bda api functions. 
+///     Lists all possible return values of bda api functions.
 /////////////////////////////////////////////////////////////////////////////
 typedef enum
 {
@@ -137,8 +145,16 @@ typedef enum
     RET_NOT_SET,
     /// operation finished with general error
     RET_ERROR,
-	/// operation finished with ilegal pointer
-    RET_ERROR_POINTER
+	/// operation finished with illegal pointer
+    RET_ERROR_POINTER,
+    /// the tunerequest structure did not have the expected size
+    RET_INCORRECT_SIZE,
+    /// the tuner interface was not available
+    RET_TUNER_IF_UNAVAILABLE,
+    /// an unknown DVB type has been specified for the tune request
+    RET_UNKNOWN_DVB_TYPE,
+    // length of buffer is too small
+    RET_BUFFER_TOO_SMALL
 } TYPE_RET_VAL;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -153,7 +169,7 @@ typedef enum
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
-///     
+///
 /////////////////////////////////////////////////////////////////////////////
 typedef enum
 {
@@ -231,13 +247,25 @@ typedef void (*PIRCBFCN) (PVOID  Context,
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
-///                 This callback funtion is called if the state of the 
+///                 TT-premium callback function for the command interface.
+/// \param Context  Can be used for a context pointer in the calling
+///                 application. This parameter can be NULL.
+/// \param Buf      Contains the remote code. If RC5 then the low word is
+///                 used. If RC6 then the whole DWORD is used.
+/////////////////////////////////////////////////////////////////////////////
+typedef void (*PCMDCBFCN) (PVOID   Context,
+                           BYTE  * Buf,
+                           DWORD & dwLength);
+
+/////////////////////////////////////////////////////////////////////////////
+/// \brief
+///                 This callback funtion is called if the state of the
 ///                 common interface is changed. E.g. a CAM is inserted into
 ///                 the common interface or removed.
 /// \param Context  Can be used for a context pointer in the calling
 ///                 application. This parameter can be NULL.
 /// \param nSlot    Is the Slot ID. Should ever be '0' for pc products.
-/// \param nStatus  Slot status. Defines are given by CI_SLOT_* in 
+/// \param nStatus  Slot status. Defines are given by CI_SLOT_* in
 ///                 bdaapi_CIMsg.h.
 /// \param csInfo   Detailed slot informations.
 /////////////////////////////////////////////////////////////////////////////
@@ -325,7 +353,7 @@ typedef void ( *PCBFCN_CI_OnSwitchOsdOff)(PVOID Context,
 typedef void ( *PCBFCN_CI_OnInputRequest)(PVOID Context,
                                                    BYTE  nSlot,
                                                    BOOL  bBlindAnswer,
-                                                   BYTE  nExpectedLength, 
+                                                   BYTE  nExpectedLength,
                                                    DWORD dwKeyMask);
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -404,6 +432,15 @@ typedef void ( *PCBFCN_CI_OnLscTransmitBuffer)(PVOID Context,
                                                         BYTE  PhaseID,
                                                         BYTE* pData,
                                                         WORD  nLength);
+
+/////////////////////////////////////////////////////////////////////////////
+/// \brief
+///                 ???
+/////////////////////////////////////////////////////////////////////////////
+typedef short (*PCBFCN_CI_MsgHandler)(BYTE                nSlot,
+                                      typ_CiMsgHandlerTag Tag,
+                                      char*               pData,
+                                      WORD                wDataLength);
 
 /////////////////////////////////////////////////////////////////////////////
 /// \brief
@@ -502,6 +539,7 @@ typedef struct
     char            szCaptureFilterName[MAX_PATH];
     char            szAnlgTunerFilterName[MAX_PATH];
     char            szAnlgCaptureFilterName[MAX_PATH];
+    char            szSTBCaptureFilterName[MAX_PATH];
     char            szProductName[MAX_PATH];
     TYPE_FRONT_END  FeType;
 } TS_FilterNames,  *pTS_FilterNames;
