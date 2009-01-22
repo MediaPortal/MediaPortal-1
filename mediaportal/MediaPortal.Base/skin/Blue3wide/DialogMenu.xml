@@ -80,18 +80,17 @@
       <spinPosX>977</spinPosX>
       <spinPosY>462</spinPosY>
       <textXOff>88</textXOff>
-      <PinIconXOff>45</PinIconXOff>
-      <PinIconYOff>3</PinIconYOff>
-      <PinIconWidth>20</PinIconWidth>
-      <PinIconHeight>20</PinIconHeight>
+      <PinIconXOff>60</PinIconXOff>
+      <PinIconYOff>10</PinIconYOff>
+      <PinIconWidth>40</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <PinIconXOff>45</PinIconXOff>
-      <PinIconYOff>7</PinIconYOff>
-      <itemHeight>37</itemHeight>
+      <keepaspectratio>yes</keepaspectratio>
+      <itemHeight>34</itemHeight>
       <itemWidth>53</itemWidth>
       <IconXOff>17</IconXOff>
-      <IconYOff>0</IconYOff>
+      <IconYOff>3</IconYOff>
     </control>
   </controls>
 </window>

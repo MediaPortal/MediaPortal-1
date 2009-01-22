@@ -152,7 +152,7 @@
           <left>0</left>
         </padding>
       </mpe>
-      
+
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
@@ -177,9 +177,9 @@
         <type>textboxscrollup</type>
         <description>Description1</description>
         <id>15</id>
-        <posX>471</posX>
+        <posX>400</posX>
         <posY>535</posY>
-        <width>741</width>
+        <width>775</width>
         <height>125</height>
         <colordiffuse>ffffffff</colordiffuse>
         <font>font11</font>

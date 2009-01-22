@@ -160,7 +160,7 @@
         <textureFocus>album_background_focus.png</textureFocus>
         <textureNoFocus>album_background_nofocus.png</textureNoFocus>
         <spaceBetweenItems>8</spaceBetweenItems>
-        <textureHeight>55</textureHeight>
+        <textureHeight>65</textureHeight>
         <keepaspectratio>yes</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
