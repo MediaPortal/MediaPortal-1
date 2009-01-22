@@ -60,33 +60,7 @@ Name "MediaPortal Unpacker"
 !define BUILD_DeployTool
 !define BUILD_Installer
 
-!system '"$%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" "${svn_ROOT}" RevisionInfoTemplate.nsh version.txt' = 0
-;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
-!include "version.txt"
-
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
-
-!ifdef BUILD_MediaPortal
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_MP}\MediaPortal.sln"' = 0
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
-!endif
-
-!ifdef BUILD_TVServer
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvLibrary.sln"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
-!endif
-
-!ifdef BUILD_DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_DeployTool}\MediaPortal.DeployTool.sln"' = 0
-!endif
-
-!ifdef BUILD_Installer
-!system '"${NSISDIR}\makensis.exe" "${svn_MP}\Setup\setup.nsi"' = 0
-!system '"${NSISDIR}\makensis.exe" "${svn_TVServer}\Setup\setup.nsi"' = 0
-!endif
+!include "include-MP-PreBuild.nsh"
 
 #---------------------------------------------------------------------------
 # UNPACKER script
