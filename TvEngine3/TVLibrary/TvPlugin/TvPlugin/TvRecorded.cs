@@ -141,7 +141,7 @@ namespace TvPlugin
 
     #endregion
 
-    #region variables
+    #region Variables
 
     enum Controls
     {
@@ -178,7 +178,7 @@ namespace TvPlugin
     bool m_bSortAscending = true;
     bool _deleteWatchedShows = false;    
     int _iSelectedItem = 0;
-    string _currentShow = string.Empty;
+    string _currentLabel = string.Empty;
     
     RecordingThumbCacher thumbworker = null;
 
@@ -191,46 +191,14 @@ namespace TvPlugin
 
     #endregion
 
+    #region Constructor
+
     public TvRecorded()
     {
       GetID = (int)GUIWindow.Window.WINDOW_RECORDEDTV;
     }
 
-    public override void OnAdded()
-    {
-      // replace g_player's ShowFullScreenWindowTV
-      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
-      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler; // singleseaters uses this
-
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-
-    public override bool IsTv
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-    public static Recording ActiveRecording()
-    {
-      return _oActiveRecording;
-    }
-
-    public static void SetActiveRecording(Recording rec)
-    {
-      _oActiveRecording = rec;
-      _bIsLiveRecording = IsRecordingActual(rec);
-    }
-
-    public static bool IsLiveRecording()
-    {
-      return _bIsLiveRecording;
-    }
+    #endregion
 
     #region Serialisation
 
@@ -336,45 +304,7 @@ namespace TvPlugin
 
     #endregion
 
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowTV
-    /// </summary>
-    ///<returns></returns>
-    private static bool ShowFullScreenWindowTVHandler()
-    {
-      if (g_Player.IsTVRecording)
-      {
-        // watching TV
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          return true;
-        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen tv");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        return true;
-      }
-      return g_Player.ShowFullScreenWindowTVDefault();
-    }
-
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowVideo
-    /// </summary>
-    ///<returns></returns>
-    private static bool ShowFullScreenWindowVideoHandler()
-    {
-      if (g_Player.IsTVRecording)
-      {
-        // watching TV
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-          return true;
-        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        return true;
-      }
-      return g_Player.ShowFullScreenWindowVideoDefault();
-    }
-
-    #region overrides
+    #region Overrides
 
     public override bool Init()
     {
@@ -414,7 +344,7 @@ namespace TvPlugin
               {
                 if (item.IsFolder && item.Label == "..")
                 {
-                  _currentShow = string.Empty;
+                  _currentLabel = string.Empty;
                   LoadDirectory();
                   return;
                 }
@@ -423,22 +353,22 @@ namespace TvPlugin
           }
           break;
 
-        case Action.ActionType.ACTION_SELECT_ITEM:
-          if (facadeView != null)
-          {
-            if (facadeView.Focus)
-            {
-              GUIListItem item = GetSelectedItem();
-              if (item != null)
-              {
-                if (!item.IsFolder && item.Label != "..")
-                {
-                  _currentShow = item.Label;
-                }
-              }
-            }
-          }
-          break;
+        //case Action.ActionType.ACTION_SELECT_ITEM:
+        //  if (facadeView != null)
+        //  {
+        //    if (facadeView.Focus)
+        //    {
+        //      GUIListItem item = GetSelectedItem();
+        //      if (item != null)
+        //      {
+        //        if (!item.IsFolder && item.Label != "..")
+        //        {
+        //          _currentLabel = item.Label;
+        //        }
+        //      }
+        //    }
+        //  }
+        //  break;
       }
       base.OnAction(action);
     }
@@ -557,7 +487,7 @@ namespace TvPlugin
                 shouldContinue = true;
               }
               break;
-          }          
+          }
         } while (shouldContinue);
 
         facadeView.View = _currentViewMethod;
@@ -603,7 +533,7 @@ namespace TvPlugin
         int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          OnPlayRecording(iItem);
+          OnSelectedRecording(iItem);
         }
         if (actionType == Action.ActionType.ACTION_SHOW_INFO)
         {
@@ -655,7 +585,7 @@ namespace TvPlugin
           break;
 
         case 655: // play
-          if (OnPlayRecording(iItem))
+          if (OnSelectedRecording(iItem))
             return;
           break;
 
@@ -665,12 +595,10 @@ namespace TvPlugin
           break;
 
         case 830: // Reset watched status
-          {
-            _iSelectedItem = GetSelectedItemNo();
-            ResetWatchedStatus(rec);
-            LoadDirectory();
-            GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
-          }
+          _iSelectedItem = GetSelectedItemNo();
+          ResetWatchedStatus(rec);
+          LoadDirectory();
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
           break;
       }
     }
@@ -682,7 +610,73 @@ namespace TvPlugin
 
     #endregion
 
-    #region private methods
+    #region Public methods
+
+    public override bool IsTv
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public static Recording ActiveRecording()
+    {
+      return _oActiveRecording;
+    }
+
+    public static void SetActiveRecording(Recording rec)
+    {
+      _oActiveRecording = rec;
+      _bIsLiveRecording = IsRecordingActual(rec);
+    }
+
+    public static bool IsLiveRecording()
+    {
+      return _bIsLiveRecording;
+    }
+
+    #endregion
+
+    #region Private methods
+
+    /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowTV
+    /// </summary>
+    ///<returns></returns>
+    private static bool ShowFullScreenWindowTVHandler()
+    {
+      if (g_Player.IsTVRecording)
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen tv");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+      return g_Player.ShowFullScreenWindowTVDefault();
+    }
+
+    /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowVideo
+    /// </summary>
+    ///<returns></returns>
+    private static bool ShowFullScreenWindowVideoHandler()
+    {
+      if (g_Player.IsTVRecording)
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+      return g_Player.ShowFullScreenWindowVideoDefault();
+    }
 
     private void ShowViews()
     {
@@ -711,7 +705,6 @@ namespace TvPlugin
             _currentDbView = DBView.Channel;
             break;
         }
-
         LoadDirectory();
       }
       catch (Exception ex)
@@ -728,7 +721,7 @@ namespace TvPlugin
         GUIControl.ClearControl(GetID, facadeView.GetID);
 
         IList<Recording> recordings = Recording.ListAll();
-        if (_currentShow == string.Empty)
+        if (_currentLabel == string.Empty)
         {
           foreach (Recording rec in recordings)
           {
@@ -808,24 +801,26 @@ namespace TvPlugin
         }
         else
         {
+          // Showing a merged folders content
           GUIListItem item = new GUIListItem("..");
           item.IsFolder = true;
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
 
+          // Log.Debug("TVRecorded: Currently showing the virtual folder contents of {0}", _currentLabel);
           foreach (Recording rec in recordings)
           {
-            bool addToList = false;
+            bool addToList = true;
             switch (_currentDbView)
             {
               case DBView.Recordings:
-                addToList = rec.Title.Equals(_currentShow, StringComparison.InvariantCultureIgnoreCase);
+                addToList = rec.Title.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Channel:
-                addToList = rec.ReferencedChannel().DisplayName.Equals(_currentShow, StringComparison.InvariantCultureIgnoreCase);
+                addToList = rec.ReferencedChannel().DisplayName.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Genre:
-                addToList = rec.Genre.Equals(_currentShow, StringComparison.InvariantCultureIgnoreCase);
+                addToList = rec.Genre.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
             }
 
@@ -833,6 +828,7 @@ namespace TvPlugin
             {
               // Add new list item for this recording
               item = BuildItemFromRecording(rec);
+              item.Label = rec.Title;
               if (item != null)
                 itemlist.Add(item);
             }
@@ -942,16 +938,18 @@ namespace TvPlugin
           strGenre = aRecording.Genre;
         }
 
+        // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.Title, aRecording.Genre, strChannelName);
+        item = new GUIListItem();
         switch (_currentDbView)
         {
           case DBView.Recordings:
-            item = new GUIListItem(aRecording.Title);
+            item.Label = aRecording.Title;
             break;
           case DBView.Channel:
-            item = new GUIListItem(strChannelName);
+            item.Label = strChannelName;
             break;
           case DBView.Genre:
-            item = new GUIListItem(aRecording.Genre);
+            item.Label = aRecording.Genre;
             break;
         }
 
@@ -991,10 +989,10 @@ namespace TvPlugin
           item.PinImage = Thumbs.TvRecordingIcon;
         }
       }
-      catch (NullReferenceException singleex)
+      catch (Exception singleex)
       {
         item = null;
-        Log.Warn("TVRecorded: error building item from recording {0} - {1}", aRecording.FileName, singleex.Message + " stack: " + singleex.StackTrace);
+        Log.Warn("TVRecorded: Error building item from recording {0}\n{1}", aRecording.FileName, singleex.ToString());
       }
 
       return item;
@@ -1083,21 +1081,29 @@ namespace TvPlugin
           if (item1.Label == "..")
             continue;
           Recording rec = (Recording)item1.TVTag;
-          item1.Label = rec.Title;
+          // item1.Label = rec.Title;
           TimeSpan ts = rec.EndTime - rec.StartTime;
           string strTime = string.Format("{0} {1} ({2})", Utils.GetShortDayString(rec.StartTime), rec.StartTime.ToShortTimeString(), Utils.SecondsToHMString((int)ts.TotalSeconds));
           item1.Label2 = strTime;
           if (_currentViewMethod != GUIFacadeControl.ViewMode.List)
           {
-            if (rec.Genre != "unknown")
+            item1.Label3 = GUILocalizeStrings.Get(2014); // unknown
+            if (!String.IsNullOrEmpty(rec.Genre))
               item1.Label3 = rec.Genre;
-            else
-              item1.Label3 = string.Empty;
           }
           else
           {
             if (_currentSortMethod == SortMethod.Channel)
-              item1.Label2 = rec.ReferencedChannel().DisplayName;
+            {
+              item1.Label2 = GUILocalizeStrings.Get(2014); // unknown
+              try
+              {
+                string Channel = rec.ReferencedChannel().DisplayName;
+                if (String.IsNullOrEmpty(Channel))
+                  item1.Label2 = Channel;
+              }
+              catch (Exception) { }
+            }
           }
           if (rec.TimesWatched > 0)
           {
@@ -1112,7 +1118,7 @@ namespace TvPlugin
       }
     }
 
-    private bool OnPlayRecording(int iItem)
+    private bool OnSelectedRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1120,9 +1126,9 @@ namespace TvPlugin
       if (pItem.IsFolder)
       {
         if (pItem.Label.Equals(".."))
-          _currentShow = string.Empty;
+          _currentLabel = string.Empty;
         else
-          _currentShow = pItem.Label;
+          _currentLabel = pItem.Label;
         LoadDirectory();
         return false;
       }
@@ -1147,7 +1153,7 @@ namespace TvPlugin
       // instead we just playback the newly selected TV recording
       if (!g_Player.IsTVRecording)
       {
-        Log.Info("OnPlayRecording - calling g_Player.Stop(true); ");
+        Log.Info("OnSelectedRecording - calling g_Player.Stop(true); ");
         g_Player.Stop(true);
       }
 
@@ -1174,10 +1180,8 @@ namespace TvPlugin
         if (!dlgYesNo.IsConfirmed)
           stoptime = 0;
       }
-
       else if (_bIsLiveRecording)
       {
-
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
         if (dlg != null)
         {
@@ -1441,7 +1445,7 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if (_currentShow != "")
+      if (_currentLabel != "")
         dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder.
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
@@ -1454,8 +1458,8 @@ namespace TvPlugin
         DeleteWatchedRecordings(null);
       if ((dlg.SelectedLabel == 1) || (dlg.SelectedLabel == 2))
         DeleteInvalidRecordings();
-      if (dlg.SelectedLabel == 3 && _currentShow != "")
-        DeleteWatchedRecordings(_currentShow);
+      if (dlg.SelectedLabel == 3 && _currentLabel != "")
+        DeleteWatchedRecordings(_currentLabel);
       Gentle.Common.CacheManager.Clear();
       dlg.Reset();
       LoadDirectory();
@@ -1558,7 +1562,8 @@ namespace TvPlugin
 
     #endregion
 
-    #region album/list view management
+    #region View management
+
     GUIListItem GetSelectedItem()
     {
       return facadeView.SelectedListItem;
@@ -1586,6 +1591,7 @@ namespace TvPlugin
     #endregion
 
     #region Sort Members
+
     void OnSort()
     {
       try
