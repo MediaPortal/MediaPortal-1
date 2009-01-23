@@ -52,36 +52,6 @@
 !define UnRegisterExtension `!insertmacro UnRegisterExtension ""`
 !define un.UnRegisterExtension `!insertmacro UnRegisterExtension "un."`
 
-
-!macro RegisterExtension UNINSTALL_PREFIX executable extension description
-       Push "${executable}"  ; "full path to my.exe"
-       Push "${extension}"   ;  ".mkv"
-       Push "${description}" ;  "MKV File"
-       Call ${UNINSTALL_PREFIX}RegisterExtension
-!macroend
-  
-!macro UnRegisterExtension UNINSTALL_PREFIX extension description
-       Push "${extension}"   ;  ".mkv"
-       Push "${description}"   ;  "MKV File"
-       Call ${UNINSTALL_PREFIX}UnRegisterExtension
-!macroend
-
- 
-Function RegisterExtension
-  !insertmacro ___RegisterExtension___ ""
-FunctionEnd
-Function un.RegisterExtension
-  !insertmacro ___RegisterExtension___ "un."
-FunctionEnd
-
-Function UnRegisterExtension
-  !insertmacro ___UnRegisterExtension___ ""
-FunctionEnd
-Function un.UnRegisterExtension
-  !insertmacro ___UnRegisterExtension___ "un."
-FunctionEnd
-
-
 !macro ___RegisterExtension___
 !define Index "Line${__LINE__}"
   pop $R0 ; ext name
@@ -125,6 +95,35 @@ FunctionEnd
   DeleteRegKey HKCR $R1 ;Delete key with association name settings
 "${Index}-NoOwn:"
 !undef Index
+!macroend
+ 
+ 
+Function RegisterExtension
+  !insertmacro ___RegisterExtension___
+FunctionEnd
+Function un.RegisterExtension
+  !insertmacro ___RegisterExtension___
+FunctionEnd
+
+Function UnRegisterExtension
+  !insertmacro ___UnRegisterExtension___
+FunctionEnd
+Function un.UnRegisterExtension
+  !insertmacro ___UnRegisterExtension___
+FunctionEnd
+
+
+!macro RegisterExtension UNINSTALL_PREFIX executable extension description
+       Push "${executable}"  ; "full path to my.exe"
+       Push "${extension}"   ;  ".mkv"
+       Push "${description}" ;  "MKV File"
+       Call ${UNINSTALL_PREFIX}RegisterExtension
+!macroend
+  
+!macro UnRegisterExtension UNINSTALL_PREFIX extension description
+       Push "${extension}"   ;  ".mkv"
+       Push "${description}"   ;  "MKV File"
+       Call ${UNINSTALL_PREFIX}UnRegisterExtension
 !macroend
 
 !endif # !___FILE_ASSOCIATION__NSH___
