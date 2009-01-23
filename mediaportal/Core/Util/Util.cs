@@ -2884,28 +2884,28 @@ namespace MediaPortal.Util
       switch (aspectRatioType)
       {
         case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-          return "stretch";
+          return "Stretch";
 
         case MediaPortal.GUI.Library.Geometry.Type.Normal:
-          return "normal";
+          return "Normal";
 
         case MediaPortal.GUI.Library.Geometry.Type.Original:
-          return "original";
+          return "Original";
 
         case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-          return "letterbox";
+          return "Letterbox 4:3";
 
         case MediaPortal.GUI.Library.Geometry.Type.NonLinearStretch:
-          return "nonlinear";
+          return "Non-linear Stretch";
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-          return "zoom";
+          return "Zoom";
 
         case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-          return "zoom149";
+          return "Zoom 14:9";
 
         default:
-          return "normal";
+          return "Normal";
       }
     }
 
@@ -2913,25 +2913,25 @@ namespace MediaPortal.Util
     {
       switch (aspectRatioText)
       {
-        case "stretch":
+        case "Stretch":
           return MediaPortal.GUI.Library.Geometry.Type.Stretch;
 
-        case "normal":
+        case "Normal":
           return MediaPortal.GUI.Library.Geometry.Type.Normal;
 
-        case "original":
+        case "Original":
           return MediaPortal.GUI.Library.Geometry.Type.Original;
 
-        case "letterbox":
+        case "Letterbox 4:3":
           return MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
 
-        case "nonlinear":
+        case "Non-linear Stretch":
           return MediaPortal.GUI.Library.Geometry.Type.NonLinearStretch;
 
-        case "zoom":
+        case "Zoom":
           return MediaPortal.GUI.Library.Geometry.Type.Zoom;
 
-        case "zoom149":
+        case "Zoom 14:9":
           return MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
 
         default:
