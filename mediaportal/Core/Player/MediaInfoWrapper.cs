@@ -26,11 +26,13 @@ namespace MediaPortal.Player
     private string _videoCodec = string.Empty;
     private string _audioCodec = string.Empty;
     private string _scanType = string.Empty;
+    private bool _isDIVX = false; // mpeg4 DivX
     private bool _isXVID = false; // mpeg4 asp
     private bool _isH264 = false; // mpeg4 avc h264/x264
     private bool _isMP1V = false; // mpeg1 video (VCD)
     private bool _isMP2V = false; // mpeg2 video
     private bool _isMP4V = false; // mpeg4 generic
+    private bool _isWMV = false;  // WMV 7-9
     private bool _is720P = false; // is 1280x720 video
     private bool _is1080P = false; // is 1980x1080 video, progressive
     private bool _is1080I = false; // is 1920x1080 video, interlaced
@@ -38,11 +40,13 @@ namespace MediaPortal.Player
     private bool _isHDTV = false; // is HDTV resolution
     private bool _isSDTV = false; // is SDTV resolution
     private bool _isAC3 = false;  // AC3
-    private bool _isMP3 = false; // MPEG-1 Audio layer 3
+    private bool _isMP3 = false;  // MPEG-1 Audio layer 3
     private bool _isMP2A = false; // MPEG-1 Audio layer 2
-    private bool _isDTS = false; // DTS
-    private bool _isOGG = false; // OGG VORBIS
-    private bool _isAAC = false;  //AAC
+    private bool _isDTS = false;  // DTS
+    private bool _isOGG = false;  // OGG VORBIS
+    private bool _isAAC = false;  // AAC
+    private bool _isWMA = false;  // Windows Media Audio
+    private bool _isPCM = false;  // RAW audio
 
     #endregion
 
@@ -101,23 +105,28 @@ namespace MediaPortal.Player
         if (_width == 1920 && _height == 1080 && _scanType.IndexOf("interlaced") > 1)
             _is1080I = true;
 
+        _isDIVX = (_videoCodec.IndexOf("dx50") > -1); // DivX 5
         _isXVID = (_videoCodec.IndexOf("xvid") > -1);
         _isH264 = (_videoCodec.IndexOf("avc") > -1);
         _isMP1V = (_videoCodec.IndexOf("mpeg-1v") > -1);
         _isMP2V = (_videoCodec.IndexOf("mpeg-2v") > -1);
         _isMP4V = (_videoCodec.IndexOf("fmp4") > -1); // add more
-        // wmv3, cvid etc
+        _isWMV = (_videoCodec.IndexOf("wmv") > -1); // wmv3 = WMV9
+        // missing cvid etc
         _isAC3 = (_audioCodec.IndexOf("ac3") > -1);
         _isMP3 = (_audioCodec.IndexOf("mpeg-1 audio layer 3") > -1);
         _isMP2A = (_audioCodec.IndexOf("mpeg-1 audio layer 2") > -1);
         _isDTS = (_audioCodec.IndexOf("dts") > -1);
         _isOGG = (_audioCodec.IndexOf("ogg") > -1);
         _isAAC = (_audioCodec.IndexOf("aac") > -1);
-        // pcm, wma3, etc
+        _isWMA = (_audioCodec.IndexOf("wma") > -1); // e.g. wma3
+        _isPCM = (_audioCodec.IndexOf("pcm") > -1);
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: inspecting media : {0}", strFile);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec : {0}", _videoCodec);
+        if (_isDIVX)
+            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsDIVX: {0}", _isDIVX);
         if(_isXVID)
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsXVID: {0}", _isXVID);
         if (_isH264)
@@ -128,6 +137,9 @@ namespace MediaPortal.Player
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V: {0}", _isMP2V);
           if (_isMP4V)
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V: {0}", _isMP4V);
+        if (_isWMV)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMV: {0}", _isWMV);
+
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type : {0}", _scanType);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced: {0}", _isInterlaced);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width : {0}", _width);
@@ -148,8 +160,10 @@ namespace MediaPortal.Player
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsOGG : {0}", _isOGG);
         if(_isAAC)
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAAC : {0}", _isAAC);
-
-
+        if (_isWMA)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsWMA: {0}", _isWMA);
+        if (_isPCM)
+          Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsPCM: {0}", _isPCM);
       }
       catch (Exception ex)
       {
@@ -184,6 +198,11 @@ namespace MediaPortal.Player
     {
       get { return _framerate; }
     }
+
+    public bool IsDIVX
+    {
+      get { return _isDIVX; }
+    }
     
     public bool IsXVID
     {
@@ -208,6 +227,11 @@ namespace MediaPortal.Player
     public bool IsMP4V
     {
       get { return _isMP4V; }
+    }
+
+    public bool IsWMV
+    {
+      get { return _isWMV; }
     }
 
     public bool Is720P
@@ -282,6 +306,16 @@ namespace MediaPortal.Player
     public bool IsMP2A
     {
       get { return _isMP2A; }
+    }
+
+    public bool IsWMA
+    {
+      get { return _isWMA; }
+    }
+
+    public bool IsPCM
+    {
+      get { return _isPCM; }
     }
 
     public bool IsDTS

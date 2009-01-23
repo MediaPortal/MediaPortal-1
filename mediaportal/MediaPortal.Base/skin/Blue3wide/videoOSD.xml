@@ -52,13 +52,27 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
+      <description>AAC</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>195</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsAAC</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>    
+    <control>
       <description>MP3</description>
       <type>image</type>
       <id>0</id>
       <posX>195</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsMP3</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -71,8 +85,8 @@
       <id>0</id>
       <posX>195</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsAC3</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -85,8 +99,8 @@
       <id>0</id>
       <posX>195</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsDTS</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -99,8 +113,8 @@
       <id>0</id>
       <posX>195</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsMP2A</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -108,13 +122,55 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
+      <description>WMA</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>195</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsWMA</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>PCM</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>195</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsPCM</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>   
+    <control>
+      <description>DivX</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>280</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsDIVX</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>    
+    <control>
       <description>XVID</description>
       <type>image</type>
       <id>0</id>
       <posX>280</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsXVID</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -127,8 +183,8 @@
       <id>0</id>
       <posX>280</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsH264</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -136,13 +192,27 @@
       <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
+      <description>Generic MPEG4</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>280</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsMP4V</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>    
+    <control>
       <description>MP1V</description>
       <type>image</type>
       <id>0</id>
       <posX>280</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsMP1V</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -155,13 +225,27 @@
       <id>0</id>
       <posX>280</posX>
       <posY>600</posY>
-      <width>88</width>
-      <height>85</height>
+      <width>58</width>
+      <height>40</height>
       <texture>#Play.Current.IsMP2V</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+    <control>
+      <description>WMV</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>280</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.IsWMV</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>    
   </controls>
 </window>

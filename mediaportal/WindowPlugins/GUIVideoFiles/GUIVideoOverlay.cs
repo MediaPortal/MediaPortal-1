@@ -264,36 +264,47 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", "");
+      GUIPropertyManager.SetProperty("#Play.Current.IsDIVX", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsXVID", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP1V", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP4V", string.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.IsWMV", string.Empty);
+
       GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP3", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP2A", string.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.IsWMA", string.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.IsPCM", string.Empty);
 
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV)
       {
         // Set video format (only one possible per stream)
           if (g_Player.MediaInfo != null)
           {
-            if (g_Player.MediaInfo.IsXVID)
-              GUIPropertyManager.SetProperty("#Play.Current.IsXVID", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "xvid.png"));
+            if (g_Player.MediaInfo.IsDIVX)
+              GUIPropertyManager.SetProperty("#Play.Current.IsDIVX", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "DivX.png"));
             else
-              if (g_Player.MediaInfo.IsH264)
-                GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "h264.png"));
+              if (g_Player.MediaInfo.IsXVID)
+                GUIPropertyManager.SetProperty("#Play.Current.IsXVID", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "xvid.png"));
               else
-                if (g_Player.MediaInfo.IsMP4V)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsMP4V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp4v.png"));
+                if (g_Player.MediaInfo.IsH264)
+                  GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "h264.png"));
                 else
-              if (g_Player.MediaInfo.IsMP1V)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsMP1V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp1v.png"));
-              else
-              if (g_Player.MediaInfo.IsMP2V)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2v.png"));
+                  if (g_Player.MediaInfo.IsMP4V)
+                    GUIPropertyManager.SetProperty("#Play.Current.IsMP4V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp4v.png"));
+                  else
+                    if (g_Player.MediaInfo.IsMP1V)
+                      GUIPropertyManager.SetProperty("#Play.Current.IsMP1V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp1v.png"));
+                    else
+                      if (g_Player.MediaInfo.IsMP2V)
+                        GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2v.png"));
+                      else
+                        if (g_Player.MediaInfo.IsWMV)
+                          GUIPropertyManager.SetProperty("#Play.Current.IsWMV", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "wmv.png"));
 
         // Set audio format (only one possible per stream)
         if (g_Player.MediaInfo.IsMP3)
@@ -309,7 +320,13 @@ namespace MediaPortal.GUI.Video
                 GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "dts.png"));
               else
                 if (g_Player.MediaInfo.IsAAC)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "AAC.png"));              
+                  GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "AAC.png"));
+                else
+                  if (g_Player.MediaInfo.IsWMA)
+                    GUIPropertyManager.SetProperty("#Play.Current.IsWMA", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "wma.png"));
+                  else
+                    if (g_Player.MediaInfo.IsPCM)
+                      GUIPropertyManager.SetProperty("#Play.Current.IsPCM", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "pcm.png"));  
           }
       }        
 
