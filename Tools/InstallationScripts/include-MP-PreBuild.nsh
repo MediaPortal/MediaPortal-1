@@ -46,16 +46,16 @@
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
 
 !ifdef BUILD_MediaPortal
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_MP}\MediaPortal.sln"' = 0
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_MP}"  /revert' = 0
 !endif
 
 !ifdef BUILD_TVServer
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_TVServer}"' = 0
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvLibrary.sln"' = 0
 !system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${svn_TVServer}\TvPlugin\TvPlugin.sln"' = 0
-!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
+!system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_TVServer}"  /revert' = 0
 !endif
 
 !ifdef BUILD_DeployTool
