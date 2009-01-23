@@ -86,8 +86,10 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>8</posX>
-      <posY>33</posY>
+      <posX>49</posX>
+      <posY>42</posY>
+      <width>30</width>
+      <height>18</height>
       <texture>rec.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
