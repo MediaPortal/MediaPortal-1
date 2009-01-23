@@ -270,6 +270,7 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP3", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP2A", string.Empty);
 
@@ -292,6 +293,8 @@ namespace MediaPortal.GUI.Video
                   GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Empty);
                   GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "dts.png"));
               }
+              if (g_Player.MediaInfo.IsAAC)
+                GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "AAC.png"));
               if (g_Player.MediaInfo.IsMP3)
                   GUIPropertyManager.SetProperty("#Play.Current.IsMP3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp3.png"));
               if (g_Player.MediaInfo.IsMP2A)
