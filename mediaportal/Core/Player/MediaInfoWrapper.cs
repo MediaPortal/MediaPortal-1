@@ -24,6 +24,7 @@ namespace MediaPortal.Player
     private int _audiochannels = 0;
     private string _aspectRatio = "";
     private string _videoCodec = string.Empty;
+    private string _audioCodec = string.Empty;
     private string _scanType = string.Empty;
     private bool _isXVID = false; // mpeg4 asp
     private bool _isH264 = false; // mpeg4 avc h264/x264
@@ -78,7 +79,7 @@ namespace MediaPortal.Player
 
         _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String");
 
-        string codec = _mI.Get(StreamKind.Audio, 0, "Codec/String").ToLower();
+        _audioCodec = _mI.Get(StreamKind.Audio, 0, "Codec/String").ToLower();
 
         _isInterlaced = (_scanType.IndexOf("interlaced") > -1);
         if (_height >= 720)
@@ -104,12 +105,12 @@ namespace MediaPortal.Player
         _isMP1V = (_videoCodec.IndexOf("mpeg-1v") > -1);
         _isMP2V = (_videoCodec.IndexOf("mpeg-2v") > -1);
 
-        _isAC3 = (codec.IndexOf("ac3") > -1);
-        _isMP3  = (codec.IndexOf("mpeg-1 audio layer 3") > -1);
-        _isMP2A = (codec.IndexOf("mpeg-1 audio layer 2") > -1);
-        _isDTS  = (codec.IndexOf("dts") > -1);
-        _isOGG  = (codec.IndexOf("ogg") > -1); 
-        _isAAC  = (codec.IndexOf("aac") > -1);
+        _isAC3 = (_audioCodec.IndexOf("ac3") > -1);
+        _isMP3 = (_audioCodec.IndexOf("mpeg-1 audio layer 3") > -1);
+        _isMP2A = (_audioCodec.IndexOf("mpeg-1 audio layer 2") > -1);
+        _isDTS = (_audioCodec.IndexOf("dts") > -1);
+        _isOGG = (_audioCodec.IndexOf("ogg") > -1);
+        _isAAC = (_audioCodec.IndexOf("aac") > -1);
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: inspecting media : {0}", strFile);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
@@ -129,7 +130,7 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiochannels : {0}", _audiochannels);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Audiorate : {0}", _audiorate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio : {0}", _aspectRatio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec : {0}", codec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec : {0}", _audioCodec);
         if(_isAC3)
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsAC3 : {0}", _isAC3);
         if(_isMP3)
@@ -183,6 +184,7 @@ namespace MediaPortal.Player
     {
       get { return _isXVID; }
     }
+
     public bool IsH264
     {
        get { return _isH264; }
@@ -241,6 +243,11 @@ namespace MediaPortal.Player
     #endregion
 
     #region public audio related properties
+
+    public string AudioCodec
+    {
+      get { return _audioCodec; }
+    }
 
     public int Audiorate
     {
