@@ -2007,7 +2007,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       strButtonText = GUILocalizeStrings.Get(34000);
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
-      strPictureImage = "hover_my radio.png"; //hover_LastFmRadio.png
+      strPictureImage = "hover_LastFmRadio.png";
       return true;
     }
 
