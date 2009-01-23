@@ -687,6 +687,9 @@
     <String id="810">Kort</String>
     <String id="820">Slette usette opptak?</String>
     <String id="830">Marker som usett</String>
+    <String id="831">Løs ut ekstern harddisk</String>
+    <String id="832">Kan ikke fjerne harddisk: </String>
+    <String id="833">Harddisk kan nå trygt fjernes</String>
     <String id="850" prefix="Min ">Alarm</String>
     <String id="851">Spilleliste</String>
     <String id="852">Alarm på</String>
@@ -954,6 +957,7 @@
     <String id="1448">Velg Ingen</String>
     <String id="1449">Stopp opptak</String>
     <String id="1450">Er du sikker på at du vil stoppe opptaket?</String>
+    <String id="1451">Kan ikke avspilles</String>
     <String id="1499">Ikke signal</String>
     <String id="1500">Kan ikke starte tidsskifting</String>
     <String id="1501">TV-korter er fra koblet</String>
