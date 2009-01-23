@@ -46,7 +46,7 @@
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-<!--     <selectedColor>white</selectedColor> -->
+    <!--     <selectedColor>white</selectedColor> -->
     <animation effect="zoom" start="100,100" end="105,105" time="100">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="300">unfocus</animation>
   </control>
@@ -339,7 +339,6 @@
   <control>
     <description>default thumbnail panel</description>
     <type>thumbnailpanel</type>
-
     <id>11</id>
     <posX>80</posX>
     <posY>97</posY>

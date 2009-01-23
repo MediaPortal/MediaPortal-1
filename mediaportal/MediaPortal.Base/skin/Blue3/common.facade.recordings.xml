@@ -17,9 +17,9 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <scrollOffset>2</scrollOffset>
-<!--                    <width>775</width>
-                    <height>460</height>
-                    <PinIconWidth>35</PinIconWidth>
+          <width>425</width>
+          <height>370</height>
+          <!--<PinIconWidth>35</PinIconWidth>
 					<PinIconHeight>25</PinIconHeight>
 					<PinIconXOff>49</PinIconXOff>
 					<PinIconYOff>11</PinIconYOff>
@@ -39,8 +39,8 @@
           <type>listcontrol</type>
           <subtype>album</subtype>
           <id>50</id>
-          <!--<width>755</width>
-          <height>460</height>-->
+          <width>425</width>
+          <height>370</height>
           <font>font13</font>
           <font2>font13</font2>
           <selectedColor>80000000</selectedColor>
@@ -48,7 +48,7 @@
           <selectedColor2>ffffffff</selectedColor2>
           <textcolor2>ffffffff</textcolor2>
           <textXOff2>420</textXOff2>
-          <!--<textXOff3>108</textXOff3>-->
+          <textXOff3>111</textXOff3>
           <textYOff2>60</textYOff2>
           <itemWidth>72</itemWidth>
           <itemHeight>72</itemHeight>
@@ -68,37 +68,37 @@
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
-          <posX>50</posX>
+          <posX>260</posX>
           <posY>105</posY>
-          <width>660</width>
-          <height>471</height>
+          <width>425</width>
+          <height>370</height>
           <scrollOffset>0</scrollOffset>
           <onleft>2</onleft>
           <onright>50</onright>
-          <itemWidth>72</itemWidth>
-          <!--<itemHeight>130</itemHeight>-->
-          <textureWidth>58</textureWidth>
-          <!--<textureHeight>100</textureHeight>-->
-          <thumbWidth>44</thumbWidth>
-          <!--<thumbHeight>90</thumbHeight>-->
-          <thumbPosX>7</thumbPosX>
-          <!--<thumbPosY>5</thumbPosY>-->
-          <itemWidthBig>108</itemWidthBig>
-          <itemHeightBig>138</itemHeightBig>
-          <textureWidthBig>85</textureWidthBig>
-          <textureHeightBig>116</textureHeightBig>
-          <thumbWidthBig>64</thumbWidthBig>
-          <thumbHeightBig>90</thumbHeightBig>
-          <thumbPosXBig>10</thumbPosXBig>
-          <!--<thumbPosYBig>5</thumbPosYBig>-->
+          <itemWidth>140</itemWidth>
+          <itemHeight>77</itemHeight>
+          <textureWidth>100</textureWidth>
+          <textureHeight>60</textureHeight>
+          <thumbWidth>89</thumbWidth>
+          <thumbHeight>50</thumbHeight>
+          <thumbPosX>5</thumbPosX>
+          <thumbPosY>3</thumbPosY>
+          <itemWidthBig>210</itemWidthBig>
+          <itemHeightBig>166</itemHeightBig>
+          <textureWidthBig>177</textureWidthBig>
+          <textureHeightBig>102</textureHeightBig>
+          <thumbWidthBig>160</thumbWidthBig>
+          <thumbHeightBig>92</thumbHeightBig>
+          <thumbPosXBig>8</thumbPosXBig>
+          <thumbPosYBig>5</thumbPosYBig>
           <zoomXPixels>0</zoomXPixels>
-	      <zoomYPixels>0</zoomYPixels>
-	      <thumbZoom>no</thumbZoom>
-	      <enableFocusZoom>false</enableFocusZoom>
-	      <keepaspectratio>no</keepaspectratio>
-	      <hideUnfocusTexture>no</hideUnfocusTexture>
-	      <renderFocusText>no</renderFocusText>
-	      <renderUnfocusText>yes</renderUnfocusText>
+          <zoomYPixels>0</zoomYPixels>
+          <thumbZoom>no</thumbZoom>
+          <enableFocusZoom>false</enableFocusZoom>
+          <keepaspectratio>no</keepaspectratio>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
         </control>
       </control>
     </control>
