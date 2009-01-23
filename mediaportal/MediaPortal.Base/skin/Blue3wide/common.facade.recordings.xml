@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
     <controls>
         <control>
@@ -92,7 +91,8 @@
                     <thumbHeightBig>170</thumbHeightBig>
                     <thumbPosXBig>5</thumbPosXBig>
                     <thumbPosYBig>5</thumbPosYBig>
-                    <zoomXPixels>24</zoomXPixels>
+                    <zoomXPixels>0</zoomXPixels>
+                    <zoomYPixels>0</zoomYPixels>
                     <thumbZoom>no</thumbZoom>
                     <enableFocusZoom>false</enableFocusZoom>
                     <keepaspectratio>no</keepaspectratio>

@@ -90,28 +90,27 @@
       <control>
         <type>sortbutton</type>
         <id>3</id>
-        <onleft>2</onleft>
+        <onleft>3</onleft>
         <onright>50</onright>
         <onup>2</onup>
         <ondown>5</ondown>
-        <font>font13</font>
         <label>620</label>
       </control>
-<!--       <control>
+      <control>
         <type>button</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
-        <onleft>6</onleft>
+        <onleft>5</onleft>
         <onright>50</onright>
-        <onup>2</onup>
+        <onup>3</onup>
         <ondown>6</ondown>
         <label>457</label>
-      </control> -->
+      </control>
       <control>
         <type>button</type>
         <description>cleanup button</description>
         <id>6</id>
-        <onleft>2</onleft>
+        <onleft>6</onleft>
         <onright>50</onright>
         <onup>5</onup>
         <ondown>7</ondown>
@@ -122,7 +121,7 @@
         <type>button</type>
         <description>compress button</description>
         <id>7</id>
-        <onleft>2</onleft>
+        <onleft>7</onleft>
         <onright>50</onright>
         <onup>6</onup>
         <ondown>99</ondown>
@@ -159,7 +158,7 @@
         <posX>800</posX>
         <posY>600</posY>
         <label>#TV.RecordedTV.Title</label>
-        <disabledcolor>00808080</disabledcolor>
+        <disabledcolor>808080</disabledcolor>
         <textcolor>00b2d4f5</textcolor>
       </control>
       <control>
