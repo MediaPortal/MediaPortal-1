@@ -2774,15 +2774,12 @@ namespace MediaPortal.Player
     {
       try
       {
-        MediaInfo mI = new MediaInfo();
-        mI.Open(FileName);
-        string VideoCodec = mI.Get(StreamKind.Video, 0, "Codec");
-        string AudioCodec = mI.Get(StreamKind.Audio, 0, "Codec");
-
+        _mediaInfo = new MediaInfoWrapper(FileName);
+        
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Path.GetFileName(FileName));
-        msg.Label2 = string.IsNullOrEmpty(VideoCodec) ? string.Empty : string.Format("Video codec: {0}", VideoCodec);
-        msg.Label3 = string.Format("Audio codec: {0}", AudioCodec);
+        msg.Label2 = string.IsNullOrEmpty(_mediaInfo.VideoCodec) ? string.Empty : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
+        msg.Label3 = string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
       }
       catch (Exception ex)
