@@ -70,7 +70,11 @@
 !ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
-  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+  !ifdef UPDATE_BUILD
+    !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
+  !else
+    !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+  !endif
 !endif
 !define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
 

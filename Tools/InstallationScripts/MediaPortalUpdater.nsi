@@ -55,15 +55,15 @@ Name "MediaPortal Update"
 # BUILD sources
 #---------------------------------------------------------------------------
 ; comment one of the following lines to disable the preBuild
-#!define BUILD_MediaPortal
-#!define BUILD_TVServer
-#!define BUILD_DeployTool           <---- not needed for the updater
-/*   TODO
-  - add installer build commands, maybe with special build parameters for the updater
-*/
-#!define BUILD_Installer
+!define BUILD_MediaPortal
+!define BUILD_TVServer
+#!define BUILD_DeployTool      #     <---- not needed for the updater
+#!define BUILD_Installer         #<---- not needed for the updater, because it is building the installer with special parameters, uncomment it for testing please
 
 !include "include-MP-PreBuild.nsh"
+
+!system '"${NSISDIR}\makensis.exe" /DUPDATE_BUILD "${svn_MP}\Setup\setup.nsi"' = 0  # <----  comment for testing purposes these two line please
+!system '"${NSISDIR}\makensis.exe" /DUPDATE_BUILD "${svn_TVServer}\Setup\setup.nsi"' = 0
 
 #---------------------------------------------------------------------------
 # UNPACKER script

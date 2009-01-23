@@ -68,7 +68,16 @@
 
 # additional path definitions
 !define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"
-!define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+#!define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+!ifdef SVN_BUILD
+  !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
+!else
+  !ifdef UPDATE_BUILD
+    !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
+  !else
+    !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+  !endif
+!endif
 
 #---------------------------------------------------------------------------
 # VARIABLES
