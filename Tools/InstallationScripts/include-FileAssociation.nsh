@@ -47,20 +47,42 @@
 !define ___FILE_ASSOCIATION__NSH___
 
 
+!define RegisterExtension `!insertmacro RegisterExtension ""`
+!define un.RegisterExtension `!insertmacro RegisterExtension "un."`
+!define UnRegisterExtension `!insertmacro UnRegisterExtension ""`
+!define un.UnRegisterExtension `!insertmacro UnRegisterExtension "un."`
 
 
-!define registerExtension "!insertmacro registerExtension"
-!define unregisterExtension "!insertmacro unregisterExtension"
- 
-!macro registerExtension executable extension description
+!macro RegisterExtension UNINSTALL_PREFIX executable extension description
        Push "${executable}"  ; "full path to my.exe"
        Push "${extension}"   ;  ".mkv"
        Push "${description}" ;  "MKV File"
-       Call registerExtension
+       Call ${UNINSTALL_PREFIX}RegisterExtension
 !macroend
+  
+!macro UnRegisterExtension UNINSTALL_PREFIX extension description
+       Push "${extension}"   ;  ".mkv"
+       Push "${description}"   ;  "MKV File"
+       Call ${UNINSTALL_PREFIX}UnRegisterExtension
+!macroend
+
  
-; back up old value of .opt
-Function registerExtension
+Function RegisterExtension
+  !insertmacro ___RegisterExtension___ ""
+FunctionEnd
+Function un.RegisterExtension
+  !insertmacro ___RegisterExtension___ "un."
+FunctionEnd
+
+Function UnRegisterExtension
+  !insertmacro ___UnRegisterExtension___ ""
+FunctionEnd
+Function un.UnRegisterExtension
+  !insertmacro ___UnRegisterExtension___ "un."
+FunctionEnd
+
+
+!macro ___RegisterExtension___
 !define Index "Line${__LINE__}"
   pop $R0 ; ext name
   pop $R1
@@ -85,15 +107,9 @@ Function registerExtension
   pop $0
   pop $1
 !undef Index
-FunctionEnd
- 
-!macro unregisterExtension extension description
-       Push "${extension}"   ;  ".mkv"
-       Push "${description}"   ;  "MKV File"
-       Call un.unregisterExtension
 !macroend
- 
-Function un.unregisterExtension
+
+!macro ___UnRegisterExtension___
   pop $R1 ; description
   pop $R0 ; extension
 !define Index "Line${__LINE__}"
@@ -109,7 +125,7 @@ Function un.unregisterExtension
   DeleteRegKey HKCR $R1 ;Delete key with association name settings
 "${Index}-NoOwn:"
 !undef Index
-FunctionEnd
+!macroend
 
 !endif # !___FILE_ASSOCIATION__NSH___
 

@@ -435,7 +435,39 @@ Var TempInstallLog
   SetRegView 32
 
   ${If} ${TVServerIsInstalled}
+  ${OrIf} ${TVClientIsInstalled}
     ReadRegStr ${_var} HKLM "${TV3_REG_UNINSTALL}" "InstallPath"
+  ${Else}
+    StrCpy ${_var} ""
+  ${EndIf}
+
+!macroend
+
+!macro MP_GET_VERSION _var
+  SetRegView 32
+
+  ${If} ${MPIsInstalled}
+    ReadRegDWORD $R0 HKLM "${MP_REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${MP_REG_UNINSTALL}" "VersionMinor"
+    ReadRegDWORD $R2 HKLM "${MP_REG_UNINSTALL}" "VersionRevision"
+    ReadRegDWORD $R3 HKLM "${MP_REG_UNINSTALL}" "VersionBuild"
+    StrCpy ${_var} $R0.$R1.$R2.$R3
+  ${Else}
+    StrCpy ${_var} ""
+  ${EndIf}
+
+!macroend
+
+!macro TVSERVER_GET_VERSION _var
+  SetRegView 32
+
+  ${If} ${TVServerIsInstalled}
+  ${OrIf} ${TVClientIsInstalled}
+    ReadRegDWORD $R0 HKLM "${TV3_REG_UNINSTALL}" "VersionMajor"
+    ReadRegDWORD $R1 HKLM "${TV3_REG_UNINSTALL}" "VersionMinor"
+    ReadRegDWORD $R2 HKLM "${TV3_REG_UNINSTALL}" "VersionRevision"
+    ReadRegDWORD $R3 HKLM "${TV3_REG_UNINSTALL}" "VersionBuild"
+    StrCpy ${_var} $R0.$R1.$R2.$R3
   ${Else}
     StrCpy ${_var} ""
   ${EndIf}
@@ -483,7 +515,11 @@ LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "$(^Name) is a
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
 LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is required after a previous action. Reboot you system and try it again."
 
-
+LangString UPDATE_ERROR_WRONGEXE                  ${LANG_ENGLISH} "updating $(^Name) is only allowed by starting MediaPortalUpdater!"
+LangString UPDATE_ERROR_UNKNOWN                   ${LANG_ENGLISH} "strange / unknown error, please use full installer"
+LangString UPDATE_ERROR_NOTHING_INSTALLED         ${LANG_ENGLISH} "Nothing to do, nothing installed, please use the full installer"
+LangString UPDATE_ERROR_VERSION_MP                ${LANG_ENGLISH} "wrong version of MediaPortal is installed or svn, please use the full installer"
+LangString UPDATE_ERROR_VERSION_TVSERVER          ${LANG_ENGLISH} "wrong version or TVServer or Client plugin is installed or svn, please use the full installer"
 
   /*
 ; Section flag test

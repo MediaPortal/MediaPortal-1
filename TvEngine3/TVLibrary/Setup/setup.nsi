@@ -33,13 +33,23 @@
 #---------------------------------------------------------------------------
 # SPECIAL BUILDS
 #---------------------------------------------------------------------------
-# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without Gabest Filters)
-;!define HEISE_BUILD
-# swtich for command line execution: /DHEISE_BUILD
+##### SVN_BUILD
+# This build will be created by svn bot only.
+# Creating such a build, will only include the changed and new files since latest stable release to the installer.
 
+##### UPDATE_BUILD
+# This build will be created by svn bot only.
+# Creating such a build, will only include the changed and new files since latest stable release to the installer.
+
+##### HEISE_BUILD
+# Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
+;!define HEISE_BUILD
+# parameter for command line execution: /DHEISE_BUILD
+
+##### BUILD_TYPE
 # Uncomment the following line to create a setup in debug mode
 ;!define BUILD_TYPE "Debug"
-# swtich for command line execution: /DBUILD_TYPE=Debug
+# parameter for command line execution: /DBUILD_TYPE=Debug
 # by default BUILD_TYPE is set to "Release"
 !ifndef BUILD_TYPE
   !define BUILD_TYPE "Release"
@@ -98,11 +108,15 @@ Var DeployMode
 !if ${BUILD_TYPE} == "Debug"
     !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
-  !if ${VER_BUILD} == 0       # it's a stable release
-    !define VERSION "1.0"
-  !else                       # it's an svn reöease
-    !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
+!if ${VER_BUILD} == 0       # it's an official release
+  !ifndef UPDATE_BUILD        # it's the full installer
+    !define VERSION "1.0.1"
+  !else                       # it's the update installer
+    !define VERSION "1.0.1 Update"
   !endif
+!else                       # it's a svn release
+    !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
+!endif
 !endif
 Name          "${NAME}"
 SetCompressor /SOLID lzma
@@ -142,13 +156,12 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP              "Resources\header.bmp"
-!if ${VER_BUILD} == 0       # it's a stable release
-    !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard.bmp"
-!else                       # it's an svn reöease
-    !define MUI_WELCOMEFINISHPAGE_BITMAP    "Resources\wizard-svn.bmp"
-    !define MUI_UNWELCOMEFINISHPAGE_BITMAP  "Resources\wizard-svn.bmp"
+!if ${VER_BUILD} == 0       # it's an official release
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "Resources\wizard.bmp"
+!else                       # it's a svn release
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "Resources\wizard-svn.bmp"
 !endif
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "Resources\wizard.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
@@ -163,7 +176,7 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 #!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.txt
 #!define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
 #!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_FINISHPAGE_LINK "Donate to MediaPortal"
+!define MUI_FINISHPAGE_LINK          "Donate to MediaPortal"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://www.team-mediaportal.com/donate.html"
 
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -239,7 +252,7 @@ ShowUninstDetails show
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
-!if ${VER_BUILD} == 0       # it's an official release (stable or release candidate)
+!macro RenameInstallDirectory
 Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   ${LOG_TEXT} "INFO" "Prepare installation..."
@@ -262,6 +275,13 @@ Section "-prepare" SecPrepare
   ${EndIf}
 
 SectionEnd
+!macroend
+!if ${VER_BUILD} == 0       # it's an official release
+  !ifndef UPDATE_BUILD        # it's the full installer
+    !insertmacro RenameInstallDirectory
+  !else                       # it's the update installer
+    # no rename, because files will be updated
+  !endif
 !endif
 
 ${MementoSection} "MediaPortal TV Server" SecServer
@@ -565,6 +585,15 @@ Section -Post
   ${LOG_TEXT} "DEBUG" "SECTION Post"
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
+!ifdef UPDATE_BUILD        # it's the update installer, no workaround needed
+
+    ;Removes unselected components
+    !insertmacro SectionList "FinishSection"
+
+    ;writes component status to registry
+    ${MementoSectionSave}
+
+!else                      # it's the full installer, workaround needed for the DeployTool
   ${If} $DeployMode == 1
 
     #MessageBox MB_OK|MB_ICONEXCLAMATION "DeployMode == 1"
@@ -591,6 +620,7 @@ Section -Post
     ${MementoSectionSave}
 
   ${EndIf}
+!endif
 
   SetOverwrite on
   SetOutPath $INSTDIR
@@ -715,6 +745,14 @@ Function .onInit
 
   ; reads components status for registry
   ${MementoSectionRestore}
+
+!ifdef UPDATE_BUILD
+  ; updating is only allowed by starting MediaPortalUpdater
+  ${If} $DeployMode = 0
+    MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_WRONGEXE)"
+    Abort
+  ${EndIf}
+!endif
 
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noClient = 1

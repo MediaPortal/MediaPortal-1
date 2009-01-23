@@ -77,7 +77,7 @@ Name "MediaPortal Update"
 !define VER_BUILD       0
 !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 
-BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
+BrandingText  "${NAME} ${VERSION} Update by ${COMPANY}"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -137,7 +137,7 @@ BrandingText  "${NAME} ${VERSION} by ${COMPANY}"
 #!endif
 
 #!ifndef HEISE_BUILD
-#!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_COMPONENTS
 #!endif
 #!insertmacro MUI_PAGE_DIRECTORY
 #!insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
@@ -163,7 +163,7 @@ OutFile "MediaPortalUpdater_1.0.1_SVN${SVN_REVISION}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 ;Page directory
-Page instfiles
+#Page instfiles
 /*   TODO
   - add additional installer pages
 */
@@ -185,31 +185,40 @@ VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
 
+Section "MediaPortal" SecMP
+SectionEnd
+Section "TV Client plugin" SecClient
+SectionEnd
+Section "TV Server" SecServer
+SectionEnd
+
 Section
   IfFileExists "$INSTDIR\*.*" 0 +2
     RMDir "$INSTDIR"
 
+  # extract the installers to temp
   SetOutPath $INSTDIR
-
-
-/*   TODO
-  - Check if MP is installed
-        - false: skip
-        - true: extract updater and run it
-  - Check if TVplugin OR TVServer is installed
-        - false: skip
-        - true: extract tvserver updater
-                   run the updater (only update the installed components)
-
-
-
-
   File "${svn_MP}\Setup\Release\package-mediaportal.exe"
-  Exec "$INSTDIR\package-mediaportal.exe"
-
   File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
-  Exec "$INSTDIR\package-tvengine.exe"
-*/
+
+
+  # install MP
+  ${If} ${MPIsInstalled}
+    Exec "'$INSTDIR\package-mediaportal.exe' /S /DeployMode"
+  ${EndIf}
+
+  # install TVserver or plugin  
+  ${If} ${TVServerIsInstalled}
+  ${AndIf} ${TVClientIsInstalled}
+    Exec "'$INSTDIR\package-mediaportal.exe' /S /DeployMode"
+  ${Else}
+    ${If} ${TVServerIsInstalled}
+      Exec "'$INSTDIR\package-mediaportal.exe' /S /noClient /DeployMode"
+    ${ElseIf} ${TVClientIsInstalled}
+      Exec "'$INSTDIR\package-mediaportal.exe' /S /noServer /DeployMode"
+    ${EndIf}
+  ${EndIf}
+
 
 SectionEnd
 
@@ -220,11 +229,51 @@ Function .onInit
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck 0
 
+  # installation checks
+  ${IfNot} ${MPIsInstalled}
+  ${AndIfNot} ${TVServerIsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_NOTHING_INSTALLED)"
+    Abort
+  ${EndIf}
 
-/*   TODO
-  - Check if MP or TVserver is installed
-        - true: go on
-        - false: abort, show msgbox
-*/
+  ${If} ${TVClientIsInstalled}
+  ${AndIfNot} ${MPIsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_UNKNOWN)"
+    Abort
+  ${EndIf}
 
+
+  ${If} ${MPIsInstalled}
+    !insertmacro MP_GET_VERSION $0
+    ${IfNot} $0 = "1.0.0.0"
+      MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_VERSION_MP)"
+      Abort
+    ${EndIf}
+  ${EndIf}
+  
+  ${If} ${TVServerIsInstalled}
+  ${OrIf} ${TVClientIsInstalled}
+    !insertmacro TVSERVER_GET_VERSION $0
+    ${IfNot} $0 = "1.0.0.0"
+      MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_VERSION_TVSERVER)"
+      Abort
+    ${EndIf}
+  ${EndIf}
+
+
+  # sections for components page  (only for visual reason)
+  #first all will be unselected and read only
+  !insertmacro DisableComponent "${SecMP}"     ""
+  !insertmacro DisableComponent "${SecServer}" ""
+  !insertmacro DisableComponent "${SecClient}" ""
+  # the ones which will be updated, needs to be enabled again
+  ${If} ${MPIsInstalled}
+    !insertmacro SelectSection ${SecMP}
+  ${EndIf}
+  ${If} ${TVServerIsInstalled}
+    !insertmacro SelectSection ${SecServer}
+  ${EndIf}
+  ${If} ${TVClientIsInstalled}
+    !insertmacro SelectSection ${SecClient}
+  ${EndIf}
 FunctionEnd
