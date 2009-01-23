@@ -30,6 +30,7 @@ namespace MediaPortal.Player
     private bool _isH264 = false; // mpeg4 avc h264/x264
     private bool _isMP1V = false; // mpeg1 video (VCD)
     private bool _isMP2V = false; // mpeg2 video
+    private bool _isMP4V = false; // mpeg4 generic
     private bool _is720P = false; // is 1280x720 video
     private bool _is1080P = false; // is 1980x1080 video, progressive
     private bool _is1080I = false; // is 1920x1080 video, interlaced
@@ -104,13 +105,15 @@ namespace MediaPortal.Player
         _isH264 = (_videoCodec.IndexOf("avc") > -1);
         _isMP1V = (_videoCodec.IndexOf("mpeg-1v") > -1);
         _isMP2V = (_videoCodec.IndexOf("mpeg-2v") > -1);
-
+        _isMP4V = (_videoCodec.IndexOf("fmp4") > -1); // add more
+        // wmv3, cvid etc
         _isAC3 = (_audioCodec.IndexOf("ac3") > -1);
         _isMP3 = (_audioCodec.IndexOf("mpeg-1 audio layer 3") > -1);
         _isMP2A = (_audioCodec.IndexOf("mpeg-1 audio layer 2") > -1);
         _isDTS = (_audioCodec.IndexOf("dts") > -1);
         _isOGG = (_audioCodec.IndexOf("ogg") > -1);
         _isAAC = (_audioCodec.IndexOf("aac") > -1);
+        // pcm, wma3, etc
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: inspecting media : {0}", strFile);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate : {0}", _framerate);
@@ -123,6 +126,8 @@ namespace MediaPortal.Player
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP1V: {0}", _isMP1V);
         if (_isMP2V)
             Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP2V: {0}", _isMP2V);
+          if (_isMP4V)
+            Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsMP4V: {0}", _isMP4V);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type : {0}", _scanType);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced: {0}", _isInterlaced);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width : {0}", _width);
@@ -198,6 +203,11 @@ namespace MediaPortal.Player
     public bool IsMP2V
     {
       get { return _isMP2V; }
+    }
+
+    public bool IsMP4V
+    {
+      get { return _isMP4V; }
     }
 
     public bool Is720P

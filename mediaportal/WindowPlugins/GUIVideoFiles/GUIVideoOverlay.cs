@@ -268,6 +268,7 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP1V", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.IsMP4V", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Empty);
@@ -276,32 +277,41 @@ namespace MediaPortal.GUI.Video
 
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV)
       {
+        // Set video format (only one possible per stream)
           if (g_Player.MediaInfo != null)
           {
-              if(g_Player.MediaInfo.IsXVID)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsXVID", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "xvid.png"));
+            if (g_Player.MediaInfo.IsXVID)
+              GUIPropertyManager.SetProperty("#Play.Current.IsXVID", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "xvid.png"));
+            else
               if (g_Player.MediaInfo.IsH264)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "h264.png"));
+                GUIPropertyManager.SetProperty("#Play.Current.IsH264", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "h264.png"));
+              else
+                if (g_Player.MediaInfo.IsMP4V)
+                  GUIPropertyManager.SetProperty("#Play.Current.IsMP4V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp4v.png"));
+                else
               if (g_Player.MediaInfo.IsMP1V)
                   GUIPropertyManager.SetProperty("#Play.Current.IsMP1V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp1v.png"));
+              else
               if (g_Player.MediaInfo.IsMP2V)
                   GUIPropertyManager.SetProperty("#Play.Current.IsMP2V", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2v.png"));
-              if (g_Player.MediaInfo.IsAC3)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "ac3.png"));
+
+        // Set audio format (only one possible per stream)
+        if (g_Player.MediaInfo.IsMP3)
+          GUIPropertyManager.SetProperty("#Play.Current.IsMP3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp3.png"));
+        else
+          if (g_Player.MediaInfo.IsMP2A)
+            GUIPropertyManager.SetProperty("#Play.Current.IsMP2A", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2a.png"));
+          else
+            if (g_Player.MediaInfo.IsAC3)
+              GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "ac3.png"));
+            else
               if (g_Player.MediaInfo.IsDTS)
-              { // clear ac3 as it's same family
-                  GUIPropertyManager.SetProperty("#Play.Current.IsAC3", string.Empty);
-                  GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "dts.png"));
-              }
-              if (g_Player.MediaInfo.IsAAC)
-                GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "AAC.png"));
-              if (g_Player.MediaInfo.IsMP3)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsMP3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp3.png"));
-              if (g_Player.MediaInfo.IsMP2A)
-                  GUIPropertyManager.SetProperty("#Play.Current.IsMP2A", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2a.png"));
+                GUIPropertyManager.SetProperty("#Play.Current.IsDTS", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "dts.png"));
+              else
+                if (g_Player.MediaInfo.IsAAC)
+                  GUIPropertyManager.SetProperty("#Play.Current.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "AAC.png"));              
           }
-      }
-        
+      }        
 
       if (g_Player.IsDVD)
       {
