@@ -34,19 +34,6 @@
     </control>
     <control>
       <type>label</type>
-      <description>My Recorded TV Text Label</description>
-      <id>1</id>
-      <posX>444</posX>
-      <posY>85</posY>
-      <label>652</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <type>label</type>
       <description>Number of Files Label</description>
       <id>12</id>
       <posX>462</posX>
@@ -60,7 +47,7 @@
       <type>fadelabel</type>
       <description>Selected item Label</description>
       <id>1</id>
-      <posX>1208</posX>
+      <posX>1168</posX>
       <posY>85</posY>
       <width>622</width>
       <label>#selecteditem</label>

@@ -14,11 +14,11 @@
                     <id>50</id>
                     <posX>400</posX>
         			<posY>121</posY>
+        			<width>775</width>
+                    <height>460</height>
                     <onleft>2</onleft>
                     <onright>2</onright>
-                    <scrollOffset>2</scrollOffset>
-                    <width>775</width>
-                    <height>460</height>
+                    <scrollOffset>2</scrollOffset>                   
                     <PinIconWidth>35</PinIconWidth>
 					<PinIconHeight>25</PinIconHeight>
 					<PinIconXOff>49</PinIconXOff>
@@ -39,7 +39,9 @@
                     <type>listcontrol</type>
                     <subtype>album</subtype>
                     <id>50</id>
-                    <width>755</width>
+                    <posX>400</posX>
+        			<posY>121</posY>
+                    <width>775</width>
                     <height>460</height>
                     <font>font13</font>
                     <font2>font13</font2>
@@ -53,7 +55,11 @@
                     <itemWidth>50</itemWidth>
                     <itemHeight>50</itemHeight>
                     <IconXOff>12</IconXOff>
-                    <IconYOff>9</IconYOff>
+                    <IconYOff>12</IconYOff>
+                    <PinIconWidth>35</PinIconWidth>
+					<PinIconHeight>20</PinIconHeight>
+					<PinIconXOff>69</PinIconXOff>
+					<PinIconYOff>41</PinIconYOff>
                     <spaceBetweenItems>5</spaceBetweenItems>
                     <textureHeight>72</textureHeight>
                     <scrollOffset>1</scrollOffset>
@@ -68,7 +74,7 @@
                     <description>Thumbnail Panel</description>
                     <type>thumbnailpanel</type>
                     <id>50</id>
-                    <posX>462</posX>
+                    <posX>400</posX>
                     <posY>121</posY>
                     <width>755</width>
                     <height>460</height>
@@ -94,7 +100,7 @@
                     <zoomXPixels>0</zoomXPixels>
                     <zoomYPixels>0</zoomYPixels>
                     <thumbZoom>no</thumbZoom>
-                    <enableFocusZoom>false</enableFocusZoom>
+                    <enableFocusZoom>no</enableFocusZoom>
                     <keepaspectratio>no</keepaspectratio>
                     <hideUnfocusTexture>no</hideUnfocusTexture>
                     <renderFocusText>no</renderFocusText>
