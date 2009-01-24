@@ -11,6 +11,7 @@
 <!--   - Finland   -->
 <!--   - France   -->
 <!--   - Germany   -->
+<!--   - Greece   -->
 <!--   - Italy   -->
 <!--   - Luxembourg   -->
 <!--   - Netherlands   -->
@@ -18,6 +19,7 @@
 <!--   - Norway   -->
 <!--   - Singapore   -->
 <!--   - South Africa -->
+<!--   - Slovenia   -->
 <!--   - Spain   -->
 <!--   - Sweden   -->
 <!--   - Taiwan   -->
@@ -103,6 +105,11 @@
     <carrier frequency="592500" bandwidth="7"></carrier>
     <carrier frequency="599500" bandwidth="7"></carrier>
     <carrier frequency="620500" bandwidth="7"></carrier>
+    <carrier frequency="690500" bandwidth="7"></carrier>
+    <carrier frequency="711500" bandwidth="7"></carrier>
+    <carrier frequency="732500" bandwidth="7"></carrier>
+    <carrier frequency="753500" bandwidth="7"></carrier>
+    <carrier frequency="774500" bandwidth="7"></carrier>
   </country>
   <country name="Australia - NSW - Coffs Harbour Mt Moombil" offset="125">
     <carrier frequency="585500" bandwidth="7"></carrier>
@@ -389,6 +396,70 @@
     <carrier frequency="778000" bandwidth="8"></carrier>
     <carrier frequency="826000" bandwidth="8"></carrier>
     <carrier frequency="834000" bandwidth="8"></carrier>
+  </country>
+  <country name="Estonia - All regions" offset="125">
+    <carrier frequency="570000" bandwidth="8" />
+    <carrier frequency="610000" bandwidth="8" />
+    <carrier frequency="666000" bandwidth="8" />
+    <carrier frequency="682000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8" />
+    <carrier frequency="722000" bandwidth="8" />
+    <carrier frequency="730000" bandwidth="8" />
+    <carrier frequency="754000" bandwidth="8" />
+    <carrier frequency="762000" bandwidth="8" />
+    <carrier frequency="770000" bandwidth="8" />
+    <carrier frequency="778000" bandwidth="8" />
+    <carrier frequency="786000" bandwidth="8" />
+    <carrier frequency="794000" bandwidth="8" />
+    <carrier frequency="802000" bandwidth="8" />
+    <carrier frequency="810000" bandwidth="8" />
+    <carrier frequency="818000" bandwidth="8" />
+    <carrier frequency="842000" bandwidth="8" />
+    <carrier frequency="858000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Tallinn, Teletorn, Kristiine" offset="125">
+    <carrier frequency="666000" bandwidth="8" />
+    <carrier frequency="778000" bandwidth="8" />
+    <carrier frequency="818000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Valgjarve, Tartu" offset="125">
+    <carrier frequency="682000" bandwidth="8" />
+    <carrier frequency="722000" bandwidth="8" />
+    <carrier frequency="794000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Viljandi" offset="125">
+    <carrier frequency="682000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Koeru" offset="125">
+    <carrier frequency="762000" bandwidth="8" />
+    <carrier frequency="786000" bandwidth="8" />
+    <carrier frequency="810000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Parnu" offset="125">
+    <carrier frequency="730000" bandwidth="8" />
+    <carrier frequency="754000" bandwidth="8" />
+    <carrier frequency="802000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Haapsalu" offset="125">
+    <carrier frequency="666000" bandwidth="8" />
+    <carrier frequency="778000" bandwidth="8" />
+    <carrier frequency="818000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Kohtla-Nomme, Narva" offset="125">
+    <carrier frequency="570000" bandwidth="8" />
+    <carrier frequency="690000" bandwidth="8" />
+    <carrier frequency="770000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Ruhnu, Sorve, Mannamaa" offset="125">
+    <carrier frequency="610000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Pehka, Ellamaa" offset="125">
+    <carrier frequency="666000" bandwidth="8" />
+  </country>
+  <country name="Estonia - Sauvere, Orissaare" offset="125">
+    <carrier frequency="610000" bandwidth="8" />
+    <carrier frequency="842000" bandwidth="8" />
+    <carrier frequency="858000" bandwidth="8" />
   </country>
   <country name="Estonia - Tallinn" offset="125">
     <carrier frequency="666000" bandwidth="8" />
@@ -1758,6 +1829,65 @@
     <carrier frequency="682000" bandwidth="8"></carrier>
     <carrier frequency="770000" bandwidth="8"></carrier>
   </country>
+  <country name="Greece - All Regions" offset="125">
+    <carrier frequency="478000" bandwidth="8" />
+    <carrier frequency="486000" bandwidth="8" />
+    <carrier frequency="494000" bandwidth="8" />
+    <carrier frequency="502000" bandwidth="8" />
+    <carrier frequency="510000" bandwidth="8" />
+    <carrier frequency="518000" bandwidth="8" />
+    <carrier frequency="526000" bandwidth="8" />
+    <carrier frequency="534000" bandwidth="8" />
+    <carrier frequency="542000" bandwidth="8" />
+    <carrier frequency="550000" bandwidth="8" />
+    <carrier frequency="558000" bandwidth="8" />
+    <carrier frequency="566000" bandwidth="8" />
+    <carrier frequency="574000" bandwidth="8" />
+    <carrier frequency="582000" bandwidth="8" />
+    <carrier frequency="590000" bandwidth="8" />
+    <carrier frequency="598000" bandwidth="8" />
+    <carrier frequency="606000" bandwidth="8" />
+    <carrier frequency="614000" bandwidth="8" />
+    <carrier frequency="622000" bandwidth="8" />
+    <carrier frequency="630000" bandwidth="8" />
+    <carrier frequency="638000" bandwidth="8" />
+    <carrier frequency="646000" bandwidth="8" />
+    <carrier frequency="654000" bandwidth="8" />
+    <carrier frequency="662000" bandwidth="8" />
+    <carrier frequency="670000" bandwidth="8" />
+    <carrier frequency="678000" bandwidth="8" />
+    <carrier frequency="686000" bandwidth="8" />
+    <carrier frequency="694000" bandwidth="8" />
+    <carrier frequency="702000" bandwidth="8" />
+    <carrier frequency="710000" bandwidth="8" />
+    <carrier frequency="718000" bandwidth="8" />
+    <carrier frequency="726000" bandwidth="8" />
+    <carrier frequency="734000" bandwidth="8" />
+    <carrier frequency="742000" bandwidth="8" />
+    <carrier frequency="750000" bandwidth="8" />
+    <carrier frequency="758000" bandwidth="8" />
+    <carrier frequency="766000" bandwidth="8" />
+    <carrier frequency="774000" bandwidth="8" />
+    <carrier frequency="782000" bandwidth="8" />
+    <carrier frequency="790000" bandwidth="8" />
+    <carrier frequency="798000" bandwidth="8" />
+    <carrier frequency="806000" bandwidth="8" />
+    <carrier frequency="814000" bandwidth="8" />
+    <carrier frequency="822000" bandwidth="8" />
+    <carrier frequency="830000" bandwidth="8" />
+    <carrier frequency="838000" bandwidth="8" />
+    <carrier frequency="846000" bandwidth="8" />
+  </country>
+  <country name="Greece - Athens" offset="125">
+    <carrier frequency="686000" bandwidth="8" />
+    <carrier frequency="694000" bandwidth="8" />
+  </country>
+  <country name="Greece - Thessaloniki" offset="125">
+    <carrier frequency="510000" bandwidth="8" />
+    <carrier frequency="518000" bandwidth="8" />
+    <carrier frequency="750000" bandwidth="8" />
+    <carrier frequency="758000" bandwidth="8" />
+  </country>
   <country name="Italy - All Regions" offset="125">
     <carrier frequency="177500" bandwidth="7"></carrier>
     <carrier frequency="184500" bandwidth="7"></carrier>
@@ -2477,6 +2607,14 @@
     <carrier frequency="538000" bandwidth="8"></carrier>
     <carrier frequency="602000" bandwidth="8"></carrier>
     <carrier frequency="610000" bandwidth="8"></carrier>
+  </country>
+  <country name="Slovenia – All Regions" offset="0">
+    <carrier frequency="666000"></carrier>
+    <carrier frequency="602000"></carrier>
+    <carrier frequency="714000"></carrier>
+    <carrier frequency="842000"></carrier>
+    <carrier frequency="554000"></carrier>
+    <carrier frequency="834000"></carrier>
   </country>
   <country name="South Africa - Gauteng" offset="125">
 	<carrier frequency="770000" bandwidth="8"></carrier>
