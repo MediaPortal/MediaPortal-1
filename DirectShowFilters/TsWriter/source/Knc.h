@@ -76,7 +76,6 @@ private:
   STDMETHODIMP              FreeKNCLibrary();
   bool                      m_bIsKNC;
   HINSTANCE                 m_hMod;
-  bool                      m_verboseLogging;
   UINT                      m_slot; /* default 0, hw-index for multiple cards, 0,1,2... how to find out???. */
-  UINT                      m_CAM_present;
+  bool                      m_CAM_present;
 };

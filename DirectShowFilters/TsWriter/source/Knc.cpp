@@ -56,7 +56,6 @@ CKnc::CKnc(LPUNKNOWN pUnk, HRESULT *phr)
   m_hMod					          =NULL;
   m_slot                    =0;
   m_CAM_present             =false;
-  m_verboseLogging          =false;
 }
 
 //**************************************************************************************************
