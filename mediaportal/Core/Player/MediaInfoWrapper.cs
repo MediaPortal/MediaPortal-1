@@ -48,6 +48,9 @@ namespace MediaPortal.Player
     private bool _isWMA = false;  // Windows Media Audio
     private bool _isPCM = false;  // RAW audio
 
+    private bool _hasSubtitle = false;
+    private static List<string> _subTitleExtensions = new List<string>();   
+
     #endregion
 
     #region ctor's
@@ -68,6 +71,8 @@ namespace MediaPortal.Player
 
       try
       {
+        _hasSubtitle = checkHasSubtitles(strFile);
+
         _mI = new MediaInfo();
         _mI.Open(strFile);
 
@@ -168,7 +173,7 @@ namespace MediaPortal.Player
       catch (Exception ex)
       {
         Log.Error(
-          "MediaInfoWrapper.MediaInfoWrapper: unable to call external DLL - medialib info (make sure 'MediaInfo.dll' is located in MP root dir.) {0}",
+          "MediaInfoWrapper.MediaInfoWrapper: unable to call external DLL - mediainfo (make sure 'MediaInfo.dll' is located in MP root dir.) {0}",
           ex.Message);
       }
       finally
@@ -178,6 +183,63 @@ namespace MediaPortal.Player
           _mI.Close();
         }
       }
+    }
+
+    #endregion
+
+    #region private methods
+
+    private bool checkHasSubtitles(string strFile)
+    {
+      if (_subTitleExtensions.Count == 0)
+      {
+        // load them in first time
+        _subTitleExtensions.Add(".aqt");
+        _subTitleExtensions.Add(".asc");
+        _subTitleExtensions.Add(".ass");
+        _subTitleExtensions.Add(".dat");
+        _subTitleExtensions.Add(".dks");
+        _subTitleExtensions.Add(".js");
+        _subTitleExtensions.Add(".jss");
+        _subTitleExtensions.Add(".lrc");
+        _subTitleExtensions.Add(".mpl");
+        _subTitleExtensions.Add(".ovr");
+        _subTitleExtensions.Add(".pan");
+        _subTitleExtensions.Add(".pjs");
+        _subTitleExtensions.Add(".psb");
+        _subTitleExtensions.Add(".rt");
+        _subTitleExtensions.Add(".rtf");
+        _subTitleExtensions.Add(".s2k");
+        _subTitleExtensions.Add(".sbt");
+        _subTitleExtensions.Add(".scr");
+        _subTitleExtensions.Add(".smi");
+        _subTitleExtensions.Add(".son");
+        _subTitleExtensions.Add(".srt");
+        _subTitleExtensions.Add(".ssa");
+        _subTitleExtensions.Add(".sst");
+        _subTitleExtensions.Add(".ssts");
+        _subTitleExtensions.Add(".stl");
+        _subTitleExtensions.Add(".sub");
+        _subTitleExtensions.Add(".txt");
+        _subTitleExtensions.Add(".vkt");
+        _subTitleExtensions.Add(".vsf");
+        _subTitleExtensions.Add(".zeg");
+
+      }
+      string filenameNoExt = System.IO.Path.GetFileNameWithoutExtension(strFile);
+      try
+      {
+        foreach (string file in System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(strFile), filenameNoExt + "*"))
+        {
+          System.IO.FileInfo fi = new System.IO.FileInfo(file);
+          if (_subTitleExtensions.Contains(fi.Extension.ToLower())) return true;
+        }
+      }
+      catch (Exception)
+      {
+        // most likley path not available
+      }
+      return false;
     }
 
     #endregion
@@ -332,6 +394,15 @@ namespace MediaPortal.Player
     {
       get { return _isAAC; }
     }
+
+    #endregion
+
+    #region public misc properties
+
+    public bool HasSubtitle
+    {
+      get { return _hasSubtitle; }
+    }    
 
     #endregion
   }
