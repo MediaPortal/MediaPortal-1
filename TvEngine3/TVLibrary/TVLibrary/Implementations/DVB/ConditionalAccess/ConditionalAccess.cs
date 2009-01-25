@@ -22,11 +22,11 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using TvLibrary.Channels;
+using TVLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
-using TVLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.DVB
 {
