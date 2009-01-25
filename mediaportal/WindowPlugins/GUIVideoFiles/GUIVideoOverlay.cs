@@ -280,6 +280,8 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Play.Current.IsWMA", string.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.IsPCM", string.Empty);
 
+      GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", string.Empty);
+
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV)
       {
         // Set video format (only one possible per stream)
