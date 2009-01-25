@@ -328,6 +328,8 @@ namespace MediaPortal.GUI.Video
                     if (g_Player.MediaInfo.IsPCM)
                       GUIPropertyManager.SetProperty("#Play.Current.IsPCM", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "pcm.png"));  
           }
+          if(g_Player.MediaInfo.HasSubtitles)
+              GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "pcm.png"));
       }        
 
       if (g_Player.IsDVD)

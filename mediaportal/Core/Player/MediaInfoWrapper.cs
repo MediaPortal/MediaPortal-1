@@ -48,7 +48,7 @@ namespace MediaPortal.Player
     private bool _isWMA = false;  // Windows Media Audio
     private bool _isPCM = false;  // RAW audio
 
-    private bool _hasSubtitle = false;
+    private bool _hasSubtitles = false;
     private static List<string> _subTitleExtensions = new List<string>();   
 
     #endregion
@@ -71,7 +71,7 @@ namespace MediaPortal.Player
 
       try
       {
-        _hasSubtitle = checkHasSubtitles(strFile);
+        _hasSubtitles = checkHasSubtitles(strFile);
 
         _mI = new MediaInfo();
         _mI.Open(strFile);
@@ -399,9 +399,9 @@ namespace MediaPortal.Player
 
     #region public misc properties
 
-    public bool HasSubtitle
+    public bool HasSubtitles
     {
-      get { return _hasSubtitle; }
+      get { return _hasSubtitles; }
     }    
 
     #endregion

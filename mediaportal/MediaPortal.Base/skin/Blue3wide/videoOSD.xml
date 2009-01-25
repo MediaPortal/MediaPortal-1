@@ -247,5 +247,19 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>    
+    <control>
+      <description>Subtitles</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>365</posX>
+      <posY>600</posY>
+      <width>58</width>
+      <height>40</height>
+      <texture>#Play.Current.HasSubtitles</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>    
   </controls>
 </window>
