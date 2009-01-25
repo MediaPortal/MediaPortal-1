@@ -26,6 +26,7 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
+using TVLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -96,7 +97,9 @@ namespace TvLibrary.Implementations.DVB
         if (isDVBC || isDVBS || isDVBT)
         {
           Log.Log.WriteFile("Check for KNC");
-          _knc = new KNC(tunerFilter, analyzerFilter);
+          // Lookup device index of current card. only counting KNC cards by device path
+          int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
+          _knc = new KNC(tunerFilter, analyzerFilter, DeviceIndex);
           if (_knc.IsKNC)
           {
             Log.Log.WriteFile("KNC card detected");

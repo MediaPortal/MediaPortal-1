@@ -42,12 +42,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The analyzer filter.</param>
-    public KNC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    /// <param name="DeviceIndex">The KNC1 card hardware index (0 based)</param>
+    public KNC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, int DeviceIndex)
     {
       _KNCInterface = analyzerFilter as IKNC;
       if (_KNCInterface != null)
       {
-        _KNCInterface.SetTunerFilter(tunerFilter);
+        _KNCInterface.SetTunerFilter(tunerFilter, DeviceIndex);
       }
       ptrPmt = Marshal.AllocCoTaskMem(1024);
       _ptrDataInstance = Marshal.AllocCoTaskMem(1024);

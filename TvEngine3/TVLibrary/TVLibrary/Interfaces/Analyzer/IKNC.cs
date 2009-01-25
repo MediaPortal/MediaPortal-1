@@ -36,9 +36,10 @@ Guid("C71E2EFA-2439-4dbe-A1F7-935ADC37A4EC"),
     /// Sets the tuner filter
     /// </summary>
     /// <param name="tunerFilter">The tuner filter</param>
+    /// <param name="DeviceIndex">0 based index of KNC1 card</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetTunerFilter(IBaseFilter tunerFilter);
+    int SetTunerFilter(IBaseFilter tunerFilter, int DeviceIndex);
     /// <summary>
     /// Checks, if the tuner is a KNC
     /// </summary>
