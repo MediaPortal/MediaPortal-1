@@ -885,7 +885,7 @@ namespace WebEPG_conf
 
     private void lvMapping_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (lvMapping.SelectedItems.Count > 0)
+      if (lvMapping.SelectedItems.Count > 0 && _channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
       {
         ChannelMap channel = _channelMapping[lvMapping.SelectedItems[0].Text];
         DisplayChannelGrabberInfo(channel);
