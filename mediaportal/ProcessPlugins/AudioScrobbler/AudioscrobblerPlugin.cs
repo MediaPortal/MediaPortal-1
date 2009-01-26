@@ -269,44 +269,51 @@ namespace MediaPortal.Audioscrobbler
     {
       bool songFound = false;
 
-      if (g_Player.IsCDA)
+      try
       {
-        songFound = GetCurrentCDASong();
-        if (songFound == false)
+        if (g_Player.IsCDA)
         {
-          return;
+          songFound = GetCurrentCDASong();
+          if (songFound == false)
+          {
+            return;
+          }
         }
-      }
-      else if (Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
-      {
-        songFound = (g_Player.Player.CurrentFile == AudioscrobblerBase.CurrentPlayingSong.FileName);
-      }
-      else
-        // local DB file
-      {
-        songFound = GetCurrentSong();
-      }
-
-      if (songFound)
-      {
-        //Log.Debug("Audioscrobbler plugin: found database track for: {0}", g_Player.CurrentFile);        
-        SetStartTime();
-        OnSongChangedEvent();
-      }
-        // DB lookup of song failed
-      else if (g_Player.IsMusic)
-      {
-        if (AudioscrobblerBase.CurrentPlayingSong.Title != null &&
-            AudioscrobblerBase.CurrentPlayingSong.Title != string.Empty)
+        else if (Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
         {
-          Log.Info("Audioscrobbler plugin: Database does not contain track - ignoring: {0} by {1} from {2}",
-                   AudioscrobblerBase.CurrentPlayingSong.Title, AudioscrobblerBase.CurrentPlayingSong.Artist,
-                   AudioscrobblerBase.CurrentPlayingSong.Album);
+          songFound = (g_Player.Player.CurrentFile == AudioscrobblerBase.CurrentPlayingSong.FileName);
         }
         else
+        // local DB file
         {
-          Log.Info("Audioscrobbler plugin: Unknown track: {0}", g_Player.CurrentFile);
+          songFound = GetCurrentSong();
         }
+
+        if (songFound)
+        {
+          //Log.Debug("Audioscrobbler plugin: found database track for: {0}", g_Player.CurrentFile);        
+          SetStartTime();
+          OnSongChangedEvent();
+        }
+        // DB lookup of song failed
+        else if (g_Player.IsMusic)
+        {
+          if (AudioscrobblerBase.CurrentPlayingSong.Title != null &&
+              AudioscrobblerBase.CurrentPlayingSong.Title != string.Empty)
+          {
+            Log.Info("Audioscrobbler plugin: Database does not contain track - ignoring: {0} by {1} from {2}",
+                     AudioscrobblerBase.CurrentPlayingSong.Title, AudioscrobblerBase.CurrentPlayingSong.Artist,
+                     AudioscrobblerBase.CurrentPlayingSong.Album);
+          }
+          else
+          {
+            Log.Info("Audioscrobbler plugin: Unknown track: {0}", g_Player.CurrentFile);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Audioscrobbler plugin: Error on state event: {0}", ex.ToString());
       }
     }
 
