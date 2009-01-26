@@ -101,7 +101,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               num3 = -2147483646;
             }
-            num2 = Bass.BASS_ChannelGetData(handle, ref EQSETTINGS.EqFftData[0], num3);
+            num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
           }
           catch
           {

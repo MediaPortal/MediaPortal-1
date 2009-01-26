@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Get all available ASIO devices and add them to the combo box
-        string[] asioDevices = BassAsio.BASS_ASIO_GetDeviceDescriptions();
+        BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
         if (asioDevices.Length == 0)
         {
           MessageBox.Show(this, "No ASIO Devices available in the system.",
@@ -168,12 +168,12 @@ namespace MediaPortal.Configuration.Sections
 
         if (_useASIO)
         {
-          string[] asioDevices = BassAsio.BASS_ASIO_GetDeviceDescriptions();
+          BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
           // Check if the ASIO device read is amongst the one retrieved
           bool found = false;
           for (int i = 0; i < asioDevices.Length; i++)
           {
-            if (asioDevices[i] == _asioDeviceSelected)
+            if (asioDevices[i].name == _asioDeviceSelected)
             {
               found = true;
               bool rc = BassAsio.BASS_ASIO_Init(i);

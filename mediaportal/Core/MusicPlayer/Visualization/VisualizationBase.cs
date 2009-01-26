@@ -26,7 +26,9 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Visualization
 {
@@ -58,6 +60,7 @@ namespace MediaPortal.Visualization
     protected static BassAudioEngine _Bass = null;
     protected bool _Initialized = false;
     protected bool _IsPreviewVisualization = false;
+    protected BASS_VIS_PARAM _visParam = null;
 
     #region Properties
 
@@ -78,6 +81,11 @@ namespace MediaPortal.Visualization
       get { return _Initialized; }
     }
 
+    public BASS_VIS_PARAM VizParam
+    {
+      get { return _visParam; }
+    }
+
     public virtual bool PreRenderRequired
     {
       get { return false; }
@@ -88,7 +96,6 @@ namespace MediaPortal.Visualization
       get { return _IsPreviewVisualization; }
       set { _IsPreviewVisualization = value; }
     }
-
     #endregion
 
     public VisualizationBase()
@@ -100,6 +107,20 @@ namespace MediaPortal.Visualization
     {
       VizPluginInfo = vizPluginInfo;
       VisualizationWindow = vizCtrl;
+
+      // Init BAssVis
+      switch (VizPluginInfo.VisualizationType)
+      {
+        case VisualizationInfo.PluginType.Sonique:
+          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+          _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_SONIQUE);
+          break;
+
+        case VisualizationInfo.PluginType.Winamp:
+          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+          _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
+          break;
+      }
     }
 
     #region IDisposable Members
@@ -189,6 +210,38 @@ namespace MediaPortal.Visualization
 
     public virtual bool Close()
     {
+
+      try
+      {
+        if (_visParam.VisHandle != 0)
+        {
+          // wait max 5 loops for Vis to get freed
+          // Might cause infinite loop with some vis
+          int i = 0;
+          bool isFree = false;
+          try
+          {
+            isFree = BassVis.BASS_VIS_Free(_visParam);
+            while (!isFree && i < 5)
+            {
+              isFree = BassVis.BASS_VIS_Free(_visParam);
+              i++;
+              System.Threading.Thread.Sleep(20);
+            }
+          }
+          catch (AccessViolationException)
+          { }
+
+          _visParam.VisHandle = 0;
+        }
+
+        if (_visParam != null)
+          BassVis.BASS_VIS_Quit(_visParam);
+
+        return true;
+      }
+      catch (Exception)
+      { }
       return false;
     }
 

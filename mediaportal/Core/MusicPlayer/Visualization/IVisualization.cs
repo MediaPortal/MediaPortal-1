@@ -29,6 +29,7 @@ namespace MediaPortal.Visualization
 {
   public interface IVisualization
   {
+    Un4seen.Bass.AddOn.Vis.BASS_VIS_PARAM VizParam { get; }
     bool Initialized { get; }
     bool PreRenderRequired { get; }
     bool IsEngineInstalled();

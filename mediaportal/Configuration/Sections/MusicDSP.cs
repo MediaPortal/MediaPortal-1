@@ -36,7 +36,7 @@ using MediaPortal.UserInterface.Controls;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Vst;
-using Un4seen.Bass.AddOn.Wa;
+using Un4seen.Bass.AddOn.WaDsp;
 using Un4seen.Bass.Misc;
 
 namespace MediaPortal.Configuration.Sections
@@ -50,11 +50,12 @@ namespace MediaPortal.Configuration.Sections
     private int _stream;
     private string _initialMusicDirectory;
     // BASS DSP / FX variables
-    private DSP_Stacker _stacker;
     private DSP_Gain _gain = null;
-    private BASS_FX_DSPDAMP _damp = null;
-    private BASS_FX_DSPCOMPRESSOR _comp = null;
+    private BASS_BFX_DAMP _damp = null;
+    private BASS_BFX_COMPRESSOR _comp = null;
+    private int _dampHandle = 0;
     private int _dampPrio = 3;
+    private int _compHandle = 0;
     private int _compPrio = 2;
     // VST Related variables
     private int _vstHandle;
@@ -83,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Init DSP specific vars
-      BassWa.BASS_WADSP_Init(this.Handle);
+      BassWaDsp.BASS_WADSP_Init(this.Handle);
     }
 
     #endregion
@@ -147,28 +148,26 @@ namespace MediaPortal.Configuration.Sections
           bassEngine.InitBass();
         }
 
-        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0,
-                                             BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE |
-                                             BASSStream.BASS_SAMPLE_SOFTWARE);
+        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_SAMPLE_SOFTWARE);
         if (_stream != 0)
         {
           // Attach the BASS DSP Effects to the stream
-          if (_stacker != null)
+          if (_gain != null)
           {
-            _stacker.ChannelHandle = _stream;
-            _stacker.Start();
+            _gain.ChannelHandle = _stream;
+            _gain.Start();
           }
 
           if (checkBoxDAmp.Checked)
           {
-            BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_DAMP, _dampPrio);
-            BassFx.BASS_FX_DSP_SetParameters(_stream, _damp);
+            _dampHandle = Bass.BASS_ChannelSetFX(_stream, BASSFXType.BASS_FX_BFX_DAMP, _dampPrio);
+            Bass.BASS_FXSetParameters(_dampHandle, _damp);
           }
 
           if (checkBoxCompressor.Checked)
           {
-            BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR, _compPrio);
-            BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
+            _compHandle = Bass.BASS_ChannelSetFX(_stream, BASSFXType.BASS_FX_BFX_COMPRESSOR, _compPrio);
+            Bass.BASS_FXSetParameters(_compHandle, _comp);
           }
 
           // Attach the plugins to the stream
@@ -189,8 +188,8 @@ namespace MediaPortal.Configuration.Sections
             else
             {
               _waDspPlugin = _waDspPlugins[dsp.FilePath];
-              BassWa.BASS_WADSP_Start(_waDspPlugin, 0, 0);
-              BassWa.BASS_WADSP_ChannelSetDSP(_waDspPlugin, _stream, 1);
+              BassWaDsp.BASS_WADSP_Start(_waDspPlugin, 0, 0);
+              BassWaDsp.BASS_WADSP_ChannelSetDSP(_waDspPlugin, _stream, 1);
             }
           }
           btPlay.Enabled = false;
@@ -217,10 +216,10 @@ namespace MediaPortal.Configuration.Sections
     {
       btPlay.Enabled = true;
       btStop.Enabled = false;
-      // Stop the DSP Stacker
-      if (_stacker != null)
+      // Stop the DSP Gain
+      if (_gain != null)
       {
-        _stacker.Stop();
+        _gain.Stop();
       }
 
       foreach (DSPPluginInfo dsp in listBoxSelectedPlugins.Items)
@@ -238,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
         {
           // Stop the WinAmp DSP
           _waDspPlugin = _waDspPlugins[dsp.FilePath];
-          BassWa.BASS_WADSP_Stop(_waDspPlugin);
+          BassWaDsp.BASS_WADSP_Stop(_waDspPlugin);
         }
       }
       Bass.BASS_ChannelStop(_stream);
@@ -319,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         // Get the winamp handle and enable it
-        _waDspPlugin = BassWa.BASS_WADSP_Load(pluginInfo.FilePath, 5, 5, 100, 100, null);
+        _waDspPlugin = BassWaDsp.BASS_WADSP_Load(pluginInfo.FilePath, 5, 5, 100, 100, null);
         if (_waDspPlugin > 0)
         {
           _waDspPlugins[pluginInfo.FilePath] = _waDspPlugin;
@@ -357,7 +356,7 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         // Remove Winamp Handle
-        BassWa.BASS_WADSP_FreeDSP(_waDspPlugins[pluginInfo.FilePath]);
+        BassWaDsp.BASS_WADSP_FreeDSP(_waDspPlugins[pluginInfo.FilePath]);
         _waDspPlugins.Remove(pluginInfo.Name);
       }
       listBoxFoundPlugins.Items.Add(listBoxSelectedPlugins.SelectedItem);
@@ -386,7 +385,7 @@ namespace MediaPortal.Configuration.Sections
         {
           // Set a handle to the callback procedure
           _vstProc = new VSTPROC(vstEditorCallBack);
-          BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, 0);
+          BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, IntPtr.Zero);
           // create a new System.Windows.Forms.Form
           Form f = new MPConfigForm();
           f.Width = vstInfo.editorWidth + 4;
@@ -404,8 +403,8 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         _waDspPlugin = _waDspPlugins[pluginInfo.FilePath];
-        BassWa.BASS_WADSP_Start(_waDspPlugin, 0, 0);
-        BassWa.BASS_WADSP_Config(_waDspPlugin, 0);
+        BassWaDsp.BASS_WADSP_Start(_waDspPlugin, 0, 0);
+        BassWaDsp.BASS_WADSP_Config(_waDspPlugin, 0);
       }
     }
 
@@ -429,11 +428,11 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="param2"></param>
     /// <param name="user"></param>
     /// <returns></returns>
-    private int vstEditorCallBack(int vstEditor, int action, int param1, int param2, int user)
+    private int vstEditorCallBack(int vstEditor, BASSVSTAction action, int param1, int param2, IntPtr user)
     {
       switch (action)
       {
-        case (int) BASSVSTAction.BASS_VST_PARAM_CHANGED:
+        case BASSVSTAction.BASS_VST_PARAM_CHANGED:
           // Some slider has been changed in the editor
           BASS_VST_PARAM_INFO paramInfo = new BASS_VST_PARAM_INFO();
           for (int i = BassVst.BASS_VST_GetParamCount(vstEditor) - 1; i >= 0; i--)
@@ -442,10 +441,10 @@ namespace MediaPortal.Configuration.Sections
             BassVst.BASS_VST_GetParamInfo(_vstHandle, i, paramInfo);
           }
           break;
-        case (int) BASSVSTAction.BASS_VST_EDITOR_RESIZED:
+        case BASSVSTAction.BASS_VST_EDITOR_RESIZED:
           // the editor window requests a new size,
           break;
-        case (int) BASSVSTAction.BASS_VST_AUDIO_MASTER:
+        case BASSVSTAction.BASS_VST_AUDIO_MASTER:
           break;
       }
       return 0;
@@ -501,11 +500,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void SetDSPGain(double gainDB)
     {
-      if (_stacker == null)
-      {
-        _stacker = new DSP_Stacker();
-      }
-
       if (_gain == null)
       {
         _gain = new DSP_Gain();
@@ -519,12 +513,6 @@ namespace MediaPortal.Configuration.Sections
       {
         _gain.SetBypass(false);
         _gain.Gain_dBV = gainDB;
-      }
-
-      // Do we have the gain already in the stacker?
-      if (_stacker.IndexOf(_gain) == -1)
-      {
-        _stacker.Add(_gain);
       }
     }
 
@@ -548,22 +536,17 @@ namespace MediaPortal.Configuration.Sections
       if (checkBoxDAmp.Checked)
       {
         SetDAmpPreset(comboBoxDynamicAmplification.SelectedIndex);
-        BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_DAMP, _dampPrio);
-        BassFx.BASS_FX_DSP_SetParameters(_stream, _damp);
+        _dampHandle = Bass.BASS_ChannelSetFX(_stream, BASSFXType.BASS_FX_BFX_DAMP, _dampPrio);
+        Bass.BASS_FXSetParameters(_dampHandle, _damp);
       }
       else
       {
-        BassFx.BASS_FX_DSP_Remove(_stream, BASSFXDsp.BASS_FX_DSPFX_DAMP);
+        Bass.BASS_FXReset(_dampHandle);
       }
     }
 
     private void SetDAmpPreset(int preset)
     {
-      if (_damp == null)
-      {
-        _damp = new BASS_FX_DSPDAMP();
-      }
-
       switch (preset)
       {
         case 0:
@@ -586,7 +569,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (_comp == null)
       {
-        _comp = new BASS_FX_DSPCOMPRESSOR();
+        _comp = new BASS_BFX_COMPRESSOR();
       }
 
       if (_stream == 0)
@@ -597,12 +580,12 @@ namespace MediaPortal.Configuration.Sections
       if (checkBoxCompressor.Checked)
       {
         _comp.Preset_Medium();
-        BassFx.BASS_FX_DSP_Set(_stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR, _compPrio);
-        BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
+        _compHandle = Bass.BASS_ChannelSetFX(_stream, BASSFXType.BASS_FX_BFX_COMPRESSOR, _compPrio);
+        Bass.BASS_FXSetParameters(_compHandle, _comp);
       }
       else
       {
-        BassFx.BASS_FX_DSP_Remove(_stream, BASSFXDsp.BASS_FX_DSPFX_COMPRESSOR);
+        Bass.BASS_FXReset(_compHandle);
       }
     }
 
@@ -616,7 +599,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       _comp.fThreshold = (float) Un4seen.Bass.Utils.DBToLevel(trackBarCompressor.Value/10d, 1.0);
-      BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
+      Bass.BASS_FXSetParameters(_stream, _comp);
     }
 
     #endregion Compressor
@@ -740,7 +723,7 @@ namespace MediaPortal.Configuration.Sections
       // WinAmp Plugins
 
       // Get the available plugins in the directory and fill the found listbox
-      WINAMP_DSP[] dsps = BassWa.BASS_WADSP_FindPlugins(pluginPath);
+      WINAMP_DSP[] dsps = BassWaDsp.BASS_WADSP_FindPlugins(pluginPath);
       foreach (WINAMP_DSP winampPlugin in dsps)
       {
         DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.file,
@@ -763,7 +746,7 @@ namespace MediaPortal.Configuration.Sections
           if (dsp.DSPPluginType == DSPPluginInfo.PluginType.Winamp && dsp.FilePath == plugins.PluginDll)
           {
             listBoxFoundPlugins.Items.RemoveAt(i);
-            _waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
+            _waDspPlugin = BassWaDsp.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
             if (_waDspPlugin > 0)
             {
               listBoxSelectedPlugins.Items.Add(dsp);
@@ -867,7 +850,7 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         // Some Winamp dsps might raise an exception when closing
-        BassWa.BASS_WADSP_Free();
+        BassWaDsp.BASS_WADSP_Free();
       }
       catch
       {

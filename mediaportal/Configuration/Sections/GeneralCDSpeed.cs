@@ -257,12 +257,11 @@ namespace MediaPortal.Configuration.Sections
           bool disCD = (disableCD[i] == "Y");
           bool disDVD = (disableDVD[i] == "Y");
           datasetFilters.Rows.Add(
-            new object[]
-              {
-                BassCd.BASS_CD_GetDriveLetterChar(i), BassCd.BASS_CD_GetDriveDescription(i),
-                drivespeedCD[i], disCD, drivespeedDVD[i], disDVD
-              }
-            );
+              new object[] {
+                           BassCd.BASS_CD_GetInfo(i).DriveLetter, BassCd.BASS_CD_GetInfo(i).vendor,
+                           drivespeedCD[i], disCD, drivespeedDVD[i], disDVD
+												 }
+                                 );
         }
 
         //Set the Data Grid Source as the Data Table created above

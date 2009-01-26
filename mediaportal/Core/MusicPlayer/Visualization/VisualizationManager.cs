@@ -38,6 +38,7 @@ namespace MediaPortal.Visualization
 {
   public class VisualizationManager : IVisualizationManager, IDisposable
   {
+    #region Variables
     private BassAudioEngine Bass = null;
     private List<VisualizationInfo> _VisualizationPluginsInfo = new List<VisualizationInfo>();
     private VisualizationInfo.PluginType CurrentVizType = VisualizationInfo.PluginType.None;
@@ -46,6 +47,8 @@ namespace MediaPortal.Visualization
     private VisualizationWindow VizRenderWindow = null;
 
     private int _TargetFPS = 20;
+    private BASS_VIS_PARAM _visParam = null;
+    #endregion
 
     #region Properties
 
@@ -91,9 +94,9 @@ namespace MediaPortal.Visualization
     {
       get { return CurrentVizType; }
     }
-
     #endregion
 
+    #region ctor / dtor
     public VisualizationManager(BassAudioEngine bass, VisualizationWindow vizWindow)
     {
       Bass = bass;
@@ -117,7 +120,9 @@ namespace MediaPortal.Visualization
         ((VisualizationBase) Viz).Dispose();
       }
     }
+    #endregion
 
+    #region Events
     private void OnPlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
                                         BassAudioEngine.PlayState newState)
     {
@@ -133,7 +138,9 @@ namespace MediaPortal.Visualization
         VizRenderWindow.Run = true;
       }
     }
+    #endregion
 
+    #region Private Methods
     private bool IsGForceInstalled()
     {
       string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
@@ -172,17 +179,6 @@ namespace MediaPortal.Visualization
     {
       // No support yet!
       return false;
-
-      //string mpVizDll = Path.Combine(Application.StartupPath, "mpviz.dll");
-
-      //if (!File.Exists(mpVizDll))
-      //    return false;
-
-      //SoundSpectrumViz viz = new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.SoftSkies, "", "softskies", "", 0));
-      //bool engineInstalled = viz.IsEngineInstalled();
-      //viz.Dispose();
-
-      //return engineInstalled;
     }
 
     private VisualizationInfo.PluginType GetVisualizationTypeFromPath(string path)
@@ -251,26 +247,34 @@ namespace MediaPortal.Visualization
         Log.Info("Visualization Manager: Visualization plugin close not required - nothing loaded");
       }
     }
+    #endregion
 
     #region IVisualizationManager Members
-
+    /// <summary>
+    /// Search the Visaulation Path for supported Vis
+    /// </summary>
+    /// <returns></returns>
     public List<VisualizationInfo> GetVisualizationPluginsInfo()
     {
       _VisualizationPluginsInfo.Clear();
       _VisualizationPluginsInfo.Add(new VisualizationInfo("None", true));
 
+      // Close any Visualisation, which we may have running, because of VizManager Init
+      CloseCurrentVisualization();
+
+      // Init BassVis. Must be done prior to any first call to BassVis
+      BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_NONE, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
+      _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_NONE);
+
       string skinFolderPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\visualizations");
-      string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath,
-                                                              BASSWINAMPFindPlugin.BASS_VIS_FIND_SONIQUE |
-                                                              BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE);
-      ;
-      // Init winamp Support, otherwise we won't get any infos about winamp plugins
-      BassVis.BASS_WINAMPVIS_Init(
-        BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int) GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
-      string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath,
-                                                             BASSWINAMPFindPlugin.BASS_VIS_FIND_WINAMP |
-                                                             BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE);
-      ;
+
+      string[] soniqueVisPaths = null;
+      /* Don't search for Sonique Vis. They cause troubles
+      string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(BASSVISPlugin.BASSVISKIND_SONIQUE, skinFolderPath, true);
+      */
+      string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(BASSVISPlugin.BASSVISKIND_WINAMP, skinFolderPath, true);
+
+      BassVis.BASS_VIS_Quit(_visParam);
 
       List<VisualizationInfo> wmpPluginsInfo = GetWMPPluginInfo();
 
@@ -305,45 +309,53 @@ namespace MediaPortal.Visualization
 
       if (soniqueVisPaths != null)
       {
+        BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
+        _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_SONIQUE);
         for (int i = 0; i < soniqueVisPaths.Length; i++)
         {
           string filePath = soniqueVisPaths[i];
           string name = Path.GetFileNameWithoutExtension(filePath);
-          int visPlugin = BassVis.BASS_SONIQUEVIS_CreateVis(filePath, "vis.ini", BASSVISCreate.BASS_VIS_NOINIT, 0, 0);
-          string pluginname = BassVis.BASS_SONIQUEVIS_GetName(visPlugin);
+          BASS_VIS_EXEC visExec = new BASS_VIS_EXEC(filePath);
+          visExec.SON_Flags = BASSVISFlags.BASS_VIS_NOINIT; // don't execute the plugin yet
+          visExec.SON_ConfigFile = Path.Combine(Path.GetDirectoryName(filePath), "vis.ini");
+          BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
+          string pluginname = BassVis.BASS_VIS_GetPluginName(_visParam);
           if (pluginname != null)
           {
             name = pluginname;
           }
-          BassVis.BASS_SONIQUEVIS_Free(visPlugin);
+          BassVis.BASS_VIS_Free(_visParam);
           VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name,
                                                             string.Empty, null);
           _VisualizationPluginsInfo.Add(vizInfo);
         }
+        BassVis.BASS_VIS_Quit(_visParam);
       }
-
+        
       if (winampVisPaths != null)
       {
+        BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
+        _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
         for (int i = 0; i < winampVisPaths.Length; i++)
         {
           List<string> presets = new List<string>();
           string filePath = winampVisPaths[i];
           string name = Path.GetFileNameWithoutExtension(filePath);
-          int visPlugin = BassVis.BASS_WINAMPVIS_GetHandle(filePath);
-          if (visPlugin != 0)
+          _visParam.VisHandle = BassVis.BASS_VIS_GetPluginHandle(BASSVISPlugin.BASSVISKIND_WINAMP, filePath);
+
+          string pluginname = BassVis.BASS_VIS_GetPluginName(_visParam);
+          if (pluginname != null)
+            name = pluginname;
+
+          // Get modules
+          int numModules = BassVis.BASS_VIS_GetModulePresetCount(_visParam, filePath);
+          if (numModules > 0)
           {
-            string pluginname = BassVis.BASS_WINAMPVIS_GetName(visPlugin);
-            if (pluginname != null)
-            {
-              name = pluginname;
-            }
-            // Get modules
-            int numModules = BassVis.BASS_WINAMPVIS_GetNumModules(filePath);
             if (numModules > 0)
             {
               for (int j = 0; j < numModules; j++)
               {
-                presets.Add(BassVis.BASS_WINAMPVIS_GetModuleName(visPlugin, j));
+                presets.Add(BassVis.BASS_VIS_GetModulePresetName(_visParam, j, filePath));
               }
             }
             VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Winamp, filePath, name,
@@ -352,15 +364,18 @@ namespace MediaPortal.Visualization
             {
               _VisualizationPluginsInfo.Add(vizInfo);
             }
-
-            BassVis.BASS_WINAMPVIS_Free(visPlugin);
           }
+          BassVis.BASS_VIS_Free(_visParam);
         }
+        BassVis.BASS_VIS_Quit(_visParam);
       }
-      BassVis.BASS_WINAMPVIS_Quit();
       return _VisualizationPluginsInfo;
     }
 
+    /// <summary>
+    /// Retrieve Information about WMP Plugins
+    /// </summary>
+    /// <returns></returns>
     private List<VisualizationInfo> GetWMPPluginInfo()
     {
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\MediaPlayer\\Objects\\Effects");
@@ -386,6 +401,11 @@ namespace MediaPortal.Visualization
       return wmpPlugins;
     }
 
+    /// <summary>
+    /// Load the specified WMP Plugin
+    /// </summary>
+    /// <param name="sCLSID"></param>
+    /// <returns></returns>
     private VisualizationInfo LoadWMPPlugin(string sCLSID)
     {
       try

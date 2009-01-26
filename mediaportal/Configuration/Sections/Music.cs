@@ -35,6 +35,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Vis;
 
 #pragma warning disable 108
 
@@ -118,8 +119,7 @@ namespace MediaPortal.Configuration.Sections
     private bool VisualizationsInitialized = false;
     private bool SuppressVisualizationRestart = false;
     private bool EnqueueNext = true;
-    private VisualizationWindow VizWindow;
-
+    private BASS_VIS_PARAM _visParam = null;
     #endregion
 
     #region Controls
@@ -143,15 +143,12 @@ namespace MediaPortal.Configuration.Sections
     private MPComboBox audioPlayerComboBox;
     private TabPage VisualizationsTabPg;
     private MPGroupBox mpGroupBox3;
-    private LinkLabel SoundSpectrumLnkLbl;
     private MPCheckBox EnableStatusOverlaysChkBox;
     private MPCheckBox ShowTrackInfoChkBox;
-    private MPLabel VizPlaceHolderLbl;
     private Label label11;
     private Label label10;
     private ComboBox VizPresetsCmbBox;
     private ComboBox VisualizationsCmbBox;
-    private Label label6;
     private Label label7;
     private Label label5;
     private NumericUpDown VisualizationFpsNud;
@@ -188,6 +185,9 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel2;
     private MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
+    private MPGroupBox groupBoxWinampVis;
+    private MPButton btWinampConfig;
+    private Label label3;
     private MPComboBox autoPlayComboBox;
 
     #endregion
@@ -243,7 +243,7 @@ namespace MediaPortal.Configuration.Sections
         enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
         // Get all available devices and add them to the combo box
-        string[] soundDevices = Bass.BASS_GetDeviceDescriptions();
+        BASS_DEVICEINFO[] soundDevices = Bass.BASS_GetDeviceInfos();
 
         // For Directshow player, we need to have the exact wording here
         if (audioPlayerComboBox.SelectedIndex == 1)
@@ -258,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
         // Fill the combo box, starting at 1 to skip the "No Sound" device
         for (int i = 1; i < soundDevices.Length; i++)
         {
-          soundDeviceComboBox.Items.Add(soundDevices[i]);
+          soundDeviceComboBox.Items.Add(soundDevices[i].name);
         }
 
         string soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "None");
@@ -303,16 +303,16 @@ namespace MediaPortal.Configuration.Sections
 
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal) xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
+        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
 
         // Visualization Settings
-        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int) VisualizationInfo.PluginType.None);
+        int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
         string vizClsid = xmlreader.GetValueAsString("musicvisualization", "clsid", "");
         int vizPreset = xmlreader.GetValueAsInt("musicvisualization", "preset", 0);
 
-        if (vizType == (int) VisualizationInfo.PluginType.None
+        if (vizType == (int)VisualizationInfo.PluginType.None
             && vizName == "None")
         {
           VizPluginInfo = new VisualizationInfo("None", true);
@@ -320,20 +320,20 @@ namespace MediaPortal.Configuration.Sections
 
         else
         {
-          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType) vizType, vizPath, vizName, vizClsid,
+          VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
                                                 vizPreset);
         }
 
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
 
-        if (fps < (int) VisualizationFpsNud.Minimum)
+        if (fps < (int)VisualizationFpsNud.Minimum)
         {
-          fps = (int) VisualizationFpsNud.Minimum;
+          fps = (int)VisualizationFpsNud.Minimum;
         }
 
         else if (fps > VisualizationFpsNud.Maximum)
         {
-          fps = (int) VisualizationFpsNud.Maximum;
+          fps = (int)VisualizationFpsNud.Maximum;
         }
 
         VisualizationFpsNud.Value = fps;
@@ -483,17 +483,17 @@ namespace MediaPortal.Configuration.Sections
 
           xmlwriter.SetValue("musicvisualization", "name", vizPluginsInfo[selIndex].Name);
           xmlwriter.SetValue("musicvisualization", "vizType",
-                             ((int) vizPluginsInfo[selIndex].VisualizationType).ToString());
+                             ((int)vizPluginsInfo[selIndex].VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-          // This is the case, when we started Config without activating the Vis Tab
+        // This is the case, when we started Config without activating the Vis Tab
         {
           xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
-          xmlwriter.SetValue("musicvisualization", "vizType", ((int) VizPluginInfo.VisualizationType).ToString());
+          xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
           xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
@@ -641,6 +641,12 @@ namespace MediaPortal.Configuration.Sections
           components.Dispose();
         }
 
+        // Close eventually open Winamp stuff
+        if (_visParam != null)
+        {
+          BassVis.BASS_VIS_Quit(_visParam);
+        }
+
         // Make sure we shut down the viz engine
         if (IVizMgr != null)
         {
@@ -683,15 +689,15 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.SoundSpectrumLnkLbl = new System.Windows.Forms.LinkLabel();
+      this.label3 = new System.Windows.Forms.Label();
+      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.VizPlaceHolderLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label11 = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
       this.VizPresetsCmbBox = new System.Windows.Forms.ComboBox();
       this.VisualizationsCmbBox = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
@@ -727,11 +733,12 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.StreamOutputLevelNud)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
       this.VisualizationsTabPg.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.VisualizationFpsNud)).BeginInit();
+      this.groupBoxWinampVis.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
       this.PlaylistTabPg.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
@@ -755,8 +762,7 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.SelectedIndex = 0;
       this.MusicSettingsTabCtl.Size = new System.Drawing.Size(472, 400);
       this.MusicSettingsTabCtl.TabIndex = 1;
-      this.MusicSettingsTabCtl.SelectedIndexChanged +=
-        new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
+      this.MusicSettingsTabCtl.SelectedIndexChanged += new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
       // 
       // PlayerTabPg
       // 
@@ -805,10 +811,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -822,10 +826,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -872,13 +874,11 @@ namespace MediaPortal.Configuration.Sections
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
-      this.StreamOutputLevelNud.Value = new decimal(new int[]
-                                                      {
-                                                        85,
-                                                        0,
-                                                        0,
-                                                        0
-                                                      });
+      this.StreamOutputLevelNud.Value = new decimal(new int[] {
+            85,
+            0,
+            0,
+            0});
       // 
       // FadeOnStartStopChkbox
       // 
@@ -920,10 +920,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -948,10 +946,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -981,23 +977,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioPlayerComboBox.Items.AddRange(new object[]
-                                                {
-                                                  "Internal dshow player",
-                                                  "BASS engine"
-                                                });
+      this.audioPlayerComboBox.Items.AddRange(new object[] {
+            "Internal dshow player",
+            "BASS engine"});
       this.audioPlayerComboBox.Location = new System.Drawing.Point(91, 24);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
       this.audioPlayerComboBox.TabIndex = 1;
-      this.audioPlayerComboBox.SelectedIndexChanged +=
-        new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
+      this.audioPlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
       // 
       // VisualizationsTabPg
       // 
@@ -1011,15 +1002,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Controls.Add(this.SoundSpectrumLnkLbl);
+      this.mpGroupBox3.Controls.Add(this.label3);
+      this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
       this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
       this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
-      this.mpGroupBox3.Controls.Add(this.VizPlaceHolderLbl);
       this.mpGroupBox3.Controls.Add(this.label11);
       this.mpGroupBox3.Controls.Add(this.label10);
       this.mpGroupBox3.Controls.Add(this.VizPresetsCmbBox);
       this.mpGroupBox3.Controls.Add(this.VisualizationsCmbBox);
-      this.mpGroupBox3.Controls.Add(this.label6);
       this.mpGroupBox3.Controls.Add(this.label7);
       this.mpGroupBox3.Controls.Add(this.label5);
       this.mpGroupBox3.Controls.Add(this.VisualizationFpsNud);
@@ -1031,52 +1021,59 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Visualization settings";
       // 
-      // SoundSpectrumLnkLbl
+      // label3
       // 
-      this.SoundSpectrumLnkLbl.AutoSize = true;
-      this.SoundSpectrumLnkLbl.Location = new System.Drawing.Point(91, 242);
-      this.SoundSpectrumLnkLbl.Name = "SoundSpectrumLnkLbl";
-      this.SoundSpectrumLnkLbl.Size = new System.Drawing.Size(256, 13);
-      this.SoundSpectrumLnkLbl.TabIndex = 11;
-      this.SoundSpectrumLnkLbl.TabStop = true;
-      this.SoundSpectrumLnkLbl.Text = "Get more great visualizations at SoundSpectrum.com";
-      this.SoundSpectrumLnkLbl.Visible = false;
-      this.SoundSpectrumLnkLbl.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.SoundSpectrumLnkLbl_LinkClicked);
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(6, 163);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(409, 13);
+      this.label3.TabIndex = 12;
+      this.label3.Text = "Note: Support for Sonique Visualizations has been disabled due to technical probl" +
+          "ems";
+      // 
+      // groupBoxWinampVis
+      // 
+      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
+      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
+      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
+      this.groupBoxWinampVis.Size = new System.Drawing.Size(289, 56);
+      this.groupBoxWinampVis.TabIndex = 11;
+      this.groupBoxWinampVis.TabStop = false;
+      this.groupBoxWinampVis.Text = "Winamp Vis.";
+      // 
+      // btWinampConfig
+      // 
+      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
+      this.btWinampConfig.Name = "btWinampConfig";
+      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
+      this.btWinampConfig.TabIndex = 4;
+      this.btWinampConfig.Text = "Config";
+      this.btWinampConfig.UseVisualStyleBackColor = true;
+      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
       // 
       // EnableStatusOverlaysChkBox
       // 
       this.EnableStatusOverlaysChkBox.AutoSize = true;
       this.EnableStatusOverlaysChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 293);
+      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 246);
       this.EnableStatusOverlaysChkBox.Name = "EnableStatusOverlaysChkBox";
       this.EnableStatusOverlaysChkBox.Size = new System.Drawing.Size(299, 17);
       this.EnableStatusOverlaysChkBox.TabIndex = 9;
       this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
       this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
-      this.EnableStatusOverlaysChkBox.CheckedChanged +=
-        new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
+      this.EnableStatusOverlaysChkBox.CheckedChanged += new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
       // 
       // ShowTrackInfoChkBox
       // 
       this.ShowTrackInfoChkBox.AutoSize = true;
       this.ShowTrackInfoChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 314);
+      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 267);
       this.ShowTrackInfoChkBox.Name = "ShowTrackInfoChkBox";
       this.ShowTrackInfoChkBox.Size = new System.Drawing.Size(178, 17);
       this.ShowTrackInfoChkBox.TabIndex = 10;
       this.ShowTrackInfoChkBox.Text = "Show song info on track change";
       this.ShowTrackInfoChkBox.UseVisualStyleBackColor = true;
-      // 
-      // VizPlaceHolderLbl
-      // 
-      this.VizPlaceHolderLbl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.VizPlaceHolderLbl.Location = new System.Drawing.Point(91, 75);
-      this.VizPlaceHolderLbl.Name = "VizPlaceHolderLbl";
-      this.VizPlaceHolderLbl.Size = new System.Drawing.Size(289, 161);
-      this.VizPlaceHolderLbl.TabIndex = 5;
-      this.VizPlaceHolderLbl.Text = "Visualization window placeholder";
-      this.VizPlaceHolderLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // label11
       // 
@@ -1114,22 +1111,12 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
       this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
       this.VisualizationsCmbBox.TabIndex = 1;
-      this.VisualizationsCmbBox.SelectedIndexChanged +=
-        new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(37, 75);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(48, 13);
-      this.label6.TabIndex = 4;
-      this.label6.Text = "Preview:";
+      this.VisualizationsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
       // 
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(149, 267);
+      this.label7.Location = new System.Drawing.Point(149, 220);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(166, 13);
       this.label7.TabIndex = 8;
@@ -1138,7 +1125,7 @@ namespace MediaPortal.Configuration.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(21, 267);
+      this.label5.Location = new System.Drawing.Point(21, 220);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(64, 13);
       this.label5.TabIndex = 6;
@@ -1146,31 +1133,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // VisualizationFpsNud
       // 
-      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 265);
-      this.VisualizationFpsNud.Maximum = new decimal(new int[]
-                                                       {
-                                                         50,
-                                                         0,
-                                                         0,
-                                                         0
-                                                       });
-      this.VisualizationFpsNud.Minimum = new decimal(new int[]
-                                                       {
-                                                         5,
-                                                         0,
-                                                         0,
-                                                         0
-                                                       });
+      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 218);
+      this.VisualizationFpsNud.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+      this.VisualizationFpsNud.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
       this.VisualizationFpsNud.Name = "VisualizationFpsNud";
       this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
       this.VisualizationFpsNud.TabIndex = 7;
-      this.VisualizationFpsNud.Value = new decimal(new int[]
-                                                     {
-                                                       30,
-                                                       0,
-                                                       0,
-                                                       0
-                                                     });
+      this.VisualizationFpsNud.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
       this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
       // 
       // PlaylistTabPg
@@ -1185,10 +1166,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
       this.groupBox1.Controls.Add(this.SavePlaylistOnExitChkBox);
@@ -1250,9 +1229,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistButton
       // 
-      this.playlistButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistButton.Location = new System.Drawing.Point(365, 22);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(61, 22);
@@ -1263,10 +1240,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
@@ -1466,10 +1441,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1514,13 +1487,14 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg.ResumeLayout(false);
       this.PlaybackSettingsGrpBox.ResumeLayout(false);
       this.PlaybackSettingsGrpBox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.StreamOutputLevelNud)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.VisualizationsTabPg.ResumeLayout(false);
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.VisualizationFpsNud)).EndInit();
+      this.groupBoxWinampVis.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
       this.PlaylistTabPg.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -1537,6 +1511,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -1572,29 +1547,14 @@ namespace MediaPortal.Configuration.Sections
 
           if (!VisualizationsInitialized)
           {
-            VizPlaceHolderLbl.Text = "Getting installed visualizations. This may\r\ntake a minute Please wait...";
             Application.DoEvents();
 
             InitializeVizEngine();
-          }
-
-          else
-          {
-            mpGroupBox3.Controls.Add(VizWindow);
-            mpGroupBox3.Controls.Remove(VizPlaceHolderLbl);
-
-            VizWindow.Text = "";
-            VizWindow.BackColor = Color.Black;
           }
         }
 
         else
         {
-          mpGroupBox3.Controls.Add(VizPlaceHolderLbl);
-          mpGroupBox3.Controls.Remove(VizWindow);
-
-          VizPlaceHolderLbl.Text = "Not available.";
-
           VisualizationsTabPg.Enabled = false;
           MessageBox.Show(this, "Visualization settings are only available with the BASS music player.",
                           "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -1627,7 +1587,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (hScrollBarCrossFade.Value > 0)
       {
-        xFadeSecs = (float) hScrollBarCrossFade.Value/1000f;
+        xFadeSecs = (float)hScrollBarCrossFade.Value / 1000f;
       }
 
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
@@ -1639,7 +1599,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (hScrollBarBuffering.Value > 0)
       {
-        bufferingSecs = (float) hScrollBarBuffering.Value/1000f;
+        bufferingSecs = (float)hScrollBarBuffering.Value / 1000f;
       }
 
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
@@ -1659,64 +1619,35 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      // Stop the visualization
-      VizWindow.Run = false;
-
-      VizPluginInfo = (VisualizationInfo) VisualizationsCmbBox.SelectedItem;
+      VizPluginInfo = (VisualizationInfo)VisualizationsCmbBox.SelectedItem;
 
       if (VizPluginInfo == null || VizPluginInfo.IsDummyPlugin)
       {
         return;
       }
 
-      // For Winamp Plugins we use our own form to do the preview, because in some installations, we found problems
+      VizPresetsCmbBox.Items.Clear();
+
       if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp)
       {
-        VizWindow.Run = false;
-        VizWindow.Hide();
-
-        MusicWinampPreview dlgWinamp = new MusicWinampPreview(VizPluginInfo);
-        dlgWinamp.Text = String.Format("{0} Preview", VizPluginInfo.Name);
-        dlgWinamp.ShowDialog();
+        groupBoxWinampVis.Enabled = true;
       }
       else
       {
-        VizWindow.Show();
-        bool vizCreated = IVizMgr.CreatePreviewVisualization(VizPluginInfo);
+        groupBoxWinampVis.Enabled = false;
+      }
 
-        if (!vizCreated)
-        {
-          string msg =
-            string.Format(
-              "Unable to load the following visualization:\r\nName:{0}\r\nCLSID:{1}\r\nType:{2}\r\nPreset Count:{3}",
-              VizPluginInfo.Name, VizPluginInfo.CLSID, VizPluginInfo.VisualizationType, VizPluginInfo.PresetCount);
-
-          MessageBox.Show(this, msg, "Visualization Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          return;
-        }
-
-        else
-        {
-          VizPresetsCmbBox.Items.Clear();
-
-          if (VizPluginInfo.HasPresets)
-          {
-            VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
-            SuppressVisualizationRestart = true;
-            VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
-            VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
-            SuppressVisualizationRestart = false;
-          }
-
-          else
-          {
-            VizPresetsCmbBox.Enabled = false;
-          }
-
-          // Force a Resize event to ensure the viz engine is notified of window size
-          IVizMgr.ResizeVisualizationWindow(VizWindow.Size);
-          VizWindow.Run = true;
-        }
+      if (VizPluginInfo.HasPresets)
+      {
+        VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
+        SuppressVisualizationRestart = true;
+        VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
+        VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
+        SuppressVisualizationRestart = false;
+      }
+      else
+      {
+        VizPresetsCmbBox.Enabled = false;
       }
     }
 
@@ -1740,27 +1671,13 @@ namespace MediaPortal.Configuration.Sections
       }
 
       VizPluginInfo.PresetIndex = selIndex;
-      bool vizCreated = false;
-
-      if (!SuppressVisualizationRestart)
-      {
-        VizWindow.Run = false;
-        vizCreated = IVizMgr.CreatePreviewVisualization(VizPluginInfo);
-        SuppressVisualizationRestart = false;
-        VizWindow.Run = true;
-      }
-    }
-
-    private void SoundSpectrumLnkLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      Process.Start(@"http://www.SoundSpectrum.com");
     }
 
     private void VisualizationFpsNud_ValueChanged(object sender, EventArgs e)
     {
       if (IVizMgr != null)
       {
-        IVizMgr.TargetFPS = (int) VisualizationFpsNud.Value;
+        IVizMgr.TargetFPS = (int)VisualizationFpsNud.Value;
       }
     }
 
@@ -1786,7 +1703,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (section != null)
         {
-          bool asio = (bool) section.GetSetting("useasio");
+          bool asio = (bool)section.GetSetting("useasio");
           if (asio)
           {
             enableMixing.Checked = false;
@@ -1805,7 +1722,6 @@ namespace MediaPortal.Configuration.Sections
       BassAudioEngine bassEngine = BassMusicPlayer.Player;
 
       IVizMgr = bassEngine.IVizManager;
-      VizWindow = bassEngine.VisualizationWindow;
       List<VisualizationInfo> vizPluginsInfo = null;
 
       if (IVizMgr != null)
@@ -1841,7 +1757,6 @@ namespace MediaPortal.Configuration.Sections
       }
 
       VisualizationsInitialized = true;
-      SetVisualizationWindow();
       int selectedIndex = -1;
 
       for (int i = 0; i < vizPluginsInfo.Count; i++)
@@ -1860,23 +1775,24 @@ namespace MediaPortal.Configuration.Sections
       {
         selectedIndex = 0;
       }
-
-      // If only one item was added it's the dummy "None" entry and we didn't find any other visualizations
-      if (VisualizationsCmbBox.Items.Count == 1)
-      {
-        VizPlaceHolderLbl.Text = "No compatible visualizations were found.";
-      }
-
       VisualizationsCmbBox.SelectedIndex = selectedIndex;
     }
 
-    private void SetVisualizationWindow()
+    private void btWinampConfig_Click(object sender, EventArgs e)
     {
-      VizWindow.Location = VizPlaceHolderLbl.Location;
-      VizWindow.Size = VizPlaceHolderLbl.Size;
-      mpGroupBox3.Controls.Add(VizWindow);
-      mpGroupBox3.Controls.Remove(VizPlaceHolderLbl);
-      VizWindow.Visible = true;
+      if (_visParam != null)
+      {
+        // Free first the previous winamp plugin
+        BassVis.BASS_VIS_Quit(_visParam);
+      }
+      _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
+      BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle, MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
+      int tmpVis = BassVis.BASS_VIS_GetPluginHandle(BASSVISPlugin.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
+      if (tmpVis != 0)
+      {
+        int numModules = BassVis.BASS_VIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
+        BassVis.BASS_VIS_Config(_visParam, 0);
+      }
     }
   }
 }

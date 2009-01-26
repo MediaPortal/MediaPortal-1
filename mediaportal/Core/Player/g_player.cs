@@ -212,7 +212,7 @@ namespace MediaPortal.Player
       // Get Drive letters assigned
       for (int i = 0; i < _driveCount; i++)
       {
-        builderDriveLetter.Append(BassCd.BASS_CD_GetDriveLetterChar(i));
+        builderDriveLetter.Append(BassCd.BASS_CD_GetInfo(i).DriveLetter);
       }
       _driveLetters = builderDriveLetter.ToString();
       if (speedTableCD == string.Empty || speedTableDVD == string.Empty)

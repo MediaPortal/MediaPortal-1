@@ -395,7 +395,7 @@ namespace MediaPortal.Freedb
     {
       for (int i = 0; i < 25; i++)
       {
-        if (BassCd.BASS_CD_GetDriveLetterChar(i) == driveLetter)
+        if (BassCd.BASS_CD_GetInfo(i).DriveLetter == driveLetter)
         {
           return i;
         }

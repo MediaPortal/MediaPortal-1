@@ -393,7 +393,7 @@ namespace MediaPortal.Visualization
 
           if (!IsPreviewVisualization)
           {
-            len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref pcm[0], reqDataLen);
+            len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, pcm, reqDataLen);
 
             if (len < 1)
             {
@@ -489,7 +489,7 @@ namespace MediaPortal.Visualization
 
           if (!IsPreviewVisualization)
           {
-            bytesRead = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fft[0], (int) binSizeFlag);
+            bytesRead = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int)binSizeFlag);
 
             // The number of "bins" requested is likely to be smaller than the number we get
             // from BASS so we'll need to average some of the bins...

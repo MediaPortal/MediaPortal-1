@@ -9,7 +9,7 @@ namespace MediaPortal.Player
   {
     private int _stream;
     private BASSBuffer _streamBuffer;
-    private BASSStream _streamFlags;
+    private BASSFlag _streamFlags;
 
     public StreamCopy()
       : base()
@@ -17,7 +17,7 @@ namespace MediaPortal.Player
     }
 
     public StreamCopy(int channel, int priority)
-      : base(channel, priority, 0)
+      : base(channel, priority, IntPtr.Zero)
     {
     }
 
@@ -36,27 +36,27 @@ namespace MediaPortal.Player
       switch (channelBitwidth)
       {
         case 0x20:
-          this._streamFlags &= ~BASSStream.BASS_SAMPLE_8BITS;
-          this._streamFlags |= BASSStream.BASS_SAMPLE_FLOAT;
+          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
+          this._streamFlags |= BASSFlag.BASS_SAMPLE_FLOAT;
           channelBitwidth = 4;
           break;
 
         case 8:
-          this._streamFlags &= ~BASSStream.BASS_SAMPLE_FLOAT;
-          this._streamFlags |= BASSStream.BASS_SAMPLE_8BITS;
+          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
+          this._streamFlags |= BASSFlag.BASS_SAMPLE_8BITS;
           channelBitwidth = 1;
           break;
 
         default:
-          this._streamFlags &= ~BASSStream.BASS_SAMPLE_FLOAT;
-          this._streamFlags &= ~BASSStream.BASS_SAMPLE_8BITS;
+          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_FLOAT;
+          this._streamFlags &= ~BASSFlag.BASS_SAMPLE_8BITS;
           channelBitwidth = 2;
           break;
       }
       this._streamBuffer = new BASSBuffer(2f, base.ChannelSampleRate, base.ChannelNumChans, channelBitwidth);
-      this._stream = Bass.BASS_StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags, null, 0);
-      Bass.BASS_ChannelSetLink(base.ChannelHandle, this._stream);
-      if (Bass.BASS_ChannelIsActive(base.ChannelHandle) == 1)
+      this._stream = Un4seen.Bass.Bass.BASS_StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags, null, IntPtr.Zero);
+      Un4seen.Bass.Bass.BASS_ChannelSetLink(base.ChannelHandle, this._stream);
+      if (Un4seen.Bass.Bass.BASS_ChannelIsActive(base.ChannelHandle) == BASSActive.BASS_ACTIVE_PLAYING)
       {
         Bass.BASS_ChannelPlay(this._stream, false);
       }
@@ -78,7 +78,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public override void DSPCallback(int handle, int channel, IntPtr buffer, int length, int user)
+    public override void DSPCallback(int handle, int channel, IntPtr buffer, int length, IntPtr user)
     {
       try
       {
@@ -101,7 +101,7 @@ namespace MediaPortal.Player
       get { return this._stream; }
     }
 
-    public BASSStream StreamFlags
+    public BASSFlag StreamFlags
     {
       get { return this._streamFlags; }
       set { this._streamFlags = value; }

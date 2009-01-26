@@ -234,7 +234,7 @@ namespace MediaPortal.Visualization
           return false;
         }
 
-        int len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref buf[0], buf.Length);
+        int len = Un4seen.Bass.Bass.BASS_ChannelGetData(stream, buf, buf.Length);
         int x = 0;
 
         // The pcm buffer contains interleaved left, right, left, ... channel info
@@ -318,7 +318,7 @@ namespace MediaPortal.Visualization
         }
 
         fft = new float[1024];
-        Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fft[0], (int) BASSData.BASS_DATA_FFT2048);
+        Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int) BASSData.BASS_DATA_FFT2048);
       }
 
       else

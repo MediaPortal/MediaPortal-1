@@ -135,12 +135,12 @@ namespace MediaPortal.Visualization
     private int FadeFrameCount = 15;
     private int ShowCoverArtFrameCount = 90;
     private int ShowVisualizationFrameCount = 150;
-    private const int TrackInfoDisplayMS = 5*1000;
+    private const int TrackInfoDisplayMS = 5 * 1000;
     private int ShowTrackInfoFrameCount = 250;
     private int _playBackType;
 
     private int ShowPlayStateFrameCount = 30;
-    private const int PlayStateDisplayMS = 1*1000;
+    private const int PlayStateDisplayMS = 1 * 1000;
     private int CurrentPlayStateFrame = 0;
 
     private bool SeekingFF = false;
@@ -338,7 +338,7 @@ namespace MediaPortal.Visualization
     private float DefaultFontSize = 11f;
     //private Color TextColor = Color.White;
     private Font TextFont = new Font("Arial", 11f, FontStyle.Regular);
-    private StringFormat TextStringFormat = (StringFormat) StringFormat.GenericTypographic.Clone();
+    private StringFormat TextStringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 
     #endregion
 
@@ -485,12 +485,23 @@ namespace MediaPortal.Visualization
 
     #endregion
 
+    #region ctor
     public VisualizationWindow(BassAudioEngine bass)
     {
       Bass = bass;
       Init();
     }
 
+    ~VisualizationWindow()
+    {
+      Dispose();
+    }
+    #endregion
+
+    #region Init ReInit
+    /// <summary>
+    /// Initialise The Viz Window
+    /// </summary>
     private void Init()
     {
       InitializeComponent();
@@ -521,6 +532,20 @@ namespace MediaPortal.Visualization
       }
     }
 
+    /// <summary>
+    /// ReInit the Visz
+    /// </summary>
+    public void Reinit()
+    {
+      bool running = VisualizationRunning;
+      Run = false;
+      Dispose();
+      Init();
+      Run = running;
+    }
+    #endregion
+
+    #region Event Handler
     private void OnNewAction(Action action)
     {
       if (!Visible)
@@ -620,20 +645,115 @@ namespace MediaPortal.Visualization
       }
     }
 
-    ~VisualizationWindow()
+    /// <summary>
+    /// Called when the Meta Data Tags of an Internet Stream changed
+    /// </summary>
+    /// <param name="sender"></param>
+    private void InternetStreamSongChanged(object sender)
     {
-      Dispose();
+      OnPlayBackStarted(g_Player.MediaType.Music, "http");
     }
 
-    public void Reinit()
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      bool running = VisualizationRunning;
-      Run = false;
-      Dispose();
-      Init();
-      Run = running;
-    }
+      try
+      {
+        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms"))
+        {
+          if (type != g_Player.MediaType.Music)
+          {
+            return;
+          }
 
+          CurrentFilePath = filename;
+          PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
+          if (curPlaylistItem == null)
+          {
+            return;
+          }
+
+          bool IsInternetStream = false;
+
+          // When playing an Internet Stream, we need to clear the Coverart image, that is maybe there when music was played before
+          if (CurrentFilePath.ToLower().StartsWith("http") || CurrentFilePath.ToLower().StartsWith("mms"))
+          {
+            IsInternetStream = true;
+            if (CurrentThumbImage != null)
+            {
+              CurrentThumbImage.Dispose();
+              CurrentThumbImage = null;
+            }
+          }
+
+          CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
+
+          // Make sure that Status Overlay gets displayed for new tracks
+          CurrentFrame = 0;
+
+          // We only need to get this data if we're going to display
+          if (_EnableStatusOverlays)
+          {
+            Label1ValueString = GetPropertyStringValue(Label1PropertyString, IsInternetStream);
+            Label2ValueString = GetPropertyStringValue(Label2PropertyString, IsInternetStream);
+            Label3ValueString = GetPropertyStringValue(Label3PropertyString, IsInternetStream);
+            Label4ValueString = GetPropertyStringValue(Label4PropertyString, IsInternetStream);
+          }
+
+          if (TrackInfoImage != null)
+          {
+            if (CurrentTrackInfoImage != null)
+            {
+              CurrentTrackInfoImage.Dispose();
+              CurrentTrackInfoImage = null;
+            }
+
+            NewTrack = true;
+          }
+
+          if (CurrentTrackTag != null)
+          {
+            string thumbPath = GetAlbumOrFolderThumb(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
+
+            if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+            {
+              CurrentThumbPath = thumbPath.ToLower();
+              CoverArtNeedsRefresh = true;
+            }
+          }
+
+          // Get Coverart for the played internet Stream
+          if (IsInternetStream)
+          {
+            string StationName = GetPropertyStringValue("#Play.Current.ArtistThumb", IsInternetStream);
+            string thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
+            if (File.Exists(thumbnail))
+            {
+              CurrentThumbPath = thumbnail.ToLower();
+              CoverArtNeedsRefresh = true;
+            }
+            else
+            {
+              // try with the name returned inside the "icy-name" tag, which we stored in the Album property
+              StationName = GetPropertyStringValue("#Play.Current.Album", IsInternetStream);
+              thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
+              if (File.Exists(thumbnail))
+              {
+                CurrentThumbPath = thumbnail.ToLower();
+                CoverArtNeedsRefresh = true;
+              }
+            }
+          }
+        }
+      }
+
+      catch (Exception ex)
+      {
+        Log.Info("Visualization Window: OnPlayBackStarted caused an exception: {0}", ex.Message);
+      }
+    }
+    #endregion
+
+    #region Load Settings
     private void LoadSettings()
     {
       Log.Info("Visualization Window: Loading skin settings...");
@@ -718,42 +838,42 @@ namespace MediaPortal.Visualization
 
         switch (ctrlID)
         {
-          case (int) ControlID.OverlayImage:
+          case (int)ControlID.OverlayImage:
             LoadOverlayImageSettings(node);
             break;
 
-          case (int) ControlID.CoverArtImage:
+          case (int)ControlID.CoverArtImage:
             LoadCoverArtSettings(node);
             break;
 
-          case (int) ControlID.MissingCoverArtImage:
+          case (int)ControlID.MissingCoverArtImage:
             LoadMissingCoverArtSettings(node);
             break;
 
-          case (int) ControlID.Label1:
+          case (int)ControlID.Label1:
             LoadLabel1Settings(node);
             break;
 
-          case (int) ControlID.Label2:
+          case (int)ControlID.Label2:
             LoadLabel2Settings(node);
             break;
 
-          case (int) ControlID.Label3:
+          case (int)ControlID.Label3:
             LoadLabel3Settings(node);
             break;
 
-          case (int) ControlID.Label4:
+          case (int)ControlID.Label4:
             LoadLabel4Settings(node);
             break;
 
-          case (int) ControlID.PauseIcon:
-          case (int) ControlID.PlayIcon:
-          case (int) ControlID.FFIcon:
-          case (int) ControlID.RewIcon:
-          case (int) ControlID.StopIcon:
-          case (int) ControlID.CrossfadeIcon:
-          case (int) ControlID.GapIcon:
-          case (int) ControlID.GaplessIcon:
+          case (int)ControlID.PauseIcon:
+          case (int)ControlID.PlayIcon:
+          case (int)ControlID.FFIcon:
+          case (int)ControlID.RewIcon:
+          case (int)ControlID.StopIcon:
+          case (int)ControlID.CrossfadeIcon:
+          case (int)ControlID.GapIcon:
+          case (int)ControlID.GaplessIcon:
             LoadPlayStateImage(node, ctrlID);
             break;
         }
@@ -960,7 +1080,7 @@ namespace MediaPortal.Visualization
       int imgWidth = GetSettingIntValue(node["width"], 1);
       int imgHeight = GetSettingIntValue(node["height"], 1);
 
-      if (ctrlID == (int) ControlID.PauseIcon)
+      if (ctrlID == (int)ControlID.PauseIcon)
       {
         if (PauseImage != null)
         {
@@ -982,7 +1102,7 @@ namespace MediaPortal.Visualization
         PauseImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.PlayIcon)
+      else if (ctrlID == (int)ControlID.PlayIcon)
       {
         if (PlayImage != null)
         {
@@ -1003,7 +1123,7 @@ namespace MediaPortal.Visualization
         PlayImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.FFIcon)
+      else if (ctrlID == (int)ControlID.FFIcon)
       {
         if (FFImage != null)
         {
@@ -1024,7 +1144,7 @@ namespace MediaPortal.Visualization
         FFImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.RewIcon)
+      else if (ctrlID == (int)ControlID.RewIcon)
       {
         if (RewImage != null)
         {
@@ -1045,7 +1165,7 @@ namespace MediaPortal.Visualization
         RewImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.StopIcon)
+      else if (ctrlID == (int)ControlID.StopIcon)
       {
         if (StopImage != null)
         {
@@ -1066,7 +1186,7 @@ namespace MediaPortal.Visualization
         StopImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.CrossfadeIcon)
+      else if (ctrlID == (int)ControlID.CrossfadeIcon)
       {
         if (CrossfadeImage != null)
         {
@@ -1087,7 +1207,7 @@ namespace MediaPortal.Visualization
         CrossfadeImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.GapIcon)
+      else if (ctrlID == (int)ControlID.GapIcon)
       {
         if (GapImage != null)
         {
@@ -1108,7 +1228,7 @@ namespace MediaPortal.Visualization
         GapImage = img;
       }
 
-      else if (ctrlID == (int) ControlID.GaplessIcon)
+      else if (ctrlID == (int)ControlID.GaplessIcon)
       {
         if (GaplessImage != null)
         {
@@ -1252,7 +1372,7 @@ namespace MediaPortal.Visualization
             style |= FontStyle.Italic;
           }
 
-          font = new Font(fontName, (float) fontSize, style);
+          font = new Font(fontName, (float)fontSize, style);
           return font;
         }
       }
@@ -1292,115 +1412,9 @@ namespace MediaPortal.Visualization
         return 0f;
       }
 
-      return (float) alphaVal/255f;
+      return (float)alphaVal / 255f;
     }
-
-    /// <summary>
-    /// Called when the Meta Data Tags of an Internet Stream changed
-    /// </summary>
-    /// <param name="sender"></param>
-    private void InternetStreamSongChanged(object sender)
-    {
-      OnPlayBackStarted(g_Player.MediaType.Music, "http");
-    }
-
-    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
-    {
-      try
-      {
-        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms"))
-        {
-          if (type != g_Player.MediaType.Music)
-          {
-            return;
-          }
-
-          CurrentFilePath = filename;
-          PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
-          if (curPlaylistItem == null)
-          {
-            return;
-          }
-
-          bool IsInternetStream = false;
-
-          // When playing an Internet Stream, we need to clear the Coverart image, that is maybe there when music was played before
-          if (CurrentFilePath.ToLower().StartsWith("http") || CurrentFilePath.ToLower().StartsWith("mms"))
-          {
-            IsInternetStream = true;
-            if (CurrentThumbImage != null)
-            {
-              CurrentThumbImage.Dispose();
-              CurrentThumbImage = null;
-            }
-          }
-
-          CurrentTrackTag = (MusicTag) curPlaylistItem.MusicTag;
-
-          // Make sure that Status Overlay gets displayed for new tracks
-          CurrentFrame = 0;
-
-          // We only need to get this data if we're going to display
-          if (_EnableStatusOverlays)
-          {
-            Label1ValueString = GetPropertyStringValue(Label1PropertyString, IsInternetStream);
-            Label2ValueString = GetPropertyStringValue(Label2PropertyString, IsInternetStream);
-            Label3ValueString = GetPropertyStringValue(Label3PropertyString, IsInternetStream);
-            Label4ValueString = GetPropertyStringValue(Label4PropertyString, IsInternetStream);
-          }
-
-          if (TrackInfoImage != null)
-          {
-            if (CurrentTrackInfoImage != null)
-            {
-              CurrentTrackInfoImage.Dispose();
-              CurrentTrackInfoImage = null;
-            }
-
-            NewTrack = true;
-          }
-
-          if (CurrentTrackTag != null)
-          {
-            string thumbPath = GetAlbumOrFolderThumb(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
-
-            if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
-            {
-              CurrentThumbPath = thumbPath.ToLower();
-              CoverArtNeedsRefresh = true;
-            }
-          }
-
-          // Get Coverart for the played internet Stream
-          if (IsInternetStream)
-          {
-            string StationName = GetPropertyStringValue("#Play.Current.ArtistThumb", IsInternetStream);
-            string thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
-            if (File.Exists(thumbnail))
-            {
-              CurrentThumbPath = thumbnail.ToLower();
-              CoverArtNeedsRefresh = true;
-            }
-            else
-            {
-              // try with the name returned inside the "icy-name" tag, which we stored in the Album property
-              StationName = GetPropertyStringValue("#Play.Current.Album", IsInternetStream);
-              thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
-              if (File.Exists(thumbnail))
-              {
-                CurrentThumbPath = thumbnail.ToLower();
-                CoverArtNeedsRefresh = true;
-              }
-            }
-          }
-        }
-      }
-
-      catch (Exception ex)
-      {
-        Log.Info("Visualization Window: OnPlayBackStarted caused an exception: {0}", ex.Message);
-      }
-    }
+    #endregion
 
     private string GetPropertyStringValue(string propertyString, bool IsInternetStream)
     {
@@ -1552,7 +1566,7 @@ namespace MediaPortal.Visualization
         if (IsCursorMovedBottomRight)
         {
           // Set the cursor back to the old position
-          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width/2, GUIGraphicsContext.form.Bounds.Height/2);
+          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width / 2, GUIGraphicsContext.form.Bounds.Height / 2);
           IsCursorMovedBottomRight = false;
         }
       }
@@ -1679,34 +1693,34 @@ namespace MediaPortal.Visualization
           // Label1
           GUIGraphicsContext.ScaleHorizontal(ref Label1PosX);
           GUIGraphicsContext.ScaleVertical(ref Label1PosY);
-          fontSize = (int) DefaultLabel1FontSize;
+          fontSize = (int)DefaultLabel1FontSize;
           GUIGraphicsContext.ScaleVertical(ref fontSize);
-          Label1Font = new Font(Label1Font.FontFamily, (float) fontSize, Label1Font.Style);
+          Label1Font = new Font(Label1Font.FontFamily, (float)fontSize, Label1Font.Style);
 
           // Label2
           GUIGraphicsContext.ScaleHorizontal(ref Label2PosX);
           GUIGraphicsContext.ScaleVertical(ref Label2PosY);
-          fontSize = (int) DefaultLabel2FontSize;
+          fontSize = (int)DefaultLabel2FontSize;
           GUIGraphicsContext.ScaleVertical(ref fontSize);
-          Label2Font = new Font(Label2Font.FontFamily, (float) fontSize, Label2Font.Style);
+          Label2Font = new Font(Label2Font.FontFamily, (float)fontSize, Label2Font.Style);
 
           // Label3
           GUIGraphicsContext.ScaleHorizontal(ref Label3PosX);
           GUIGraphicsContext.ScaleVertical(ref Label3PosY);
-          fontSize = (int) DefaultLabel3FontSize;
+          fontSize = (int)DefaultLabel3FontSize;
           GUIGraphicsContext.ScaleVertical(ref fontSize);
-          Label3Font = new Font(Label3Font.FontFamily, (float) fontSize, Label3Font.Style);
+          Label3Font = new Font(Label3Font.FontFamily, (float)fontSize, Label3Font.Style);
 
           // Label4
           GUIGraphicsContext.ScaleHorizontal(ref Label4PosX);
           GUIGraphicsContext.ScaleVertical(ref Label4PosY);
-          fontSize = (int) DefaultLabel4FontSize;
+          fontSize = (int)DefaultLabel4FontSize;
           GUIGraphicsContext.ScaleVertical(ref fontSize);
-          Label4Font = new Font(Label4Font.FontFamily, (float) fontSize, Label4Font.Style);
+          Label4Font = new Font(Label4Font.FontFamily, (float)fontSize, Label4Font.Style);
 
-          fontSize = (int) DefaultFontSize;
+          fontSize = (int)DefaultFontSize;
           GUIGraphicsContext.ScaleVertical(ref fontSize);
-          TextFont = new Font(TextFont.FontFamily, (float) fontSize, TextFont.Style);
+          TextFont = new Font(TextFont.FontFamily, (float)fontSize, TextFont.Style);
 
           if (CurrentTrackInfoImage != null)
           {
@@ -1757,14 +1771,14 @@ namespace MediaPortal.Visualization
         targetFPS = 40;
       }
 
-      float displayseconds = (float) PlayStateDisplayMS/1000;
-      ShowPlayStateFrameCount = (int) ((float) targetFPS*(float) displayseconds);
+      float displayseconds = (float)PlayStateDisplayMS / 1000;
+      ShowPlayStateFrameCount = (int)((float)targetFPS * (float)displayseconds);
 
-      displayseconds = TrackInfoDisplayMS/1000;
-      ShowTrackInfoFrameCount = (int) ((float) targetFPS*(float) displayseconds);
+      displayseconds = TrackInfoDisplayMS / 1000;
+      ShowTrackInfoFrameCount = (int)((float)targetFPS * (float)displayseconds);
 
-      float interval = 1000/targetFPS;
-      VisualizationRenderInterval = (int) interval;
+      float interval = 1000 / targetFPS;
+      VisualizationRenderInterval = (int)interval;
     }
 
     internal void StartVisualization()
@@ -1820,7 +1834,7 @@ namespace MediaPortal.Visualization
       {
         VisualizationRunning = false;
 
-        int maxWaitMS = 1*1000;
+        int maxWaitMS = 1 * 1000;
         int sleepMS = 100;
         bool threadShutDown = true;
 
@@ -2244,8 +2258,8 @@ namespace MediaPortal.Visualization
         {
           Rectangle coverArtRect = new Rectangle(CoverArtXOffset,
                                                  CoverArtYOffset,
-                                                 TrackInfoImageHeight - (CoverArtYOffset*2),
-                                                 TrackInfoImageHeight - (CoverArtYOffset*2));
+                                                 TrackInfoImageHeight - (CoverArtYOffset * 2),
+                                                 TrackInfoImageHeight - (CoverArtYOffset * 2));
 
           g.DrawImage(coverArtImage, coverArtRect, 0, 0, coverArtImage.Width, coverArtImage.Height, GraphicsUnit.Pixel);
         }
@@ -2255,7 +2269,7 @@ namespace MediaPortal.Visualization
         int textLeft = Label1PosX;
         int textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
         stringSize = g.MeasureString(Label1ValueString, Label1Font, textWidth, TextStringFormat);
-        int textHeight = (int) (stringSize.Height + 1f);
+        int textHeight = (int)(stringSize.Height + 1f);
         Rectangle textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
         DrawFadingText(g, stringSize, Label1ValueString, textRect, Label1Font, Label1Color);
 
@@ -2263,7 +2277,7 @@ namespace MediaPortal.Visualization
         textLeft = Label2PosX;
         textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
         stringSize = g.MeasureString(Label2ValueString, Label2Font, textWidth, TextStringFormat);
-        textHeight = (int) (stringSize.Height + 1f);
+        textHeight = (int)(stringSize.Height + 1f);
         textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
         DrawFadingText(g, stringSize, Label2ValueString, textRect, Label2Font, Label2Color);
 
@@ -2271,7 +2285,7 @@ namespace MediaPortal.Visualization
         textLeft = Label3PosX;
         textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
         stringSize = g.MeasureString(Label3ValueString, Label3Font, textWidth, TextStringFormat);
-        textHeight = (int) (stringSize.Height + 1f);
+        textHeight = (int)(stringSize.Height + 1f);
         textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
         DrawFadingText(g, stringSize, Label3ValueString, textRect, Label3Font, Label3Color);
 
@@ -2279,7 +2293,7 @@ namespace MediaPortal.Visualization
         textLeft = Label4PosX;
         textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
         stringSize = g.MeasureString(Label4ValueString, Label4Font, textWidth, TextStringFormat);
-        textHeight = (int) (stringSize.Height + 1f);
+        textHeight = (int)(stringSize.Height + 1f);
         textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
         DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);
 
@@ -2333,17 +2347,17 @@ namespace MediaPortal.Visualization
     {
       float maxOpacity = GetOpacity(TrackInfoOverlayAlpha);
 
-      if (maxOpacity < (float) (FadeFrameCount - 1)/100)
+      if (maxOpacity < (float)(FadeFrameCount - 1) / 100)
       {
-        maxOpacity = (float) (FadeFrameCount - 1)/100;
+        maxOpacity = (float)(FadeFrameCount - 1) / 100;
       }
 
-      float fStep = maxOpacity/(float) (FadeFrameCount - 1);
+      float fStep = maxOpacity / (float)(FadeFrameCount - 1);
 
       if (CurrentFrame < FadeFrameCount)
       {
         // Fade in the track info over the visualization
-        float opacity = fStep*(float) CurrentFrame;
+        float opacity = fStep * (float)CurrentFrame;
         DrawTrackInfoOverlay(g, opacity);
       }
 
@@ -2356,7 +2370,7 @@ namespace MediaPortal.Visualization
       else if (CurrentFrame < FadeFrameCount + ShowTrackInfoFrameCount + FadeFrameCount)
       {
         // Fade out the track info ;
-        float opacity = maxOpacity - (fStep*(float) (CurrentFrame - (FadeFrameCount + ShowTrackInfoFrameCount)));
+        float opacity = maxOpacity - (fStep * (float)(CurrentFrame - (FadeFrameCount + ShowTrackInfoFrameCount)));
         DrawTrackInfoOverlay(g, opacity);
       }
 
@@ -2391,7 +2405,7 @@ namespace MediaPortal.Visualization
           return;
         }
 
-        float fStep = 1.0f/(float) (FadeFrameCount - 1);
+        float fStep = 1.0f / (float)(FadeFrameCount - 1);
         bool paused = g_Player.Paused;
         // show a static thumb instead of the idle viz..
         if (paused)
@@ -2403,7 +2417,7 @@ namespace MediaPortal.Visualization
           if (CurrentFrame < FadeFrameCount)
           {
             // Fade in the album art over the visualization
-            float opacity = fStep*(float) CurrentFrame;
+            float opacity = fStep * (float)CurrentFrame;
             DrawThumbnailOverlay(g, opacity);
           }
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount)
@@ -2414,7 +2428,7 @@ namespace MediaPortal.Visualization
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount)
           {
             // Fade out the album art;
-            float opacity = 1.0f - (fStep*(float) (CurrentFrame - (FadeFrameCount + ShowCoverArtFrameCount)));
+            float opacity = 1.0f - (fStep * (float)(CurrentFrame - (FadeFrameCount + ShowCoverArtFrameCount)));
             DrawThumbnailOverlay(g, opacity);
           }
           else if (CurrentFrame < FadeFrameCount + ShowCoverArtFrameCount + FadeFrameCount + ShowVisualizationFrameCount)
@@ -2490,7 +2504,7 @@ namespace MediaPortal.Visualization
         }
 
         Rectangle rect = new Rectangle(0, 0, Width, Height);
-        SolidBrush fillBrush = new SolidBrush(Color.FromArgb((int) (255f*opacity), Color.Black));
+        SolidBrush fillBrush = new SolidBrush(Color.FromArgb((int)(255f * opacity), Color.Black));
         g.FillRectangle(fillBrush, rect);
         fillBrush.Dispose();
 
@@ -2502,7 +2516,7 @@ namespace MediaPortal.Visualization
           imgWidth = Width;
         }
 
-        int left = (Width - imgHeight)/2;
+        int left = (Width - imgHeight) / 2;
 
         float[][] matrixItems = {
                                   new float[] {1, 0, 0, 0, 0},
@@ -2567,11 +2581,11 @@ namespace MediaPortal.Visualization
                                               LinearGradientMode.Horizontal);
 
         Blend fadeBlend = new Blend(4);
-        fadeBlend.Factors = new float[] {0, 0, .85f, 1};
-        float fadeStart = Math.Max(1, rect.Width - 50)/(float) rect.Width;
-        float fadeMiddle = Math.Max(1, rect.Width - 15)/(float) rect.Width;
+        fadeBlend.Factors = new float[] { 0, 0, .85f, 1 };
+        float fadeStart = Math.Max(1, rect.Width - 50) / (float)rect.Width;
+        float fadeMiddle = Math.Max(1, rect.Width - 15) / (float)rect.Width;
         float fadeEnd = 1;
-        fadeBlend.Positions = new float[] {0, fadeStart, fadeMiddle, fadeEnd};
+        fadeBlend.Positions = new float[] { 0, fadeStart, fadeMiddle, fadeEnd };
         fadingBrush.Blend = fadeBlend;
 
         g.DrawString(text, font, fadingBrush, rect, TextStringFormat);
@@ -2608,14 +2622,14 @@ namespace MediaPortal.Visualization
         }
 
         ++CurrentPlayStateFrame;
-        float fStep = 1.0f/(float) (FadeFrameCount - 1);
+        float fStep = 1.0f / (float)(FadeFrameCount - 1);
         float opacity = 1.0f;
         bool doFade = CurrentPlayStateFrame >= ShowPlayStateFrameCount;
 
         if (doFade)
         {
           int fadeFrame = (ShowPlayStateFrameCount + FadeFrameCount) - CurrentPlayStateFrame;
-          opacity = (fadeFrame*fStep);
+          opacity = (fadeFrame * fStep);
 
           if (opacity < 0)
           {
@@ -2750,7 +2764,7 @@ namespace MediaPortal.Visualization
 
           switch (_playBackType)
           {
-            case (int) PlayBackType.CROSSFADE:
+            case (int)PlayBackType.CROSSFADE:
               {
                 img = CrossfadeImage;
                 imgX = CrossfadeImageX;
@@ -2759,7 +2773,7 @@ namespace MediaPortal.Visualization
                 imgHeight = CrossfadeImageHeight;
                 break;
               }
-            case (int) PlayBackType.GAPLESS:
+            case (int)PlayBackType.GAPLESS:
               {
                 img = GaplessImage;
                 imgX = GaplessImageX;
@@ -2768,7 +2782,7 @@ namespace MediaPortal.Visualization
                 imgHeight = GaplessImageHeight;
                 break;
               }
-            case (int) PlayBackType.NORMAL:
+            case (int)PlayBackType.NORMAL:
               {
                 img = GapImage;
                 imgX = GapImageX;
