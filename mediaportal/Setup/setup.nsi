@@ -791,6 +791,12 @@ Section -Post
     Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
   ${EndIf}
 
+  ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
+  ${If} ${FileExists} "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+    ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
+    Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+  ${EndIf}
+
   ; create desktop shortcuts
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
