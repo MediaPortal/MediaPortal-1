@@ -72,11 +72,11 @@ Name "MediaPortal Unpacker"
 !define VER_MINOR       0
 !define VER_REVISION    0
 !ifndef VER_BUILD
-  !define VER_BUILD   0
+  !define VER_BUILD     0
 !endif
-!if VER_BUILD=""
+!if ${VER_BUILD} == ""
   !undef VER_BUILD
-  !define VER_BUILD   0
+  !define VER_BUILD     0
 !endif
 !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 
