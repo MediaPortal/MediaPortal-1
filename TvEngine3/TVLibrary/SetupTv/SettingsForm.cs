@@ -52,8 +52,7 @@ namespace SetupTv
       try
       {
         Init();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("Failed to startup cause of exception");
         Log.Write(ex);
@@ -83,8 +82,7 @@ namespace SetupTv
         Gentle.Framework.GentleSettings.DefaultProviderName = nodeProvider.InnerText;
         Gentle.Framework.ProviderFactory.GetDefaultProvider();
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(node.InnerText);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
         Log.Write(ex);
@@ -93,8 +91,7 @@ namespace SetupTv
       try
       {
         Server.ListAll();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         MessageBox.Show("Failed to open database");
         Log.Error("Unable to get list of servers");
@@ -123,8 +120,7 @@ namespace SetupTv
               {
                 Card c = (Card)server.ReferringCard()[0];
                 RemoteControl.Instance.Type(c.IdCard);
-              }
-              catch
+              } catch
               {
                 MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
               }
@@ -390,12 +386,12 @@ namespace SetupTv
         try
         {
           RemoteControl.Instance.EpgGrabberEnabled = false;
-        }
-        catch (Exception)
+        } catch (Exception)
         {
         }
         //DatabaseManager.Instance.SaveChanges();
         //DatabaseManager.Instance.ClearQueryCache();
+        Cursor = Cursors.WaitCursor;
         section.Dock = DockStyle.Fill;
         section.OnSectionActivated();
         if (section != _previousSection && _previousSection != null)
@@ -406,10 +402,13 @@ namespace SetupTv
 
         holderPanel.Controls.Clear();
         holderPanel.Controls.Add(section);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
+      }
+      finally
+      {
+        Cursor = Cursors.Default;
       }
       return true;
     }
@@ -424,8 +423,7 @@ namespace SetupTv
           RemoteControl.Instance.EpgGrabberEnabled = true;
           RemoteControl.Instance.OnNewSchedule();
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       { }
 
     }
@@ -550,8 +548,7 @@ namespace SetupTv
           _previousSection = null;
         }
         Close();
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Write(ex);
       }
