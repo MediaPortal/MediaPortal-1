@@ -77,7 +77,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry.FormattingEnabled = true;
       this.mpComboBoxCountry.Location = new System.Drawing.Point(111, 30);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
-      this.mpComboBoxCountry.Size = new System.Drawing.Size(175, 21);
+      this.mpComboBoxCountry.Size = new System.Drawing.Size(328, 21);
       this.mpComboBoxCountry.TabIndex = 0;
       // 
       // mpBeveledLine1
