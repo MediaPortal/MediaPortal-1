@@ -778,24 +778,16 @@ Section -Post
   SetOverwrite on
   SetOutPath "$MPdir.Base"
 
-  ; cleanup, delete obsolete files to prevent issues, which will occure if these files still exists
-  ${If} ${FileExists} "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-  ${OrIf} ${FileExists} "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
-  ${OrIf} ${FileExists} "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
-  ${OrIf} ${FileExists} "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
-    ${LOG_TEXT} "INFO" "!!! WARNING !!! Old installation files found! (-> MiniDisplay)"
-    ${LOG_TEXT} "INFO" "You are an evil guy. Why did you copy back files from an old Installation?"
-    Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
-    Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
-    Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
-    Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
-  ${EndIf}
+  ; removing old externaldisplay files - requested by chemelli
+  ${LOG_TEXT} "INFO" "Removing obsolete (External/Mini/Cybr)Display files"
+  Delete "$MPdir.Plugins\process\ExternalDisplayPlugin.dll"
+  Delete "$MPdir.Plugins\process\MiniDisplayPlugin.dll"
+  Delete "$MPdir.Plugins\process\CybrDisplayPlugin.dll"
+  Delete "$MPdir.Plugins\windows\CybrDisplayPlugin.dll"
 
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
-  ${If} ${FileExists} "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
-    ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
-    Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
-  ${EndIf}
+  ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
   ; create desktop shortcuts
   ${If} $noDesktopSC != 1
