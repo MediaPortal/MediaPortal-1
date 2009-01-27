@@ -13,6 +13,9 @@
   <satellite name="11.0°W Express A3" url="http://en.kingofsat.net/dl.php?pos=11.0W"/>
   <satellite name="12.5°W Atlantic Bird 1" url="http://en.kingofsat.net/dl.php?pos=12.5W"/>
   <satellite name="13.0°E Hotbird" url="http://en.kingofsat.net/dl.php?pos=13.0E"/>
+  <satellite name="13.0°E Hotbird FTA" url=""/>
+  <satellite name="13.0°E Hotbird Italy FTA" url=""/>
+  <satellite name="13.0°E Hotbird Italy Sky" url=""/>
   <satellite name="14.0°W Express A4" url="http://en.kingofsat.net/dl.php?pos=14.0W"/>
   <satellite name="15.0°W Telstar 12" url="http://en.kingofsat.net/dl.php?pos=15.0W"/>
   <satellite name="16.0°E Eutelsat W2" url="http://en.kingofsat.net/dl.php?pos=16.0E"/>
