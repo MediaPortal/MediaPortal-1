@@ -3270,17 +3270,36 @@ namespace TvService
             TvCardContext context = (TvCardContext)_cards[user.CardId].Card.Context;
             User[] users = context.Users;
 
+            int userSubCh = -1;
+            bool otherUserFound = false;
             foreach (User userObj in users)
             {
-              if (userObj.Name.Equals(user.Name))
+              if (userObj.Name.Equals(user.Name) && userSubCh == -1)
               {
-                if (userObj.SubChannel > -1)
+                userSubCh = userObj.SubChannel;                
+                if (otherUserFound)
                 {
-                  _cards[user.CardId].Card.FreeSubChannelContinueGraph(userObj.SubChannel);
+                  break;
                 }
-                break;
+              }
+              else
+              {
+                otherUserFound = true;
               }
             }
+
+            if (userSubCh > -1)
+            {
+              if (otherUserFound)
+              {
+                _cards[user.CardId].Card.FreeSubChannelContinueGraph(userSubCh, true);
+              }
+              else
+              {
+                _cards[user.CardId].Card.FreeSubChannelContinueGraph(userSubCh);
+              }
+            }
+            
           }
         }
 

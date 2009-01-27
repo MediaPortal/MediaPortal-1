@@ -594,6 +594,17 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region subchannel management
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
+    public virtual void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
+    {
+      FreeSubChannel(id, true);
+    }
+
     /// <summary>
     /// Frees the sub channel. but keeps the graph running.
     /// </summary>

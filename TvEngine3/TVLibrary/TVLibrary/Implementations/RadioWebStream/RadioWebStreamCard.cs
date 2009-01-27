@@ -293,6 +293,16 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
+    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
+    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
+    {
+     
+    }
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
     public void FreeSubChannelContinueGraph(int id)
     {
       

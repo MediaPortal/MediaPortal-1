@@ -270,6 +270,14 @@ namespace TvLibrary.Interfaces
     /// <param name="id">The id.</param>
     void FreeSubChannelContinueGraph(int id);
 
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
+    void FreeSubChannelContinueGraph(int id, bool subchannelBusy);
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>

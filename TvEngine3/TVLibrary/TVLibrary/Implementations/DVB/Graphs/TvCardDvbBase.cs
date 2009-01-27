@@ -176,6 +176,24 @@ namespace TvLibrary.Implementations.DVB
 
     #region subchannel management
 
+
+    /// <summary>
+    /// Frees the sub channel.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
+    public override void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
+    {
+      if (subchannelBusy)
+      {
+        base.FreeSubChannelContinueGraph(id);
+      }
+      else
+      {
+        FreeSubChannelContinueGraph(id);
+      }
+    }
+
     /// <summary>
     /// Frees the sub channel. but keeps the graph running.
     /// </summary>
