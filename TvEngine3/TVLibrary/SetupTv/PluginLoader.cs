@@ -29,7 +29,11 @@ namespace SetupTv
         {
           string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
           foreach (string strFile in strFiles)
-            LoadPlugin(strFile);
+            // Fixed mantis #0001963: Hide ConflictsManager plugin until its integration is finished
+            if (strFile.ToLower() != "conflictsmanager.dll")
+            {
+              LoadPlugin(strFile);
+            }
         }
       } catch (Exception)
       {
