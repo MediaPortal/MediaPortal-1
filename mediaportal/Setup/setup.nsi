@@ -399,6 +399,9 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Config\xmltv"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
 
+  SetOutPath "$MPdir.Config\Installer"
+  File /nonfatal "${MEDIAPORTAL.BASE}\cleanup.xml"
+
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
 
@@ -590,10 +593,6 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\channels"
   RMDir /r /REBOOTOK "$MPdir.Base\WebEPG\grabbers"
   RMDir "$MPdir.Base\WebEPG"
-
-  ; MPinstaller
-  Delete /REBOOTOK "$MPdir.Base\Installer\cleanup.xml"
-  RMDir "$MPdir.Base\Installer"
 
   ; xmltv
   Delete /REBOOTOK "$MPdir.Base\xmltv\ReadMe.txt"
