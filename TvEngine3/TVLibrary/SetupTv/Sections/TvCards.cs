@@ -131,7 +131,13 @@ namespace SetupTv.Sections
 
         if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
         {
+          NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
           RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
         }
         else
         {
@@ -374,7 +380,7 @@ namespace SetupTv.Sections
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       e.Item.Font = e.Item.Checked ? new Font(e.Item.Font, FontStyle.Regular) : new Font(e.Item.Font, FontStyle.Strikeout);
-      buttonEdit.Enabled = e.Item.Checked;
+      UpdateEditButtonState();
     }
 
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -385,6 +391,12 @@ namespace SetupTv.Sections
         Card card = (Card)mpListView1.SelectedItems[0].Tag;
         enabled = !RemoteControl.Instance.CardPresent(card.IdCard);
       }
+      UpdateEditButtonState();
+      buttonRemove.Enabled = enabled;
+    }
+
+    private void UpdateEditButtonState()
+    {
       if (mpListView1.SelectedItems.Count == 1)
       {
         string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLowerInvariant();
@@ -393,9 +405,7 @@ namespace SetupTv.Sections
         else
           buttonEdit.Enabled = false;
       }
-      buttonRemove.Enabled = enabled;
     }
-
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
     }

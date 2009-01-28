@@ -102,7 +102,8 @@ namespace SetupTv.Sections
     private void mpButtonAddGroup_Click(object sender, EventArgs e)
     {
       GroupNameForm dlg = new GroupNameForm();
-      dlg.ShowDialog(this);
+      if (dlg.ShowDialog(this) == DialogResult.Cancel)
+        return;
       if (dlg.GroupName.Length == 0)
         return;
       RadioChannelGroup newGroup = new RadioChannelGroup(dlg.GroupName, 9999);

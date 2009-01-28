@@ -103,7 +103,7 @@ namespace SetupTv.Sections
       MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void buttonChooseIp_Click(object sender, EventArgs e)
     {
       if (mpListView1.SelectedIndices.Count < 1)
         return;
@@ -115,15 +115,60 @@ namespace SetupTv.Sections
       dlg.HostName = server.HostName;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        item.Text = dlg.HostName;
-        server.HostName = dlg.HostName;
-        server.Persist();
-        RemoteControl.Instance.Restart();
-        MessageBox.Show(this, "Changes made require TvService to restart. Please restart the tvservice");
+        if (dlg.HostName.Equals(server.HostName) == false)
+        {
+          item.Text = dlg.HostName;
+          server.HostName = dlg.HostName;
+          server.Persist();
+          ServiceNeedsToRestart();
+        }
       }
 
     }
 
+    private void ServiceNeedsToRestart()
+    {
+      if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      {
+        NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+        dlgNotify.Show();
+        dlgNotify.WaitForDisplay();
+
+        RemoteControl.Instance.Restart();
+
+        dlgNotify.Close();
+      }
+
+    }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (mpListView1.SelectedItems.Count == 0)
+      {
+        buttonChooseIp.Enabled = false;
+      }
+      else
+      {
+        buttonChooseIp.Enabled = true ;
+      }
+    }
+
+    private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if (mpListView1.SelectedItems.Count == 0)
+      {
+        chooseIPForStreamingToolStripMenuItem.Enabled = false;
+      }
+      else
+      {
+        chooseIPForStreamingToolStripMenuItem.Enabled = true;
+      }
+    }
+
+    private void chooseIPForStreamingToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+       buttonChooseIp_Click(null , null);
+    }
 
   }
 }
