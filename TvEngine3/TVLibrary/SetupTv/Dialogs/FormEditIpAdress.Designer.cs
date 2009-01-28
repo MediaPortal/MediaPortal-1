@@ -47,7 +47,7 @@ namespace SetupTv.Sections
       // mpButtonOK
       // 
       this.mpButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonOK.Location = new System.Drawing.Point(183, 80);
+      this.mpButtonOK.Location = new System.Drawing.Point(196, 80);
       this.mpButtonOK.Name = "mpButtonOK";
       this.mpButtonOK.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOK.TabIndex = 1;
@@ -59,7 +59,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(264, 80);
+      this.mpButtonCancel.Location = new System.Drawing.Point(277, 80);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 2;
@@ -75,7 +75,7 @@ namespace SetupTv.Sections
       this.mpComboBox1.FormattingEnabled = true;
       this.mpComboBox1.Location = new System.Drawing.Point(15, 41);
       this.mpComboBox1.Name = "mpComboBox1";
-      this.mpComboBox1.Size = new System.Drawing.Size(324, 21);
+      this.mpComboBox1.Size = new System.Drawing.Size(337, 21);
       this.mpComboBox1.TabIndex = 0;
       // 
       // FormEditIpAdress
@@ -84,7 +84,7 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(351, 115);
+      this.ClientSize = new System.Drawing.Size(372, 115);
       this.Controls.Add(this.mpComboBox1);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOK);
