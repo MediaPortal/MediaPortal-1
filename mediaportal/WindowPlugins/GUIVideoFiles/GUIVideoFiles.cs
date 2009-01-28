@@ -1498,18 +1498,21 @@ namespace MediaPortal.GUI.Video
       int iidMovie = VideoDatabase.GetMovieId(filename);
       VideoDatabase.GetFiles(iidMovie, ref movies);
       if (movies.Count <= 0)
-      {
+      {       
         return;
       }
       for (int i = 0; i < movies.Count; i++)
       {
-        string strFilePath = (string) movies[i];
+        string strFilePath = (string) movies[i];        
+
         int idFile = VideoDatabase.GetFileId(strFilePath);
+        
         if (idFile < 0)
         {
           break;
         }
-        if ((filename == strFilePath) && (timeMovieStopped > 0))
+
+        if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
