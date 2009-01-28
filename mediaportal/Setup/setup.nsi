@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+cleanup#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -400,7 +400,7 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\xmltv\*"
 
   SetOutPath "$MPdir.Config\Installer"
-  File /nonfatal "${MEDIAPORTAL.BASE}\cleanup.xml"
+  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
 
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
