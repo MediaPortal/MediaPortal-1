@@ -456,6 +456,7 @@ Section "MediaPortal core files (required)" SecCore
   ; MPInstaller
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.*"
   File "..\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.*"
+  File "..\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.*"
   ; WatchDog
   File "..\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
   File "..\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
@@ -685,6 +686,7 @@ SectionEnd
   Delete /REBOOTOK "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.exe"
   Delete /REBOOTOK "$MPdir.Base\MPInstaller.Library.dll"
+  Delete /REBOOTOK "$MPdir.Base\MPIMaker.exe"
   Delete /REBOOTOK "$MPdir.Base\WatchDog.exe"
   Delete /REBOOTOK "$MPdir.Base\mpviz.dll"
   Delete /REBOOTOK "$MPdir.Base\MusicShareWatcher.exe"
