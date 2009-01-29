@@ -39,12 +39,13 @@ namespace MediaPortal.MPInstaller
           this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
           this.informationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-          this.button1 = new System.Windows.Forms.Button();
+          this.button_uninstall = new System.Windows.Forms.Button();
           this.button2 = new System.Windows.Forms.Button();
           this.button3 = new System.Windows.Forms.Button();
           this.button4 = new System.Windows.Forms.Button();
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage1 = new System.Windows.Forms.TabPage();
+          this.checkBox_comp = new System.Windows.Forms.CheckBox();
           this.button_local = new System.Windows.Forms.Button();
           this.label3 = new System.Windows.Forms.Label();
           this.comboBox_filter = new System.Windows.Forms.ComboBox();
@@ -139,17 +140,17 @@ namespace MediaPortal.MPInstaller
           this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
           this.imageList1.Images.SetKeyName(0, "application.ico");
           // 
-          // button1
+          // button_uninstall
           // 
-          this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-          this.button1.Enabled = false;
-          this.button1.Location = new System.Drawing.Point(8, 358);
-          this.button1.Name = "button1";
-          this.button1.Size = new System.Drawing.Size(75, 23);
-          this.button1.TabIndex = 1;
-          this.button1.Text = "Uninstall";
-          this.button1.UseVisualStyleBackColor = true;
-          this.button1.Click += new System.EventHandler(this.button1_Click);
+          this.button_uninstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+          this.button_uninstall.Enabled = false;
+          this.button_uninstall.Location = new System.Drawing.Point(8, 358);
+          this.button_uninstall.Name = "button_uninstall";
+          this.button_uninstall.Size = new System.Drawing.Size(75, 23);
+          this.button_uninstall.TabIndex = 1;
+          this.button_uninstall.Text = "Uninstall";
+          this.button_uninstall.UseVisualStyleBackColor = true;
+          this.button_uninstall.Click += new System.EventHandler(this.button1_Click);
           // 
           // button2
           // 
@@ -201,6 +202,7 @@ namespace MediaPortal.MPInstaller
           // 
           // tabPage1
           // 
+          this.tabPage1.Controls.Add(this.checkBox_comp);
           this.tabPage1.Controls.Add(this.button_local);
           this.tabPage1.Controls.Add(this.label3);
           this.tabPage1.Controls.Add(this.comboBox_filter);
@@ -213,7 +215,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage1.Controls.Add(this.listView1);
           this.tabPage1.Controls.Add(this.button2);
           this.tabPage1.Controls.Add(this.button4);
-          this.tabPage1.Controls.Add(this.button1);
+          this.tabPage1.Controls.Add(this.button_uninstall);
           this.tabPage1.Controls.Add(this.button3);
           this.tabPage1.Location = new System.Drawing.Point(4, 22);
           this.tabPage1.Name = "tabPage1";
@@ -223,6 +225,17 @@ namespace MediaPortal.MPInstaller
           this.tabPage1.Text = "Extensions";
           this.tabPage1.UseVisualStyleBackColor = true;
           this.tabPage1.Enter += new System.EventHandler(this.tabPage1_Enter);
+          // 
+          // checkBox_comp
+          // 
+          this.checkBox_comp.AutoSize = true;
+          this.checkBox_comp.Location = new System.Drawing.Point(10, 341);
+          this.checkBox_comp.Name = "checkBox_comp";
+          this.checkBox_comp.Size = new System.Drawing.Size(200, 17);
+          this.checkBox_comp.TabIndex = 13;
+          this.checkBox_comp.Text = "Show only the compatible extensions";
+          this.checkBox_comp.UseVisualStyleBackColor = true;
+          this.checkBox_comp.CheckedChanged += new System.EventHandler(this.checkBox_comp_CheckedChanged);
           // 
           // button_local
           // 
@@ -400,17 +413,16 @@ namespace MediaPortal.MPInstaller
           // 
           // openFileDialog1
           // 
-          this.openFileDialog1.FileName = "";
           this.openFileDialog1.Filter = "MPE1 files|*.mpe1|MPI files|*.mpi|All files|*.*";
           // 
-          // controlp
+          // ControlPanel
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(871, 416);
           this.Controls.Add(this.tabControl1);
           this.MinimumSize = new System.Drawing.Size(800, 450);
-          this.Name = "controlp";
+          this.Name = "ControlPanel";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
           this.Text = "Control panel";
           this.Load += new System.EventHandler(this.controlp_Load);
@@ -428,7 +440,7 @@ namespace MediaPortal.MPInstaller
         #endregion
 
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_uninstall;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ColumnHeader columnHeader1;
@@ -456,5 +468,6 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.OpenFileDialog openFileDialog1;
       private System.Windows.Forms.TabPage tabPage2;
       private MediaPortal.MPInstaller.Controls.ControlListView controlListView1;
+      private System.Windows.Forms.CheckBox checkBox_comp;
     }
 }

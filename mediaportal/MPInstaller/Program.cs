@@ -61,7 +61,7 @@ namespace MediaPortal.MPInstaller
 
       if (!String.IsNullOrEmpty(fil))
       {
-        if (Path.GetExtension(fil) == ".mpi" || Path.GetExtension(fil) == ".mpe1")
+        if (Path.GetExtension(fil).ToUpper() == ".MPI" || Path.GetExtension(fil).ToUpper() == ".MPE1")
         {
           InstallWizard wiz = new InstallWizard();
           wiz.package.LoadFromFile(fil);

@@ -287,6 +287,15 @@ namespace MediaPortal.MPInstaller
     private void addrow(string file, string type, string subtype, string path, string id, string op)
     {
       ListViewItem item1 = new ListViewItem(file, 0);
+      ListViewItem item = new ListViewItem(file, 0);
+      foreach (ListViewItem it in bossview.Items)
+      {
+        if (it.SubItems[3].Text == path && it.SubItems[0].Text == file)
+        {
+          item = it;
+        }
+      }
+      bossview.Items.Remove(item);
       item1.SubItems.Add(type);
       item1.SubItems.Add(subtype);
       item1.SubItems.Add(path);

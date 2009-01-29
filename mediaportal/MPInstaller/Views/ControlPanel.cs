@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Data;
 using System.Drawing;
@@ -48,7 +49,7 @@ namespace MediaPortal.MPInstaller
     private string InstallDir = Config.GetFolder(Config.Dir.Installer);
     private Hashtable[] groupTables;
     int groupColumn = 0;
-
+    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
     public ControlPanel()
     {
@@ -85,6 +86,9 @@ namespace MediaPortal.MPInstaller
     
     public bool TestView(MPpackageStruct pk, int idx )
     {
+      if (checkBox_comp.Checked && VersionPharser.CompareVersions(versionInfo.FileVersion, pk.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
+        return false;
+
       switch (idx)
       {
         case 0:
@@ -480,7 +484,7 @@ namespace MediaPortal.MPInstaller
 
     private void SetButtonState()
     {
-      button1.Enabled = false;
+      button_uninstall.Enabled = false;
       button3.Enabled = false;
       button4.Enabled = false;
       button5.Enabled = false;
@@ -491,7 +495,7 @@ namespace MediaPortal.MPInstaller
         contextMenuStrip1.Enabled= true; 
         if (!pk.isNew)
         {
-          button1.Enabled = true;
+          button_uninstall.Enabled = true;
           button4.Enabled = true;
           if (pk.isUpdated)
             button3.Enabled = true;
@@ -503,7 +507,7 @@ namespace MediaPortal.MPInstaller
       }
       else
       {
-        button1.Enabled = false;
+        button_uninstall.Enabled = false;
         button3.Enabled = false;
         button4.Enabled = false;
         button5.Enabled = false;
@@ -580,6 +584,12 @@ namespace MediaPortal.MPInstaller
       {
         MessageBox.Show("Invalid package !");
       }
+    }
+
+    private void checkBox_comp_CheckedChanged(object sender, EventArgs e)
+    {
+      mozPane1.SelectItem(0);
+      LoadToListview("All");
     }
   }
 
