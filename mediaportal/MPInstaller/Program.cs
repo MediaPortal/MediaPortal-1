@@ -61,7 +61,7 @@ namespace MediaPortal.MPInstaller
 
       if (!String.IsNullOrEmpty(fil))
       {
-        if (Path.GetExtension(fil) == ".mpi" && Path.GetExtension(fil) == ".mpe1")
+        if (Path.GetExtension(fil) == ".mpi" || Path.GetExtension(fil) == ".mpe1")
         {
           InstallWizard wiz = new InstallWizard();
           wiz.package.LoadFromFile(fil);
@@ -74,11 +74,6 @@ namespace MediaPortal.MPInstaller
             MessageBox.Show("Invalid package !");
           }
         }
-        //if (Path.GetExtension(fil) == ".xmp")
-        //{
-        //  EditForm create_dlg = new EditForm(Path.GetFullPath(fil));
-        //  create_dlg.ShowDialog();
-        //}
       }
       else
       {

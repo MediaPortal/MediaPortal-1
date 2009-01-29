@@ -804,7 +804,8 @@ Section -Post
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"   "-auto"    "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
-      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Plugins-Skins Installer.lnk"    "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Plugins-Skins Installer"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Extension Installer.lnk"        "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Extension Installer"
+      CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Extension Maker.lnk"            "$MPdir.Base\MPIMaker.exe"   ""         "$MPdir.Base\MPIMaker.exe"   0 "" "" "MediaPortal Extension Maker"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\MediaPortal Logs Collector.lnk"             "$MPdir.Base\WatchDog.exe"   ""         "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal WatchDog"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "$SMPROGRAMS\$StartMenuGroup\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
@@ -832,7 +833,8 @@ Section -Post
   WriteUninstaller "$MPdir.Base\uninstall-mp.exe"
 
   ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"
-  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".xmp" "MediaPortal extension project"
+  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpe1" "MediaPortal extension package"
+  ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
 
   ${RefreshShellIcons}
 
