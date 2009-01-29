@@ -41,7 +41,7 @@ using Pabo.MozBar;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class controlp : MPInstallerForm
+  public partial class ControlPanel : MPInstallerForm
   {
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
@@ -50,7 +50,7 @@ namespace MediaPortal.MPInstaller
     int groupColumn = 0;
 
 
-    public controlp()
+    public ControlPanel()
     {
       InitializeComponent();
 
@@ -123,28 +123,28 @@ namespace MediaPortal.MPInstaller
       for (int i = 0; i < mpih.Items.Count; i++)
       {
         MPpackageStruct pk = (MPpackageStruct)mpih.Items[i];
-        if ((pk._intalerStruct.Group == strgroup || strgroup == "All")&&TestView(pk,comboBox_filter.SelectedIndex))
+        if ((pk.InstallerInfo.Group == strgroup || strgroup == "All")&&TestView(pk,comboBox_filter.SelectedIndex))
         {
-          ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, 0);
-          if (pk._intalerStruct.Logo != null)
+          ListViewItem item1 = new ListViewItem(pk.InstallerInfo.Name, 0);
+          if (pk.InstallerInfo.Logo != null)
           {
-            imageList1.Images.Add(pk._intalerStruct.Logo);
+            imageList1.Images.Add(pk.InstallerInfo.Logo);
             item1.ImageIndex = imageList1.Images.Count - 1;
           }
           if (pk.isNew) item1.ForeColor = Color.Blue;
           if (pk.isUpdated) item1.ForeColor = Color.BlueViolet;
-          item1.ToolTipText = pk._intalerStruct.Description;
-          item1.SubItems.Add(pk._intalerStruct.Author);
-          item1.SubItems.Add(pk._intalerStruct.Version);
+          item1.ToolTipText = pk.InstallerInfo.Description;
+          item1.SubItems.Add(pk.InstallerInfo.Author);
+          item1.SubItems.Add(pk.InstallerInfo.Version);
           item1.SubItems.Add(Path.GetFileName(pk.FileName));
-          item1.SubItems.Add(pk._intalerStruct.Group);
+          item1.SubItems.Add(pk.InstallerInfo.Group);
           lv.Items.AddRange(new ListViewItem[] { item1 });
           //----------------------
           TileListItem item = new TileListItem();
-          item.Title = pk._intalerStruct.Name;
-          item.Author = pk._intalerStruct.Author;
-          item.Version = pk._intalerStruct.Version;
-          item.Description = pk._intalerStruct.Description;
+          item.Title = pk.InstallerInfo.Name;
+          item.Author = pk.InstallerInfo.Author;
+          item.Version = pk.InstallerInfo.Version;
+          item.Description = pk.InstallerInfo.Description;
           controlListView1.Add(item);
           //--------------------
 
@@ -273,7 +273,7 @@ namespace MediaPortal.MPInstaller
 
     private void button4_Click(object sender, EventArgs e)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
       if (wiz.package.isValid)
       {
@@ -293,12 +293,12 @@ namespace MediaPortal.MPInstaller
           return;
         string file_name = pk.FileName;
         string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-        download_form dw = new download_form(pk._intalerStruct.UpdateURL, temp_file);
+        DownloadForm dw = new DownloadForm(pk.InstallerInfo.UpdateURL, temp_file);
         dw.Text = listView1.SelectedItems[0].SubItems[3].Text;
         dw.ShowDialog();
         if (File.Exists(temp_file))
         {
-          wizard_1 wiz = new wizard_1();
+          InstallWizard wiz = new InstallWizard();
           wiz.package.LoadFromFile(temp_file);
           if (wiz.package.isValid)
           {
@@ -314,7 +314,7 @@ namespace MediaPortal.MPInstaller
 
     private void button1_Click(object sender, EventArgs e)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
       if (wiz.package.isValid)
       {
@@ -374,11 +374,11 @@ namespace MediaPortal.MPInstaller
         MPpackageStruct pk = temp_lst.Find(listView1.SelectedItems[0].SubItems[0].Text);
         if (pk != null)
         {
-          if (!String.IsNullOrEmpty(pk._intalerStruct.UpdateURL.Trim()))
+          if (!String.IsNullOrEmpty(pk.InstallerInfo.UpdateURL.Trim()))
           {
             string file_name = "MPExtensionFileList.xml";
             string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-            download_form dw = new download_form(pk._intalerStruct.UpdateURL + "/" + file_name, temp_file);
+            DownloadForm dw = new DownloadForm(pk.InstallerInfo.UpdateURL + "/" + file_name, temp_file);
             dw.Text = listView1.SelectedItems[0].SubItems[3].Text;
             dw.ShowDialog();
             if (File.Exists(temp_file))
@@ -395,12 +395,12 @@ namespace MediaPortal.MPInstaller
                     MPpackageStruct pk1 = ((MPpackageStruct)temp_mpih.Items[idx]);
                     file_name = pk1.FileName;
                     temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-                    download_form dw1 = new download_form(pk1._intalerStruct.UpdateURL , temp_file);
-                    dw1.Text = pk1._intalerStruct.UpdateURL + "/" + pk1.FileName + "/" + pk1._intalerStruct.Version;
+                    DownloadForm dw1 = new DownloadForm(pk1.InstallerInfo.UpdateURL , temp_file);
+                    dw1.Text = pk1.InstallerInfo.UpdateURL + "/" + pk1.FileName + "/" + pk1.InstallerInfo.Version;
                     dw1.ShowDialog();
                     if (File.Exists(temp_file))
                     {
-                      wizard_1 wiz = new wizard_1();
+                      InstallWizard wiz = new InstallWizard();
                       wiz.package.LoadFromFile(temp_file);
                       if (wiz.package.isValid)
                       {
@@ -517,7 +517,7 @@ namespace MediaPortal.MPInstaller
       {
         Directory.CreateDirectory(InstallDir);
       }
-      download_form dw = new download_form(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
+      DownloadForm dw = new DownloadForm(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
       dw.Text = "Download online list";
       dw.ShowDialog();
       LoadListFiles();
@@ -570,7 +570,7 @@ namespace MediaPortal.MPInstaller
 
     private void install_Package(string fil)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       wiz.package.LoadFromFile(fil);
       if (wiz.package.isValid)
       {

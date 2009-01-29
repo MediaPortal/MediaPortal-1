@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-    partial class wizard_1
+    partial class InstallWizard
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@ namespace MediaPortal.MPInstaller
         /// </summary>
         private void InitializeComponent()
         {
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(wizard_1));
+          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallWizard));
           this.panel1 = new System.Windows.Forms.Panel();
           this.pictureBox2 = new System.Windows.Forms.PictureBox();
           this.listBox1 = new System.Windows.Forms.ListBox();

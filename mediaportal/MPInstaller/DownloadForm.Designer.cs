@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-    partial class download_form
+    partial class DownloadForm
     {
         /// <summary>
         /// Required designer variable.

@@ -32,7 +32,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class download_form : MPInstallerForm
+  public partial class DownloadForm : MPInstallerForm
   {
     private string source = string.Empty;
     private string dest = string.Empty;
@@ -41,7 +41,7 @@ namespace MediaPortal.MPInstaller
     public string user = string.Empty;
     public string password = string.Empty;
 
-    public download_form(string s, string d)
+    public DownloadForm(string s, string d)
     {
       InitializeComponent();
       label2.Text = "Resolving host ....";

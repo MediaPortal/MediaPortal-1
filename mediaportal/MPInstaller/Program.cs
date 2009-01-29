@@ -63,7 +63,7 @@ namespace MediaPortal.MPInstaller
       {
         if (Path.GetExtension(fil) == ".mpi" && Path.GetExtension(fil) == ".mpe1")
         {
-          wizard_1 wiz = new wizard_1();
+          InstallWizard wiz = new InstallWizard();
           wiz.package.LoadFromFile(fil);
           if (wiz.package.isValid)
           {
@@ -82,7 +82,7 @@ namespace MediaPortal.MPInstaller
       }
       else
       {
-        Application.Run(new controlp());
+        Application.Run(new ControlPanel());
       }
     }
   }

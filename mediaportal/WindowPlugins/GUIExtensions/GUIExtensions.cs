@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Forms;
 using System.IO;
 using System.Text;
 using System.Net;
@@ -408,13 +410,13 @@ namespace WindowPlugins.GUI.Extensions
           if (dlg == null) return;
           dlg.Reset();
           //dlg.SetHeading(495); // Sort options
-          if (queue.ContainName(pk._intalerStruct.Name))
+          if (queue.ContainName(pk.InstallerInfo.Name))
           {
             dlg.AddLocalizedString(14008);
           }
           else
           {
-            if (lst.Find(pk._intalerStruct.Name) == null)
+            if (lst.Find(pk.InstallerInfo.Name) == null)
             {
               dlg.AddLocalizedString(14005); // install
             }
@@ -429,9 +431,9 @@ namespace WindowPlugins.GUI.Extensions
           dlg.DoModal(GetID);
           if (dlg.SelectedId == -1) return;
           QueueItem qitem = new QueueItem();
-          qitem.Name = pk._intalerStruct.Name;
+          qitem.Name = pk.InstallerInfo.Name;
           qitem.DownloadUrl = MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=&passwd=&filename=" + Path.GetFileName(pk.FileName);
-          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk._intalerStruct.Name+" "+ pk._intalerStruct.Version + ".mpi";
+          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk.InstallerInfo.Name+" "+ pk.InstallerInfo.Version + ".mpi";
           
           switch (dlg.SelectedId)
           {
@@ -445,7 +447,7 @@ namespace WindowPlugins.GUI.Extensions
               qitem.Action = QueueAction.Install;
               break;
             case 14008:
-              queue.Remove(pk._intalerStruct.Name);              
+              queue.Remove(pk.InstallerInfo.Name);              
               break;
           }
           
@@ -459,7 +461,7 @@ namespace WindowPlugins.GUI.Extensions
               {
                 dlgProgress.Reset();
                 dlgProgress.SetHeading(14010);
-                dlgProgress.SetLine(1, pk._intalerStruct.Name+" - "+pk._intalerStruct.Version);
+                dlgProgress.SetLine(1, pk.InstallerInfo.Name+" - "+pk.InstallerInfo.Version);
                 dlgProgress.SetLine(2, "");
                 dlgProgress.SetPercentage(0);
                 dlgProgress.Progress();
@@ -474,28 +476,39 @@ namespace WindowPlugins.GUI.Extensions
             package.LoadFromFile(qitem.LocalFile);
             if (package.isValid)
             {
-              if (package._intalerStruct.SetupGroups.Count > 1)
+              if (!TestVersion(package))
               {
-                if (package._intalerStruct.ProiectProperties.SingleGroupSelect)
+                GUIDialogYesNo dlgcontinue = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                dlgcontinue.Reset();
+                dlgcontinue.SetHeading(14011); // Sort options
+                dlgcontinue.SetLine(1, string.Format(GUILocalizeStrings.Get(14012), package.InstallerInfo.ProiectProperties.MPMinVersion));
+                dlgcontinue.SetLine(1, 14013);
+                dlgcontinue.DoModal(GetID);
+                if (!dlgcontinue.IsConfirmed)
+                  return;
+              }
+              if (package.InstallerInfo.SetupGroups.Count > 1)
+              {
+                if (package.InstallerInfo.ProiectProperties.SingleGroupSelect)
                 {
 
                   GUIDialogMenu dlgselect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                   if (dlgselect == null) return;
                   dlgselect.Reset();
                   dlgselect.SetHeading(14011); // Sort options
-                  foreach (GroupString gs in package._intalerStruct.SetupGroups)
+                  foreach (GroupString gs in package.InstallerInfo.SetupGroups)
                   {
                     gs.Checked = false;
                     dlgselect.Add(gs.Name);
                   }
                   dlgselect.DoModal(GetID);
                   if (dlgselect.SelectedLabel != -1)
-                    package._intalerStruct.SetupGroups[dlgselect.SelectedLabel].Checked = true;
-                  qitem.SetupGroups = package._intalerStruct.SetupGroups;
+                    package.InstallerInfo.SetupGroups[dlgselect.SelectedLabel].Checked = true;
+                  qitem.SetupGroups = package.InstallerInfo.SetupGroups;
                 }
                 else
                 {
-                  foreach (GroupString gs in package._intalerStruct.SetupGroups)
+                  foreach (GroupString gs in package.InstallerInfo.SetupGroups)
                   {
                     GUIDialogYesNo dlgselect = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
                     dlgselect.SetHeading(14011); // Sort options
@@ -504,7 +517,7 @@ namespace WindowPlugins.GUI.Extensions
                     if (dlgselect.IsConfirmed)
                       gs.Checked = true;
                   }
-                  qitem.SetupGroups = package._intalerStruct.SetupGroups;
+                  qitem.SetupGroups = package.InstallerInfo.SetupGroups;
                 }
               }
             }
@@ -525,6 +538,16 @@ namespace WindowPlugins.GUI.Extensions
         }
         GUIPropertyManager.SetProperty("#selecteditem", item.Label);
       }
+    }
+
+    bool TestVersion(MPpackageStruct package)
+    {
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
+      {
+        return false;
+      }
+      return true;
     }
 
     void OnShowSort()
@@ -634,20 +657,20 @@ namespace WindowPlugins.GUI.Extensions
         case SortMethod.Type:
           if (bAscending)
           {
-            return String.Compare(pk1._intalerStruct.Group, pk2._intalerStruct.Group, true);
+            return String.Compare(pk1.InstallerInfo.Group, pk2.InstallerInfo.Group, true);
           }
           else
           {
-            return String.Compare(pk2._intalerStruct.Group, pk1._intalerStruct.Group, true);
+            return String.Compare(pk2.InstallerInfo.Group, pk1.InstallerInfo.Group, true);
           }
         case SortMethod.Date:
           if (bAscending)
           {
-            return DateTime.Compare(pk1._intalerStruct.ProiectProperties.CreationDate, pk2._intalerStruct.ProiectProperties.CreationDate);
+            return DateTime.Compare(pk1.InstallerInfo.ProiectProperties.CreationDate, pk2.InstallerInfo.ProiectProperties.CreationDate);
           }
           else
           {
-            return DateTime.Compare(pk2._intalerStruct.ProiectProperties.CreationDate, pk1._intalerStruct.ProiectProperties.CreationDate);
+            return DateTime.Compare(pk2.InstallerInfo.ProiectProperties.CreationDate, pk1.InstallerInfo.ProiectProperties.CreationDate);
           }
       }
       return 0;
@@ -680,8 +703,8 @@ namespace WindowPlugins.GUI.Extensions
               item = new GUIListItem();
               item.MusicTag = pk;
               item.IsFolder = false;
-              item.Label = pk._intalerStruct.Name;
-              item.Label2 = pk._intalerStruct.Group;
+              item.Label = pk.InstallerInfo.Name;
+              item.Label2 = pk.InstallerInfo.Group;
               facadeView.Add(item);
             }
           }
@@ -723,13 +746,13 @@ namespace WindowPlugins.GUI.Extensions
               facadeView.Add(item);
               foreach (MPpackageStruct pk in lst_online.Items)
               {
-                if ((pk._intalerStruct.Group == strNewDirectory || strNewDirectory == "All"))
+                if ((pk.InstallerInfo.Group == strNewDirectory || strNewDirectory == "All"))
                 {
                   item = new GUIListItem();
                   item.MusicTag = pk;
                   item.IsFolder = false;
-                  item.Label = pk._intalerStruct.Name;
-                  item.Label2 = pk._intalerStruct.Group;
+                  item.Label = pk.InstallerInfo.Name;
+                  item.Label2 = pk.InstallerInfo.Group;
                   facadeView.Add(item);
                 }
               }
@@ -844,13 +867,13 @@ namespace WindowPlugins.GUI.Extensions
           switch (method)
           {
             case SortMethod.Name:
-              item.Label2 = pak._intalerStruct.Group;
+              item.Label2 = pak.InstallerInfo.Group;
               break;
             case SortMethod.Type:
-              item.Label2 = pak._intalerStruct.Group;
+              item.Label2 = pak.InstallerInfo.Group;
               break;
             case SortMethod.Date:
-              item.Label2 = pak._intalerStruct.ProiectProperties.CreationDate.ToShortDateString();
+              item.Label2 = pak.InstallerInfo.ProiectProperties.CreationDate.ToShortDateString();
               break;
             default:
               break;

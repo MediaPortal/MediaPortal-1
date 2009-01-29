@@ -50,7 +50,7 @@ namespace MediaPortal.MPInstaller
               {
                 listBox1.Items.Add("Local file not found downloading from main site ...");
                 temp_file = Path.GetTempFileName();
-                download_form dw1 = new download_form(item.DownloadUrl, temp_file);
+                DownloadForm dw1 = new DownloadForm(item.DownloadUrl, temp_file);
                 dw1.Text = string.Format("Download {0} - {1}", item.Name, item.Version);
                 dw1.ShowDialog();
               }
@@ -60,14 +60,14 @@ namespace MediaPortal.MPInstaller
                 package.LoadFromFile(temp_file);
                 if (package.isValid)
                 {
-                  package._intalerStruct.SetupGroups = item.SetupGroups;
+                  package.InstallerInfo.SetupGroups = item.SetupGroups;
                   package.InstallableSkinList.AddRange(package.SkinList);
-                  progressBar2.Maximum = package._intalerStruct.FileList.Count + 1;
-                  package.install_file(progressBar3, progressBar2, listBox2);
+                  progressBar2.Maximum = package.InstallerInfo.FileList.Count + 1;
+                  package.InstallPackage(progressBar3, progressBar2, listBox2);
                   package.installLanguage(listBox2);
                   inst.Add(package);
                   inst.SaveToFile();
-                  if (package._intalerStruct.ProiectProperties.ClearSkinCache)
+                  if (package.InstallerInfo.ProiectProperties.ClearSkinCache)
                   {
                     Directory.Delete(Config.GetFolder(Config.Dir.Cache), true);
                   }
@@ -88,12 +88,12 @@ namespace MediaPortal.MPInstaller
             {
               listBox1.Items.Add(string.Format("Uninstalling : {0} - {1}", item.Name, item.Version));
               MPpackageStruct pk = inst.Find(item.Name);
-              if (pk != null && pk._intalerStruct.Uninstall.Count > 0)
+              if (pk != null && pk.InstallerInfo.Uninstall.Count > 0)
               {
-                progressBar2.Maximum = pk._intalerStruct.Uninstall.Count;
-                for (int i = 0; i < pk._intalerStruct.Uninstall.Count; i++)
+                progressBar2.Maximum = pk.InstallerInfo.Uninstall.Count;
+                for (int i = 0; i < pk.InstallerInfo.Uninstall.Count; i++)
                 {
-                  UninstallInfo u = (UninstallInfo)pk._intalerStruct.Uninstall[i];
+                  UninstallInfo u = (UninstallInfo)pk.InstallerInfo.Uninstall[i];
                   progressBar2.Value++;
                   progressBar2.Update();
                   progressBar2.Refresh();

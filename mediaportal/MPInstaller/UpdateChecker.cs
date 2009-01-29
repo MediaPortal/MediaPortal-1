@@ -57,7 +57,7 @@ namespace MediaPortal.MPInstaller
         {
             string file_name = "MPExtensionFileList.xml";
             string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-            download_form dw = new download_form(remoteFile, temp_file);
+            DownloadForm dw = new DownloadForm(remoteFile, temp_file);
             dw.Text = "Download files list ...";
             dw.ShowDialog();
             if (File.Exists(temp_file))
@@ -87,15 +87,15 @@ namespace MediaPortal.MPInstaller
                 MPpackageStruct pk = (MPpackageStruct)mpih.Items[i];
                 if (pk.isUpdated)
                 {
-                    ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, 0);
-                    if (pk._intalerStruct.Logo != null)
+                    ListViewItem item1 = new ListViewItem(pk.InstallerInfo.Name, 0);
+                    if (pk.InstallerInfo.Logo != null)
                     {
-                        imageList1.Images.Add(pk._intalerStruct.Logo);
+                        imageList1.Images.Add(pk.InstallerInfo.Logo);
                         item1.ImageIndex = imageList1.Images.Count - 1;
                     }
-                    item1.ToolTipText = pk._intalerStruct.Description;
+                    item1.ToolTipText = pk.InstallerInfo.Description;
                     //item1.SubItems.Add(pk._intalerStruct.Author);
-                    item1.SubItems.Add(pk._intalerStruct.Version);
+                    item1.SubItems.Add(pk.InstallerInfo.Version);
                     //item1.SubItems.Add(Path.GetFileName(pk.FileName));
                     //item1.SubItems.Add(pk._intalerStruct.Group);
           lv.Items.AddRange(new ListViewItem[] {item1});
@@ -112,12 +112,12 @@ namespace MediaPortal.MPInstaller
                 {
                     string file_name = pk.FileName;
                     string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-                    download_form dw1 = new download_form(pk._intalerStruct.UpdateURL, temp_file);
-                    dw1.Text = pk._intalerStruct.UpdateURL + "/" +  pk._intalerStruct.Version;
+                    DownloadForm dw1 = new DownloadForm(pk.InstallerInfo.UpdateURL, temp_file);
+                    dw1.Text = pk.InstallerInfo.UpdateURL + "/" +  pk.InstallerInfo.Version;
                     dw1.ShowDialog();
                     if (File.Exists(temp_file))
                     {
-                        wizard_1 wiz = new wizard_1();
+                        InstallWizard wiz = new InstallWizard();
                         wiz.package.LoadFromFile(temp_file);
                         if (wiz.package.isValid)
                         {

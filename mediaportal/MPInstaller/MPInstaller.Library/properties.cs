@@ -57,12 +57,10 @@ namespace MediaPortal.MPInstaller
       }
       get
       {
-        return mpminversion;
+        return new VersionPharser(mpminversion).ToString();
       }
     }
-    [
-    Description("Maximum version of MediaPortal"),
-    ]
+    [Description("Maximum version of MediaPortal")]
     public string MPMaxVersion
     {
       set
@@ -71,7 +69,7 @@ namespace MediaPortal.MPInstaller
       }
       get
       {
-        return mpmaxversion;
+        return new VersionPharser(mpmaxversion).ToString();
       }
     }
 

@@ -1483,6 +1483,8 @@
 	<String id="14009">On next restart this action will be executed</String>
 	<String id="14010">Download extension</String>
 	<String id="14011">Select an option</String>
+	<String id="14012">Not supported Mediaportal version !(Needed version {0})</String>	
+	<String id="14013">Do you want continue ?</String>		
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>

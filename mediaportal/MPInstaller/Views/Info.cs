@@ -39,21 +39,21 @@ namespace MediaPortal.MPInstaller
 
     private void Info_Load(object sender, EventArgs e)
     {
-      label1.Text = info_pk._intalerStruct.Name;
-      label2.Text = info_pk._intalerStruct.Author;
-      label3.Text = info_pk._intalerStruct.Version;
-      pictureBox1.Image = info_pk._intalerStruct.Logo;
-      if (!String.IsNullOrEmpty(info_pk._intalerStruct.Description.Trim()))
+      label1.Text = info_pk.InstallerInfo.Name;
+      label2.Text = info_pk.InstallerInfo.Author;
+      label3.Text = info_pk.InstallerInfo.Version;
+      pictureBox1.Image = info_pk.InstallerInfo.Logo;
+      if (!String.IsNullOrEmpty(info_pk.InstallerInfo.Description.Trim()))
       {
-        textBox1.Text = info_pk._intalerStruct.Description.Trim();
+        textBox1.Text = info_pk.InstallerInfo.Description.Trim();
       }
       else
       {
         textBox1.Visible = false;
       }
-      linkLabel1.Text = info_pk._intalerStruct.ProiectProperties.ForumURL;
-      linkLabel2.Text = info_pk._intalerStruct.ProiectProperties.WebURL;
-      label4.Text = info_pk._intalerStruct.ProiectProperties.CreationDate.ToLongDateString();
+      linkLabel1.Text = info_pk.InstallerInfo.ProiectProperties.ForumURL;
+      linkLabel2.Text = info_pk.InstallerInfo.ProiectProperties.WebURL;
+      label4.Text = info_pk.InstallerInfo.ProiectProperties.CreationDate.ToLongDateString();
     }
 
     private void button1_Click(object sender, EventArgs e)

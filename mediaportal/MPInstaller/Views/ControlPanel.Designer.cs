@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-    partial class controlp
+    partial class ControlPanel
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(controlp));
+          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ControlPanel));
           this.listView1 = new System.Windows.Forms.ListView();
           this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
           this.columnHeader2 = new System.Windows.Forms.ColumnHeader();

@@ -56,7 +56,7 @@ namespace MediaPortal.MPInstaller
 
     private void install_Package(string fil)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       wiz.package.LoadFromFile(fil);
       if (wiz.package.isValid)
       {
@@ -70,7 +70,7 @@ namespace MediaPortal.MPInstaller
 
     private void button3_Click(object sender, EventArgs e)
     {
-      controlp cnt = new controlp();
+      ControlPanel cnt = new ControlPanel();
       this.Hide();
       cnt.ShowDialog();
       this.Show();

@@ -854,7 +854,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void install_Package(string fil)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       wiz.package.LoadFromFile(fil);
       if (wiz.package.isValid)
       {
@@ -928,15 +928,15 @@ namespace MediaPortal.Configuration.Sections
       for (int i = 0; i < mpih.Items.Count; i++)
       {
         MPpackageStruct pk = (MPpackageStruct) mpih.Items[i];
-        if ((pk._intalerStruct.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
+        if ((pk.InstallerInfo.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
         {
-          ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name,
-                                                mpListView1.Groups["listViewGroup" + pk._intalerStruct.Group]);
+          ListViewItem item1 = new ListViewItem(pk.InstallerInfo.Name,
+                                                mpListView1.Groups["listViewGroup" + pk.InstallerInfo.Group]);
             //listViewGroup listViewPlugins.Groups["listViewGroupProcess"]
           item1.ImageIndex = 0;
-          if (pk._intalerStruct.Logo != null)
+          if (pk.InstallerInfo.Logo != null)
           {
-            imageListMPInstaller.Images.Add(pk._intalerStruct.Logo);
+            imageListMPInstaller.Images.Add(pk.InstallerInfo.Logo);
             item1.ImageIndex = imageListMPInstaller.Images.Count - 1;
           }
           if (pk.isNew)
@@ -947,11 +947,11 @@ namespace MediaPortal.Configuration.Sections
           {
             item1.ForeColor = Color.BlueViolet;
           }
-          item1.ToolTipText = pk._intalerStruct.Description;
-          item1.SubItems.Add(pk._intalerStruct.Author);
-          item1.SubItems.Add(pk._intalerStruct.Version);
+          item1.ToolTipText = pk.InstallerInfo.Description;
+          item1.SubItems.Add(pk.InstallerInfo.Author);
+          item1.SubItems.Add(pk.InstallerInfo.Version);
           item1.SubItems.Add(Path.GetFileName(pk.FileName));
-          item1.SubItems.Add(pk._intalerStruct.Group);
+          item1.SubItems.Add(pk.InstallerInfo.Group);
           lv.Items.AddRange(new ListViewItem[] {item1});
         }
         //        InitGroups(lv);
@@ -984,7 +984,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void mpButtonReinstall_Click(object sender, EventArgs e)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
       wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
       if (wiz.package.isValid)
@@ -1006,7 +1006,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void mpButtonUninstall_Click(object sender, EventArgs e)
     {
-      wizard_1 wiz = new wizard_1();
+      InstallWizard wiz = new InstallWizard();
       MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
       wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
       if (wiz.package.isValid)
@@ -1017,7 +1017,7 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          wiz.uninstall(pk._intalerStruct.Name);
+          wiz.uninstall(pk.InstallerInfo.Name);
           mpListView1.Items.Clear();
           LoadListFiles();
           LoadToListview("All");

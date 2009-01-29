@@ -55,6 +55,7 @@
       <HintPath>..\MediaPortal.Base\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -85,11 +86,11 @@
     <Compile Include="Controls\TileListItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="download_form.cs">
+    <Compile Include="DownloadForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="download_form.Designer.cs">
-      <DependentUpon>download_form.cs</DependentUpon>
+    <Compile Include="DownloadForm.Designer.cs">
+      <DependentUpon>DownloadForm.cs</DependentUpon>
     </Compile>
     <Compile Include="login_form.cs">
       <SubType>Form</SubType>
@@ -123,9 +124,9 @@
       <DependentUpon>TileListItem.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="download_form.resx">
+    <EmbeddedResource Include="DownloadForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>download_form.cs</DependentUpon>
+      <DependentUpon>DownloadForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="login_form.resx">
       <SubType>Designer</SubType>
@@ -152,11 +153,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>UpdateChecker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vews\controlp.resx">
+    <EmbeddedResource Include="Views\ControlPanel.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>controlp.cs</DependentUpon>
+      <DependentUpon>ControlPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vews\Info.resx">
+    <EmbeddedResource Include="Views\Info.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
@@ -190,16 +191,16 @@
     <Compile Include="UpdateChecker.Designer.cs">
       <DependentUpon>UpdateChecker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vews\controlp.cs">
+    <Compile Include="Views\ControlPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Vews\controlp.Designer.cs">
-      <DependentUpon>controlp.cs</DependentUpon>
+    <Compile Include="Views\ControlPanel.Designer.cs">
+      <DependentUpon>ControlPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vews\Info.cs">
+    <Compile Include="Views\Info.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Vews\Info.Designer.cs">
+    <Compile Include="Views\Info.Designer.cs">
       <DependentUpon>Info.cs</DependentUpon>
     </Compile>
   </ItemGroup>

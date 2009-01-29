@@ -1,73 +1,29 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalPlayers", "ExternalPlayers\ExternalPlayers.csproj", "{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitlePlugins", "SubtitlePlugins\SubtitlePlugins.csproj", "{5B8BC37B-44EB-4736-8B27-0960F3E03822}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowPlugins", "WindowPlugins\WindowPlugins.csproj", "{B282C55B-A37B-4CEC-A4FC-00791069BF00}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databases", "Databases\Databases.csproj", "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVGuideScheduler", "TVGuideScheduler\TVGuideScheduler.csproj", "{809F8C77-0EC1-44F9-9536-707A646F43EB}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessPlugins", "ProcessPlugins\ProcessPlugins.csproj", "{3333B71D-6304-452C-BEA5-D037E7B3AA6B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSetup", "PostSetup\PostSetup.csproj", "{57137A99-FD0A-4A3C-9B51-0DA10DCDE7A6}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVCapture", "TVCapture\TVCapture.csproj", "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD} = {396C5208-5D46-4A11-92C1-FD0F2F42D7DD}
 		{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE} = {11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}
@@ -93,130 +49,46 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "Dialogs\Dialogs.csproj", "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlugins", "RemotePlugins\RemotePlugins.csproj", "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG", "WebEPG\WebEPG\WebEPG.csproj", "{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-conf", "WebEPG\WebEPG-conf\WebEPG-conf.csproj", "{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "WebEPG\WebEPG-xmltv\WebEPG-xmltv.csproj", "{67D44FEB-AC41-4B93-AC1D-876318CDD16B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebEPG", "WebEPG", "{2600F94F-B223-4FDD-8D93-73AC573F6D50}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HcwHelper", "HcwHelper", "{D213045F-E672-421B-B92A-78F512AAF784}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HcwHelper", "RemotePlugins\Remotes\HcwRemote\HCWHelper\HcwHelper.csproj", "{596BDC58-35E0-488F-BED2-FC7A133BC047}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Tests", "MediaPortal.Tests\MediaPortal.Tests.csproj", "{DF3AC5D1-762E-4807-8642-1AE773B65E07}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Support", "MediaPortal.Support\MediaPortal.Support.csproj", "{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MusicShareWatcher", "MusicShareWatcher", "{05789B6D-8173-4709-991B-34234041D393}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicShareWatcherHelper", "ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj", "{C6564AA7-976B-43EF-9E35-7E607EE1DD12}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicShareWatcher", "ProcessPlugins\MusicShareWatcher\MusicShareWatcher\MusicShareWatcher.csproj", "{1CCD6A99-B59F-42B2-8A6B-A5BCE57FF3F1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller", "MPInstaller\MPInstaller.csproj", "{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj", "{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPImapiBurner", "XPImapiBurner\XPImapiBurner.csproj", "{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDog", "WatchDog\WatchDog.csproj", "{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayLibrary", "MiniDisplayLibrary\MiniDisplayLibrary.csproj", "{8635D515-A5D4-4FB7-BD30-71770651E18B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD} = {396C5208-5D46-4A11-92C1-FD0F2F42D7DD}
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC} = {BD4A3413-C9F9-4299-BB52-ED45027EE7CC}
@@ -237,16 +109,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayLibrary", "MiniD
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MPE Installer", "MPE Installer", "{7E1AA929-F9B8-42E6-A6AD-6759CE43521F}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPIMaker", "MPInstaller\MPIMaker\MPIMaker.csproj", "{ED0D40F0-7ACC-4FDE-93E9-65B5D37BE6E0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
