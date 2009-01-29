@@ -135,26 +135,79 @@ namespace MediaPortal.TagReader
 
         if (tag.MimeType == "taglib/mp3")
         {
+          bool foundPopm = false;
           // Handle the Rating, which comes from the POPM frame
           TagLib.Id3v2.Tag id32_tag = tag.GetTag(TagLib.TagTypes.Id3v2) as TagLib.Id3v2.Tag;
           if (id32_tag != null)
           {
-            foreach (TagLib.Id3v2.PopularimeterFrame popm in id32_tag.GetFrames<TagLib.Id3v2.PopularimeterFrame>())
+            // Do we have a POPM frame written by MPTagThat?
+            TagLib.Id3v2.PopularimeterFrame popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MPTagThat", false);
+            if (popmFrame != null)
             {
-              int rating = popm.Rating;
-              int i = 0;
-              if (rating > 205)
-                i = 5;
-              else if (rating > 154)
-                i = 4;
-              else if (rating > 104)
-                i = 3;
-              else if (rating > 53)
-                i = 2;
-              else if (rating > 0)
-                i = 1;
-              musictag.Rating = i;
-              break;  // we only take the first popm frame
+              musictag.Rating = popmFrame.Rating;
+              foundPopm = true;
+            }
+
+            if (!foundPopm)
+            {
+              // Now look for any other POPM frame that might exist
+              foreach (TagLib.Id3v2.PopularimeterFrame popm in id32_tag.GetFrames<TagLib.Id3v2.PopularimeterFrame>())
+              {
+                int rating = popm.Rating;
+                int i = 0;
+                if (rating > 205 || rating == 5)
+                  i = 5;
+                else if (rating > 154 || rating == 4)
+                  i = 4;
+                else if (rating > 104 || rating == 3)
+                  i = 3;
+                else if (rating > 53 || rating == 2)
+                  i = 2;
+                else if (rating > 0 || rating == 1)
+                  i = 1;
+                musictag.Rating = i;
+                foundPopm = true;
+                break;  // we only take the first popm frame
+              }
+            }
+
+            if (!foundPopm)
+            {
+              // If we don't have any POPM frame, we might have an APE Tag embedded in the mp3 file
+              TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
+              TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
+              if (apeItem != null)
+              {
+                string rating = apeItem.ToString();
+                try
+                {
+                  musictag.Rating = Convert.ToInt32(rating);
+                }
+                catch (Exception)
+                {
+                  musictag.Rating = 0;
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if (tag.MimeType == "taglib/ape")
+          {
+            TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
+            TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
+            if (apeItem != null)
+            {
+              string rating = apeItem.ToString();
+              try
+              {
+                musictag.Rating = Convert.ToInt32(rating);
+              }
+              catch (Exception)
+              {
+                musictag.Rating = 0;
+              }
             }
           }
         }
