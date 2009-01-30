@@ -4507,6 +4507,7 @@
     <carrier frequency="498000" bandwidth="8"></carrier>
     <carrier frequency="554000" bandwidth="8"></carrier>
     <carrier frequency="514000" bandwidth="8"></carrier>
+	<carrier frequency="658000" bandwidth="8"></carrier>
   </country>
   <country name="Sweden - Solleftea Multra - Asmon-Sormoflo" offset="125">
     <carrier frequency="538000" bandwidth="8"></carrier>
