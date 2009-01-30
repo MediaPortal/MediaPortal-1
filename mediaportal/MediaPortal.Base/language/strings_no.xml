@@ -1474,15 +1474,17 @@
     <String id="13041">Vis fil informasjon</String>
     <String id="14001" prefix="Mine ">Utvidelser</String>
 	<String id="14002">Velg visning</String>
-    <String id="14003">Innstallerte utvidelser</String>	
-    <String id="14004">Online utvidelser</String>	
-    <String id="14005">Innstaller utvidelse</String>		
-    <String id="14006">Avinstaller utvidelse</String>			
-    <String id="14007">Innstaller på nytt</String>			
-    <String id="14008">Omgjør siste endring</String>		
-	<String id="14009">Vil bli utført på neste start av MediaPortal</String>		
-	<String id="14010">Last ned utvidelse</String>	
-	<String id="14011">Velg en av mulighetene</String>	
+    <String id="14003">Innstallerte utvidelser</String>
+    <String id="14004">Online utvidelser</String>
+    <String id="14005">Innstaller utvidelse</String>
+    <String id="14006">Avinstaller utvidelse</String>
+    <String id="14007">Innstaller på nytt</String>
+    <String id="14008">Omgjør siste endring</String>
+	<String id="14009">Vil bli utført på neste start av MediaPortal</String>
+	<String id="14010">Last ned utvidelse</String>
+	<String id="14011">Velg en av mulighetene</String>
+	<String id="14012">Ikke gyldig MediaPortal versjon!(Du trenger versjon {0})</String>
+	<String id="14013">Vil du fortsette?</String>
     <String id="16001">Festmiks</String>
     <String id="19001" prefix="Min ">Tetris</String>
     <String id="19002">Nytt spill</String>
