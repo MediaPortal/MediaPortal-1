@@ -85,101 +85,15 @@ namespace MediaPortal.MPInstaller
           return false;
       }
     }
-   //public void instal_file(ProgressBar pb, ListBox lb, MPIFileList fl)
-   // {
-   //   string fil = FileName;
-   //   byte[] data = new byte[2048];
-   //   int nb = data.Length;
-   //   ZipEntry entry;
-   //   try
-   //   {
-   //     if (File.Exists(fil))
-   //     {
-   //       ZipInputStream s = new ZipInputStream(File.OpenRead(fil));
-   //       while ((entry = s.GetNextEntry()) != null)
-   //       {
-   //         //MessageBox.Show(entry.Name);
-   //         if (test_file(fl, entry))
-   //         {
-   //           string tpf;
-   //           if (InstallableSkinList.Contains(fl.SubType) || !fl.SkinType)
-   //           {
-   //             tpf = Path.GetFullPath(MPinstallerStruct.GetDirEntry(fl));
-   //           }
-   //           else
-   //           {
-   //             tpf = Path.GetTempFileName();
-   //           }
-   //           //if (fl.SkinType)
-   //           //{
-   //           if (!Directory.Exists(Path.GetDirectoryName(tpf)))
-   //             Directory.CreateDirectory(Path.GetDirectoryName(tpf));
-   //           //}
-   //           //MessageBox.Show(tpf);
-   //           FileStream fs = new FileStream(tpf, FileMode.Create);
-   //           if (pb != null)
-   //           {
-   //             pb.Minimum = 0;
-   //             pb.Maximum = (int)entry.Size;
-   //             pb.Value = 0;
-   //           }
-   //           while ((nb = s.Read(data, 0, data.Length)) > 0)
-   //           {
-   //             if (pb != null)
-   //             {
-   //               //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
-   //               pb.Value += nb;
-   //               pb.Refresh();
-   //               pb.Update();
-   //             }
-   //             fs.Write(data, 0, nb);
-   //           }
-   //           fs.Close();
-   //           if (fl.SkinType && fl.FileProperties.DefaultFile)
-   //           {
-   //             foreach (string sd in this.InstallableSkinList)
-   //               if (!this.SkinList.Contains(sd))
-   //               {
-   //                 string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl, sd));
-   //                 if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
-   //                   Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
-   //                 File.Copy(tpf, newtpf, true);
-   //                 this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
-   //                 if (lb != null)
-   //                 {
-   //                   lb.Items.Add(newtpf);
-   //                   lb.Refresh();
-   //                   lb.Update();
-   //                 }
 
-   //               }
-   //           }
-   //           if (!InstallableSkinList.Contains(fl.SubType) && fl.SkinType)
-   //           {
-   //             File.Delete(tpf);
-   //           }
-   //           else
-   //           {
-   //             this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
-   //             if (lb != null)
-   //             {
-   //               lb.Items.Add(tpf);
-   //               lb.Refresh();
-   //               lb.Update();
-   //             }
-   //           }
-   //         }
-   //       }
-   //       s.Close();
-   //       load();
-   //     }
-   //   }
-   //   catch (Exception ex)
-   //   {
-   //     MessageBox.Show(ex.Message);
-   //   }
-   // }
-
+    /// <summary>
+    /// Get the localy stored filename.
+    /// </summary>
+    /// <returns></returns>
+    public string GetLocalFilename()
+    {
+      return InstallerInfo.Name + " " + InstallerInfo.Version + ".mpe1";
+    }
     /// <summary>
     /// Installs the current package.
     /// </summary>
@@ -614,9 +528,9 @@ namespace MediaPortal.MPInstaller
       {
         Directory.CreateDirectory(InstallDir);
       }
-      if (Path.GetFullPath(pk.FileName) != Path.GetFullPath(InstallDir + @"\" + pk.InstallerInfo.Name + " " + pk.InstallerInfo.Version + ".mpi"))
+      if (Path.GetFullPath(pk.FileName) != Path.GetFullPath(InstallDir + @"\" + pk.GetLocalFilename()))
         if (File.Exists(Path.GetFullPath(pk.FileName)))
-          File.Copy(pk.FileName, InstallDir + @"\" + pk.InstallerInfo.Name + " " + pk.InstallerInfo.Version + ".mpi", true);
+          File.Copy(pk.FileName, InstallDir + @"\" + pk.GetLocalFilename(), true);
     }
 
     public void AddRange(MPInstallHelper mpih)

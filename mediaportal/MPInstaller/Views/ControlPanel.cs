@@ -137,6 +137,7 @@ namespace MediaPortal.MPInstaller
           }
           if (pk.isNew) item1.ForeColor = Color.Blue;
           if (pk.isUpdated) item1.ForeColor = Color.BlueViolet;
+          item1.Tag = pk;
           item1.ToolTipText = pk.InstallerInfo.Description;
           item1.SubItems.Add(pk.InstallerInfo.Author);
           item1.SubItems.Add(pk.InstallerInfo.Version);
@@ -278,7 +279,7 @@ namespace MediaPortal.MPInstaller
     private void button4_Click(object sender, EventArgs e)
     {
       InstallWizard wiz = new InstallWizard();
-      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
+      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" +((MPpackageStruct)(listView1.SelectedItems[0].Tag)).GetLocalFilename());
       if (wiz.package.isValid)
       {
         wiz.starStep();
@@ -319,16 +320,16 @@ namespace MediaPortal.MPInstaller
     private void button1_Click(object sender, EventArgs e)
     {
       InstallWizard wiz = new InstallWizard();
-      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
-      if (wiz.package.isValid)
-      {
+      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Installer) + @"\" + ((MPpackageStruct)(listView1.SelectedItems[0].Tag)).GetLocalFilename());
+      //if (wiz.package.isValid)
+      //{
         wiz.uninstall(listView1.SelectedItems[0].Text);
         listView1.Items.Clear();
         LoadListFiles();
         LoadToListview("All");
-      }
-      else
-        MessageBox.Show("Invalid package !");
+      //}
+      //else
+      //  MessageBox.Show("Invalid package !");
 
     }
 

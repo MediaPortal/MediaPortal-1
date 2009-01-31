@@ -44,7 +44,7 @@ namespace MediaPortal.MPInstaller
     MPInstallHelper inst = new MPInstallHelper();
     List<ActionInfo> actions = new List<ActionInfo>();
 
-    string InstalDir = Config.GetFolder(Config.Dir.Installer);
+    string InstallDir = Config.GetFolder(Config.Dir.Installer);
     bool update = false;
     bool working = false;
     public InstallWizard()
@@ -52,6 +52,7 @@ namespace MediaPortal.MPInstaller
       package = new MPpackageStruct();
       InitializeComponent();
     }
+
     public void starStep()
     {
       inst.LoadFromFile();
@@ -467,8 +468,8 @@ namespace MediaPortal.MPInstaller
             MPpackageStruct p = (MPpackageStruct)inst.Items[index];
             MPpackageStruct p_temp = new MPpackageStruct();
 
-            if (File.Exists(InstalDir + @"\" + p.FileName))
-              p_temp.LoadFromFile(InstalDir + @"\" + p.FileName);
+            if (File.Exists(InstallDir + @"\" + p.FileName))
+              p_temp.LoadFromFile(InstallDir + @"\" + p.FileName);
             try
             {
               if (p_temp.InstallPlugin != null)

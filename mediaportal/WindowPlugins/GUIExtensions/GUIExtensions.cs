@@ -433,7 +433,7 @@ namespace WindowPlugins.GUI.Extensions
           QueueItem qitem = new QueueItem();
           qitem.Name = pk.InstallerInfo.Name;
           qitem.DownloadUrl = MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=&passwd=&filename=" + Path.GetFileName(pk.FileName);
-          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk.InstallerInfo.Name+" "+ pk.InstallerInfo.Version + ".mpi";
+          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk.GetLocalFilename();
           
           switch (dlg.SelectedId)
           {
