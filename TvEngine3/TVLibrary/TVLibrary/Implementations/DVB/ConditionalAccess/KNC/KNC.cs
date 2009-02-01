@@ -36,6 +36,7 @@ namespace TvLibrary.Implementations.DVB
     IKNC _KNCInterface;
     readonly IntPtr ptrPmt;
     readonly IntPtr _ptrDataInstance;
+    protected IBDA_Topology _TunerDevice;
     DVBSChannel _previousChannel;
     /// <summary>
     /// Initializes a new instance of the <see cref="KNC"/> class.
@@ -126,33 +127,95 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="parameters">The scanparameters.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      if (_KNCInterface == null)
-        return;
-      if (_previousChannel != null)
+      switch (channel.DisEqc)
       {
-        if (_previousChannel.Frequency == channel.Frequency &&
-            _previousChannel.DisEqc == channel.DisEqc &&
-            _previousChannel.Polarisation == channel.Polarisation)
-        {
-          Log.Log.WriteFile("KNC: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc, channel.Frequency, channel.Polarisation);
+        case DisEqcType.Level1AA:
+          Log.Log.Info("KNC:  Level1AA - SendDiSEqCCommand(0x00)");
+          SendDiSEqCCommand(0x00);
+          break;
+        case DisEqcType.Level1AB:
+          Log.Log.Info("KNC:  Level1AB - SendDiSEqCCommand(0x01)");
+          SendDiSEqCCommand(0x01);
+          break;
+        case DisEqcType.Level1BA:
+          Log.Log.Info("KNC:  Level1BA - SendDiSEqCCommand(0x0100)");
+          SendDiSEqCCommand(0x0100);
+          break;
+        case DisEqcType.Level1BB:
+          Log.Log.Info("KNC:  Level1BB - SendDiSEqCCommand(0x0101)");
+          SendDiSEqCCommand(0x0101);
+          break;
+        case DisEqcType.SimpleA:
+          Log.Log.Info("KNC:  SimpleA - SendDiSEqCCommand(0x00)");
+          SendDiSEqCCommand(0x00);
+          break;
+        case DisEqcType.SimpleB:
+          Log.Log.Info("KNC:  SimpleB - SendDiSEqCCommand(0x01)");
+          SendDiSEqCCommand(0x01);
+          break;
+        default:
           return;
+      }
+    }
+
+    /// <summary>
+    /// Sends the DiSEqC command.
+    /// </summary>
+    /// <param name="ulRange">The DisEqCPort</param>
+    /// <returns>true if succeeded, otherwise false</returns>
+    protected bool SendDiSEqCCommand(ulong ulRange)
+    {
+      Log.Log.Info("KNC:  SendDiSEqC Command {0}", ulRange);
+      // get ControlNode of tuner control node
+      object ControlNode;
+      int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
+      if (hr == 0)
+      // retrieve the BDA_DeviceControl interface 
+      {
+        IBDA_DeviceControl DecviceControl = (IBDA_DeviceControl)_TunerDevice;
+        if (DecviceControl != null)
+        {
+          if (ControlNode != null)
+          {
+            IBDA_FrequencyFilter FrequencyFilter = ControlNode as IBDA_FrequencyFilter;
+            hr = DecviceControl.StartChanges();
+            if (hr == 0)
+            {
+              if (FrequencyFilter != null)
+              {
+                hr = FrequencyFilter.put_Range(ulRange);
+                Log.Log.Info("KNC:  put_Range:{0} success:{1}", ulRange, hr);
+                if (hr == 0)
+                {
+                  // did it accept the changes? 
+                  hr = DecviceControl.CheckChanges();
+                  if (hr == 0)
+                  {
+                    hr = DecviceControl.CommitChanges();
+                    if (hr == 0)
+                    {
+                      Log.Log.Info("KNC:  CommitChanges() Succeeded");
+                      return true;
+                    }
+                    // reset configuration
+                    Log.Log.Info("KNC:  CommitChanges() Failed!");
+                    DecviceControl.StartChanges();
+                    DecviceControl.CommitChanges();
+                    return false;
+                  }
+                  Log.Log.Info("KNC:  CheckChanges() Failed!");
+                  return false;
+                }
+                Log.Log.Info("KNC:  put_Range Failed!");
+                return false;
+              }
+            }
+          }
         }
       }
-      _previousChannel = channel;
-      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0);//diseqc command 1. uFraming=0xe0
-      Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
-      Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
-      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile("KNC: SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
-      byte cmd = 0xf0;
-      cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((isHorizontal) ? 2 : 0);
-      cmd |= (byte)((antennaNr - 1) << 2);
-      Marshal.WriteByte(_ptrDataInstance, 3, cmd);
-      _KNCInterface.SetDisEqc(_ptrDataInstance, 4, 1);
-    }
+      Log.Log.Info("KNC:  GetControlNode Failed!");
+      return false;
+    } //end SendDiSEqCCommand
 
     /// <summary>
     /// Determines whether [is cam present].
