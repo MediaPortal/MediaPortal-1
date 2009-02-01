@@ -1483,6 +1483,8 @@
     <String id="14009">Al prossimo riavvio questa azine verrà eseguita</String>
     <String id="14010">Scarica estensione</String>
     <String id="14011">Selezione un'opzione</String>
+    <String id="14012">Versione di MediaPortal non supportata! (E' necessaria la versione {0})</String>
+    <String id="14013">Si vuole continuare ?</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Il mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
