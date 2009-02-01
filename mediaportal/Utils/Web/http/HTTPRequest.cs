@@ -33,6 +33,7 @@ namespace MediaPortal.Utils.Web
     private string _host = string.Empty;
     private string _getQuery = string.Empty;
     private string _postQuery = string.Empty;
+    private string _cookies = string.Empty;
     private string _scheme = string.Empty;
     private bool _externalBrowser = false;
     private string _encoding = string.Empty;
@@ -67,6 +68,7 @@ namespace MediaPortal.Utils.Web
       _host = request._host;
       _getQuery = request._getQuery;
       _postQuery = request._postQuery;
+      _cookies = request._cookies;
       _externalBrowser = request._externalBrowser;
       _encoding = request._encoding;
     }
@@ -122,6 +124,13 @@ namespace MediaPortal.Utils.Web
       set { _externalBrowser = value; }
     }
 
+    [XmlAttribute("cookies")]
+    public string Cookies
+    {
+      get { return _cookies; }
+      set { _cookies = value; }
+    }
+
     [XmlAttribute("encoding")]
     public string Encoding
     {
@@ -150,30 +159,27 @@ namespace MediaPortal.Utils.Web
     public HTTPRequest Add(string relativeUri)
     {
       if (relativeUri.StartsWith("?"))
-      {
         relativeUri = Uri.LocalPath + relativeUri;
-      }
       Uri newUri = new Uri(Uri, relativeUri);
-      return new HTTPRequest(newUri);
+      HTTPRequest newHTTPRequest = new HTTPRequest(newUri);
+      newHTTPRequest._encoding = this._encoding;
+      return newHTTPRequest;
     }
 
     public void ReplaceTag(string tag, string value)
     {
       _getQuery = _getQuery.Replace(tag, value);
       _postQuery = _postQuery.Replace(tag, value);
+      _cookies = _cookies.Replace(tag, value);
     }
 
     public bool HasTag(string tag)
     {
       if (_getQuery.IndexOf(tag) != -1)
-      {
         return true;
-      }
 
       if (_postQuery.IndexOf(tag) != -1)
-      {
         return true;
-      }
 
       return false;
     }
@@ -187,12 +193,10 @@ namespace MediaPortal.Utils.Web
 
     public static bool operator ==(HTTPRequest r1, HTTPRequest r2)
     {
-      if ((object) r1 == null || (object) r2 == null)
+      if ((object)r1 == null || (object)r2 == null)
       {
-        if ((object) r1 == null && (object) r2 == null)
-        {
+        if ((object)r1 == null && (object)r2 == null)
           return true;
-        }
         return false;
       }
       return r1.Equals(r2);
@@ -207,16 +211,12 @@ namespace MediaPortal.Utils.Web
     {
       HTTPRequest req = obj as HTTPRequest;
       if (req == null)
-      {
         return false;
-      }
       if (_scheme == req._scheme &&
           _host == req._host &&
           _getQuery == req._getQuery &&
           _postQuery == req._postQuery)
-      {
         return true;
-      }
 
       return false;
     }
@@ -225,7 +225,6 @@ namespace MediaPortal.Utils.Web
     {
       return (_host + _getQuery + _scheme + _postQuery).GetHashCode();
     }
-
     #endregion
   }
 }

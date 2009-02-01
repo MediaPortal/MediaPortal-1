@@ -161,9 +161,24 @@ namespace MediaPortal.Utils.Web
       {
         // Make the Webrequest
         // Create the request header
-        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(pageUri);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
         request.UserAgent = _agent;
         request.AllowAutoRedirect = false;
+        if (pageRequest.Cookies != string.Empty)
+        {
+          string[] cookiesArray = pageRequest.Cookies.Split(new Char[] { ';' });
+          foreach (string cookie in cookiesArray)
+          {
+            string[] cookieParts = cookie.Split(new Char[] { '=' });
+            if (cookieParts.Length >= 2)
+            {
+              if (_cookies == null)
+                _cookies = new CookieCollection();
+              _cookies.Add(new Cookie(cookieParts[0], cookieParts[1], "/", request.RequestUri.Host));
+            }
+          }
+        }
+
         if (pageRequest.PostQuery == string.Empty)
         {
           // GET request
@@ -184,6 +199,10 @@ namespace MediaPortal.Utils.Web
           request.ContentLength = pageRequest.PostQuery.Length;
           request.Method = "POST";
 
+          request.CookieContainer = new CookieContainer();
+          if (_cookies != null)
+            request.CookieContainer.Add(_cookies);
+
           // Write post message 
           try
           {
@@ -199,7 +218,7 @@ namespace MediaPortal.Utils.Web
           }
         }
 
-        _response = (HttpWebResponse) request.GetResponse();
+        _response = (HttpWebResponse)request.GetResponse();
 
         // Check for redirection
         if ((_response.StatusCode == HttpStatusCode.Found) ||
@@ -208,7 +227,7 @@ namespace MediaPortal.Utils.Web
             (_response.StatusCode == HttpStatusCode.MovedPermanently))
         {
           Uri uri = new Uri(_response.Headers["Location"]);
-          HttpWebRequest redirect = (HttpWebRequest) WebRequest.Create(uri);
+          HttpWebRequest redirect = (HttpWebRequest)WebRequest.Create(uri);
           redirect.UserAgent = _agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();
@@ -227,7 +246,7 @@ namespace MediaPortal.Utils.Web
             }
           }
           //redirect.ContentType = "text/html"; 
-          _response = (HttpWebResponse) redirect.GetResponse();
+          _response = (HttpWebResponse)redirect.GetResponse();
         }
 
         if (request.CookieContainer != null)
@@ -257,7 +276,7 @@ namespace MediaPortal.Utils.Web
 
         for (int i = 0; i < Blocks.Count; i++)
         {
-          Block = (byte[]) Blocks[i];
+          Block = (byte[])Blocks[i];
           Block.CopyTo(_data, pos);
           pos += Block.Length;
         }
