@@ -1173,22 +1173,27 @@ namespace MediaPortal.Player
         int t1 = (int) type;
         RefreshRateChanger.MediaType t2 = (RefreshRateChanger.MediaType) t1;
 
-        RefreshRateChanger.AdaptRefreshRate(strFile, t2);
-        if (RefreshRateChanger.RefreshRateChangePending)
+        if (Util.Utils.IsLiveTv(strFile))
         {
-          TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-          if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+          // liveTV needs the refreshrate change done here.
+          RefreshRateChanger.AdaptRefreshRate(strFile, t2);
+
+          if (RefreshRateChanger.RefreshRateChangePending)
           {
-            Log.Info(
-              "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-              RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-            RefreshRateChanger.ResetRefreshRateState();
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            {
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
+            }
           }
-          else
-          {
-            return true;
-          }
-        }
+        }        
 
         _currentStep = 0;
         _currentStepIndex = -1;
@@ -1221,6 +1226,24 @@ namespace MediaPortal.Player
 
         if (!Util.Utils.IsAVStream(strFile) && Util.Utils.IsVideo(strFile))
         {
+          RefreshRateChanger.AdaptRefreshRate(strFile, t2);
+
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            {
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
+            }
+          }
+
           if (Util.Utils.PlayMovie(strFile))
           {
             _isInitialized = false;
