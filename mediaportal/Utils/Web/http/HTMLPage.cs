@@ -134,6 +134,10 @@ namespace MediaPortal.Utils.Web
         }
       }
 
+      // Delay before getting page
+      if (page.Delay > 0)
+        Thread.Sleep(page.Delay);
+
       bool success;
 
       if (page.External)
