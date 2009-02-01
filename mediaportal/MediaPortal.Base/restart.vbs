@@ -6,7 +6,7 @@ Dim   Shell, Shell2, objFolder, objFolderItem, logpath, logold, lognew, syspath,
 Const ssfCOMMONAPPDATA = 35
 Const ssfSYSTEM        = 37
 
-process   = "Notepad"
+process   = "MediaPortal"
 
 Set Shell         = CreateObject("WScript.Shell")
 Set Shell2        = CreateObject("Shell.Application")
