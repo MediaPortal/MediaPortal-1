@@ -560,7 +560,11 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_knc != null)
         {
-          return _knc.SendPMT(PMT, pmtLength);
+          ChannelInfo info = new ChannelInfo();
+          info.DecodePmt(PMT);
+          int caPmtLen;
+          byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
+          return _knc.SendPMT(caPmt, caPmtLen);
         }
         if (_digitalEveryWhere != null)
         {
@@ -580,7 +584,8 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
