@@ -46,6 +46,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="DeviceIndex">The KNC1 card hardware index (0 based)</param>
     public KNC(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, int DeviceIndex)
     {
+      _TunerDevice = (IBDA_Topology)tunerFilter;
       _KNCInterface = analyzerFilter as IKNC;
       if (_KNCInterface != null)
       {
