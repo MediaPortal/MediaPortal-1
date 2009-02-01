@@ -94,6 +94,7 @@ namespace TvPlugin
       IMG_REC_RECTANGLE = 23,
 
     };
+
     //heartbeat related stuff
     private Thread heartBeatTransmitterThread = null;
     //private static string _newTimeshiftFileName = "";
@@ -128,6 +129,9 @@ namespace TvPlugin
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
 
+    private static ManualResetEvent _waitForBlackScreen = null;
+    private static ManualResetEvent _waitForVideoReceived = null;
+    
     // this var is used to block the user from hitting "record now" button multiple times
     // the sideeffect is that the user is able to record the same show twice.
     private static int lastActiveRecChannelId = 0;
@@ -243,6 +247,11 @@ namespace TvPlugin
 
     static TVHome()
     {
+      GUIGraphicsContext.OnBlackImageRendered += new MediaPortal.GUI.Library.BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnVideoReceived += new MediaPortal.GUI.Library.VideoReceivedHandler(OnVideoReceived);
+
+      _waitForBlackScreen = new ManualResetEvent(false);
+      _waitForVideoReceived = new ManualResetEvent(false);
       try
       {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
@@ -269,6 +278,11 @@ namespace TvPlugin
 
     public TVHome()
     {
+      GUIGraphicsContext.OnBlackImageRendered += new MediaPortal.GUI.Library.BlackImageRenderedHandler(OnBlackImageRendered);
+      _waitForBlackScreen = new ManualResetEvent(false);
+      _waitForVideoReceived = new ManualResetEvent(false);
+
+      
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
       Log.Info("TVHome V" + versionInfo.FileVersion + ":ctor");
       GetID = (int)GUIWindow.Window.WINDOW_TV;
@@ -706,7 +720,7 @@ namespace TvPlugin
         else
         {
           useRtsp = false;
-        }                
+        }
       }
       return useRtsp;
     }
@@ -2279,6 +2293,62 @@ namespace TvPlugin
         }
       }
 
+      //set audio video related media info properties.
+
+      int currAudio = g_Player.CurrentAudioStream;
+
+      if (currAudio > -1)
+      {
+        string streamType = g_Player.AudioType(currAudio);
+
+        switch (streamType)
+        {
+          case "AC3":
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "ac3.png"));
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Empty);
+            break;
+          case "Mpeg1":
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp1a.png"));
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Empty);
+            break;
+          case "Mpeg2":
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "mp2a.png"));
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Empty);
+            break;
+          case "AAC":
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "aac.png"));
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Empty);
+            break;
+          case "LATMAAC":
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\", "latmaac3.png"));
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Empty);
+            break;
+          default:
+            GUIPropertyManager.SetProperty("#TV.View.IsAC3", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP1A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsMP2A", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsAAC", string.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC", string.Empty);
+            break;
+        }
+      }
+
+
       if (!g_Player.IsTVRecording) //playing live TV
       {
         if (Navigator.Channel == null) return;
@@ -2375,7 +2445,7 @@ namespace TvPlugin
           double playingPoint = timeShiftStartPoint + g_Player.CurrentPosition;
           if (timeShiftStartPoint < 0) timeShiftStartPoint = 0;
 
-           
+
           double timeShiftStartPointPercent = ((double)timeShiftStartPoint) / ((double)programDuration);
           timeShiftStartPointPercent *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
@@ -2794,11 +2864,56 @@ namespace TvPlugin
     }
     */
 
+    private static void OnBlackImageRendered()
+    {
+      if (GUIGraphicsContext.RenderBlackImage)
+      {
+        //MediaPortal.GUI.Library.Log.Debug("TvHome.OnBlackImageRendered()");
+        _waitForBlackScreen.Set();
+      }
+    }
+
+    private static void OnVideoReceived()
+    {
+      if (GUIGraphicsContext.RenderBlackImage)
+      {
+        MediaPortal.GUI.Library.Log.Debug("TvHome.OnVideoReceived()");
+        _waitForVideoReceived.Set();
+      }
+    }
+    
+    private static void StopRenderBlackImage()
+    {      
+      if (GUIGraphicsContext.RenderBlackImage)
+      {        
+        _waitForVideoReceived.WaitOne(1000, false);
+        _waitForVideoReceived.Reset();
+
+        //Console.Beep(10000, 2000);
+        GUIGraphicsContext.RenderBlackImage = false;
+        MediaPortal.GUI.Library.Log.Debug("TvHome.StopRenderBlackImage()");
+      }
+    }
+  
+    private static void RenderBlackImage()
+    {      
+
+      MediaPortal.GUI.Library.Log.Debug("TvHome.RenderBlackImage()");
+      _waitForBlackScreen.Reset();     
+      GUIGraphicsContext.RenderBlackImage = true;
+      _waitForBlackScreen.WaitOne(1000, false);      
+    } 
+    
     public static bool ViewChannelAndCheck(Channel channel)
     {
-           
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
+      bool cardChanged = false;
+
+
+      _waitForVideoReceived.Reset();
+      _waitForVideoReceived.Reset();
+
       //System.Diagnostics.Debugger.Launch();
       try
       {
@@ -2905,8 +3020,7 @@ namespace TvPlugin
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
         VirtualCard card;
-        bool cardChanged = false;
-        int newCardId = -1;
+                int newCardId = -1;
         if (wasPlaying)
         {
           // we need to stop player HERE if card has changed.        
@@ -2932,12 +3046,14 @@ namespace TvPlugin
               //server.StopTimeShifting(ref user);              
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
             }
-            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+
+            RenderBlackImage();
+            succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);                        
           }
           else //card "probably" not changed.
           {
-            // PauseGraph & ContinueGraph does add a bit overhead to channel change times
-            GUIGraphicsContext.RenderBlackImage = true;
+            // PauseGraph & ContinueGraph does add a bit overhead to channel change times                        
+            RenderBlackImage();
             g_Player.PauseGraph();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
@@ -2993,11 +3109,7 @@ namespace TvPlugin
           bool wasPaused = g_Player.Paused;
 
           if (!g_Player.Playing || cardChanged)
-          {
-            if (cardChanged)
-            {
-              GUIGraphicsContext.RenderBlackImage = true;
-            }
+          {            
             StartPlay();
           }
 
@@ -3039,17 +3151,17 @@ namespace TvPlugin
         return false;
       }
       catch (Exception ex)
-      {
+      {        
         Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
         //GUIWaitCursor.Hide();
         _doingChannelChange = false;
         TVHome.Card.User.Name = new User().Name;
-        TVHome.Card.StopTimeShifting();
+        TVHome.Card.StopTimeShifting();        
         return false;
       }
       finally
       {
-        GUIGraphicsContext.RenderBlackImage = false;
+        StopRenderBlackImage();
       }
     }
 
