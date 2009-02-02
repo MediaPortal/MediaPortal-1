@@ -3271,26 +3271,42 @@ namespace TvService
             User[] users = context.Users;
 
             int userSubCh = -1;
-            bool otherUserFound = false;
+            int userChannelId = -1;
+            bool otherUserFoundOnSameCh = false;
+            
+            //lets find the current user, if he has a subchannel and what channel it is.
             foreach (User userObj in users)
             {
-              if (userObj.Name.Equals(user.Name) && userSubCh == -1)
+              if (userObj.Name.Equals(user.Name))
               {
-                userSubCh = userObj.SubChannel;                
-                if (otherUserFound)
+                if (userSubCh == -1)
                 {
-                  break;
+                  userChannelId = userObj.IdChannel;
+                  userSubCh = userObj.SubChannel;
+                  break;                  
                 }
-              }
-              else
-              {
-                otherUserFound = true;
-              }
+              }            
             }
 
+            //lets find if any other users are sharing that same subchannel/channel
+            if (userChannelId > -1)
+            {
+              foreach (User userObj in users)
+              {
+                if (!userObj.Name.Equals(user.Name))
+                {
+                  if (userObj.IdChannel == userChannelId)
+                  {
+                    otherUserFoundOnSameCh = true;
+                    break;
+                  }
+                }
+              }
+            }
+            
             if (userSubCh > -1)
             {
-              if (otherUserFound)
+              if (otherUserFoundOnSameCh)
               {
                 _cards[user.CardId].Card.FreeSubChannelContinueGraph(userSubCh, true);
               }
