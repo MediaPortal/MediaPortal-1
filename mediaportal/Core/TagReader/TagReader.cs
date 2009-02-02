@@ -73,6 +73,12 @@ namespace MediaPortal.TagReader
         // Otherwise Latin1 is used as default, which causes characters in various languages being displayed wrong
         TagLib.ByteVector.UseBrokenLatin1Behavior = true;
         TagLib.File tag = TagLib.File.Create(strFile);
+        if (tag == null)
+        {
+          Log.Warn("Tagreader: No tag in file - {0}", strFile);
+          return null;
+        }
+        
         MusicTag musictag = new MusicTag();
         string[] artists = tag.Tag.Performers;
         if (artists.Length > 0)
@@ -175,17 +181,21 @@ namespace MediaPortal.TagReader
             {
               // If we don't have any POPM frame, we might have an APE Tag embedded in the mp3 file
               TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
-              TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
-              if (apeItem != null)
+              if (apetag != null)
               {
-                string rating = apeItem.ToString();
-                try
+                TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
+                if (apeItem != null)
                 {
-                  musictag.Rating = Convert.ToInt32(rating);
-                }
-                catch (Exception)
-                {
-                  musictag.Rating = 0;
+                  string rating = apeItem.ToString();
+                  try
+                  {
+                    musictag.Rating = Convert.ToInt32(rating);
+                  }
+                  catch (Exception ex)
+                  {
+                    musictag.Rating = 0;
+                    Log.Warn("Tagreader: Unsupported APE rating format - {0} in {1} {2}", rating, strFile, ex.Message);
+                  }
                 }
               }
             }
@@ -196,17 +206,21 @@ namespace MediaPortal.TagReader
           if (tag.MimeType == "taglib/ape")
           {
             TagLib.Ape.Tag apetag = tag.GetTag(TagTypes.Ape, false) as TagLib.Ape.Tag;
-            TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
-            if (apeItem != null)
+            if (apetag != null)
             {
-              string rating = apeItem.ToString();
-              try
+              TagLib.Ape.Item apeItem = apetag.GetItem("RATING");
+              if (apeItem != null)
               {
-                musictag.Rating = Convert.ToInt32(rating);
-              }
-              catch (Exception)
-              {
-                musictag.Rating = 0;
+                string rating = apeItem.ToString();
+                try
+                {
+                  musictag.Rating = Convert.ToInt32(rating);
+                }
+                catch (Exception ex)
+                {
+                  musictag.Rating = 0;
+                  Log.Warn("Tagreader: Unsupported APE rating format - {0} in {1} {2}", rating, strFile, ex.Message);
+                }
               }
             }
           }
