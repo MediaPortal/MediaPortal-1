@@ -2,6 +2,7 @@
 <Grabber>
   <Info availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
+    <Channel id="rtl.de" siteId="23" />
     <Channel id="ard.de" siteId="37" />
     <Channel id="zdf.de" siteId="36" />
     <Channel id="wdr.de" siteId="35" />
@@ -11,7 +12,6 @@
     <Channel id="swr.de" siteId="44" />
     <Channel id="hr-online.de" siteId="11" />
     <Channel id="rbb-online.de" siteId="5" />
-    <Channel id="rtl.de" siteId="23" />
     <Channel id="rtl2.de" siteId="24" />
     <Channel id="super-rtl.de" siteId="25" />
     <Channel id="sat1.de" siteId="38" />
@@ -115,7 +115,12 @@
     <Channel id="bluemovie.cc" siteId="196" />
     <Channel id="extra@bluemovie.cc" siteId="197" />
     <Channel id="dir1@premiere.de" siteId="201" />
-	<Channel id="filmclassics@premiere.de" siteId="220" />
+    <Channel id="DMAX" siteId="231" />
+    <Channel id="Comedy Central" siteId="226" />
+    <Channel id="filmclassics@premiere.de" siteId="220" />
+    <Channel id="Premiere Filmfest" siteId="221" />
+    <Channel id="Focus Gesundheit" siteId="214" />
+    <Channel id="Anixe HD" siteId="230" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.tvinfo.de/exe.php3?target=senderlist.inc&amp;newD=[_D]&amp;newM=[_M]&amp;newY=[YYYY]&amp;showSenderID=[ID]" post="" external="false" encoding="" />
