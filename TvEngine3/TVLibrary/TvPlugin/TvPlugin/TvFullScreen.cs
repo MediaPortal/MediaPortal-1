@@ -253,14 +253,8 @@ namespace TvPlugin
           _allowedArModes.Add(MediaPortal.GUI.Library.Geometry.Type.Zoom14to9);
         if (!TVHome.settingsLoaded)
         {
-          string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-          if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-          if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-          if (strValue.Equals("normal")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-          if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-          if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-          if (strValue.Equals("nonlinear")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.NonLinearStretch;
-          if (strValue.Equals("zoom149")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+          string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+          GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
         }
       }
     }
@@ -282,35 +276,7 @@ namespace TvPlugin
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         TVHome.Navigator.SaveSettings(xmlwriter);
-        switch (GUIGraphicsContext.ARType)
-        {
-          case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-            xmlwriter.SetValue("mytv", "defaultar", "zoom");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-            xmlwriter.SetValue("mytv", "defaultar", "stretch");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Normal:
-            xmlwriter.SetValue("mytv", "defaultar", "normal");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Original:
-            xmlwriter.SetValue("mytv", "defaultar", "original");
-            break;
-          case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-            xmlwriter.SetValue("mytv", "defaultar", "letterbox");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.NonLinearStretch:
-            xmlwriter.SetValue("mytv", "defaultar", "nonlinear");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-            xmlwriter.SetValue("mytv", "defaultar", "zoom149");
-            break;
-        }
+        xmlwriter.SetValue("mytv", "defaultar", Utils.GetAspectRatio(GUIGraphicsContext.ARType));
       }
     }
     #endregion

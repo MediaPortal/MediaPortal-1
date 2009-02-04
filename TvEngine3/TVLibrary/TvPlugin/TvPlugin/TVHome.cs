@@ -975,13 +975,8 @@ namespace TvPlugin
         _showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         _showlastactivemoduleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
 
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if (strValue.Equals("normal")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if (strValue.Equals("nonlinear")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.NonLinearStretch;
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
 
         string preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
         //_preferredLanguages = preferredLanguages.Split(';');
