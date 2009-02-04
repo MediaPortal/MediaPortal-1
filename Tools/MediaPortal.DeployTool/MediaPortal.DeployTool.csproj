@@ -193,6 +193,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaPortal.DeployTool.ru-RU.resx</DependentUpon>
     </Compile>
+    <Compile Include="MediaPortal.DeployTool.sr-Latn-CS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.sr-Latn-CS.resx</DependentUpon>
+    </Compile>
     <Compile Include="MediaPortal.DeployTool.sv-SE.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -318,6 +323,11 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaPortal.DeployTool.ru-RU.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.sr-Latn-CS.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.sr-Latn-CS.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.sv-SE.resx">
       <SubType>Designer</SubType>
