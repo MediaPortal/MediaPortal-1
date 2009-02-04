@@ -764,35 +764,8 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        if (strValue.Equals("zoom"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Zoom;
-        }
-        if (strValue.Equals("stretch"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Stretch;
-        }
-        if (strValue.Equals("normal"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Normal;
-        }
-        if (strValue.Equals("original"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Original;
-        }
-        if (strValue.Equals("letterbox"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
-        }
-        if (strValue.Equals("nonlinear"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
-        }
-        if (strValue.Equals("zoom149"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
-        }
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
       }
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       GUIGraphicsContext_OnVideoWindowChanged();

@@ -320,7 +320,7 @@ namespace WindowPlugins.GUISettings.TV
       Geometry.Type aspectRatio = Geometry.Type.Normal;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string aspectRatioText = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
+        string aspectRatioText = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
       }
 

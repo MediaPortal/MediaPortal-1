@@ -281,7 +281,7 @@ namespace WindowPlugins.GUISettings.TV
       Geometry.Type aspectRatio = Geometry.Type.Normal;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string aspectRatioText = xmlreader.GetValueAsString("dvdplayer", "defaultar", "normal");
+        string aspectRatioText = xmlreader.GetValueAsString("dvdplayer", "defaultar", "Normal");
         aspectRatio = Utils.GetAspectRatio(aspectRatioText);
       }
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);

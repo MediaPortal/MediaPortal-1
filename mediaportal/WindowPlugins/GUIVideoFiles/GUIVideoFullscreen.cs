@@ -151,37 +151,8 @@ namespace MediaPortal.GUI.Video
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
 
-        string aspectRatioText = xmlreader.GetValueAsString(key, "defaultar", "normal");
+        string aspectRatioText = xmlreader.GetValueAsString(key, "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(aspectRatioText);
-
-        if (xmlreader.GetValueAsBool("movies", "allowarzoom", true))
-        {
-          _allowedArModes.Add(Geometry.Type.Zoom);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowarstretch", true))
-        {
-          _allowedArModes.Add(Geometry.Type.Stretch);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowarnormal", true))
-        {
-          _allowedArModes.Add(Geometry.Type.Normal);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowaroriginal", true))
-        {
-          _allowedArModes.Add(Geometry.Type.Original);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowarletterbox", true))
-        {
-          _allowedArModes.Add(Geometry.Type.LetterBox43);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowarnonlinear", true))
-        {
-          _allowedArModes.Add(Geometry.Type.NonLinearStretch);
-        }
-        if (xmlreader.GetValueAsBool("movies", "allowarzoom149", true))
-        {
-          _allowedArModes.Add(Geometry.Type.Zoom14to9);
-        }
       }
     }
 

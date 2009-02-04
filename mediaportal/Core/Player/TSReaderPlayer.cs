@@ -287,35 +287,8 @@ namespace MediaPortal.Player
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
-        if (strValue.Equals("zoom"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Zoom;
-        }
-        if (strValue.Equals("stretch"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Stretch;
-        }
-        if (strValue.Equals("normal"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Normal;
-        }
-        if (strValue.Equals("original"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Original;
-        }
-        if (strValue.Equals("letterbox"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
-        }
-        if (strValue.Equals("nonlinear"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
-        }
-        if (strValue.Equals("zoom149"))
-        {
-          GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
-        }
+        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
+        GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
