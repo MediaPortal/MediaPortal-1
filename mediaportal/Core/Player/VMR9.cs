@@ -1083,6 +1083,15 @@ namespace MediaPortal.Player
       //DirectShowUtil.ReleaseComObject(_qualityInterface);
       _qualityInterface = null;
 
+      if (GUIGraphicsContext.IsEvr)
+      {
+          EvrDeinit();
+      }
+      else
+      {
+          Vmr9Deinit();
+      }
+
       try
       {
         result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
@@ -1105,14 +1114,6 @@ namespace MediaPortal.Player
       }
       catch (Exception)
       {
-      }
-      if (GUIGraphicsContext.IsEvr)
-      {
-        EvrDeinit();
-      }
-      else
-      {
-        Vmr9Deinit();
       }
       _vmr9Filter = null;
       _graphBuilderInterface = null;
