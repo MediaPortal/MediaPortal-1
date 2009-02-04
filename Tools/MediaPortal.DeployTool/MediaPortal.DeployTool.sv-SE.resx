@@ -152,20 +152,20 @@
 + fullt DVB-undertext stöd.
 + stöd för HD-TV (dvb-s2 / h.264) och AAC ljud (Norge, Nya Zeeland, Australien)
 + stöd för TV-kort av hybrid typ (TV-kort som delar samma tuner för DVB och analog signal)
-+ automatisk detekterar anslutna TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
++ detekterar automatiskt anslutna TV-kort (analog, dvb-c, -s, -s2, -t, atsc)
 + stöd för ATSC QAM (kabel TV)
 + stöd för inspelning i mpg eller ts filformat.
-+ atsc/DVB tillåter att spela in/titta på flera kanaler ifrån samma transponder/mux med ett TV-kort.
-+ möjlighet att sända ut TV till flera clienter över LAN.
-- behöver MySQL eller MS-SQL (vilket kommer att installeras automatiskt om det ej redan finns installerat)
++ ATSC/DVB tillåter att spela in/titta på flera kanaler ifrån samma transponder/mux med ett TV-kort.
++ möjlighet att sända ut TV till flera klienter över LAN.
+- kräver MySQL eller MS-SQL (vilket kommer att installeras automatiskt om det ej redan finns installerat)
 
 TV-Servern kommer att helt ersätta den inbyggda TV-motorn, och helt sömlöst vara integrerad i MediaPortals användargänssnitt.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Alla applicationer kommer att bli installerade på dess standard platser och med dess standard inställningar.</value>
+    <value>Alla applikationer kommer att installeras på dess standardplatser och med dess standardinställningar.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Avancerad installation tillåter dig att specificera installations plats och andra inställningar </value>
+    <value>Avancerad installation tillåter dig att specificera installationsplats och andra inställningar</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
     <value>Avancerad installation</value>
@@ -177,7 +177,7 @@ TV-Servern kommer att helt ersätta den inbyggda TV-motorn, och helt sömlöst v
     <value>Singel klicks installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Alla applikationer som behövs kommer att installeras till dess standard platser och med dess standard inställningar. Databas lösenordet är "MediaPortal".</value>
+    <value>Alla applikationer som behövs kommer att installeras till dess standardplatser och med dess standardinställningar. Databaslösenordet är "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Utför en avancerad installation</value>
@@ -210,14 +210,14 @@ som du vill använda MediaPortal för att titta på TV med MediaPortal 1.0.</val
 Denna dator kommer sen att fungera som en dedicerad TV-Server och leverera TV till andra datorer 
 i ditt lokala nätverk. (databas installation behövs)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
+  <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Bläddra</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurerar Windows Brandväggen till att tillåta extern åtkomst till databasserver</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>Du måste välja en gillitig installationssökväg för SQL-Serven.</value>
+    <value>Du måste välja en gillitig installationssökväg för SQL-Servern.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
     <value>Du måste välja ett lösenord för SQL-Server användare.</value>
@@ -271,7 +271,7 @@ i ditt lokala nätverk. (databas installation behövs)</value>
     <value>Ett fel uppstod vid nerladdning av den begärda filen</value>
   </data>
   <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
-    <value>Nerladdnings länk:</value>
+    <value>Nerladdningslänk:</value>
   </data>
   <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
     <value>Mål:</value>
@@ -375,9 +375,6 @@ i ditt lokala nätverk. (databas installation behövs)</value>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Manuell nerladdning</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Bläddra</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Du måste välja en gilltig installationssökväg för MediaPortal.</value>
   </data>
@@ -389,9 +386,6 @@ i ditt lokala nätverk. (databas installation behövs)</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Välj installationsmapp för MediaPortal</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Bläddra</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurerar Windows Brandväggen till att tillåta extern åtkomst till TV-Servern</value>
@@ -409,10 +403,10 @@ i ditt lokala nätverk. (databas installation behövs)</value>
     <value>Välj installationsmapp för TV-Servern</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Tack för att du väljer MediaPortal. . The FREE OpenSource MediaCenter!</value>
+    <value>Tack för att du väljer MediaPortal... The FREE OpenSource MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Detta installationsprogram kommer att guida dig igenom hela installations processen</value>
+    <value>Detta installationsprogram kommer att guida dig igenom hela installationsprocessen</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Välj språk innan du går vidare</value>
@@ -449,7 +443,7 @@ i ditt lokala nätverk. (databas installation behövs)</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>En internet uppkoppling är ett krav för att installationsprocessen skall fungera.
-Vill du starta installationsprocessen nu , eller vill du ladda ner alla komponenter 
+Vill du starta installationsprocessen nu, eller vill du ladda ner alla komponenter 
 som behövs för att utföra installationen senare, kanske på en PC utan en internetanslutning?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
@@ -480,8 +474,8 @@ som behövs för att utföra installationen senare, kanske på en PC utan en int
     <value>Tyvärr stödjer MediaPortal inte ditt operativsystem !</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Ditt operativsystem stödjs är ej pga Microsoft har inte släppt flera hotfixar som behövs.
-Fortsätt på din egen risk </value>
+    <value>Ditt operativsystem stödjs ej pga Microsoft inte har släppt flertalet hotfixar som behövs.
+Fortsätt på egen risk!</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Nerladdning av inställningsfil misslyckades.
@@ -490,5 +484,31 @@ korrupt konfigurationsfil, om funnen, kommer nu raderas.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurera Windows Brandväggen till att tillåta extern åtkomst till MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Du kör en betaversion av SP, ditt system stöds ej...
+Fortsätt på egen risk!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Applikationen kommer nu att stängas och öppna katalogen "MediaPortal Installation".
+Överför denna katalog till din HTPC. Starta installationen genom att starta "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Överhoppad</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Vill du verkligen avbryta installationen av MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Aktuella inställningar för nerladdning: språk={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Ange inställningar för nerladdning:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Ingen anslutning till internet hittad! En aktiv internetanslutning krävs för att fortsätta installationen.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Det finns inte tillräckligt med utrymme på vald enhet! Det behövs åtminstonde {0} MB ledigt utrymme för att installera MediaPortal.</value>
   </data>
 </root>
