@@ -30,19 +30,26 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 	{
 		string absoluteUri;
 		string strURL = "http://us.imdb.com/Tsearch?title=" + strSearch;
+
 		string strBody = GetPage(strURL, "utf-8", out absoluteUri);
 		
 		string strBodyExact = "";
 		string strBodyPopular = "";
+        // Pirppuli 6.1.2009: Added strBodyPartial
+        string strBodyPartial = "";
 
 		bool bFoundExact = false;
 		bool bFoundPop = false;
+        // Pirppuli 6.1.2009: Added bFoundPartial
+		bool bFoundPartial = false;
 
 		int iStartOfMovieExactList = 0;
 		int iStartOfMovieList = 0;
+        // Pirppuli 6.1.2009: Added iStartOfMoviePartialList
+		int iStartOfMoviePartialList = 0;
 		
 		iStartOfMovieList = strBody.IndexOf("Popular Titles");
-		if (iStartOfMovieList >= 0)
+		if (iStartOfMovieList >= 0) // Pirppuli 6.1.2009: Popular titles found
 		{
 			strBodyPopular = strBody;
 			bFoundPop = true;
@@ -59,10 +66,15 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
             strBodyExact = strBody;
             iStartOfMovieExactList = strBody.IndexOf("Titles (Exact Matches)");
             iStartOfMovieList = iStartOfMovieExactList;
+            // Pirppuli 6.1.2009: Added Partial match handling
+			bFoundPartial = true;
+            strBodyPartial = strBody;
+            iStartOfMoviePartialList = strBody.IndexOf("Titles (Partial Matches)");
+            iStartOfMovieList = iStartOfMoviePartialList;
 		}
 
 		int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
-		if (iStartOfMovieList <= 0)
+		if (iStartOfMovieList <= 0) // Pirppuli 6.1.2009: IMDB displayed the exact match, no list
 		{
 			int iMovieTitle = strBody.IndexOf("<title>");
 			int iOverview = strBody.IndexOf("Overview");
@@ -85,8 +97,6 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 			}
 			return;
 		}
-		
-		
 
 		if (bFoundPop == true)
 		{
@@ -114,15 +124,16 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 
 				while (imdbEntry.Success)
 				{
-					string imdbTitle = imdbEntry.Groups["title"].Value.Replace("\"", "");
+                    // Pirppuli 6.1.2009: Added HTML entity decoding
+					string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "");
 					string imdbURL = imdbEntry.Groups["tt"].Value;
 					string imdbOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
 														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
 
+                    // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
 					bSkipThisEntry = imdbOptions.Contains("(TV)") |
 						imdbOptions.Contains("(TV series)") |
 						imdbOptions.Contains("(VG)") |
-						imdbOptions.Contains("(V)") |
 						imdbOptions.Contains("(promotional title)") |
 						imdbOptions.Contains("(working title)") |
 						imdbOptions.Contains("(poster title)") |
@@ -143,13 +154,14 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 						 Match imdbAlias = Regex.Match(imdbAka, @"<br>&#160;aka\s<em>""(?<alias>.*?)""</em>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 						 while (imdbAlias.Success)
 						 {
-							 imdbTitle = imdbAlias.Groups["alias"].Value;
+                             // Pirppuli 6.1.2009: Added HTML entity decoding and quote stripping
+							 imdbTitle = HttpUtility.HtmlDecode(imdbAlias.Groups["alias"].Value).Replace("\"", "");
 							 string imdbakaOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
 														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+                             // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
 							 bool bSkipThisAkaEntry = imdbakaOptions.Contains("(TV)") |
 								 imdbakaOptions.Contains("(TV series)") |
 								 imdbakaOptions.Contains("(VG)") |
-								 imdbakaOptions.Contains("(V)") |
 								 imdbakaOptions.Contains("(promotional title)") |
 								 imdbakaOptions.Contains("(working title)") |
 								 imdbakaOptions.Contains("(poster title)") |
@@ -207,14 +219,15 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 
 				while (imdbEntry.Success)
 				{
-					string imdbTitle = imdbEntry.Groups["title"].Value.Replace("\"", "");
+                    // Pirppuli 6.1.2009: Added HTML entity decoding
+					string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "");
 					string imdbURL = imdbEntry.Groups["tt"].Value;
 					string imdbOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
 														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+                    // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
 					bSkipThisEntry = imdbOptions.Contains("(TV)") |
 						imdbOptions.Contains("(TV series)") |
 						imdbOptions.Contains("(VG)") |
-						imdbOptions.Contains("(V)") |
 						imdbOptions.Contains("(promotional title)") |
 						imdbOptions.Contains("(working title)") |
 						imdbOptions.Contains("(poster title)") |
@@ -236,13 +249,115 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 						Match imdbAlias = Regex.Match(imdbAka, @"<br>&#160;aka\s<em>""(?<alias>.*?)""</em>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 						while (imdbAlias.Success)
 						{
-							imdbTitle = imdbAlias.Groups["alias"].Value;
+                            // Pirppuli 6.1.2009: Added HTML entity decoding and quote stripping
+                            imdbTitle = HttpUtility.HtmlDecode(imdbAlias.Groups["alias"].Value).Replace("\"", "");
 							string imdbakaOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
 														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+                            // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
 							bool bSkipThisAkaEntry = imdbakaOptions.Contains("(TV)") |
 								imdbakaOptions.Contains("(TV series)") |
 								imdbakaOptions.Contains("(VG)") |
-								imdbakaOptions.Contains("(V)") |
+								imdbakaOptions.Contains("(promotional title)") |
+								imdbakaOptions.Contains("(working title)") |
+								imdbakaOptions.Contains("(poster title)") |
+								imdbakaOptions.Contains("(promotional abbreviation)") |
+								imdbakaOptions.Contains("(short title)") |
+								imdbakaOptions.Contains("(video title)") |
+								imdbakaOptions.Contains("(original script title)") |
+								imdbakaOptions.Contains("(video box title)") |
+								imdbakaOptions.Contains("(new title)") |
+								imdbakaOptions.Contains("(DVD box title)");
+							if (bSkipThisAkaEntry == false)
+							{
+								url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+								elements.Add(url);
+								imdbAlias = imdbAlias.NextMatch();
+							}
+							
+						}
+						
+					}
+					imdbEntry = imdbEntry.NextMatch();
+					if (iCount > iLimit)
+					{
+						break;
+					}
+				}
+				break;
+			}
+			
+		}
+        
+        // Pirppuli 6.1.2009: Added partial match handling
+		if (bFoundPartial == true)
+		{
+			iStartOfMoviePartialList += "<table>".Length;
+			int iEndOfMoviePartialList = strBodyPartial.IndexOf("</table>", iStartOfMoviePartialList);
+
+			if (iEndOfMoviePartialList < 0)
+			{
+				iEndOfMoviePartialList = strBodyPartial.Length;
+			}
+			if (endOfTitleList < iEndOfMoviePartialList && endOfTitleList > iStartOfMoviePartialList)
+			{
+				iEndOfMoviePartialList = endOfTitleList;
+			}
+			strBodyPartial = strBodyPartial.Substring(iStartOfMoviePartialList, iEndOfMoviePartialList - iStartOfMoviePartialList);
+			while (true)
+			{
+				Match imdbEntry = Regex.Match(strBodyPartial, @"<tr>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?</td>[\s]*
+					<td[^>]*>.*?
+					<a\shref=""(?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)</a>
+					(?<options>.*?)[\s]*
+					(?(?=<br>)(?<aka><br>.*?))
+					</td>[\s]*
+					</tr>",
+					 RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+
+				bool bSkipThisEntry = false;
+
+				while (imdbEntry.Success)
+				{
+                    // Pirppuli 6.1.2009: Added HTML entity decoding
+					string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "");
+					string imdbURL = imdbEntry.Groups["tt"].Value;
+					string imdbOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+                    // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
+					bSkipThisEntry = imdbOptions.Contains("(TV)") |
+						imdbOptions.Contains("(TV series)") |
+						imdbOptions.Contains("(VG)") |
+						imdbOptions.Contains("(promotional title)") |
+						imdbOptions.Contains("(working title)") |
+						imdbOptions.Contains("(poster title)") |
+						imdbOptions.Contains("(promotional abbreviation)") |
+						imdbOptions.Contains("(short title)") |
+						imdbOptions.Contains("(video title)") |
+						imdbOptions.Contains("(original script title)") |
+						imdbOptions.Contains("(video box title)") |
+						imdbOptions.Contains("(new title)") |
+						imdbOptions.Contains("(DVD box title)");
+
+					if (bSkipThisEntry == false)
+					{
+						MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl("http://us.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + " (IMDB_With_AKA)", "IMDB");
+						elements.Add(url);
+						iCount++;
+
+						string imdbAka = imdbEntry.Groups["aka"].Value;
+						Match imdbAlias = Regex.Match(imdbAka, @"<br>&#160;aka\s<em>""(?<alias>.*?)""</em>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+						while (imdbAlias.Success)
+						{
+                            // Pirppuli 6.1.2009: Added HTML entity decoding and quote stripping
+                            imdbTitle = HttpUtility.HtmlDecode(imdbAlias.Groups["alias"].Value).Replace("\"", "");
+							string imdbakaOptions = Regex.Replace(imdbEntry.Groups["options"].Value, @"<(.|\n)*?>", String.Empty,
+														RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+                            // Pirppuli 6.1.2009: Removed direct-to-video (V) releases from exclude list
+							bool bSkipThisAkaEntry = imdbakaOptions.Contains("(TV)") |
+								imdbakaOptions.Contains("(TV series)") |
+								imdbakaOptions.Contains("(VG)") |
 								imdbakaOptions.Contains("(promotional title)") |
 								imdbakaOptions.Contains("(working title)") |
 								imdbakaOptions.Contains("(poster title)") |
@@ -331,7 +446,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       {
         iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
       }
-      int iRating = strBody.IndexOf("User Rating:</b>");
+      int iRating = strBody.IndexOf("User Rating:</h5>");
       int iCred = strBody.IndexOf("<table class=\"cast\">");
       int iTop = strBody.IndexOf("Top 250:");
       int iYear = strBody.IndexOf("/Sections/Years/");
@@ -353,7 +468,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 
       if (iRating >= 0) // and votes
       {
-        iRating += "User Rating:</b>".Length;
+        iRating += "User Rating:</h5>".Length;
         iStart = strBody.IndexOf("<b>", iRating);
         if (iStart >= 0)
         {
@@ -378,14 +493,16 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
           {
             // now, votes
             movieDetails.Votes = "0";
-            iStart = strBody.IndexOf("(", iEnd + 2);
+            iStart = strBody.IndexOf("&nbsp;&nbsp;<a href=\"ratings\" class=\"tn15more\">", iEnd + 2);
             if (iStart > 0)
             {
-              iEnd = strBody.IndexOf(" votes</a>)", iStart);
+              iEnd = strBody.IndexOf(" votes</a>", iStart);
               if (iEnd > 0)
               {
-                iStart += "(<a href=\"ratings\">".Length; // skip the parantese and link before votes
-                movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim();
+                iStart += "&nbsp;&nbsp;<a href=\"ratings\" class=\"tn15more\">".Length; // skip the spaces and link before votes
+                // Pirppuli 6.1.2009: Remove commas, as they are interpreted as decimal points in some countries
+                movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim().Replace(",", "");
+                //movieDetails.Votes = "12345";
               }
             }
           }
@@ -406,7 +523,8 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
         iEnd = strBody.IndexOf("<", iTagLine);
         movieDetails.TagLine = strBody.Substring(iTagLine, iEnd - iTagLine).Trim();
         movieDetails.TagLine = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.TagLine);
-        movieDetails.TagLine = HttpUtility.HtmlDecode(movieDetails.TagLine);  // Remove HTML entities like &#189;
+        movieDetails.TagLine = HttpUtility.HtmlDecode(movieDetails.TagLine); // Remove HTML entities like &#189;
+        movieDetails.TagLine = movieDetails.TagLine.Replace(" |", "");  // Pirppuli 6.1.2009: Remove pipe character from the end
       }
 
       if (iPlotOutline < 0)
@@ -418,6 +536,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
           movieDetails.PlotOutline = strBody.Substring(iPlotSummary, iEnd - iPlotSummary).Trim();
           movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
           movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
+          movieDetails.PlotOutline = movieDetails.PlotOutline.Replace(" |", ""); // Pirppuli 6.1.2009: Remove pipe character from the end
         }
       }
       else
@@ -434,6 +553,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
         movieDetails.PlotOutline = strBody.Substring(iPlotOutline, iEnd - iPlotOutline).Trim();
         movieDetails.PlotOutline = MediaPortal.Util.Utils.stripHTMLtags(movieDetails.PlotOutline);
         movieDetails.PlotOutline = HttpUtility.HtmlDecode(movieDetails.PlotOutline);  // remove HTML entities
+        movieDetails.PlotOutline = movieDetails.PlotOutline.Replace(" |", ""); // Pirppuli 6.1.2009: Remove  character from the end
         movieDetails.Plot = movieDetails.PlotOutline.Trim();
         movieDetails.Plot = HttpUtility.HtmlDecode(movieDetails.Plot);  // remove HTML entities
       }
