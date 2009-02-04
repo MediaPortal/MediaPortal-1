@@ -45,6 +45,7 @@ namespace MediaPortal.MPInstaller
           case QueueAction.Install:
             {
               listBox1.Items.Add(string.Format("Installing : {0} - {1}", item.Name, item.Version));
+              progressBar3.Visible = true;
               string temp_file = item.LocalFile;
               if (!File.Exists(item.LocalFile))
               {
@@ -90,7 +91,9 @@ namespace MediaPortal.MPInstaller
               MPpackageStruct pk = inst.Find(item.Name);
               if (pk != null && pk.InstallerInfo.Uninstall.Count > 0)
               {
+                progressBar3.Visible = false;
                 progressBar2.Maximum = pk.InstallerInfo.Uninstall.Count;
+                progressBar2.Value = 0;
                 for (int i = 0; i < pk.InstallerInfo.Uninstall.Count; i++)
                 {
                   UninstallInfo u = (UninstallInfo)pk.InstallerInfo.Uninstall[i];
@@ -115,19 +118,26 @@ namespace MediaPortal.MPInstaller
                       }
                     }
                     else
+                    {
                       listBox2.Items.Add("File date changed :" + u.Path);
+                    }
                   }
-                  else listBox2.Items.Add("File not found :" + u.Path);
+                  else
+                  {
+                    listBox2.Items.Add("File not found :" + u.Path);
+                  }
                 }
                 if (pk != null)
                   inst.Items.Remove(pk);
-                inst.SaveToFile();
               }
               else
               {
                 listBox1.Items.Add("No uninstall information was found ....");
+                if (pk != null)
+                  inst.Items.Remove(pk);
               }
             }
+            inst.SaveToFile();
             break;
           case QueueAction.Unknow:
             break;

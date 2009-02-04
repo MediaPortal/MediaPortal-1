@@ -1485,6 +1485,7 @@
 	<String id="14011">Select an option</String>
 	<String id="14012">Not supported Mediaportal version !(Needed version {0})</String>	
 	<String id="14013">Do you want continue ?</String>		
+	<String id="14014">Updating online info</String>			
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>

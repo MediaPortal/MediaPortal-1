@@ -176,6 +176,33 @@ namespace WindowPlugins.GUI.Extensions
     #region Serialisation
     void LoadSettings()
     {
+      bool shouldUpdate = false;
+      if (!File.Exists(MpiFileList.ONLINE_LISTING))
+      {
+        shouldUpdate = true;
+      }
+      else
+      {
+        FileInfo finfo = new FileInfo(MpiFileList.ONLINE_LISTING);
+        if (((TimeSpan)(DateTime.Now - finfo.CreationTime)).Days > 5)
+          shouldUpdate = true;
+      }
+        
+      dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if (shouldUpdate && dlgProgress != null)
+      {
+        dlgProgress.Reset();
+        dlgProgress.SetHeading(14010);
+        dlgProgress.SetLine(1, 14014);
+        dlgProgress.SetLine(2, "");
+        dlgProgress.SetPercentage(0);
+        dlgProgress.Progress();
+        dlgProgress.DisableCancel(true);
+        dlgProgress.ShowProgressBar(true);
+        client.DownloadFileAsync(new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user=&passwd="), MpiFileList.ONLINE_LISTING);
+        dlgProgress.DoModal(GetID);
+      }
+
       lst.LoadFromFile();
       lst_online.LoadFromFile(MpiFileList.ONLINE_LISTING);
       queue = queue.Load(MpiFileList.QUEUE_LISTING);
