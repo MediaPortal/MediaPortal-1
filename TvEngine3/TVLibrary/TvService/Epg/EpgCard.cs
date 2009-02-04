@@ -89,7 +89,7 @@ namespace TvService
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
       _eventHandler = controller_OnTvServerEvent;
-      _dbUpdater = new EpgDBUpdater("IdleEpgGrabber", true);
+      _dbUpdater = new EpgDBUpdater(_tvController, "IdleEpgGrabber", true);
       controller.OnTvServerEvent += _eventHandler;
     }
 

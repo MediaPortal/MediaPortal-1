@@ -160,14 +160,14 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
-    public TvCardDvbBase(DsDevice device)
+    public TvCardDvbBase(IEpgEvents epgEvents, DsDevice device)
       : base(device)
     {
       matchDevicePath = true;
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
-      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber((ITVCard)this);
+      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(epgEvents, (ITVCard)this);
       _minChannel = -1;
       _maxChannel = -1;
       _supportsSubChannels = true;
@@ -952,9 +952,8 @@ namespace TvLibrary.Implementations.DVB
         //This is done by checking the DeviceId and DeviceInstance part of the DevicePath.
         if (matchDevicePath)
         {
-          int indx1, indx2;
-          indx1 = device.DevicePath.IndexOf(deviceIdDelimter);
-          indx2 = devices[i].DevicePath.IndexOf(deviceIdDelimter);
+          int indx1 = device.DevicePath.IndexOf(deviceIdDelimter);
+          int indx2 = devices[i].DevicePath.IndexOf(deviceIdDelimter);
           if (indx1 < 0 || indx2 < 0)
           {
               continue;

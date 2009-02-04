@@ -169,9 +169,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbSS2"/> class.
     /// </summary>
+    /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
-    public TvCardDvbSS2(DsDevice device)
-      : base(device)
+    public TvCardDvbSS2(IEpgEvents epgEvents, DsDevice device)
+      : base(epgEvents, device)
     {
       _useDISEqCMotor = false;
       TvBusinessLayer layer = new TvBusinessLayer();

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using TvLibrary.Epg;
 using TvLibrary.Log;
 using TvLibrary.Channels;
+using TvLibrary.Interfaces;
 
 namespace TvDatabase
 {
@@ -58,6 +59,8 @@ namespace TvDatabase
   public class EpgDBUpdater
   {
     #region Variables
+
+    readonly IEpgEvents _epgEvents;
     string _titleTemplate;
     string _descriptionTemplate;
     string _epgLanguages;
@@ -71,8 +74,9 @@ namespace TvDatabase
     #endregion
 
     #region ctor
-    public EpgDBUpdater(string grabberName, bool checkForLastUpdate)
+    public EpgDBUpdater(IEpgEvents epgEvents, string grabberName, bool checkForLastUpdate)
     {
+      _epgEvents = epgEvents;
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
       ReloadConfig();
@@ -100,12 +104,22 @@ namespace TvDatabase
     }
     public void UpdateEpgForChannel(EpgChannel epgChannel)
     {
-      int iInserted = 0;
-      bool hasGaps = false;
       Channel dbChannel = IsInsertAllowed(epgChannel);
       if (dbChannel == null)
         return;
       Log.Epg("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+
+      // Store the data in our database
+      ImportPrograms(dbChannel, epgChannel.Programs);
+      // Raise an event with the data so that other plugins can handle the data on their own
+      _epgEvents.OnImportEpgPrograms(epgChannel.Programs);
+    }
+
+    private void ImportPrograms(Channel dbChannel, IList<EpgProgram> epgPrograms)
+    {
+      int iInserted = 0;
+      bool hasGaps = false;
+
       _layer.RemoveOldPrograms(dbChannel.IdChannel);
 
       EpgHoleCollection holes = new EpgHoleCollection();
@@ -128,9 +142,9 @@ namespace TvDatabase
       }
       DateTime dbLastProgram = _layer.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
-      for (int i = 0; i < epgChannel.Programs.Count; i++)
+      for (int i = 0; i < epgPrograms.Count; i++)
       {
-        EpgProgram epgProgram = epgChannel.Programs[i];
+        EpgProgram epgProgram = epgPrograms[i];
         // Check for dupes
         if (lastProgram != null)
         {

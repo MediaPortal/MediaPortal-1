@@ -49,9 +49,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDVBC"/> class.
     /// </summary>
+    /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
-    public TvCardDVBC(DsDevice device)
-      : base(device)
+    public TvCardDVBC(IEpgEvents epgEvents, DsDevice device)
+      : base(epgEvents, device)
     {
       _cardType = CardType.DvbC;
 

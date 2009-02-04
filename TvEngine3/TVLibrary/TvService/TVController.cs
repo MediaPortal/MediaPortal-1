@@ -48,7 +48,7 @@ namespace TvService
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent
+  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent, IEpgEvents
   {
     #region constants
     private const int HEARTBEAT_MAX_SECS_EXCEED_ALLOWED = 30;
@@ -299,7 +299,7 @@ namespace TvService
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         _cards = new Dictionary<int, ITvCardHandler>();
-        _localCardCollection = new TvCardCollection();
+        _localCardCollection = new TvCardCollection(this);
 
         _plugins = new PluginLoader();
         _plugins.Load();
@@ -716,14 +716,14 @@ namespace TvService
     /// Gets the assembly of tvservice.exe
     /// </summary>
     /// <value>Returns the AssemblyVersion of tvservice.exe</value>
-    public string GetAssemblyVersion 
+    public string GetAssemblyVersion
     {
       get
       {
         return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
       }
     }
-    
+
     /// <summary>
     /// Gets the server.
     /// </summary>
@@ -2460,6 +2460,22 @@ namespace TvService
     }
 
     /// <summary>
+    /// This method will be called by the EPG grabber.
+    /// </summary>
+    public void OnImportEpgPrograms(IList<EpgProgram> epgPrograms)
+    {
+      try
+      {
+        TvServerEventArgs eventArgs = new TvServerEventArgs(TvServerEventType.ImportEpgPrograms, epgPrograms);
+        Fire(this, eventArgs);
+      } catch (Exception ex)
+      {
+        Log.Write(ex);
+        return;
+      }
+    }
+
+    /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>
     public bool EpgGrabberEnabled
@@ -3273,7 +3289,7 @@ namespace TvService
             int userSubCh = -1;
             int userChannelId = -1;
             bool otherUserFoundOnSameCh = false;
-            
+
             //lets find the current user, if he has a subchannel and what channel it is.
             foreach (User userObj in users)
             {
@@ -3283,9 +3299,9 @@ namespace TvService
                 {
                   userChannelId = userObj.IdChannel;
                   userSubCh = userObj.SubChannel;
-                  break;                  
+                  break;
                 }
-              }            
+              }
             }
 
             //lets find if any other users are sharing that same subchannel/channel
@@ -3303,7 +3319,7 @@ namespace TvService
                 }
               }
             }
-            
+
             if (userSubCh > -1)
             {
               if (otherUserFoundOnSameCh)
@@ -3315,7 +3331,7 @@ namespace TvService
                 _cards[user.CardId].Card.FreeSubChannelContinueGraph(userSubCh);
               }
             }
-            
+
           }
         }
 

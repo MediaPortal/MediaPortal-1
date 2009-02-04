@@ -47,9 +47,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardATSC"/> class.
     /// </summary>
+    /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
-    public TvCardATSC(DsDevice device)
-      : base(device)
+    public TvCardATSC(IEpgEvents epgEvents, DsDevice device)
+      : base(epgEvents, device)
     {
       _cardType = CardType.Atsc;
 

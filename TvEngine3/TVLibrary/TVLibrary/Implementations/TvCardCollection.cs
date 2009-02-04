@@ -37,13 +37,15 @@ namespace TvLibrary.Implementations
   public class TvCardCollection
   {
     readonly List<ITVCard> _cards;
+    private readonly IEpgEvents _epgEvents;
 
     /// <summary>
     /// ctor
     /// </summary>
-    public TvCardCollection()
+    public TvCardCollection(IEpgEvents epgEvents)
     {
       Log.Log.WriteFile("----------------------------");
+      _epgEvents = epgEvents;
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -78,7 +80,7 @@ namespace TvLibrary.Implementations
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
         {
           Log.Log.WriteFile("Detected SkyStar 2 card");
-          TvCardDvbSS2 card = new TvCardDvbSS2(devices[i]);
+          TvCardDvbSS2 card = new TvCardDvbSS2(_epgEvents, devices[i]);
           _cards.Add(card);
           //break;  maybe more than one B2C2 card ?
         }
@@ -205,25 +207,25 @@ namespace TvLibrary.Implementations
           if (ConnectFilter(graphBuilder, networkDVBT, tmp))
           {
             Log.Log.WriteFile("Detected DVB-T card:{0}", name);
-            TvCardDVBT dvbtCard = new TvCardDVBT(devices[i]);
+            TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
             _cards.Add(dvbtCard);
           }
           else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
           {
             Log.Log.WriteFile("Detected DVB-C card:{0}", name);
-            TvCardDVBC dvbcCard = new TvCardDVBC(devices[i]);
+            TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
             _cards.Add(dvbcCard);
           }
           else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
           {
             Log.Log.WriteFile("Detected DVB-S card:{0}", name);
-            TvCardDVBS dvbsCard = new TvCardDVBS(devices[i]);
+            TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           else if (ConnectFilter(graphBuilder, networkATSC, tmp))
           {
             Log.Log.WriteFile("Detected ATSC card:{0}", name);
-            TvCardATSC dvbsCard = new TvCardATSC(devices[i]);
+            TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           graphBuilder.RemoveFilter(tmp);

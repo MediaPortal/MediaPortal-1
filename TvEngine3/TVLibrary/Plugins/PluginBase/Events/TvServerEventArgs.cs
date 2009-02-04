@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using TvControl;
 using TvLibrary.Interfaces;
 using TvDatabase;
+using TvLibrary.Epg;
 
 namespace TvEngine.Events
 {
@@ -79,26 +80,32 @@ namespace TvEngine.Events
     /// Event indicating that the program db was updated
     /// </summary>
     ProgramUpdated,
+    /// <summary>
+    /// Event indicating that new EPG data is about to be imported
+    /// </summary>
+    ImportEpgPrograms,
   };
 
   public class TvServerEventArgs : EventArgs
   {
     #region variables
-    User _user = null;
-    VirtualCard _card = null;
-    IChannel _channel = null;
+
+    readonly User _user;
+    readonly VirtualCard _card;
+    readonly IChannel _channel;
     IController _controller = null;
     //Channel _databaseChannel = null;
     //TuningDetail _tuningDetail = null;
-    Schedule _schedule = null;
-    Recording _recording = null;
-    Conflict _conflict = null;
+    readonly Schedule _schedule;
+    readonly Recording _recording;
+    Conflict _conflict;
     // Added by Broce for exchanges between TVPlugin & ConflictsManager
-    IList<Schedule> _schedules = null;
-    IList<Conflict> _conflicts = null;
-    object _argsUpdatedState = null;
+    IList<Schedule> _schedules;
+    IList<Conflict> _conflicts;
+    object _argsUpdatedState;
+    private IList<EpgProgram> _epgPrograms;
     //
-    TvServerEventType _eventType;
+    readonly TvServerEventType _eventType;
     #endregion
 
     #region ctor
@@ -159,7 +166,6 @@ namespace TvEngine.Events
     /// <param name="eventType">Type of the event.</param>
     /// <param name="card">The card.</param>
     /// <param name="user">The user.</param>
-    /// <param name="schedule">The schedule.</param>
     /// <param name="conflict">The conflict.</param>
     public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, Conflict conflict)
     {
@@ -175,13 +181,23 @@ namespace TvEngine.Events
     /// <param name="eventType">Type of the event.</param>
     /// <param name="schedulesList">a IList of schedules</param>
     /// <param name="conflictsList">a IList of conflicts</param>
-    /// <param name="argUpdated">bool flag</param>
+    /// <param name="argsUpdated">bool flag</param>
     public TvServerEventArgs(TvServerEventType eventType, IList<Schedule> schedulesList, IList<Conflict> conflictsList, object argsUpdated)
     {
       _eventType = eventType;
       _schedules = schedulesList;
       _conflicts = conflictsList;
       _argsUpdatedState = argsUpdated;
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
+    /// </summary>
+    /// <param name="eventType">Type of the event.</param>
+    /// <param name="epgPrograms">An IList of the new programs to import.</param>
+    public TvServerEventArgs(TvServerEventType eventType, IList<EpgProgram> epgPrograms)
+    {
+      _eventType = eventType;
+      _epgPrograms = epgPrograms;
     }
     #endregion
 
@@ -286,6 +302,14 @@ namespace TvEngine.Events
     {
       get { return _argsUpdatedState; }
       set { _argsUpdatedState = value; }
+    }
+    /// <summary>
+    /// List of recieved EPG programs.
+    /// </summary>
+    public IList<EpgProgram> EpgPrograms
+    {
+      get { return _epgPrograms; }
+      set { _epgPrograms = value; }
     }
     //
     /// <summary>

@@ -84,4 +84,15 @@ namespace TvLibrary.Interfaces
     List<EpgChannel> Epg { get;}
 
   }
+
+  /// <summary>
+  /// interface for EPG events
+  /// </summary>
+  public interface IEpgEvents
+  {
+    /// <summary>
+    /// This method will be called by the EPG grabber.
+    /// </summary>
+    void OnImportEpgPrograms(IList<EpgProgram> epgPrograms);
+  }
 }

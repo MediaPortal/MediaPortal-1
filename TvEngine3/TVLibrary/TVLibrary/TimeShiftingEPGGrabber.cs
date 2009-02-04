@@ -38,10 +38,10 @@ namespace TvLibrary
     private readonly EpgDBUpdater _dbUpdater;
     #endregion
 
-    public TimeShiftingEPGGrabber(ITVCard card)
+    public TimeShiftingEPGGrabber(IEpgEvents epgEvents, ITVCard card)
     {
       _card = card;
-      _dbUpdater = new EpgDBUpdater("TimeshiftingEpgGrabber", false);
+      _dbUpdater = new EpgDBUpdater(epgEvents, "TimeshiftingEpgGrabber", false);
       _updateThreadRunning = false;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
