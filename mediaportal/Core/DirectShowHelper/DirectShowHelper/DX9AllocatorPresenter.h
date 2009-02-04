@@ -118,15 +118,19 @@ public:
 protected:
 	void Paint(IDirect3DSurface9* pSurface,SIZE aspecRatio);
 	void DeleteSurfaces();
+	HRESULT AllocVideoSurface();
 
 	CComPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
 
-    CComPtr<IDirect3DDevice9> m_pD3DDev;
+  CComPtr<IDirect3DDevice9> m_pD3DDev;
 	CComPtr<IDirect3D9> m_pD3D;
-	vector<CComPtr<IDirect3DSurface9> >     m_pSurfaces;
+	IDirect3DSurface9** m_pSurfaces;
+  
+  CComPtr<IDirect3DTexture9> m_pVideoTexture;
+	CComPtr<IDirect3DSurface9> m_pVideoSurface;
 
 	long		  m_refCount;
-	int			  m_surfaceCount;
+	DWORD		  m_surfaceCount;
 	HMONITOR	  m_hMonitor;
 	IVMR9Callback* m_pCallback;
 	int   m_iVideoWidth, m_iVideoHeight;

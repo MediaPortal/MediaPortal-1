@@ -857,6 +857,25 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
 	CHECK_HR(m_pDeviceManager->UnlockDevice(hDevice, FALSE), "failed: Unlock device");
 	Log("Releasing device: %d", pDevice->Release());
 	CHECK_HR(m_pDeviceManager->CloseDeviceHandle(hDevice), "failed: CloseDeviceHandle");
+
+
+	m_pVideoTexture = NULL;
+	m_pVideoSurface = NULL;
+
+
+
+  if(FAILED(hr = m_pD3DDev->CreateTexture(
+    m_iVideoWidth, m_iVideoHeight, 1, 
+    D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_A8R8G8B8, 
+    D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
+    return;
+
+  if(FAILED(hr = m_pVideoTexture->GetSurfaceLevel(0, &m_pVideoSurface)))
+    return;
+
+
+	hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
+
 	Log("ReallocSurfaces done");
 }
 
@@ -1799,7 +1818,7 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
 	//make sure that the surface is not in use anymore before we delete it.
 	if ( m_pCallback != NULL )
   {
-		m_pCallback->PresentSurface(0,0,0,0,0);
+		m_pCallback->PresentImage(0,0,0,0,0);
   }
 	Flush();
 	m_iFreeSamples = 0;
@@ -1813,10 +1832,6 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
 		m_vFreeSamples[i] = NULL;
 	}
 
-	/*if (m_pCallback!=NULL)
-  {
-		m_pCallback->PresentImage(0,0,0,0,0);
-  }*/
 	m_pDeviceManager->UnlockDevice(hDevice, FALSE);
 	Log("Releasing device");
 	pDevice->Release();
@@ -1828,49 +1843,20 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 {
 	try
 	{
-		if (m_pCallback!=NULL)
-		{
-			if (pSurface!=NULL)
-			{
-				HRESULT hr;
-				DWORD dwPtr;
-				//disabled, because of garbeled image.
-				/*
-				void *pContainer = NULL;
-				pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
-				if (pContainer!=NULL)
-				{
-					LPDIRECT3DTEXTURE9 pTexture=(LPDIRECT3DTEXTURE9)pContainer;
+    HRESULT hr;
 
-					dwPtr=(DWORD)(pTexture);
-					if ( dwPtr == 0 ) Log("WARNING: null-texture-pointer!");
-					hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY,dwPtr);
-					if (m_bfirstFrame)
-					{
-						m_bfirstFrame=false;
-						D3DSURFACE_DESC desc;
-						pTexture->GetLevelDesc(0,&desc);
-						
-					}
-					pTexture->Release();
-					
-					return hr;
-				}*/
-				dwPtr = (DWORD)(IDirect3DSurface9*)pSurface;
-				hr = m_pCallback->PresentSurface( m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY,dwPtr);
-				if (m_bfirstFrame)
-				{
-					D3DSURFACE_DESC desc;
-					pSurface->GetDesc(&desc);
-					m_bfirstFrame = false;
-				}
-				return hr;
-			}
-		}
+		if (m_pCallback==NULL || pSurface==NULL)
+      return E_FAIL;
+    if(FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
+    {
+      Log("vmr9:Paint: StretchRect failed %u\n",hr);
+    }
+    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture);
+    return hr;
 	}
 	catch(...)
 	{
-		Log("vmr9:Paint() invalid exception");
+		Log("Paint() exception");
 	}
 	return E_FAIL;
 }

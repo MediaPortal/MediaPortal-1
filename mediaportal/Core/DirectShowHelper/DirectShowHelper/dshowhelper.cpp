@@ -265,6 +265,8 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
    	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
    	m_pVMR9Filter=vmr9Filter;
    
+	Log("Vmr9Init");
+
    	CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
    	if(!pConfig)
    		return FALSE;
@@ -303,6 +305,7 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
    
    void Vmr9Deinit()
    {
+     Log("Vmr9Deinit");
      try
      {
    	  int hr;
@@ -329,7 +332,7 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
      {
    		  Log("Vmr9Deinit:exception");
      }
-   StopLogger();
+   //StopLogger();
   }
 
 
@@ -567,7 +570,7 @@ void EvrDeinit()
   {
 		  Log("EvrDeinit:exception");
   }
-  StopLogger();
+  //StopLogger();
 }
 
 
@@ -1059,6 +1062,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 		break;
 	case DLL_PROCESS_DETACH:
 		processCounter--;
+		if (processCounter == 0)
+			StopLogger();
 		break;
 	}
     return TRUE;

@@ -248,6 +248,9 @@ protected:
 	void ReturnSample(IMFSample* pSample, BOOL tryNotify);
 	void ResetStatistics();
 	
+  CComPtr<IDirect3DTexture9> m_pVideoTexture;
+	CComPtr<IDirect3DSurface9> m_pVideoSurface;
+
   HRESULT PresentSample(IMFSample* pSample);
   CComPtr<IDirect3DDevice9> m_pD3DDev;
 	IVMR9Callback* m_pCallback;
