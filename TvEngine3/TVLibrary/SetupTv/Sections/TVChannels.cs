@@ -554,10 +554,13 @@ namespace SetupTv.Sections
       /* chemelli: end of block
        */
 
-      Channel channel = (Channel)mpListView1.Items[oldIndex].Tag;
-      channel.Name = e.Label;
-      channel.DisplayName = e.Label;
-      channel.Persist();
+      if (e.Label != null) // GEMX: ==null means, nothing has changed. This check is necessary, otherwise gentle gives an error about a null value
+      {
+        Channel channel = (Channel)mpListView1.Items[oldIndex].Tag;
+        channel.Name = e.Label;
+        channel.DisplayName = e.Label;
+        channel.Persist();
+      }
     }
 
     private void mpButtonEdit_Click(object sender, EventArgs e)
