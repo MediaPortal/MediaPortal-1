@@ -175,6 +175,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://forum.team-mediaportal.com/movie-info-grabbers-287/");
+      this.linkLabel2.Links.Add(0, linkLabel1.Text.Length, "http://forum.team-mediaportal.com/movie-info-grabbers-287/");
     }
 
     #endregion

@@ -43,6 +43,8 @@ namespace MediaPortal.Configuration.Sections
       this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();
       this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
       this.groupBoxAvailableGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.mpButtonUpdateGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxAvailableDatabases = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpButtonAddGrabber = new MediaPortal.UserInterface.Controls.MPButton();
@@ -119,7 +121,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -165,11 +166,11 @@ namespace MediaPortal.Configuration.Sections
       this.actorsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.actorsCheckBox.AutoSize = true;
       this.actorsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.actorsCheckBox.Location = new System.Drawing.Point(16, 280);
+      this.actorsCheckBox.Location = new System.Drawing.Point(25, 278);
       this.actorsCheckBox.Name = "actorsCheckBox";
-      this.actorsCheckBox.Size = new System.Drawing.Size(104, 17);
+      this.actorsCheckBox.Size = new System.Drawing.Size(132, 17);
       this.actorsCheckBox.TabIndex = 4;
-      this.actorsCheckBox.Text = "Download actors";
+      this.actorsCheckBox.Text = "Download actor details";
       this.actorsCheckBox.UseVisualStyleBackColor = true;
       // 
       // skipCheckBox
@@ -177,7 +178,7 @@ namespace MediaPortal.Configuration.Sections
       this.skipCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.skipCheckBox.AutoSize = true;
       this.skipCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.skipCheckBox.Location = new System.Drawing.Point(16, 259);
+      this.skipCheckBox.Location = new System.Drawing.Point(25, 257);
       this.skipCheckBox.Name = "skipCheckBox";
       this.skipCheckBox.Size = new System.Drawing.Size(161, 17);
       this.skipCheckBox.TabIndex = 1;
@@ -258,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActiveGrabbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxActiveGrabbers.Location = new System.Drawing.Point(3, 3);
       this.groupBoxActiveGrabbers.Name = "groupBoxActiveGrabbers";
-      this.groupBoxActiveGrabbers.Size = new System.Drawing.Size(452, 302);
+      this.groupBoxActiveGrabbers.Size = new System.Drawing.Size(452, 278);
       this.groupBoxActiveGrabbers.TabIndex = 0;
       this.groupBoxActiveGrabbers.TabStop = false;
       this.groupBoxActiveGrabbers.Text = "Internet database search settings";
@@ -266,7 +267,7 @@ namespace MediaPortal.Configuration.Sections
       // mpNumericUpDownLimit
       // 
       this.mpNumericUpDownLimit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpNumericUpDownLimit.Location = new System.Drawing.Point(270, 251);
+      this.mpNumericUpDownLimit.Location = new System.Drawing.Point(244, 217);
       this.mpNumericUpDownLimit.Minimum = new decimal(new int[] {
             1,
             0,
@@ -288,9 +289,9 @@ namespace MediaPortal.Configuration.Sections
       // mpDeleteGrabber
       // 
       this.mpDeleteGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpDeleteGrabber.Location = new System.Drawing.Point(374, 246);
+      this.mpDeleteGrabber.Location = new System.Drawing.Point(355, 212);
       this.mpDeleteGrabber.Name = "mpDeleteGrabber";
-      this.mpDeleteGrabber.Size = new System.Drawing.Size(72, 26);
+      this.mpDeleteGrabber.Size = new System.Drawing.Size(91, 26);
       this.mpDeleteGrabber.TabIndex = 9;
       this.mpDeleteGrabber.Text = "Delete";
       this.mpDeleteGrabber.UseVisualStyleBackColor = true;
@@ -303,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       this._fuzzyMatchingCheckBox.Checked = true;
       this._fuzzyMatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this._fuzzyMatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(16, 278);
+      this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(21, 247);
       this._fuzzyMatchingCheckBox.Name = "_fuzzyMatchingCheckBox";
       this._fuzzyMatchingCheckBox.Size = new System.Drawing.Size(205, 17);
       this._fuzzyMatchingCheckBox.TabIndex = 0;
@@ -314,7 +315,7 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseDown
       // 
       this.bDatabaseDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.bDatabaseDown.Location = new System.Drawing.Point(73, 246);
+      this.bDatabaseDown.Location = new System.Drawing.Point(82, 212);
       this.bDatabaseDown.Name = "bDatabaseDown";
       this.bDatabaseDown.Size = new System.Drawing.Size(58, 26);
       this.bDatabaseDown.TabIndex = 3;
@@ -325,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseUp
       // 
       this.bDatabaseUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.bDatabaseUp.Location = new System.Drawing.Point(6, 246);
+      this.bDatabaseUp.Location = new System.Drawing.Point(15, 212);
       this.bDatabaseUp.Name = "bDatabaseUp";
       this.bDatabaseUp.Size = new System.Drawing.Size(61, 26);
       this.bDatabaseUp.TabIndex = 2;
@@ -349,10 +350,10 @@ namespace MediaPortal.Configuration.Sections
       this.lvDatabase.GridLines = true;
       this.lvDatabase.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.lvDatabase.HideSelection = false;
-      this.lvDatabase.Location = new System.Drawing.Point(6, 21);
+      this.lvDatabase.Location = new System.Drawing.Point(15, 30);
       this.lvDatabase.MultiSelect = false;
       this.lvDatabase.Name = "lvDatabase";
-      this.lvDatabase.Size = new System.Drawing.Size(440, 219);
+      this.lvDatabase.Size = new System.Drawing.Size(431, 176);
       this.lvDatabase.TabIndex = 1;
       this.lvDatabase.UseCompatibleStateImageBehavior = false;
       this.lvDatabase.View = System.Windows.Forms.View.Details;
@@ -380,27 +381,54 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAvailableGrabbers
       // 
+      this.groupBoxAvailableGrabbers.Controls.Add(this.linkLabel2);
       this.groupBoxAvailableGrabbers.Controls.Add(this.linkLabel1);
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonUpdateGrabber);
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpComboBoxAvailableDatabases);
       this.groupBoxAvailableGrabbers.Controls.Add(this.mpButtonAddGrabber);
       this.groupBoxAvailableGrabbers.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.groupBoxAvailableGrabbers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAvailableGrabbers.Location = new System.Drawing.Point(3, 305);
+      this.groupBoxAvailableGrabbers.Location = new System.Drawing.Point(3, 281);
       this.groupBoxAvailableGrabbers.Name = "groupBoxAvailableGrabbers";
-      this.groupBoxAvailableGrabbers.Size = new System.Drawing.Size(452, 68);
+      this.groupBoxAvailableGrabbers.Size = new System.Drawing.Size(452, 92);
       this.groupBoxAvailableGrabbers.TabIndex = 13;
       this.groupBoxAvailableGrabbers.TabStop = false;
       this.groupBoxAvailableGrabbers.Text = "Available databases:";
       // 
+      // linkLabel2
+      // 
+      this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabel2.AutoSize = true;
+      this.linkLabel2.Location = new System.Drawing.Point(12, 74);
+      this.linkLabel2.Name = "linkLabel2";
+      this.linkLabel2.Size = new System.Drawing.Size(109, 13);
+      this.linkLabel2.TabIndex = 9;
+      this.linkLabel2.TabStop = true;
+      this.linkLabel2.Text = "please visit the forum.";
+      this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(12, 61);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(284, 13);
+      this.linkLabel1.TabIndex = 8;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "If you have problems or need support for a special grabber,";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
       // mpButtonUpdateGrabber
       // 
       this.mpButtonUpdateGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(374, 19);
+      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(355, 30);
       this.mpButtonUpdateGrabber.Name = "mpButtonUpdateGrabber";
-      this.mpButtonUpdateGrabber.Size = new System.Drawing.Size(72, 24);
+      this.mpButtonUpdateGrabber.Size = new System.Drawing.Size(91, 50);
       this.mpButtonUpdateGrabber.TabIndex = 7;
-      this.mpButtonUpdateGrabber.Text = "Update";
+      this.mpButtonUpdateGrabber.Text = "Update grabber scripts";
       this.mpButtonUpdateGrabber.UseVisualStyleBackColor = true;
       this.mpButtonUpdateGrabber.Click += new System.EventHandler(this.mpButtonUpdateGrabber_Click);
       // 
@@ -410,17 +438,17 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxAvailableDatabases.BorderColor = System.Drawing.Color.Empty;
       this.mpComboBoxAvailableDatabases.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxAvailableDatabases.Location = new System.Drawing.Point(6, 19);
+      this.mpComboBoxAvailableDatabases.Location = new System.Drawing.Point(15, 30);
       this.mpComboBoxAvailableDatabases.Name = "mpComboBoxAvailableDatabases";
-      this.mpComboBoxAvailableDatabases.Size = new System.Drawing.Size(234, 21);
+      this.mpComboBoxAvailableDatabases.Size = new System.Drawing.Size(249, 21);
       this.mpComboBoxAvailableDatabases.TabIndex = 5;
       // 
       // mpButtonAddGrabber
       // 
       this.mpButtonAddGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonAddGrabber.Location = new System.Drawing.Point(246, 19);
+      this.mpButtonAddGrabber.Location = new System.Drawing.Point(266, 29);
       this.mpButtonAddGrabber.Name = "mpButtonAddGrabber";
-      this.mpButtonAddGrabber.Size = new System.Drawing.Size(72, 24);
+      this.mpButtonAddGrabber.Size = new System.Drawing.Size(57, 24);
       this.mpButtonAddGrabber.TabIndex = 6;
       this.mpButtonAddGrabber.Text = "Add";
       this.mpButtonAddGrabber.UseVisualStyleBackColor = true;
@@ -785,9 +813,9 @@ namespace MediaPortal.Configuration.Sections
       // label11
       // 
       this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label11.Location = new System.Drawing.Point(199, 281);
+      this.label11.Location = new System.Drawing.Point(207, 282);
       this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(97, 21);
+      this.label11.Size = new System.Drawing.Size(74, 22);
       this.label11.TabIndex = 21;
       this.label11.Text = "MPAA Rating:";
       // 
@@ -1233,19 +1261,6 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave.UseVisualStyleBackColor = true;
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
-      // linkLabel1
-      // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(36, 46);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(371, 13);
-      this.linkLabel1.TabIndex = 8;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "If you have problems or need support for a special grabber, visit forum please.";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-      // 
       // MovieDatabase
       // 
       this.Controls.Add(this.tabControl1);
@@ -1382,5 +1397,6 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader chDatabaseTitle;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown mpNumericUpDownLimit;
     private System.Windows.Forms.LinkLabel linkLabel1;
+    private System.Windows.Forms.LinkLabel linkLabel2;
   }
 }
