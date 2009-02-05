@@ -148,7 +148,7 @@ namespace MediaPortal.Player
             _renderFrame = renderer;
 
             _vertexBuffers = new VertexBuffer[11];
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < _vertexBuffers.Length; i++)
             {
                 _vertexBuffers[i] = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                                     4,
@@ -290,7 +290,7 @@ namespace MediaPortal.Player
                 _renderTarget.Dispose();
                 _renderTarget = null;
             }
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < _vertexBuffers.Length; i++)
             {
                 if (_vertexBuffers[i] != null)
                 {
