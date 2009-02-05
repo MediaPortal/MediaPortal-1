@@ -1083,15 +1083,6 @@ namespace MediaPortal.Player
       //DirectShowUtil.ReleaseComObject(_qualityInterface);
       _qualityInterface = null;
 
-      if (GUIGraphicsContext.IsEvr)
-      {
-          EvrDeinit();
-      }
-      else
-      {
-          Vmr9Deinit();
-      }
-
       try
       {
         result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
@@ -1100,8 +1091,18 @@ namespace MediaPortal.Player
           Log.Warn("VMR9: RemoveFilter(): {0}", result);
         }
       }
-      catch (Exception)
+      catch (Exception exr)
       {
+        Log.Error("VMR9: Error removing filter - {0}", exr.ToString());
+      }
+
+      if (GUIGraphicsContext.IsEvr)
+      {
+        EvrDeinit();
+      }
+      else
+      {
+        Vmr9Deinit();
       }
 
       try
@@ -1112,8 +1113,9 @@ namespace MediaPortal.Player
           Log.Info("VMR9: ReleaseComObject(): {0}", result);
         } while (result > 0);
       }
-      catch (Exception)
+      catch (Exception exm)
       {
+        Log.Error("VMR9: Error releasing ComObject - {0}", exm.ToString());
       }
       _vmr9Filter = null;
       _graphBuilderInterface = null;
