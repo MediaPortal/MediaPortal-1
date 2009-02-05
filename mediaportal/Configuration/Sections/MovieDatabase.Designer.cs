@@ -424,7 +424,7 @@ namespace MediaPortal.Configuration.Sections
       // mpButtonUpdateGrabber
       // 
       this.mpButtonUpdateGrabber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(355, 30);
+      this.mpButtonUpdateGrabber.Location = new System.Drawing.Point(355, 29);
       this.mpButtonUpdateGrabber.Name = "mpButtonUpdateGrabber";
       this.mpButtonUpdateGrabber.Size = new System.Drawing.Size(91, 50);
       this.mpButtonUpdateGrabber.TabIndex = 7;
