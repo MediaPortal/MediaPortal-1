@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           // Allow to finish other thread context
-          Thread.Sleep(0);
+          Thread.Sleep(1);
           //Log.Debug("GUIWindowManager: Cannot reach desired framerate - please check your system config!");
         }
       }

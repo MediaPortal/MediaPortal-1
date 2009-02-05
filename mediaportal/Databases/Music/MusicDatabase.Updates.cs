@@ -1446,7 +1446,7 @@ namespace MediaPortal.Music.Database
                 {
                   Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
                 }
-                Thread.Sleep(0);
+                Thread.Sleep(1);
               }
             }
           }

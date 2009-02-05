@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
       AddCommand(command);
       while (!command.Finished)
       {
-        GUIWindowManager.DispatchThreadMessages();
+        GUIWindowManager.Process();// DispatchThreadMessages();
         Thread.Sleep(100);
       }
     }

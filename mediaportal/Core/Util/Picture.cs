@@ -924,7 +924,7 @@ namespace MediaPortal.Util
         if (MediaPortal.Player.g_Player.Playing)
           Thread.Sleep(100);
         else
-          Thread.Sleep(0);
+          Thread.Sleep(1);
         return true;
       }
       catch (Exception ex)

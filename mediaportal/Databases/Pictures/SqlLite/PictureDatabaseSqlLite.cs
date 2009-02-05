@@ -184,7 +184,7 @@ namespace MediaPortal.Picture.Database
         }
         else
         {
-          Thread.Sleep(0);
+          Thread.Sleep(1);
         }
 
         return lPicId;
