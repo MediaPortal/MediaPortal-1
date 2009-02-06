@@ -3752,7 +3752,7 @@ namespace TvPlugin
         foreach (ChannelGroup group in groups)
         {
           //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          if (hideAllChannelsGroup && group.GroupName.Equals("All Channels"))
+          if (hideAllChannelsGroup && group.GroupName.Equals("All Channels") && groups.Count > 1)
           {
             continue;
           }
