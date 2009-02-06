@@ -128,6 +128,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaPortal.DeployTool.de-DE.resx</DependentUpon>
     </Compile>
+    <Compile Include="MediaPortal.DeployTool.el.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.el.resx</DependentUpon>
+    </Compile>
     <Compile Include="MediaPortal.DeployTool.es-ES.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -258,6 +263,11 @@
       <SubType>Designer</SubType>
       <LastGenOutput>MediaPortal.DeployTool.de-DE.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.el.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.el.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.DeployTool.es-ES.resx">
       <SubType>Designer</SubType>
