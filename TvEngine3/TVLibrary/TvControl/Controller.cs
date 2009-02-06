@@ -152,13 +152,13 @@ namespace TvControl
     /// Gets the server.
     /// </summary>
     /// <value>The server.</value>
-    int IdServer { get;}
+    int IdServer { get; }
 
     ///<summary>
     ///Gets the total number of tv-cards installed.
     ///</summary>
     ///<value>Number which indicates the cards installed</value>
-    int Cards { get;}
+    int Cards { get; }
 
     /// <summary>
     /// Gets the card Id for a card
@@ -362,6 +362,7 @@ namespace TvControl
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
     bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec);
+
     /// <summary>
     /// Determines if any card is not locked by a user
     /// </summary>
@@ -392,7 +393,7 @@ namespace TvControl
     /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>
-    bool EpgGrabberEnabled { get;set;}
+    bool EpgGrabberEnabled { get; set; }
 
 
     /// <summary>
@@ -450,51 +451,60 @@ namespace TvControl
     /// <param name="currentTSChannels"></param>
     /// <param name="currentUnavailChannels"></param>
     /// <param name="currentAvailChannels"></param>
-    void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels, out List<int> currentUnavailChannels, out List<int> currentAvailChannels);
+    void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels,
+                                 out List<int> currentUnavailChannels, out List<int> currentAvailChannels);
 
     /// <summary>
     /// Returns a list of all ip adresses on the server.
     /// </summary>
     /// <value>The server ip adresses.</value>
-    List<string> ServerIpAdresses { get;}
+    List<string> ServerIpAdresses { get; }
+
     #endregion
 
     #region streaming
+
     /// <summary>
     /// Gets a list of all streaming clients.
     /// </summary>
     /// <value>The streaming clients.</value>
-    List<RtspClient> StreamingClients { get;}
+    List<RtspClient> StreamingClients { get; }
 
     #endregion
 
     #region DiSEqC
+
     /// <summary>
     /// Reset DiSEqC for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     void DiSEqCReset(int cardId);
+
     /// <summary>
     /// Stops the DiSEqC motor for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     void DiSEqCStopMotor(int cardId);
+
     /// <summary>
     /// Sets the DiSEqC east limit for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     void DiSEqCSetEastLimit(int cardId);
+
     /// <summary>
     /// Sets the DiSEqC west limit for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     void DiSEqCSetWestLimit(int cardId);
+
     /// <summary>
     /// DiSEqC force limit  for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="onoff">on/off</param>
     void DiSEqCForceLimit(int cardId, bool onoff);
+
     /// <summary>
     /// Moves the DiSEqC motor for the given card
     /// </summary>
@@ -502,23 +512,27 @@ namespace TvControl
     /// <param name="direction">direction</param>
     /// <param name="numberOfSteps">Number of steps</param>
     void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps);
+
     /// <summary>
     /// Stores the current DiSEqC position for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="position">position</param>
     void DiSEqCStorePosition(int cardId, byte position);
+
     /// <summary>
     /// DiSEqC move to the reference position for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     void DiSEqCGotoReferencePosition(int cardId);
+
     /// <summary>
     /// Go to the DiSEqC position for the given card
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <param name="position">position</param>
     void DiSEqCGotoPosition(int cardId, byte position);
+
     /// <summary>
     /// Gets the DiSEqC position for the given card
     /// </summary>
@@ -527,9 +541,11 @@ namespace TvControl
     /// <param name="stepsAzimuth">azimuth</param>
     /// <param name="stepsElevation">elvation</param>
     void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation);
+
     #endregion
 
     #region sub channels
+
     /// <summary>
     /// Returns the URL for the RTSP stream on which the client can find the
     /// stream for the selected card
@@ -724,6 +740,7 @@ namespace TvControl
     DateTime RecordingStarted(User user);
 
     #region audio stream selection
+
     /// <summary>
     /// returns the list of available audio streams for the card specified
     /// </summary>
@@ -746,6 +763,7 @@ namespace TvControl
     /// <param name="user">The user.</param>
     /// <param name="stream">audio stream</param>
     void SetCurrentAudioStream(User user, IAudioStream stream);
+
     #endregion
 
     /// <summary>
@@ -920,9 +938,11 @@ namespace TvControl
     /// </summary>
     /// <value>The number of channels decrypting.</value>
     bool HasCA(int cardId);
+
     #endregion
 
     #region quality control
+
     /// <summary>
     /// Indicates if bit rate modes are supported
     /// </summary>

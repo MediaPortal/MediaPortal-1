@@ -29,13 +29,16 @@ namespace TvLibrary.ChannelLinkage
   public class LinkedChannel
   {
     #region variables
-    ushort _networkId;
-    ushort _transportId;
-    ushort _serviceId;
-    string _name;
+
+    private ushort _networkId;
+    private ushort _transportId;
+    private ushort _serviceId;
+    private string _name;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LinkedChannel"/> class.
     /// </summary>
@@ -46,22 +49,18 @@ namespace TvLibrary.ChannelLinkage
       _serviceId = 0;
       _name = "";
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets/Sets the network id
     /// </summary>
     public ushort NetworkId
     {
-      get
-      {
-        return _networkId;
-      }
-      set
-      {
-        _networkId = value;
-      }
+      get { return _networkId; }
+      set { _networkId = value; }
     }
 
     /// <summary>
@@ -69,14 +68,8 @@ namespace TvLibrary.ChannelLinkage
     /// </summary>
     public ushort TransportId
     {
-      get
-      {
-        return _transportId;
-      }
-      set
-      {
-        _transportId = value;
-      }
+      get { return _transportId; }
+      set { _transportId = value; }
     }
 
     /// <summary>
@@ -84,14 +77,8 @@ namespace TvLibrary.ChannelLinkage
     /// </summary>
     public ushort ServiceId
     {
-      get
-      {
-        return _serviceId;
-      }
-      set
-      {
-        _serviceId = value;
-      }
+      get { return _serviceId; }
+      set { _serviceId = value; }
     }
 
     /// <summary>
@@ -99,16 +86,10 @@ namespace TvLibrary.ChannelLinkage
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
+      get { return _name; }
+      set { _name = value; }
     }
-    #endregion
 
+    #endregion
   }
 }

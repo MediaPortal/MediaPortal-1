@@ -28,16 +28,16 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// gets/sets the channel name
     /// </summary>
-    string Name { get;set;}
+    string Name { get; set; }
 
     /// <summary>
     /// boolean indication if this is a radio channel
     /// </summary>
-    bool IsRadio { get;set;}
+    bool IsRadio { get; set; }
 
     /// <summary>
     /// boolean indication if this is a tv channel
     /// </summary>
-    bool IsTv { get;set;}
+    bool IsTv { get; set; }
   }
 }

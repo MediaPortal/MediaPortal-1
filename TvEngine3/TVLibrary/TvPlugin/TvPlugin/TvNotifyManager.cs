@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -24,29 +25,25 @@
 
 using System;
 using System.Collections;
-using System.Text;
-using System.Windows.Forms;
-using System.Globalization;
 using System.Collections.Generic;
-
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Configuration;
-
-using Gentle.Common;
+using System.Globalization;
+using System.Windows.Forms;
 using Gentle.Framework;
-
-using TvDatabase;
+using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.TV.Database;
+using MediaPortal.Util;
 using TvControl;
-using TvLibrary.Interfaces;
+using TvDatabase;
 
 namespace TvPlugin
 {
   public class TvNotifyManager
   {
-    private System.Windows.Forms.Timer _timer;
+    private Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     private static bool _notifiesListChanged;
     private static bool _enableTVNotification;
@@ -67,16 +64,16 @@ namespace TvPlugin
 
     public TvNotifyManager()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
         //_enableNotifyOnRecFailed = xmlreader.GetValueAsBool("mytv", "enableTvOnRecFailed", true);
-      }      
+      }
 
       _busy = false;
-      _timer = new System.Windows.Forms.Timer();
+      _timer = new Timer();
 
       // check every 15 seconds for notifies
       _dummyuser = new User();
@@ -94,7 +91,10 @@ namespace TvPlugin
 
     public static void ForceUpdate()
     {
-      if (!_enableRecNotification) return;
+      if (!_enableRecNotification)
+      {
+        return;
+      }
       AddActiveRecordings();
       CheckForStoppedRecordings();
     }
@@ -108,11 +108,11 @@ namespace TvPlugin
     private static Recording CheckForStoppedRecordings()
     {
       Recording stoppedRec = null;
-      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = Recording.ListAllActive();
       bool found = false;
       foreach (KeyValuePair<int, Recording> pair in _actualRecordings)
       {
-        Recording actRec = (Recording)pair.Value;
+        Recording actRec = (Recording) pair.Value;
 
         foreach (Recording rec in recordings)
         {
@@ -142,7 +142,7 @@ namespace TvPlugin
     private static Recording AddActiveRecordings()
     {
       Recording newRecAdded = null;
-      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = Recording.ListAllActive();
       if (_actualRecordings == null)
       {
         _actualRecordings = new Dictionary<int, Recording>();
@@ -165,7 +165,7 @@ namespace TvPlugin
     {
       _actualRecordings = new Dictionary<int, Recording>();
 
-      IList<Recording> recordings = TvDatabase.Recording.ListAllActive();
+      IList<Recording> recordings = Recording.ListAllActive();
       foreach (Recording rec in recordings)
       {
         if (TvRecorded.IsRecordingActual(rec))
@@ -175,15 +175,15 @@ namespace TvPlugin
       }
     }
 
-    void LoadNotifies()
+    private void LoadNotifies()
     {
       try
       {
         Log.Info("TvNotify:LoadNotifies");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
         sb.AddConstraint(Operator.Equals, "notify", 1);
         SqlStatement stmt = sb.GetStatement(true);
-        _notifiesList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+        _notifiesList = ObjectFactory.GetCollection(typeof (Program), stmt.Execute());
         _notifiedRecordings = new ArrayList();
         _notifiedRecordingsStarted = new Dictionary<int, Schedule>();
 
@@ -202,7 +202,8 @@ namespace TvPlugin
 
     private bool Notify(string heading, string mainMsg, string channelName)
     {
-      GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify pDlgNotify =
+        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (pDlgNotify != null)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV, 0, 0, 0, 0, 0, null);
@@ -219,27 +220,33 @@ namespace TvPlugin
         }
         pDlgNotify.TimeOut = 5;
 
-        
+
         try
         {
-          pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);          
+          pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
         }
         catch
         {
           //ignore
           // ex- the notify dialogue will cause an error if rendered while mini TV epg is active.
-          return false;                    
+          return false;
         }
-        
       }
       return true;
     }
 
-    void _timer_Tick(object sender, EventArgs e)
+    private void _timer_Tick(object sender, EventArgs e)
     {
-
-      if (!_enableTVNotification && !_enableRecNotification) { return; };
-      if (_busy) { return; };
+      if (!_enableTVNotification && !_enableRecNotification)
+      {
+        return;
+      }
+      ;
+      if (_busy)
+      {
+        return;
+      }
+      ;
       _busy = true;
 
       if (_actualRecordings == null)
@@ -247,7 +254,11 @@ namespace TvPlugin
         AddActiveRecordings();
       }
 
-      if (!TVHome.Connected) { return; };
+      if (!TVHome.Connected)
+      {
+        return;
+      }
+      ;
       try
       {
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
@@ -264,10 +275,11 @@ namespace TvPlugin
             {
               if (preNotifySecs > program.StartTime)
               {
-                Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName, program.StartTime);
+                Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,
+                         program.StartTime);
                 program.Notify = false;
                 program.Persist();
-                MediaPortal.TV.Database.TVProgram tvProg = new MediaPortal.TV.Database.TVProgram();
+                TVProgram tvProg = new TVProgram();
                 tvProg.Channel = program.ReferencedChannel().DisplayName;
                 tvProg.Title = program.Title;
                 tvProg.Description = program.Description;
@@ -313,10 +325,13 @@ namespace TvPlugin
                 {
                   //check if freecard is available. 
                   //Log.Debug("TVPlugIn: Notify verified program {0} about to start recording. {1} / {2}", rec.ProgramName, rec.StartTime, preNotifySecs);
-                  if (TVHome.Navigator.Channel.IdChannel != rec.IdChannel && (int)TVHome.TvServer.GetChannelState(rec.IdChannel, _dummyuser) == 0) //not tunnable
+                  if (TVHome.Navigator.Channel.IdChannel != rec.IdChannel &&
+                      (int) TVHome.TvServer.GetChannelState(rec.IdChannel, _dummyuser) == 0) //not tunnable
                   {
                     Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", rec.ProgramName);
-                    if (Notify(GUILocalizeStrings.Get(1004), String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)), TVHome.Navigator.CurrentChannel))
+                    if (Notify(GUILocalizeStrings.Get(1004),
+                               String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)),
+                               TVHome.Navigator.CurrentChannel))
                     {
                       _notifiedRecordings.Add(rec);
                     }
@@ -332,13 +347,18 @@ namespace TvPlugin
           }
 
           //check if rec. has started
-          if (!_enableRecNotification) return;
+          if (!_enableRecNotification)
+          {
+            return;
+          }
 
           Recording newRecording = AddActiveRecordings();
 
           if (newRecording != null)
-          {                        
-            IList<Program> prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(newRecording.Title, newRecording.StartTime.AddHours(-4), newRecording.EndTime);
+          {
+            IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(newRecording.Title,
+                                                                          newRecording.StartTime.AddHours(-4),
+                                                                          newRecording.EndTime);
 
             Program prg = null;
             if (prgs != null && prgs.Count > 0)
@@ -349,18 +369,18 @@ namespace TvPlugin
             if (prg != null)
             {
               text = String.Format("{0} {1}-{2}",
-                prg.Title,
-                //prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                   prg.Title,
+                                   //prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             }
             else
             {
               text = String.Format("{0} {1}-{2}",
-                newRecording.Title,
-                newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-                //text = GUILocalizeStrings.Get(736);//no tvguide data available
+                                   newRecording.Title,
+                                   newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              //text = GUILocalizeStrings.Get(736);//no tvguide data available
             }
 
             if (!Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName))
@@ -368,15 +388,19 @@ namespace TvPlugin
               _actualRecordings.Remove(newRecording.IdRecording);
             }
             return;
-          }         
+          }
           //check if rec. has ended.                
           //AddActiveRecordings();
           Recording stoppedRec = CheckForStoppedRecordings();
-          if (stoppedRec == null) return;
+          if (stoppedRec == null)
+          {
+            return;
+          }
           if (!TvRecorded.IsRecordingActual(stoppedRec))
           {
             string text = "";
-            IList<Program> prgs = TvDatabase.Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime, stoppedRec.EndTime);
+            IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
+                                                                          stoppedRec.EndTime);
 
             Program prg = null;
             if (prgs != null && prgs.Count > 0)
@@ -386,16 +410,16 @@ namespace TvPlugin
             if (prg != null)
             {
               text = String.Format("{0} {1}-{2}",
-                prg.Title,
-                prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                   prg.Title,
+                                   prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             }
             else
             {
               text = String.Format("{0} {1}-{2}",
-                stoppedRec.Title,
-                stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                   stoppedRec.Title,
+                                   stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               //text = GUILocalizeStrings.Get(736);//no tvguide data available
             }
             //Recording stopped:                    
@@ -405,13 +429,12 @@ namespace TvPlugin
             }
             return; //we do not want to show any more notifications.
           }
-          
+
           // todo
           // check if rec. has failed.
           //if (_enableNotifyOnRecFailed)
           //{
           //}
-
         }
       }
       finally

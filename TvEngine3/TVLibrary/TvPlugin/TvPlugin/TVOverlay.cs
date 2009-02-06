@@ -24,16 +24,9 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Globalization;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using TvDatabase;
 using TvControl;
 
-using Gentle.Common;
-using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>
@@ -41,25 +34,28 @@ namespace TvPlugin
   /// </summary>
   public class TvOverlay : GUIOverlayWindow, IRenderLayer
   {
-    DateTime _updateTimer = DateTime.Now;		
-    bool _lastStatus = false;
-    bool _didRenderLastTime = false;
+    private DateTime _updateTimer = DateTime.Now;
+    private bool _lastStatus = false;
+    private bool _didRenderLastTime = false;
+
     public TvOverlay()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+      GetID = (int) Window.WINDOW_TV_OVERLAY;
     }
+
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV_OVERLAY, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_TV_OVERLAY, this);
       Restore();
       PreInit();
       ResetAllControls();
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
     }
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+      GetID = (int) Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;
     }
@@ -68,17 +64,16 @@ namespace TvPlugin
     {
       base.PreInit();
       AllocResources();
-
     }
+
     public override bool SupportsDelayedLoad
     {
-      get { return false; } 
+      get { return false; }
     }
-
 
     #region IRenderLayer
 
-    void OnUpdateState(bool render)
+    private void OnUpdateState(bool render)
     {
       if (_didRenderLastTime != render)
       {
@@ -93,19 +88,26 @@ namespace TvPlugin
         }
       }
     }
+
     public bool ShouldRenderLayer()
-    {      
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+    {
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        return false;
+      }
       //{
       //  OnUpdateState(false);
       //  return base.IsAnimating(AnimationType.WindowClose);
       //}      
-      
+
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 1000) return _lastStatus;
+      if (ts.TotalMilliseconds < 1000)
+      {
+        return _lastStatus;
+      }
 
       if (!TVHome.Connected)
-      {        
+      {
         return false;
       }
 
@@ -120,17 +122,25 @@ namespace TvPlugin
       }
       _updateTimer = DateTime.Now;
       OnUpdateState(_lastStatus);
-      if (!_lastStatus) 
+      if (!_lastStatus)
+      {
         return base.IsAnimating(AnimationType.WindowClose);
-      else 
+      }
+      else
+      {
         return _lastStatus;
+      }
     }
 
     public void RenderLayer(float timePassed)
     {
-      if (GUIGraphicsContext.IsFullScreenVideo) return ;
-      Render(timePassed);			
+      if (GUIGraphicsContext.IsFullScreenVideo)
+      {
+        return;
+      }
+      Render(timePassed);
     }
+
     #endregion
   }
 }

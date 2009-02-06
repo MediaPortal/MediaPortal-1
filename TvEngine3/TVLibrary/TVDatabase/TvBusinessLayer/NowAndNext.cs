@@ -25,15 +25,16 @@ namespace TvDatabase
 {
   public class NowAndNext
   {
-    int _idChannel;
-    DateTime _nowStart;
-    DateTime _nowEnd;
-    string _titleNow;
-    string _titleNext;
-    int _idProgramNow;
-    int _idProgramNext;
+    private int _idChannel;
+    private DateTime _nowStart;
+    private DateTime _nowEnd;
+    private string _titleNow;
+    private string _titleNext;
+    private int _idProgramNow;
+    private int _idProgramNext;
 
-    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext, int idProgramNow, int idProgramNext)
+    public NowAndNext(int idChannel, DateTime nowStart, DateTime nowEnd, string titleNow, string titleNext,
+                      int idProgramNow, int idProgramNext)
     {
       _idChannel = idChannel;
       _nowStart = nowStart;
@@ -46,86 +47,44 @@ namespace TvDatabase
 
     public int IdChannel
     {
-      get
-      {
-        return _idChannel;
-      }
-      set
-      {
-        _idChannel = value;
-      }
+      get { return _idChannel; }
+      set { _idChannel = value; }
     }
 
     public DateTime NowStartTime
     {
-      get
-      {
-        return _nowStart;
-      }
-      set
-      {
-        _nowStart = value;
-      }
+      get { return _nowStart; }
+      set { _nowStart = value; }
     }
 
     public DateTime NowEndTime
     {
-      get
-      {
-        return _nowEnd;
-      }
-      set
-      {
-        _nowEnd = value;
-      }
+      get { return _nowEnd; }
+      set { _nowEnd = value; }
     }
 
     public string TitleNow
     {
-      get
-      {
-        return _titleNow;
-      }
-      set
-      {
-        _titleNow = value;
-      }
+      get { return _titleNow; }
+      set { _titleNow = value; }
     }
 
     public string TitleNext
     {
-      get
-      {
-        return _titleNext;
-      }
-      set
-      {
-        _titleNext = value;
-      }
+      get { return _titleNext; }
+      set { _titleNext = value; }
     }
 
     public int IdProgramNow
     {
-      get
-      {
-        return _idProgramNow;
-      }
-      set
-      {
-        _idProgramNow = value;
-      }
+      get { return _idProgramNow; }
+      set { _idProgramNow = value; }
     }
 
     public int IdProgramNext
     {
-      get
-      {
-        return _idProgramNext;
-      }
-      set
-      {
-        _idProgramNext = value;
-      }
+      get { return _idProgramNext; }
+      set { _idProgramNext = value; }
     }
   }
 }

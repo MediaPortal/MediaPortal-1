@@ -24,13 +24,12 @@ using TvLibrary.Epg;
 
 namespace TvLibrary.Interfaces
 {
-
   /// <summary>
   /// callback interface for the EPG
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEpgCallback
   {
     /// <summary>
@@ -39,7 +38,7 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     [PreserveSig]
     int OnEpgReceived();
-  };
+  } ;
 
   /// <summary>
   /// Base class used for dvb epg-grabbing
@@ -53,6 +52,7 @@ namespace TvLibrary.Interfaces
     public virtual void OnEpgCancelled()
     {
     }
+
     /// <summary>
     /// Gets called when epg has been received
     /// Should be overriden by the class
@@ -62,7 +62,6 @@ namespace TvLibrary.Interfaces
     {
       return 0;
     }
-
   }
 
   /// <summary>
@@ -70,7 +69,6 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public interface ITVEPG
   {
-
     /// <summary>
     /// Starts the EPG grabber.
     /// When the epg has been received the OnEpgReceived event will be fired
@@ -81,8 +79,7 @@ namespace TvLibrary.Interfaces
     /// returns a list of all epg data for each channel found.
     /// </summary>
     /// <value>The epg.</value>
-    List<EpgChannel> Epg { get;}
-
+    List<EpgChannel> Epg { get; }
   }
 
   /// <summary>

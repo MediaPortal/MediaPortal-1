@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
@@ -26,14 +28,14 @@
 using System;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 
 #endregion
 
 namespace MediaPortal.Plugins.Process
 {
-  public partial class PowerSchedulerClientSetup : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class PowerSchedulerClientSetup : MPConfigForm
   {
-
     public PowerSchedulerClientSetup()
     {
       InitializeComponent();
@@ -63,7 +65,7 @@ namespace MediaPortal.Plugins.Process
         writer.SetValueAsBool("psclientplugin", "forceshutdown", forceCheckBox.Checked);
         writer.SetValueAsBool("psclientplugin", "shutdownenabled", enableShutdownCheckBox.Checked);
         writer.SetValue("psclientplugin", "idletimeout", idleNumericUpDown.Value);
-      }       
+      }
     }
 
     private void okButton_Click(object sender, EventArgs e)
@@ -77,6 +79,5 @@ namespace MediaPortal.Plugins.Process
       LoadSettings();
       Close();
     }
-  
   }
 }

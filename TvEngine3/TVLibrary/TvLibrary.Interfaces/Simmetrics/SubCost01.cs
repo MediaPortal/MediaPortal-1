@@ -1,13 +1,12 @@
-
 using System;
-using AbstractSubstitutionCost = api.AbstractSubstitutionCost;
+using api;
+
 namespace similaritymetrics.costfunctions
 {
-
   ///<summary>
   ///</summary>
   [Serializable]
-  public sealed class SubCost01 : AbstractSubstitutionCost//, System.Runtime.Serialization.ISerializable
+  public sealed class SubCost01 : AbstractSubstitutionCost //, System.Runtime.Serialization.ISerializable
   {
     /// <summary>
     /// Short descritption

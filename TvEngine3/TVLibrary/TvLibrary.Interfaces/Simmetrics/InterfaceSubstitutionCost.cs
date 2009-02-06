@@ -2,13 +2,11 @@ using System;
 
 namespace api
 {
-
   /// <summary>
   /// Interface for substitution cost
   /// </summary>
   public interface InterfaceSubstitutionCost
   {
-
     /// <summary>
     /// Gets the short description
     /// </summary>

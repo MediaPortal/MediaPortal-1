@@ -59,11 +59,11 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// gets/sets the Audio language
     /// </summary>
-    string Language { get;set;}
+    string Language { get; set; }
 
     /// <summary>
     /// gets/sets the audio stream type
     /// </summary>
-    AudioStreamType StreamType { get;set;}
+    AudioStreamType StreamType { get; set; }
   }
 }

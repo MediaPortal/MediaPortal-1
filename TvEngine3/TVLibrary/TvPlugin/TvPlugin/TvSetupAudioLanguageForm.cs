@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using MediaPortal.UserInterface.Controls;
 
 namespace TvPlugin
 {
-  public partial class TvSetupAudioLanguageForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class TvSetupAudioLanguageForm : MPConfigForm
   {
     public TvSetupAudioLanguageForm()
     {
       InitializeComponent();
     }
-    public void InitForm(List<String> languageCodes,List<String> languages,string preferredLanguages)
+
+    public void InitForm(List<String> languageCodes, List<String> languages, string preferredLanguages)
     {
       mpListViewLanguages.Items.Clear();
       for (int i = 0; i < languages.Count; i++)
@@ -26,13 +24,16 @@ namespace TvPlugin
         mpListViewLanguages.Items.Add(item);
       }
     }
+
     public string GetConfig()
     {
-      string prefLangs="";
+      string prefLangs = "";
       foreach (ListViewItem item in mpListViewLanguages.Items)
       {
         if (item.Checked)
-          prefLangs += (string)item.Tag + ";";
+        {
+          prefLangs += (string) item.Tag + ";";
+        }
       }
       return prefLangs;
     }

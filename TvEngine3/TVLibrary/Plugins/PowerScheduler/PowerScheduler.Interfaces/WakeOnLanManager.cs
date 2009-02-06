@@ -24,13 +24,15 @@
 #endregion
 
 #region Usings
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 using System.Net;
-using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Threading;
+
 #endregion
 
 namespace TvEngine.PowerScheduler
@@ -38,31 +40,31 @@ namespace TvEngine.PowerScheduler
   public class WakeOnLanManager
   {
     #region Constants
+
     // Maximum length of a physical address
     private const int PHYSADDR_MAXLEN = 8;
     // Insufficient buffer error
     private const int INSUFFICIENT_BUFFER = 122;
+
     #endregion
 
     #region Structs
+
     // Define the MIB_IPNETROW structure.
     [StructLayout(LayoutKind.Sequential)]
-    struct MIB_IPNETROW
+    private struct MIB_IPNETROW
     {
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwIndex;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwPhysAddrLen;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = PHYSADDR_MAXLEN)]
-      public byte[] bPhysAddr;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwAddr;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwType;
+      [MarshalAs(UnmanagedType.U4)] public int dwIndex;
+      [MarshalAs(UnmanagedType.U4)] public int dwPhysAddrLen;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = PHYSADDR_MAXLEN)] public byte[] bPhysAddr;
+      [MarshalAs(UnmanagedType.U4)] public int dwAddr;
+      [MarshalAs(UnmanagedType.U4)] public int dwType;
     }
+
     #endregion
 
     #region External methods
+
     [DllImport("iphlpapi.dll")]
     [return: MarshalAs(UnmanagedType.U4)]
     private static extern int GetIpNetTable(IntPtr ipNetTable, [MarshalAs(UnmanagedType.U4)] ref int size, bool order);
@@ -70,9 +72,11 @@ namespace TvEngine.PowerScheduler
     [DllImport("iphlpapi.dll")]
     [return: MarshalAs(UnmanagedType.U4)]
     private static extern int SendARP(int destIP, int srcIP, [Out] byte[] macAddr, ref int phyAddrLen);
+
     #endregion
 
     #region Private (lowlevel) methods
+
     private MIB_IPNETROW[] GetPhysicalAddressTable()
     {
       int bytesNeeded = 0;
@@ -98,14 +102,15 @@ namespace TvEngine.PowerScheduler
         }
 
         int entries = Marshal.ReadInt32(buffer);
-        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof(int));
+        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof (int));
         table = new MIB_IPNETROW[entries];
 
         for (int i = 0; i < entries; i++)
         {
           table[i] = (MIB_IPNETROW) Marshal.PtrToStructure(
-            new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof(MIB_IPNETROW)))), typeof(MIB_IPNETROW)
-            );
+                                      new IntPtr(currentBuffer.ToInt64() + (i*Marshal.SizeOf(typeof (MIB_IPNETROW)))),
+                                      typeof (MIB_IPNETROW)
+                                      );
         }
       }
       finally
@@ -128,16 +133,24 @@ namespace TvEngine.PowerScheduler
     private byte[] GetWakeOnLanMagicPacket(byte[] hwAddress)
     {
       if (hwAddress.Length != 6)
+      {
         throw new ArgumentOutOfRangeException("hwAddress", hwAddress, "hwAddress must contain 6 bytes!");
+      }
       byte[] packet = new byte[102];
       // pad packet data with 6 0xFF bytes
       for (int i = 0; i < 6; i++)
+      {
         packet[i] = 0xFF;
+      }
 
       // write hwaddress (at least) 16 times to packet
       for (int i = 1; i < 17; i++)
+      {
         for (int x = 0; x < 6; x++)
-          packet[i * 6 + x] = hwAddress[x];
+        {
+          packet[i*6 + x] = hwAddress[x];
+        }
+      }
       return packet;
     }
 
@@ -155,12 +168,16 @@ namespace TvEngine.PowerScheduler
       Ping p = new Ping();
       PingReply r = p.Send(address, timeout);
       if (r.Status == IPStatus.Success)
+      {
         return true;
+      }
       return false;
     }
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Gets the hardware ethernet address of the given IP address as an array of bytes. The address is searched
     /// for in the ARP table cache and (if not found there) and ARP request is transmitted to find out the address.
@@ -177,7 +194,9 @@ namespace TvEngine.PowerScheduler
         {
           byte[] addr = address.GetAddressBytes();
           if (BitConverter.ToInt32(addr, 0) == addrTable[i].dwAddr)
+          {
             return addrTable[i].bPhysAddr;
+          }
         }
       }
       // Try sending an ARP request specifically for this address
@@ -203,9 +222,13 @@ namespace TvEngine.PowerScheduler
     public bool IsValidEthernetAddress(byte[] hwAddress)
     {
       if (hwAddress == null)
+      {
         return false;
+      }
       if (hwAddress.Length != 6)
+      {
         return false;
+      }
       bool valid = false;
       for (int i = 0; i < hwAddress.Length; i++)
       {
@@ -227,7 +250,9 @@ namespace TvEngine.PowerScheduler
     public bool SendWakeOnLanPacket(byte[] hwAddress, IPAddress ipAddress)
     {
       if (hwAddress.Length != 6)
+      {
         throw new ArgumentOutOfRangeException("hwAddress", hwAddress, "must be 6 bytes");
+      }
       if (IsValidEthernetAddress(hwAddress))
       {
         byte[] magicPacket = GetWakeOnLanMagicPacket(hwAddress);
@@ -262,7 +287,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>bool indicating if the packet was sent successfully</returns>
     public bool SendWakeOnLanPacket(byte[] hwAddress)
     {
-      byte[] ipAddress = new byte[4] { 0xFF, 0xFF, 0xFF, 0xFF };
+      byte[] ipAddress = new byte[4] {0xFF, 0xFF, 0xFF, 0xFF};
       return SendWakeOnLanPacket(hwAddress, new IPAddress(ipAddress));
     }
 
@@ -294,7 +319,8 @@ namespace TvEngine.PowerScheduler
     /// <returns>bool indication whether or not the system is available</returns>
     public bool WakeupSystem(string hwAddress, string wakeupTarget, string packetTarget, int timeout)
     {
-      return WakeupSystem(GetHwAddrBytes(hwAddress), new IPAddress(GetIpBytes(wakeupTarget)), new IPAddress(GetIpBytes(packetTarget)), timeout);
+      return WakeupSystem(GetHwAddrBytes(hwAddress), new IPAddress(GetIpBytes(wakeupTarget)),
+                          new IPAddress(GetIpBytes(packetTarget)), timeout);
     }
 
     /// <summary>
@@ -329,7 +355,9 @@ namespace TvEngine.PowerScheduler
       int waited = 0;
 
       if (Ping(wakeupTarget, timeout))
+      {
         return true;
+      }
 
       if (!SendWakeOnLanPacket(hwAddress, packetTarget))
       {
@@ -337,12 +365,14 @@ namespace TvEngine.PowerScheduler
         return false;
       }
 
-      while (waited < timeout * 1000)
+      while (waited < timeout*1000)
       {
         if (Ping(wakeupTarget, 1000))
+        {
           return true;
+        }
         Console.WriteLine("System {0} still not reachable, waiting...");
-        System.Threading.Thread.Sleep(1000);
+        Thread.Sleep(1000);
         waited += 2000;
       }
       return false;
@@ -358,11 +388,15 @@ namespace TvEngine.PowerScheduler
       byte[] ipn = new byte[4];
       string[] ip = address.Split('.');
       if (ip.Length != 4)
+      {
         throw new ArgumentOutOfRangeException("address", address, "not a valid IP addresss");
+      }
       try
       {
         for (int i = 0; i < ip.Length; i++)
+        {
           ipn[i] = Convert.ToByte(ip[i]);
+        }
         return ipn;
       }
       catch (FormatException)
@@ -381,11 +415,15 @@ namespace TvEngine.PowerScheduler
       byte[] addrn = new byte[6];
       string[] addr = address.Split(':');
       if (addr.Length != 6)
+      {
         throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss");
+      }
       try
       {
         for (int i = 0; i < addr.Length; i++)
-          addrn[i] = byte.Parse(addr[i], System.Globalization.NumberStyles.HexNumber);
+        {
+          addrn[i] = byte.Parse(addr[i], NumberStyles.HexNumber);
+        }
         return addrn;
       }
       catch (FormatException)
@@ -393,9 +431,11 @@ namespace TvEngine.PowerScheduler
         throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss");
       }
     }
+
     #endregion
 
     #region Main entrypoint (for testing)
+
     public static void Main(String[] args)
     {
       for (int i = 0; i < args.Length; i++)
@@ -404,7 +444,9 @@ namespace TvEngine.PowerScheduler
         {
           case "-gethwaddr":
             if (args.Length != 2)
+            {
               throw new ApplicationException("-gethwaddr needs one argument: <ipaddress>");
+            }
             GetHwAddr(args[++i]);
             break;
           case "-wakeup":
@@ -419,7 +461,10 @@ namespace TvEngine.PowerScheduler
               i += 3;
             }
             else
-              throw new ApplicationException("-gethwaddr: arguments: <hwaddr> <wakeupIP> [<targetIP>] <timeout in seconds>");
+            {
+              throw new ApplicationException(
+                "-gethwaddr: arguments: <hwaddr> <wakeupIP> [<targetIP>] <timeout in seconds>");
+            }
             break;
           default:
             Console.WriteLine("Usage: WakeOnLanManager -gethwaddr <ipaddress>");
@@ -444,20 +489,29 @@ namespace TvEngine.PowerScheduler
       Console.WriteLine("Wakeup system: IP:({0}) hwAddr:{1})", wakeupIP, hwAddr);
       WakeOnLanManager wolManager = new WakeOnLanManager();
       if (wolManager.WakeupSystem(hwAddr, wakeupIP, Int32.Parse(timeout)))
+      {
         Console.WriteLine("wakeup successful");
+      }
       else
+      {
         Console.WriteLine("wakeup FAILED!");
+      }
     }
+
     private static void Wakeup(string hwAddr, string wakeupIP, string targetIP, string timeout)
     {
       Console.WriteLine("Wakeup system: IP:({0}) hwAddr:{1} to:{2})", wakeupIP, hwAddr, targetIP);
       WakeOnLanManager wolManager = new WakeOnLanManager();
       if (wolManager.WakeupSystem(hwAddr, wakeupIP, targetIP, Int32.Parse(timeout)))
+      {
         Console.WriteLine("wakeup successful");
+      }
       else
+      {
         Console.WriteLine("wakeup FAILED!");
+      }
     }
-    #endregion
 
+    #endregion
   }
 }

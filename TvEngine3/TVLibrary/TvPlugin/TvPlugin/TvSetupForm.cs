@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
-
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using TvLibrary.Epg;
 
 namespace TvPlugin
 {
-  public partial class TvSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class TvSetupForm : MPConfigForm
   {
     #region variables
+
     private string _serverHostName;
     private string _preferredLanguages;
     private bool _preferAC3;
@@ -21,12 +20,14 @@ namespace TvPlugin
     private bool _avoidSeeking;
     private List<String> languagesAvail;
     private List<String> languageCodes;
+
     #endregion
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _serverHostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
@@ -36,19 +37,21 @@ namespace TvPlugin
         _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
-    void SaveSettings()
+
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValue("tvservice", "hostname", _serverHostName);
-        xmlreader.SetValue("tvservice","preferredlanguages",_preferredLanguages);
-        xmlreader.SetValueAsBool("tvservice","preferac3",_preferAC3);
+        xmlreader.SetValue("tvservice", "preferredlanguages", _preferredLanguages);
+        xmlreader.SetValueAsBool("tvservice", "preferac3", _preferAC3);
 
         xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", _rebuildGraphOnNewAudioSpecs);
-        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", _rebuildGraphOnNewVideoSpecs);                
-        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking );        
+        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", _rebuildGraphOnNewVideoSpecs);
+        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking);
       }
     }
+
     #endregion
 
     public TvSetupForm()
@@ -58,7 +61,7 @@ namespace TvPlugin
 
     private void TvSetupForm_Load(object sender, EventArgs e)
     {
-      TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+      Languages languages = new Languages();
       languagesAvail = languages.GetLanguages();
       languageCodes = languages.GetLanguageCodes();
       LoadSettings();
@@ -77,7 +80,7 @@ namespace TvPlugin
       toolTip += "channel (ex. mpeg2 to h264). This can cause a slightly slower channel" + Environment.NewLine;
       toolTip += "change speed. Should only be used if you are" + Environment.NewLine;
       toolTip += "having problems with video codec/drivers (blank screen) on channel change.";
-      toolTipChannelChangeVideoChanged.SetToolTip(mpCheckBoxPrefRebuildGraphVideoChanged, toolTip);      
+      toolTipChannelChangeVideoChanged.SetToolTip(mpCheckBoxPrefRebuildGraphVideoChanged, toolTip);
 
       toolTip = "Use this option to make sure that the graph" + Environment.NewLine;
       toolTip += "is rebuilt when changing to a channel that" + Environment.NewLine;
@@ -85,7 +88,7 @@ namespace TvPlugin
       toolTip += "channel (ex. mpeg1 to ac3). This can cause a slightly slower channel" + Environment.NewLine;
       toolTip += "change speed. Should only be used if you are" + Environment.NewLine;
       toolTip += "having problems with audio codec/drivers (no sound) on channel change.";
-      toolTipChannelChangeAudioChanged.SetToolTip(mpCheckBoxPrefRebuildGraphAudioChanged, toolTip);      
+      toolTipChannelChangeAudioChanged.SetToolTip(mpCheckBoxPrefRebuildGraphAudioChanged, toolTip);
     }
 
     private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
@@ -113,7 +116,7 @@ namespace TvPlugin
         mpTextBoxPreferredLanguages.Text = _preferredLanguages;
       }
     }
-  
+
 
     private void mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged(object sender, EventArgs e)
     {
@@ -129,6 +132,5 @@ namespace TvPlugin
     {
       _rebuildGraphOnNewVideoSpecs = mpCheckBoxPrefRebuildGraphVideoChanged.Checked;
     }
-
   }
 }

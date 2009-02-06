@@ -2,8 +2,6 @@ using System;
 
 namespace api
 {
-
-
   // Referenced classes of package api:
   //            InterfaceStringMetric
   ///<summary>
@@ -14,11 +12,12 @@ namespace api
     /// <summary>
     /// Short Descritpion
     /// </summary>
-    public abstract String ShortDescriptionString { get;}
+    public abstract String ShortDescriptionString { get; }
+
     /// <summary>
     /// Long Description
     /// </summary>
-    public abstract String LongDescriptionString { get;}
+    public abstract String LongDescriptionString { get; }
 
     /// <summary>
     /// Return Similarity Timing Actual
@@ -29,10 +28,10 @@ namespace api
     public long getSimilarityTimingActual(String string1, String string2)
     {
       //UPGRADE_TODO: Method 'java.lang.System.currentTimeMillis' was converted to 'System.DateTime.Now' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javalangSystemcurrentTimeMillis"'
-      long timeBefore = (DateTime.Now.Ticks - 621355968000000000) / 10000;
+      long timeBefore = (DateTime.Now.Ticks - 621355968000000000)/10000;
       getSimilarity(string1, string2);
       //UPGRADE_TODO: Method 'java.lang.System.currentTimeMillis' was converted to 'System.DateTime.Now' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javalangSystemcurrentTimeMillis"'
-      long timeAfter = (DateTime.Now.Ticks - 621355968000000000) / 10000;
+      long timeAfter = (DateTime.Now.Ticks - 621355968000000000)/10000;
       return timeAfter - timeBefore;
     }
 
@@ -46,7 +45,9 @@ namespace api
     {
       float[] results = new float[set_Renamed.Length];
       for (int strNum = 0; strNum < set_Renamed.Length; strNum++)
+      {
         results[strNum] = getSimilarity(set_Renamed[strNum], comparator);
+      }
 
       return results;
     }
@@ -61,7 +62,9 @@ namespace api
     {
       float[] results = firstSet.Length <= secondSet.Length ? new float[firstSet.Length] : new float[secondSet.Length];
       for (int strNum = 0; strNum < results.Length; strNum++)
+      {
         results[strNum] = getSimilarity(firstSet[strNum], secondSet[strNum]);
+      }
 
       return results;
     }

@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,12 +20,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
@@ -71,7 +73,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// is suspended as soon as possible (no handler disallows shutdown).
     /// Note that the idle timer is automatically reset to now when the user moves the mouse or touchs the keyboard.
     /// </summary>
-    void UserActivityDetected( DateTime when );
+    void UserActivityDetected(DateTime when);
 
     /// <summary>
     /// Register remote handlers. If an empty string or null is passed, no handler is registered for
@@ -100,12 +102,12 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <param name="disAllowShutdownHandler"></param>
     /// <param name="nextWakeupTime"></param>
     /// <param name="nextWakeupHandler"></param>
-    void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
+    void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown,
+                         out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
 
     /// <summary>
     /// Provides access to PowerScheduler's settings
     /// </summary>
     IPowerSettings PowerSettings { get; }
-
   }
 }

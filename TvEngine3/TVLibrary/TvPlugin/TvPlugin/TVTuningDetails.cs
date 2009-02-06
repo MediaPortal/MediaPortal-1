@@ -23,21 +23,9 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Services;
-using MediaPortal.Threading;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
-
 using TvDatabase;
-using TvControl;
 
 namespace TvPlugin
 {
@@ -45,24 +33,26 @@ namespace TvPlugin
   {
     public TVTuningDetails()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS;
+      GetID = (int) Window.WINDOW_TV_TUNING_DETAILS;
     }
 
     #region Overrides
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml");
       return bResult;
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelName",TVHome.Card.ChannelName );
-      GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL",TVHome.Card.RTSPUrl);
-      Channel chan=TVHome.Navigator.Channel;
-      if (chan!=null)
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelName", TVHome.Card.ChannelName);
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL", TVHome.Card.RTSPUrl);
+      Channel chan = TVHome.Navigator.Channel;
+      if (chan != null)
       {
-        IList<TuningDetail> details=chan.ReferringTuningDetail();
+        IList<TuningDetail> details = chan.ReferringTuningDetail();
         if (details.Count > 0)
         {
           TuningDetail detail = details[0];
@@ -87,11 +77,13 @@ namespace TvPlugin
         }
       }
     }
+
     public override void Process()
     {
-      GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel",TVHome.Card.SignalLevel.ToString());
-      GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality",TVHome.Card.SignalQuality.ToString());
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
     }
+
     #endregion
   }
 }

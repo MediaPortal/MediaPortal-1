@@ -24,9 +24,9 @@
 #endregion
 
 #region Usings
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
@@ -37,13 +37,16 @@ namespace TvEngine.PowerScheduler.Interfaces
   public class RemotePowerControl
   {
     #region Variables
+
     /// <summary>
     /// IPowerController singleton
     /// </summary>
     private static IPowerController _powerController;
+
     #endregion
 
     #region Public Properties
+
     /// <summary>
     /// Returns the one and only instance of the IPowerController (PowerScheduler)
     /// </summary>
@@ -54,8 +57,11 @@ namespace TvEngine.PowerScheduler.Interfaces
         try
         {
           if (_powerController != null)
+          {
             return _powerController;
-          _powerController = (IPowerController)Activator.GetObject(typeof(IPowerController), "http://localhost:31457/PowerControl");
+          }
+          _powerController =
+            (IPowerController) Activator.GetObject(typeof (IPowerController), "http://localhost:31457/PowerControl");
           bool connected = _powerController.IsConnected;
           return _powerController;
         }
@@ -75,7 +81,10 @@ namespace TvEngine.PowerScheduler.Interfaces
       {
         try
         {
-          if (_powerController == null) return false;
+          if (_powerController == null)
+          {
+            return false;
+          }
           return _powerController.IsConnected;
         }
         catch (Exception)
@@ -84,9 +93,11 @@ namespace TvEngine.PowerScheduler.Interfaces
         }
       }
     }
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Reinitializes the IPowercontroller singleton
     /// </summary>
@@ -94,6 +105,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     {
       _powerController = null;
     }
+
     #endregion
   }
 }

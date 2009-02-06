@@ -54,5 +54,4 @@ namespace TvLibrary.Interfaces
     /// </summary>
     Unknown
   }
-
 }

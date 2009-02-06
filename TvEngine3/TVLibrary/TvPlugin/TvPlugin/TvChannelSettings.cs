@@ -23,41 +23,28 @@
 
 #endregion
 
-using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using AMS.Profile;
+using System.IO;
+using Gentle.Framework;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.Configuration;
+using TvDatabase;
 //using MediaPortal.Utils.Services;
 
-using TvDatabase;
-using TvControl;
-using TvLibrary.Interfaces;
-
-
-using Gentle.Common;
-using Gentle.Framework;
 namespace TvPlugin
 {
   public class ChannelSettings : GUIWindow, IComparer<Channel>
   {
-    [SkinControlAttribute(24)]    protected GUIButtonControl btnTvGroup = null;
-    [SkinControlAttribute(10)]    protected GUIUpDownListControl listChannels = null;
+    [SkinControl(24)] protected GUIButtonControl btnTvGroup = null;
+    [SkinControl(10)] protected GUIUpDownListControl listChannels = null;
 
-    ChannelGroup _currentGroup = null;
+    private ChannelGroup _currentGroup = null;
+
     public ChannelSettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS;
+      GetID = (int) Window.WINDOW_SETTINGS_SORT_CHANNELS;
     }
 
     public override bool Init()
@@ -67,7 +54,7 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SETTINGS_SORT_CHANNELS, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_SORT_CHANNELS, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -84,20 +71,19 @@ namespace TvPlugin
     {
       base.OnPageDestroy(new_windowId);
       TVHome.Navigator.ReLoad();
-
     }
 
-    void UpdateList()
+    private void UpdateList()
     {
       IList channels;
       listChannels.Clear();
       if (_currentGroup == null)
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
         int count = 0;
         foreach (Channel chan in channels)
         {
@@ -110,7 +96,7 @@ namespace TvPlugin
           item.Label = chan.DisplayName;
           item.MusicTag = chan;
           string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          if (!System.IO.File.Exists(strLogo))
+          if (!File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
           }
@@ -133,7 +119,7 @@ namespace TvPlugin
           item.Label = chan.DisplayName;
           item.MusicTag = chan;
           string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          if (!System.IO.File.Exists(strLogo))
+          if (!File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
           }
@@ -151,37 +137,47 @@ namespace TvPlugin
     {
       if (control == listChannels)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         OnMoveUp(iItem);
       }
     }
+
     protected override void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listChannels)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         OnMoveDown(iItem);
       }
     }
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == btnTvGroup) OnTvGroup();
+      if (control == btnTvGroup)
+      {
+        OnTvGroup();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
 
-    void OnMoveDown(int item)
+    private void OnMoveDown(int item)
     {
-      if (item + 1 >= listChannels.Count) return;
+      if (item + 1 >= listChannels.Count)
+      {
+        return;
+      }
       GUIListItem item1 = listChannels[item];
-      Channel chan1 = (Channel)item1.MusicTag;
+      Channel chan1 = (Channel) item1.MusicTag;
 
       GUIListItem item2 = listChannels[item + 1];
-      Channel chan2 = (Channel)item2.MusicTag;
+      Channel chan2 = (Channel) item2.MusicTag;
 
       int prio = chan1.SortOrder;
       chan1.SortOrder = chan2.SortOrder;
@@ -208,14 +204,17 @@ namespace TvPlugin
       listChannels.SelectedListItemIndex = item + 1;
     }
 
-    void OnMoveUp(int item)
+    private void OnMoveUp(int item)
     {
-      if (item < 1) return;
+      if (item < 1)
+      {
+        return;
+      }
       GUIListItem item1 = listChannels[item];
-      Channel chan1 = (Channel)item1.MusicTag;
+      Channel chan1 = (Channel) item1.MusicTag;
 
       GUIListItem item2 = listChannels[item - 1];
-      Channel chan2 = (Channel)item2.MusicTag;
+      Channel chan2 = (Channel) item2.MusicTag;
 
       int prio = chan1.SortOrder;
       chan1.SortOrder = chan2.SortOrder;
@@ -241,19 +240,19 @@ namespace TvPlugin
       listChannels.SelectedListItemIndex = item - 1;
     }
 
-    void OnTvGroup()
+    private void OnTvGroup()
     {
       IList<ChannelGroup> tvGroups = ChannelGroup.ListAll();
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
         dlg.SelectedLabel = 0;
         dlg.Add("All channels");
         for (int i = 0; i < tvGroups.Count; ++i)
         {
-          ChannelGroup group = (ChannelGroup)tvGroups[i];
+          ChannelGroup group = (ChannelGroup) tvGroups[i];
           dlg.Add(group.GroupName);
           if (_currentGroup != null)
           {
@@ -273,14 +272,18 @@ namespace TvPlugin
 
         if (dlg.SelectedLabel > 0)
         {
-          _currentGroup = (ChannelGroup)tvGroups[dlg.SelectedLabel - 1];
+          _currentGroup = (ChannelGroup) tvGroups[dlg.SelectedLabel - 1];
           UpdateList();
         }
       }
     }
-    void SaveGroup(List<Channel> channelsInGroup)
+
+    private void SaveGroup(List<Channel> channelsInGroup)
     {
-      if (_currentGroup == null) return;
+      if (_currentGroup == null)
+      {
+        return;
+      }
       channelsInGroup.Sort(this);
       TvBusinessLayer layer = new TvBusinessLayer();
       foreach (Channel ch in channelsInGroup)
@@ -288,14 +291,21 @@ namespace TvPlugin
         layer.AddChannelToGroup(ch, _currentGroup.GroupName);
       }
     }
+
     #region IComparer Members
 
     public int Compare(Channel x, Channel y)
     {
-      Channel ch1 = (Channel)x;
-      Channel ch2 = (Channel)y;
-      if (ch1.SortOrder < ch2.SortOrder) return -1;
-      if (ch1.SortOrder > ch2.SortOrder) return 1;
+      Channel ch1 = (Channel) x;
+      Channel ch2 = (Channel) y;
+      if (ch1.SortOrder < ch2.SortOrder)
+      {
+        return -1;
+      }
+      if (ch1.SortOrder > ch2.SortOrder)
+      {
+        return 1;
+      }
       return 0;
     }
 

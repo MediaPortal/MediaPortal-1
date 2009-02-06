@@ -1,30 +1,27 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections;
 using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using TvDatabase;
-
 
 namespace TvPlugin
 {
-  public partial class RadioSetupForm : MediaPortal.UserInterface.Controls.MPConfigForm
+  public partial class RadioSetupForm : MPConfigForm
   {
     #region variables
+
     private bool _showAllChannelsGroup = true;
     private bool _rememberLastGroup = true;
-    private string _rootGroup="(none)";
+    private string _rootGroup = "(none)";
+
     #endregion
 
     #region Serialisation
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
@@ -34,11 +31,11 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlreader.SetValueAsBool("myradio", "showallchannelsgroup", _showAllChannelsGroup);
         xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
-        xmlreader.SetValue("myradio", "rootgroup",_rootGroup);
+        xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
       }
     }
 
@@ -56,13 +53,15 @@ namespace TvPlugin
       cbRememberLastGroup.Checked = _rememberLastGroup;
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
-      int selectedIdx=0;
+      int selectedIdx = 0;
       IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
       foreach (RadioChannelGroup group in groups)
       {
         int idx = comboBoxGroups.Items.Add(group.GroupName);
         if (group.GroupName == _rootGroup)
+        {
           selectedIdx = idx;
+        }
       }
       comboBoxGroups.SelectedIndex = selectedIdx;
     }

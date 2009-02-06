@@ -21,6 +21,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using TvLibrary.Interfaces;
 
@@ -32,6 +33,7 @@ namespace TvLibrary.Implementations.Analog
   public class Configuration
   {
     #region variables
+
     private string _name;
     private string _devicePath;
     private int _customQualityValue;
@@ -41,9 +43,11 @@ namespace TvLibrary.Implementations.Analog
     private VIDEOENCODER_BITRATE_MODE _playbackQualityMode;
     private VIDEOENCODER_BITRATE_MODE _recordQualityMode;
     private int _cardId;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Simple constructor
     /// </summary>
@@ -56,9 +60,11 @@ namespace TvLibrary.Implementations.Analog
       _customQualityValue = 50;
       _customPeakQualityValue = 75;
     }
+
     #endregion
 
     #region properties
+
     ///<summary>
     /// Gets/Sets the custom quality value
     ///</summary>
@@ -143,6 +149,7 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region Read/Write methods
+
     /// <summary>
     /// Loads the configuration from a xml file
     /// </summary>
@@ -199,28 +206,29 @@ namespace TvLibrary.Implementations.Analog
             {
               tempValue = 0;
             }
-            _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
+            _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE) tempValue;
             tempValue = int.Parse(tempNode.Attributes["type"].Value);
             if (tempValue < 1 || tempValue > 6)
             {
               tempValue = 1;
             }
-            _configuration.PlaybackQualityType = (QualityType)tempValue;
+            _configuration.PlaybackQualityType = (QualityType) tempValue;
             tempNode = node.SelectSingleNode("record");
             tempValue = int.Parse(tempNode.Attributes["mode"].Value);
             if (tempValue < 0 || tempValue > 2)
             {
               tempValue = 0;
             }
-            _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
+            _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE) tempValue;
             tempValue = int.Parse(tempNode.Attributes["type"].Value);
             if (tempValue < 1 || tempValue > 6)
             {
               tempValue = 1;
             }
-            _configuration.RecordQualityType = (QualityType)tempValue;
+            _configuration.RecordQualityType = (QualityType) tempValue;
           }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");
           Log.Log.Write(e);
@@ -231,6 +239,7 @@ namespace TvLibrary.Implementations.Analog
       }
       return _configuration;
     }
+
     /// <summary>
     /// Saves the configuration object in a xml file
     /// </summary>
@@ -238,10 +247,10 @@ namespace TvLibrary.Implementations.Analog
     public static void writeConfiguration(Configuration configuration)
     {
       String fileName = GetFileName(configuration.Name, configuration.CardId);
-      XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
+      XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
-      writer.IndentChar = (char)9;
+      writer.IndentChar = (char) 9;
       writer.WriteStartDocument(true);
       writer.WriteStartElement("configuration"); //<configuration>
       writer.WriteAttributeString("version", "1");
@@ -256,13 +265,13 @@ namespace TvLibrary.Implementations.Analog
       writer.WriteAttributeString("value", XmlConvert.ToString(configuration.CustomQualityValue));
       writer.WriteAttributeString("peakValue", XmlConvert.ToString(configuration.CustomPeakQualityValue));
       writer.WriteEndElement(); //</customSettings>
-      writer.WriteStartElement("playback");  //<playback>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.PlaybackQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.PlaybackQualityType));
+      writer.WriteStartElement("playback"); //<playback>
+      writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.PlaybackQualityMode));
+      writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.PlaybackQualityType));
       writer.WriteEndElement(); //</playback>
       writer.WriteStartElement("record"); //<record>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.RecordQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.RecordQualityType));
+      writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.RecordQualityMode));
+      writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.RecordQualityType));
       writer.WriteEndElement(); //</record>
       writer.WriteEndElement(); //</qualityControl>
       writer.WriteEndElement(); //</card>
@@ -270,9 +279,11 @@ namespace TvLibrary.Implementations.Analog
       writer.WriteEndDocument();
       writer.Close();
     }
+
     #endregion
 
     #region private helper
+
     /// <summary>
     /// Generates the file and pathname of the configuration file
     /// </summary>
@@ -286,6 +297,7 @@ namespace TvLibrary.Implementations.Analog
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;
     }
+
     #endregion
   }
 }

@@ -23,7 +23,6 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations
 {
-
   /// <summary>
   /// class holding all tuning details for radio webstream channels
   /// </summary>
@@ -31,9 +30,11 @@ namespace TvLibrary.Implementations
   public class RadioWebStreamChannel : IChannel
   {
     #region variables
-    string _channelName;
-    string _url;
-    Country _country;
+
+    private string _channelName;
+    private string _url;
+    private Country _country;
+
     #endregion
 
     #region ctor
@@ -52,19 +53,14 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region properties
+
     /// <summary>
     /// gets/sets the country
     /// </summary>
     public Country Country
     {
-      get
-      {
-        return _country;
-      }
-      set
-      {
-        _country = value;
-      }
+      get { return _country; }
+      set { _country = value; }
     }
 
     /// <summary>
@@ -72,14 +68,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _channelName;
-      }
-      set
-      {
-        _channelName = value;
-      }
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
@@ -87,27 +77,17 @@ namespace TvLibrary.Implementations
     /// </summary>
     public string Url
     {
-      get
-      {
-        return _url;
-      }
-      set
-      {
-        _url = value;
-      }
+      get { return _url; }
+      set { _url = value; }
     }
+
     /// <summary>
     /// boolean indicating if this is a radio channel
     /// </summary>
     public bool IsRadio
     {
-      get
-      {
-        return true;
-      }
-      set
-      {
-      }
+      get { return true; }
+      set { }
     }
 
     /// <summary>
@@ -115,13 +95,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsTv
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
+      get { return false; }
+      set { }
     }
 
     #endregion
@@ -150,16 +125,25 @@ namespace TvLibrary.Implementations
     public override bool Equals(object obj)
     {
       if ((obj as RadioWebStreamChannel) == null)
+      {
         return false;
+      }
       RadioWebStreamChannel ch = obj as RadioWebStreamChannel;
       if (ch.Country.Id != Country.Id)
+      {
         return false;
+      }
       if (ch.Name != Name)
+      {
         return false;
+      }
       if (ch.Url != Url)
+      {
         return false;
+      }
       return true;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -169,7 +153,7 @@ namespace TvLibrary.Implementations
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _url.GetHashCode() ^
-        _country.GetHashCode();
+             _country.GetHashCode();
     }
   }
 }

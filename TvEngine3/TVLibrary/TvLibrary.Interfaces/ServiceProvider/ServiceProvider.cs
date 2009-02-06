@@ -45,7 +45,7 @@ namespace TvLibrary.Interfaces
     /// <returns>true if service is registered</returns>
     public bool IsRegistered<T>()
     {
-      return services.ContainsKey(typeof(T));
+      return services.ContainsKey(typeof (T));
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace TvLibrary.Interfaces
     public void Add<T>(object service)
     {
       // Make sure service implements type
-      Type t = typeof(T);
+      Type t = typeof (T);
       services.Add(t, service);
     }
 
@@ -68,10 +68,10 @@ namespace TvLibrary.Interfaces
     /// <remarks>if service is not registered an exception is thrown</remarks>
     public T Get<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
-        return (T)services[t];
+        return (T) services[t];
       }
       throw new ArgumentException(String.Format("Service {0} is not registered", t));
     }
@@ -82,7 +82,7 @@ namespace TvLibrary.Interfaces
     /// <typeparam name="T">Service type</typeparam>
     public void Remove<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         services.Remove(t);
@@ -96,8 +96,8 @@ namespace TvLibrary.Interfaces
     /// <param name="service">new instance of the service</param>
     public void Replace<T>(object service)
     {
-      services.Remove(typeof(T));
-      services.Add(typeof(T), service);
+      services.Remove(typeof (T));
+      services.Add(typeof (T), service);
     }
   }
 }

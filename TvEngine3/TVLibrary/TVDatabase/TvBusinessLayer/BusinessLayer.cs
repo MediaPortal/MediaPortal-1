@@ -28,22 +28,26 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Gentle.Framework;
 using MySql.Data.MySqlClient;
-//using FirebirdSql.Data.Firebird;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
-using TvLibrary.Channels;
-using TvLibrary.Log;
 using TvLibrary;
+using TvLibrary.Channels;
+using TvLibrary.Implementations;
+using TvLibrary.Interfaces;
+using TvLibrary.Log;
+using StatementType=Gentle.Framework.StatementType;
+
+//using FirebirdSql.Data.Firebird;
 
 #endregion
 
@@ -53,10 +57,12 @@ namespace TvDatabase
   {
     #region vars
 
-    readonly object SingleInsert = new object();
+    private readonly object SingleInsert = new object();
+
     #endregion
 
     #region cards
+
     public Card AddCard(string name, string devicePath, Server server)
     {
       Card card = GetCardByDevicePath(devicePath);
@@ -69,17 +75,15 @@ namespace TvDatabase
       //
       // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0, 0);
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
+                              0);
       newCard.Persist();
       return newCard;
     }
 
     public IList<Card> Cards
     {
-      get
-      {
-        return Card.ListAll();
-      }
+      get { return Card.ListAll(); }
     }
 
     public void DeleteCard(Card card)
@@ -93,7 +97,9 @@ namespace TvDatabase
       foreach (Card card in cards)
       {
         if (card.Name == name)
+        {
           return card;
+        }
       }
       return null;
     }
@@ -104,26 +110,31 @@ namespace TvDatabase
       foreach (Card card in cards)
       {
         if (card.DevicePath == path)
+        {
           return card;
+        }
       }
       return null;
     }
 
     public IList<Card> ListAllEnabledCardsOrderedByPriority()
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Card));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Card));
       sb.AddConstraint("enabled=1");
       sb.AddOrderByField(false, "priority");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Card>(stmt.Execute());
     }
+
     #endregion
 
     #region channels
+
     // This is really needed
     public Channel AddNewChannel(string name)
     {
-      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true, name);
+      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1),
+                                       -1, true, "", true, name);
       return newChannel;
     }
 
@@ -141,8 +152,8 @@ namespace TvDatabase
 
     public void AddChannelToGroup(Channel channel, string groupName)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
-      sb.AddConstraint(Operator.Like, "groupName", "%"+groupName+"%");
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
+      sb.AddConstraint(Operator.Like, "groupName", "%" + groupName + "%");
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       ChannelGroup group;
@@ -193,10 +204,7 @@ namespace TvDatabase
 
     public IList<Channel> Channels
     {
-      get
-      {
-        return Channel.ListAll();
-      }
+      get { return Channel.ListAll(); }
     }
 
     public void DeleteChannel(Channel channel)
@@ -225,7 +233,7 @@ namespace TvDatabase
         channelType = 1;
       }
 
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", channel.Name);
       sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
       sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
@@ -236,24 +244,32 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (channels == null)
+      {
         return null;
+      }
       if (channels.Count == 0)
+      {
         return null;
+      }
       return channels[0];
     }
 
     public TuningDetail GetChannel(string provider, string name, int serviceId)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", name);
       sb.AddConstraint(Operator.Equals, "provider", provider);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (details == null)
+      {
         return null;
+      }
       if (details.Count == 0)
+      {
         return null;
+      }
       TuningDetail detail = details[0];
       return detail;
     }
@@ -261,21 +277,25 @@ namespace TvDatabase
 
     public Channel GetChannel(int idChannel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
 
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
+      {
         return null;
+      }
       if (channels.Count == 0)
+      {
         return null;
+      }
       return channels[0];
     }
 
     public Channel GetChannelByTuningDetail(int networkId, int transportId, int serviceId)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "networkId", networkId);
       sb.AddConstraint(Operator.Equals, "transportId", transportId);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
@@ -284,16 +304,20 @@ namespace TvDatabase
       IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
 
       if (details == null)
+      {
         return null;
+      }
       if (details.Count == 0)
+      {
         return null;
+      }
       TuningDetail detail = details[0];
       return detail.ReferencedChannel();
     }
 
     public TuningDetail GetAtscChannel(ATSCChannel channel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", channel.Name);
       sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
       sb.AddConstraint(Operator.Equals, "networkId", channel.MajorChannel);
@@ -303,49 +327,65 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (channels == null)
+      {
         return null;
+      }
       if (channels.Count == 0)
+      {
         return null;
+      }
       return channels[0];
     }
 
     public IList<Channel> GetChannelsByName(string name)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
+      {
         return null;
+      }
       if (channels.Count == 0)
+      {
         return null;
+      }
       return channels;
     }
 
     public Channel GetChannelByName(string name)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "name", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (channels == null)
+      {
         return null;
+      }
       if (channels.Count == 0)
+      {
         return null;
+      }
       return channels[0];
     }
 
     public Channel GetChannelByName(string provider, string name)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", name);
       sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       if (details == null)
+      {
         return null;
+      }
       if (details.Count == 0)
+      {
         return null;
+      }
       TuningDetail detail = details[0];
       return detail.ReferencedChannel();
     }
@@ -355,10 +395,12 @@ namespace TvDatabase
     /// If the file does exist a empty string is returned.
     /// </summary>
     /// <returns>A String that contains the name of the not existing file </returns>
-    static String FileNotExistsString(String fileName)
+    private static String FileNotExistsString(String fileName)
     {
-      if (!System.IO.File.Exists(fileName))
+      if (!File.Exists(fileName))
+      {
         return "\r\n" + fileName;
+      }
       return "";
     }
 
@@ -366,7 +408,7 @@ namespace TvDatabase
     /// Checks several files that are needed for using the gentle framework for the database.
     /// If some files are not present in the working folder an System.IO.FileNotFoundException exception is thrown
     /// </summary>
-    static void checkGentleFiles()
+    private static void checkGentleFiles()
     {
       String filesNotFound = "";
       //filesNotFound += FileNotExistsString("Gentle.config");
@@ -376,7 +418,7 @@ namespace TvDatabase
 
       if (!filesNotFound.Equals(""))
       {
-        throw new System.IO.FileNotFoundException("Files not found:" + filesNotFound);
+        throw new FileNotFoundException("Files not found:" + filesNotFound);
       }
     }
 
@@ -387,19 +429,26 @@ namespace TvDatabase
     public Setting GetSetting(string tagName, string defaultValue)
     {
       if (defaultValue == null)
+      {
         return null;
+      }
       if (tagName == null)
+      {
         return null;
+      }
       if (tagName == "")
+      {
         return null;
+      }
       SqlBuilder sb;
       try
       {
-        sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
-      } catch (TypeInitializationException)
+        sb = new SqlBuilder(StatementType.Select, typeof (Setting));
+      }
+      catch (TypeInitializationException)
       {
-        checkGentleFiles();// Try to throw a more meaningfull exception
-        throw;// else re-throw the original error
+        checkGentleFiles(); // Try to throw a more meaningfull exception
+        throw; // else re-throw the original error
       }
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
@@ -423,11 +472,12 @@ namespace TvDatabase
       SqlBuilder sb;
       try
       {
-        sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Setting));
-      } catch (TypeInitializationException)
+        sb = new SqlBuilder(StatementType.Select, typeof (Setting));
+      }
+      catch (TypeInitializationException)
       {
-        checkGentleFiles();// Try to throw a more meaningfull exception
-        throw;// else re-throw the original error
+        checkGentleFiles(); // Try to throw a more meaningfull exception
+        throw; // else re-throw the original error
       }
 
       sb.AddConstraint(Operator.Equals, "tag", tagName);
@@ -450,7 +500,9 @@ namespace TvDatabase
       {
         TuningDetail detail = tuningDetails[i];
         if (detail.ChannelType != channelType)
+        {
           continue;
+        }
         switch (detail.ChannelType)
         {
           case 0: //AnalogChannel
@@ -461,9 +513,9 @@ namespace TvDatabase
             analogChannel.IsRadio = detail.IsRadio;
             analogChannel.IsTv = detail.IsTv;
             analogChannel.Name = detail.Name;
-            analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
-            analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
-            analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
+            analogChannel.TunerSource = (TunerInputType) detail.TuningSource;
+            analogChannel.VideoSource = (AnalogChannel.VideoInputType) detail.VideoSource;
+            analogChannel.AudioSource = (AnalogChannel.AudioInputType) detail.AudioSource;
             return analogChannel;
           case 1: //ATSCChannel
             ATSCChannel atscChannel = new ATSCChannel();
@@ -484,11 +536,11 @@ namespace TvDatabase
             atscChannel.TransportId = detail.TransportId;
             atscChannel.VideoPid = detail.VideoPid;
             atscChannel.AudioPid = detail.AudioPid;
-            atscChannel.ModulationType = (ModulationType)detail.Modulation;
+            atscChannel.ModulationType = (ModulationType) detail.Modulation;
             return atscChannel;
           case 2: //DVBCChannel
             DVBCChannel dvbcChannel = new DVBCChannel();
-            dvbcChannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbcChannel.ModulationType = (ModulationType) detail.Modulation;
             dvbcChannel.FreeToAir = detail.FreeToAir;
             dvbcChannel.Frequency = detail.Frequency;
             dvbcChannel.IsRadio = detail.IsRadio;
@@ -504,8 +556,8 @@ namespace TvDatabase
             return dvbcChannel;
           case 3: //DVBSChannel
             DVBSChannel dvbsChannel = new DVBSChannel();
-            dvbsChannel.DisEqc = (DisEqcType)detail.Diseqc;
-            dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
+            dvbsChannel.DisEqc = (DisEqcType) detail.Diseqc;
+            dvbsChannel.Polarisation = (Polarisation) detail.Polarisation;
             dvbsChannel.SwitchingFrequency = detail.SwitchingFrequency;
             dvbsChannel.FreeToAir = detail.FreeToAir;
             dvbsChannel.Frequency = detail.Frequency;
@@ -519,12 +571,12 @@ namespace TvDatabase
             dvbsChannel.ServiceId = detail.ServiceId;
             dvbsChannel.SymbolRate = detail.Symbolrate;
             dvbsChannel.TransportId = detail.TransportId;
-            dvbsChannel.BandType = (BandType)detail.Band;
+            dvbsChannel.BandType = (BandType) detail.Band;
             dvbsChannel.SatelliteIndex = detail.SatIndex;
-            dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
-            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
-            dvbsChannel.Pilot = (Pilot)detail.Pilot;
-            dvbsChannel.Rolloff = (RollOff)detail.RollOff;
+            dvbsChannel.ModulationType = (ModulationType) detail.Modulation;
+            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate) detail.InnerFecRate;
+            dvbsChannel.Pilot = (Pilot) detail.Pilot;
+            dvbsChannel.Rolloff = (RollOff) detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbsChannel.VideoPid = detail.VideoPid;
             dvbsChannel.AudioPid = detail.AudioPid;
@@ -570,9 +622,9 @@ namespace TvDatabase
             analogChannel.IsRadio = detail.IsRadio;
             analogChannel.IsTv = detail.IsTv;
             analogChannel.Name = channel.Name; //detail.Name;
-            analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
-            analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
-            analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
+            analogChannel.TunerSource = (TunerInputType) detail.TuningSource;
+            analogChannel.VideoSource = (AnalogChannel.VideoInputType) detail.VideoSource;
+            analogChannel.AudioSource = (AnalogChannel.AudioInputType) detail.AudioSource;
             tvChannels.Add(analogChannel);
             break;
           case 1: //ATSCChannel
@@ -594,12 +646,12 @@ namespace TvDatabase
             atscChannel.TransportId = detail.TransportId;
             atscChannel.AudioPid = detail.AudioPid;
             atscChannel.VideoPid = detail.VideoPid;
-            atscChannel.ModulationType = (ModulationType)detail.Modulation;
+            atscChannel.ModulationType = (ModulationType) detail.Modulation;
             tvChannels.Add(atscChannel);
             break;
           case 2: //DVBCChannel
             DVBCChannel dvbcChannel = new DVBCChannel();
-            dvbcChannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbcChannel.ModulationType = (ModulationType) detail.Modulation;
             dvbcChannel.FreeToAir = detail.FreeToAir;
             dvbcChannel.Frequency = detail.Frequency;
             dvbcChannel.IsRadio = detail.IsRadio;
@@ -616,8 +668,8 @@ namespace TvDatabase
             break;
           case 3: //DVBSChannel
             DVBSChannel dvbsChannel = new DVBSChannel();
-            dvbsChannel.DisEqc = (DisEqcType)detail.Diseqc;
-            dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
+            dvbsChannel.DisEqc = (DisEqcType) detail.Diseqc;
+            dvbsChannel.Polarisation = (Polarisation) detail.Polarisation;
             dvbsChannel.SwitchingFrequency = detail.SwitchingFrequency;
             dvbsChannel.FreeToAir = detail.FreeToAir;
             dvbsChannel.Frequency = detail.Frequency;
@@ -631,12 +683,12 @@ namespace TvDatabase
             dvbsChannel.ServiceId = detail.ServiceId;
             dvbsChannel.SymbolRate = detail.Symbolrate;
             dvbsChannel.TransportId = detail.TransportId;
-            dvbsChannel.BandType = (BandType)detail.Band;
+            dvbsChannel.BandType = (BandType) detail.Band;
             dvbsChannel.SatelliteIndex = detail.SatIndex;
-            dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
-            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
-            dvbsChannel.Pilot = (Pilot)detail.Pilot;
-            dvbsChannel.Rolloff = (RollOff)detail.RollOff;
+            dvbsChannel.ModulationType = (ModulationType) detail.Modulation;
+            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate) detail.InnerFecRate;
+            dvbsChannel.Pilot = (Pilot) detail.Pilot;
+            dvbsChannel.Rolloff = (RollOff) detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbsChannel.VideoPid = detail.VideoPid;
             dvbsChannel.AudioPid = detail.AudioPid;
@@ -673,7 +725,9 @@ namespace TvDatabase
       {
         ChannelMap map = channelMaps[i];
         if (map.IdChannel == channel.IdChannel && map.IdCard == card.IdCard)
+        {
           return map;
+        }
       }
       ChannelMap newMap = new ChannelMap(channel.IdChannel, card.IdCard, epgOnly);
       newMap.Persist();
@@ -686,29 +740,36 @@ namespace TvDatabase
     /// <returns>a list of TVDatabase Channels</returns>
     public List<Channel> GetTVGuideChannelsForGroup(int groupID)
     {
-
-      SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlBuilder sb1 = new SqlBuilder(StatementType.Select, typeof (Channel));
       SqlStatement stmt1 = sb1.GetStatement(true);
-      SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where visibleInGuide = 1 and isTv = 1 and idGroup = '{0}' order by g.idGroup, g.sortOrder", groupID), typeof(Channel));
+      SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
+                                                    String.Format(
+                                                      "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where visibleInGuide = 1 and isTv = 1 and idGroup = '{0}' order by g.idGroup, g.sortOrder",
+                                                      groupID), typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
-
     }
 
     public IList<Channel> GetAllRadioChannels()
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "isRadio", 1);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> radioChannels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       if (radioChannels == null)
+      {
         return null;
+      }
       if (radioChannels.Count == 0)
+      {
         return null;
+      }
       return radioChannels;
     }
+
     #endregion
 
     #region tuningdetails
+
     public TuningDetail AddTuningDetails(Channel channel, IChannel tvChannel)
     {
       string channelName = "";
@@ -740,9 +801,9 @@ namespace TvDatabase
       int audioPid = -1;
       int band = 0;
       int satIndex = -1;
-      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)RollOff.NotSet;
+      int innerFecRate = (int) BinaryConvolutionCodeRate.RateNotSet;
+      int pilot = (int) Pilot.NotSet;
+      int rollOff = (int) RollOff.NotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -753,9 +814,9 @@ namespace TvDatabase
         country = analogChannel.Country.Index;
         isRadio = analogChannel.IsRadio;
         isTv = analogChannel.IsTv;
-        tunerSource = (int)analogChannel.TunerSource;
-        videoInputType = (int)analogChannel.VideoSource;
-        audioInputType = (int)analogChannel.AudioSource;
+        tunerSource = (int) analogChannel.TunerSource;
+        videoInputType = (int) analogChannel.VideoSource;
+        audioInputType = (int) analogChannel.AudioSource;
         channelType = 0;
       }
 
@@ -767,7 +828,7 @@ namespace TvDatabase
         channelNumber = atscChannel.PhysicalChannel;
         //videoPid = atscChannel.VideoPid;
         //audioPid = atscChannel.AudioPid;
-        modulation = (int)atscChannel.ModulationType;
+        modulation = (int) atscChannel.ModulationType;
         channelType = 1;
       }
 
@@ -775,7 +836,7 @@ namespace TvDatabase
       if (dvbcChannel != null)
       {
         symbolRate = dvbcChannel.SymbolRate;
-        modulation = (int)dvbcChannel.ModulationType;
+        modulation = (int) dvbcChannel.ModulationType;
         channelType = 2;
       }
 
@@ -783,15 +844,15 @@ namespace TvDatabase
       if (dvbsChannel != null)
       {
         symbolRate = dvbsChannel.SymbolRate;
-        polarisation = (int)dvbsChannel.Polarisation;
+        polarisation = (int) dvbsChannel.Polarisation;
         switchFrequency = dvbsChannel.SwitchingFrequency;
-        diseqc = (int)dvbsChannel.DisEqc;
-        band = (int)dvbsChannel.BandType;
+        diseqc = (int) dvbsChannel.DisEqc;
+        band = (int) dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
-        modulation = (int)dvbsChannel.ModulationType;
-        innerFecRate = (int)dvbsChannel.InnerFecRate;
-        pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.Rolloff;
+        modulation = (int) dvbsChannel.ModulationType;
+        innerFecRate = (int) dvbsChannel.InnerFecRate;
+        pilot = (int) dvbsChannel.Pilot;
+        rollOff = (int) dvbsChannel.Rolloff;
         channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
@@ -823,10 +884,12 @@ namespace TvDatabase
       }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                              networkId, transportId, serviceId, pmtPid, freeToAir,
-                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, "", 0);
+                                             channelType, channelNumber, (int) channelFrequency, country, isRadio, isTv,
+                                             networkId, transportId, serviceId, pmtPid, freeToAir,
+                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
+                                             audioInputType, tunerSource, videoPid, audioPid, band, satIndex,
+                                             innerFecRate, pilot, rollOff, "", 0);
       detail.Persist();
       return detail;
     }
@@ -862,9 +925,9 @@ namespace TvDatabase
       int audioPid = -1;
       int band = 0;
       int satIndex = -1;
-      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      int pilot = (int)Pilot.NotSet;
-      int rollOff = (int)RollOff.NotSet;
+      int innerFecRate = (int) BinaryConvolutionCodeRate.RateNotSet;
+      int pilot = (int) Pilot.NotSet;
+      int rollOff = (int) RollOff.NotSet;
 
       AnalogChannel analogChannel = tvChannel as AnalogChannel;
       if (analogChannel != null)
@@ -875,9 +938,9 @@ namespace TvDatabase
         country = analogChannel.Country.Index;
         isRadio = analogChannel.IsRadio;
         isTv = analogChannel.IsTv;
-        tunerSource = (int)analogChannel.TunerSource;
-        videoInputType = (int)analogChannel.VideoSource;
-        audioInputType = (int)analogChannel.AudioSource;
+        tunerSource = (int) analogChannel.TunerSource;
+        videoInputType = (int) analogChannel.VideoSource;
+        audioInputType = (int) analogChannel.AudioSource;
         channelType = 0;
       }
       ATSCChannel atscChannel = tvChannel as ATSCChannel;
@@ -888,7 +951,7 @@ namespace TvDatabase
         channelNumber = atscChannel.PhysicalChannel;
         //videoPid = atscChannel.VideoPid;
         //audioPid = atscChannel.AudioPid;
-        modulation = (int)atscChannel.ModulationType;
+        modulation = (int) atscChannel.ModulationType;
         channelType = 1;
       }
 
@@ -896,7 +959,7 @@ namespace TvDatabase
       if (dvbcChannel != null)
       {
         symbolRate = dvbcChannel.SymbolRate;
-        modulation = (int)dvbcChannel.ModulationType;
+        modulation = (int) dvbcChannel.ModulationType;
         channelType = 2;
       }
 
@@ -904,15 +967,15 @@ namespace TvDatabase
       if (dvbsChannel != null)
       {
         symbolRate = dvbsChannel.SymbolRate;
-        polarisation = (int)dvbsChannel.Polarisation;
+        polarisation = (int) dvbsChannel.Polarisation;
         switchFrequency = dvbsChannel.SwitchingFrequency;
-        diseqc = (int)dvbsChannel.DisEqc;
-        band = (int)dvbsChannel.BandType;
+        diseqc = (int) dvbsChannel.DisEqc;
+        band = (int) dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
-        modulation = (int)dvbsChannel.ModulationType;
-        innerFecRate = (int)dvbsChannel.InnerFecRate;
-        pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.Rolloff;
+        modulation = (int) dvbsChannel.ModulationType;
+        innerFecRate = (int) dvbsChannel.InnerFecRate;
+        pilot = (int) dvbsChannel.Pilot;
+        rollOff = (int) dvbsChannel.Rolloff;
         channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
@@ -947,7 +1010,7 @@ namespace TvDatabase
       detail.Provider = provider;
       detail.ChannelType = channelType;
       detail.ChannelNumber = channelNumber;
-      detail.Frequency = (int)channelFrequency;
+      detail.Frequency = (int) channelFrequency;
       detail.CountryId = country;
       detail.IsRadio = isRadio;
       detail.IsTv = isTv;
@@ -1010,16 +1073,20 @@ namespace TvDatabase
       const int audioPid = -1;
       const int band = 0;
       const int satIndex = -1;
-      const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      const int pilot = (int)Pilot.NotSet;
-      const int rollOff = (int)RollOff.NotSet;
+      const int innerFecRate = (int) BinaryConvolutionCodeRate.RateNotSet;
+      const int pilot = (int) Pilot.NotSet;
+      const int rollOff = (int) RollOff.NotSet;
       if (url == null)
+      {
         url = "";
+      }
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                              networkId, transportId, serviceId, pmtPid, freeToAir,
-                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                                             channelType, channelNumber, (int) channelFrequency, country, isRadio, isTv,
+                                             networkId, transportId, serviceId, pmtPid, freeToAir,
+                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
+                                             audioInputType, tunerSource, videoPid, audioPid, band, satIndex,
+                                             innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }
@@ -1055,26 +1122,30 @@ namespace TvDatabase
       const int audioPid = -1;
       const int band = 0;
       const int satIndex = -1;
-      const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
-      const int pilot = (int)Pilot.NotSet;
-      const int rollOff = (int)RollOff.NotSet;
+      const int innerFecRate = (int) BinaryConvolutionCodeRate.RateNotSet;
+      const int pilot = (int) Pilot.NotSet;
+      const int rollOff = (int) RollOff.NotSet;
       const string url = "";
       const int bitrate = 0;
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
-                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
-                              networkId, transportId, serviceId, pmtPid, freeToAir,
-                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, audioInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+                                             channelType, channelNumber, (int) channelFrequency, country, isRadio, isTv,
+                                             networkId, transportId, serviceId, pmtPid, freeToAir,
+                                             modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
+                                             audioInputType, tunerSource, videoPid, audioPid, band, satIndex,
+                                             innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();
       return detail;
     }
+
     #endregion
 
     #region linkage map
+
     public IList<ChannelLinkageMap> GetLinkagesForChannel(Channel channel)
     {
       int idChannel = -1;
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
       IList<ChannelLinkageMap> links = ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
@@ -1087,12 +1158,15 @@ namespace TvDatabase
         }
       }
       if (idChannel == -1)
+      {
         idChannel = channel.IdChannel;
-      sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
+      }
+      sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idPortalChannel", idChannel);
       stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
     }
+
     #endregion
 
     #region programs
@@ -1101,13 +1175,15 @@ namespace TvDatabase
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       if (provider == "mysql")
+      {
         return "yyyy-MM-dd HH:mm:ss";
+      }
       return "yyyyMMdd HH:mm:ss";
     }
 
     public void RemoveOldPrograms()
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
       DateTime dtYesterday = DateTime.Now.AddDays(-1);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
@@ -1117,7 +1193,7 @@ namespace TvDatabase
 
     public void RemoveOldPrograms(int idChannel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
       DateTime dtToKeep = DateTime.Now.AddHours(-4.0);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
@@ -1128,7 +1204,7 @@ namespace TvDatabase
 
     public void RemoveAllPrograms(int idChannel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection<Program>(stmt.Execute());
@@ -1136,9 +1212,11 @@ namespace TvDatabase
 
     public IList<Program> GetOnairNow()
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      sb.AddConstraint(String.Format("startTime <= '{0}' and endTime >= '{1}'", DateTime.Now.ToString(GetDateTimeString(), mmddFormat), DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
+      sb.AddConstraint(String.Format("startTime <= '{0}' and endTime >= '{1}'",
+                                     DateTime.Now.ToString(GetDateTimeString(), mmddFormat),
+                                     DateTime.Now.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -1147,9 +1225,11 @@ namespace TvDatabase
     {
       //The DateTime.MinValue is lower than the min datetime value of the database
       if (startTime == DateTime.MinValue)
+      {
         startTime = startTime.AddYears(1900);
+      }
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(String.Format("startTime>='{0}'", startTime.ToString(GetDateTimeString(), mmddFormat)));
@@ -1162,11 +1242,17 @@ namespace TvDatabase
     public IList<Program> GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
@@ -1179,10 +1265,15 @@ namespace TvDatabase
     public IList<Program> GetProgramExists(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      string sub1 = String.Format("( (StartTime >= '{0}' and StartTime < '{1}') or ( EndTime > '{0}' and EndTime <= '{1}' ) )", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime < '{0}' and EndTime > '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub1 =
+        String.Format("( (StartTime >= '{0}' and StartTime < '{1}') or ( EndTime > '{0}' and EndTime <= '{1}' ) )",
+                      startTime.ToString(GetDateTimeString(), mmddFormat),
+                      endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime < '{0}' and EndTime > '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1}) ", sub1, sub2));
@@ -1193,7 +1284,9 @@ namespace TvDatabase
     }
 
     #region TV-Guide
-    public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime, List<Channel> channelList)
+
+    public Dictionary<int, List<Program>> GetProgramsForAllChannels(DateTime startTime, DateTime endTime,
+                                                                    List<Channel> channelList)
     {
       MySqlConnection MySQLConnect = null;
       MySqlDataAdapter MySQLAdapter = null;
@@ -1210,7 +1303,8 @@ namespace TvDatabase
         {
           provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
           connectString = ProviderFactory.GetDefaultProvider().ConnectionString;
-        } catch (Exception cex)
+        }
+        catch (Exception cex)
         {
           Log.Info("BusinessLayer: GetProgramsForAllChannels could not retrieve connection details - {0}", cex.Message);
           return new Dictionary<int, List<Program>>();
@@ -1247,17 +1341,21 @@ namespace TvDatabase
           {
             case "sqlserver":
               if (MsSqlAdapter != null)
+              {
                 MsSqlAdapter.Fill(dataSet);
+              }
               break;
             case "mysql":
               if (MySQLAdapter != null)
+              {
                 MySQLAdapter.Fill(dataSet);
+              }
               break;
           }
           return FillProgramMapFromDataSet(dataSet);
         }
-
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("BusinessLayer: GetProgramsForAllChannels caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         return new Dictionary<int, List<Program>>();
@@ -1270,26 +1368,43 @@ namespace TvDatabase
           {
             case "mysql":
               if (MySQLConnect != null)
+              {
                 MySQLConnect.Close();
+              }
               if (MySQLAdapter != null)
+              {
                 MySQLAdapter.Dispose();
+              }
               if (MySQLCmd != null)
+              {
                 MySQLCmd.Dispose();
+              }
               if (MySQLConnect != null)
+              {
                 MySQLConnect.Dispose();
+              }
               break;
             case "sqlserver":
               if (MsSqlConnect != null)
+              {
                 MsSqlConnect.Close();
+              }
               if (MsSqlAdapter != null)
+              {
                 MsSqlAdapter.Dispose();
+              }
               if (MsSqlCmd != null)
+              {
                 MsSqlCmd.Dispose();
+              }
               if (MsSqlConnect != null)
+              {
                 MsSqlConnect.Dispose();
+              }
               break;
           }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Info("BusinessLayer: GetProgramsForAllChannels Exception in finally - {0}, {1}", ex.Message, ex.StackTrace);
         }
@@ -1323,9 +1438,13 @@ namespace TvDatabase
       foreach (Channel ch in channelList)
       {
         if (string.IsNullOrEmpty(channelConstraint))
+        {
           channelConstraint = string.Format("(idChannel={0}", ch.IdChannel);
+        }
         else
+        {
           channelConstraint += string.Format(" or idChannel={0}", ch.IdChannel);
+        }
       }
       if (channelConstraint.Length > 0)
       {
@@ -1358,26 +1477,35 @@ namespace TvDatabase
                                 Convert.ToInt32(prog["starRating"]),
                                 Convert.ToString(prog["classification"]),
                                 Convert.ToInt32(prog["parentalRating"])
-                                );
+          );
 
         int idChannel = p.IdChannel;
         if (!maps.ContainsKey(idChannel))
+        {
           maps[idChannel] = new List<Program>();
+        }
 
         maps[idChannel].Add(p);
       }
       return maps;
     }
+
     #endregion
 
     public IList<Program> GetPrograms(DateTime startTime, DateTime endTime)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
       sb.AddOrderByField(true, "starttime");
@@ -1387,7 +1515,7 @@ namespace TvDatabase
 
     public DateTime GetNewestProgramForChannel(int idChannel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       sb.AddOrderByField(false, "startTime");
       sb.SetRowLimit(1);
@@ -1399,15 +1527,21 @@ namespace TvDatabase
     public IList<Program> GetProgramsByTitle(Channel channel, DateTime startTime, DateTime endTime, string title)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", "%"+title+"%");
+      sb.AddConstraint(Operator.Like, "title", "%" + title + "%");
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -1416,23 +1550,32 @@ namespace TvDatabase
 
     public IList<Program> GetProgramsByTitle(DateTime startTime, DateTime endTime, string title)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
 
-      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
-      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')", startTime.ToString(GetDateTimeString(), mmddFormat), endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub1 = String.Format("(EndTime > '{0}' and EndTime < '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub2 = String.Format("(StartTime >= '{0}' and StartTime <= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
+      string sub3 = String.Format("(StartTime <= '{0}' and EndTime >= '{1}')",
+                                  startTime.ToString(GetDateTimeString(), mmddFormat),
+                                  endTime.ToString(GetDateTimeString(), mmddFormat));
 
       sb.AddConstraint(string.Format(" ({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", "%"+title+"%");
+      sb.AddConstraint(Operator.Like, "title", "%" + title + "%");
       sb.AddOrderByField(true, "starttime");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public IList<Program> SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName, Channel channel)
+    public IList<Program> SearchMinimalPrograms(DateTime startTime, DateTime endTime, string programName,
+                                                Channel channel)
     {
-      return channel != null ? GetProgramsByTitle(channel, startTime, endTime, programName) : GetProgramsByTitle(startTime, endTime, programName);
+      return channel != null
+               ? GetProgramsByTitle(channel, startTime, endTime, programName)
+               : GetProgramsByTitle(startTime, endTime, programName);
     }
 
     public IList<string> GetGenres()
@@ -1454,7 +1597,7 @@ namespace TvDatabase
             {
               while (reader.Read())
               {
-                genres.Add((string)reader[0]);
+                genres.Add((string) reader[0]);
               }
               reader.Close();
             }
@@ -1464,10 +1607,10 @@ namespace TvDatabase
       }
       else
       {
-        using (System.Data.OleDb.OleDbConnection connect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString))
+        using (OleDbConnection connect = new OleDbConnection("Provider=SQLOLEDB;" + connectString))
         {
           connect.Open();
-          using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
+          using (OleDbCommand cmd = connect.CreateCommand())
           {
             cmd.CommandText = "select distinct(genre) from Program order by genre";
             cmd.CommandType = CommandType.Text;
@@ -1475,7 +1618,7 @@ namespace TvDatabase
             {
               while (reader.Read())
               {
-                genres.Add((string)reader[0]);
+                genres.Add((string) reader[0]);
               }
               reader.Close();
             }
@@ -1488,17 +1631,17 @@ namespace TvDatabase
 
     public IList<Program> SearchProgramsPerGenre(string currentGenre, string currentSearchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       if (currentSearchCriteria.Length == 0)
       {
-        sb.AddConstraint(Operator.Like, "genre", "%"+currentGenre+"%");
+        sb.AddConstraint(Operator.Like, "genre", "%" + currentGenre + "%");
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
       }
       else
       {
-        sb.AddConstraint(Operator.Like, "genre", "%"+currentGenre+"%");
+        sb.AddConstraint(Operator.Like, "genre", "%" + currentGenre + "%");
         sb.AddConstraint(Operator.Like, "title", String.Format("{0}%", currentSearchCriteria));
         sb.AddOrderByField("title");
         sb.AddOrderByField("starttime");
@@ -1510,7 +1653,7 @@ namespace TvDatabase
 
     public IList<Program> SearchPrograms(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
@@ -1528,12 +1671,11 @@ namespace TvDatabase
 
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
-
     }
 
     public IList<Program> SearchProgramsByDescription(string searchCriteria)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       if (searchCriteria.Length > 0)
       {
@@ -1559,14 +1701,20 @@ namespace TvDatabase
 
       // no channel = no EPG but we need a valid command text
       if (aEpgChannelList.Count < 1)
+      {
         completeStatement = "SELECT * FROM program WHERE 0=1";
+      }
       else
       {
         StringBuilder sbSelect = new StringBuilder();
         if (aProvider == "mysql")
         {
           foreach (Channel ch in aEpgChannelList)
-            sbSelect.AppendFormat("(SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ", ch.IdChannel);
+          {
+            sbSelect.AppendFormat(
+              "(SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
+              ch.IdChannel);
+          }
 
           completeStatement = sbSelect.ToString();
           completeStatement = completeStatement.Remove(completeStatement.Length - 8); // Remove trailing UNION
@@ -1585,7 +1733,9 @@ namespace TvDatabase
 
           StringBuilder whereChannel = new StringBuilder(" AND (");
           foreach (Channel ch in aEpgChannelList)
+          {
             whereChannel.AppendFormat("idChannel={0} OR ", ch.IdChannel);
+          }
 
           string channelClause = whereChannel.ToString();
           // remove trailing "OR "
@@ -1649,17 +1799,22 @@ namespace TvDatabase
           {
             case "sqlserver":
               if (MsSqlAdapter != null)
+              {
                 MsSqlAdapter.Fill(dataSet);
+              }
               break;
             case "mysql":
               if (MySQLAdapter != null)
+              {
                 MySQLAdapter.Fill(dataSet);
+              }
               break;
           }
 
           nowNextList = BuildNowNextFromDataSet(dataSet);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
       }
@@ -1669,23 +1824,39 @@ namespace TvDatabase
         {
           case "mysql":
             if (MySQLConnect != null)
+            {
               MySQLConnect.Close();
+            }
             if (MySQLAdapter != null)
+            {
               MySQLAdapter.Dispose();
+            }
             if (MySQLCmd != null)
+            {
               MySQLCmd.Dispose();
+            }
             if (MySQLConnect != null)
+            {
               MySQLConnect.Dispose();
+            }
             break;
           case "sqlserver":
             if (MsSqlConnect != null)
+            {
               MsSqlConnect.Close();
+            }
             if (MsSqlAdapter != null)
+            {
               MsSqlAdapter.Dispose();
+            }
             if (MsSqlCmd != null)
+            {
               MsSqlCmd.Dispose();
+            }
             if (MsSqlConnect != null)
+            {
               MsSqlConnect.Dispose();
+            }
             break;
         }
       }
@@ -1702,21 +1873,22 @@ namespace TvDatabase
       // for-loops are faster than foreach-loops
       for (int j = 0; j < programsCount; j++)
       {
-        int idChannel = (int)dataSet.Tables[0].Rows[j]["idChannel"];
+        int idChannel = (int) dataSet.Tables[0].Rows[j]["idChannel"];
         // Only get the Now-Next-Data _once_ per channel
         if (!lastChannelIDs.Contains(idChannel))
         {
           lastChannelIDs.Add(idChannel);
 
-          int nowidProgram = (int)dataSet.Tables[0].Rows[j]["idProgram"];
-          DateTime nowStart = (DateTime)dataSet.Tables[0].Rows[j]["startTime"];
-          DateTime nowEnd = (DateTime)dataSet.Tables[0].Rows[j]["endTime"];
-          string nowTitle = (string)dataSet.Tables[0].Rows[j]["title"];
+          int nowidProgram = (int) dataSet.Tables[0].Rows[j]["idProgram"];
+          DateTime nowStart = (DateTime) dataSet.Tables[0].Rows[j]["startTime"];
+          DateTime nowEnd = (DateTime) dataSet.Tables[0].Rows[j]["endTime"];
+          string nowTitle = (string) dataSet.Tables[0].Rows[j]["title"];
 
           // if the first entry is not valid for the "Now" entry - use if for "Next" info
           if (nowStart > DateTime.Now)
           {
-            NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value, string.Empty, nowTitle, -1, nowidProgram);
+            NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
+                                          string.Empty, nowTitle, -1, nowidProgram);
             progList[idChannel] = p;
             continue;
           }
@@ -1724,12 +1896,13 @@ namespace TvDatabase
           if (j < programsCount - 1)
           {
             // get the the "Next" info if it belongs to the same channel.
-            if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
+            if (idChannel == (int) dataSet.Tables[0].Rows[j + 1]["idChannel"])
             {
-              int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
-              string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
+              int nextidProgram = (int) dataSet.Tables[0].Rows[j + 1]["idProgram"];
+              string nextTitle = (string) dataSet.Tables[0].Rows[j + 1]["title"];
 
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram, nextidProgram);
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram,
+                                            nextidProgram);
               progList[idChannel] = p;
             }
             else
@@ -1738,7 +1911,6 @@ namespace TvDatabase
               NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1);
               progList[idChannel] = p;
             }
-
           }
         }
       }
@@ -1752,7 +1924,7 @@ namespace TvDatabase
       public List<Program> ProgramList;
       public string ConnectString;
       public int SleepTime;
-    };
+    } ;
 
     /// <summary>
     /// Batch inserts programs - intended for faster EPG import. You must make sure before that there are no duplicates 
@@ -1769,7 +1941,8 @@ namespace TvDatabase
       {
         IGentleProvider prov = ProviderFactory.GetDefaultProvider();
         string provider = prov.Name.ToLowerInvariant();
-        string defaultConnectString = prov.ConnectionString; // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
+        string defaultConnectString = prov.ConnectionString;
+        // Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString;
         int sleepTime = 10;
 
         switch (aThreadPriority)
@@ -1779,13 +1952,14 @@ namespace TvDatabase
             aThreadPriority = ThreadPriority.Normal;
             sleepTime = 0;
             break;
-          case ThreadPriority.Normal:      // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
+          case ThreadPriority.Normal:
+            // this is almost enough on dualcore systems for one cpu to gather epg and the other to insert it
             sleepTime = 10;
             break;
           case ThreadPriority.BelowNormal: // on faster systems this might be enough for background importing
             sleepTime = 20;
             break;
-          case ThreadPriority.Lowest:      // even a single core system is enough to use MP while importing.
+          case ThreadPriority.Lowest: // even a single core system is enough to use MP while importing.
             sleepTime = 40;
             break;
         }
@@ -1817,7 +1991,8 @@ namespace TvDatabase
         }
 
         return aProgramList.Count;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
@@ -1828,7 +2003,7 @@ namespace TvDatabase
     {
       lock (SingleInsert)
       {
-        ImportParams MyParams = (ImportParams)aImportParam;
+        ImportParams MyParams = (ImportParams) aImportParam;
         InsertMySql(MyParams);
       }
     }
@@ -1837,7 +2012,7 @@ namespace TvDatabase
     {
       lock (SingleInsert)
       {
-        ImportParams MyParams = (ImportParams)aImportParam;
+        ImportParams MyParams = (ImportParams) aImportParam;
         InsertSqlServer(MyParams);
       }
     }
@@ -1857,35 +2032,53 @@ namespace TvDatabase
       {
         string connectString = (ProviderFactory.GetDefaultProvider()).ConnectionString;
         if (string.IsNullOrEmpty(connectString))
+        {
           return;
+        }
 
         using (MySqlConnection connection = new MySqlConnection(connectString))
         {
           connection.Open();
           transact = connection.BeginTransaction();
           using (MySqlCommand cmd = new MySqlCommand(string.Format("LOCK TABLES {0} READ;", aTable), connection))
+          {
             cmd.ExecuteNonQuery();
+          }
 
           using (MySqlCommand cmd = new MySqlCommand(string.Format("CHECK TABLE {0}", aTable), connection))
+          {
             cmd.ExecuteNonQuery();
+          }
 
           using (MySqlCommand cmd = new MySqlCommand(string.Format("UNLOCK TABLES"), connection))
+          {
             cmd.ExecuteNonQuery();
+          }
 
           using (MySqlCommand cmd = new MySqlCommand(string.Format("OPTIMIZE TABLE {0}", aTable), connection))
+          {
             cmd.ExecuteNonQuery();
+          }
 
           transact.Commit();
           benchClock.Stop();
-          Log.Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms", benchClock.ElapsedMilliseconds.ToString());
+          Log.Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms",
+                   benchClock.ElapsedMilliseconds.ToString());
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         try
         {
           if (transact != null)
+          {
             transact.Rollback();
-        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+        }
         Log.Info("BusinessLayer: OptimizeMySql unsuccessful - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
@@ -1903,13 +2096,20 @@ namespace TvDatabase
           transact.Commit();
           //OptimizeMySql("Program");
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         try
         {
           if (transact != null)
+          {
             transact.Rollback();
-        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+        }
         Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
@@ -1926,13 +2126,20 @@ namespace TvDatabase
           ExecuteSqlServerCommand(aImportParam.ProgramList, connection, transact, aImportParam.SleepTime);
           transact.Commit();
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         try
         {
           if (transact != null)
+          {
             transact.Rollback();
-        } catch (Exception ex2) { Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace); }
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+        }
         Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
@@ -1941,13 +2148,15 @@ namespace TvDatabase
 
     #region SQL Builder
 
-    private static void ExecuteMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection, MySqlTransaction aTransaction, int aDelay)
+    private static void ExecuteMySqlCommand(IEnumerable<Program> aProgramList, MySqlConnection aConnection,
+                                            MySqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       MySqlCommand sqlCmd = new MySqlCommand();
       List<Program> currentInserts = new List<Program>(aProgramList);
 
-      sqlCmd.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
+      sqlCmd.CommandText =
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?notify, ?parentalRating)";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?startTime", MySqlDbType.Datetime);
@@ -1969,7 +2178,8 @@ namespace TvDatabase
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
         sqlCmd.Prepare();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("BusinessLayer: ExecuteMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
@@ -1995,11 +2205,15 @@ namespace TvDatabase
           sqlCmd.ExecuteNonQuery();
           aCounter++;
           // Avoid I/O starving
-          if (aCounter % 3 == 0)
+          if (aCounter%3 == 0)
+          {
             Thread.Sleep(aDelay);
-        } catch (MySqlException myex)
+          }
+        }
+        catch (MySqlException myex)
         {
-          string errorRow = sqlCmd.Parameters["?idChannel"].Value + ", " + sqlCmd.Parameters["?title"].Value + " : " + sqlCmd.Parameters["?startTime"].Value + "-" + sqlCmd.Parameters["?endTime"].Value;
+          string errorRow = sqlCmd.Parameters["?idChannel"].Value + ", " + sqlCmd.Parameters["?title"].Value + " : " +
+                            sqlCmd.Parameters["?startTime"].Value + "-" + sqlCmd.Parameters["?endTime"].Value;
           switch (myex.Number)
           {
             case 1062:
@@ -2009,10 +2223,12 @@ namespace TvDatabase
               Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
               break;
             default:
-              Log.Info("BusinessLayer: ExecuteMySqlCommand caused a MySqlException - {0}, {1} {2}", myex.Message, myex.Number, myex.HelpLink);
+              Log.Info("BusinessLayer: ExecuteMySqlCommand caused a MySqlException - {0}, {1} {2}", myex.Message,
+                       myex.Number, myex.HelpLink);
               break;
           }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Info("BusinessLayer: ExecuteMySqlCommand caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         }
@@ -2020,13 +2236,15 @@ namespace TvDatabase
       return;
     }
 
-    private static void ExecuteSqlServerCommand(IEnumerable<Program> aProgramList, SqlConnection aConnection, SqlTransaction aTransaction, int aDelay)
+    private static void ExecuteSqlServerCommand(IEnumerable<Program> aProgramList, SqlConnection aConnection,
+                                                SqlTransaction aTransaction, int aDelay)
     {
       int aCounter = 0;
       SqlCommand sqlCmd = new SqlCommand();
       List<Program> currentInserts = new List<Program>(aProgramList);
 
-      sqlCmd.CommandText = "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
+      sqlCmd.CommandText =
+        "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, notify, parentalRating) VALUES (@idChannel, @startTime, @endTime, @title, @description, @seriesNum, @episodeNum, @genre, @originalAirDate, @classification, @starRating, @notify, @parentalRating)";
 
       sqlCmd.Parameters.Add("idChannel", SqlDbType.Int);
       sqlCmd.Parameters.Add("startTime", SqlDbType.DateTime);
@@ -2048,7 +2266,8 @@ namespace TvDatabase
         sqlCmd.Transaction = aTransaction;
         // Prepare the command since we will reuse it quite often
         // sqlCmd.Prepare(); <-- this would need exact param field length definitions
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("BusinessLayer: ExecuteSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
@@ -2074,11 +2293,15 @@ namespace TvDatabase
           sqlCmd.ExecuteNonQuery();
           aCounter++;
           // Avoid I/O starving
-          if (aCounter % 2 == 0)
+          if (aCounter%2 == 0)
+          {
             Thread.Sleep(aDelay);
-        } catch (SqlException msex)
+          }
+        }
+        catch (SqlException msex)
         {
-          string errorRow = sqlCmd.Parameters["idChannel"].Value + ", " + sqlCmd.Parameters["title"].Value + " : " + sqlCmd.Parameters["startTime"].Value + "-" + sqlCmd.Parameters["endTime"].Value;
+          string errorRow = sqlCmd.Parameters["idChannel"].Value + ", " + sqlCmd.Parameters["title"].Value + " : " +
+                            sqlCmd.Parameters["startTime"].Value + "-" + sqlCmd.Parameters["endTime"].Value;
           switch (msex.Number)
           {
             case 2601:
@@ -2088,10 +2311,12 @@ namespace TvDatabase
               Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
               break;
             default:
-              Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number, msex.HelpLink);
+              Log.Info("BusinessLayer: InsertSqlServer caused a SqlException - {0}, {1} {2}", msex.Message, msex.Number,
+                       msex.HelpLink);
               break;
           }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Error("BusinessLayer: InsertSqlServer error - {0}, {1}", ex.Message, ex.StackTrace);
         }
@@ -2114,12 +2339,16 @@ namespace TvDatabase
       IList<Schedule> schedulesList = Schedule.ListAll();
       IList<Card> cards = Card.ListAll();
       if (cards.Count == 0)
+      {
         return conflicts;
+      }
       Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
       for (int i = 0; i < cards.Count; i++)
+      {
         cardSchedules[i] = new List<Schedule>();
+      }
 
       // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
       // as he decided to keep them before. That's why they are in the db
@@ -2129,9 +2358,13 @@ namespace TvDatabase
         foreach (Schedule episode in episodes)
         {
           if (DateTime.Now > episode.EndTime)
+          {
             continue;
+          }
           if (episode.IsSerieIsCanceled(episode.StartTime))
+          {
             continue;
+          }
           Schedule overlapping;
           AssignSchedulesToCard(episode, cardSchedules, out overlapping);
         }
@@ -2141,9 +2374,13 @@ namespace TvDatabase
       foreach (Schedule newEpisode in newEpisodes)
       {
         if (DateTime.Now > newEpisode.EndTime)
+        {
           continue;
+        }
         if (newEpisode.IsSerieIsCanceled(newEpisode.StartTime))
+        {
           continue;
+        }
         Schedule overlapping;
         if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
         {
@@ -2180,7 +2417,8 @@ namespace TvDatabase
       return conflicts;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out Schedule overlappingSchedule)
+    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
+                                              out Schedule overlappingSchedule)
     {
       overlappingSchedule = null;
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
@@ -2201,7 +2439,8 @@ namespace TvDatabase
               if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
               {
                 overlappingSchedule = assignedSchedule;
-                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count, card.IdCard);
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
+                         card.IdCard);
                 free = false;
                 break;
               }
@@ -2218,7 +2457,9 @@ namespace TvDatabase
         count++;
       }
       if (!assigned)
+      {
         return false;
+      }
 
       return true;
     }
@@ -2235,29 +2476,36 @@ namespace TvDatabase
       List<Schedule> recordings = new List<Schedule>();
 
       DateTime dtDay = DateTime.Now;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Once)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Once)
       {
         recordings.Add(rec);
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Daily)
       {
         for (int i = 0; i < days; ++i)
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                          0);
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(1);
+          }
           recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(-1);
+          }
           recNew.Series = true;
           if (recNew.StartTime >= DateTime.Now)
           {
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             recordings.Add(recNew);
           }
           dtDay = dtDay.AddDays(1);
@@ -2265,23 +2513,30 @@ namespace TvDatabase
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
       {
         for (int i = 0; i < days; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                            0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
+            }
             recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -2292,46 +2547,55 @@ namespace TvDatabase
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekends)
       {
-        IList<Program> progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
+        IList<Program> progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
+                                                              rec.ReferencedChannel());
 
         foreach (Program prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-                      (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+              (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
             recNew.StartTime = prog.StartTime;
             recNew.EndTime = prog.EndTime;
             recNew.Series = true;
 
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             recordings.Add(recNew);
           }
-
         }
         return recordings;
       }
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekly)
       {
         for (int i = 0; i < days; ++i)
         {
           if ((dtDay.DayOfWeek == rec.StartTime.DayOfWeek) && (dtDay.Date >= rec.StartTime.Date))
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                            0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
+            }
             recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -2343,19 +2607,24 @@ namespace TvDatabase
       }
 
 
-      IList<Program> programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel()) : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
+      IList<Program> programs = rec.ScheduleType == (int) ScheduleRecordingType.EveryTimeOnThisChannel
+                                  ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
+                                                                rec.ReferencedChannel())
+                                  : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
       foreach (Program prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
           recNew.IdChannel = prog.IdChannel;
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
           if (rec.IsSerieIsCanceled(recNew.StartTime))
+          {
             recNew.Canceled = recNew.StartTime;
+          }
           recordings.Add(recNew);
         }
       }
@@ -2363,19 +2632,23 @@ namespace TvDatabase
     }
 
     // Add schedules for importing from xml
-    public Schedule AddSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime, int scheduleType)
+    public Schedule AddSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime,
+                                int scheduleType)
     {
       Schedule schedule = GetSchedule(idChannel, programName, startTime, endTime, scheduleType);
       if (schedule != null)
+      {
         return schedule;
+      }
       Schedule newSchedule = new Schedule(idChannel, programName, startTime, endTime);
       return newSchedule;
     }
 
     // Get schedules to import from xml
-    public Schedule GetSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime, int scheduleType)
+    public Schedule GetSchedule(int idChannel, string programName, DateTime startTime, DateTime endTime,
+                                int scheduleType)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Schedule));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Schedule));
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
       sb.AddConstraint(Operator.Equals, "programName", programName);
       sb.AddConstraint(Operator.Equals, "startTime", startTime);
@@ -2385,9 +2658,13 @@ namespace TvDatabase
       Log.Info(stmt.Sql);
       IList<Schedule> schedules = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
       if (schedules == null)
+      {
         return null;
+      }
       if (schedules.Count == 0)
+      {
         return null;
+      }
       return schedules[0];
     }
 
@@ -2397,13 +2674,15 @@ namespace TvDatabase
 
     public Recording GetRecordingByFileName(string fileName)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
-      sb.AddConstraint(Operator.Like, "fileName", "%"+fileName+"%");
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Recording));
+      sb.AddConstraint(Operator.Like, "fileName", "%" + fileName + "%");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList<Recording> recordings = ObjectFactory.GetCollection<Recording>(stmt.Execute());
       if (recordings.Count == 0)
+      {
         return null;
+      }
       return recordings[0];
     }
 
@@ -2413,14 +2692,18 @@ namespace TvDatabase
 
     public RadioChannelGroup GetRadioChannelGroupByName(string name)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(RadioChannelGroup));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioChannelGroup));
       sb.AddConstraint(Operator.Equals, "groupName", name);
       SqlStatement stmt = sb.GetStatement(true);
       IList<RadioChannelGroup> groups = ObjectFactory.GetCollection<RadioChannelGroup>(stmt.Execute());
       if (groups == null)
+      {
         return null;
+      }
       if (groups.Count == 0)
+      {
         return null;
+      }
       return groups[0];
     }
 
@@ -2432,26 +2715,35 @@ namespace TvDatabase
 
     public ChannelGroup GetGroupByName(string aGroupName, int aSortOrder)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelGroup));
-      sb.AddConstraint(Operator.Like, "groupName", "%"+aGroupName+"%"); // use like here since the user might have changed the casing
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
+      sb.AddConstraint(Operator.Like, "groupName", "%" + aGroupName + "%");
+      // use like here since the user might have changed the casing
       if (aSortOrder > -1)
+      {
         sb.AddConstraint(Operator.Equals, "sortOrder", aSortOrder);
+      }
       SqlStatement stmt = sb.GetStatement(true);
       Log.Debug(stmt.Sql);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       if (groups == null)
+      {
         return null;
+      }
       if (groups.Count == 0)
+      {
         return null;
+      }
       return groups[0];
     }
 
     #endregion
 
     #region EPG Updating
+
     //string _titleTemplate;
     //string _descriptionTemplate;
     //string _epgLanguages;
+
     #endregion
   }
 }

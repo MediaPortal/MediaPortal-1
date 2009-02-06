@@ -25,7 +25,8 @@ namespace TvLibrary.Interfaces
   /// </summary>
   public class GlobalServiceProvider
   {
-    static ServiceProvider _provider;
+    private static ServiceProvider _provider;
+
     /// <summary>
     /// returns the instance of the global ServiceProvider
     /// </summary>
@@ -34,7 +35,9 @@ namespace TvLibrary.Interfaces
       get
       {
         if (_provider == null)
+        {
           _provider = new ServiceProvider();
+        }
         return _provider;
       }
     }

@@ -25,34 +25,45 @@
 
 using MediaPortal.GUI.Library;
 
-namespace TvPlugin {
+namespace TvPlugin
+{
   /// <summary>
   /// Fullscreen teletext window of TVE3
   /// </summary>
-  public class TVTeletextFullScreen : TvTeletextBase, IRenderLayer {
+  public class TVTeletextFullScreen : TvTeletextBase, IRenderLayer
+  {
     #region variables
-    bool _isFullScreenVideo;
+
+    private bool _isFullScreenVideo;
+
     #endregion
 
     #region ctor
-    public TVTeletextFullScreen() {
-      GetID = (int)Window.WINDOW_FULLSCREEN_TELETEXT;
+
+    public TVTeletextFullScreen()
+    {
+      GetID = (int) Window.WINDOW_FULLSCREEN_TELETEXT;
     }
+
     #endregion
 
     #region GUIWindow initializing methods
-    public override bool Init() {
+
+    public override bool Init()
+    {
       return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
     }
 
-    public override void OnAdded() {
-      GUIWindowManager.Replace((int)Window.WINDOW_FULLSCREEN_TELETEXT, this);
+    public override void OnAdded()
+    {
+      GUIWindowManager.Replace((int) Window.WINDOW_FULLSCREEN_TELETEXT, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
 
-    protected override void OnPageDestroy(int newWindowId) {
+    protected override void OnPageDestroy(int newWindowId)
+    {
       SaveSettings();
       _updateThreadStop = true;
       TVHome.Card.GrabTeletext = false;
@@ -61,17 +72,22 @@ namespace TvPlugin {
       base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnPageLoad() {
+    protected override void OnPageLoad()
+    {
       _isFullScreenVideo = GUIGraphicsContext.IsFullScreenVideo;
       base.OnPageLoad();
       InitializeWindow(true);
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
     }
+
     #endregion
 
     #region OnAction
-    public override void OnAction(Action action) {
-      switch (action.wID) {
+
+    public override void OnAction(Action action)
+    {
+      switch (action.wID)
+      {
         case Action.ActionType.ACTION_SWITCH_TELETEXT_TRANSPARENT:
           // Switch tranparent mode
           _transparentMode = !_transparentMode;
@@ -82,32 +98,41 @@ namespace TvPlugin {
       }
       base.OnAction(action);
     }
+
     #endregion
 
     #region Rendering method
-    public override void Render(float timePassed) {
+
+    public override void Render(float timePassed)
+    {
       // Force the fullscreen video
       GUIGraphicsContext.IsFullScreenVideo = true;
       // Only the render one of the images, if no update is running
-      if (!_updatingForegroundImage) {
+      if (!_updatingForegroundImage)
+      {
         imgTeletextForeground.Render(timePassed);
       }
-      if (!_updatingBackgroundImage) {
+      if (!_updatingBackgroundImage)
+      {
         imgTeletextBackground.Render(timePassed);
       }
     }
+
     #endregion
 
     #region IRenderLayer
-    public bool ShouldRenderLayer() {
+
+    public bool ShouldRenderLayer()
+    {
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       return true;
     }
 
-    public void RenderLayer(float timePassed) {
+    public void RenderLayer(float timePassed)
+    {
       Render(timePassed);
     }
-    #endregion
 
-  }// class
-}// namespace
+    #endregion
+  } // class
+} // namespace

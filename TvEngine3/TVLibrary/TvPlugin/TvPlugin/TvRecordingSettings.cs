@@ -24,29 +24,10 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using AMS.Profile;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.Configuration;
+using TvDatabase;
 //using MediaPortal.Utils.Services;
 
-using TvDatabase;
-using TvControl;
-using TvLibrary.Interfaces;
-
-
-using Gentle.Common;
-using Gentle.Framework;
 namespace TvPlugin
 {
   /// <summary>
@@ -54,23 +35,24 @@ namespace TvPlugin
   /// </summary>
   public class TvRecordingSettings : GUIWindow
   {
-    [SkinControlAttribute(4)]    protected GUICheckMarkControl cbAutoDeleteRecordings = null;
-    [SkinControlAttribute(5)]    protected GUICheckMarkControl cbCreateTagInfoXML = null;
-    [SkinControlAttribute(27)]   protected GUISpinControl spinPreRecord = null;
-    [SkinControlAttribute(30)]   protected GUISpinControl spinPostRecord = null;
+    [SkinControl(4)] protected GUICheckMarkControl cbAutoDeleteRecordings = null;
+    [SkinControl(5)] protected GUICheckMarkControl cbCreateTagInfoXML = null;
+    [SkinControl(27)] protected GUISpinControl spinPreRecord = null;
+    [SkinControl(30)] protected GUISpinControl spinPostRecord = null;
 
     public TvRecordingSettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS;
+      GetID = (int) Window.WINDOW_SETTINGS_RECORDINGS;
     }
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SETTINGS_RECORDINGS, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_RECORDINGS, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_recording.xml");
@@ -87,19 +69,31 @@ namespace TvPlugin
       spinPostRecord.Value = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
       cbAutoDeleteRecordings.Selected = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      cbCreateTagInfoXML.Selected = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes"); 
+      cbCreateTagInfoXML.Selected = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == cbAutoDeleteRecordings) OnAutoDeleteRecordings();
-      if (control == cbCreateTagInfoXML) OnCreateTagInfoXML();
-      if (control == spinPreRecord) OnPreRecord();
-      if (control == spinPostRecord) OnPostRecord();
+      if (control == cbAutoDeleteRecordings)
+      {
+        OnAutoDeleteRecordings();
+      }
+      if (control == cbCreateTagInfoXML)
+      {
+        OnCreateTagInfoXML();
+      }
+      if (control == spinPreRecord)
+      {
+        OnPreRecord();
+      }
+      if (control == spinPostRecord)
+      {
+        OnPostRecord();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnAutoDeleteRecordings()
+    private void OnAutoDeleteRecordings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("autodeletewatchedrecordings", "no");
@@ -107,16 +101,15 @@ namespace TvPlugin
       setting.Persist();
     }
 
-    void OnCreateTagInfoXML()
+    private void OnCreateTagInfoXML()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("createtaginfoxml", "yes");
       setting.Value = cbCreateTagInfoXML.Selected ? "yes" : "no";
       setting.Persist();
-
     }
 
-    void OnPreRecord()
+    private void OnPreRecord()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("preRecordInterval", "5");
@@ -124,13 +117,14 @@ namespace TvPlugin
       setting.Persist();
     }
 
-    void OnPostRecord()
+    private void OnPostRecord()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("postRecordInterval", "5");
       setting.Value = spinPostRecord.Value.ToString();
       setting.Persist();
     }
+
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();

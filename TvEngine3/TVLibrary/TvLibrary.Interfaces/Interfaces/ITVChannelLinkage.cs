@@ -26,8 +26,8 @@ namespace TvLibrary.Interfaces
   /// callback interface for the ChannelLinkageScanner
   /// </summary>
   [ComVisible(true), ComImport,
-    Guid("F8A86679-C80A-42fd-A148-20D681A67024"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("F8A86679-C80A-42fd-A148-20D681A67024"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IChannelLinkageCallback
   {
     /// <summary>
@@ -36,7 +36,7 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     [PreserveSig]
     int OnLinkageReceived();
-  };
+  } ;
 
   /// <summary>
   /// Base class used for channel linkage grabbing
@@ -52,6 +52,5 @@ namespace TvLibrary.Interfaces
     {
       return 0;
     }
-
   }
 }

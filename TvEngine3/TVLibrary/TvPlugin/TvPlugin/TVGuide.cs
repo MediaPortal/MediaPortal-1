@@ -24,27 +24,10 @@
 #endregion
 
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using TvDatabase;
 
-using Gentle.Common;
-using Gentle.Framework;
+using MediaPortal.GUI.Library;
 
 #endregion
-
 
 namespace TvPlugin
 {
@@ -53,43 +36,40 @@ namespace TvPlugin
   /// </summary>
   public class TVGuide : TvGuideBase
   {
-    [SkinControlAttribute(98)]    protected GUIImage videoBackground;
-    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow;
+    [SkinControl(98)] protected GUIImage videoBackground;
+    [SkinControl(99)] protected GUIVideoControl videoWindow;
 
     public TVGuide()
       : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TVGUIDE;
+      GetID = (int) Window.WINDOW_TVGUIDE;
     }
+
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TVGUIDE;
+      GetID = (int) Window.WINDOW_TVGUIDE;
       Initialize();
       return result;
     }
+
     public override void OnAdded()
     {
       Log.Debug("TVGuide:OnAdded");
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVGUIDE, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_TVGUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     public override bool SupportsDelayedLoad
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     protected override void OnPageLoad()

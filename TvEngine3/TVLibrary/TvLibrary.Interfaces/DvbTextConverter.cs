@@ -24,10 +24,9 @@
 #endregion
 
 using System;
-using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
-
+using System.Text;
 
 namespace TvLibrary.Interfaces
 {
@@ -47,12 +46,18 @@ namespace TvLibrary.Interfaces
       try
       {
         if (string.IsNullOrEmpty(lang))
+        {
           lang = CultureInfo.CurrentCulture.ThreeLetterISOLanguageName;
+        }
         lang = lang.ToLowerInvariant();
         if (lang == "cze" || lang == "ces")
+        {
           encoding = 20269; //ISO-6937
+        }
         else if (lang == "ukr" || lang == "bel" || lang == "rus")
+        {
           encoding = 28595; //ISO-8859-5
+        }
 
         byte c = Marshal.ReadByte(ptr, 0);
         if (c < 0x20)
@@ -77,18 +82,18 @@ namespace TvLibrary.Interfaces
             case 0x05:
               encoding = 28599; //ISO-8859-9
               break;
-            //case 0x06: encoding = ; //ISO-8859-10
-            //	break;
+              //case 0x06: encoding = ; //ISO-8859-10
+              //	break;
             case 0x07:
               encoding = 874; //ISO-8859-11
               break;
-            //case 0x08: encoding = ; //ISO-8859-12
-            //	break;
+              //case 0x08: encoding = ; //ISO-8859-12
+              //	break;
             case 0x09:
               encoding = 28603; //ISO-8859-13
               break;
-            //case 0x0A: encoding = ; //ISO-8859-14
-            //	break;
+              //case 0x0A: encoding = ; //ISO-8859-14
+              //	break;
             case 0x0B:
               encoding = 28605; //ISO-8859-15
               break;
@@ -125,18 +130,18 @@ namespace TvLibrary.Interfaces
                   case 0x09:
                     encoding = 28599; //ISO-8859-9
                     break;
-                  //case 0x0A: encoding = ; //ISO-8859-10
-                  //	break;
+                    //case 0x0A: encoding = ; //ISO-8859-10
+                    //	break;
                   case 0x0B:
                     encoding = 874; //ISO-8859-11
                     break;
-                  //case 0x0C: encoding = ; //ISO-8859-12
-                  //	break;
+                    //case 0x0C: encoding = ; //ISO-8859-12
+                    //	break;
                   case 0x0D:
                     encoding = 28591; //ISO-8859-13
                     break;
-                  //case 0x0E: encoding = ; //ISO-8859-14
-                  //	break;
+                    //case 0x0E: encoding = ; //ISO-8859-14
+                    //	break;
                   case 0x0F:
                     encoding = 28591; //ISO-8859-15
                     break;
@@ -162,8 +167,11 @@ namespace TvLibrary.Interfaces
         }
         len = pos;
         while (Marshal.ReadByte(ptr, len) != 0)
+        {
           len++;
-      } catch (Exception ex)
+        }
+      }
+      catch (Exception ex)
       {
         Log.Log.WriteFile("Error while converting dvb text", ex);
       }

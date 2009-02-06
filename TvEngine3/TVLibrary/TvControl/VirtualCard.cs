@@ -19,9 +19,9 @@
  *
  */
 using System;
+using System.Net;
 using System.Xml.Serialization;
 using TvLibrary.Interfaces;
-using System.Net;
 
 namespace TvControl
 {
@@ -35,14 +35,17 @@ namespace TvControl
   public class VirtualCard
   {
     #region variables
-    string _server;
-    string _recordingFolder;
-    string _timeShiftFolder;
-    int _recordingFormat;
-    User _user;
+
+    private string _server;
+    private string _recordingFolder;
+    private string _timeShiftFolder;
+    private int _recordingFormat;
+    private User _user;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
@@ -53,9 +56,11 @@ namespace TvControl
     {
       _user = user;
       _server = server;
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
       _recordingFormat = recordingFormat;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
@@ -65,8 +70,10 @@ namespace TvControl
     {
       _user = user;
       _server = server;
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
@@ -75,37 +82,36 @@ namespace TvControl
     {
       _user = user;
       _server = Dns.GetHostName();
-      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+                                       Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
+
     #endregion
 
-    static void HandleFailure()
+    private static void HandleFailure()
     {
       RemoteControl.Clear();
     }
 
     #region properties
+
     /// <summary>
     /// Gets the user.
     /// </summary>
     /// <value>The user.</value>
     public User User
     {
-      get
-      {
-        return _user;
-      }
+      get { return _user; }
     }
+
     /// <summary>
     /// returns the card id of this virtual card
     /// </summary>
     public int Id
     {
-      get
-      {
-        return _user.CardId;
-      }
+      get { return _user.CardId; }
     }
+
     /// <summary>
     /// returns if the card is enabled;
     /// </summary>
@@ -115,12 +121,15 @@ namespace TvControl
       get
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         try
         {
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.Enabled(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -133,28 +142,17 @@ namespace TvControl
     /// </summary>
     public string RemoteServer
     {
-      get
-      {
-        return _server;
-      }
-      set
-      {
-        _server = value;
-      }
+      get { return _server; }
+      set { _server = value; }
     }
+
     ///<summary>
     /// Gets/Set the recording format
     ///</summary>
     public int RecordingFormat
     {
-      get
-      {
-        return _recordingFormat;
-      }
-      set
-      {
-        _recordingFormat = value;
-      }
+      get { return _recordingFormat; }
+      set { _recordingFormat = value; }
     }
 
     /// <summary>
@@ -163,16 +161,15 @@ namespace TvControl
     [XmlIgnore]
     public string RecordingFolder
     {
-      get
-      {
-        return _recordingFolder;
-      }
+      get { return _recordingFolder; }
       set
       {
         _recordingFolder = value;
         if (_recordingFolder == String.Empty)
-          _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
+        {
+          _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
+                                           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        }
       }
     }
 
@@ -182,18 +179,18 @@ namespace TvControl
     [XmlIgnore]
     public string TimeshiftFolder
     {
-      get
-      {
-        return _timeShiftFolder;
-      }
+      get { return _timeShiftFolder; }
       set
       {
         _timeShiftFolder = value;
         if (_timeShiftFolder == String.Empty)
-          _timeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-
+        {
+          _timeShiftFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
+                                           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        }
       }
     }
+
     /// <summary>
     /// Gets the type of card (analog,dvbc,dvbs,dvbt,atsc)
     /// </summary>
@@ -206,10 +203,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return CardType.Analog;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.Type(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -229,10 +229,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.CardName(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -252,10 +255,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.CardDevice(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -276,10 +282,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.RecordingFileName(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -299,10 +308,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return null;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetCurrentAudioStream(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -313,15 +325,19 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return;
+          }
           RemoteControl.HostName = _server;
           RemoteControl.Instance.SetCurrentAudioStream(User, value);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
       }
     }
+
     /// <summary>
     /// Gets the available audio streams.
     /// </summary>
@@ -332,12 +348,15 @@ namespace TvControl
       get
       {
         if (User.CardId < 0)
+        {
           return null;
+        }
         try
         {
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.AvailableAudioStreams(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -352,12 +371,15 @@ namespace TvControl
     public int GetCurrentVideoStream(User user)
     {
       if (User.CardId < 0)
+      {
         return -1;
+      }
       try
       {
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetCurrentVideoStream(user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -376,10 +398,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return -1;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetRecordingSchedule(User.CardId, User.IdChannel);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -400,10 +425,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetStreamingUrl(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -423,10 +451,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.IsGrabbingTeletext(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -437,10 +468,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return;
+          }
           RemoteControl.HostName = _server;
           RemoteControl.Instance.GrabTeletext(User, value);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -459,10 +493,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.HasTeletext(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -482,11 +519,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.IsGrabbingEpg(User.CardId);
-
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -511,7 +550,8 @@ namespace TvControl
           VirtualCard vc;
           bool isRec = RemoteControl.Instance.IsRecording(ChannelName, out vc);
           return (isRec && vc.Id == Id && vc.User.IsAdmin);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -530,10 +570,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return TvStoppedReason.UnknownReason;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetTvStoppedReason(_user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -553,10 +596,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.IsScanning(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -576,10 +622,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.IsScrambled(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -599,10 +648,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.IsTimeShifting(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -622,10 +674,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return 0;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.MinChannel(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -645,17 +700,20 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return 0;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.MaxChannel(User.CardId);
-
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
         return 0;
       }
     }
+
     /// <summary>
     /// Returns the current filename used for timeshifting
     /// </summary>
@@ -668,10 +726,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.TimeShiftFileName(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -691,10 +752,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return DateTime.MinValue;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.TimeShiftStarted(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -714,10 +778,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return DateTime.MinValue;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.RecordingStarted(User);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -737,10 +804,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return false;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.TunerLocked(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -760,10 +830,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return "";
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.CurrentChannelName(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -784,10 +857,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return null;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.CurrentChannel(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -807,10 +883,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return -1;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.CurrentDbChannel(ref _user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -830,10 +909,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return 0;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.SignalLevel(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -853,19 +935,24 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return 0;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.SignalQuality(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
         return 0;
       }
     }
+
     #endregion
 
     #region methods
+
     /// <summary>
     /// Gets a raw teletext page.
     /// </summary>
@@ -877,14 +964,17 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
-          return new byte[] { 1 };
+        {
+          return new byte[] {1};
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetTeletextPage(User, pageNumber, subPageNumber);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
-      return new byte[] { 1 };
+      return new byte[] {1};
     }
 
     /// <summary>
@@ -896,10 +986,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return null;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.Scan(User.CardId, channel);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -915,13 +1008,18 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return;
+        }
         //if (IsRecording) return;
         if (IsTimeShifting == false)
+        {
           return;
+        }
         RemoteControl.HostName = _server;
         RemoteControl.Instance.StopTimeShifting(ref _user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -936,10 +1034,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return;
+        }
         RemoteControl.HostName = _server;
         RemoteControl.Instance.StopRecording(ref _user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -957,10 +1058,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.StartRecording(ref _user, ref fileName, contentRecording, startTime);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -980,10 +1084,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsCardInUse(User.CardId, out user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1000,10 +1107,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return -1;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.SubPageCount(User, pageNumber);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1019,10 +1129,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return -1;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetTeletextRedPageNumber(User);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1038,10 +1151,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return -1;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetTeletextGreenPageNumber(User);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1057,10 +1173,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return -1;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetTeletextYellowPageNumber(User);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1076,10 +1195,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return -1;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetTeletextBluePageNumber(User);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1096,11 +1218,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return new TimeSpan(0, 0, 0, 15);
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.TeletextRotation(User, pageNumber);
-
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1118,18 +1242,23 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return ChannelState.nottunable;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.GetChannelState(idChannel, user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
       return ChannelState.nottunable;
     }
+
     #endregion
 
     #region quality control
+
     /// <summary>
     /// Indicates, if the user is the owner of the card
     /// </summary>
@@ -1139,10 +1268,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.IsOwner(User.CardId, User);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1159,10 +1291,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.SupportsQualityControl(User.CardId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1178,10 +1313,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.SupportsBitRate(User.CardId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1197,10 +1335,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.SupportsBitRateModes(User.CardId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1216,10 +1357,13 @@ namespace TvControl
       try
       {
         if (User.CardId < 0)
+        {
           return false;
+        }
         RemoteControl.HostName = _server;
         return RemoteControl.Instance.SupportsPeakBitRateMode(User.CardId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -1236,10 +1380,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return QualityType.Default;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetQualityType(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -1250,10 +1397,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return;
+          }
           RemoteControl.HostName = _server;
           RemoteControl.Instance.SetQualityType(User.CardId, value);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -1270,10 +1420,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return VIDEOENCODER_BITRATE_MODE.Undefined;
+          }
           RemoteControl.HostName = _server;
           return RemoteControl.Instance.GetBitRateMode(User.CardId);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -1284,10 +1437,13 @@ namespace TvControl
         try
         {
           if (User.CardId < 0)
+          {
             return;
+          }
           RemoteControl.HostName = _server;
           RemoteControl.Instance.SetBitRateMode(User.CardId, value);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }

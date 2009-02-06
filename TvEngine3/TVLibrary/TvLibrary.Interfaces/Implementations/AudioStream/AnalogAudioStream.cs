@@ -19,6 +19,7 @@
  *
  */
 using System;
+using DirectShowLib;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -30,12 +31,15 @@ namespace TvLibrary.Implementations.DVB
   public class AnalogAudioStream : IAudioStream
   {
     #region variables
-    string _language;
-    AudioStreamType _streamType;
-    DirectShowLib.TVAudioMode _audioMode;
+
+    private string _language;
+    private AudioStreamType _streamType;
+    private TVAudioMode _audioMode;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogAudioStream"/> class.
     /// </summary>
@@ -43,24 +47,20 @@ namespace TvLibrary.Implementations.DVB
     {
       _language = "";
       _streamType = AudioStreamType.Mpeg2;
-      _audioMode = DirectShowLib.TVAudioMode.Stereo;
+      _audioMode = TVAudioMode.Stereo;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// gets/sets  Audio language
     /// </summary>
     public string Language
     {
-      get
-      {
-        return _language;
-      }
-      set
-      {
-        _language = value;
-      }
+      get { return _language; }
+      set { _language = value; }
     }
 
     /// <summary>
@@ -68,29 +68,18 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public AudioStreamType StreamType
     {
-      get
-      {
-        return _streamType;
-      }
-      set
-      {
-        _streamType = value;
-      }
+      get { return _streamType; }
+      set { _streamType = value; }
     }
+
     /// <summary>
     /// Gets or sets the audio mode.
     /// </summary>
     /// <value>The audio mode.</value>
-    public DirectShowLib.TVAudioMode AudioMode
+    public TVAudioMode AudioMode
     {
-      get
-      {
-        return _audioMode;
-      }
-      set
-      {
-        _audioMode = value;
-      }
+      get { return _audioMode; }
+      set { _audioMode = value; }
     }
 
     #endregion
@@ -106,11 +95,16 @@ namespace TvLibrary.Implementations.DVB
     {
       AnalogAudioStream stream = obj as AnalogAudioStream;
       if (stream == null)
+      {
         return false;
+      }
       if (_language == stream.Language && _streamType == stream.StreamType && AudioMode == stream.AudioMode)
+      {
         return true;
+      }
       return false;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -121,6 +115,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode() ^ _audioMode.GetHashCode();
     }
+
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -130,8 +125,7 @@ namespace TvLibrary.Implementations.DVB
     public override string ToString()
     {
       return String.Format("mode:{0} type:{1} language:{2}",
-          AudioMode, StreamType, Language);
+                           AudioMode, StreamType, Language);
     }
   }
 }
-

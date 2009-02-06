@@ -20,7 +20,9 @@
  */
 using System;
 using System.Runtime.Remoting;
+using System.Threading;
 using TvLibrary.Log;
+
 // Reverted mantis #1409: using System.Collections;
 
 namespace TvControl
@@ -30,8 +32,8 @@ namespace TvControl
   /// </summary>
   public class RemoteControl
   {
-    static IController _tvControl;
-    static string _hostName = "localhost";
+    private static IController _tvControl;
+    private static string _hostName = "localhost";
     // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
 
     /// <summary>
@@ -40,10 +42,7 @@ namespace TvControl
     /// <value>The name of the host.</value>
     public static string HostName
     {
-      get
-      {
-        return _hostName;
-      }
+      get { return _hostName; }
       set
       {
         if (_hostName != value)
@@ -53,6 +52,7 @@ namespace TvControl
         }
       }
     }
+
     /// <summary>
     /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
     /// </summary>
@@ -64,7 +64,9 @@ namespace TvControl
         try
         {
           if (_tvControl != null)
+          {
             return _tvControl;
+          }
 
           // Reverted mantis #1409: 
           //#if !DEBUG //only use timeouts when (build=release)
@@ -81,20 +83,24 @@ namespace TvControl
           //            //ignore
           //          }
           //#endif          
-          _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+          _tvControl =
+            (IController)
+            Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
           // int card = _tvControl.Cards;
           return _tvControl;
-        } catch (RemotingTimeoutException exrt)
+        }
+        catch (RemotingTimeoutException exrt)
         {
           try
           {
             Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
             // maybe the DB wasn't up yet - 2nd try...
-            System.Threading.Thread.Sleep(5000);
-            _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+            Thread.Sleep(5000);
+            _tvControl =
+              (IController)
+              Activator.GetObject(typeof (IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
             // int card = _tvControl.Cards;
             return _tvControl;
-
           }
             // didn't help - do nothing
           catch (Exception ex)
@@ -130,7 +136,8 @@ namespace TvControl
           int id = Instance.Cards;
 
           return id >= 0;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Error("RemoteControl - Error checking connection state");
         }

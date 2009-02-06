@@ -24,20 +24,18 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
+using System.IO;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
-
-using TvDatabase;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
+using TvDatabase;
 
 namespace TvPlugin
 {
@@ -47,72 +45,76 @@ namespace TvPlugin
   public class TvScheduler : GUIWindow, IComparer<GUIListItem>
   {
     #region variables, ctor/dtor
-    enum SortMethod
+
+    private enum SortMethod
     {
       Channel = 0,
       Date = 1,
       Name = 2,
     }
-    [SkinControlAttribute(2)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnNew = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(8)]
-    protected GUIButtonControl btnPriorities = null;
-    [SkinControlAttribute(9)]
-    protected GUIButtonControl btnConflicts = null;
-    [SkinControlAttribute(10)]
-    protected GUIListControl listSchedules = null;
-    [SkinControlAttribute(11)]
-    protected GUIToggleButtonControl btnSeries = null;
 
-    SortMethod currentSortMethod = SortMethod.Date;
-    bool m_bSortAscending = true;
-    int m_iSelectedItem = 0;
-    bool needUpdate = false;
+    [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(6)] protected GUIButtonControl btnNew = null;
+    [SkinControl(7)] protected GUIButtonControl btnCleanup = null;
+    [SkinControl(8)] protected GUIButtonControl btnPriorities = null;
+    [SkinControl(9)] protected GUIButtonControl btnConflicts = null;
+    [SkinControl(10)] protected GUIListControl listSchedules = null;
+    [SkinControl(11)] protected GUIToggleButtonControl btnSeries = null;
+
+    private SortMethod currentSortMethod = SortMethod.Date;
+    private bool m_bSortAscending = true;
+    private int m_iSelectedItem = 0;
+    private bool needUpdate = false;
     private Schedule selectedItem = null;
 
 
     public TvScheduler()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SCHEDULER;
+      GetID = (int) Window.WINDOW_SCHEDULER;
     }
+
     ~TvScheduler()
     {
     }
+
     public override void OnAdded()
     {
       Log.Debug("TvRecorded:OnAdded");
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SCHEDULER, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_SCHEDULER, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
-
 
     #endregion
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strTmp = String.Empty;
-        strTmp = (string)xmlreader.GetValue("tvscheduler", "sort");
+        strTmp = (string) xmlreader.GetValue("tvscheduler", "sort");
         if (strTmp != null)
         {
-          if (strTmp == "channel") currentSortMethod = SortMethod.Channel;
-          else if (strTmp == "date") currentSortMethod = SortMethod.Date;
-          else if (strTmp == "name") currentSortMethod = SortMethod.Name;
+          if (strTmp == "channel")
+          {
+            currentSortMethod = SortMethod.Channel;
+          }
+          else if (strTmp == "date")
+          {
+            currentSortMethod = SortMethod.Date;
+          }
+          else if (strTmp == "name")
+          {
+            currentSortMethod = SortMethod.Name;
+          }
         }
         m_bSortAscending = xmlreader.GetValueAsBool("tvscheduler", "sortascending", true);
         if (btnSeries != null)
@@ -122,9 +124,9 @@ namespace TvPlugin
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (currentSortMethod)
         {
@@ -142,9 +144,11 @@ namespace TvPlugin
         xmlwriter.SetValueAsBool("tvscheduler", "series", btnSeries.Selected);
       }
     }
+
     #endregion
 
     #region overrides
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvschedulerserver.xml");
@@ -157,6 +161,7 @@ namespace TvPlugin
     {
       base.OnAction(action);
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -171,11 +176,15 @@ namespace TvPlugin
       selectedItem = null;
       LoadDirectory();
 
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+      {
+        m_iSelectedItem--;
+      }
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       //@ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
@@ -197,7 +206,7 @@ namespace TvPlugin
       }
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
@@ -224,9 +233,10 @@ namespace TvPlugin
       }
       if (control == listSchedules)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(iItem);
@@ -240,7 +250,6 @@ namespace TvPlugin
       {
         OnNewShedule();
       }
-
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -253,41 +262,49 @@ namespace TvPlugin
       }
       return base.OnMessage(message);
     }
+
     protected override void OnShowContextMenu()
     {
       OnShowContextMenu(GetSelectedItemNo(), false);
     }
 
-
     #endregion
 
     #region list management
-    GUIListItem GetSelectedItem()
+
+    private GUIListItem GetSelectedItem()
     {
       return listSchedules.SelectedListItem;
     }
 
-    GUIListItem GetItem(int index)
+    private GUIListItem GetItem(int index)
     {
-      if (index < 0 || index >= listSchedules.Count) return null;
+      if (index < 0 || index >= listSchedules.Count)
+      {
+        return null;
+      }
       return listSchedules[index];
     }
 
-    int GetSelectedItemNo()
+    private int GetSelectedItemNo()
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listSchedules.GetID, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listSchedules.GetID, 0, 0,
+                                      null);
       OnMessage(msg);
-      int iItem = (int)msg.Param1;
+      int iItem = (int) msg.Param1;
       return iItem;
     }
-    int GetItemCount()
+
+    private int GetItemCount()
     {
       return listSchedules.Count;
     }
+
     #endregion
 
     #region Sort Members
-    void OnSort()
+
+    private void OnSort()
     {
       SetLabels();
       listSchedules.Sort(this);
@@ -296,33 +313,84 @@ namespace TvPlugin
 
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (item1 == item2) return 0;
-      if (item1 == null) return -1;
-      if (item2 == null) return -1;
-      if (item1.IsFolder && item1.Label == "..") return -1;
-      if (item2.IsFolder && item2.Label == "..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1;
+      if (item1 == item2)
+      {
+        return 0;
+      }
+      if (item1 == null)
+      {
+        return -1;
+      }
+      if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "..")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "..")
+      {
+        return -1;
+      }
+      if (item1.IsFolder && !item2.IsFolder)
+      {
+        return -1;
+      }
+      else if (!item1.IsFolder && item2.IsFolder)
+      {
+        return 1;
+      }
 
       int iComp = 0;
       //TimeSpan ts;
-      Schedule rec1 = (Schedule)item1.TVTag;
-      Schedule rec2 = (Schedule)item2.TVTag;
+      Schedule rec1 = (Schedule) item1.TVTag;
+      Schedule rec2 = (Schedule) item2.TVTag;
 
       //0=Recording->1=Finished->2=Waiting->3=Canceled
       int type1 = 2, type2 = 2;
-      if (item1.Label3 == GUILocalizeStrings.Get(682)) type1 = 0;
-      else if (item1.Label3 == GUILocalizeStrings.Get(683)) type1 = 1;
-      else if (item1.Label3 == GUILocalizeStrings.Get(681)) type1 = 2;
-      else if (item1.Label3 == GUILocalizeStrings.Get(684)) type1 = 3;
+      if (item1.Label3 == GUILocalizeStrings.Get(682))
+      {
+        type1 = 0;
+      }
+      else if (item1.Label3 == GUILocalizeStrings.Get(683))
+      {
+        type1 = 1;
+      }
+      else if (item1.Label3 == GUILocalizeStrings.Get(681))
+      {
+        type1 = 2;
+      }
+      else if (item1.Label3 == GUILocalizeStrings.Get(684))
+      {
+        type1 = 3;
+      }
 
 
-      if (item2.Label3 == GUILocalizeStrings.Get(682)) type2 = 0;
-      else if (item2.Label3 == GUILocalizeStrings.Get(683)) type2 = 1;
-      else if (item2.Label3 == GUILocalizeStrings.Get(681)) type2 = 2;
-      else if (item2.Label3 == GUILocalizeStrings.Get(684)) type2 = 3;
-      if (type1 == 0 && type2 != 0) return -1;
-      if (type2 == 0 && type1 != 0) return 1;
+      if (item2.Label3 == GUILocalizeStrings.Get(682))
+      {
+        type2 = 0;
+      }
+      else if (item2.Label3 == GUILocalizeStrings.Get(683))
+      {
+        type2 = 1;
+      }
+      else if (item2.Label3 == GUILocalizeStrings.Get(681))
+      {
+        type2 = 2;
+      }
+      else if (item2.Label3 == GUILocalizeStrings.Get(684))
+      {
+        type2 = 3;
+      }
+      if (type1 == 0 && type2 != 0)
+      {
+        return -1;
+      }
+      if (type2 == 0 && type1 != 0)
+      {
+        return 1;
+      }
 
       switch (currentSortMethod)
       {
@@ -330,77 +398,124 @@ namespace TvPlugin
           if (m_bSortAscending)
           {
             iComp = String.Compare(rec1.ProgramName, rec2.ProgramName, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Channel;
+            }
+            else
+            {
+              return iComp;
+            }
           }
           else
           {
             iComp = String.Compare(rec2.ProgramName, rec1.ProgramName, true);
-            if (iComp == 0) goto case SortMethod.Channel;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Channel;
+            }
+            else
+            {
+              return iComp;
+            }
           }
 
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
             iComp = String.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Date;
+            }
+            else
+            {
+              return iComp;
+            }
           }
           else
           {
             iComp = String.Compare(rec2.ReferencedChannel().DisplayName, rec1.ReferencedChannel().DisplayName, true);
-            if (iComp == 0) goto case SortMethod.Date;
-            else return iComp;
+            if (iComp == 0)
+            {
+              goto case SortMethod.Date;
+            }
+            else
+            {
+              return iComp;
+            }
           }
 
         case SortMethod.Date:
           if (m_bSortAscending)
           {
-            if (rec1.StartTime == rec2.StartTime) return 0;
-            if (rec1.StartTime > rec2.StartTime) return 1;
+            if (rec1.StartTime == rec2.StartTime)
+            {
+              return 0;
+            }
+            if (rec1.StartTime > rec2.StartTime)
+            {
+              return 1;
+            }
             return -1;
           }
           else
           {
-            if (rec2.StartTime == rec1.StartTime) return 0;
-            if (rec2.StartTime > rec1.StartTime) return 1;
+            if (rec2.StartTime == rec1.StartTime)
+            {
+              return 0;
+            }
+            if (rec2.StartTime > rec1.StartTime)
+            {
+              return 1;
+            }
             return -1;
           }
-
       }
       return 0;
     }
+
     #endregion
 
     #region scheduled tv methods
 
-    GUIListItem Schedule2ListItem(Schedule schedule)
+    private GUIListItem Schedule2ListItem(Schedule schedule)
     {
       GUIListItem item = new GUIListItem();
-      if (schedule == null) return item;
+      if (schedule == null)
+      {
+        return item;
+      }
       item.Label = schedule.ProgramName;
 
       item.TVTag = schedule;
-      string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
-      if (!System.IO.File.Exists(strLogo))
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
+      if (!File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
       }
       bool conflicting = (schedule.ReferringConflicts().Count > 0);
-      if (schedule.ScheduleType != (int)(ScheduleRecordingType.Once))
+      if (schedule.ScheduleType != (int) (ScheduleRecordingType.Once))
       {
         if (conflicting)
+        {
           item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
+        }
         else
+        {
           item.PinImage = Thumbs.TvRecordingSeriesIcon;
+        }
       }
       else
       {
         if (conflicting)
+        {
           item.PinImage = Thumbs.TvConflictRecordingIcon;
+        }
         else
+        {
           item.PinImage = Thumbs.TvRecordingIcon;
+        }
       }
       item.ThumbnailImage = strLogo;
       item.IconImageBig = strLogo;
@@ -408,7 +523,7 @@ namespace TvPlugin
       return item;
     }
 
-    void LoadDirectory()
+    private void LoadDirectory()
     {
       IList<Conflict> conflictsList = Conflict.ListAll();
       btnConflicts.Visible = conflictsList.Count > 0;
@@ -429,8 +544,14 @@ namespace TvPlugin
 
         foreach (Schedule schedule in seriesList)
         {
-          if (DateTime.Now > schedule.EndTime) continue;
-          if (schedule.Canceled != Schedule.MinSchedule) continue;
+          if (DateTime.Now > schedule.EndTime)
+          {
+            continue;
+          }
+          if (schedule.Canceled != Schedule.MinSchedule)
+          {
+            continue;
+          }
 
           item = Schedule2ListItem(schedule);
           item.MusicTag = schedule;
@@ -438,10 +559,12 @@ namespace TvPlugin
           total++;
         }
       }
-      else foreach (Schedule rec in schedulesList)
+      else
+      {
+        foreach (Schedule rec in schedulesList)
         {
           GUIListItem item = new GUIListItem();
-          if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
+          if (rec.ScheduleType != (int) ScheduleRecordingType.Once)
           {
             if (showSeries)
             {
@@ -456,9 +579,15 @@ namespace TvPlugin
               List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
               for (int serieNr = 0; serieNr < seriesList.Count; ++serieNr)
               {
-                Schedule recSeries = (Schedule)seriesList[serieNr];
-                if (DateTime.Now > recSeries.EndTime) continue;
-                if (recSeries.Canceled != Schedule.MinSchedule) continue;
+                Schedule recSeries = (Schedule) seriesList[serieNr];
+                if (DateTime.Now > recSeries.EndTime)
+                {
+                  continue;
+                }
+                if (recSeries.Canceled != Schedule.MinSchedule)
+                {
+                  continue;
+                }
 
                 item = Schedule2ListItem(rec);
                 item.MusicTag = rec;
@@ -467,39 +596,46 @@ namespace TvPlugin
                 total++;
               }
             }
-          }//if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
+          } //if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
           else
           {
             //single recording
-            if (showSeries) continue;  // do not show single recordings if showSeries is enabled
-            if (rec.IsSerieIsCanceled(rec.StartTime)) continue;
+            if (showSeries)
+            {
+              continue; // do not show single recordings if showSeries is enabled
+            }
+            if (rec.IsSerieIsCanceled(rec.StartTime))
+            {
+              continue;
+            }
             item = Schedule2ListItem(rec);
             item.MusicTag = rec;
             listSchedules.Add(item);
             total++;
           }
-        }//foreach (Schedule rec in itemlist)
+        } //foreach (Schedule rec in itemlist)
+      }
 
       //set object count label
-      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(total));
+      GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(total));
 
       OnSort();
       UpdateButtonStates();
     }
 
-    void UpdateButtonStates()
+    private void UpdateButtonStates()
     {
       string strLine = String.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
-          strLine = GUILocalizeStrings.Get(620);// Sort by: Channel
+          strLine = GUILocalizeStrings.Get(620); // Sort by: Channel
           break;
         case SortMethod.Date:
-          strLine = GUILocalizeStrings.Get(621);// Sort by: Date
+          strLine = GUILocalizeStrings.Get(621); // Sort by: Date
           break;
         case SortMethod.Name:
-          strLine = GUILocalizeStrings.Get(268);// Sort by: Title
+          strLine = GUILocalizeStrings.Get(268); // Sort by: Title
           break;
       }
 
@@ -507,20 +643,24 @@ namespace TvPlugin
       btnSortBy.IsAscending = m_bSortAscending;
     }
 
-    string GetDate(Schedule schedule)
+    private string GetDate(Schedule schedule)
     {
       DateTime now = DateTime.Now;
       if (schedule.StartTime.Date == now.Date)
+      {
         return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), schedule.StartTime.ToString("HH:mm"));
+      }
       if (schedule.StartTime.Date == now.Date.AddDays(1))
+      {
         return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), schedule.StartTime.ToString("HH:mm"));
+      }
 
       return String.Format("{0} {1}",
-                    schedule.StartTime.ToShortDateString(),
-                    schedule.StartTime.ToString("HH:mm"));
+                           schedule.StartTime.ToShortDateString(),
+                           schedule.StartTime.ToString("HH:mm"));
     }
 
-    void SetLabels()
+    private void SetLabels()
     {
       SortMethod method = currentSortMethod;
       bool bAscending = m_bSortAscending;
@@ -529,8 +669,11 @@ namespace TvPlugin
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
-        if (item.IsFolder && item.Label.Equals("..")) continue;
-        Schedule rec = (Schedule)item.TVTag;
+        if (item.IsFolder && item.Label.Equals(".."))
+        {
+          continue;
+        }
+        Schedule rec = (Schedule) item.TVTag;
 
         item.Label = rec.ProgramName;
         if (showSeries)
@@ -540,14 +683,14 @@ namespace TvPlugin
 
           switch (rec.ScheduleType)
           {
-            case (int)ScheduleRecordingType.Once:
+            case (int) ScheduleRecordingType.Once:
               item.Label2 = String.Format("{0} {1} - {2}",
-                                          MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
+                                          Utils.GetShortDayString(rec.StartTime),
                                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               ;
               break;
-            case (int)ScheduleRecordingType.Daily:
+            case (int) ScheduleRecordingType.Daily:
               strTime = String.Format("{0}-{1}",
                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -555,7 +698,7 @@ namespace TvPlugin
               item.Label2 = String.Format("{0} {1}", strType, strTime);
               break;
 
-            case (int)ScheduleRecordingType.WorkingDays:
+            case (int) ScheduleRecordingType.WorkingDays:
               strTime = String.Format("{0}-{1} {2}-{3}",
                                       GUILocalizeStrings.Get(657), //657=Mon
                                       GUILocalizeStrings.Get(661), //661=Fri
@@ -565,7 +708,7 @@ namespace TvPlugin
               item.Label2 = String.Format("{0} {1}", strType, strTime);
               break;
 
-            case (int)ScheduleRecordingType.Weekends:
+            case (int) ScheduleRecordingType.Weekends:
               strTime = String.Format("{0}-{1} {2}-{3}",
                                       GUILocalizeStrings.Get(662), //662=Sat
                                       GUILocalizeStrings.Get(663), //663=Sun
@@ -574,7 +717,7 @@ namespace TvPlugin
               strType = GUILocalizeStrings.Get(649);
               item.Label2 = String.Format("{0} {1}", strType, strTime);
               break;
-            case (int)ScheduleRecordingType.Weekly:
+            case (int) ScheduleRecordingType.Weekly:
               string day;
               switch (rec.StartTime.DayOfWeek)
               {
@@ -607,19 +750,22 @@ namespace TvPlugin
               strType = GUILocalizeStrings.Get(649);
               item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
               break;
-            case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-              item.Label2 = GUILocalizeStrings.Get(650, new object[] { rec.ReferencedChannel().DisplayName });
+            case (int) ScheduleRecordingType.EveryTimeOnThisChannel:
+              item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});
               break;
-            case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
+            case (int) ScheduleRecordingType.EveryTimeOnEveryChannel:
               item.Label2 = GUILocalizeStrings.Get(651);
               break;
           }
         }
-        else item.Label2 = GetDate(rec);
+        else
+        {
+          item.Label2 = GetDate(rec);
+        }
       }
     }
 
-    void OnClick(int iItem)
+    private void OnClick(int iItem)
     {
       OnShowContextMenu(GetSelectedItemNo(), true);
       /*
@@ -633,11 +779,14 @@ namespace TvPlugin
     }
 
 
-    void OnShowContextMenu(int iItem, bool clicked)
+    private void OnShowContextMenu(int iItem, bool clicked)
     {
       m_iSelectedItem = iItem;
       GUIListItem item = GetItem(iItem);
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
 
       if (item.IsFolder && clicked)
       {
@@ -654,8 +803,14 @@ namespace TvPlugin
         if (selectedItem == null)
         {
           List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(item.TVTag as Schedule);
-          if (seriesList.Count < 1) noitems = true;  // no items existing
-          else selectedItem = item.TVTag as Schedule;
+          if (seriesList.Count < 1)
+          {
+            noitems = true; // no items existing
+          }
+          else
+          {
+            selectedItem = item.TVTag as Schedule;
+          }
         }
         if (noitems == false)
         {
@@ -667,29 +822,35 @@ namespace TvPlugin
       bool showSeries = btnSeries.Selected;
 
       Schedule rec = item.TVTag as Schedule;
-      if (rec == null) return;
+      if (rec == null)
+      {
+        return;
+      }
 
       Log.Info("OnShowContextMenu: Rec = {0}", rec.ToString());
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
 
       dlg.Reset();
       dlg.SetHeading(rec.ProgramName);
 
       if (showSeries && item.IsFolder)
       {
-        dlg.AddLocalizedString(982);//Cancel this show (618=delete)
-        dlg.AddLocalizedString(888);//Episodes management
+        dlg.AddLocalizedString(982); //Cancel this show (618=delete)
+        dlg.AddLocalizedString(888); //Episodes management
       }
       else if (rec.Series == false)
       {
-        dlg.AddLocalizedString(618);//delete
+        dlg.AddLocalizedString(618); //delete
       }
       else
       {
-        dlg.AddLocalizedString(981);//Cancel this show
-        dlg.AddLocalizedString(982);//Delete this entire recording
-        dlg.AddLocalizedString(888);//Episodes management
+        dlg.AddLocalizedString(981); //Cancel this show
+        dlg.AddLocalizedString(982); //Delete this entire recording
+        dlg.AddLocalizedString(888); //Episodes management
       }
       VirtualCard card;
       TvServer server = new TvServer();
@@ -705,11 +866,14 @@ namespace TvPlugin
       //Schedule schedDB = Schedule.Retrieve(rec.IdSchedule);
       //if (schedDB.ScheduleType != (int)ScheduleRecordingType.Once)
       //{
-        dlg.AddLocalizedString(1048); // settings
+      dlg.AddLocalizedString(1048); // settings
       //}
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
 
       bool isSchedRec = TVHome.IsRecordingSchedule(rec, null, out card);
 
@@ -721,16 +885,16 @@ namespace TvPlugin
       Log.Info("recording fname:{0}", fileName);
       switch (dlg.SelectedId)
       {
-        case 888:////Episodes management
+        case 888: ////Episodes management
           TvPriorities.OnSetEpisodesToKeep(rec);
           break;
 
-        case 1048:////settings
+        case 1048: ////settings
           TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
           //if (TVProgramInfo.CurrentProgram != null)
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+          GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_PROGRAM_INFO);
           return;
-        case 882:////Quality settings
+        case 882: ////Quality settings
           TvPriorities.OnSetQuality(rec);
           break;
 
@@ -770,13 +934,13 @@ namespace TvPlugin
         case 979: // Play recording from beginning
           {
             g_Player.Stop(true);
-            if (System.IO.File.Exists(fileName))
+            if (File.Exists(fileName))
             {
               if (g_Player.Play(fileName, g_Player.MediaType.Recording))
               {
                 g_Player.SeekAbsolute(0);
                 g_Player.ShowFullScreenWindow();
-                TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                Recording recDB = Recording.Retrieve(fileName);
                 TvRecorded.SetActiveRecording(recDB);
                 g_Player.currentTitle = recDB.Title;
                 g_Player.currentDescription = recDB.Description;
@@ -797,7 +961,7 @@ namespace TvPlugin
                 {
                   g_Player.SeekAbsolute(0);
                   g_Player.ShowFullScreenWindow();
-                  TvDatabase.Recording recDB = Recording.Retrieve(fileName);
+                  Recording recDB = Recording.Retrieve(fileName);
                   TvRecorded.SetActiveRecording(recDB);
                   g_Player.currentTitle = recDB.Title;
                   g_Player.currentDescription = recDB.Description;
@@ -814,7 +978,9 @@ namespace TvPlugin
           {
             TVHome.ViewChannelAndCheck(rec.ReferencedChannel());
             if (g_Player.Playing)
+            {
               g_Player.ShowFullScreenWindow();
+            }
             /*
             g_Player.Stop();
             if (System.IO.File.Exists(fileName))
@@ -844,18 +1010,21 @@ namespace TvPlugin
           }
           break;
       }
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0)
+      {
+        m_iSelectedItem--;
+      }
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
     }
 
 
-    void ChangeType(Schedule rec)
+    private void ChangeType(Schedule rec)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(616));//616=Select Recording type
+        dlg.SetHeading(GUILocalizeStrings.Get(616)); //616=Select Recording type
         //611=Record once
         //612=Record everytime on this channel
         //613=Record everytime on every channel
@@ -865,9 +1034,9 @@ namespace TvPlugin
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
-        dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
-        switch ((ScheduleRecordingType)rec.ScheduleType)
+        dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
+        dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
+        switch ((ScheduleRecordingType) rec.ScheduleType)
         {
           case ScheduleRecordingType.Once:
             dlg.SelectedLabel = 0;
@@ -892,35 +1061,38 @@ namespace TvPlugin
             break;
         }
         dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1) return;
+        if (dlg.SelectedLabel == -1)
+        {
+          return;
+        }
         switch (dlg.SelectedLabel)
         {
-          case 0://once
-            rec.ScheduleType = (int)ScheduleRecordingType.Once;
+          case 0: //once
+            rec.ScheduleType = (int) ScheduleRecordingType.Once;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 1://everytime, this channel
-            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+          case 1: //everytime, this channel
+            rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnThisChannel;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 2://everytime, all channels
-            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+          case 2: //everytime, all channels
+            rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnEveryChannel;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 3://weekly
-            rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+          case 3: //weekly
+            rec.ScheduleType = (int) ScheduleRecordingType.Weekly;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 4://daily
-            rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+          case 4: //daily
+            rec.ScheduleType = (int) ScheduleRecordingType.Daily;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 5://Mo-Fi
-            rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+          case 5: //Mo-Fi
+            rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
             rec.Canceled = Schedule.MinSchedule;
             break;
-          case 6://Sat-Sun
-            rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+          case 6: //Sat-Sun
+            rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
             rec.Canceled = Schedule.MinSchedule;
             break;
         }
@@ -928,21 +1100,19 @@ namespace TvPlugin
         TvServer server = new TvServer();
         server.OnNewSchedule();
         LoadDirectory();
-
       }
     }
 
-    void OnNewShedule()
+    private void OnNewShedule()
     {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_SEARCHTYPE);
-
+      GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_SEARCHTYPE);
     }
 
-    void OnEdit(Schedule rec)
+    private void OnEdit(Schedule rec)
     {
-      GUIDialogDateTime dlg = (GUIDialogDateTime)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_DATETIME);
+      GUIDialogDateTime dlg = (GUIDialogDateTime) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_DATETIME);
       if (dlg != null)
-      {        
+      {
         IList<Channel> channels = Channel.ListAll();
         dlg.SetHeading(637);
         dlg.Items.Clear();
@@ -975,38 +1145,39 @@ namespace TvPlugin
       }
     }
 
-    string GetScheduleType(Schedule schedule, int type)
+    private string GetScheduleType(Schedule schedule, int type)
     {
-      ScheduleRecordingType ScheduleType = (ScheduleRecordingType)type;
+      ScheduleRecordingType ScheduleType = (ScheduleRecordingType) type;
       string strType = String.Empty;
       switch (ScheduleType)
       {
         case ScheduleRecordingType.Daily:
-          strType = GUILocalizeStrings.Get(648);//daily
+          strType = GUILocalizeStrings.Get(648); //daily
           break;
         case ScheduleRecordingType.EveryTimeOnEveryChannel:
-          strType = GUILocalizeStrings.Get(651);//Everytime on any channel
+          strType = GUILocalizeStrings.Get(651); //Everytime on any channel
           break;
         case ScheduleRecordingType.EveryTimeOnThisChannel:
-          strType = String.Format(GUILocalizeStrings.Get(650), schedule.ReferencedChannel().DisplayName); ;//Everytime on this channel
+          strType = String.Format(GUILocalizeStrings.Get(650), schedule.ReferencedChannel().DisplayName);
+          ; //Everytime on this channel
           break;
         case ScheduleRecordingType.Once:
-          strType = GUILocalizeStrings.Get(647);//Once
+          strType = GUILocalizeStrings.Get(647); //Once
           break;
         case ScheduleRecordingType.WorkingDays:
-          strType = GUILocalizeStrings.Get(680);//Mon-Fri
+          strType = GUILocalizeStrings.Get(680); //Mon-Fri
           break;
         case ScheduleRecordingType.Weekends:
-          strType = GUILocalizeStrings.Get(1050);//Sat-Sun
+          strType = GUILocalizeStrings.Get(1050); //Sat-Sun
           break;
         case ScheduleRecordingType.Weekly:
-          strType = GUILocalizeStrings.Get(679);//Weekly
+          strType = GUILocalizeStrings.Get(679); //Weekly
           break;
       }
       return strType;
     }
 
-    void OnCleanup()
+    private void OnCleanup()
     {
       int iCleaned = 0;
       IList<Schedule> itemlist = Schedule.ListAll();
@@ -1019,7 +1190,7 @@ namespace TvPlugin
           r.Delete();
         }
       }
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       LoadDirectory();
       if (pDlgOK != null)
       {
@@ -1030,12 +1201,12 @@ namespace TvPlugin
       }
     }
 
-    void SetProperties(Schedule rec)
+    private void SetProperties(Schedule rec)
     {
       string strTime = String.Format("{0} {1} - {2}",
-        Utils.GetShortDayString(rec.StartTime),
-        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Utils.GetShortDayString(rec.StartTime),
+                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", rec.ProgramName);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
@@ -1043,12 +1214,13 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
 
       if (rec.IdChannel < 0)
+      {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+      }
       else
       {
-
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-        if (System.IO.File.Exists(strLogo))
+        if (File.Exists(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
         }
@@ -1058,6 +1230,7 @@ namespace TvPlugin
         }
       }
     }
+
     public void SetProperties(Schedule schedule, Program prog)
     {
       GUIPropertyManager.SetProperty("#TV.Scheduled.Title", String.Empty);
@@ -1067,9 +1240,9 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
 
       string strTime = String.Format("{0} {1} - {2}",
-        Utils.GetShortDayString(schedule.StartTime),
-        schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Utils.GetShortDayString(schedule.StartTime),
+                                     schedule.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     schedule.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
       if (prog != null)
@@ -1089,7 +1262,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.ReferencedChannel().DisplayName);
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
-        if (System.IO.File.Exists(logo))
+        if (File.Exists(logo))
         {
           GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
         }
@@ -1104,7 +1277,7 @@ namespace TvPlugin
       }
     }
 
-    void UpdateDescription()
+    private void UpdateDescription()
     {
       Schedule rec = new Schedule(-1, "", Schedule.MinSchedule, Schedule.MinSchedule);
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -1117,17 +1290,22 @@ namespace TvPlugin
         return;
       }
       rec = pItem.TVTag as Schedule;
-      if (rec == null) return;
+      if (rec == null)
+      {
+        return;
+      }
 
       Program prog = rec.ReferencedChannel().GetProgramAt(rec.StartTime.AddMinutes(1));
       SetProperties(rec, prog);
     }
+
     #endregion
 
     private void ConflictManager_OnConflictsUpdated()
     {
       needUpdate = true;
     }
+
     public override void Process()
     {
       if (needUpdate)
@@ -1138,9 +1316,9 @@ namespace TvPlugin
       TVHome.UpdateProgressPercentageBar();
     }
 
-    void SortChanged(object sender, SortEventArgs e)
+    private void SortChanged(object sender, SortEventArgs e)
     {
-      m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+      m_bSortAscending = e.Order != SortOrder.Descending;
 
       OnSort();
     }

@@ -30,20 +30,23 @@ namespace TvLibrary.Streaming
   {
     #region variables
 
-    readonly bool _isActive;
-    readonly string _ipAdress;
-    readonly string _streamName;
-    readonly DateTime _dateTimeStarted;
-    readonly string _description;
+    private readonly bool _isActive;
+    private readonly string _ipAdress;
+    private readonly string _streamName;
+    private readonly DateTime _dateTimeStarted;
+    private readonly string _description;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
     public RtspClient()
     {
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
@@ -60,19 +63,18 @@ namespace TvLibrary.Streaming
       _dateTimeStarted = started;
       _description = description;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the description.
     /// </summary>
     /// <value>The description.</value>
     public string Description
     {
-      get
-      {
-        return _description;
-      }
+      get { return _description; }
     }
 
     /// <summary>
@@ -81,10 +83,7 @@ namespace TvLibrary.Streaming
     /// <value>The date time started.</value>
     public DateTime DateTimeStarted
     {
-      get
-      {
-        return _dateTimeStarted;
-      }
+      get { return _dateTimeStarted; }
     }
 
     /// <summary>
@@ -93,10 +92,7 @@ namespace TvLibrary.Streaming
     /// <value><c>true</c> if this user is active; otherwise, <c>false</c>.</value>
     public bool IsActive
     {
-      get
-      {
-        return _isActive;
-      }
+      get { return _isActive; }
     }
 
     /// <summary>
@@ -105,10 +101,7 @@ namespace TvLibrary.Streaming
     /// <value>The ip adress.</value>
     public string IpAdress
     {
-      get
-      {
-        return _ipAdress;
-      }
+      get { return _ipAdress; }
     }
 
     /// <summary>
@@ -117,11 +110,9 @@ namespace TvLibrary.Streaming
     /// <value>The name of the stream.</value>
     public string StreamName
     {
-      get
-      {
-        return _streamName;
-      }
+      get { return _streamName; }
     }
+
     #endregion
   }
 }

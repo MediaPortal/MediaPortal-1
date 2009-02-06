@@ -24,17 +24,20 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Drawing;
-using System.Reflection;
 using System.IO;
-using MediaPortal.GUI.Library;
+using System.Reflection;
+using System.Threading;
 using MediaPortal.Configuration;
-
+using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
+using TvLibrary.Teletext;
 
 namespace TvPlugin
 {
+
   #region enum
+
   public enum TeletextButton
   {
     Red,
@@ -42,6 +45,7 @@ namespace TvPlugin
     Yellow,
     Blue
   }
+
   #endregion
 
   /// <summary>
@@ -50,15 +54,15 @@ namespace TvPlugin
   public class TvTeletextBase : GUIWindow
   {
     #region gui controls
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblMessage = null;
-    [SkinControlAttribute(500)]
-    protected GUIImage imgTeletextForeground = null;
-    [SkinControlAttribute(501)]
-    protected GUIImage imgTeletextBackground = null;
+
+    [SkinControl(27)] protected GUILabelControl lblMessage = null;
+    [SkinControl(500)] protected GUIImage imgTeletextForeground = null;
+    [SkinControl(501)] protected GUIImage imgTeletextBackground = null;
+
     #endregion
 
     #region variables
+
     protected Bitmap bmpTeletextPage;
     protected string inputLine = String.Empty;
     protected int currentPageNumber = 0x100;
@@ -70,7 +74,7 @@ namespace TvPlugin
     protected bool _updatingBackgroundImage;
     protected bool _waiting;
     protected DateTime _startTime = DateTime.MinValue;
-    protected TvLibrary.Teletext.TeletextPageRenderer _renderer = new TvLibrary.Teletext.TeletextPageRenderer();
+    protected TeletextPageRenderer _renderer = new TeletextPageRenderer();
     protected bool _hiddenMode;
     protected bool _transparentMode;
     protected Thread _updateThread;
@@ -78,19 +82,20 @@ namespace TvPlugin
     protected int _numberOfRequestedUpdates;
     protected bool _rememberLastValues;
     protected int _percentageOfMaximumHeight;
+
     #endregion
 
     #region Property
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     #endregion
 
     #region Initialization methods
+
     /// <summary>
     /// Initialize the window
     /// </summary>
@@ -118,7 +123,7 @@ namespace TvPlugin
       _startTime = DateTime.MinValue;
 
       // Initialize the render
-      _renderer = new TvLibrary.Teletext.TeletextPageRenderer();
+      _renderer = new TeletextPageRenderer();
       _renderer.TransparentMode = _transparentMode;
       _renderer.FullscreenMode = fullscreenMode;
       _renderer.HiddenMode = _hiddenMode;
@@ -143,6 +148,7 @@ namespace TvPlugin
       // Request an update
       _numberOfRequestedUpdates++;
     }
+
     /// <summary>
     /// Loads the logo page from the assembly
     /// </summary>
@@ -155,19 +161,21 @@ namespace TvPlugin
         using (BinaryReader reader = new BinaryReader(stream))
         {
           receivedPage = new byte[stream.Length];
-          reader.Read(receivedPage, 0, (int)stream.Length);
+          reader.Read(receivedPage, 0, (int) stream.Length);
           receivedPageNumber = 0;
           receivedSubPageNumber = 0;
         }
       }
     }
+
     #endregion
 
     #region OnAction
+
     public override void OnAction(Action action)
     {
       // if we have a keypress or a remote button press then check if it is a number and add it to the inputLine
-      char key = (char)0;
+      char key = (char) 0;
       if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
       {
         if (action.m_key != null)
@@ -175,11 +183,13 @@ namespace TvPlugin
           if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            key = (char)action.m_key.KeyChar;
+            key = (char) action.m_key.KeyChar;
           }
         }
-        if (key == (char)0)
+        if (key == (char) 0)
+        {
           return;
+        }
         UpdateInputLine(key);
       }
       switch (action.wID)
@@ -234,9 +244,11 @@ namespace TvPlugin
       }
       base.OnAction(action);
     }
+
     #endregion
 
     #region Navigation methods
+
     /// <summary>
     /// Selects the next subpage, if possible
     /// </summary>
@@ -246,7 +258,9 @@ namespace TvPlugin
       {
         currentSubPageNumber++;
         while ((currentSubPageNumber & 0x0F) > 9)
+        {
           currentSubPageNumber++;
+        }
         _numberOfRequestedUpdates++;
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
@@ -260,8 +274,10 @@ namespace TvPlugin
       if (currentSubPageNumber > 0)
       {
         currentSubPageNumber--;
-        while ((currentSubPageNumber % 0x0F) > 9)
+        while ((currentSubPageNumber%0x0F) > 9)
+        {
           currentSubPageNumber--;
+        }
         _numberOfRequestedUpdates++;
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
@@ -276,9 +292,13 @@ namespace TvPlugin
       {
         currentPageNumber++;
         while ((currentPageNumber & 0x0F) > 9)
+        {
           currentPageNumber++;
+        }
         while ((currentPageNumber & 0xF0) > 0x90)
+        {
           currentPageNumber += 16;
+        }
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
         _numberOfRequestedUpdates++;
@@ -297,9 +317,13 @@ namespace TvPlugin
       {
         currentPageNumber--;
         while ((currentPageNumber & 0xF0) > 0x90)
+        {
           currentPageNumber -= 16;
+        }
         while ((currentPageNumber & 0x0F) > 9)
+        {
           currentPageNumber--;
+        }
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
         _numberOfRequestedUpdates++;
@@ -328,9 +352,13 @@ namespace TvPlugin
         currentPageNumber = Convert.ToInt16(inputLine, 16);
         currentSubPageNumber = 0;
         if (currentPageNumber < 0x100)
+        {
           currentPageNumber = 0x100;
+        }
         if (currentPageNumber > 0x899)
+        {
           currentPageNumber = 0x899;
+        }
         _numberOfRequestedUpdates++;
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
@@ -378,9 +406,11 @@ namespace TvPlugin
         return;
       }
     }
+
     #endregion
 
     #region Update, Process and Redraw
+
     /// <summary>
     /// Gets called by MP. Rotate the subpages and updates the pages
     /// </summary>
@@ -389,7 +419,9 @@ namespace TvPlugin
       TimeSpan ts = DateTime.Now - _startTime;
       // Only every second, we check
       if (ts.TotalMilliseconds < 1000)
+      {
         return;
+      }
       // Still waiting for a page, then request an update again
       if (_waiting)
       {
@@ -401,14 +433,20 @@ namespace TvPlugin
       TimeSpan tsRotation = TVHome.Card.TeletextRotation(currentPageNumber);
       // Should we rotate?
       if (ts.TotalMilliseconds < tsRotation.TotalMilliseconds)
+      {
         return;
+      }
       // Rotate --> Check the subpagenumber and update time variable
       _startTime = DateTime.Now;
 
       if (currentPageNumber < 0x100)
+      {
         currentPageNumber = 0x100;
+      }
       if (currentPageNumber > 0x899)
+      {
         currentPageNumber = 0x899;
+      }
       int NumberOfSubpages = TVHome.Card.SubPageCount(currentPageNumber);
       if (currentSubPageNumber < NumberOfSubpages)
       {
@@ -423,7 +461,8 @@ namespace TvPlugin
         currentSubPageNumber = 0;
       }
 
-      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
+      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber,
+               NumberOfSubpages, tsRotation.TotalMilliseconds);
       // Request the update
       _numberOfRequestedUpdates++;
     }
@@ -462,7 +501,7 @@ namespace TvPlugin
         _updatingForegroundImage = true;
         imgTeletextForeground.IsVisible = false;
         // Clear the old image
-        Image img = (Image)bmpTeletextPage.Clone();
+        Image img = (Image) bmpTeletextPage.Clone();
         imgTeletextForeground.FileName = "";
         GUITextureManager.ReleaseTexture("[teletextpage]");
         // Set the new image and make the image visible again
@@ -476,7 +515,7 @@ namespace TvPlugin
         _updatingBackgroundImage = true;
         imgTeletextBackground.IsVisible = false;
         // Clear the old image
-        Image img2 = (Image)bmpTeletextPage.Clone();
+        Image img2 = (Image) bmpTeletextPage.Clone();
         imgTeletextBackground.FileName = "";
         GUITextureManager.ReleaseTexture("[teletextpage2]");
         // Set the new image and make the image visible again
@@ -486,7 +525,8 @@ namespace TvPlugin
         imgTeletextBackground.KeepAspectRatio = false;
         imgTeletextBackground.IsVisible = true;
         _updatingBackgroundImage = false;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error(ex);
       }
@@ -511,7 +551,9 @@ namespace TvPlugin
         return;
       }
       if (sub >= maxSubs)
+      {
         sub = maxSubs - 1;
+      }
       // Get the page
       byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, sub);
       // Was the page available, then render it. Otherwise render the last page again and update the header line, if
@@ -540,12 +582,13 @@ namespace TvPlugin
     #endregion
 
     #region Serialisation
+
     /// <summary>
     /// Load the settings
     /// </summary>
     protected void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
@@ -561,13 +604,14 @@ namespace TvPlugin
     {
       if (_rememberLastValues)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlreader.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
           xmlreader.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);
         }
       }
     }
+
     #endregion
   }
 }

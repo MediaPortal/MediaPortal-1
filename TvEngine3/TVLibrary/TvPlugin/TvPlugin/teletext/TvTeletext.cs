@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using MediaPortal.GUI.Library;
 
 namespace TvPlugin.teletext
@@ -30,43 +31,44 @@ namespace TvPlugin.teletext
   /// <summary>
   /// Teletext window of TVE3
   /// </summary>
-  public class TVTeletext : TvTeletextBase 
+  public class TVTeletext : TvTeletextBase
   {
     #region gui components
-    [SkinControlAttribute(502)]
-    protected GUIButtonControl btnPage100 = null;
-    [SkinControlAttribute(503)]
-    protected GUIButtonControl btnPage200 = null;
-    [SkinControlAttribute(504)]
-    protected GUIButtonControl btnPage300 = null;
-    [SkinControlAttribute(505)]
-    protected GUIToggleButtonControl btnHidden = null;
-    [SkinControlAttribute(506)]
-    protected GUISelectButtonControl btnSubPage = null;
-    [SkinControlAttribute(507)]
-    protected GUIButtonControl btnFullscreen = null;
+
+    [SkinControl(502)] protected GUIButtonControl btnPage100 = null;
+    [SkinControl(503)] protected GUIButtonControl btnPage200 = null;
+    [SkinControl(504)] protected GUIButtonControl btnPage300 = null;
+    [SkinControl(505)] protected GUIToggleButtonControl btnHidden = null;
+    [SkinControl(506)] protected GUISelectButtonControl btnSubPage = null;
+    [SkinControl(507)] protected GUIButtonControl btnFullscreen = null;
+
     #endregion
 
     #region ctor
-    public TVTeletext() 
+
+    public TVTeletext()
     {
-      GetID = (int)Window.WINDOW_TELETEXT;
+      GetID = (int) Window.WINDOW_TELETEXT;
     }
+
     #endregion
 
     #region GUIWindow initializing methods
-    public override bool Init() 
+
+    public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
     }
-    public override void OnAdded() 
+
+    public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)Window.WINDOW_TELETEXT, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_TELETEXT, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
-    protected override void OnPageDestroy(int newWindowId) 
+
+    protected override void OnPageDestroy(int newWindowId)
     {
       // Save the settings and then stop the update thread. Also the teletext grabbing
       SaveSettings();
@@ -75,7 +77,7 @@ namespace TvPlugin.teletext
       base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnPageLoad() 
+    protected override void OnPageLoad()
     {
       base.OnPageLoad();
       // Deactivate fullscreen video and initialize the window
@@ -84,17 +86,19 @@ namespace TvPlugin.teletext
       InitializeWindow(false);
       btnHidden.Selected = _hiddenMode;
     }
+
     #endregion
 
     #region OnAction
-    public override void OnAction(Action action) 
+
+    public override void OnAction(Action action)
     {
       base.OnAction(action);
-      switch (action.wID) 
+      switch (action.wID)
       {
         case Action.ActionType.ACTION_SWITCH_TELETEXT_HIDDEN:
           //Change Hidden Mode
-          if (btnHidden != null) 
+          if (btnHidden != null)
           {
             btnHidden.Selected = _hiddenMode;
           }
@@ -102,67 +106,69 @@ namespace TvPlugin.teletext
         case Action.ActionType.ACTION_REMOTE_SUBPAGE_UP:
         case Action.ActionType.ACTION_REMOTE_SUBPAGE_DOWN:
           // Subpage up
-          if (btnSubPage != null) 
+          if (btnSubPage != null)
           {
             btnSubPage.SelectedItem = currentSubPageNumber;
           }
           break;
       }
     }
+
     #endregion
 
     #region OnClicked
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) 
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       // Handle the click events, of this window
-      if (control == btnPage100) 
+      if (control == btnPage100)
       {
         currentPageNumber = 0x100;
         currentSubPageNumber = 0;
         _numberOfRequestedUpdates++;
-        _renderer.PageSelectText = System.Convert.ToString(currentPageNumber, 16);
+        _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
-      if (control == btnPage200) 
+      if (control == btnPage200)
       {
         currentPageNumber = 0x200;
         currentSubPageNumber = 0;
         _numberOfRequestedUpdates++;
-        _renderer.PageSelectText = System.Convert.ToString(currentPageNumber, 16);
+        _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
-      if (control == btnPage300) 
+      if (control == btnPage300)
       {
         currentPageNumber = 0x300;
         currentSubPageNumber = 0;
         _numberOfRequestedUpdates++;
-        _renderer.PageSelectText = System.Convert.ToString(currentPageNumber, 16);
+        _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
-      if (control == btnHidden) 
+      if (control == btnHidden)
       {
-        if (btnHidden != null) 
+        if (btnHidden != null)
         {
           _hiddenMode = btnHidden.Selected;
           _renderer.HiddenMode = btnHidden.Selected;
           _numberOfRequestedUpdates++;
         }
       }
-      if (control == btnSubPage) 
+      if (control == btnSubPage)
       {
-        if (btnSubPage != null) 
+        if (btnSubPage != null)
         {
           currentSubPageNumber = btnSubPage.SelectedItem;
           _numberOfRequestedUpdates++;
         }
       }
-      if (control == btnFullscreen) 
+      if (control == btnFullscreen)
       {
         // First the fullscreen video and then switch to the new window. Otherwise the teletext isn't displayed
         GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_TELETEXT);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_FULLSCREEN_TELETEXT);
       }
       base.OnClicked(controlId, control, actionType);
     }
-    #endregion
 
+    #endregion
   }
 }
 

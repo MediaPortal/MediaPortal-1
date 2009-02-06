@@ -29,7 +29,6 @@ namespace TvLibrary.Epg
   /// </summary>
   public class Languages
   {
-
     /// <summary>
     /// Gets the languages.
     /// </summary>
@@ -40,7 +39,9 @@ namespace TvLibrary.Epg
 
       CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
       foreach (CultureInfo ci in cinfos)
+      {
         langs.Add(ci.EnglishName);
+      }
       return langs;
     }
 
@@ -54,7 +55,9 @@ namespace TvLibrary.Epg
 
       CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
       foreach (CultureInfo ci in cinfos)
+      {
         langs.Add(ci.ThreeLetterISOLanguageName);
+      }
       return langs;
     }
 

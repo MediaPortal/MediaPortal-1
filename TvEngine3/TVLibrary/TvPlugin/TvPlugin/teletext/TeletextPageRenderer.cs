@@ -25,6 +25,8 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
+using System.Text;
 
 namespace TvLibrary.Teletext
 {
@@ -34,39 +36,44 @@ namespace TvLibrary.Teletext
 
     public TeletextPageRenderer()
     {
-      _isRegionalDK = (System.Globalization.RegionInfo.CurrentRegion.Equals("DK"));
+      _isRegionalDK = (RegionInfo.CurrentRegion.Equals("DK"));
     }
 
     #endregion
 
     #region constants
-    const int MAX_ROWS = 50;
+
+    private const int MAX_ROWS = 50;
+
     #endregion
 
     #region variables
+
     //regional stuff
-    readonly bool _isRegionalDK;
+    private readonly bool _isRegionalDK;
 
-    Bitmap _pageBitmap;
-    Graphics _renderGraphics;
-    Font _fontTeletext;
+    private Bitmap _pageBitmap;
+    private Graphics _renderGraphics;
+    private Font _fontTeletext;
 
-    bool _hiddenMode = true;
-    bool _transparentMode ;
-    bool _fullscreenMode;
+    private bool _hiddenMode = true;
+    private bool _transparentMode;
+    private bool _fullscreenMode;
 
-    string _selectedPageText = "";
+    private string _selectedPageText = "";
 
-    int _pageRenderWidth = 1440;
-    int _pageRenderHeight = 1080;
-    int _percentageOfMaximumHeight = 100;
+    private int _pageRenderWidth = 1440;
+    private int _pageRenderHeight = 1080;
+    private int _percentageOfMaximumHeight = 100;
+
     #endregion
 
     #region enums
+
     /// <summary>
     /// Enumeration of all availabel colors in teletext
     /// </summary>
-    enum TextColors
+    private enum TextColors
     {
       None,
       Black,
@@ -119,40 +126,65 @@ namespace TvLibrary.Teletext
       HoldMosaic,
       ReleaseMosaic
     }
+
     #endregion
 
     #region character and other tables for multi-language support. Referring the bits C12-C14 in the header
 
-    readonly char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
-	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
-	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
-	};
+    private readonly char[,] m_charTableA = new char[,]
+                                              {
+                                                {'#', '\u016F'}, {'£', '$'},
+                                                {'#', 'õ'}, {'é', 'ï'}, {'#', '$'}, {'£', '$'}, {'#', '$'},
+                                                {'#', '\u0149'}, {'ç', '$'}, {'#', '¤'}, {'#', 'Ë'}, {'#', '¤'},
+                                                {'£', '\u011F'}
+                                              };
 
-    readonly char[] m_charTableB = new char[] { '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C', 'É', '\u0130' };
+    private readonly char[] m_charTableB = new char[]
+                                             {
+                                               '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162',
+                                               '\u010C', 'É', '\u0130'
+                                             };
 
-    readonly char[,] m_charTableC = new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
-	{ 'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161' },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
-	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
-	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
-	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
-	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },
-    { 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
-	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' },
-    { 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' }
-    };
+    private readonly char[,] m_charTableC = new char[,]
+                                              {
+                                                {'\u0165', '\u017E', 'ý', 'í', '\u0159', 'é'},
+                                                {'\u2190', '½', '\u2192', '\u2191', '#', '\u0336'},
+                                                {'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161'}, {'ë', 'ê', 'ù', 'î', '#', 'è'}
+                                                ,
+                                                {'Ä', 'Ö', 'Ü', '^', '_', '°'}, {'°', 'ç', '\u2192', '\u2191', '#', 'ù'}
+                                                ,
+                                                {'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161'},
+                                                {'\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119'},
+                                                {'á', 'é', 'í', 'ó', 'ú', '¿'},
+                                                {'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163'},
+                                                {'\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D'},
+                                                {'Ä', 'Ö', 'Å', 'Ü', '_', 'é'},
+                                                {'\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131'},
+                                                {'Æ', 'Ø', 'Å', 'Ü', '_', 'é'}
+                                              };
 
-    readonly char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
-	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
-	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
-	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
-	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' },
-    { 'æ', 'ø', 'å', 'ü' }
-    };
+    private readonly char[,] m_charTableD = new char[,]
+                                              {
+                                                {'á', '\u011B', 'ú', '\u0161'}, {'¼', '\u2016', '¾', '÷'},
+                                                {'ä', 'ö', '\u017E', 'ü'}, {'â', 'ô', 'û', 'ç'}, {'ä', 'ö', 'ü', 'ß'},
+                                                {'à', 'ò', 'è', 'ì'}, {'\u0105', '\u0173', '\u017E', '\u012F'},
+                                                {'\u017C', '\u015B', '\u0142', '\u017A'},
+                                                {'ü', 'ñ', 'è', 'à'}, {'â', '\u015F', '\u01CE', 'î'},
+                                                {'\u0107', '\u017E', '\u0111', '\u0161'},
+                                                {'ä', 'ö', 'å', 'ü'}, {'\u015F', 'ö', 'ç', 'ü'},
+                                                {'æ', 'ø', 'å', 'ü'}
+                                              };
 
-    readonly char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
+    private readonly char[] m_charTableE = new char[]
+                                             {
+                                               '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190',
+                                               '\u2190'
+                                             };
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Width of the bitmap
     /// </summary>
@@ -184,14 +216,8 @@ namespace TvLibrary.Teletext
     /// </summary>
     public bool HiddenMode
     {
-      get
-      {
-        return _hiddenMode;
-      }
-      set
-      {
-        _hiddenMode = value;
-      }
+      get { return _hiddenMode; }
+      set { _hiddenMode = value; }
     }
 
     /// <summary>
@@ -217,10 +243,7 @@ namespace TvLibrary.Teletext
     /// </summary>
     public string PageSelectText
     {
-      get
-      {
-        return _selectedPageText;
-      }
+      get { return _selectedPageText; }
       set
       {
         _selectedPageText = "";
@@ -243,9 +266,11 @@ namespace TvLibrary.Teletext
       get { return _percentageOfMaximumHeight; }
       set { _percentageOfMaximumHeight = value; }
     }
+
     #endregion
 
     #region private methods
+
     /// <summary>
     /// Render a single position in the bitmap
     /// </summary>
@@ -271,8 +296,8 @@ namespace TvLibrary.Teletext
       // Generate mosaic
       int[] mosaicY = new int[4];
       mosaicY[0] = 0;
-      mosaicY[1] = (h + 1) / 3;
-      mosaicY[2] = (h * 2 + 1) / 3;
+      mosaicY[1] = (h + 1)/3;
+      mosaicY[2] = (h*2 + 1)/3;
       mosaicY[3] = h;
 
       /* get colors */
@@ -281,7 +306,9 @@ namespace TvLibrary.Teletext
       Color bgColor = GetColor(bColor);
       // We are in transparent mode and fullscreen. Make beckground transparent
       if (_transparentMode && _fullscreenMode)
+      {
         bgColor = Color.HotPink;
+      }
       Brush backBrush = new SolidBrush(bgColor);
       Brush foreBrush = new SolidBrush(GetColor(fColor));
       Pen backPen = new Pen(backBrush, 1);
@@ -291,36 +318,53 @@ namespace TvLibrary.Teletext
       {
         if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
         {
-          int w1 = w / 2;
+          int w1 = w/2;
           int w2 = w - w1;
           int y1;
 
-          chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
+          chr = (byte) ((chr & 0x1f) | ((chr & 0x40) >> 1));
           if ((attrib & 0x200) > 0)
+          {
             for (y1 = 0; y1 < 3; y1++)
             {
               graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
               if ((chr & 1) > 0)
+              {
                 graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              }
               graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
               if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              {
+                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2,
+                                    mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              }
               chr >>= 2;
             }
+          }
           else
+          {
             for (y1 = 0; y1 < 3; y1++)
             {
               if ((chr & 1) > 0)
+              {
                 graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
               else
+              {
                 graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
               if ((chr & 2) > 0)
+              {
                 graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
               else
+              {
                 graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+              }
 
               chr >>= 2;
             }
+          }
 
           x += w;
           return;
@@ -336,7 +380,9 @@ namespace TvLibrary.Teletext
           case 0x20:
             graph.FillRectangle(backBrush, x, y, w, h);
             if (factor == 2)
+            {
               graph.FillRectangle(backBrush, x, y + h, w, h);
+            }
             x += w;
             charReady = true;
             break;
@@ -362,8 +408,8 @@ namespace TvLibrary.Teletext
             chr2 = m_charTableD[txtLanguage, chr - 0x7B];
             break;
           case 0x7F:
-            graph.FillRectangle(backBrush, x, y, w, factor * h);
-            graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
+            graph.FillRectangle(backBrush, x, y, w, factor*h);
+            graph.FillRectangle(foreBrush, x + (w/12), y + factor*(h*5/20), w*10/12, factor*(h*11/20));
             x += w;
             charReady = true;
             break;
@@ -421,33 +467,37 @@ namespace TvLibrary.Teletext
             break;
           case 0xE8:
             graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
-            for (int r = 0; r < w / 2; r++)
+            for (int r = 0; r < w/2; r++)
+            {
               graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
+            }
             x += w;
             charReady = true;
             break;
           case 0xE9:
-            graph.FillRectangle(backBrush, x + w / 2, y, (w + 1) / 2, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h);
+            graph.FillRectangle(backBrush, x + w/2, y, (w + 1)/2, h);
+            graph.FillRectangle(foreBrush, x, y, w/2, h);
             x += w;
             charReady = true;
             break;
           case 0xEA:
             graph.FillRectangle(backBrush, x, y, w, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
+            graph.FillRectangle(foreBrush, x, y, w/2, h/2);
             x += w;
             charReady = true;
             break;
           case 0xEB:
             graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
-            for (int r = 0; r < w / 2; r++)
+            for (int r = 0; r < w/2; r++)
+            {
               graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
+            }
             x += w;
             charReady = true;
             break;
           case 0xEC:
-            graph.FillRectangle(backBrush, x, y + (w / 2), w, h - (w / 2));
-            graph.FillRectangle(foreBrush, x, y, w, h / 2);
+            graph.FillRectangle(backBrush, x, y + (w/2), w, h - (w/2));
+            graph.FillRectangle(foreBrush, x, y, w, h/2);
             x += w;
             charReady = true;
             break;
@@ -464,7 +514,7 @@ namespace TvLibrary.Teletext
             chr2 = m_charTableE[chr - 0xED];
             break;
           default:
-            chr2 = (char)chr;
+            chr2 = (char) chr;
             break;
         }
         // If still not drawn than it's a text and we draw the string
@@ -473,12 +523,12 @@ namespace TvLibrary.Teletext
           string text = "" + chr2;
           graph.FillRectangle(backBrush, x, y, w, h);
           SizeF width = graph.MeasureString(text, _fontTeletext);
-          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), y);
+          PointF xyPos = new PointF((float) x + ((w - ((int) width.Width))/2), y);
           graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
           if (factor == 2)
           {
             graph.FillRectangle(backBrush, x, y + h, w, h);
-            Color[,] pixelColor = new Color[w + 1, h + 1];
+            Color[,] pixelColor = new Color[w + 1,h + 1];
             // save char
             for (int ypos = 0; ypos < h; ypos++)
             {
@@ -490,21 +540,21 @@ namespace TvLibrary.Teletext
             // draw doubleheight
             for (int ypos = 0; ypos < h; ypos++)
             {
-
               for (int xpos = 0; xpos < w; xpos++)
               {
-
                 try
                 {
-                  if (y + (ypos * 2) + 1 < _pageBitmap.Height)
+                  if (y + (ypos*2) + 1 < _pageBitmap.Height)
                   {
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos * 2), pixelColor[xpos, ypos]); // backup old line
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos * 2) + 1, pixelColor[xpos, ypos]);
+                    _pageBitmap.SetPixel(x + xpos, y + (ypos*2), pixelColor[xpos, ypos]); // backup old line
+                    _pageBitmap.SetPixel(x + xpos, y + (ypos*2) + 1, pixelColor[xpos, ypos]);
                   }
-                } catch { }
+                }
+                catch
+                {
+                }
               }
             }
-
           }
           x += w;
         }
@@ -518,6 +568,7 @@ namespace TvLibrary.Teletext
       }
       return;
     }
+
     /// <summary>
     /// Converts the color of the teletext informations to a system color
     /// </summary>
@@ -525,32 +576,32 @@ namespace TvLibrary.Teletext
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
     private static Color GetColor(int colorNumber)
     {
-
       switch (colorNumber)
       {
-        case (int)TextColors.Black:
+        case (int) TextColors.Black:
           return Color.Black;
-        case (int)TextColors.Red:
+        case (int) TextColors.Red:
           return Color.Red;
-        case (int)TextColors.Green:
+        case (int) TextColors.Green:
           return Color.FromArgb(0, 255, 0);
-        case (int)TextColors.Yellow:
+        case (int) TextColors.Yellow:
           return Color.Yellow;
-        case (int)TextColors.Blue:
+        case (int) TextColors.Blue:
           return Color.Blue;
-        case (int)TextColors.Magenta:
+        case (int) TextColors.Magenta:
           return Color.Magenta;
-        case (int)TextColors.White:
+        case (int) TextColors.White:
           return Color.White;
-        case (int)TextColors.Cyan:
+        case (int) TextColors.Cyan:
           return Color.Cyan;
-        case (int)TextColors.Trans1:
+        case (int) TextColors.Trans1:
           return Color.HotPink;
-        case (int)TextColors.Trans2:
+        case (int) TextColors.Trans2:
           return Color.HotPink;
       }
       return Color.Black;
     }
+
     /// <summary>
     /// Checks if is a valid page to be displayed
     /// </summary>
@@ -564,6 +615,7 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Renders a teletext page to a bitmap
     /// </summary>
@@ -580,7 +632,9 @@ namespace TvLibrary.Teletext
         _pageBitmap.MakeTransparent(Color.HotPink);
       }
       if (_renderGraphics == null)
+      {
         _renderGraphics = Graphics.FromImage(_pageBitmap);
+      }
 
       int col;
       int hold;
@@ -588,36 +642,48 @@ namespace TvLibrary.Teletext
       byte held_mosaic;
       bool flag = false;
       bool isBoxed = false;
-      byte[] pageChars = new byte[31 * 40];
-      int[] pageAttribs = new int[31 * 40];
+      byte[] pageChars = new byte[31*40];
+      int[] pageAttribs = new int[31*40];
       bool row24 = false;
       // Decode the page data (Hamming 8/4 or odd parity)
       for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
       {
-        if (rowNr * 42 >= byPage.Length)
+        if (rowNr*42 >= byPage.Length)
+        {
           break;
-        int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref byPage);
+        }
+        int packetNumber = Hamming.GetPacketNumber(rowNr*42, ref byPage);
         // Only the packets 0-25 are accepted
         if (packetNumber < 0 || packetNumber > 25)
+        {
           continue;
+        }
         bool stripParity = true;
         // Packets 0 and 25 are hamming 8/4 encoded
         if (packetNumber == 25 || packetNumber == 0)
+        {
           stripParity = false;
+        }
         // Decode the whole row and remove the first two bytes
         for (col = 2; col < 42; col++)
         {
           // After pageheader in packet 0 (Bit 10) odd parity is used
           if (col >= 10 && packetNumber == 0)
+          {
             stripParity = true;
-          byte kar = byPage[rowNr * 42 + col];
+          }
+          byte kar = byPage[rowNr*42 + col];
           if (stripParity)
+          {
             kar &= 0x7f;
-          pageChars[packetNumber * 40 + col - 2] = kar;
+          }
+          pageChars[packetNumber*40 + col - 2] = kar;
         }
         // Exists a packet 24 (Toptext line)
         if (packetNumber == 24)
+        {
           row24 = true;
+        }
       }
       int row;
       int txtLanguage;
@@ -625,9 +691,13 @@ namespace TvLibrary.Teletext
       int languageCode;
       byte byte1 = Hamming.Decode[byPage[9]];
       if (byte1 == 0xFF)
+      {
         languageCode = 0;
+      }
       else
+      {
         languageCode = ((byte1 >> 3) & 0x01) | (((byte1 >> 2) & 0x01) << 1) | (((byte1 >> 1) & 0x01) << 2);
+      }
 
       switch (languageCode)
       {
@@ -655,7 +725,6 @@ namespace TvLibrary.Teletext
         default:
           txtLanguage = 1;
           break;
-
       }
       // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
       bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
@@ -667,21 +736,25 @@ namespace TvLibrary.Teletext
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
-        || (isBoxed && _selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
+                                     ||
+                                     (isBoxed && _selectedPageText.IndexOf("-") == -1 &&
+                                      !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
 
       // Iterate over all lines of the teletext page and prepare the rendering
       for (row = 0; row <= 24; row++)
       {
         // If row 24 and no toptext exists, then skip this row
         if (row == 24 && !row24)
+        {
           continue;
+        }
         // If not display the header and toptext line, then clear these two rows
         if ((row == 0 || row == 24) && !displayHeaderAndTopText)
         {
           for (int i = 0; i < 40; ++i)
           {
-            pageChars[row * 40 + i] = 32;
-            pageAttribs[row * 40 + i] = ((int)TextColors.Trans1 << 4) | ((int)TextColors.White);
+            pageChars[row*40 + i] = 32;
+            pageAttribs[row*40 + i] = ((int) TextColors.Trans1 << 4) | ((int) TextColors.White);
           }
         }
         else
@@ -689,11 +762,15 @@ namespace TvLibrary.Teletext
           // Otherwise, analyse the information. First set the forground to white and the background to:
           // - Transparent, if transparent mode or boxed and fullscreen and not display the header and toptext line
           // - Black otherwise
-          foreground = (int)TextColors.White;
+          foreground = (int) TextColors.White;
           if ((isBoxed || _transparentMode) && _fullscreenMode && !displayHeaderAndTopText)
-            background = (int)TextColors.Trans1;
+          {
+            background = (int) TextColors.Trans1;
+          }
           else
-            background = (int)TextColors.Black;
+          {
+            background = (int) TextColors.Black;
+          }
 
           // Reset the attributes
           doubleheight = 0;
@@ -705,7 +782,7 @@ namespace TvLibrary.Teletext
           for (int loop1 = 0; loop1 < 40; loop1++)
           {
             // Box starts in this row
-            if (pageChars[(row * 40) + loop1] == (int)Attributes.StartBox)
+            if (pageChars[(row*40) + loop1] == (int) Attributes.StartBox)
             {
               flag = true;
               break;
@@ -718,20 +795,20 @@ namespace TvLibrary.Teletext
           {
             if (_fullscreenMode)
             {
-              foreground = (int)TextColors.Trans1;
-              background = (int)TextColors.Trans1;
+              foreground = (int) TextColors.Trans1;
+              background = (int) TextColors.Trans1;
             }
             else
             {
-              foreground = (int)TextColors.Black;
-              background = (int)TextColors.Black;
+              foreground = (int) TextColors.Black;
+              background = (int) TextColors.Black;
             }
           }
 
           // Iterate over all columns in the row again and now analyse every byte
           for (col = 0; col < 40; col++)
           {
-            int index = row * 40 + col;
+            int index = row*40 + col;
 
             // Set the attributes
             pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
@@ -745,146 +822,154 @@ namespace TvLibrary.Teletext
             {
               switch (pageChars[index])
               {
-                case (int)Attributes.AlphaBlack:
-                  foreground = (int)TextColors.Black;
+                case (int) Attributes.AlphaBlack:
+                  foreground = (int) TextColors.Black;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaRed:
-                  foreground = (int)TextColors.Red;
+                case (int) Attributes.AlphaRed:
+                  foreground = (int) TextColors.Red;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaGreen:
-                  foreground = (int)TextColors.Green;
+                case (int) Attributes.AlphaGreen:
+                  foreground = (int) TextColors.Green;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaYellow:
-                  foreground = (int)TextColors.Yellow;
+                case (int) Attributes.AlphaYellow:
+                  foreground = (int) TextColors.Yellow;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaBlue:
-                  foreground = (int)TextColors.Blue;
+                case (int) Attributes.AlphaBlue:
+                  foreground = (int) TextColors.Blue;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaMagenta:
-                  foreground = (int)TextColors.Magenta;
+                case (int) Attributes.AlphaMagenta:
+                  foreground = (int) TextColors.Magenta;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaCyan:
-                  foreground = (int)TextColors.Cyan;
+                case (int) Attributes.AlphaCyan:
+                  foreground = (int) TextColors.Cyan;
                   charset = 0;
                   break;
 
-                case (int)Attributes.AlphaWhite:
-                  foreground = (int)TextColors.White;
+                case (int) Attributes.AlphaWhite:
+                  foreground = (int) TextColors.White;
                   charset = 0;
                   break;
 
-                case (int)Attributes.Flash:
+                case (int) Attributes.Flash:
                   break;
 
-                case (int)Attributes.Steady:
+                case (int) Attributes.Steady:
                   break;
 
-                case (int)Attributes.EndBox:
+                case (int) Attributes.EndBox:
                   if (isBoxed)
                   {
                     if (_fullscreenMode)
                     {
-                      foreground = (int)TextColors.Trans1;
-                      background = (int)TextColors.Trans1;
+                      foreground = (int) TextColors.Trans1;
+                      background = (int) TextColors.Trans1;
                     }
                     else
                     {
-                      foreground = (int)TextColors.Black;
-                      background = (int)TextColors.Black;
+                      foreground = (int) TextColors.Black;
+                      background = (int) TextColors.Black;
                     }
                   }
                   break;
 
-                case (int)Attributes.StartBox:
+                case (int) Attributes.StartBox:
                   if (isBoxed)
                   {
                     // Clear everything until this position in the line
                     if (col > 0)
+                    {
                       for (int loop1 = 0; loop1 < col; loop1++)
-                        pageChars[(row * 40) + loop1] = 32;
+                      {
+                        pageChars[(row*40) + loop1] = 32;
+                      }
+                    }
                     // Clear also the page attributes
                     for (int clear = 0; clear < col; clear++)
                     {
                       if (_fullscreenMode)
                       {
-                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Trans1 << 4 | (int)TextColors.Trans1;
+                        pageAttribs[row*40 + clear] = doubleheight << 10 | charset << 8 | (int) TextColors.Trans1 << 4 |
+                                                      (int) TextColors.Trans1;
                       }
                       else
                       {
-                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 | (int)TextColors.Black;
+                        pageAttribs[row*40 + clear] = doubleheight << 10 | charset << 8 | (int) TextColors.Black << 4 |
+                                                      (int) TextColors.Black;
                       }
                     }
                     // Set the standard background color
-                    if (background == (int)TextColors.Trans1)
+                    if (background == (int) TextColors.Trans1)
                     {
-                      background = (int)TextColors.Black;
+                      background = (int) TextColors.Black;
                     }
                   }
                   break;
 
-                case (int)Attributes.NormalSize:
+                case (int) Attributes.NormalSize:
                   doubleheight = 0;
                   pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.DoubleHeight:
+                case (int) Attributes.DoubleHeight:
                   if (row < 23)
+                  {
                     doubleheight = 1;
+                  }
                   break;
 
-                case (int)Attributes.MosaicBlack:
-                  foreground = (int)TextColors.Black;
+                case (int) Attributes.MosaicBlack:
+                  foreground = (int) TextColors.Black;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicRed:
-                  foreground = (int)TextColors.Red;
+                case (int) Attributes.MosaicRed:
+                  foreground = (int) TextColors.Red;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicGreen:
-                  foreground = (int)TextColors.Green;
+                case (int) Attributes.MosaicGreen:
+                  foreground = (int) TextColors.Green;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicYellow:
-                  foreground = (int)TextColors.Yellow;
+                case (int) Attributes.MosaicYellow:
+                  foreground = (int) TextColors.Yellow;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicBlue:
-                  foreground = (int)TextColors.Blue;
+                case (int) Attributes.MosaicBlue:
+                  foreground = (int) TextColors.Blue;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicMagenta:
-                  foreground = (int)TextColors.Magenta;
+                case (int) Attributes.MosaicMagenta:
+                  foreground = (int) TextColors.Magenta;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicCyan:
-                  foreground = (int)TextColors.Cyan;
+                case (int) Attributes.MosaicCyan:
+                  foreground = (int) TextColors.Cyan;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.MosaicWhite:
-                  foreground = (int)TextColors.White;
+                case (int) Attributes.MosaicWhite:
+                  foreground = (int) TextColors.White;
                   charset = 1 + mosaictype;
                   break;
 
-                case (int)Attributes.Conceal:
+                case (int) Attributes.Conceal:
                   if (_hiddenMode == false)
                   {
                     foreground = background;
@@ -892,7 +977,7 @@ namespace TvLibrary.Teletext
                   }
                   break;
 
-                case (int)Attributes.ContiguousMosaic:
+                case (int) Attributes.ContiguousMosaic:
                   mosaictype = 0;
                   if (charset > 0)
                   {
@@ -901,7 +986,7 @@ namespace TvLibrary.Teletext
                   }
                   break;
 
-                case (int)Attributes.SeparatedMosaic:
+                case (int) Attributes.SeparatedMosaic:
                   mosaictype = 1;
                   if (charset > 0)
                   {
@@ -910,59 +995,72 @@ namespace TvLibrary.Teletext
                   }
                   break;
 
-                case (int)Attributes.Esc:
+                case (int) Attributes.Esc:
                   break;
 
-                case (int)Attributes.BlackBackground:
-                  background = (int)TextColors.Black;
+                case (int) Attributes.BlackBackground:
+                  background = (int) TextColors.Black;
                   pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.NewBackground:
+                case (int) Attributes.NewBackground:
                   background = foreground;
                   pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   break;
 
-                case (int)Attributes.HoldMosaic:
+                case (int) Attributes.HoldMosaic:
                   hold = 1;
                   break;
 
-                case (int)Attributes.ReleaseMosaic:
+                case (int) Attributes.ReleaseMosaic:
                   hold = 2;
                   break;
               }
 
               if (hold > 0 && charset > 0)
+              {
                 pageChars[index] = held_mosaic;
+              }
               else
+              {
                 pageChars[index] = 32;
+              }
 
               if (hold == 2)
+              {
                 hold = 0;
+              }
             }
             else
             {
               if (charset > 0)
+              {
                 held_mosaic = pageChars[index];
+              }
               // If doubleheight is selected than delete the following line
               if (doubleheight > 0)
+              {
                 pageChars[index + 40] = 0xFF;
+              }
             }
           }
           // Check, if there is double height selected in than set the attributes for the next row and skip it
-          for (int count = (row + 1) * 40; count < ((row + 1) * 40) + 40; count++)
+          for (int count = (row + 1)*40; count < ((row + 1)*40) + 40; count++)
           {
             if (pageChars[count] == 255)
             {
               for (int loop1 = 0; loop1 < 40; loop1++)
-                pageAttribs[(row + 1) * 40 + loop1] = ((pageAttribs[(row * 40) + loop1] & 0xF0) | ((pageAttribs[(row * 40) + loop1] & 0xF0) >> 4));
+              {
+                pageAttribs[(row + 1)*40 + loop1] = ((pageAttribs[(row*40) + loop1] & 0xF0) |
+                                                     ((pageAttribs[(row*40) + loop1] & 0xF0) >> 4));
+              }
 
               row++;
               break;
             }
           }
         }
-      }//for (int rowNr = 0; rowNr < 24; rowNr++)
+      } //for (int rowNr = 0; rowNr < 24; rowNr++)
 
       // Generate header line, if it should be displayed
       if (IsDecimalPage(mPage) && displayHeaderAndTopText)
@@ -978,40 +1076,44 @@ namespace TvLibrary.Teletext
         {
           if (_selectedPageText.Equals(Convert.ToString(mPage, 16)))
           {
-            lineColor = (int)TextColors.Green;
+            lineColor = (int) TextColors.Green;
             pageNumber = Convert.ToString(mPage, 16) + "/" + Convert.ToString(sPage, 16);
           }
           else
           {
-            lineColor = (int)TextColors.Yellow;
+            lineColor = (int) TextColors.Yellow;
             pageNumber = _selectedPageText;
           }
         }
         else
         {
-          lineColor = (int)TextColors.Red;
+          lineColor = (int) TextColors.Red;
           pageNumber = _selectedPageText;
         }
         string headline = "MediaPortal P." + pageNumber;
-        headline += new string((char)32, 32 - headline.Length);
-        byte[] mpText = System.Text.Encoding.ASCII.GetBytes(headline);
+        headline += new string((char) 32, 32 - headline.Length);
+        byte[] mpText = Encoding.ASCII.GetBytes(headline);
         Array.Copy(mpText, 0, pageChars, 0, mpText.Length);
         for (i = 0; i < 11; i++)
-          pageAttribs[i] = ((int)TextColors.Black << 4) | lineColor;
+        {
+          pageAttribs[i] = ((int) TextColors.Black << 4) | lineColor;
+        }
         for (i = 12; i < 40; i++)
-          pageAttribs[i] = ((int)TextColors.Black << 4) | ((int)TextColors.White);
+        {
+          pageAttribs[i] = ((int) TextColors.Black << 4) | ((int) TextColors.White);
+        }
       }
 
       // Now we generate the bitmap
       int y = 0;
       int x;
-      int width = _pageRenderWidth / 40;
-      int height = _pageRenderHeight / 25;
-      float fntSize = height;//Math.Min(width, height);
-      float nPercentage = ((float)_percentageOfMaximumHeight / 100);
+      int width = _pageRenderWidth/40;
+      int height = _pageRenderHeight/25;
+      float fntSize = height; //Math.Min(width, height);
+      float nPercentage = ((float) _percentageOfMaximumHeight/100);
       _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
       float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
-      while (fntHeight > nPercentage * height)// || fntHeight > nPercentage * width)
+      while (fntHeight > nPercentage*height) // || fntHeight > nPercentage * width)
       {
         fntSize -= 0.1f;
         _fontTeletext = new Font("Lucida Console", fntSize, FontStyle.Bold, GraphicsUnit.Pixel);
@@ -1023,9 +1125,13 @@ namespace TvLibrary.Teletext
       {
         // Select the brush, depending on the page and mode
         if ((isBoxed || _transparentMode) && _fullscreenMode)
+        {
           brush = new SolidBrush(Color.HotPink);
+        }
         else
+        {
           brush = new SolidBrush(Color.Black);
+        }
 
         // Draw the base rectangle
         _renderGraphics.FillRectangle(brush, 0, 0, _pageRenderWidth, _pageRenderHeight);
@@ -1036,11 +1142,16 @@ namespace TvLibrary.Teletext
           {
             // If not display a toptext line than abort
             if (!displayHeaderAndTopText && row == 24)
+            {
               break;
+            }
             x = 0;
             // Draw a single point
             for (col = 0; col < 40; col++)
-              Render(_renderGraphics, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width, height, txtLanguage);
+            {
+              Render(_renderGraphics, pageChars[row*40 + col], pageAttribs[row*40 + col], ref x, ref y, width, height,
+                     txtLanguage);
+            }
 
             y += height + (row == 23 ? 2 : 0);
           }
@@ -1049,7 +1160,9 @@ namespace TvLibrary.Teletext
       finally
       {
         if (brush != null)
+        {
           brush.Dispose();
+        }
         _fontTeletext.Dispose();
         _fontTeletext = null;
       }
@@ -1063,13 +1176,18 @@ namespace TvLibrary.Teletext
     public void Clear()
     {
       if (_pageBitmap != null)
+      {
         _pageBitmap.Dispose();
+      }
       _pageBitmap = null;
 
       if (_renderGraphics != null)
+      {
         _renderGraphics.Dispose();
+      }
       _renderGraphics = null;
     }
+
     #endregion
   }
 }

@@ -19,12 +19,11 @@
  *
  */
 using System;
-using TvLibrary.Interfaces;
 using DirectShowLib;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations
 {
-
   /// <summary>
   /// class holding all tuning details for analog channels
   /// </summary>
@@ -32,6 +31,7 @@ namespace TvLibrary.Implementations
   public class AnalogChannel : IChannel
   {
     #region enums
+
     /// <summary>
     /// Video input type
     /// </summary>
@@ -90,6 +90,7 @@ namespace TvLibrary.Implementations
       /// </summary>
       YRYBYInput3
     }
+
     /// <summary>
     /// Audio input type
     /// </summary>
@@ -136,17 +137,19 @@ namespace TvLibrary.Implementations
       /// </summary>
       SPDIFInput3
     }
+
     #endregion
 
     #region variables
-    string _channelName;
-    long _channelFrequency;
-    int _channelNumber;
-    Country _country;
-    bool _isRadio;
-    TunerInputType _tunerSource;
-    VideoInputType _videoInputType;
-    AudioInputType _audioInputType;
+
+    private string _channelName;
+    private long _channelFrequency;
+    private int _channelNumber;
+    private Country _country;
+    private bool _isRadio;
+    private TunerInputType _tunerSource;
+    private VideoInputType _videoInputType;
+    private AudioInputType _audioInputType;
 
     #endregion
 
@@ -170,20 +173,15 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets or sets the video source.
     /// </summary>
     /// <value>The video source.</value>
     public VideoInputType VideoSource
     {
-      get
-      {
-        return _videoInputType;
-      }
-      set
-      {
-        _videoInputType = value;
-      }
+      get { return _videoInputType; }
+      set { _videoInputType = value; }
     }
 
     /// <summary>
@@ -192,14 +190,8 @@ namespace TvLibrary.Implementations
     /// <value>The audio source.</value>
     public AudioInputType AudioSource
     {
-      get
-      {
-        return _audioInputType;
-      }
-      set
-      {
-        _audioInputType = value;
-      }
+      get { return _audioInputType; }
+      set { _audioInputType = value; }
     }
 
     /// <summary>
@@ -208,28 +200,17 @@ namespace TvLibrary.Implementations
     /// <value>The tuner source.</value>
     public TunerInputType TunerSource
     {
-      get
-      {
-        return _tunerSource;
-      }
-      set
-      {
-        _tunerSource = value;
-      }
+      get { return _tunerSource; }
+      set { _tunerSource = value; }
     }
+
     /// <summary>
     /// gets/sets the country
     /// </summary>
     public Country Country
     {
-      get
-      {
-        return _country;
-      }
-      set
-      {
-        _country = value;
-      }
+      get { return _country; }
+      set { _country = value; }
     }
 
     /// <summary>
@@ -237,14 +218,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _channelName;
-      }
-      set
-      {
-        _channelName = value;
-      }
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
@@ -252,14 +227,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public long Frequency
     {
-      get
-      {
-        return _channelFrequency;
-      }
-      set
-      {
-        _channelFrequency = value;
-      }
+      get { return _channelFrequency; }
+      set { _channelFrequency = value; }
     }
 
     /// <summary>
@@ -267,28 +236,17 @@ namespace TvLibrary.Implementations
     /// </summary>
     public int ChannelNumber
     {
-      get
-      {
-        return _channelNumber;
-      }
-      set
-      {
-        _channelNumber = value;
-      }
+      get { return _channelNumber; }
+      set { _channelNumber = value; }
     }
+
     /// <summary>
     /// boolean indicating if this is a radio channel
     /// </summary>
     public bool IsRadio
     {
-      get
-      {
-        return _isRadio;
-      }
-      set
-      {
-        _isRadio = value;
-      }
+      get { return _isRadio; }
+      set { _isRadio = value; }
     }
 
     /// <summary>
@@ -296,14 +254,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsTv
     {
-      get
-      {
-        return !_isRadio;
-      }
-      set
-      {
-        _isRadio = !value;
-      }
+      get { return !_isRadio; }
+      set { _isRadio = !value; }
     }
 
     #endregion
@@ -318,7 +270,7 @@ namespace TvLibrary.Implementations
     {
       string line = IsRadio ? "radio:" : "tv:";
       line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5} Audio:{6}",
-        Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
+                            Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
       return line;
     }
 
@@ -333,28 +285,49 @@ namespace TvLibrary.Implementations
     public override bool Equals(object obj)
     {
       if ((obj as AnalogChannel) == null)
+      {
         return false;
+      }
       AnalogChannel ch = obj as AnalogChannel;
       if (ch.VideoSource != VideoSource)
+      {
         return false;
+      }
       if (ch.AudioSource != AudioSource)
+      {
         return false;
+      }
       if (ch.TunerSource != TunerSource)
+      {
         return false;
+      }
       if (ch.Country.Id != Country.Id)
+      {
         return false;
+      }
       if (ch.Name != Name)
+      {
         return false;
+      }
       if (ch.Frequency != Frequency)
+      {
         return false;
+      }
       if (ch.ChannelNumber != ChannelNumber)
+      {
         return false;
+      }
       if (ch.IsRadio != IsRadio)
+      {
         return false;
+      }
       if (ch.IsTv != IsTv)
+      {
         return false;
+      }
       return true;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -365,7 +338,7 @@ namespace TvLibrary.Implementations
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
-              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode();
+             _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode();
     }
   }
 }

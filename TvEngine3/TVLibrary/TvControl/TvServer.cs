@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TvControl
 {
@@ -28,12 +29,13 @@ namespace TvControl
   /// </summary>
   public class TvServer
   {
-    static void HandleFailure()
+    private static void HandleFailure()
     {
       RemoteControl.Clear();
     }
 
     #region public interface
+
     /// <summary>
     /// Returns the number of cards found
     /// </summary>
@@ -44,7 +46,8 @@ namespace TvControl
         try
         {
           return RemoteControl.Instance.Cards;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -63,19 +66,24 @@ namespace TvControl
       {
         try
         {
-          if (System.IO.File.Exists(fileName))
+          if (File.Exists(fileName))
+          {
             return fileName;
-        } catch (Exception)
+          }
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
         return RemoteControl.Instance.GetUrlForFile(fileName);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
       return "";
     }
+
     /// <summary>
     /// Deletes the recording at the tvserver
     /// </summary>
@@ -85,12 +93,14 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.DeleteRecording(idRecording);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
       return false;
     }
+
     /// <summary>
     /// Checks if the files of a recording still exist
     /// </summary>
@@ -100,7 +110,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.IsRecordingValid(idRecording);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return true;
       }
@@ -116,7 +127,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetUserForCard(cardId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -136,7 +148,8 @@ namespace TvControl
       {
         RemoteControl.Instance.CardId(index);
         return new VirtualCard(user, RemoteControl.HostName);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -157,7 +170,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.IsRecording(channelName, out card);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -173,14 +187,18 @@ namespace TvControl
       try
       {
         if (RemoteControl.Instance.IsAnyCardRecording())
+        {
           return true;
-      } catch (Exception)
+        }
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
 
       return false;
     }
+
     /// <summary>
     /// Determines if any card is currently busy recording or timeshifting
     /// </summary>
@@ -200,8 +218,11 @@ namespace TvControl
       try
       {
         if (RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec))
+        {
           return true;
-      } catch (Exception)
+        }
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -218,8 +239,11 @@ namespace TvControl
       try
       {
         if (RemoteControl.Instance.IsAnyCardIdle())
+        {
           return true;
-      } catch (Exception)
+        }
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -240,7 +264,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.TimeShiftingWouldUseCard(ref user, idChannel);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -263,13 +288,13 @@ namespace TvControl
       {
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card);
         return result;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
       return TvResult.UnknownError;
     }
-
 
 
     /// <summary>
@@ -284,9 +309,9 @@ namespace TvControl
       card = null;
       try
       {
-        return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out  card);
-
-      } catch (Exception)
+        return RemoteControl.Instance.IsRecordingSchedule(idSchedule, out card);
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -303,8 +328,8 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.StopRecordingSchedule(idSchedule);
-
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -319,7 +344,8 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.OnNewSchedule();
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -335,7 +361,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.IsTimeToRecord(time);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -351,7 +378,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.IsTimeToRecord(time, recordingId);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -368,11 +396,13 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.OnNewSchedule(args);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
     }
+
     /// <summary>
     /// Enable or disable the epg-grabber
     /// </summary>
@@ -383,7 +413,8 @@ namespace TvControl
         try
         {
           return RemoteControl.Instance.EpgGrabberEnabled;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -394,7 +425,8 @@ namespace TvControl
         try
         {
           RemoteControl.Instance.EpgGrabberEnabled = value;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           HandleFailure();
         }
@@ -411,7 +443,8 @@ namespace TvControl
       try
       {
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -428,7 +461,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetRecordingUrl(idRecording);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -444,7 +478,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetAllChannelStatesCached(user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -462,7 +497,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetAllChannelStatesForGroup(idGroup, user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -480,7 +516,8 @@ namespace TvControl
       try
       {
         return RemoteControl.Instance.GetChannelState(idChannel, user);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
@@ -494,7 +531,8 @@ namespace TvControl
     /// <param name="currentTSChannels"></param>
     /// <param name="currentUnavailChannels"></param>
     /// <param name="currentAvailChannels"></param>
-    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels, out List<int> currentUnavailChannels, out List<int> currentAvailChannels)
+    public void GetAllRecordingChannels(out List<int> currentRecChannels, out List<int> currentTSChannels,
+                                        out List<int> currentUnavailChannels, out List<int> currentAvailChannels)
     {
       currentRecChannels = null;
       currentTSChannels = null;
@@ -502,12 +540,15 @@ namespace TvControl
       currentAvailChannels = null;
       try
       {
-        RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels, out currentUnavailChannels, out currentAvailChannels);
-      } catch (Exception)
+        RemoteControl.Instance.GetAllRecordingChannels(out currentRecChannels, out currentTSChannels,
+                                                       out currentUnavailChannels, out currentAvailChannels);
+      }
+      catch (Exception)
       {
         HandleFailure();
       }
     }
+
     #endregion
   }
 }

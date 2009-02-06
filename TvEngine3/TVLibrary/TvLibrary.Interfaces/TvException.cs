@@ -54,7 +54,6 @@ namespace TvLibrary
       : base(message, innerException)
     {
     }
-
   }
 
   /// <summary>
@@ -89,6 +88,5 @@ namespace TvLibrary
       : base(message, innerException)
     {
     }
-
   }
 }

@@ -23,104 +23,105 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endregion
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace DirectShowLib
 {
-    #region Declarations
 
-    /// <summary>
-    /// From MIXER_DATA_* defines
-    /// </summary>
-    [Flags]
-    public enum MixerData
-    {
-        None = 0,
-        AspectRatio = 0x00000001, // picture aspect ratio changed
-        NativeSize = 0x00000002, // native size of video changed
-        Palette = 0x00000004 // palette of video changed
-    }
+  #region Declarations
 
-    /// <summary>
-    /// From MIXER_STATE_* defines
-    /// </summary>
-    public enum MixerState
-    {
-        Mask = 0x00000003, // use this mask with state status bits
-        Unconnected = 0x00000000, // mixer is unconnected and stopped
-        ConnectedStopped = 0x00000001, // mixer is connected and stopped
-        ConnectedPaused = 0x00000002, // mixer is connected and paused
-        ConnectedPlaying = 0x00000003 // mixer is connected and playing
-    }
+  /// <summary>
+  /// From MIXER_DATA_* defines
+  /// </summary>
+  [Flags]
+  public enum MixerData
+  {
+    None = 0,
+    AspectRatio = 0x00000001, // picture aspect ratio changed
+    NativeSize = 0x00000002, // native size of video changed
+    Palette = 0x00000004 // palette of video changed
+  }
 
-    #endregion
+  /// <summary>
+  /// From MIXER_STATE_* defines
+  /// </summary>
+  public enum MixerState
+  {
+    Mask = 0x00000003, // use this mask with state status bits
+    Unconnected = 0x00000000, // mixer is unconnected and stopped
+    ConnectedStopped = 0x00000001, // mixer is connected and stopped
+    ConnectedPaused = 0x00000002, // mixer is connected and paused
+    ConnectedPlaying = 0x00000003 // mixer is connected and playing
+  }
 
-    #region Interfaces
+  #endregion
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("81A3BD31-DEE1-11d1-8508-00A0C91F9CA0"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IMixerOCXNotify
-    {
-        [PreserveSig]
-        int OnInvalidateRect([In] DsRect lpcRect);
+  #region Interfaces
 
-        [PreserveSig]
-        int OnStatusChange([In] MixerState ulStatusFlags);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("81A3BD31-DEE1-11d1-8508-00A0C91F9CA0"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IMixerOCXNotify
+  {
+    [PreserveSig]
+    int OnInvalidateRect([In] DsRect lpcRect);
 
-        [PreserveSig]
-        int OnDataChange([In] MixerData ulDataFlags);
-    }
+    [PreserveSig]
+    int OnStatusChange([In] MixerState ulStatusFlags);
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("81A3BD32-DEE1-11d1-8508-00A0C91F9CA0"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IMixerOCX
-    {
-        [PreserveSig]
-        int OnDisplayChange(
-            [In] int ulBitsPerPixel,
-            [In] int ulScreenWidth,
-            [In] int ulScreenHeight
-            );
+    [PreserveSig]
+    int OnDataChange([In] MixerData ulDataFlags);
+  }
 
-        [PreserveSig]
-        int GetAspectRatio(
-            [Out] out int pdwPictAspectRatioX,
-            [Out] out int pdwPictAspectRatioY
-            );
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("81A3BD32-DEE1-11d1-8508-00A0C91F9CA0"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IMixerOCX
+  {
+    [PreserveSig]
+    int OnDisplayChange(
+      [In] int ulBitsPerPixel,
+      [In] int ulScreenWidth,
+      [In] int ulScreenHeight
+      );
 
-        [PreserveSig]
-        int GetVideoSize(
-            [Out] out int pdwVideoWidth,
-            [Out] out int pdwVideoHeight
-            );
+    [PreserveSig]
+    int GetAspectRatio(
+      [Out] out int pdwPictAspectRatioX,
+      [Out] out int pdwPictAspectRatioY
+      );
 
-        [PreserveSig]
-        int GetStatus([Out] out int pdwStatus);
+    [PreserveSig]
+    int GetVideoSize(
+      [Out] out int pdwVideoWidth,
+      [Out] out int pdwVideoHeight
+      );
 
-        [PreserveSig]
-        int OnDraw(
-            [In] IntPtr hdcDraw, // HDC
-            [In] DsRect prcDraw
-            );
+    [PreserveSig]
+    int GetStatus([Out] out int pdwStatus);
 
-        [PreserveSig]
-        int SetDrawRegion(
-            // While in theory this takes an LPPOINT, in practice
-            // it must be NULL.
-            [In] IntPtr lpptTopLeftSC,
-            [In] DsRect prcDrawCC,
-            [In] DsRect lprcClip
-            );
+    [PreserveSig]
+    int OnDraw(
+      [In] IntPtr hdcDraw, // HDC
+      [In] DsRect prcDraw
+      );
 
-        [PreserveSig]
-        int Advise([In] IMixerOCXNotify pmdns);
+    [PreserveSig]
+    int SetDrawRegion(
+      // While in theory this takes an LPPOINT, in practice
+      // it must be NULL.
+      [In] IntPtr lpptTopLeftSC,
+      [In] DsRect prcDrawCC,
+      [In] DsRect lprcClip
+      );
 
-        [PreserveSig]
-        int UnAdvise();
-    }
+    [PreserveSig]
+    int Advise([In] IMixerOCXNotify pmdns);
 
-    #endregion
+    [PreserveSig]
+    int UnAdvise();
+  }
+
+  #endregion
 }

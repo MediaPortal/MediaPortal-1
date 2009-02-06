@@ -30,17 +30,19 @@ namespace TvLibrary
   [Serializable]
   public class Country
   {
-    readonly int _id;
-    int _index;
-    readonly string _name;
-    readonly string _code;
-    AnalogVideoStandard _standard;
+    private readonly int _id;
+    private int _index;
+    private readonly string _name;
+    private readonly string _code;
+    private AnalogVideoStandard _standard;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
     public Country()
     {
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
@@ -88,14 +90,8 @@ namespace TvLibrary
     /// <value>The index.</value>
     public int Index
     {
-      get
-      {
-        return _index;
-      }
-      set
-      {
-        _index = value;
-      }
+      get { return _index; }
+      set { _index = value; }
     }
 
     /// <summary>
@@ -103,10 +99,7 @@ namespace TvLibrary
     /// </summary>
     public int Id
     {
-      get
-      {
-        return _id;
-      }
+      get { return _id; }
     }
 
     /// <summary>
@@ -114,20 +107,15 @@ namespace TvLibrary
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _name;
-      }
+      get { return _name; }
     }
+
     /// <summary>
     /// gets/sets the country code
     /// </summary>
     public string Code
     {
-      get
-      {
-        return _code;
-      }
+      get { return _code; }
     }
 
     ///<summary>
@@ -135,15 +123,8 @@ namespace TvLibrary
     ///</summary>
     public AnalogVideoStandard VideoStandard
     {
-      get
-      {
-        return _standard;
-      }
-      set
-      {
-        _standard = value;
-      }
+      get { return _standard; }
+      set { _standard = value; }
     }
   }
-
 }

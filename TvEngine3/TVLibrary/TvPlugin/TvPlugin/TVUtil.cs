@@ -20,14 +20,9 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-
 using TvDatabase;
-using Gentle.Common;
-using Gentle.Framework;
 
 namespace TvPlugin
 {
@@ -38,7 +33,8 @@ namespace TvPlugin
   /// </summary>
   public class TVUtil
   {
-    int _days;
+    private int _days;
+
     public TVUtil()
     {
       _days = 15;
@@ -51,7 +47,6 @@ namespace TvPlugin
 
     #region IDisposable Members
 
-
     #endregion
 
     public List<Schedule> GetRecordingTimes(Schedule rec)
@@ -60,29 +55,36 @@ namespace TvPlugin
       List<Schedule> recordings = new List<Schedule>();
 
       DateTime dtDay = DateTime.Now;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Once)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Once)
       {
         recordings.Add(rec);
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Daily)
       {
         for (int i = 0; i < _days; ++i)
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                          0);
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(1);
+          }
           recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
           if (rec.EndTime.Day > rec.StartTime.Day)
+          {
             dtDay = dtDay.AddDays(-1);
+          }
           recNew.Series = true;
           if (recNew.StartTime >= DateTime.Now)
           {
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             recordings.Add(recNew);
           }
           dtDay = dtDay.AddDays(1);
@@ -90,23 +92,30 @@ namespace TvPlugin
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
       {
         for (int i = 0; i < _days; ++i)
         {
           if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                            0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
+            }
             recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -117,7 +126,7 @@ namespace TvPlugin
         return recordings;
       }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekends)
       {
         IList<Program> progList;
         progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
@@ -125,39 +134,47 @@ namespace TvPlugin
         foreach (Program prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-                      (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+              (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
             recNew.StartTime = prog.StartTime;
             recNew.EndTime = prog.EndTime;
             recNew.Series = true;
 
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             recordings.Add(recNew);
           }
-
         }
         return recordings;
       }
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.Weekly)
       {
         for (int i = 0; i < _days; ++i)
         {
           if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
           {
             Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0);
+            recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
+                                            0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(1);
+            }
             recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
             if (rec.EndTime.Day > rec.StartTime.Day)
+            {
               dtDay = dtDay.AddDays(-1);
+            }
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
               recNew.Canceled = recNew.StartTime;
+            }
             if (recNew.StartTime >= DateTime.Now)
             {
               recordings.Add(recNew);
@@ -170,14 +187,14 @@ namespace TvPlugin
 
 
       IList<Program> programs;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+      if (rec.ScheduleType == (int) ScheduleRecordingType.EveryTimeOnThisChannel)
       {
         Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().DisplayName);
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
       }
       else
       {
-        Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName );
+        Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName);
 
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
       }
@@ -186,13 +203,15 @@ namespace TvPlugin
         if (rec.IsRecordingProgram(prog, false))
         {
           Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.IdChannel= prog.IdChannel;
+          recNew.ScheduleType = (int) ScheduleRecordingType.Once;
+          recNew.IdChannel = prog.IdChannel;
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
           if (rec.IsSerieIsCanceled(recNew.StartTime))
+          {
             recNew.Canceled = recNew.StartTime;
+          }
           recordings.Add(recNew);
         }
       }

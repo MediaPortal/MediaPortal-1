@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -23,47 +24,38 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-
-
-using TvDatabase;
 using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
+using TvDatabase;
 
 namespace TvPlugin
 {
   public class TvNewScheduleSearchType : GUIWindow
   {
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnQuickRecord = null;
-    [SkinControlAttribute(3)]    protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnTvGuide = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnSearchTitle = null;
-    [SkinControlAttribute(8)]    protected GUIButtonControl btnSearchKeyword = null;
-    [SkinControlAttribute(9)]    protected GUIButtonControl btnSearchGenre = null;
+    [SkinControl(2)] protected GUIButtonControl btnQuickRecord = null;
+    [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControl(6)] protected GUIButtonControl btnTvGuide = null;
+    [SkinControl(7)] protected GUIButtonControl btnSearchTitle = null;
+    [SkinControl(8)] protected GUIButtonControl btnSearchKeyword = null;
+    [SkinControl(9)] protected GUIButtonControl btnSearchGenre = null;
 
     public TvNewScheduleSearchType()
     {
       Log.Info("newsearch ctor");
-      GetID = (int)GUIWindow.Window.WINDOW_TV_SEARCHTYPE;
+      GetID = (int) Window.WINDOW_TV_SEARCHTYPE;
     }
+
     ~TvNewScheduleSearchType()
     {
     }
 
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     public override bool Init()
@@ -91,25 +83,25 @@ namespace TvPlugin
       if (control == btnSearchTitle)
       {
         TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.Title;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_SEARCH);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_SEARCH);
         return;
       }
       if (control == btnSearchGenre)
       {
         TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.Genres;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_SEARCH);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_SEARCH);
         return;
       }
       if (control == btnSearchKeyword)
       {
         TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.KeyWord;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_SEARCH);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_SEARCH);
         return;
       }
       if (control == btnTvGuide)
       {
         TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.KeyWord;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVGUIDE);
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TVGUIDE);
         return;
       }
       if (control == btnQuickRecord)
@@ -125,18 +117,21 @@ namespace TvPlugin
       base.OnClicked(controlId, control, actionType);
     }
 
-    void OnQuickRecord()
+    private void OnQuickRecord()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
+      dlg.SetHeading(GUILocalizeStrings.Get(891)); //Select TV Channel
       IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!System.IO.File.Exists(strLogo))
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -146,31 +141,34 @@ namespace TvPlugin
         dlg.Add(item);
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
 
-      Channel selectedChannel = ((GroupMap)channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
+      Channel selectedChannel = ((GroupMap) channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
       dlg.Reset();
-      dlg.SetHeading(616);//select recording type
+      dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
-      dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
+      dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
+      dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
       TvBusinessLayer layer = new TvBusinessLayer();
       rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
       rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-      rec.ScheduleType = (int)ScheduleRecordingType.Once;
+      rec.ScheduleType = (int) ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
       int day;
       day = 0;
 
       dlg.Reset();
-      dlg.SetHeading(142);//select time
+      dlg.SetHeading(142); //select time
       dlg.ShowQuickNumbers = false;
       //time
       //int no = 0;
@@ -181,30 +179,48 @@ namespace TvPlugin
       {
         for (minute = 0; minute < 60; minute += steps)
         {
-          if (hour == 0 && minute == 0) continue;
+          if (hour == 0 && minute == 0)
+          {
+            continue;
+          }
           string time = "";
-          if (hour < 10) time = "0" + hour.ToString();
-          else time = hour.ToString();
+          if (hour < 10)
+          {
+            time = "0" + hour.ToString();
+          }
+          else
+          {
+            time = hour.ToString();
+          }
           time += ":";
-          if (minute < 10) time = time + "0" + minute.ToString();
-          else time += minute.ToString();
+          if (minute < 10)
+          {
+            time = time + "0" + minute.ToString();
+          }
+          else
+          {
+            time += minute.ToString();
+          }
 
           //if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
           dlg.Add(time);
         }
       }
       // pre-select the current time
-      dlg.SelectedLabel = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps));
+      dlg.SelectedLabel = (DateTime.Now.Hour*(60/steps)) + (Convert.ToInt16(DateTime.Now.Minute/steps));
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
 
-      int mins = (dlg.SelectedLabel) * steps;
-      hour = (mins) / 60;
-      minute = ((mins) % 60);
+      int mins = (dlg.SelectedLabel)*steps;
+      hour = (mins)/60;
+      minute = ((mins)%60);
 
 
       dlg.Reset();
-      dlg.SetHeading(180);//select time
+      dlg.SetHeading(180); //select time
       dlg.ShowQuickNumbers = false;
       //duration
       for (float hours = 0.5f; hours <= 24f; hours += 0.5f)
@@ -212,8 +228,11 @@ namespace TvPlugin
         dlg.Add(String.Format("{0} {1}", hours.ToString("f2"), GUILocalizeStrings.Get(3002)));
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
-      int duration = (dlg.SelectedLabel + 1) * 30;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
+      int duration = (dlg.SelectedLabel + 1)*30;
 
 
       dtNow = DateTime.Now.AddDays(day);
@@ -226,19 +245,22 @@ namespace TvPlugin
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    void OnAdvancedRecord()
+    private void OnAdvancedRecord()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
 
       dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
+      dlg.SetHeading(GUILocalizeStrings.Get(891)); //Select TV Channel
       IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!System.IO.File.Exists(strLogo))
+        if (!File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -248,17 +270,20 @@ namespace TvPlugin
         dlg.Add(item);
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel < 0)
+      {
+        return;
+      }
 
-      Channel selectedChannel = ((GroupMap)channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
+      Channel selectedChannel = ((GroupMap) channels[dlg.SelectedLabel]).ReferencedChannel() as Channel;
       dlg.Reset();
-      dlg.SetHeading(616);//select recording type
+      dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
-      dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
+      dlg.Add(GUILocalizeStrings.Get(672)); // 672=Record Mon-Fri
+      dlg.Add(GUILocalizeStrings.Get(1051)); // 1051=Record Sat-Sun
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
@@ -267,30 +292,33 @@ namespace TvPlugin
       rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
 
       switch (dlg.SelectedLabel)
       {
-        case 0://once
-          rec.ScheduleType = (int)ScheduleRecordingType.Once;
+        case 0: //once
+          rec.ScheduleType = (int) ScheduleRecordingType.Once;
           break;
-        case 1://everytime, this channel
-          rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+        case 1: //everytime, this channel
+          rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnThisChannel;
           break;
-        case 2://everytime, all channels
-          rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+        case 2: //everytime, all channels
+          rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnEveryChannel;
           break;
-        case 3://weekly
-          rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+        case 3: //weekly
+          rec.ScheduleType = (int) ScheduleRecordingType.Weekly;
           break;
-        case 4://daily
-          rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+        case 4: //daily
+          rec.ScheduleType = (int) ScheduleRecordingType.Daily;
           break;
-        case 5://Mo-Fi
-          rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+        case 5: //Mo-Fi
+          rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
           break;
-        case 6://Sat-Sun
-          rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+        case 6: //Sat-Sun
+          rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
           break;
       }
 
@@ -298,23 +326,27 @@ namespace TvPlugin
       DateTime dtNow = DateTime.Now;
       int day;
       dlg.Reset();
-      dlg.SetHeading(636);//select day
+      dlg.SetHeading(636); //select day
       dlg.ShowQuickNumbers = false;
 
       for (day = 0; day < 30; day++)
       {
         if (day > 0)
+        {
           dtNow = DateTime.Now.AddDays(day);
+        }
         dlg.Add(dtNow.ToLongDateString());
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
+      {
         return;
+      }
       day = dlg.SelectedLabel;
 
 
       dlg.Reset();
-      dlg.SetHeading(142);//select time
+      dlg.SetHeading(142); //select time
       dlg.ShowQuickNumbers = false;
       //time
       //int no = 0;
@@ -325,30 +357,48 @@ namespace TvPlugin
       {
         for (minute = 0; minute < 60; minute += steps)
         {
-          if (hour == 0 && minute == 0) continue;
+          if (hour == 0 && minute == 0)
+          {
+            continue;
+          }
           string time = "";
-          if (hour < 10) time = "0" + hour.ToString();
-          else time = hour.ToString();
+          if (hour < 10)
+          {
+            time = "0" + hour.ToString();
+          }
+          else
+          {
+            time = hour.ToString();
+          }
           time += ":";
-          if (minute < 10) time = time + "0" + minute.ToString();
-          else time += minute.ToString();
+          if (minute < 10)
+          {
+            time = time + "0" + minute.ToString();
+          }
+          else
+          {
+            time += minute.ToString();
+          }
 
           //if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
           dlg.Add(time);
         }
       }
       // pre-select the current time
-      dlg.SelectedLabel = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps));
+      dlg.SelectedLabel = (DateTime.Now.Hour*(60/steps)) + (Convert.ToInt16(DateTime.Now.Minute/steps));
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
 
-      int mins = (dlg.SelectedLabel) * steps;
-      hour = (mins) / 60;
-      minute = ((mins) % 60);
+      int mins = (dlg.SelectedLabel)*steps;
+      hour = (mins)/60;
+      minute = ((mins)%60);
 
 
       dlg.Reset();
-      dlg.SetHeading(180);//select time
+      dlg.SetHeading(180); //select time
       dlg.ShowQuickNumbers = false;
       //duration
       for (float hours = 0.5f; hours <= 24f; hours += 0.5f)
@@ -356,8 +406,11 @@ namespace TvPlugin
         dlg.Add(String.Format("{0} {1}", hours.ToString("f2"), GUILocalizeStrings.Get(3002)));
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
-      int duration = (dlg.SelectedLabel + 1) * 30;
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
+      int duration = (dlg.SelectedLabel + 1)*30;
 
       IList<TuningDetail> details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
       foreach (TuningDetail detail in details)
@@ -379,6 +432,7 @@ namespace TvPlugin
       server.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
+
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();

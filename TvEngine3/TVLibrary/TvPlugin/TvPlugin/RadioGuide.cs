@@ -1,4 +1,4 @@
-  /* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -18,27 +18,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
 
-using TvDatabase;
-using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
 #endregion
 
 namespace TvPlugin
@@ -48,34 +32,35 @@ namespace TvPlugin
   /// </summary>
   public class RadioGuide : RadioGuideBase
   {
-
     public RadioGuide() : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_RADIO_GUIDE;
+      GetID = (int) Window.WINDOW_RADIO_GUIDE;
     }
+
     public override void OnAdded()
     {
       Log.Info("RadioGuide:OnAdded");
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RADIO_GUIDE, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_RADIO_GUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");
       Initialize();
-      GetID = (int)GUIWindow.Window.WINDOW_RADIO_GUIDE;
+      GetID = (int) Window.WINDOW_RADIO_GUIDE;
       return result;
     }
 
     protected override void OnPageLoad()
     {
-      base.OnPageLoad();    }
+      base.OnPageLoad();
+    }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-
       base.OnPageDestroy(newWindowId);
     }
   }

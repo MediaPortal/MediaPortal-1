@@ -27,20 +27,20 @@ namespace TvLibrary
   /// </summary>
   public class ScanParameters
   {
-    int _timeoutTune = 2;
-    int _timeoutPAT = 5;
-    int _timeoutCAT = 5;
-    int _timeoutPMT = 10;
-    int _timeoutSDT = 20;
-    int _timeoutAnalog = 20;
+    private int _timeoutTune = 2;
+    private int _timeoutPAT = 5;
+    private int _timeoutCAT = 5;
+    private int _timeoutPMT = 10;
+    private int _timeoutSDT = 20;
+    private int _timeoutAnalog = 20;
 
-    int _lnbLowFrequency = -1;
-    int _lnbHighFrequency = -1;
-    int _lnbSwitchFrequency = -1;
-    bool _useDefaultLnbFrequencies = true;
-    int _minFiles = 6;
-    int _maxFiles = 20;
-    UInt32 _maxFileSize = (256 * 1000 * 1000);
+    private int _lnbLowFrequency = -1;
+    private int _lnbHighFrequency = -1;
+    private int _lnbSwitchFrequency = -1;
+    private bool _useDefaultLnbFrequencies = true;
+    private int _minFiles = 6;
+    private int _maxFiles = 20;
+    private UInt32 _maxFileSize = (256*1000*1000);
 
     /// <summary>
     /// Gets or sets the minimium number of timeshifting files.
@@ -48,29 +48,18 @@ namespace TvLibrary
     /// <value>The minimium files.</value>
     public int MinimumFiles
     {
-      get
-      {
-        return _minFiles;
-      }
-      set
-      {
-        _minFiles = value;
-      }
+      get { return _minFiles; }
+      set { _minFiles = value; }
     }
+
     /// <summary>
     /// Gets or sets the maximum number of timeshifting files.
     /// </summary>
     /// <value>The maximum files.</value>
     public int MaximumFiles
     {
-      get
-      {
-        return _maxFiles;
-      }
-      set
-      {
-        _maxFiles = value;
-      }
+      get { return _maxFiles; }
+      set { _maxFiles = value; }
     }
 
     /// <summary>
@@ -79,14 +68,8 @@ namespace TvLibrary
     /// <value>The maximum filesize.</value>
     public UInt32 MaximumFileSize
     {
-      get
-      {
-        return _maxFileSize;
-      }
-      set
-      {
-        _maxFileSize = value;
-      }
+      get { return _maxFileSize; }
+      set { _maxFileSize = value; }
     }
 
     /// <summary>
@@ -95,29 +78,18 @@ namespace TvLibrary
     /// <value>The use default LNB frequencies.</value>
     public bool UseDefaultLnbFrequencies
     {
-      get
-      {
-        return _useDefaultLnbFrequencies;
-      }
-      set
-      {
-        _useDefaultLnbFrequencies = value;
-      }
+      get { return _useDefaultLnbFrequencies; }
+      set { _useDefaultLnbFrequencies = value; }
     }
+
     /// <summary>
     /// Gets or sets the LNB low frequency.
     /// </summary>
     /// <value>The LNB low frequency.</value>
     public int LnbLowFrequency
     {
-      get
-      {
-        return _lnbLowFrequency;
-      }
-      set
-      {
-        _lnbLowFrequency = value;
-      }
+      get { return _lnbLowFrequency; }
+      set { _lnbLowFrequency = value; }
     }
 
     /// <summary>
@@ -126,14 +98,8 @@ namespace TvLibrary
     /// <value>The LNB switch frequency.</value>
     public int LnbSwitchFrequency
     {
-      get
-      {
-        return _lnbSwitchFrequency;
-      }
-      set
-      {
-        _lnbSwitchFrequency = value;
-      }
+      get { return _lnbSwitchFrequency; }
+      set { _lnbSwitchFrequency = value; }
     }
 
     /// <summary>
@@ -142,14 +108,8 @@ namespace TvLibrary
     /// <value>The LNB high frequency.</value>
     public int LnbHighFrequency
     {
-      get
-      {
-        return _lnbHighFrequency;
-      }
-      set
-      {
-        _lnbHighFrequency = value;
-      }
+      get { return _lnbHighFrequency; }
+      set { _lnbHighFrequency = value; }
     }
 
     /// <summary>
@@ -158,90 +118,58 @@ namespace TvLibrary
     /// <value>The time out PAT.</value>
     public int TimeOutPAT
     {
-      get
-      {
-        return _timeoutPAT;
-      }
-      set
-      {
-        _timeoutPAT = value;
-      }
+      get { return _timeoutPAT; }
+      set { _timeoutPAT = value; }
     }
+
     /// <summary>
     /// Gets or sets the time out CAT.
     /// </summary>
     /// <value>The time out CAT.</value>
     public int TimeOutCAT
     {
-      get
-      {
-        return _timeoutCAT;
-      }
-      set
-      {
-        _timeoutCAT = value;
-      }
+      get { return _timeoutCAT; }
+      set { _timeoutCAT = value; }
     }
+
     /// <summary>
     /// Gets or sets the time out PMT.
     /// </summary>
     /// <value>The time out PMT.</value>
     public int TimeOutPMT
     {
-      get
-      {
-        return _timeoutPMT;
-      }
-      set
-      {
-        _timeoutPMT = value;
-      }
+      get { return _timeoutPMT; }
+      set { _timeoutPMT = value; }
     }
+
     /// <summary>
     /// Gets or sets the time out tune.
     /// </summary>
     /// <value>The time out tune.</value>
     public int TimeOutTune
     {
-      get
-      {
-        return _timeoutTune;
-      }
-      set
-      {
-        _timeoutTune = value;
-      }
+      get { return _timeoutTune; }
+      set { _timeoutTune = value; }
     }
+
     /// <summary>
     /// Gets or sets the time out SDT.
     /// </summary>
     /// <value>The time out SDT.</value>
     public int TimeOutSDT
     {
-      get
-      {
-        return _timeoutSDT;
-      }
-      set
-      {
-        _timeoutSDT = value;
-      }
+      get { return _timeoutSDT; }
+      set { _timeoutSDT = value; }
     }
+
     /// <summary>
     /// Gets or sets the time out Analog scanning.
     /// </summary>
     /// <value>The time out Analog scanning.</value>
     public int TimeOutAnalog
     {
-      get
-      {
-        return _timeoutAnalog;
-      }
-      set
-      {
-        _timeoutAnalog = value;
-      }
+      get { return _timeoutAnalog; }
+      set { _timeoutAnalog = value; }
     }
-
   }
 }

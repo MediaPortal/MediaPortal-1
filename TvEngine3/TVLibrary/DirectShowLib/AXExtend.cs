@@ -50,14 +50,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Security;
 using System.Text;
 
 #if !USING_NET11
-using System.Runtime.InteropServices.ComTypes;
+
 #endif
 
 namespace DirectShowLib
 {
+
   #region Declarations
 
   /// <summary>
@@ -129,8 +132,8 @@ namespace DirectShowLib
     ColorKey = 0x4,
     Position = 0x8,
     DisplayChange = 0x10,
-    All = Advise.Clipping | Advise.Palette | Advise.ColorKey | Advise.Position,
-    All2 = Advise.All | Advise.DisplayChange
+    All = Clipping | Palette | ColorKey | Position,
+    All2 = All | DisplayChange
   }
 
   // ------------------------------------------------------------------------
@@ -142,8 +145,7 @@ namespace DirectShowLib
   public struct RegFilter
   {
     public Guid Clsid;
-    [MarshalAs(UnmanagedType.LPWStr)]
-    public string Name;
+    [MarshalAs(UnmanagedType.LPWStr)] public string Name;
   }
 
   /// <summary>
@@ -162,22 +164,15 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Sequential)]
   public struct RegFilterPins
   {
-    [MarshalAs(UnmanagedType.LPWStr)]
-    public string strName;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool bRendered;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool bOutput;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool bZero;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool bMany;
+    [MarshalAs(UnmanagedType.LPWStr)] public string strName;
+    [MarshalAs(UnmanagedType.Bool)] public bool bRendered;
+    [MarshalAs(UnmanagedType.Bool)] public bool bOutput;
+    [MarshalAs(UnmanagedType.Bool)] public bool bZero;
+    [MarshalAs(UnmanagedType.Bool)] public bool bMany;
     public Guid clsConnectsToFilter;
-    [MarshalAs(UnmanagedType.LPWStr)]
-    public string strConnectsToPin;
+    [MarshalAs(UnmanagedType.LPWStr)] public string strConnectsToPin;
     public int nMediaTypes;
-    [MarshalAs(UnmanagedType.ByValArray)]
-    public RegPinTypes[] lpMediaType;
+    [MarshalAs(UnmanagedType.ByValArray)] public RegPinTypes[] lpMediaType;
   }
 
   /// <summary>
@@ -201,11 +196,9 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Explicit)]
   public struct RegFilter2Union
   {
-    [FieldOffset(0)]
-    public RegFilterPins[] rgPins;
-    [FieldOffset(0)]
-    public RegFilterPins2[] rgPins2;
-  };
+    [FieldOffset(0)] public RegFilterPins[] rgPins;
+    [FieldOffset(0)] public RegFilterPins2[] rgPins2;
+  } ;
 
   [StructLayout(LayoutKind.Sequential)]
   public struct RegFilter2
@@ -293,8 +286,7 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Sequential)]
   public struct AMCOPPSignature
   {
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 256)]
-    public byte[] Signature;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 256)] public byte[] Signature;
   }
 
   /// <summary>
@@ -307,8 +299,7 @@ namespace DirectShowLib
     public Guid guidCommandID;
     public int dwSequence;
     public int cbSizeData;
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4056)]
-    public byte[] CommandData;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4056)] public byte[] CommandData;
   }
 
   /// <summary>
@@ -321,8 +312,7 @@ namespace DirectShowLib
     public Guid guidStatusRequestID;
     public int dwSequence;
     public int cbSizeData;
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4056)]
-    public byte[] StatusData;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4056)] public byte[] StatusData;
   }
 
   /// <summary>
@@ -333,8 +323,7 @@ namespace DirectShowLib
   {
     public Guid macKDI;
     public int cbSizeData;
-    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4076)]
-    public byte[] COPPStatus;
+    [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.I1, SizeConst = 4076)] public byte[] COPPStatus;
   }
 
   /// <summary>
@@ -1208,7 +1197,7 @@ namespace DirectShowLib
   public enum ExtTransportAudio
   {
     None = 0,
-    AudioAll = 0x10000000,  //  or any of the following OR'd together
+    AudioAll = 0x10000000, //  or any of the following OR'd together
     Audio1 = 0x0000001,
     Audio2 = 0x0000002,
     Audio3 = 0x0000004,
@@ -1377,9 +1366,9 @@ namespace DirectShowLib
 
   #region Interfaces
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("D8D715A0-6E5E-11D0-B3F0-00AA003761C5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("D8D715A0-6E5E-11D0-B3F0-00AA003761C5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVfwCaptureDialogs
   {
     [PreserveSig]
@@ -1387,31 +1376,31 @@ namespace DirectShowLib
 
     [PreserveSig]
     int ShowDialog(
-        [In] VfwCaptureDialogs iDialog,
-        [In] IntPtr hwnd // HWND *
-        );
+      [In] VfwCaptureDialogs iDialog,
+      [In] IntPtr hwnd // HWND *
+      );
 
     [PreserveSig]
     int SendDriverMessage(
-        [In] VfwCaptureDialogs iDialog,
-        [In] int uMsg,
-        [In] int dw1,
-        [In] int dw2
-        );
+      [In] VfwCaptureDialogs iDialog,
+      [In] int uMsg,
+      [In] int dw1,
+      [In] int dw2
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a4-0ad4-11ce-b03a-0020af0ba770"),
-  Obsolete("This interface has been deprecated.  Use IFilterMapper2::EnumMatchingFilters", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a4-0ad4-11ce-b03a-0020af0ba770"),
+   Obsolete("This interface has been deprecated.  Use IFilterMapper2::EnumMatchingFilters", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEnumRegFilters
   {
     [PreserveSig]
     int Next(
-        [In] int cFilters,
-        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] RegFilter[] apRegFilter,
-        [In] IntPtr pcFetched
-        );
+      [In] int cFilters,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] RegFilter[] apRegFilter,
+      [In] IntPtr pcFetched
+      );
 
     [PreserveSig]
     int Skip([In] int cFilters);
@@ -1423,45 +1412,45 @@ namespace DirectShowLib
     int Clone([Out] out IEnumRegFilters ppEnum);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a3-0ad4-11ce-b03a-0020af0ba770"),
-  Obsolete("This interface has been deprecated.  Use IFilterMapper2.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a3-0ad4-11ce-b03a-0020af0ba770"),
+   Obsolete("This interface has been deprecated.  Use IFilterMapper2.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterMapper
   {
     [PreserveSig]
     int RegisterFilter(
-        [In] Guid clsid,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
-        [In] Merit dwMerit
-        );
+      [In] Guid clsid,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
+      [In] Merit dwMerit
+      );
 
     [PreserveSig]
     int RegisterFilterInstance(
-        [In] Guid clsid,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
-        [Out] out Guid MRId
-        );
+      [In] Guid clsid,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
+      [Out] out Guid MRId
+      );
 
     [PreserveSig]
     int RegisterPin(
-        [In] Guid Filter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bRendered,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bOutput,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bZero,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bMany,
-        [In] Guid ConnectsToFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string ConnectsToPin
-        );
+      [In] Guid Filter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bRendered,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bOutput,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bZero,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bMany,
+      [In] Guid ConnectsToFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string ConnectsToPin
+      );
 
     [PreserveSig]
     int RegisterPinType(
-        [In] Guid clsFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string strName,
-        [In] Guid clsMajorType,
-        [In] Guid clsSubType
-        );
+      [In] Guid clsFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string strName,
+      [In] Guid clsMajorType,
+      [In] Guid clsSubType
+      );
 
     [PreserveSig]
     int UnregisterFilter([In] Guid Filter);
@@ -1471,80 +1460,80 @@ namespace DirectShowLib
 
     [PreserveSig]
     int UnregisterPin(
-        [In] Guid Filter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name
-        );
+      [In] Guid Filter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name
+      );
 
     [PreserveSig]
     int EnumMatchingFilters(
-        [Out] out IEnumRegFilters ppEnum,
-        [In] Merit dwMerit,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
-        [In] Guid clsInMaj,
-        [In] Guid clsInSub,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bOututNeeded,
-        [In] Guid clsOutMaj,
-        [In] Guid clsOutSub
-        );
+      [Out] out IEnumRegFilters ppEnum,
+      [In] Merit dwMerit,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
+      [In] Guid clsInMaj,
+      [In] Guid clsInSub,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bOututNeeded,
+      [In] Guid clsOutMaj,
+      [In] Guid clsOutSub
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a0-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a0-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IOverlayNotify
   {
     [PreserveSig]
     int OnPaletteChange(
-        [In] int dwColors,
-        [In] IntPtr pPalette // PALETTEENTRY *
-        );
+      [In] int dwColors,
+      [In] IntPtr pPalette // PALETTEENTRY *
+      );
 
     [PreserveSig]
     int OnClipChange(
-        [In] Rectangle pSourceRect,
-        [In] Rectangle pDestinationRect,
-        [In] RgnData pRgnData
-        );
+      [In] Rectangle pSourceRect,
+      [In] Rectangle pDestinationRect,
+      [In] RgnData pRgnData
+      );
 
     [PreserveSig]
     int OnColorKeyChange([In] ColorKey pColorKey);
 
     [PreserveSig]
     int OnPositionChange(
-        [In] Rectangle pSourceRect,
-        [In] Rectangle pDestinationRect
-        );
+      [In] Rectangle pSourceRect,
+      [In] Rectangle pDestinationRect
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("680EFA10-D535-11D1-87C8-00A0C9223196"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("680EFA10-D535-11D1-87C8-00A0C9223196"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IOverlayNotify2 : IOverlayNotify
   {
     #region IOverlayNotify Methods
 
     [PreserveSig]
     new int OnPaletteChange(
-        [In] int dwColors,
-        [In] IntPtr pPalette // PALETTEENTRY *
-        );
+      [In] int dwColors,
+      [In] IntPtr pPalette // PALETTEENTRY *
+      );
 
     [PreserveSig]
     new int OnClipChange(
-        [In] Rectangle pSourceRect,
-        [In] Rectangle pDestinationRect,
-        [In] RgnData pRgnData
-        );
+      [In] Rectangle pSourceRect,
+      [In] Rectangle pDestinationRect,
+      [In] RgnData pRgnData
+      );
 
     [PreserveSig]
     new int OnColorKeyChange([In] ColorKey pColorKey);
 
     [PreserveSig]
     new int OnPositionChange(
-        [In] Rectangle pSourceRect,
-        [In] Rectangle pDestinationRect
-        );
+      [In] Rectangle pSourceRect,
+      [In] Rectangle pDestinationRect
+      );
 
     #endregion
 
@@ -1552,22 +1541,22 @@ namespace DirectShowLib
     int OnDisplayChange(IntPtr hMonitor); // HMONITOR
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a1-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a1-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IOverlay
   {
     [PreserveSig]
     int GetPalette(
-        [Out] out int pdwColors,
-        [Out] out IntPtr ppPalette // PALETTEENTRY **
-        );
+      [Out] out int pdwColors,
+      [Out] out IntPtr ppPalette // PALETTEENTRY **
+      );
 
     [PreserveSig]
     int SetPalette(
-        [In] int dwColors,
-        [In] IntPtr pPalette // PALETTEENTRY *
-        );
+      [In] int dwColors,
+      [In] IntPtr pPalette // PALETTEENTRY *
+      );
 
     [PreserveSig]
     int GetDefaultColorKey([Out] out ColorKey pColorKey);
@@ -1583,31 +1572,31 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetClipList(
-        [Out] out Rectangle pSourceRect,
-        [Out] out Rectangle pDestinationRect,
-        [Out] out RgnData ppRgnData
-        );
+      [Out] out Rectangle pSourceRect,
+      [Out] out Rectangle pDestinationRect,
+      [Out] out RgnData ppRgnData
+      );
 
     [PreserveSig]
     int GetVideoPosition(
-        [Out] out Rectangle pSourceRect,
-        [Out] out Rectangle pDestinationRect
-        );
+      [Out] out Rectangle pSourceRect,
+      [Out] out Rectangle pDestinationRect
+      );
 
     [PreserveSig]
     int Advise(
-        [In] IOverlayNotify pOverlayNotify,
-        [In] Advise dwInterests
-        );
+      [In] IOverlayNotify pOverlayNotify,
+      [In] Advise dwInterests
+      );
 
     [PreserveSig]
     int Unadvise();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("bf87b6e0-8c27-11d0-b3f0-00aa003761c5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-  Obsolete("The ICaptureGraphBuilder interface is deprecated. Use ICaptureGraphBuilder2 instead.", false)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("bf87b6e0-8c27-11d0-b3f0-00aa003761c5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+   Obsolete("The ICaptureGraphBuilder interface is deprecated. Use ICaptureGraphBuilder2 instead.", false)]
   public interface ICaptureGraphBuilder
   {
     [PreserveSig]
@@ -1618,74 +1607,74 @@ namespace DirectShowLib
 
     [PreserveSig]
     int SetOutputFileName(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid pType,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
-        [Out] out IBaseFilter ppbf,
-        [Out] out IFileSinkFilter ppSink
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid pType,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
+      [Out] out IBaseFilter ppbf,
+      [Out] out IFileSinkFilter ppSink
+      );
 
     [PreserveSig]
     int FindInterface(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
-        [In] IBaseFilter pf,
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppint
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
+      [In] IBaseFilter pf,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppint
+      );
 
     [PreserveSig]
     int RenderStream(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
-        [In] IBaseFilter pfCompressor,
-        [In] IBaseFilter pfRenderer
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
+      [In] IBaseFilter pfCompressor,
+      [In] IBaseFilter pfRenderer
+      );
 
     [PreserveSig]
     int ControlStream(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
-        [In] IBaseFilter pFilter,
-        [In] long pstart,
-        [In] long pstop,
-        [In] short wStartCookie,
-        [In] short wStopCookie
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid pCategory,
+      [In] IBaseFilter pFilter,
+      [In] long pstart,
+      [In] long pstop,
+      [In] short wStartCookie,
+      [In] short wStopCookie
+      );
 
     [PreserveSig]
     int AllocCapFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
-        [In] long dwlSize
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
+      [In] long dwlSize
+      );
 
     [PreserveSig]
     int CopyCaptureFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew,
-        [In] int fAllowEscAbort,
-        [In] IAMCopyCaptureFileProgress pFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew,
+      [In] int fAllowEscAbort,
+      [In] IAMCopyCaptureFileProgress pFilter
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868bf-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868bf-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IStreamBuilder
   {
     [PreserveSig]
     int Render(
-        [In] IPin ppinOut,
-        [In] IGraphBuilder pGraph
-        );
+      [In] IPin ppinOut,
+      [In] IGraphBuilder pGraph
+      );
 
     [PreserveSig]
     int Backout(
-        [In] IPin ppinOut,
-        [In] IGraphBuilder pGraph
-        );
+      [In] IPin ppinOut,
+      [In] IGraphBuilder pGraph
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868ad-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868ad-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IResourceConsumer
   {
     [PreserveSig]
@@ -1695,52 +1684,52 @@ namespace DirectShowLib
     int ReleaseResource([In] int idResource);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868ac-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868ac-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IResourceManager
   {
     [PreserveSig]
     int Register(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
-        [In] int cResource,
-        [Out] out int plToken
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
+      [In] int cResource,
+      [Out] out int plToken
+      );
 
     [PreserveSig]
     int RegisterGroup(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
-        [In] int cResource,
-        [In] IntPtr palTokens, // int *
-        [Out] out int plToken
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
+      [In] int cResource,
+      [In] IntPtr palTokens, // int *
+      [Out] out int plToken
+      );
 
     [PreserveSig]
     int RequestResource(
-        [In] int idResource,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pFocusObject,
-        [In] IResourceConsumer pConsumer
-        );
+      [In] int idResource,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pFocusObject,
+      [In] IResourceConsumer pConsumer
+      );
 
     [PreserveSig]
     int NotifyAcquire(
-        [In] int idResource,
-        [In] IResourceConsumer pConsumer,
-        [In] int hr
-        );
+      [In] int idResource,
+      [In] IResourceConsumer pConsumer,
+      [In] int hr
+      );
 
     [PreserveSig]
     int NotifyRelease(
-        [In] int idResource,
-        [In] IResourceConsumer pConsumer,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bStillWant
-        );
+      [In] int idResource,
+      [In] IResourceConsumer pConsumer,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bStillWant
+      );
 
     [PreserveSig]
     int CancelRequest(
-        [In] int idResource,
-        [In] IResourceConsumer pConsumer
-        );
+      [In] int idResource,
+      [In] IResourceConsumer pConsumer
+      );
 
     [PreserveSig]
     int SetFocus([In, MarshalAs(UnmanagedType.IUnknown)] object pFocusObject);
@@ -1749,9 +1738,9 @@ namespace DirectShowLib
     int ReleaseFocus([In, MarshalAs(UnmanagedType.IUnknown)] object pFocusObject);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868af-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868af-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDistributorNotify
   {
     [PreserveSig]
@@ -1770,32 +1759,32 @@ namespace DirectShowLib
     int NotifyGraphChange();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("211A8765-03AC-11d1-8D13-00AA00BD8339"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("211A8765-03AC-11d1-8D13-00AA00BD8339"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IBPCSatelliteTuner : IAMTuner
   {
     #region IAMTuner Methods
 
     [PreserveSig]
     new int put_Channel(
-        [In] int lChannel,
-        [In] AMTunerSubChannel lVideoSubChannel,
-        [In] AMTunerSubChannel lAudioSubChannel
-        );
+      [In] int lChannel,
+      [In] AMTunerSubChannel lVideoSubChannel,
+      [In] AMTunerSubChannel lAudioSubChannel
+      );
 
     [PreserveSig]
     new int get_Channel(
-        [Out] out int plChannel,
-        [Out] out AMTunerSubChannel plVideoSubChannel,
-        [Out] out AMTunerSubChannel plAudioSubChannel
-        );
+      [Out] out int plChannel,
+      [Out] out AMTunerSubChannel plVideoSubChannel,
+      [Out] out AMTunerSubChannel plAudioSubChannel
+      );
 
     [PreserveSig]
     new int ChannelMinMax(
-        [Out] out int lChannelMin,
-        [Out] out int lChannelMax
-        );
+      [Out] out int lChannelMin,
+      [Out] out int lChannelMax
+      );
 
     [PreserveSig]
     new int put_CountryCode([In] int lCountryCode);
@@ -1829,9 +1818,9 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int RegisterNotificationCallBack(
-        [In] IAMTunerNotification pNotify,
-        [In] AMTunerEventType lEvents
-        );
+      [In] IAMTunerNotification pNotify,
+      [In] AMTunerEventType lEvents
+      );
 
     [PreserveSig]
     new int UnRegisterNotificationCallBack([In] IAMTunerNotification pNotify);
@@ -1840,34 +1829,34 @@ namespace DirectShowLib
 
     [PreserveSig]
     int get_DefaultSubChannelTypes(
-        [Out] out int plDefaultVideoType,
-        [Out] out int plDefaultAudioType
-        );
+      [Out] out int plDefaultVideoType,
+      [Out] out int plDefaultAudioType
+      );
 
     [PreserveSig]
     int put_DefaultSubChannelTypes(
-        [In] int lDefaultVideoType,
-        [In] int lDefaultAudioType
-        );
+      [In] int lDefaultVideoType,
+      [In] int lDefaultAudioType
+      );
 
     [PreserveSig]
     int IsTapingPermitted();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("83EC1C33-23D1-11d1-99E6-00A0C9560266"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("83EC1C33-23D1-11d1-99E6-00A0C9560266"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTVAudioNotification
   {
     [PreserveSig]
     int OnEvent([In] AMTVAudioEventType Event);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E133B0-30AC-11d0-A18C-00A0C9118956"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E133B0-30AC-11d0-A18C-00A0C9118956"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMAnalogVideoEncoder
   {
     [PreserveSig]
@@ -1893,35 +1882,35 @@ namespace DirectShowLib
     int get_CCEnable([Out] out int lCCEnable);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("F938C991-3029-11cf-8C44-00AA006B6814"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("F938C991-3029-11cf-8C44-00AA006B6814"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMPhysicalPinInfo
   {
     [PreserveSig]
     int GetPhysicalType(
-        [Out] out PhysicalConnectorType pType,
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszType
-        );
+      [Out] out PhysicalConnectorType pType,
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszType
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("9B496CE1-811B-11cf-8C77-00AA006B6814"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("9B496CE1-811B-11cf-8C77-00AA006B6814"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTimecodeReader
   {
     [PreserveSig]
     int GetTCRMode(
-        [In] int Param,
-        [Out] out int pValue
-        );
+      [In] int Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetTCRMode(
-        [In] int Param,
-        [In] int Value
-        );
+      [In] int Param,
+      [In] int Value
+      );
 
     [PreserveSig]
     int put_VITCLine([In] int Line);
@@ -1933,22 +1922,22 @@ namespace DirectShowLib
     int GetTimecode([Out] out TimeCodeSample pTimecodeSample);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("9B496CE0-811B-11cf-8C77-00AA006B6814"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("9B496CE0-811B-11cf-8C77-00AA006B6814"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTimecodeGenerator
   {
     [PreserveSig]
     int GetTCGMode(
-        [In] int Param,
-        [Out] out int pValue
-        );
+      [In] int Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetTCGMode(
-        [In] int Param,
-        [In] int Value
-        );
+      [In] int Param,
+      [In] int Value
+      );
 
     [PreserveSig]
     int put_VITCLine([In] int Line);
@@ -1964,9 +1953,9 @@ namespace DirectShowLib
     int GetTimecode([Out] TimeCodeSample pTimecodeSample);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("9B496CE2-811B-11cf-8C77-00AA006B6814"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("9B496CE2-811B-11cf-8C77-00AA006B6814"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTimecodeDisplay
   {
     [PreserveSig]
@@ -1977,54 +1966,54 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetTCDisplay(
-        [In] int Param,
-        [Out] out int pValue
-        );
+      [In] int Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetTCDisplay(
-        [In] int Param,
-        [In] int Value
-        );
+      [In] int Param,
+      [In] int Value
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("c6545bf0-e76b-11d0-bd52-00a0c911ce86"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("c6545bf0-e76b-11d0-bd52-00a0c911ce86"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMDevMemoryAllocator
   {
     [PreserveSig]
     int GetInfo(
-        [Out] out int pdwcbTotalFree,
-        [Out] out int pdwcbLargestFree,
-        [Out] out int pdwcbTotalMemory,
-        [Out] out int pdwcbMinimumChunk
-        );
+      [Out] out int pdwcbTotalFree,
+      [Out] out int pdwcbLargestFree,
+      [Out] out int pdwcbTotalMemory,
+      [Out] out int pdwcbMinimumChunk
+      );
 
     [PreserveSig]
     int CheckMemory([In] IntPtr pBuffer); // BYTE *
 
     [PreserveSig]
     int Alloc(
-        [Out] out IntPtr ppBuffer, // BYTE **
-        [In, Out] ref int pdwcbBuffer
-        );
+      [Out] out IntPtr ppBuffer, // BYTE **
+      [In, Out] ref int pdwcbBuffer
+      );
 
     [PreserveSig]
     int Free([In] IntPtr pBuffer); // BYTE *
 
     [PreserveSig]
     int GetDevMemoryObject(
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnkInnner,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkOuter
-        );
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnkInnner,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkOuter
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("c6545bf1-e76b-11d0-bd52-00a0c911ce86"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("c6545bf1-e76b-11d0-bd52-00a0c911ce86"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMDevMemoryControl
   {
     [PreserveSig]
@@ -2037,10 +2026,10 @@ namespace DirectShowLib
     int GetDevId([Out] out int pdwDevId);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("48efb120-ab49-11d2-aed2-00a0c995e8d5"),
-  Obsolete("This interface has been deprecated.", false),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("48efb120-ab49-11d2-aed2-00a0c995e8d5"),
+   Obsolete("This interface has been deprecated.", false),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDrawVideoImage
   {
     [PreserveSig]
@@ -2051,30 +2040,30 @@ namespace DirectShowLib
 
     [PreserveSig]
     int DrawVideoImageDraw(
-        [In] IntPtr hdc, // HDC
-        [In] Rectangle lprcSrc,
-        [In] Rectangle lprcDst
-        );
+      [In] IntPtr hdc, // HDC
+      [In] Rectangle lprcSrc,
+      [In] Rectangle lprcDst
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("2e5ea3e0-e924-11d2-b6da-00a0c995e8df"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("2e5ea3e0-e924-11d2-b6da-00a0c995e8df"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDecimateVideoImage
   {
     [PreserveSig]
     int SetDecimationImageSize(
-        [In] int lWidth,
-        [In] int lHeight
-        );
+      [In] int lWidth,
+      [In] int lHeight
+      );
 
     [PreserveSig]
     int ResetDecimationImageSize();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("F185FE76-E64E-11d2-B76E-00C04FB6BD3D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("F185FE76-E64E-11d2-B76E-00C04FB6BD3D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMPushSource
   {
     [PreserveSig]
@@ -2096,16 +2085,16 @@ namespace DirectShowLib
     int SetMaxStreamOffset([In] long rtMaxOffset);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("f90a6130-b658-11d2-ae49-0000f8754b99"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("f90a6130-b658-11d2-ae49-0000f8754b99"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMDeviceRemoval
   {
     [PreserveSig]
     int DeviceInfo(
-        [Out] out Guid pclsidInterfaceClass,
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string pwszSymbolicLink
-        );
+      [Out] out Guid pclsidInterfaceClass,
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string pwszSymbolicLink
+      );
 
     [PreserveSig]
     int Reassociate();
@@ -2114,26 +2103,26 @@ namespace DirectShowLib
     int Disassociate();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("62EA93BA-EC62-11d2-B770-00C04FB6BD3D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("62EA93BA-EC62-11d2-B770-00C04FB6BD3D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMLatency
   {
     [PreserveSig]
     int GetLatency(out long prtLatency);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("945C1566-6202-46fc-96C7-D87F289C6534"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("945C1566-6202-46fc-96C7-D87F289C6534"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEnumStreamIdMap
   {
     [PreserveSig]
     int Next(
-        [In] int cRequest,
-        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] StreamIdMap[] pStreamIdMap, // STREAM_ID_MAP *
-        [In] IntPtr pcReceived
-        );
+      [In] int cRequest,
+      [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] StreamIdMap[] pStreamIdMap, // STREAM_ID_MAP *
+      [In] IntPtr pcReceived
+      );
 
     [PreserveSig]
     int Skip([In] int cRecords);
@@ -2145,9 +2134,9 @@ namespace DirectShowLib
     int Clone([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("901db4c7-31ce-41a2-85dc-8fa0bf41b8da"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("901db4c7-31ce-41a2-85dc-8fa0bf41b8da"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICodecAPI
   {
     [PreserveSig]
@@ -2158,42 +2147,42 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterRange(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object ValueMin,
-        [Out] out object ValueMax,
-        [Out] out object SteppingDelta
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object ValueMin,
+      [Out] out object ValueMax,
+      [Out] out object SteppingDelta
+      );
 
     [PreserveSig]
     int GetParameterValues(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object[] Values,
-        [Out] out int ValuesCount
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object[] Values,
+      [Out] out int ValuesCount
+      );
 
     [PreserveSig]
     int GetDefaultValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     int GetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     int SetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [In] ref object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] ref object Value
+      );
 
     [PreserveSig]
     int RegisterForEvent(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [In] IntPtr userData
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] IntPtr userData
+      );
 
     [PreserveSig]
     int UnregisterForEvent([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
@@ -2203,17 +2192,17 @@ namespace DirectShowLib
 
     [PreserveSig]
     int SetValueWithNotify(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [In] object Value,
-        [Out] out Guid[] ChangedParam,
-        [Out] int ChangedParamCount
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] object Value,
+      [Out] out Guid[] ChangedParam,
+      [Out] int ChangedParamCount
+      );
 
     [PreserveSig]
     int SetAllDefaultsWithNotify(
-        [Out] out Guid[] ChangedParam,
-        [Out] out int ChangedParamCount
-        );
+      [Out] out Guid[] ChangedParam,
+      [Out] out int ChangedParamCount
+      );
 
     [PreserveSig]
 #if USING_NET11
@@ -2234,17 +2223,19 @@ namespace DirectShowLib
 #if USING_NET11
             [In] UCOMIStream pStream,
 #else
-[In] IStream pStream,
+      [In] IStream pStream,
 #endif
- [Out, MarshalAs(UnmanagedType.LPStruct)] out Guid[] ChangedParam,
- [Out] out int ChangedParamCount
- );
+      [Out, MarshalAs(UnmanagedType.LPStruct)] out Guid[] ChangedParam,
+      [Out] out int ChangedParamCount
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [Obsolete(
+    "This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface."
+    )]
   public interface IEncoderAPI
   {
     [PreserveSig]
@@ -2255,41 +2246,41 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetParameterRange(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object ValueMin,
-        [Out] out object ValueMax,
-        [Out] out object SteppingDelta
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object ValueMin,
+      [Out] out object ValueMax,
+      [Out] out object SteppingDelta
+      );
 
     [PreserveSig]
     int GetParameterValues(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object[] Values,
-        [Out] out int ValuesCount
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object[] Values,
+      [Out] out int ValuesCount
+      );
 
     [PreserveSig]
     int GetDefaultValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     int GetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     int SetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [In] ref object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] ref object Value
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoEncoder : IEncoderAPI
   {
     #region IEncoderAPI Methods
@@ -2302,51 +2293,51 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int GetParameterRange(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object ValueMin,
-        [Out] out object ValueMax,
-        [Out] out object SteppingDelta
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object ValueMin,
+      [Out] out object ValueMax,
+      [Out] out object SteppingDelta
+      );
 
     [PreserveSig]
     new int GetParameterValues(
-        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
-        [Out] out object[] Values,
-        [Out] out int ValuesCount
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object[] Values,
+      [Out] out int ValuesCount
+      );
 
     [PreserveSig]
     new int GetDefaultValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int GetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
-        [Out] out object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int SetValue(
-        [In, MarshalAs(UnmanagedType.LPStruct)]  Guid Api,
-        [In] ref object Value
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] ref object Value
+      );
 
     #endregion
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMCertifiedOutputProtection
   {
     [PreserveSig]
     int KeyExchange(
-        [Out] out Guid pRandom,
-        [Out] out IntPtr VarLenCertGH, // BYTE **
-        [Out] out int pdwLengthCertGH
-        );
+      [Out] out Guid pRandom,
+      [Out] out IntPtr VarLenCertGH, // BYTE **
+      [Out] out int pdwLengthCertGH
+      );
 
     [PreserveSig]
     int SessionSequenceStart([In] AMCOPPSignature pSig);
@@ -2356,23 +2347,23 @@ namespace DirectShowLib
 
     [PreserveSig]
     int ProtectionStatus(
-        [In] AMCOPPStatusInput pStatusInput,
-        [Out] out AMCOPPStatusOutput pStatusOutput
-        );
+      [In] AMCOPPStatusInput pStatusInput,
+      [Out] out AMCOPPStatusOutput pStatusOutput
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868ab-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868ab-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGraphVersion
   {
     [PreserveSig]
     int QueryVersion([Out] out int pVersion);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("b8e8bd60-0bfe-11d0-af91-00aa00b67a42"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("b8e8bd60-0bfe-11d0-af91-00aa00b67a42"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IIPDVDec
   {
     [PreserveSig]
@@ -2382,73 +2373,73 @@ namespace DirectShowLib
     int put_IPDisplay([In] DVDecoderResolution displayPix);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("92a3a302-da7c-4a1f-ba7e-1802bb5d2d02"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("92a3a302-da7c-4a1f-ba7e-1802bb5d2d02"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVSplitter
   {
     [PreserveSig]
     int DiscardAlternateVideoFrames([In, MarshalAs(UnmanagedType.Bool)] bool nDiscard);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("58473A19-2BC8-4663-8012-25F81BABDDD1"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("58473A19-2BC8-4663-8012-25F81BABDDD1"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVRGB219
   {
     [PreserveSig]
     int SetRGB219([In, MarshalAs(UnmanagedType.Bool)] bool bState);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("36b73881-c2c8-11cf-8b46-00805f6cef60"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("36b73881-c2c8-11cf-8b46-00805f6cef60"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMStreamControl
   {
     [PreserveSig]
     int StartAt(
-        [In] DsLong ptStart,
-        [In] int dwCookie
-        );
+      [In] DsLong ptStart,
+      [In] int dwCookie
+      );
 
     [PreserveSig]
     int StopAt(
-        [In] DsLong ptStop,
-        [In, MarshalAs(UnmanagedType.Bool)] bool bSendExtra,
-        [In] int dwCookie
-        );
+      [In] DsLong ptStop,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bSendExtra,
+      [In] int dwCookie
+      );
 
     [PreserveSig]
     int GetInfo([Out] out AMStreamInfo pInfo);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("8E1C39A1-DE53-11cf-AA63-0080C744528D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("8E1C39A1-DE53-11cf-AA63-0080C744528D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMOpenProgress
   {
     [PreserveSig]
     int QueryProgress(
-        [Out] out long pllTotal,
-        [Out] out long pllCurrent
-        );
+      [Out] out long pllTotal,
+      [Out] out long pllCurrent
+      );
 
     [PreserveSig]
     int AbortOperation();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("2dd74950-a890-11d1-abe8-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("2dd74950-a890-11d1-abe8-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMFilterMiscFlags
   {
     [PreserveSig]
     int GetMiscFlags();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("5738E040-B67F-11d0-BD4D-00A0C911CE86"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("5738E040-B67F-11d0-BD4D-00A0C911CE86"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPersistMediaPropertyBag : IPersist
   {
     #region IPersist
@@ -2463,60 +2454,60 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Load(
-        [In] IMediaPropertyBag pPropBag,
-        [In] IErrorLog pErrorLog
-        );
+      [In] IMediaPropertyBag pPropBag,
+      [In] IErrorLog pErrorLog
+      );
 
     [PreserveSig]
     int Save(
-        IMediaPropertyBag pPropBag,
-        [In, MarshalAs(UnmanagedType.Bool)] bool fClearDirty,
-        [In, MarshalAs(UnmanagedType.Bool)] bool fSaveAllProperties
-        );
+      IMediaPropertyBag pPropBag,
+      [In, MarshalAs(UnmanagedType.Bool)] bool fClearDirty,
+      [In, MarshalAs(UnmanagedType.Bool)] bool fSaveAllProperties
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("6025A880-C0D5-11d0-BD4E-00A0C911CE86"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("6025A880-C0D5-11d0-BD4E-00A0C911CE86"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMediaPropertyBag : IPropertyBag
   {
     #region IPropertyBag Methods
 
     [PreserveSig]
     new int Read(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszPropName,
-        [Out, MarshalAs(UnmanagedType.Struct)] out object pVar,
-        [In] IErrorLog pErrorLog
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszPropName,
+      [Out, MarshalAs(UnmanagedType.Struct)] out object pVar,
+      [In] IErrorLog pErrorLog
+      );
 
     [PreserveSig]
     new int Write(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszPropName,
-        [In] ref object pVar
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszPropName,
+      [In] ref object pVar
+      );
 
     #endregion
 
     [PreserveSig]
     int EnumProperty(
-        [In] int iProperty,
-        [Out] out object pvarPropertyName,
-        [Out] out object pvarPropertyValue
-        );
+      [In] int iProperty,
+      [Out] out object pvarPropertyName,
+      [Out] out object pvarPropertyValue
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("632105FA-072E-11d3-8AF9-00C04FB6BD3D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("632105FA-072E-11d3-8AF9-00C04FB6BD3D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMGraphStreams
   {
     [PreserveSig]
     int FindUpstreamInterface(
-        [In] IPin pPin,
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppvInterface,
-        [In] AMIntfSearchFlags dwFlags
-        );
+      [In] IPin pPin,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppvInterface,
+      [In] AMIntfSearchFlags dwFlags
+      );
 
     [PreserveSig]
     int SyncUsingStreamOffset([In, MarshalAs(UnmanagedType.Bool)] bool bUseStreamOffset);
@@ -2525,18 +2516,18 @@ namespace DirectShowLib
     int SetMaxGraphLatency([In] long rtMaxGraphLatency);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a9-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a9-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IGraphBuilder : IFilterGraph
   {
     #region IFilterGraph Methods
 
     [PreserveSig]
     new int AddFilter(
-        [In] IBaseFilter pFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName
-        );
+      [In] IBaseFilter pFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName
+      );
 
     [PreserveSig]
     new int RemoveFilter([In] IBaseFilter pFilter);
@@ -2546,17 +2537,16 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int FindFilterByName(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int ConnectDirect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn,
-        [In, MarshalAs(UnmanagedType.LPStruct)]
-            AMMediaType pmt
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     new int Reconnect([In] IPin ppin);
@@ -2571,25 +2561,25 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Connect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn
+      );
 
     [PreserveSig]
     int Render([In] IPin ppinOut);
 
     [PreserveSig]
     int RenderFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
+      );
 
     [PreserveSig]
     int AddSourceFilter(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     int SetLogFile(IntPtr hFile); // DWORD_PTR
@@ -2601,18 +2591,18 @@ namespace DirectShowLib
     int ShouldOperationContinue();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("36b73882-c2c8-11cf-8b46-00805f6cef60"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("36b73882-c2c8-11cf-8b46-00805f6cef60"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterGraph2 : IGraphBuilder
   {
     #region IFilterGraph Methods
 
     [PreserveSig]
     new int AddFilter(
-        [In] IBaseFilter pFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName
-        );
+      [In] IBaseFilter pFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName
+      );
 
     [PreserveSig]
     new int RemoveFilter([In] IBaseFilter pFilter);
@@ -2622,17 +2612,16 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int FindFilterByName(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int ConnectDirect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn,
-        [In, MarshalAs(UnmanagedType.LPStruct)]
-            AMMediaType pmt
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     new int Reconnect([In] IPin ppin);
@@ -2649,25 +2638,25 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int Connect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn
+      );
 
     [PreserveSig]
     new int Render([In] IPin ppinOut);
 
     [PreserveSig]
     new int RenderFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
+      );
 
     [PreserveSig]
     new int AddSourceFilter(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int SetLogFile(IntPtr hFile); // DWORD_PTR
@@ -2686,30 +2675,30 @@ namespace DirectShowLib
             [In] UCOMIMoniker pMoniker,
             [In] UCOMIBindCtx pCtx,
 #else
-[In] IMoniker pMoniker,
-[In] IBindCtx pCtx,
+      [In] IMoniker pMoniker,
+      [In] IBindCtx pCtx,
 #endif
- [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
- [Out] out IBaseFilter ppFilter
- );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     int ReconnectEx(
-        [In] IPin ppin,
-        [In] AMMediaType pmt
-        );
+      [In] IPin ppin,
+      [In] AMMediaType pmt
+      );
 
     [PreserveSig]
     int RenderEx(
-        [In] IPin pPinOut,
-        [In] AMRenderExFlags dwFlags,
-        [In] IntPtr pvContext // DWORD *
-        );
+      [In] IPin pPinOut,
+      [In] AMRenderExFlags dwFlags,
+      [In] IntPtr pvContext // DWORD *
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("5ACD6AA0-F482-11ce-8B67-00AA00A3F1A6"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IConfigAviMux
   {
     [PreserveSig]
@@ -2725,9 +2714,9 @@ namespace DirectShowLib
     int GetOutputCompatibilityIndex([Out, MarshalAs(UnmanagedType.Bool)] out bool pfOldIndex);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("BEE3D220-157B-11d0-BD23-00A0C911CE86"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("BEE3D220-157B-11d0-BD23-00A0C911CE86"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IConfigInterleaving
   {
     [PreserveSig]
@@ -2738,53 +2727,53 @@ namespace DirectShowLib
 
     [PreserveSig]
     int put_Interleaving(
-        [In] ref long prtInterleave,
-        [In] ref long prtPreroll
-        );
+      [In] ref long prtInterleave,
+      [In] ref long prtPreroll
+      );
 
     [PreserveSig]
     int get_Interleaving(
-        [Out] out long prtInterleave,
-        [Out] out long prtPreroll
-        );
+      [Out] out long prtInterleave,
+      [Out] out long prtPreroll
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("a2104830-7c70-11cf-8bce-00aa00a3f1a6"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("a2104830-7c70-11cf-8bce-00aa00a3f1a6"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFileSinkFilter
   {
     [PreserveSig]
     int SetFileName(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
-        [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     int GetCurFile(
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
-        [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
+      [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("00855B90-CE1B-11d0-BD4F-00A0C911CE86"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("00855B90-CE1B-11d0-BD4F-00A0C911CE86"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFileSinkFilter2 : IFileSinkFilter
   {
     #region IFileSinkFilter Methods
 
     [PreserveSig]
     new int SetFileName(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
-        [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     new int GetCurFile(
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
-        [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
+      [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     #endregion
 
@@ -2795,103 +2784,103 @@ namespace DirectShowLib
     int GetMode([Out] out AMFileSinkFlags dwFlags);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a6-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a6-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFileSourceFilter
   {
     [PreserveSig]
     int Load(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
-        [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     int GetCurFile(
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
-        [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
-        );
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string pszFileName,
+      [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("e46a9787-2b71-444d-a4b5-1fab7b708d6a"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("e46a9787-2b71-444d-a4b5-1fab7b708d6a"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoFrameStep
   {
     [PreserveSig]
     int Step(
-        [In] int dwFrames,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pStepObject
-        );
+      [In] int dwFrames,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pStepObject
+      );
 
     [PreserveSig]
     int CanStep(
-        [In] int bMultiple,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pStepObject
-        );
+      [In] int bMultiple,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pStepObject
+      );
 
     [PreserveSig]
     int CancelStep();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IKsPropertySet
   {
     [PreserveSig]
     int Set(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-        [In] int dwPropID,
-        [In] IntPtr pInstanceData,
-        [In] int cbInstanceData,
-        [In] IntPtr pPropData,
-        [In] int cbPropData
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+      [In] int dwPropID,
+      [In] IntPtr pInstanceData,
+      [In] int cbInstanceData,
+      [In] IntPtr pPropData,
+      [In] int cbPropData
+      );
 
     [PreserveSig]
     int Get(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-        [In] int dwPropID,
-        [In] IntPtr pInstanceData,
-        [In] int cbInstanceData,
-        [In, Out] IntPtr pPropData,
-        [In] int cbPropData,
-        [Out] out int pcbReturned
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+      [In] int dwPropID,
+      [In] IntPtr pInstanceData,
+      [In] int cbInstanceData,
+      [In, Out] IntPtr pPropData,
+      [In] int cbPropData,
+      [Out] out int pcbReturned
+      );
 
     [PreserveSig]
     int QuerySupported(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
-        [In] int dwPropID,
-        [Out] out KSPropertySupport pTypeSupport
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet,
+      [In] int dwPropID,
+      [Out] out KSPropertySupport pTypeSupport
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("211A8761-03AC-11d1-8D13-00AA00BD8339"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("211A8761-03AC-11d1-8D13-00AA00BD8339"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTuner
   {
     [PreserveSig]
     int put_Channel(
-        [In] int lChannel,
-        [In] AMTunerSubChannel lVideoSubChannel,
-        [In] AMTunerSubChannel lAudioSubChannel
-        );
+      [In] int lChannel,
+      [In] AMTunerSubChannel lVideoSubChannel,
+      [In] AMTunerSubChannel lAudioSubChannel
+      );
 
     [PreserveSig]
     int get_Channel(
-        [Out] out int plChannel,
-        [Out] out AMTunerSubChannel plVideoSubChannel,
-        [Out] out AMTunerSubChannel plAudioSubChannel
-        );
+      [Out] out int plChannel,
+      [Out] out AMTunerSubChannel plVideoSubChannel,
+      [Out] out AMTunerSubChannel plAudioSubChannel
+      );
 
     [PreserveSig]
     int ChannelMinMax(
-        [Out] out int lChannelMin,
-        [Out] out int lChannelMax
-        );
+      [Out] out int lChannelMin,
+      [Out] out int lChannelMax
+      );
 
     [PreserveSig]
     int put_CountryCode([In] int lCountryCode);
@@ -2925,49 +2914,49 @@ namespace DirectShowLib
 
     [PreserveSig]
     int RegisterNotificationCallBack(
-        [In] IAMTunerNotification pNotify,
-        [In] AMTunerEventType lEvents
-        );
+      [In] IAMTunerNotification pNotify,
+      [In] AMTunerEventType lEvents
+      );
 
     [PreserveSig]
     int UnRegisterNotificationCallBack([In] IAMTunerNotification pNotify);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("211A8760-03AC-11d1-8D13-00AA00BD8339"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("211A8760-03AC-11d1-8D13-00AA00BD8339"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTunerNotification
   {
     [PreserveSig]
     int OnEvent([In] AMTunerEventType Event);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("211A8766-03AC-11d1-8D13-00AA00BD8339"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("211A8766-03AC-11d1-8D13-00AA00BD8339"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTVTuner : IAMTuner
   {
     #region IAMTuner
 
     [PreserveSig]
     new int put_Channel(
-        [In] int lChannel,
-        [In] AMTunerSubChannel lVideoSubChannel,
-        [In] AMTunerSubChannel lAudioSubChannel
-        );
+      [In] int lChannel,
+      [In] AMTunerSubChannel lVideoSubChannel,
+      [In] AMTunerSubChannel lAudioSubChannel
+      );
 
     [PreserveSig]
     new int get_Channel(
-        [Out] out int plChannel,
-        [Out] out AMTunerSubChannel plVideoSubChannel,
-        [Out] out AMTunerSubChannel plAudioSubChannel
-        );
+      [Out] out int plChannel,
+      [Out] out AMTunerSubChannel plVideoSubChannel,
+      [Out] out AMTunerSubChannel plAudioSubChannel
+      );
 
     [PreserveSig]
     new int ChannelMinMax(
-        [Out] out int lChannelMin,
-        [Out] out int lChannelMax
-        );
+      [Out] out int lChannelMin,
+      [Out] out int lChannelMax
+      );
 
     [PreserveSig]
     new int put_CountryCode([In] int lCountryCode);
@@ -3001,9 +2990,9 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int RegisterNotificationCallBack(
-        [In] IAMTunerNotification pNotify,
-        [In] AMTunerEventType lEvents
-        );
+      [In] IAMTunerNotification pNotify,
+      [In] AMTunerEventType lEvents
+      );
 
     [PreserveSig]
     new int UnRegisterNotificationCallBack([In] IAMTunerNotification pNotify);
@@ -3018,9 +3007,9 @@ namespace DirectShowLib
 
     [PreserveSig]
     int AutoTune(
-        [In] int lChannel,
-        [Out] out int plFoundSignal
-        );
+      [In] int lChannel,
+      [Out] out int plFoundSignal
+      );
 
     [PreserveSig]
     int StoreAutoTune();
@@ -3030,15 +3019,15 @@ namespace DirectShowLib
 
     [PreserveSig]
     int put_InputType(
-        [In] int lIndex,
-        [In] TunerInputType inputType
-        );
+      [In] int lIndex,
+      [In] TunerInputType inputType
+      );
 
     [PreserveSig]
     int get_InputType(
-        [In] int lIndex,
-        [Out] out TunerInputType inputType
-        );
+      [In] int lIndex,
+      [Out] out TunerInputType inputType
+      );
 
     [PreserveSig]
     int put_ConnectInput([In] int lIndex);
@@ -3053,56 +3042,56 @@ namespace DirectShowLib
     int get_AudioFrequency([Out] out int lFreq);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("6a2e0670-28e4-11d0-a18c-00a0c9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("6a2e0670-28e4-11d0-a18c-00a0c9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVideoControl
   {
     [PreserveSig]
     int GetCaps(
-        [In] IPin pPin,
-        [Out] out VideoControlFlags pCapsFlags
-        );
+      [In] IPin pPin,
+      [Out] out VideoControlFlags pCapsFlags
+      );
 
     [PreserveSig]
     int SetMode(
-        [In] IPin pPin,
-        [In] VideoControlFlags Mode
-        );
+      [In] IPin pPin,
+      [In] VideoControlFlags Mode
+      );
 
     [PreserveSig]
     int GetMode(
-        [In] IPin pPin,
-        [Out] out VideoControlFlags Mode
-        );
+      [In] IPin pPin,
+      [Out] out VideoControlFlags Mode
+      );
 
     [PreserveSig]
     int GetCurrentActualFrameRate(
-        [In] IPin pPin,
-        [Out] out long ActualFrameRate
-        );
+      [In] IPin pPin,
+      [Out] out long ActualFrameRate
+      );
 
     [PreserveSig]
     int GetMaxAvailableFrameRate(
-        [In] IPin pPin,
-        [In] int iIndex,
-        [In] Size Dimensions,
-        [Out] out long MaxAvailableFrameRate
-        );
+      [In] IPin pPin,
+      [In] int iIndex,
+      [In] Size Dimensions,
+      [Out] out long MaxAvailableFrameRate
+      );
 
     [PreserveSig]
     int GetFrameRateList(
-        [In] IPin pPin,
-        [In] int iIndex,
-        [In] Size Dimensions,
-        [Out] out int ListSize,
-        [Out] out IntPtr FrameRates
-        );
+      [In] IPin pPin,
+      [In] int iIndex,
+      [In] Size Dimensions,
+      [Out] out int ListSize,
+      [Out] out IntPtr FrameRates
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13350-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13350-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMAnalogVideoDecoder
   {
     [PreserveSig]
@@ -3133,39 +3122,39 @@ namespace DirectShowLib
     int get_OutputEnable([Out, MarshalAs(UnmanagedType.Bool)] out bool plOutputEnable);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13360-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13360-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVideoProcAmp
   {
     [PreserveSig]
     int GetRange(
-        [In] VideoProcAmpProperty Property,
-        [Out] out int pMin,
-        [Out] out int pMax,
-        [Out] out int pSteppingDelta,
-        [Out] out int pDefault,
-        [Out] out VideoProcAmpFlags pCapsFlags
-        );
+      [In] VideoProcAmpProperty Property,
+      [Out] out int pMin,
+      [Out] out int pMax,
+      [Out] out int pSteppingDelta,
+      [Out] out int pDefault,
+      [Out] out VideoProcAmpFlags pCapsFlags
+      );
 
     [PreserveSig]
     int Set(
-        [In] VideoProcAmpProperty Property,
-        [In] int lValue,
-        [In] VideoProcAmpFlags Flags
-        );
+      [In] VideoProcAmpProperty Property,
+      [In] int lValue,
+      [In] VideoProcAmpFlags Flags
+      );
 
     [PreserveSig]
     int Get(
-        [In] VideoProcAmpProperty Property,
-        [Out] out int lValue,
-        [Out] out VideoProcAmpFlags Flags
-        );
+      [In] VideoProcAmpProperty Property,
+      [Out] out int lValue,
+      [Out] out VideoProcAmpFlags Flags
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("54C39221-8380-11d0-B3F0-00AA003761C5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("54C39221-8380-11d0-B3F0-00AA003761C5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMAudioInputMixer
   {
     [PreserveSig]
@@ -3217,56 +3206,56 @@ namespace DirectShowLib
     int get_BassRange([Out] out double pRange);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("670d1d20-a068-11d0-b3f0-00aa003761c5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("670d1d20-a068-11d0-b3f0-00aa003761c5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMCopyCaptureFileProgress
   {
     [PreserveSig]
     int Progress(int iProgress);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13380-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13380-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMCrossbar
   {
     [PreserveSig]
     int get_PinCounts(
-        [Out] out int OutputPinCount,
-        [Out] out int InputPinCount
-        );
+      [Out] out int OutputPinCount,
+      [Out] out int InputPinCount
+      );
 
     [PreserveSig]
     int CanRoute(
-        [In] int OutputPinIndex,
-        [In] int InputPinIndex
-        );
+      [In] int OutputPinIndex,
+      [In] int InputPinIndex
+      );
 
     [PreserveSig]
     int Route(
-        [In] int OutputPinIndex,
-        [In] int InputPinIndex
-        );
+      [In] int OutputPinIndex,
+      [In] int InputPinIndex
+      );
 
     [PreserveSig]
     int get_IsRoutedTo(
-        [In] int OutputPinIndex,
-        [Out] out int InputPinIndex
-        );
+      [In] int OutputPinIndex,
+      [Out] out int InputPinIndex
+      );
 
     [PreserveSig]
     int get_CrossbarPinInfo(
-        [In, MarshalAs(UnmanagedType.Bool)] bool IsInputPin,
-        [In] int PinIndex,
-        [Out] out int PinIndexRelated,
-        [Out] out PhysicalConnectorType PhysicalType
-        );
+      [In, MarshalAs(UnmanagedType.Bool)] bool IsInputPin,
+      [In] int PinIndex,
+      [Out] out int PinIndexRelated,
+      [Out] out PhysicalConnectorType PhysicalType
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13344-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13344-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMDroppedFrames
   {
     [PreserveSig]
@@ -3277,18 +3266,18 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetDroppedInfo(
-        [In] int lSize,
-        [Out, MarshalAs(UnmanagedType.LPArray)] out int[] plArray,
-        [Out] out int plNumCopied
-        );
+      [In] int lSize,
+      [Out, MarshalAs(UnmanagedType.LPArray)] out int[] plArray,
+      [Out] out int plNumCopied
+      );
 
     [PreserveSig]
     int GetAverageFrameSize([Out] out int plAverageSize);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("83EC1C30-23D1-11d1-99E6-00A0C9560266"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("83EC1C30-23D1-11d1-99E6-00A0C9560266"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMTVAudio
   {
     [PreserveSig]
@@ -3305,48 +3294,48 @@ namespace DirectShowLib
 
     [PreserveSig]
     int RegisterNotificationCallBack(
-        [In] IAMTunerNotification pNotify,
-        [In] AMTVAudioEventType lEvents
-        );
+      [In] IAMTunerNotification pNotify,
+      [In] AMTVAudioEventType lEvents
+      );
 
     [PreserveSig]
     int UnRegisterNotificationCallBack([In] IAMTunerNotification pNotify);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("D8D715A3-6E5E-11D0-B3F0-00AA003761C5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("D8D715A3-6E5E-11D0-B3F0-00AA003761C5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVfwCompressDialogs
   {
     [PreserveSig]
     int ShowDialog(
-        [In] VfwCompressDialogs iDialog,
-        [In] IntPtr hwnd
-        );
+      [In] VfwCompressDialogs iDialog,
+      [In] IntPtr hwnd
+      );
 
     [PreserveSig]
     int GetState(
-        [In] IntPtr pState,
-        [In, Out] ref int pcbState
-        );
+      [In] IntPtr pState,
+      [In, Out] ref int pcbState
+      );
 
     [PreserveSig]
     int SetState(
-        [In] IntPtr pState,
-        [In] int pcbState
-        );
+      [In] IntPtr pState,
+      [In] int pcbState
+      );
 
     [PreserveSig]
     int SendDriverMessage(
-        [In] int uMsg,
-        [In] int dw1,
-        [In] int dw2
-        );
+      [In] int uMsg,
+      [In] int dw1,
+      [In] int dw2
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13343-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13343-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVideoCompression
   {
     [PreserveSig]
@@ -3375,29 +3364,29 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetInfo(
-        [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszVersion, // WCHAR *
-        [Out] out int pcbVersion,
-        [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDescription, // LPWSTR
-        [Out] out int pcbDescription,
-        [Out] out int pDefaultKeyFrameRate,
-        [Out] out int pDefaultPFramesPerKey,
-        [Out] out double pDefaultQuality,
-        [Out] out CompressionCaps pCapabilities
-        );
+      [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszVersion, // WCHAR *
+      [Out] out int pcbVersion,
+      [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDescription, // LPWSTR
+      [Out] out int pcbDescription,
+      [Out] out int pDefaultKeyFrameRate,
+      [Out] out int pDefaultPFramesPerKey,
+      [Out] out double pDefaultQuality,
+      [Out] out CompressionCaps pCapabilities
+      );
 
     [PreserveSig]
     int OverrideKeyFrame([In] int FrameNumber);
 
     [PreserveSig]
     int OverrideFrameSize(
-        [In] int FrameNumber,
-        [In] int Size
-        );
+      [In] int FrameNumber,
+      [In] int Size
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICaptureGraphBuilder2
   {
     [PreserveSig]
@@ -3408,70 +3397,70 @@ namespace DirectShowLib
 
     [PreserveSig]
     int SetOutputFileName(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid pType,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
-        [Out] out IBaseFilter ppbf,
-        [Out] out IFileSinkFilter ppSink
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid pType,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
+      [Out] out IBaseFilter ppbf,
+      [Out] out IFileSinkFilter ppSink
+      );
 
     [PreserveSig]
     int FindInterface(
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid pCategory,
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid pType,
-        [In] IBaseFilter pbf,
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppint
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid pCategory,
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid pType,
+      [In] IBaseFilter pbf,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppint
+      );
 
     [PreserveSig]
     int RenderStream(
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid PinCategory,
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
-        [In] IBaseFilter pfCompressor,
-        [In] IBaseFilter pfRenderer
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid PinCategory,
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
+      [In] IBaseFilter pfCompressor,
+      [In] IBaseFilter pfRenderer
+      );
 
     [PreserveSig]
     int ControlStream(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid PinCategory,
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
-        [In, MarshalAs(UnmanagedType.Interface)] IBaseFilter pFilter,
-        [In] DsLong pstart,
-        [In] DsLong pstop,
-        [In] short wStartCookie,
-        [In] short wStopCookie
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid PinCategory,
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
+      [In, MarshalAs(UnmanagedType.Interface)] IBaseFilter pFilter,
+      [In] DsLong pstart,
+      [In] DsLong pstop,
+      [In] short wStartCookie,
+      [In] short wStopCookie
+      );
 
     [PreserveSig]
     int AllocCapFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
-        [In] long dwlSize
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile,
+      [In] long dwlSize
+      );
 
     [PreserveSig]
     int CopyCaptureFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew,
-        [In, MarshalAs(UnmanagedType.Bool)] bool fAllowEscAbort,
-        [In] IAMCopyCaptureFileProgress pFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew,
+      [In, MarshalAs(UnmanagedType.Bool)] bool fAllowEscAbort,
+      [In] IAMCopyCaptureFileProgress pFilter
+      );
 
     [PreserveSig]
     int FindPin(
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
-        [In] PinDirection pindir,
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid PinCategory,
-        [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
-        [In, MarshalAs(UnmanagedType.Bool)] bool fUnconnected,
-        [In] int ZeroBasedIndex,
-        [Out, MarshalAs(UnmanagedType.Interface)] out IPin ppPin
-        );
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pSource,
+      [In] PinDirection pindir,
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid PinCategory,
+      [In, MarshalAs(UnmanagedType.LPStruct)] DsGuid MediaType,
+      [In, MarshalAs(UnmanagedType.Bool)] bool fUnconnected,
+      [In] int ZeroBasedIndex,
+      [Out, MarshalAs(UnmanagedType.Interface)] out IPin ppPin
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13340-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13340-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMStreamConfig
   {
     [PreserveSig]
@@ -3485,52 +3474,52 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetStreamCaps(
-        [In] int iIndex,
-        [Out] out AMMediaType ppmt,
-        [In] IntPtr pSCC
-        );
+      [In] int iIndex,
+      [Out] out AMMediaType ppmt,
+      [In] IntPtr pSCC
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("d18e17a0-aacb-11d0-afb0-00aa00b67a42"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("d18e17a0-aacb-11d0-afb0-00aa00b67a42"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVEnc
   {
     [PreserveSig]
     int get_IFormatResolution(
-        [Out] out DVEncoderVideoFormat VideoFormat,
-        [Out] out DVEncoderFormat DVFormat,
-        [Out] out DVEncoderResolution Resolution,
-        [In] OABool fDVInfo,
-        [Out] out DVInfo sDVInfo
-        );
+      [Out] out DVEncoderVideoFormat VideoFormat,
+      [Out] out DVEncoderFormat DVFormat,
+      [Out] out DVEncoderResolution Resolution,
+      [In] OABool fDVInfo,
+      [Out] out DVInfo sDVInfo
+      );
 
     [PreserveSig]
     int put_IFormatResolution(
-        [In] DVEncoderVideoFormat VideoFormat,
-        [In] DVEncoderFormat DVFormat,
-        [In] DVEncoderResolution Resolution,
-        [In] OABool fDVInfo,
-        [In] DVInfo sDVInfo
-        );
+      [In] DVEncoderVideoFormat VideoFormat,
+      [In] DVEncoderFormat DVFormat,
+      [In] DVEncoderResolution Resolution,
+      [In] OABool fDVInfo,
+      [In] DVInfo sDVInfo
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a2-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a2-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMediaEventSink
   {
     [PreserveSig]
     int Notify(
-        [In] EventCode evCode,
-        [In] IntPtr EventParam1,
-        [In] IntPtr EventParam2
-        );
+      [In] EventCode evCode,
+      [In] IntPtr EventParam1,
+      [In] IntPtr EventParam2
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("9FD52741-176D-4b36-8F51-CA8F933223BE"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("9FD52741-176D-4b36-8F51-CA8F933223BE"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMClockSlave
   {
     [PreserveSig]
@@ -3540,21 +3529,21 @@ namespace DirectShowLib
     int GetErrorTolerance([Out] out int pdwTolerance);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("c0dff467-d499-4986-972b-e1d9090fa941"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("c0dff467-d499-4986-972b-e1d9090fa941"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMDecoderCaps
   {
     [PreserveSig]
     int GetDecoderCaps(
-        [In] AMQueryDecoder dwCapIndex,
-        [Out] out DecoderCap lpdwCap
-        );
+      [In] AMQueryDecoder dwCapIndex,
+      [Out] out DecoderCap lpdwCap
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("62fae250-7e65-4460-bfc9-6398b322073c"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("62fae250-7e65-4460-bfc9-6398b322073c"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMOverlayFX
   {
     [PreserveSig]
@@ -3567,21 +3556,21 @@ namespace DirectShowLib
     int GetOverlayFX([Out] out AMOverlayFX lpdwOverlayFX);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("8389d2d0-77d7-11d1-abe6-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("8389d2d0-77d7-11d1-abe6-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMResourceControl
   {
     [PreserveSig]
     int Reserve(
-        [In] AMResCtlReserveFlags dwFlags,
-        [In] IntPtr pvReserved // PVOID
-        );
+      [In] AMResCtlReserveFlags dwFlags,
+      [In] IntPtr pvReserved // PVOID
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("c1960960-17f5-11d1-abe1-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("c1960960-17f5-11d1-abe1-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMStreamSelect
   {
     [PreserveSig]
@@ -3589,26 +3578,26 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Info(
-        [In] int lIndex,
-        [Out] out AMMediaType ppmt,
-        [Out] out AMStreamSelectInfoFlags pdwFlags,
-        [Out] out int plcid,
-        [Out] out int pdwGroup,
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszName,
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppObject,
-        [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk
-        );
+      [In] int lIndex,
+      [Out] out AMMediaType ppmt,
+      [Out] out AMStreamSelectInfoFlags pdwFlags,
+      [Out] out int plcid,
+      [Out] out int pdwGroup,
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszName,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppObject,
+      [Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk
+      );
 
     [PreserveSig]
     int Enable(
-        [In] int lIndex,
-        [In] AMStreamSelectEnableFlags dwFlags
-        );
+      [In] int lIndex,
+      [In] AMStreamSelectEnableFlags dwFlags
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("60d32930-13da-11d3-9ec6-c4fcaef5c7be"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("60d32930-13da-11d3-9ec6-c4fcaef5c7be"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMVideoDecimationProperties
   {
     [PreserveSig]
@@ -3618,130 +3607,130 @@ namespace DirectShowLib
     int SetDecimationUsage([In] DecimationUsage Usage);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("b79bb0b0-33c1-11d1-abe1-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("b79bb0b0-33c1-11d1-abe1-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterMapper2
   {
     [PreserveSig]
     int CreateCategory(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidCategory,
-        [In] Merit dwCategoryMerit,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Description
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidCategory,
+      [In] Merit dwCategoryMerit,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Description
+      );
 
     [PreserveSig]
     int UnregisterFilter(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidCategory,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid Filter
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidCategory,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Filter
+      );
 
     [PreserveSig]
     [Obsolete("This method has not been tested.", false)]
     int RegisterFilter(
-        [In] Guid clsidFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
+      [In] Guid clsidFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
 #if USING_NET11
             [In, Out] UCOMIMoniker ppMoniker,
 #else
- [In, Out] IMoniker ppMoniker,
+      [In, Out] IMoniker ppMoniker,
 #endif
- [In] DsGuid pclsidCategory,
- [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
+      [In] DsGuid pclsidCategory,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
 #if ALLOW_UNTESTED_INTERFACES
-            [In] RegFilter2 prf2
+      [In] RegFilter2 prf2
 #else
- [In] object prf2
+      [In] object prf2
 #endif
-);
+      );
 
     [PreserveSig]
     int EnumMatchingFilters(
 #if USING_NET11
             [Out] out UCOMIEnumMoniker ppEnum,
 #else
-[Out] out IEnumMoniker ppEnum,
+      [Out] out IEnumMoniker ppEnum,
 #endif
- [In] int dwFlags,
- [In, MarshalAs(UnmanagedType.Bool)] bool bExactMatch,
- [In] Merit dwMerit,
- [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
- [In] int cInputTypes,
- [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pInputTypes, // GUID *
- [In] RegPinMedium pMedIn,
- [In] DsGuid pPinCategoryIn,
- [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
- [In, MarshalAs(UnmanagedType.Bool)] bool bOutputNeeded,
- [In] int cOutputTypes,
- [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pOutputTypes, // GUID *
- [In] RegPinMedium pMedOut,
- [In] DsGuid pPinCategoryOut
- );
+      [In] int dwFlags,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bExactMatch,
+      [In] Merit dwMerit,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
+      [In] int cInputTypes,
+      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pInputTypes, // GUID *
+      [In] RegPinMedium pMedIn,
+      [In] DsGuid pPinCategoryIn,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bOutputNeeded,
+      [In] int cOutputTypes,
+      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pOutputTypes, // GUID *
+      [In] RegPinMedium pMedOut,
+      [In] DsGuid pPinCategoryOut
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("b79bb0b1-33c1-11d1-abe1-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("b79bb0b1-33c1-11d1-abe1-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterMapper3 : IFilterMapper2
   {
     #region IFilterMapper2 Methods
 
     [PreserveSig]
     new int CreateCategory(
-        [In] Guid clsidCategory,
-        [In] Merit dwCategoryMerit,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Description
-        );
+      [In] Guid clsidCategory,
+      [In] Merit dwCategoryMerit,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Description
+      );
 
     [PreserveSig]
     new int UnregisterFilter(
-        [In] Guid clsidCategory,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
-        [In] Guid Filter
-        );
+      [In] Guid clsidCategory,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
+      [In] Guid Filter
+      );
 
     [PreserveSig]
     [Obsolete("This method has not been tested.", false)]
     new int RegisterFilter(
-        [In] Guid clsidFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
+      [In] Guid clsidFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string Name,
 #if USING_NET11
             [In, Out] UCOMIMoniker ppMoniker,
 #else
- [In, Out] IMoniker ppMoniker,
+      [In, Out] IMoniker ppMoniker,
 #endif
- [In] DsGuid pclsidCategory,
- [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
+      [In] DsGuid pclsidCategory,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string szInstance,
 #if ALLOW_UNTESTED_INTERFACES
-            [In] RegFilter2 prf2
+      [In] RegFilter2 prf2
 #else
- [In] object prf2
+      [In] object prf2
 #endif
-);
+      );
 
     [PreserveSig]
     new int EnumMatchingFilters(
 #if USING_NET11
             [Out] out UCOMIEnumMoniker ppEnum,
 #else
-[Out] out IEnumMoniker ppEnum,
+      [Out] out IEnumMoniker ppEnum,
 #endif
- [In] int dwFlags,
- [In, MarshalAs(UnmanagedType.Bool)] bool bExactMatch,
- [In] Merit dwMerit,
- [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
- [In] int cInputTypes,
- [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pInputTypes, // GUID *
- [In] RegPinMedium pMedIn,
- [In] DsGuid pPinCategoryIn,
- [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
- [In, MarshalAs(UnmanagedType.Bool)] bool bOutputNeeded,
- [In] int cOutputTypes,
- [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pOutputTypes, // GUID *
- [In] RegPinMedium pMedOut,
- [In] DsGuid pPinCategoryOut
- );
+      [In] int dwFlags,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bExactMatch,
+      [In] Merit dwMerit,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bInputNeeded,
+      [In] int cInputTypes,
+      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pInputTypes, // GUID *
+      [In] RegPinMedium pMedIn,
+      [In] DsGuid pPinCategoryIn,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bRender,
+      [In, MarshalAs(UnmanagedType.Bool)] bool bOutputNeeded,
+      [In] int cOutputTypes,
+      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct)] Guid[] pOutputTypes, // GUID *
+      [In] RegPinMedium pMedOut,
+      [In] DsGuid pPinCategoryOut
+      );
 
     #endregion
 
@@ -3749,39 +3738,39 @@ namespace DirectShowLib
     int GetICreateDevEnum([Out] out ICreateDevEnum ppEnum);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("436eee9c-264f-4242-90e1-4e330c107512"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("436eee9c-264f-4242-90e1-4e330c107512"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMpeg2Demultiplexer
   {
     [PreserveSig]
     int CreateOutputPin(
-        [In] AMMediaType pMediaType,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName,
-        [Out] out IPin ppIPin
-        );
+      [In] AMMediaType pMediaType,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName,
+      [Out] out IPin ppIPin
+      );
 
     [PreserveSig]
     int SetOutputPinMediaType(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName,
-        [In] AMMediaType pMediaType
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName,
+      [In] AMMediaType pMediaType
+      );
 
     [PreserveSig]
     int DeleteOutputPin([In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMExtDevice
   {
     [PreserveSig]
     int GetCapability(
-        [In] ExtDeviceCaps Capability,
-        [Out] out ExtDeviceCaps pValue,
-        [Out] out double pdblValue
-        );
+      [In] ExtDeviceCaps Capability,
+      [Out] out ExtDeviceCaps pValue,
+      [Out] out double pdblValue
+      );
 
     [PreserveSig]
     int get_ExternalDeviceID([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
@@ -3797,10 +3786,10 @@ namespace DirectShowLib
 
     [PreserveSig]
     int Calibrate(
-        [In] IntPtr hEvent, // HEVENT
-        [In] ExtTransportEdit Mode, //Active / Inactive
-        [Out] out int pStatus
-        );
+      [In] IntPtr hEvent, // HEVENT
+      [In] ExtTransportEdit Mode, //Active / Inactive
+      [Out] out int pStatus
+      );
 
     [PreserveSig]
     int put_DevicePort([In] ExtDevicePort DevicePort);
@@ -3809,45 +3798,45 @@ namespace DirectShowLib
     int get_DevicePort([Out] out ExtDevicePort pDevicePort);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMPEG2StreamIdMap
   {
     [PreserveSig]
     int MapStreamId(
-        [In] int ulStreamId,
-        [In] MPEG2Program MediaSampleContent,
-        [In] int ulSubstreamFilterValue,
-        [In] int iDataOffset
-        );
+      [In] int ulStreamId,
+      [In] MPEG2Program MediaSampleContent,
+      [In] int ulSubstreamFilterValue,
+      [In] int iDataOffset
+      );
 
     [PreserveSig]
     int UnmapStreamId(
-        [In] int culStreamId,
-        [In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
-        );
+      [In] int culStreamId,
+      [In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
+      );
 
     [PreserveSig,
-    Obsolete("Because of bug in DS 9.0c, you can't get the StreamId map from .NET", false)]
+     Obsolete("Because of bug in DS 9.0c, you can't get the StreamId map from .NET", false)]
 #if ALLOW_UNTESTED_INTERFACES
-        int EnumStreamIdMap([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
+    int EnumStreamIdMap([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
 #else
     int EnumStreamIdMap([Out] out object ppIEnumStreamIdMap);
 #endif
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("A03CD5F0-3045-11cf-8C44-00AA006B6814"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("A03CD5F0-3045-11cf-8C44-00AA006B6814"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMExtTransport
   {
     [PreserveSig]
     int GetCapability(
-        [In] ExtTransportCaps Capability,
-        [Out] out int pValue,
-        [Out] out double pdblValue
-        );
+      [In] ExtTransportCaps Capability,
+      [Out] out int pValue,
+      [Out] out double pdblValue
+      );
 
     [PreserveSig]
     int put_MediaState([In] ExtTransportMediaStates State);
@@ -3863,47 +3852,47 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetStatus(
-        [In] ExtTransportStatus StatusItem,
-        [Out] out int pValue
-        );
+      [In] ExtTransportStatus StatusItem,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int GetTransportBasicParameters(
-        [In] ExtTransportParameters Param,
-        [Out] out int pValue,
-        [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData
-        );
+      [In] ExtTransportParameters Param,
+      [Out] out int pValue,
+      [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData
+      );
 
     [PreserveSig]
     int SetTransportBasicParameters(
-        [In] ExtTransportParameters Param,
-        [In] int Value,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszData
-        );
+      [In] ExtTransportParameters Param,
+      [In] int Value,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pszData
+      );
 
     [PreserveSig]
     int GetTransportVideoParameters(
-        [In] ExtTransportParameters Param,
-        [Out] out int pValue
-        );
+      [In] ExtTransportParameters Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetTransportVideoParameters(
-        [In] ExtTransportParameters Param,
-        [In] int Value
-        );
+      [In] ExtTransportParameters Param,
+      [In] int Value
+      );
 
     [PreserveSig]
     int GetTransportAudioParameters(
-        [In] ExtTransportParameters Param,
-        [Out] out int pValue
-        );
+      [In] ExtTransportParameters Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetTransportAudioParameters(
-        [In] ExtTransportParameters Param,
-        [In] ExtTransportAudio Value
-        );
+      [In] ExtTransportParameters Param,
+      [In] ExtTransportAudio Value
+      );
 
     [PreserveSig]
     int put_Mode([In] ExtTransportModes Mode);
@@ -3919,29 +3908,29 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetChase(
-        [Out] out int pEnabled,
-        [Out] out int pOffset,
-        [Out] out IntPtr phEvent // HEVENT
-        );
+      [Out] out int pEnabled,
+      [Out] out int pOffset,
+      [Out] out IntPtr phEvent // HEVENT
+      );
 
     [PreserveSig]
     int SetChase(
-        [In] int Enable,
-        [In] int Offset,
-        [In] IntPtr hEvent // HEVENT
-        );
+      [In] int Enable,
+      [In] int Offset,
+      [In] IntPtr hEvent // HEVENT
+      );
 
     [PreserveSig]
     int GetBump(
-        [Out] out int pSpeed,
-        [Out] out int pDuration
-        );
+      [Out] out int pSpeed,
+      [Out] out int pDuration
+      );
 
     [PreserveSig]
     int SetBump(
-        [In] int Speed,
-        [In] int Duration
-        );
+      [In] int Speed,
+      [In] int Duration
+      );
 
     [PreserveSig]
     int get_AntiClogControl([Out] out int pEnabled);
@@ -3951,29 +3940,29 @@ namespace DirectShowLib
 
     [PreserveSig]
     int GetEditPropertySet(
-        [In] int EditID,
-        [Out] out ExtTransportEdit pState
-        );
+      [In] int EditID,
+      [Out] out ExtTransportEdit pState
+      );
 
     [PreserveSig]
     int SetEditPropertySet(
-        [In, Out] ref int pEditID,
-        [In] ExtTransportEdit State
-        );
+      [In, Out] ref int pEditID,
+      [In] ExtTransportEdit State
+      );
 
     [PreserveSig]
     int GetEditProperty(
-        [In] int EditID,
-        [In] ExtTransportEdit Param,
-        [Out] out int pValue
-        );
+      [In] int EditID,
+      [In] ExtTransportEdit Param,
+      [Out] out int pValue
+      );
 
     [PreserveSig]
     int SetEditProperty(
-        [In] int EditID,
-        [In] ExtTransportEdit Param,
-        [In] int Value
-        );
+      [In] int EditID,
+      [In] ExtTransportEdit Param,
+      [In] int Value
+      );
 
     [PreserveSig]
     int get_EditStart([Out] out int pValue);
@@ -3982,9 +3971,9 @@ namespace DirectShowLib
     int put_EditStart([In] int Value);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("4995f511-9ddb-4f12-bd3b-f04611807b79"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("4995f511-9ddb-4f12-bd3b-f04611807b79"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMGraphBuilderCallback
   {
     [PreserveSig]
@@ -3998,24 +3987,24 @@ namespace DirectShowLib
     int CreatedFilter([In] IBaseFilter pFil);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868a5-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868a5-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IQualityControl
   {
     [PreserveSig]
     int Notify(
-        [In] IBaseFilter pSelf,
-        [In] Quality q
-        );
+      [In] IBaseFilter pSelf,
+      [In] Quality q
+      );
 
     [PreserveSig]
     int SetSink([In] IQualityControl piqc);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56ED71A0-AF5F-11D0-B3F0-00AA003761C5"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56ED71A0-AF5F-11D0-B3F0-00AA003761C5"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMBufferNegotiation
   {
     [PreserveSig]
@@ -4025,93 +4014,93 @@ namespace DirectShowLib
     int GetAllocatorProperties([Out] AllocatorProperties pprop);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("22320CB2-D41A-11d2-BF7C-D7CB9DF0BF93"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("22320CB2-D41A-11d2-BF7C-D7CB9DF0BF93"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMAudioRendererStats
   {
     [PreserveSig]
     int GetStatParam(
-        [In] AMAudioRendererStatParam dwParam,
-        [Out] out int pdwParam1,
-        [Out] out int pdwParam2
-        );
+      [In] AMAudioRendererStatParam dwParam,
+      [Out] out int pdwParam1,
+      [Out] out int pdwParam2
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("7B3A2F01-0751-48DD-B556-004785171C54"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("7B3A2F01-0751-48DD-B556-004785171C54"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IRegisterServiceProvider
   {
     [PreserveSig]
     int RegisterService(
-        [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidService,
-        [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkObject
-        );
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidService,
+      [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkObject
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("36b73883-c2c8-11cf-8b46-00805f6cef60"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("36b73883-c2c8-11cf-8b46-00805f6cef60"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ISeekingPassThru
   {
     int Init(
-        [In, MarshalAs(UnmanagedType.Bool)] bool bSupportRendering,
-        [In] IPin pPin
-        );
+      [In, MarshalAs(UnmanagedType.Bool)] bool bSupportRendering,
+      [In] IPin pPin
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("4d5466b0-a49c-11d1-abe8-00a0c905f375"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("4d5466b0-a49c-11d1-abe8-00a0c905f375"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMClockAdjust
   {
     [PreserveSig]
     int SetClockDelta([In] long rtDelta);
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("56a868aa-0ad4-11ce-b03a-0020af0ba770"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868aa-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAsyncReader
   {
     [PreserveSig]
     int RequestAllocator(
-        [In] IMemAllocator pPreferred,
-        [In, MarshalAs(UnmanagedType.LPStruct)] AllocatorProperties pProps,
-        [Out] out IMemAllocator ppActual
-        );
+      [In] IMemAllocator pPreferred,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AllocatorProperties pProps,
+      [Out] out IMemAllocator ppActual
+      );
 
     [PreserveSig]
     int Request(
-        [In] IMediaSample pSample,
-        [In] IntPtr dwUser
-        );
+      [In] IMediaSample pSample,
+      [In] IntPtr dwUser
+      );
 
     [PreserveSig]
     int WaitForNext(
-        [In] int dwTimeout,
-        [Out] out IMediaSample ppSample,
-        [Out] out IntPtr pdwUser
-        );
+      [In] int dwTimeout,
+      [Out] out IMediaSample ppSample,
+      [Out] out IntPtr pdwUser
+      );
 
     [PreserveSig]
     int SyncReadAligned(
-        [In] IMediaSample pSample
-        );
+      [In] IMediaSample pSample
+      );
 
     [PreserveSig]
     int SyncRead(
-        [In] long llPosition,
-        [In] int lLength,
-        [Out] IntPtr pBuffer // BYTE *
-        );
+      [In] long llPosition,
+      [In] int lLength,
+      [Out] IntPtr pBuffer // BYTE *
+      );
 
     [PreserveSig]
     int Length(
-        [Out] out long pTotal,
-        [Out] out long pAvailable
-        );
+      [Out] out long pTotal,
+      [Out] out long pAvailable
+      );
 
     [PreserveSig]
     int BeginFlush();
@@ -4120,48 +4109,48 @@ namespace DirectShowLib
     int EndFlush();
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("C6E13370-30AC-11d0-A18C-00A0C9118956"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("C6E13370-30AC-11d0-A18C-00A0C9118956"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAMCameraControl
   {
     [PreserveSig]
     int GetRange(
-        [In] CameraControlProperty Property,
-        [Out] out int pMin,
-        [Out] out int pMax,
-        [Out] out int pSteppingDelta,
-        [Out] out int pDefault,
-        [Out] out CameraControlFlags pCapsFlags
-        );
+      [In] CameraControlProperty Property,
+      [Out] out int pMin,
+      [Out] out int pMax,
+      [Out] out int pSteppingDelta,
+      [Out] out int pDefault,
+      [Out] out CameraControlFlags pCapsFlags
+      );
 
     [PreserveSig]
     int Set(
-        [In] CameraControlProperty Property,
-        [In] int lValue,
-        [In] CameraControlFlags Flags
-        );
+      [In] CameraControlProperty Property,
+      [In] int lValue,
+      [In] CameraControlFlags Flags
+      );
 
     [PreserveSig]
     int Get(
-        [In] CameraControlProperty Property,
-        [Out] out int lValue,
-        [Out] out CameraControlFlags Flags
-        );
+      [In] CameraControlProperty Property,
+      [Out] out int lValue,
+      [Out] out CameraControlFlags Flags
+      );
   }
 
-  [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-  Guid("aaf38154-b80b-422f-91e6-b66467509a07"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("aaf38154-b80b-422f-91e6-b66467509a07"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFilterGraph3 : IFilterGraph2
   {
     #region IFilterGraph Methods
 
     [PreserveSig]
     new int AddFilter(
-        [In] IBaseFilter pFilter,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName
-        );
+      [In] IBaseFilter pFilter,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName
+      );
 
     [PreserveSig]
     new int RemoveFilter([In] IBaseFilter pFilter);
@@ -4171,17 +4160,16 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int FindFilterByName(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int ConnectDirect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn,
-        [In, MarshalAs(UnmanagedType.LPStruct)]
-            AMMediaType pmt
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn,
+      [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pmt
+      );
 
     [PreserveSig]
     new int Reconnect([In] IPin ppin);
@@ -4198,25 +4186,25 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int Connect(
-        [In] IPin ppinOut,
-        [In] IPin ppinIn
-        );
+      [In] IPin ppinOut,
+      [In] IPin ppinIn
+      );
 
     [PreserveSig]
     new int Render([In] IPin ppinOut);
 
     [PreserveSig]
     new int RenderFile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList
+      );
 
     [PreserveSig]
     new int AddSourceFilter(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
-        [Out] out IBaseFilter ppFilter
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int SetLogFile(IntPtr hFile); // DWORD_PTR
@@ -4237,35 +4225,34 @@ namespace DirectShowLib
             [In] UCOMIMoniker pMoniker,
             [In] UCOMIBindCtx pCtx,
 #else
-[In] IMoniker pMoniker,
-[In] IBindCtx pCtx,
+      [In] IMoniker pMoniker,
+      [In] IBindCtx pCtx,
 #endif
- [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
- [Out] out IBaseFilter ppFilter
- );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName,
+      [Out] out IBaseFilter ppFilter
+      );
 
     [PreserveSig]
     new int ReconnectEx(
-        [In] IPin ppin,
-        [In] AMMediaType pmt
-        );
+      [In] IPin ppin,
+      [In] AMMediaType pmt
+      );
 
     [PreserveSig]
     new int RenderEx(
-        [In] IPin pPinOut,
-        [In] AMRenderExFlags dwFlags,
-        [In] IntPtr pvContext // DWORD *
-        );
+      [In] IPin pPinOut,
+      [In] AMRenderExFlags dwFlags,
+      [In] IntPtr pvContext // DWORD *
+      );
 
     #endregion
 
     [PreserveSig]
     int SetSyncSourceEx(
-        IReferenceClock pClockForMostOfFilterGraph,
-        IReferenceClock pClockForFilter,
-        IBaseFilter pFilter
-        );
-
+      IReferenceClock pClockForMostOfFilterGraph,
+      IReferenceClock pClockForFilter,
+      IBaseFilter pFilter
+      );
   }
 
   #endregion

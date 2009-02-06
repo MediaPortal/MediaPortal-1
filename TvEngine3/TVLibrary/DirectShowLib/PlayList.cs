@@ -24,146 +24,144 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace DirectShowLib
 {
-    #region Declarations
 
+  #region Declarations
 
-    /// <summary>
-    /// From AMPlayListItemFlags
-    /// </summary>
-    public enum AMPlayListItemFlags
-    {
-        CanSkip = 0x1,
-        CanBind = 0x2
-    }
+  /// <summary>
+  /// From AMPlayListItemFlags
+  /// </summary>
+  public enum AMPlayListItemFlags
+  {
+    CanSkip = 0x1,
+    CanBind = 0x2
+  }
 
-    /// <summary>
-    /// From AMPlayListFlags
-    /// </summary>
-    [Flags]
-    public enum AMPlayListFlags
-    {
-        None = 0,
-        StartInScanMode = 0x1,
-        ForceBanner = 0x2
-    }
+  /// <summary>
+  /// From AMPlayListFlags
+  /// </summary>
+  [Flags]
+  public enum AMPlayListFlags
+  {
+    None = 0,
+    StartInScanMode = 0x1,
+    ForceBanner = 0x2
+  }
 
+  #endregion
 
-    #endregion
+  #region Interfaces
 
-    #region Interfaces
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868ff-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAMPlayListItem
+  {
+    int GetFlags(
+      out AMPlayListItemFlags pdwFlags
+      );
 
+    int GetSourceCount(
+      out int pdwSources
+      );
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("56a868ff-0ad4-11ce-b03a-0020af0ba770"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMPlayListItem
-    {
-        int GetFlags(
-            out AMPlayListItemFlags pdwFlags
-            );
+    int GetSourceURL(
+      int dwSourceIndex,
+      [MarshalAs(UnmanagedType.BStr)] out string pbstrURL
+      );
 
-        int GetSourceCount(
-            out int pdwSources
-            );
+    int GetSourceStart(
+      int dwSourceIndex,
+      out long prtStart
+      );
 
-        int GetSourceURL(
-            int dwSourceIndex,
-            [MarshalAs(UnmanagedType.BStr)] out string pbstrURL
-            );
+    int GetSourceDuration(
+      int dwSourceIndex,
+      out long prtDuration
+      );
 
-        int GetSourceStart(
-            int dwSourceIndex,
-            out long prtStart
-            );
+    int GetSourceStartMarker(
+      int dwSourceIndex,
+      out int pdwMarker
+      );
 
-        int GetSourceDuration(
-            int dwSourceIndex,
-            out long prtDuration
-            );
+    int GetSourceEndMarker(
+      int dwSourceIndex,
+      out int pdwMarker
+      );
 
-        int GetSourceStartMarker(
-            int dwSourceIndex,
-            out int pdwMarker
-            );
+    int GetSourceStartMarkerName(
+      int dwSourceIndex,
+      [MarshalAs(UnmanagedType.BStr)] out string pbstrStartMarker
+      );
 
-        int GetSourceEndMarker(
-            int dwSourceIndex,
-            out int pdwMarker
-            );
+    int GetSourceEndMarkerName(
+      int dwSourceIndex,
+      [MarshalAs(UnmanagedType.BStr)] out string pbstrEndMarker
+      );
 
-        int GetSourceStartMarkerName(
-            int dwSourceIndex,
-            [MarshalAs(UnmanagedType.BStr)] out string pbstrStartMarker
-            );
+    int GetLinkURL(
+      [MarshalAs(UnmanagedType.BStr)] out string pbstrURL);
 
-        int GetSourceEndMarkerName(
-            int dwSourceIndex,
-            [MarshalAs(UnmanagedType.BStr)] out string pbstrEndMarker
-            );
+    int GetScanDuration(
+      int dwSourceIndex,
+      out long prtScanDuration
+      );
+  }
 
-        int GetLinkURL(
-            [MarshalAs(UnmanagedType.BStr)] out string pbstrURL);
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("56a868fe-0ad4-11ce-b03a-0020af0ba770"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAMPlayList
+  {
+    int GetFlags(
+      out AMPlayListFlags pdwFlags
+      );
 
-        int GetScanDuration(
-            int dwSourceIndex,
-            out long prtScanDuration
-            );
-    }
+    int GetItemCount(
+      out int pdwItems
+      );
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("56a868fe-0ad4-11ce-b03a-0020af0ba770"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMPlayList
-    {
-        int GetFlags(
-            out AMPlayListFlags pdwFlags
-            );
+    int GetItem(
+      int dwItemIndex,
+      out IAMPlayListItem ppItem
+      );
 
-        int GetItemCount(
-            out int pdwItems
-            );
+    int GetNamedEvent(
+      string pwszEventName,
+      int dwItemIndex,
+      out IAMPlayListItem ppItem,
+      out AMPlayListItemFlags pdwFlags
+      );
 
-        int GetItem(
-            int dwItemIndex,
-            out IAMPlayListItem ppItem
-            );
+    int GetRepeatInfo(
+      out int pdwRepeatCount,
+      out int pdwRepeatStart,
+      out int pdwRepeatEnd
+      );
+  }
 
-        int GetNamedEvent(
-            string pwszEventName,
-            int dwItemIndex,
-            out IAMPlayListItem ppItem,
-            out AMPlayListItemFlags pdwFlags
-            );
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("4C437B91-6E9E-11d1-A704-006097C4E476"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface ISpecifyParticularPages
+  {
+    int GetPages(
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidWhatPages,
+      out DsCAUUID pPages
+      );
+  }
 
-        int GetRepeatInfo(
-            out int pdwRepeatCount,
-            out int pdwRepeatStart,
-            out int pdwRepeatEnd
-            );
-    }
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("02EF04DD-7580-11d1-BECE-00C04FB6E937"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IAMRebuild
+  {
+    int RebuildNow();
+  } ;
 
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("4C437B91-6E9E-11d1-A704-006097C4E476"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface ISpecifyParticularPages
-    {
-        int GetPages(
-            [In, MarshalAs(UnmanagedType.LPStruct)] Guid guidWhatPages,
-            out DsCAUUID pPages
-            );
-    }
-
-    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("02EF04DD-7580-11d1-BECE-00C04FB6E937"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMRebuild
-    {
-        int RebuildNow( );
-    };
-
-
-    #endregion
+  #endregion
 }

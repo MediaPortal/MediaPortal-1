@@ -2,7 +2,6 @@ using System;
 
 namespace mathSimmetrics
 {
-
   /// <summary>
   /// Math helper functions
   /// </summary>

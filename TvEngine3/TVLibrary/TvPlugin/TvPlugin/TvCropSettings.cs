@@ -24,14 +24,12 @@
 #endregion
 
 #region usings
+
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Collections.Generic;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
+
 #endregion
 
 namespace TvPlugin
@@ -41,26 +39,21 @@ namespace TvPlugin
   /// </summary>
   public class TvCropSettings : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(8)]
-    protected GUISpinControl spinTop = null;
-    [SkinControlAttribute(12)]
-    protected GUISpinControl spinBottom = null;
-    [SkinControlAttribute(16)]
-    protected GUISpinControl spinLeft = null;
-    [SkinControlAttribute(20)]
-    protected GUISpinControl spinRight = null;
+    [SkinControl(2)] protected GUIButtonControl btnClose = null;
+    [SkinControl(8)] protected GUISpinControl spinTop = null;
+    [SkinControl(12)] protected GUISpinControl spinBottom = null;
+    [SkinControl(16)] protected GUISpinControl spinLeft = null;
+    [SkinControl(20)] protected GUISpinControl spinRight = null;
 
-    bool _running;
-    int _parentWindowID = 0;
-    CropSettings _cropSettings;
-    GUIWindow _parentWindow = null;
+    private bool _running;
+    private int _parentWindowID = 0;
+    private CropSettings _cropSettings;
+    private GUIWindow _parentWindow = null;
 
     /// <summary>
     /// Collection of Controls which are accessed from this class
     /// </summary>
-    enum Controls
+    private enum Controls
     {
       CONTROL_EXIT = 2,
       CONTROL_CARD_LABEL = 5,
@@ -71,13 +64,15 @@ namespace TvPlugin
     }
 
     #region Ctor
+
     /// <summary>
     /// Constructor
     /// </summary>
     public TvCropSettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS;
+      GetID = (int) Window.WINDOW_TV_CROP_SETTINGS;
     }
+
     #endregion
 
     /// <summary>
@@ -87,14 +82,14 @@ namespace TvPlugin
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVCropSettings.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS;
+      GetID = (int) Window.WINDOW_TV_CROP_SETTINGS;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       return bResult;
     }
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_TV_CROP_SETTINGS, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -114,13 +109,13 @@ namespace TvPlugin
     /// <param name="timePassed"></param>
     public override void Render(float timePassed)
     {
-      base.Render(timePassed);		// render our controls to the screen
+      base.Render(timePassed); // render our controls to the screen
     }
 
     /// <summary>
     /// Close
     /// </summary>
-    void Close()
+    private void Close()
     {
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
@@ -148,57 +143,67 @@ namespace TvPlugin
           {
             // fetch settings for the current capture card
             _cropSettings = TvCropManager.CropSettings;
-            GUILabelControl cardLabel = GetControl((int)Controls.CONTROL_CARD_LABEL) as GUILabelControl;
+            GUILabelControl cardLabel = GetControl((int) Controls.CONTROL_CARD_LABEL) as GUILabelControl;
             cardLabel.Visible = false;
 
-            foreach (int iCtl in Enum.GetValues(typeof(Controls)))
+            foreach (int iCtl in Enum.GetValues(typeof (Controls)))
             {
               if (GetControl(iCtl) is GUISpinControl)
               {
-                GUISpinControl cntl = (GUISpinControl)GetControl(iCtl);
+                GUISpinControl cntl = (GUISpinControl) GetControl(iCtl);
                 cntl.ShowRange = false;
               }
             }
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_TOP);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_CROP_TOP);
             for (int i = 0; i <= 200; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_CROP_TOP, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_CROP_TOP, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_TOP, _cropSettings.Top);
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_CROP_TOP, _cropSettings.Top);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_CROP_BOTTOM);
             for (int i = 0; i <= 200; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_CROP_BOTTOM, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_BOTTOM, _cropSettings.Bottom);
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_LEFT);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_CROP_BOTTOM, _cropSettings.Bottom);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_CROP_LEFT);
             for (int i = 0; i <= 200; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_CROP_LEFT, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_CROP_LEFT, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_LEFT, _cropSettings.Left);
-            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_CROP_RIGHT);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_CROP_LEFT, _cropSettings.Left);
+            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_CROP_RIGHT);
             for (int i = 0; i <= 200; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_CROP_RIGHT, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_CROP_RIGHT, i.ToString());
             }
-            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_CROP_RIGHT, _cropSettings.Right);
+            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_CROP_RIGHT, _cropSettings.Right);
 
             break;
           }
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int)Controls.CONTROL_EXIT)
+            if (iControl == (int) Controls.CONTROL_EXIT)
+            {
               Close();
-            else if (iControl == (int)Controls.CONTROL_CROP_TOP)
+            }
+            else if (iControl == (int) Controls.CONTROL_CROP_TOP)
+            {
               _cropSettings.Top = Int32.Parse(message.Label);
-            else if (iControl == (int)Controls.CONTROL_CROP_BOTTOM)
+            }
+            else if (iControl == (int) Controls.CONTROL_CROP_BOTTOM)
+            {
               _cropSettings.Bottom = Int32.Parse(message.Label);
-            else if (iControl == (int)Controls.CONTROL_CROP_LEFT)
+            }
+            else if (iControl == (int) Controls.CONTROL_CROP_LEFT)
+            {
               _cropSettings.Left = Int32.Parse(message.Label);
-            else if (iControl == (int)Controls.CONTROL_CROP_RIGHT)
+            }
+            else if (iControl == (int) Controls.CONTROL_CROP_RIGHT)
+            {
               _cropSettings.Right = Int32.Parse(message.Label);
+            }
 
             // ativate & save settings for the current capture card
             TvCropManager.CropSettings = _cropSettings;
@@ -244,7 +249,7 @@ namespace TvPlugin
     {
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       AllocResources();
-      ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
       base.OnPageLoad();
     }
 
@@ -254,7 +259,6 @@ namespace TvPlugin
     /// <param name="dwParentId"></param>
     public void DoModal(int parentId)
     {
-
       _parentWindowID = parentId;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
       if (null == _parentWindow)
@@ -277,12 +281,15 @@ namespace TvPlugin
       {
         GUIWindowManager.Process();
         if (!GUIGraphicsContext.Vmr9Active)
-          System.Threading.Thread.Sleep(50);
+        {
+          Thread.Sleep(50);
+        }
       }
       GUILayerManager.UnRegisterLayer(this);
     }
 
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       return true;
@@ -291,8 +298,11 @@ namespace TvPlugin
     public void RenderLayer(float timePassed)
     {
       if (_running)
+      {
         Render(timePassed);
+      }
     }
+
     #endregion
   }
 }

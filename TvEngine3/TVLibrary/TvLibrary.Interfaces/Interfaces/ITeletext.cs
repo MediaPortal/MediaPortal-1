@@ -36,21 +36,26 @@ namespace TvLibrary.Teletext
   public interface ITeletext
   {
     #region events
+
     /// <summary>
     /// event which gets fired when the current selected pagenumber is updated
     /// </summary>
     event PageEventHandler OnPageUpdated;
+
     /// <summary>
     /// event which gets fired when the current selected pagenumber is added
     /// </summary>
     event PageEventHandler OnPageAdded;
+
     /// <summary>
     /// event which gets fired when the current selected pagenumber is removed
     /// </summary>
     event PageEventHandler OnPageDeleted;
+
     #endregion
 
     #region methods
+
     /// <summary>
     /// returns the channel name found in packet 8/30
     /// </summary>
@@ -98,45 +103,54 @@ namespace TvLibrary.Teletext
     /// <param name="currentPageNumber">The current page number.</param>
     /// <returns>timespan contain the rotation time</returns>
     TimeSpan RotationTime(int currentPageNumber);
+
     #endregion
 
     #region fasttext
+
     /// <summary>
     /// returns the pagenumber for the red button
     /// </summary>
-    int PageRed { get;}
+    int PageRed { get; }
+
     /// <summary>
     /// returns the pagenumber for the green button
     /// </summary>
-    int PageGreen { get;}
+    int PageGreen { get; }
+
     /// <summary>
     /// returns the pagenumber for the yellow button
     /// </summary>
-    int PageYellow { get;}
+    int PageYellow { get; }
+
     /// <summary>
     /// returns the pagenumber for the blue button
     /// </summary>
-    int PageBlue { get;}
+    int PageBlue { get; }
 
     /// <summary>
     /// Gets the page select text.
     /// </summary>
     /// <value>The page select text.</value>
-    string PageSelectText { get;}
+    string PageSelectText { get; }
+
     /// <summary>
     /// Gets/Sets  the percentage of the maximum height for the font size
     /// </summary>
     /// <value>Percentage of the maximum height of font size.</value>
-    int PercentageOfMaximumHeight { get;set;}
+    int PercentageOfMaximumHeight { get; set; }
+
     /// <summary>
     /// turns on/off the conceal (hidden) mode
     /// </summary>
-    bool HiddenMode { get;set;}
+    bool HiddenMode { get; set; }
+
     /// <summary>
     /// turns on/off transparent mode. In transparent mode the
     /// teletext page is rendered on transparent background
     /// </summary>
-    bool TransparentMode { get;set;}
+    bool TransparentMode { get; set; }
+
     #endregion
   }
 }

@@ -23,46 +23,28 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
-using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using AMS.Profile;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Dialogs;
-using MediaPortal.Configuration;
+using TvDatabase;
 //using MediaPortal.Utils.Services;
 
-using TvDatabase;
-using TvControl;
-using TvLibrary.Interfaces;
-
-
-using Gentle.Common;
-using Gentle.Framework;
 namespace TvPlugin
 {
   public class TvEpgSettings : GUIWindow
   {
-    [SkinControlAttribute(10)]    protected GUICheckListControl listChannels = null;
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnSelectAll = null;
-    [SkinControlAttribute(3)]     protected GUIButtonControl btnSelectNone = null;
+    [SkinControl(10)] protected GUICheckListControl listChannels = null;
+    [SkinControl(2)] protected GUIButtonControl btnSelectAll = null;
+    [SkinControl(3)] protected GUIButtonControl btnSelectNone = null;
 
     public TvEpgSettings()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG;
+      GetID = (int) Window.WINDOW_SETTINGS_TV_EPG;
     }
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_SETTINGS_TV_EPG, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -79,13 +61,16 @@ namespace TvPlugin
       Update();
     }
 
-    void Update()
+    private void Update()
     {
       listChannels.Clear();
       IList<Channel> channels = Channel.ListAll();
       foreach (Channel chan in channels)
       {
-        if (chan.IsTv) continue;
+        if (chan.IsTv)
+        {
+          continue;
+        }
         bool isDigital = false;
         foreach (TuningDetail detail in chan.ReferringTuningDetail())
         {
@@ -100,9 +85,9 @@ namespace TvPlugin
           GUIListItem item = new GUIListItem();
           item.Label = chan.DisplayName;
           item.IsFolder = false;
-          item.ThumbnailImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          item.IconImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          item.IconImageBig = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
           item.Selected = chan.GrabEpg;
           item.TVTag = chan;
           listChannels.Add(item);
@@ -110,7 +95,7 @@ namespace TvPlugin
       }
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listChannels)
       {
@@ -124,7 +109,10 @@ namespace TvPlugin
         IList<Channel> channels = Channel.ListAll();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv) continue;
+          if (chan.IsTv)
+          {
+            continue;
+          }
           if (!chan.GrabEpg)
           {
             chan.GrabEpg = true;
@@ -138,7 +126,10 @@ namespace TvPlugin
         IList<Channel> channels = Channel.ListAll();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv) continue;
+          if (chan.IsTv)
+          {
+            continue;
+          }
           if (chan.GrabEpg)
           {
             chan.GrabEpg = false;
@@ -149,6 +140,7 @@ namespace TvPlugin
       }
       base.OnClicked(controlId, control, actionType);
     }
+
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();

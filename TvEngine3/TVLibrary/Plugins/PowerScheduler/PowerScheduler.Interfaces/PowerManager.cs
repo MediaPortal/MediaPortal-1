@@ -24,10 +24,10 @@
 #endregion
 
 #region Usings
+
 using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
@@ -35,10 +35,12 @@ namespace TvEngine.PowerScheduler.Interfaces
   public class PowerManager
   {
     #region Variables
+
     /// <summary>
     /// Does the PowerManager allow/prevent standby?
     /// </summary>
     private bool _standbyAllowed = false;
+
     #endregion
 
     #region External power management methods and enumerations
@@ -87,7 +89,9 @@ namespace TvEngine.PowerScheduler.Interfaces
     public bool AllowStandby()
     {
       if (_standbyAllowed)
+      {
         return true;
+      }
       lock (this)
       {
         ExecutionState result = SetThreadExecutionState(ExecutionState.Continuous);
@@ -110,7 +114,9 @@ namespace TvEngine.PowerScheduler.Interfaces
     public bool PreventStandby()
     {
       if (!_standbyAllowed)
+      {
         return true;
+      }
       lock (this)
       {
         ExecutionState result = SetThreadExecutionState(ExecutionState.SystemRequired | ExecutionState.Continuous);

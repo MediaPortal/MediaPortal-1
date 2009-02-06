@@ -30,15 +30,14 @@ namespace TvControl
   [Serializable]
   public class User : ICloneable
   {
-    string _hostName;
-    bool _isAdmin;
-    int _cardId;
-    int _subChannel;
-    int _idChannel;
-    TvStoppedReason _timeshiftStoppedReason;
-    DateTime _lastHeartBeat;
-    [NonSerialized]
-    object _history;
+    private string _hostName;
+    private bool _isAdmin;
+    private int _cardId;
+    private int _subChannel;
+    private int _idChannel;
+    private TvStoppedReason _timeshiftStoppedReason;
+    private DateTime _lastHeartBeat;
+    [NonSerialized] private object _history;
     private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
 
     /// <summary>
@@ -69,6 +68,7 @@ namespace TvControl
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
@@ -90,14 +90,8 @@ namespace TvControl
     /// <returns>dictionary containing all channel states of the channels supplied</returns>
     public Dictionary<int, ChannelState> ChannelStates
     {
-      get
-      {
-        return _channelStates;
-      }
-      set
-      {
-        _channelStates = value;
-      }
+      get { return _channelStates; }
+      set { _channelStates = value; }
     }
 
     /// <summary>
@@ -106,29 +100,18 @@ namespace TvControl
     /// <value>The card id.</value>
     public int CardId
     {
-      get
-      {
-        return _cardId;
-      }
-      set
-      {
-        _cardId = value;
-      }
+      get { return _cardId; }
+      set { _cardId = value; }
     }
+
     /// <summary>
     /// Gets or sets the database id channel.
     /// </summary>
     /// <value>The id channel.</value>
     public int IdChannel
     {
-      get
-      {
-        return _idChannel;
-      }
-      set
-      {
-        _idChannel = value;
-      }
+      get { return _idChannel; }
+      set { _idChannel = value; }
     }
 
     /// <summary>
@@ -137,14 +120,8 @@ namespace TvControl
     /// <value>The subchannel id.</value>
     public int SubChannel
     {
-      get
-      {
-        return _subChannel;
-      }
-      set
-      {
-        _subChannel = value;
-      }
+      get { return _subChannel; }
+      set { _subChannel = value; }
     }
 
     /// <summary>
@@ -153,29 +130,18 @@ namespace TvControl
     /// <value>The name.</value>
     public string Name
     {
-      get
-      {
-        return _hostName;
-      }
-      set
-      {
-        _hostName = value;
-      }
+      get { return _hostName; }
+      set { _hostName = value; }
     }
+
     /// <summary>
     /// Gets or sets a value indicating whether this instance is admin.
     /// </summary>
     /// <value><c>true</c> if this instance is admin; otherwise, <c>false</c>.</value>
     public bool IsAdmin
     {
-      get
-      {
-        return _isAdmin;
-      }
-      set
-      {
-        _isAdmin = value;
-      }
+      get { return _isAdmin; }
+      set { _isAdmin = value; }
     }
 
     /// <summary>
@@ -184,14 +150,8 @@ namespace TvControl
     /// <value>The history.</value>
     public object History
     {
-      get
-      {
-        return _history;
-      }
-      set
-      {
-        _history = value;
-      }
+      get { return _history; }
+      set { _history = value; }
     }
 
     /// <summary>
@@ -199,14 +159,8 @@ namespace TvControl
     /// </summary>
     public DateTime HeartBeat
     {
-      get
-      {
-        return _lastHeartBeat;
-      }
-      set
-      {
-        _lastHeartBeat = value;
-      }
+      get { return _lastHeartBeat; }
+      set { _lastHeartBeat = value; }
     }
 
     /// <summary>
@@ -214,17 +168,9 @@ namespace TvControl
     /// </summary>
     public TvStoppedReason TvStoppedReason
     {
-      get
-      {
-        return _timeshiftStoppedReason;
-      }
-      set
-      {
-        _timeshiftStoppedReason = value;
-      }
+      get { return _timeshiftStoppedReason; }
+      set { _timeshiftStoppedReason = value; }
     }
-
-
 
     #region ICloneable Members
 
@@ -247,7 +193,5 @@ namespace TvControl
     }
 
     #endregion
-
-
   }
 }

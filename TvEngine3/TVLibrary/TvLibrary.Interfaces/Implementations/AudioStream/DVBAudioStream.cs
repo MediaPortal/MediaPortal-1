@@ -30,12 +30,15 @@ namespace TvLibrary.Implementations.DVB
   public class DVBAudioStream : IAudioStream
   {
     #region variables
-    string _language;
-    AudioStreamType _streamType;
-    int _pid;
+
+    private string _language;
+    private AudioStreamType _streamType;
+    private int _pid;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBAudioStream"/> class.
     /// </summary>
@@ -45,22 +48,18 @@ namespace TvLibrary.Implementations.DVB
       _streamType = AudioStreamType.Mpeg2;
       _pid = 0;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// gets/sets  Audio language
     /// </summary>
     public string Language
     {
-      get
-      {
-        return _language;
-      }
-      set
-      {
-        _language = value;
-      }
+      get { return _language; }
+      set { _language = value; }
     }
 
     /// <summary>
@@ -68,14 +67,8 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public AudioStreamType StreamType
     {
-      get
-      {
-        return _streamType;
-      }
-      set
-      {
-        _streamType = value;
-      }
+      get { return _streamType; }
+      set { _streamType = value; }
     }
 
     /// <summary>
@@ -83,15 +76,10 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public int Pid
     {
-      get
-      {
-        return _pid;
-      }
-      set
-      {
-        _pid = value;
-      }
+      get { return _pid; }
+      set { _pid = value; }
     }
+
     #endregion
 
     /// <summary>
@@ -105,11 +93,16 @@ namespace TvLibrary.Implementations.DVB
     {
       DVBAudioStream stream = obj as DVBAudioStream;
       if (stream == null)
+      {
         return false;
+      }
       if (_language == stream.Language && _streamType == stream.StreamType && _pid == stream.Pid)
+      {
         return true;
+      }
       return false;
     }
+
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -119,8 +112,9 @@ namespace TvLibrary.Implementations.DVB
     public override string ToString()
     {
       return String.Format("pid:{0:X} language:{1} type:{2}",
-        Pid, Language, StreamType);
+                           Pid, Language, StreamType);
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>

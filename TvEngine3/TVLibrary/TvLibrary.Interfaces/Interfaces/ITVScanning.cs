@@ -57,6 +57,6 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// returns the tv card used 
     /// </summary>
-    ITVCard TvCard { get;}
+    ITVCard TvCard { get; }
   }
 }

@@ -24,58 +24,69 @@
 #endregion
 
 #region Usings
-using System;
-using System.Collections.Generic;
-using System.Text;
 
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace MediaPortal.Plugins.Process
 {
   public class PowerSchedulerClientPlugin : IPlugin, ISetupForm, IPluginReceiver
   {
-
     #region Variables
-    PowerScheduler _powerScheduler;
+
+    private PowerScheduler _powerScheduler;
+
     #endregion
 
     #region Ctor
+
     public PowerSchedulerClientPlugin()
     {
       _powerScheduler = new PowerScheduler();
     }
+
     #endregion
 
     #region IPlugin implementation
+
     public void Start()
     {
       _powerScheduler.Start();
     }
+
     public void Stop()
     {
       _powerScheduler.Stop();
     }
+
     #endregion
 
     #region ISetupForm implementation
+
     public string Author()
     {
       return "micheloe";
     }
+
     public bool CanEnable()
     {
       return true;
     }
+
     public bool DefaultEnabled()
     {
       return false;
     }
+
     public string Description()
     {
       return "Enables standby/wakeup support for MP together with TVEngine3";
     }
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = null;
       strButtonImage = null;
@@ -83,31 +94,37 @@ namespace MediaPortal.Plugins.Process
       strPictureImage = null;
       return false;
     }
+
     public int GetWindowId()
     {
       return 0;
     }
+
     public bool HasSetup()
     {
       return true;
     }
+
     public string PluginName()
     {
       return "PowerScheduler client plugin";
     }
+
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form f = new PowerSchedulerClientSetup();
+      Form f = new PowerSchedulerClientSetup();
       f.Show();
     }
+
     #endregion
 
     #region IPluginReceiver implementation
-    public bool WndProc(ref System.Windows.Forms.Message msg)
+
+    public bool WndProc(ref Message msg)
     {
       return _powerScheduler.WndProc(ref msg);
     }
-    #endregion
 
+    #endregion
   }
 }

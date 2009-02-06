@@ -30,68 +30,71 @@ namespace TvLibrary.Interfaces
   public interface ITvSubChannel
   {
     #region properties
+
     /// <summary>
     /// Gets the sub channel id.
     /// </summary>
     /// <value>The sub channel id.</value>
-    int SubChannelId { get;}
+    int SubChannelId { get; }
+
     /// <summary>
     /// gets the current filename used for timeshifting
     /// </summary>
-    string TimeShiftFileName { get;}
+    string TimeShiftFileName { get; }
 
     /// <summary>
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    DateTime StartOfTimeShift { get;}
+    DateTime StartOfTimeShift { get; }
 
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when recording was started</returns>
-    DateTime RecordingStarted { get;}
+    DateTime RecordingStarted { get; }
 
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
-    bool IsReceivingAudioVideo { get;}
+    bool IsReceivingAudioVideo { get; }
 
     /// <summary>
     /// gets the current filename used for recording
     /// </summary>
-    string RecordingFileName { get;}
+    string RecordingFileName { get; }
 
     /// <summary>
     /// returns true if card is currently recording
     /// </summary>
-    bool IsRecording { get;}
+    bool IsRecording { get; }
 
     /// <summary>
     /// returns true if card is currently timeshifting
     /// </summary>
-    bool IsTimeShifting { get;}
+    bool IsTimeShifting { get; }
 
 
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
-    IChannel CurrentChannel { get;}
+    IChannel CurrentChannel { get; }
 
     /// <summary>
     /// returns true if we timeshift in transport stream mode
     /// false we timeshift in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    bool IsTimeshiftingTransportStream { get;}
+    bool IsTimeshiftingTransportStream { get; }
 
     /// <summary>
     /// returns true if we record in transport stream mode
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    bool IsRecordingTransportStream { get;}
+    bool IsRecordingTransportStream { get; }
+
     #endregion
 
     /// <summary>
@@ -102,24 +105,26 @@ namespace TvLibrary.Interfaces
     int GetCurrentVideoStream { get; }
 
     #region teletext
+
     /// <summary>
     /// Turn on/off teletext grabbing
     /// </summary>
-    bool GrabTeletext { get;set;}
+    bool GrabTeletext { get; set; }
 
     /// <summary>
     /// returns the ITeletext interface used for retrieving the teletext pages
     /// </summary>
-    ITeletext TeletextDecoder { get;}
+    ITeletext TeletextDecoder { get; }
 
     /// <summary>
     /// Property which returns true when the current channel contains teletext
     /// </summary>
-    bool HasTeletext { get;}
+    bool HasTeletext { get; }
 
     #endregion
 
     #region timeshifting and recording
+
     /// <summary>
     /// Starts timeshifting. Note card has to be tuned first
     /// </summary>
@@ -146,20 +151,21 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <returns>true if succeeded else false</returns>
     bool StopRecording();
+
     #endregion
 
-
     #region audio streams
+
     /// <summary>
     /// returns the list of available audio streams
     /// </summary>
-    List<IAudioStream> AvailableAudioStreams { get;}
+    List<IAudioStream> AvailableAudioStreams { get; }
 
     /// <summary>
     /// get/set the current selected audio stream
     /// </summary>
-    IAudioStream CurrentAudioStream { get;set;}
-    #endregion
+    IAudioStream CurrentAudioStream { get; set; }
 
+    #endregion
   }
 }

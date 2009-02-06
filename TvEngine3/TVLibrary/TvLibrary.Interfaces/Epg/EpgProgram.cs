@@ -30,9 +30,11 @@ namespace TvLibrary.Epg
   public class EpgProgram : IComparable<EpgProgram>
   {
     #region variables
-    List<EpgLanguageText> _languageText;
-    DateTime _startTime;
-    DateTime _endTime;
+
+    private List<EpgLanguageText> _languageText;
+    private DateTime _startTime;
+    private DateTime _endTime;
+
     #endregion
 
     #region ctor
@@ -51,22 +53,16 @@ namespace TvLibrary.Epg
 
     #endregion
 
-
     #region properties
+
     /// <summary>
     /// Gets or sets the text.
     /// </summary>
     /// <value>The text.</value>
     public List<EpgLanguageText> Text
     {
-      get
-      {
-        return _languageText;
-      }
-      set
-      {
-        _languageText = value;
-      }
+      get { return _languageText; }
+      set { _languageText = value; }
     }
 
     /// <summary>
@@ -75,14 +71,8 @@ namespace TvLibrary.Epg
     /// <value>The start time.</value>
     public DateTime StartTime
     {
-      get
-      {
-        return _startTime;
-      }
-      set
-      {
-        _startTime = value;
-      }
+      get { return _startTime; }
+      set { _startTime = value; }
     }
 
     /// <summary>
@@ -91,15 +81,10 @@ namespace TvLibrary.Epg
     /// <value>The end time.</value>
     public DateTime EndTime
     {
-      get
-      {
-        return _endTime;
-      }
-      set
-      {
-        _endTime = value;
-      }
+      get { return _endTime; }
+      set { _endTime = value; }
     }
+
     #endregion
 
     #region IComparable<EpgProgram> Members
@@ -114,9 +99,13 @@ namespace TvLibrary.Epg
     public int CompareTo(EpgProgram other)
     {
       if (other.StartTime > StartTime)
+      {
         return -1;
+      }
       if (other.StartTime < StartTime)
+      {
         return 1;
+      }
       return 0;
     }
 

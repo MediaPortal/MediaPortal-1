@@ -24,24 +24,9 @@
 #endregion
 
 #region usings
-using System;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-using TvDatabase;
 
-using Gentle.Common;
-using Gentle.Framework;
+using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace TvPlugin
@@ -51,34 +36,32 @@ namespace TvPlugin
   /// </summary>
   public class TVGuideDialog : TvGuideBase
   {
-
     public TVGuideDialog()
       : base()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE;
+      GetID = (int) Window.WINDOW_DIALOG_TVGUIDE;
     }
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_DIALOG_TVGUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     public override bool Init()
     {
       Initialize();
 
       Load(GUIGraphicsContext.Skin + @"\dialogTvGuide.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE;
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE, this);
+      GetID = (int) Window.WINDOW_DIALOG_TVGUIDE;
+      GUIWindowManager.Replace((int) Window.WINDOW_DIALOG_TVGUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -88,23 +71,25 @@ namespace TvPlugin
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
-      if (_running) PageDestroy();
+      if (_running)
+      {
+        PageDestroy();
+      }
     }
 
     public override void OnAction(Action action)
     {
-			switch (action.wID)
+      switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
         case Action.ActionType.ACTION_CLOSE_DIALOG:
         case Action.ActionType.ACTION_SHOW_FULLSCREEN:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-        //case Action.ActionType.ACTION_SELECT_ITEM:
+          //case Action.ActionType.ACTION_SELECT_ITEM:
           PageDestroy();
-      		return;
+          return;
       }
       base.OnAction(action);
     }
-  
   }
 }

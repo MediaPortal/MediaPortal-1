@@ -24,20 +24,24 @@
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
 {
+
   #region Enums
+
   public enum ShutdownMode
   {
     Suspend = 0,
     Hibernate = 1,
     StayOn = 2
   }
+
   #endregion
 
   /// <summary>
@@ -47,6 +51,7 @@ namespace TvEngine.PowerScheduler.Interfaces
   public class PowerSettings : IPowerSettings
   {
     #region Variables
+
     private bool _shutdownEnabled;
     private bool _wakeupEnabled;
     private bool _forceShutdown;
@@ -58,18 +63,21 @@ namespace TvEngine.PowerScheduler.Interfaces
     private int _allowedStart;
     private int _allowedStop;
     private ShutdownMode _shutdownMode = ShutdownMode.StayOn;
+
     /// <summary>
     /// Placeholder for additional PowerScheduler settings
     /// </summary>
-    [NonSerialized]
-    private Dictionary<string, PowerSetting> _settings;
+    [NonSerialized] private Dictionary<string, PowerSetting> _settings;
+
     #endregion
 
     #region Constructor
+
     public PowerSettings()
     {
       _settings = new Dictionary<string, PowerSetting>();
     }
+
     public PowerSettings(PowerSettings s)
     {
       _shutdownEnabled = s.ShutdownEnabled;
@@ -85,9 +93,11 @@ namespace TvEngine.PowerScheduler.Interfaces
       _allowedStart = s.AllowedSleepStartTime;
       _allowedStop = s.AllowedSleepStopTime;
     }
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Adds a custom setting
     /// </summary>
@@ -95,9 +105,12 @@ namespace TvEngine.PowerScheduler.Interfaces
     public void AddSetting(PowerSetting setting)
     {
       if (_settings.ContainsKey(setting.Name))
+      {
         throw new ArgumentException("settings already contain key", setting.Name);
+      }
       _settings.Add(setting.Name, setting);
     }
+
     /// <summary>
     /// Checks if the given setting name is configured
     /// </summary>
@@ -106,10 +119,15 @@ namespace TvEngine.PowerScheduler.Interfaces
     public bool HasSetting(string name)
     {
       if (_settings.ContainsKey(name))
+      {
         return true;
+      }
       else
+      {
         return false;
+      }
     }
+
     /// <summary>
     /// Gets a custom PowerScheduler setting
     /// </summary>
@@ -128,6 +146,7 @@ namespace TvEngine.PowerScheduler.Interfaces
         return setting;
       }
     }
+
     /// <summary>
     /// Clones the current PowerSettings. Only the default properties are copied;
     /// the additional settings are just referenced. Modifying those for
@@ -138,9 +157,11 @@ namespace TvEngine.PowerScheduler.Interfaces
     {
       return new PowerSettings(this);
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Should PowerScheduler actively try to put the system into standby?
     /// </summary>
@@ -149,6 +170,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _shutdownEnabled; }
       set { _shutdownEnabled = value; }
     }
+
     /// <summary>
     /// Should PowerScheduler check when any plugin wants to wakeup the system?
     /// </summary>
@@ -157,6 +179,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _wakeupEnabled; }
       set { _wakeupEnabled = value; }
     }
+
     /// <summary>
     /// Should the shutdown attemps be forced?
     /// </summary>
@@ -165,6 +188,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _forceShutdown; }
       set { _forceShutdown = value; }
     }
+
     /// <summary>
     /// Should PowerScheduler be verbose when logging?
     /// </summary>
@@ -173,6 +197,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _extensiveLogging; }
       set { _extensiveLogging = value; }
     }
+
     /// <summary>
     /// If _shutdownEnabled, how long (in minutes) to wait before putting the
     /// system into standby
@@ -183,10 +208,13 @@ namespace TvEngine.PowerScheduler.Interfaces
       set
       {
         if (value < 1)
+        {
           throw new ArgumentException("IdleTimeout cannot be smaller than 1");
+        }
         _idleTimeout = value;
       }
     }
+
     /// <summary>
     /// if _wakeupEnabled, the time (in seconds) to wakeup the system earlier than
     /// the actual wakeup time
@@ -197,7 +225,9 @@ namespace TvEngine.PowerScheduler.Interfaces
       set
       {
         if (value < 0)
+        {
           throw new ArgumentException("PrewakeupTime cannot be smaller than 0");
+        }
         _preWakeupTime = value;
       }
     }
@@ -212,7 +242,9 @@ namespace TvEngine.PowerScheduler.Interfaces
       set
       {
         if (value < 0)
+        {
           throw new ArgumentException("PrenoshutdownTime cannot be smaller than 0");
+        }
         _preNoShutdownTime = value;
       }
     }
@@ -226,7 +258,9 @@ namespace TvEngine.PowerScheduler.Interfaces
       set
       {
         if (value < 1)
+        {
           throw new ArgumentException("CheckInterval cannot be smaller than 1");
+        }
         _checkInterval = value;
       }
     }
@@ -271,6 +305,7 @@ namespace TvEngine.PowerScheduler.Interfaces
         }
       }
     }
+
     #endregion
   }
 
@@ -280,31 +315,40 @@ namespace TvEngine.PowerScheduler.Interfaces
   public class PowerSetting
   {
     #region Variables
+
     public readonly string Name;
-    object _object;
-    Type _type;
+    private object _object;
+    private Type _type;
+
     #endregion
 
     #region Constructor
+
     public PowerSetting(string name)
     {
       Name = name;
     }
+
     #endregion
 
     #region Public methods
+
     public void Set<T>(object o)
     {
-      _type = typeof(T);
+      _type = typeof (T);
       _object = o;
     }
+
     public T Get<T>()
     {
-      Type type = typeof(T);
+      Type type = typeof (T);
       if (_type == type)
-        return (T)_object;
+      {
+        return (T) _object;
+      }
       return default(T);
     }
+
     #endregion
   }
 }

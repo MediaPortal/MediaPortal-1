@@ -24,27 +24,18 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Globalization;
-
-using MediaPortal;
-using MediaPortal.Configuration;
-using MediaPortal.Player;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Playlists;
-using MediaPortal.Radio.Database;
-
-using TvDatabase;
-using TvControl;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
-using Gentle.Common;
-using Gentle.Framework;
+using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Profile;
+using MediaPortal.Util;
+using TvControl;
+using TvDatabase;
 
 namespace TvPlugin
 {
@@ -52,7 +43,7 @@ namespace TvPlugin
   public class Radio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region constants
-    
+
     private const int WM_POWERBROADCAST = 0x0218;
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
@@ -67,9 +58,10 @@ namespace TvPlugin
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
 
     #endregion
+
     #region enums
 
-    enum SortMethod
+    private enum SortMethod
     {
       Name = 0,
       Type = 1,
@@ -78,7 +70,7 @@ namespace TvPlugin
       Number = 4
     }
 
-    enum View : int
+    private enum View : int
     {
       List = 0,
       Icons = 1,
@@ -89,36 +81,36 @@ namespace TvPlugin
 
     #region Base variabeles
 
-    View currentView = View.List;
-    SortMethod currentSortMethod = SortMethod.Number;
-    bool sortAscending = true;
-    DirectoryHistory directoryHistory = new DirectoryHistory();
-    string currentFolder = null;
-    string lastFolder = "..";
-    int selectedItemIndex = -1;
-    bool showAllChannelsGroup = true;
-    string rootGroup = "(none)";
+    private View currentView = View.List;
+    private SortMethod currentSortMethod = SortMethod.Number;
+    private bool sortAscending = true;
+    private DirectoryHistory directoryHistory = new DirectoryHistory();
+    private string currentFolder = null;
+    private string lastFolder = "..";
+    private int selectedItemIndex = -1;
+    private bool showAllChannelsGroup = true;
+    private string rootGroup = "(none)";
     public static RadioChannelGroup selectedGroup = null;
 
     #endregion
 
     #region SkinControls
-    
-    [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
+
+    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
+    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(6)] protected GUIButtonControl btnPrevious = null;
+    [SkinControl(7)] protected GUIButtonControl btnNext = null;
 
     #endregion
 
     //heartbeat related stuff
     private const int HEARTBEAT_INTERVAL = 5; //seconds
-    private Thread heartBeatTransmitterThread = null;    
+    private Thread heartBeatTransmitterThread = null;
 
     public Radio()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_RADIO;
+      GetID = (int) Window.WINDOW_RADIO;
       LoadSettings();
       startHeartBeatThread();
 
@@ -145,13 +137,14 @@ namespace TvPlugin
 
       //_resumed = false;
     }
+
     private void OnResume()
     {
       Log.Debug("Radio.OnResume()");
-     // _resumed = true;
+      // _resumed = true;
     }
 
-    public bool WndProc(ref System.Windows.Forms.Message msg)
+    public bool WndProc(ref Message msg)
     {
       if (msg.Msg == WM_POWERBROADCAST)
       {
@@ -205,13 +198,12 @@ namespace TvPlugin
 
     private void HeartBeatTransmitter()
     {
-
       // when debugging we want to disable heartbeats
 
 #if DEBUG
       return;
 #endif
-      
+
       while (true)
       {
         if (TVHome.Connected && TVHome.Card.IsTimeShifting)
@@ -228,7 +220,7 @@ namespace TvPlugin
             Log.Error("Radio: failed sending HeartBeat signal to server. ({0})", e.Message);
           }
         }
-        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
+        Thread.Sleep(HEARTBEAT_INTERVAL*1000); //sleep for 5 secs. before sending heartbeat again
       }
     }
 
@@ -247,7 +239,7 @@ namespace TvPlugin
       heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
       //GEMX 01.04.08: Better debuggin plus IsBackground=true fixes MP not closing correctly if TvService is not running
       heartBeatTransmitterThread.IsBackground = true;
-      heartBeatTransmitterThread.Name="TvClient-Radio: HeartBeat transmitter thread";
+      heartBeatTransmitterThread.Name = "TvClient-Radio: HeartBeat transmitter thread";
       heartBeatTransmitterThread.Start();
     }
 
@@ -263,13 +255,15 @@ namespace TvPlugin
       }
     }
 
-    void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       if (type == g_Player.MediaType.Radio)
       {
         VirtualCard card = TVHome.Card;
         if (card == null)
+        {
           return;
+        }
 
         if (card.IsTimeShifting && card.Channel != null)
         {
@@ -283,7 +277,7 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RADIO, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_RADIO, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -296,42 +290,68 @@ namespace TvPlugin
       return bResult;
     }
 
-
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string tmpLine = String.Empty;
-        tmpLine = (string)xmlreader.GetValue("myradio", "viewby");
+        tmpLine = (string) xmlreader.GetValue("myradio", "viewby");
         if (tmpLine != null)
         {
-          if (tmpLine == "list") currentView = View.List;
-          else if (tmpLine == "icons") currentView = View.Icons;
-          else if (tmpLine == "largeicons") currentView = View.LargeIcons;
+          if (tmpLine == "list")
+          {
+            currentView = View.List;
+          }
+          else if (tmpLine == "icons")
+          {
+            currentView = View.Icons;
+          }
+          else if (tmpLine == "largeicons")
+          {
+            currentView = View.LargeIcons;
+          }
         }
 
-        tmpLine = (string)xmlreader.GetValue("myradio", "sort");
+        tmpLine = (string) xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
         {
-          if (tmpLine == "name") currentSortMethod = SortMethod.Name;
-          else if (tmpLine == "type") currentSortMethod = SortMethod.Type;
-          else if (tmpLine == "genre") currentSortMethod = SortMethod.Genre;
-          else if (tmpLine == "bitrate") currentSortMethod = SortMethod.Bitrate;
-          else if (tmpLine == "number") currentSortMethod = SortMethod.Number;
+          if (tmpLine == "name")
+          {
+            currentSortMethod = SortMethod.Name;
+          }
+          else if (tmpLine == "type")
+          {
+            currentSortMethod = SortMethod.Type;
+          }
+          else if (tmpLine == "genre")
+          {
+            currentSortMethod = SortMethod.Genre;
+          }
+          else if (tmpLine == "bitrate")
+          {
+            currentSortMethod = SortMethod.Bitrate;
+          }
+          else if (tmpLine == "number")
+          {
+            currentSortMethod = SortMethod.Number;
+          }
         }
 
         sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
         if (xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true))
+        {
           currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
+        }
         showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
         rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
       }
     }
 
-    void SaveSettings()
+    private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (currentView)
         {
@@ -371,12 +391,14 @@ namespace TvPlugin
         if (TVHome.Navigator.Channel.IsRadio)
         {
           xmlwriter.SetValue("myradio", "channel", TVHome.Navigator.Channel.DisplayName);
-        }        
+        }
       }
     }
+
     #endregion
 
     #region BaseWindow Members
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -447,7 +469,7 @@ namespace TvPlugin
       base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
 
@@ -462,25 +484,37 @@ namespace TvPlugin
             case View.List:
               currentView = View.Icons;
               if (facadeView.ThumbnailView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+              }
               break;
 
             case View.Icons:
               currentView = View.LargeIcons;
               if (facadeView.ThumbnailView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+              }
               break;
 
             case View.LargeIcons:
               currentView = View.List;
               if (facadeView.ListView == null)
+              {
                 shouldContinue = true;
+              }
               else
+              {
                 facadeView.View = GUIFacadeControl.ViewMode.List;
+              }
               break;
           }
         } while (shouldContinue);
@@ -488,7 +522,7 @@ namespace TvPlugin
         SelectCurrentItem();
         GUIControl.FocusControl(GetID, controlId);
         return;
-      }//if (control == btnViewAs)
+      } //if (control == btnViewAs)
 
       if (control == btnSortBy)
       {
@@ -499,7 +533,7 @@ namespace TvPlugin
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
-        int itemIndex = (int)msg.Param1;
+        int itemIndex = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(itemIndex);
@@ -563,7 +597,7 @@ namespace TvPlugin
     //    return listView.Count;
     //}
 
-    void UpdateButtonStates()
+    private void UpdateButtonStates()
     {
       facadeView.IsVisible = false;
       facadeView.IsVisible = true;
@@ -613,9 +647,12 @@ namespace TvPlugin
       }
     }
 
-    void SelectCurrentItem()
+    private void SelectCurrentItem()
     {
-      if (facadeView == null) return;
+      if (facadeView == null)
+      {
+        return;
+      }
       int iItem = facadeView.SelectedListItemIndex;
       if (iItem > -1)
       {
@@ -624,7 +661,7 @@ namespace TvPlugin
       UpdateButtonStates();
     }
 
-    void SwitchView()
+    private void SwitchView()
     {
       switch (currentView)
       {
@@ -654,7 +691,7 @@ namespace TvPlugin
     //  UpdateButtons();
     //}
 
-    void LoadDirectory(string strNewDirectory)
+    private void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = facadeView.SelectedListItem;
       if (SelectedItem != null)
@@ -666,29 +703,33 @@ namespace TvPlugin
       }
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeView.GetID);
-      
+
       string objectCount = String.Empty;
       int totalItems = 0;
-      if (currentFolder==null || currentFolder=="..")
+      if (currentFolder == null || currentFolder == "..")
       {
-        IList<RadioChannelGroup> groups=RadioChannelGroup.ListAll();
+        IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in groups)
         {
           if (!showAllChannelsGroup)
           {
             if (group.GroupName == "All Channels")
+            {
               continue;
+            }
           }
           if (group.GroupName == rootGroup)
+          {
             continue;
-          GUIListItem item=new GUIListItem();
+          }
+          GUIListItem item = new GUIListItem();
           item.Label = group.GroupName;
           item.IsFolder = true;
           item.MusicTag = group;
           item.ThumbnailImage = String.Empty;
-          MediaPortal.Util.Utils.SetDefaultIcons(item);
-          string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
-          if (System.IO.File.Exists(thumbnail))
+          Utils.SetDefaultIcons(item);
+          string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
+          if (File.Exists(thumbnail))
           {
             item.IconImageBig = thumbnail;
             item.IconImage = thumbnail;
@@ -721,8 +762,8 @@ namespace TvPlugin
                 item.IconImageBig = "DefaultMyradioBig.png";
                 item.IconImage = "DefaultMyradio.png";
               }
-              string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-              if (System.IO.File.Exists(thumbnail))
+              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+              if (File.Exists(thumbnail))
               {
                 item.IconImageBig = thumbnail;
                 item.IconImage = thumbnail;
@@ -737,24 +778,26 @@ namespace TvPlugin
       }
       else
       {
-        TvBusinessLayer layer=new TvBusinessLayer();
-        RadioChannelGroup group=layer.GetRadioChannelGroupByName(currentFolder);
-        if (group==null)
+        TvBusinessLayer layer = new TvBusinessLayer();
+        RadioChannelGroup group = layer.GetRadioChannelGroupByName(currentFolder);
+        if (group == null)
+        {
           return;
+        }
         selectedGroup = group;
         lastFolder = currentFolder;
-        GUIListItem item=new GUIListItem();
+        GUIListItem item = new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
         item.MusicTag = null;
         item.ThumbnailImage = String.Empty;
-        MediaPortal.Util.Utils.SetDefaultIcons(item);
+        Utils.SetDefaultIcons(item);
         facadeView.Add(item);
-        IList<RadioGroupMap> maps=group.ReferringRadioGroupMap();
+        IList<RadioGroupMap> maps = group.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
-          Channel channel=map.ReferencedChannel();
-          item=new GUIListItem();
+          Channel channel = map.ReferencedChannel();
+          item = new GUIListItem();
           item.Label = channel.DisplayName;
           item.IsFolder = false;
           item.MusicTag = channel;
@@ -768,8 +811,8 @@ namespace TvPlugin
             item.IconImageBig = "DefaultMyradioBig.png";
             item.IconImage = "DefaultMyradio.png";
           }
-          string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-          if (System.IO.File.Exists(thumbnail))
+          string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+          if (File.Exists(thumbnail))
           {
             item.IconImageBig = thumbnail;
             item.IconImage = thumbnail;
@@ -784,18 +827,21 @@ namespace TvPlugin
       OnSort();
 
       //set object count label
-      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(totalItems));
+      GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(totalItems));
 
       SelectCurrentItem();
       SetLabels();
 
       //set selected item
       if (selectedItemIndex >= 0)
+      {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+      }
     }
+
     #endregion
 
-    void SetLabels()
+    private void SetLabels()
     {
       // TODO: why this is disabled?      
       return;
@@ -828,7 +874,8 @@ namespace TvPlugin
     }
 
     #region Sort Members
-    void OnSort()
+
+    private void OnSort()
     {
       SetLabels();
       facadeView.Sort(this);
@@ -837,13 +884,34 @@ namespace TvPlugin
 
     public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (item1 == item2) return 0;
-      if (item1 == null) return -1;
-      if (item2 == null) return -1;
-      if (item1.IsFolder && item1.Label == "..") return -1;
-      if (item2.IsFolder && item2.Label == "..") return -1;
-      if (item1.IsFolder && !item2.IsFolder) return -1;
-      else if (!item1.IsFolder && item2.IsFolder) return 1;
+      if (item1 == item2)
+      {
+        return 0;
+      }
+      if (item1 == null)
+      {
+        return -1;
+      }
+      if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "..")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "..")
+      {
+        return -1;
+      }
+      if (item1.IsFolder && !item2.IsFolder)
+      {
+        return -1;
+      }
+      else if (!item1.IsFolder && item2.IsFolder)
+      {
+        return 1;
+      }
 
 
       SortMethod method = currentSortMethod;
@@ -870,9 +938,13 @@ namespace TvPlugin
           string strURL1 = "0";
           string strURL2 = "0";
           if (item1.IconImage.ToLower().Equals("defaultmyradiostream.png"))
+          {
             strURL1 = "1";
+          }
           if (item2.IconImage.ToLower().Equals("defaultmyradiostream.png"))
-              strURL2 = "1";
+          {
+            strURL2 = "1";
+          }
           if (strURL1.Equals(strURL2))
           {
             if (bAscending)
@@ -886,56 +958,99 @@ namespace TvPlugin
           }
           if (bAscending)
           {
-            if (strURL1.Length > 0) return 1;
-            else return -1;
+            if (strURL1.Length > 0)
+            {
+              return 1;
+            }
+            else
+            {
+              return -1;
+            }
           }
           else
           {
-            if (strURL1.Length > 0) return -1;
-            else return 1;
+            if (strURL1.Length > 0)
+            {
+              return -1;
+            }
+            else
+            {
+              return 1;
+            }
           }
-        //break;
+          //break;
 
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
           {
             if (bAscending)
             {
-              if (channel1.SortOrder > channel2.SortOrder) return 1;
-              else return -1;
+              if (channel1.SortOrder > channel2.SortOrder)
+              {
+                return 1;
+              }
+              else
+              {
+                return -1;
+              }
             }
             else
             {
-              if (channel2.SortOrder > channel1.SortOrder) return 1;
-              else return -1;
+              if (channel2.SortOrder > channel1.SortOrder)
+              {
+                return 1;
+              }
+              else
+              {
+                return -1;
+              }
             }
           }
 
-          if (channel1 != null) return -1;
-          if (channel2 != null) return 1;
+          if (channel1 != null)
+          {
+            return -1;
+          }
+          if (channel2 != null)
+          {
+            return 1;
+          }
           return 0;
-        //break;
+          //break;
         case SortMethod.Bitrate:
           if (detail1 != null && detail2 != null)
           {
             if (bAscending)
             {
-              if (detail1.Bitrate > detail2.Bitrate) return 1;
-              else return -1;
+              if (detail1.Bitrate > detail2.Bitrate)
+              {
+                return 1;
+              }
+              else
+              {
+                return -1;
+              }
             }
             else
             {
-              if (detail2.Bitrate > detail1.Bitrate) return 1;
-              else return -1;
+              if (detail2.Bitrate > detail1.Bitrate)
+              {
+                return 1;
+              }
+              else
+              {
+                return -1;
+              }
             }
           }
           return 0;
       }
       return 0;
     }
+
     #endregion
 
-    void OnClick(int itemIndex)
+    private void OnClick(int itemIndex)
     {
       Log.Info("OnClick");
       GUIListItem item = facadeView.SelectedListItem;
@@ -955,10 +1070,13 @@ namespace TvPlugin
       }
     }
 
-    void OnShowSort()
+    private void OnShowSort()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
 
@@ -968,11 +1086,14 @@ namespace TvPlugin
       dlg.AddLocalizedString(670); // bitrate
       dlg.AddLocalizedString(620); // number
 
-      dlg.SelectedLabel = (int)currentSortMethod;
+      dlg.SelectedLabel = (int) currentSortMethod;
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1) return;
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
 
       switch (dlg.SelectedId)
       {
@@ -998,39 +1119,46 @@ namespace TvPlugin
 
       OnSort();
       if (btnSortBy != null)
+      {
         GUIControl.FocusControl(GetID, btnSortBy.GetID);
+      }
     }
 
-    bool IsUrl(string fileName)
+    private bool IsUrl(string fileName)
     {
       if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-      fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+          fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
       {
         return true;
       }
       return false;
     }
 
-    string GetPlayPath(Channel channel)
+    private string GetPlayPath(Channel channel)
     {
-      IList<TuningDetail> details=channel.ReferringTuningDetail();
-      TuningDetail detail=details[0];
+      IList<TuningDetail> details = channel.ReferringTuningDetail();
+      TuningDetail detail = details[0];
       if (channel.IsWebstream())
+      {
         return detail.Url;
+      }
       {
         string fileName = String.Format("{0}.radio", detail.Frequency);
         return fileName;
       }
     }
 
-    void Play(GUIListItem item)
+    private void Play(GUIListItem item)
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", item.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Album", item.Label);
-      if (item.MusicTag == null) return;
-      Channel channel=(Channel)item.MusicTag;
+      if (item.MusicTag == null)
+      {
+        return;
+      }
+      Channel channel = (Channel) item.MusicTag;
       if (g_Player.Playing)
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && channel.IsWebstream()))
@@ -1039,19 +1167,23 @@ namespace TvPlugin
         }
       }
       if (channel.IsFMRadio() || channel.IsWebstream())
+      {
         g_Player.PlayAudioStream(GetPlayPath(channel));
+      }
       else
+      {
         TVHome.ViewChannelAndCheck(channel);
+      }
     }
 
-    void SortChanged(object sender, SortEventArgs e)
+    private void SortChanged(object sender, SortEventArgs e)
     {
-      sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+      sortAscending = e.Order != SortOrder.Descending;
 
       OnSort();
       UpdateButtonStates();
 
-      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+      GUIControl.FocusControl(GetID, ((GUIControl) sender).GetID);
     }
 
     #region ISetupForm Members
@@ -1081,7 +1213,8 @@ namespace TvPlugin
       return GetID;
     }
 
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(665);
       strButtonImage = String.Empty;

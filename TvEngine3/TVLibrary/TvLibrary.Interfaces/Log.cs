@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,13 +20,14 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Text;
+using System.Threading;
 
 namespace TvLibrary.Log
 {
@@ -34,7 +36,7 @@ namespace TvLibrary.Log
   /// </summary>
   public class Log
   {
-    enum LogType
+    private enum LogType
     {
       /// <summary>
       /// Debug logging
@@ -57,7 +59,7 @@ namespace TvLibrary.Log
     /// <summary>
     /// Configure after how many days the log file shall be rotated when a new line is added
     /// </summary>
-    static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
+    private static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
 
     /// <summary>
     /// The maximum size of each log file in Megabytes
@@ -72,7 +74,7 @@ namespace TvLibrary.Log
     /// <summary>
     /// The last log n lines to compare for repeated entries.
     /// </summary>
-    static readonly List<string> _lastLogLines = new List<string>(_maxRepetitions);
+    private static readonly List<string> _lastLogLines = new List<string>(_maxRepetitions);
 
     #region Constructors
 
@@ -211,7 +213,8 @@ namespace TvLibrary.Log
     ///<returns>Application data path of TvServer</returns>
     public static string GetPathName()
     {
-      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
+                           Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
 
     #endregion
@@ -253,9 +256,15 @@ namespace TvLibrary.Log
           try
           {
             File.SetCreationTime(aFileName, DateTime.Now);
-          } catch (Exception) { }
+          }
+          catch (Exception)
+          {
+          }
         }
-      } catch (Exception) { }
+      }
+      catch (Exception)
+      {
+      }
     }
 
     /// <summary>
@@ -267,13 +276,15 @@ namespace TvLibrary.Log
       {
         List<string> physicalLogFiles = new List<string>(3);
         // Get all log types
-        foreach (LogType logtype in Enum.GetValues(typeof(LogType)))
+        foreach (LogType logtype in Enum.GetValues(typeof (LogType)))
         {
           // Get full path for log
           string name = GetFileName(logtype);
           // Since e.g. debug and info might share the same file make sure we only rotate once
           if (!physicalLogFiles.Contains(name))
+          {
             physicalLogFiles.Add(name);
+          }
         }
 
         foreach (string logFileName in physicalLogFiles)
@@ -284,15 +295,29 @@ namespace TvLibrary.Log
             string bakFileName = logFileName.Replace(".log", ".bak");
             // Delete outdated log
             if (File.Exists(bakFileName))
+            {
               File.Delete(bakFileName);
+            }
             // Rotate current log
             if (File.Exists(logFileName))
+            {
               File.Move(logFileName, bakFileName);
+            }
             // Create a new log file with correct timestamps
             CreateBlankFile(logFileName);
-          } catch (UnauthorizedAccessException) { } catch (ArgumentException) { } catch (IOException) { }
+          }
+          catch (UnauthorizedAccessException)
+          {
+          }
+          catch (ArgumentException)
+          {
+          }
+          catch (IOException)
+          {
+          }
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         // Maybe add EventLog here...
       }
@@ -319,7 +344,9 @@ namespace TvLibrary.Log
         }
       }
       else
+      {
         result = false;
+      }
 
       return result;
     }
@@ -329,7 +356,9 @@ namespace TvLibrary.Log
       if (!string.IsNullOrEmpty(aLogLine))
       {
         if (_lastLogLines.Count == _maxRepetitions)
+        {
           _lastLogLines.RemoveAt(0);
+        }
 
         _lastLogLines.Add(aLogLine);
       }
@@ -361,16 +390,24 @@ namespace TvLibrary.Log
             fileDate = logFi.CreationTime;
 
             // Some log source went out of control here - do not log until out of disk space!
-            if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
+            if (logFi.Length > _maxLogSizeMb*1000*1000)
             {
               result = false;
             }
-          } catch (Exception) { }
+          }
+          catch (Exception)
+          {
+          }
           // File is older than today - _logDaysToKeep = rotate
           if (checkDate.CompareTo(fileDate) > 0)
+          {
             BackupLogFiles();
+          }
         }
-      } catch (Exception) { }
+      }
+      catch (Exception)
+      {
+      }
       return result;
     }
 
@@ -382,7 +419,7 @@ namespace TvLibrary.Log
     /// <param name="arg">The arg.</param>
     private static void WriteToFile(LogType logType, string format, params object[] arg)
     {
-      lock (typeof(Log))
+      lock (typeof (Log))
       {
         try
         {
@@ -390,7 +427,9 @@ namespace TvLibrary.Log
           string logLine = string.Format(format, arg);
 
           if (IsRepetition(logLine))
+          {
             return;
+          }
           CacheLogLine(logLine);
 
           if (CheckLogPrepared(logFileName))
@@ -399,20 +438,22 @@ namespace TvLibrary.Log
             {
               string thread = Thread.CurrentThread.Name;
               if (string.IsNullOrEmpty(thread))
+              {
                 thread = Thread.CurrentThread.ManagedThreadId.ToString();
+              }
 
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
               writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, logLine);
               writer.Close();
             }
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
       }
     }
 
     #endregion
-
   }
 }

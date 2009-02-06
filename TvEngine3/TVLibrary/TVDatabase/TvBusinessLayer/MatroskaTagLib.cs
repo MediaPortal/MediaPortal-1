@@ -21,10 +21,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.IO;
+using System.Xml;
 using TvLibrary.Log;
-
 
 namespace TvDatabase
 {
@@ -44,6 +43,7 @@ namespace TvDatabase
     #region Event delegates
 
     public delegate void TagLookupSuccessful(Dictionary<string, MatroskaTagInfo> FoundTags);
+
     public static event TagLookupSuccessful OnTagLookupCompleted;
 
     #endregion
@@ -81,21 +81,27 @@ namespace TvDatabase
         try
         {
           importDirs = Directory.GetDirectories(aDirectory, "*", SearchOption.TopDirectoryOnly);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          importDirs = new string[] { aDirectory };
+          importDirs = new string[] {aDirectory};
         }
         List<string> searchDirs = new List<string>(importDirs);
         if (!searchDirs.Contains(aDirectory))
+        {
           searchDirs.Add(aDirectory);
+        }
 
         foreach (string subDir in searchDirs)
         {
           try
           {
             // we do not have insufficient access rights for this
-            if (subDir.ToLowerInvariant().Contains(@"system volume information") || subDir.ToLowerInvariant().Contains(@"recycled") || subDir.ToLowerInvariant().Contains(@"recycler"))
+            if (subDir.ToLowerInvariant().Contains(@"system volume information") ||
+                subDir.ToLowerInvariant().Contains(@"recycled") || subDir.ToLowerInvariant().Contains(@"recycler"))
+            {
               continue;
+            }
             string[] importFiles = Directory.GetFiles(subDir, "*.xml", SearchOption.AllDirectories);
             foreach (string recordingXml in importFiles)
             {
@@ -103,24 +109,27 @@ namespace TvDatabase
               {
                 MatroskaTagInfo importTag = ReadTag(recordingXml);
                 fileRecordings[recordingXml] = importTag;
-              } catch (Exception ex)
+              }
+              catch (Exception ex)
               {
                 Log.Info("Error while reading matroska informations in file: ", ex);
               }
             }
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Info("Error while reading matroska informations in directory: ", ex);
-
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("Error while reading all matroska informations : ", ex);
-
       }
       if (OnTagLookupCompleted != null)
+      {
         OnTagLookupCompleted(fileRecordings);
+      }
     }
 
     /// <summary>
@@ -131,12 +140,15 @@ namespace TvDatabase
     public static MatroskaTagInfo ReadTag(string filename)
     {
       if (!File.Exists(filename))
+      {
         return null;
+      }
       MatroskaTagInfo info = new MatroskaTagInfo();
       XmlDocument doc = new XmlDocument();
       doc.Load(filename);
       XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
       if (simpleTags != null)
+      {
         foreach (XmlNode simpleTag in simpleTags)
         {
           string tagName = simpleTag.ChildNodes[0].InnerText;
@@ -156,6 +168,7 @@ namespace TvDatabase
               break;
           }
         }
+      }
       return info;
     }
 
@@ -167,7 +180,9 @@ namespace TvDatabase
     public static void WriteTag(string filename, MatroskaTagInfo taginfo)
     {
       if (!Directory.Exists(Path.GetDirectoryName(filename)))
+      {
         Directory.CreateDirectory(Path.GetDirectoryName(filename));
+      }
       XmlDocument doc = new XmlDocument();
       XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
       XmlNode tagsNode = doc.CreateElement("tags");
@@ -181,6 +196,7 @@ namespace TvDatabase
       doc.InsertBefore(xmldecl, tagsNode);
       doc.Save(filename);
     }
+
     #endregion
   }
 }

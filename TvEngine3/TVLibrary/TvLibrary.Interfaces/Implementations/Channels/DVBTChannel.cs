@@ -29,7 +29,9 @@ namespace TvLibrary.Channels
   public class DVBTChannel : DVBBaseChannel
   {
     #region variables
-    int _bandWidth;
+
+    private int _bandWidth;
+
     #endregion
 
     /// <summary>
@@ -45,14 +47,8 @@ namespace TvLibrary.Channels
     /// </summary>
     public int BandWidth
     {
-      get
-      {
-        return _bandWidth;
-      }
-      set
-      {
-        _bandWidth = value;
-      }
+      get { return _bandWidth; }
+      set { _bandWidth = value; }
     }
 
     /// <summary>
@@ -77,15 +73,22 @@ namespace TvLibrary.Channels
     public override bool Equals(object obj)
     {
       if ((obj as DVBTChannel) == null)
+      {
         return false;
+      }
       if (!base.Equals(obj))
+      {
         return false;
+      }
       DVBTChannel ch = obj as DVBTChannel;
       if (ch.BandWidth != BandWidth)
+      {
         return false;
+      }
 
       return true;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -98,4 +101,3 @@ namespace TvLibrary.Channels
     }
   }
 }
-

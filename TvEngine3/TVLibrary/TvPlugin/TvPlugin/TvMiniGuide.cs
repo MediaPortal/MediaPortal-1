@@ -27,22 +27,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
+using System.IO;
 using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.Util;
-
-using TvDatabase;
 using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
+using TvDatabase;
 
 namespace TvPlugin
 {
@@ -53,43 +46,41 @@ namespace TvPlugin
   public class TvMiniGuide : GUIWindow, IRenderLayer
   {
     // Member variables                                  
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl cmdExit = null;
-    [SkinControlAttribute(35)]
-    protected GUIListControl lstChannelsNoStateIcons = null;
-    [SkinControlAttribute(36)]
-    protected GUISpinControl spinGroup = null;
-    [SkinControlAttribute(37)]
-    protected GUIListControl lstChannelsWithStateIcons = null;
+    [SkinControl(34)] protected GUIButtonControl cmdExit = null;
+    [SkinControl(35)] protected GUIListControl lstChannelsNoStateIcons = null;
+    [SkinControl(36)] protected GUISpinControl spinGroup = null;
+    [SkinControl(37)] protected GUIListControl lstChannelsWithStateIcons = null;
 
     protected GUIListControl lstChannels = null;
 
-    bool _canceled = false;
-    bool _running = false;
-    int _parentWindowID = 0;
-    GUIWindow _parentWindow = null;
-    Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
+    private bool _canceled = false;
+    private bool _running = false;
+    private int _parentWindowID = 0;
+    private GUIWindow _parentWindow = null;
+    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
 
-    List<ChannelGroup> _channelGroupList = null;
-    Channel _selectedChannel;
-    bool _zap = true;
-    Stopwatch benchClock = null;
+    private List<ChannelGroup> _channelGroupList = null;
+    private Channel _selectedChannel;
+    private bool _zap = true;
+    private Stopwatch benchClock = null;
     private List<Channel> _channelList = new List<Channel>();
 
-    bool _byIndex = false;
-    bool _showChannelNumber = false;
-    int _channelNumberMaxLength = 3;
+    private bool _byIndex = false;
+    private bool _showChannelNumber = false;
+    private int _channelNumberMaxLength = 3;
 
     #region Serialisation
-    void LoadSettings()
+
+    private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
       }
     }
+
     #endregion
 
     /// <summary>
@@ -97,12 +88,12 @@ namespace TvPlugin
     /// </summary>
     public TvMiniGuide()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
+      GetID = (int) Window.WINDOW_MINI_GUIDE;
     }
 
     public override void OnAdded()
     {
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_MINI_GUIDE, this);
+      GUIWindowManager.Replace((int) Window.WINDOW_MINI_GUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -110,10 +101,7 @@ namespace TvPlugin
 
     public override bool SupportsDelayedLoad
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -122,10 +110,7 @@ namespace TvPlugin
     /// <value><c>true</c> if this instance is tv; otherwise, <c>false</c>.</value>
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     /// <summary>
@@ -134,10 +119,7 @@ namespace TvPlugin
     /// <value><c>true</c> if dialog was canceled without a selection</value>
     public bool Canceled
     {
-      get
-      {
-        return _canceled;
-      }
+      get { return _canceled; }
     }
 
     /// <summary>
@@ -146,14 +128,8 @@ namespace TvPlugin
     /// <value>The selected channel.</value>
     public Channel SelectedChannel
     {
-      get
-      {
-        return _selectedChannel;
-      }
-      set
-      {
-        _selectedChannel = value;
-      }
+      get { return _selectedChannel; }
+      set { _selectedChannel = value; }
     }
 
     /// <summary>
@@ -162,14 +138,8 @@ namespace TvPlugin
     /// <value><c>true</c> if [auto zap]; otherwise, <c>false</c>.</value>
     public bool AutoZap
     {
-      get
-      {
-        return _zap;
-      }
-      set
-      {
-        _zap = value;
-      }
+      get { return _zap; }
+      set { _zap = value; }
     }
 
     /// <summary>
@@ -180,7 +150,7 @@ namespace TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
 
-      GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
+      GetID = (int) Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       _canceled = true;
       LoadSettings();
@@ -194,13 +164,15 @@ namespace TvPlugin
     /// <param name="timePassed"></param>
     public override void Render(float timePassed)
     {
-      base.Render(timePassed);		// render our controls to the screen
+      base.Render(timePassed); // render our controls to the screen
     }
 
     private void GetChannels(bool refresh)
     {
       if (refresh || _channelList == null)
+      {
         _channelList = new List<Channel>();
+      }
 
       if (_channelList.Count == 0)
       {
@@ -212,7 +184,9 @@ namespace TvPlugin
             {
               Channel ch = chan.ReferencedChannel();
               if (ch.VisibleInGuide && ch.IsTv)
+              {
                 _channelList.Add(ch);
+              }
             }
           }
         }
@@ -222,9 +196,12 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
+                                           DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
+          {
             _channelList.Add(newChannel);
+          }
         }
       }
     }
@@ -232,7 +209,7 @@ namespace TvPlugin
     /// <summary>
     /// On close
     /// </summary>
-    void Close()
+    private void Close()
     {
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
@@ -261,21 +238,21 @@ namespace TvPlugin
           {
             if (message.SenderControlId == 35 || message.SenderControlId == 37) // listbox
             {
-              if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+              if ((int) Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
+                SelectedChannel = (Channel) lstChannels.SelectedListItem.MusicTag;
 
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
+                  string selectedChan = (string) lstChannels.SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
-                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
+                      changeChannel = (Channel) tvChannelList[lstChannels.SelectedListItemIndex];
                     }
                   }
                 }
@@ -366,7 +343,7 @@ namespace TvPlugin
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       AllocResources();
-      ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
       benchClock.Stop();
       Log.Debug("TvMiniGuide: All controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
 
@@ -436,7 +413,9 @@ namespace TvPlugin
       }
 
       if (_channelGroupList.Count < 2)
+      {
         spinGroup.Visible = false;
+      }
 
       benchClock.Stop();
       Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
@@ -484,7 +463,8 @@ namespace TvPlugin
       benchClock.Start();
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext(tvChannelList);
       benchClock.Stop();
-      Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count, tvChannelList.Count, benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count,
+                tvChannelList.Count, benchClock.ElapsedMilliseconds.ToString());
       Channel CurrentChan = null;
       GUIListItem item = null;
       string ChannelLogo = "";
@@ -516,7 +496,8 @@ namespace TvPlugin
         // 1) when the "all channels" group is selected - too many channels.
         // 2) when user is not timeshifting - no user object on the server.
         User currentUser = new User();
-        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, currentUser);
+        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
+                                                                          currentUser);
       }
       else
       {
@@ -527,14 +508,16 @@ namespace TvPlugin
         if (tvChannelStatesList == null)
         {
           //slow approach.
-          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup, TVHome.Card.User);
+          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
+                                                                            TVHome.Card.User);
         }
       }
 
       benchClock.Stop();
       if (tvChannelStatesList != null)
       {
-        Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms", Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
+        Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms",
+                  Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
       }
 
       for (int i = 0; i < tvChannelList.Count; i++)
@@ -544,11 +527,11 @@ namespace TvPlugin
 
         if (tvChannelStatesList != null && tvChannelStatesList.ContainsKey(CurrentId))
         {
-          CurrentChanState = (int)tvChannelStatesList[CurrentId];
+          CurrentChanState = (int) tvChannelStatesList[CurrentId];
         }
         else
         {
-          CurrentChanState = (int)ChannelState.tunable;
+          CurrentChanState = (int) ChannelState.tunable;
         }
 
         if (CurrentChan.VisibleInGuide)
@@ -560,7 +543,7 @@ namespace TvPlugin
           item.MusicTag = CurrentChan;
 
           sb.Append(CurrentChan.DisplayName);
-          ChannelLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
+          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
           if (TVHome.Navigator.Channel.IdChannel == CurrentId)
@@ -569,7 +552,7 @@ namespace TvPlugin
             SelectedID = lstChannels.Count;
           }
 
-          if (System.IO.File.Exists(ChannelLogo))
+          if (File.Exists(ChannelLogo))
           {
             item.IconImageBig = ChannelLogo;
             item.IconImage = ChannelLogo;
@@ -586,7 +569,7 @@ namespace TvPlugin
 
             switch (CurrentChanState)
             {
-              case (int)ChannelState.nottunable: //not avail.                
+              case (int) ChannelState.nottunable: //not avail.                
                 item.IsPlayed = true;
                 if (showChannelStateIcons)
                 {
@@ -598,7 +581,7 @@ namespace TvPlugin
                   sb.Append(local1056);
                 }
                 break;
-              case (int)ChannelState.timeshifting: // timeshifting                
+              case (int) ChannelState.timeshifting: // timeshifting                
                 if (showChannelStateIcons)
                 {
                   item.PinImage = Thumbs.TvIsTimeshiftingIcon;
@@ -609,7 +592,7 @@ namespace TvPlugin
                   sb.Append(local1055);
                 }
                 break;
-              case (int)ChannelState.recording: // recording                
+              case (int) ChannelState.recording: // recording                
                 if (showChannelStateIcons)
                 {
                   item.PinImage = Thumbs.TvIsRecordingIcon;
@@ -636,7 +619,9 @@ namespace TvPlugin
           {
             //tmpString = CurrentChan.CurrentProgram.Title; <-- this would be SLOW
             if (!string.IsNullOrEmpty(listNowNext[CurrentId].TitleNow))
+            {
               tmpString = listNowNext[CurrentId].TitleNow;
+            }
           }
           item.Label2 = tmpString;
           item.Label3 = local789 + tmpString;
@@ -645,7 +630,9 @@ namespace TvPlugin
           {
             string chanNumbers = " - ";
             foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
+            {
               chanNumbers = chanNumbers + detail.ChannelNumber + " - ";
+            }
             // strip trailing " - "
             chanNumbers = chanNumbers.Remove(chanNumbers.Length - 3);
             sb.Append(chanNumbers);
@@ -657,7 +644,8 @@ namespace TvPlugin
             if (listNowNext[CurrentId].NowStartTime != SqlDateTime.MinValue.Value)
             {
               sb.Append(" - ");
-              sb.Append(CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
+              sb.Append(
+                CalculateProgress(listNowNext[CurrentId].NowStartTime, listNowNext[CurrentId].NowEndTime).ToString());
               sb.Append("%");
             }
           }
@@ -666,7 +654,9 @@ namespace TvPlugin
 
           tmpString = local736;
           if ((listNowNext.ContainsKey(CurrentId)) && (listNowNext[CurrentId].IdProgramNext != -1))
+          {
             tmpString = listNowNext[CurrentId].TitleNext;
+          }
 
           item.Label2 = sb.ToString();
           item.Label = local790 + tmpString;
@@ -697,12 +687,16 @@ namespace TvPlugin
       double fprogress = 0;
       if (length.TotalMinutes > 0)
       {
-        fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
+        fprogress = (passed.TotalMinutes/length.TotalMinutes)*100;
         fprogress = Math.Floor(fprogress);
         if (fprogress > 100.0f)
+        {
           fprogress = 100.0f;
+        }
         if (fprogress < 1.0f)
+        {
           fprogress = 0;
+        }
       }
       return fprogress;
     }
@@ -742,7 +736,9 @@ namespace TvPlugin
     }
 
     // Overlay IRenderLayer members
+
     #region IRenderLayer
+
     public bool ShouldRenderLayer()
     {
       //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
@@ -752,8 +748,11 @@ namespace TvPlugin
     public void RenderLayer(float timePassed)
     {
       if (_running)
+      {
         Render(timePassed);
+      }
     }
+
     #endregion
   }
 }

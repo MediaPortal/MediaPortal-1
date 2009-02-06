@@ -30,13 +30,15 @@ namespace TvLibrary.Channels
   public class ATSCChannel : DVBBaseChannel
   {
     #region variables
-    int _physicalChannel;
-    int _majorChannel;
-    int _minorChannel;
-    int _symbolRate;
+
+    private int _physicalChannel;
+    private int _majorChannel;
+    private int _minorChannel;
+    private int _symbolRate;
     //int _videoPid;
     //int _audioPid;
-    ModulationType _modulation = ModulationType.ModNotSet;
+    private ModulationType _modulation = ModulationType.ModNotSet;
+
     #endregion
 
     /// <summary>
@@ -70,76 +72,52 @@ namespace TvLibrary.Channels
     }
 
     #region properties
+
     /// <summary>
     /// gets/sets the modulation type
     /// </summary>
     public ModulationType ModulationType
     {
-      get
-      {
-        return _modulation;
-      }
-      set
-      {
-        _modulation = value;
-      }
+      get { return _modulation; }
+      set { _modulation = value; }
     }
+
     /// <summary>
     /// gets/sets the physical channel
     /// </summary>
     public int PhysicalChannel
     {
-      get
-      {
-        return _physicalChannel;
-      }
-      set
-      {
-        _physicalChannel = value;
-      }
+      get { return _physicalChannel; }
+      set { _physicalChannel = value; }
     }
+
     /// <summary>
     /// gets/sets the major channel
     /// </summary>
     public int MajorChannel
     {
-      get
-      {
-        return _majorChannel;
-      }
-      set
-      {
-        _majorChannel = value;
-      }
+      get { return _majorChannel; }
+      set { _majorChannel = value; }
     }
+
     /// <summary>
     /// gets/sets the minor channel
     /// </summary>
     public int MinorChannel
     {
-      get
-      {
-        return _minorChannel;
-      }
-      set
-      {
-        _minorChannel = value;
-      }
+      get { return _minorChannel; }
+      set { _minorChannel = value; }
     }
+
     /// <summary>
     /// gets/sets the symbolrate
     /// </summary>
     public int SymbolRate
     {
-      get
-      {
-        return _symbolRate;
-      }
-      set
-      {
-        _symbolRate = value;
-      }
+      get { return _symbolRate; }
+      set { _symbolRate = value; }
     }
+
     /*
     /// <summary>
     /// gets/sets the AudioPid
@@ -169,6 +147,7 @@ namespace TvLibrary.Channels
         _videoPid = value;
       }
     }*/
+
     #endregion
 
     /// <summary>
@@ -178,7 +157,8 @@ namespace TvLibrary.Channels
     public override string ToString()
     {
       //return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5} audio pid:{6:X} video pid:{7:X}", base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation, _audioPid, _videoPid);
-      return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5}", base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation);
+      return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5}", base.ToString(), _physicalChannel,
+                           _majorChannel, _minorChannel, _symbolRate, _modulation);
     }
 
     /// <summary>
@@ -189,24 +169,39 @@ namespace TvLibrary.Channels
     public override bool Equals(object obj)
     {
       if ((obj as ATSCChannel) == null)
+      {
         return false;
+      }
       if (!base.Equals(obj))
+      {
         return false;
+      }
       ATSCChannel ch = obj as ATSCChannel;
       if (ch.MajorChannel != MajorChannel)
+      {
         return false;
+      }
       if (ch.MinorChannel != MinorChannel)
+      {
         return false;
+      }
       if (ch.ModulationType != ModulationType)
+      {
         return false;
+      }
       if (ch.PhysicalChannel != PhysicalChannel)
+      {
         return false;
+      }
       if (ch.SymbolRate != SymbolRate)
+      {
         return false;
+      }
       //if (ch.AudioPid != AudioPid) return false;
       //if (ch.VideoPid != VideoPid) return false;
       return true;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -216,7 +211,8 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       //return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
-      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode();
+      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^
+             _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode();
     }
   }
 }

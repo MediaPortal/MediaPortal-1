@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvLibrary.Interfaces;
+
 namespace TvLibrary.Epg
 {
   /// <summary>
@@ -30,11 +31,14 @@ namespace TvLibrary.Epg
   public class EpgChannel
   {
     #region variables
-    List<EpgProgram> _programs;
-    IChannel _channel;
+
+    private List<EpgProgram> _programs;
+    private IChannel _channel;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EpgChannel"/> class.
     /// </summary>
@@ -42,24 +46,19 @@ namespace TvLibrary.Epg
     {
       _programs = new List<EpgProgram>();
     }
+
     #endregion
 
-
     #region properties
+
     /// <summary>
     /// Gets or sets the channel.
     /// </summary>
     /// <value>The channel.</value>
     public IChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
-      set
-      {
-        _channel = value;
-      }
+      get { return _channel; }
+      set { _channel = value; }
     }
 
     /// <summary>
@@ -68,15 +67,10 @@ namespace TvLibrary.Epg
     /// <value>The programs.</value>
     public List<EpgProgram> Programs
     {
-      get
-      {
-        return _programs;
-      }
-      set
-      {
-        _programs = value;
-      }
+      get { return _programs; }
+      set { _programs = value; }
     }
+
     #endregion
 
     /// <summary>

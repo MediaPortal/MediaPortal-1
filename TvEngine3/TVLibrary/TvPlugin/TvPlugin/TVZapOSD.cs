@@ -24,78 +24,63 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
-using System.Collections.Generic;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Util;
-using TvDatabase;
-using TvControl;
-
-using Gentle.Common;
+using System.Globalization;
+using System.IO;
 using Gentle.Framework;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
+using TvControl;
+using TvDatabase;
+
 namespace TvPlugin
 {
   /// <summary>
   /// 
   /// </summary>
   /// 
-
   public class TvZapOsd : GUIWindow
   {
-    [SkinControlAttribute(35)]
-    protected GUILabelControl lblCurrentChannel = null;
-    [SkinControlAttribute(36)]
-    protected GUITextControl lblOnTvNow = null;
-    [SkinControlAttribute(37)]
-    protected GUITextControl lblOnTvNext = null;
-    [SkinControlAttribute(100)]
-    protected GUILabelControl lblCurrentTime = null;
-    [SkinControlAttribute(101)]
-    protected GUILabelControl lblStartTime = null;
-    [SkinControlAttribute(102)]
-    protected GUILabelControl lblEndTime = null;
-    [SkinControlAttribute(39)]
-    protected GUIImage imgRecIcon = null;
-    [SkinControlAttribute(10)]
-    protected GUIImage imgTvChannelLogo = null;
+    [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
+    [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
+    [SkinControl(37)] protected GUITextControl lblOnTvNext = null;
+    [SkinControl(100)] protected GUILabelControl lblCurrentTime = null;
+    [SkinControl(101)] protected GUILabelControl lblStartTime = null;
+    [SkinControl(102)] protected GUILabelControl lblEndTime = null;
+    [SkinControl(39)] protected GUIImage imgRecIcon = null;
+    [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
 
 
-    bool m_bNeedRefresh = false;
-    DateTime m_dateTime = DateTime.Now;
+    private bool m_bNeedRefresh = false;
+    private DateTime m_dateTime = DateTime.Now;
     private string channelName = "";
     private int idChannel;
 
-    IList tvChannelList;
+    private IList tvChannelList;
 
     public TvZapOsd()
     {
-
-      GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
+      GetID = (int) Window.WINDOW_TVZAPOSD;
     }
+
     public override void OnAdded()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TVZAPOSD, this);
+      GetID = (int) Window.WINDOW_TVZAPOSD;
+      GUIWindowManager.Replace((int) Window.WINDOW_TVZAPOSD, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
-      GetID = (int)GUIWindow.Window.WINDOW_TVZAPOSD;
+      GetID = (int) Window.WINDOW_TVZAPOSD;
       return bResult;
     }
 
@@ -108,8 +93,8 @@ namespace TvPlugin
     public override void Render(float timePassed)
     {
       UpdateProgressBar();
-      Get_TimeInfo();							// show the time elapsed/total playing time
-      base.Render(timePassed);		// render our controls to the screen
+      Get_TimeInfo(); // show the time elapsed/total playing time
+      base.Render(timePassed); // render our controls to the screen
     }
 
     public override void OnAction(Action action)
@@ -137,7 +122,7 @@ namespace TvPlugin
           {
             if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
             {
-              TvFullScreen tvWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              TvFullScreen tvWindow = (TvFullScreen) GUIWindowManager.GetWindow((int) Window.WINDOW_TVFULLSCREEN);
               tvWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
               tvWindow.OnAction(action);
             }
@@ -156,40 +141,41 @@ namespace TvPlugin
 
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + newWindowId));
     }
+
     protected override void OnPageLoad()
     {
       Log.Debug("zaposd pageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "istv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      tvChannelList = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      tvChannelList = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
 
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
-      ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
       m_bNeedRefresh = false;
       m_dateTime = DateTime.Now;
       channelName = GetChannelName();
       idChannel = GetIdChannel();
-      SetCurrentChannelLogo();      
-      base.OnPageLoad();      
+      SetCurrentChannelLogo();
+      base.OnPageLoad();
 
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
     }
 
 
-    void Get_TimeInfo()
+    private void Get_TimeInfo()
     {
       string strTime = channelName;
-      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;      
+      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;
       if (prog != null)
       {
         strTime = String.Format("{0}-{1}",
-        prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-        prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       if (lblCurrentTime != null)
       {
@@ -207,7 +193,7 @@ namespace TvPlugin
 
       foreach (CPosition pos in _listPositions)
       {
-        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+        pos.control.SetPosition((int) pos.XPos, (int) pos.YPos + iCalibrationY);
       }
       foreach (CPosition pos in _listPositions)
       {
@@ -219,20 +205,22 @@ namespace TvPlugin
           if (dwPosY < iTop)
           {
             int iSize = iTop - dwPosY;
-            if (iSize > iMin) iMin = iSize;
+            if (iSize > iMin)
+            {
+              iMin = iSize;
+            }
             bOffScreen = true;
           }
         }
       }
       if (bOffScreen)
       {
-
         foreach (CPosition pos in _listPositions)
         {
           GUIControl pControl = pos.control;
           int dwPosX = pControl.XPosition;
           int dwPosY = pControl.YPosition;
-          if (dwPosY < (int)100)
+          if (dwPosY < (int) 100)
           {
             dwPosY += Math.Abs(iMin);
             pControl.SetPosition(dwPosX, dwPosY);
@@ -256,23 +244,29 @@ namespace TvPlugin
     private void OnPreviousChannel()
     {
       Log.Debug("GUITV OSD: OnNextChannel");
-      if (!TVHome.Card.IsTimeShifting) return;
+      if (!TVHome.Card.IsTimeShifting)
+      {
+        return;
+      }
       TVHome.Navigator.ZapToPreviousChannel(true);
       channelName = GetChannelName();
-        idChannel = GetIdChannel();
-      SetCurrentChannelLogo();      
+      idChannel = GetIdChannel();
+      SetCurrentChannelLogo();
       m_dateTime = DateTime.Now;
     }
 
     private void OnNextChannel()
     {
-      Log.Debug("GUITV ZAPOSD: OnNextChannel");      
-      if (!TVHome.Card.IsTimeShifting) return;      
+      Log.Debug("GUITV ZAPOSD: OnNextChannel");
+      if (!TVHome.Card.IsTimeShifting)
+      {
+        return;
+      }
       TVHome.Navigator.ZapToNextChannel(true);
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
-      
+
       m_dateTime = DateTime.Now;
     }
 
@@ -284,10 +278,10 @@ namespace TvPlugin
     }
 
 
-    void SetCurrentChannelLogo()
+    private void SetCurrentChannelLogo()
     {
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-      if (System.IO.File.Exists(strLogo))
+      if (File.Exists(strLogo))
       {
         if (imgTvChannelLogo != null)
         {
@@ -307,15 +301,17 @@ namespace TvPlugin
       ShowPrograms();
     }
 
-    string GetChannelName()
+    private string GetChannelName()
     {
       return TVHome.Navigator.ZapChannel.DisplayName;
     }
-    int GetIdChannel()
+
+    private int GetIdChannel()
     {
-        return TVHome.Navigator.ZapChannel.IdChannel;
+      return TVHome.Navigator.ZapChannel.IdChannel;
     }
-    void ShowPrograms()
+
+    private void ShowPrograms()
     {
       if (lblOnTvNow != null)
       {
@@ -340,12 +336,12 @@ namespace TvPlugin
       {
         lblCurrentChannel.Label = channelName;
       }
-      Program prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(m_dateTime);      
+      Program prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(m_dateTime);
       if (prog != null)
       {
         string strTime = String.Format("{0}-{1}",
-          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         if (lblCurrentTime != null)
         {
@@ -355,7 +351,7 @@ namespace TvPlugin
         if (lblOnTvNow != null)
         {
           lblOnTvNow.Label = prog.Title;
-        }        
+        }
         if (lblStartTime != null)
         {
           strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -368,7 +364,7 @@ namespace TvPlugin
         }
 
         // next program
-          prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(prog.EndTime.AddMinutes(1));
+        prog = TVHome.Navigator.GetChannel(idChannel).GetProgramAt(prog.EndTime.AddMinutes(1));
         //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
         if (prog != null)
         {
@@ -380,9 +376,8 @@ namespace TvPlugin
       }
       else
       {
-        
         lblOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
-        
+
         if (lblStartTime != null)
         {
           lblStartTime.Label = String.Empty;
@@ -399,25 +394,25 @@ namespace TvPlugin
       UpdateProgressBar();
     }
 
-    void UpdateProgressBar()
-    {      
+    private void UpdateProgressBar()
+    {
       double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;      
+      Program prog = TVHome.Navigator.GetChannel(idChannel).CurrentProgram;
       if (prog == null)
-      {        
+      {
         return;
       }
       string strTime = String.Format("{0}-{1}",
-      prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-      prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
       TimeSpan ts = prog.EndTime - prog.StartTime;
       double iTotalSecs = ts.TotalSeconds;
       ts = DateTime.Now - prog.StartTime;
       double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+      fPercent = ((double) iCurSecs)/((double) iTotalSecs);
       fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());      
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int) fPercent).ToString());
     }
   }
 }

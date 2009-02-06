@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,17 +20,20 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
 {
+
   #region Enums
+
   /// <summary>
   /// All possible event types sent by PowerScheduler
   /// </summary>
@@ -70,6 +74,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     Elapsed
   }
+
   #endregion
 
   /// <summary>
@@ -79,36 +84,49 @@ namespace TvEngine.PowerScheduler.Interfaces
   public class PowerSchedulerEventArgs : EventArgs
   {
     #region Variables
+
     private PowerSchedulerEventType _eventType;
     private object _data;
     private Type _dataType;
+
     #endregion
 
     #region Constructor
+
     public PowerSchedulerEventArgs(PowerSchedulerEventType eventType)
     {
       _eventType = eventType;
     }
+
     #endregion
+
     #region Public methods
+
     public void SetData<T>(object o)
     {
-      _dataType = typeof(T);
+      _dataType = typeof (T);
       _data = o;
     }
+
     public T GetData<T>()
     {
-      Type dataType = typeof(T);
+      Type dataType = typeof (T);
       if (_dataType == dataType)
-        return (T)_data;
+      {
+        return (T) _data;
+      }
       return default(T);
     }
+
     #endregion
+
     #region Properties
+
     public PowerSchedulerEventType EventType
     {
       get { return _eventType; }
     }
+
     #endregion
   }
 }

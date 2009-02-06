@@ -22,7 +22,6 @@ using TvLibrary.Implementations.Analog;
 
 namespace TvLibrary.Interfaces
 {
-
   /// <summary>
   /// used by the IVideoEncoder interface getvalue(ENCAPIPARAM_BITRATE_MODE)
   /// </summary>
@@ -48,7 +47,7 @@ namespace TvLibrary.Interfaces
     /// Bit rate mode not set
     /// </summary>
     NotSet
-  };
+  } ;
 
 
   /// <summary>
@@ -80,20 +79,12 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Gets/Sets the quality bit type (only the bit rate)
     /// </summary>
-    QualityType QualityType
-    {
-      get;
-      set;
-    }
+    QualityType QualityType { get; set; }
 
     /// <summary>
     /// Gets/Sets the bit rate mode. Works only if this is supported
     /// </summary>
-    VIDEOENCODER_BITRATE_MODE BitRateMode
-    {
-      get;
-      set;
-    }
+    VIDEOENCODER_BITRATE_MODE BitRateMode { get; set; }
 
     /// <summary>
     /// Indicates if bit rate modes are supported
@@ -127,6 +118,5 @@ namespace TvLibrary.Interfaces
     /// Sets the new configuration object
     /// </summary>
     void SetConfiguration(Configuration configuration);
-
   }
 }

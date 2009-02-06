@@ -1,4 +1,5 @@
 #region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -23,60 +24,53 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Player;
-
-
 using TvDatabase;
-using TvControl;
-
-using Gentle.Common;
-using Gentle.Framework;
 
 namespace TvPlugin
 {
   public class TvNewScheduleSearch : GUIWindow
   {
     #region enums
+
     public enum SearchType : int
     {
       Title = 0,
       KeyWord,
       Genres,
-    };
+    } ;
+
     #endregion
 
     #region variables
-    static SearchType _searchType = SearchType.Title;
-    [SkinControlAttribute(50)]    protected GUIListControl listResults = null;
-    [SkinControlAttribute(51)]    protected GUISMSInputControl smsInputControl = null;
+
+    private static SearchType _searchType = SearchType.Title;
+    [SkinControl(50)] protected GUIListControl listResults = null;
+    [SkinControl(51)] protected GUISMSInputControl smsInputControl = null;
     public string _searchKeyword = "";
     public bool _refreshList = false;
 
     private Action LastAction = null; // Keeps the Last received Action from the OnAction Methode
     private int LastActionTime = 0; // stores the time of the last action from the OnAction Methode
+
     #endregion
 
     public TvNewScheduleSearch()
     {
       Log.Info("newsearch ctor");
-      GetID = (int)GUIWindow.Window.WINDOW_TV_SEARCH;
+      GetID = (int) Window.WINDOW_TV_SEARCH;
     }
+
     ~TvNewScheduleSearch()
     {
     }
 
     public override bool IsTv
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     public override bool Init()
@@ -90,7 +84,11 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
-      if (LastActionTime + 100 > System.Environment.TickCount && action == LastAction) return; // don't do anything if the keypress is comes to soon after the previos one and the action is the same as before.
+      if (LastActionTime + 100 > Environment.TickCount && action == LastAction)
+      {
+        return;
+          // don't do anything if the keypress is comes to soon after the previos one and the action is the same as before.
+      }
 
       switch (action.wID)
       {
@@ -116,7 +114,8 @@ namespace TvPlugin
         if (GetFocusControlId() != smsInputControl.GetID)
         {
           // set focus to the default control then
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)smsInputControl.GetID, 0, 0, null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int) smsInputControl.GetID,
+                                          0, 0, null);
           OnMessage(msg);
         }
         smsInputControl.OnAction(action);
@@ -135,14 +134,8 @@ namespace TvPlugin
 
     public static SearchType SearchFor
     {
-      get
-      {
-        return _searchType;
-      }
-      set
-      {
-        _searchType = value;
-      }
+      get { return _searchType; }
+      set { _searchType = value; }
     }
 
 
@@ -152,19 +145,22 @@ namespace TvPlugin
       smsInputControl.OnTextChanged += new GUISMSInputControl.OnTextChangedHandler(OnTextChanged);
       base.OnPageLoad();
     }
+
     protected override void OnPageDestroy(int new_windowId)
     {
       Log.Info("newsearch OnPageDestroy");
       smsInputControl.OnTextChanged -= new GUISMSInputControl.OnTextChangedHandler(OnTextChanged);
       base.OnPageDestroy(new_windowId);
     }
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == listResults)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listResults.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listResults.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
-        int iItem = (int)msg.Param1;
+        int iItem = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(iItem);
@@ -172,20 +168,31 @@ namespace TvPlugin
       }
       base.OnClicked(controlId, control, actionType);
     }
-    GUIListItem GetItem(int index)
+
+    private GUIListItem GetItem(int index)
     {
-      if (index < 0 || index >= listResults.Count) return null;
+      if (index < 0 || index >= listResults.Count)
+      {
+        return null;
+      }
       return listResults[index];
     }
-    void OnClick(int itemNo)
+
+    private void OnClick(int itemNo)
     {
       GUIListItem item = GetItem(itemNo);
-      if (item == null) return;
+      if (item == null)
+      {
+        return;
+      }
       TVProgramInfo.CurrentProgram = item.TVTag as Program;
       if (TVProgramInfo.CurrentProgram != null)
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+      {
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_PROGRAM_INFO);
+      }
       return;
     }
+
     public void OnTextChanged()
     {
       Log.Info("newsearch OnTextChanged:{0}", smsInputControl.Text);
@@ -195,6 +202,7 @@ namespace TvPlugin
         //_refreshList = true;
       }
     }
+
     public override void Process()
     {
       base.Process();
@@ -205,7 +213,8 @@ namespace TvPlugin
       }
       TVHome.UpdateProgressPercentageBar();
     }
-    void Search()
+
+    private void Search()
     {
       Log.Info("newsearch Search:{0} {1}", _searchKeyword, SearchFor);
       GUIControl.ClearControl(GetID, listResults.GetID);
@@ -223,15 +232,21 @@ namespace TvPlugin
           listPrograms = layer.SearchPrograms("%" + _searchKeyword);
           break;
       }
-      if (listPrograms == null) return;
-      if (listPrograms.Count == 0) return;
+      if (listPrograms == null)
+      {
+        return;
+      }
+      if (listPrograms.Count == 0)
+      {
+        return;
+      }
       Log.Info("newsearch found:{0} progs", listPrograms.Count);
       foreach (Program program in listPrograms)
       {
         GUIListItem item = new GUIListItem();
         item.Label = program.Title;
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.ReferencedChannel().DisplayName);
-        if (!System.IO.File.Exists(logo))
+        if (!File.Exists(logo))
         {
           logo = "defaultVideoBig.png";
         }

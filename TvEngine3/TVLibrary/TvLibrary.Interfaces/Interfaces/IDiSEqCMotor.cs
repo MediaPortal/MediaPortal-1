@@ -20,7 +20,9 @@
  */
 namespace TvLibrary.Interfaces
 {
+
   #region enums
+
   /// <summary>
   /// DisEqC directions
   /// </summary>
@@ -46,7 +48,9 @@ namespace TvLibrary.Interfaces
     /// </summary>
     Down
   }
+
   #endregion
+
   /// <summary>
   /// interface for controlling DiSEqC motors
   /// </summary>
@@ -56,28 +60,34 @@ namespace TvLibrary.Interfaces
     /// Stops the motor.
     /// </summary>
     void StopMotor();
+
     /// <summary>
     /// Reset.
     /// </summary>
     void Reset();
+
     /// <summary>
     /// Sets the east limit.
     /// </summary>
     void SetEastLimit();
+
     /// <summary>
     /// Sets the west limit.
     /// </summary>
     void SetWestLimit();
+
     /// <summary>
     /// Enable/disables the west/east limits.
     /// </summary>
-    bool ForceLimits { set;}
+    bool ForceLimits { set; }
+
     /// <summary>
     /// Drives the motor.
     /// </summary>
     /// <param name="direction">The direction.</param>
     /// <param name="numberOfSeconds">the number of seconds to move.</param>
     void DriveMotor(DiSEqCDirection direction, byte numberOfSeconds);
+
     /// <summary>
     /// Stores the position.
     /// </summary>
@@ -87,10 +97,12 @@ namespace TvLibrary.Interfaces
     /// Goto's the sattelite reference position.
     /// </summary>
     void GotoReferencePosition();
+
     /// <summary>
     /// Goto's the position.
     /// </summary>
     void GotoPosition(byte position);
+
     /// <summary>
     /// Gets the current motor position.
     /// </summary>

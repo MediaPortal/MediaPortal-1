@@ -20,6 +20,7 @@
  */
 using System;
 using TvLibrary.Interfaces;
+
 namespace TvLibrary.Channels
 {
   /// <summary>
@@ -29,20 +30,22 @@ namespace TvLibrary.Channels
   public class DVBBaseChannel : IChannel
   {
     #region variables
-    string _channelName;
-    string _providerName;
-    long _channelFrequency;
-    int _networkId;
-    int _serviceId;
-    int _transportId;
-    int _pmtPid;
-    int _pcrPid;
-    int _lcn;
-    int _videoPid;
-    int _audioPid;
-    bool _isRadio;
-    bool _isTv;
-    bool _freeToAir;
+
+    private string _channelName;
+    private string _providerName;
+    private long _channelFrequency;
+    private int _networkId;
+    private int _serviceId;
+    private int _transportId;
+    private int _pmtPid;
+    private int _pcrPid;
+    private int _lcn;
+    private int _videoPid;
+    private int _audioPid;
+    private bool _isRadio;
+    private bool _isTv;
+    private bool _freeToAir;
+
     #endregion
 
     /// <summary>
@@ -84,203 +87,134 @@ namespace TvLibrary.Channels
     }
 
     #region properties
+
     /// <summary>
     /// gets/set the LCN of the channel
     /// </summary>
     public int LogicalChannelNumber
     {
-      get
-      {
-        return _lcn;
-      }
-      set
-      {
-        _lcn = value;
-      }
+      get { return _lcn; }
+      set { _lcn = value; }
     }
+
     /// <summary>
     /// Gets or sets the PCR pid.
     /// </summary>
     /// <value>The PCR pid.</value>
     public int PcrPid
     {
-      get
-      {
-        return _pcrPid;
-      }
-      set
-      {
-        _pcrPid = value;
-      }
+      get { return _pcrPid; }
+      set { _pcrPid = value; }
     }
+
     /// <summary>
     /// gets/set the pid of the Program management table for the channel
     /// </summary>
     public int PmtPid
     {
-      get
-      {
-        return _pmtPid;
-      }
-      set
-      {
-        _pmtPid = value;
-      }
+      get { return _pmtPid; }
+      set { _pmtPid = value; }
     }
+
     /// <summary>
     /// gets/sets the network id of the channel
     /// </summary>
     public int NetworkId
     {
-      get
-      {
-        return _networkId;
-      }
-      set
-      {
-        _networkId = value;
-      }
+      get { return _networkId; }
+      set { _networkId = value; }
     }
+
     /// <summary>
     /// gets/sets the service id of the channel
     /// </summary>
     public int ServiceId
     {
-      get
-      {
-        return _serviceId;
-      }
-      set
-      {
-        _serviceId = value;
-      }
+      get { return _serviceId; }
+      set { _serviceId = value; }
     }
+
     /// <summary>
     /// gets/sets the transport id of the channel
     /// </summary>
     public int TransportId
     {
-      get
-      {
-        return _transportId;
-      }
-      set
-      {
-        _transportId = value;
-      }
+      get { return _transportId; }
+      set { _transportId = value; }
     }
+
     /// <summary>
     /// gets/sets the channel name
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _channelName;
-      }
-      set
-      {
-        _channelName = value;
-      }
+      get { return _channelName; }
+      set { _channelName = value; }
     }
+
     /// <summary>
     /// gets/sets the channel provider name
     /// </summary>
     public string Provider
     {
-      get
-      {
-        return _providerName;
-      }
-      set
-      {
-        _providerName = value;
-      }
+      get { return _providerName; }
+      set { _providerName = value; }
     }
+
     /// <summary>
     /// gets/sets the carrier frequency of the channel
     /// </summary>
     public long Frequency
     {
-      get
-      {
-        return _channelFrequency;
-      }
-      set
-      {
-        _channelFrequency = value;
-      }
+      get { return _channelFrequency; }
+      set { _channelFrequency = value; }
     }
+
     /// <summary>
     /// boolean indication if this is a radio channel
     /// </summary>
     public bool IsRadio
     {
-      get
-      {
-        return _isRadio;
-      }
-      set
-      {
-        _isRadio = value;
-      }
+      get { return _isRadio; }
+      set { _isRadio = value; }
     }
+
     /// <summary>
     /// boolean indication if this is a tv channel
     /// </summary>
     public bool IsTv
     {
-      get
-      {
-        return _isTv;
-      }
-      set
-      {
-        _isTv = value;
-      }
+      get { return _isTv; }
+      set { _isTv = value; }
     }
+
     /// <summary>
     /// boolean indicating if this is a FreeToAir channel or an encrypted channel
     /// </summary>
     public bool FreeToAir
     {
-      get
-      {
-        return _freeToAir;
-      }
-      set
-      {
-        _freeToAir = value;
-      }
+      get { return _freeToAir; }
+      set { _freeToAir = value; }
     }
+
     /// <summary>
     /// gets/sets the AudioPid
     /// </summary>
     public int AudioPid
     {
-      get
-      {
-        return _audioPid;
-      }
-      set
-      {
-        _audioPid = value;
-      }
+      get { return _audioPid; }
+      set { _audioPid = value; }
     }
+
     /// <summary>
     /// gets/sets the VideoPid
     /// </summary>
     public int VideoPid
     {
-      get
-      {
-        return _videoPid;
-      }
-      set
-      {
-        _videoPid = value;
-      }
+      get { return _videoPid; }
+      set { _videoPid = value; }
     }
+
     #endregion
 
     /// <summary>
@@ -293,7 +227,8 @@ namespace TvLibrary.Channels
     {
       string line = IsRadio ? "radio:" : "tv:";
       line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:0x{6:X} FTA:{7} LCN:{8}",
-        Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir, LogicalChannelNumber);
+                            Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,
+                            LogicalChannelNumber);
       return line;
     }
 
@@ -308,38 +243,69 @@ namespace TvLibrary.Channels
     public override bool Equals(object obj)
     {
       if ((obj as DVBBaseChannel) == null)
+      {
         return false;
+      }
       DVBBaseChannel ch = obj as DVBBaseChannel;
       if (ch.FreeToAir != FreeToAir)
+      {
         return false;
+      }
       if (ch.Frequency != Frequency)
+      {
         return false;
+      }
       if (ch.IsRadio != IsRadio)
+      {
         return false;
+      }
       if (ch.IsTv != IsTv)
+      {
         return false;
+      }
       if (ch.Name != Name)
+      {
         return false;
+      }
       if (ch.NetworkId != NetworkId)
+      {
         return false;
+      }
       if (ch.PcrPid != PcrPid)
+      {
         return false;
+      }
       if (ch.PmtPid != PmtPid)
+      {
         return false;
+      }
       if (ch.Provider != Provider)
+      {
         return false;
+      }
       if (ch.ServiceId != ServiceId)
+      {
         return false;
+      }
       if (ch.TransportId != TransportId)
+      {
         return false;
+      }
       if (ch.VideoPid != VideoPid)
+      {
         return false;
+      }
       if (ch.AudioPid != AudioPid)
+      {
         return false;
+      }
       if (ch.LogicalChannelNumber != LogicalChannelNumber)
+      {
         return false;
+      }
       return true;
     }
+
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
@@ -348,7 +314,9 @@ namespace TvLibrary.Channels
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^ _pmtPid.GetHashCode() ^ _pcrPid.GetHashCode() ^ _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^ _lcn.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
+      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^ _pmtPid.GetHashCode() ^
+             _pcrPid.GetHashCode() ^ _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^
+             _lcn.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
     }
   }
 }

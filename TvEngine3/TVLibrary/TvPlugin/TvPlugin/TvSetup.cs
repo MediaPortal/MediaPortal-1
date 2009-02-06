@@ -1,32 +1,35 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
+using System.Net.Sockets;
+using System.ServiceProcess;
+using Gentle.Framework;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using TvControl;
 using TvDatabase;
-using System.Net.Sockets;
-using System.ServiceProcess;
 
 namespace TvPlugin
 {
   public class TvSetup : GUIWindow
   {
     #region Variables
-    string _hostName;
-    [SkinControlAttribute(24)]    protected GUIButtonControl btnChange = null;
-    [SkinControlAttribute(25)]    protected GUIButtonControl btnBack = null;
-    [SkinControlAttribute(30)]    protected GUILabelControl lblHostName = null;
+
+    private string _hostName;
+    [SkinControl(24)] protected GUIButtonControl btnChange = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+    [SkinControl(30)] protected GUILabelControl lblHostName = null;
+
     #endregion
 
     public TvSetup()
     {
-      GetID = (int)Window.WINDOW_SETTINGS_TVENGINE;
+      GetID = (int) Window.WINDOW_SETTINGS_TVENGINE;
     }
 
     #region Serialisation
+
     private void LoadSettings()
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -34,6 +37,7 @@ namespace TvPlugin
         _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
     }
+
     private void SaveSettings()
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -41,6 +45,7 @@ namespace TvPlugin
         xmlreader.SetValue("tvservice", "hostname", _hostName);
       }
     }
+
     #endregion
 
     #region private static methods
@@ -53,13 +58,14 @@ namespace TvPlugin
         basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
       }
 
-      int homeWindow = basicHome ? (int) Window.WINDOW_SECOND_HOME : (int) GUIWindow.Window.WINDOW_HOME;
+      int homeWindow = basicHome ? (int) Window.WINDOW_SECOND_HOME : (int) Window.WINDOW_HOME;
       GUIWindowManager.ActivateWindow(homeWindow);
     }
 
     #endregion
 
     #region Check helpers
+
     private bool CheckTcpPort(int port)
     {
       TcpClient client = new TcpClient();
@@ -74,6 +80,7 @@ namespace TvPlugin
       client.Close();
       return true;
     }
+
     private bool CheckUdpPort(int port)
     {
       UdpClient client = new UdpClient();
@@ -117,10 +124,11 @@ namespace TvPlugin
       }
       return succeeded;
     }
+
     private bool CheckDatabaseConnection(List<string> portErrors)
     {
       bool succeeded = true;
-      string provider=Gentle.Framework.ProviderFactory.GetDefaultProvider().Name;
+      string provider = ProviderFactory.GetDefaultProvider().Name;
       if (provider.ToLower() == "sqlserver")
       {
         if (!CheckTcpPort(1433)) // MS SQL TCP Port
@@ -155,6 +163,7 @@ namespace TvPlugin
       }
       return succeeded;
     }
+
     private void CheckTvServiceStatus()
     {
       // check if we are in a single seat environment, if so check if TvService is started - if not start it
@@ -185,9 +194,13 @@ namespace TvPlugin
             {
             }
             if (ctrl.Status == ServiceControllerStatus.Running)
+            {
               Log.Info("TvSetup: TvService started.");
+            }
             else
+            {
               Log.Info("TvSetup: Failed to start TvService");
+            }
           }
           else if (ctrl.Status == ServiceControllerStatus.Running)
           {
@@ -195,11 +208,13 @@ namespace TvPlugin
           }
           else
           {
-            Log.Info("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}", ctrl.Status.ToString());
+            Log.Info("TvSetup: TvService seems to be in an unusual state. Please check. Current state={0}",
+                     ctrl.Status.ToString());
           }
         }
       }
     }
+
     #endregion
 
     #region Overrides
@@ -234,19 +249,19 @@ namespace TvPlugin
 
           CheckTvServiceStatus();
 
-          List<string> portErrors=new List<string>();
+          List<string> portErrors = new List<string>();
           bool tvServerOk = CheckTvServerConnection(portErrors);
           bool databaseOk = CheckDatabaseConnection(portErrors);
-          
+
           //Show the check results dialog to the user
-          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           if (tvServerOk && databaseOk)
           {
             TVHome.Navigator.ReLoad();
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
-              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064));  // Connected to TvServer
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064)); // Connected to TvServer
               pDlgOK.SetLine(2, "");
               pDlgOK.SetLine(3, "");
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
@@ -254,7 +269,7 @@ namespace TvPlugin
             return;
           }
           RemoteControl.Clear();
-          pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+          pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           if (pDlgOK != null)
           {
             if (portErrors.Count > 0)
@@ -263,26 +278,42 @@ namespace TvPlugin
               for (int i = 0; i < 4; i++)
               {
                 if (i < portErrors.Count)
+                {
                   pDlgOK.SetLine(i + 1, portErrors[i]);
+                }
                 else
+                {
                   pDlgOK.SetLine(i + 1, "");
+                }
               }
               pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             }
             pDlgOK.SetHeading(GUILocalizeStrings.Get(605));
             if (tvServerOk)
-              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064));  // Connected to TvServer
+            {
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200064)); // Connected to TvServer
+            }
             else
-              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200066));  // Unable to connect to TvServer
+            {
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(200066)); // Unable to connect to TvServer
+            }
 
             if (databaseOk)
-              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200067));  // Connected to database
+            {
+              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200067)); // Connected to database
+            }
             else
-              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200068));  // Unable to connect to database
-            if (portErrors.Count==0)
-              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200069));  // All ip ports seem to be fine
+            {
+              pDlgOK.SetLine(2, GUILocalizeStrings.Get(200068)); // Unable to connect to database
+            }
+            if (portErrors.Count == 0)
+            {
+              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200069)); // All ip ports seem to be fine
+            }
             else
-              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200070));  // Please check firewall
+            {
+              pDlgOK.SetLine(3, GUILocalizeStrings.Get(200070)); // Please check firewall
+            }
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
 
             return;
@@ -315,8 +346,8 @@ namespace TvPlugin
 
     protected bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (keyboard == null )
+      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (keyboard == null)
       {
         return false;
       }

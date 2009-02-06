@@ -10,20 +10,13 @@ namespace api
     /// <summary>
     /// Gets the short description
     /// </summary>
-    String ShortDescriptionString
-    {
-      get;
-
-    }
+    String ShortDescriptionString { get; }
 
     /// <summary>
     /// Gets the long description
     /// </summary>
-    String LongDescriptionString
-    {
-      get;
+    String LongDescriptionString { get; }
 
-    }
     /// <summary>
     /// Return Similarity Timing Actual
     /// </summary>

@@ -2,8 +2,6 @@ using System;
 
 namespace api
 {
-
-
   // Referenced classes of package api:
   //            InterfaceSubstitutionCost
 

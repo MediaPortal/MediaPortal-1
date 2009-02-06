@@ -26,18 +26,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using DirectShowLib.Dvd;
 
 #if !USING_NET11
-using System.Runtime.InteropServices.ComTypes;
+
 #endif
 
 namespace DirectShowLib
 {
+
   #region Declarations
 
   /// <summary>
@@ -84,45 +87,28 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Explicit)]
   public struct DDPixelFormat
   {
-    [FieldOffset(0)]
-    public int dwSize;
-    [FieldOffset(4)]
-    public int dwFlags;
-    [FieldOffset(8)]
-    public int dwFourCC;
+    [FieldOffset(0)] public int dwSize;
+    [FieldOffset(4)] public int dwFlags;
+    [FieldOffset(8)] public int dwFourCC;
 
-    [FieldOffset(12)]
-    public int dwRGBBitCount;
-    [FieldOffset(12)]
-    public int dwYUVBitCount;
-    [FieldOffset(12)]
-    public int dwZBufferBitDepth;
-    [FieldOffset(12)]
-    public int dwAlphaBitDepth;
+    [FieldOffset(12)] public int dwRGBBitCount;
+    [FieldOffset(12)] public int dwYUVBitCount;
+    [FieldOffset(12)] public int dwZBufferBitDepth;
+    [FieldOffset(12)] public int dwAlphaBitDepth;
 
-    [FieldOffset(16)]
-    public int dwRBitMask;
-    [FieldOffset(16)]
-    public int dwYBitMask;
+    [FieldOffset(16)] public int dwRBitMask;
+    [FieldOffset(16)] public int dwYBitMask;
 
-    [FieldOffset(20)]
-    public int dwGBitMask;
-    [FieldOffset(20)]
-    public int dwUBitMask;
+    [FieldOffset(20)] public int dwGBitMask;
+    [FieldOffset(20)] public int dwUBitMask;
 
-    [FieldOffset(24)]
-    public int dwBBitMask;
-    [FieldOffset(24)]
-    public int dwVBitMask;
+    [FieldOffset(24)] public int dwBBitMask;
+    [FieldOffset(24)] public int dwVBitMask;
 
-    [FieldOffset(28)]
-    public int dwRGBAlphaBitMask;
-    [FieldOffset(28)]
-    public int dwYUVAlphaBitMask;
-    [FieldOffset(28)]
-    public int dwRGBZBitMask;
-    [FieldOffset(28)]
-    public int dwYUVZBitMask;
+    [FieldOffset(28)] public int dwRGBAlphaBitMask;
+    [FieldOffset(28)] public int dwYUVAlphaBitMask;
+    [FieldOffset(28)] public int dwRGBZBitMask;
+    [FieldOffset(28)] public int dwYUVZBitMask;
   }
 
   /// <summary>
@@ -145,8 +131,8 @@ namespace DirectShowLib
 
       for (int i = 0; i < this.cElems; i++)
       {
-        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof(Guid)) * i));
-        retval[i] = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
+        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof (Guid))*i));
+        retval[i] = (Guid) Marshal.PtrToStructure(ptr, typeof (Guid));
       }
 
       return retval;
@@ -255,8 +241,7 @@ namespace DirectShowLib
   [StructLayout(LayoutKind.Explicit)]
   public class DsGuid
   {
-    [FieldOffset(0)]
-    private Guid guid;
+    [FieldOffset(0)] private Guid guid;
 
     public static readonly DsGuid Empty = Guid.Empty;
 
@@ -621,9 +606,9 @@ namespace DirectShowLib
     public override int GetHashCode()
     {
       return this.left.GetHashCode() |
-          this.top.GetHashCode() |
-          this.right.GetHashCode() |
-          this.bottom.GetHashCode();
+             this.top.GetHashCode() |
+             this.right.GetHashCode() |
+             this.bottom.GetHashCode();
     }
 
     /// <summary>
@@ -716,9 +701,9 @@ namespace DirectShowLib
     public override int GetHashCode()
     {
       return this.left.GetHashCode() |
-          this.top.GetHashCode() |
-          this.right.GetHashCode() |
-          this.bottom.GetHashCode();
+             this.top.GetHashCode() |
+             this.right.GetHashCode() |
+             this.bottom.GetHashCode();
     }
 
     public static implicit operator RectangleF(NormalizedRect r)
@@ -744,9 +729,11 @@ namespace DirectShowLib
     public override bool Equals(object obj)
     {
       if (!(obj is NormalizedRect))
+      {
         return false;
+      }
 
-      NormalizedRect other = (NormalizedRect)obj;
+      NormalizedRect other = (NormalizedRect) obj;
       return (this == other);
     }
 
@@ -766,160 +753,160 @@ namespace DirectShowLib
 
   #region Utility Classes
 
-  sealed public class DsResults
+  public sealed class DsResults
   {
     private DsResults()
     {
       // Prevent people from trying to instantiate this class
     }
 
-    public const int E_InvalidMediaType = unchecked((int)0x80040200);
-    public const int E_InvalidSubType = unchecked((int)0x80040201);
-    public const int E_NeedOwner = unchecked((int)0x80040202);
-    public const int E_EnumOutOfSync = unchecked((int)0x80040203);
-    public const int E_AlreadyConnected = unchecked((int)0x80040204);
-    public const int E_FilterActive = unchecked((int)0x80040205);
-    public const int E_NoTypes = unchecked((int)0x80040206);
-    public const int E_NoAcceptableTypes = unchecked((int)0x80040207);
-    public const int E_InvalidDirection = unchecked((int)0x80040208);
-    public const int E_NotConnected = unchecked((int)0x80040209);
-    public const int E_NoAllocator = unchecked((int)0x8004020A);
-    public const int E_RunTimeError = unchecked((int)0x8004020B);
-    public const int E_BufferNotSet = unchecked((int)0x8004020C);
-    public const int E_BufferOverflow = unchecked((int)0x8004020D);
-    public const int E_BadAlign = unchecked((int)0x8004020E);
-    public const int E_AlreadyCommitted = unchecked((int)0x8004020F);
-    public const int E_BuffersOutstanding = unchecked((int)0x80040210);
-    public const int E_NotCommitted = unchecked((int)0x80040211);
-    public const int E_SizeNotSet = unchecked((int)0x80040212);
-    public const int E_NoClock = unchecked((int)0x80040213);
-    public const int E_NoSink = unchecked((int)0x80040214);
-    public const int E_NoInterface = unchecked((int)0x80040215);
-    public const int E_NotFound = unchecked((int)0x80040216);
-    public const int E_CannotConnect = unchecked((int)0x80040217);
-    public const int E_CannotRender = unchecked((int)0x80040218);
-    public const int E_ChangingFormat = unchecked((int)0x80040219);
-    public const int E_NoColorKeySet = unchecked((int)0x8004021A);
-    public const int E_NotOverlayConnection = unchecked((int)0x8004021B);
-    public const int E_NotSampleConnection = unchecked((int)0x8004021C);
-    public const int E_PaletteSet = unchecked((int)0x8004021D);
-    public const int E_ColorKeySet = unchecked((int)0x8004021E);
-    public const int E_NoColorKeyFound = unchecked((int)0x8004021F);
-    public const int E_NoPaletteAvailable = unchecked((int)0x80040220);
-    public const int E_NoDisplayPalette = unchecked((int)0x80040221);
-    public const int E_TooManyColors = unchecked((int)0x80040222);
-    public const int E_StateChanged = unchecked((int)0x80040223);
-    public const int E_NotStopped = unchecked((int)0x80040224);
-    public const int E_NotPaused = unchecked((int)0x80040225);
-    public const int E_NotRunning = unchecked((int)0x80040226);
-    public const int E_WrongState = unchecked((int)0x80040227);
-    public const int E_StartTimeAfterEnd = unchecked((int)0x80040228);
-    public const int E_InvalidRect = unchecked((int)0x80040229);
-    public const int E_TypeNotAccepted = unchecked((int)0x8004022A);
-    public const int E_SampleRejected = unchecked((int)0x8004022B);
-    public const int E_SampleRejectedEOS = unchecked((int)0x8004022C);
-    public const int E_DuplicateName = unchecked((int)0x8004022D);
-    public const int S_DuplicateName = unchecked((int)0x0004022D);
-    public const int E_Timeout = unchecked((int)0x8004022E);
-    public const int E_InvalidFileFormat = unchecked((int)0x8004022F);
-    public const int E_EnumOutOfRange = unchecked((int)0x80040230);
-    public const int E_CircularGraph = unchecked((int)0x80040231);
-    public const int E_NotAllowedToSave = unchecked((int)0x80040232);
-    public const int E_TimeAlreadyPassed = unchecked((int)0x80040233);
-    public const int E_AlreadyCancelled = unchecked((int)0x80040234);
-    public const int E_CorruptGraphFile = unchecked((int)0x80040235);
-    public const int E_AdviseAlreadySet = unchecked((int)0x80040236);
-    public const int S_StateIntermediate = unchecked((int)0x00040237);
-    public const int E_NoModexAvailable = unchecked((int)0x80040238);
-    public const int E_NoAdviseSet = unchecked((int)0x80040239);
-    public const int E_NoFullScreen = unchecked((int)0x8004023A);
-    public const int E_InFullScreenMode = unchecked((int)0x8004023B);
-    public const int E_UnknownFileType = unchecked((int)0x80040240);
-    public const int E_CannotLoadSourceFilter = unchecked((int)0x80040241);
-    public const int S_PartialRender = unchecked((int)0x00040242);
-    public const int E_FileTooShort = unchecked((int)0x80040243);
-    public const int E_InvalidFileVersion = unchecked((int)0x80040244);
-    public const int S_SomeDataIgnored = unchecked((int)0x00040245);
-    public const int S_ConnectionsDeferred = unchecked((int)0x00040246);
-    public const int E_InvalidCLSID = unchecked((int)0x80040247);
-    public const int E_InvalidMediaType2 = unchecked((int)0x80040248);
-    public const int E_BabKey = unchecked((int)0x800403F2);
-    public const int S_NoMoreItems = unchecked((int)0x00040103);
-    public const int E_SampleTimeNotSet = unchecked((int)0x80040249);
-    public const int S_ResourceNotNeeded = unchecked((int)0x00040250);
-    public const int E_MediaTimeNotSet = unchecked((int)0x80040251);
-    public const int E_NoTimeFormatSet = unchecked((int)0x80040252);
-    public const int E_MonoAudioHW = unchecked((int)0x80040253);
-    public const int S_MediaTypeIgnored = unchecked((int)0x00040254);
-    public const int E_NoDecompressor = unchecked((int)0x80040255);
-    public const int E_NoAudioHardware = unchecked((int)0x80040256);
-    public const int S_VideoNotRendered = unchecked((int)0x00040257);
-    public const int S_AudioNotRendered = unchecked((int)0x00040258);
-    public const int E_RPZA = unchecked((int)0x80040259);
-    public const int S_RPZA = unchecked((int)0x0004025A);
-    public const int E_ProcessorNotSuitable = unchecked((int)0x8004025B);
-    public const int E_UnsupportedAudio = unchecked((int)0x8004025C);
-    public const int E_UnsupportedVideo = unchecked((int)0x8004025D);
-    public const int E_MPEGNotConstrained = unchecked((int)0x8004025E);
-    public const int E_NotInGraph = unchecked((int)0x8004025F);
-    public const int S_Estimated = unchecked((int)0x00040260);
-    public const int E_NoTimeFormat = unchecked((int)0x80040261);
-    public const int E_ReadOnly = unchecked((int)0x80040262);
-    public const int S_Reserved = unchecked((int)0x00040263);
-    public const int E_BufferUnderflow = unchecked((int)0x80040264);
-    public const int E_UnsupportedStream = unchecked((int)0x80040265);
-    public const int E_NoTransport = unchecked((int)0x80040266);
-    public const int S_StreamOff = unchecked((int)0x00040267);
-    public const int S_CantCue = unchecked((int)0x00040268);
-    public const int E_BadVideoCD = unchecked((int)0x80040269);
-    public const int S_NoStopTime = unchecked((int)0x00040270);
-    public const int E_OutOfVideoMemory = unchecked((int)0x80040271);
-    public const int E_VPNegotiationFailed = unchecked((int)0x80040272);
-    public const int E_DDrawCapsNotSuitable = unchecked((int)0x80040273);
-    public const int E_NoVPHardware = unchecked((int)0x80040274);
-    public const int E_NoCaptureHardware = unchecked((int)0x80040275);
-    public const int E_DVDOperationInhibited = unchecked((int)0x80040276);
-    public const int E_DVDInvalidDomain = unchecked((int)0x80040277);
-    public const int E_DVDNoButton = unchecked((int)0x80040278);
-    public const int E_DVDGraphNotReady = unchecked((int)0x80040279);
-    public const int E_DVDRenderFail = unchecked((int)0x8004027A);
-    public const int E_DVDDecNotEnough = unchecked((int)0x8004027B);
-    public const int E_DDrawVersionNotSuitable = unchecked((int)0x8004027C);
-    public const int E_CopyProtFailed = unchecked((int)0x8004027D);
-    public const int S_NoPreviewPin = unchecked((int)0x0004027E);
-    public const int E_TimeExpired = unchecked((int)0x8004027F);
-    public const int S_DVDNonOneSequential = unchecked((int)0x00040280);
-    public const int E_DVDWrongSpeed = unchecked((int)0x80040281);
-    public const int E_DVDMenuDoesNotExist = unchecked((int)0x80040282);
-    public const int E_DVDCmdCancelled = unchecked((int)0x80040283);
-    public const int E_DVDStateWrongVersion = unchecked((int)0x80040284);
-    public const int E_DVDStateCorrupt = unchecked((int)0x80040285);
-    public const int E_DVDStateWrongDisc = unchecked((int)0x80040286);
-    public const int E_DVDIncompatibleRegion = unchecked((int)0x80040287);
-    public const int E_DVDNoAttributes = unchecked((int)0x80040288);
-    public const int E_DVDNoGoupPGC = unchecked((int)0x80040289);
-    public const int E_DVDLowParentalLevel = unchecked((int)0x8004028A);
-    public const int E_DVDNotInKaraokeMode = unchecked((int)0x8004028B);
-    public const int S_DVDChannelContentsNotAvailable = unchecked((int)0x0004028C);
-    public const int S_DVDNotAccurate = unchecked((int)0x0004028D);
-    public const int E_FrameStepUnsupported = unchecked((int)0x8004028E);
-    public const int E_DVDStreamDisabled = unchecked((int)0x8004028F);
-    public const int E_DVDTitleUnknown = unchecked((int)0x80040290);
-    public const int E_DVDInvalidDisc = unchecked((int)0x80040291);
-    public const int E_DVDNoResumeInformation = unchecked((int)0x80040292);
-    public const int E_PinAlreadyBlockedOnThisThread = unchecked((int)0x80040293);
-    public const int E_PinAlreadyBlocked = unchecked((int)0x80040294);
-    public const int E_CertificationFailure = unchecked((int)0x80040295);
-    public const int E_VMRNotInMixerMode = unchecked((int)0x80040296);
-    public const int E_VMRNoApSupplied = unchecked((int)0x80040297);
-    public const int E_VMRNoDeinterlace_HW = unchecked((int)0x80040298);
-    public const int E_VMRNoProcAMPHW = unchecked((int)0x80040299);
-    public const int E_DVDVMR9IncompatibleDec = unchecked((int)0x8004029A);
-    public const int E_NoCOPPHW = unchecked((int)0x8004029B);
+    public const int E_InvalidMediaType = unchecked((int) 0x80040200);
+    public const int E_InvalidSubType = unchecked((int) 0x80040201);
+    public const int E_NeedOwner = unchecked((int) 0x80040202);
+    public const int E_EnumOutOfSync = unchecked((int) 0x80040203);
+    public const int E_AlreadyConnected = unchecked((int) 0x80040204);
+    public const int E_FilterActive = unchecked((int) 0x80040205);
+    public const int E_NoTypes = unchecked((int) 0x80040206);
+    public const int E_NoAcceptableTypes = unchecked((int) 0x80040207);
+    public const int E_InvalidDirection = unchecked((int) 0x80040208);
+    public const int E_NotConnected = unchecked((int) 0x80040209);
+    public const int E_NoAllocator = unchecked((int) 0x8004020A);
+    public const int E_RunTimeError = unchecked((int) 0x8004020B);
+    public const int E_BufferNotSet = unchecked((int) 0x8004020C);
+    public const int E_BufferOverflow = unchecked((int) 0x8004020D);
+    public const int E_BadAlign = unchecked((int) 0x8004020E);
+    public const int E_AlreadyCommitted = unchecked((int) 0x8004020F);
+    public const int E_BuffersOutstanding = unchecked((int) 0x80040210);
+    public const int E_NotCommitted = unchecked((int) 0x80040211);
+    public const int E_SizeNotSet = unchecked((int) 0x80040212);
+    public const int E_NoClock = unchecked((int) 0x80040213);
+    public const int E_NoSink = unchecked((int) 0x80040214);
+    public const int E_NoInterface = unchecked((int) 0x80040215);
+    public const int E_NotFound = unchecked((int) 0x80040216);
+    public const int E_CannotConnect = unchecked((int) 0x80040217);
+    public const int E_CannotRender = unchecked((int) 0x80040218);
+    public const int E_ChangingFormat = unchecked((int) 0x80040219);
+    public const int E_NoColorKeySet = unchecked((int) 0x8004021A);
+    public const int E_NotOverlayConnection = unchecked((int) 0x8004021B);
+    public const int E_NotSampleConnection = unchecked((int) 0x8004021C);
+    public const int E_PaletteSet = unchecked((int) 0x8004021D);
+    public const int E_ColorKeySet = unchecked((int) 0x8004021E);
+    public const int E_NoColorKeyFound = unchecked((int) 0x8004021F);
+    public const int E_NoPaletteAvailable = unchecked((int) 0x80040220);
+    public const int E_NoDisplayPalette = unchecked((int) 0x80040221);
+    public const int E_TooManyColors = unchecked((int) 0x80040222);
+    public const int E_StateChanged = unchecked((int) 0x80040223);
+    public const int E_NotStopped = unchecked((int) 0x80040224);
+    public const int E_NotPaused = unchecked((int) 0x80040225);
+    public const int E_NotRunning = unchecked((int) 0x80040226);
+    public const int E_WrongState = unchecked((int) 0x80040227);
+    public const int E_StartTimeAfterEnd = unchecked((int) 0x80040228);
+    public const int E_InvalidRect = unchecked((int) 0x80040229);
+    public const int E_TypeNotAccepted = unchecked((int) 0x8004022A);
+    public const int E_SampleRejected = unchecked((int) 0x8004022B);
+    public const int E_SampleRejectedEOS = unchecked((int) 0x8004022C);
+    public const int E_DuplicateName = unchecked((int) 0x8004022D);
+    public const int S_DuplicateName = unchecked((int) 0x0004022D);
+    public const int E_Timeout = unchecked((int) 0x8004022E);
+    public const int E_InvalidFileFormat = unchecked((int) 0x8004022F);
+    public const int E_EnumOutOfRange = unchecked((int) 0x80040230);
+    public const int E_CircularGraph = unchecked((int) 0x80040231);
+    public const int E_NotAllowedToSave = unchecked((int) 0x80040232);
+    public const int E_TimeAlreadyPassed = unchecked((int) 0x80040233);
+    public const int E_AlreadyCancelled = unchecked((int) 0x80040234);
+    public const int E_CorruptGraphFile = unchecked((int) 0x80040235);
+    public const int E_AdviseAlreadySet = unchecked((int) 0x80040236);
+    public const int S_StateIntermediate = unchecked((int) 0x00040237);
+    public const int E_NoModexAvailable = unchecked((int) 0x80040238);
+    public const int E_NoAdviseSet = unchecked((int) 0x80040239);
+    public const int E_NoFullScreen = unchecked((int) 0x8004023A);
+    public const int E_InFullScreenMode = unchecked((int) 0x8004023B);
+    public const int E_UnknownFileType = unchecked((int) 0x80040240);
+    public const int E_CannotLoadSourceFilter = unchecked((int) 0x80040241);
+    public const int S_PartialRender = unchecked((int) 0x00040242);
+    public const int E_FileTooShort = unchecked((int) 0x80040243);
+    public const int E_InvalidFileVersion = unchecked((int) 0x80040244);
+    public const int S_SomeDataIgnored = unchecked((int) 0x00040245);
+    public const int S_ConnectionsDeferred = unchecked((int) 0x00040246);
+    public const int E_InvalidCLSID = unchecked((int) 0x80040247);
+    public const int E_InvalidMediaType2 = unchecked((int) 0x80040248);
+    public const int E_BabKey = unchecked((int) 0x800403F2);
+    public const int S_NoMoreItems = unchecked((int) 0x00040103);
+    public const int E_SampleTimeNotSet = unchecked((int) 0x80040249);
+    public const int S_ResourceNotNeeded = unchecked((int) 0x00040250);
+    public const int E_MediaTimeNotSet = unchecked((int) 0x80040251);
+    public const int E_NoTimeFormatSet = unchecked((int) 0x80040252);
+    public const int E_MonoAudioHW = unchecked((int) 0x80040253);
+    public const int S_MediaTypeIgnored = unchecked((int) 0x00040254);
+    public const int E_NoDecompressor = unchecked((int) 0x80040255);
+    public const int E_NoAudioHardware = unchecked((int) 0x80040256);
+    public const int S_VideoNotRendered = unchecked((int) 0x00040257);
+    public const int S_AudioNotRendered = unchecked((int) 0x00040258);
+    public const int E_RPZA = unchecked((int) 0x80040259);
+    public const int S_RPZA = unchecked((int) 0x0004025A);
+    public const int E_ProcessorNotSuitable = unchecked((int) 0x8004025B);
+    public const int E_UnsupportedAudio = unchecked((int) 0x8004025C);
+    public const int E_UnsupportedVideo = unchecked((int) 0x8004025D);
+    public const int E_MPEGNotConstrained = unchecked((int) 0x8004025E);
+    public const int E_NotInGraph = unchecked((int) 0x8004025F);
+    public const int S_Estimated = unchecked((int) 0x00040260);
+    public const int E_NoTimeFormat = unchecked((int) 0x80040261);
+    public const int E_ReadOnly = unchecked((int) 0x80040262);
+    public const int S_Reserved = unchecked((int) 0x00040263);
+    public const int E_BufferUnderflow = unchecked((int) 0x80040264);
+    public const int E_UnsupportedStream = unchecked((int) 0x80040265);
+    public const int E_NoTransport = unchecked((int) 0x80040266);
+    public const int S_StreamOff = unchecked((int) 0x00040267);
+    public const int S_CantCue = unchecked((int) 0x00040268);
+    public const int E_BadVideoCD = unchecked((int) 0x80040269);
+    public const int S_NoStopTime = unchecked((int) 0x00040270);
+    public const int E_OutOfVideoMemory = unchecked((int) 0x80040271);
+    public const int E_VPNegotiationFailed = unchecked((int) 0x80040272);
+    public const int E_DDrawCapsNotSuitable = unchecked((int) 0x80040273);
+    public const int E_NoVPHardware = unchecked((int) 0x80040274);
+    public const int E_NoCaptureHardware = unchecked((int) 0x80040275);
+    public const int E_DVDOperationInhibited = unchecked((int) 0x80040276);
+    public const int E_DVDInvalidDomain = unchecked((int) 0x80040277);
+    public const int E_DVDNoButton = unchecked((int) 0x80040278);
+    public const int E_DVDGraphNotReady = unchecked((int) 0x80040279);
+    public const int E_DVDRenderFail = unchecked((int) 0x8004027A);
+    public const int E_DVDDecNotEnough = unchecked((int) 0x8004027B);
+    public const int E_DDrawVersionNotSuitable = unchecked((int) 0x8004027C);
+    public const int E_CopyProtFailed = unchecked((int) 0x8004027D);
+    public const int S_NoPreviewPin = unchecked((int) 0x0004027E);
+    public const int E_TimeExpired = unchecked((int) 0x8004027F);
+    public const int S_DVDNonOneSequential = unchecked((int) 0x00040280);
+    public const int E_DVDWrongSpeed = unchecked((int) 0x80040281);
+    public const int E_DVDMenuDoesNotExist = unchecked((int) 0x80040282);
+    public const int E_DVDCmdCancelled = unchecked((int) 0x80040283);
+    public const int E_DVDStateWrongVersion = unchecked((int) 0x80040284);
+    public const int E_DVDStateCorrupt = unchecked((int) 0x80040285);
+    public const int E_DVDStateWrongDisc = unchecked((int) 0x80040286);
+    public const int E_DVDIncompatibleRegion = unchecked((int) 0x80040287);
+    public const int E_DVDNoAttributes = unchecked((int) 0x80040288);
+    public const int E_DVDNoGoupPGC = unchecked((int) 0x80040289);
+    public const int E_DVDLowParentalLevel = unchecked((int) 0x8004028A);
+    public const int E_DVDNotInKaraokeMode = unchecked((int) 0x8004028B);
+    public const int S_DVDChannelContentsNotAvailable = unchecked((int) 0x0004028C);
+    public const int S_DVDNotAccurate = unchecked((int) 0x0004028D);
+    public const int E_FrameStepUnsupported = unchecked((int) 0x8004028E);
+    public const int E_DVDStreamDisabled = unchecked((int) 0x8004028F);
+    public const int E_DVDTitleUnknown = unchecked((int) 0x80040290);
+    public const int E_DVDInvalidDisc = unchecked((int) 0x80040291);
+    public const int E_DVDNoResumeInformation = unchecked((int) 0x80040292);
+    public const int E_PinAlreadyBlockedOnThisThread = unchecked((int) 0x80040293);
+    public const int E_PinAlreadyBlocked = unchecked((int) 0x80040294);
+    public const int E_CertificationFailure = unchecked((int) 0x80040295);
+    public const int E_VMRNotInMixerMode = unchecked((int) 0x80040296);
+    public const int E_VMRNoApSupplied = unchecked((int) 0x80040297);
+    public const int E_VMRNoDeinterlace_HW = unchecked((int) 0x80040298);
+    public const int E_VMRNoProcAMPHW = unchecked((int) 0x80040299);
+    public const int E_DVDVMR9IncompatibleDec = unchecked((int) 0x8004029A);
+    public const int E_NoCOPPHW = unchecked((int) 0x8004029B);
   }
 
 
-  sealed public class DsError
+  public sealed class DsError
   {
     private DsError()
     {
@@ -980,7 +967,7 @@ namespace DirectShowLib
   }
 
 
-  sealed public class DsUtils
+  public sealed class DsUtils
   {
     private DsUtils()
     {
@@ -997,7 +984,7 @@ namespace DirectShowLib
       Guid guidRet = Guid.Empty;
 
       // Memory to hold the returned guid
-      int iSize = Marshal.SizeOf(typeof(Guid));
+      int iSize = Marshal.SizeOf(typeof (Guid));
       IntPtr ipOut = Marshal.AllocCoTaskMem(iSize);
 
       try
@@ -1012,11 +999,11 @@ namespace DirectShowLib
         if (pKs != null)
         {
           // Query for the Category
-          hr = pKs.Get(g, (int)AMPropertyPin.Category, IntPtr.Zero, 0, ipOut, iSize, out cbBytes);
+          hr = pKs.Get(g, (int) AMPropertyPin.Category, IntPtr.Zero, 0, ipOut, iSize, out cbBytes);
           DsError.ThrowExceptionForHR(hr);
 
           // Marshal it to the return variable
-          guidRet = (Guid)Marshal.PtrToStructure(ipOut, typeof(Guid));
+          guidRet = (Guid) Marshal.PtrToStructure(ipOut, typeof (Guid));
         }
       }
       finally
@@ -1061,7 +1048,6 @@ namespace DirectShowLib
         pinInfo.filter = null;
       }
     }
-
   }
 
 
@@ -1077,6 +1063,7 @@ namespace DirectShowLib
     private int m_cookie = 0;
 
     #region APIs
+
     [DllImport("ole32.dll", ExactSpelling = true)]
 #if USING_NET11
         private static extern int GetRunningObjectTable(int r, out UCOMIRunningObjectTable pprot);
@@ -1090,6 +1077,7 @@ namespace DirectShowLib
 #else
     private static extern int CreateItemMoniker(string delim, string item, out IMoniker ppmk);
 #endif
+
     #endregion
 
     public DsROTEntry(IFilterGraph graph)
@@ -1109,9 +1097,9 @@ namespace DirectShowLib
         DsError.ThrowExceptionForHR(hr);
 
         // Build up the object to add to the table
-        int id = System.Diagnostics.Process.GetCurrentProcess().Id;
+        int id = Process.GetCurrentProcess().Id;
         IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
-        int iuInt = (int)iuPtr;
+        int iuInt = (int) iuPtr;
         Marshal.Release(iuPtr);
         string item = string.Format("FilterGraph {0} pid {1}", iuInt.ToString("x8"), id.ToString("x8"));
         hr = CreateItemMoniker("!", item, out mk);
@@ -1121,7 +1109,7 @@ namespace DirectShowLib
 #if USING_NET11
                 rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
 #else
-        m_cookie = rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk);
+        m_cookie = rot.Register((int) ROTFlags.RegistrationKeepsAlive, graph, mk);
 #endif
       }
       finally
@@ -1200,10 +1188,7 @@ namespace DirectShowLib
     public IMoniker Mon
 #endif
     {
-      get
-      {
-        return m_Mon;
-      }
+      get { return m_Mon; }
     }
 
     public string Name
@@ -1256,7 +1241,7 @@ namespace DirectShowLib
       IEnumMoniker enumMon;
 #endif
 
-      ICreateDevEnum enumDev = (ICreateDevEnum)new CreateDevEnum();
+      ICreateDevEnum enumDev = (ICreateDevEnum) new CreateDevEnum();
       hr = enumDev.CreateClassEnumerator(FilterCategory, out enumMon, 0);
       DsError.ThrowExceptionForHR(hr);
 
@@ -1333,10 +1318,10 @@ namespace DirectShowLib
 
       try
       {
-        Guid bagId = typeof(IPropertyBag).GUID;
+        Guid bagId = typeof (IPropertyBag).GUID;
         m_Mon.BindToStorage(null, null, ref bagId, out bagObj);
 
-        bag = (IPropertyBag)bagObj;
+        bag = (IPropertyBag) bagObj;
 
         int hr = bag.Read("FriendlyName", out val, null);
         DsError.ThrowExceptionForHR(hr);
@@ -1373,7 +1358,7 @@ namespace DirectShowLib
   }
 
 
-  sealed public class DsFindPin
+  public sealed class DsFindPin
   {
     private DsFindPin()
     {
@@ -1538,6 +1523,7 @@ namespace DirectShowLib
 
       return pRet;
     }
+
     /// <summary>
     /// Scans a filter's pins looking for a pin with the specified connection status
     /// </summary>
@@ -1582,9 +1568,9 @@ namespace DirectShowLib
 
           // Is it the right status?
           if (
-              (hr == 0 && vStat == PinConnectedStatus.Connected) ||
-              (hr == DsResults.E_NotConnected && vStat == PinConnectedStatus.Unconnected)
-              )
+            (hr == 0 && vStat == PinConnectedStatus.Connected) ||
+            (hr == DsResults.E_NotConnected && vStat == PinConnectedStatus.Unconnected)
+            )
           {
             // Is is the right index?
             if (iIndex == 0)
@@ -1607,7 +1593,7 @@ namespace DirectShowLib
   }
 
 
-  sealed public class DsToString
+  public sealed class DsToString
   {
     private DsToString()
     {
@@ -1621,12 +1607,12 @@ namespace DirectShowLib
     public static string AMMediaTypeToString(AMMediaType pmt)
     {
       return string.Format("{0} {1} {2} {3} {4} {5}",
-          MediaTypeToString(pmt.majorType),
-          MediaSubTypeToString(pmt.subType),
-          MediaFormatTypeToString(pmt.formatType),
-          (pmt.fixedSizeSamples ? "FixedSamples" : "NotFixedSamples"),
-          (pmt.temporalCompression ? "temporalCompression" : "NottemporalCompression"),
-          pmt.sampleSize.ToString());
+                           MediaTypeToString(pmt.majorType),
+                           MediaSubTypeToString(pmt.subType),
+                           MediaFormatTypeToString(pmt.formatType),
+                           (pmt.fixedSizeSamples ? "FixedSamples" : "NotFixedSamples"),
+                           (pmt.temporalCompression ? "temporalCompression" : "NottemporalCompression"),
+                           pmt.sampleSize.ToString());
     }
 
     /// <summary>
@@ -1636,7 +1622,7 @@ namespace DirectShowLib
     public static string MediaTypeToString(Guid guid)
     {
       // Walk the MediaSubType class looking for a match
-      return WalkClass(typeof(MediaType), guid);
+      return WalkClass(typeof (MediaType), guid);
     }
 
     /// <summary>
@@ -1646,7 +1632,7 @@ namespace DirectShowLib
     public static string MediaSubTypeToString(Guid guid)
     {
       // Walk the MediaSubType class looking for a match
-      string s = WalkClass(typeof(MediaSubType), guid);
+      string s = WalkClass(typeof (MediaSubType), guid);
 
       // There is a special set of Guids that contain the FourCC code
       // as part of the Guid.  Check to see if it is one of those.
@@ -1654,11 +1640,11 @@ namespace DirectShowLib
       {
         // Parse out the FourCC code
         byte[] asc = {
-                                 Convert.ToByte(s.Substring(6, 2), 16),
-                                 Convert.ToByte(s.Substring(4, 2), 16),
-                                 Convert.ToByte(s.Substring(2, 2), 16),
-                                 Convert.ToByte(s.Substring(0, 2), 16)
-                             };
+                       Convert.ToByte(s.Substring(6, 2), 16),
+                       Convert.ToByte(s.Substring(4, 2), 16),
+                       Convert.ToByte(s.Substring(2, 2), 16),
+                       Convert.ToByte(s.Substring(0, 2), 16)
+                     };
         s = Encoding.ASCII.GetString(asc);
       }
 
@@ -1672,8 +1658,7 @@ namespace DirectShowLib
     public static string MediaFormatTypeToString(Guid guid)
     {
       // Walk the FormatType class looking for a match
-      return WalkClass(typeof(FormatType), guid);
-
+      return WalkClass(typeof (FormatType), guid);
     }
 
     /// <summary>
@@ -1696,7 +1681,7 @@ namespace DirectShowLib
         o = m.GetValue(o);
 
         // Compare it with the sought value
-        if ((Guid)o == guid)
+        if ((Guid) o == guid)
         {
           return m.Name;
         }
@@ -1713,14 +1698,16 @@ namespace DirectShowLib
   // called after.  This allows for allocating a correctly sized memory block for the COM call,
   // then to break up the memory block and build an object that c# can digest.
 
-  abstract internal class DsMarshaler : ICustomMarshaler
+  internal abstract class DsMarshaler : ICustomMarshaler
   {
     #region Data Members
+
     // The cookie isn't currently being used.
     protected string m_cookie;
 
     // The managed object passed in to MarshalManagedToNative, and modified in MarshalNativeToManaged
     protected object m_obj;
+
     #endregion
 
     // The constructor.  This is called from GetInstance (below)
@@ -1732,7 +1719,7 @@ namespace DirectShowLib
 
     // Called just before invoking the COM method.  The returned IntPtr is what goes on the stack
     // for the COM call.  The input arg is the parameter that was passed to the method.
-    virtual public IntPtr MarshalManagedToNative(object managedObj)
+    public virtual IntPtr MarshalManagedToNative(object managedObj)
     {
       // Save off the passed-in value.  Safe since we just checked the type.
       m_obj = managedObj;
@@ -1742,9 +1729,9 @@ namespace DirectShowLib
       int iSize = GetNativeDataSize() + 3;
       IntPtr p = Marshal.AllocCoTaskMem(iSize);
 
-      for (int x = 0; x < iSize / 4; x++)
+      for (int x = 0; x < iSize/4; x++)
       {
-        Marshal.WriteInt32(p, x * 4, 0);
+        Marshal.WriteInt32(p, x*4, 0);
       }
 
       return p;
@@ -1752,13 +1739,13 @@ namespace DirectShowLib
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    virtual public object MarshalNativeToManaged(IntPtr pNativeData)
+    public virtual object MarshalNativeToManaged(IntPtr pNativeData)
     {
       return m_obj;
     }
 
     // Release the (now unused) buffer
-    virtual public void CleanUpNativeData(IntPtr pNativeData)
+    public virtual void CleanUpNativeData(IntPtr pNativeData)
     {
       if (pNativeData != IntPtr.Zero)
       {
@@ -1767,13 +1754,13 @@ namespace DirectShowLib
     }
 
     // Release the (now unused) managed object
-    virtual public void CleanUpManagedData(object managedObj)
+    public virtual void CleanUpManagedData(object managedObj)
     {
       m_obj = null;
     }
 
     // This routine is (apparently) never called by the marshaler.  However it can be useful.
-    abstract public int GetNativeDataSize();
+    public abstract int GetNativeDataSize();
 
     // GetInstance is called by the marshaler in preparation to doing custom marshaling.  The (optional)
     // cookie is the value specified in MarshalCookie="asdf", or "" is none is specified.
@@ -1794,17 +1781,17 @@ namespace DirectShowLib
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    override public object MarshalNativeToManaged(IntPtr pNativeData)
+    public override object MarshalNativeToManaged(IntPtr pNativeData)
     {
       AMMediaType[] emt = m_obj as AMMediaType[];
 
       for (int x = 0; x < emt.Length; x++)
       {
         // Copy in the value, and advance the pointer
-        IntPtr p = Marshal.ReadIntPtr(pNativeData, x * IntPtr.Size);
+        IntPtr p = Marshal.ReadIntPtr(pNativeData, x*IntPtr.Size);
         if (p != IntPtr.Zero)
         {
-          emt[x] = (AMMediaType)Marshal.PtrToStructure(p, typeof(AMMediaType));
+          emt[x] = (AMMediaType) Marshal.PtrToStructure(p, typeof (AMMediaType));
         }
         else
         {
@@ -1816,13 +1803,13 @@ namespace DirectShowLib
     }
 
     // The number of bytes to marshal out
-    override public int GetNativeDataSize()
+    public override int GetNativeDataSize()
     {
       // Get the array size
-      int i = ((Array)m_obj).Length;
+      int i = ((Array) m_obj).Length;
 
       // Multiply that times the size of a pointer
-      int j = i * IntPtr.Size;
+      int j = i*IntPtr.Size;
 
       return j;
     }
@@ -1857,29 +1844,29 @@ namespace DirectShowLib
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    override public object MarshalNativeToManaged(IntPtr pNativeData)
+    public override object MarshalNativeToManaged(IntPtr pNativeData)
     {
       DvdTitleAttributes dta = m_obj as DvdTitleAttributes;
 
       // Copy in the value, and advance the pointer
-      dta.AppMode = (DvdTitleAppMode)Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
+      dta.AppMode = (DvdTitleAppMode) Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
 
       // Copy in the value, and advance the pointer
-      dta.VideoAttributes = (DvdVideoAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdVideoAttributes));
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdVideoAttributes)));
+      dta.VideoAttributes = (DvdVideoAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdVideoAttributes));
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdVideoAttributes)));
 
       // Copy in the value, and advance the pointer
-      dta.ulNumberOfAudioStreams = (int)Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
+      dta.ulNumberOfAudioStreams = (int) Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
 
       // Allocate a large enough array to hold all the returned structs.
       dta.AudioAttributes = new DvdAudioAttributes[8];
       for (int x = 0; x < 8; x++)
       {
         // Copy in the value, and advance the pointer
-        dta.AudioAttributes[x] = (DvdAudioAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdAudioAttributes));
-        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdAudioAttributes)));
+        dta.AudioAttributes[x] = (DvdAudioAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdAudioAttributes));
+        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdAudioAttributes)));
       }
 
       // Allocate a large enough array to hold all the returned structs.
@@ -1893,8 +1880,9 @@ namespace DirectShowLib
         for (int y = 0; y < 8; y++)
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Info[y] = (DvdMUAMixingInfo)Marshal.PtrToStructure(pNativeData, typeof(DvdMUAMixingInfo));
-          pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUAMixingInfo)));
+          dta.MultichannelAudioAttributes[x].Info[y] =
+            (DvdMUAMixingInfo) Marshal.PtrToStructure(pNativeData, typeof (DvdMUAMixingInfo));
+          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUAMixingInfo)));
         }
 
         dta.MultichannelAudioAttributes[x].Coeff = new DvdMUACoeff[8];
@@ -1902,25 +1890,27 @@ namespace DirectShowLib
         for (int y = 0; y < 8; y++)
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Coeff[y] = (DvdMUACoeff)Marshal.PtrToStructure(pNativeData, typeof(DvdMUACoeff));
-          pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdMUACoeff)));
+          dta.MultichannelAudioAttributes[x].Coeff[y] =
+            (DvdMUACoeff) Marshal.PtrToStructure(pNativeData, typeof (DvdMUACoeff));
+          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUACoeff)));
         }
       }
 
       // The DvdMultichannelAudioAttributes needs to be 16 byte aligned
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + 4);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + 4);
 
       // Copy in the value, and advance the pointer
-      dta.ulNumberOfSubpictureStreams = (int)Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(int)));
+      dta.ulNumberOfSubpictureStreams = (int) Marshal.ReadInt32(pNativeData);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
 
       // Allocate a large enough array to hold all the returned structs.
       dta.SubpictureAttributes = new DvdSubpictureAttributes[32];
       for (int x = 0; x < 32; x++)
       {
         // Copy in the value, and advance the pointer
-        dta.SubpictureAttributes[x] = (DvdSubpictureAttributes)Marshal.PtrToStructure(pNativeData, typeof(DvdSubpictureAttributes));
-        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(DvdSubpictureAttributes)));
+        dta.SubpictureAttributes[x] =
+          (DvdSubpictureAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdSubpictureAttributes));
+        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdSubpictureAttributes)));
       }
 
       // Note that 4 bytes (more alignment) are unused at the end
@@ -1929,7 +1919,7 @@ namespace DirectShowLib
     }
 
     // The number of bytes to marshal out
-    override public int GetNativeDataSize()
+    public override int GetNativeDataSize()
     {
       // This is the actual size of a DvdTitleAttributes structure
       return 3208;
@@ -1955,43 +1945,47 @@ namespace DirectShowLib
 
     // Called just after invoking the COM method.  The IntPtr is the same one that just got returned
     // from MarshalManagedToNative.  The return value is unused.
-    override public object MarshalNativeToManaged(IntPtr pNativeData)
+    public override object MarshalNativeToManaged(IntPtr pNativeData)
     {
       DvdKaraokeAttributes dka = m_obj as DvdKaraokeAttributes;
 
       // Copy in the value, and advance the pointer
-      dka.bVersion = (byte)Marshal.ReadByte(pNativeData);
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(byte)));
+      dka.bVersion = (byte) Marshal.ReadByte(pNativeData);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (byte)));
 
       // DWORD Align
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + 3);
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + 3);
 
       // Copy in the value, and advance the pointer
       dka.fMasterOfCeremoniesInGuideVocal1 = Marshal.ReadInt32(pNativeData) != 0;
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(bool)));
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (bool)));
 
       // Copy in the value, and advance the pointer
       dka.fDuet = Marshal.ReadInt32(pNativeData) != 0;
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(typeof(bool)));
+      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (bool)));
 
       // Copy in the value, and advance the pointer
-      dka.ChannelAssignment = (DvdKaraokeAssignment)Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof(DvdKaraokeAssignment))));
+      dka.ChannelAssignment = (DvdKaraokeAssignment) Marshal.ReadInt32(pNativeData);
+      pNativeData =
+        (IntPtr)
+        (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeAssignment.GetUnderlyingType(typeof (DvdKaraokeAssignment))));
 
       // Allocate a large enough array to hold all the returned structs.
       dka.wChannelContents = new DvdKaraokeContents[8];
       for (int x = 0; x < 8; x++)
       {
         // Copy in the value, and advance the pointer
-        dka.wChannelContents[x] = (DvdKaraokeContents)Marshal.ReadInt16(pNativeData);
-        pNativeData = (IntPtr)(pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof(DvdKaraokeContents))));
+        dka.wChannelContents[x] = (DvdKaraokeContents) Marshal.ReadInt16(pNativeData);
+        pNativeData =
+          (IntPtr)
+          (pNativeData.ToInt64() + Marshal.SizeOf(DvdKaraokeContents.GetUnderlyingType(typeof (DvdKaraokeContents))));
       }
 
       return null;
     }
 
     // The number of bytes to marshal out
-    override public int GetNativeDataSize()
+    public override int GetNativeDataSize()
     {
       // This is the actual size of a DvdKaraokeAttributes structure.
       return 32;
@@ -2004,8 +1998,6 @@ namespace DirectShowLib
       return new DKAMarshaler(cookie);
     }
   }
-
-
 
   #endregion
 }

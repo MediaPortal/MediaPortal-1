@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2008 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2008 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,18 +20,23 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+
 #endregion
 
 namespace TvEngine.PowerScheduler
 {
+
   #region Enums
+
   public enum EPGGrabDays
   {
     Monday,
@@ -41,6 +47,7 @@ namespace TvEngine.PowerScheduler
     Saturday,
     Sunday
   }
+
   #endregion
 
   [Serializable]
@@ -50,7 +57,11 @@ namespace TvEngine.PowerScheduler
     public List<EPGGrabDays> Days = new List<EPGGrabDays>();
     public int Hour;
     public int Minutes;
-    public EPGWakeupConfig() { }
+
+    public EPGWakeupConfig()
+    {
+    }
+
     public EPGWakeupConfig(string serializedConfig)
     {
       EPGWakeupConfig cfg = new EPGWakeupConfig();
@@ -60,15 +71,18 @@ namespace TvEngine.PowerScheduler
         byte[] buffer = Convert.FromBase64String(serializedConfig);
         using (MemoryStream stream = new MemoryStream(buffer, 0, buffer.Length))
         {
-          cfg = (EPGWakeupConfig)formatter.Deserialize(stream);
+          cfg = (EPGWakeupConfig) formatter.Deserialize(stream);
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      {
+      }
       Hour = cfg.Hour;
       Minutes = cfg.Minutes;
       Days = cfg.Days;
       LastRun = cfg.LastRun;
     }
+
     public string SerializeAsString()
     {
       BinaryFormatter formatter = new BinaryFormatter();
@@ -84,24 +98,34 @@ namespace TvEngine.PowerScheduler
       }
       return result;
     }
+
     public override bool Equals(object obj)
     {
       if (obj is EPGWakeupConfig)
       {
-        EPGWakeupConfig cfg = (EPGWakeupConfig)obj;
+        EPGWakeupConfig cfg = (EPGWakeupConfig) obj;
         if (cfg.Hour == Hour && cfg.Minutes == Minutes)
         {
           foreach (EPGGrabDays day in cfg.Days)
+          {
             if (!Days.Contains(day))
+            {
               return false;
+            }
+          }
           foreach (EPGGrabDays day in Days)
+          {
             if (!cfg.Days.Contains(day))
+            {
               return false;
+            }
+          }
           return true;
         }
       }
       return false;
     }
+
     public override int GetHashCode()
     {
       return base.GetHashCode();

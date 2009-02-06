@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Plugins.Process
@@ -9,12 +6,12 @@ namespace MediaPortal.Plugins.Process
   {
     public UnattendedWindow()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED;
+      GetID = (int) Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED;
     }
 
     public override bool Init()
     {
-      MediaPortal.GUI.Library.Log.Info("PSClientPlugin.UnattendedWindow.Init");
+      Log.Info("PSClientPlugin.UnattendedWindow.Init");
 
       return Load(GUIGraphicsContext.Skin + @"\psclientplugin_unattended.xml");
     }
