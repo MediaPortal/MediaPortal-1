@@ -11,7 +11,7 @@ xcopy "Plugins\PowerScheduler\PowerScheduler.Interfaces\bin\Debug\*.*" "_TvServe
 xcopy "Plugins\ServerBlaster\ServerBlaster (Learn)\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\PluginBase\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "Plugins\ComSkipLauncher\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
-xcopy "Plugins\ComSkipManager\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
+xcopy "Plugins\ConflictsManager\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\PersonalTVGuide\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\ServerBlaster\ServerBlaster\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
 xcopy "Plugins\TvMovie\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\Plugins\" /R /Y
