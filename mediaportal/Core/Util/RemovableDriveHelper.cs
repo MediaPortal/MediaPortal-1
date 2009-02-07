@@ -59,9 +59,7 @@ namespace MediaPortal.Util
           if (hdr.devicetype == DBT_DEVTYPE_VOLUME)
           {
             vol = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(msg.LParam, vol.GetType());
-
-            DeviceNew(vol);
-            return true;
+            return DeviceNew(vol);
           }
         }
         else if (msg.WParam.ToInt32() == DBT_DEVICEREMOVECOMPLETE)
@@ -71,8 +69,7 @@ namespace MediaPortal.Util
           if (hdr.devicetype == DBT_DEVTYPE_VOLUME)
           {
             vol = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(msg.LParam, vol.GetType());
-            DeviceRemoved(vol);
-            return true;
+            return DeviceRemoved(vol);
           }
         }
       } catch (Exception ex)
@@ -152,32 +149,43 @@ namespace MediaPortal.Util
     /// Extracts the Volume letter and sends a gui message with the extracted volume letter so that other plugins can add this drive out of there virtual directory
     /// </summary>
     /// <param name="volumeInformation">Volume Informations</param>
-    private static void DeviceNew(DEV_BROADCAST_VOLUME volumeInformation)
+    /// <returns>true, if the message was handled; false otherwise</returns>
+    private static bool DeviceNew(DEV_BROADCAST_VOLUME volumeInformation)
     {
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
-      Log.Debug("Detected new device: {0}", volumeLetter);
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
       string path = (volumeLetter + @":").ToUpperInvariant();
       string driveName = Utils.GetDriveName(path);
-      msg.Label = path;
-      msg.Label2 = String.Format("({0}) {1}", path, driveName);
-      ;
-      GUIGraphicsContext.SendMessage(msg);
+      if (Utils.IsRemovable(path) || Utils.IsHD(path))
+      {
+        Log.Debug("Detected new device: {0}", volumeLetter);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+        msg.Label = path;
+        msg.Label2 = String.Format("({0}) {1}", path, driveName);
+        GUIGraphicsContext.SendMessage(msg);
+        return true;
+      }
+      return false;
     }
 
     /// <summary>
     /// Extracts the Volume letter and sends a gui message with the extracted volume letter so that other plugins can remove this drive out of there virtual directory
     /// </summary>
     /// <param name="volumeInformation">Volume Informations</param>
-    private static void DeviceRemoved(DEV_BROADCAST_VOLUME volumeInformation)
+    /// <returns>true, if the message was handled; false otherwise</returns>
+    private static bool DeviceRemoved(DEV_BROADCAST_VOLUME volumeInformation)
     {
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
-      Log.Debug("Detected device remove: {0}", volumeLetter);
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
       string path = (volumeLetter + @":").ToUpperInvariant();
-      msg.Label = path;
-      msg.Label2 = String.Format("({0})", path);
-      GUIGraphicsContext.SendMessage(msg);
+      if (!Utils.IsDVD(path))
+      {
+        Log.Debug("Detected device remove: {0}", volumeLetter);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+        msg.Label = path;
+        msg.Label2 = String.Format("({0})", path);
+        GUIGraphicsContext.SendMessage(msg);
+        return true;
+      }
+      return false;
     }
     
     /// <summary>
