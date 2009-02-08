@@ -1036,6 +1036,8 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.DX9Device.SamplerState[0].AddressV = TextureAddress.Clamp;
                 GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 
+                GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
+                GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
 
                 if (_useNonLinearStretch)
                 {
@@ -1092,8 +1094,8 @@ namespace MediaPortal.Player
                                           lColorDiffuse);
                 }
 
-                //GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
-                //GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, true);
+                GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
+                GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, true);
 
                 // unset the texture and palette or the texture caching crashes because the runtime still has a reference
                 GUIGraphicsContext.DX9Device.SetTexture(0, null);
