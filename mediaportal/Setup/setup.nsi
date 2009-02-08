@@ -716,31 +716,10 @@ ${MementoSection} "MPC-HC audio/video decoders" SecGabest
   ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
 
   SetOutPath "$MPdir.Base"
+  ; register the default video and audio codecs from the MediaPlayer Classic Home Cinema Project
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax"   "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
-
-  ; Write Default Values for Filter into the registry
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AAC Downmix" 1
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Dynamic Range" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 LFE" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3 Speaker Config" 2
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "AC3Decoder" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Boost" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Dynamic Range" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS LFE" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTS Speaker Config" 2
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "DTSDecoder" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Normalize" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Audio Filter" "Output Format" 0
-
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Brightness" 128
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Contrast" 100
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Deinterlace" 0
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Enable Planar YUV Modes" 1
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Forced Subtitles" 1
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Hue" 180
-  WriteRegStr HKCU "Software\MediaPortal\Mpeg Video Filter" "Saturation" 100
-
+  
   ; adjust the merit of this directshow filter
   SetOutPath "$MPdir.Base"
   File "Resources\SetMerit.exe"
