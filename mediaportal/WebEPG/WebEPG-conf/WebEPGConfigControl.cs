@@ -275,16 +275,19 @@ namespace WebEPG_conf
       string[] countries = _channelInfo.GetCountries();
       _countryList = new Dictionary<string, string>();
 
-      foreach (string country in countries)
+      if (countries != null)
       {
-        try
+        foreach (string country in countries)
         {
-          RegionInfo region = new RegionInfo(country);
-          cbCountry.Items.Add(region.EnglishName);
-          _countryList.Add(region.EnglishName, country);
-        }
-        catch (Exception)
-        {
+          try
+          {
+            RegionInfo region = new RegionInfo(country);
+            cbCountry.Items.Add(region.EnglishName);
+            _countryList.Add(region.EnglishName, country);
+          }
+          catch (Exception)
+          {
+          }
         }
       }
 
