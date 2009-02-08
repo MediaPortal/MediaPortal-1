@@ -120,22 +120,90 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>126, 17</value>
-  </metadata>
-  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>271, 17</value>
-  </metadata>
-  <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>397, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>782, 17</value>
-  </metadata>
-  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>525, 17</value>
-  </metadata>
-  <metadata name="folderBrowserDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>624, 17</value>
-  </metadata>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+//css_reference "MPInstaller.Library.dll";
+//css_reference "plugins\Windows\Dialogs.dll";
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Text;
+
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.MPInstaller
+{
+  class InstallScript : MPInstallerScript
+  {
+    /// &lt;summary&gt;
+    /// Execute when the package is downloaded via GUI 
+    /// &lt;/summary&gt;
+    public override void GUI_GetOptions()
+    {
+      base.GUI_GetOptions();
+    }
+
+    /// &lt;summary&gt;
+    /// Test if version is compatible and show warning
+    /// This use when installing via GUI
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    public override bool GUI_Warning()
+    {
+      return base.GUI_Warning();
+    }
+
+    /// &lt;summary&gt;
+    /// Test if version is compatible and show warning
+    /// &lt;/summary&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    public override bool Warning()
+    {
+      return base.Warning();
+    }
+    /// &lt;summary&gt;
+    /// Inits this instance.
+    /// executed when the package it is loaded
+    /// &lt;/summary&gt;
+    public override void Init()
+    {
+      base.Init();
+    }
+
+    /// &lt;summary&gt;
+    /// Installs the current package.
+    /// &lt;/summary&gt;
+    /// &lt;param name="pb"&gt;ProgressBar for overall progress (can bee null) &lt;/param&gt;
+    /// &lt;param name="pb1"&gt;ProgressBar for current copied file (can bee null)&lt;/param&gt;
+    /// &lt;param name="listbox"&gt;Listbox for file listing(can bee null) &lt;/param&gt;
+    public override void Install(ProgressBar pb, ProgressBar pb1, ListBox listbox)
+    {
+      base.Install(pb, pb1, listbox);
+    }
+
+    /// &lt;summary&gt;
+    /// Called when [install file procesed].
+    /// &lt;/summary&gt;
+    /// &lt;param name="mpiFileInfo"&gt;The mpi file info.&lt;/param&gt;
+    public override void OnInstallFileProcesed(MPIFileList mpiFileInfo)
+    {
+
+    }
+
+    /// &lt;summary&gt;
+    /// Called when [install done].
+    /// &lt;/summary&gt;
+    public override void OnInstallDone()
+    {
+
+    }
+
+  }
+}</value>
+  </data>
 </root>

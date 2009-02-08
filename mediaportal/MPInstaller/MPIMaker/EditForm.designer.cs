@@ -29,9 +29,9 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Plugins");
-          System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Skins");
-          System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Thumbs");
+          System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Plugins");
+          System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Skins");
+          System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Thumbs");
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,6 +70,7 @@ namespace MediaPortal.MPInstaller
           this.customizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.postSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.setupGroupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.installScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.bossview = new System.Windows.Forms.ListView();
           this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
           this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -145,7 +146,8 @@ namespace MediaPortal.MPInstaller
           this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.addToolStripMenuItem,
-            this.customizationToolStripMenuItem});
+            this.customizationToolStripMenuItem,
+            this.installScriptToolStripMenuItem});
           this.menuStrip1.Location = new System.Drawing.Point(0, 0);
           this.menuStrip1.Name = "menuStrip1";
           this.menuStrip1.Size = new System.Drawing.Size(988, 24);
@@ -313,42 +315,42 @@ namespace MediaPortal.MPInstaller
           // componentToolStripMenuItem
           // 
           this.componentToolStripMenuItem.Name = "componentToolStripMenuItem";
-          this.componentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.componentToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.componentToolStripMenuItem.Text = "Component";
           this.componentToolStripMenuItem.Click += new System.EventHandler(this.componentToolStripMenuItem_Click);
           // 
           // mediaToolStripMenuItem
           // 
           this.mediaToolStripMenuItem.Name = "mediaToolStripMenuItem";
-          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.mediaToolStripMenuItem.Text = "Media";
           this.mediaToolStripMenuItem.Click += new System.EventHandler(this.mediaToolStripMenuItem_Click);
           // 
           // soundsToolStripMenuItem
           // 
           this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
-          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.soundsToolStripMenuItem.Text = "Sounds";
           this.soundsToolStripMenuItem.Click += new System.EventHandler(this.soundsToolStripMenuItem_Click);
           // 
           // animationsToolStripMenuItem
           // 
           this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
-          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.animationsToolStripMenuItem.Text = "Animations";
           this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
           // 
           // tetrisToolStripMenuItem
           // 
           this.tetrisToolStripMenuItem.Name = "tetrisToolStripMenuItem";
-          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.tetrisToolStripMenuItem.Text = "Tetris";
           this.tetrisToolStripMenuItem.Click += new System.EventHandler(this.tetrisToolStripMenuItem_Click);
           // 
           // systemFontToolStripMenuItem
           // 
           this.systemFontToolStripMenuItem.Name = "systemFontToolStripMenuItem";
-          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
           this.systemFontToolStripMenuItem.Text = "System Font";
           this.systemFontToolStripMenuItem.Click += new System.EventHandler(this.systemFontToolStripMenuItem_Click);
           // 
@@ -440,6 +442,13 @@ namespace MediaPortal.MPInstaller
           this.setupGroupsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
           this.setupGroupsToolStripMenuItem.Text = "Setup Groups";
           this.setupGroupsToolStripMenuItem.Click += new System.EventHandler(this.setupGroupsToolStripMenuItem_Click);
+          // 
+          // installScriptToolStripMenuItem
+          // 
+          this.installScriptToolStripMenuItem.Name = "installScriptToolStripMenuItem";
+          this.installScriptToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+          this.installScriptToolStripMenuItem.Text = "Install Script";
+          this.installScriptToolStripMenuItem.Click += new System.EventHandler(this.installScriptToolStripMenuItem_Click);
           // 
           // bossview
           // 
@@ -641,7 +650,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Advanced.Controls.Add(this.pictureBox1);
           this.tabPage_Advanced.Location = new System.Drawing.Point(4, 22);
           this.tabPage_Advanced.Name = "tabPage_Advanced";
-          this.tabPage_Advanced.Size = new System.Drawing.Size(643, 153);
+          this.tabPage_Advanced.Size = new System.Drawing.Size(658, 153);
           this.tabPage_Advanced.TabIndex = 3;
           this.tabPage_Advanced.Text = "Advanced Properties";
           this.tabPage_Advanced.UseVisualStyleBackColor = true;
@@ -1016,26 +1025,27 @@ namespace MediaPortal.MPInstaller
           // 
           this.treeView1.Location = new System.Drawing.Point(685, 49);
           this.treeView1.Name = "treeView1";
-          treeNode4.Name = "Node0";
-          treeNode4.Text = "Plugins";
-          treeNode5.Name = "Node1";
-          treeNode5.Text = "Skins";
-          treeNode6.Name = "Node2";
-          treeNode6.Text = "Thumbs";
+          treeNode1.Name = "Node0";
+          treeNode1.Text = "Plugins";
+          treeNode2.Name = "Node1";
+          treeNode2.Text = "Skins";
+          treeNode3.Name = "Node2";
+          treeNode3.Text = "Thumbs";
           this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4,
-            treeNode5,
-            treeNode6});
+            treeNode1,
+            treeNode2,
+            treeNode3});
           this.treeView1.Size = new System.Drawing.Size(293, 365);
           this.treeView1.TabIndex = 6;
+          this.treeView1.Visible = false;
           // 
           // EditForm
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(988, 431);
-          this.Controls.Add(this.treeView1);
           this.Controls.Add(this.toolStrip1);
+          this.Controls.Add(this.treeView1);
           this.Controls.Add(this.bossview);
           this.Controls.Add(this.tabControl1);
           this.Controls.Add(this.toolStripContainer1);
@@ -1167,6 +1177,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolStripMenuItem systemFontToolStripMenuItem;
       private System.Windows.Forms.ToolTip toolTip1;
       private System.Windows.Forms.TreeView treeView1;
+      private System.Windows.Forms.ToolStripMenuItem installScriptToolStripMenuItem;
     }
 }
 

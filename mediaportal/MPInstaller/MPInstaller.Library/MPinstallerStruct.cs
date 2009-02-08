@@ -83,6 +83,8 @@ namespace MediaPortal.MPInstaller
     string _description = string.Empty;
     string _group = string.Empty;
     string _release = string.Empty;
+    private string script = string.Empty;
+
     Image _image = null;
     public ProiectPropertiesClass ProiectProperties;
     public ArrayList Uninstall = new ArrayList();
@@ -91,6 +93,7 @@ namespace MediaPortal.MPInstaller
     public List<ActionInfo> Actions;
     public List<GroupString> SetupGroups;
     public List<GroupStringMapping> SetupGroupsMappig;
+    
     public MPinstallerStruct()
     {
       Language = new List<LanguageString>();
@@ -109,6 +112,13 @@ namespace MediaPortal.MPInstaller
         if (String.IsNullOrEmpty(value)) _update = DEFAULT_UPDATE_SITE; else _update = value.Trim();
       }
     }
+
+    public string Script
+    {
+      get { return script; }
+      set { script = value; }
+    }
+
 
     public string Version
     {
@@ -157,7 +167,7 @@ namespace MediaPortal.MPInstaller
       get { return _builFileName; }
       set { _builFileName = value; }
     }
-    public string ProiectdFileName
+    public string ProiectFileName
     {
       get { return _proiectFileName; }
       set { _proiectFileName = value; }
@@ -269,13 +279,14 @@ namespace MediaPortal.MPInstaller
       SetupGroupsMappig.Clear();
       ProiectProperties.Clear();
       BuildFileName = string.Empty;
-      ProiectdFileName = string.Empty;
+      ProiectFileName = string.Empty;
       Author = string.Empty;
       Name = string.Empty;
       Version = string.Empty;
       UpdateURL = string.Empty;
       Group = string.Empty;
       Release = string.Empty;
+      Script = string.Empty;
       Logo = null;
     }
 
@@ -284,7 +295,7 @@ namespace MediaPortal.MPInstaller
       Stream myStream;
       if ((myStream = File.Open(fil, FileMode.Create, FileAccess.Write, FileShare.None)) != null)
       {
-        this.ProiectdFileName = fil;
+        this.ProiectFileName = fil;
         // Code to write the stream goes here.
         XmlDocument doc = new XmlDocument();
         XmlWriter writer = null;
@@ -356,7 +367,7 @@ namespace MediaPortal.MPInstaller
           writer.WriteEndElement();
           writer.WriteStartElement("Option");
           writer.WriteElementString("BuildFileName", this.BuildFileName);
-          writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProiectdFileName));
+          writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProiectFileName));
           writer.WriteElementString("ProiectName", this.Name);
           writer.WriteElementString("Author", this.Author);
           writer.WriteElementString("UpdateURL", this.UpdateURL);
@@ -364,6 +375,7 @@ namespace MediaPortal.MPInstaller
           writer.WriteElementString("Description", this.Description);
           writer.WriteElementString("Group", this.Group);
           writer.WriteElementString("Release", this.Release);
+          writer.WriteElementString("Script", this.Script);
           WriteLogoElement(writer);
           writer.WriteEndElement();
           writer.WriteStartElement("Properties");
@@ -407,7 +419,7 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    public void BuilFile(ListBox ls, ProgressBar pb)
+    public void BuildFile(ListBox ls, ProgressBar pb)
     {
       ZipOutputStream s = new ZipOutputStream(File.Create(_builFileName));
       ls.Items.Clear();
@@ -415,9 +427,9 @@ namespace MediaPortal.MPInstaller
       pb.Value = 0;
       pb.Maximum = FileList.Count;
       ls.Items.Add("Build file :" + _builFileName);
-      if (File.Exists(ProiectdFileName))
+      if (File.Exists(ProiectFileName))
       {
-        FileStream fs = File.OpenRead(Path.GetFullPath(ProiectdFileName));
+        FileStream fs = File.OpenRead(Path.GetFullPath(ProiectFileName));
         byte[] buffer = new byte[fs.Length];
         fs.Read(buffer, 0, buffer.Length);
 
@@ -528,9 +540,12 @@ namespace MediaPortal.MPInstaller
       XmlNode node_des = nodeoption.SelectSingleNode("Description");
       if (node_des != null)
         this._description = node_des.InnerText;
-      XmlNode node_rel = nodeoption.SelectSingleNode("Release");
-      if (node_rel != null)
-        this.Release = node_rel.InnerText;
+      XmlNode node_release = nodeoption.SelectSingleNode("Release");
+      if (node_release != null)
+        this.Release = node_release.InnerText;
+      XmlNode node_scr = nodeoption.SelectSingleNode("Script");
+      if (node_scr != null)
+        this.Script = node_scr.InnerText;
       XmlNode node_gr = nodeoption.SelectSingleNode("Group");
       if (node_gr != null)
         this.Group = node_gr.InnerText;

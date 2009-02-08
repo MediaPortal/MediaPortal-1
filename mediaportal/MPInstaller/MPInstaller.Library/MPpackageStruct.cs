@@ -14,9 +14,11 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Globalization;
 
+using CSScriptLibrary;
 using ICSharpCode.SharpZipLib.Zip;
 
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal;
 
@@ -36,6 +38,7 @@ namespace MediaPortal.MPInstaller
     public bool containsSkin = false;
     public bool containsPlugin = false;
     public IMPIInternalPlugin InstallPlugin;
+    public IMPInstallerScript InstallerScript;
     public bool isValid = false;
     public List<string> SkinList;
     public List<string> InstallableSkinList;
@@ -61,6 +64,7 @@ namespace MediaPortal.MPInstaller
       InstallableSkinList = new List<string>();
       InstalledSkinList = new List<string>();
       InstallPlugin = null;
+      InstallerScript = new MPInstallerScript();
     }
 
     private MPinstallerStruct installerInfo = new MPinstallerStruct();
@@ -73,8 +77,14 @@ namespace MediaPortal.MPInstaller
       get { return installerInfo; }
       set { installerInfo = value; }
     }
-	
 
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is skin package.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is skin package; otherwise, <c>false</c>.
+    /// </value>
     public bool IsSkinPackage
     {
       get
@@ -191,9 +201,11 @@ namespace MediaPortal.MPInstaller
                 }
               }
             }
+
+            this.InstallerScript.OnInstallFileProcesed(fl);
+
             if (pb1 != null && pb1.Minimum > pb1.Value)
             {
-              //MessageBox.Show(String.Format("{0} {1} {2}",pb.Minimum,pb.Value,pb.Maximum));
               pb1.Value++;
               pb1.Refresh();
               pb1.Update();
@@ -263,6 +275,31 @@ namespace MediaPortal.MPInstaller
     {
       if (isValid)
       {
+        // script suport
+        this.InstallerScript = new MPInstallerScript();
+        try
+        {
+          if (!string.IsNullOrEmpty(this.InstallerInfo.Script))
+          {
+            Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
+            AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.LoadCode(this.InstallerInfo.Script, Path.GetTempFileName(), true));
+            //MessageBox.Show(script.CreateObject("InstallScript").ToString());
+            this.InstallerScript = (MPInstallerScript)script.CreateObject("InstallScript");
+          }
+          else
+          {
+            this.InstallerScript = new MPInstallerScript();
+          }
+        }
+        catch (Exception )
+        {
+          //MessageBox.Show("Script loading error " + ex.Message + ex.StackTrace);
+          this.InstallerScript = new MPInstallerScript();
+        }
+
+        this.InstallerScript.CurrentPackage = this;
+
+
         byte[] data = new byte[2048];
         int nb = data.Length;
         ZipEntry entry;
@@ -309,6 +346,7 @@ namespace MediaPortal.MPInstaller
         {
           
         }
+        this.InstallerScript.Init();
       }
     }
 
@@ -391,7 +429,7 @@ namespace MediaPortal.MPInstaller
       }
       catch (Exception)
       {
-        //MessageBox.Show(ex.Message+ex.StackTrace);
+        //MessageBox.Show(ex.Message + ex.StackTrace);
         isValid = false;
       }
       if (isValid)
@@ -437,10 +475,6 @@ namespace MediaPortal.MPInstaller
 
               if (isInvalidDirectory == false)
               {
-                //
-                // Check if we have a home.xml located in the directory, if so we consider it as a
-                // valid skin directory
-                //
                 string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
                 if (File.Exists(filename))
                 {

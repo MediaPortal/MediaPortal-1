@@ -64,7 +64,7 @@ namespace MediaPortal.MPInstaller
       if (!String.IsNullOrEmpty(textBox1.Text))
       {
         _struct.BuildFileName = textBox1.Text;
-        _struct.BuilFile(listBox1, progressBar1);
+        _struct.BuildFile(listBox1, progressBar1);
       }
       else
       {
@@ -91,7 +91,7 @@ namespace MediaPortal.MPInstaller
         if (checkBox1.Checked)
         {
           _struct.BuildFileName = textBox1.Text;
-          _struct.BuilFile(listBox1, progressBar1);
+          _struct.BuildFile(listBox1, progressBar1);
           listBox1.SelectedIndex = listBox1.Items.Count - 1;
           listBox1.Refresh();
           listBox1.Update();

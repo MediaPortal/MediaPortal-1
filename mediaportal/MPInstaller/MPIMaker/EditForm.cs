@@ -36,6 +36,7 @@ namespace MediaPortal.MPInstaller
     private MPinstallerStruct _struct = new MPinstallerStruct();
     private string proiect_file_name = "Untitled";
     private bool _loading = false;
+    private ScriptEditorForm scriptEditor = new ScriptEditorForm();
     public int sortColumn;
     public FilePropertiesClass fpc = new FilePropertiesClass();
 
@@ -63,6 +64,7 @@ namespace MediaPortal.MPInstaller
       saveFileDialog1.Filter = "Project files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
       _struct.AddFileList(bossview);
+      _struct.Script = scriptEditor.textBox_code.Text;
       if (Path.GetFileName(proiect_file_name) == "Untitled" || String.IsNullOrEmpty(proiect_file_name.Trim()))
       {
         if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
@@ -307,16 +309,16 @@ namespace MediaPortal.MPInstaller
     private void OpenProjectFile(string projectFile)
     {
       _struct.LoadFromFile(projectFile);
-      _struct.ProiectdFileName = projectFile;
+      _struct.ProiectFileName = projectFile;
       loadProperties();
       this.Text = projectFile;
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
         addrow((MPIFileList) _struct.FileList[i]);
       }
-
-      openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProiectdFileName);
-      folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(_struct.ProiectdFileName);
+      scriptEditor.textBox_code.Text = _struct.Script;
+      openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProiectFileName);
+      folderBrowserDialog1.SelectedPath = Path.GetDirectoryName(_struct.ProiectFileName);
     }
 
     private void openProiectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -383,6 +385,7 @@ namespace MediaPortal.MPInstaller
     {
       bossview.Items.Clear();
       _struct.Clear();
+      scriptEditor.Reset();
       loadProperties();
     }
 
@@ -420,8 +423,9 @@ namespace MediaPortal.MPInstaller
       if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
         proiect_file_name = saveFileDialog1.FileName;
-        _struct.ProiectdFileName = proiect_file_name;
+        _struct.ProiectFileName = proiect_file_name;
         _struct.AddFileList(bossview);
+        _struct.Script = scriptEditor.textBox_code.Text;
         _struct.SaveToFile(proiect_file_name);
         this.Text = proiect_file_name;
       }
@@ -878,6 +882,18 @@ namespace MediaPortal.MPInstaller
     private void systemFontToolStripMenuItem_Click(object sender, EventArgs e)
     {
       addskin(6);
+    }
+
+    private void installScriptToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (!scriptEditor.Visible)
+      {
+        scriptEditor.Show();
+      }
+      else
+      {
+        scriptEditor.BringToFront();
+      }
     }
   }
 }

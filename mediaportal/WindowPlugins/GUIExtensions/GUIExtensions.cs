@@ -35,6 +35,7 @@ namespace WindowPlugins.GUI.Extensions
     {
       Local = 0,
       Online = 1,
+      Updates = 2,
     }
     
     #endregion
@@ -503,50 +504,10 @@ namespace WindowPlugins.GUI.Extensions
             package.LoadFromFile(qitem.LocalFile);
             if (package.isValid)
             {
-              if (!TestVersion(package))
-              {
-                GUIDialogYesNo dlgcontinue = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                dlgcontinue.Reset();
-                dlgcontinue.SetHeading(14011); // Sort options
-                dlgcontinue.SetLine(1, string.Format(GUILocalizeStrings.Get(14012), package.InstallerInfo.ProiectProperties.MPMinVersion));
-                dlgcontinue.SetLine(1, 14013);
-                dlgcontinue.DoModal(GetID);
-                if (!dlgcontinue.IsConfirmed)
-                  return;
-              }
-              if (package.InstallerInfo.SetupGroups.Count > 1)
-              {
-                if (package.InstallerInfo.ProiectProperties.SingleGroupSelect)
-                {
-
-                  GUIDialogMenu dlgselect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                  if (dlgselect == null) return;
-                  dlgselect.Reset();
-                  dlgselect.SetHeading(14011); // Sort options
-                  foreach (GroupString gs in package.InstallerInfo.SetupGroups)
-                  {
-                    gs.Checked = false;
-                    dlgselect.Add(gs.Name);
-                  }
-                  dlgselect.DoModal(GetID);
-                  if (dlgselect.SelectedLabel != -1)
-                    package.InstallerInfo.SetupGroups[dlgselect.SelectedLabel].Checked = true;
-                  qitem.SetupGroups = package.InstallerInfo.SetupGroups;
-                }
-                else
-                {
-                  foreach (GroupString gs in package.InstallerInfo.SetupGroups)
-                  {
-                    GUIDialogYesNo dlgselect = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                    dlgselect.SetHeading(14011); // Sort options
-                    dlgselect.SetLine(1, gs.Name);
-                    dlgselect.DoModal(GetID);
-                    if (dlgselect.IsConfirmed)
-                      gs.Checked = true;
-                  }
-                  qitem.SetupGroups = package.InstallerInfo.SetupGroups;
-                }
-              }
+              if (!package.InstallerScript.GUI_Warning())
+                return;
+              package.InstallerScript.GUI_GetOptions();
+              qitem.SetupGroups = package.InstallerInfo.SetupGroups;
             }
           }
 
@@ -565,16 +526,6 @@ namespace WindowPlugins.GUI.Extensions
         }
         GUIPropertyManager.SetProperty("#selecteditem", item.Label);
       }
-    }
-
-    bool TestVersion(MPpackageStruct package)
-    {
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
-      {
-        return false;
-      }
-      return true;
     }
 
     void OnShowSort()
@@ -624,6 +575,7 @@ namespace WindowPlugins.GUI.Extensions
 
       dlg.AddLocalizedString(14003); // local
       dlg.AddLocalizedString(14004); // online
+      dlg.AddLocalizedString(14015); // updates
 
       dlg.SelectedLabel = (int)currentListing;
 
@@ -638,6 +590,9 @@ namespace WindowPlugins.GUI.Extensions
           break;
         case 14004:
           currentListing = Views.Online;
+          break;
+        case 14015:
+          currentListing = Views.Updates;
           break;
       }
 
@@ -708,8 +663,7 @@ namespace WindowPlugins.GUI.Extensions
 
     void LoadDirectory(string strNewDirectory)
     {
-      SwitchView();
-      OnSort();
+;
       GUIWaitCursor.Show();
       GUIListItem SelectedItem = facadeView.SelectedListItem;
 
@@ -786,12 +740,18 @@ namespace WindowPlugins.GUI.Extensions
             }
           }
           break;
+        case Views.Updates:
+          {
+          }
+          break;
       }
 
       //------------
       //set object count label
       //GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(totalItems));
       SetLabels();
+      SwitchView();
+      OnSort();
       SelectCurrentItem();
 
       //set selected item

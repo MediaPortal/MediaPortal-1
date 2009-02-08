@@ -64,8 +64,9 @@ namespace MediaPortal.MPInstaller
                   package.InstallerInfo.SetupGroups = item.SetupGroups;
                   package.InstallableSkinList.AddRange(package.SkinList);
                   progressBar2.Maximum = package.InstallerInfo.FileList.Count + 1;
-                  package.InstallPackage(progressBar3, progressBar2, listBox2);
-                  package.installLanguage(listBox2);
+
+                  package.InstallerScript.Install(progressBar3, progressBar2, listBox2);
+
                   inst.Add(package);
                   inst.SaveToFile();
                   if (package.InstallerInfo.ProiectProperties.ClearSkinCache)

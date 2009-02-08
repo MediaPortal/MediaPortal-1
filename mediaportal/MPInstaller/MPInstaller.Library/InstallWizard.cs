@@ -56,18 +56,15 @@ namespace MediaPortal.MPInstaller
     public void starStep()
     {
       inst.LoadFromFile();
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
-      {
-        if (MessageBox.Show(string.Format("Not supported Mediaportal version !(Needed version {0}) Do you want continue ?", package.InstallerInfo.ProiectProperties.MPMinVersion), "", MessageBoxButtons.YesNo) == DialogResult.No)
-          return;
-      }
+      if (!package.InstallerScript.Warning())
+        return;
       if (inst.IndexOf(package) < 0)
         nextStep(1);
       else
         if (MessageBox.Show("Extension already installed. Do you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
           nextStep(1);
     }
+
     public void StartUpdate()
     {
       update = true;
@@ -298,6 +295,10 @@ namespace MediaPortal.MPInstaller
             {
               package.InstallerInfo.SetupGroups[i].Checked = Customize_list.GetItemChecked(i);
             }
+            progressBar1.Visible = false;
+            progressBar2.Visible = false;
+            skinlister.Visible = false;
+            listBox1.Visible = false;
             label2.Visible = true;
             Customize_list.Visible = false;
             progressBar1.Visible = true;
@@ -325,14 +326,9 @@ namespace MediaPortal.MPInstaller
         progressBar1.Minimum = 0;
         progressBar1.Maximum = package.InstallerInfo.FileList.Count+1;
       }
-      //for (int i = 0; i < package._intalerStruct.FileList.Count; i++)
-      //{
-      package.InstallPackage(progressBar2, progressBar1, listBox1);
-        //progressBar1.Value++;
-        //this.Refresh();
-        //this.Update();
-      //}
-      package.installLanguage(listBox1);
+
+      package.InstallerScript.Install(progressBar2, progressBar1, listBox1);
+
       button_next.Visible = false;
       button_cancel.Enabled = true;
       inst.Add(package);
@@ -363,6 +359,7 @@ namespace MediaPortal.MPInstaller
       {
         
       }
+      package.InstallerScript.OnInstallDone();
     }
 
     /// <summary>
@@ -410,6 +407,9 @@ namespace MediaPortal.MPInstaller
             step += m;
             test_next_step(m);
           }
+          break;
+        case 7:
+            step += m;
           break;
         default:
           break;
