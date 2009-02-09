@@ -30,15 +30,34 @@
       <onleft>213</onleft>
       <onright>213</onright>
       <onup>213</onup>
-      <ondown>218</ondown>
+      <ondown>220</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
+     <control>
+        <description>Video Position Menu</description>
+        <type>togglebutton</type>
+        <id>220</id>
+        <posX>117</posX>
+        <posY>570</posY>
+        <width>52</width>
+        <height>51</height>
+        <AltTextureFocus>osd_video_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>osd_video_nofocus.png</AltTextureNoFocus>
+        <textureFocus>osd_video_focus.png</textureFocus>
+        <textureNoFocus>osd_video_nofocus.png</textureNoFocus>
+        <label>-</label>
+        <font>-</font>
+        <onleft>213</onleft>
+        <onright>213</onright>
+        <onup>213</onup>
+        <ondown>213</ondown>
+      </control>
     <control>
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>117</posX>
+      <posX>1517</posX>
       <posY>570</posY>
       <width>52</width>
       <height>51</height>
@@ -286,8 +305,10 @@
       <description>Sub Menu Background (volume)</description>
       <type>image</type>
       <id>300</id>
-      <posX>257</posX>
-      <posY>393</posY>
+      <posX>782</posX>
+      <posY>412</posY>
+      <width>462</width>
+      <height>287</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -297,8 +318,10 @@
       <description>Sub Menu Background (subtitles)</description>
       <type>image</type>
       <id>302</id>
-      <posX>257</posX>
-      <posY>393</posY>
+      <posX>782</posX>
+      <posY>412</posY>
+      <width>462</width>
+      <height>287</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -308,8 +331,10 @@
       <description>Sub Menu Background (bookmarks)</description>
       <type>image</type>
       <id>303</id>
-      <posX>257</posX>
-      <posY>393</posY>
+      <posX>782</posX>
+      <posY>412</posY>
+      <width>462</width>
+      <height>287</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -319,8 +344,10 @@
       <description>Sub Menu Background (video)</description>
       <type>image</type>
       <id>304</id>
-      <posX>257</posX>
-      <posY>362</posY>
+      <posX>782</posX>
+      <posY>412</posY>
+      <width>462</width>
+      <height>287</height>
       <texture>osd_dialog_big.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -330,8 +357,10 @@
       <description>Sub Menu Background (audio)</description>
       <type>image</type>
       <id>305</id>
-      <posX>257</posX>
-      <posY>393</posY>
+      <posX>782</posX>
+      <posY>412</posY>
+      <width>462</width>
+      <height>287</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -414,9 +443,9 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>328</posX>
-      <posY>425</posY>
-      <label>298</label>
+      <posX>915</posX>
+      <posY>500</posY>
+      <label>Video Position</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
@@ -427,16 +456,16 @@
       <description>Video Position Slider</description>
       <type>slider</type>
       <id>700</id>
-      <posX>533</posX>
-      <posY>425</posY>
+      <posX>915</posX>
+      <posY>537</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
-      <onup>700</onup>
-      <ondown>701</ondown>
-      <onleft>700</onleft>
-      <onright>702</onright>
+      <onup>213</onup>
+      <ondown>213</ondown>
+      <onleft>213</onleft>
+      <onright>213</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -445,7 +474,7 @@
       <description>Non-Interleaved Checkbox</description>
       <type>checkmark</type>
       <id>701</id>
-      <posX>328</posX>
+      <posX>1828</posX>
       <posY>462</posY>
       <label>306</label>
       <onup>700</onup>
@@ -460,7 +489,7 @@
       <description>No Cache Checkbox</description>
       <type>checkmark</type>
       <id>702</id>
-      <posX>638</posX>
+      <posX>1838</posX>
       <posY>462</posY>
       <label>431</label>
       <onup>700</onup>
@@ -475,7 +504,7 @@
       <description>Adjust Framerate Checkbox</description>
       <type>checkmark</type>
       <id>703</id>
-      <posX>328</posX>
+      <posX>1828</posX>
       <posY>493</posY>
       <label>343</label>
       <onup>701</onup>
@@ -490,7 +519,7 @@
       <description>brightness label</description>
       <type>label</type>
       <id>752</id>
-      <posX>328</posX>
+      <posX>1828</posX>
       <posY>531</posY>
       <label>464</label>
       <font>font13</font>
@@ -503,7 +532,7 @@
       <description>brightness</description>
       <type>slider</type>
       <id>704</id>
-      <posX>533</posX>
+      <posX>1833</posX>
       <posY>531</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -521,7 +550,7 @@
       <description>contrast label</description>
       <type>label</type>
       <id>753</id>
-      <posX>328</posX>
+      <posX>1828</posX>
       <posY>568</posY>
       <label>465</label>
       <font>font13</font>
@@ -534,7 +563,7 @@
       <description>contrast</description>
       <type>slider</type>
       <id>705</id>
-      <posX>533</posX>
+      <posX>1833</posX>
       <posY>568</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -552,7 +581,7 @@
       <description>gamma label</description>
       <type>label</type>
       <id>754</id>
-      <posX>328</posX>
+      <posX>1828</posX>
       <posY>606</posY>
       <label>466</label>
       <font>font13</font>
@@ -565,7 +594,7 @@
       <description>gamma</description>
       <type>slider</type>
       <id>706</id>
-      <posX>533</posX>
+      <posX>1833</posX>
       <posY>606</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
