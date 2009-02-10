@@ -18,7 +18,7 @@
       <id>213</id>
       <posX>36</posX>
       <posY>425</posY>
-      <width>60</width>
+      <width>66</width>
       <height>66</height>
       <AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
@@ -29,18 +29,37 @@
       <onleft>213</onleft>
       <onright>213</onright>
       <onup>213</onup>
-      <ondown>218</ondown>
+      <ondown>220</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
+    </control>
+    <control>
+      <description>Video Position Menu</description>
+      <type>togglebutton</type>
+      <id>220</id>
+      <posX>70</posX>
+      <posY>460</posY>
+      <width>40</width>
+      <height>40</height>
+      <AltTextureFocus>osd_video_focus.png</AltTextureFocus>
+      <AltTextureNoFocus>osd_video_nofocus.png</AltTextureNoFocus>
+      <textureFocus>osd_video_focus.png</textureFocus>
+      <textureNoFocus>osd_video_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <font>-</font>
+      <onleft>213</onleft>
+      <onright>213</onright>
+      <onup>213</onup>
+      <ondown>213</ondown>
     </control>
     <control>
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>52</posX>
-      <posY>495</posY>
-      <width>30</width>
-      <height>33</height>
+      <posX>2052</posX>
+      <posY>460</posY>
+      <width>40</width>
+      <height>40</height>
       <AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_subtitles_nofocus.png</AltTextureNoFocus>
       <textureFocus>osd_subtitles_focus.png</textureFocus>
@@ -285,8 +304,10 @@
       <description>Sub Menu Background (volume)</description>
       <type>image</type>
       <id>300</id>
-      <posX>145</posX>
-      <posY>315</posY>
+      <posX>440</posX>
+      <posY>330</posY>
+      <width>260</width>
+      <height>230</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -296,8 +317,10 @@
       <description>Sub Menu Background (subtitles)</description>
       <type>image</type>
       <id>302</id>
-      <posX>145</posX>
-      <posY>315</posY>
+      <posX>440</posX>
+      <posY>330</posY>
+      <width>260</width>
+      <height>230</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -307,8 +330,10 @@
       <description>Sub Menu Background (bookmarks)</description>
       <type>image</type>
       <id>303</id>
-      <posX>145</posX>
-      <posY>315</posY>
+      <posX>440</posX>
+      <posY>330</posY>
+      <width>260</width>
+      <height>230</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -318,8 +343,10 @@
       <description>Sub Menu Background (video)</description>
       <type>image</type>
       <id>304</id>
-      <posX>145</posX>
-      <posY>290</posY>
+      <posX>440</posX>
+      <posY>330</posY>
+      <width>260</width>
+      <height>230</height>
       <texture>osd_dialog_big.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -329,8 +356,10 @@
       <description>Sub Menu Background (audio)</description>
       <type>image</type>
       <id>305</id>
-      <posX>145</posX>
-      <posY>315</posY>
+      <posX>440</posX>
+      <posY>330</posY>
+      <width>260</width>
+      <height>230</height>
       <texture>osd_dialog.png</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -413,9 +442,9 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>185</posX>
-      <posY>340</posY>
-      <label>298</label>
+      <posX>480</posX>
+      <posY>370</posY>
+      <label>Video Position</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
@@ -426,16 +455,16 @@
       <description>Video Position Slider</description>
       <type>slider</type>
       <id>700</id>
-      <posX>300</posX>
-      <posY>340</posY>
+      <posX>480</posX>
+      <posY>400</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
-      <onup>700</onup>
-      <ondown>701</ondown>
-      <onleft>700</onleft>
-      <onright>702</onright>
+      <onup>213</onup>
+      <ondown>213</ondown>
+      <onleft>213</onleft>
+      <onright>213</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -444,7 +473,7 @@
       <description>Non-Interleaved Checkbox</description>
       <type>checkmark</type>
       <id>701</id>
-      <posX>185</posX>
+      <posX>2185</posX>
       <posY>370</posY>
       <label>306</label>
       <onup>700</onup>
@@ -459,7 +488,7 @@
       <description>No Cache Checkbox</description>
       <type>checkmark</type>
       <id>702</id>
-      <posX>359</posX>
+      <posX>2359</posX>
       <posY>370</posY>
       <label>431</label>
       <onup>700</onup>
@@ -474,7 +503,7 @@
       <description>Adjust Framerate Checkbox</description>
       <type>checkmark</type>
       <id>703</id>
-      <posX>185</posX>
+      <posX>2185</posX>
       <posY>395</posY>
       <label>343</label>
       <onup>701</onup>
@@ -489,7 +518,7 @@
       <description>brightness label</description>
       <type>label</type>
       <id>752</id>
-      <posX>185</posX>
+      <posX>2185</posX>
       <posY>425</posY>
       <label>464</label>
       <font>font13</font>
@@ -502,7 +531,7 @@
       <description>brightness</description>
       <type>slider</type>
       <id>704</id>
-      <posX>300</posX>
+      <posX>2300</posX>
       <posY>425</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -520,7 +549,7 @@
       <description>contrast label</description>
       <type>label</type>
       <id>753</id>
-      <posX>185</posX>
+      <posX>2185</posX>
       <posY>455</posY>
       <label>465</label>
       <font>font13</font>
@@ -533,7 +562,7 @@
       <description>contrast</description>
       <type>slider</type>
       <id>705</id>
-      <posX>300</posX>
+      <posX>2300</posX>
       <posY>455</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -551,7 +580,7 @@
       <description>gamma label</description>
       <type>label</type>
       <id>754</id>
-      <posX>185</posX>
+      <posX>2185</posX>
       <posY>485</posY>
       <label>466</label>
       <font>font13</font>
@@ -564,7 +593,7 @@
       <description>gamma</description>
       <type>slider</type>
       <id>706</id>
-      <posX>300</posX>
+      <posX>2300</posX>
       <posY>485</posY>
       <spintype>int</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
