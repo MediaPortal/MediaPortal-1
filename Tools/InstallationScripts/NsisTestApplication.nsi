@@ -64,10 +64,12 @@ Page instfiles
 #!include Library.nsh
 #!include FileFunc.nsh
 #!include Memento.nsh
+!include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
-!include LogicLib.nsh
 
-!include include-CommonMPMacros.nsh
+!define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
+!define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
+!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 ;--------------------------------
 
@@ -249,7 +251,6 @@ SectionEnd ; end the section
 
 
 
-
 Section
   ${LOG_OPEN}
 
@@ -271,6 +272,31 @@ Section
   DetailPrint "KillProcess FINISHED"
 
   noKillProcess:
+  
+  
+  
+  MessageBox MB_ICONINFORMATION|MB_YESNO "ShutdownTVService?" IDNO noTVShutdown
+  
+  ${LOG_TEXT} "INFO" "Stopping TV Service..."
+  nsExec::ExecToLog 'net stop TVservice'
+  Pop $0
+  DetailPrint "net stop TVservice result: $0"  
+  
+  DetailPrint "TVShutdown FINISHED"
+
+  noTVShutdown:
+  
+  
+  MessageBox MB_ICONINFORMATION|MB_YESNO "TVStart?" IDNO noTVStart
+  
+  ${LOG_TEXT} "INFO" "starting TV Service..."
+  nsExec::ExecToLog 'net start TVservice'
+  Pop $0
+  DetailPrint "net start TVservice result: $0"  
+  
+  DetailPrint "TVStart FINISHED"
+
+  noTVStart:
 
 
   
