@@ -558,7 +558,7 @@ LangString UPDATE_ERROR_VERSION_TVSERVER          ${LANG_ENGLISH} "wrong version
 #           enable it by defining         USE_READ_MP_DIRS      in parent script
 #---------------------------------------------------------------------------
 !ifdef USE_READ_MP_DIRS
-  
+
 Var MyDocs
 Var UserAppData
 Var CommonAppData
@@ -809,67 +809,7 @@ FunctionEnd
 
 !endif # !USE_READ_MP_DIRS
 
-#---------------------------------------------------------------------------
-#   Windows Version checks
-#---------------------------------------------------------------------------
-# TODO :::    rework win version detection, or the way it is imported
-;!include WinVer.nsh
-!define WinVer++
-!ifdef WINVER++
-  !include "${svn_InstallScripts}\include-WinVerEx.nsh"
-!else
 
-!include WordFunc.nsh
-!insertmacro WordFind
-!insertmacro un.WordFind
-!macro GetServicePack _major _minor
-  Push $0
-  Push $1
-
-  ; result is:
-  ; "Service Pack 3"         for final Service Packs
-  ; "Service Pack 3, v.3311" for beta  Service Packs
-
-  GetVersion::WindowsServicePack
-  Pop $0
-  ${LOG_TEXT} "INFO" "GetVersion::WindowsServicePack: $0"
-
-  ;uncomment for testing
-  ;StrCpy $0 "Service Pack 3"
-  ;StrCpy $0 "Service Pack 3, v.3311"
-
-  ; split the string by "." and save the word count in $2
-  ; if no . is found in $2 the input string (was $0) is saved
-  ${WordFind} "$0" "." "#" $1
-
-  ; if $0 = $2 -> no "." was found -> no beta
-  ${If} "$0" == "$1"
-    StrCpy ${_major} $0 1 -1   ;  "Service Pack 3"
-    StrCpy ${_minor} 0
-  ${Else}
-    ${WordFind} "$0" "." "+1" $1  ;  "Service Pack 3, v.3311"
-    StrCpy ${_major} $1 1 -4      ;  "Service Pack 3, v"
-
-    ;split again, and use the second word as minorVer
-    ${WordFind} "$0" "." "+2" ${_minor}  ;  "Service Pack 3, v.3311"
-  ${EndIf}
-
-  ;MessageBox MB_OK|MB_ICONEXCLAMATION "Service Pack: >${_major}< >${_minor}<"
-
-  pop $1
-  pop $0
-!macroend
-
-!endif
-
-
-
-#**********************************************************************************************************#
-#
-#
-#
-#
-#**********************************************************************************************************#
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP
 #---------------------------------------------------------------------------
