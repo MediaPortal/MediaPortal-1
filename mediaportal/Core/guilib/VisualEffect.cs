@@ -159,6 +159,10 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+      text = text.ToLower();
+      text = text.Replace("screencenterx", GUIGraphicsContext.OutputScreenCenter.X.ToString());
+      text = text.Replace("screencentery", GUIGraphicsContext.OutputScreenCenter.Y.ToString());
+
       int pos = text.IndexOf(",");
       if (pos >= 0)
       {
