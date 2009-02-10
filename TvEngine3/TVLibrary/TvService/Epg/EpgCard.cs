@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -237,14 +237,14 @@ namespace TvService
       _currentTransponder = TransponderList.Instance.CurrentTransponder;
       Channel channel = _currentTransponder.CurrentChannel;
 
-      Log.Epg("grab epg card:#{0} transponder: #{1} ch:{2} ", _card.IdCard, TransponderList.Instance.CurrentIndex, channel.Name);
+      Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard, TransponderList.Instance.CurrentIndex, channel.Name);
 
       _state = EpgState.Idle;
       _isRunning = true;
       _user = new User("epg", false, -1);
       if (GrabEpgForChannel(channel, _currentTransponder.Tuning, _card))
       {
-        Log.Epg("Epg: card:{0} start grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
+        Log.Epg("EpgCard: card: {0} starting to grab {1}", _user.CardId, _currentTransponder.Tuning.ToString());
         _currentTransponder.InUse = true;
         //succeeded, then wait for epg to be received
         _state = EpgState.Grabbing;
@@ -252,7 +252,7 @@ namespace TvService
         _epgTimer.Enabled = true;
         return;
       }
-      Log.Epg("unable to grab epg transponder: {0} ch: {1} started on {2}", TransponderList.Instance.CurrentIndex, channel.Name, _user.CardId);
+      Log.Epg("EpgCard: unable to grab epg transponder: {0} ch: {1} started on {2}", TransponderList.Instance.CurrentIndex, channel.Name, _user.CardId);
       Log.Epg("{0}", _currentTransponder.Tuning.ToString());
     }
 
@@ -263,7 +263,7 @@ namespace TvService
     {
       if (_user.CardId >= 0)
       {
-        Log.Epg("Epg: card:{0} stop grab", _user.CardId);
+        Log.Epg("EpgCard: card: {0} stop grabbing", _user.CardId);
         _tvController.StopGrabbingEpg(_user);
       }
       if (_currentTransponder != null)
@@ -308,12 +308,11 @@ namespace TvService
               //not idle? then cancel epg grabbing
               if (_state != EpgState.Idle)
               {
-                Log.Epg("Canceled epg, card is not idle:{0}", _user.CardId);
+                Log.Epg("EpgCard: Canceled epg, card is not idle:{0}", _user.CardId);
               }
               _state = EpgState.Idle;
               _user.CardId = -1;
               _currentTransponder.InUse = false;
-              _reEntrant = false;
               return;
             }
           }
@@ -322,15 +321,17 @@ namespace TvService
           TimeSpan ts = DateTime.Now - _grabStartTime;
           if (ts.TotalMinutes > _epgTimeOut)
           {
-            //epg grabber timed out. Update database
-            //and go back to idle mode
-            Log.Epg("Epg: card:{0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
+            //epg grabber timed out. Update database and go back to idle mode
+            Log.Epg("EpgCard: card: {0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
             _tvController.AbortEPGGrabbing(_user.CardId);
+            //Log.Epg("EpgCard: Aborted epg grab");
           }
+          else
+            Log.Epg("EpgCard: allow grabbing for {0} seconds on card {1}", ts.TotalSeconds, _user.CardId);
         }
       } catch (Exception ex)
       {
-        Log.Write(ex);
+        Log.Error("EpgCard: Error in EPG timer - {0}", ex.ToString());
       }
       finally
       {
@@ -646,9 +647,7 @@ namespace TvService
       {
         if (cardUser != null)
         {
-          if (cardUser.Name != _user.Name)
-            return false;
-          return true;
+          return cardUser.Name == _user.Name;
         }
         return false;
       }
@@ -676,9 +675,7 @@ namespace TvService
       {
         if (cardUser != null)
         {
-          if (cardUser.Name != _user.Name)
-            return false;
-          return true;
+          return cardUser.Name == _user.Name;
         }
         return false;
       }

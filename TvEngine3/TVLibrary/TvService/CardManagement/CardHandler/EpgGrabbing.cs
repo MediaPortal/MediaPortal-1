@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ namespace TvService
             return false;
         } catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
 
@@ -96,7 +96,7 @@ namespace TvService
             return;
         } catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
         if (_cardHandler.IsLocal == false)
@@ -132,7 +132,7 @@ namespace TvService
             return new List<EpgChannel>();
         } catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
         if (_cardHandler.IsLocal == false)
@@ -166,7 +166,7 @@ namespace TvService
               return false;
           } catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("EpgGrabbing: unable to connect to controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
           if (_cardHandler.IsLocal == false)
@@ -177,7 +177,7 @@ namespace TvService
               return RemoteControl.Instance.IsGrabbingEpg(_cardHandler.DataBaseCard.IdCard);
             } catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+              Log.Error("EpgGrabbing: unable to connect to controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return false;
             }
           }
