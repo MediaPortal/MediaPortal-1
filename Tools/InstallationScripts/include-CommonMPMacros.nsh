@@ -128,10 +128,10 @@ Var TempInstallLog
     !if "${LEVEL}" != "INFO"
       !error "$\r$\n$\r$\nYou call macro LOG_TEXT with wrong LogLevel. Only 'DEBUG', 'ERROR' and 'INFO' are valid!$\r$\n$\r$\n"
     !else
-      DetailPrint "${prefix${LEVEL}}${TEXT}$\r$\n"
+      DetailPrint "${prefix${LEVEL}}${TEXT}"
     !endif
   !else
-    DetailPrint "${prefix${LEVEL}}${TEXT}$\r$\n"
+    DetailPrint "${prefix${LEVEL}}${TEXT}"
   !endif
 !endif
 
