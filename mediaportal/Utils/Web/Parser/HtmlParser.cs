@@ -79,12 +79,12 @@ namespace MediaPortal.Utils.Web
       int startIndex = 0;
       if (_template.Start != null && _template.Start != string.Empty)
       {
-        startIndex = pageSource.IndexOf(_template.Start, 0);
+        startIndex = pageSource.IndexOf(_template.Start, 0, StringComparison.OrdinalIgnoreCase);
         if (startIndex == -1)
         {
           startIndex = 0;
         }
-        //return -1;
+        //log error ?
       }
 
 
@@ -92,12 +92,12 @@ namespace MediaPortal.Utils.Web
 
       if (_template.End != null && _template.End != string.Empty)
       {
-        endIndex = pageSource.ToLower().IndexOf(_template.End, startIndex);
+        endIndex = pageSource.IndexOf(_template.End, startIndex, StringComparison.OrdinalIgnoreCase);
         if (endIndex == -1)
         {
           endIndex = pageSource.Length;
         }
-        //return -1;
+        //log error?
       }
 
       int count = 0;
