@@ -62,7 +62,6 @@ namespace TvService
     int GetCurrentVideoStream(User user);
     bool IsScrambled(ref User user);
 
-
     void StopCard(User user);
     void SetParameters();
     void Dispose();

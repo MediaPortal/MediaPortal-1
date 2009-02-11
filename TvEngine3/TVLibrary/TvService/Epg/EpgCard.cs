@@ -147,7 +147,9 @@ namespace TvService
       Log.Epg("epg grabber:epg cancelled");
 
       if (_state == EpgState.Idle)
+      {
         return;
+      }
       _state = EpgState.Idle;
       _tvController.StopGrabbingEpg(_user);
       _user.CardId = -1;
@@ -204,7 +206,6 @@ namespace TvService
           return 0;
         }
 
-
         //create worker thread to update the database
         Log.Epg("Epg: card:{0} received epg for {1} channels", _user.CardId, epg.Count);
         _state = EpgState.Updating;
@@ -213,8 +214,8 @@ namespace TvService
         workerThread.IsBackground = true;
         workerThread.Name = "EPG Update thread";
         workerThread.Start();
-
-      } catch (Exception ex)
+      } 
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -267,7 +268,9 @@ namespace TvService
         _tvController.StopGrabbingEpg(_user);
       }
       if (_currentTransponder != null)
+      {
         _currentTransponder.InUse = false;
+      }
 
       _epgTimer.Enabled = false;
       _isRunning = false;
@@ -313,6 +316,7 @@ namespace TvService
               _state = EpgState.Idle;
               _user.CardId = -1;
               _currentTransponder.InUse = false;
+              _tvController.AbortEPGGrabbing(_user.CardId);
               return;
             }
           }
@@ -324,12 +328,15 @@ namespace TvService
             //epg grabber timed out. Update database and go back to idle mode
             Log.Epg("EpgCard: card: {0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
             _tvController.AbortEPGGrabbing(_user.CardId);
-            //Log.Epg("EpgCard: Aborted epg grab");
+            Log.Epg("EpgCard: Aborted epg grab");
           }
           else
+          {
             Log.Epg("EpgCard: allow grabbing for {0} seconds on card {1}", ts.TotalSeconds, _user.CardId);
+          }
         }
-      } catch (Exception ex)
+      } 
+      catch (Exception ex)
       {
         Log.Error("EpgCard: Error in EPG timer - {0}", ex.ToString());
       }

@@ -100,7 +100,9 @@ namespace TvService
         return;
       }
       if (_isRunning)
+      {
         return;
+      }
 
       Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
@@ -109,7 +111,9 @@ namespace TvService
       }
       TransponderList.Instance.RefreshTransponders();
       if (TransponderList.Instance.Count == 0)
+      {
         return;
+      }
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList<Card> cards = Card.ListAll();
@@ -119,13 +123,18 @@ namespace TvService
       foreach (Card card in cards)
       {
         if (!card.Enabled || !card.GrabEPG)
+        {
           continue;
+        }
         try
         {
           RemoteControl.HostName = card.ReferencedServer().HostName;
           if (!_tvController.CardPresent(card.IdCard))
+          {
             continue;
-        } catch (Exception e)
+          }
+        } 
+        catch (Exception e)
         {
           Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, card.ReferencedServer().HostName);
         }
@@ -144,7 +153,9 @@ namespace TvService
     public void Stop()
     {
       if (_isRunning == false)
+      {
         return;
+      }
       Log.Epg("EPG: grabber stopped..");
       _epgTimer.Enabled = false;
       _isRunning = false;

@@ -1851,8 +1851,12 @@ namespace TvService
     /// <returns></returns>
     public bool GrabEpg(BaseEpgGrabber grabber, int cardId)
     {
+      Log.Info("Controller: GrabEpg on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
+      {
+        Log.Error("Controller: GrabEpg - invalid cardId");
         return false;
+      }
       return _cards[cardId].Epg.Start(grabber);
     }
 
@@ -1861,8 +1865,12 @@ namespace TvService
     /// </summary>
     public void AbortEPGGrabbing(int cardId)
     {
+      Log.Info("Controller: AbortEPGGrabbing on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
+      {
+        Log.Error("Controller: AbortEPGGrabbing - invalid cardId");
         return;
+      }
       _cards[cardId].Epg.Abort();
     }
 
@@ -1874,7 +1882,9 @@ namespace TvService
     public List<EpgChannel> Epg(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
+      {
         return new List<EpgChannel>();
+      }
       return _cards[cardId].Epg.Epg;
     }
 
@@ -1888,7 +1898,9 @@ namespace TvService
       {
         Recording rec = Recording.Retrieve(idRecording);
         if (rec == null)
+        {
           return false;
+        }
 
         if (!IsLocal(rec.ReferencedServer().HostName))
         {
@@ -1896,7 +1908,8 @@ namespace TvService
           {
             RemoteControl.HostName = rec.ReferencedServer().HostName;
             return RemoteControl.Instance.DeleteRecording(rec.IdRecording);
-          } catch (Exception)
+          } 
+          catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
           }
@@ -1911,7 +1924,8 @@ namespace TvService
           rec.Delete();
           return true;
         }
-      } catch (Exception)
+      } 
+      catch (Exception)
       {
         Log.Error("Controller: Can't delete recording");
       }
@@ -1927,14 +1941,17 @@ namespace TvService
       {
         Recording rec = Recording.Retrieve(idRecording);
         if (rec == null)
+        {
           return false;
+        }
         if (!IsLocal(rec.ReferencedServer().HostName))
         {
           try
           {
             RemoteControl.HostName = rec.ReferencedServer().HostName;
             return RemoteControl.Instance.IsRecordingValid(rec.IdRecording);
-          } catch (Exception)
+          } 
+          catch (Exception)
           {
             Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
           }
@@ -3404,8 +3421,11 @@ namespace TvService
       try
       {
         if (OnTvServerEvent != null)
+        {
           OnTvServerEvent(sender, args);
-      } catch (Exception ex)
+        }
+      } 
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
