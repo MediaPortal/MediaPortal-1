@@ -1485,6 +1485,8 @@
 	<String id="14011">Velg en av mulighetene</String>
 	<String id="14012">Ikke gyldig MediaPortal versjon!(Du trenger versjon {0})</String>
 	<String id="14013">Vil du fortsette?</String>
+	<String id="14014">Oppdaterer online informasjon</String>			
+	<String id="14015">Oppdateringer</String>	
     <String id="16001">Festmiks</String>
     <String id="19001" prefix="Min ">Tetris</String>
     <String id="19002">Nytt spill</String>
