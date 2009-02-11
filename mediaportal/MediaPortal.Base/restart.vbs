@@ -36,19 +36,22 @@ End If
 
 Set LogFile = FileSys.CreateTextFile(lognew,1)
 
-
-strEcho = vbcrlf & Date() & "-" & Time() & ": Starting """ & Wscript.ScriptName & """ with """ & Wscript.FullName & """ (v. " & Wscript.Version & ")"
+strEcho = Date() & "-" & Time() & ": Starting """ & Wscript.ScriptName & """ with """ & Wscript.FullName & """ (v. " & Wscript.Version & ")"
 LogFile.writeline strEcho
 
-If FileSys.FileExists(syspath + "tskill.exe") Then
-	
-  strEcho = vbcrlf & Date() & "-" & Time() & ": Kill utility will be ""tskill"""
+strEcho = Date() & "-" & Time() & ": Looking for ""tskill.exe"" in """ & syspath & """"
+LogFile.writeline strEcho
+If FileSys.FileExists(syspath + "\tskill.exe") Then
+
+  strEcho = Date() & "-" & Time() & ": Kill utility will be ""tskill"""
   LogFile.writeline strEcho
   ' Using tskill to fix Mantis issue 1529
   prockill = "tskill " & process
 
 Else
 
+  strEcho = Date() & "-" & Time() & ": ""tskill.exe"" not found "
+  LogFile.writeline strEcho
   strEcho = Date() & "-" & Time() & ": Kill utility will be ""taskkill"""
   LogFile.writeline strEcho	
   prockill = "taskkill /T /F /IM " & process & ".exe"
