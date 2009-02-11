@@ -42,14 +42,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       const string prg = "DirectX9c";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-      DialogResult result;
-      result = Utils.RetryDownloadFile(FileName, prg);
+      DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
+      // Extract package
       string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("DirectX9c", "FILE");
       Process setup = Process.Start(exe, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
+      try
+      {
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      // Install package
+      exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
+      setup = Process.Start(exe, "/silent");
       try
       {
         if (setup != null)
@@ -63,11 +78,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
     }
+
     public bool UnInstall()
     {
       //Uninstall not possible. Installer tries an automatic update if older version found
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;
