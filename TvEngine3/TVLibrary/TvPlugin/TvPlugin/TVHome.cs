@@ -715,6 +715,10 @@ namespace TvPlugin
         bool isSingleSeat = IsSingleSeat();
         if (!isSingleSeat)
         {
+          if (!settingsLoaded)
+          {
+            LoadSettings();
+          }
           useRtsp = _usertsp;
         }
         else

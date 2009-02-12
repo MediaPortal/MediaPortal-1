@@ -52,6 +52,21 @@ namespace TvPlugin
 {
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
+    /*
+    public override void OnAdded()
+    {
+      // replace g_player's ShowFullScreenWindowTV
+      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler; // singleseaters uses this
+
+      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
+      Restore();
+      PreInit();
+      ResetAllControls();
+    }
+    */
+   
+
     #region ThumbCacher
 
     public class RecordingThumbCacher
@@ -66,7 +81,7 @@ namespace TvPlugin
       }
 
       private void PerformRequest()
-      {
+      {        
         if (_thumbCreationActive)
         {
           return;
@@ -78,8 +93,10 @@ namespace TvPlugin
           IList<Recording> recordings = Recording.ListAll();
           foreach (Recording rec in recordings)
           {
+            string recFileName = GetFileName(rec.FileName);
+
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
-                                             Path.ChangeExtension(Utils.SplitFilename(rec.FileName), null),
+                                             Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                              Utils.GetThumbExtension());
             if (!File.Exists(thumbNail))
             {
@@ -90,13 +107,13 @@ namespace TvPlugin
               try
               {
                 Thread.Sleep(250);
-                if (VideoThumbCreator.CreateVideoThumb(rec.FileName, thumbNail, true, true))
+                if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
                 {
-                  Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(rec.FileName));
+                  Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(recFileName));
                 }
                 else
                 {
-                  Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+                  Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
                 }
                 Thread.Sleep(250);
 
@@ -127,7 +144,7 @@ namespace TvPlugin
               }
               catch (Exception ex)
               {
-                Log.Error("RecordedTV: No thumbnail created for {0} - {1}", Utils.SplitFilename(rec.FileName),
+                Log.Error("RecordedTV: No thumbnail created for {0} - {1}", Utils.SplitFilename(recFileName),
                           ex.Message);
               }
             }
@@ -1310,41 +1327,16 @@ namespace TvPlugin
           }
         }
       */
-      string fileName = rec.FileName;
-
-      bool useRTSP = TVHome.UseRTSP();
-      bool recFileExists = File.Exists(fileName);
-
-      if (!recFileExists && !useRTSP) //singleseat      
-      {
-        if (TVHome.RecordingPath().Length > 0)
-        {
-          string path = Path.GetDirectoryName(fileName);
-          int index = path.LastIndexOf("\\");
-
-          if (index == -1)
-          {
-            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
-          }
-          else
-          {
-            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
-          }
-        }
-        else
-        {
-          fileName = fileName.Replace(":", "");
-          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
-        }
-      }
+      string fileName = GetFileName (rec.FileName);      
 
       //populates recording metadata to g_player;
       g_Player.currentFileName = fileName;
 
+      bool useRTSP = TVHome.UseRTSP();
       if (useRTSP)
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
-      }
+      }      
 
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
@@ -1366,6 +1358,36 @@ namespace TvPlugin
         return true;
       }
       return false;
+    }
+
+    private static string GetFileName(string fileName)
+    {
+      bool useRTSP = TVHome.UseRTSP();
+      bool fileExists = File.Exists(fileName);
+
+      if (!fileExists && !useRTSP) //singleseat      
+      {
+        if (TVHome.RecordingPath().Length > 0)
+        {
+          string path = Path.GetDirectoryName(fileName);
+          int index = path.IndexOf("\\");
+
+          if (index == -1)
+          {
+            fileName = TVHome.RecordingPath() + "\\" + Path.GetFileName(fileName);
+          }
+          else
+          {
+            fileName = TVHome.RecordingPath() + path.Substring(index) + "\\" + Path.GetFileName(fileName);
+          }
+        }
+        else
+        {
+          fileName = fileName.Replace(":", "");
+          fileName = "\\\\" + RemoteControl.HostName + "\\" + fileName;
+        }
+      }
+      return fileName;
     }
 
     private void OnDeleteRecording(int iItem)
