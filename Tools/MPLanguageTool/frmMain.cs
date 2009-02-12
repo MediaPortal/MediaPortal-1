@@ -109,6 +109,7 @@ namespace MPLanguageTool
     {
       folderBrowserDialog1.Description = "Please select a path where [MediaPortal.DeployTool.resx] can be found:";
       folderBrowserDialog1.SelectedPath = Application.StartupPath;
+      folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
       folderBrowserDialog1.ShowDialog();
       languagePath = folderBrowserDialog1.SelectedPath;
 
@@ -153,6 +154,7 @@ namespace MPLanguageTool
     {
       folderBrowserDialog1.Description = "Please select a path where [strings_en.xml] can be found:";
       folderBrowserDialog1.SelectedPath = Application.StartupPath;
+      folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
       folderBrowserDialog1.ShowDialog();
       languagePath = folderBrowserDialog1.SelectedPath;
 
