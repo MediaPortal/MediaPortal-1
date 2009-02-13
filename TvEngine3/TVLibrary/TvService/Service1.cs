@@ -371,7 +371,16 @@ namespace TvService
       bool accept = true;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
       List<PowerEventHandler> powerEventAllowers = new List<PowerEventHandler>();
+      
+      // Make a copy of _powerEventHandlers, because the handler might call AddPowerEventHandler
+      // or RemovePowerEventHandler when executing thus generating an exception when we iterate.
+      List<PowerEventHandler> listCopy = new List<PowerEventHandler>();
       foreach (PowerEventHandler handler in _powerEventHandlers)
+      {
+        listCopy.Add((PowerEventHandler)handler.Clone());
+      }
+      // Now iterate the 'copy'
+      foreach (PowerEventHandler handler in listCopy)
       {
         bool result = handler(powerStatus);
         if (result == false)
