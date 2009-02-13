@@ -1536,6 +1536,7 @@ namespace MediaPortal.Player
       for (int i = 0; i < driveCount; i++)
       {
         builderDriveLetter.Append(BassCd.BASS_CD_GetInfo(i).DriveLetter);
+        BassCd.BASS_CD_Release(i);
       }
       _cdDriveLetters = builderDriveLetter.ToString();
     }

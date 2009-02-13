@@ -245,6 +245,7 @@ namespace MediaPortal.Player
       _disableCDSpeed = disableCD.Split(',');
       _disableDVDSpeed = disableDVD.Split(',');
       driveSpeedLoaded = true;
+      BassMusicPlayer.ReleaseCDDrives();
     }
 
     /// <summary>
@@ -566,6 +567,7 @@ namespace MediaPortal.Player
           BassCd.BASS_CD_GetInfo(i, cdinfo);
           int maxspeed = (int) (cdinfo.maxspeed / 176.4);
           BassCd.BASS_CD_SetSpeed(i, maxspeed);
+          BassCd.BASS_CD_Release(i);
         }
       }
       if (_player != null)
