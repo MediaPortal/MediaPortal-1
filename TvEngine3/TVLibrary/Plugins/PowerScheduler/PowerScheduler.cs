@@ -490,6 +490,12 @@ namespace TvEngine.PowerScheduler
       }
 
       SetWakeupTimer();
+      // Here we should wait for QuerySuspendFailed / QueryStandByFailed
+      _querySuspendFailed = false;
+      do
+      {
+        System.Threading.Thread.Sleep(1000);
+      } while (_querySuspendFailed == false);
 
       // activate standby
       _denySuspendQuery = false;
@@ -938,22 +944,26 @@ namespace TvEngine.PowerScheduler
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
           Log.Debug("PowerScheduler: System wants to enter standby (query)");
-
+          // First request for suspend, this we will reject by returning false.
+          // Instead we will start a shutdown thread that will de-init and last will 
+          // issue a new suspend query that will accept.
           if (_denySuspendQuery)
           {
             Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-            SuspendSystem("", (int)(powerStatus == PowerEventType.QuerySuspend ? RestartOptions.Hibernate : RestartOptions.Suspend), false);
+            SuspendSystem("", (int)(powerStatus == PowerEventType.QuerySuspend ?  RestartOptions.Suspend : RestartOptions.Hibernate ), false);
             return false;
           }
-
           return true;
         case PowerEventType.Suspend:
         case PowerEventType.StandBy:
           _denySuspendQuery = true; // reset the flag
-
           Log.Debug("PowerScheduler: System is going to standby");
+          
           _standby = true;
-          _timer.Enabled = false;
+          if (_timer != null)
+          {
+            _timer.Enabled = false;
+          }
           _controller.EpgGrabberEnabled = false;
           FreeTVCards();
           SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
@@ -961,6 +971,7 @@ namespace TvEngine.PowerScheduler
           return true;
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
+          _querySuspendFailed = true;
           Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
           return true;
         case PowerEventType.ResumeAutomatic:
@@ -1215,6 +1226,7 @@ namespace TvEngine.PowerScheduler
     private bool _currentDisAllowShutdown = false;
     private String _currentDisAllowShutdownHandler = "";
     private bool _denySuspendQuery = true;
+    private bool _querySuspendFailed;
 
     public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
     {
