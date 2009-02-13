@@ -146,6 +146,10 @@ namespace MediaPortal.Player
             {
               h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
             }
+            if (strAudioCodec.Length > 0)
+            {
+              audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
             if (strAACAudioCodec.Length > 0)
             {
               aacaudioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
