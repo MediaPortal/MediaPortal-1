@@ -421,6 +421,7 @@ namespace TvEngine.PowerScheduler
       public PowerScheduler that;
       public RestartOptions how;
       public bool force;
+      public string source;
     }
 
     /// <summary>
@@ -450,6 +451,7 @@ namespace TvEngine.PowerScheduler
       data.that = this;
       data.how = (RestartOptions)how;
       data.force = force;
+      data.source = source;
 
       Thread suspendThread = new Thread(SuspendSystemThread);
       suspendThread.Name = "Powerscheduler Suspender";
@@ -459,10 +461,10 @@ namespace TvEngine.PowerScheduler
     protected static void SuspendSystemThread(object _data)
     {
       SuspendSystemThreadEnv data = (SuspendSystemThreadEnv)_data;
-      data.that.SuspendSystemThread(data.how, data.force);
+      data.that.SuspendSystemThread(data.source, data.how, data.force);
     }
 
-    protected void SuspendSystemThread(RestartOptions how, bool force)
+    protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
       Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
 
@@ -477,7 +479,7 @@ namespace TvEngine.PowerScheduler
 
 
 
-      Log.Info("PowerScheduler: Shutdown is allowed {0} ; forced: {1}", !disallow, force);
+      Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
       if (disallow && !force)
       {
@@ -490,13 +492,16 @@ namespace TvEngine.PowerScheduler
       }
 
       SetWakeupTimer();
-      // Here we should wait for QuerySuspendFailed / QueryStandByFailed
-      _querySuspendFailed = false;
-      do
+      if (source == "System")
       {
-        System.Threading.Thread.Sleep(1000);
-      } while (_querySuspendFailed == false);
-
+        // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
+        // the suspend request
+        _querySuspendFailed = false;
+        do
+        {
+          System.Threading.Thread.Sleep(1000);
+        } while (_querySuspendFailed == false);
+      }
       // activate standby
       _denySuspendQuery = false;
       Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
@@ -950,7 +955,7 @@ namespace TvEngine.PowerScheduler
           if (_denySuspendQuery)
           {
             Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-            SuspendSystem("", (int)(powerStatus == PowerEventType.QuerySuspend ?  RestartOptions.Suspend : RestartOptions.Hibernate ), false);
+            SuspendSystem("System", (int)(powerStatus == PowerEventType.QuerySuspend ?  RestartOptions.Suspend : RestartOptions.Hibernate ), false);
             return false;
           }
           return true;
