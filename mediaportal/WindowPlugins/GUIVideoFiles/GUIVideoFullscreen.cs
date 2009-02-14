@@ -185,25 +185,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void SaveSettings()
-    {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        string strKey = "movieplayer";
-        if (g_Player.IsDVD)
-        {
-          strKey = "dvdplayer";
-        }
-        if (g_Player.IsTVRecording)
-        {
-          strKey = "mytv";
-        }
-
-        string aspectRatioText = Util.Utils.GetAspectRatio(GUIGraphicsContext.ARType);
-        xmlwriter.SetValue(strKey, "defaultar", aspectRatioText);
-      }
-    }
-
     #endregion
 
     private void OnOsdAction(Action action)
@@ -472,7 +453,7 @@ namespace MediaPortal.GUI.Video
             msg.Label = status;
             OnMessage(msg);
 
-            SaveSettings();
+ 
           }
           break;
 
@@ -1285,7 +1266,6 @@ namespace MediaPortal.GUI.Video
 
       GUIGraphicsContext.ARType = Util.Utils.GetAspectRatioByLangID(dlg.SelectedId);
       strStatus = GUILocalizeStrings.Get(dlg.SelectedId);
-      SaveSettings();
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
                                       null);

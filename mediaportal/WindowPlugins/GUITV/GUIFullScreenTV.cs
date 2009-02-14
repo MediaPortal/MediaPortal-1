@@ -219,15 +219,6 @@ namespace MediaPortal.GUI.TV
     //				return m_sZapChannel;
     //			}
     //		}
-    private void SaveSettings()
-    {
-      using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        GUITVHome.Navigator.SaveSettings(xmlwriter);
-        xmlwriter.SetValue("mytv", "defaultar", Util.Utils.GetAspectRatio(GUIGraphicsContext.ARType));
-      }
-    }
-
     #endregion
 
     public override void OnAction(Action action)
@@ -542,7 +533,6 @@ namespace MediaPortal.GUI.TV
                                             0, 0, null);
             msg.Label = status;
             OnMessage(msg);
-            SaveSettings();
           }
           break;
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
@@ -1522,43 +1512,36 @@ namespace MediaPortal.GUI.TV
         case 942: // Stretch
           GUIGraphicsContext.ARType = Geometry.Type.Stretch;
           strStatus = "Stretch";
-          SaveSettings();
           break;
 
         case 943: // Normal
           GUIGraphicsContext.ARType = Geometry.Type.Normal;
           strStatus = "Normal";
-          SaveSettings();
           break;
 
         case 944: // Original
           GUIGraphicsContext.ARType = Geometry.Type.Original;
           strStatus = "Original";
-          SaveSettings();
           break;
 
         case 945: // Letterbox
           GUIGraphicsContext.ARType = Geometry.Type.LetterBox43;
           strStatus = "Letterbox 4:3";
-          SaveSettings();
           break;
 
         case 946: // Pan and scan
           GUIGraphicsContext.ARType = Geometry.Type.NonLinearStretch;
           strStatus = "Smart Stretch";
-          SaveSettings();
           break;
 
         case 947: // Zoom
           GUIGraphicsContext.ARType = Geometry.Type.Zoom;
           strStatus = "Zoom";
-          SaveSettings();
           break;
 
         case 1190: //14:9
           GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
           strStatus = "Zoom 14:9";
-          SaveSettings();
           break;
       }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
@@ -2428,7 +2411,6 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-      SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
 
