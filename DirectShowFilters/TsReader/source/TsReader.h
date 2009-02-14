@@ -64,6 +64,9 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 		) = 0;		        
 			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
 								ITSReaderAudioChange* pCallback) = 0;
+
+      virtual HRESULT STDMETHODCALLTYPE SetRelaxedMode( 
+								BOOL relaxedReading) = 0;
 		  //virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
 
@@ -125,6 +128,7 @@ public:
 	// ITSReader
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
+  STDMETHODIMP	  SetRelaxedMode(BOOL relaxedReading);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);

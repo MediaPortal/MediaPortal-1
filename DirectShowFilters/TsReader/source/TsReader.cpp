@@ -196,19 +196,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
     RegCloseKey(key);
   }
 
-	HANDLE hTest=CreateFile("C:\\RelaxTsReaderForBadReception.txt",(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL);
-  if (hTest==INVALID_HANDLE_VALUE)
-  {
-		LogDebug("Normal discontinuities filtering");
-		m_demultiplexer.m_DisableDiscontinuitiesFiltering=false ;
-	}
-	else
-	{
-		CloseHandle(hTest);
-		LogDebug("Relaxed discontinuities filtering");
-		m_demultiplexer.m_DisableDiscontinuitiesFiltering=true ;
-	}
-
+  // Set default filtering mode (normal), if not overriden externaly (see ITSReader::SetRelaxedMode)
+  m_demultiplexer.m_DisableDiscontinuitiesFiltering=false ;
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -356,6 +345,22 @@ STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange
 {
 	LogDebug("SetRequestAudioChangeCallback SET");
 	m_pRequestAudioCallback = pCallback;
+	return S_OK;
+}
+
+STDMETHODIMP CTsReaderFilter::SetRelaxedMode(BOOL relaxedReading)
+{
+  LogDebug("SetRelaxedMode");
+  if (relaxedReading == FALSE)
+  {
+		LogDebug("Normal discontinuities filtering");
+		m_demultiplexer.m_DisableDiscontinuitiesFiltering=false ;
+	}
+	else
+	{
+		LogDebug("Relaxed discontinuities filtering");
+		m_demultiplexer.m_DisableDiscontinuitiesFiltering=true ;
+  }
 	return S_OK;
 }
 

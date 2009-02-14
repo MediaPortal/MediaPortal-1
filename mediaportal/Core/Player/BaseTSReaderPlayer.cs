@@ -71,6 +71,9 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int SetRequestAudioChangeCallback(ITSReaderCallbackAudioChange callback);
+
+      [PreserveSig]
+      int SetRelaxedMode(int relaxedReading);
     }
 
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]

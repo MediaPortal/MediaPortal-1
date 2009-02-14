@@ -148,6 +148,7 @@ namespace MediaPortal.Player
     private bool enableDVBBitmapSubtitles = false;
     private bool enableDVBTtxtSubtitles = false;
     private bool enableMPAudioSwitcher = false;
+    private int  relaxTsReader = 0; // Disable dropping of discontinued dvb packets
 
     #endregion
 
@@ -264,7 +265,7 @@ namespace MediaPortal.Player
     protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
                                           ref string strAudioCodec, ref string strAACAudioCodec,
                                           ref string strH264VideoCodec, ref string strAudioRenderer,
-                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -287,6 +288,7 @@ namespace MediaPortal.Player
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
+        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1); // as int for passing through interface
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
@@ -296,7 +298,7 @@ namespace MediaPortal.Player
     protected void LoadMyVideosFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
                                               ref string strAudioCodec, ref string strAACAudioCodec,
                                               ref string strH264VideoCodec, ref string strAudioRenderer,
-                                              ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles)
+                                              ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -319,6 +321,7 @@ namespace MediaPortal.Player
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableMPAudioSwitcher = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
+        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1); // as int for passing through interface
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", false);
       }
     }
@@ -390,13 +393,13 @@ namespace MediaPortal.Player
         {
           LoadMyVideosFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
                                      ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                                     ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+                                     ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
         }
         else
         {
           LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
                                  ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles);
+                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
         }
 
         if (_isRadio == false)
@@ -476,6 +479,7 @@ namespace MediaPortal.Player
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter) reader;
         ITSReader ireader = (ITSReader) reader;
+        ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
         ireader.SetTsReaderCallback(this);
         ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer:add TsReader to graph");

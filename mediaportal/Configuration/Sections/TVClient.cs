@@ -73,6 +73,8 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox txtNotifyAfter;
     private MPLabel labelNotifyTimeout;
     private ColumnHeader columnHeader7;
+    private MPGroupBox grpTsReader;
+    private MPCheckBox cbRelaxTsReader;
     private ListViewColumnSorter _columnSorter;
 
     #endregion
@@ -104,6 +106,7 @@ namespace MediaPortal.Configuration.Sections
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+        cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
 
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
@@ -263,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
         xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
+        xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
 
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
         xmlwriter.SetValueAsBool("mytv", "enableTvNotifier", chkTVnotifications.Checked);
@@ -341,6 +345,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2 = new MPLabel();
       this.txtNotifyBefore = new MPTextBox();
       this.chkTVnotifications = new MPCheckBox();
+      this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -355,6 +361,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.SuspendLayout();
       this.mpGroupBox8.SuspendLayout();
       this.mpGroupBox7.SuspendLayout();
+      this.grpTsReader.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -453,6 +460,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageGeneralSettings
       // 
+      this.tabPageGeneralSettings.Controls.Add(this.grpTsReader);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox6);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox5);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox2);
@@ -972,6 +980,30 @@ namespace MediaPortal.Configuration.Sections
       this.chkTVnotifications.UseVisualStyleBackColor = true;
       this.chkTVnotifications.CheckedChanged += new EventHandler(this.chkTVnotifications_CheckedChanged);
       // 
+      // grpTsReader
+      // 
+      this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
+      this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.grpTsReader.Location = new System.Drawing.Point(16, 235);
+      this.grpTsReader.Name = "grpTsReader";
+      this.grpTsReader.Size = new System.Drawing.Size(431, 53);
+      this.grpTsReader.TabIndex = 12;
+      this.grpTsReader.TabStop = false;
+      this.grpTsReader.Text = "TsReader Options";
+      // 
+      // cbRelaxTsReader
+      // 
+      this.cbRelaxTsReader.AutoSize = true;
+      this.cbRelaxTsReader.Checked = true;
+      this.cbRelaxTsReader.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbRelaxTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbRelaxTsReader.Location = new System.Drawing.Point(22, 19);
+      this.cbRelaxTsReader.Name = "cbRelaxTsReader";
+      this.cbRelaxTsReader.Size = new System.Drawing.Size(347, 17);
+      this.cbRelaxTsReader.TabIndex = 0;
+      this.cbRelaxTsReader.Text = "Don\'t drop discontinued packets in TsReader (can reduce stuttering)";
+      this.cbRelaxTsReader.UseVisualStyleBackColor = true;
+      // 
       // TVClient
       // 
       this.Controls.Add(this.tabControlTVGeneral);
@@ -1000,6 +1032,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox8.PerformLayout();
       this.mpGroupBox7.ResumeLayout(false);
       this.mpGroupBox7.PerformLayout();
+      this.grpTsReader.ResumeLayout(false);
+      this.grpTsReader.PerformLayout();
       this.ResumeLayout(false);
     }
 
