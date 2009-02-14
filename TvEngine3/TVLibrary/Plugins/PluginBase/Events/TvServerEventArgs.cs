@@ -103,7 +103,7 @@ namespace TvEngine.Events
     IList<Schedule> _schedules;
     IList<Conflict> _conflicts;
     object _argsUpdatedState;
-    private IList<EpgProgram> _epgPrograms;
+    private EpgChannel _epgChannel;
     //
     readonly TvServerEventType _eventType;
     #endregion
@@ -193,11 +193,11 @@ namespace TvEngine.Events
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
     /// <param name="eventType">Type of the event.</param>
-    /// <param name="epgPrograms">An IList of the new programs to import.</param>
-    public TvServerEventArgs(TvServerEventType eventType, IList<EpgProgram> epgPrograms)
+    /// <param name="epgChannel">The epg channel</param>
+    public TvServerEventArgs(TvServerEventType eventType, EpgChannel epgChannel)
     {
       _eventType = eventType;
-      _epgPrograms = epgPrograms;
+      _epgChannel = epgChannel;
     }
     #endregion
 
@@ -304,12 +304,12 @@ namespace TvEngine.Events
       set { _argsUpdatedState = value; }
     }
     /// <summary>
-    /// List of recieved EPG programs.
+    /// The received epgChannel
     /// </summary>
-    public IList<EpgProgram> EpgPrograms
+    public EpgChannel EpgChannel
     {
-      get { return _epgPrograms; }
-      set { _epgPrograms = value; }
+      get { return _epgChannel; }
+      set { _epgChannel = value; }
     }
     //
     /// <summary>

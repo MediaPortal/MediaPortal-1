@@ -2479,11 +2479,11 @@ namespace TvService
     /// <summary>
     /// This method will be called by the EPG grabber.
     /// </summary>
-    public void OnImportEpgPrograms(IList<EpgProgram> epgPrograms)
+    public void OnImportEpgPrograms(EpgChannel epgChannel)
     {
       try
       {
-        TvServerEventArgs eventArgs = new TvServerEventArgs(TvServerEventType.ImportEpgPrograms, epgPrograms);
+        TvServerEventArgs eventArgs = new TvServerEventArgs(TvServerEventType.ImportEpgPrograms, epgChannel);
         Fire(this, eventArgs);
       } catch (Exception ex)
       {

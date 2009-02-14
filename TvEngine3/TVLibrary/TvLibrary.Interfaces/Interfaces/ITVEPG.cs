@@ -90,6 +90,6 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// This method will be called by the EPG grabber.
     /// </summary>
-    void OnImportEpgPrograms(IList<EpgProgram> epgPrograms);
+    void OnImportEpgPrograms(EpgChannel epgChannel);
   }
 }

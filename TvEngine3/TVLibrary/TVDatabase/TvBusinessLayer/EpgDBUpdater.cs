@@ -127,7 +127,7 @@ namespace TvDatabase
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
       // Raise an event with the data so that other plugins can handle the data on their own
-      _epgEvents.OnImportEpgPrograms(epgChannel.Programs);
+      _epgEvents.OnImportEpgPrograms(epgChannel);
     }
 
     private void ImportPrograms(Channel dbChannel, IList<EpgProgram> epgPrograms)
