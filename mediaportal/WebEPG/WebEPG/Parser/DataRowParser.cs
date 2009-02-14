@@ -57,7 +57,7 @@ namespace MediaPortal.WebEPG.Parser
     {
       ArrayList sourceData = GetElements(source);
 
-      for (int i = 0; i < _templateData.Count; i++)
+      for (int i = 0; i < _templateData.Count && i < sourceData.Count; i++)
       {
         string template = (string) _templateData[i];
 
