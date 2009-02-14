@@ -290,14 +290,7 @@ namespace TvPlugin
     //			}
     //		}
 
-    private void SaveSettings()
-    {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        TVHome.Navigator.SaveSettings(xmlwriter);
-        xmlwriter.SetValue("mytv", "defaultar", Utils.GetAspectRatio(GUIGraphicsContext.ARType));
-      }
-    }
+   
 
     #endregion
 
@@ -593,7 +586,7 @@ namespace TvPlugin
             msg.Label = status;
             OnMessage(msg);
 
-            SaveSettings();
+
           }
           break;
 
@@ -1966,7 +1959,7 @@ namespace TvPlugin
 
       GUIGraphicsContext.ARType = Utils.GetAspectRatioByLangID(dlg.SelectedId);
       strStatus = GUILocalizeStrings.Get(dlg.SelectedId);
-      SaveSettings();
+
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
                                       null);
@@ -2970,7 +2963,7 @@ namespace TvPlugin
           }
         }
       }*/
-      SaveSettings();
+ 
       base.OnPageDestroy(newWindowId);
     }
 
