@@ -496,11 +496,12 @@ namespace TvEngine.PowerScheduler
       {
         // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
         // the suspend request
-        _querySuspendFailed = false;
+        _querySuspendFailed++;
+        Log.Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
         do
         {
           System.Threading.Thread.Sleep(1000);
-        } while (_querySuspendFailed == false);
+        } while (_querySuspendFailed>0);
       }
       // activate standby
       _denySuspendQuery = false;
@@ -976,7 +977,7 @@ namespace TvEngine.PowerScheduler
           return true;
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
-          _querySuspendFailed = true;
+          _querySuspendFailed--;
           Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
           return true;
         case PowerEventType.ResumeAutomatic:
@@ -1231,7 +1232,7 @@ namespace TvEngine.PowerScheduler
     private bool _currentDisAllowShutdown = false;
     private String _currentDisAllowShutdownHandler = "";
     private bool _denySuspendQuery = true;
-    private bool _querySuspendFailed;
+    private int _querySuspendFailed = 0;
 
     public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
     {
