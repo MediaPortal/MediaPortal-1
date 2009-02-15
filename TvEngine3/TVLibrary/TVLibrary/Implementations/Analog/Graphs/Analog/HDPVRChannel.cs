@@ -37,37 +37,30 @@ namespace TvLibrary.Implementations.Analog
     #region variables
     private readonly TvCardHDPVR _card;
     private readonly IBaseFilter _filterTsWriter;
-    private readonly IFilterGraph2 _graphBuilder;
     private readonly ITsFilter _tsFilterInterface;
-    private Int32 _pmtPid = 256; //always 256 for HDPVR
+    private Int32 _pmtPid;
     private const int _serviceID = 1;
     private Int32 _pmtVersion = -1;
     private int _pmtLength;
     private byte[] _pmtData;
-
-    private ManualResetEvent _eventPMT; // gets signaled when PMT arrives
-
+    private bool _graphRunning;
     #endregion
 
-    #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    public HDPVRChannel(TvCardHDPVR card, IFilterGraph2 graphBuilder, Int32 subchannelId, IChannel channel, IBaseFilter filterTsWriter)
+    public HDPVRChannel(TvCardHDPVR card, Int32 subchannelId, IChannel channel, IBaseFilter filterTsWriter)
     {
       _card = card;
-      _graphBuilder = graphBuilder;
       _subChannelId = subchannelId;
       _currentChannel = channel;
       _filterTsWriter = filterTsWriter;
       _hasTeletext = false;
-      _parameters = new ScanParameters();
       _tsFilterInterface = (ITsFilter)_filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelId);
       _pmtData = null;
       _pmtLength = 0;
     }
-    #endregion
 
     #region tuning and graph methods
 
@@ -78,9 +71,12 @@ namespace TvLibrary.Implementations.Analog
     public override void OnBeforeTune()
     {
       Log.Log.WriteFile("HDPVR: subch:{0} OnBeforeTune", _subChannelId);
-      if (IsTimeShifting && _subChannelId >= 0)
+      if (IsTimeShifting)
       {
-        _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
+        if (_subChannelId >= 0)
+        {
+          _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
+        }
       }
     }
 
@@ -94,85 +90,11 @@ namespace TvLibrary.Implementations.Analog
       if (IsTimeShifting && _subChannelId >= 0)
       {
         _tsFilterInterface.TimeShiftPause(_subChannelId, 0);
+
         //hack
         OnNotify(PidType.Audio);
         OnNotify(PidType.Video);
       }
-    }
-
-    private void WaitForPMT()
-    {
-      _pmtPid = -1;
-      _pmtVersion = -1;
-
-      HDPVRChannel channel = _currentChannel as HDPVRChannel;
-      if (channel != null)
-      {
-        _eventPMT = new ManualResetEvent(false);
-        if (SetupPmtGrabber(_pmtPid, _serviceID))
-        {
-          DateTime dtNow = DateTime.Now;
-          int timeoutPMT = _parameters.TimeOutPMT * 1000;
-          Log.Log.Debug("WaitForPMT: Waiting for PMT.");
-          if (_eventPMT.WaitOne(timeoutPMT, true))
-          {
-            _eventPMT.Close();
-            _eventPMT = null;
-            TimeSpan ts = DateTime.Now - dtNow;
-            Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
-            IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
-            _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelId, pmtMem);
-            if (_pmtLength > 6)
-            {
-              _pmtData = new byte[_pmtLength];
-            }
-            _pmtData = new byte[_pmtLength];
-            Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
-            Marshal.FreeCoTaskMem(pmtMem);
-            _pmtVersion = ((_pmtData[5] >> 1) & 0x1F);
-          }
-          else
-          {
-            TimeSpan ts = DateTime.Now - dtNow;
-            Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
-          }
-        }
-      }
-      if (_eventPMT != null)
-      {
-        _eventPMT.Close();
-        _eventPMT = null;
-      }
-      return;
-    }
-
-    /// <summary>
-    /// Checks if the graph is running
-    /// </summary>
-    /// <returns>true, when the graph is running</returns>
-    protected bool GraphRunning()
-    {
-      bool graphRunning = false;
-
-      if (_graphBuilder != null)
-      {
-        try
-        {
-          FilterState state;
-          ((IMediaControl)_graphBuilder).GetState(10, out state);
-          graphRunning = (state == FilterState.Running);
-        } catch (InvalidComObjectException)
-        {
-          // RCW error
-          // ignore this error as, the graphbuilder is being disposed of in another thread.         
-          return false;
-        } catch (Exception e)
-        {
-          Log.Log.Error("GraphRunning error : {0}", e.Message);
-        }
-      }
-      //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
-      return graphRunning;
     }
 
     /// <summary>
@@ -183,20 +105,22 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStart()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
+      Log.Log.WriteFile("HDPVR: subch:{0} OnGraphStart", _subChannelId);
 
-      if (GraphRunning())
+      if (SetupPmtGrabber(256, _serviceID))
       {
-        WaitForPMT();
-      }
-      else
-      {
-        Log.Log.WriteFile("subch:{0} Graph already running - skip WaitForPMT", _subChannelId);
-        if (_teletextDecoder != null)
-          _teletextDecoder.ClearBuffer();
-
-        _pmtPid = -1;
-        _pmtVersion = -1;
+        DateTime dtNow = DateTime.Now;
+        while (_pmtVersion < 0)
+        {
+          Log.Log.Write("subch:{0} wait for pmt", _subChannelId);
+          Thread.Sleep(20);
+          TimeSpan ts = DateTime.Now - dtNow;
+          if (ts.TotalMilliseconds >= 10000)
+          {
+            Log.Log.Debug("Timedout waiting for PMT after {0} seconds. Increase the PMT timeout value?", ts.TotalSeconds);
+            break;
+          }
+        }
       }
     }
 
@@ -207,13 +131,14 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="serviceId">The service id.</param>
     protected bool SetupPmtGrabber(int pmtPid, int serviceId)
     {
-      Log.Log.Info("HDPVR: subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      Log.Log.Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       if (pmtPid < 0)
         return false;
-      //if (pmtPid == _pmtPid) return false;
+      if (pmtPid == _pmtPid)
+        return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      Log.Log.Write("HDPVR: subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelId, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelId, pmtPid, serviceId);
       return true;
@@ -225,18 +150,16 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStarted()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
-
-      if (!GraphRunning())
+      Log.Log.WriteFile("HDPVR: subch:{0} OnGraphStarted", _subChannelId);
+      _graphRunning = true;
+      _dateTimeShiftStarted = DateTime.MinValue;
+      SetupPmtGrabber(_pmtPid, _serviceID);
+      //_pmtTimer.Enabled = true;
+      while (_pmtVersion < 0)
       {
-        _pmtPid = -1;
-        _pmtVersion = -1;
-
-        Log.Log.WriteFile("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
-        return;
+        Log.Log.Write("subch:{0} wait for pmt:{1:X}", _subChannelId, _pmtPid);
+        Thread.Sleep(20);
       }
-
-      WaitForPMT();
     }
 
     /// <summary>
@@ -245,22 +168,10 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStop()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStop", _subChannelId);
-      _pmtPid = -1;
-      _dateTimeShiftStarted = DateTime.MinValue;
-      _dateRecordingStarted = DateTime.MinValue;
-      _startTimeShifting = false;
-      _startRecording = false;
-      _pmtVersion = -1;
-      _recordingFileName = "";
-      _currentChannel = null;
-      _recordTransportStream = false;
-
       if (_tsFilterInterface != null)
       {
         _tsFilterInterface.RecordStopRecord(_subChannelId);
         _tsFilterInterface.TimeShiftStop(_subChannelId);
-        _graphState = GraphState.Created;
       }
     }
 
@@ -270,8 +181,6 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStopped()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStopped", _subChannelId);
-      _graphState = GraphState.Created;
     }
 
     #endregion
@@ -284,40 +193,24 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="fileName">timeshifting filename</param>
     protected override bool OnStartTimeShifting(string fileName)
     {
-      if (!PMTreceived)
-      {
-        Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
-        return false;
-      }
-      if (_card.SupportsQualityControl && !IsRecording)
-      {
-        _card.Quality.StartPlayback();
-      }
       _timeshiftFileName = fileName;
       Log.Log.WriteFile("HDPVR: SetTimeShiftFileName:{0}", fileName);
       Log.Log.WriteFile("HDPVR: SetTimeShiftFileName: _subChannelId {0}", _subChannelId);
-      if (_tsFilterInterface != null)
-      {
-        _tsFilterInterface.SetVideoAudioObserver(_subChannelId, this);
+      ScanParameters parameters = _card.Parameters;
+      _tsFilterInterface.TimeShiftSetParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles, parameters.MaximumFileSize);
+      _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
+      _tsFilterInterface.TimeShiftSetMode(_subChannelId, TimeShiftingMode.TransportStream);
 
-        _tsFilterInterface.TimeShiftSetParams(_subChannelId, _parameters.MinimumFiles, _parameters.MaximumFiles,
-                                              _parameters.MaximumFileSize);
-        _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
-        _tsFilterInterface.TimeShiftSetMode(_subChannelId, TimeShiftingMode.TransportStream);
+      _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
+      _tsFilterInterface.TimeShiftSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
+      _tsFilterInterface.AnalyzerSetVideoPid(_subChannelId, 0x1011);
+      _tsFilterInterface.AnalyzerSetAudioPid(_subChannelId, 0x1100);
+      _tsFilterInterface.TimeShiftPause(_subChannelId, 0);
 
-        _startTimeShifting = false;
+      _tsFilterInterface.TimeShiftStart(_subChannelId);
+      _tsFilterInterface.SetVideoAudioObserver(_subChannelId, this);
+      _dateTimeShiftStarted = DateTime.Now;
 
-        _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
-        //HDPVR pmt is always 256
-        _tsFilterInterface.TimeShiftSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
-        //HDPVR video pid is always 4113
-        _tsFilterInterface.AnalyzerSetVideoPid(_subChannelId, 0x1011);
-        //HDPVR audio pdi is always 4352
-        _tsFilterInterface.AnalyzerSetAudioPid(_subChannelId, 0x1100);
-        _tsFilterInterface.TimeShiftPause(_subChannelId, 0);
-        _tsFilterInterface.TimeShiftStart(_subChannelId);
-        _dateTimeShiftStarted = DateTime.Now;
-      }
       return true;
     }
 
@@ -327,16 +220,9 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopTimeShifting()
     {
-      if (_timeshiftFileName != "")
-      {
-        Log.Log.WriteFile("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelId);
-        if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.TimeShiftStop(_subChannelId);
-        }
-        _graphState = GraphState.Created;
-      }
-      _timeshiftFileName = "";
+      Log.Log.WriteFile("HDPVR: StopTimeShifting()");
+      _tsFilterInterface.SetVideoAudioObserver(_subChannelId, null);
+      _tsFilterInterface.TimeShiftStop(_subChannelId);
     }
 
     /// <summary>
@@ -347,31 +233,17 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStartRecording(bool transportStream, string fileName)
     {
-      if (_card.SupportsQualityControl)
-      {
-        _card.Quality.StartRecord();
-      }
       _recordingFileName = fileName;
       _tsFilterInterface.RecordSetRecordingFileName(_subChannelId, fileName);
       _tsFilterInterface.RecordSetMode(_subChannelId, TimeShiftingMode.TransportStream);
-      if (!PMTreceived)
+      _tsFilterInterface.RecordSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
+      _startRecording = true;
+      int hr = _tsFilterInterface.RecordStartRecord(_subChannelId);
+      if (hr != 0)
       {
-        Log.Log.WriteFile("subch:{0} StartRecord no pmt received yet", _subChannelId);
-        _startRecording = true;
+        Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
       }
-      else
-      {
-
-        _tsFilterInterface.RecordSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
-        _startRecording = true;
-        Int32 hr = _tsFilterInterface.RecordStartRecord(_subChannelId);
-        if (hr != 0)
-        {
-          Log.Log.Error("HDPVR: subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
-        }
-        _graphState = GraphState.Recording;
-      }
-      _dateRecordingStarted = DateTime.Now;
+      _graphState = GraphState.Recording;
     }
 
     /// <summary>
@@ -380,19 +252,11 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      if (IsRecording)
+      Log.Log.WriteFile("HDPVR: StopRecord()");
+      _tsFilterInterface.RecordStopRecord(_subChannelId);
+      if (_card.SupportsQualityControl && IsTimeShifting)
       {
-        Log.Log.WriteFile("subch:{0}-{1} tswriter StopRecording...", _subChannelId, _subChannelId);
-
-        if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.RecordStopRecord(_subChannelId);
-          if (_card.SupportsQualityControl && IsTimeShifting)
-          {
-            _card.Quality.StartPlayback();
-          }
-          _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
-        }
+        _card.Quality.StartPlayback();
       }
     }
 
@@ -407,7 +271,6 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        //TODO: better info on audio stream
         return null;
       }
     }
@@ -419,7 +282,6 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        //TODO: better info on audio stream
         return null;
       }
       set
@@ -475,27 +337,43 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     protected override void OnDecompose()
     {
-      if (_tsFilterInterface != null && _subChannelId >=0)
+      if (_tsFilterInterface != null)
       {
         _tsFilterInterface.DeleteChannel(_subChannelId);
-        _subChannelId = -1;
       }
     }
 
     #endregion
 
-    #region tswriter callback handlers
     /// <summary>
     /// Called when the PMT has been received.
     /// </summary>
     /// <returns></returns>
     public int OnPMTReceived()
     {
-      if (_eventPMT != null)
+      IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
+      _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelId, pmtMem);
+      if (_pmtLength > 6)
       {
-        Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, GraphRunning());
-        _eventPMT.Set();
+        _pmtData = new byte[_pmtLength];
       }
+
+      Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
+      Marshal.FreeCoTaskMem(pmtMem);
+
+      _pmtVersion++;
+
+      try
+      {
+        Log.Log.WriteFile("subch:{0} OnPMTReceived() {1}", _subChannelId, _graphRunning);
+        if (_graphRunning == false)
+          return 0;
+        _pmtVersion++;
+      } catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+
       return 0;
     }
 
@@ -508,28 +386,10 @@ namespace TvLibrary.Implementations.Analog
     {
       if (pidType == PidType.Video)
       {
-        //adds delay to avoid stutter
         Thread.Sleep(1000);
       }
       return base.OnNotify(pidType);
     }
-    #endregion
-
-    #region properties
-
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
-    public bool PMTreceived
-    {
-      get
-      {
-        return _pmtVersion > -1;
-      }
-    }
-
-    #endregion
-
-
   }
 }
+
