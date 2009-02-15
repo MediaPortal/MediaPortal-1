@@ -137,7 +137,16 @@ void Log(char* txt)
   
   FILE* fp = fopen(logFile,"a+");
   fseek(fp,0,SEEK_END);
-  fprintf(fp,txt);
+  
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+
+  fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s",
+    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    systemTime.wMilliseconds,
+    GetCurrentThreadId(),
+    txt);
   fclose(fp);
 }
 //*******************************************************************************************************************
@@ -330,7 +339,6 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 		  textureData[selected].vertices[i].z=0;
 		  //textureData[selected].vertices[i].rhw=1;
 	  }
-
   }
   textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
@@ -487,7 +495,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
     viewportWholeScreen.MinZ = 0.0;
 		m_pDevice->SetViewport(&viewportWholeScreen);
 
-
 		FontEnginePresentTextures();
 		m_pDevice->SetViewport(&viewport);
 	}
@@ -519,7 +526,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	float tx2=uoff+umax;
 	float ty1=voff;
 	float ty2=voff+vmax;
-	
 
 	if (viewport.X>0 || viewport.Y>0)
 	{
@@ -591,7 +597,9 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   //upper left
 	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
       texture->vertices[iv].x != x1 || texture->vertices[iv].y !=y1 || texture->vertices[iv].z!=z1)
+  {
 		texture->updateVertexBuffer=true;
+  }
 	texture->vertices[iv].x=x1 ;  
   texture->vertices[iv].y=y1 ; 
   texture->vertices[iv].z=z1;
@@ -603,7 +611,9 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   //bottom left
 	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
       texture->vertices[iv].x != x2 || texture->vertices[iv].y !=y2 || texture->vertices[iv].z!=z2)
+  {
 		texture->updateVertexBuffer=true;
+  }
 	texture->vertices[iv].x=x2;  
   texture->vertices[iv].y=y2;
 	texture->vertices[iv].z=z2; 
@@ -615,7 +625,9 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   //bottom right
 	if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
       texture->vertices[iv].x != x3 || texture->vertices[iv].y !=y3 || texture->vertices[iv].z!=z3)
+  {
 		texture->updateVertexBuffer=true;
+  }
 	texture->vertices[iv].x=x3;  
   texture->vertices[iv].y=y3; 
   texture->vertices[iv].z=z3;
@@ -626,7 +638,9 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   //upper right
 	if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
       texture->vertices[iv].x != x4 || texture->vertices[iv].y !=y4 || texture->vertices[iv].z!=z4)
+  {
 		texture->updateVertexBuffer=true;
+  }
 	texture->vertices[iv].x=x4;  
   texture->vertices[iv].y=y4;
 	texture->vertices[iv].z=z4; 
@@ -693,7 +707,6 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
   float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
   
-  
   CUSTOMVERTEX2 verts[4];
   //CUSTOMVERTEX verts[4];
   verts[0].x = x1; 
@@ -756,7 +769,6 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
   m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
   m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-
 
   m_pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_MODULATE);//MODULATE );
   m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -851,7 +863,7 @@ void FontEnginePresentTextures()
   catch(...)
   {
     char log[128];
-	sprintf(log,"ERROR Fontengine:FontEnginePresentTextures()\n");
+    sprintf(log,"ERROR Fontengine:FontEnginePresentTextures()\n");
     Log(log);  
   }
   inPresentTextures=false;
@@ -871,7 +883,6 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 		//fontData[fontNumber].vertices[i].rhw=1;
 	}
 
-
 	fontData[fontNumber].iFirstChar    = firstChar;
 	fontData[fontNumber].iEndChar      = endChar;
 	fontData[fontNumber].fTextureScale = textureScale;
@@ -879,10 +890,10 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 	fontData[fontNumber].fTextureHeight= textureHeight;
 	fontData[fontNumber].pTexture      = (LPDIRECT3DTEXTURE9)fontTexture;
 	fontData[fontNumber].fSpacingPerChar = fSpacingPerChar;
-	fontData[fontNumber].iv			   =0;
+	fontData[fontNumber].iv=0;
 	fontData[fontNumber].dwNumTriangles=0;
 
-	LPDIRECT3DVERTEXBUFFER9 g_pVB        = NULL;
+	LPDIRECT3DVERTEXBUFFER9 g_pVB = NULL;
 	int hr=m_pDevice->CreateVertexBuffer(	MaxNumfontVertices*sizeof(CUSTOMVERTEX),
 											D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,
 											m_ipoolFormat, 
@@ -987,7 +998,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	int lineNr=0;
 	for (int i=0; i < (int)wcslen(text);++i)
 	{
-        WCHAR c=text[i];
+    WCHAR c=text[i];
 		if (c == '\n')
 		{
 			lineWidths[lineNr]=totalWidth;
@@ -1002,7 +1013,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 		else if (totalWidth >= maxWidth)		// Reached max width?
 			continue;							// Skip until row break or end of text
 
-        int index=c-font->iFirstChar;
+    int index=c-font->iFirstChar;
 		float tx1 = font->textureCoord[index][0];
 		float tx2 = font->textureCoord[index][2];
 
@@ -1033,7 +1044,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 		else if (totalWidth >= maxWidth)		// Reached max width?
 			continue;							// Skip until row break or end of text
 
-        int index=c-font->iFirstChar;
+    int index=c-font->iFirstChar;
 		float tx1 = font->textureCoord[index][0];
 		float ty1 = font->textureCoord[index][1];
 		float tx2 = font->textureCoord[index][2];
@@ -1197,7 +1208,9 @@ void FontEngineRemoveFont(int fontNumber)
 	fontData[fontNumber].pIndexBuffer=NULL;
 
 	if (fontData[fontNumber].vertices!=NULL)
+  {
 		delete[] fontData[fontNumber].vertices;
+  }
 	fontData[fontNumber].vertices=NULL;
 
 	fontData[fontNumber].pTexture=NULL;
@@ -1212,14 +1225,21 @@ void PrintStatistics()
 
 void FontEngineSetTexture(void* surface)
 {
-	//LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
-	//void *pContainer = NULL;
-	//int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+  try
+  {
+    //LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+	  //void *pContainer = NULL;
+	  //int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
 
-	//LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)pContainer;
-	LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)surface;
-	m_pDevice->SetTexture(0, pTexture);
-	//pTexture->Release();
+	  //LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)pContainer;
+	  LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)surface;
+	  m_pDevice->SetTexture(0, pTexture);
+  	//pTexture->Release();
+  }
+  catch(...)
+  {
+    Log("error in FontEngineSetTexture");
+  }
 }
 
 void FontEngineDrawSurface(int fx, int fy, int nw, int nh, 
