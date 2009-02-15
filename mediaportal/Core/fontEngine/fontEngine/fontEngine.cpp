@@ -131,7 +131,7 @@ void Log(char* txt)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\fontengine.log",folder);
+    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\fontEngine.log",folder);
     pathBuild=true;
   }
   
@@ -251,7 +251,7 @@ void FontEngineRemoveTexture(int textureNo)
   if(inPresentTextures)
   {
     char log[128];
-    sprintf(log,"FontEngineRemoveTexture -- called when inPresenTextures == true \n");
+    sprintf(log,"FontEngineRemoveTexture -- called when inPresentTextures == true \n");
     Log(log);    
   }
 
@@ -295,7 +295,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   if(inPresentTextures)
   {
     char log[128];
-    sprintf(log,"FontEngineAddTexture -- called when inPresenTextures == true \n");
+    sprintf(log,"FontEngineAddTexture -- called when inPresentTextures == true \n");
     Log(log);    
   }
 
