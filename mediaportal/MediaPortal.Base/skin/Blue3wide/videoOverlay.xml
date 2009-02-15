@@ -21,8 +21,8 @@
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_play.png</texture>
@@ -34,8 +34,8 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_pause.png</texture>
@@ -47,8 +47,8 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_fastforward.png</texture>
@@ -60,8 +60,8 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_rewind.png</texture>
@@ -88,9 +88,9 @@
       <type>image</type>
       <id>0</id>
       <posX>78</posX>
-      <posY>523</posY>
-      <width>155</width>
-      <height>155</height>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -99,10 +99,10 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>9</id>
-       <posX>86</posX>
-      <posY>528</posY>
-      <width>140</width>
-      <height>138</height>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>

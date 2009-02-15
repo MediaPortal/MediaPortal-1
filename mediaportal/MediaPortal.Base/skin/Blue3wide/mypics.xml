@@ -278,9 +278,9 @@
       <type>image</type>
       <id>0</id>
       <posX>78</posX>
-      <posY>523</posY>
-      <width>155</width>
-      <height>155</height>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
       <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <visible>[facadeview.list|facadeview.filmstrip]+[Control.HasFocus(50) + player.hasmedia]</visible>
@@ -290,9 +290,9 @@
       <type>videowindow</type>
       <id>0</id>
       <posX>86</posX>
-      <posY>528</posY>
-      <width>140</width>
-      <height>138</height>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
@@ -304,8 +304,8 @@
       <description>play logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_play.png</texture>
@@ -316,8 +316,8 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>0</id>
-      <posX>251</posX>
-      <posY>575</posY>
+      <posX>301</posX>
+      <posY>590</posY>
       <width>52</width>
       <height>52</height>
       <texture>logo_pause.png</texture>

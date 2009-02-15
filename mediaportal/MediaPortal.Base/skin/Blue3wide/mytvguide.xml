@@ -257,9 +257,9 @@
       <type>image</type>
       <id>98</id>
       <posX>78</posX>
-      <posY>523</posY>
-      <width>155</width>
-      <height>155</height>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
       <texture>Picture_cover.png</texture>
       <visible>Player.HasVideo</visible>
     </control>
@@ -267,10 +267,10 @@
       <description>TV preview window</description>
       <type>videowindow</type>
       <id>99</id>
-       <posX>86</posX>
-      <posY>528</posY>
-      <width>140</width>
-      <height>138</height>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <action>18</action>
