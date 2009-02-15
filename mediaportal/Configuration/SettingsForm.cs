@@ -127,7 +127,7 @@ namespace MediaPortal.Configuration
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
-    private string _windowName = "MediaPortal - Setup";
+    private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
     private LinkLabel linkLabel1;
     private ToolStrip toolStrip1;
