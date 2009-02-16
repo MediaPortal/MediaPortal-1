@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
@@ -790,6 +791,15 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
                 Log.Warn("Planescene caught DeviceLostException in InternalPresentImage");
             }
+            catch (DirectXException dex)
+            {
+              if (dex.ErrorCode == -2005530508 || // GPU_HUNG
+              dex.ErrorCode == -2005530512) // GPU_REMOVED
+              {
+                Log.Info("Planescene caught GPU_HUNG in InternalPresentImage");
+                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+              }
+            }
             catch (Exception ex)
             {
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
@@ -941,7 +951,17 @@ namespace MediaPortal.Player
             {
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
                 Log.Warn("Planescene.InternalPresentSurface caught DeviceLostException in InternalPresentSurface");
+            } 
+            catch (DirectXException dex)
+            {
+              if (dex.ErrorCode == -2005530508 || // GPU_HUNG
+              dex.ErrorCode == -2005530512) // GPU_REMOVED
+              {
+                Log.Info("Planescene.InternalPresentSurface caught GPU_HUNG in InternalPresentSurface");
+                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+              }
             }
+            
             catch (Exception ex)
             {
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;

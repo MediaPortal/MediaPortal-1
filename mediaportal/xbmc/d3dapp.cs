@@ -49,6 +49,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using WPFMediaKit.DirectX;
 
@@ -92,7 +93,7 @@ namespace MediaPortal
     protected int m_iVolume = -1;
 
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
-                             // We need to keep track of our enumeration settings
+    // We need to keep track of our enumeration settings
 
     protected D3DSettings graphicsSettings = new D3DSettings();
     protected bool isMaximized = false; // Are we maximized?
@@ -291,13 +292,12 @@ namespace MediaPortal
       //GUIGraphicsContext.DX9Device = null;
       try
       {
-        int hr = (int) timeBeginPeriod(MILLI_SECONDS_TIMER);
+        int hr = (int)timeBeginPeriod(MILLI_SECONDS_TIMER);
         if (hr != 0)
         {
           UseMillisecondTiming = false;
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
         UseMillisecondTiming = false;
         Log.Info("Exception");
@@ -453,13 +453,11 @@ namespace MediaPortal
         InitializeEnvironment();
         // Initialize the app's custom scene stuff
         OneTimeSceneInitialization();
-      }
-      catch (SampleException d3de)
+      } catch (SampleException d3de)
       {
         HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
         return false;
-      }
-      catch
+      } catch
       {
         HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
         return false;
@@ -483,7 +481,7 @@ namespace MediaPortal
         IntPtr hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
 
         NativeMethods.MonitorInformation info = new NativeMethods.MonitorInformation();
-        info.Size = (uint) Marshal.SizeOf(info);
+        info.Size = (uint)Marshal.SizeOf(info);
         NativeMethods.GetMonitorInfo(hMon, ref info);
         Rectangle rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
 
@@ -569,7 +567,7 @@ namespace MediaPortal
         }
       }
 
-      EndWindowedDeviceComboSearch:
+    EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -584,14 +582,14 @@ namespace MediaPortal
       graphicsSettings.WindowedHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
       if (enumerationSettings.AppUsesDepthBuffer)
       {
-        graphicsSettings.WindowedDepthStencilBufferFormat = (DepthFormat) bestDeviceCombo.DepthStencilFormatList[0];
+        graphicsSettings.WindowedDepthStencilBufferFormat = (DepthFormat)bestDeviceCombo.DepthStencilFormatList[0];
       }
       int iQuality = 0; //bestDeviceCombo.MultiSampleTypeList.Count-1;
-      graphicsSettings.WindowedMultisampleType = (MultiSampleType) bestDeviceCombo.MultiSampleTypeList[iQuality];
+      graphicsSettings.WindowedMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[iQuality];
       graphicsSettings.WindowedMultisampleQuality = 0; //(int)bestDeviceCombo.MultiSampleQualityList[iQuality];
 
-      graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType) bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.WindowedPresentInterval = (PresentInterval) bestDeviceCombo.PresentIntervalList[0];
+      graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
+      graphicsSettings.WindowedPresentInterval = (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
 
       return true;
     }
@@ -681,7 +679,7 @@ namespace MediaPortal
         }
       }
 
-      EndFullscreenDeviceComboSearch:
+    EndFullscreenDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -734,12 +732,12 @@ namespace MediaPortal
       graphicsSettings.FullscreenDisplayMode = bestDisplayMode;
       if (enumerationSettings.AppUsesDepthBuffer)
       {
-        graphicsSettings.FullscreenDepthStencilBufferFormat = (DepthFormat) bestDeviceCombo.DepthStencilFormatList[0];
+        graphicsSettings.FullscreenDepthStencilBufferFormat = (DepthFormat)bestDeviceCombo.DepthStencilFormatList[0];
       }
-      graphicsSettings.FullscreenMultisampleType = (MultiSampleType) bestDeviceCombo.MultiSampleTypeList[0];
+      graphicsSettings.FullscreenMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[0];
       graphicsSettings.FullscreenMultisampleQuality = 0;
       graphicsSettings.FullscreenVertexProcessingType =
-        (VertexProcessingType) bestDeviceCombo.VertexProcessingTypeList[0];
+        (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
       graphicsSettings.FullscreenPresentInterval = PresentInterval.Default;
 
       return true;
@@ -868,8 +866,7 @@ namespace MediaPortal
         {
           Log.Debug("D3D: Switched to exclusive mode successfully");
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         if (windowed)
         {
@@ -900,8 +897,7 @@ namespace MediaPortal
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
           Log.Warn("D3D: mode failed - {0}", e.ToString());
         }
@@ -932,8 +928,7 @@ namespace MediaPortal
         Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
                  deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(),
                  deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
-      }
-      catch (Exception lex)
+      } catch (Exception lex)
       {
         Log.Warn("d3dapp: Error logging graphic device details - {0}", lex.Message);
       }
@@ -1110,8 +1105,7 @@ namespace MediaPortal
           InitializeDeviceObjects();
           //OnDeviceReset(null, null);
           active = true;
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
           Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
@@ -1124,8 +1118,7 @@ namespace MediaPortal
             return;
           }
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error(ex);
         // If that failed, fall back to the reference rasterizer
@@ -1166,10 +1159,10 @@ namespace MediaPortal
       }
 
       param.AutoDepthStencilFormat = presentParams.AutoDepthStencilFormat;
-      param.BackBufferCount = (uint) presentParams.BackBufferCount;
+      param.BackBufferCount = (uint)presentParams.BackBufferCount;
       param.BackBufferFormat = presentParams.BackBufferFormat;
-      param.BackBufferHeight = (uint) presentParams.BackBufferHeight;
-      param.BackBufferWidth = (uint) presentParams.BackBufferWidth;
+      param.BackBufferHeight = (uint)presentParams.BackBufferHeight;
+      param.BackBufferWidth = (uint)presentParams.BackBufferWidth;
       param.hDeviceWindow = presentParams.DeviceWindow.Handle;
 
       param.EnableAutoDepthStencil = 0;
@@ -1178,10 +1171,10 @@ namespace MediaPortal
         param.EnableAutoDepthStencil = 1;
       }
 
-      param.FullScreen_RefreshRateInHz = (uint) presentParams.FullScreenRefreshRateInHz;
+      param.FullScreen_RefreshRateInHz = (uint)presentParams.FullScreenRefreshRateInHz;
       param.MultiSampleType = presentParams.MultiSample;
       param.MultiSampleQuality = presentParams.MultiSampleQuality;
-      param.PresentationInterval = (uint) presentParams.PresentationInterval;
+      param.PresentationInterval = (uint)presentParams.PresentationInterval;
       param.SwapEffect = presentParams.SwapEffect;
 
       IDirect3D9Ex m_d3dEx;
@@ -1191,7 +1184,7 @@ namespace MediaPortal
 
       D3DDISPLAYMODEEX displaymodeEx = new D3DDISPLAYMODEEX();
 
-      displaymodeEx.Size = (uint) Marshal.SizeOf(displaymodeEx);
+      displaymodeEx.Size = (uint)Marshal.SizeOf(displaymodeEx);
       displaymodeEx.Width = param.BackBufferWidth;
       displaymodeEx.Height = param.BackBufferHeight;
       displaymodeEx.Format = param.BackBufferFormat;
@@ -1223,8 +1216,7 @@ namespace MediaPortal
         {
           timeEndPeriod(MILLI_SECONDS_TIMER);
         }
-      }
-      catch (Exception)
+      } catch (Exception)
       {
       }
 
@@ -1345,7 +1337,7 @@ namespace MediaPortal
           }
           if (tempList != null)
           {
-            for (int i = 0; i < (int) tempList.Count; ++i)
+            for (int i = 0; i < (int)tempList.Count; ++i)
             {
               PlayListItem itemNew = tempList[i];
               _currentPlayList.Add(itemNew);
@@ -1382,15 +1374,15 @@ namespace MediaPortal
           bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
           if (success)
           {
-            if ((_iActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
-                (_iActiveWindow == (int) GUIWindow.Window.WINDOW_TV))
+            if ((_iActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
+                (_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
             {
               GUIWindowManager.ActivateWindow(_iActiveWindow);
               Log.Info("D3D: Resumed TV successfully");
             }
             else
             {
-              GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
               Thread tvWaitThread = new Thread(TvWaitThread);
               tvWaitThread.IsBackground = true;
               tvWaitThread.Name = "TvWaitThread";
@@ -1413,7 +1405,7 @@ namespace MediaPortal
           playlist.Clear();
           if (_currentPlayList != null)
           {
-            for (int i = 0; i < (int) _currentPlayList.Count; ++i)
+            for (int i = 0; i < (int)_currentPlayList.Count; ++i)
             {
               PlayListItem itemNew = _currentPlayList[i];
               playlist.Add(itemNew);
@@ -1497,8 +1489,7 @@ namespace MediaPortal
           Render3DEnvironment();
 #if DEBUG
 #else
-        }
-        catch (Exception ee)
+        } catch (Exception ee)
         {
           Log.Info("D3D: Exception {0}", ee);
           MessageBox.Show("An exception has occurred.  MediaPortal has to be closed.\r\n\r\n" + ee.ToString(),
@@ -1551,25 +1542,30 @@ namespace MediaPortal
           }
         }
 
-        //Debugger.Launch();
-        try
+        if (!GUIGraphicsContext.IsDirectX9ExUsed())
         {
-          Log.Debug("d3dapp: RecoverDevice called");
-          // Test the cooperative level to see if it's okay to render
-          GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-        }
-        catch (DeviceLostException)
-        {
-          // If the device was lost, do not render until we get it back
-          isHandlingSizeChanges = false;
-          isWindowActive = false;
-          Log.Debug("d3dapp: DeviceLostException");
+          //Debugger.Launch();
+          try
+          {
+            Log.Debug("d3dapp: RecoverDevice called");
+            // Test the cooperative level to see if it's okay to render
+            GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+          } catch (DeviceLostException)
+          {
+            // If the device was lost, do not render until we get it back
+            isHandlingSizeChanges = false;
+            isWindowActive = false;
+            Log.Debug("d3dapp: DeviceLostException");
 
-          return;
+            return;
+          } catch (DeviceNotResetException)
+          {
+            Log.Debug("d3dapp: DeviceNotResetException");
+            m_bNeedReset = true;
+          }
         }
-        catch (DeviceNotResetException)
+        else
         {
-          Log.Debug("d3dapp: DeviceNotResetException");
           m_bNeedReset = true;
         }
         if (m_bNeedReset)
@@ -1587,7 +1583,10 @@ namespace MediaPortal
           //  presentParams.BackBufferFormat = graphicsSettings.WindowedDisplayMode.Format;
           //}
           //g_Player.RefreshRateChangePending = false;
-          BuildPresentParamsFromSettings(windowed);
+          if (!GUIGraphicsContext.IsDirectX9ExUsed())
+          {
+            BuildPresentParamsFromSettings(windowed);
+          }
 
           // Reset the device and resize it
           Log.Warn("d3dapp: Resetting DX9 device");
@@ -1599,15 +1598,22 @@ namespace MediaPortal
             GUIFontManager.Dispose();
 
             // GUIGraphicsContext.DX9Device.EvictManagedResources();
+            if (!GUIGraphicsContext.IsDirectX9ExUsed())
+            {
 
-            GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
-            m_bNeedReset = false;
-          }
-          catch (Exception ex)
+              GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+              m_bNeedReset = false;
+            }
+            else
+            {
+              Log.Warn("d3dapp: DirectX9Ex is lost or gpu hung --> Reinit of DX9Ex is needed.");
+              InitializeEnvironment();
+            }
+          } catch (Exception ex)
           {
             Log.Error("d3dapp: Reset failed - {0}", ex.ToString());
-            GUIGraphicsContext.DX9Device.DeviceLost -= new EventHandler(this.OnDeviceLost);
-            GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
             InitializeEnvironment();
             return;
           }
@@ -1625,8 +1631,8 @@ namespace MediaPortal
             RefreshRateChanger.RefreshRateChangePending = false;
             if (RefreshRateChanger.RefreshRateChangeMediaType != RefreshRateChanger.MediaType.Unknown)
             {
-              int t1 = (int) RefreshRateChanger.RefreshRateChangeMediaType;
-              g_Player.MediaType t2 = (g_Player.MediaType) t1;
+              int t1 = (int)RefreshRateChanger.RefreshRateChangeMediaType;
+              g_Player.MediaType t2 = (g_Player.MediaType)t1;
               g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile, t2);
             }
             else
@@ -1656,8 +1662,7 @@ namespace MediaPortal
         {
           Render(GUIGraphicsContext.TimePassed);
         }
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("d3dapp: Exception: {0}", ex);
       }
@@ -1866,7 +1871,7 @@ namespace MediaPortal
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
-        framePerSecond = frames/(time - lastTime);
+        framePerSecond = frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;
@@ -2007,8 +2012,7 @@ namespace MediaPortal
 
         handle.Set();
         handle.Close();
-      }
-      catch
+      } catch
       {
       }
       if (GUIGraphicsContext.UseSeparateRenderThread)
@@ -2107,7 +2111,7 @@ namespace MediaPortal
             moduleDelayThread.Start();
             */
 
-            if (lastActiveModule == (int) GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
+            if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
             {
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
@@ -2119,8 +2123,7 @@ namespace MediaPortal
             }
 
             return true;
-          }
-          catch (Exception e)
+          } catch (Exception e)
           {
             Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
             //otherwise ignore.
@@ -2260,7 +2263,7 @@ namespace MediaPortal
     private void InitializeComponent()
     {
       this.components = new Container();
-      ComponentResourceManager resources = new ComponentResourceManager(typeof (D3DApp));
+      ComponentResourceManager resources = new ComponentResourceManager(typeof(D3DApp));
       this.menuStripMain = new MainMenu(this.components);
       this.menuItemFile = new MenuItem();
       this.menuItemExit = new MenuItem();
@@ -2384,7 +2387,7 @@ namespace MediaPortal
       // notifyIcon
       // 
       this.notifyIcon.ContextMenu = this.contextMenu;
-      this.notifyIcon.Icon = ((Icon) (resources.GetObject("notifyIcon.Icon")));
+      this.notifyIcon.Icon = ((Icon)(resources.GetObject("notifyIcon.Icon")));
       this.notifyIcon.Text = "MediaPortal";
       this.notifyIcon.DoubleClick += new EventHandler(this.Restore_OnClick);
       // 
@@ -2541,8 +2544,7 @@ namespace MediaPortal
         }
         active = !(this.WindowState == FormWindowState.Minimized);
         base.OnResize(e);
-      }
-      catch (Exception ex)
+      } catch (Exception ex)
       {
         Log.Error("d3dapp: An error occured in OnResize - {0}", ex.ToString());
       }
@@ -2783,7 +2785,7 @@ namespace MediaPortal
       {
         Log.Info("D3D: Exception: {0}", ex.ToString());
 #else
-      catch (Exception)
+ catch (Exception)
       {
 #endif
       }
@@ -2806,10 +2808,10 @@ namespace MediaPortal
       timeElapsed = clockWatch.ElapsedTicks;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000)/Stopwatch.Frequency);
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
         if (milliSecondsLeft > 0)
         {
-          DoSleep((int) milliSecondsLeft);
+          DoSleep((int)milliSecondsLeft);
         }
         else
         {
@@ -2867,7 +2869,7 @@ namespace MediaPortal
       ToggleFullWindowed();
 
       GUIDialogNotify dialogNotify =
-        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dialogNotify != null)
       {
         dialogNotify.SetHeading(1020);
@@ -3271,15 +3273,18 @@ namespace MediaPortal
     public struct WindowClass
     {
       public int Styles;
-      [MarshalAs(UnmanagedType.FunctionPtr)] public WndProcDelegate WindowsProc;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public WndProcDelegate WindowsProc;
       private int ExtraClassData;
       private int ExtraWindowData;
       public IntPtr InstanceHandle;
       public IntPtr IconHandle;
       public IntPtr CursorHandle;
       public IntPtr backgroundBrush;
-      [MarshalAs(UnmanagedType.LPTStr)] public string MenuName;
-      [MarshalAs(UnmanagedType.LPTStr)] public string ClassName;
+      [MarshalAs(UnmanagedType.LPTStr)]
+      public string MenuName;
+      [MarshalAs(UnmanagedType.LPTStr)]
+      public string ClassName;
     }
 
     #endregion
@@ -3466,25 +3471,25 @@ namespace MediaPortal
     /// <summary>Returns the low word</summary>
     public static short LoWord(uint l)
     {
-      return (short) (l & 0xffff);
+      return (short)(l & 0xffff);
     }
 
     /// <summary>Returns the high word</summary>
     public static short HiWord(uint l)
     {
-      return (short) (l >> 16);
+      return (short)(l >> 16);
     }
 
     /// <summary>Makes two shorts into a long</summary>
     public static uint MakeUInt32(short l, short r)
     {
-      return (uint) ((l & 0xffff) | ((r & 0xffff) << 16));
+      return (uint)((l & 0xffff) | ((r & 0xffff) << 16));
     }
 
     /// <summary>Is this key down right now</summary>
     public static bool IsKeyDown(Keys key)
     {
-      return (GetAsyncKeyState((int) Keys.ShiftKey) & 0x8000) != 0;
+      return (GetAsyncKeyState((int)Keys.ShiftKey) & 0x8000) != 0;
     }
 
     #endregion
