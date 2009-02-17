@@ -3200,16 +3200,23 @@ namespace TvPlugin
           {
             if (wasPlaying)
             {
-              Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
-                        Card.RTSPUrl);
+              Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
               Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
               //g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
               //server.StopTimeShifting(ref user);              
-              Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
+              Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
             }
 
             RenderBlackImage();
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+            
+            // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
+            if (Card.Id == card.Id)
+            {
+              Log.Debug("TVHome.ViewChannelAndCheck(): card was not changed. seek to end.");
+              cardChanged = false;
+              SeekToEnd(true);
+            }
           }
           else //card "probably" not changed.
           {
@@ -3822,7 +3829,16 @@ namespace TvPlugin
         return (ChannelGroup) m_groups[m_currentgroup];
       }
     }
-
+    /// <summary>
+    /// Gets the index of currently active tv channel group.
+    /// </summary>
+    public int CurrentGroupIndex
+    {
+      get
+      {
+        return m_currentgroup;
+      }
+    }
     /// <summary>
     /// Gets the list of tv channel groups.
     /// </summary>
