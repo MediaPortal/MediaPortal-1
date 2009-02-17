@@ -72,10 +72,8 @@ namespace SetupTv.Sections
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.labelTSFolder = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
-      this.labelRecFormat = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.textBoxFolder = new System.Windows.Forms.TextBox();
-      this.comboBoxRecordingFormat = new System.Windows.Forms.ComboBox();
       this.label13 = new System.Windows.Forms.Label();
       this.buttonTimeShiftBrowse = new System.Windows.Forms.Button();
       this.buttonBrowse = new System.Windows.Forms.Button();
@@ -89,6 +87,7 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -543,13 +542,12 @@ namespace SetupTv.Sections
       // 
       // groupBoxRecordSettings
       // 
+      this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
       this.groupBoxRecordSettings.Controls.Add(this.labelTSFolder);
       this.groupBoxRecordSettings.Controls.Add(this.comboBoxCards);
-      this.groupBoxRecordSettings.Controls.Add(this.labelRecFormat);
       this.groupBoxRecordSettings.Controls.Add(this.label23);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
-      this.groupBoxRecordSettings.Controls.Add(this.comboBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.label13);
       this.groupBoxRecordSettings.Controls.Add(this.buttonTimeShiftBrowse);
       this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
@@ -596,22 +594,10 @@ namespace SetupTv.Sections
       this.comboBoxCards.TabIndex = 0;
       this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
-      // labelRecFormat
-      // 
-      this.labelRecFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelRecFormat.AutoSize = true;
-      this.labelRecFormat.Location = new System.Drawing.Point(32, 117);
-      this.labelRecFormat.Name = "labelRecFormat";
-      this.labelRecFormat.Size = new System.Drawing.Size(355, 26);
-      this.labelRecFormat.TabIndex = 24;
-      this.labelRecFormat.Text = "Use the slightly larger .ts format if you want to keep all stream informations \r\n" +
-          "for further editing or if you get issues with the recorded .mpg files";
-      // 
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(20, 66);
+      this.label23.Location = new System.Drawing.Point(20, 73);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -627,21 +613,6 @@ namespace SetupTv.Sections
       this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
       this.textBoxFolder.TabIndex = 2;
       this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
-      // 
-      // comboBoxRecordingFormat
-      // 
-      this.comboBoxRecordingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxRecordingFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxRecordingFormat.FormattingEnabled = true;
-      this.comboBoxRecordingFormat.Items.AddRange(new object[] {
-            "Transport Stream (.ts)",
-            "MPEG (.mpg)"});
-      this.comboBoxRecordingFormat.Location = new System.Drawing.Point(23, 84);
-      this.comboBoxRecordingFormat.Name = "comboBoxRecordingFormat";
-      this.comboBoxRecordingFormat.Size = new System.Drawing.Size(355, 21);
-      this.comboBoxRecordingFormat.TabIndex = 22;
-      this.comboBoxRecordingFormat.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
       // 
       // label13
       // 
@@ -782,6 +753,15 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // textBoxRecordingFormat
+      // 
+      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 99);
+      this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
+      this.textBoxRecordingFormat.ReadOnly = true;
+      this.textBoxRecordingFormat.Size = new System.Drawing.Size(326, 20);
+      this.textBoxRecordingFormat.TabIndex = 26;
+      this.textBoxRecordingFormat.Text = " Transport Stream (.ts)";
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -856,9 +836,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.TextBox textBoxTimeShiftFolder;
     private System.Windows.Forms.Label label23;
-    private System.Windows.Forms.ComboBox comboBoxRecordingFormat;
     private System.Windows.Forms.Label labelTSFolder;
-    private System.Windows.Forms.Label labelRecFormat;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSchedulerPriority;
@@ -874,5 +852,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox cbRecPaths;
     private System.Windows.Forms.Button btnRemoveInvalidFiles;
     private System.Windows.Forms.GroupBox groupBoxRecordSettings;
+    private System.Windows.Forms.TextBox textBoxRecordingFormat;
   }
 }

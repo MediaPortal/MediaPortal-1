@@ -149,7 +149,7 @@ namespace SetupTv.Sections
       string strReturn = strDirectory;
       if (strDirectory != string.Empty)
         strReturn += "\\";
-      strReturn += strName + ".mpg";
+      strReturn += strName + ".ts";
       return strReturn;
     }
 
@@ -291,6 +291,9 @@ namespace SetupTv.Sections
         if (!Directory.Exists(textBoxTimeShiftFolder.Text))
           Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
       }
+      /*
+       * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
+       * 
       switch (info.card.RecordingFormat)
       {
         case 0:
@@ -300,6 +303,7 @@ namespace SetupTv.Sections
           comboBoxRecordingFormat.SelectedIndex = 1;
           break;
       }
+      */
     }
 
     private void buttonBrowse_Click(object sender, EventArgs e)
@@ -398,6 +402,9 @@ namespace SetupTv.Sections
       }
     }
 
+    /*
+     * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
+     * 
     private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
@@ -408,6 +415,7 @@ namespace SetupTv.Sections
         _needRestart = true;
       }
     }
+    */
 
     private void mpNumericTextBoxDiskQuota_Leave(object sender, EventArgs e)
     {
@@ -816,7 +824,12 @@ namespace SetupTv.Sections
       Recording tagRec = null;
       try
       {
+        /*
+         * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
+         *
         string physicalFile = GetRecordingFilename(aFileName);
+        */
+        string physicalFile = aFileName;
         tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
                                          GetRecordingStartTime(physicalFile),
                                          GetRecordingEndTime(physicalFile),
@@ -858,6 +871,9 @@ namespace SetupTv.Sections
       return endTime;
     }
 
+    /*
+     * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
+     *
     private static string GetRecordingFilename(string aTagFilename)
     {
       string recordingFile = Path.ChangeExtension(aTagFilename, ".ts");
@@ -878,6 +894,7 @@ namespace SetupTv.Sections
       }
       return recordingFile;
     }
+     */
 
     private static int GetServerId()
     {

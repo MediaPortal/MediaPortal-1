@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -31,6 +32,7 @@ using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
 using TvControl;
+using TvDatabase;
 using TvLibrary.Log;
 
 namespace SetupTv
@@ -188,6 +190,18 @@ namespace SetupTv
           Log.Write(ex);
           MessageBox.Show("Failed to startup tvservice" + ex);
           return;
+        }
+      }
+
+      // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
+      IList<Card> TvCards = Card.ListAll();
+      foreach (Card card in TvCards)
+      {
+        if (card.RecordingFormat != 0)
+        {
+          card.RecordingFormat = 0;
+          Log.Info("Card {0} switched from .MPG to .TS format", card.Name);
+          card.Persist();
         }
       }
 
