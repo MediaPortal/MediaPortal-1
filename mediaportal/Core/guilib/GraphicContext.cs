@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.Library
               if (Form.ActiveForm.Handle != IntPtr.Zero)
               {
                 SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
-                            value ? (IntPtr)MONITOR_ON : (IntPtr)MONITOR_OFF);
+                            value ? (IntPtr)MONITOR_OFF : (IntPtr)MONITOR_ON);
               }
               else
               {
