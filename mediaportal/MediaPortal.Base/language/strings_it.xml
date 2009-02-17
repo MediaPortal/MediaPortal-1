@@ -308,7 +308,7 @@
     <String id="374">Nuvoloso</String>
     <String id="375">Neve</String>
     <String id="376">Pioggia</String>
-    <String id="377">Luce</String>
+    <String id="377">Leggera</String>
     <String id="378">AM</String>
     <String id="379">PM</String>
     <String id="380">Rovesci</String>
@@ -316,7 +316,7 @@
     <String id="382">Sparsi</String>
     <String id="383">Vento</String>
     <String id="384">Forti</String>
-    <String id="385">Sostenuto</String>
+    <String id="385">Buono</String>
     <String id="386">Limpido</String>
     <String id="387">Presto</String>
     <String id="388">e</String>
@@ -890,8 +890,8 @@
     <String id="1051">Registra Sab-Dom</String>
     <String id="1052">Brani</String>
     <String id="1053">Chiamante sconosciuto</String>
-    <String id="1054">(in registrazione)</String>
-    <String id="1055">(Buffer TV in corso)</String>
+    <String id="1054">(rec)</String>
+    <String id="1055">(in onda)</String>
     <String id="1056">(non disponibile)</String>
     <String id="1061">Rimovibile</String>
     <String id="1062">Oggetto</String>
@@ -1486,6 +1486,7 @@
     <String id="14012">Versione di MediaPortal non supportata! (E' necessaria la versione {0})</String>
     <String id="14013">Si vuole continuare ?</String>
     <String id="14014">Aggiornamento informazioni online</String>
+    <String id="14015">Aggiornamenti</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Il mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
