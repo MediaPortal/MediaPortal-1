@@ -153,6 +153,7 @@ namespace MediaPortal.Configuration.Sections
           inputCheckBox.CheckedChanged -= new EventHandler(inputCheckBox_CheckedChanged);
           inputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
           inputCheckBox.CheckedChanged += new EventHandler(inputCheckBox_CheckedChanged);
+          internalCommandsButton.Enabled = inputCheckBox.Checked;
 
           outputCheckBox.CheckedChanged -= new EventHandler(outputCheckBox_CheckedChanged);
           outputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -162,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
           enterCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
 
           commandRepeatNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2);
-          ;
+          
           interCommandDelayNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
         }
 
@@ -608,7 +609,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
+    {      
       if (inputCheckBox.Checked || outputCheckBox.Checked)
       {
         if (USBUIRT.Instance == null)
@@ -618,7 +619,7 @@ namespace MediaPortal.Configuration.Sections
             inputCheckBox.Checked = false;
             return;
           }
-        }
+        }        
       }
 
       internalCommandsButton.Enabled = inputCheckBox.Checked;
