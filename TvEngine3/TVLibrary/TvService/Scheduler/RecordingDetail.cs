@@ -21,6 +21,7 @@
 using System;
 using System.Text.RegularExpressions;
 using TvDatabase;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -231,7 +232,20 @@ namespace TvService
     public void MakeFileName(string recordingPath)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = !_isSerie ? layer.GetSetting("moviesformat", "%title%") : layer.GetSetting("seriesformat", "%title%");
+
+      Setting setting;
+
+      if (!_isSerie)
+      {
+        Log.Debug("MakeFileName: using \"moviesformat\"...");
+        setting = layer.GetSetting("moviesformat", "%title%");
+      }
+      else
+      {
+        Log.Debug("MakeFileName: using \"seriesformat\"...");
+        setting = layer.GetSetting("seriesformat", "%title%");
+      }
+
       string strInput = "title%";
       if (setting != null)
       {
