@@ -135,7 +135,7 @@ namespace MediaPortal.Player
               Log.Info("DVDPlayer9:InterVideo DXVA already off");
             }
           }
-          if (codecType == "CyberLink Video/SP Decoder")
+          if (codecType.StartsWith("CyberLink Video/SP Decoder"))
           {
             codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
             if (codecValue == 1)
@@ -220,7 +220,7 @@ namespace MediaPortal.Player
         }
         catch (Exception ex)
         {
-          string strEx = ex.Message;
+          Log.Error("DVDPlayer9:Add {0} as navigator failed: {1}", dvdDNavigator, ex.Message);
         }
         Guid riid;
 
@@ -264,7 +264,7 @@ namespace MediaPortal.Player
         _mediaPos = (IMediaPosition) _graphBuilder;
         _basicVideo = _graphBuilder as IBasicVideo2;
 
-        Log.Info("Dvdplayer9:disable line 21");
+        Log.Info("Dvdplayer9:disabling Line21 Decoder (Closed Captions)");
         // disable Closed Captions!
         IBaseFilter basefilter;
         _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
@@ -285,7 +285,7 @@ namespace MediaPortal.Player
             }
             else
             {
-              Log.Info("DVDPlayer9:failed 2 disable Closed Captions");
+              Log.Info("DVDPlayer9:failed to disable Closed Captions");
             }
           }
         }
@@ -350,7 +350,7 @@ namespace MediaPortal.Player
             subkey.SetValue("DXVA", codecValue);
           }
         }
-        if (codecType == "CyberLink Video/SP Decoder")
+        if (codecType.StartsWith("CyberLink Video/SP Decoder"))
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
           Log.Info("DVDPlayer9:Resetting CyberLink DXVA to {0}", codecValue);
