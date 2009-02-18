@@ -102,20 +102,22 @@ namespace MediaPortal.Util
       if (IsoFile == string.Empty) return false;
       if (!_Enabled) return false;
       if (!System.IO.File.Exists(_Path)) return false;
-
+      DateTime startTime = DateTime.Now;
+      System.IO.DriveInfo drive = new System.IO.DriveInfo(_Drive);
       UnMount();
 
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);
       string strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
       Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
-      while (!p.HasExited && (timeout < 10000))
+      while ((!p.HasExited || !drive.IsReady) && (timeout < 10000))
       {
         System.Threading.Thread.Sleep(100);
         timeout += 100;
       }
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
+      Log.Debug("Mount time: {0}s", (DateTime.Now - startTime).TotalSeconds);
       return true;
     }
 
