@@ -800,11 +800,17 @@ Function .onInit
     Abort
   ${EndIf}
 
-  ${IfNot} ${MPIsInstalled}
-    !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
-  ${else}
-    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
-    ${ReadMediaPortalDirs} $MPdir.Base
+  ; If Silent:   check if MP is installed -> if not disable that component
+  ; If notSilent: do nothing    -> MP check is done on ComponentsPagePre, so it will checked dynamically
+  ${If} ${Silent}
+
+    ${IfNot} ${MPIsInstalled}
+      !insertmacro UnselectSection "${SecClient}"
+    ${else}
+      !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+      ${ReadMediaPortalDirs} $MPdir.Base
+    ${EndIf}
+
   ${EndIf}
 
   SetShellVarContext all
@@ -916,10 +922,30 @@ Function WelcomeLeave
 FunctionEnd
 */
 Function ComponentsPre
-  #${IfNot} ${MP023IsInstalled}
-  #${AndIfNot} ${MPIsInstalled}
-  #  !insertmacro DisableComponent "${SecClient}" " ($(TEXT_MP_NOT_INSTALLED))"
-  #${EndIf}
+
+  ${IfNot} ${MPIsInstalled}
+
+    ; uncheck the component, so that it won't be installed
+    !insertmacro UnselectSection "${SecClient}"
+    ; add the read only flag to the section, see Sections.nsh of official NSIS header files
+    !insertmacro SetSectionFlag "${SecClient}" ${SF_RO}
+    ; set new text for the component
+    SectionSetText ${SecClient} "MediaPortal TV Client plugin ($(TEXT_MP_NOT_INSTALLED))"
+
+  ${else}
+
+    ; check the component
+    !insertmacro SelectSection "${SecClient}"
+    ; remove the read only flag to the section, see Sections.nsh of official NSIS header files
+    !insertmacro ClearSectionFlag "${SecClient}" ${SF_RO}
+    ; set new text for the component
+    SectionSetText ${SecClient} "MediaPortal TV Client plugin"
+
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
+
+  ${EndIf}
+
 FunctionEnd
 
 Function DirectoryPre
