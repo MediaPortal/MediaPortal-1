@@ -1,9 +1,7 @@
-; fontEngine.def : Deklariert die Modulparameter für die DLL.
-
 LIBRARY      "fontEngine"
 
 EXPORTS
-    ; Explizite Exporte können hier eingefügt werden
+
 FontEngineInitialize			@1
 FontEngineAddFont				@2
 FontEngineRemoveFont			@3
@@ -14,8 +12,8 @@ FontEngineAddTexture			@7
 FontEngineRemoveTexture			@8
 FontEngineDrawTexture			@9
 FontEnginePresentTextures		@10
-FontEngineAddSurface            @11
+FontEngineAddSurface			@11
 FontEngineSetTexture			@12
 FontEngineDrawSurface			@13
 FontEngineSetDevice				@14
-FontEngineDrawTexture2    @15
+FontEngineDrawTexture2			@15
