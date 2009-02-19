@@ -1201,6 +1201,7 @@ namespace MediaPortal.Player
         UpdateMenu();
       }
       CloseInterfaces();
+      Util.DaemonTools.UnMount();
       GUIGraphicsContext.IsFullScreenVideo = false;
       GUIGraphicsContext.IsPlaying = false;
     }
