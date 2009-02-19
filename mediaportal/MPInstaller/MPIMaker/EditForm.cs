@@ -507,6 +507,7 @@ namespace MediaPortal.MPInstaller
         {
           tabControl1.Controls.Add(tabPage_Thumbs);
           thumbst_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
+          thumbs_pictureBox.LoadAsync(bossview.SelectedItems[0].SubItems[3].Text);
         }
         if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.OTHER_TYPE)
         {
@@ -767,6 +768,17 @@ namespace MediaPortal.MPInstaller
         }
         return;
       }
+     
+      if (fil.ToUpper().Contains("THUMBS"))
+      {
+        foreach (string subdir in thumbst_comboBox1.Items)
+        {
+          if (!string.IsNullOrEmpty(subdir.Trim()) && fil.ToUpper().Contains(subdir.ToUpper()))
+            addrow(Path.GetFileName(fil), MPinstallerStruct.THUMBS_TYPE, subdir, Path.GetFullPath(fil), "04010", "");
+        }
+        return;
+      }
+
       if (Path.GetExtension(fil).ToUpper() == ".TXT")
       {
         addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE,

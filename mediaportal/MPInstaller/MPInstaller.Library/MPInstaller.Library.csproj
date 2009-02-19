@@ -76,6 +76,7 @@
     <Compile Include="MpInstallerNameReplace.cs" />
     <Compile Include="MPInstallerScript.cs" />
     <Compile Include="MPinstallerStruct.cs" />
+    <Compile Include="MPInstallHelper.cs" />
     <Compile Include="MPIutils.cs" />
     <Compile Include="MPpackageStruct.cs" />
     <Compile Include="PropertiesClass.cs" />

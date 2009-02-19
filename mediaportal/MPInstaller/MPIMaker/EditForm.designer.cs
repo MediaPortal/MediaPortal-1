@@ -29,9 +29,9 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Plugins");
-          System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Skins");
-          System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Thumbs");
+          System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Plugins");
+          System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Skins");
+          System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Thumbs");
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,6 +127,7 @@ namespace MediaPortal.MPInstaller
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
           this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
           this.treeView1 = new System.Windows.Forms.TreeView();
+          this.thumbs_pictureBox = new System.Windows.Forms.PictureBox();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -139,6 +140,7 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Other.SuspendLayout();
           this.toolStrip1.SuspendLayout();
           this.toolStripContainer1.SuspendLayout();
+          ((System.ComponentModel.ISupportInitialize)(this.thumbs_pictureBox)).BeginInit();
           this.SuspendLayout();
           // 
           // menuStrip1
@@ -875,6 +877,7 @@ namespace MediaPortal.MPInstaller
           // 
           // tabPage_Thumbs
           // 
+          this.tabPage_Thumbs.Controls.Add(this.thumbs_pictureBox);
           this.tabPage_Thumbs.Controls.Add(this.thumbst_comboBox1);
           this.tabPage_Thumbs.Controls.Add(this.label7);
           this.tabPage_Thumbs.Location = new System.Drawing.Point(4, 22);
@@ -1025,19 +1028,28 @@ namespace MediaPortal.MPInstaller
           // 
           this.treeView1.Location = new System.Drawing.Point(685, 49);
           this.treeView1.Name = "treeView1";
-          treeNode1.Name = "Node0";
-          treeNode1.Text = "Plugins";
-          treeNode2.Name = "Node1";
-          treeNode2.Text = "Skins";
-          treeNode3.Name = "Node2";
-          treeNode3.Text = "Thumbs";
+          treeNode4.Name = "Node0";
+          treeNode4.Text = "Plugins";
+          treeNode5.Name = "Node1";
+          treeNode5.Text = "Skins";
+          treeNode6.Name = "Node2";
+          treeNode6.Text = "Thumbs";
           this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            treeNode4,
+            treeNode5,
+            treeNode6});
           this.treeView1.Size = new System.Drawing.Size(293, 365);
           this.treeView1.TabIndex = 6;
           this.treeView1.Visible = false;
+          // 
+          // thumbs_pictureBox
+          // 
+          this.thumbs_pictureBox.Location = new System.Drawing.Point(487, 6);
+          this.thumbs_pictureBox.Name = "thumbs_pictureBox";
+          this.thumbs_pictureBox.Size = new System.Drawing.Size(165, 141);
+          this.thumbs_pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+          this.thumbs_pictureBox.TabIndex = 2;
+          this.thumbs_pictureBox.TabStop = false;
           // 
           // EditForm
           // 
@@ -1076,6 +1088,7 @@ namespace MediaPortal.MPInstaller
           this.toolStrip1.PerformLayout();
           this.toolStripContainer1.ResumeLayout(false);
           this.toolStripContainer1.PerformLayout();
+          ((System.ComponentModel.ISupportInitialize)(this.thumbs_pictureBox)).EndInit();
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -1178,6 +1191,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolTip toolTip1;
       private System.Windows.Forms.TreeView treeView1;
       private System.Windows.Forms.ToolStripMenuItem installScriptToolStripMenuItem;
+      private System.Windows.Forms.PictureBox thumbs_pictureBox;
     }
 }
 
