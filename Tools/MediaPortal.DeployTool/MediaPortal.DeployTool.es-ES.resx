@@ -473,8 +473,8 @@ necesarios e instalarlos más tarde?
     <value>¡¡Lo siento tu sistema operativo no es válido para MediaPortal!!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Tu sistema operativo no es válido porque Microsoft no ha sacado las actualizaciones necesarias para él.
-¡Continúa bajo tu responsabilidad!</value>
+    <value>Tu sistema operativo no es válido porque Microsoft no ha sacado las actualizaciones necesarias para él, 
+o no está actualizado. ¡Continúa bajo tu responsabilidad!</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>La descarga del archivo de configuraciones ha fallado.
@@ -493,7 +493,7 @@ Si se encuentra el archivo de configuración corrupto, será borrado.</value>
 Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPortal.DeployTool.exe"</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
-    <value>Saltado</value>
+    <value>Pasado</value>
   </data>
   <data name="Exit_Installation" xml:space="preserve">
     <value>¿Realmente quieres abortar la instalación de MediaPortal?</value>
@@ -504,10 +504,10 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Por favor, selecciona la configuración para las descargas:</value>
   </data>
-  <data name="DiskSpace_Error" xml:space="preserve">
-    <value>No hay espacio suficiente en el disco especificado! Para la instalación de MediaPortal son necesarios {0} MB de espacio libre en el disco.</value>
-  </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
-    <value>No se ha encontrado conexión a Internet! Para continuar con la instalación es necesaria una conexión activa.</value>
+    <value>¡No estás conectado a Internet! Para continuar la instalación se requiere una conexión activa.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>¡No hay suficiente espacio libre en la unidad especificada! Para la instalación de MediaPortal se necesita al menos {0} MB de espacio libre en disco.</value>
   </data>
 </root>
