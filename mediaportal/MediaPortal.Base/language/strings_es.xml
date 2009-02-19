@@ -492,7 +492,7 @@
     <String id="593">Oculto</String>
     <String id="594">Subpágina</String>
     <String id="595">Pantalla completa</String>
-    <String id="596">Esperando para página {0}/{1}...</String>
+    <String id="596">Esperando la página {0}/{1}...</String>
     <String id="599">Tormenta</String>
     <String id="600">Guía de TV</String>
     <String id="601">Grabar ahora</String>
@@ -606,7 +606,7 @@
     <String id="715">CD insertado, ¿quieres reproducirlo?</String>
     <String id="716">Satélite</String>
     <String id="717">Tiempo</String>
-    <String id="718">Limpiar Top100</String>
+    <String id="718">Limpiar Top 100</String>
     <String id="719">¿Estás seguro de querer reiniciar el top 100?</String>
     <String id="720">Mostrar: Duración</String>
     <String id="721">Mostrar: Veces reproducido</String>
@@ -616,10 +616,10 @@
     <String id="725">Géneros</String>
     <String id="726">Título</String>
     <String id="727">TV en vivo de fondo</String>
-    <String id="728">No Vídeo/TV reproduciéndose</String>
+    <String id="728">Ningún Vídeo/TV reproduciéndose</String>
     <String id="729">Asegúrese de usar VMR9 y que algo se esté reproduciéndo</String>
     <String id="730">Esta programación se está grabando. Si borra</String>
-    <String id="731">la programación la grabación se detendrá.</String>
+    <String id="731">la programación, la grabación se detendrá.</String>
     <String id="732">¿Está seguro?</String>
     <String id="733">Ver: Diapositiva</String>
     <String id="734">Imagen:</String>
@@ -687,6 +687,9 @@
     <String id="810">Tarjeta</String>
     <String id="820">¿Desea eliminar la grabación no vista?</String>
     <String id="830">Reiniciar el estado de visto</String>
+    <String id="831">Desconectar unidad externa</String>
+    <String id="832">No se puede desconctar la unidad: </String>
+    <String id="833">La unidad se puede quitar con seguridad</String>
     <String id="850" prefix="Mi ">Alarma</String>
     <String id="851">Lista de reproducción</String>
     <String id="852">Alarma encendida</String>
@@ -954,6 +957,7 @@
     <String id="1448">Deseleccionar</String>
     <String id="1449">Detener grabación</String>
     <String id="1450">¿Está seguro que desea detener la grabación?</String>
+    <String id="1451">Imposible reproducir</String>
     <String id="1499">Sin señal</String>
     <String id="1500">Incapaz de iniciar timeshift</String>
     <String id="1501">La tarjeta está deshabilitada</String>
@@ -1137,8 +1141,8 @@
     <String id="2138">Cortar</String>
     <String id="2139">Hacer MP3-CD</String>
     <String id="2140">Hacer MP3-DVD</String>
-    <String id="2141">MPEG2 -&gt;DivX</String>
-    <String id="2142">MPEG2 -&gt;MPEG4</String>
+    <String id="2141">MPEG2 -&gt; DivX</String>
+    <String id="2142">MPEG2 -&gt; MPEG4</String>
     <String id="2143">Inicio</String>
     <String id="2144">Comenzar Grabación</String>
     <String id="2145">Importar listas de reproducción actuales</String>
@@ -1468,6 +1472,21 @@
     <String id="13033">Más recientemente estrenado</String>
     <String id="13034">Título</String>
     <String id="13041">Mostrar información del archivo</String>
+    <String id="14001" prefix="Mis">Extensiones</String>
+    <String id="14002">Vistas</String>
+    <String id="14003">Extensiones instaladas</String>
+    <String id="14004">Extensiones en línea</String>
+    <String id="14005">Instalar extensión</String>
+    <String id="14006">Desinstalar extensión</String>
+    <String id="14007">Reinstalar extensión</String>
+    <String id="14008">Anular última acción</String>
+    <String id="14009">Esta acción se ejecutará en el próximo reinicio</String>
+    <String id="14010">Descargar extensión</String>
+    <String id="14011">Seleccione una opción</String>
+    <String id="14012">¡Versión de MediaPortal no soportada! (Requiere versión {0})</String>
+    <String id="14013">¿Quiere continuar?</String>
+    <String id="14014">Actualizando información online</String>
+    <String id="14015">Actualizaciones</String>
     <String id="16001">Mezclar party</String>
     <String id="19001" prefix="Mi ">Tetris</String>
     <String id="19002">Nuevo juego</String>
@@ -1721,7 +1740,9 @@
     <String id="100762">Guía de Radio</String>
     <String id="100770">Explorador</String>
     <String id="101000">teclado</String>
-    <String id="101002">Teclado Virtual</String>
+    <String id="101002">Teclado Virtual Estandard</String>
+    <String id="101003">Teclado Virtual Web</String>
+    <String id="101004">Teclado Virtual SMS</String>
     <String id="102000">Seleccionar diálogo</String>
     <String id="102001" prefix="Mi ">Música/Información</String>
     <String id="102002">Diálogo OK</String>
@@ -1750,6 +1771,7 @@
     <String id="103007" prefix="Mi ">TV/OSD de Zap</String>
     <String id="103009" prefix="Mi ">TV/Mini EPG</String>
     <String id="103011" prefix="Mi ">TV/Configuración de recorte</String>
+    <String id="103012">Detalles de sintonización de TV</String>
     <String id="104711" prefix="Mi ">Wikipedia</String>
     <String id="105000">Alarma</String>
     <String id="105001">Alarma - Detalles de Alarma</String>
