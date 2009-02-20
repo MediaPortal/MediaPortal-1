@@ -83,10 +83,6 @@ namespace TvService
 
     Dictionary<int, ITvCardHandler> _cards;
     /// 
-    /// Plugins
-    /// </summary>
-    PluginLoader _plugins;
-    List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
 
     // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
     // used to speedup "mini EPG" channel state creation.
@@ -104,7 +100,6 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      Init();
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -241,7 +236,7 @@ namespace TvService
       _cards[user.CardId].Users.Unlock(user);
     }
 
-    private void Init()
+    public void Init()
     {
       Log.Info("Controller: Initilizing TVServer");
       bool result = false;
@@ -300,10 +295,6 @@ namespace TvService
 
         _cards = new Dictionary<int, ITvCardHandler>();
         _localCardCollection = new TvCardCollection(this);
-
-        _plugins = new PluginLoader();
-        _plugins.Load();
-        Log.Info("Controller: plugins loaded");
 
         //log all local ip adresses, usefull for debugging problems
         Log.Write("Controller: started at {0}", Dns.GetHostName());
@@ -546,49 +537,6 @@ namespace TvService
           _scheduler.Start();
         }
 
-        // start plugins
-        foreach (ITvServerPlugin plugin in _plugins.Plugins)
-        {
-          if (plugin.MasterOnly == false || _isMaster)
-          {
-            Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-            if (setting.Value == "true")
-            {
-              Log.Info("Plugin: {0} started", plugin.Name);
-              try
-              {
-                plugin.Start(this);
-                _pluginsStarted.Add(plugin);
-              } catch (Exception ex)
-              {
-                Log.Info("Plugin: {0} failed to start", plugin.Name);
-                Log.Write(ex);
-              }
-            }
-            else
-            {
-              Log.Info("Plugin: {0} disabled", plugin.Name);
-            }
-          }
-        }
-
-        // fire off startedAll on plugins
-        foreach (ITvServerPlugin plugin in _pluginsStarted)
-        {
-          if (plugin is ITvServerPluginStartedAll)
-          {
-            Log.Info("Plugin: {0} started all", plugin.Name);
-            try
-            {
-              (plugin as ITvServerPluginStartedAll).StartedAll();
-            } catch (Exception ex)
-            {
-              Log.Info("Plugin: {0} failed to startedAll", plugin.Name);
-              Log.Write(ex);
-            }
-          }
-        }
-
         // setup heartbeat monitoring thread.
         // useful for kicking idle/dead clients.
         Log.Info("Controller: setup HeartBeat Monitor");
@@ -654,20 +602,6 @@ namespace TvService
           }
         }
 
-        if (_pluginsStarted != null)
-        {
-          foreach (ITvServerPlugin plugin in _pluginsStarted)
-          {
-            try
-            {
-              plugin.Stop();
-            } catch (Exception ex)
-            {
-              Log.Error("Controller: plugin: {0} failed to stop - {1}", plugin.Name, ex.Message);
-            }
-          }
-          _pluginsStarted = new List<ITvServerPlugin>();
-        }
         //stop the RTSP streamer server
         if (_streamer != null)
         {

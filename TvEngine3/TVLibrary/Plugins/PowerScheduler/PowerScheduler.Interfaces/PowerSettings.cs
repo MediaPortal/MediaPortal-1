@@ -62,6 +62,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     private int _checkInterval;
     private int _allowedStart;
     private int _allowedStop;
+    private bool _reinitializeController;
     private ShutdownMode _shutdownMode = ShutdownMode.StayOn;
 
     /// <summary>
@@ -92,6 +93,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       _settings = s._settings;
       _allowedStart = s.AllowedSleepStartTime;
       _allowedStop = s.AllowedSleepStopTime;
+      _reinitializeController = s.ReinitializeController;
     }
 
     #endregion
@@ -162,6 +164,15 @@ namespace TvEngine.PowerScheduler.Interfaces
 
     #region Properties
 
+    /// <summary>
+    /// Should PowerScheduler reinit tv controller
+    /// </summary>
+    public bool ReinitializeController
+    {
+      get { return _reinitializeController; }
+      set { _reinitializeController = value; }
+    }
+    
     /// <summary>
     /// Should PowerScheduler actively try to put the system into standby?
     /// </summary>

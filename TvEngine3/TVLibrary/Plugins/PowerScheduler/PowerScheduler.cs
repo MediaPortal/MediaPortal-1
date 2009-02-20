@@ -743,16 +743,14 @@ namespace TvEngine.PowerScheduler
         changed = true;
       }
       // Check if PowerScheduler should reinitialize the TVController after wakeup
-      PowerSetting pSetting = _settings.GetSetting("ReinitializeController");
-      bool bSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value);
-      if (pSetting.Get<bool>() != bSetting)
+      if (_settings.ReinitializeController != Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value))
       {
-        pSetting.Set<bool>(bSetting);
-        LogVerbose("PowerScheduler: Reinitialize tvservice controller on wakeup: {0}", bSetting);
+        _settings.ReinitializeController = !_settings.ReinitializeController;
+        LogVerbose("PowerScheduler: Reinitialize controller on wakeup: {0}", _settings.ReinitializeController);
         changed = true;
       }
 
-      pSetting = _settings.GetSetting("ExternalCommand");
+      PowerSetting pSetting = _settings.GetSetting("ExternalCommand");
       string sSetting = layer.GetSetting("PowerSchedulerCommand", String.Empty).Value;
       if (!sSetting.Equals(pSetting.Get<string>()))
       {
@@ -962,18 +960,7 @@ namespace TvEngine.PowerScheduler
           return true;
         case PowerEventType.Suspend:
         case PowerEventType.StandBy:
-          _denySuspendQuery = true; // reset the flag
-          Log.Debug("PowerScheduler: System is going to standby");
-          
-          _standby = true;
-          if (_timer != null)
-          {
-            _timer.Enabled = false;
-          }
-          _controller.EpgGrabberEnabled = false;
-          FreeTVCards();
-          SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
-          SetWakeupTimer();
+          Suspend(powerStatus);
           return true;
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
@@ -981,26 +968,43 @@ namespace TvEngine.PowerScheduler
           Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
           return true;
         case PowerEventType.ResumeAutomatic:
-          Log.Debug("PowerScheduler: System has resumed automatically from standby");
-          Resume(true);
-          return true;
         case PowerEventType.ResumeCritical:
-          Log.Debug("PowerScheduler: System has resumed from standby after a critical suspend");
-          Resume(true);
-          return true;
         case PowerEventType.ResumeSuspend:
           // note: this event may not arrive unless the user has moved the mouse or hit a key
           // so, we should also handle ResumeAutomatic and ResumeCritical (as done above)
-          Log.Debug("PowerScheduler: System has resumed from standby");
-          Resume(true);
+          Resume(powerStatus);
           return true;
       }
       return true;
     }
 
-    private void Resume(bool resume)
+    private void Suspend(PowerEventType powerStatus)
     {
-      if (!_standby) return;
+      if (powerStatus == PowerEventType.Suspend)
+        Log.Debug("PowerScheduler: System is going to suspend");
+      else if (powerStatus == PowerEventType.StandBy)
+        Log.Debug("PowerScheduler: System is going to standby");
+      _denySuspendQuery = true; // reset the flag
+      _standby = true;
+      _timer.Enabled = false;
+      _controller.EpgGrabberEnabled = false;
+      DeInitController();
+      SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
+      SetWakeupTimer();
+    }
+
+    private void Resume(PowerEventType powerStatus)
+    {
+
+      if (powerStatus == PowerEventType.ResumeAutomatic)
+        Log.Debug("PowerScheduler: System has resumed automatically from standby");
+      else if (powerStatus == PowerEventType.ResumeCritical)
+        Log.Debug("PowerScheduler: System has resumed from standby after a critical suspend");
+      else if (powerStatus == PowerEventType.ResumeSuspend)
+        Log.Debug("PowerScheduler: System has resumed from standby");
+
+      if (!_standby)
+        return;
 
       lock (this)
       {
@@ -1016,11 +1020,10 @@ namespace TvEngine.PowerScheduler
         // <--- INSIDE lock!!!
 
         // if real resume, run command
-        if (resume)
-          RunExternalCommand("wakeup");
+        RunExternalCommand("wakeup");
 
         // reinitialize TVController if system is configured to do so and not already done
-        ReinitializeController();
+        ReInitController();
       }
       // enable timer
       if (_timer != null)
@@ -1178,50 +1181,43 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Frees the tv tuners before entering standby
     /// </summary>
-    private void FreeTVCards()
+    private void DeInitController()
     {
-      // Bav: moved logic to Service1.cs, because controller.Deinit() is stopping all plugins (including Powerscheduler)
-      return;
-      /*if (_cardsStopped)
+      if (_cardsStopped)
         return;
       // only free tuner cards if reinitialization is enabled in settings
-      if (_settings.GetSetting("ReinitializeController").Get<bool>())
+      if (!_settings.ReinitializeController)
+        return;
+    
+      TvService.TVController controller = _controller as TvService.TVController;
+      if (controller != null)
       {
-        TvService.TVController controller = _controller as TvService.TVController;
-        if (controller != null)
-        {
-          Log.Debug("PowerScheduler: Stopping TVController");
-          controller.DeInit();
-          _cardsStopped = true;
-          _reinitializeController = true;
-        }
+        Log.Debug("PowerScheduler: DeInit controller");
+        controller.DeInit();
+        _cardsStopped = true;
+        _reinitializeController = true;
       }
-      */
     }
 
     /// <summary>
     /// Restarts the TVController when resumed from standby
     /// </summary>
-    private void ReinitializeController()
+    private void ReInitController()
     {
-      // Bav: moved logic to Service1.cs, because Reinit is never called due to earlier call of controller.Deinit() which is stopping all plugins (including Powerscheduler)
-      return;
-      /*
       if (!_reinitializeController)
         return;
       // only reinitialize controller if enabled in settings
-      if (_settings.GetSetting("ReinitializeController").Get<bool>())
+      if (!_settings.ReinitializeController)
+        return;
+
+      TvService.TVController controller = _controller as TvService.TVController;
+      if (controller != null && _reinitializeController)
       {
-        TvService.TVController controller = _controller as TvService.TVController;
-        if (controller != null && _reinitializeController)
-        {
-          Log.Debug("PowerScheduler: reinitializing the tvservice TVController");
-          controller.Restart();
-          _reinitializeController = false;
-          _cardsStopped = false;
-        }
+        Log.Debug("PowerScheduler: ReInit Controller");
+        controller.Restart();
+        _reinitializeController = false;
+        _cardsStopped = false;
       }
-       */
     }
 
     #endregion

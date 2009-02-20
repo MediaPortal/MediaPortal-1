@@ -40,9 +40,11 @@ using System.Xml;
 using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
+using TvEngine;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace TvService
 {
@@ -53,7 +55,8 @@ namespace TvService
     bool _priorityApplied;
     TVController _controller;
     readonly List<PowerEventHandler> _powerEventHandlers;
-    private bool _reinitializeController;
+    PluginLoader _plugins;
+    List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
 
     #endregion
 
@@ -96,6 +99,7 @@ namespace TvService
       if (_started)
         return;
 
+      Log.Info("TV service: Starting");
       // apply process priority on initial service start.
       if (!_priorityApplied)
       {
@@ -126,6 +130,9 @@ namespace TvService
       _powerEventThread.Start();
       //currentProcess.PriorityClass = ProcessPriorityClass.High;
       _controller = new TVController();
+      _controller.Init();
+      StartPlugins();
+      
       try
       {
         System.IO.Directory.CreateDirectory("pmt");
@@ -135,10 +142,85 @@ namespace TvService
       StartRemoting();
       Utils.ShutDownMCEServices();
       _started = true;
-      Log.WriteFile("TV service started");
+      Log.Info("TV service: Started");
     }
 
-
+    private void StartPlugins()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Log.Info("TV Service: Load plugins");
+      
+      _plugins = new PluginLoader();
+      _plugins.Load();
+       
+      Log.Info("TV Service: Plugins loaded");  
+      // start plugins
+      foreach (ITvServerPlugin plugin in _plugins.Plugins)
+      {
+        if (plugin.MasterOnly == false || _controller.IsMaster)
+        {
+          Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+          if (setting.Value == "true")
+          {
+            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+            try
+            {
+              plugin.Start(_controller);
+              _pluginsStarted.Add(plugin);
+            } catch (Exception ex)
+            {
+              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
+              Log.Write(ex);
+            }
+          }
+          else
+          {
+            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+          }
+        }
+      }
+      
+      Log.Info("TV Service: Plugins started");  
+      
+      // fire off startedAll on plugins
+      foreach (ITvServerPlugin plugin in _pluginsStarted)
+      {
+        if (plugin is ITvServerPluginStartedAll)
+        {
+          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
+          try
+          {
+            (plugin as ITvServerPluginStartedAll).StartedAll();
+          } catch (Exception ex)
+          {
+            Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
+            Log.Write(ex);
+          }
+        }
+      }
+    }
+    
+    private void StopPlugins()
+    {
+      Log.Info("TV Service: Stop plugins");
+      if (_pluginsStarted != null)
+      {
+        foreach (ITvServerPlugin plugin in _pluginsStarted)
+        {
+          try
+          {
+            plugin.Stop();
+          } catch (Exception ex)
+          {
+            Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
+            Log.Write(ex);
+          }
+        }
+      _pluginsStarted = new List<ITvServerPlugin>();
+      }
+      Log.Info("TV Service: Plugins stopped");
+    }
+    
     /// <summary>
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
@@ -146,21 +228,20 @@ namespace TvService
     {
       if (!_started)
         return;
-
-      Log.WriteFile("TV service stopping");
+      Log.WriteFile("TV Service: stopping");
 
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
       {
         _controller.DeInit();
-        //_controller.Dispose(); dispose is already calling deinit, so why bother ?
         _controller = null;
       }
 
+      StopPlugins();
       if (_powerEventThreadId != 0)
       {
-        Log.Debug("TVService OnStop asking PowerEventThread to exit");
+        Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
         PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
         _powerEventThread.Join();
       }
@@ -172,7 +253,7 @@ namespace TvService
         Utils.RestartMCEServices();
       }
       _started = false;
-      Log.WriteFile("TV service stopped");
+      Log.WriteFile("TV Service: stopped");
     }
 
     #region PowerEvent window handling
@@ -481,17 +562,6 @@ namespace TvService
       {
         case PowerEventType.StandBy:
         case PowerEventType.Suspend:
-          if ((!_reinitializeController) && (_controller != null))
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            bool bSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value);
-            if (bSetting)
-            {
-              _reinitializeController = true;
-              Log.Debug("OnPowerEventHandler: Stopping Controller");
-              _controller.DeInit();
-            }
-          }
           return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
@@ -513,14 +583,6 @@ namespace TvService
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
         case PowerEventType.ResumeSuspend:
-          //OnStart(null);
-          if ((_reinitializeController) && (_controller != null))
-          {
-            _reinitializeController = false;
-            Log.Debug("OnPowerEventHandler: Starting Controller");
-            _controller.Restart();
-          }
-
           return true;
       }
       return true;
