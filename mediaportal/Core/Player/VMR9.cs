@@ -62,10 +62,7 @@ namespace MediaPortal.Player
   public interface IVMR9PresentCallback
   {
     [PreserveSig]
-    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
-
-    [PreserveSig]
-    int PresentSurface(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
+    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pImage, uint pTexture);
   }
 
   #endregion
