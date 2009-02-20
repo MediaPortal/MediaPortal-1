@@ -1857,5 +1857,6 @@
     <String id="200068">Kan ikke koble til databasen</String>
     <String id="200069">Alle IP porter ser ut til å fungere</String>
     <String id="200070">Vennligst sjekk firewall instillinger</String>
+    <String id="200071">Slette denne folderen og alle under foldre?</String>
   </Section>
 </Language>
