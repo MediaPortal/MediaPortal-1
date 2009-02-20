@@ -1228,7 +1228,9 @@ namespace TvPlugin
           {
             _singleChannelNumber -= _channelList.Count;
           }
-          GUIButton3PartControl img = (GUIButton3PartControl) GetControl(_cursorX + (int) Controls.IMG_CHAN1);
+          
+          // instead of direct casting us "as"; else it fails for other controls!
+          GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
           if (null != img)
           {
             _currentChannel = img.Label1;
@@ -1574,22 +1576,31 @@ namespace TvPlugin
         }
         else
         {
-          program = (Program) programs[programs.Count - 1];
-          if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
+          // bugfix for 0 items
+          if (programs.Count == 0)
           {
-            program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", false,
+            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty, false,
                                   DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
           }
           else
           {
-            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", false,
-                                  DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+            program = (Program) programs[programs.Count - 1];
+            if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
+            {
+              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", false,
+                                    DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+            }
+            else
+            {
+              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", false,
+                                    DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
+            }
           }
         }
 
         int ypos = GetControl(ichan + (int) Controls.IMG_CHAN1).YPosition;
         int iControlId = GUIDE_COMPONENTID_START + ichan*RowID + 0*ColID;
-        GUIButton3PartControl img = (GUIButton3PartControl) GetControl(iControlId);
+        GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl; 
 
         if (img == null)
         {
@@ -1985,7 +1996,7 @@ namespace TvPlugin
 
             int ypos = GetControl(iChannel + (int) Controls.IMG_CHAN1).YPosition;
             int iControlId = GUIDE_COMPONENTID_START + iChannel*RowID + iProgram*ColID;
-            GUIButton3PartControl img = (GUIButton3PartControl) GetControl(iControlId);
+            GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
             int iWidth = iEndXPos - iStartXPos;
             if (iWidth > 3)
             {
@@ -2554,7 +2565,7 @@ namespace TvPlugin
         return;
       }
       int iControlId = GUIDE_COMPONENTID_START + _cursorX*RowID + (_cursorY - 1)*ColID;
-      GUIButton3PartControl img = (GUIButton3PartControl) GetControl(iControlId);
+      GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;;
       if (null != img)
       {
         SetFocus();
@@ -2614,7 +2625,8 @@ namespace TvPlugin
         {
           _singleChannelNumber -= _channelList.Count;
         }
-        GUIButton3PartControl img = (GUIButton3PartControl) GetControl(_cursorX + (int) Controls.IMG_CHAN1);
+        // instead of direct casting us "as"; else it fails for other controls!
+        GUIButton3PartControl img = GetControl(_cursorX + (int) Controls.IMG_CHAN1) as GUIButton3PartControl;;
         if (null != img)
         {
           _currentChannel = img.Label1;
