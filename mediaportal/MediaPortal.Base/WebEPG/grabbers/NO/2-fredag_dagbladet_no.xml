@@ -59,20 +59,18 @@
     <Channel id="star" siteId="77" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://fredag.dagbladet.no/tv/index.html?kategori_id=&amp;kanal_id=[ID]&amp;dag=[DAY_OFFSET]&amp;fra_tid=0&amp;til_tid=24" post="" external="false" encoding="" />
+    <Site url="http://fredag.dagbladet.no/tv/index.html?kanal_id=[ID]&amp;dag=[DAY_OFFSET]&amp;fra_tid=0&amp;til_tid=24&amp;kategori_id" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="&lt;!-- hovedtabell --&gt;" end="&lt;!-- /hovedtabell --&gt;">
         <SectionTemplate tags="T">
           <TemplateText>
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/td&gt;&lt;/tr&gt;
 &lt;td&gt;&lt;#START&gt;&lt;br&gt;(&lt;#END&gt;)&lt;/td&gt;
 &lt;td&gt;
 &lt;a&gt;&lt;img&gt;&lt;/a&gt;&lt;#TITLE&gt;
 &lt;br&gt;
 &lt;#DESCRIPTION&gt;&lt;br&gt;
 &lt;br&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
     </TemplateText>
         </SectionTemplate>
 		</Template>

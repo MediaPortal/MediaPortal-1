@@ -50,15 +50,15 @@
       <Template name="default" start="&lt;!-- hovedtabell --&gt;" end="&lt;!-- /hovedtabell --&gt;">
         <SectionTemplate tags="T">
           <TemplateText>
-&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;td&gt;&lt;#START&gt;&lt;br&gt;(&lt;#END&gt;)&lt;/td&gt;
-&lt;td&gt;
-&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;font&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;#TITLE&gt;
-&lt;br&gt;
-&lt;#DESCRIPTION&gt;&lt;br&gt;
-&lt;br&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
+&lt;td&gt;
+&lt;b&gt;&lt;#START&gt;&lt;/b&gt;&lt;br&gt;
+(&lt;#END&gt;)
+&lt;/td&gt;
+&lt;td&gt;					&lt;b&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;#SOMETHING&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;#TITLE&gt;				&lt;/b&gt;&lt;br&gt;				&lt;#DESCRIPTION&gt;&lt;br&gt;
+&lt;img&gt;&lt;br&gt;
     </TemplateText>
         </SectionTemplate>
 		</Template>
