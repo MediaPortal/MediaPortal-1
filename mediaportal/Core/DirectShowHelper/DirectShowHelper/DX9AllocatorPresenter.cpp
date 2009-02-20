@@ -180,7 +180,10 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
   }
   
   // test if the colorspace is acceptable
-	if(FAILED(hr = m_pD3DDev->StretchRect(m_pSurfaces[0], NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
+  m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+  hr = m_pD3DDev->StretchRect(m_pSurfaces[0], NULL, m_pVideoSurface, NULL, D3DTEXF_NONE);
+  m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	if(FAILED(hr))
 	{
     Log("vmr9:InitializeDevice()   StretchRect returned:0x%x",hr);
 		DeleteSurfaces();
@@ -371,10 +374,13 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 
     HRESULT hr;
     
+    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     if(FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
     {
       Log("vmr9:Paint: StretchRect failed %u\n",hr);
     }
+    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+
     m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture);
 	}
 	catch(...)

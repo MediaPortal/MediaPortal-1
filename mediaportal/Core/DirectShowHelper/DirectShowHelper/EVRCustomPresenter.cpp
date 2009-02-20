@@ -1847,10 +1847,13 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
 		if (m_pCallback==NULL || pSurface==NULL)
       return E_FAIL;
+    
+    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     if(FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
     {
       Log("vmr9:Paint: StretchRect failed %u\n",hr);
     }
+     m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture);
     return hr;
 	}
