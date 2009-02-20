@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using MediaPortal.Configuration;
@@ -1402,6 +1403,31 @@ namespace MediaPortal.Video.Database
     #region Movie
 
     public void DeleteMovie(string strFilenameAndPath)
+    {
+      if (Directory.Exists(strFilenameAndPath))
+        DeleteMoviesInFolder(strFilenameAndPath);
+      else
+        DeleteSingleMovie(strFilenameAndPath);
+    }
+
+    private void DeleteMoviesInFolder(string strPath)
+    {
+      SQLiteResultSet results;
+      results = m_db.Execute("SELECT idPath,strPath FROM path WHERE strPath LIKE '" + strPath + "%'");
+
+      SortedDictionary<string,string> pathList= new SortedDictionary<string,string>();
+      for (int i = 0; i < results.Rows.Count; ++i)
+        pathList.Add(DatabaseUtility.Get(results, i, 0),DatabaseUtility.Get(results, i, 1));
+      
+      foreach (KeyValuePair<string, string> kvp in pathList)
+      {
+        results = m_db.Execute("SELECT strFilename FROM files WHERE idPath=" + kvp.Key);
+        for (int j = 0; j < results.Rows.Count; ++j)
+          DeleteSingleMovie(kvp.Value + DatabaseUtility.Get(results, j, 0));
+      }
+    }
+
+    private void DeleteSingleMovie(string strFilenameAndPath)
     {
       try
       {

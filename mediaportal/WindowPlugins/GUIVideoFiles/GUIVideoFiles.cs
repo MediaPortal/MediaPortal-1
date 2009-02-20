@@ -1972,7 +1972,7 @@ namespace MediaPortal.GUI.Video
             {
               return;
             }
-            dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(925)); // Delete this movie?
             dlgYesNo.SetLine(1, movieFileName);
             dlgYesNo.SetLine(2, String.Format("{0}: {1}", GUILocalizeStrings.Get(3021), iPart++));
             dlgYesNo.SetLine(3, string.Empty);
@@ -2086,12 +2086,40 @@ namespace MediaPortal.GUI.Video
         }
         if (item.Label != "..")
         {
-          List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(item.Path, false);
-          foreach (GUIListItem subItem in items)
+          string[] subDirs = Directory.GetDirectories(item.Path);
+          bool containsSubdirs = false;
+          foreach (string dir in subDirs)
           {
-            DoDeleteItem(subItem, false);
+            if (dir != "." && dir != "..")
+            {
+              containsSubdirs = true;
+              break;
+            }
           }
-          Util.Utils.DirectoryDelete(item.Path);
+          if (containsSubdirs)
+          {
+            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(200071)); // Delete this folder and all subfolders?
+            dlgYesNo.SetLine(1, item.Label);
+            dlgYesNo.SetLine(2, string.Empty);
+            dlgYesNo.SetLine(3, string.Empty);
+            dlgYesNo.DoModal(GetID);
+
+            if (!dlgYesNo.IsConfirmed)
+            {
+              return;
+            }
+          }
+          try
+          {
+            Directory.Delete(item.Path, true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+          }
+          VideoDatabase.DeleteMovie(item.Path);
+          TVDatabase.RemoveRecordedTVByFileName(item.Path);
           if (_currentSelectedItem > 0 && decreaseSelectedItem)
           {
             _currentSelectedItem--;

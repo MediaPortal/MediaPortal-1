@@ -1857,5 +1857,6 @@
     <String id="200068">Unable to connect to database</String>
     <String id="200069">All ip ports seem to be fine</String>
     <String id="200070">Please check firewall</String>
+	<String id="200071">Delete this folder and all subfolders?</String>
   </Section>
 </Language>
