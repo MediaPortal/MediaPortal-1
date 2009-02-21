@@ -122,6 +122,7 @@ namespace TvPlugin
     private static bool _doingHandleServerNotConnected = false;
     private static bool _doingChannelChange = false;
     private static bool _ServerNotConnectedHandled = false;
+    private static bool _ServerLastStatusOK = true;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -842,6 +843,7 @@ namespace TvPlugin
         // we just did a successful connect      
         if (remConnected && !Connected)
         {
+          _ServerLastStatusOK = true;
           GUIMessage initMsg = null;
           initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV_OVERLAY, 0, 0, 0,
                                    0, null);
@@ -852,6 +854,7 @@ namespace TvPlugin
 
         if (!Connected)
         {
+          _ServerLastStatusOK = false;
           g_Player.Stop();
           Card.User.Name = new User().Name;
 
@@ -1746,7 +1749,7 @@ namespace TvPlugin
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
 
-      if (HandleServerNotConnected())
+      if (HandleServerNotConnected() && _ServerLastStatusOK)
       {
         UpdateStateOfRecButton();
         UpdateProgressPercentageBar();
