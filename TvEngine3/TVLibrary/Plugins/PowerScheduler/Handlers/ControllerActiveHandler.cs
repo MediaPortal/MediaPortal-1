@@ -38,7 +38,7 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ControllerActiveHandler : IStandbyHandler
   {
     #region Variables
-    TVController _controller;
+    private TVController _controller;
     #endregion
 
     #region Constructor
@@ -48,20 +48,13 @@ namespace TvEngine.PowerScheduler.Handlers
     }
     #endregion
 
-    /*
-    public TVController Controller
-    {
-      get { return _controller; }
-      set { _controller = value; }
-    }
-     */
 
     #region IStandbyHandler Implementation
     public bool DisAllowShutdown
     {
       get
       {
-        if (_controller.CanSuspend)
+        if (_controller != null && _controller.CanSuspend)
           return false;
         return true;
       }
