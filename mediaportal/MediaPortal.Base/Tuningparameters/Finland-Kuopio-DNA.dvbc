@@ -1,6 +1,6 @@
-;28.08.2008
+;21.02.2009
 
-170000,128QAM,6875000
+234000,128QAM,6875000
 ; ============================
 ; YLE TV1
 ; YLE TV2
@@ -8,173 +8,163 @@
 ; Nelonen
 ; YLE FST5
 ; Sub
-; YLE TV1+ 
-; YLE Teema 
-; JIM 
-; YLE PEILI
+; YLE Teema
+; JIM
+;
+; YLE PUHE
 ; YLEN KLASSINEN
 ; YLEN MONDO
 
 
-162000,128QAM,6875000
+370000,128QAM,6875000
 ; =============================
-; Urheilukanava 
-; The Voice
-; DNA diggari 
-; diggari+ 
-; Deutsche Welle 
-; TV5 Monde Europe 
-; BBC World 
-; Music Television Finland
-; IskelmäTV
-; RADIO ISKELMÄ
-
-
-290000,256QAM,6875000
-; =============================
-;YLE Peking HD
-;Voom HD
+; TV1000
+; TV1000 +1
+; TV1000 Family
+; TV1000 Action
+; TV1000 Nordic
+; TV1000 Classic
+; Viasat Sport 1
+; TV1000 Drama
 
 
 362000,128QAM,6875000
 ; =============================
-; National Geographic (13-04) 
-; 3sat 
+; National Geographic (13-04)
+; 3sat
 ; RTL Television
-; TVE Internacional Europe (07-05) 
-; RAI Uno 
-; ARTE Deutsch (14-02) 
-; TRT International 
+; TVE Internacional Europe (07-05)
+; RAI Uno
+; ARTE Deutsch (14-02)
+; TRT International
 ; Private Spice
-;
-; TOTAL HITS
-; DANCE FLOOR
-; ROCK ANTHEMS
-; BLUES
-; CLASSICAL GREATS
+; Big brother 24/7
 
-
-298000,128QAM,6875000
-; =============================
-; MTV3 MAX 
-; MTV3 Ava 
-; Sub Juniori 
-; MTV3 Fakta 
-; Sub Leffa 
-; MTV3 Scifi 
-; MTV3 Sarja 
 
 
 354000,128QAM,6875000
 ; =============================
-; URHEILU+KANAVA 
-; Adult (01-06) 
-; MTV 2 
-; VH1 Classic  
-; Viasat History 
-; Viasat Nature&Crime (07-01) 
-; Viasat Explorer (06-24) 
-; Spice (00-06) 
-; Playboy TV (01-05) 
-; Viasat Golf 
-; Nickelodeon 
-;
-; CLASSICAL ORCHESTRAL
-; JAZZ CLASSICS
-; THE ALTERNATIVE
-; URBAN
-; COCKTAIL LOUNGE
+; URHEILU+KANAVA
+; Adult (01-06)
+; MTV 2
+; VH1 Classic
+; MTV Music
+; Toto TV
+; Viasat History
+; Viasat Nature&Crime (07-01)
+; Viasat Explorer (06-24)
+; Spice (00-06)
+; Playboy TV (01-05)
+; Viasat Golf
+; Nickelodeon
 
-
-370000,128QAM,6875000
-; =============================
-; TV1000  
-; TV1000 +1 
-; TV1000 Family 
-; TV1000 Action 
-; TV1000 Nordic 
-; TV1000 Classic 
-; Viasat Sport 1 
-; Viasat Sport 2 
-; Viasat Sport 3 
-
-
-314000,128QAM,6875000
-; =============================
-; CANAL+ FIRST 
-; CANAL+ HITS 
-; CANAL+ ACTION 
-; CANAL+ DRAMA 
-; CANAL+ COMEDY 
-; CANAL 69 
-; CANAL+ SPORT 1  
-; CANAL+ SPORT 2 
-; CANAL+ SPORT EXTRA 
-
-
-306000,128QAM,6875000
-; =============================
-; Turku TV 
-; Disney Channel 
-; Toon Disney 
-; Playhouse Disney 
-; Eurosport 2 
-; Eurosport 
-; Star 
-; Travel Channel 
-; EuroNews 
-
-
-322000,128QAM,6875000
-; =============================
-; CNN International 
-; BBC Prime 
-; BBC Food 
-; Discovery Finland (10-04) 
-; Animal Planet (08-02) 
-; Discovery Science 
-; Discov Civilisation 
-; Discov Tra&Liv 
-; VH1 
-;
-; COUNTRY STARS
-; TOTAL HITS ITALY
-; TOTAL HITS NORDIC
-; CLASSICAL CALM
-; XMAS & KIDS
-
-
-338000,128QAM,6875000
-; =============================
-; Showtime 
-; Extreme 
-; Zone Reality 
-; ESPN Classic Sports 
-; Cartoon Network 
-; Turner Classic Movies (TCM) 
-; KinoTV 
-; Silver 
-; Mezzo 
-;
-; SOUL CLASSICS
-; WORLD CARNIVAL 
-; JUST CHILL OUT
-; STRICTLY 60S
-; CLASSIC ROCK
 
 
 346000,128QAM,6875000
 ; =============================
-; TV7 
-; SVT1 
-; SVT2 
-; Barnkanalen 
-; TV3  
-; TV4 
-; ORT International 
-; NTV Mir 
+; MTV Dance
+; TV7
+; SVT1
+; SVT2
+; Barnkanalen
+; TV3
+; TV4
+; ORT International
+; NTV Mir
 
 
+338000,128QAM,6875000
+; =============================
+; Showtime
+; Extreme Sports
+; Zone Reality
+; ESPN Classic Sports
+; Cartoon Network
+; Turner Classic Movies (TCM)
+; KinoTV
+; Silver
+; Mezzo
 
 
+322000,128QAM,6875000
+; =============================
+; CNN International
+; BBC Entertainment
+; BBC Lifestyle
+; Discovery Finland (10-04)
+; Animal Planet (08-02)
+; Discovery Science
+; Discov World
+; Discov Tra&Liv
+; VH1
 
+
+314000,128QAM,6875000
+; =============================
+; CANAL+ FIRST
+; CANAL+ HITS
+; CANAL+ ACTION
+; CANAL+ DRAMA
+; CANAL+ COMEDY
+; CANAL 69
+; CANAL+ SPORT 1
+; CANAL+ SPORT 2
+; CANAL+ SPORT EXTRA
+
+
+242000,128QAM,6875000
+; =============================
+; Urheilukanava
+; The Voice
+; diggari
+; Diggari+
+; MTV Hits
+; Deutsche Welle
+; TV5 Monde Europe
+; BBC World
+; Music Television Finland
+; IskelmäTV
+;
+; ISKELMÄ (RADIO)
+
+
+306000,128QAM,6875000
+; =============================
+; Turku TV
+; Disney Channel
+; Toon Disney
+; Playhouse Disney
+; Eurosport 2
+; Eurosport
+; Star
+; Travel Channel
+; EuroNews
+
+
+298000,128QAM,6875000
+; =============================
+; MTV3 MAX
+; MTV3 Ava
+; Sub Juniori
+; MTV3 Fakta
+; Sub Leffa
+; MTV3 Scifi
+; MTV3 Sarja
+
+
+290000,256QAM,6875000
+; =============================
+;Liv
+;Voom HD
+
+
+274000,256QAM,6875000
+; =============================
+; CANAL+ SPORT HD
+; CANAL+ FILM HD
+
+
+266000,256QAM,6875000
+; =============================
+; MTVN HD
+; TV1000 HD
