@@ -700,7 +700,7 @@ namespace MediaPortal.Player
       bool IsAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
 
 
-      if (!isTV && !isDVD && !isVideo)
+      if (!isTV && !isDVD && !isVideo && !IsAVStream)
       {
         return;
       }
