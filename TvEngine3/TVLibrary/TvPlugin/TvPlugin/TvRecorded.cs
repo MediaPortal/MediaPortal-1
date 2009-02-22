@@ -1175,7 +1175,7 @@ namespace TvPlugin
               try
               {
                 string Channel = rec.ReferencedChannel().DisplayName;
-                if (String.IsNullOrEmpty(Channel))
+                if (!String.IsNullOrEmpty(Channel))
                 {
                   item1.Label2 = Channel;
                 }
