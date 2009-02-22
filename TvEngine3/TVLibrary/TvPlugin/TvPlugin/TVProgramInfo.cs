@@ -44,32 +44,46 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
-    [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
-    [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControl(14)] protected GUILabelControl lblProgramTime = null;
-    [SkinControl(13)] protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControl(16)] protected GUIFadeLabel lblProgramChannel = null;
-    [SkinControl(2)] protected GUIButtonControl btnRecord = null;
-    [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControl(4)] protected GUIButtonControl btnKeep = null;
-    [SkinControl(5)] protected GUIToggleButtonControl btnNotify = null;
-    [SkinControl(10)] protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControl(6)] protected GUIButtonControl btnQuality = null;
-    [SkinControl(7)] protected GUIButtonControl btnEpisodes = null;
-    [SkinControl(8)] protected GUIButtonControl btnPreRecord = null;
-    [SkinControl(9)] protected GUIButtonControl btnPostRecord = null;
+    [SkinControl(17)]
+    protected GUILabelControl lblProgramGenre = null;
+    [SkinControl(15)]
+    protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControl(14)]
+    protected GUILabelControl lblProgramTime = null;
+    [SkinControl(13)]
+    protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControl(16)]
+    protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControl(2)]
+    protected GUIButtonControl btnRecord = null;
+    [SkinControl(3)]
+    protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControl(4)]
+    protected GUIButtonControl btnKeep = null;
+    [SkinControl(5)]
+    protected GUIToggleButtonControl btnNotify = null;
+    [SkinControl(10)]
+    protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControl(6)]
+    protected GUIButtonControl btnQuality = null;
+    [SkinControl(7)]
+    protected GUIButtonControl btnEpisodes = null;
+    [SkinControl(8)]
+    protected GUIButtonControl btnPreRecord = null;
+    [SkinControl(9)]
+    protected GUIButtonControl btnPostRecord = null;
 
-    protected bool _notificationEnabled = false;
+    protected bool _notificationEnabled;
 
-    private static Program currentProgram = null;
+    private static Program currentProgram;
 
-    private List<int> RecordingIntervalValues = new List<int>();
+    private readonly List<int> RecordingIntervalValues = new List<int>();
     private int _preRec;
     private int _postRec;
 
     public TVProgramInfo()
     {
-      GetID = (int) Window.WINDOW_TV_PROGRAM_INFO; //748
+      GetID = (int)Window.WINDOW_TV_PROGRAM_INFO; //748
 
       LoadSettings();
     }
@@ -77,7 +91,7 @@ namespace TvPlugin
     public override void OnAdded()
     {
       Log.Debug("TVProgramInfo:OnAdded");
-      GUIWindowManager.Replace((int) Window.WINDOW_TV_PROGRAM_INFO, this);
+      GUIWindowManager.Replace((int)Window.WINDOW_TV_PROGRAM_INFO, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -151,9 +165,8 @@ namespace TvPlugin
       set
       {
         CurrentProgram = null;
-        IList<Program> programs = new List<Program>();
         TvBusinessLayer layer = new TvBusinessLayer();
-        programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
+        IList<Program> programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
         foreach (Program prog in programs)
         {
           if (value.IsRecordingProgram(prog, false))
@@ -165,7 +178,7 @@ namespace TvPlugin
       }
     }
 
-    private void UpdateProgramDescription(Schedule rec, Program program)
+    private void UpdateProgramDescription(Program program)
     {
       if (program == null)
       {
@@ -187,6 +200,14 @@ namespace TvPlugin
     private void Update()
     {
       GUIListItem lastSelectedItem = lstUpcomingEpsiodes.SelectedListItem;
+      Program lastSelectedProgram;
+      if (lastSelectedItem != null)
+      {
+        lastSelectedProgram = lastSelectedItem.MusicTag as Program;
+      }else
+      {
+        lastSelectedProgram = currentProgram;
+      }
       int itemToSelect = -1;
       lstUpcomingEpsiodes.Clear();
       if (currentProgram == null)
@@ -217,7 +238,7 @@ namespace TvPlugin
 
         if (isRecording)
         {
-          if ((ScheduleRecordingType) schedule.ScheduleType != ScheduleRecordingType.Once)
+          if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
           {
             isSeries = true;
           }
@@ -275,7 +296,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem();
         item.Label = episode.Title;
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        item.OnItemSelected += item_OnItemSelected;
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
         if (!File.Exists(logo))
         {
@@ -295,14 +316,7 @@ namespace TvPlugin
         {
           if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
           {
-            if (recordingSchedule.ReferringConflicts().Count > 0)
-            {
-              item.PinImage = Thumbs.TvConflictRecordingIcon;
-            }
-            else
-            {
-              item.PinImage = Thumbs.TvRecordingIcon;
-            }
+            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
           }
           item.TVTag = recordingSchedule;
         }
@@ -322,10 +336,11 @@ namespace TvPlugin
                                     Utils.GetShortDayString(episode.StartTime),
                                     episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        ;
-        if (lastSelectedItem != null)
+        if (lastSelectedProgram != null)
         {
-          if ((item.Label == lastSelectedItem.Label) && (item.Label2 == lastSelectedItem.Label2))
+          if (lastSelectedProgram.IdChannel == episode.IdChannel &&
+              lastSelectedProgram.StartTime == episode.StartTime &&
+              lastSelectedProgram.EndTime == episode.EndTime && lastSelectedProgram.Title == episode.Title)
           {
             itemToSelect = lstUpcomingEpsiodes.Count;
           }
@@ -341,7 +356,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
     }
 
-    private bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
+    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
       recordingSchedule = null;
       IList<Schedule> schedules = Schedule.ListAll();
@@ -430,7 +445,7 @@ namespace TvPlugin
       {
         return;
       }
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -511,7 +526,7 @@ namespace TvPlugin
       {
         return;
       }
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -588,7 +603,7 @@ namespace TvPlugin
       {
         return;
       }
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -755,44 +770,15 @@ namespace TvPlugin
           }
           else
           {
-            CreateProgram(program, (int) ScheduleRecordingType.Once);
+            CreateProgram(program, (int)ScheduleRecordingType.Once);
           }
         }
         else
         {
-          CreateProgram(program, (int) ScheduleRecordingType.Once);
+          CreateProgram(program, (int)ScheduleRecordingType.Once);
         }
       }
       Update();
-    }
-
-    private bool DeleteRecordingPrompt(Schedule schedule, Program program)
-    {
-      if (schedule.IsRecordingProgram(program, true)) //check if we currently recoding this schedule      
-      {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo)
-        {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-          return false;
-        }
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-        if (dlgYesNo.IsConfirmed)
-        {
-          //server.StopRecordingSchedule(schedule.IdSchedule);
-          return true;
-        }
-        else
-        {
-          Log.Debug("TVProgramInfo.DeleteRecordingPrompt: not confirmed");
-        }
-      }
-      return false;
     }
 
     private void CancelProgram(Program program, Schedule schedule)
@@ -803,20 +789,20 @@ namespace TvPlugin
 
       bool deleteEntireSched = false;
 
-      if (schedule.ScheduleType == (int) ScheduleRecordingType.Once)
+      if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
         TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, program, false, false);
         return;
       }
 
-      else if ((schedule.ScheduleType == (int) ScheduleRecordingType.Daily)
-               || (schedule.ScheduleType == (int) ScheduleRecordingType.Weekends)
-               || (schedule.ScheduleType == (int) ScheduleRecordingType.Weekly)
-               || (schedule.ScheduleType == (int) ScheduleRecordingType.WorkingDays)
-               || (schedule.ScheduleType == (int) ScheduleRecordingType.EveryTimeOnEveryChannel)
-               || (schedule.ScheduleType == (int) ScheduleRecordingType.EveryTimeOnThisChannel))
+      if ((schedule.ScheduleType == (int)ScheduleRecordingType.Daily)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekends)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekly)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel))
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           Log.Error("TVProgramInfo.CancelProgram: ERROR no GUIDialogMenu found !!!!!!!!!!");
@@ -837,7 +823,6 @@ namespace TvPlugin
         {
           case 981: //delete specific series
 
-            deleteEntireSched = false;
             break;
           case 982: //Delete entire recording
             deleteEntireSched = true;
@@ -851,7 +836,7 @@ namespace TvPlugin
     private void CreateProgram(Program program, int scheduleType)
     {
       Log.Debug("TVProgramInfo.CreateProgram: program = {0}", program.ToString());
-      Schedule schedule = null;
+      Schedule schedule;
       Schedule saveSchedule = null;
       TvBusinessLayer layer = new TvBusinessLayer();
       if (IsRecordingProgram(program, out schedule, false)) // check if schedule is already existing
@@ -866,7 +851,7 @@ namespace TvPlugin
           schedule = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
           schedule.PreRecordInterval = saveSchedule.PreRecordInterval;
           schedule.PostRecordInterval = saveSchedule.PostRecordInterval;
-          schedule.ScheduleType = (int) ScheduleRecordingType.Once; // needed for layer.GetConflictingSchedules(...)
+          schedule.ScheduleType = (int)ScheduleRecordingType.Once; // needed for layer.GetConflictingSchedules(...)
         }
       }
       else
@@ -887,14 +872,14 @@ namespace TvPlugin
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg =
-          (GUIDialogTVConflict) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_TVCONFLICT);
+          (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_TVCONFLICT);
         if (dlg != null)
         {
           dlg.Reset();
           dlg.SetHeading(GUILocalizeStrings.Get(879)); // "recording conflict"
           foreach (Schedule conflict in conflicts)
           {
-            Log.Debug("TVProgramInfo.CreateProgram: Conflicts = " + conflict.ToString());
+            Log.Debug("TVProgramInfo.CreateProgram: Conflicts = " + conflict);
 
             GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
@@ -902,7 +887,7 @@ namespace TvPlugin
             item.TVTag = conflict;
             dlg.AddConflictRecording(item);
           }
-          dlg.ConflictingEpisodes = (scheduleType != (int) ScheduleRecordingType.Once);
+          dlg.ConflictingEpisodes = (scheduleType != (int)ScheduleRecordingType.Once);
           dlg.DoModal(GetID);
           switch (dlg.SelectedLabel)
           {
@@ -991,7 +976,7 @@ namespace TvPlugin
         return;
       }
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -1015,53 +1000,52 @@ namespace TvPlugin
           return;
         }
 
-        int scheduleType = (int) ScheduleRecordingType.Once;
+        int scheduleType = (int)ScheduleRecordingType.Once;
         switch (dlg.SelectedId)
         {
           case 611: //once
-            scheduleType = (int) ScheduleRecordingType.Once;
+            scheduleType = (int)ScheduleRecordingType.Once;
             break;
           case 612: //everytime, this channel
-            scheduleType = (int) ScheduleRecordingType.EveryTimeOnThisChannel;
+            scheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
             break;
           case 613: //everytime, all channels
-            scheduleType = (int) ScheduleRecordingType.EveryTimeOnEveryChannel;
+            scheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
             break;
           case 614: //weekly
-            scheduleType = (int) ScheduleRecordingType.Weekly;
+            scheduleType = (int)ScheduleRecordingType.Weekly;
             break;
           case 615: //daily
-            scheduleType = (int) ScheduleRecordingType.Daily;
+            scheduleType = (int)ScheduleRecordingType.Daily;
             break;
           case 672: //Mo-Fi
-            scheduleType = (int) ScheduleRecordingType.WorkingDays;
+            scheduleType = (int)ScheduleRecordingType.WorkingDays;
             break;
           case 1051: //Record Sat-Sun
-            scheduleType = (int) ScheduleRecordingType.Weekends;
+            scheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
         CreateProgram(currentProgram, scheduleType);
 
-        if (scheduleType == (int) ScheduleRecordingType.Once)
+        if (scheduleType == (int)ScheduleRecordingType.Once)
         {
           //check if this program is interrupted (for example by a news bulletin)
           //ifso ask the user if he wants to record the 2nd part also
-          IList<Program> programs = new List<Program>();
           DateTime dtStart = currentProgram.EndTime.AddMinutes(1);
           DateTime dtEnd = dtStart.AddHours(3);
           TvBusinessLayer layer = new TvBusinessLayer();
-          programs = layer.GetPrograms(currentProgram.ReferencedChannel(), dtStart, dtEnd);
+          IList<Program> programs = layer.GetPrograms(currentProgram.ReferencedChannel(), dtStart, dtEnd);
           if (programs.Count >= 2)
           {
-            Program next = programs[0] as Program;
-            Program nextNext = programs[1] as Program;
+            Program next = programs[0];
+            Program nextNext = programs[1];
             if (nextNext.Title == currentProgram.Title)
             {
               TimeSpan ts = next.EndTime - nextNext.StartTime;
               if (ts.TotalMinutes <= 40)
               {
                 //
-                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
                 dlgYesNo.SetHeading(1012); //This program will be interrupted by
                 dlgYesNo.SetLine(1, next.Title);
                 dlgYesNo.SetLine(2, 1013); //Would you like to record the second part also?
@@ -1082,10 +1066,11 @@ namespace TvPlugin
     private void OnNotify()
     {
       currentProgram.Notify = !currentProgram.Notify;
+
       // get the right db instance of current prog before we store it
       // currentProgram is not a ref to the real entity
-      Program modifiedProg = Program.RetrieveByTitleAndTimes(currentProgram.Title, currentProgram.StartTime,
-                                                             currentProgram.EndTime);
+      Program modifiedProg = Program.RetrieveByTitleTimesAndChannel(currentProgram.Title, currentProgram.StartTime,
+                                                             currentProgram.EndTime, currentProgram.IdChannel);
       modifiedProg.Notify = currentProgram.Notify;
       modifiedProg.Persist();
       Update();
@@ -1100,7 +1085,7 @@ namespace TvPlugin
         return;
       }
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1113,16 +1098,16 @@ namespace TvPlugin
       dlg.AddLocalizedString(1046); //Always
       switch (rec.KeepMethod)
       {
-        case (int) KeepMethodType.UntilWatched:
+        case (int)KeepMethodType.UntilWatched:
           dlg.SelectedLabel = 0;
           break;
-        case (int) KeepMethodType.UntilSpaceNeeded:
+        case (int)KeepMethodType.UntilSpaceNeeded:
           dlg.SelectedLabel = 1;
           break;
-        case (int) KeepMethodType.TillDate:
+        case (int)KeepMethodType.TillDate:
           dlg.SelectedLabel = 2;
           break;
-        case (int) KeepMethodType.Always:
+        case (int)KeepMethodType.Always:
           dlg.SelectedLabel = 3;
           break;
       }
@@ -1134,14 +1119,14 @@ namespace TvPlugin
       switch (dlg.SelectedId)
       {
         case 1043:
-          rec.KeepMethod = (int) KeepMethodType.UntilWatched;
+          rec.KeepMethod = (int)KeepMethodType.UntilWatched;
           break;
         case 1044:
-          rec.KeepMethod = (int) KeepMethodType.UntilSpaceNeeded;
+          rec.KeepMethod = (int)KeepMethodType.UntilSpaceNeeded;
 
           break;
         case 1045:
-          rec.KeepMethod = (int) KeepMethodType.TillDate;
+          rec.KeepMethod = (int)KeepMethodType.TillDate;
           dlg.Reset();
           dlg.ShowQuickNumbers = false;
           dlg.SetHeading(1045);
@@ -1151,7 +1136,7 @@ namespace TvPlugin
             dlg.Add(dt.ToLongDateString());
           }
           TimeSpan ts = (rec.KeepDate - currentProgram.StartTime);
-          int days = (int) ts.TotalDays;
+          int days = (int)ts.TotalDays;
           if (days >= 100)
           {
             days = 30;
@@ -1165,7 +1150,7 @@ namespace TvPlugin
           rec.KeepDate = currentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
           break;
         case 1046:
-          rec.KeepMethod = (int) KeepMethodType.Always;
+          rec.KeepMethod = (int)KeepMethodType.Always;
           break;
       }
       rec.Persist();
@@ -1186,7 +1171,7 @@ namespace TvPlugin
         if (episode != null)
         {
           Log.Info("TVProgrammInfo.item_OnItemSelected: {0}", episode.Title);
-          UpdateProgramDescription(null, episode);
+          UpdateProgramDescription(episode);
         }
         else
         {
@@ -1199,7 +1184,7 @@ namespace TvPlugin
       }
     }
 
-    private string GetRecordingDateTime(Schedule rec)
+    private static string GetRecordingDateTime(Schedule rec)
     {
       return String.Format("{0} {1} - {2}",
                            Utils.GetShortDayString(rec.StartTime),

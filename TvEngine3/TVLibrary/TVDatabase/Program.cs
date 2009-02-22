@@ -336,6 +336,44 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retreives the first found instance of a Program given its Title,Start and End Times and referenced channel
+    /// </summary>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <param name="channelId">Referenced Channel id</param>
+    /// <returns></returns>
+    public static Program RetrieveByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "startTime", startTime);
+      sb.AddConstraint(Operator.Equals, "endTime", endTime);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList<Program> result = ObjectFactory.GetCollection<Program>(stmt.Execute());
+      if (result == null)
+      {
+        return null;
+      }
+      if (result.Count == 0)
+      {
+        return null;
+      }
+      return result[0];
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
     /// Retreives the first found instance of a Program given its Title
     /// </summary>
     /// <param name="title">Title we wanna look for</param>
