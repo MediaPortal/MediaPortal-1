@@ -1039,6 +1039,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void SetWakeupTimer()
     {
+      Log.Debug("PowerScheduler: SetWakeupTimer");
       if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
@@ -1077,6 +1078,8 @@ namespace TvEngine.PowerScheduler
           _wakeupTimer.SecondsToWait = -1;
         }
       }
+      else
+        Log.Debug("PowerScheduler: Warning WakeupEnabled is not set.");
     }
 
     #region Message handling
