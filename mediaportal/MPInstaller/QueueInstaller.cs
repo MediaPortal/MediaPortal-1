@@ -69,7 +69,7 @@ namespace MediaPortal.MPInstaller
 
                   inst.Add(package);
                   inst.SaveToFile();
-                  if (package.InstallerInfo.ProiectProperties.ClearSkinCache)
+                  if (package.InstallerInfo.ProjectProperties.ClearSkinCache)
                   {
                     Directory.Delete(Config.GetFolder(Config.Dir.Cache), true);
                   }

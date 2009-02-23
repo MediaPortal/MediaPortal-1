@@ -436,7 +436,7 @@ namespace MediaPortal.MPInstaller
       tabControl1.Controls.Clear();
       tabControl1.Controls.Add(tabPage_Proiect);
       tabControl1.Controls.Add(tabPage_Advanced);
-      propertyGrid1.SelectedObject = _struct.ProiectProperties;
+      propertyGrid1.SelectedObject = _struct.ProjectProperties;
       textt_comboBox1.Items.Clear();
       textt_comboBox1.Items.Add(MPinstallerStruct.TEXT_LOG_TYPE);
       textt_comboBox1.Items.Add(MPinstallerStruct.TEXT_README_TYPE);
@@ -516,7 +516,7 @@ namespace MediaPortal.MPInstaller
         }
         tabControl1.Controls.Add(tabPage_Proiect);
         tabControl1.Controls.Add(tabPage_Advanced);
-        propertyGrid1.SelectedObject = _struct.ProiectProperties;
+        propertyGrid1.SelectedObject = _struct.ProjectProperties;
         propertyGrid2.SelectedObject = fpc.Parse(bossview.SelectedItems[0].SubItems[5].Text);
         propertyGrid1.Update();
         propertyGrid2.Update();

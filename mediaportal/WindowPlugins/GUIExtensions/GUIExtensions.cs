@@ -648,11 +648,11 @@ namespace WindowPlugins.GUI.Extensions
         case SortMethod.Date:
           if (bAscending)
           {
-            return DateTime.Compare(pk1.InstallerInfo.ProiectProperties.CreationDate, pk2.InstallerInfo.ProiectProperties.CreationDate);
+            return DateTime.Compare(pk1.InstallerInfo.ProjectProperties.CreationDate, pk2.InstallerInfo.ProjectProperties.CreationDate);
           }
           else
           {
-            return DateTime.Compare(pk2.InstallerInfo.ProiectProperties.CreationDate, pk1.InstallerInfo.ProiectProperties.CreationDate);
+            return DateTime.Compare(pk2.InstallerInfo.ProjectProperties.CreationDate, pk1.InstallerInfo.ProjectProperties.CreationDate);
           }
       }
       return 0;
@@ -860,7 +860,7 @@ namespace WindowPlugins.GUI.Extensions
               item.Label2 = pak.InstallerInfo.Group;
               break;
             case SortMethod.Date:
-              item.Label2 = pak.InstallerInfo.ProiectProperties.CreationDate.ToShortDateString();
+              item.Label2 = pak.InstallerInfo.ProjectProperties.CreationDate.ToShortDateString();
               break;
             default:
               break;

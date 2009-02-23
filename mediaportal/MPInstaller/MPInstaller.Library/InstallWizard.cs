@@ -251,9 +251,9 @@ namespace MediaPortal.MPInstaller
             Customize_list.Items.Clear();
             foreach (GroupString gs in package.InstallerInfo.SetupGroups)
             {
-              Customize_list.Items.Add(gs.Name, !package.InstallerInfo.ProiectProperties.SingleGroupSelect);
+              Customize_list.Items.Add(gs.Name, !package.InstallerInfo.ProjectProperties.SingleGroupSelect);
             }
-            if (package.InstallerInfo.ProiectProperties.SingleGroupSelect && package.InstallerInfo.SetupGroups.Count > 0)
+            if (package.InstallerInfo.ProjectProperties.SingleGroupSelect && package.InstallerInfo.SetupGroups.Count > 0)
               Customize_list.SetItemChecked(0, true);
             break;
           }
@@ -350,7 +350,7 @@ namespace MediaPortal.MPInstaller
       {
         if (package.InstallPlugin != null)
           package.InstallPlugin.OnEndInstall(ref package);
-        if (package.InstallerInfo.ProiectProperties.ClearSkinCache)
+        if (package.InstallerInfo.ProjectProperties.ClearSkinCache)
         {
           Directory.Delete(Config.GetFolder(Config.Dir.Cache),true);
         }
@@ -546,7 +546,7 @@ namespace MediaPortal.MPInstaller
     {
       if (working) return;
       working = true;
-      if (package.InstallerInfo.ProiectProperties.SingleGroupSelect)
+      if (package.InstallerInfo.ProjectProperties.SingleGroupSelect)
       {
         for (int i = 0; i < Customize_list.Items.Count; i++)
           Customize_list.SetItemChecked(i, false);

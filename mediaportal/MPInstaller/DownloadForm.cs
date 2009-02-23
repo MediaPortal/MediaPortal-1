@@ -76,11 +76,13 @@ namespace MediaPortal.MPInstaller
 //                  if (result.Contains("Login was made !"))
             if (true)
             {
+              client.UseDefaultCredentials = true;
+              client.Credentials = new NetworkCredential("username", "passs");
               if (Path.GetExtension(dest) == ".xml")
               {
                 //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
                 client.DownloadFileAsync(
-                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user=" + user + "&passwd=" +
+                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mpe.php?option=getxml&user=" + user + "&passwd=" +
                           password), dest);
               }
               else
@@ -91,7 +93,7 @@ namespace MediaPortal.MPInstaller
                 client.CachePolicy = new RequestCachePolicy();
                 client.UseDefaultCredentials = true;
                 client.DownloadFileAsync(
-                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" +
+                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mpe.php?option=down&user=" + user + "&passwd=" +
                           password + "&filename=" + Path.GetFileName(source)), dest);
               }
             }

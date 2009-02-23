@@ -166,7 +166,7 @@ namespace MediaPortal.MPInstaller
             writer.WriteElementString("Group", it.InstallerInfo.Group);
             it.InstallerInfo.WriteLogoElement(writer);
             writer.WriteStartElement("Properties");
-            it.InstallerInfo.ProiectProperties.Save(writer);
+            it.InstallerInfo.ProjectProperties.Save(writer);
             writer.WriteEndElement();
             writer.WriteStartElement("Uninstall");
             for (int j = 0; j < it.InstallerInfo.Uninstall.Count; j++)
@@ -245,6 +245,11 @@ namespace MediaPortal.MPInstaller
             pkg.InstallerInfo.Author = nodefile.SelectSingleNode("Author").InnerText;
             pkg.InstallerInfo.Version = nodefile.SelectSingleNode("Version").InnerText;
             pkg.InstallerInfo.UpdateURL = nodefile.SelectSingleNode("URL").InnerText;
+            pkg.DownloadCount = GetIntValueFromNode(nodefile, "Downloads", 0);
+            pkg.VoteCount = GetIntValueFromNode(nodefile, "Vote/Count", 0);
+            pkg.VoteValue = GetIntValueFromNode(nodefile, "Vote/Value", 0);
+            pkg.ScreenUrl = GetStringValueFromNode(nodefile, "Screenurl", string.Empty);
+            string updateDate = GetStringValueFromNode(nodefile, "Submitdate", string.Empty);
             XmlNode grup_node = nodefile.SelectSingleNode("Group");
             if (grup_node != null)
               pkg.InstallerInfo.Group = grup_node.InnerText;
@@ -275,8 +280,18 @@ namespace MediaPortal.MPInstaller
             if (node_des != null)
               pkg.InstallerInfo.Description = node_des.InnerText;
             XmlNode nodeproperties = nodefile.SelectSingleNode("Properties");
-            pkg.InstallerInfo.ProiectProperties.Load(nodeproperties);
+            pkg.InstallerInfo.ProjectProperties.Load(nodeproperties);
 
+            if (!string.IsNullOrEmpty(updateDate))
+            {
+              try
+              {
+                pkg.InstallerInfo.ProjectProperties.CreationDate = DateTime.ParseExact(updateDate.Substring(0, 10), "yyyy-MM-dd", null);
+              }
+              catch (Exception)
+              {
+              }
+            }
             this.Items.Add(pkg);
           }
           //XmlNode nodeoption = ver.SelectSingleNode("Option");
@@ -290,5 +305,43 @@ namespace MediaPortal.MPInstaller
       }
     }
 
+    /// <summary>
+    /// Gets the int value from node.
+    /// </summary>
+    /// <param name="node">The node.</param>
+    /// <param name="name">The name of node.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
+    private int GetIntValueFromNode(XmlNode node, string name, int defaultValue)
+    {
+      try
+      {
+        int i = defaultValue;
+        if (int.TryParse(node.SelectSingleNode(name).InnerText, out i))
+        {
+          return i;
+        }
+        else
+        {
+          return defaultValue;
+        }
+      }
+      catch (Exception)
+      {
+        return defaultValue;
+      }
+    }
+
+    private string GetStringValueFromNode(XmlNode node, string name, string defaultValue)
+    {
+      try
+      {
+        return node.SelectSingleNode(name).InnerText;
+      }
+      catch (Exception)
+      {
+        return defaultValue;
+      }
+    }
   }
 }

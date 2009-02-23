@@ -86,7 +86,7 @@ namespace MediaPortal.MPInstaller
     
     public bool TestView(MPpackageStruct pk, int idx )
     {
-      if (checkBox_comp.Checked && VersionPharser.CompareVersions(versionInfo.FileVersion, pk.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
+      if (checkBox_comp.Checked && VersionPharser.CompareVersions(versionInfo.FileVersion, pk.InstallerInfo.ProjectProperties.MPMinVersion) < 0)
         return false;
 
       switch (idx)
@@ -124,6 +124,7 @@ namespace MediaPortal.MPInstaller
     public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
     {
       lv.Items.Clear();
+      controlListView1.Clear();
       for (int i = 0; i < mpih.Items.Count; i++)
       {
         MPpackageStruct pk = (MPpackageStruct)mpih.Items[i];
@@ -150,6 +151,11 @@ namespace MediaPortal.MPInstaller
           item.Author = pk.InstallerInfo.Author;
           item.Version = pk.InstallerInfo.Version;
           item.Description = pk.InstallerInfo.Description;
+          item.CreateDate = pk.InstallerInfo.ProjectProperties.CreationDate;
+          if (!string.IsNullOrEmpty(pk.ScreenUrl))
+          {
+            item.PictureBox.LoadAsync(pk.ScreenUrl);
+          }
           controlListView1.Add(item);
           //--------------------
 

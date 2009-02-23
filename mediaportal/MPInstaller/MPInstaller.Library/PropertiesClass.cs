@@ -32,7 +32,7 @@ using System.Xml;
 
 namespace MediaPortal.MPInstaller
 {
-  public class ProiectPropertiesClass
+  public class ProjectPropertiesClass
   {
     private string mpminversion;
     private string mpmaxversion;
@@ -44,7 +44,7 @@ namespace MediaPortal.MPInstaller
     private bool singlegroupselect;
     private bool clarskincache;
 
-    public ProiectPropertiesClass()
+    public ProjectPropertiesClass()
     {
       Clear();
     }

@@ -46,8 +46,9 @@ namespace MediaPortal.MPInstaller
   /// </summary>
   public class MPinstallerStruct
   {
-    public const string DEFAULT_UPDATE_SITE = "http://www.team-mediaportal.com";
-
+    //public const string DEFAULT_UPDATE_SITE = "http://www.team-mediaportal.com";
+    // for testing only 
+    public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
 
     public static string[] CategoryListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
 
@@ -86,7 +87,6 @@ namespace MediaPortal.MPInstaller
     private string script = string.Empty;
 
     Image _image = null;
-    public ProiectPropertiesClass ProiectProperties;
     public ArrayList Uninstall = new ArrayList();
     public ArrayList FileList = new ArrayList();
     public List<LanguageString> Language;
@@ -98,11 +98,20 @@ namespace MediaPortal.MPInstaller
     {
       Language = new List<LanguageString>();
       Actions = new List<ActionInfo>();
-      ProiectProperties = new ProiectPropertiesClass();
+      ProjectProperties = new ProjectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
       
     }
+
+    private ProjectPropertiesClass projectPropertise;
+
+    public ProjectPropertiesClass ProjectProperties
+    {
+      get { return projectPropertise; }
+      set { projectPropertise = value; }
+    }
+
 
     public string UpdateURL
     {
@@ -277,7 +286,7 @@ namespace MediaPortal.MPInstaller
       Actions.Clear();
       SetupGroups.Clear();
       SetupGroupsMappig.Clear();
-      ProiectProperties.Clear();
+      ProjectProperties.Clear();
       BuildFileName = string.Empty;
       ProiectFileName = string.Empty;
       Author = string.Empty;
@@ -379,7 +388,7 @@ namespace MediaPortal.MPInstaller
           WriteLogoElement(writer);
           writer.WriteEndElement();
           writer.WriteStartElement("Properties");
-          ProiectProperties.Save(writer);
+          ProjectProperties.Save(writer);
           writer.WriteEndElement();
           writer.WriteEndElement();
           writer.Flush();
@@ -487,7 +496,7 @@ namespace MediaPortal.MPInstaller
       doc.Load(fil);
       FileList.Clear();
       Language.Clear();
-      ProiectProperties.Clear();
+      ProjectProperties.Clear();
       XmlNode ver = doc.DocumentElement.SelectSingleNode("/MPinstaler");
       XmlNodeList fileList = ver.SelectNodes("FileList/File");
       foreach (XmlNode nodefile in fileList)
@@ -568,7 +577,7 @@ namespace MediaPortal.MPInstaller
         }
       }
       XmlNode nodeproperties = ver.SelectSingleNode("Properties");
-      ProiectProperties.Load(nodeproperties);
+      ProjectProperties.Load(nodeproperties);
     }
 
     public MPIFileList FindList(string typ, string stpy)

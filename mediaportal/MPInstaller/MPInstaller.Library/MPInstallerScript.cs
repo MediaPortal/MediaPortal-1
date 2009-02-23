@@ -33,7 +33,7 @@ namespace MediaPortal.MPInstaller
     {
       if (CurrentPackage.InstallerInfo.SetupGroups.Count > 1)
       {
-        if (CurrentPackage.InstallerInfo.ProiectProperties.SingleGroupSelect)
+        if (CurrentPackage.InstallerInfo.ProjectProperties.SingleGroupSelect)
         {
 
           GUIDialogMenu dlgselect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -76,7 +76,7 @@ namespace MediaPortal.MPInstaller
         GUIDialogYesNo dlgcontinue = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         dlgcontinue.Reset();
         dlgcontinue.SetHeading(14011); // Sort options
-        dlgcontinue.SetLine(1, string.Format(GUILocalizeStrings.Get(14012), CurrentPackage.InstallerInfo.ProiectProperties.MPMinVersion));
+        dlgcontinue.SetLine(1, string.Format(GUILocalizeStrings.Get(14012), CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion));
         dlgcontinue.SetLine(1, 14013);
         dlgcontinue.DoModal(GUIWindowManager.ActiveWindow);
         if (!dlgcontinue.IsConfirmed)
@@ -93,7 +93,7 @@ namespace MediaPortal.MPInstaller
     {
       if (!TestVersion(CurrentPackage))
       {
-        if (MessageBox.Show(string.Format("Not supported Mediaportal version !(Needed version {0}) Do you want continue ?", CurrentPackage.InstallerInfo.ProiectProperties.MPMinVersion), "", MessageBoxButtons.YesNo) == DialogResult.No)
+        if (MessageBox.Show(string.Format("Not supported Mediaportal version !(Needed version {0}) Do you want continue ?", CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion), "", MessageBoxButtons.YesNo) == DialogResult.No)
           return false;
       }
       return true;
@@ -153,7 +153,7 @@ namespace MediaPortal.MPInstaller
     private bool TestVersion(MPpackageStruct package)
     {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProiectProperties.MPMinVersion) < 0)
+      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProjectProperties.MPMinVersion) < 0)
       {
         return false;
       }

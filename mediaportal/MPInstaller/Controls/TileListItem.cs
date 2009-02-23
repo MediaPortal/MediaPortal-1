@@ -11,8 +11,8 @@ namespace MediaPortal.MPInstaller.Controls
 	/// Summary description for TileListItem.
 	/// </summary>
 	public class TileListItem : System.Windows.Forms.UserControl
-	{
-		private System.Windows.Forms.PictureBox picBox;
+  {
+    private PictureBox Thumbnail;
 		private System.Windows.Forms.Label lblTitle;
 		private System.Windows.Forms.Label lblDescription;
 		private System.Windows.Forms.Label lblCreateDate;
@@ -64,7 +64,7 @@ namespace MediaPortal.MPInstaller.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.picBox = new System.Windows.Forms.PictureBox();
+      this.Thumbnail = new System.Windows.Forms.PictureBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.lblDescription = new System.Windows.Forms.Label();
       this.lblCreateDate = new System.Windows.Forms.Label();
@@ -73,25 +73,26 @@ namespace MediaPortal.MPInstaller.Controls
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.lblVersion = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.Thumbnail)).BeginInit();
       this.SuspendLayout();
       // 
-      // picBox
+      // Thumbnail
       // 
-      this.picBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this.picBox.BackColor = System.Drawing.Color.Transparent;
-      this.picBox.Location = new System.Drawing.Point(3, 3);
-      this.picBox.Name = "picBox";
-      this.picBox.Size = new System.Drawing.Size(160, 90);
-      this.picBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-      this.picBox.TabIndex = 0;
-      this.picBox.TabStop = false;
-      this.picBox.DoubleClick += new System.EventHandler(this.TileListItem_DoubleClick);
-      this.picBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseMove);
-      this.picBox.Click += new System.EventHandler(this.TileListItem_Click);
-      this.picBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseDown);
-      this.picBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseUp);
-      this.picBox.MouseEnter += new System.EventHandler(this.TileListItem_MouseEnter);
+      this.Thumbnail.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this.Thumbnail.BackColor = System.Drawing.Color.Transparent;
+      this.Thumbnail.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+      this.Thumbnail.Location = new System.Drawing.Point(3, 3);
+      this.Thumbnail.Name = "Thumbnail";
+      this.Thumbnail.Size = new System.Drawing.Size(160, 90);
+      this.Thumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.Thumbnail.TabIndex = 0;
+      this.Thumbnail.TabStop = false;
+      this.Thumbnail.DoubleClick += new System.EventHandler(this.TileListItem_DoubleClick);
+      this.Thumbnail.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseMove);
+      this.Thumbnail.Click += new System.EventHandler(this.TileListItem_Click);
+      this.Thumbnail.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseDown);
+      this.Thumbnail.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseUp);
+      this.Thumbnail.MouseEnter += new System.EventHandler(this.TileListItem_MouseEnter);
       // 
       // lblTitle
       // 
@@ -234,13 +235,13 @@ namespace MediaPortal.MPInstaller.Controls
       this.Controls.Add(this.lblCreateDate);
       this.Controls.Add(this.lblDescription);
       this.Controls.Add(this.lblTitle);
-      this.Controls.Add(this.picBox);
+      this.Controls.Add(this.Thumbnail);
       this.Name = "TileListItem";
       this.Size = new System.Drawing.Size(640, 100);
       this.MouseLeave += new System.EventHandler(this.TileListItem_MouseLeave);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TileListItem_MouseMove);
       this.MouseEnter += new System.EventHandler(this.TileListItem_MouseEnter);
-      ((System.ComponentModel.ISupportInitialize)(this.picBox)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.Thumbnail)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -345,11 +346,11 @@ namespace MediaPortal.MPInstaller.Controls
 		{
 			get
 			{
-				return this.picBox.Image;
+				return this.Thumbnail.Image;
 			}
 			set
 			{
-				this.picBox.Image=value;
+        //this.Thumbnail.Image=value;
 			}
 		}
 		private int imageIndex=0;
@@ -490,7 +491,7 @@ namespace MediaPortal.MPInstaller.Controls
       itemTip.SetToolTip(this.lblDescription, tooltipText);
       itemTip.SetToolTip(this.lblTitle, tooltipText);
       itemTip.SetToolTip(this.lblAuthor, tooltipText);
-      itemTip.SetToolTip(this.picBox, tooltipText);
+      itemTip.SetToolTip(this.Thumbnail, tooltipText);
     }
 
 		private System.Drawing.Image selectionImage=null;
@@ -569,7 +570,7 @@ namespace MediaPortal.MPInstaller.Controls
 		{
 			get
 			{
-				return picBox;
+				return Thumbnail;
 			}
 		}
 		public System.Windows.Forms.Label TitleLabel

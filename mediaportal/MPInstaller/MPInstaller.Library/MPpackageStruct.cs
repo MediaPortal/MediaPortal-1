@@ -65,6 +65,10 @@ namespace MediaPortal.MPInstaller
       InstalledSkinList = new List<string>();
       InstallPlugin = null;
       InstallerScript = new MPInstallerScript();
+      DownloadCount = 0;
+      VoteCount = 0;
+      VoteValue = 0;
+      ScreenUrl = string.Empty;
     }
 
     private MPinstallerStruct installerInfo = new MPinstallerStruct();
@@ -95,6 +99,48 @@ namespace MediaPortal.MPInstaller
           return false;
       }
     }
+
+    private int voteValue;
+    /// <summary>
+    /// Gets or sets the vote value.
+    /// </summary>
+    /// <value>The vote value.</value>
+    public int VoteValue
+    {
+      get { return voteValue; }
+      set { voteValue = value; }
+    }
+
+    private int voteCount;
+    /// <summary>
+    /// Gets or sets the vote count.
+    /// </summary>
+    /// <value>The vote count.</value>
+    public int VoteCount
+    {
+      get { return voteCount; }
+      set { voteCount = value; }
+    }
+
+    private int downloadCount;
+    /// <summary>
+    /// Gets or sets the download count.
+    /// </summary>
+    /// <value>The download count.</value>
+    public int DownloadCount
+    {
+      get { return downloadCount; }
+      set { downloadCount = value; }
+    }
+
+    private string screenUrl;
+
+    public string ScreenUrl
+    {
+      get { return screenUrl; }
+      set { screenUrl = value; }
+    }
+
 
     /// <summary>
     /// Get the localy stored filename.

@@ -228,6 +228,7 @@ namespace MediaPortal.MPInstaller
           // 
           // checkBox_comp
           // 
+          this.checkBox_comp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
           this.checkBox_comp.AutoSize = true;
           this.checkBox_comp.Location = new System.Drawing.Point(10, 341);
           this.checkBox_comp.Name = "checkBox_comp";
