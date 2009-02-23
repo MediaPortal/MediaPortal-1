@@ -59,6 +59,23 @@ namespace TvDatabase
 
     private readonly object SingleInsert = new object();
 
+    // maximum hours to keep old program info
+    private int _EpgKeepDuration = 0;
+
+    public int EpgKeepDuration { 
+      get 
+      {
+        if (_EpgKeepDuration == 0) 
+        {
+          // first time query settings, caching
+          Setting duration = GetSetting("epgKeepDuration", "24");
+          duration.Persist();
+          _EpgKeepDuration = Convert.ToInt32(duration.Value);
+        }
+        return _EpgKeepDuration;
+      }
+    }
+
     #endregion
 
     #region cards
@@ -1184,7 +1201,7 @@ namespace TvDatabase
     public void RemoveOldPrograms()
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
-      DateTime dtYesterday = DateTime.Now.AddDays(-1);
+      DateTime dtYesterday = DateTime.Now.AddHours(-EpgKeepDuration);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
@@ -1194,10 +1211,10 @@ namespace TvDatabase
     public void RemoveOldPrograms(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Delete, typeof (Program));
-      DateTime dtToKeep = DateTime.Now.AddHours(-4.0);
+      DateTime dtToKeep = DateTime.Now.AddHours(-EpgKeepDuration);
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
-      sb.AddConstraint(String.Format("startTime < '{0}'", dtToKeep.ToString(GetDateTimeString(), mmddFormat)));
+      sb.AddConstraint(String.Format("endTime < '{0}'", dtToKeep.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
