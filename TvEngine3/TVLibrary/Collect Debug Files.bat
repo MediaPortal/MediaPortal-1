@@ -21,6 +21,7 @@ xcopy "TvPlugin\TvPlugin\Gentle.config" "_TvPluginDebug\MediaPortal\" /R /Y
 xcopy "TvPlugin\TvPlugin\bin\Debug\TvPlugin.dll" "_TvPluginDebug\MediaPortal\plugins\Windows\" /R /Y
 xcopy "TvPlugin\TvPlugin\bin\Debug\TvPlugin.pdb" "_TvPluginDebug\MediaPortal\plugins\Windows\" /R /Y
 xcopy "_TvServerDebug\MediaPortal TV Server\Gentle*.*" "_TvPluginDebug\MediaPortal\" /R /Y
+xcopy "_TvServerDebug\MediaPortal TV Server\MySql.Data.dll" "_TvPluginDebug\MediaPortal\" /R /Y
 xcopy "_TvServerDebug\MediaPortal TV Server\Tv*.dll" "_TvPluginDebug\MediaPortal\" /R /Y
 xcopy "_TvServerDebug\MediaPortal TV Server\Tv*.pdb" "_TvPluginDebug\MediaPortal\" /R /Y
 xcopy "_TvServerDebug\MediaPortal TV Server\Tv*.xml" "_TvPluginDebug\MediaPortal\" /R /Y
