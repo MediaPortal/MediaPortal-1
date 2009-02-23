@@ -697,10 +697,9 @@ namespace MediaPortal.Player
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isDVD = Util.Utils.IsDVD(strFile);
       bool isVideo = Util.Utils.IsVideo(strFile);
-      bool IsAVStream = Util.Utils.IsAVStream(strFile); //rtsp users for live TV and recordings.
+      bool isRTSP = Util.Utils.IsRTSP(strFile); //rtsp users for live TV and recordings.
 
-
-      if (!isTV && !isDVD && !isVideo && !IsAVStream)
+      if (!isTV && !isDVD && !isVideo && !isRTSP)
       {
         return;
       }
@@ -727,7 +726,7 @@ namespace MediaPortal.Player
       double[] tvFPS = RetriveRefreshRateChangerSettings("tv_fps");
       double fps = -1;
 
-      if ((isVideo || isDVD) && (!IsAVStream && !isTV))
+      if ((isVideo || isDVD) && (!isRTSP && !isTV))
       {
         if (g_Player.MediaInfo != null)
         {
@@ -742,7 +741,7 @@ namespace MediaPortal.Player
           return;
         }       
       }
-      else if (isTV || IsAVStream)
+      else if (isTV || isRTSP)
       {
         if (tvFPS.Length > 0)
         {

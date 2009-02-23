@@ -1175,7 +1175,7 @@ namespace MediaPortal.Player
         int t1 = (int) type;
         RefreshRateChanger.MediaType t2 = (RefreshRateChanger.MediaType) t1;
 
-        if (Util.Utils.IsLiveTv(strFile))
+        if (Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile))
         {
           // liveTV needs the refreshrate change done here.
           RefreshRateChanger.AdaptRefreshRate(strFile, t2);

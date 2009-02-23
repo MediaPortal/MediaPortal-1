@@ -347,6 +347,17 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsRTSP(string strPath)
+    {
+      if (strPath == null) return false;
+      try
+      {
+        if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;       
+      }
+      catch (Exception) { }
+      return false;
+    }
+
     public static bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
@@ -417,7 +428,6 @@ namespace MediaPortal.Util
     public static bool IsAVStream(string strPath)
     {
       if (strPath == null) return false;
-      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       if (strPath.ToLower().IndexOf("http:") >= 0) return true;
       if (strPath.ToLower().IndexOf("https:") >= 0) return true;
       if (strPath.ToLower().IndexOf("mms:") >= 0) return true;
