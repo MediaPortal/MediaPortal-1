@@ -1167,7 +1167,6 @@ namespace TvPlugin
               item1.Label3 = rec.Genre;
             }
           }
-          else
           {
             if (_currentSortMethod == SortMethod.Channel)
             {
