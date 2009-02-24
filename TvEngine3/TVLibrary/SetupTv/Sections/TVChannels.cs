@@ -102,35 +102,9 @@ namespace SetupTv.Sections
 
     private void UpdateMenu()
     {
-      while (tabControl1.TabPages.Count > 1)
-      {
-        tabControl1.TabPages.RemoveAt(1);
-      }
+
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
-      foreach (ChannelGroup group in groups)
-      {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
-        item.Tag = group;
-        item.Click += OnAddToFavoritesMenuItem_Click;
-        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
-        TabPage page = new TabPage(group.GroupName);
-        page.SuspendLayout();
-        ChannelsInGroupControl channelsInGroupControl = new ChannelsInGroupControl();
-        channelsInGroupControl.Location = new System.Drawing.Point(9, 9);
-        channelsInGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
-                                         | AnchorStyles.Left)
-                                        | AnchorStyles.Right;
-        page.Controls.Add(channelsInGroupControl);
-        page.Tag = group;
-        page.Location = new System.Drawing.Point(4, 22);
-        page.Padding = new Padding(3);
-        page.Size = new System.Drawing.Size(457, 374);
-        page.UseVisualStyleBackColor = true;
-        page.PerformLayout();
-        page.ResumeLayout(false);
-        tabControl1.TabPages.Add(page);
-      }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
       itemNew.Click += OnAddToFavoritesMenuItem_Click;
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
@@ -472,48 +446,6 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
       ReOrder();
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-    }
-
-    private void buttonUtp_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      for (int i = 0; i < indexes.Count; ++i)
-      {
-        int index = indexes[i];
-        if (index > 0)
-        {
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
-          mpListView1.Items.Insert(index - 1, item);
-        }
-      }
-      ReOrder();
-      mpListView1.EndUpdate();
-    }
-
-    private void buttonDown_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      if (mpListView1.Items.Count < 2)
-        return;
-      for (int i = indexes.Count - 1; i >= 0; i--)
-      {
-        int index = indexes[i];
-        ListViewItem item = mpListView1.Items[index];
-        mpListView1.Items.RemoveAt(index);
-        if (index + 1 < mpListView1.Items.Count)
-          mpListView1.Items.Insert(index + 1, item);
-        else
-          mpListView1.Items.Add(item);
-      }
-      ReOrder();
-      mpListView1.EndUpdate();
     }
 
     private void ReOrder()
@@ -1135,29 +1067,6 @@ namespace SetupTv.Sections
       }
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (tabControl1.SelectedIndex == 0)
-      {
-        if (_redrawTab1)
-        {
-          OnSectionActivated();
-        }
-      }
-      else
-      {
-        TabPage page = tabControl1.TabPages[tabControl1.SelectedIndex];
-        foreach (Control control in page.Controls)
-        {
-          ChannelsInGroupControl groupCnt = control as ChannelsInGroupControl;
-          if (groupCnt != null)
-          {
-            groupCnt.Group = (ChannelGroup)page.Tag;
-            groupCnt.OnActivated();
-          }
-        }
-      }
-    }
 
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
