@@ -3423,7 +3423,7 @@ namespace TvService
 
         // check whether the scheduler would like to record something now, but there is no card recording
         // this can happen if a recording is due, but the scheduler has not yet picked up recording (latency)
-        if (_scheduler.IsTimeToRecord(DateTime.Now))
+        if (_scheduler != null && _scheduler.IsTimeToRecord(DateTime.Now))
         {
           //Log.Debug("TVController.CanSuspend: IsTimeToRecord finished -> cannot suspend" );
           return false;
