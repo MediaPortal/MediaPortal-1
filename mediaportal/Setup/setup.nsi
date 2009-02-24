@@ -263,6 +263,28 @@ ShowUninstDetails show
 !endif
 !macroend
 
+!macro ShutdownRunningMediaPortalApplications
+  ${LOG_TEXT} "INFO" "Terminating processes..."
+
+  ${KILLPROCESS} "MediaPortal.exe"
+  ${KILLPROCESS} "configuration.exe"
+
+  ; MPInstaller apps
+  ${KILLPROCESS} "MPInstaller.exe"
+  ${KILLPROCESS} "MPIMaker.exe"
+
+  ${KILLPROCESS} "WatchDog.exe"
+  ${KILLPROCESS} "MusicShareWatcher.exe"
+  ${KILLPROCESS} "TVGuideScheduler.exe"
+
+  ; MovieThumbnailer
+  ${KILLPROCESS} "mtn.exe"
+
+  ; WebEPG apps
+  ${KILLPROCESS} "WebEPG.exe"
+  ${KILLPROCESS} "WebEPG-conf.exe"
+!macroend
+
 #---------------------------------------------------------------------------
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
@@ -270,17 +292,8 @@ Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
-
-  ${LOG_TEXT} "INFO" "Terminating processes..."
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
-
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "WatchDog.exe"
-  ${KILLPROCESS} "MusicShareWatcher.exe"
-  ${KILLPROCESS} "TVGuideScheduler.exe"
-  ${KILLPROCESS} "WebEPG.exe"
-  ${KILLPROCESS} "WebEPG-conf.exe"
+  
+  !insertmacro ShutdownRunningMediaPortalApplications
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -526,17 +539,8 @@ SectionEnd
 !macro Remove_${SecCore}
   ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecCore}"
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
-
-  ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
-
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "WatchDog.exe"
-  ${KILLPROCESS} "MusicShareWatcher.exe"
-  ${KILLPROCESS} "TVGuideScheduler.exe"
-  ${KILLPROCESS} "WebEPG.exe"
-  ${KILLPROCESS} "WebEPG-conf.exe"
+  
+  !insertmacro ShutdownRunningMediaPortalApplications
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient
