@@ -3403,6 +3403,9 @@ namespace TvService
         while (enumer.MoveNext())
         {
           int cardId = enumer.Current.Key;
+          // Do we have a card or is it disposed?
+          if (_cards[cardId] == null)
+            continue;
           User[] users = _cards[cardId].Users.GetUsers();
           if (users != null)
           {
