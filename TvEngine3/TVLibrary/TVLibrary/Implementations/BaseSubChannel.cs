@@ -390,6 +390,10 @@ namespace TvLibrary.Implementations
         {
           Log.Log.Info("analog subch:{0} Started recording", _subChannelId);
         }
+        else if (this is HDPVRChannel)
+        {
+          Log.Log.Info("HDPVR subch:{0} Started recording", _subChannelId);
+        }
         else if (this is TvDvbChannel)
         {
           Log.Log.Info("DVB subch:{0} Started recording", _subChannelId);
@@ -511,6 +515,10 @@ namespace TvLibrary.Implementations
       if (this is AnalogSubChannel)
       {
         Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
+      }
+      else if (this is HDPVRChannel)
+      {
+        Log.Log.Info("HDPVR subch:{0} Decompose", _subChannelId);
       }
       else if (this is TvDvbChannel)
       {
