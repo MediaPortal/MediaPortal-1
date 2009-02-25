@@ -731,6 +731,8 @@ namespace WindowPlugins.GUI.Extensions
               item.IsFolder = false;
               item.Label = pk.InstallerInfo.Name;
               item.Label2 = pk.InstallerInfo.Group;
+              item.Rating = pk.VoteValue;
+              item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               facadeView.Add(item);
             }
           }
@@ -779,6 +781,8 @@ namespace WindowPlugins.GUI.Extensions
                   item.IsFolder = false;
                   item.Label = pk.InstallerInfo.Name;
                   item.Label2 = pk.InstallerInfo.Group;
+                  item.Rating = pk.VoteValue;
+                  item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
                   facadeView.Add(item);
                 }
               }
@@ -804,6 +808,22 @@ namespace WindowPlugins.GUI.Extensions
         GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
 
       GUIWaitCursor.Hide();
+    }
+
+    void item_OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      MPpackageStruct pak = item.MusicTag as MPpackageStruct;
+      if (pak != null)
+      {
+        GUIPropertyManager.SetProperty("#MPE.Selected.Name", pak.InstallerInfo.Name);
+        GUIPropertyManager.SetProperty("#MPE.Selected.Version", pak.InstallerInfo.Version);
+        GUIPropertyManager.SetProperty("#MPE.Selected.Author", pak.InstallerInfo.Author);
+        GUIPropertyManager.SetProperty("#MPE.Selected.Description", pak.InstallerInfo.Description);
+        GUIPropertyManager.SetProperty("#MPE.Selected.Group", pak.InstallerInfo.Group);
+        GUIPropertyManager.SetProperty("#MPE.Selected.DownloadCount", pak.DownloadCount.ToString());
+        GUIPropertyManager.SetProperty("#MPE.Selected.VoteValue", pak.VoteValue.ToString());
+        GUIPropertyManager.SetProperty("#MPE.Selected.VoteCount", pak.VoteCount.ToString());
+      }
     }
 
     void SelectCurrentItem()
