@@ -988,9 +988,9 @@ namespace TvEngine.PowerScheduler
       _standby = true;
       _timer.Enabled = false;
       _controller.EpgGrabberEnabled = false;
+      SetWakeupTimer();
       DeInitController();
       SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
-      SetWakeupTimer();
     }
 
     private void Resume(PowerEventType powerStatus)
