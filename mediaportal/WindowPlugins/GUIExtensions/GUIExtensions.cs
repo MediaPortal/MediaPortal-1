@@ -22,6 +22,8 @@ namespace WindowPlugins.GUI.Extensions
       Name = 0,
       Type = 1,
       Date = 2,
+      Download = 3,
+      Rating = 4,
     }
 
     enum View : int
@@ -206,6 +208,8 @@ namespace WindowPlugins.GUI.Extensions
 
       lst.LoadFromFile();
       lst_online.LoadFromFile(MpiFileList.ONLINE_LISTING);
+      lst.LoadOnlineInfo(lst_online);
+
       queue = queue.Load(MpiFileList.QUEUE_LISTING);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -227,6 +231,8 @@ namespace WindowPlugins.GUI.Extensions
           if (tmpLine == "name") currentSortMethod = SortMethod.Name;
           else if (tmpLine == "type") currentSortMethod = SortMethod.Type;
           else if (tmpLine == "date") currentSortMethod = SortMethod.Date;
+          else if (tmpLine == "download") currentSortMethod = SortMethod.Download;
+          else if (tmpLine == "rate") currentSortMethod = SortMethod.Rating;
         }
         tmpLine = (string)xmlreader.GetValue("myextensions", "listing");
         if (tmpLine != null)
@@ -266,6 +272,12 @@ namespace WindowPlugins.GUI.Extensions
             break;
           case SortMethod.Date:
             xmlwriter.SetValue("myextensions", "sort", "date");
+            break;
+          case SortMethod.Download:
+            xmlwriter.SetValue("myextensions", "sort", "download");
+            break;
+          case SortMethod.Rating:
+            xmlwriter.SetValue("myextensions", "sort", "rate");
             break;
         }
 
@@ -332,6 +344,12 @@ namespace WindowPlugins.GUI.Extensions
           break;
         case SortMethod.Date:
           btnSortBy.SelectedItem = 2;
+          break;
+        case SortMethod.Download:
+          btnSortBy.SelectedItem = 3;
+          break;
+        case SortMethod.Rating:
+          btnSortBy.SelectedItem = 4;
           break;
       }
 
@@ -538,6 +556,8 @@ namespace WindowPlugins.GUI.Extensions
       dlg.AddLocalizedString(103); // name
       dlg.AddLocalizedString(668); // Type
       dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(14016); // download
+      dlg.AddLocalizedString(14017); // rate
 
       dlg.SelectedLabel = (int)currentSortMethod;
 
@@ -555,6 +575,12 @@ namespace WindowPlugins.GUI.Extensions
           break;
         case 104:
           currentSortMethod = SortMethod.Date;
+          break;
+        case 14016:
+          currentSortMethod = SortMethod.Download;
+          break;
+        case 14017:
+          currentSortMethod = SortMethod.Rating;
           break;
         default:
           currentSortMethod = SortMethod.Name;
@@ -654,6 +680,25 @@ namespace WindowPlugins.GUI.Extensions
           {
             return DateTime.Compare(pk2.InstallerInfo.ProjectProperties.CreationDate, pk1.InstallerInfo.ProjectProperties.CreationDate);
           }
+        case SortMethod.Download:
+          if (bAscending)
+          {
+            return pk1.DownloadCount - pk2.DownloadCount;
+          }
+          else
+          {
+            return pk2.DownloadCount - pk1.DownloadCount;
+          }
+        case SortMethod.Rating:
+          if (bAscending)
+          {
+            return (int)pk1.VoteValue - (int)pk2.VoteValue;
+          }
+          else
+          {
+            return (int)pk2.VoteValue - (int)pk1.VoteValue;
+          }
+
       }
       return 0;
     }
@@ -807,6 +852,12 @@ namespace WindowPlugins.GUI.Extensions
         case SortMethod.Date:
           strLine = GUILocalizeStrings.Get(104);
           break;
+        case SortMethod.Download:
+          strLine = GUILocalizeStrings.Get(14016);
+          break;
+        case SortMethod.Rating:
+          strLine = GUILocalizeStrings.Get(14017);
+          break;
       }
       if (btnSortBy != null)
       {
@@ -861,6 +912,12 @@ namespace WindowPlugins.GUI.Extensions
               break;
             case SortMethod.Date:
               item.Label2 = pak.InstallerInfo.ProjectProperties.CreationDate.ToShortDateString();
+              break;
+            case SortMethod.Download:
+              item.Label2 = pak.DownloadCount.ToString();
+              break;
+            case SortMethod.Rating:
+              item.Label2 =((int) pak.VoteValue).ToString();
               break;
             default:
               break;

@@ -100,12 +100,12 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    private int voteValue;
+    private float voteValue;
     /// <summary>
     /// Gets or sets the vote value.
     /// </summary>
     /// <value>The vote value.</value>
-    public int VoteValue
+    public float VoteValue
     {
       get { return voteValue; }
       set { voteValue = value; }
@@ -134,11 +134,22 @@ namespace MediaPortal.MPInstaller
     }
 
     private string screenUrl;
-
+    /// <summary>
+    /// Gets or sets the screenshout URL.
+    /// </summary>
+    /// <value>The screen URL.</value>
     public string ScreenUrl
     {
       get { return screenUrl; }
       set { screenUrl = value; }
+    }
+
+    private int fileID;
+
+    public int FileID
+    {
+      get { return fileID; }
+      set { fileID = value; }
     }
 
 

@@ -40,6 +40,7 @@ namespace MediaPortal.MPInstaller
     private string maxextensionversion;
     private string forumurl;
     private string weburl;
+    private string wikiurl;
     private DateTime creationdate;
     private bool singlegroupselect;
     private bool clarskincache;
@@ -121,6 +122,18 @@ namespace MediaPortal.MPInstaller
       }
     }
 
+    public string WikiURL
+    {
+      set
+      {
+        wikiurl = value;
+      }
+      get
+      {
+        return wikiurl;
+      }
+    }
+
     public DateTime CreationDate
     {
       set
@@ -165,6 +178,7 @@ namespace MediaPortal.MPInstaller
       writer.WriteElementString("MaxExtensionVersion", MaxExtensionVersion);
       writer.WriteElementString("ForumURL", ForumURL);
       writer.WriteElementString("WebURL", WebURL);
+      writer.WriteElementString("WikiURL", WikiURL);
       writer.WriteElementString("CreationDate", CreationDate.ToString("dd-MM-yy"));
       writer.WriteElementString("SingleGroupSelect", SingleGroupSelect.ToString());
       writer.WriteElementString("ClearSkinCache", ClearSkinCache.ToString());
@@ -193,6 +207,9 @@ namespace MediaPortal.MPInstaller
         node = basenode.SelectSingleNode("WebURL");
         if (node != null && node.InnerText != null)
           WebURL = node.InnerText;
+        node = basenode.SelectSingleNode("WikiURL");
+        if (node != null && node.InnerText != null)
+          WikiURL = node.InnerText;
         node = basenode.SelectSingleNode("CreationDate");
         if (node != null && node.InnerText != null)
           try
@@ -214,9 +231,6 @@ namespace MediaPortal.MPInstaller
           if (node.InnerText == "True")
             ClearSkinCache = true;
           else ClearSkinCache = false;
-
-
-
       }
 
     }
@@ -227,6 +241,7 @@ namespace MediaPortal.MPInstaller
       MPMinVersion = string.Empty;
       ForumURL = string.Empty;
       WebURL = string.Empty;
+      WikiURL = string.Empty;
       CreationDate = DateTime.Today;
       SingleGroupSelect = false;
     }

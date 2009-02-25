@@ -17,7 +17,7 @@ namespace MediaPortal.MPInstaller
     #region local vars
     QueueEnumerator queue = new QueueEnumerator();
     MPInstallHelper inst = new MPInstallHelper();
-
+    int time_to_close = 10;
     #endregion
 
     public QueueInstaller()
@@ -27,6 +27,7 @@ namespace MediaPortal.MPInstaller
 
     private void button1_Click(object sender, EventArgs e)
     {
+      timer1.Enabled = false;
       this.Close();
     }
 
@@ -35,6 +36,7 @@ namespace MediaPortal.MPInstaller
       Thread.Sleep(2000);
       queue = queue.Load(MpiFileList.QUEUE_LISTING);
       inst.LoadFromFile();
+      this.Update();
       progressBar1.Maximum = queue.Items.Count;
       foreach (QueueItem item in queue.Items)
       {
@@ -148,7 +150,8 @@ namespace MediaPortal.MPInstaller
       }
       queue.Items.Clear();
       queue.Save(MpiFileList.QUEUE_LISTING);
-      button1.Enabled = true;
+      button_close.Enabled = true;
+      timer1.Enabled = true;
     }
 
     void ClearSkinCashe()
@@ -160,6 +163,16 @@ namespace MediaPortal.MPInstaller
       catch (Exception)
       {
 
+      }
+    }
+
+    private void timer1_Tick(object sender, EventArgs e)
+    {
+      time_to_close--;
+      button_close.Text = string.Format("Close ({0})", time_to_close.ToString()); 
+      if (time_to_close == 0)
+      {
+        this.Close();
       }
     }
 

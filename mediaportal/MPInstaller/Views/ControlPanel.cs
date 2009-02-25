@@ -155,6 +155,7 @@ namespace MediaPortal.MPInstaller
           if (!string.IsNullOrEmpty(pk.ScreenUrl))
           {
             item.PictureBox.LoadAsync(pk.ScreenUrl);
+            //MessageBox.Show(pk.VoteValue.ToString());
           }
           controlListView1.Add(item);
           //--------------------

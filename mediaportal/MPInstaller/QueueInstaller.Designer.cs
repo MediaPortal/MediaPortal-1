@@ -28,12 +28,14 @@ namespace MediaPortal.MPInstaller
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.progressBar2 = new System.Windows.Forms.ProgressBar();
       this.listBox1 = new System.Windows.Forms.ListBox();
-      this.button1 = new System.Windows.Forms.Button();
+      this.button_close = new System.Windows.Forms.Button();
       this.progressBar3 = new System.Windows.Forms.ProgressBar();
       this.listBox2 = new System.Windows.Forms.ListBox();
+      this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.SuspendLayout();
       // 
       // progressBar1
@@ -58,16 +60,16 @@ namespace MediaPortal.MPInstaller
       this.listBox1.Size = new System.Drawing.Size(505, 95);
       this.listBox1.TabIndex = 2;
       // 
-      // button1
+      // button_close
       // 
-      this.button1.Enabled = false;
-      this.button1.Location = new System.Drawing.Point(229, 275);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 23);
-      this.button1.TabIndex = 3;
-      this.button1.Text = "Close";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.button_close.Enabled = false;
+      this.button_close.Location = new System.Drawing.Point(229, 275);
+      this.button_close.Name = "button_close";
+      this.button_close.Size = new System.Drawing.Size(75, 23);
+      this.button_close.TabIndex = 3;
+      this.button_close.Text = "Close";
+      this.button_close.UseVisualStyleBackColor = true;
+      this.button_close.Click += new System.EventHandler(this.button1_Click);
       // 
       // progressBar3
       // 
@@ -84,6 +86,11 @@ namespace MediaPortal.MPInstaller
       this.listBox2.Size = new System.Drawing.Size(505, 82);
       this.listBox2.TabIndex = 5;
       // 
+      // timer1
+      // 
+      this.timer1.Interval = 1000;
+      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+      // 
       // QueueInstaller
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -91,7 +98,7 @@ namespace MediaPortal.MPInstaller
       this.ClientSize = new System.Drawing.Size(529, 301);
       this.Controls.Add(this.listBox2);
       this.Controls.Add(this.progressBar3);
-      this.Controls.Add(this.button1);
+      this.Controls.Add(this.button_close);
       this.Controls.Add(this.listBox1);
       this.Controls.Add(this.progressBar2);
       this.Controls.Add(this.progressBar1);
@@ -108,8 +115,9 @@ namespace MediaPortal.MPInstaller
     private System.Windows.Forms.ProgressBar progressBar1;
     private System.Windows.Forms.ProgressBar progressBar2;
     private System.Windows.Forms.ListBox listBox1;
-    private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button button_close;
     private System.Windows.Forms.ProgressBar progressBar3;
     private System.Windows.Forms.ListBox listBox2;
+    private System.Windows.Forms.Timer timer1;
   }
 }

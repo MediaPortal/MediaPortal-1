@@ -77,7 +77,8 @@ namespace MediaPortal.MPInstaller
             if (true)
             {
               client.UseDefaultCredentials = true;
-              client.Credentials = new NetworkCredential("username", "passs");
+              //client.Credentials = new NetworkCredential("username", "passs");
+
               if (Path.GetExtension(dest) == ".xml")
               {
                 //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));

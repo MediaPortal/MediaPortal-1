@@ -18,11 +18,11 @@ namespace MediaPortal.MPInstaller
 {
   public class MPInstallHelper
   {
-    public ArrayList items = new ArrayList();
+    public List<MPpackageStruct> items = new List<MPpackageStruct>();
     string InstallDir = Config.GetFolder(Config.Dir.Installer);
     public string FileName = "";
 
-    public ArrayList Items
+    public List<MPpackageStruct> Items
     {
       get { return items; }
       set { items = value; }
@@ -73,6 +73,25 @@ namespace MediaPortal.MPInstaller
             ((MPpackageStruct)this.Items[idx]).isUpdated = true;
           ((MPpackageStruct)this.Items[idx]).isNew = false;
 
+        }
+      }
+    }
+
+    /// <summary>
+    /// Loads the online info frome a another extension list.
+    /// </summary>
+    /// <param name="list">The list.</param>
+    public void LoadOnlineInfo(MPInstallHelper list)
+    {
+      foreach (MPpackageStruct pk in this.Items)
+      {
+        MPpackageStruct item = list.Find(pk.InstallerInfo.Name);
+        if (item != null)
+        {
+          pk.DownloadCount = item.DownloadCount;
+          pk.VoteCount = item.VoteCount;
+          pk.VoteValue = item.VoteValue;
+          pk.ScreenUrl = item.ScreenUrl;
         }
       }
     }
@@ -246,9 +265,14 @@ namespace MediaPortal.MPInstaller
             pkg.InstallerInfo.Version = nodefile.SelectSingleNode("Version").InnerText;
             pkg.InstallerInfo.UpdateURL = nodefile.SelectSingleNode("URL").InnerText;
             pkg.DownloadCount = GetIntValueFromNode(nodefile, "Downloads", 0);
-            pkg.VoteCount = GetIntValueFromNode(nodefile, "Vote/Count", 0);
-            pkg.VoteValue = GetIntValueFromNode(nodefile, "Vote/Value", 0);
+            XmlNode votenode = nodefile.SelectSingleNode("Vote");
+            if (votenode != null)
+            {
+              pkg.VoteCount = GetIntValueFromNode(votenode, "Count", 0);
+              pkg.VoteValue = GetFloatValueFromNode(votenode, "Value", 0);
+            }
             pkg.ScreenUrl = GetStringValueFromNode(nodefile, "Screenurl", string.Empty);
+            pkg.FileID = GetIntValueFromNode(nodefile, "FileID", 0);
             string updateDate = GetStringValueFromNode(nodefile, "Submitdate", string.Empty);
             XmlNode grup_node = nodefile.SelectSingleNode("Group");
             if (grup_node != null)
@@ -318,6 +342,26 @@ namespace MediaPortal.MPInstaller
       {
         int i = defaultValue;
         if (int.TryParse(node.SelectSingleNode(name).InnerText, out i))
+        {
+          return i;
+        }
+        else
+        {
+          return defaultValue;
+        }
+      }
+      catch (Exception ex)
+      {
+        return defaultValue;
+      }
+    }
+
+    private float GetFloatValueFromNode(XmlNode node, string name, float defaultValue)
+    {
+      try
+      {
+        float i = defaultValue;
+        if (float.TryParse(node.SelectSingleNode(name).InnerText, out i))
         {
           return i;
         }

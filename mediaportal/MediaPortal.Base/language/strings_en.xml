@@ -1487,6 +1487,8 @@
 	<String id="14013">Do you want continue ?</String>		
 	<String id="14014">Updating online info</String>			
 	<String id="14015">Updates</String>	
+	<String id="14016">Sort by: Download</String>
+	<String id="14017">Sort by: Rating</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
