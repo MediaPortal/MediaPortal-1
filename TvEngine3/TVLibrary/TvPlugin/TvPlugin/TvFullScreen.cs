@@ -262,7 +262,7 @@ namespace TvPlugin
         {
           _allowedArModes.Add(Geometry.Type.LetterBox43);
         }
-        if (xmlreader.GetValueAsBool("mytv", "allownonlinear", true))
+        if (xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true))
         {
           _allowedArModes.Add(Geometry.Type.NonLinearStretch);
         }
