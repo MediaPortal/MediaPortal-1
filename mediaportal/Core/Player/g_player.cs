@@ -1444,8 +1444,16 @@ namespace MediaPortal.Player
               return true;
             }
           }
-
-          if (Util.Utils.PlayMovie(strFile))
+          bool bInternal = true;
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
+            bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+          }
+          if (Util.Utils.PlayMovie(strFile)) // external player used
+          {            
+            return true;
+          }
+          else if(!bInternal) // external player error
           {
             _isInitialized = false;
             UnableToPlay(strFile, MediaType.Unknown);
