@@ -1903,22 +1903,20 @@ namespace MediaPortal.Player
     {
       if (_currentStep != 0 && _player != null)
       {
-        double dTime = (int) _currentStep + _player.CurrentPosition;
-        if (dTime < 0)
+        if (_currentStep < 0 || (_player.CurrentPosition+4 < _player.Duration) || !IsTV)
         {
-          dTime = 0d;
+          double dTime = (int)_currentStep + _player.CurrentPosition;
+          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
+          if (dTime > _player.Duration) dTime = _player.Duration;  
+          if (IsTV && (dTime+3 > _player.Duration)) dTime = _player.Duration-3 ; // Margin for live Tv
+          if (dTime < 0) dTime = 0d;
+
+          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d),IsTV);
+          _player.SeekAbsolute(dTime);
+          Speed = Speed;
+          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+          GUIGraphicsContext.SendMessage(msgUpdate);
         }
-        if (dTime > _player.Duration)
-        {
-          dTime = _player.Duration - 5;
-        }
-        Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2}", (int) (dTime / 3600d),
-                  (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d));
-        _player.SeekAbsolute(dTime);
-        Speed = Speed;
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
-                                              null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
       }
       _currentStep = 0;
       _currentStepIndex = -1;
