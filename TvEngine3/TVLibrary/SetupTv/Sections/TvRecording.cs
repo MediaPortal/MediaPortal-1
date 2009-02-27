@@ -824,12 +824,7 @@ namespace SetupTv.Sections
       Recording tagRec = null;
       try
       {
-        /*
-         * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-         *
         string physicalFile = GetRecordingFilename(aFileName);
-        */
-        string physicalFile = aFileName;
         tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
                                          GetRecordingStartTime(physicalFile),
                                          GetRecordingEndTime(physicalFile),
@@ -873,7 +868,8 @@ namespace SetupTv.Sections
 
     /*
      * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-     *
+     * edit: morpheus_xx: function still needed to get valid extension of EXISTING recordings
+     */
     private static string GetRecordingFilename(string aTagFilename)
     {
       string recordingFile = Path.ChangeExtension(aTagFilename, ".ts");
@@ -894,7 +890,6 @@ namespace SetupTv.Sections
       }
       return recordingFile;
     }
-     */
 
     private static int GetServerId()
     {
