@@ -1582,9 +1582,13 @@ namespace TvPlugin
           {
             TVGuideDialog dlgTvGuide = (TVGuideDialog) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_TVGUIDE);
 
+            dlgTvGuide.GroupChanged = false;
+            // do this in loop to reopen guide after change
+            do {
             _isDialogVisible = true;
             dlgTvGuide.DoModal(GetID);
             _isDialogVisible = false;
+            } while (dlgTvGuide.GroupChanged == true);
             break;
           }
 

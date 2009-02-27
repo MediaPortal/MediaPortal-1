@@ -86,7 +86,9 @@ namespace TvPlugin
       IMG_TIME1 = 90, // first and template
       IMG_REC_PIN = 31,
       SINGLE_CHANNEL_LABEL = 32,
-      SINGLE_CHANNEL_IMAGE = 33
+      SINGLE_CHANNEL_IMAGE = 33,
+
+      TVGROUP_BUTTON = 60
     } ;
 
     #endregion
@@ -140,6 +142,23 @@ namespace TvPlugin
     private bool _useNewRecordingButtonColor = false;
     private bool _notificationEnabled = false;
     private bool _recalculateProgramOffset;
+
+    private int MinYIndex;
+
+    /// <summary>
+    /// Logic to decide if tvgroup button is available and visible
+    /// </summary>
+    protected bool TvGroupButtonAvail 
+    { 
+      get 
+      {
+        // show/hide tvgroup button
+        GUIButtonControl btnTvGroup = GetControl((int)Controls.TVGROUP_BUTTON) as GUIButtonControl;
+
+        // visible only if more than one group? and not in single channel, and button exists in skin!
+        return (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView && btnTvGroup != null);
+      } 
+    }
 
     #endregion
 
@@ -218,8 +237,11 @@ namespace TvPlugin
     public override int GetFocusControlId()
     {
       int focusedId = base.GetFocusControlId();
-      if (_cursorX >= 0 || focusedId == (int) Controls.SPINCONTROL_DAY ||
-          focusedId == (int) Controls.SPINCONTROL_TIME_INTERVAL)
+      if (_cursorX >= 0 || 
+          focusedId == (int) Controls.SPINCONTROL_DAY ||
+          focusedId == (int) Controls.SPINCONTROL_TIME_INTERVAL||
+          focusedId == (int) Controls.TVGROUP_BUTTON
+        )
       {
         return focusedId;
       }
@@ -516,8 +538,59 @@ namespace TvPlugin
         case Action.ActionType.ACTION_TVGUIDE_DECREASE_DAY:
           OnPreviousDay();
           break;
+        // TV group changing actions
+        case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
+          OnChangeTvGroup(1);
+          break;
+
+        case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
+          OnChangeTvGroup(-1);
+          break;
       }
       base.OnAction(action);
+    }
+    /// <summary>
+    /// changes the current tv group and refreshes guide display
+    /// </summary>
+    /// <param name="Direction"></param>
+    protected virtual void OnChangeTvGroup(int Direction)
+    {
+      // in single channel view there would be errors when changing group
+      if (_singleChannelView) return;
+      int newIndex, oldIndex;
+      int countGroups = TVHome.Navigator.Groups.Count; // all
+      
+      newIndex = oldIndex = TVHome.Navigator.CurrentGroupIndex;
+      if(
+         (newIndex >= 1 && Direction < 0) ||
+         (newIndex < countGroups -1 && Direction > 0)
+        )
+      {
+        newIndex += Direction; // change group
+      } 
+      else // Cycle handling
+        if ((newIndex == countGroups - 1) && Direction > 0)
+        {
+          newIndex = 0;
+        }
+        else
+          if (newIndex == 0 && Direction < 0)
+          {
+            newIndex = countGroups - 1;
+          }
+
+      if (oldIndex != newIndex) 
+      {
+        // update list
+        GUIWaitCursor.Show();
+        TVHome.Navigator.SetCurrentGroup(newIndex);
+        // set name only, if group button not avail (avoids short "flashing" of text after switching group)
+        if (!TvGroupButtonAvail) GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        GetChannels(true);
+        Update(false);
+        SetFocus();
+        GUIWaitCursor.Hide();
+      }
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -787,6 +860,11 @@ namespace TvPlugin
               SetFocus();
               return true;
             }
+            if (iControl == (int)Controls.TVGROUP_BUTTON)
+            {
+              OnSelectGroup();
+              return true;
+            }
             if (iControl >= GUIDE_COMPONENTID_START)
             {
               OnSelectItem(true);
@@ -806,6 +884,24 @@ namespace TvPlugin
       }
       return base.OnMessage(message);
       ;
+    }
+
+    /// <summary>
+    /// Shows channel group selection dialog
+    /// </summary>
+    protected virtual void OnSelectGroup()
+    {
+      // only if more groups present and not in singleChannelView
+      if (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView)
+      {
+        TVHome.OnSelectGroup();
+        GetChannels(true);
+        Update(false);
+        // button focus should be on tvgroup, so change back to channel name
+        if (_cursorY == -1)
+          _cursorY = 0;
+        SetFocus();
+      }
     }
 
 
@@ -948,6 +1044,9 @@ namespace TvPlugin
         {
           return;
         }
+
+        // sets button visible state
+        UpdateGroupButton();
 
         _updateTimer = DateTime.Now;
         GUISpinControl cntlDay = GetControl((int) Controls.SPINCONTROL_DAY) as GUISpinControl;
@@ -2510,8 +2609,21 @@ namespace TvPlugin
         return;
       }
       UnFocus();
-      if (_cursorY == 0)
+      if (_cursorY <= 0)
       {
+        if (_viewingTime < DateTime.Now)
+        {
+          // custom focus handling only if button available
+          if (MinYIndex == -1)
+          {
+            _cursorY--; // decrease by 1, 
+            if (_cursorY == -1) // means tvgroup entered (-1) or moved left (-2)
+            {
+              SetFocus();
+              return;
+            }
+          }
+        }
         _viewingTime = _viewingTime.AddMinutes(-_timePerBlock);
         // Check new day
         int iDay = CalcDays();
@@ -2572,6 +2684,38 @@ namespace TvPlugin
         _currentProgram = (Program) img.Data;
         SetProperties();
       }
+    }
+
+    /// <summary>
+    /// Show or hide group button
+    /// </summary>
+    protected void UpdateGroupButton()
+    {
+      // text for button
+      String GroupButtonText = " ";
+
+      // show/hide tvgroup button
+      GUIButtonControl btnTvGroup = GetControl((int)Controls.TVGROUP_BUTTON) as GUIButtonControl;
+
+      if (btnTvGroup != null) 
+        btnTvGroup.Visible = TvGroupButtonAvail;
+
+      // set min index for focus handling
+      if (TvGroupButtonAvail)
+      {
+        MinYIndex = -1; // allow focus of button
+        GroupButtonText = String.Format("{0}: {1}",GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", " ");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        MinYIndex = 0;
+      }
+
+      // Set proper text for group change button; Empty string to hide text if only 1 group 
+      // (split between button and rotated label due to focusing issue of rotated buttons)
+      GUIPropertyManager.SetProperty("#TV.Guide.ChangeGroup", GroupButtonText); // existing string "group"
     }
 
     private void OnRight()
@@ -2640,7 +2784,7 @@ namespace TvPlugin
       {
         return;
       }
-      if (_cursorY == 0)
+      if (_cursorY == 0 || _cursorY == MinYIndex ) // either channel or group button 
       {
         int controlid = (int) Controls.IMG_CHAN1 + _cursorX;
         GUIControl.UnfocusControl(GetID, controlid);
@@ -2667,18 +2811,23 @@ namespace TvPlugin
       {
         return;
       }
-      if (_cursorY == 0)
+      if (_cursorY == 0 || _cursorY == MinYIndex) // either channel or group button 
       {
-        GUIControl.UnfocusControl(GetID, (int) Controls.SPINCONTROL_DAY);
-        GUIControl.UnfocusControl(GetID, (int) Controls.SPINCONTROL_TIME_INTERVAL);
+        int controlid;
+        GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_DAY);
+        GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_TIME_INTERVAL);
 
-        int controlid = (int) Controls.IMG_CHAN1 + _cursorX;
+        if (_cursorY == -1)
+          controlid = (int)Controls.TVGROUP_BUTTON;
+        else
+          controlid = (int)Controls.IMG_CHAN1 + _cursorX;
+
         GUIControl.FocusControl(GetID, controlid);
       }
       else
       {
         Correct();
-        int iControlId = GUIDE_COMPONENTID_START + _cursorX*RowID + (_cursorY - 1)*ColID;
+        int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
@@ -2693,9 +2842,9 @@ namespace TvPlugin
     private void Correct()
     {
       int iControlId;
-      if (_cursorY < 0)
+      if (_cursorY < MinYIndex) // either channel or group button  
       {
-        _cursorY = 0;
+        _cursorY = MinYIndex;
       }
       if (_cursorY > 0)
       {

@@ -55,6 +55,18 @@ namespace TvPlugin
       get { return true; }
     }
 
+    private bool _groupChanged;
+    public bool GroupChanged 
+    {
+      get 
+      { 
+        return _groupChanged; 
+      }
+      set 
+      { 
+        _groupChanged = value; 
+      }
+    }
     public override bool Init()
     {
       Initialize();
@@ -65,6 +77,8 @@ namespace TvPlugin
       Restore();
       PreInit();
       ResetAllControls();
+
+      _groupChanged = false;
       return true;
     }
 
@@ -77,6 +91,24 @@ namespace TvPlugin
       }
     }
 
+    /// <summary>
+    /// changes the current tv group and refreshes guide display
+    /// </summary>
+    /// <param name="Direction"></param>
+    protected override void OnChangeTvGroup(int Direction)
+    {
+      base.OnChangeTvGroup(Direction);
+      _groupChanged = true;
+    }
+
+    /// <summary>
+    /// Shows channel group selection dialog
+    /// </summary>
+    protected override void OnSelectGroup()
+    {
+      base.OnSelectGroup();
+      _groupChanged = true;
+    }
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -86,6 +118,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_SHOW_FULLSCREEN:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           //case Action.ActionType.ACTION_SELECT_ITEM:
+          _groupChanged = false; // reset so guide dialog can exit loop in tvhome
           PageDestroy();
           return;
       }

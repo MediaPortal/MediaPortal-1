@@ -308,10 +308,12 @@ namespace TvPlugin
           Close();
           return;
         case Action.ActionType.ACTION_MOVE_LEFT:
+        case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
           // switch group
           spinGroup.MoveUp();
           return;
         case Action.ActionType.ACTION_MOVE_RIGHT:
+        case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
           // switch group
           spinGroup.MoveDown();
           return;
