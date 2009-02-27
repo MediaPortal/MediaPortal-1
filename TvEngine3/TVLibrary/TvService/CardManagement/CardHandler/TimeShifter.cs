@@ -43,6 +43,10 @@ namespace TvService
     bool _eventsReady;
 
     readonly ChannelLinkageGrabber _linkageGrabber;
+
+    DateTime _timeAudioEvent;
+    DateTime _timeVideoEvent;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TimeShifter"/> class.
     /// </summary>
@@ -61,6 +65,9 @@ namespace TvService
       _timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
 
       _waitForTimeshifting = Int32.Parse(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value);
+
+      _timeAudioEvent = DateTime.Now;
+      _timeVideoEvent = DateTime.Now;
     }
 
 
@@ -217,16 +224,29 @@ namespace TvService
 
     private void AudioVideoEventHandler(PidType pidType)
     {
-      Log.Info("audioVideoEventHandler {0}", pidType);
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
-      {
-        _eventAudio.Set();
+      {                                                
+        TimeSpan ts = DateTime.Now - _timeAudioEvent;
+        if (ts.TotalMilliseconds > 1000)
+        {
+          // Avoid repetitive events that are kept for next channel change, so trig only once.
+          Log.Info("audioVideoEventHandler {0}", pidType);
+          _eventAudio.Set();
+        }
+        _timeAudioEvent = DateTime.Now; 
       }
 
       if (pidType == PidType.Video)
       {
-        _eventVideo.Set();
+        TimeSpan ts = DateTime.Now - _timeVideoEvent;
+        if (ts.TotalMilliseconds > 1000)
+        {
+          // Avoid repetitive events that are kept for next channel change, so trig only once.
+          Log.Info("audioVideoEventHandler {0}", pidType);
+          _eventVideo.Set();
+        }
+        _timeVideoEvent = DateTime.Now;
       }
     }
 
@@ -550,9 +570,6 @@ namespace TvService
           Log.Write("card: WaitForTimeShiftFile - audio is seen after {0} seconds", ts.TotalSeconds);
           _eventVideo.Reset();
           _eventAudio.Reset();
-
-          // give some breathing room for TsReader
-          Thread.Sleep(200);
           return true;
         }
         else
@@ -581,9 +598,6 @@ namespace TvService
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write("card: WaitForTimeShiftFile - video and audio are seen after {0} seconds", ts.TotalSeconds);
             _eventVideo.Reset();
-
-            // give some breathing room for TsReader
-            Thread.Sleep(200);
             return true;
           }
           else
