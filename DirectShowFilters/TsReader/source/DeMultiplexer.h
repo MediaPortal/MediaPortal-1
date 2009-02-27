@@ -149,6 +149,7 @@ private:
   CBuffer* m_pCurrentAudioBuffer;
   CPcr     m_streamPcr;
 	CPcr		 m_lastVideoPTS;
+  CPcr     m_lastAudioPTS;
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
   unsigned int m_iAudioStream;

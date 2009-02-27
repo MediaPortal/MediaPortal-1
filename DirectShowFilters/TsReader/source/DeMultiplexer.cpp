@@ -75,6 +75,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_iAudioReadCount = 0;
   //ReadAudioIndexFromRegistry();
 	m_lastVideoPTS.IsValid=false;
+  m_lastAudioPTS.IsValid=false;
 	ResetMpeg2VideoInfo();
 	m_mpegParserTriggerFormatChange=false;
 	m_DisableDiscontinuitiesFiltering = false ;
@@ -421,8 +422,11 @@ void CDeMultiplexer::FlushVideo()
     this->CallTeletextEventCallback(TELETEXT_EVENT_BUFFER_OUT_UPDATE,m_outVideoBuffer);
   }*/
   m_VideoPrevCC = -1 ;
+  m_lastVideoPTS.IsValid=false;
   m_VideoValidPES = false ;
   m_pCurrentVideoBuffer = new CBuffer();
+
+  Reset() ;  // PacketSync reset.
 }   
 
 void CDeMultiplexer::FlushAudio()
@@ -447,8 +451,11 @@ void CDeMultiplexer::FlushAudio()
 	}
 	
 	m_AudioPrevCC = -1 ;
+  m_lastAudioPTS.IsValid=false;
 	m_AudioValidPES = false ;
 	m_pCurrentAudioBuffer = new CBuffer();
+
+  Reset() ;  // PacketSync reset.
 }
 
 void CDeMultiplexer::FlushSubtitle()
@@ -957,6 +964,21 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 				CPcr dts;
 				if (CPcr::DecodeFromPesHeader(p,0,pts,dts))
 				{
+          double diff;
+          if (!m_lastAudioPTS.IsValid)
+            m_lastAudioPTS=pts;
+          if (m_lastAudioPTS>pts)
+            diff=m_lastAudioPTS.ToClock()-pts.ToClock();
+          else
+            diff=pts.ToClock()-m_lastAudioPTS.ToClock();
+          if (diff>10.0)
+          {
+						LogDebug("DeMultiplexer::FillAudio pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastAudioPTS.ToClock());
+						m_AudioValidPES=false ;
+          }
+					else
+	          m_lastAudioPTS=pts;
+
 					Cbuf->SetPts(pts);
 				}
 				//skip pes header
@@ -1091,12 +1113,15 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 						diff=m_lastVideoPTS.ToClock()-pts.ToClock();
 					else
 						diff=pts.ToClock()-m_lastVideoPTS.ToClock();
-					m_lastVideoPTS=pts;
+//          m_lastVideoPTS=pts;
 					if (diff>10.0)
 					{
-						LogDebug("DeMultiplexer::FillVideoVideo pts jump found, flushing video : %f %I64x, %I64x", (float) diff, pts.PcrReferenceBase, m_lastVideoPTS.PcrReferenceBase);
-//						FlushVideo(); // Not required 
+						LogDebug("DeMultiplexer::FillVideo pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
+						m_VideoValidPES=false ;
 					}
+					else
+	          m_lastVideoPTS=pts;
+
 					Cbuf->SetPts(pts);
 				}
 				//skip pes header
