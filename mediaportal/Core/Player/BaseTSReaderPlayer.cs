@@ -166,6 +166,7 @@ namespace MediaPortal.Player
     protected IBaseFilter _mpegDemux;
     private VMR7Util _vmr7 = null;
     private DateTime _elapsedTimer = DateTime.Now;
+    private DateTime _FFRWtimer = DateTime.Now;
     protected const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
     protected const int WS_CHILD = 0x40000000; // attributes for video window
     protected const int WS_CLIPCHILDREN = 0x02000000;
@@ -178,7 +179,7 @@ namespace MediaPortal.Player
     protected g_Player.MediaType _mediaType;
     protected int iChangedMediaTypes;
     protected VideoStreamFormat _videoFormat;
-
+    protected int _lastFrameCounter;
     #endregion
 
     #region ctor/dtor
@@ -675,7 +676,8 @@ namespace MediaPortal.Player
         _updateTimer = DateTime.Now;
       }
 
-      if (IsTimeShifting)
+
+      if (false) //IsTimeShifting)
       {
         if (Speed > 1 && CurrentPosition + 5d >= Duration)
         {
@@ -697,6 +699,8 @@ namespace MediaPortal.Player
 					SeekAsolutePercentage(0);
 				}*/
       }
+
+
       _lastPosition = CurrentPosition;
       if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
       {
@@ -729,6 +733,11 @@ namespace MediaPortal.Player
       if (_speedRate != 10000)
       {
         DoFFRW();
+      }
+      else
+      {
+        _lastFrameCounter = 0; 
+        _FFRWtimer = DateTime.Now;
       }
       if (_endOfFileDetected && IsTimeShifting)
       {
@@ -1840,29 +1849,28 @@ namespace MediaPortal.Player
         return;
       }
       TimeSpan ts = DateTime.Now - _elapsedTimer;
-      if (ts.TotalMilliseconds < 100)
-      {
-        return;
-      }
+      if ((ts.TotalMilliseconds < 100) || (ts.TotalMilliseconds < Math.Abs(1000.0f/Speed)) || (VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) && (ts.TotalMilliseconds < 2000))
+      {                                   // Ambass : Normally, 100 mS are enough to present the new frame, but sometimes the PC is thinking...and we launch a new seek
+        return;                           // before the StopWhenReady() method has been completed. It results as a kind of mess in the tsReader....
+      }                                   // So, it's better to verify a new frame has been pesented.
       long earliest, latest, current, stop, rewind, pStop;
       lock (_mediaCtrl)
       {
         _mediaSeeking.GetAvailable(out earliest, out latest);
         _mediaSeeking.GetPositions(out current, out stop);
 
-        // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
-        //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,_speedRate, (latest-earliest)/10000000);
+        //this is the real elapsed time from next seek.
+         DateTime dt = DateTime.Now;
+         ts = dt - _FFRWtimer ;
+         _FFRWtimer = dt ;
 
-        //earliest += + 30 * 10000000;
+        //Log.Info(" time from last : {6} {7} {8} earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+        //         earliest / 10000000, latest / 10000000, current / 10000000, stop / 10000000, _speedRate, (latest - earliest) / 10000000, (long)ts.TotalMilliseconds, VMR9Util.g_vmr9.FreeFrameCounter, Speed);
 
-        // new time = current time + 2*timerinterval* (speed)
+        // new time = current time + timerinterval * speed
         long lTimerInterval = (long) ts.TotalMilliseconds;
-        if (lTimerInterval > 300)
-        {
-          lTimerInterval = 300;
-        }
-        lTimerInterval = 300;
-        rewind = (long) (current + (2*(long) (lTimerInterval)*_speedRate));
+
+        rewind = (long) (current + ((long)(lTimerInterval)*Speed*10000));
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just
@@ -1879,11 +1887,13 @@ namespace MediaPortal.Player
         }
         // if we end up at the end of time then just
         // start @ the end-100msec
-        if ((rewind > (latest - 100000)) && (_speedRate > 0))
+        long margin = (IsTimeShifting) ? 30000000 : 1000000 ;
+
+        if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
           _speedRate = 10000;
-          rewind = latest - 100000;
-          //Log.Info(" seek ff:{0}",rewind/10000000);
+          rewind = latest - margin;
+          //Log.Info(" seek ff:{0} {1}",rewind,latest);
           hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           _mediaCtrl.Run();
@@ -1891,6 +1901,7 @@ namespace MediaPortal.Player
         }
         //seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
+        if (VMR9Util.g_vmr9!=null) _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
         hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
                                         AMSeekingSeekingFlags.NoPositioning);
         //according to ms documentation, this is the prefered way to do seeking

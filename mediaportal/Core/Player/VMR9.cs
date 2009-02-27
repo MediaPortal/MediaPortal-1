@@ -128,6 +128,7 @@ namespace MediaPortal.Player
     private string pixelAdaptive = "";
     private string verticalStretch = "";
     private string medianFiltering = "";
+    private int _freeframeCounter = 0;
 
     #endregion
 
@@ -178,6 +179,13 @@ namespace MediaPortal.Player
       get { return _frameCounter; }
       set { _frameCounter = value; }
     }
+
+    public int FreeFrameCounter
+    {
+      get { return _freeframeCounter; }
+      set { _freeframeCounter = value; }
+    }
+
 
     /// <summary>
     /// returns the width of the video
@@ -551,9 +559,9 @@ namespace MediaPortal.Player
 
       TimeSpan ts = DateTime.Now - _repaintTimer;
       int frames = FrameCounter;
-      if (ts.TotalMilliseconds >= 1000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0))
+      if (ts.TotalMilliseconds >= 5000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0))
       {
-        GUIGraphicsContext.Vmr9FPS = ((float) (frames*1000))/((float) ts.TotalMilliseconds);
+        GUIGraphicsContext.Vmr9FPS = ((float) (frames*5000))/((float) ts.TotalMilliseconds);
 //         Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
@@ -579,7 +587,7 @@ namespace MediaPortal.Player
         _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
       }
-      else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 5f)
+      else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS < 2f)
       {
         Log.Debug("VMR9Helper: Playing -> Repainting, Frames {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;

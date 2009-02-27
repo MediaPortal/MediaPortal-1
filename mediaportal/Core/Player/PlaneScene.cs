@@ -568,7 +568,10 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           return 0;
-        }
+        } 
+
+        _vmr9Util.FreeFrameCounter++;
+
         if (!_drawVideoAllowed || !_isEnabled)
         {
           Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
