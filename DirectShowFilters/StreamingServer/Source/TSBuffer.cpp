@@ -36,7 +36,7 @@ CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;
 	m_lItemOffset = 0;
-	m_lTSBufferItemSize = 128028;
+	m_lTSBufferItemSize = 8084 ; //128028;
 
 	//round to nearest byte boundary.
 

@@ -60,8 +60,10 @@ public:
 	void SetDebugOutput(BOOL bDebugOutput);
 
 	virtual __int64 GetFileSize();
-  virtual bool IsBuffer(){return false;};
-  virtual bool HasMoreData(int bytes){return false;};
+	virtual bool IsBuffer(){return false;};
+	virtual bool HasMoreData(){return false;};
+	virtual int HasData(){return 0; } ;
+
 protected:
 	
 	HANDLE   m_hFile; 				// Handle to file for streaming

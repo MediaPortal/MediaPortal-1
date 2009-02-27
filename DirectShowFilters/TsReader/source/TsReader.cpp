@@ -402,8 +402,6 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
     if (m_rtspClient.IsPaused())
     {
       LogDebug(" CTsReaderFilter::Run()  -->is paused,continue rtsp");
-      m_buffer.Clear();
-      m_buffer.Run(true);
       m_rtspClient.Continue();
       LogDebug(" CTsReaderFilter::Run()  --> rtsp running");
     }
@@ -495,15 +493,10 @@ STDMETHODIMP CTsReaderFilter::Pause()
       if (!m_rtspClient.IsRunning())
       {
         //not streaming atm
-        //stop audio/video pins from blocking in FillBuffer()
-        m_demultiplexer.SetHoldAudio(true);
-        m_demultiplexer.SetHoldVideo(true);
-        m_demultiplexer.SetHoldSubtitle(true);
         double startTime=m_seekTime.Millisecs();
         startTime/=1000.0f;
 
         //clear buffers
-        m_demultiplexer.Flush();
         LogDebug("  -- Pause()  ->start rtsp from %f",startTime);
         m_buffer.Clear();
 
@@ -522,9 +515,6 @@ STDMETHODIMP CTsReaderFilter::Pause()
         m_duration.Set( pcrstart, pcrEnd, pcrMax);
 
         //allow audio/video/subtitle pins to block in fillbuffer
-        m_demultiplexer.SetHoldAudio(false);
-        m_demultiplexer.SetHoldVideo(false);
-        m_demultiplexer.SetHoldSubtitle(false);
         LogDebug("  -- Pause()-  >duration:%f",(m_rtspClient.Duration()/1000.0f));
       }
       else
@@ -532,13 +522,6 @@ STDMETHODIMP CTsReaderFilter::Pause()
         //we are streaming at the moment.
         //pause the streaming
         LogDebug("  -- Pause()  ->pause rtsp");
-	      m_demultiplexer.Flush();
-	      m_buffer.Clear();
-	      m_demultiplexer.SetHoldAudio(true);
-	      m_demultiplexer.SetHoldVideo(true);
-	      m_demultiplexer.SetHoldSubtitle(true);
-
-        m_buffer.Run(false);
         m_rtspClient.Pause();
       }
     }
@@ -846,10 +829,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     startTime/=1000.0f;
     float milli=m_duration.Duration().Millisecs();
     milli/=1000.0;
-    if (startTime >= milli-40.0f)
-    { 
-      startTime=milli+40.0f;
-    }	
+
+		if (m_bLiveTv) startTime+=10.0f ; // If liveTv, it's a seek to end, force end of buffer.
 
     LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers

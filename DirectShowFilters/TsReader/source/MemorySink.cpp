@@ -13,9 +13,9 @@ CMemorySink::CMemorySink(UsageEnvironment& env,CMemoryBuffer& buffer, unsigned b
 {
   Log("CMemorySink::ctor");
   fBuffer = new unsigned char[bufferSize];
-	m_pSubmitBuffer = new byte[SUBMIT_BUF_SIZE];
-	m_iSubmitBufferPos=0;
-	m_bReEntrant=false;
+  m_pSubmitBuffer = new byte[SUBMIT_BUF_SIZE];
+  m_iSubmitBufferPos=0;
+  m_bReEntrant=false;
 }
 
 CMemorySink::~CMemorySink() 
@@ -42,7 +42,7 @@ void CMemorySink::afterGettingFrame(void* clientData, unsigned frameSize,unsigne
 {
   CMemorySink* sink = (CMemorySink*)clientData;
   sink->afterGettingFrame1(frameSize, presentationTime);
-	sink->continuePlaying();
+  sink->continuePlaying();
 } 
 static int testsize=0;
 void CMemorySink::addData(unsigned char* data, unsigned dataSize,struct timeval presentationTime) 
@@ -52,23 +52,19 @@ void CMemorySink::addData(unsigned char* data, unsigned dataSize,struct timeval 
     Log("CMemorySink:addData");
     testsize=1;
   }
-	if (dataSize==0) return;
-	if (data==NULL) return;
-	if (m_bReEntrant)
-	{
-		Log("REENTRANT IN MEMORYSINK.CPP");
-		return;
-	}
-	CAutoLock BufferLock(&m_BufferLock);
-	m_bReEntrant=true;
-	if (m_iSubmitBufferPos+dataSize >= SUBMIT_BUF_SIZE)
-	{
-		m_buffer.PutBuffer(m_pSubmitBuffer, m_iSubmitBufferPos);
-		m_iSubmitBufferPos=0;
-	}
-	memcpy(&m_pSubmitBuffer[m_iSubmitBufferPos],data,dataSize);
-	m_iSubmitBufferPos+=dataSize;
-	m_bReEntrant=false;
+  if (dataSize==0) return;
+  if (data==NULL) return;
+  if (m_bReEntrant)
+  {
+    Log("REENTRANT IN MEMORYSINK.CPP");
+    return;
+  }
+  CAutoLock BufferLock(&m_BufferLock);
+  m_bReEntrant=true;
+
+  m_buffer.PutBuffer(data, dataSize);
+
+  m_bReEntrant=false;
 }
 
 

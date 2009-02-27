@@ -61,7 +61,7 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
   }
   float fileDuration=duration();
   if (seekNPT<0) seekNPT=0;
-  if (seekNPT>(fileDuration-0.5f)) seekNPT=(fileDuration-0.5f);
+  if (seekNPT>(fileDuration-0.1f)) seekNPT=(fileDuration-0.1f);
   if (seekNPT <0) seekNPT=0;
 
 

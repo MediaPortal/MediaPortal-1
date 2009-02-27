@@ -31,3 +31,7 @@ bool CMemoryReader::HasMoreData(int bytes)
 {
   return (m_buffer.Size()>=bytes);
 }
+int CMemoryReader::HasData()
+{
+  return (m_buffer.Size());
+}

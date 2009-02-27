@@ -87,10 +87,10 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
 
   long dur=m_duration/1000;
   long diff=abs(dur-m_fStart);
-  if (diff <20 && m_fStart>1 )
-  {
-    m_fStart=dur+5;
-  }
+//  if (diff <20 && m_fStart>1 )
+//  {
+//    m_fStart=dur+5;
+//  }
   LogDebug("CRTSPClient::clientStartPlayingSession() play from %.3f / %.3f",m_fStart,(float)m_duration/1000);
   return rtspClient->playMediaSession(*session,m_fStart);
 
@@ -519,7 +519,7 @@ bool CRTSPClient::Pause()
 	if (m_ourClient!=NULL && m_session!=NULL)
 	{
 	  LogDebug("CRTSPClient::Pause() stopthread");
-		StopThread(100);
+		StopThread(1000);                           // Ambass : sometimes 100mS ( prev value ) is not enough and thread is not stopped.
 	  LogDebug("CRTSPClient::Pause() thread stopped");
 		RTSPClient* rtspClient=(RTSPClient*)m_ourClient;
 		rtspClient->pauseMediaSession(*m_session);

@@ -726,10 +726,12 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   if (m_reader->IsBuffer())
   {
     // and, the current buffer holds data
-    if (m_reader->HasMoreData( sizeof(buffer) ) )
+    int nBytesToRead = m_reader->HasData() ;
+    if (nBytesToRead > sizeof(buffer)) nBytesToRead=sizeof(buffer);
+    if (nBytesToRead)
     {
-        //then read raw data from the buffer
-      m_reader->Read(buffer, sizeof(buffer), (ULONG*)&dwReadBytes);
+      //then read raw data from the buffer
+      m_reader->Read(buffer, nBytesToRead, (DWORD*)&dwReadBytes);
       if (dwReadBytes > 0)
       {
         //yes, then process the raw data
