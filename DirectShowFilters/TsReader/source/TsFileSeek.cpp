@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -98,9 +98,11 @@ void CTsFileSeek::Seek(CRefTime refTime)
   __int64 prevfilePos=filePos;
   __int64 binaryMax=m_reader->GetFileSize();
   __int64 binaryMin=0;
+  __int64 lastFilePos=0;
   int seekingIteration=0;
 
   SeekState state=FindPcr;
+  Reset() ;   // Reset "PacketSync"
   while (true)
   {
     //sanity checks
@@ -128,72 +130,81 @@ void CTsFileSeek::Seek(CRefTime refTime)
     if (m_pcrFound.IsValid)
     {
       //yes. pcr found
-      //Check state
       double clockFound=m_pcrFound.ToClock();
-      if (state==FindPcr)
+      if( m_useBinarySearch )
       {
-        prevfilePos=filePos;
-        //we found the pcr.
-        //compare it with the timestamp we want to seek to
-        if (clockFound < seekTimeStamp)
-        {
-          // pcr found is too low, move forward in file and seek next pcr
-          state=FindNextPcr;
+        double diff = fabs( seekTimeStamp - clockFound );
+        LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
           
-          //LogDebug(" got %f at filepos %x ->find next", clockFound, (DWORD)filePos);
-          filePos += sizeof(buffer);
-        }
-        else if (clockFound > seekTimeStamp)
+        if( diff < SEEKING_ACCURACY )
         {
-          // pcr found is too high, move backward in file and seek previous pcr
-          //LogDebug(" got %f at filepos %x ->find prev", clockFound, (DWORD)filePos);
-          state=FindPreviousPcr;
-          filePos -= sizeof(buffer);
-        }
-        else
-        {
-          //pcr is correct, just return
-          //LogDebug(" got %f", clockFound);
+          LogDebug(" stop seek: %f at %x - target: %f, diff: %f", 
+            clockFound, (DWORD)filePos, seekTimeStamp, diff);
           m_reader->SetFilePointer(filePos,FILE_BEGIN);
           return;
         }
+
+        seekingIteration++;
+        if( seekingIteration > MAX_SEEKING_ITERATIONS )
+        {
+          LogDebug(" stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f", 
+            MAX_SEEKING_ITERATIONS, clockFound, (DWORD)filePos, seekTimeStamp, diff);
+          m_reader->SetFilePointer(filePos,FILE_BEGIN);
+          return;
+        }
+
+        // lower bound becomes valid
+        if( clockFound > seekTimeStamp ) 
+        {
+          if (filePos < binaryMax) binaryMax = filePos-1;
+        }
+        else
+        {
+          if (filePos > binaryMin) binaryMin = filePos+1;
+        }
+
+        if (lastFilePos==filePos)
+        {
+          LogDebug(" stop seek closer target found : %f at %x - target: %f, diff: %f", 
+            clockFound, (DWORD)filePos, seekTimeStamp, diff);
+          m_reader->SetFilePointer(filePos,FILE_BEGIN);
+          return;
+        }
+
+        lastFilePos=filePos;
+        filePos = binaryMin + ( binaryMax - binaryMin ) / 2;
+        Reset() ;   // Random jump, Reset "PacketSync"
       }
       else
       {
-        if( m_useBinarySearch )
+        if (state==FindPcr)
         {
-          double diff = fabs( seekTimeStamp - clockFound );
-          LogDebug(" got %f at filepos %x diff %f", clockFound, (DWORD)filePos, diff);
+          prevfilePos=filePos;
+          //we found the pcr.
+          //compare it with the timestamp we want to seek to
+          if (clockFound < seekTimeStamp)
+          {
+            // pcr found is too low, move forward in file and seek next pcr
+            state=FindNextPcr;
           
-          if( diff < SEEKING_ACCURACY )
-          {
-            LogDebug(" stop seek: %f at %x - target: %f, diff: %f", 
-              clockFound, (DWORD)filePos, seekTimeStamp, diff);
-            m_reader->SetFilePointer(prevfilePos,FILE_BEGIN);
-            return;
+            //LogDebug(" got %f at filepos %x ->find next", clockFound, (DWORD)filePos);
+            filePos += sizeof(buffer);
           }
-
-          seekingIteration++;
-          if( seekingIteration > MAX_SEEKING_ITERATIONS )
+          else if (clockFound > seekTimeStamp)
           {
-            LogDebug(" stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f", 
-              MAX_SEEKING_ITERATIONS, clockFound, (DWORD)filePos, seekTimeStamp, diff);
-            m_reader->SetFilePointer(prevfilePos,FILE_BEGIN);
-            return;
-          }
-
-          // lower bound becomes valid
-          if( clockFound > seekTimeStamp ) 
-          {
-            binaryMax = filePos-1;
+            // pcr found is too high, move backward in file and seek previous pcr
+            //LogDebug(" got %f at filepos %x ->find prev", clockFound, (DWORD)filePos);
+            state=FindPreviousPcr;
+            filePos -= sizeof(buffer);
+            Reset() ;   // Backward jump, Reset "PacketSync"
           }
           else
           {
-            binaryMin = filePos+1;
+            //pcr is correct, just return
+            //LogDebug(" got %f", clockFound);
+            m_reader->SetFilePointer(filePos,FILE_BEGIN);
+            return;
           }
-
-          prevfilePos=filePos;
-          filePos = binaryMin + ( binaryMax - binaryMin ) / 2;
         }
         else
         {
@@ -225,6 +236,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
             }
             prevfilePos=filePos;
             filePos-=sizeof(buffer);
+            Reset() ;   // Backward jump, Reset "PacketSync"
           }
         }
       }
@@ -236,6 +248,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
       {
         //move filepointer back and continue searching for a PCR
         filePos -=sizeof(buffer);
+        Reset() ;   // Backward jump, Reset "PacketSync"
       }
       else
       {
@@ -256,6 +269,8 @@ void CTsFileSeek::Seek(CRefTime refTime)
 // and ifso sets the PCR timestamp in m_pcrFound;
 void CTsFileSeek::OnTsPacket(byte* tsPacket)
 {
+  if (m_pcrFound.IsValid) return ;
+
   CTsHeader header(tsPacket);
   CAdaptionField field;
   field.Decode(header,tsPacket);

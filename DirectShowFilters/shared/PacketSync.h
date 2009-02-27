@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,14 +26,15 @@
 class CPacketSync
 {
 public:
-	CPacketSync(void);
+  CPacketSync(void);
 
 public:
-	virtual ~CPacketSync(void);
-	void OnRawData(byte* pData, int nDataLen);
-	virtual void OnTsPacket(byte* tsPacket);
+  virtual ~CPacketSync(void);
+  void OnRawData(byte* pData, int nDataLen);
+  virtual void OnTsPacket(byte* tsPacket);
+  void Reset(void);
 
 private:
-	byte	m_tempBuffer[200];
-	int  	m_tempBufferPos;
+  byte  m_tempBuffer[200];
+  int   m_tempBufferPos;
 };

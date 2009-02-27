@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2008 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,64 +25,60 @@
 
 CPacketSync::CPacketSync(void)
 {
-	m_tempBufferPos=-1;
+  m_tempBufferPos=-1;
 }
 
 CPacketSync::~CPacketSync(void)
 {
 }
 
-// [188]   [188]		 [188]		[100]				[88]
-// 0..187  188..375	 376..563 564..663		0..87
-// datalen=664
+void CPacketSync::Reset(void)
+{
+  m_tempBufferPos=-1;
+}
+
+// Ambass : Now, need to have 2 consecutive TS_PACKET_SYNC to try avoiding bad synchronisation.  
+//          In case of data flow change ( Seek, tv Zap .... ) Reset() should be called first to flush buffer.
 void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
-	int syncOffset=0;
-	if (m_tempBufferPos > 0 )
-	{
-		syncOffset = TS_PACKET_LEN - m_tempBufferPos;
-		memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
-    if (m_tempBuffer[0] == TS_PACKET_SYNC) 
+  int syncOffset=0;
+  if (m_tempBufferPos > 0 )
+  {
+    if (pData[TS_PACKET_LEN - m_tempBufferPos]==TS_PACKET_SYNC)
     {
-		  OnTsPacket(m_tempBuffer);
+      syncOffset = TS_PACKET_LEN - m_tempBufferPos;
+      if (syncOffset) memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
+      OnTsPacket(m_tempBuffer);
     }
-		m_tempBufferPos = 0;
-	}
+    m_tempBufferPos = 0;
+  }
 
-	while (syncOffset < nDataLen)
-	{
-		if (syncOffset + TS_PACKET_LEN > nDataLen) break;
-		if (pData[syncOffset] != TS_PACKET_SYNC) 
-		{
-      //check if this is a corrupted packet...
-      int nextPkt=syncOffset + TS_PACKET_LEN;
-      if (nextPkt < nDataLen) 
-      {
-        if (pData[nextPkt]==TS_PACKET_SYNC)
-        {
-          syncOffset=nextPkt;
-        }
-        else
-        {
-			    syncOffset++;
-			    continue;
-        }
-      }
-      else
-      {
-			  syncOffset++;
-			  continue;
-      }
-		}
-		OnTsPacket( &pData[syncOffset] );
-		syncOffset += TS_PACKET_LEN;
-	}
+  while (syncOffset + TS_PACKET_LEN < nDataLen)
+  {
+    if ((pData[syncOffset] == TS_PACKET_SYNC) &&
+        (pData[syncOffset + TS_PACKET_LEN]==TS_PACKET_SYNC))
+    {
+      OnTsPacket( &pData[syncOffset] );
+      syncOffset += TS_PACKET_LEN;
+    }
+    else
+      syncOffset++;
+  }
 
-	if (syncOffset < nDataLen)
-	{
-		m_tempBufferPos= nDataLen - syncOffset;
-		memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
-	}
+  // Here we have less than 188+1 bytes
+  while (syncOffset < nDataLen)
+  {
+    if (pData[syncOffset] == TS_PACKET_SYNC)
+    {
+      m_tempBufferPos= nDataLen - syncOffset;
+      memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
+      return ;
+    }
+    else
+      syncOffset++;
+  }
+
+  m_tempBufferPos=0 ;
 }
 
 void CPacketSync::OnTsPacket(byte* tsPacket)
