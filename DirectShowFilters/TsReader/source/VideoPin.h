@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,52 +26,48 @@
 class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
-	CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
-	~CVideoPin();
+  CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
+  ~CVideoPin();
 
-	STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
+  STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
-	//CSourceStream
-	HRESULT GetMediaType(CMediaType *pMediaType);
-	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
-	HRESULT CompleteConnect(IPin *pReceivePin);
+  //CSourceStream
+  HRESULT GetMediaType(CMediaType *pMediaType);
+  HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
+  HRESULT CompleteConnect(IPin *pReceivePin);
   HRESULT CheckConnect(IPin *pReceivePin);
-	HRESULT FillBuffer(IMediaSample *pSample);
+  HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
 
-	// CSourceSeeking
-	HRESULT ChangeStart();
-	HRESULT ChangeStop();
-	HRESULT ChangeRate();
-  STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
+  // CSourceSeeking
+  HRESULT ChangeStart();
+  HRESULT ChangeStop();
+  HRESULT ChangeRate();
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
+  STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
   STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
-	HRESULT OnThreadStartPlay();
-	void SetStart(CRefTime rtStartTime);
-	void FlushStart();
-	void FlushStop();
+  HRESULT OnThreadStartPlay();
+  void SetStart(CRefTime rtStartTime);
   bool IsConnected();
-  bool IsSeeking();
   void SetDiscontinuity(bool onOff);
 
 
 protected:
-  void    UpdateFromSeek();
+  void      UpdateFromSeek();
   
-  CTsReaderFilter *	const m_pTsReaderFilter;
-  bool      m_binUpdateFromSeek;
+  CTsReaderFilter * const m_pTsReaderFilter;
   bool      m_bConnected;
-	BOOL      m_bDiscontinuity;
-	CCritSec* m_section;
+  BOOL      m_bDiscontinuity;
+  CCritSec* m_section;
   CCritSec  m_bufferLock;
   bool      m_bSeeking;
   DWORD     m_seekTimer;
   CRefTime  m_lastSeek;
-  bool      m_bMeasureCompensation;
   bool      m_bInFillBuffer;
+  bool      m_bPresentSample;
 };
 
 #endif

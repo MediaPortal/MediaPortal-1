@@ -149,10 +149,26 @@ public:
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
+  CRefTime        AddVideoComp;
   void				    OnMediaTypeChanged(int mediaTypes);
   void				    OnRequestAudioChange();
 	void						OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced);
   bool			      IsStreaming();
+
+	void            SetWaitForSeekToEof(bool onOff) ;
+	bool            IsSeekingToEof() ;
+
+	void            SetWaitForNewPat(bool onOff) ;
+	bool            IsWaitingForNewPat() ;
+
+	DWORD           m_lastPause;
+	bool            m_bStreamCompensated;
+	DWORD           m_lastRun;
+	CRefTime        m_ClockOnStart;
+
+	REFERENCE_TIME  m_RandomCompensation ;
+	bool            m_bLiveTv ;
+
 protected:
   void ThreadProc();
 private:
@@ -178,10 +194,13 @@ private:
   CMemoryBuffer   m_buffer;
   DWORD           m_tickCount;
   CRefTime        m_seekTime;
-  bool            m_bNeedSeeking;
   bool            m_bTimeShifting;
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
+
+	bool            m_WaitForSeekToEof ;
+	bool            m_WaitForNewPat ;
+	bool            m_bPauseOnly ;
 };
 

@@ -1,20 +1,20 @@
-/* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+/*
+ *  Copyright (C) 2005 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -41,22 +41,25 @@ class CDeMultiplexer : public CPacketSync, public IPatParserCallback
 {
 public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
-	virtual ~CDeMultiplexer(void);
+  virtual ~CDeMultiplexer(void);
 
   void       Start();
   void       Flush();
   CBuffer*   GetVideo();
   CBuffer*   GetAudio();
   CBuffer*   GetSubtitle();
-	void       OnTsPacket(byte* tsPacket);
-	void       OnNewChannel(CChannelInfo& info);
+  void       OnTsPacket(byte* tsPacket);
+  void       OnNewChannel(CChannelInfo& info);
   void       SetFileReader(FileReader* reader);
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
-  void			 SetEndOfFile(bool bEndOfFile);
+  void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
+
+  int        GetAudioBufferPts(CRefTime& First, CRefTime& Last) ;
+  int        GetVideoBufferPts(CRefTime& First, CRefTime& Last) ;
 
   bool       SetAudioStream(__int32 stream);
   bool       GetAudioStream(__int32 &stream);
@@ -66,28 +69,28 @@ public:
   void       GetVideoStreamType(CMediaType& pmt);
   int        GetAudioStreamCount();
 
-  // TsReader::ISubtitleStream uses these 
+  // TsReader::ISubtitleStream uses these
   bool       SetSubtitleStream(__int32 stream);
   bool       GetSubtitleStreamType(__int32 stream, __int32& count);
   bool       GetSubtitleStreamCount(__int32 &count);
   bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
-  bool			 SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
+  bool       SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
 
   bool       EndOfFile();
-	bool			 HoldAudio();
-	void			 SetHoldAudio(bool onOff);
-	bool			 HoldVideo();
-	void			 SetHoldVideo(bool onOff);
-  bool			 HoldSubtitle();
-	void			 SetHoldSubtitle(bool onOff);
+  bool       HoldAudio();
+  void       SetHoldAudio(bool onOff);
+  bool       HoldVideo();
+  void       SetHoldVideo(bool onOff);
+  bool       HoldSubtitle();
+  void       SetHoldSubtitle(bool onOff);
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
   void       FlushSubtitle();
   void       FlushTeletext();
-  //void		 SyncTeletext();
-  int        GetVideoServiceType();  
+  //void     SyncTeletext();
+  int        GetVideoServiceType();
 
   void SetTeletextEventCallback(int (CALLBACK *pTeletextResetCallback)(int,DWORD64));
   void SetTeletextPacketCallback(int (CALLBACK *pTeletextPacketCallback)(byte*, int));
@@ -95,7 +98,12 @@ public:
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 
-	bool m_DisableDiscontinuitiesFiltering ;
+  void SetVideoChanging(bool onOff) ;
+  bool IsVideoChanging() ;
+
+  bool m_DisableDiscontinuitiesFiltering ;
+  CRefTime  m_IframeSample ;
+  DWORD m_LastDataFromRtsp ;
 
 private:
   struct stAudioStream
@@ -113,11 +121,11 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
-	void ResetMpeg2VideoInfo();
+  void ResetMpeg2VideoInfo();
   void GetVideoMedia(CMediaType *pmt);
   void GetH264Media(CMediaType *pmt);
   void GetMpeg4Media(CMediaType *pmt);
-  bool ReadFromFile(bool isAudio, bool isVideo);
+  int ReadFromFile(bool isAudio, bool isVideo);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   HRESULT DoStart();
@@ -128,9 +136,9 @@ private:
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionRead;
-	FileReader* m_reader;
+  FileReader* m_reader;
   CPatParser m_patParser;
-	CMpegPesParser m_mpegPesParser;
+  CMpegPesParser m_mpegPesParser;
   CPidTable m_pids;
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
@@ -138,17 +146,21 @@ private:
   vector<CBuffer*> m_vecAudioBuffers;
   vector<CBuffer*> m_t_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
-	int  m_AudioPrevCC ;
-	int  m_VideoPrevCC ;
-	bool m_AudioValidPES ;
-	bool m_VideoValidPES ;
+  int  m_AudioPrevCC ;
+  int  m_VideoPrevCC ;
+  bool m_AudioValidPES ;
+  bool m_VideoValidPES ;
+  CRefTime  m_FirstAudioSample ;
+  CRefTime  m_LastAudioSample ;
+  CRefTime  m_FirstVideoSample ;
+  CRefTime  m_LastVideoSample ;
 
   CBuffer* m_pCurrentTeletextBuffer;
   CBuffer* m_pCurrentSubtitleBuffer;
   CBuffer* m_pCurrentVideoBuffer;
   CBuffer* m_pCurrentAudioBuffer;
   CPcr     m_streamPcr;
-	CPcr		 m_lastVideoPTS;
+  CPcr     m_lastVideoPTS;
   CPcr     m_lastAudioPTS;
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
@@ -160,28 +172,30 @@ private:
 
   unsigned int m_iAudioReadCount;
 
-  bool m_bScanning;
-	bool m_bHoldAudio;
-	bool m_bHoldVideo;
+  bool m_bHoldAudio;
+  bool m_bHoldVideo;
   bool m_bHoldSubtitle;
   //bool m_bPreferAC3;
   int m_iAudioIdx;
   int m_iPatVersion;
-	int m_receivedPackets;
+  int m_receivedPackets;
 
-	MPEG2VIDEOINFO m_mpeg2VideoInfo;
-	bool m_mpegParserTriggerFormatChange;
+  bool m_bIframeFound ;
+  bool m_bVideoChanging;
+
+  MPEG2VIDEOINFO m_mpeg2VideoInfo;
+  bool m_mpegParserTriggerFormatChange;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
-  CPcr m_subtitlePcr;  
+  CPcr m_subtitlePcr;
   //void ReadAudioIndexFromRegistry();
 
   int (CALLBACK *pTeletextServiceInfoCallback)(int, byte,byte,byte,byte);
-   int (CALLBACK *pTeletextPacketCallback)(byte*, int);
-   int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
-   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
+  int (CALLBACK *pTeletextPacketCallback)(byte*, int);
+  int (CALLBACK *pTeletextEventCallback)(int,DWORD64);
+  int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
-    // used to sync teletext packets with video
-	//DWORD64 m_inVideoBuffer;
-	//DWORD64 m_outVideoBuffer;
+  // used to sync teletext packets with video
+  //DWORD64 m_inVideoBuffer;
+  //DWORD64 m_outVideoBuffer;
 };

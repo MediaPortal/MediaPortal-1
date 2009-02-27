@@ -52,14 +52,14 @@ const unsigned int H264_PREFIX = 0x00000107;
 bool CMpegPesParser::SequenceFound(byte *tsPacket, int offset, byte marker)
 {
 	// does the offset+header exceed our tspacket
-	if (offset+4>188)
+	if (offset+4>m_Length)
 		return false;
 	return (tsPacket[offset] == 0 && tsPacket[offset + 1] == 0 && tsPacket[offset + 2] == 1 && tsPacket[offset + 3] == marker);
 }
 
 int CMpegPesParser::SearchSequence(byte* tsPacket,int offset,byte marker)
 {
-	for (int i=offset;i<183;i++)
+	for (int i=offset;i<m_Length;i++)
 	{
 		if (SequenceFound(tsPacket,i,marker))
 			return i;
@@ -183,16 +183,16 @@ bool CMpegPesParser::ParseMpeg2Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &m
 	return true;
 }
 
-byte GetNextBit(byte* tsPacket,int &bit)
+byte CMpegPesParser::GetNextBit(byte* tsPacket,int &bit)
 {
-	if (bit>(187*8))
+	if (bit>(m_Length*8))
 	{
 		bit=0;
 		return 0;
 	}
 	byte ret = (byte)(((tsPacket[bit / 8]) >> (7 - (bit % 8))) & 1);
   bit++;
-	if (bit>(187*8))
+	if (bit>(m_Length*8))
 	{
 		bit=0;
 		return 0;
@@ -200,7 +200,7 @@ byte GetNextBit(byte* tsPacket,int &bit)
   return ret;
 }
 
-int GetNextExpGolomb(byte *tsPacket,int &curBitPos)
+int CMpegPesParser::GetNextExpGolomb(byte *tsPacket,int &curBitPos)
 {
 	// Header exceeds current packet
 	if (curBitPos==0)
@@ -230,7 +230,7 @@ int GetNextExpGolomb(byte *tsPacket,int &curBitPos)
   return codeNum;
 }
 
-void ScalingListSkip(byte* tsPacket,int &bit,int skip)
+void CMpegPesParser::ScalingListSkip(byte* tsPacket,int &bit,int skip)
 {
 	int lastScale=8;
 	int nextScale=8;
@@ -326,13 +326,13 @@ bool CMpegPesParser::ParseH264Video(byte* tsPacket,int offset,MPEG2VIDEOINFO &mp
 	return true;
 }
 
-bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
+bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset, MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
 {
   //LogDebug("Found VIDEO offset=%d 0x%x%x%x%x",offset,tsPacket[offset],tsPacket[offset+1],tsPacket[offset+2],tsPacket[offset+3]);
   unsigned int marker = 0xffffffff;
 	if (videoServiceType==SERVICE_TYPE_VIDEO_MPEG2)
 	{
-	  for (; offset < 170; offset++)
+	  for (; offset < m_Length; offset++)
 		{
 		marker=(unsigned int)marker<<8;
 		marker &= 0xffffff00;
@@ -343,7 +343,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2V
 	}
 	else
 	{
-	  for (; offset < 170; offset++)
+	  for (; offset < m_Length; offset++)
 		{
 		marker=(unsigned int)marker<<8;
 		marker &= 0xffffff00;
@@ -355,22 +355,9 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,int offset,MPEG2VIDEOINFO &mpeg2V
   return false;
 }
 
-bool CMpegPesParser::OnTsPacket(byte *tsPacket, CTsHeader header, MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
+bool CMpegPesParser::OnTsPacket(byte *Frame,int Length, MPEG2VIDEOINFO &mpeg2VideoInfo, int videoServiceType)
 {
-	int offset=header.PayLoadStart;
-	if (!header.HasPayload)
-		return false;
-	if (!header.PayloadUnitStart)
-		return false;
-
-	if (offset < 170)
-	{
-		if (tsPacket[offset+0]==0 && tsPacket[offset+1]==0 && tsPacket[offset+2]==1 && ((tsPacket[offset+6] & 0xC0) == 0x80))
-		{	// should find PES header and skip it.
-			offset += (9 + tsPacket[offset+8]) ;
-			if (offset < 180)
-				return ParseVideo(tsPacket,offset,mpeg2VideoInfo,videoServiceType);
-		}
-	}
-	return false ;
+	m_Length = Length - 100 ;					// arbitrary for safety.
+	if (m_Length<=100) return false ; // arbitrary for safety.
+	return ParseVideo(Frame,0,mpeg2VideoInfo,videoServiceType);
 }

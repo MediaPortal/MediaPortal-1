@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,31 +51,24 @@ public:
 
   HRESULT OnThreadStartPlay();
   void SetStart(CRefTime rtStartTime);
-
   bool IsConnected();
   void SetDiscontinuity(bool onOff);
-  bool IsSeeking();
 
 
 protected:
   void      UpdateFromSeek();
   
-  CTsReaderFilter *	const m_pTsReaderFilter;
-  bool      m_binUpdateFromSeek;
+  CTsReaderFilter * const m_pTsReaderFilter;
   bool      m_bConnected;
-  CRefTime	m_refStartTime;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
   CCritSec  m_bufferLock;
-  bool	    m_bDropPackets;
-  bool      m_bDropSeek;
   bool      m_bSeeking;
   DWORD     m_seekTimer;
   CRefTime  m_lastSeek;
-  bool      m_bMeasureCompensation;
-  bool      m_bSubtitleCompensationSet;
   bool      m_bInFillBuffer;     
-
+  bool      m_bPresentSample;
+  bool      m_bSubtitleCompensationSet;
 };
 
 #endif

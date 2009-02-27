@@ -1,20 +1,20 @@
-/* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+/*
+ *  Copyright (C) 2005 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -31,104 +31,104 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
-	CSourceStream(NAME("pinSubtitle"), phr, pFilter, L"Subtitle"),
-	m_pTsReaderFilter(pFilter),
+  CSourceStream(NAME("pinSubtitle"), phr, pFilter, L"Subtitle"),
+  m_pTsReaderFilter(pFilter),
   CSourceSeeking(NAME("pinSubtitle"),pUnk,phr,section),
-	m_section(section)
+  m_section(section)
 {
-	m_rtStart=0;
+  m_rtStart=0;
   m_bConnected=false;
-	m_dwSeekingCaps =
-	AM_SEEKING_CanSeekAbsolute	|
-	AM_SEEKING_CanSeekForwards	|
-	AM_SEEKING_CanSeekBackwards	|
-	AM_SEEKING_CanGetStopPos	|
-	AM_SEEKING_CanGetDuration	|
+  m_dwSeekingCaps =
+  AM_SEEKING_CanSeekAbsolute  |
+  AM_SEEKING_CanSeekForwards  |
+  AM_SEEKING_CanSeekBackwards |
+  AM_SEEKING_CanGetStopPos  |
+  AM_SEEKING_CanGetDuration |
   //AM_SEEKING_CanGetCurrentPos |
-	AM_SEEKING_Source;
+  AM_SEEKING_Source;
   m_bSeeking=false;
 }
 
 CSubtitlePin::~CSubtitlePin()
 {
-	LogDebug("sub pin:dtor()");
+  LogDebug("sub pin:dtor()");
 }
 
 bool CSubtitlePin::IsConnected()
 {
-	//LogDebug("CSubtitlePin connected? %i",m_bConnected);
+  //LogDebug("CSubtitlePin connected? %i",m_bConnected);
   return m_bConnected;
 }
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-		LogDebug("sub:IID_IStreamBufferConfigure()");
+    LogDebug("sub:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-		LogDebug("sub:IID_IStreamBufferInitialize()");
+    LogDebug("sub:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-		LogDebug("sub:IID_IStreamBufferMediaSeeking()");
+    LogDebug("sub:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-		LogDebug("sub:IID_IStreamBufferSource()");
+    LogDebug("sub:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-		LogDebug("sub:IID_IStreamBufferDataCounters()");
+    LogDebug("sub:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
-		return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+    return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   if (riid == IID_IMediaPosition)
   {
-		return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+    return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
   }
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
 HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 {
-	pmt->InitMediaType();
-	pmt->SetType      (& MEDIATYPE_Stream);
-	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_TRANSPORT);
-	pmt->SetSampleSize(1);
-	pmt->SetTemporalCompression(FALSE);
-	pmt->SetVariableSize();
+  pmt->InitMediaType();
+  pmt->SetType      (& MEDIATYPE_Stream);
+  pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_TRANSPORT);
+  pmt->SetSampleSize(1);
+  pmt->SetTemporalCompression(FALSE);
+  pmt->SetVariableSize();
 
-	return S_OK;
+  return S_OK;
 }
 
 HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
-	HRESULT hr;
-	CheckPointer(pAlloc, E_POINTER);
-	CheckPointer(pRequest, E_POINTER);
+  HRESULT hr;
+  CheckPointer(pAlloc, E_POINTER);
+  CheckPointer(pRequest, E_POINTER);
 
-	if (pRequest->cBuffers == 0)
-	{
-			pRequest->cBuffers = 30;
-	}
-	pRequest->cbBuffer = 8192;
+  if (pRequest->cBuffers == 0)
+  {
+      pRequest->cBuffers = 30;
+  }
+  pRequest->cbBuffer = 8192;
 
-	ALLOCATOR_PROPERTIES Actual;
-	hr = pAlloc->SetProperties(pRequest, &Actual);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
+  ALLOCATOR_PROPERTIES Actual;
+  hr = pAlloc->SetProperties(pRequest, &Actual);
+  if (FAILED(hr))
+  {
+    return hr;
+  }
 
-	if (Actual.cbBuffer < pRequest->cbBuffer)
-	{
-		return E_FAIL;
-	}
+  if (Actual.cbBuffer < pRequest->cbBuffer)
+  {
+    return E_FAIL;
+  }
 
-	return S_OK;
+  return S_OK;
 }
 
 HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
@@ -145,8 +145,8 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
   // we only want to connect to the DVB subtitle input pin
   // on the subtitle filter (and not the teletext one for example!)
   if( wcscmp(pinInfo.achName, L"In") != 0){
-	  //LogDebug("sub pin: Cant connect to pin name %s", pinInfo.achName);
-	return E_FAIL;
+    //LogDebug("sub pin: Cant connect to pin name %s", pinInfo.achName);
+  return E_FAIL;
   }
 
   hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
@@ -155,7 +155,7 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub2")!=0)
   {
-	  //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
+    //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
     return E_FAIL;
   }
   return CBaseOutputPin::CheckConnect(pReceivePin);
@@ -163,18 +163,18 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
 HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer=false;
-	LogDebug("pin:CompleteConnect()");
-	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
-	
+  LogDebug("pin:CompleteConnect()");
+  HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
+
   if (SUCCEEDED(hr))
-	{
-		LogDebug("pin:CompleteConnect() done");
+  {
+    LogDebug("pin:CompleteConnect() done");
     m_bConnected=true;
-	}
-	else
-	{
-		LogDebug("pin:CompleteConnect() failed:%x",hr);
-	}
+  }
+  else
+  {
+    LogDebug("pin:CompleteConnect() failed:%x",hr);
+  }
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
@@ -190,7 +190,7 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
     m_rtDuration=CRefTime(refTime);
   }
   LogDebug("sub:CompleteConnect() ok");
-	return hr;
+  return hr;
 }
 
 
@@ -206,113 +206,115 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
-    //get file-duration and set m_rtDuration
-    GetDuration(NULL);
-
-    //if the filter is currently seeking to a new position
-    //or this pin is currently seeking to a new position then
-    //we dont try to read any packets, but simply return...
-    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-	  {
-      LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
-		  Sleep(20);
-      pSample->SetTime(NULL,NULL); 
-	    pSample->SetActualDataLength(0);
-      pSample->SetSyncPoint(FALSE);
-		  return NOERROR;
-	  }
-
-    //get next buffer from demultiplexer
-    m_bInFillBuffer=true;
-	  CDeMultiplexer& demux = m_pTsReaderFilter->GetDemultiplexer();
-    CBuffer* buffer = NULL;
-
-	  if (m_bDiscontinuity)
+    CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+    CBuffer* buffer=NULL;
+    do
     {
-      LogDebug("sub:set discontinuity");
-      pSample->SetDiscontinuity(TRUE);
-      m_bDiscontinuity=FALSE;
-    }
-    //LogDebug("sub: FillBuffer - start blocking the output pin...");
+      //get file-duration and set m_rtDuration
+      GetDuration(NULL);
+      m_bInFillBuffer=true;
 
-	  while (buffer == NULL)
-	  {
-		  Sleep(10);
-
-		  if (!m_bRunning)
-			  {
-				  LogDebug("sub: FillBuffer - stopping");
-				  Sleep(1);
-				  EmptySample(pSample);
-				  m_bInFillBuffer=false;
-          return NOERROR;
-			  }
-
-		  if (demux.EndOfFile())
-			  {
-        LogDebug("sub: FillBuffer - end of file");
-			  Sleep(1);
-			  EmptySample(pSample);
-			  m_bInFillBuffer=false;
+      //if the filter is currently seeking to a new position
+      //or this pin is currently seeking to a new position then
+      //we dont try to read any packets, but simply return...
+      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof())
+      {
+//        LogDebug("sub:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+        Sleep(20);
+        pSample->SetTime(NULL,NULL);
+        pSample->SetActualDataLength(0);
+        pSample->SetSyncPoint(FALSE);
+        pSample->SetDiscontinuity(FALSE);  // TRUE seems to hold sometimes the working thread....( ambass )
         return NOERROR;
-			  }
-
-		  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-		  {
-			  LogDebug("sub: FillBuffer - seeking detected!");
-			  Sleep(1);
-			  EmptySample(pSample); 
-        m_bInFillBuffer=false;
-			  return NOERROR;
-		  }
-      // check if new subtitle data has arrived
-      {
-        CAutoLock lock(&m_bufferLock);
-        buffer=demux.GetSubtitle();
       }
-	  }
-	  //LogDebug("sub: SLEEPING DONE");
-    if (buffer!=NULL)
-    {
-      BYTE* pSampleBuffer;
-      CRefTime cRefTime;
-      if (buffer->MediaTime(cRefTime))
-      {
-			  //CPcr pcr = buffer->Pcr();
-        //LogDebug("sub: buffer->Pcr = %lld" ,pcr.PcrReferenceBase );
-        
-        cRefTime-=m_rtStart;
-        REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
-        pSample->SetTime(&refTime,NULL); 
-        pSample->SetSyncPoint(TRUE);
-			  pSample->SetDiscontinuity(TRUE);
 
-        float fTime=(float)cRefTime.Millisecs();
-        fTime/=1000.0f;
-        //LogCurrentPosition();
-			  //LogDebug("sub pSample->SetTime %f ", fTime);
+      if (m_pTsReaderFilter->m_bStreamCompensated)
+      {
+        //get next buffer from demultiplexer
+        {
+          CAutoLock lock(&m_bufferLock);
+          buffer=demux.GetSubtitle();
+        }
+      }
+
+      //did we reach the end of the file
+      if (demux.EndOfFile())
+      {
+        LogDebug("sub:set eof");
+        pSample->SetTime(NULL,NULL);
+        pSample->SetActualDataLength(0);
+        pSample->SetSyncPoint(FALSE);
+        pSample->SetDiscontinuity(TRUE);
+        m_bInFillBuffer=false;
+        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+      }
+
+      if (buffer==NULL)
+      {
+        m_bInFillBuffer=false;
+        Sleep(20);
       }
       else
       {
-        pSample->SetTime(NULL,NULL);  
+        CRefTime RefTime,cRefTime ;
+        bool HasTimestamp ;
+        //check if it has a timestamp
+        if ((HasTimestamp=buffer->MediaTime(RefTime)))
+        {
+          cRefTime = RefTime ;
+          cRefTime -= m_rtStart ;
+
+          if (cRefTime.m_time >= 0) // + PRESENT_DELAY)
+          {
+//            Sleep(1) ;
+            m_bPresentSample = true ;
+          }
+          else
+            m_bPresentSample = false ;              //  Sample is too late.
+        }
+
+        if (m_bPresentSample)
+        {
+          //do we need to set the discontinuity flag?
+          if (m_bDiscontinuity || buffer->GetDiscontinuity())
+          {
+            //ifso, set it
+            LogDebug("vid:set discontinuity");
+            pSample->SetDiscontinuity(TRUE);
+            m_bDiscontinuity=FALSE;
+          }
+
+            REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+          if (HasTimestamp)
+          {
+            //now we have the final timestamp, set timestamp in sample
+//            REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+            pSample->SetSyncPoint(TRUE);
+            pSample->SetTime(&refTime,&refTime);
+          }
+          else
+          {
+            //buffer has no timestamp
+            pSample->SetTime(NULL,NULL);
+            pSample->SetSyncPoint(FALSE);
+          }
+          //copy buffer in sample
+          BYTE* pSampleBuffer;
+          pSample->SetActualDataLength(buffer->Length());
+          pSample->GetPointer(&pSampleBuffer);
+          memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+          //delete the buffer and return
+          delete buffer;
+        }
+        else
+        { // Buffer was not displayed because it was out of date, search for next.
+          delete buffer;
+          buffer=NULL ;
+        }
       }
-	    pSample->SetActualDataLength(buffer->Length());
-      pSample->GetPointer(&pSampleBuffer);
-      memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-      delete buffer;
       m_bInFillBuffer=false;
-      return NOERROR;
-    }
-    else
-    {
-      LogDebug("sub:no buffer --- THIS SHOULD NOT HAPPEN!");
-		  EmptySample(pSample);
-      if (demux.EndOfFile())
-      {
-        m_bInFillBuffer=false;
-        return S_FALSE;
-      }
-    }
+    } while (buffer==NULL);
+    return NOERROR;
   }
   catch(...)
   {
@@ -325,17 +327,28 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 //******************************************************
 /// Called when thread is about to start delivering data to the filter
-/// 
+///
 HRESULT CSubtitlePin::OnThreadStartPlay()
-{    
-  m_bInFillBuffer=false;
+{
+  //set discontinuity flag indicating to codec that the new data
+  //is not belonging to any previous data
   m_bDiscontinuity=TRUE;
+  m_bInFillBuffer=false;
+  m_bPresentSample=false ;
+
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
+
+  //tell demuxer to start deliver subtitle packets again
+  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  demux.SetHoldSubtitle(false);
+
+  if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
+    while(m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) Sleep(5) ;
+
   LogDebug("sub:OnThreadStartPlay(%f)", fStart);
-  //tell demuxer to delete any subtitle packets it still might have
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  demux.FlushSubtitle();
+
+  //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay( );
 }
@@ -344,16 +357,16 @@ HRESULT CSubtitlePin::OnThreadStartPlay()
 HRESULT CSubtitlePin::ChangeStart()
 {
   UpdateFromSeek();
-	return S_OK;
+  return S_OK;
 }
 HRESULT CSubtitlePin::ChangeStop()
 {
   UpdateFromSeek();
-	return S_OK;
+  return S_OK;
 }
 HRESULT CSubtitlePin::ChangeRate()
 {
-  if( m_dRateSeeking <= 0 ) 
+  if( m_dRateSeeking <= 0 )
   {
       m_dRateSeeking = 1.0;  // Reset to a reasonable value.
       return E_FAIL;
@@ -368,28 +381,18 @@ STDMETHODIMP CSubtitlePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, 
 }
 
 //******************************************************
-/// Returns true if a thread is currently executing in UpdateFromSeek()
-/// 
-bool CSubtitlePin::IsSeeking()
-{
-  return m_binUpdateFromSeek;
-}
-
-//******************************************************
 /// UpdateFromSeek() called when need to seek to a specific timestamp in the file
 /// m_rtStart contains the time we need to seek to...
-/// 
+///
 void CSubtitlePin::UpdateFromSeek()
 {
-  m_binUpdateFromSeek=true;
-  
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
 
-	//if (m_rtStart>m_rtDuration)
-	//	m_rtStart=m_rtDuration;
-  
-  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times 
+  //if (m_rtStart>m_rtDuration)
+  //  m_rtStart=m_rtDuration;
+
+  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times
   //directly after eachother
   //for a single seek operation. To 'fix' this we only perform the seeking operation
   //if we didnt do a seek in the last 5 seconds...
@@ -398,11 +401,10 @@ void CSubtitlePin::UpdateFromSeek()
     if (m_lastSeek==m_rtStart)
     {
       LogDebug("sub:skip seek");
-      m_binUpdateFromSeek=false;
       return;
     }
   }
-  
+
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()
   //We however would like the seek timestamp to be in the range 0-fileduration
@@ -412,8 +414,8 @@ void CSubtitlePin::UpdateFromSeek()
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
-  
-  
+
+
   //get the earliest timestamp available in the file
   float earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
   if (earliesTimeStamp<0) earliesTimeStamp=0;
@@ -422,7 +424,7 @@ void CSubtitlePin::UpdateFromSeek()
   seekTime-=earliesTimeStamp;
   if (seekTime<0) seekTime=0;
   LogDebug("sub seek to %f", seekTime);
-  
+
   seekTime*=1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
 
@@ -430,24 +432,24 @@ void CSubtitlePin::UpdateFromSeek()
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
 
-  //tell demuxer to stop deliver subtitle data and wait until 
+  //tell demuxer to stop deliver subtitle data and wait until
   //FillBuffer() finished
-	demux.SetHoldSubtitle(true);
+  demux.SetHoldSubtitle(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
 
   //if a pin-output thread exists...
-  if (ThreadExists()) 
+  if (ThreadExists())
   {
     //normally the audio pin does the acutal seeking
     //check if its connected. If not, we'll do the seeking
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
         //tell the filter we are starting a seek operation
-				m_pTsReaderFilter->SeekStart();
+        m_pTsReaderFilter->SeekStart();
       }
 
-	  	//deliver a begin-flush to the codec filter so it stops asking for data
+      //deliver a begin-flush to the codec filter so it stops asking for data
       HRESULT hr=DeliverBeginFlush();
 
       //stop the thread
@@ -460,7 +462,7 @@ void CSubtitlePin::UpdateFromSeek()
 
       //deliver a end-flush to the codec filter so it will start asking for data again
       hr=DeliverEndFlush();
-      
+
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
         //tell filter we're done with seeking
@@ -478,21 +480,20 @@ void CSubtitlePin::UpdateFromSeek()
     //no thread running? then simply seek to the position
     m_pTsReaderFilter->Seek(rtSeek,false);
   }
-  
+
   //tell demuxer to start deliver subtitle packets again
-	demux.SetHoldSubtitle(false);
+  demux.SetHoldSubtitle(false);
 
   //clear flags indiciating that the pin is seeking
   m_bSeeking=false;
   LogDebug("sub seek done---");
-  m_binUpdateFromSeek=false;
 }
 
 //******************************************************
-/// GetAvailable() returns 
+/// GetAvailable() returns
 /// pEarliest -> the earliest (pcr) timestamp in the file
 /// pLatest   -> the latest (pcr) timestamp in the file
-/// 
+///
 STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
 //  LogDebug("vid:GetAvailable");
@@ -501,7 +502,7 @@ STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
     CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
-      //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file 
+      //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file
       double d2=duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -509,7 +510,7 @@ STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
     }
     if (pLatest)
     {
-      //return the endpcr, which is the latest pcr timestamp available in the timeshifting file 
+      //return the endpcr, which is the latest pcr timestamp available in the timeshifting file
       double d2=duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -548,42 +549,30 @@ STDMETHODIMP CSubtitlePin::GetDuration(LONGLONG *pDuration)
 
 //******************************************************
 /// GetCurrentPosition() simply returns that this is not implemented by this pin
-/// reason is that only the audio/video renderer now exactly the 
+/// reason is that only the audio/video renderer now exactly the
 /// current playing position and they do implement GetCurrentPosition()
-/// 
+///
 STDMETHODIMP CSubtitlePin::GetCurrentPosition(LONGLONG *pCurrent)
 {
 //  LogDebug("sub:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
 
-void CSubtitlePin::SetRunningStatus(bool onOff)
-{
-	m_bRunning = onOff;
-}
-
-void CSubtitlePin::EmptySample(IMediaSample *pSample)    
-{
-  pSample->SetDiscontinuity(TRUE);
-  pSample->SetActualDataLength(0);
-  pSample->SetTime(NULL,NULL);  
-}
-
-void CSubtitlePin::LogCurrentPosition()  
+void CSubtitlePin::LogCurrentPosition()
 {
   IFilterGraph* pGraph = m_pTsReaderFilter->GetFilterGraph();
-	IMediaSeeking* pMediaSeeking( NULL );
+  IMediaSeeking* pMediaSeeking( NULL );
 
-	if( pGraph ) 
-	{
-		pGraph->QueryInterface( &pMediaSeeking );
-		pGraph->Release();
-	}
+  if( pGraph )
+  {
+    pGraph->QueryInterface( &pMediaSeeking );
+    pGraph->Release();
+  }
 
-	LONGLONG pos( 0 );
-	pMediaSeeking->GetCurrentPosition( &pos );
-	//pMediaSeeking->Release();
-	float fPos = (float)pos;
-	fPos = ( ( fPos / 10000000 ) );			
-	LogDebug("sub current position %f", fPos );
+  LONGLONG pos( 0 );
+  pMediaSeeking->GetCurrentPosition( &pos );
+  //pMediaSeeking->Release();
+  float fPos = (float)pos;
+  fPos = ( ( fPos / 10000000 ) );
+  LogDebug("sub current position %f", fPos );
 }
