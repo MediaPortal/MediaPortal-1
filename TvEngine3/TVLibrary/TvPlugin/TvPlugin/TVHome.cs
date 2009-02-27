@@ -3044,7 +3044,7 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        _waitForVideoReceived.WaitOne(1000, false);
+// Ambass : just cause 1 sec wait when graph need to be rebuild because Video never comes...       _waitForVideoReceived.WaitOne(1000, false);
         _waitForVideoReceived.Reset();
 
         //Console.Beep(10000, 2000);
@@ -3505,19 +3505,16 @@ namespace TvPlugin
       //singleseat
       if (!useRtsp)
       {
-        if (g_Player.IsRadio == false)
+        if (duration > 0 || position > 0)
         {
-          if (duration > 0 || position > 0)
+          try
           {
-            try
-            {
-              g_Player.SeekAbsolute(duration);
-            }
-            catch (Exception e)
-            {
-              Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
-              g_Player.Stop();
-            }
+            g_Player.SeekAbsolute(duration);
+          }
+          catch (Exception e)
+          {
+            Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+            g_Player.Stop();
           }
         }
       }
@@ -3526,22 +3523,18 @@ namespace TvPlugin
         //multiseat rtsp streaming....
         if (zapping)
         {
-          // avoid seeking on radion in multiseat, b/c of a an unsolved bug in tsreader.ax
-          if (!g_Player.IsRadio)
+          //System.Threading.Thread.Sleep(100);            
+          Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
+          if (duration > 0 || position > 0)
           {
-            //System.Threading.Thread.Sleep(100);            
-            Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
-            if (duration > 0 || position > 0)
+            try
             {
-              try
-              {
-                g_Player.SeekAbsolute(duration + 10);
-              }
-              catch (Exception e)
-              {
-                Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
-                g_Player.Stop();
-              }
+              g_Player.SeekAbsolute(duration) ; // + 10);
+            }
+            catch (Exception e)
+            {
+              Log.Error("tvhome:SeektoEnd({0}, rtsp={1} exception: {2}", zapping, useRtsp, e.Message);
+              g_Player.Stop();
             }
           }
         }
