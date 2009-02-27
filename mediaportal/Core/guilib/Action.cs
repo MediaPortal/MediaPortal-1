@@ -199,7 +199,9 @@ namespace MediaPortal.GUI.Library
       ACTION_SKIN_NEXT = 9989, // used for the changeskin plugin.
       ACTION_SKIN_PREVIOUS = 9990, // used for the changeskin plugin.
       ACTION_TVGUIDE_INCREASE_DAY = 9991,
-      ACTION_TVGUIDE_DECREASE_DAY = 9992
+      ACTION_TVGUIDE_DECREASE_DAY = 9992,
+      ACTION_TVGUIDE_NEXT_GROUP = 9995, // switch to the next tv group in guide
+      ACTION_TVGUIDE_PREV_GROUP = 9996  // switch to the previous tv group in guide
     } ;
 
     #endregion

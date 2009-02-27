@@ -45,9 +45,10 @@
       <description>TVGUIDE Panel</description>
       <type>image</type>
       <id>2</id>
-      <posX>60</posX>
+      <posX>85</posX>
+      <!--posX>60</posX-->
       <posY>90</posY>
-      <width>640</width>
+      <width>620</width>
       <height>340</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>-</texture>
@@ -105,7 +106,7 @@
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>center</align>
-      <onleft>6</onleft>
+      <onleft>60</onleft>
       <onright>8</onright>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -134,9 +135,11 @@
       <description>Channel template</description>
       <type>image</type>
       <id>20</id>
-      <posX>22</posX>
+      <posX>42</posX>
+      <!--posX>22</posX-->
       <posY>65</posY>
-      <width>170</width>
+      <width>150</width>
+      <!--width>170</width-->
       <height>35</height>
     </control>
     <control>
@@ -154,9 +157,11 @@
       <description>channel Label template</description>
       <type>label</type>
       <id>18</id>
-      <posX>37</posX>
+      <posX>44</posX>
+      <!--posX>37</posX-->
       <posY>5</posY>
-      <width>65</width>
+      <width>38</width>
+      <!--width>65</width-->
       <height>15</height>
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -284,5 +289,34 @@
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
+     <control>
+      <description>TvGroup button</description>
+      <type>button</type>
+      <id>60</id>
+      <posX>14</posX>
+      <posY>66</posY>
+      <width>28</width>
+      <height>348</height>
+      <textureFocus>small_vbutton_focus.png</textureFocus>
+      <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
+      <label></label>
+      <onleft>60</onleft>
+      <onright>6</onright>
+      <onup>6</onup>
+      <ondown>6</ondown>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
+     </control>
+    <control>
+      <description>TvGroup button label</description>
+      <type>label</type>
+      <id>61</id>
+      <posX>37</posX>
+      <posY>70</posY>
+      <label>#TV.Guide.ChangeGroup</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
+      </control>    
   </controls>
 </window>
