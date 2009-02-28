@@ -2617,6 +2617,16 @@ namespace TvPlugin
 
         GUIPropertyManager.SetProperty("#TV.View.start", startTime);
         GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, displayName);
+        if (File.Exists(strLogo))
+        {
+          GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.View.thumb", "defaultVideoBig.png");
+        }
         //GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));                
       }
     }
