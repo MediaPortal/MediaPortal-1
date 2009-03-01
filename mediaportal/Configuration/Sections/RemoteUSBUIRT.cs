@@ -106,10 +106,11 @@ namespace MediaPortal.Configuration.Sections
     {
       USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
 
-      if (USBUIRT.Instance == null)
+      if (USBUIRT.Instance == null || !GetUsbUirtDriverStatusOK())
       {
+        ShowDriverOfflineMsg();
         return false;
-      }
+      } 
 
       lblUSBUIRTVersion.Text = USBUIRT.Instance.GetVersions();
 
@@ -148,25 +149,14 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           Log.Info("USBUIRT: Setting configuration control values");
-
-          //detach event handlers to prevent unnessesary early initializing of UIRT
-          inputCheckBox.CheckedChanged -= new EventHandler(inputCheckBox_CheckedChanged);
           inputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
-          inputCheckBox.CheckedChanged += new EventHandler(inputCheckBox_CheckedChanged);
-          internalCommandsButton.Enabled = inputCheckBox.Checked;
-
-          outputCheckBox.CheckedChanged -= new EventHandler(outputCheckBox_CheckedChanged);
           outputCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "external", false);
-          outputCheckBox.CheckedChanged += new EventHandler(outputCheckBox_CheckedChanged);
-
           digitCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "is3digit", false);
           enterCheckBox.Checked = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
 
           commandRepeatNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2);
-          
           interCommandDelayNumUpDn.Value = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
         }
-
         catch (Exception ex)
         {
           Log.Info("USBUIRT: Setting control values failed: " + ex.Message);
@@ -594,8 +584,14 @@ namespace MediaPortal.Configuration.Sections
             return;
           }
         }
+        else if (!GetUsbUirtDriverStatusOK())
+        {
+          ShowDriverOfflineMsg();
+          outputCheckBox.Checked = false;
+          return;
+        }
+        USBUIRT.Instance.TransmitEnabled = outputCheckBox.Checked;
       }
-
       bool setTopControl = outputCheckBox.Checked;
       digitCheckBox.Enabled = setTopControl;
       enterCheckBox.Enabled = setTopControl;
@@ -604,12 +600,10 @@ namespace MediaPortal.Configuration.Sections
       interCommandDelayNumUpDn.Enabled = setTopControl;
       testSendIrBtn.Enabled = setTopControl;
       testSendIrTxtBox.Enabled = setTopControl;
-
-      USBUIRT.Instance.TransmitEnabled = outputCheckBox.Checked;
     }
 
     private void inputCheckBox_CheckedChanged(object sender, EventArgs e)
-    {      
+    {
       if (inputCheckBox.Checked || outputCheckBox.Checked)
       {
         if (USBUIRT.Instance == null)
@@ -619,11 +613,16 @@ namespace MediaPortal.Configuration.Sections
             inputCheckBox.Checked = false;
             return;
           }
-        }        
+        }
+        else if (!GetUsbUirtDriverStatusOK())
+        {
+          ShowDriverOfflineMsg();
+          inputCheckBox.Checked = false;
+          return;
+        }
+        USBUIRT.Instance.ReceiveEnabled = inputCheckBox.Checked;
       }
-
       internalCommandsButton.Enabled = inputCheckBox.Checked;
-      USBUIRT.Instance.ReceiveEnabled = inputCheckBox.Checked;
     }
 
     private void OnRemoteCommand(object command)
@@ -640,7 +639,6 @@ namespace MediaPortal.Configuration.Sections
         // The driver is loaded but is the USBUIRT connected?
         driverStatusOK = USBUIRT.Instance.IsUsbUirtConnected;
       }
-
       else
       {
         driverStatusOK = USBUIRT.Instance.Reconnect();
@@ -652,8 +650,8 @@ namespace MediaPortal.Configuration.Sections
 
     private void USBUIRT_Load(object sender, EventArgs e)
     {
-      outputCheckBox_CheckedChanged(null, null);
       inputCheckBox_CheckedChanged(null, null);
+      outputCheckBox_CheckedChanged(null, null);      
 
       SettingsPnl.BringToFront();
     }
