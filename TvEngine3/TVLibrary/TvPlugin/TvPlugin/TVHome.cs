@@ -854,12 +854,14 @@ namespace TvPlugin
 
         if (!Connected)
         {
-          _ServerLastStatusOK = false;
-          g_Player.Stop();
+          _ServerLastStatusOK = false; // to enable TV connect button again
+          //g_Player.Stop(); // moved to Process() for correct threading
+          
           Card.User.Name = new User().Name;
 
           if (g_Player.FullScreen)
           {
+            g_Player.Stop();
             GUIMessage initMsgTV = null;
             initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV, 0, 0, 0, 0,
                                        null);
@@ -1886,6 +1888,11 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000)
       {
         return;
+      }
+      //stop playing non-fullscreen TV here to overcome thread error
+      if (!RemoteControl.IsConnected && !g_Player.FullScreen && g_Player.IsTV)
+      {
+        g_Player.Stop();
       }
 
       UpdateRecordingIndicator();
