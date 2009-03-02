@@ -1200,7 +1200,9 @@ STDMETHODIMP CTsReaderFilter::SetSubtitleResetCallback( int (CALLBACK *pSubUpdat
 HRESULT CTsReaderFilter::FindSubtitleFilter()
 {
   if( m_pDVBSubtitle )
+  {
     return S_OK;
+  }
   //LogDebug( "FindSubtitleFilter - start");
 
   IEnumFilters * piEnumFilters = NULL;

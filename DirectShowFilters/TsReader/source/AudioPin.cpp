@@ -64,6 +64,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
   m_bSeeking=false;
+  m_bSubtitleCompensationSet=false;
 }
 
 CAudioPin::~CAudioPin()
@@ -202,7 +203,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
     CBuffer* buffer=NULL;
-    DWORD m_LastTickCount = GetTickCount() ;
+    DWORD m_LastTickCount = GetTickCount();
 
     do
     {
@@ -216,7 +217,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       //we dont try to read any packets, but simply return...
       if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof())
       {
-//        if (ShowBuffer) LogDebug("aud:isseeking");
+        //if (ShowBuffer) LogDebug("aud:isseeking");
         m_bInFillBuffer=false;
         Sleep(20);
         pSample->SetTime(NULL,NULL);
@@ -250,12 +251,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        m_LastTickCount = GetTickCount() ;
+        m_LastTickCount = GetTickCount();
         int cntA,cntV ;
-        CRefTime firstAudio, lastAudio ;
-        CRefTime firstVideo, lastVideo ;
-        cntA = demux.GetAudioBufferPts(firstAudio, lastAudio) + 1 ; // this one...
-        cntV = demux.GetVideoBufferPts(firstVideo, lastVideo) ;
+        CRefTime firstAudio, lastAudio;
+        CRefTime firstVideo, lastVideo;
+        cntA = demux.GetAudioBufferPts(firstAudio, lastAudio) + 1; // this one...
+        cntV = demux.GetVideoBufferPts(firstVideo, lastVideo);
         #define PRESENT_DELAY 0000000
         // Ambass : Coming here means we've a minimum of audio(>=1)/video buffers waiting...
         if (!m_pTsReaderFilter->m_bStreamCompensated)
@@ -268,6 +269,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
           {
             if (firstAudio.Millisecs() < demux.m_IframeSample.Millisecs())
+            {
               if (lastAudio.Millisecs() - 150 < demux.m_IframeSample.Millisecs())
               {
                 BestCompensation  = lastAudio - 1500000 - m_pTsReaderFilter->m_RandomCompensation - m_rtStart ; //demux.m_IframeSample /*firstVideo*/ -m_rtStart ;
@@ -280,7 +282,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
                 AddVideoCompensation = 0 ; // ( demux.m_IframeSample-firstAudio ) ;
                 LogDebug("Compensation : ( Rnd : %d mS ) Audio pts ahead Video Pts ( Recover skipping Audio ) ....",m_pTsReaderFilter->m_RandomCompensation/10000) ;
               }
+            }
             else
+            {
               if (lastVideo.Millisecs() < firstAudio.Millisecs())
               {
                 BestCompensation = lastVideo-m_rtStart ;
@@ -293,6 +297,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
                 AddVideoCompensation = 0 ;
                 LogDebug("Compensation : Audio pts behind Video Pts ( Recover skipping Video ) ....") ;
               }
+            }
             m_pTsReaderFilter->m_RandomCompensation += 500000 ;   // Stupid feature required to have FFRW working with DVXA ( at least ATI.. ) to avoid frozen picture. ( it moves just moves the sample time a bit !! )
             m_pTsReaderFilter->m_RandomCompensation = m_pTsReaderFilter->m_RandomCompensation % 1000000 ;
           }
@@ -309,10 +314,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (m_pTsReaderFilter->State() == State_Running)
           {
             m_pTsReaderFilter->m_ClockOnStart = (GetTickCount() - m_pTsReaderFilter->m_lastRun) * 10000 ;
-            if (m_pTsReaderFilter->m_bLiveTv) LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_pTsReaderFilter->m_lastPause);
+            if (m_pTsReaderFilter->m_bLiveTv)
+            {
+              LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_pTsReaderFilter->m_lastPause);
+            }
           }
           else
+          {
             m_pTsReaderFilter->m_ClockOnStart=0 ;
+          }
 
           // set the current compensation
           m_pTsReaderFilter->Compensation.m_time=(BestCompensation.m_time - m_pTsReaderFilter->m_ClockOnStart.m_time) - PRESENT_DELAY ;
@@ -320,14 +330,20 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
 
+          //set flag to false so we dont keep compensating
+          m_pTsReaderFilter->m_bStreamCompensated = true ;
+        }
+
+        // Subtitle filter is "found" only after Run() has been completed
+        if(!m_bSubtitleCompensationSet)
+        {
           IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
           if(pDVBSubtitleFilter)
           {
+            LogDebug("aud:pDVBSubtitleFilter->SetTimeCompensation");
             pDVBSubtitleFilter->SetTimeCompensation(m_pTsReaderFilter->Compensation);
+            m_bSubtitleCompensationSet=true;
           }
-
-          //set flag to false so we dont keep compensating
-          m_pTsReaderFilter->m_bStreamCompensated = true ;
         }
 
         CRefTime RefTime,cRefTime ;
@@ -373,7 +389,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             {
               double clock=0 ;
               if (m_pTsReaderFilter->State() == State_Running)
+              {
                 clock = (double)(GetTickCount() - m_pTsReaderFilter->m_lastRun) / 1000.0 ;
+              }
 
               float fTime=(float)cRefTime.Millisecs();
               fTime/=1000.0f;
@@ -480,7 +498,9 @@ HRESULT CAudioPin::OnThreadStartPlay()
     demux.SetVideoChanging(false);
   }
   else
+  {
     while(m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) Sleep(5) ;
+  }
   LogDebug("aud:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
 
   //start playing
