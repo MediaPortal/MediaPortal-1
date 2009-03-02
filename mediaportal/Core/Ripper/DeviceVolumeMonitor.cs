@@ -380,7 +380,11 @@ namespace Win32.Utils.Cd
       {
         if (fInternal.Handle != IntPtr.Zero)
         {
-          fInternal.ReleaseHandle();
+          // handle should not be released as this is the handle for MediaPortal itself (just borrowing 
+          // it for wndproc message purposes). Just nulling the reference and letting the garbage collector
+          // clean up is enough to free resources for device monitoring.
+          //fInternal.ReleaseHandle();
+          
           fInternal = null;
         }
       }
