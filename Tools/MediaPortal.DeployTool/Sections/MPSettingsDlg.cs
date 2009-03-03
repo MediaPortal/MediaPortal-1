@@ -34,17 +34,17 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.MPSettings;
-      textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
-      checkBoxFirewall.Text = Utils.GetBestTranslation("MPSettings_checkBoxFirewall");
+      textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      checkBoxFirewall.Text = Localizer.GetBestTranslation("MPSettings_checkBoxFirewall");
       UpdateUI();
     }
 
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Utils.GetBestTranslation("MPSettings_labelHeading");
-      labelInstDir.Text = Utils.GetBestTranslation("MPSettings_labelInstDir");
-      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
+      labelHeading.Text = Localizer.GetBestTranslation("MPSettings_labelHeading");
+      labelInstDir.Text = Localizer.GetBestTranslation("MPSettings_labelInstDir");
+      buttonBrowse.Text = Localizer.GetBestTranslation("MainWindow_browseButton");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -60,7 +60,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Utils.GetBestTranslation("MPSettings_errInvalidPath"));
+        Utils.ErrorDlg(Localizer.GetBestTranslation("MPSettings_errInvalidPath"));
         return false;
       }
       return true;
@@ -78,14 +78,14 @@ namespace MediaPortal.DeployTool.Sections
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Utils.GetBestTranslation("MPSettings_msgSelectDir");
+      dlg.Description = Localizer.GetBestTranslation("MPSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         if (dlg.SelectedPath.EndsWith("\\"))
-          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "MediaPortal";
+          textBoxDir.Text = installationPath = dlg.SelectedPath + "MediaPortal";
         else
-          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "\\MediaPortal";
+          textBoxDir.Text = installationPath = dlg.SelectedPath + "\\MediaPortal";
       }
     }
 

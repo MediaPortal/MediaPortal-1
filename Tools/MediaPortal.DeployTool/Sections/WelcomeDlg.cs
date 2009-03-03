@@ -66,10 +66,9 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading1.Text = Utils.GetBestTranslation("Welcome_labelHeading1");
-      //labelHeading1.Text = Utils.GetBestTranslation("MainWindow_labelAppHeading");
-      labelHeading2.Text = Utils.GetBestTranslation("Welcome_labelHeading2");
-      labelHeading3.Text = Utils.GetBestTranslation("Welcome_labelHeading3");
+      labelHeading1.Text = Localizer.GetBestTranslation("Welcome_labelHeading1");
+      labelHeading2.Text = Localizer.GetBestTranslation("Welcome_labelHeading2");
+      labelHeading3.Text = Localizer.GetBestTranslation("Welcome_labelHeading3");
     }
     public override DeployDialog GetNextDialog()
     {

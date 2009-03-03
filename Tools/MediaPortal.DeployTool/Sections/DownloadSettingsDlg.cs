@@ -76,7 +76,7 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Utils.GetBestTranslation("DownloadSettings_labelSectionHeader");
+      labelSectionHeader.Text = Localizer.GetBestTranslation("DownloadSettings_labelSectionHeader");
     }
     public override DeployDialog GetNextDialog()
     {

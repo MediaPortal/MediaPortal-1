@@ -34,17 +34,17 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.TvServerSettings;
-      textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+      textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
       UpdateUI();
     }
 
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Utils.GetBestTranslation("TvServerSettings_labelHeading");
-      labelInstDir.Text = Utils.GetBestTranslation("TvServerSettings_labelInstDir");
-      checkBoxFirewall.Text = Utils.GetBestTranslation("TvServerSettings_checkBoxFirewall");
-      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
+      labelHeading.Text = Localizer.GetBestTranslation("TvServerSettings_labelHeading");
+      labelInstDir.Text = Localizer.GetBestTranslation("TvServerSettings_labelInstDir");
+      checkBoxFirewall.Text = Localizer.GetBestTranslation("TvServerSettings_checkBoxFirewall");
+      buttonBrowse.Text = Localizer.GetBestTranslation("MainWindow_browseButton");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -54,7 +54,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Utils.GetBestTranslation("TvServerSettings_errInvalidPath"));
+        Utils.ErrorDlg(Localizer.GetBestTranslation("TvServerSettings_errInvalidPath"));
         return false;
       }
       return true;
@@ -72,14 +72,14 @@ namespace MediaPortal.DeployTool.Sections
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Utils.GetBestTranslation("TvServerSettings_msgSelectDir");
+      dlg.Description = Localizer.GetBestTranslation("TvServerSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         if (dlg.SelectedPath.EndsWith("\\"))
-          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "MediaPortal TV Server";
+          textBoxDir.Text = installationPath = dlg.SelectedPath + "MediaPortal TV Server";
         else
-          textBoxDir.Text = this.installationPath = dlg.SelectedPath + "\\MediaPortal TV Server";
+          textBoxDir.Text = installationPath = dlg.SelectedPath + "\\MediaPortal TV Server";
       }
     }
   }

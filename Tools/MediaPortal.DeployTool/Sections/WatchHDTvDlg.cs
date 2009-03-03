@@ -44,10 +44,10 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Utils.GetBestTranslation("WatchHDTv_labelSectionHeader");
-      rbYesHD.Text = Utils.GetBestTranslation("WatchHDTv_yes");
-      rbNoHD.Text = Utils.GetBestTranslation("WatchHDTv_no");
-      rbMaybeHD.Text = Utils.GetBestTranslation("WatchHDTv_maybe");
+      labelSectionHeader.Text = Localizer.GetBestTranslation("WatchHDTv_labelSectionHeader");
+      rbYesHD.Text = Localizer.GetBestTranslation("WatchHDTv_yes");
+      rbNoHD.Text = Localizer.GetBestTranslation("WatchHDTv_no");
+      rbMaybeHD.Text = Localizer.GetBestTranslation("WatchHDTv_maybe");
     }
     public override DeployDialog GetNextDialog()
     {

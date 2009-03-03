@@ -11,8 +11,8 @@ namespace MediaPortal.DeployTool
 
     private void UpdateUI()
     {
-      Text = Utils.GetBestTranslation("ManualDownload_Title");
-      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
+      Text = Localizer.GetBestTranslation("ManualDownload_Title");
+      buttonBrowse.Text = Localizer.GetBestTranslation("MainWindow_browseButton");
     }
 
     public ManualDownloadFileMissing()
@@ -25,7 +25,7 @@ namespace MediaPortal.DeployTool
     {
       target_file = targetFile;
       target_dir = targetDir;
-      labelHeading.Text = String.Format(Utils.GetBestTranslation("ManualDownload_errFileNotFound"), target_file);
+      labelHeading.Text = String.Format(Localizer.GetBestTranslation("ManualDownload_errFileNotFound"), target_file);
       ShowDialog();
       return DialogResult.OK;
     }

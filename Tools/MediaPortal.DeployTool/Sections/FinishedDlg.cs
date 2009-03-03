@@ -39,21 +39,21 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading1.Text = Utils.GetBestTranslation("Finished_labelHeading1");
+      labelHeading1.Text = Localizer.GetBestTranslation("Finished_labelHeading1");
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-        labelHeading2.Text = Utils.GetBestTranslation("Finished_labelHeading2_download");
-        labelHeading3.Text = Utils.GetBestTranslation("Finished_labelHeading3_download");
+        labelHeading2.Text = Localizer.GetBestTranslation("Finished_labelHeading2_download");
+        labelHeading3.Text = Localizer.GetBestTranslation("Finished_labelHeading3_download");
       }
       else
       {
-        labelHeading2.Text = Utils.GetBestTranslation("Finished_labelHeading2_install");
-        labelHeading3.Text = Utils.GetBestTranslation("Finished_labelHeading3_install");
+        labelHeading2.Text = Localizer.GetBestTranslation("Finished_labelHeading2_install");
+        labelHeading3.Text = Localizer.GetBestTranslation("Finished_labelHeading3_install");
       }
-      linkHomepage.Text = Utils.GetBestTranslation("Finished_linkHomepage");
-      linkForum.Text = Utils.GetBestTranslation("Finished_linkForum");
-      linkWiki.Text = Utils.GetBestTranslation("Finished_linkWiki");
-      labelEbay.Text = Utils.GetBestTranslation("Finished_labelEbay");
+      linkHomepage.Text = Localizer.GetBestTranslation("Finished_linkHomepage");
+      linkForum.Text = Localizer.GetBestTranslation("Finished_linkForum");
+      linkWiki.Text = Localizer.GetBestTranslation("Finished_linkWiki");
+      labelEbay.Text = Localizer.GetBestTranslation("Finished_labelEbay");
       labelSectionHeader.Text = "";
     }
     public override DeployDialog GetNextDialog()

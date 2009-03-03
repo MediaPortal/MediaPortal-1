@@ -47,6 +47,7 @@ namespace MediaPortal.DeployTool
       return nativeName;
     }
   }
+
   public sealed class Localizer
   {
     #region Singleton implementation
@@ -85,6 +86,12 @@ namespace MediaPortal.DeployTool
       System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureId);
     }
 
+    public static string GetBestTranslation(string ID)
+    {
+      string _translation = Instance.GetString(ID);
+      return _translation.Length > 0 ? _translation : Instance.GetDefaultString(ID);
+    }
+
   }
 
   class Utils
@@ -117,7 +124,7 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        MessageBox.Show(GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        MessageBox.Show(Localizer.GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         File.Delete(XmlFile);
         Environment.Exit(-2);
       }
@@ -308,7 +315,7 @@ namespace MediaPortal.DeployTool
       // Disable OS if < XP
       if (ver < 51)
       {
-        MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
         Application.Exit();
       }
       switch (ver)
@@ -316,7 +323,7 @@ namespace MediaPortal.DeployTool
         case 51:
           if (os.OSServicePackMajor < 2)
           {
-            MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
           break;
@@ -324,23 +331,23 @@ namespace MediaPortal.DeployTool
           if (os.OSProductType == OsDetection.OSProductType.Workstation)
           {
             MsgOsVersion = MsgOsVersion + " [64bit]";
-            MessageBox.Show(GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgOsVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.Exit();
           }
-          res = MessageBox.Show(GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
         case 60:
           if (os.OSProductType != OsDetection.OSProductType.Workstation || os.OSServicePackMajor < 1)
           {
-            res = MessageBox.Show(GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
             if (res == DialogResult.Cancel) Application.Exit();
           }
           break;
       }
       if (os.OSServicePackBuild != 0)
       {
-        res = MessageBox.Show(GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), MsgOsVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
@@ -398,16 +405,6 @@ namespace MediaPortal.DeployTool
         MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         return false;
       }
-    }
-
-    public static string GetBestTranslation(string ID)
-    {
-      string _translation = Localizer.Instance.GetString(ID);
-      if (_translation.Length > 0)
-      {
-        return _translation;
-      }
-      return Localizer.Instance.GetDefaultString(ID);
     }
 
     public static string GetPackageVersion()

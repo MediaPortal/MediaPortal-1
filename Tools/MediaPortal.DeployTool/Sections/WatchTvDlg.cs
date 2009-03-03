@@ -47,9 +47,9 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Utils.GetBestTranslation("WatchTV_labelSectionHeader");
-      rbYesWatchTv.Text = Utils.GetBestTranslation("WatchTV_on");
-      rbNoWatchTv.Text = Utils.GetBestTranslation("WatchTV_off");
+      labelSectionHeader.Text = Localizer.GetBestTranslation("WatchTV_labelSectionHeader");
+      rbYesWatchTv.Text = Localizer.GetBestTranslation("WatchTV_on");
+      rbNoWatchTv.Text = Localizer.GetBestTranslation("WatchTV_off");
     }
 
     public override DeployDialog GetNextDialog()

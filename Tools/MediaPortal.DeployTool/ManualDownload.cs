@@ -34,12 +34,12 @@ namespace MediaPortal.DeployTool
 
     private void UpdateUI()
     {
-      Text = Utils.GetBestTranslation("ManualDownload_Title");
-      labelHeading.Text = Utils.GetBestTranslation("ManualDownload_labelHeading");
-      linkURL.Text = labelTargetFile.Text = Utils.GetBestTranslation("ManualDownload_linkURL");
-      linkDir.Text = Utils.GetBestTranslation("ManualDownload_linkDir");
-      labelDesc.Text = Utils.GetBestTranslation("ManualDownload_labelDesc");
-      buttonContinue.Text = Utils.GetBestTranslation("ManualDownload_buttonContinue");
+      Text = Localizer.GetBestTranslation("ManualDownload_Title");
+      labelHeading.Text = Localizer.GetBestTranslation("ManualDownload_labelHeading");
+      linkURL.Text = labelTargetFile.Text = Localizer.GetBestTranslation("ManualDownload_linkURL");
+      linkDir.Text = Localizer.GetBestTranslation("ManualDownload_linkDir");
+      labelDesc.Text = Localizer.GetBestTranslation("ManualDownload_labelDesc");
+      buttonContinue.Text = Localizer.GetBestTranslation("ManualDownload_buttonContinue");
     }
 
     public ManualDownload()

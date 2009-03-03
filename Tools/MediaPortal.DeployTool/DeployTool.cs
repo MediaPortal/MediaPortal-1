@@ -38,10 +38,9 @@ namespace MediaPortal.DeployTool
     #region IDeployDialog interface
     public void UpdateUI()
     {
-      Text = Utils.GetBestTranslation("MainWindow_AppName");
-      //labelAppHeading.Text = Utils.GetBestTranslation("MainWindow_labelAppHeading");
-      backButton.Text = Utils.GetBestTranslation("MainWindow_backButton");
-      nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
+      Text = Localizer.GetBestTranslation("MainWindow_AppName");
+      backButton.Text = Localizer.GetBestTranslation("MainWindow_backButton");
+      nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
     }
     public DeployDialog GetNextDialog()
     {
@@ -115,7 +114,7 @@ namespace MediaPortal.DeployTool
       {
         if (!InstallationChecks.InternetChecker.CheckConnection())
         {
-          MessageBox.Show(Utils.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          MessageBox.Show(Localizer.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
       }
 
@@ -130,12 +129,12 @@ namespace MediaPortal.DeployTool
         
         if (actualDiskSpace < requiredDiskSpace)
         {
-          MessageBox.Show(string.Format(Utils.GetBestTranslation("DiskSpace_Error"),requiredDiskSpace*1000),"MediaPortal",MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(string.Format(Localizer.GetBestTranslation("DiskSpace_Error"), requiredDiskSpace * 1000), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
       }
 
-      if (nextButton.Text == Utils.GetBestTranslation("MainWindow_buttonClose"))
+      if (nextButton.Text == Localizer.GetBestTranslation("MainWindow_buttonClose"))
       {
         //
         // If in download_only mode, start explorer to show downloaded stuff
@@ -159,8 +158,8 @@ namespace MediaPortal.DeployTool
         Close();
         return;
       }
-      if (nextButton.Text == Utils.GetBestTranslation("Install_buttonDownload") ||
-          nextButton.Text == Utils.GetBestTranslation("Install_buttonInstall"))
+      if (nextButton.Text == Localizer.GetBestTranslation("Install_buttonDownload") ||
+          nextButton.Text == Localizer.GetBestTranslation("Install_buttonInstall"))
       {
         nextButton.Enabled = false;
       }
@@ -181,11 +180,11 @@ namespace MediaPortal.DeployTool
       {
         backButton.Visible = false;
         nextButton.Enabled = true;
-        nextButton.Text = Utils.GetBestTranslation("MainWindow_buttonClose");
+        nextButton.Text = Localizer.GetBestTranslation("MainWindow_buttonClose");
       }
       if (InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
-        nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Utils.GetBestTranslation("Install_buttonDownload") : Utils.GetBestTranslation("Install_buttonInstall");
+        nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Localizer.GetBestTranslation("Install_buttonDownload") : Localizer.GetBestTranslation("Install_buttonInstall");
         InstallationProperties.Instance.Set("Install_Dialog", "no");
       }
     }
@@ -196,14 +195,14 @@ namespace MediaPortal.DeployTool
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
         backButton.Visible = false;
-      nextButton.Text = Utils.GetBestTranslation("MainWindow_nextButton");
+      nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
 
     
     private void bExit_Click(object sender, EventArgs e)
     {
-      string message = Utils.GetBestTranslation("Exit_Installation");
+      string message = Localizer.GetBestTranslation("Exit_Installation");
       const string caption = "MediaPortal";
       const MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 

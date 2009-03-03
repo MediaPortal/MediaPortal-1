@@ -17,10 +17,10 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Utils.GetBestTranslation("DBMSType_labelHeading");
-      rbMSSQL.Text = Utils.GetBestTranslation("DBMSType_rbMSSQL");
-      rbMySQL.Text = Utils.GetBestTranslation("DBMSType_rbMySQL");
-      rbDBAlreadyInstalled.Text = Utils.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
+      labelHeading.Text = Localizer.GetBestTranslation("DBMSType_labelHeading");
+      rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL");
+      rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQL");
+      rbDBAlreadyInstalled.Text = Localizer.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
     }
     public override DeployDialog GetNextDialog()
     {

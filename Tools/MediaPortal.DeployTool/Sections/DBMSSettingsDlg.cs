@@ -35,20 +35,20 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.DBMSSettings;
       if (InstallationProperties.Instance["DBMSType"] == "mssql2005")
-        textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server";
+        textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server";
       else
-        textBoxDir.Text = this.installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.0";
+        textBoxDir.Text = installationPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MySQL\\MySQL Server 5.0";
       UpdateUI();
     }
 
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelHeading.Text = Utils.GetBestTranslation("DBMSSettings_labelHeading");
-      labelInstDir.Text = Utils.GetBestTranslation("DBMSSettings_labelInstDir");
-      buttonBrowse.Text = Utils.GetBestTranslation("MainWindow_browseButton");
-      checkBoxFirewall.Text = Utils.GetBestTranslation("DBMSSettings_checkBoxFirewall");
-      labelPassword.Text = Utils.GetBestTranslation("DBMSSettings_labelPassword");
+      labelHeading.Text = Localizer.GetBestTranslation("DBMSSettings_labelHeading");
+      labelInstDir.Text = Localizer.GetBestTranslation("DBMSSettings_labelInstDir");
+      buttonBrowse.Text = Localizer.GetBestTranslation("MainWindow_browseButton");
+      checkBoxFirewall.Text = Localizer.GetBestTranslation("DBMSSettings_checkBoxFirewall");
+      labelPassword.Text = Localizer.GetBestTranslation("DBMSSettings_labelPassword");
     }
     public override DeployDialog GetNextDialog()
     {
@@ -63,12 +63,12 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg(Utils.GetBestTranslation("DBMSSettings_errInvalidInstallationPath"));
+        Utils.ErrorDlg(Localizer.GetBestTranslation("DBMSSettings_errInvalidInstallationPath"));
         return false;
       }
       if (textBoxPassword.Text == "")
       {
-        Utils.ErrorDlg(Utils.GetBestTranslation("DBMSSettings_errPasswordMissing"));
+        Utils.ErrorDlg(Localizer.GetBestTranslation("DBMSSettings_errPasswordMissing"));
         return false;
       }
       return true;
@@ -87,10 +87,10 @@ namespace MediaPortal.DeployTool.Sections
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = Utils.GetBestTranslation("DBMSSettings_msgSelectDir");
+      dlg.Description = Localizer.GetBestTranslation("DBMSSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = this.installationPath = dlg.SelectedPath;
+        textBoxDir.Text = installationPath = dlg.SelectedPath;
     }
   }
 }

@@ -76,7 +76,7 @@ namespace MediaPortal.DeployTool
     {
       if (e.Error is WebException)
       {
-        Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_errDownloadFailed"));
+        Utils.ErrorDlg(Localizer.GetBestTranslation("HTTPDownload_errDownloadFailed"));
         try
         {
           File.Delete(_target);
@@ -97,7 +97,7 @@ namespace MediaPortal.DeployTool
     private void buttonCancel_Click(object sender, EventArgs e)
     {
       client.CancelAsync();
-      Utils.ErrorDlg(Utils.GetBestTranslation("HTTPDownload_msgCanceledByUser"));
+      Utils.ErrorDlg(Localizer.GetBestTranslation("HTTPDownload_msgCanceledByUser"));
       try
       {
         File.Delete(_target);

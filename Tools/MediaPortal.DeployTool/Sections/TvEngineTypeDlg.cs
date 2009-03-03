@@ -43,10 +43,10 @@ namespace MediaPortal.DeployTool.Sections
     #region IDeployDialog interface
     public override void UpdateUI()
     {
-      labelSectionHeader.Text = Utils.GetBestTranslation("TvEngineType_labelSectionHeader");
-      rbTV2.Text = Utils.GetBestTranslation("TvEngineType_rbTvBuildIn");
-      rbTV3.Text = Utils.GetBestTranslation("TvEngineType_rbTvEngine");
-      labelTV3.Text = Utils.GetBestTranslation("TvEngineType_labelTvEngine");
+      labelSectionHeader.Text = Localizer.GetBestTranslation("TvEngineType_labelSectionHeader");
+      rbTV2.Text = Localizer.GetBestTranslation("TvEngineType_rbTvBuildIn");
+      rbTV3.Text = Localizer.GetBestTranslation("TvEngineType_rbTvEngine");
+      labelTV3.Text = Localizer.GetBestTranslation("TvEngineType_labelTvEngine");
     }
     public override DeployDialog GetNextDialog()
     {
