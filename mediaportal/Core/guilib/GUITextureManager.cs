@@ -464,55 +464,6 @@ namespace MediaPortal.GUI.Library
 				}
 #endif
 
-                ////Format fmt=Format.A8R8G8B8;
-                //if (true==false && IsTemporary(fileName))
-                //{
-                //  //fmt=Format.Dxt3;
-                //  iMaxWidth = MAX_THUMB_WIDTH;
-                //  iMaxHeight = MAX_THUMB_HEIGHT;
-
-
-                //  using (FileStream imgstream = new FileStream(fileName, FileMode.Open))
-                //  {
-                //    imgSrc = Image.FromStream(imgstream, true, false);
-
-
-                //    if (imgSrc == null) return null;
-                //    if (imgSrc.Width >= iMaxWidth || imgSrc.Height >= iMaxHeight)
-                //    {
-                //      Image imgResampled = Resample(imgSrc, iMaxWidth, iMaxHeight);
-                //      imgSrc.Dispose();
-                //      imgSrc = imgResampled;
-                //      imgResampled = null;
-                //    }
-                //    //load jpg or png into texture
-                //    using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
-                //    {
-                //      imgSrc.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                //      ImageInformation info2 = new ImageInformation();
-                //      stream.Flush();
-                //      stream.Seek(0, System.IO.SeekOrigin.Begin);
-                //      texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-                //        stream,
-                //        0, 0,//width/height
-                //        1,//mipslevels
-                //        0,//Usage.Dynamic,
-                //        Direct3D.Format.A8R8G8B8,
-                //        GUIGraphicsContext.GetTexturePoolType(),
-                //        Filter.None,
-                //        Filter.None,
-                //        (int)lColorKey,
-                //        ref info2);
-                //      width = info2.Width;
-                //      height = info2.Height;
-
-                //      //Log.Info("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
-                //    }
-                //  }
-                //}
-                //else
-                //{
-                //fmt=GetCompression(fileName);
                 Format fmt = Format.A8R8G8B8;
 
                 ImageInformation info2 = new ImageInformation();
@@ -529,30 +480,6 @@ namespace MediaPortal.GUI.Library
                                                  ref info2);
                 width = info2.Width;
                 height = info2.Height;
-                /*
-                if (width > (GUIGraphicsContext.Width/2) ||
-                  height> (GUIGraphicsContext.Height/2) )
-                {
-                  texture.Dispose();
-                  fmt=Direct3D.Format.A8R8G8B8;
-                  texture=TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                    fileName,
-                    0,0,//width/height
-                    1,//mipslevels
-                    0,//Usage.Dynamic,
-                    fmt,
-                    GUIGraphicsContext.GetTexturePoolType(),
-                    Filter.None,
-                    Filter.None,
-                    (int)lColorKey,
-                    ref info2);
-                  width=info2.Width;
-                  height=info2.Height;
-                }
-                Log.Info("Texturemanager loaded:{0} {1}x{2} format:{3}",
-                              fileName,width,height,info2.Format);*/
-
-                //}
             }
             catch (Exception)
             {
