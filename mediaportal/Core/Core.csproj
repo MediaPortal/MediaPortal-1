@@ -1110,16 +1110,10 @@
     <Compile Include="Player\StreamBufferPlayer9.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\StreamBufferPlayerVMR9wl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Player\VideoPlayerVMR7.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\VideoPlayerVMR9.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Player\VideoPlayerVMR9wl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\VMR7.cs">
