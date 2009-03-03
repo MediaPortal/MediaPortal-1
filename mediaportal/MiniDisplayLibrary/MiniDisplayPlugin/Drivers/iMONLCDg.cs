@@ -4648,7 +4648,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (this.MPStatus.MediaPlayer_Playing)
           {
-            if (this.EQSettings.UseEqDisplay)
+            if (EQSettings.UseEqDisplay && (MPStatus.Media_IsCD || MPStatus.Media_IsMusic || MPStatus.Media_IsRadio))
             {
               this.GetEQ();
               this.DisplayEQ();
