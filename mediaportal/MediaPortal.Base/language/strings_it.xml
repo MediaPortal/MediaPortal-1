@@ -1487,6 +1487,8 @@
     <String id="14013">Si vuole continuare ?</String>
     <String id="14014">Aggiornamento informazioni online</String>
     <String id="14015">Aggiornamenti</String>
+    <String id="14016">Ordina per: Download</String>
+    <String id="14017">Ordina per: Rating</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Il mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
@@ -1857,5 +1859,6 @@
     <String id="200068">Impossibile connettersi al database</String>
     <String id="200069">Tutte le porte ip sembrano essere a posto</String>
     <String id="200070">Controllare il firewall</String>
+    <String id="200071">Cancellare questa cartella e tutte le sottocartelle?</String>
   </Section>
 </Language>
