@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,7 +7,7 @@ namespace DeployVersionSVN
 {
   public class AssemblyUpdate
   {
-    string _version;
+    private readonly string _version;
 
     public AssemblyUpdate(string version)
     {
@@ -18,7 +16,6 @@ namespace DeployVersionSVN
 
     public void UpdateAll(string directory)
     {
-
       DirectoryInfo dir = new DirectoryInfo(directory);
 
       SearchDirectory(dir);
@@ -45,7 +42,8 @@ namespace DeployVersionSVN
         string filetext = read.ReadToEnd();
         read.Close();
 
-        string newtext = Regex.Replace(filetext, "(?<version>Version\\(\"[0-9]+.[0-9]+.[0-9]+.)(?<build>[0-9]+)", "${version}" + _version);
+        string newtext = Regex.Replace(filetext, "(?<version>Version\\(\"[0-9]+.[0-9]+.[0-9]+.)(?<build>[0-9]+)",
+                                       "${version}" + _version);
 
         if (filetext != newtext)
         {

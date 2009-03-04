@@ -1,16 +1,13 @@
 using System;
 using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using ProjectInfinity.Utilities.CommandLine;
 using ProjectInfinity;
+using ProjectInfinity.Utilities.CommandLine;
 
 namespace DeployVersionSVN
 {
-  class Program
+  internal class Program
   {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       ICommandLineOptions argsOptions = new CommandLineOptions();
 
@@ -39,7 +36,10 @@ namespace DeployVersionSVN
         VersionSVN svn = new VersionSVN();
         version = svn.GetVerion(directory);
 
-        if (File.Exists("version.txt")) File.Delete("version.txt");
+        if (File.Exists("version.txt"))
+        {
+          File.Delete("version.txt");
+        }
         if (version == string.Empty)
         {
           Console.WriteLine("Local SVN not up to date");
@@ -60,7 +60,6 @@ namespace DeployVersionSVN
       }
       else
       {
-
         VersionSVN svn = new VersionSVN();
         version = svn.GetVerion(directory);
 

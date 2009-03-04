@@ -13,7 +13,7 @@ namespace ProjectInfinity
       GetVersion
     }
 
-    private Dictionary<Option, string> _options;
+    private readonly Dictionary<Option, string> _options;
 
     public CommandLineOptions()
     {

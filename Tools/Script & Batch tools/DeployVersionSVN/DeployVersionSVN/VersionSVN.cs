@@ -1,8 +1,6 @@
 using System;
-using System.IO;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace DeployVersionSVN
@@ -17,7 +15,9 @@ namespace DeployVersionSVN
 
     public string GetVerion(string directory)
     {
-      FileInfo file = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\TortoiseSVN\bin\SubWCRev.exe");
+      FileInfo file =
+        new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                     @"\TortoiseSVN\bin\SubWCRev.exe");
 
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
@@ -29,7 +29,6 @@ namespace DeployVersionSVN
 
       if (file.Exists)
       {
-
         // Start process
         Process proc;
         proc = Process.Start(procInfo);

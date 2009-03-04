@@ -23,7 +23,6 @@
 
 #endregion
 
-
 namespace ProjectInfinity.Utilities.CommandLine
 {
   /// <summary>
