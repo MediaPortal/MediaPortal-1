@@ -33,19 +33,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public static bool CheckConnection()
     {
       Uri Url = new Uri("http://install.team-mediaportal.com/");
-      WebRequest WebReq = System.Net.WebRequest.Create(Url);
+      WebRequest WebReq = WebRequest.Create(Url);
+      WebReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
       WebResponse Resp;
       
       try
       {
         Resp = WebReq.GetResponse();
         Resp.Close();
-        WebReq = null;
         return true;
       }
       catch
       {
-        WebReq = null;
         return false;
       }
     }
