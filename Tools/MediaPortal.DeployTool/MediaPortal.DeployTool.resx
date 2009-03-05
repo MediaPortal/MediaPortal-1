@@ -516,4 +516,20 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>There is not enough disk space left on the specified drive! For the installation of MediaPortal you need at least {0} MB of free disk space.</value>
   </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} detected.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (build {1}) detected.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Fresh install</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Update current installation to {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOTE: You cannot upgrade from an existing SVN build,
+          those are meant for testing purposes only.</value>
+  </data>
 </root>

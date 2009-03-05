@@ -367,6 +367,10 @@
       <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\UpgradeDlg.resx">
+      <DependentUpon>UpgradeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\DownloadSettingsDlg.resx">
       <DependentUpon>DownloadSettingsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -444,6 +448,12 @@
     </Compile>
     <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\UpgradeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\UpgradeDlg.Designer.cs">
+      <DependentUpon>UpgradeDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\DownloadSettingsDlg.cs">
       <SubType>UserControl</SubType>

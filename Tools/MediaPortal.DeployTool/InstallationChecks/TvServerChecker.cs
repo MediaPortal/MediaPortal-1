@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
   {
     public string GetDisplayName()
     {
-      return "MediaPortal TV-Server " + Utils.GetPackageVersion();
+      return "MediaPortal TV-Server " + Utils.GetPackageVersion(true);
     }
 
     public bool Download()
@@ -125,7 +125,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 #endif
           if (serverInstalled == 1)
           {
-            result.state = version == Utils.GetPackageVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+            result.state = version == Utils.GetPackageVersion(true) ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
           }
           else
             result.state = CheckState.NOT_INSTALLED;

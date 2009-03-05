@@ -54,7 +54,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DownloadSettings);
       }
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Upgrade);
     }
 
     public override bool SettingsValid()

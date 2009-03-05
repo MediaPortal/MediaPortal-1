@@ -33,6 +33,7 @@ namespace MediaPortal.DeployTool
     Welcome,
     DownloadOnly,
     DownloadSettings,
+    Upgrade,
     WatchTV,
     WatchHDTv,
     TvEngineType,
@@ -112,6 +113,9 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.DownloadSettings:
             dlg = new DownloadSettingsDlg();
+            break;
+          case DialogType.Upgrade:
+            dlg = new UpgradeDlg();
             break;
           case DialogType.WatchTV:
             dlg = new WatchTVDlg();

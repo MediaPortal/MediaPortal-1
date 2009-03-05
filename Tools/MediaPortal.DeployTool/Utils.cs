@@ -155,7 +155,7 @@ namespace MediaPortal.DeployTool
 
       for (int i = 0; i < 5; i++)
       {
-        if (File.Exists(FileName)) 
+        if (File.Exists(FileName))
         {
           FileInfo.Refresh();
           if (FileInfo.Length > 10000)
@@ -407,10 +407,9 @@ namespace MediaPortal.DeployTool
       }
     }
 
-    public static string GetPackageVersion()
+    public static string GetPackageVersion(bool current)
     {
-      return "1.0";
+      return current ? "1.0.1" : "1.0.0";
     }
-
   }
 }
