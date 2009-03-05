@@ -1246,6 +1246,12 @@ namespace MediaPortal.Util
               Log.Error("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
             }
           }
+
+          ProcStdOut.AddRange(ExternalProc.StandardOutput.ReadToEnd().Split(new char[] { '\n', '\r' }));
+          ProcStdErr.AddRange(ExternalProc.StandardError.ReadToEnd().Split(new char[] { '\n', '\r' }));
+
+          // Log.Debug("Util: Buffer status - Stdout: {0} Stderr: {1}", ProcStdOut.Count, ProcStdErr.Count);
+
           // wait this many seconds until the process has to be finished
           ExternalProc.WaitForExit(aExpectedTimeoutMs);
 
@@ -1266,17 +1272,17 @@ namespace MediaPortal.Util
 
           success = (ExternalProc.HasExited && ExternalProc.ExitCode == aFailConditions.SuccessExitCode);
 
-          //foreach (string line in ProcStdOut)
-          //{
-          //  if (String.IsNullOrEmpty(line))
-          //    continue;
-          //  Log.Debug("Util: StdOut - {0}", line);
-          //}
+          foreach (string line in ProcStdOut)
+          {
+            if (String.IsNullOrEmpty(line))
+              continue;
+            Log.Debug("Util: StdOut - {0}", line);
+          }
           foreach (string line in ProcStdErr)
           {
             if (String.IsNullOrEmpty(line))
               continue;
-            //Log.Debug("Util: StdErr - {0}", line);
+            Log.Debug("Util: StdErr - {0}", line);
             foreach (string failure in aFailConditions.CriticalOutputLines)
             {
               if (line.ToLowerInvariant().Contains(failure.ToLowerInvariant()))
