@@ -313,14 +313,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
       set { _currentTuneType = value; }
     }
 
-    /// <summary>
-    /// Is the most recent playlist someone's favorite or recommendations, etc
-    /// </summary>
-    public StreamType CurrentPlaylistType
-    {
-      get { return _currentPlaylistType; }
-      set { _currentPlaylistType = value; }
-    }
+    ///// <summary>
+    ///// Is the most recent playlist someone's favorite or recommendations, etc
+    ///// </summary>
+    //public StreamType CurrentPlaylistType
+    //{
+    //  get { return _currentPlaylistType; }
+    //  set { _currentPlaylistType = value; }
+    //}
 
     public StreamPlaybackState CurrentStreamState
     {

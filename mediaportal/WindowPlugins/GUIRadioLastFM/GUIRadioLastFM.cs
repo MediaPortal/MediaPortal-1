@@ -1748,48 +1748,56 @@ namespace MediaPortal.GUI.RADIOLASTFM
         outName = HttpUtility.UrlDecode(aUrlEncodedXmlString);
 
         string user = String.Empty;
-        string i18n = GUILocalizeStrings.Get(34020);
-        if (outName.EndsWith("Radio")) // Blue Man Group Radio
+        string i18n = String.Empty; //GUILocalizeStrings.Get(34020); // Current stream: 
+
+        if (String.IsNullOrEmpty(outName) || outName.Equals("\n"))
         {
-          user = outName.Remove(outName.Length - 6);
-          Log.Info("GUIRadioLastFM: Currently playing tracks related to {0}", user);
-          LastFMStation.CurrentPlaylistType = StreamType.Radio;
-          i18n = GUILocalizeStrings.Get(34043) + user; // Radio station of: 
-        }
-        else if (outName.EndsWith("Library"))
-        {
-          user = outName.Remove(outName.Length - 10);
-          Log.Info("GUIRadioLastFM: Currently playing personal radio of {0}", user);
-          LastFMStation.CurrentPlaylistType = StreamType.Library;
-          i18n = GUILocalizeStrings.Get(34043) + user; // Radio station of: 
-        }
-        else if (outName.EndsWith("Loved Tracks"))
-        {
-          user = outName.Remove(outName.Length - 15);
-          Log.Info("GUIRadioLastFM: Currently playing favorite tracks of {0}", user);
-          LastFMStation.CurrentPlaylistType = StreamType.Loved;
-          i18n = GUILocalizeStrings.Get(34044) + user; // Loved tracks of: 
-        }
-        else if (outName.EndsWith("Recommendations"))
-        {
-          user = outName.Remove(outName.Length - 18);
-          Log.Info("GUIRadioLastFM: Currently playing recommendations of {0}", user);
-          LastFMStation.CurrentPlaylistType = StreamType.Recommended;
-          i18n = GUILocalizeStrings.Get(34040); // My recommendations
-        }
-        else if (outName.EndsWith("Neighbourhood"))
-        {
-          user = outName.Remove(outName.Length - 16);
-          Log.Info("GUIRadioLastFM: Currently playing neighbourhood radio of {0}", user);
-          LastFMStation.CurrentPlaylistType = StreamType.Neighbourhood;
-          i18n = GUILocalizeStrings.Get(34048); // My neighbourhood
+          Log.Info("GUIRadioLastFM: Current playlist did not contain a 'title' - maybe an error of last.fm...");          
         }
         else
         {
-          Log.Info("GUIRadioLastFM: Currently playing saved playlist {0}", outName);
-          LastFMStation.CurrentPlaylistType = StreamType.Playlist;
-          i18n = outName;
-        } // maybe there is more to come.
+          if (outName.EndsWith("Radio")) // Blue Man Group Radio
+          {
+            user = outName.Remove(outName.Length - 6);
+            Log.Info("GUIRadioLastFM: Currently playing tracks related to {0}", user);
+            //LastFMStation.CurrentPlaylistType = StreamType.Radio;
+            i18n = GUILocalizeStrings.Get(34043) + user; // Radio station of: 
+          }
+          else if (outName.EndsWith("Library"))
+          {
+            user = outName.Remove(outName.Length - 10);
+            Log.Info("GUIRadioLastFM: Currently playing personal radio of {0}", user);
+            //LastFMStation.CurrentPlaylistType = StreamType.Library;
+            i18n = GUILocalizeStrings.Get(34043) + user; // Radio station of: 
+          }
+          else if (outName.EndsWith("Loved Tracks"))
+          {
+            user = outName.Remove(outName.Length - 15);
+            Log.Info("GUIRadioLastFM: Currently playing favorite tracks of {0}", user);
+            //LastFMStation.CurrentPlaylistType = StreamType.Loved;
+            i18n = GUILocalizeStrings.Get(34044) + user; // Loved tracks of: 
+          }
+          else if (outName.EndsWith("Recommendations"))
+          {
+            user = outName.Remove(outName.Length - 18);
+            Log.Info("GUIRadioLastFM: Currently playing recommendations of {0}", user);
+            //LastFMStation.CurrentPlaylistType = StreamType.Recommended;
+            i18n = GUILocalizeStrings.Get(34040); // My recommendations
+          }
+          else if (outName.EndsWith("Neighbourhood"))
+          {
+            user = outName.Remove(outName.Length - 16);
+            Log.Info("GUIRadioLastFM: Currently playing neighbourhood radio of {0}", user);
+            //LastFMStation.CurrentPlaylistType = StreamType.Neighbourhood;
+            i18n = GUILocalizeStrings.Get(34048); // My neighbourhood
+          }
+          else
+          {
+            Log.Info("GUIRadioLastFM: Currently playing saved playlist {0}", outName);
+            //LastFMStation.CurrentPlaylistType = StreamType.Playlist;
+            i18n = outName;
+          } // maybe there is more to come.
+        }
 
         GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", i18n);
       }
