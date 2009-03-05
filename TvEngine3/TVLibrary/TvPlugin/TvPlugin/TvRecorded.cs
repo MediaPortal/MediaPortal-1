@@ -106,23 +106,24 @@ namespace TvPlugin
               try
               {
                 Thread.Sleep(250);
-                MediaInfoWrapper recinfo = new MediaInfoWrapper(recFileName);
-                if (recinfo.IsH264)
+                //MediaInfoWrapper recinfo = new MediaInfoWrapper(recFileName);
+                //if (recinfo.IsH264)
+                //{
+                //  Log.Info("RecordedTV: Thumbnail creation not supported for h.264 file - {0}", Utils.SplitFilename(recFileName));
+                //}
+                //else
+                //{
+                if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
                 {
-                  Log.Info("RecordedTV: Thumbnail creation not supported for h.264 file - {0}", Utils.SplitFilename(recFileName));
+                  Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
                 }
                 else
                 {
-                  if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
-                  {
-                    Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
-                  }
-                  else
-                  {
-                    Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
-                  }
-                  Thread.Sleep(250);
+                  Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
                 }
+                Thread.Sleep(250);
+                //}
+
                 // The .NET3 way....
                 //
                 //MediaPlayer player = new MediaPlayer();
