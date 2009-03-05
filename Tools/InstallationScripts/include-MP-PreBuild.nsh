@@ -39,11 +39,15 @@
 ;!define BUILD_DeployTool
 ;!define BUILD_Installer
 
-!system '"$%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" "${svn_ROOT}" RevisionInfoTemplate.nsh version.txt' = 0
+# At first build DeployVersionSVN.exe, it is needed for all further commands
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
+
+# GetVersion by exeuting DeployVersionSVN.exe /GetVersion
+;!system '"$%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" "${svn_ROOT}" RevisionInfoTemplate.nsh version.txt' = 0
+!system 'include-MP-PreBuild.bat'
 ;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
 !include "version.txt"
-
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
+!delfile "version.txt"
 
 !ifdef BUILD_MediaPortal
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0
