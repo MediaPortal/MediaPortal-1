@@ -38,7 +38,7 @@
   !define URL "www.team-mediaportal.com"
 !endif
 !ifndef WEB_REQUIREMENTS
-  !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements/OperatingSystems"
+  !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements"
 !endif
 
 
