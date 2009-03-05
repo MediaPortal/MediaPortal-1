@@ -45,7 +45,7 @@ namespace MediaPortal.Util
     static bool NeedsConfigRefresh = true;
 
     #region Serialisation
-    
+
     private static void LoadSettings()
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -167,6 +167,13 @@ namespace MediaPortal.Util
             catch (Exception) { }
           }
         }
+        else
+        {
+          // We have a thumbnail in share but the cache was wiped out - make sure it is recreated
+          if (LeaveShareThumb && File.Exists(ShareThumb) && !File.Exists(aThumbPath))
+            Success = true;
+        }
+
         Thread.Sleep(30);
 
         if (aCacheThumb && Success)
@@ -199,10 +206,12 @@ namespace MediaPortal.Util
     private static Utils.ProcessFailedConditions GetMtnConditions()
     {
       Utils.ProcessFailedConditions mtnStat = new Utils.ProcessFailedConditions();
+      // The input file is shorter than pre- and post-recording time
       mtnStat.AddCriticalOutString("net duration after -B & -E is negative");
       mtnStat.AddCriticalOutString("all rows're skipped?");
       mtnStat.AddCriticalOutString("step is zero; movie is too short?");
       mtnStat.AddCriticalOutString("failed: -");
+      // unsupported video format by mtn.exe - maybe there's an update?
       mtnStat.AddCriticalOutString("couldn't find a decoder for codec_id");
 
       mtnStat.SuccessExitCode = 0;
