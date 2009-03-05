@@ -1568,6 +1568,7 @@ namespace MediaPortal
         {
           m_bNeedReset = true;
         }
+
         if (m_bNeedReset)
         {
           // Check if the device needs to be resized.
@@ -1593,14 +1594,13 @@ namespace MediaPortal
           try
           {
             // For Bav: reset fails with invalid call if we do not clean up all resources
-            GUITextureManager.CleanupThumbs();
+            //GUITextureManager.CleanupThumbs();
             GUITextureManager.Dispose();
             GUIFontManager.Dispose();
 
             // GUIGraphicsContext.DX9Device.EvictManagedResources();
             if (!GUIGraphicsContext.IsDirectX9ExUsed())
             {
-
               GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
               m_bNeedReset = false;
             }
