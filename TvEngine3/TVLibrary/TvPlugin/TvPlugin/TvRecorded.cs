@@ -46,7 +46,7 @@ using TvDatabase;
 //using System.Windows.Media.Imaging;
 //using MediaPortal.Video.Database;
 //using Toub.MediaCenter.Dvrms.Metadata;
-  ///@using MediaPortal.TV.DiskSpace;
+///@using MediaPortal.TV.DiskSpace;
 
 namespace TvPlugin
 {
@@ -65,7 +65,7 @@ namespace TvPlugin
       ResetAllControls();
     }
     */
-   
+
 
     #region ThumbCacher
 
@@ -81,7 +81,7 @@ namespace TvPlugin
       }
 
       private void PerformRequest()
-      {        
+      {
         if (_thumbCreationActive)
         {
           return;
@@ -91,10 +91,9 @@ namespace TvPlugin
           _thumbCreationActive = true;
 
           IList<Recording> recordings = Recording.ListAll();
-          foreach (Recording rec in recordings)
+          for (int i = recordings.Count; i >= 0; i--)
           {
-            string recFileName = GetFileName(rec.FileName);
-
+            string recFileName = GetFileName(recordings[i].FileName);
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                              Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                              Utils.GetThumbExtension());
@@ -107,16 +106,23 @@ namespace TvPlugin
               try
               {
                 Thread.Sleep(250);
-                if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
+                MediaInfoWrapper recinfo = new MediaInfoWrapper(recFileName);
+                if (recinfo.IsH264)
                 {
-                  Log.Info("RecordedTV: Thumbnail successfully created for {0}", Utils.SplitFilename(recFileName));
+                  Log.Info("RecordedTV: Thumbnail creation not supported for h.264 file - {0}", Utils.SplitFilename(recFileName));
                 }
                 else
                 {
-                  Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
+                  if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
+                  {
+                    Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
+                  }
+                  else
+                  {
+                    Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
+                  }
+                  Thread.Sleep(250);
                 }
-                Thread.Sleep(250);
-
                 // The .NET3 way....
                 //
                 //MediaPlayer player = new MediaPlayer();
@@ -213,7 +219,7 @@ namespace TvPlugin
 
     public TvRecorded()
     {
-      GetID = (int) Window.WINDOW_RECORDEDTV;
+      GetID = (int)Window.WINDOW_RECORDEDTV;
     }
 
     #endregion
@@ -350,7 +356,7 @@ namespace TvPlugin
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvrecordedtv.xml");
       //LoadSettings();
-      GUIWindowManager.Replace((int) Window.WINDOW_RECORDEDTV, this);
+      GUIWindowManager.Replace((int)Window.WINDOW_RECORDEDTV, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -391,22 +397,22 @@ namespace TvPlugin
           }
           break;
 
-          //case Action.ActionType.ACTION_SELECT_ITEM:
-          //  if (facadeView != null)
-          //  {
-          //    if (facadeView.Focus)
-          //    {
-          //      GUIListItem item = GetSelectedItem();
-          //      if (item != null)
-          //      {
-          //        if (!item.IsFolder && item.Label != "..")
-          //        {
-          //          _currentLabel = item.Label;
-          //        }
-          //      }
-          //    }
-          //  }
-          //  break;
+        //case Action.ActionType.ACTION_SELECT_ITEM:
+        //  if (facadeView != null)
+        //  {
+        //    if (facadeView.Focus)
+        //    {
+        //      GUIListItem item = GetSelectedItem();
+        //      if (item != null)
+        //      {
+        //        if (!item.IsFolder && item.Label != "..")
+        //        {
+        //          _currentLabel = item.Label;
+        //        }
+        //      }
+        //    }
+        //  }
+        //  break;
       }
       base.OnAction(action);
     }
@@ -575,7 +581,7 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
                                         null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnSelectedRecording(iItem);
@@ -610,9 +616,9 @@ namespace TvPlugin
       {
         return;
       }
-      Recording rec = (Recording) pItem.TVTag;
+      Recording rec = (Recording)pItem.TVTag;
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -648,7 +654,7 @@ namespace TvPlugin
 
         case 1048: // Settings
           TvRecordedInfo.CurrentProgram = rec;
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_RECORDED_INFO);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_RECORDED_INFO);
           break;
 
         case 830: // Reset watched status
@@ -703,12 +709,12 @@ namespace TvPlugin
       if (g_Player.IsTVRecording)
       {
         // watching TV
-        if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_TVFULLSCREEN)
+        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
         {
           return true;
         }
         Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen tv");
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TVFULLSCREEN);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
       }
@@ -724,12 +730,12 @@ namespace TvPlugin
       if (g_Player.IsTVRecording)
       {
         // watching TV
-        if (GUIWindowManager.ActiveWindow == (int) Window.WINDOW_TVFULLSCREEN)
+        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
         {
           return true;
         }
         Log.Info("TVRecorded: ShowFullScreenWindow switching to fullscreen video");
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TVFULLSCREEN);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
         return true;
       }
@@ -740,7 +746,7 @@ namespace TvPlugin
     {
       try
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           return;
@@ -949,7 +955,7 @@ namespace TvPlugin
             return true;
           }
 
-          IList prgList = (IList) Program.RetrieveByTitle(aRecording.Title);
+          IList prgList = (IList)Program.RetrieveByTitle(aRecording.Title);
 
           if (prgList.Count > 0)
           {
@@ -963,7 +969,7 @@ namespace TvPlugin
                 {
                   TimeSpan ts = now - aRecording.EndTime;
                   if (aRecording.StartTime <= prg.EndTime && ts.TotalHours < 24)
-                    // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
+                  // if endtime is over 24 hrs old, then we do not consider it as a currently rec. program
                   {
                     return true;
                   }
@@ -1115,8 +1121,8 @@ namespace TvPlugin
             case GUIFacadeControl.ViewMode.List:
               strLine = GUILocalizeStrings.Get(101);
               break;
-              //case GUIFacadeControl.ViewMode.Playlist:
-              //  break;
+            //case GUIFacadeControl.ViewMode.Playlist:
+            //  break;
             case GUIFacadeControl.ViewMode.SmallIcons:
               strLine = GUILocalizeStrings.Get(100);
               break;
@@ -1127,10 +1133,10 @@ namespace TvPlugin
           GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
         }
 
-        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMTITLE);
-        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMGENRE);
-        GUIControl.ShowControl(GetID, (int) Controls.LABEL_PROGRAMTIME);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
       }
       catch (Exception ex)
       {
@@ -1152,12 +1158,12 @@ namespace TvPlugin
           {
             continue;
           }
-          Recording rec = (Recording) item1.TVTag;
+          Recording rec = (Recording)item1.TVTag;
           // item1.Label = rec.Title;
           TimeSpan ts = rec.EndTime - rec.StartTime;
           string strTime = string.Format("{0} {1} ({2})", Utils.GetShortDayString(rec.StartTime),
                                          rec.StartTime.ToShortTimeString(),
-                                         Utils.SecondsToHMString((int) ts.TotalSeconds));
+                                         Utils.SecondsToHMString((int)ts.TotalSeconds));
           item1.Label2 = strTime;
           if (_currentViewMethod != GUIFacadeControl.ViewMode.List)
           {
@@ -1220,7 +1226,7 @@ namespace TvPlugin
         return false;
       }
 
-      Recording rec = (Recording) pItem.TVTag;
+      Recording rec = (Recording)pItem.TVTag;
       IList<Recording> itemlist = Recording.ListAll();
 
       _oActiveRecording = rec;
@@ -1252,7 +1258,7 @@ namespace TvPlugin
       int stoptime = rec.StopTime;
       if (stoptime > 0)
       {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
         {
           return false;
@@ -1275,7 +1281,7 @@ namespace TvPlugin
       }
       else if (_bIsLiveRecording)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg != null)
         {
           dlg.Reset();
@@ -1326,7 +1332,7 @@ namespace TvPlugin
           }
         }
       */
-      string fileName = GetFileName (rec.FileName);      
+      string fileName = GetFileName(rec.FileName);
 
       //populates recording metadata to g_player;
       g_Player.currentFileName = fileName;
@@ -1335,7 +1341,7 @@ namespace TvPlugin
       if (useRTSP)
       {
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
-      }      
+      }
 
       g_Player.currentTitle = rec.Title;
       g_Player.currentDescription = rec.Description;
@@ -1401,9 +1407,9 @@ namespace TvPlugin
       {
         return;
       }
-      Recording rec = (Recording) pItem.TVTag;
+      Recording rec = (Recording)pItem.TVTag;
 
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
         return;
@@ -1443,7 +1449,7 @@ namespace TvPlugin
               {
                 TimeSpan ts = s.StartTime - rec.StartTime;
 
-                ScheduleRecordingType scheduleType = (ScheduleRecordingType) s.ScheduleType;
+                ScheduleRecordingType scheduleType = (ScheduleRecordingType)s.ScheduleType;
 
                 bool isManual = (scheduleType == ScheduleRecordingType.Once);
 
@@ -1517,7 +1523,7 @@ namespace TvPlugin
       //somehow we were unable to delete the file, notify the user.
       if (!server.DeleteRecording(rec.IdRecording))
       {
-        GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
         if (dlgOk != null)
         {
@@ -1541,7 +1547,7 @@ namespace TvPlugin
     private void OnCleanup()
     {
       _iSelectedItem = GetSelectedItemNo();
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
         return;
@@ -1556,7 +1562,7 @@ namespace TvPlugin
         return;
       }
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(200043)); //Cleanup recordings?
 
@@ -1786,8 +1792,8 @@ namespace TvPlugin
 
         int iComp = 0;
         TimeSpan ts;
-        Recording rec1 = (Recording) item1.TVTag;
-        Recording rec2 = (Recording) item2.TVTag;
+        Recording rec1 = (Recording)item1.TVTag;
+        Recording rec2 = (Recording)item2.TVTag;
 
         switch (_currentSortMethod)
         {
@@ -1932,12 +1938,12 @@ namespace TvPlugin
               if (m_bSortAscending)
               {
                 ts = rec1.StartTime - rec2.StartTime;
-                return (int) (ts.Minutes);
+                return (int)(ts.Minutes);
               }
               else
               {
                 ts = rec2.StartTime - rec1.StartTime;
-                return (int) (ts.Minutes);
+                return (int)(ts.Minutes);
               }
             }
             if (rec1.IdChannel != rec2.IdChannel)
@@ -2050,7 +2056,7 @@ namespace TvPlugin
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
       {
-        if (_deleteWatchedShows || rec.KeepUntil == (int) KeepMethodType.UntilWatched)
+        if (_deleteWatchedShows || rec.KeepUntil == (int)KeepMethodType.UntilWatched)
         {
           TvServer server = new TvServer();
           server.DeleteRecording(rec.IdRecording);
