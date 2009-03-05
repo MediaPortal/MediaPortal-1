@@ -513,4 +513,20 @@ Proseguire l'installazione è un vostro rischio.</value>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Non c'è spazio libero sufficiente sul disco specificato! L'installazione di MediaPortal necessita di almeno {0} MB di spazio libero.</value>
   </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>Trovato MediaPortal {0}.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>Trovato MediaPortal {0} (build {1}).</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Re-installazione completa</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Aggiorna l'attuale installazione alla versione {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOTA: Non si può aggiornare da una build SVN esistente,
+            quest'ultima è intesa solo a scopo di test.</value>
+  </data>
 </root>
