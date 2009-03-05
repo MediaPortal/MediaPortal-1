@@ -48,6 +48,9 @@
 ;!define SVN_REVISION "$WCREV$"    ; that's the string in version txt, after SubWCRev has been launched
 !include "version.txt"
 !delfile "version.txt"
+!if ${SVN_REVISION} == 0
+  !warning "It seems there was an error, reading the svn revision. 0 will be used."
+!endif
 
 !ifdef BUILD_MediaPortal
 !system '"${svn_DeployVersionSVN}\DeployVersionSVN\bin\Debug\DeployVersionSVN.exe" /svn="${svn_MP}"' = 0

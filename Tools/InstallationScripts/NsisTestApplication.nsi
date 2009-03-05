@@ -254,6 +254,8 @@ SectionEnd ; end the section
 Section
   ${LOG_OPEN}
 
+  !insertmacro MediaPortalNetFrameworkCheck 0
+  
   !insertmacro OperationSystemInformation
   !insertmacro AdditionalInformation
 

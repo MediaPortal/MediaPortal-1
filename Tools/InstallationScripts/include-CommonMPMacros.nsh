@@ -509,7 +509,8 @@ LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "Your operatin
 LangString TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED  ${LANG_ENGLISH} "Your operating system is not recommended by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_ADMIN                ${LANG_ENGLISH} "You need administration rights to install $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
 LangString TEXT_MSGBOX_ERROR_VCREDIST             ${LANG_ENGLISH} "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
-LangString TEXT_MSGBOX_ERROR_DOTNET               ${LANG_ENGLISH} "Microsoft .Net Framework 2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET               ${LANG_ENGLISH} "Microsoft .Net Framework 2 SP2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET_SP            ${LANG_ENGLISH} "Microsoft .Net Framework 2 is installed.$\r$\nBut Service Pack 2 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 
 LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "$(^Name) is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
@@ -949,6 +950,10 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ; do nothing
   ${EndIf}
 
+!macroend
+
+!macro MediaPortalAdminCheck HideWarnings
+
   ; check if current user is admin
   UserInfo::GetOriginalAccountType
   Pop $0
@@ -958,9 +963,33 @@ DeleteRegKey HKCU "Software\MediaPortal"
     Abort
   ${EndIf}
 
+!macroend
+
+!macro MediaPortalVCRedistCheck HideWarnings
+
   ; check if VC Redist 2005 SP1 is installed
   ${IfNot} ${VCRedistIsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
+
+!macroend
+
+!macro MediaPortalNetFrameworkCheck HideWarnings
+
+  ; check if .Net Framework 2.0 is installed
+  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "Install"
+  ${If} $0 != 1
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)" IDNO +2
+    ExecShell open "${WEB_REQUIREMENTS}"
+    Abort
+  ${EndIf}
+
+  ; check if .Net Framework 2.0 SP2 is installed
+  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "SP"
+  ${If} $0 < 2
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET_SP)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
   ${EndIf}

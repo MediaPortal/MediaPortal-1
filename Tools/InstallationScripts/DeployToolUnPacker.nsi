@@ -44,21 +44,14 @@ Name "MediaPortal Unpacker"
 !define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
 
 
-!define MIN_FRA_MAJOR "2"
-!define MIN_FRA_MINOR "0"
-!define MIN_FRA_BUILD "*"
-
-# INCLUDE
-!include "include-DotNetFramework.nsh"
-
 #---------------------------------------------------------------------------
 # BUILD sources
 #---------------------------------------------------------------------------
 ; comment one of the following lines to disable the preBuild
-!define BUILD_MediaPortal
-!define BUILD_TVServer
-!define BUILD_DeployTool
-!define BUILD_Installer
+#!define BUILD_MediaPortal
+#!define BUILD_TVServer
+#!define BUILD_DeployTool
+#!define BUILD_Installer
 
 !include "include-MP-PreBuild.nsh"
 
@@ -77,6 +70,12 @@ Name "MediaPortal Unpacker"
 !define VER_BUILD       0
 
 !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+
+#---------------------------------------------------------------------------
+# INCLUDE FILES
+#---------------------------------------------------------------------------
+!include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
+
 
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
@@ -125,7 +124,7 @@ Section
 SectionEnd
 
 Function .onInit
-  Call AbortIfBadFramework
+  !insertmacro MediaPortalNetFrameworkCheck 0
 FunctionEnd
 
 Function .onInstSuccess

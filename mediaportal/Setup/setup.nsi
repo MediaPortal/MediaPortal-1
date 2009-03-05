@@ -977,14 +977,10 @@ Function .onInit
 
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck $DeployMode
+  !insertmacro MediaPortalAdminCheck $DeployMode
+  !insertmacro MediaPortalVCRedistCheck $DeployMode
+  !insertmacro MediaPortalNetFrameworkCheck $DeployMode
 
-
-  ; check if .Net is installed
-  ${IfNot} ${dotNetIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${EndIf}
 
   ; check if reboot is required
   ${If} ${FileExists} "$MPdir.Base\rebootflag"

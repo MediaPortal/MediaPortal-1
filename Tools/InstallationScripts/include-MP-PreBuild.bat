@@ -1,3 +1,4 @@
+@echo off
 
 rem That file is a workaround to use the        %errorlevel%   returned by DeployVersionSVN.exe in NSIS.
 rem       It is necessary, because NSIS' own compile time command 

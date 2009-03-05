@@ -792,6 +792,8 @@ Function .onInit
 
   ; OS and other common initialization checks are done in the following NSIS header file
   !insertmacro MediaPortalOperatingSystemCheck $DeployMode
+  !insertmacro MediaPortalAdminCheck $DeployMode
+  !insertmacro MediaPortalVCRedistCheck $DeployMode
 
 
   ; check if reboot is required
