@@ -352,7 +352,7 @@ namespace MediaPortal.Util
       if (strPath == null) return false;
       try
       {
-        if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;       
+        if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       }
       catch (Exception) { }
       return false;
@@ -989,18 +989,14 @@ namespace MediaPortal.Util
       strLabel = GetDriveName(strDrive);
       return true;
     }
+
     public static bool ShouldStack(string strFile1, string strFile2)
     {
       if (strFile1 == null) return false;
       if (strFile2 == null) return false;
       try
       {
-        // Patterns that are used for matching
-        // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
-        // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
-        //     ? is -_ or space (second ? is optional), ## is 1 or 2 digits
-        string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-														 "[-_ ]\\({0,1}(CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}\\){0,1}"};
+        string[] pattern = StackExpression();
 
         // Strip the extensions and make everything lowercase
         string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
@@ -1010,12 +1006,12 @@ namespace MediaPortal.Util
         for (int i = 0; i < pattern.Length; i++)
         {
           // See if we can find the special patterns in both filenames
-          if (Regex.IsMatch(strFileName1, pattern[i]) && Regex.IsMatch(strFileName2, pattern[i]))
+          if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) && Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
           {
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
-            if (Regex.Replace(strFileName1, pattern[i], "")
-              == Regex.Replace(strFileName2, pattern[i], ""))
+            if (Regex.Replace(strFileName1, pattern[i], "", RegexOptions.IgnoreCase)
+              == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
             {
               // It was a match so stack it
               return true;
@@ -1035,16 +1031,29 @@ namespace MediaPortal.Util
     {
 
       if (strFileName == null) return;
-      string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-													 "[-_ ]\\({0,1}(CD|cd|DISC|disc|part|Part|DVD)[-_ ]{0,1}[0-9]{1,2}\\){0,1}"};
+      string[] pattern = StackExpression();
       for (int i = 0; i < pattern.Length; i++)
       {
         // See if we can find the special patterns in both filenames
-        if (Regex.IsMatch(strFileName, pattern[i]))
+        if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
         {
-          strFileName = Regex.Replace(strFileName, pattern[i], "");
+          strFileName = Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
         }
       }
+    }
+
+    public static string[] StackExpression()
+    {
+      // Patterns that are used for matching
+      // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
+      // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
+      //     ? is -_+ or space (second ? is optional), ## is 1 or 2 digits
+      //
+      // Chemelli: added "+" as separator to allow IMDB scripts usage of this function
+      //
+      string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
+                          "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}[0-9]{1,2}\\){0,1}"};
+      return pattern;
     }
 
     public static string GetThumb(string strLine)
