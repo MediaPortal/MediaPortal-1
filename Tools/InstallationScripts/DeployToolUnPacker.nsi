@@ -48,10 +48,10 @@ Name "MediaPortal Unpacker"
 # BUILD sources
 #---------------------------------------------------------------------------
 ; comment one of the following lines to disable the preBuild
-#!define BUILD_MediaPortal
-#!define BUILD_TVServer
-#!define BUILD_DeployTool
-#!define BUILD_Installer
+!define BUILD_MediaPortal
+!define BUILD_TVServer
+!define BUILD_DeployTool
+!define BUILD_Installer
 
 !include "include-MP-PreBuild.nsh"
 
