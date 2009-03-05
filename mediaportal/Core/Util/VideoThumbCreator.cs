@@ -82,6 +82,11 @@ namespace MediaPortal.Util
         Log.Warn("VideoThumbCreator: Invalid arguments to generate thumbnails of your video!");
         return false;
       }
+      if (!File.Exists(aVideoPath))
+      {
+        Log.Warn("VideoThumbCreator: File {0} not found!", aVideoPath);
+        return false;
+      }
       if (!File.Exists(ExtractorPath))
       {
         Log.Warn("VideoThumbCreator: No {0} found to generate thumbnails of your video!", ExtractApp);
