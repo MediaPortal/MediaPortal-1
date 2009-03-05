@@ -322,26 +322,23 @@ namespace MediaPortal.GUI.Library
       List<string> files = new List<string>();
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        if (xmlreader.GetValueAsBool("debug", "packSkinGfx", false))
+        if (xmlreader.GetValueAsBool("debug", "packSkinGfx", true))
         {
           string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
           files.AddRange(skinFiles);
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
-          string[] tvFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png");
-          string[] radioFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"radio"), "*.png");
-          // add radio as well...
-          files.AddRange(tvFiles);
-          files.AddRange(radioFiles);
+          string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png", SearchOption.AllDirectories);
+          //string[] thumbFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.jpg", SearchOption.AllDirectories);
+          files.AddRange(logoFiles);
+          //files.AddRange(thumbFiles);
         }
-        if (xmlreader.GetValueAsBool("debug", "packPluginGfx", false))
+        if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
         {
-          string[] weather64Files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "64x64"), "*.png");
-          string[] weather128Files = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Weather, "128x128"), "*.png");
+          string[] weatherFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Weather), "*.png", SearchOption.AllDirectories);
           string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
-          files.AddRange(weather64Files);
-          files.AddRange(weather128Files);
+          files.AddRange(weatherFiles);
           files.AddRange(tetrisFiles);
         }
       }
