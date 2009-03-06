@@ -36,14 +36,21 @@ namespace MediaPortal.Visualization
 {
   public class SoniqueViz : VisualizationBase
   {
+    #region Variables
     IntPtr dataPtr = IntPtr.Zero;
     IntPtr fftPtr = IntPtr.Zero;
+    private bool firstRun = true;
+    private BASS_VIS_EXEC visExec;
+    #endregion
 
+    #region Constructors/Destructors
     public SoniqueViz(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
       : base(vizPluginInfo, vizCtrl)
     {
     }
+    #endregion
 
+    #region IVisualisation Implementation
     public override bool Initialize()
     {
       try
@@ -58,6 +65,7 @@ namespace MediaPortal.Visualization
           return false;
         }
 
+        firstRun = true;
         BassVis.BASS_VIS_SetOption(_visParam, BASSVISConfig.BASS_SONIQUEVIS_CONFIG_SLOWFADE, 25);
         bool result = SetOutputContext(VisualizationWindow.OutputContextType);
         _Initialized = result && _visParam.VisHandle != 0;
@@ -88,9 +96,6 @@ namespace MediaPortal.Visualization
 
     public override int RenderVisualization()
     {
-      IntPtr hdc = IntPtr.Zero;
-      Graphics destGraphics = null;
-
       try
       {
         if (VisualizationWindow == null || !VisualizationWindow.Visible)
@@ -98,28 +103,7 @@ namespace MediaPortal.Visualization
           return 0;
         }
 
-        if (VisualizationWindow.InvokeRequired)
-        {
-          ThreadSafeRenderDelegate d = new ThreadSafeRenderDelegate(RenderVisualization);
-          VisualizationWindow.Invoke(d);
-          return 0;
-        }
-
-        if (VisualizationWindow.OutputContextType == OutputContextType.DeviceContext)
-        {
-          hdc = VisualizationWindow.CompatibleDC;
-        }
-
-        else if (VisualizationWindow.OutputContextType == OutputContextType.WindowHandle)
-        {
-          destGraphics = Graphics.FromHwnd(VisualizationWindow.CompatibleDC);
-          hdc = destGraphics.GetHdc();
-        }
-
-        else
-        {
-          return -1;
-        }
+        IntPtr hdc = VisualizationWindow.CompatibleDC;
 
         int stream = 0;
         if (Bass != null)
@@ -134,20 +118,6 @@ namespace MediaPortal.Visualization
       {
       }
 
-      finally
-      {
-        Marshal.FreeHGlobal(dataPtr);
-        Marshal.FreeHGlobal(fftPtr);
-        if (destGraphics != null)
-        {
-          if (hdc != IntPtr.Zero)
-          {
-            destGraphics.ReleaseHdc(hdc);
-          }
-
-          destGraphics.Dispose();
-        }
-      }
       return 1;
     }
 
@@ -175,14 +145,15 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      bool result = SetOutputContext(VisualizationWindow.OutputContextType);
-      return result;
+      BassVis.BASS_VIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+
+      return true;
     }
 
     public override bool WindowSizeChanged(Size newSize)
     {
-      bool result = SetOutputContext(VisualizationWindow.OutputContextType);
-      return result;
+      BassVis.BASS_VIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+      return true;
     }
 
     public override bool SetOutputContext(OutputContextType outputType)
@@ -190,6 +161,11 @@ namespace MediaPortal.Visualization
       if (VisualizationWindow == null)
       {
         return false;
+      }
+
+      if (_Initialized && !firstRun)
+      {
+        return true;
       }
 
       // If width or height are 0 the call to BASS_SONIQUEVIS_CreateVis will fail.  
@@ -221,7 +197,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        BASS_VIS_EXEC visExec = new BASS_VIS_EXEC(vizPath);
+        visExec = new BASS_VIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
         visExec.SON_Flags = BASSVISFlags.BASS_VIS_DEFAULT;
         visExec.SON_PaintHandle = VisualizationWindow.CompatibleDC;
@@ -230,17 +206,12 @@ namespace MediaPortal.Visualization
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
         BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
-        BassVis.BASS_VIS_SetVisPort(_visParam,
-                              (IntPtr)_visParam.VisHandle,
-                              VisualizationWindow.CompatibleDC,
-                              0,
-                              0,
-                              VisualizationWindow.Width,
-                              VisualizationWindow.Height);
       }
       catch (Exception)
       { }
+      firstRun = false;
       return _visParam.VisHandle != 0;
     }
+    #endregion
   }
 }

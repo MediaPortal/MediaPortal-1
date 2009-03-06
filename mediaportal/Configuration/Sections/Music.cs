@@ -187,7 +187,6 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox enableMixing;
     private MPGroupBox groupBoxWinampVis;
     private MPButton btWinampConfig;
-    private Label label3;
     private MPComboBox autoPlayComboBox;
 
     #endregion
@@ -689,7 +688,6 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label3 = new System.Windows.Forms.Label();
       this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -1002,7 +1000,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Controls.Add(this.label3);
       this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
       this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
       this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
@@ -1020,16 +1017,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Visualization settings";
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 163);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(409, 13);
-      this.label3.TabIndex = 12;
-      this.label3.Text = "Note: Support for Sonique Visualizations has been disabled due to technical probl" +
-          "ems";
       // 
       // groupBoxWinampVis
       // 

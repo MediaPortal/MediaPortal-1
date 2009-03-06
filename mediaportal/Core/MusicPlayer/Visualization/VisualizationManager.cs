@@ -268,10 +268,8 @@ namespace MediaPortal.Visualization
 
       string skinFolderPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\visualizations");
 
-      string[] soniqueVisPaths = null;
-      /* Don't search for Sonique Vis. They cause troubles
+      // Search for Sonique and Winamp Plugins
       string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(BASSVISPlugin.BASSVISKIND_SONIQUE, skinFolderPath, true);
-      */
       string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(BASSVISPlugin.BASSVISKIND_WINAMP, skinFolderPath, true);
 
       BassVis.BASS_VIS_Quit(_visParam);
