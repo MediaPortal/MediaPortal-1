@@ -90,6 +90,7 @@ public:
 	bool  Ready();
 	int		GetLogicialChannelNumber(int networkId, int transportId, int serviceId);
 	DVBNetworkInfo m_nit;
+	long GetLastNetworkId() const;
 private:
 	void decodeNITTable(byte* buf);
 	void DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf);
@@ -107,4 +108,5 @@ private:
 	vector<NITLCN> m_vecLCN;
 	typedef vector<NITLCN>::iterator ivecLCN;
 	DWORD m_timer;
+	long m_lastNetworkId;
 };

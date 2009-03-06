@@ -36,6 +36,7 @@ CPatParser::CPatParser(void)
 {
 	m_finished=false;
 	m_waitForVCT=false;
+	m_currentNetworkId=0;
   Reset(NULL,false);
   SetPid(PID_PAT);
 }
@@ -75,6 +76,7 @@ void  CPatParser::Reset(IChannelScanCallback* callback, bool waitForVCT)
   m_vctParser.Reset();
   m_sdtParser.Reset();
 	m_nitDecoder.Reset();
+	m_currentNetworkId=0;
 
   m_sdtParser.SetCallback(this);
   m_vctParser.SetCallback(this);
@@ -138,7 +140,7 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
   info = it->second;
 	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
 
-  if (info.NetworkId==0)
+  /*if (info.NetworkId==0)
   {
       for (itChannels it2=m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
       {
@@ -148,7 +150,10 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
           break;
         }
     }
-  }
+  }*/
+	info.NetworkId=m_currentNetworkId;
+	if (info.NetworkId==0)
+		LogDebug("Unexpected: NID is 0 for SID %d", info.ServiceId);
 
 	return true;
 }
@@ -189,8 +194,8 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 	if (info.SdtReceived) return;
 
 	m_tickCount = GetTickCount();
-	info.NetworkId=sdtInfo.NetworkId;
-	info.TransportId=sdtInfo.TransportId;
+	//info.NetworkId=sdtInfo.NetworkId;
+	//info.TransportId=sdtInfo.TransportId;
 	info.ServiceId=sdtInfo.ServiceId;
 	info.FreeCAMode=sdtInfo.FreeCAMode;
 	info.ServiceType=sdtInfo.ServiceType;
@@ -291,6 +296,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
   if (pid==PID_NIT) 
   {
     m_nitDecoder.OnTsPacket(tsPacket);
+		m_currentNetworkId=m_nitDecoder.GetLastNetworkId();
     return;
   }
   if (pid==PID_VCT) 
