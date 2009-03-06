@@ -62,6 +62,7 @@
     <Compile Include="Handlers\ActiveSharesHandler.cs" />
     <Compile Include="Handlers\ActiveStreamsHandler.cs" />
     <Compile Include="Handlers\ControllerActiveHandler.cs" />
+    <Compile Include="Handlers\XmlTvImportWakeupHandler.cs" />
     <Compile Include="Handlers\EpgGrabbingHandler.cs" />
     <Compile Include="Handlers\GenericStandbyHandler.cs" />
     <Compile Include="Handlers\GenericWakeupHandler.cs" />

@@ -35,23 +35,37 @@ using System.Runtime.CompilerServices;
 using Gentle.Common;
 using Gentle.Framework;
 
+using ICSharpCode.SharpZipLib.Zip;
+
 namespace TvEngine
 {
-  public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler
+  public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll//, IWakeupHandler, IStandbyHandler
   {
     #region constants
     private const int remoteFileDonwloadTimeoutSecs = 360; //6 minutes
     #endregion
 
     #region variables
-    bool _workerThreadRunning = false;
-    bool _remoteFileDownloadInProgress = false;
-    DateTime _remoteFileDonwloadInProgressAt = DateTime.MinValue;
 
-    System.Timers.Timer _timer1;
+    private bool _workerThreadRunning = false;
+    private bool _remoteFileDownloadInProgress = false;
+    private DateTime _remoteFileDonwloadInProgressAt = DateTime.MinValue;
+    private string _remoteURL = "";
+    private System.Timers.Timer _timer1;
+
+    #endregion
+    
+    #region Constructor
+    /// <summary>
+    /// Create a new instance of a generic standby handler
+    /// </summary>
+    public XmlTvImporter()
+    {          
+    }
     #endregion
 
     #region properties
+
     /// <summary>
     /// returns the name of the plugin
     /// </summary>
@@ -96,15 +110,16 @@ namespace TvEngine
         return true;
       }
     }
-    #endregion
+    #endregion    
 
     #region public methods
     /// <summary>
     /// Starts the plugin
     /// </summary>
     public void Start(IController controller)
-    {
-      Log.WriteFile("plugin: xmltv started");
+    {      
+      Log.WriteFile("plugin: xmltv started");      
+      
       CheckNewTVGuide();
       //RetrieveRemoteTvGuide();
       _timer1 = new System.Timers.Timer();
@@ -140,7 +155,7 @@ namespace TvEngine
     }
 
     private void DownloadFileCallback(object sender, DownloadDataCompletedEventArgs e)
-    {
+    {      
       //System.Diagnostics.Debugger.Launch();
       try
       {
@@ -152,7 +167,7 @@ namespace TvEngine
         {
           if (e.Result != null || e.Result.Length > 0)
           {
-            result = e.Result;
+            result = e.Result;            
           }
         }
         catch (Exception ex)
@@ -170,9 +185,32 @@ namespace TvEngine
           {
             info = "File downloaded.";
 
+            if (_remoteURL.Length == 0)
+            {
+              return;
+            }
+
+            Uri uri = new Uri(_remoteURL);
+            string filename = uri.GetComponents(UriComponents.Path, UriFormat.SafeUnescaped);
+            filename = filename.ToLower().Trim();
+            bool isZip = (filename.IndexOf(".zip") > -1);
+            bool isTvGuide = (filename.IndexOf("tvguide.xml") > -1);
+
+            FileInfo fI = new FileInfo(filename);
+            filename = fI.Name;
+         
             //check if file can be opened for writing....																		
             string path = layer.GetSetting("xmlTv", "").Value;
-            path = path + @"\tvguide.xml";
+
+            if (isTvGuide || isZip)
+            {
+              path = path + @"\" + filename;
+            }
+            else
+            {
+              path = path + @"\tvguide.xml";
+            }
+            
             bool waitingForFileAccess = true;
             int retries = 0;
 
@@ -189,7 +227,16 @@ namespace TvEngine
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                 {
                   fs.Write(e.Result, 0, e.Result.Length);
+                  fs.Close();
                   waitingForFileAccess = false;
+
+                  if (isZip)
+                  {
+                    string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
+                    Log.Info("extracting zip file {0} to location {1}", path, newLoc);
+                    FastZip fz = new FastZip();
+                    fz.ExtractZip(path, newLoc, "");
+                  }
                 }
               }
               catch (Exception ex)
@@ -237,6 +284,8 @@ namespace TvEngine
       }
       string lastTransferAt = "";
       string transferStatus = "";
+
+      _remoteURL = URL;
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting;
@@ -388,6 +437,7 @@ namespace TvEngine
     #endregion
 
     #region private members
+    
 
     void _timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
@@ -462,6 +512,7 @@ namespace TvEngine
       {
         //Log.Info("Not the time to fetch remote file yet");
       }
+
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -813,34 +864,7 @@ namespace TvEngine
       RegisterForEPGSchedule();
     }
 
-    #endregion
-
-    #region IWakeupHandler Members
-
-    DateTime IWakeupHandler.GetNextWakeupTime(DateTime earliestWakeupTime)
-    {
-      DateTime now = DateTime.Now;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 6, 30, 0);
-      string remoteScheduleTimeStr = layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
-
-      DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(remoteScheduleTimeStr));
-
-      if (now < remoteScheduleTime)
-      {
-        remoteScheduleTime.AddDays(1);
-      }
-
-      Log.Debug("plugin:xmltv: IWakeupHandler.GetNextWakeupTime {0}", remoteScheduleTime);
-
-      return remoteScheduleTime;
-    }
-
-    string IWakeupHandler.HandlerName
-    {
-      get { return "XmlTvImporter Remote Download Job"; }
-    }
-
-    #endregion
+    #endregion   
+   
   }
 }

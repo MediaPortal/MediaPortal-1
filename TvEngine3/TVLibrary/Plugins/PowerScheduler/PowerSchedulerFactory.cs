@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using TvControl;
 using TvLibrary.Interfaces;
+using TvLibrary.Log;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
 
@@ -60,6 +61,8 @@ namespace TvEngine.PowerScheduler
     /// <param name="controller">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IController controller)
     {
+      Log.Info("PowerSchedulerFactory CTOR");
+
       IStandbyHandler standbyHandler;
 
       _standbyHandlers = new List<IStandbyHandler>();
@@ -74,9 +77,11 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
 
       ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();
+      XmlTvImportWakeupHandler xmltvHandler = new XmlTvImportWakeupHandler();
 
       // Add handlers for resuming from standby
       _wakeupHandlers.Add(recHandler);
+      _wakeupHandlers.Add(xmltvHandler);      
 
       // Activate the EPG grabbing handler
       _epgHandler = new EpgGrabbingHandler(controller);
