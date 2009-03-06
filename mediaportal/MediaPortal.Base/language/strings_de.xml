@@ -1487,6 +1487,8 @@
     <String id="14013">Wollen Sie fortfahren ?</String>
     <String id="14014">Aktualisiere Online Informationen</String>
     <String id="14015">Aktualisierungen</String>
+	<String id="14016">Sortiere: Downloads</String>
+	<String id="14017">Sortiere: Bewertung</String>    
     <String id="16001">Partymix</String>
     <String id="19001" prefix="Mein ">Tetris</String>
     <String id="19002">Neues Spiel</String>

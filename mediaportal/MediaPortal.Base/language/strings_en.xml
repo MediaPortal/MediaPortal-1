@@ -1593,9 +1593,9 @@
     <String id="33041">Add this album to playlist</String>
     <String id="34000" prefix="My ">Last.fm</String>
     <String id="34001">Start / Change stream</String>
-    <String id="34002">Friend:</String>
-    <String id="34003">Neighbour:</String>
-    <String id="34004">Group:</String>
+    <String id="34002">Friend: </String>
+    <String id="34003">Neighbour: </String>
+    <String id="34004">Group: </String>
     <String id="34010">Love</String>
     <String id="34011">Ban</String>
     <String id="34012">Skip</String>
