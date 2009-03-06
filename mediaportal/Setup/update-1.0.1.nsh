@@ -35,7 +35,10 @@
 #Delete "$SMPROGRAMS\$StartMenuGroup\MediaPortal Log-Files.lnk"
 #RMDir "$SMPROGRAMS\$StartMenuGroup"
 
-
 # unreg the old mpi extension, is replaced by mpe1
-${UnRegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"
-${RefreshShellIcons}
+#${UnRegisterExtension} ".mpi" "MediaPortal extension package"
+#${RefreshShellIcons}
+
+
+
+

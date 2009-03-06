@@ -37,10 +37,6 @@
 # This build will be created by svn bot only.
 # Creating such a build, will only include the changed and new files since latest stable release to the installer.
 
-##### UPDATE_BUILD
-# This build will be created by svn bot only.
-# Creating such a build, will only include the changed and new files since latest stable release to the installer.
-
 ##### HEISE_BUILD
 # Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
 ;!define HEISE_BUILD
@@ -70,11 +66,7 @@
 !ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
-  !ifdef UPDATE_BUILD
-    !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-  !else
-    !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
-  !endif
+  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
 !define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
 
@@ -89,6 +81,7 @@ Var noGabest
 Var noDesktopSC
 Var noStartMenuSC
 Var DeployMode
+Var UpdateMode
 ; variables for commandline parameters for UnInstaller
 
 #---------------------------------------------------------------------------
@@ -116,11 +109,7 @@ Var DeployMode
     !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
 !if ${VER_BUILD} == 0       # it's an official release
-  !ifndef UPDATE_BUILD        # it's the full installer
     !define VERSION "1.0.1"
-  !else                       # it's the update installer
-    !define VERSION "1.0.1 Update"
-  !endif
 !else                       # it's a svn release
     !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
@@ -300,7 +289,6 @@ Section "-prepare" SecPrepare
 SectionEnd
 
 !macro BackupInstallDirectory
-Section "Backup current installation status" SecBackup
   ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
@@ -312,11 +300,8 @@ Section "Backup current installation status" SecBackup
   ${LOG_TEXT} "INFO" "Creating backup of configuration dir, this might take some minutes."
   CreateDirectory "$MPdir.Config_$R0"
   CopyFiles /SILENT "$MPdir.Config\*.*" "$MPdir.Config_$R0"
-
-SectionEnd
 !macroend
 !macro RenameInstallDirectory
-Section "-rename existing dirs" SecBackup
   ${LOG_TEXT} "DEBUG" "SECTION SecBackup"
 
   !insertmacro GET_BACKUP_POSTFIX $R0
@@ -335,17 +320,21 @@ Section "-rename existing dirs" SecBackup
     ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."
     Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
   ${EndIf}
-SectionEnd
 !macroend
+; the following section will:
+;   - official release -> clean installation -> rename existing install dirs
+;   - official release -> update procedure -> do nothing
+;   - svn release -> create an (optional) backup of existing install dirs
 !if ${VER_BUILD} == 0       # it's an official release
-  !ifndef UPDATE_BUILD        # it's the full installer
+Section "-rename existing dirs" SecBackup
+  ${If} $UpdateMode = 0     # official release -> clean installation
     !insertmacro RenameInstallDirectory
-  !else                       # it's the update installer
-    # no rename, because files will be updated
-    # no backup, because release is tested and stable
-  !endif
+  ${EndIf}
+SectionEnd
 !else                       # it's a svn release
+Section "Backup current installation status" SecBackup
   !insertmacro BackupInstallDirectory
+SectionEnd
 !endif
 
 Section "MediaPortal core files (required)" SecCore
@@ -822,10 +811,10 @@ Section -Post
 
   ${RefreshShellIcons}
 
-!ifdef UPDATE_BUILD
   # if it is an update include a file with  last update/cleanup instructions
-  !include "update-1.0.1.nsh"
-!endif
+  ${If} $UpdateMode = 1
+    !include "update-1.0.1.nsh"
+  ${EndIf}
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -866,6 +855,7 @@ Section Uninstall
 
 
   ${un.UnRegisterExtension} ".mpi" "MediaPortal extension package"
+  ${un.UnRegisterExtension} ".mpe1" "MediaPortal extension package"
   ${un.UnRegisterExtension} ".xmp" "MediaPortal extension project"
 
   ${un.RefreshShellIcons}
@@ -910,6 +900,7 @@ Function .onInit
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
   StrCpy $DeployMode 0
+  StrCpy $UpdateMode 0
 
   ; gets comandline parameter
   ${GetParameters} $R0
@@ -936,18 +927,15 @@ Function .onInit
   ${GetOptions} $R0 "/DeployMode" $R1
   IfErrors +2
   StrCpy $DeployMode 1
+
+  ClearErrors
+  ${GetOptions} $R0 "/UpdateMode" $R1
+  IfErrors +2
+  IntOp $UpdateMode $DeployMode & 1
   #### END of check and parse cmdline parameter
 
   ; reads components status for registry
   ${MementoSectionRestore}
-
-!ifdef UPDATE_BUILD
-  ; updating is only allowed by starting MediaPortalUpdater
-  ${If} $DeployMode = 0
-    MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_WRONGEXE)"
-    Abort
-  ${EndIf}
-!endif
 
 !ifndef HEISE_BUILD
   ; update the component status -> commandline parameters have higher priority than registry values
@@ -987,21 +975,6 @@ Function .onInit
     MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
     Abort
   ${EndIf}
-
-/* OBSOLETE, not sure why i added this in the past
-!ifdef SVN_BUILD
-  ${IfNot} ${MPIsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)"
-    Abort
-  ${EndIf}
-!endif
-*/
-
-/* OBSOLETE - old code to rename existing dirs
-  ${If} ${Silent}
-    Call InstFilePre
-  ${EndIf}
-*/
 
   SetShellVarContext all
 FunctionEnd
@@ -1060,35 +1033,6 @@ Function un.onUninstSuccess
 
   ${un.LOG_CLOSE}
 FunctionEnd
-
-
-/* OBSOLETE - old code to rename existing dirs
-Function InstFilePre
-  ReadRegDWORD $R1 HKLM "${REG_UNINSTALL}" "VersionMajor"
-  ReadRegDWORD $R2 HKLM "${REG_UNINSTALL}" "VersionMinor"
-  ReadRegDWORD $R3 HKLM "${REG_UNINSTALL}" "VersionRevision"
-
-  ${IfNot} ${MPIsInstalled}
-    ${If} $R1 != ${VER_MAJOR}
-    ${OrIf} $R2 != ${VER_MINOR}
-    ${OrIf} $R3 != ${VER_REVISION}
-
-      !insertmacro GET_BACKUP_POSTFIX $R0
-
-      ${If} ${FileExists} "$MPdir.Base\*.*"
-        Rename "$MPdir.Base" "$MPdir.Base_$R0"
-      ${EndIf}
-
-      ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
-        Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
-      ${EndIf}
-
-    ${EndIf}
-  ${EndIf}
-
-  ${ReadMediaPortalDirs} "$INSTDIR"
-FunctionEnd
-*/
 
 #---------------------------------------------------------------------------
 # SECTION DECRIPTIONS     must be at the end

@@ -37,10 +37,6 @@
 # This build will be created by svn bot only.
 # Creating such a build, will only include the changed and new files since latest stable release to the installer.
 
-##### UPDATE_BUILD
-# This build will be created by svn bot only.
-# Creating such a build, will only include the changed and new files since latest stable release to the installer.
-
 ##### HEISE_BUILD
 # Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
 ;!define HEISE_BUILD
@@ -72,11 +68,7 @@
 !ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
-  !ifdef UPDATE_BUILD
-    !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
-  !else
-    !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
-  !endif
+  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
 
 #---------------------------------------------------------------------------
@@ -90,6 +82,7 @@ Var noServer
 Var noDesktopSC
 Var noStartMenuSC
 Var DeployMode
+Var UpdateMode
 ; variables for commandline parameters for UnInstaller
 
 #---------------------------------------------------------------------------
@@ -115,16 +108,12 @@ Var DeployMode
 
 
 !if ${BUILD_TYPE} == "Debug"
-    !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "1.0 >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
 !else
 !if ${VER_BUILD} == 0       # it's an official release
-  !ifndef UPDATE_BUILD        # it's the full installer
-    !define VERSION "1.0.1"
-  !else                       # it's the update installer
-    !define VERSION "1.0.1 Update"
-  !endif
+  !define VERSION "1.0.1"
 !else                       # it's a svn release
-    !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "1.0 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 Name          "${NAME}"
@@ -287,11 +276,7 @@ Section "-prepare" SecPrepare
 SectionEnd
 !macroend
 !if ${VER_BUILD} == 0       # it's an official release
-  !ifndef UPDATE_BUILD        # it's the full installer
-    !insertmacro RenameInstallDirectory
-  !else                       # it's the update installer
-    # no rename, because files will be updated
-  !endif
+  !insertmacro RenameInstallDirectory
 !endif
 
 ${MementoSection} "MediaPortal TV Server" SecServer
@@ -595,15 +580,6 @@ Section -Post
   ${LOG_TEXT} "DEBUG" "SECTION Post"
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
-!ifdef UPDATE_BUILD        # it's the update installer, no workaround needed
-
-    ;Removes unselected components
-    !insertmacro SectionList "FinishSection"
-
-    ;writes component status to registry
-    ${MementoSectionSave}
-
-!else                      # it's the full installer, workaround needed for the DeployTool
   ${If} $DeployMode == 1
 
     #MessageBox MB_OK|MB_ICONEXCLAMATION "DeployMode == 1"
@@ -630,7 +606,7 @@ Section -Post
     ${MementoSectionSave}
 
   ${EndIf}
-!endif
+
 
   SetOverwrite on
   SetOutPath $INSTDIR
@@ -721,6 +697,7 @@ Function .onInit
   StrCpy $noDesktopSC 0
   StrCpy $noStartMenuSC 0
   StrCpy $DeployMode 0
+  StrCpy $UpdateMode 0
 
   ; gets comandline parameter
   ${GetParameters} $R0
@@ -751,18 +728,15 @@ Function .onInit
   ${GetOptions} $R0 "/DeployMode" $R1
   IfErrors +2
   StrCpy $DeployMode 1
+
+  ClearErrors
+  ${GetOptions} $R0 "/UpdateMode" $R1
+  IfErrors +2
+  IntOp $UpdateMode $DeployMode & 1
   #### END of check and parse cmdline parameter
 
   ; reads components status for registry
   ${MementoSectionRestore}
-
-!ifdef UPDATE_BUILD
-  ; updating is only allowed by starting MediaPortalUpdater
-  ${If} $DeployMode = 0
-    MessageBox MB_OK|MB_ICONSTOP "$(UPDATE_ERROR_WRONGEXE)"
-    Abort
-  ${EndIf}
-!endif
 
   ; update the component status -> commandline parameters have higher priority than registry values
   ${If} $noClient = 1
