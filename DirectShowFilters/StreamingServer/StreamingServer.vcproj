@@ -72,7 +72,7 @@
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
-				ModuleDefinitionFile=""
+				ModuleDefinitionFile="Source\StreamingServer.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\bin\Debug/StreamingServer.pdb"
 				SubSystem="1"
