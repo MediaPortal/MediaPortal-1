@@ -69,15 +69,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private static IntPtr GetNotificationAreaHandle()
     {
+      IntPtr hwndNotifyArea = IntPtr.Zero;
       IntPtr hwndParent =
         FindWindowEx(
           FindWindowEx(FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null), IntPtr.Zero, "TrayNotifyWnd", null),
           IntPtr.Zero, "SysPager", null);
       if (hwndParent != IntPtr.Zero)
       {
-        hwndParent = FindWindowEx(hwndParent, IntPtr.Zero, null, "Notification Area");
+        // Old style search
+        hwndNotifyArea = FindWindowEx(hwndParent, IntPtr.Zero, null, "Notification Area");
+        // Have we found a valid hwnd?
+        if (hwndNotifyArea == IntPtr.Zero)
+        {
+          // Vista notifyarea
+          hwndNotifyArea = FindWindowEx(hwndParent, IntPtr.Zero, "ToolbarWindow32", null);
+        }
       }
-      return hwndParent;
+
+      return hwndNotifyArea;
     }
 
     public static void RedrawNotificationArea()
@@ -89,7 +98,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         for (int j = 0; j < rect.Bottom; j += 5)
         {
-          SendMessage(notificationAreaHandle, 0x200, 0, (uint) ((j << 0x10) + i));
+          SendMessage(notificationAreaHandle, 0x200, 0, (uint) ((j << 0x16) + i));
         }
       }
     }
@@ -131,35 +140,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       public RECT(int left_, int top_, int right_, int bottom_)
       {
-        this.Left = left_;
-        this.Top = top_;
-        this.Right = right_;
-        this.Bottom = bottom_;
+        Left = left_;
+        Top = top_;
+        Right = right_;
+        Bottom = bottom_;
       }
 
       public int Height
       {
-        get { return (this.Bottom - this.Top); }
+        get { return (Bottom - Top); }
       }
 
       public int Width
       {
-        get { return (this.Right - this.Left); }
+        get { return (Right - Left); }
       }
 
       public Size Size
       {
-        get { return new Size(this.Width, this.Height); }
+        get { return new Size(Width, Height); }
       }
 
       public Point Location
       {
-        get { return new Point(this.Left, this.Top); }
+        get { return new Point(Left, Top); }
       }
 
       public Rectangle ToRectangle()
       {
-        return Rectangle.FromLTRB(this.Left, this.Top, this.Right, this.Bottom);
+        return Rectangle.FromLTRB(Left, Top, Right, Bottom);
       }
 
       public static RECT FromRectangle(Rectangle rectangle)
@@ -169,8 +178,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
       public override int GetHashCode()
       {
-        return (((this.Left ^ ((this.Top << 13) | (this.Top >> 0x13))) ^ ((this.Width << 0x1a) | (this.Width >> 6))) ^
-                ((this.Height << 7) | (this.Height >> 0x19)));
+        return (((Left ^ ((Top << 13) | (Top >> 0x13))) ^ ((Width << 0x1a) | (Width >> 6))) ^
+                ((Height << 7) | (Height >> 0x19)));
       }
 
       public static implicit operator Rectangle(RECT rect)
@@ -234,7 +243,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         IntPtr hDesktop = OpenDesktop("Screen-saver", 0, false, 0x81);
         if (hDesktop != IntPtr.Zero)
         {
-          EnumDesktopWindows(hDesktop, new EnumDesktopWindowsProc(KillScreenSaverFunc), IntPtr.Zero);
+          EnumDesktopWindows(hDesktop, KillScreenSaverFunc, IntPtr.Zero);
           CloseDesktop(hDesktop);
         }
         else

@@ -1042,7 +1042,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     public static string Plugin_Version
     {
-      get { return "MiniDisplay Plugin v05_07_2008"; }
+      get { return "MiniDisplay Plugin v06_03_2009"; }
     }
 
     public static bool IsSetupAvailable()
