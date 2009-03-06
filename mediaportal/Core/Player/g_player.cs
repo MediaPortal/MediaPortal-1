@@ -2633,6 +2633,21 @@ namespace MediaPortal.Player
       }
     }
 
+    private static bool IsFileUsedbyAnotherProcess(string file)
+    {
+      try
+      {
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))
+        { }
+      }
+      catch (System.IO.IOException exp)
+      {
+        Log.Error("g_Player.LoadChapters() - {0}", exp.ToString());
+        return true;
+      }
+      return false;
+    }
+
     private static bool LoadChapters(string videoFile)
     {
       _chapters = null;
@@ -2641,8 +2656,8 @@ namespace MediaPortal.Player
       try
       {
         string chapterFile = Path.ChangeExtension(videoFile, ".txt");
-        FileInfo fileCheck = new FileInfo(chapterFile);
-        if (!fileCheck.Exists || fileCheck.Length == 0)
+
+        if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
         {
           return false;
         }
