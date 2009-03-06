@@ -76,6 +76,8 @@ namespace MediaPortal.Player
       int SetRelaxedMode(int relaxedReading);
     }
 
+    int DSERR_NODRIVER = -2005401480; // No sound driver is available for use
+
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
     protected class TsReader
     {
@@ -1814,6 +1816,15 @@ namespace MediaPortal.Player
               Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
                        p1, p2, p1, p2);
               MovieEnded();
+
+              // Playback was aborted! No sound driver is available for use!
+              if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+              {
+                CloseInterfaces();
+                ExclusiveMode(false);
+                _state = PlayState.Ended;
+                Log.Error("TSReaderPlayer: No sound driver is available for use!");
+              }
             }
             //else
             //Log.Info("TSReaderPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
