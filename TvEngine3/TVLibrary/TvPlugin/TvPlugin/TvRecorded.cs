@@ -91,7 +91,7 @@ namespace TvPlugin
           _thumbCreationActive = true;
 
           IList<Recording> recordings = Recording.ListAll();
-          for (int i = recordings.Count; i >= 0; i--)
+          for (int i = recordings.Count -1; i >= 0; i--)
           {
             string recFileName = GetFileName(recordings[i].FileName);
             string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
