@@ -2641,7 +2641,8 @@ namespace MediaPortal.Player
       try
       {
         string chapterFile = Path.ChangeExtension(videoFile, ".txt");
-        if (!File.Exists(chapterFile))
+        FileInfo fileCheck = new FileInfo(chapterFile);
+        if (!fileCheck.Exists || fileCheck.Length == 0)
         {
           return false;
         }
@@ -2675,8 +2676,6 @@ namespace MediaPortal.Player
           }
 
           double framesPerSecond = fps / 100.0;
-          char[] splitChar = new char[] { '\t' };
-          string[] tokens;
           int time;
 
           while (!file.EndOfStream)
@@ -2687,7 +2686,7 @@ namespace MediaPortal.Player
               continue;
             }
 
-            tokens = line.Split(splitChar);
+            string[] tokens = line.Split(new char[] { '\t' });
             if (tokens.Length != 2)
             {
               continue;
@@ -2704,7 +2703,6 @@ namespace MediaPortal.Player
             }
           }
         }
-
         if (chapters.Count == 0)
         {
           Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
