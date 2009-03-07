@@ -805,9 +805,35 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
             }
-
           }
         }
+
+        if(_mdplugs != null)
+        {
+          // MDPlugins Active.. 
+          // It's important that the ECM pids are not blocked by the HWPID Filter in the Tuner.
+          // therefore they need to be explicitly added to HWPID list.
+
+          // HWPIDS supports max number of 16 filtered pids - Total max of 16.
+          // ECM Pids
+          foreach(ECMEMM ecmValue in _channelInfo.caPMT.GetECM())
+          {
+            if (ecmValue.Pid != 0 && !hwPids.Contains( (ushort) ecmValue.Pid ) )
+            {
+              hwPids.Add( (ushort)ecmValue.Pid );
+            }
+          }
+          //EMM Pids
+          foreach (ECMEMM emmValue in _channelInfo.caPMT.GetECM())
+          {
+            if (emmValue.Pid != 0 && !hwPids.Contains((ushort)emmValue.Pid))
+            {
+              hwPids.Add((ushort)emmValue.Pid);
+            }
+          }
+          Log.Log.WriteFile("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
+        }
+
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
         {
           hwPids.Add((ushort)info.network_pmt_PID);
