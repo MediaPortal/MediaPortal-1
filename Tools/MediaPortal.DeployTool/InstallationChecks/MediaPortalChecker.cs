@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -50,9 +51,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string nsis = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("MediaPortal", "FILE");
       if (!File.Exists(nsis)) return false;
       string targetDir = InstallationProperties.Instance["MPDir"];
-      //NSIS installed doesn't want " in parameters (chefkoch)
+      
+      //NSIS installer need to to if it's a fresh install or an update (chefkoch)
+      string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
+      
+      //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(nsis, "/S /DeployMode /D=" + targetDir);
+      Process setup = Process.Start(nsis, String.Format("/S /DeployMode {0} /D={1}", UpdateMode, targetDir));
       if (setup != null)
       {
         setup.WaitForExit();

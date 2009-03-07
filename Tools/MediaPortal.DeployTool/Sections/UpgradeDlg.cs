@@ -96,6 +96,7 @@ namespace MediaPortal.DeployTool.Sections
       bUpdate.Image = Images.Choose_button_on;
       bFresh.Image = Images.Choose_button_off;
       rbFreshChecked = false;
+      InstallationProperties.Instance.Set("UpdateMode", "yes");
     }
 
     private void bFresh_Click(object sender, EventArgs e)
@@ -103,6 +104,7 @@ namespace MediaPortal.DeployTool.Sections
       bUpdate.Image = Images.Choose_button_off;
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
+      InstallationProperties.Instance.Set("UpdateMode", "no");
     }
 
   }

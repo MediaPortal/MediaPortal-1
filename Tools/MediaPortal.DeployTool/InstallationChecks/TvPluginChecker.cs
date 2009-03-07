@@ -23,6 +23,7 @@
 
 #endregion
 
+using System;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -49,10 +50,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       string nsis = Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
       if (!File.Exists(nsis)) return false;
-      //NSIS installed doesn't want " in parameters (chefkoch)
+
+      //NSIS installer need to to if it's a fresh install or an update (chefkoch)
+      string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
+
+      //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      const string parameters = "/S /noServer /DeployMode";
-      Process setup = Process.Start(nsis, parameters);
+      Process setup = Process.Start(nsis, String.Format("/S /noServer /DeployMode {0}", UpdateMode));
+
       if (setup != null)
       {
         setup.WaitForExit();
