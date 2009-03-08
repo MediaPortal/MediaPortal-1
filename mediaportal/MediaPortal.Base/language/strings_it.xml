@@ -1593,9 +1593,9 @@
     <String id="33041">Aggiungi quest'album alla lista di riproduzione</String>
     <String id="34000" prefix="La mia ">Last.fm</String>
     <String id="34001">Attiva / Cambia Flusso</String>
-    <String id="34002">Amico:</String>
-    <String id="34003">Vicino:</String>
-    <String id="34004">Gruppo:</String>
+    <String id="34002">Amico: </String>
+    <String id="34003">Vicino: </String>
+    <String id="34004">Gruppo: </String>
     <String id="34010">Amore</String>
     <String id="34011">Ban</String>
     <String id="34012">Salta</String>
