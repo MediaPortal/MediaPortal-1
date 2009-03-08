@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -34,6 +35,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+
 
 namespace MediaPortal.Player
 {
@@ -321,16 +323,30 @@ namespace MediaPortal.Player
 
     private void SelectSubtitles()
     {
-      string defaultLanguage = null;
+      CultureInfo ci = null;
       bool showSubtitles = true;
+
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
-        showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        try
+        {
+          ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", "EN"));
+          showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        }
+        catch (Exception ex)
+        {
+          ci = new CultureInfo("EN");
+          Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
+        }
       }
       for (int i = 0; i < SubtitleStreams; i++)
       {
-        if (defaultLanguage.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase))
+        // Unfortunately we use localized stream names...
+        string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
+        if (localizedCIName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.TwoLetterISOLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterISOLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterWindowsLanguageName.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
           break;
@@ -341,14 +357,27 @@ namespace MediaPortal.Player
 
     private void SelectAudioLanguage()
     {
-      string defaultAudioLanguage = null;
+      CultureInfo ci = null;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        defaultAudioLanguage = xmlreader.GetValueAsString("movieplayer", "audiolanguage", "English");
+        try
+        {
+          ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", "EN"));
+        }
+        catch(Exception ex)
+        {
+          ci = new CultureInfo("EN");
+          Log.Error("SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
+        }
       }
       for (int i = 0; i < AudioStreams; i++)
       {
-        if (defaultAudioLanguage.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
+        // Unfortunately we use localized stream names...
+        string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
+        if (localizedCIName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.TwoLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentAudioStream = i;
           break;
@@ -1430,7 +1459,7 @@ namespace MediaPortal.Player
         streamName = regex.Replace(streamName, "").Trim();
         //Put things back together
         //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
-        if (language.Length > 0 & streamName.Length <= 0)
+        if (language.Length > 0 ) // && streamName.Length <= 0)
         {
           streamName = language;
         }
@@ -1540,7 +1569,7 @@ namespace MediaPortal.Player
           //Put things back together
           //streamName = language +(streamName == string.Empty ? "" : " [" + streamName + "]");
           //if you do the above the subtitle preference for mkv embedded subtitles are not matched to the configuration settings.
-          if (language.Length > 0 & streamName.Length <= 0)
+          if (language.Length > 0 )//&& streamName.Length <= 0)
           {
             streamName = language;
           }

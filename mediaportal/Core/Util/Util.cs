@@ -53,7 +53,13 @@ using MediaPortal.TagReader;
 
 namespace MediaPortal.Util
 {
+  public struct LanguageInfo
+  {
+    public string EnglishName;
+    public string TwoLetterISO;
+  };
 
+  
   /// <summary>
   /// Common functions for general usage
   /// </summary>
@@ -143,6 +149,7 @@ namespace MediaPortal.Util
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
+
     // singleton. Dont allow any instance of this class
     private Utils()
     {
@@ -150,7 +157,6 @@ namespace MediaPortal.Util
 
     static Utils()
     {
-
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
@@ -3048,6 +3054,22 @@ namespace MediaPortal.Util
       return "English";
     }
 
+    public static string GetCultureRegionLanguageName()
+    {
+      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
+        {
+          return cultureInformation.TwoLetterISOLanguageName;
+        }
+      }
+      return "EN";
+    }
+
     public static void PopulateLanguagesToComboBox(ComboBox comboBox, string defaultLanguage)
     {
       comboBox.Items.Clear();
@@ -3055,7 +3077,6 @@ namespace MediaPortal.Util
       foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
       {
         comboBox.Items.Add(cultureInformation.EnglishName);
-
         if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
         {
           comboBox.Text = defaultLanguage;
@@ -3063,5 +3084,16 @@ namespace MediaPortal.Util
       }
     }
 
+    public static void GetISOLanguageNames(List<LanguageInfo> ISOLanguagePair)
+    {
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        LanguageInfo li;
+        li.EnglishName = cultureInformation.EnglishName;
+        li.TwoLetterISO = cultureInformation.TwoLetterISOLanguageName;
+
+        ISOLanguagePair.Add(li);
+      }
+    }
   }
 }
