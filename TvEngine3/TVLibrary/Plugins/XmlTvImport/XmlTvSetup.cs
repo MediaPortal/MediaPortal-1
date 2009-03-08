@@ -26,6 +26,7 @@ using System.IO;
 using System.Drawing;
 using System.Text;
 using System.Xml;
+using System.Globalization;
 using System.Windows.Forms;
 using TvDatabase;
 using TvEngine;
@@ -131,7 +132,31 @@ namespace SetupTv.Sections
 
       chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
       txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
-      dateTimePickerScheduler.Text = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value;
+
+      DateTime dt = DateTime.Now;            
+      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
+      DTFI.ShortDatePattern = "HH:mm";            
+
+      try
+      {
+        dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+      }
+      catch
+      {
+        // maybe 12 hr time (us) instead. lets re-parse it.
+        try
+        {
+          DTFI.ShortDatePattern = "hh:mm";      
+          dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+        }
+        catch
+        {
+          //ignore
+        }
+      }
+
+      dateTimePickerScheduler.Value = dt;
+
       lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
       lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
 

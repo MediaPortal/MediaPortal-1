@@ -152,7 +152,7 @@ namespace TvEngine
       {
         return new SetupTv.Sections.XmlTvSetup();
       }
-    }
+    }   
 
     private void DownloadFileCallback(object sender, DownloadDataCompletedEventArgs e)
     {      
@@ -272,6 +272,7 @@ namespace TvEngine
       finally
       {
         _remoteFileDownloadInProgress = false; //signal that we are done downloading.
+        SetStandbyAllowed(true);
       }
     }
 
@@ -299,6 +300,7 @@ namespace TvEngine
         setting.Value = errMsg;
         setting.Persist();
         _remoteFileDownloadInProgress = false;
+        SetStandbyAllowed(true);
         return;
       }
 
@@ -310,6 +312,7 @@ namespace TvEngine
         setting.Value = errMsg;
         setting.Persist();
         _remoteFileDownloadInProgress = false;
+        SetStandbyAllowed(true);
         return;
       }
 
@@ -360,6 +363,7 @@ namespace TvEngine
 
       try
       {
+        SetStandbyAllowed(false);
         _remoteFileDownloadInProgress = true;
         _remoteFileDonwloadInProgressAt = DateTime.Now;
         Client.DownloadDataAsync(uri);
@@ -382,7 +386,7 @@ namespace TvEngine
         Log.Error(errMsg);
         lastTransferAt = errMsg;
       }
-
+      
       setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
       setting.Value = transferStatus;
       setting.Persist();
@@ -482,7 +486,7 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void RetrieveRemoteTvGuide()
     {
-      //System.Diagnostics.Debugger.Launch();
+      //System.Diagnostics.Debugger.Launch();      
       if (_remoteFileDownloadInProgress)
       {
         return;
@@ -690,7 +694,7 @@ namespace TvEngine
         SqlStatement stmt = sb.GetStatement();
         stmt.Execute();
       }
-
+      
       _workerThreadRunning = true;
       ThreadParams param = new ThreadParams();
       param._importXML = importXML;
@@ -713,9 +717,8 @@ namespace TvEngine
 
     void ThreadFunctionImportTVGuide(object aparam)
     {
-      //System.Diagnostics.Debugger.Launch();
-
       SetStandbyAllowed(false);
+      //System.Diagnostics.Debugger.Launch();      
       FileStream streamIn = null;
       StreamReader fileIn = null;
 
