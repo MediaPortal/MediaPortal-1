@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace TvLibrary.Log
@@ -115,12 +116,17 @@ namespace TvLibrary.Log
     {
       StringBuilder sb = new StringBuilder();
       sb.AppendFormat("Exception   :{0}\n", ex);
-      sb.AppendFormat("Exception   :{0}\n", ex.Message);
-      sb.AppendFormat("  site      :{0}\n", ex.TargetSite);
-      sb.AppendFormat("  source    :{0}\n", ex.Source);
-      sb.AppendFormat("  stacktrace:{0}\n", ex.StackTrace);
+      Error(SafeString(sb.ToString()));
+    }
 
-      WriteToFile(LogType.Error, sb.ToString());
+    /// <summary>
+    /// Replaces a password inside the string by stars
+    /// </summary>
+    /// <param name="Logtext">String to replace</param>
+    /// <returns>String without password</returns>
+    public static String SafeString(String Logtext)
+    {
+      return new Regex(@"Password=[^;]*;", RegexOptions.IgnoreCase).Replace(Logtext, "Password=***;");
     }
 
     /// <summary>
