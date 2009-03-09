@@ -453,7 +453,10 @@ namespace MediaPortal.GUI.Library
       PackedTexture bigOne = _packedTextures[index];
       Format useFormat = Format.A8R8G8B8;
       //if (IsCompressedTextureFormatOk(Format.Dxt5))
-      //	useFormat=Format.Dxt5;
+      //{
+      //  Log.Debug("TexturePacker: Using DXT5 texture format");
+      //  useFormat = Format.Dxt5;
+      //}
       if (bigOne.texture == null)
       {
         bigOne.textureNo = -1;
@@ -645,7 +648,7 @@ namespace MediaPortal.GUI.Library
                                     Usage.None, ResourceType.Textures,
                                     textureFormat))
       {
-        Log.Info("TexurePacker:Using compressed textures");
+        Log.Info("TexurePacker: Using compressed textures");
         return true;
       }
       return false;

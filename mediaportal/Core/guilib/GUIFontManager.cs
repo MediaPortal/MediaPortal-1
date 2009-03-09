@@ -187,6 +187,8 @@ namespace MediaPortal.GUI.Library
             }
             GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
             font.ID = counter++;
+
+            // .NET's LocalisationProvider should give the correct amount of chars.
             if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
             {
               int start = Int32.Parse(nodeStart.InnerText);

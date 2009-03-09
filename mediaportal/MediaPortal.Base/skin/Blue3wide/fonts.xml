@@ -17,71 +17,51 @@
     <name>font10</name>
     <filename>Franklin Gothic Medium</filename>
     <height>12</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font11</name>
     <filename>Franklin Gothic Medium</filename>
     <height>13</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font12</name>
     <filename>Franklin Gothic Medium</filename>
     <height>15</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font13</name>
     <filename>Franklin Gothic Medium</filename>
     <height>16</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font14</name>
     <filename>Franklin Gothic Medium</filename>
     <height>17</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font15</name>
     <filename>Franklin Gothic Medium</filename>
     <height>18</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font16</name>
     <filename>Franklin Gothic Medium</filename>
     <height>20</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font17</name>
     <filename>Franklin Gothic Medium</filename>
     <height>21</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>font18</name>
     <filename>Franklin Gothic Medium</filename>
     <height>22</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <name>dingbats</name>
     <filename>Franklin Gothic Medium</filename>
     <height>30</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
   <font>
     <start>48</start>
@@ -108,7 +88,5 @@
     <name>fontSVT</name>
     <filename>Courier New</filename>
     <height>16</height>
-    <start>0</start>
-    <end>1536</end>
   </font>
 </fonts>

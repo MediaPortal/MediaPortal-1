@@ -36,8 +36,8 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
-using Filter=Microsoft.DirectX.Direct3D.Filter;
-using Font=System.Drawing.Font;
+using Filter = Microsoft.DirectX.Direct3D.Filter;
+using Font = System.Drawing.Font;
 
 namespace MediaPortal.GUI.Library
 {
@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
     private bool _fontAdded = false;
     private string _fontName;
     private string _fileName;
-    public const int MaxNumfontVertices = 100*6;
+    public const int MaxNumfontVertices = 100 * 6;
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
     private bool _useRTLLang = false;
@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Library
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
-                           (int) GUIGraphicsContext.GetTexturePoolType());
+                           (int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
       _fontHeight = fontHeight;
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Library
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
       FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
-                           (int) GUIGraphicsContext.GetTexturePoolType());
+                           (int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
       _fontStyle = style;
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Library
       Dispose(null, null);
       _fileName = fileName;
       _fontHeight = Size;
-      _systemFont = new Font(_fileName, (float) _fontHeight, style);
+      _systemFont = new Font(_fileName, (float)_fontHeight, style);
     }
 
     /// <summary>
@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.Library
       GetTextExtent(label, ref fTextWidth, ref fTextHeight);
       if (fTextWidth <= fMaxWidth)
       {
-        DrawText(xpos, ypos, color, label, alignment, (int) fMaxWidth);
+        DrawText(xpos, ypos, color, label, alignment, (int)fMaxWidth);
         return;
       }
       while (fTextWidth >= fMaxWidth && label.Length > 1)
@@ -320,10 +320,10 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      int alpha = (int) ((color >> 24) & 0xff);
-      int red = (int) ((color >> 16) & 0xff);
-      int green = (int) ((color >> 8) & 0xff);
-      int blue = (int) (color & 0xff);
+      int alpha = (int)((color >> 24) & 0xff);
+      int red = (int)((color >> 16) & 0xff);
+      int green = (int)((color >> 8) & 0xff);
+      int blue = (int)(color & 0xff);
 
       if (alignment == GUIControl.Alignment.ALIGN_LEFT)
       {
@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Library
       {
         float fW = 0, fH = 0;
         GetTextExtent(label, ref fW, ref fH);
-        int off = (int) ((maxWidth - fW)/2);
+        int off = (int)((maxWidth - fW) / 2);
         if (off < 0)
         {
           off = 0;
@@ -370,7 +370,7 @@ namespace MediaPortal.GUI.Library
       {
         for (int y = -iShadowHeight; y < iShadowHeight; y++)
         {
-          DrawText((float) x + fOriginX, (float) y + fOriginY, dwShadowColor, strText, alignment, -1);
+          DrawText((float)x + fOriginX, (float)y + fOriginY, dwShadowColor, strText, alignment, -1);
         }
       }
       DrawText(fOriginX, fOriginY, dwColor, strText, alignment, -1);
@@ -614,7 +614,7 @@ namespace MediaPortal.GUI.Library
 
             // find the opposite delimiter
             int j = strDelimiterChars.IndexOf(inLTRText[i]);
-            if (j%2 == 0)
+            if (j % 2 == 0)
             {
               j++;
             }
@@ -777,7 +777,7 @@ namespace MediaPortal.GUI.Library
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
           IntPtr ptrStr = Marshal.StringToCoTaskMemUni(text); //SLOW
-          FontEngineDrawText3D(ID, (void*) (ptrStr.ToPointer()), (int) xpos, (int) ypos, (uint) intColor, maxWidth,
+          FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint)intColor, maxWidth,
                                matrix);
           Marshal.FreeCoTaskMem(ptrStr);
           return;
@@ -800,13 +800,13 @@ namespace MediaPortal.GUI.Library
       SizeF size = graphics.MeasureString(text, font);
       Graphics anagra = Graphics.FromImage(bitmap);
 
-      int measured_width = (int) size.Width;
+      int measured_width = (int)size.Width;
 
       if (anagra != null)
       {
         anagra.Clear(Color.White);
         anagra.DrawString(text + "|", font, Brushes.Black,
-                          width - measured_width, -font.Height/2);
+                          width - measured_width, -font.Height / 2);
 
         for (int i = width - 1; i >= 0; i--)
         {
@@ -846,7 +846,7 @@ namespace MediaPortal.GUI.Library
       }
 
       float fRowWidth = 0.0f;
-      float fRowHeight = (_textureCoords[0, 3] - _textureCoords[0, 1])*_textureHeight;
+      float fRowHeight = (_textureCoords[0, 3] - _textureCoords[0, 1]) * _textureHeight;
       textheight = fRowHeight;
 
       for (int i = 0; i < text.Length; ++i)
@@ -870,7 +870,7 @@ namespace MediaPortal.GUI.Library
         float tx1 = _textureCoords[c - _StartCharacter, 0];
         float tx2 = _textureCoords[c - _StartCharacter, 2];
 
-        fRowWidth += (tx2 - tx1)*_textureWidth - 2*_spacingPerChar;
+        fRowWidth += (tx2 - tx1) * _textureWidth - 2 * _spacingPerChar;
       }
 
       if (fRowWidth > textwidth)
@@ -941,7 +941,7 @@ namespace MediaPortal.GUI.Library
       // Calculate the dimensions for the smallest power-of-two texture which
       // can hold all the printable characters
       _textureWidth = _textureHeight = 256;
-      for (;;)
+      for (; ; )
       {
         try
         {
@@ -973,13 +973,13 @@ namespace MediaPortal.GUI.Library
       if (_textureWidth > d3dCaps.MaxTextureWidth)
       {
         // Scale the font size down to fit on the largest possible texture
-        _textureScale = (float) d3dCaps.MaxTextureWidth/(float) _textureWidth;
+        _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
         _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
 
-        for (;;)
+        for (; ; )
         {
           // Create a new, smaller font
-          _fontHeight = (int) Math.Floor(_fontHeight*_textureScale);
+          _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
           _systemFont = new Font(_systemFont.Name, _fontHeight, _systemFont.Style);
 
           try
@@ -1008,7 +1008,7 @@ namespace MediaPortal.GUI.Library
       g.SmoothingMode = SmoothingMode.AntiAlias;
       g.TextRenderingHint = TextRenderingHint.AntiAlias;
       g.TextContrast = 0;
-      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter),4];
+      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter), 4];
       // Draw the alphabet
       PaintAlphabet(g, false);
       _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
@@ -1022,88 +1022,96 @@ namespace MediaPortal.GUI.Library
     public void InitializeDeviceObjects()
     {
       BinaryFormatter b = new BinaryFormatter();
-      Stream s;
+      Stream s = null;
 
       string strCache = String.Format(@"{0}\fonts\{1}_{2}.dds", GUIGraphicsContext.SkinCacheFolder, _fontName,
                                       _fontHeight);
-
-      // If file does not exist
-      if (!File.Exists(strCache))
+      try
       {
-        Log.Debug("TextureLoader.CreateFile {0}", strCache);
-        // Make sure directory exists
-        try
+        // If file does not exist
+        if (!File.Exists(strCache))
         {
-          Directory.CreateDirectory(String.Format(@"{0}\fonts\", GUIGraphicsContext.SkinCacheFolder));
+          Log.Debug("TextureLoader.CreateFile {0}", strCache);
+          // Make sure directory exists
+          try
+          {
+            Directory.CreateDirectory(String.Format(@"{0}\fonts\", GUIGraphicsContext.SkinCacheFolder));
+
+            // Create bitmap with the fonts
+            using (Bitmap bmp = CreateFontBitmap())
+            {
+              // Save bitmap to stream
+              using (MemoryStream imageStream = new MemoryStream())
+              {
+                bmp.Save(imageStream, ImageFormat.Bmp);
+
+                // Reset and load from steam
+                imageStream.Position = 0;
+                Format format = Format.Dxt3;
+                if (GUIGraphicsContext.GetTexturePoolType() == Pool.Default)
+                {
+                  format = Format.Unknown;
+                }
+                ImageInformation info = new ImageInformation();
+                _textureFont = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                                                        imageStream, (int)imageStream.Length,
+                                                        0, 0, //width/height
+                                                        1, //miplevels
+                                                        0,
+                                                        format,
+                                                        GUIGraphicsContext.GetTexturePoolType(),
+                                                        Filter.None,
+                                                        Filter.None,
+                                                        0,
+                                                        ref info);
+
+                // Finally save texture and texture coords to disk
+                TextureLoader.Save(strCache, ImageFileFormat.Dds, _textureFont);
+                s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
+                b.Serialize(s, (object)_textureCoords);
+                s.Close();
+                Log.Debug("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
+                          _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+              }
+            }
+          }
+          catch (Exception) { }
         }
-        catch (Exception)
+        else
         {
-        }
-
-        // Create bitmap with the fonts
-        Bitmap bmp = CreateFontBitmap();
-
-        // Save bitmap to stream
-        MemoryStream imageStream = new MemoryStream();
-        bmp.Save(imageStream, ImageFormat.Bmp);
-
-        // Reset and load from steam
-        imageStream.Position = 0;
-        Format format = Format.Dxt3;
-        if (GUIGraphicsContext.GetTexturePoolType() == Pool.Default)
-        {
-          format = Format.Unknown;
-        }
-        ImageInformation info = new ImageInformation();
-        _textureFont = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
-                                                imageStream, (int) imageStream.Length,
+          ImageInformation info = new ImageInformation();
+          _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+                                                strCache,
                                                 0, 0, //width/height
                                                 1, //miplevels
                                                 0,
-                                                format,
+                                                Format.Unknown,
                                                 GUIGraphicsContext.GetTexturePoolType(),
                                                 Filter.None,
                                                 Filter.None,
                                                 0,
                                                 ref info);
 
-        // Finally save texture and texture coords to disk
-        TextureLoader.Save(strCache, ImageFileFormat.Dds, _textureFont);
-        s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
-        b.Serialize(s, (object) _textureCoords);
-        s.Close();
-        Log.Debug("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
-                  _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+          s = File.Open(strCache + ".bxml", FileMode.Open, FileAccess.Read);
+          _textureCoords = (float[,])b.Deserialize(s);
+          s.Close();
+          _spacingPerChar = (int)_textureCoords[_EndCharacter - _StartCharacter, 0];
+          _textureScale = _textureCoords[_EndCharacter - _StartCharacter + 1, 0];
+          _textureHeight = info.Height;
+          _textureWidth = info.Width;
+
+          Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
+                    _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+        }
+        _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
+        SetFontEgine();
+        _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
       }
-      else
+      finally
       {
-        ImageInformation info = new ImageInformation();
-        _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-                                              strCache,
-                                              0, 0, //width/height
-                                              1, //miplevels
-                                              0,
-                                              Format.Unknown,
-                                              GUIGraphicsContext.GetTexturePoolType(),
-                                              Filter.None,
-                                              Filter.None,
-                                              0,
-                                              ref info);
-
-        s = File.Open(strCache + ".bxml", FileMode.Open, FileAccess.Read);
-        _textureCoords = (float[,]) b.Deserialize(s);
-        s.Close();
-        _spacingPerChar = (int) _textureCoords[_EndCharacter - _StartCharacter, 0];
-        _textureScale = _textureCoords[_EndCharacter - _StartCharacter + 1, 0];
-        _textureHeight = info.Height;
-        _textureWidth = info.Width;
-
-        Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
-                  _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+        if (s != null)
+          s.Dispose();
       }
-      _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
-      SetFontEgine();
-      _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
     }
 
 
@@ -1166,10 +1174,10 @@ namespace MediaPortal.GUI.Library
       // Calculate the spacing between characters based on line height
       size = g.MeasureString(" ", _systemFont).ToSize();
       //x = spacingPerChar = (int) Math.Ceiling(size.Height * 0.3);
-      _spacingPerChar = (int) Math.Ceiling(size.Width*0.4);
+      _spacingPerChar = (int)Math.Ceiling(size.Width * 0.4);
       x = 0;
 
-      for (char c = (char) _StartCharacter; c < (char) _EndCharacter; c++)
+      for (char c = (char)_StartCharacter; c < (char)_EndCharacter; c++)
       {
         str = c.ToString();
         // We need to do some things here to get the right sizes.  The default implemententation of MeasureString
@@ -1206,13 +1214,13 @@ namespace MediaPortal.GUI.Library
           try
           {
             if (c != ' ')
-              // We need the special case here because a space has a 0 width in GenericTypoGraphic stringformats
+            // We need the special case here because a space has a 0 width in GenericTypoGraphic stringformats
             {
-              g.DrawString(str, _systemFont, Brushes.White, new Point((int) x, (int) y), StringFormat.GenericTypographic);
+              g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y), StringFormat.GenericTypographic);
             }
             else
             {
-              g.DrawString(str, _systemFont, Brushes.White, new Point((int) x, (int) y));
+              g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y));
             }
           }
           catch (ExternalException)
@@ -1220,13 +1228,13 @@ namespace MediaPortal.GUI.Library
             // If GDI+ throws a generic exception (Interop ExternalException) because the requested character (str) isn't defined, ignore it and move on.
             continue;
           }
-          _textureCoords[c - _StartCharacter, 0] = ((float) (x + 0 - _spacingPerChar))/_textureWidth;
-          _textureCoords[c - _StartCharacter, 1] = ((float) (y + 0 + 0))/_textureHeight;
-          _textureCoords[c - _StartCharacter, 2] = ((float) (x + size.Width + _spacingPerChar))/_textureWidth;
-          _textureCoords[c - _StartCharacter, 3] = ((float) (y + size.Height + 0))/_textureHeight;
+          _textureCoords[c - _StartCharacter, 0] = ((float)(x + 0 - _spacingPerChar)) / _textureWidth;
+          _textureCoords[c - _StartCharacter, 1] = ((float)(y + 0 + 0)) / _textureHeight;
+          _textureCoords[c - _StartCharacter, 2] = ((float)(x + size.Width + _spacingPerChar)) / _textureWidth;
+          _textureCoords[c - _StartCharacter, 3] = ((float)(y + size.Height + 0)) / _textureHeight;
         }
 
-        x += size.Width + (2*_spacingPerChar);
+        x += size.Width + (2 * _spacingPerChar);
       }
     }
   }
