@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Library
             {
                 if (!File.Exists(fileName))
                 {
-                    Log.Info("texture:{0} does not exist", fileName);
+                    Log.Info("TextureManager: texture: {0} does not exist", fileName);
                     return 0;
                 }
 
@@ -682,7 +682,7 @@ namespace MediaPortal.GUI.Library
         }
 
         public static void Init()
-        {
+        {           
             _packer.PackSkinGraphics(GUIGraphicsContext.Skin);
         }
 

@@ -225,9 +225,22 @@ namespace MediaPortal.GUI.Library
       string mpFile = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
       DateTime cacheCreationTime = File.GetLastWriteTime(cacheFile);
       DateTime mpCreationTime = File.GetLastWriteTime(mpFile);
+      DateTime tvLogoChangeTime = Directory.GetLastWriteTime(Thumbs.TVChannel);
+      DateTime radioLogoChangeTime = Directory.GetLastWriteTime(Thumbs.Radio);
+
       if (cacheCreationTime > mpCreationTime)
       {
-        return;
+        // Cache was created after MP got updated - check whether logos have changed
+        // People might startup MP after install _before_ they are have finished to fetch logos for everything.
+        if ((cacheCreationTime > tvLogoChangeTime) && (cacheCreationTime > radioLogoChangeTime))
+        {
+          return;
+        }
+        else
+        {
+          Log.Info("TexturePacker: Cache from {0} is outdated and will be recreated including current tv ({1}) and radio ({2}) thumbs",
+            cacheCreationTime.ToShortDateString(), tvLogoChangeTime.ToShortDateString(), radioLogoChangeTime.ToShortDateString());
+        }
       }
 
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -239,13 +252,15 @@ namespace MediaPortal.GUI.Library
         }
         Log.Info("TexturePacker: Removing packed skin");
 
-        File.Delete(cacheFile);
-        for (int i = 0; i < 10; i++)
+        try
         {
-          string fileName = string.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, i);
-
-          File.Delete(fileName);
+          string[] cacheFiles = Directory.GetFiles(GUIGraphicsContext.SkinCacheFolder, "packedgfx*", SearchOption.TopDirectoryOnly);
+          for (int i = 0; i < cacheFiles.Length; i++)
+          {
+            File.Delete(cacheFiles[i]);
+          }
         }
+        catch (Exception) { }
       }
     }
 
@@ -313,6 +328,7 @@ namespace MediaPortal.GUI.Library
 
     public void PackSkinGraphics(string skinName)
     {
+      Cleanup();
       if (LoadPackedSkin(skinName))
       {
         return;
@@ -385,6 +401,7 @@ namespace MediaPortal.GUI.Library
             files[i] = files[i].ToLower();
             if (files[i] != string.Empty)
             {
+              // Ignore files not needed for MP
               if (files[i].IndexOf("preview.") >= 0)
               {
                 files[i] = string.Empty;
