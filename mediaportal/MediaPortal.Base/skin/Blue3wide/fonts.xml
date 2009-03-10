@@ -64,22 +64,22 @@
     <height>30</height>
   </font>
   <font>
-    <start>48</start>
-    <end>58</end>
+    <startchar>48</startchar>
+    <endchar>58</endchar>
     <name>font32</name>
     <filename>Franklin Gothic Medium</filename>
     <height>40</height>
   </font>
   <font>
-    <start>48</start>
-    <end>58</end>
+    <startchar>48</startchar>
+    <endchar>58</endchar>
     <name>font48</name>
     <filename>Franklin Gothic Medium</filename>
     <height>60</height>
   </font>
   <font>
-    <start>48</start>
-    <end>58</end>
+    <startchar>48</startchar>
+    <endchar>58</endchar>
     <name>font60</name>
     <filename>Franklin Gothic Medium</filename>
     <height>75</height>

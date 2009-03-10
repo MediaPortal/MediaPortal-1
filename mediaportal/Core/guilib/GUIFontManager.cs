@@ -148,8 +148,8 @@ namespace MediaPortal.GUI.Library
         XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
         foreach (XmlNode node in list)
         {
-          XmlNode nodeStart = node.SelectSingleNode("start");
-          XmlNode nodeEnd = node.SelectSingleNode("end");
+          XmlNode nodeStart = node.SelectSingleNode("startchar");
+          XmlNode nodeEnd = node.SelectSingleNode("endchar");
           XmlNode nodeName = node.SelectSingleNode("name");
           XmlNode nodeFileName = node.SelectSingleNode("filename");
           XmlNode nodeHeight = node.SelectSingleNode("height");
