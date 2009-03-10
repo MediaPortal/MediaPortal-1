@@ -69,6 +69,7 @@ namespace SetupTv.Sections
       this.label11 = new System.Windows.Forms.Label();
       this.tpRecording = new System.Windows.Forms.TabPage();
       this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
+      this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.labelTSFolder = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
@@ -80,6 +81,7 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.textBoxTimeShiftFolder = new System.Windows.Forms.TextBox();
       this.tpRecordImport = new System.Windows.Forms.TabPage();
+      this.buttonChangeChannel = new System.Windows.Forms.Button();
       this.btnRemoveInvalidFiles = new System.Windows.Forms.Button();
       this.btnImport = new System.Windows.Forms.Button();
       this.lblImportItems = new System.Windows.Forms.Label();
@@ -87,7 +89,6 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -560,6 +561,15 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.TabStop = false;
       this.groupBoxRecordSettings.Text = "Card settings";
       // 
+      // textBoxRecordingFormat
+      // 
+      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 99);
+      this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
+      this.textBoxRecordingFormat.ReadOnly = true;
+      this.textBoxRecordingFormat.Size = new System.Drawing.Size(326, 20);
+      this.textBoxRecordingFormat.TabIndex = 26;
+      this.textBoxRecordingFormat.Text = " Transport Stream (.ts)";
+      // 
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
@@ -667,6 +677,7 @@ namespace SetupTv.Sections
       // 
       // tpRecordImport
       // 
+      this.tpRecordImport.Controls.Add(this.buttonChangeChannel);
       this.tpRecordImport.Controls.Add(this.btnRemoveInvalidFiles);
       this.tpRecordImport.Controls.Add(this.btnImport);
       this.tpRecordImport.Controls.Add(this.lblImportItems);
@@ -681,14 +692,25 @@ namespace SetupTv.Sections
       this.tpRecordImport.Text = "Database import";
       this.tpRecordImport.UseVisualStyleBackColor = true;
       // 
+      // buttonChangeChannel
+      // 
+      this.buttonChangeChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonChangeChannel.Location = new System.Drawing.Point(161, 336);
+      this.buttonChangeChannel.Name = "buttonChangeChannel";
+      this.buttonChangeChannel.Size = new System.Drawing.Size(100, 23);
+      this.buttonChangeChannel.TabIndex = 5;
+      this.buttonChangeChannel.Text = "Change channel";
+      this.buttonChangeChannel.UseVisualStyleBackColor = true;
+      this.buttonChangeChannel.Click += new System.EventHandler(this.buttonChangeChannel_Click);
+      // 
       // btnRemoveInvalidFiles
       // 
       this.btnRemoveInvalidFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(215, 336);
+      this.btnRemoveInvalidFiles.Location = new System.Drawing.Point(317, 336);
       this.btnRemoveInvalidFiles.Name = "btnRemoveInvalidFiles";
-      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(170, 23);
+      this.btnRemoveInvalidFiles.Size = new System.Drawing.Size(125, 23);
       this.btnRemoveInvalidFiles.TabIndex = 4;
-      this.btnRemoveInvalidFiles.Text = "Remove no longer existing files";
+      this.btnRemoveInvalidFiles.Text = "Remove invalid entries";
       this.btnRemoveInvalidFiles.UseVisualStyleBackColor = true;
       this.btnRemoveInvalidFiles.Click += new System.EventHandler(this.btnRemoveInvalidFiles_Click);
       // 
@@ -697,7 +719,7 @@ namespace SetupTv.Sections
       this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btnImport.Location = new System.Drawing.Point(30, 336);
       this.btnImport.Name = "btnImport";
-      this.btnImport.Size = new System.Drawing.Size(170, 23);
+      this.btnImport.Size = new System.Drawing.Size(125, 23);
       this.btnImport.TabIndex = 3;
       this.btnImport.Text = "Import selected files";
       this.btnImport.UseVisualStyleBackColor = true;
@@ -723,7 +745,7 @@ namespace SetupTv.Sections
       this.tvTagRecs.Name = "tvTagRecs";
       this.tvTagRecs.ShowPlusMinus = false;
       this.tvTagRecs.ShowRootLines = false;
-      this.tvTagRecs.Size = new System.Drawing.Size(355, 236);
+      this.tvTagRecs.Size = new System.Drawing.Size(412, 236);
       this.tvTagRecs.TabIndex = 2;
       this.tvTagRecs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterCheck);
       // 
@@ -744,7 +766,7 @@ namespace SetupTv.Sections
       this.cbRecPaths.FormattingEnabled = true;
       this.cbRecPaths.Location = new System.Drawing.Point(30, 43);
       this.cbRecPaths.Name = "cbRecPaths";
-      this.cbRecPaths.Size = new System.Drawing.Size(355, 21);
+      this.cbRecPaths.Size = new System.Drawing.Size(412, 21);
       this.cbRecPaths.Sorted = true;
       this.cbRecPaths.TabIndex = 1;
       this.cbRecPaths.SelectedIndexChanged += new System.EventHandler(this.cbRecPaths_SelectedIndexChanged);
@@ -752,15 +774,6 @@ namespace SetupTv.Sections
       // openFileDialog1
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
-      // 
-      // textBoxRecordingFormat
-      // 
-      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 99);
-      this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
-      this.textBoxRecordingFormat.ReadOnly = true;
-      this.textBoxRecordingFormat.Size = new System.Drawing.Size(326, 20);
-      this.textBoxRecordingFormat.TabIndex = 26;
-      this.textBoxRecordingFormat.Text = " Transport Stream (.ts)";
       // 
       // TvRecording
       // 
@@ -853,5 +866,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button btnRemoveInvalidFiles;
     private System.Windows.Forms.GroupBox groupBoxRecordSettings;
     private System.Windows.Forms.TextBox textBoxRecordingFormat;
+    private System.Windows.Forms.Button buttonChangeChannel;
   }
 }

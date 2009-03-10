@@ -35,6 +35,7 @@ using Gentle.Framework;
 
 using TvDatabase;
 using TvControl;
+using SetupTv.Dialogs;
 
 #endregion
 
@@ -189,10 +190,10 @@ namespace SetupTv.Sections
       formatString[0] = "";
       formatString[1] = "";
 
-      numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-      formatString[0] = layer.GetSetting("moviesformat", @"%title% - %channel% - %date%").Value;
-      formatString[1] = layer.GetSetting("seriesformat", @"%title% - %channel%\%title% - %episode% - %date% - %start%").Value;
+      numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
+      numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
+      formatString[0] = layer.GetSetting("moviesformat", @"%title%\%title% - %channel% - %date% - %start%").Value;
+      formatString[1] = layer.GetSetting("seriesformat", @"%title%\%title% - %channel% - %date% - %start%").Value;
 
       /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -215,10 +216,10 @@ namespace SetupTv.Sections
     public override void SaveSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("preRecordInterval", "5");
+      Setting setting = layer.GetSetting("preRecordInterval", "7");
       setting.Value = numericUpDownPreRec.Value.ToString();
       setting.Persist();
-      setting = layer.GetSetting("postRecordInterval", "5");
+      setting = layer.GetSetting("postRecordInterval", "10");
       setting.Value = numericUpDownPostRec.Value.ToString();
       setting.Persist();
       setting = layer.GetSetting("moviesformat", "");
@@ -933,6 +934,42 @@ namespace SetupTv.Sections
 
     #endregion
 
+    #region Change channel
+
+    private void buttonChangeChannel_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Recording currentTagRec = tvTagRecs.SelectedNode.Tag as Recording;
+        if (currentTagRec != null)
+        {
+          // TODO: Just change the channel in the xml file - do not import immediately
+          FormSelectListChannel idSelection = new FormSelectListChannel();
+          currentTagRec.IdChannel = idSelection.ShowFormModal();
+          if (currentTagRec.IdChannel != -1)
+          {
+            try
+            {
+              currentTagRec.Persist();
+            }
+            catch (Exception ex)
+            {
+              MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(string.Format("Changing the recording's channel failed: \n{0}", ex.Message), "Change channel failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      // Refresh the view
+      GetRecordingsFromDb();
+      GetTagFiles();
+    }
+
+    #endregion
+
     #region Import
 
     private void btnImport_Click(object sender, EventArgs e)
@@ -951,7 +988,7 @@ namespace SetupTv.Sections
               currentTagRec.Persist();
             } catch (Exception ex)
             {
-              MessageBox.Show(string.Format("Importing failed: {0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             //}
           }
