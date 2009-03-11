@@ -48,10 +48,17 @@ namespace SetupTv.Dialogs
       listViewChannels.Clear();
       listViewChannels.BeginUpdate();
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
-      //sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
-      //sb.AddConstraint(Operator.Equals, "freetoair", 1);
+      if (checkBoxGuideChannels.Checked)
+      {
+        sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
+      }
+      if (checkBoxFTA.Checked)
+      {
+        sb.AddConstraint(Operator.Equals, "freetoair", 1);
+      }
       sb.AddConstraint(Operator.Equals, "isTv", 1);
       sb.AddOrderByField(true, "sortOrder");
+      sb.AddOrderByField(true, "displayName");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
@@ -81,5 +88,17 @@ namespace SetupTv.Dialogs
     }
 
     #endregion
+
+    private void listViewChannels_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+      try
+      {
+        if (e.Item != null)
+        {
+          e.Item.Checked = e.IsSelected;
+        }
+      }
+      catch (Exception) { }
+    }
   }
 }

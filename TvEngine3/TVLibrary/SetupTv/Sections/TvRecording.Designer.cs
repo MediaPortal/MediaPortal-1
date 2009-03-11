@@ -748,6 +748,7 @@ namespace SetupTv.Sections
       this.tvTagRecs.Size = new System.Drawing.Size(412, 236);
       this.tvTagRecs.TabIndex = 2;
       this.tvTagRecs.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterCheck);
+      this.tvTagRecs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvTagRecs_AfterSelect);
       // 
       // lblRecFolders
       // 

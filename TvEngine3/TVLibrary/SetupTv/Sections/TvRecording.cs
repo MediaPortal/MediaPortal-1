@@ -475,7 +475,8 @@ namespace SetupTv.Sections
         {
           long quota = Int64.Parse(setting.Value);
           mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           mpNumericTextBoxDiskQuota.Value = 0;
         }
@@ -553,7 +554,8 @@ namespace SetupTv.Sections
         try
         {
           result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
 
@@ -603,7 +605,8 @@ namespace SetupTv.Sections
         {
           cbRecPaths.SelectedIndex = 0;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Error gathering recording folders of all tv cards: \n{0}", ex.Message));
       }
@@ -615,7 +618,8 @@ namespace SetupTv.Sections
       {
         CurrentImportPath = cbRecPaths.Text;
         GetTagFiles();
-      } catch (Exception ex2)
+      }
+      catch (Exception ex2)
       {
         MessageBox.Show(string.Format("Error gathering matroska tags: \n{0}", ex2.Message));
       }
@@ -659,7 +663,8 @@ namespace SetupTv.Sections
           if (RecNode != null)
             tvDbRecs.Add(RecNode);
         }
-      } catch (Exception ex1)
+      }
+      catch (Exception ex1)
       {
         MessageBox.Show(string.Format("Error retrieving recordings from database: \n{0}", ex1.Message));
       }
@@ -678,7 +683,8 @@ namespace SetupTv.Sections
         lookupThread.Name = "MatroskaTagHandler";
         lookupThread.Start(CurrentImportPath);
         lookupThread.IsBackground = true;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(ex.Message);
       }
@@ -689,7 +695,8 @@ namespace SetupTv.Sections
       try
       {
         Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
-      } catch (Exception) { }
+      }
+      catch (Exception) { }
     }
 
     /// <summary>
@@ -751,7 +758,8 @@ namespace SetupTv.Sections
         //}
         tvTagRecs.EndUpdate();
         SetImportButton();
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         // just in case the GUI controls could be null due to timing problems on thread callback
         if (btnImport != null)
@@ -779,7 +787,8 @@ namespace SetupTv.Sections
             channelName = lookupChannel.DisplayName;
             lookupChannel.IdChannel.ToString();
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
 
@@ -809,7 +818,8 @@ namespace SetupTv.Sections
         recItem.Tag = aRec;
         recItem.Checked = true;
         return recItem;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
         return null;
@@ -838,7 +848,8 @@ namespace SetupTv.Sections
                                          0,
                                          GetServerId()
                                          );
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not build recording from tag: {0}\n{1}", aFileName, ex.Message));
       }
@@ -886,7 +897,8 @@ namespace SetupTv.Sections
             return recordingFile;
           }
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
       }
       return recordingFile;
@@ -904,7 +916,8 @@ namespace SetupTv.Sections
           if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant())
             serverId = computer.IdServer;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
       }
@@ -919,13 +932,14 @@ namespace SetupTv.Sections
       try
       {
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-        sb.AddConstraint(Operator.Like, "displayName", "%"+aChannelName+"%");
+        sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         if (channels.Count > 0)
           channelId = (channels[0]).IdChannel;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));
       }
@@ -940,21 +954,35 @@ namespace SetupTv.Sections
     {
       try
       {
-        Recording currentTagRec = tvTagRecs.SelectedNode.Tag as Recording;
-        if (currentTagRec != null)
+        // TODO: Just change the channel in the xml file - do not import immediately
+        // uninitialized
+        int newId = -2;
+        foreach (TreeNode node in tvTagRecs.Nodes)
         {
-          // TODO: Just change the channel in the xml file - do not import immediately
-          FormSelectListChannel idSelection = new FormSelectListChannel();
-          currentTagRec.IdChannel = idSelection.ShowFormModal();
-          if (currentTagRec.IdChannel != -1)
+          if (node.IsSelected)
           {
-            try
+            // first time = ask for channel
+            if (newId == -2)
             {
-              currentTagRec.Persist();
+              FormSelectListChannel idSelection = new FormSelectListChannel();
+              newId = idSelection.ShowFormModal();
             }
-            catch (Exception ex)
+            // If the user chose a proper channel
+            if (newId > -1)
             {
-              MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              Recording currentTagRec = node.Tag as Recording;
+              if (currentTagRec != null)
+              {
+                try
+                {
+                  currentTagRec.IdChannel = newId;
+                  currentTagRec.Persist();
+                }
+                catch (Exception ex)
+                {
+                  MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+              }
             }
           }
         }
@@ -986,7 +1014,8 @@ namespace SetupTv.Sections
             try
             {
               currentTagRec.Persist();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -1017,7 +1046,8 @@ namespace SetupTv.Sections
               try
               {
                 currentDbRec.Delete();
-              } catch (Exception ex)
+              }
+              catch (Exception ex)
               {
                 MessageBox.Show(string.Format("Cleanup failed: {0}", ex.Message), "Could not delete entry", MessageBoxButtons.OK, MessageBoxIcon.Error);
               }
@@ -1028,6 +1058,18 @@ namespace SetupTv.Sections
     }
 
     #endregion
+
+    private void tvTagRecs_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+      try
+      {
+        if (e.Node != null)
+        {
+          e.Node.Checked = e.Node.IsSelected;
+        }
+      }
+      catch (Exception) { }
+    }
 
     #endregion
   }

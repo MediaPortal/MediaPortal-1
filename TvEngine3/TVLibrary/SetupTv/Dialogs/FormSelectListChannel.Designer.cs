@@ -31,13 +31,15 @@
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewChannels = new System.Windows.Forms.ListView();
+      this.checkBoxGuideChannels = new System.Windows.Forms.CheckBox();
+      this.checkBoxFTA = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // mpButtonCancel
       // 
       this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(235, 489);
+      this.mpButtonCancel.Location = new System.Drawing.Point(242, 489);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 52;
@@ -48,7 +50,7 @@
       // mpButtonOk
       // 
       this.mpButtonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonOk.Location = new System.Drawing.Point(154, 489);
+      this.mpButtonOk.Location = new System.Drawing.Point(161, 489);
       this.mpButtonOk.Name = "mpButtonOk";
       this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOk.TabIndex = 51;
@@ -65,19 +67,46 @@
       this.listViewChannels.FullRowSelect = true;
       this.listViewChannels.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
       this.listViewChannels.LabelWrap = false;
-      this.listViewChannels.Location = new System.Drawing.Point(12, 12);
+      this.listViewChannels.Location = new System.Drawing.Point(12, 30);
       this.listViewChannels.MultiSelect = false;
       this.listViewChannels.Name = "listViewChannels";
-      this.listViewChannels.Size = new System.Drawing.Size(298, 471);
+      this.listViewChannels.Size = new System.Drawing.Size(305, 453);
       this.listViewChannels.TabIndex = 53;
       this.listViewChannels.UseCompatibleStateImageBehavior = false;
-      this.listViewChannels.View = System.Windows.Forms.View.List;
+      this.listViewChannels.View = System.Windows.Forms.View.Details;
+      this.listViewChannels.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewChannels_ItemSelectionChanged);
+      // 
+      // checkBoxGuideChannels
+      // 
+      this.checkBoxGuideChannels.AutoSize = true;
+      this.checkBoxGuideChannels.Checked = true;
+      this.checkBoxGuideChannels.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxGuideChannels.Location = new System.Drawing.Point(12, 7);
+      this.checkBoxGuideChannels.Name = "checkBoxGuideChannels";
+      this.checkBoxGuideChannels.Size = new System.Drawing.Size(165, 17);
+      this.checkBoxGuideChannels.TabIndex = 54;
+      this.checkBoxGuideChannels.Text = "Only channels visible in guide";
+      this.checkBoxGuideChannels.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxFTA
+      // 
+      this.checkBoxFTA.AutoSize = true;
+      this.checkBoxFTA.Checked = true;
+      this.checkBoxFTA.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxFTA.Location = new System.Drawing.Point(183, 7);
+      this.checkBoxFTA.Name = "checkBoxFTA";
+      this.checkBoxFTA.Size = new System.Drawing.Size(140, 17);
+      this.checkBoxFTA.TabIndex = 55;
+      this.checkBoxFTA.Text = "Only free to air channels";
+      this.checkBoxFTA.UseVisualStyleBackColor = true;
       // 
       // FormSelectListChannel
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(322, 524);
+      this.ClientSize = new System.Drawing.Size(329, 524);
+      this.Controls.Add(this.checkBoxFTA);
+      this.Controls.Add(this.checkBoxGuideChannels);
       this.Controls.Add(this.listViewChannels);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOk);
@@ -85,6 +114,7 @@
       this.Name = "FormSelectListChannel";
       this.Text = "FormSelectListChannel";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -93,5 +123,7 @@
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
     private System.Windows.Forms.ListView listViewChannels;
+    private System.Windows.Forms.CheckBox checkBoxGuideChannels;
+    private System.Windows.Forms.CheckBox checkBoxFTA;
   }
 }
