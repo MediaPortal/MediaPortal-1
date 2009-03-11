@@ -83,59 +83,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("TvServer", "FILE");
       FileInfo tvServerFile = new FileInfo(fileName);
 
-#if DEBUG
-      MessageBox.Show("TvSever - CheckStatus: " + "start");
-#endif
-
       if (tvServerFile.Exists && tvServerFile.Length != 0)
         result.needsDownload = false;
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
-#if DEBUG
-        MessageBox.Show("TvSever - CheckStatus: " + "download_only");
-#endif
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] + "Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      if (key == null)
-      {
-        result.state = CheckState.NOT_INSTALLED;
-      }
-      else
-      {
-#if DEBUG
-        MessageBox.Show("TvServer - CheckStatus: " + "registry UninstallString");
-#endif
-        string TV3Path = (string)key.GetValue("UninstallString", null);
-#if DEBUG
-        MessageBox.Show("TvServer - CheckStatus: " + "registry MementoSection_SecServer");
-#endif
-        int serverInstalled = (int)key.GetValue("MementoSection_SecServer", 0);
-#if DEBUG
-        MessageBox.Show("TvServer - CheckStatus: " + "registry DisplayVersion");
-#endif
-        string version = (string)key.GetValue("DisplayVersion", null);
-        key.Close();
-#if DEBUG
-        MessageBox.Show("TvServer - CheckStatus: " + "registry close");
-#endif
-        if (TV3Path == null | !File.Exists(TV3Path))
-          result.state = CheckState.NOT_INSTALLED;
-        else
-        {
-#if DEBUG
-          MessageBox.Show("TvServer - CheckStatus: " + "GetPackageVersion section");
-#endif
-          if (serverInstalled == 1)
-          {
-            result.state = version == Utils.GetPackageVersion(true) ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
-          }
-          else
-            result.state = CheckState.NOT_INSTALLED;
-        }
-      }
+      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
       return result;
     }
   }

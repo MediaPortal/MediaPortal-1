@@ -278,6 +278,32 @@ namespace MediaPortal.DeployTool
       return null;
     }
 
+    public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
+    {
+      CheckResult result = new CheckResult();
+      result.state = CheckState.NOT_INSTALLED;
+      
+      RegistryKey key =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
+                                         "Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      if (key != null)
+      {
+        int _IsInstalled = (int)key.GetValue(MementoSection, 0);
+        string version = (string)key.GetValue("DisplayVersion", null);
+        key.Close();
+
+        if (_IsInstalled == 1)
+        {
+          result.state = version == GetPackageVersion(true) ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+        }
+        else
+        {
+          result.state = CheckState.NOT_INSTALLED;
+        }
+      }
+      return result;
+    }
+
     public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
     {
       aCurrentVersion = new Version(0, 0, 0, 0);

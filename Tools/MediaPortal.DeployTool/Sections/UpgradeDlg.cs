@@ -97,6 +97,18 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_off;
       rbFreshChecked = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
+
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+
+      bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
+      bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
+
+      if (!TvServer && !TvClient) InstallationProperties.Instance.Set("InstallType", "mp_only");
+      if (!TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "client");
+      if (TvServer && !TvClient) InstallationProperties.Instance.Set("InstallType", "tvserver_master");
+      if (TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "singleseat");
+
     }
 
     private void bFresh_Click(object sender, EventArgs e)
