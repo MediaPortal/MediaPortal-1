@@ -66,21 +66,32 @@ namespace SetupTv
           //
           int serverId = TvControl.RemoteControl.Instance.IdServer;
           return true;
-        } catch (Exception)
+        }
+        catch (Exception ex)
         {
+          Log.Error("ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}", ex.ToString());
+
+          try
+          {
+            ServiceController[] services = ServiceController.GetServices();
+            foreach (ServiceController service in services)
+            {
+              if (String.Compare(service.ServiceName, "TvService", true) == 0)
+              {
+                if (service.Status == ServiceControllerStatus.Running)
+                {
+                  return true;
+                }
+                return false;
+              }
+            }
+          }
+          catch (Exception ex2)
+          {
+            Log.Error("ServiceHelper: Fallback to check whether the tvservice is running failed as well. Please check your installation. \nError: {0}", ex2.ToString());
+          }
           return false;
         }
-        /**
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
-      {
-        if (String.Compare(service.ServiceName, "TvService", true) == 0)
-        {
-          if (service.Status == ServiceControllerStatus.Running) return true;
-          return false;
-        }
-      }
-        */
       }
     }
 
@@ -241,7 +252,8 @@ namespace SetupTv
           }
           return false; // probably wrong service name
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return false;
       }
@@ -266,7 +278,8 @@ namespace SetupTv
         }
 
         return true;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
         return false;
