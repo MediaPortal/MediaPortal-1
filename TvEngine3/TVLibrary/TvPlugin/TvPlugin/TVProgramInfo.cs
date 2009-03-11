@@ -184,176 +184,189 @@ namespace TvPlugin
       {
         return;
       }
+      try
+      {
+        string strTime = String.Format("{0} {1} - {2}",
+                                       Utils.GetShortDayString(program.StartTime),
+                                       program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(program.StartTime),
-                                     program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      lblProgramGenre.Label = program.Genre;
-      lblProgramTime.Label = strTime;
-      lblProgramDescription.Label = program.Description;
-      lblProgramTitle.Label = program.Title;
-      lblProgramChannel.Label = Channel.Retrieve(program.IdChannel).DisplayName;
+        lblProgramGenre.Label = program.Genre;
+        lblProgramTime.Label = strTime;
+        lblProgramDescription.Label = program.Description;
+        lblProgramTitle.Label = program.Title;
+        lblProgramChannel.Label = Channel.Retrieve(program.IdChannel).DisplayName;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVProgramInfo: Error updating program description - {0}", ex.ToString());
+      }
     }
 
     private void Update()
     {
-      GUIListItem lastSelectedItem = lstUpcomingEpsiodes.SelectedListItem;
-      Program lastSelectedProgram;
-      if (lastSelectedItem != null)
+      try
       {
-        lastSelectedProgram = lastSelectedItem.MusicTag as Program;
-      }else
-      {
-        lastSelectedProgram = currentProgram;
-      }
-      int itemToSelect = -1;
-      lstUpcomingEpsiodes.Clear();
-      if (currentProgram == null)
-      {
-        return;
-      }
-
-      //set program description
-      string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(currentProgram.StartTime),
-                                     currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      lblProgramGenre.Label = currentProgram.Genre;
-      lblProgramTime.Label = strTime;
-      lblProgramDescription.Label = currentProgram.Description;
-      lblProgramTitle.Label = currentProgram.Title;
-      lblProgramChannel.Label = Channel.Retrieve(currentProgram.IdChannel).DisplayName;
-
-      //check if we are recording this program
-      IList<Schedule> schedules = Schedule.ListAll();
-      bool isRecording = false;
-      bool isSeries = false;
-      foreach (Schedule schedule in schedules)
-      {
-        Schedule recSched;
-        isRecording = IsRecordingProgram(currentProgram, out recSched, true);
-
-        if (isRecording)
+        GUIListItem lastSelectedItem = lstUpcomingEpsiodes.SelectedListItem;
+        Program lastSelectedProgram;
+        if (lastSelectedItem != null)
         {
-          if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-          {
-            isSeries = true;
-          }
-          break;
-        }
-      }
-      if (isRecording)
-      {
-        btnRecord.Label = GUILocalizeStrings.Get(1039); //dont record
-        btnAdvancedRecord.Disabled = true;
-        btnKeep.Disabled = false;
-        btnQuality.Disabled = true;
-        IList<TuningDetail> details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
-        foreach (TuningDetail detail in details)
-        {
-          if (detail.ChannelType == 0)
-          {
-            btnQuality.Disabled = false;
-            break;
-          }
-        }
-        btnEpisodes.Disabled = !isSeries;
-        btnPreRecord.Disabled = false;
-        btnPostRecord.Disabled = false;
-      }
-      else
-      {
-        btnRecord.Label = GUILocalizeStrings.Get(264); //record
-        btnAdvancedRecord.Disabled = false;
-        btnKeep.Disabled = true;
-        btnQuality.Disabled = true;
-        btnEpisodes.Disabled = true;
-        btnPreRecord.Disabled = true;
-        btnPostRecord.Disabled = true;
-      }
-      if (_notificationEnabled)
-      {
-        btnNotify.Disabled = false;
-        btnNotify.Selected = currentProgram.Notify;
-      }
-      else
-      {
-        btnNotify.Selected = false;
-        btnNotify.Disabled = true;
-      }
-
-
-      //find upcoming episodes
-      lstUpcomingEpsiodes.Clear();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      DateTime dtDay = DateTime.Now;
-      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
-
-      foreach (Program episode in episodes)
-      {
-        GUIListItem item = new GUIListItem();
-        item.Label = episode.Title;
-        item.OnItemSelected += item_OnItemSelected;
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
-        if (!File.Exists(logo))
-        {
-          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
-          logo = "defaultVideoBig.png";
-        }
-        Schedule recordingSchedule;
-        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
-        /*
-        bool isRecPrgNow = false;
-        if (!isRecPrg)
-        {
-          isRecPrgNow = TVHome.IsRecordingSchedule();
-        }*/
-
-        if (isRecPrg)
-        {
-          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
-          {
-            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
-          }
-          item.TVTag = recordingSchedule;
+          lastSelectedProgram = lastSelectedItem.MusicTag as Program;
         }
         else
         {
-          if (episode.Notify && _notificationEnabled)
-          {
-            item.PinImage = Thumbs.TvNotifyIcon;
-          }
+          lastSelectedProgram = currentProgram;
         }
-
-        item.MusicTag = episode;
-        item.ThumbnailImage = logo;
-        item.IconImageBig = logo;
-        item.IconImage = logo;
-        item.Label2 = String.Format("{0} {1} - {2}",
-                                    Utils.GetShortDayString(episode.StartTime),
-                                    episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                    episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        if (lastSelectedProgram != null)
+        int itemToSelect = -1;
+        lstUpcomingEpsiodes.Clear();
+        if (currentProgram == null)
         {
-          if (lastSelectedProgram.IdChannel == episode.IdChannel &&
-              lastSelectedProgram.StartTime == episode.StartTime &&
-              lastSelectedProgram.EndTime == episode.EndTime && lastSelectedProgram.Title == episode.Title)
+          return;
+        }
+
+        //set program description
+        string strTime = String.Format("{0} {1} - {2}",
+                                       Utils.GetShortDayString(currentProgram.StartTime),
+                                       currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        lblProgramGenre.Label = currentProgram.Genre;
+        lblProgramTime.Label = strTime;
+        lblProgramDescription.Label = currentProgram.Description;
+        lblProgramTitle.Label = currentProgram.Title;
+        lblProgramChannel.Label = Channel.Retrieve(currentProgram.IdChannel).DisplayName;
+
+        //check if we are recording this program
+        IList<Schedule> schedules = Schedule.ListAll();
+        bool isRecording = false;
+        bool isSeries = false;
+        foreach (Schedule schedule in schedules)
+        {
+          Schedule recSched;
+          isRecording = IsRecordingProgram(currentProgram, out recSched, true);
+
+          if (isRecording)
           {
-            itemToSelect = lstUpcomingEpsiodes.Count;
+            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+            {
+              isSeries = true;
+            }
+            break;
           }
         }
-        lstUpcomingEpsiodes.Add(item);
-      }
-      if (itemToSelect != -1)
-      {
-        lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
-      }
+        if (isRecording)
+        {
+          btnRecord.Label = GUILocalizeStrings.Get(1039); //dont record
+          btnAdvancedRecord.Disabled = true;
+          btnKeep.Disabled = false;
+          btnQuality.Disabled = true;
+          IList<TuningDetail> details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
+          foreach (TuningDetail detail in details)
+          {
+            if (detail.ChannelType == 0)
+            {
+              btnQuality.Disabled = false;
+              break;
+            }
+          }
+          btnEpisodes.Disabled = !isSeries;
+          btnPreRecord.Disabled = false;
+          btnPostRecord.Disabled = false;
+        }
+        else
+        {
+          btnRecord.Label = GUILocalizeStrings.Get(264); //record
+          btnAdvancedRecord.Disabled = false;
+          btnKeep.Disabled = true;
+          btnQuality.Disabled = true;
+          btnEpisodes.Disabled = true;
+          btnPreRecord.Disabled = true;
+          btnPostRecord.Disabled = true;
+        }
+        if (_notificationEnabled)
+        {
+          btnNotify.Disabled = false;
+          btnNotify.Selected = currentProgram.Notify;
+        }
+        else
+        {
+          btnNotify.Selected = false;
+          btnNotify.Disabled = true;
+        }
 
-      //set object count label
-      GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
+        //find upcoming episodes
+        lstUpcomingEpsiodes.Clear();
+        TvBusinessLayer layer = new TvBusinessLayer();
+        DateTime dtDay = DateTime.Now;
+        IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
+
+        foreach (Program episode in episodes)
+        {
+          GUIListItem item = new GUIListItem();
+          item.Label = episode.Title;
+          item.OnItemSelected += item_OnItemSelected;
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
+          if (!File.Exists(logo))
+          {
+            item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
+            logo = "defaultVideoBig.png";
+          }
+          Schedule recordingSchedule;
+          bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
+          /*
+          bool isRecPrgNow = false;
+          if (!isRecPrg)
+          {
+            isRecPrgNow = TVHome.IsRecordingSchedule();
+          }*/
+
+          if (isRecPrg)
+          {
+            if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
+            {
+              item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+            }
+            item.TVTag = recordingSchedule;
+          }
+          else
+          {
+            if (episode.Notify && _notificationEnabled)
+            {
+              item.PinImage = Thumbs.TvNotifyIcon;
+            }
+          }
+
+          item.MusicTag = episode;
+          item.ThumbnailImage = logo;
+          item.IconImageBig = logo;
+          item.IconImage = logo;
+          item.Label2 = String.Format("{0} {1} - {2}",
+                                      Utils.GetShortDayString(episode.StartTime),
+                                      episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          if (lastSelectedProgram != null)
+          {
+            if (lastSelectedProgram.IdChannel == episode.IdChannel &&
+                lastSelectedProgram.StartTime == episode.StartTime &&
+                lastSelectedProgram.EndTime == episode.EndTime && lastSelectedProgram.Title == episode.Title)
+            {
+              itemToSelect = lstUpcomingEpsiodes.Count;
+            }
+          }
+          lstUpcomingEpsiodes.Add(item);
+        }
+        if (itemToSelect != -1)
+        {
+          lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
+        }
+
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVProgramInfo: Error in Update() - {0}", ex.ToString());
+      }
     }
 
     private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)

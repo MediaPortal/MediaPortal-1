@@ -39,15 +39,21 @@ namespace MediaPortal.GUI.Library
     protected int _itemsPerPage = 10;
     protected int _itemHeight = 10;
     protected int _xOffset = 16;
-    [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
-    [XMLSkinElement("font")] protected string _fontName = "";
-    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("label")] protected string _property = "";
-    [XMLSkinElement("seperator")] protected string _seperator = "";
+    [XMLSkinElement("spaceBetweenItems")]
+    protected int _spaceBetweenItems = 2;
+    [XMLSkinElement("font")]
+    protected string _fontName = "";
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("label")]
+    protected string _property = "";
+    [XMLSkinElement("seperator")]
+    protected string _seperator = "";
     protected GUIFont _font = null;
     protected ArrayList _listItems = new ArrayList();
     protected bool _invalidate = false;
-    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textalign")]
+    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
     private string _previousProperty = "a";
 
@@ -59,7 +65,7 @@ namespace MediaPortal.GUI.Library
 
     public double TimeSlice
     {
-      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedVertical)*0.01f); }
+      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedVertical) * 0.01f); }
     }
 
     public GUITextScrollUpControl(int dwParentID)
@@ -112,7 +118,7 @@ namespace MediaPortal.GUI.Library
       int dwPosY = _positionY;
 
       _timeElapsed += timePassed;
-      _currentFrame = (int) (_timeElapsed/TimeSlice);
+      _currentFrame = (int)(_timeElapsed / TimeSlice);
 
       if (_containsProperty)
       {
@@ -141,7 +147,7 @@ namespace MediaPortal.GUI.Library
           _invalidate = true;
           // adjust y-pos
           _yPositionScroll = _currentFrame - 25 - 12;
-          dwPosY -= (int) (_yPositionScroll - _scrollOffset);
+          dwPosY -= (int)(_yPositionScroll - _scrollOffset);
 
           if (_positionY - dwPosY >= _itemHeight)
           {
@@ -181,7 +187,7 @@ namespace MediaPortal.GUI.Library
       {
         GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX + GUIGraphicsContext.OffsetX,
                                                           _positionY + GUIGraphicsContext.OffsetY, _width,
-                                                          _itemsPerPage*_itemHeight));
+                                                          _itemsPerPage * _itemHeight));
       }
       else
       {
@@ -239,7 +245,7 @@ namespace MediaPortal.GUI.Library
           string strLabel1 = "", strLabel2 = "";
           if (iItem < _listItems.Count)
           {
-            GUIListItem item = (GUIListItem) _listItems[iItem];
+            GUIListItem item = (GUIListItem)_listItems[iItem];
             strLabel1 = item.Label;
             strLabel2 = item.Label2;
           }
@@ -261,7 +267,7 @@ namespace MediaPortal.GUI.Library
             float fTextWidth = 0, fTextHeight = 0;
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2.Trim(), ref fTextWidth, ref fTextHeight);
-            dMaxWidth -= (int) (fTextWidth);
+            dMaxWidth -= (int)(fTextWidth);
 
             switch (_textAlignment)
             {
@@ -275,7 +281,7 @@ namespace MediaPortal.GUI.Library
                 break;
             }
 
-            _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, _textAlignment);
+            _font.DrawTextWidth(x, (float)dwPosY + ioffy, _textColor, wszText2.Trim(), fTextWidth, _textAlignment);
           }
 
           switch (_textAlignment)
@@ -289,7 +295,7 @@ namespace MediaPortal.GUI.Library
               x = dwPosX + _width;
               break;
           }
-          _font.DrawTextWidth(x, (float) dwPosY + ioffy, _textColor, wszText1.Trim(), (float) dMaxWidth, _textAlignment);
+          _font.DrawTextWidth(x, (float)dwPosY + ioffy, _textColor, wszText1.Trim(), (float)dMaxWidth, _textAlignment);
 
           //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
           //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
@@ -317,7 +323,7 @@ namespace MediaPortal.GUI.Library
         {
           _containsProperty = false;
           _property = "";
-          GUIListItem pItem = (GUIListItem) message.Object;
+          GUIListItem pItem = (GUIListItem)message.Object;
           pItem.DimColor = DimColor;
           _listItems.Add(pItem);
         }
@@ -361,9 +367,9 @@ namespace MediaPortal.GUI.Library
       _font.GetTextExtent("abcdef", ref fWidth, ref fHeight);
       try
       {
-        _itemHeight = (int) fHeight;
-        float fTotalHeight = (float) _height;
-        _itemsPerPage = (int) Math.Floor(fTotalHeight/fHeight);
+        _itemHeight = (int)fHeight;
+        float fTotalHeight = (float)_height;
+        _itemsPerPage = (int)Math.Floor(fTotalHeight / fHeight);
         if (_itemsPerPage == 0)
         {
           _itemsPerPage = 1;
@@ -387,9 +393,9 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        float fHeight = (float) _itemHeight; // + (float)_spaceBetweenItems;
-        float fTotalHeight = (float) (_height);
-        _itemsPerPage = (int) Math.Floor(fTotalHeight/fHeight);
+        float fHeight = (float)_itemHeight; // + (float)_spaceBetweenItems;
+        float fTotalHeight = (float)(_height);
+        _itemsPerPage = (int)Math.Floor(fTotalHeight / fHeight);
         if (_itemsPerPage == 0)
         {
           _itemsPerPage = 1;
@@ -397,8 +403,8 @@ namespace MediaPortal.GUI.Library
         int iPages = 1;
         if (_listItems.Count > 0)
         {
-          iPages = _listItems.Count/_itemsPerPage;
-          if ((_listItems.Count%_itemsPerPage) != 0)
+          iPages = _listItems.Count / _itemsPerPage;
+          if ((_listItems.Count % _itemsPerPage) != 0)
           {
             iPages++;
           }
@@ -471,107 +477,114 @@ namespace MediaPortal.GUI.Library
 
     private void SetText(string strText)
     {
-      _listItems.Clear();
-      // start wordwrapping
-      // Set a flag so we can determine initial justification effects
-      //bool bStartingNewLine = true;
-      //bool bBreakAtSpace = false;
-      int pos = 0;
-      int lpos = 0;
-      int iLastSpace = -1;
-      int iLastSpaceInLine = -1;
-      string szLine = "";
-      strText = strText.Replace("\r", " ");
-      strText.Trim();
-      while (pos < strText.Length)
+      try
       {
-        // Get the current letter in the string
-        char letter = strText[pos];
-
-        // Handle the newline character
-        if (letter == '\n')
+        _listItems.Clear();
+        // start wordwrapping
+        // Set a flag so we can determine initial justification effects
+        //bool bStartingNewLine = true;
+        //bool bBreakAtSpace = false;
+        int pos = 0;
+        int lpos = 0;
+        int iLastSpace = -1;
+        int iLastSpaceInLine = -1;
+        string szLine = "";
+        strText = strText.Replace("\r", " ");
+        strText.Trim();
+        while (pos < strText.Length)
         {
-          if (szLine.Length > 0 || _listItems.Count > 0)
-          {
-            GUIListItem item = new GUIListItem(szLine);
-            item.DimColor = DimColor;
-            _listItems.Add(item);
-          }
-          iLastSpace = -1;
-          iLastSpaceInLine = -1;
-          lpos = 0;
-          szLine = "";
-        }
-        else
-        {
-          if (letter == ' ')
-          {
-            iLastSpace = pos;
-            iLastSpaceInLine = lpos;
-          }
+          // Get the current letter in the string
+          char letter = strText[pos];
 
-          if (lpos < 0 || lpos > 1023)
+          // Handle the newline character
+          if (letter == '\n')
           {
-            //OutputDebugString("ERRROR\n");
-          }
-          szLine += letter;
-
-          float fwidth = 0, fheight = 0;
-          string wsTmp = szLine;
-          _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
-          if (fwidth > (_width - _xOffset))
-          {
-            if (iLastSpace > 0 && iLastSpaceInLine != lpos)
-            {
-              szLine = szLine.Substring(0, iLastSpaceInLine);
-              pos = iLastSpace;
-            }
             if (szLine.Length > 0 || _listItems.Count > 0)
             {
               GUIListItem item = new GUIListItem(szLine);
               item.DimColor = DimColor;
               _listItems.Add(item);
             }
-            iLastSpaceInLine = -1;
             iLastSpace = -1;
+            iLastSpaceInLine = -1;
             lpos = 0;
             szLine = "";
           }
           else
           {
-            lpos++;
+            if (letter == ' ')
+            {
+              iLastSpace = pos;
+              iLastSpaceInLine = lpos;
+            }
+
+            if (lpos < 0 || lpos > 1023)
+            {
+              //OutputDebugString("ERRROR\n");
+            }
+            szLine += letter;
+
+            float fwidth = 0, fheight = 0;
+            string wsTmp = szLine;
+            _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
+            if (fwidth > (_width - _xOffset))
+            {
+              if (iLastSpace > 0 && iLastSpaceInLine != lpos)
+              {
+                szLine = szLine.Substring(0, iLastSpaceInLine);
+                pos = iLastSpace;
+              }
+              if (szLine.Length > 0 || _listItems.Count > 0)
+              {
+                GUIListItem item = new GUIListItem(szLine);
+                item.DimColor = DimColor;
+                _listItems.Add(item);
+              }
+              iLastSpaceInLine = -1;
+              iLastSpace = -1;
+              lpos = 0;
+              szLine = "";
+            }
+            else
+            {
+              lpos++;
+            }
+          }
+          pos++;
+        }
+        if (lpos > 0)
+        {
+          GUIListItem item = new GUIListItem(szLine);
+          item.DimColor = DimColor;
+          _listItems.Add(item);
+        }
+
+        int istart = -1;
+        for (int i = 0; i < _listItems.Count; ++i)
+        {
+          GUIListItem item = (GUIListItem)_listItems[i];
+          if (item.Label.Length != 0)
+          {
+            istart = -1;
+          }
+          else if (istart == -1)
+          {
+            istart = i;
           }
         }
-        pos++;
-      }
-      if (lpos > 0)
-      {
-        GUIListItem item = new GUIListItem(szLine);
-        item.DimColor = DimColor;
-        _listItems.Add(item);
-      }
-
-      int istart = -1;
-      for (int i = 0; i < _listItems.Count; ++i)
-      {
-        GUIListItem item = (GUIListItem) _listItems[i];
-        if (item.Label.Length != 0)
+        if (istart > 0)
         {
-          istart = -1;
+          _listItems.RemoveRange(istart, _listItems.Count - istart);
         }
-        else if (istart == -1)
-        {
-          istart = i;
-        }
-      }
-      if (istart > 0)
-      {
-        _listItems.RemoveRange(istart, _listItems.Count - istart);
-      }
 
-      // Set _timeElapsed to be 0 so we delay scrolling again
-      _timeElapsed = 0.0f;
-      _scrollOffset = 0.0f;
+        // Set _timeElapsed to be 0 so we delay scrolling again
+        _timeElapsed = 0.0f;
+        _scrollOffset = 0.0f;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TextBoxScrollUp: Error in SetText - {0}", ex.ToString());
+      }
     }
 
 
