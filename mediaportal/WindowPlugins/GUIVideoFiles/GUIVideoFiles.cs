@@ -646,7 +646,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if ((item.IsFolder) && (!isFolderAMovie))
+      if ((item.IsFolder && !isFolderAMovie) || VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(path)))
         //-- Mars Warrior @ 03-sep-2004
       {
         _currentSelectedItem = -1;
@@ -1275,7 +1275,15 @@ namespace MediaPortal.GUI.Video
     private void SetMovieProperties(string path)
     {
       IMDBMovie info = new IMDBMovie();
+      if (path == "..")
+      {
+        info.Reset();
+        info.SetProperties();
+        return;
+      }
       bool isDirectory = false;
+      bool isMultiMovieFolder = false;
+      bool isFound = false;
       try
       {
         if (Directory.Exists(path))
@@ -1288,8 +1296,16 @@ namespace MediaPortal.GUI.Video
             VideoDatabase.GetMovieInfo(file, ref movie);
             if (!movie.IsEmpty)
             {
-              info = movie;
-              break;
+              if (!isFound)
+              {
+                info = movie;
+                isFound = true;
+              }
+              else
+              {
+                isMultiMovieFolder = true;
+                break;
+              }
             }
           }
         }
@@ -1297,12 +1313,14 @@ namespace MediaPortal.GUI.Video
         {
           VideoDatabase.GetMovieInfo(path, ref info);
         }
-
         if (info.IsEmpty)
         {
           FetchMatroskaInfo(path, isDirectory, ref info);
         }
-
+        if (isMultiMovieFolder)
+        {
+          info.Reset();
+        }
         info.SetProperties();
       }
       catch (Exception)
@@ -1312,22 +1330,9 @@ namespace MediaPortal.GUI.Video
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      if (item.Label != "..")
-      {
-        SetMovieProperties(item.Path);
-      }
+      SetMovieProperties(item.Path);
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null)
-      {
-        return;
-      }
-
-      if (item.Label == "..")
-      {
-        filmstrip.InfoImageFileName = string.Empty;
-        return;
-      }
-      else
+      if (filmstrip != null)
       {
         filmstrip.InfoImageFileName = item.ThumbnailImage;
       }

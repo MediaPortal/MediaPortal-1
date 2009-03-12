@@ -1514,8 +1514,14 @@ namespace MediaPortal.Util
             if ((!Directory.Exists(FileName) || (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden))
               continue;
 
-            item = new GUIListItem(strPath, "", FileName, true, new FileInformation(FileName, true));
-
+            if (File.Exists(FileName + @"\VIDEO_TS\VIDEO_TS.IFO"))
+            {
+              item = new GUIListItem(strPath, "", FileName + @"\VIDEO_TS\VIDEO_TS.IFO", false, null);
+            }
+            else
+            {
+              item = new GUIListItem(strPath, "", FileName, true, new FileInformation(FileName, true));
+            }
             Utils.SetDefaultIcons(item);
             int pin;
             if (!IsProtectedShare(item.Path, out pin))
@@ -1535,7 +1541,7 @@ namespace MediaPortal.Util
 
             if (IsImageFile(extension))
             {
-              if (DaemonTools.IsEnabled)
+              if (DaemonTools.IsEnabled && !IsValidExtension(FileName))
               {
                 item = new GUIListItem(Path.GetFileName(FileName), "", FileName, true, null);
 
