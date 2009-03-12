@@ -159,7 +159,7 @@ namespace MediaPortal.MPInstaller
     /// <returns></returns>
     public string GetLocalFilename()
     {
-      return InstallerInfo.Name + " " + InstallerInfo.Version + ".mpe1";
+      return Util.Utils.MakeFileName(InstallerInfo.Name + " " + InstallerInfo.Version + ".mpe1");
     }
     /// <summary>
     /// Installs the current package.
