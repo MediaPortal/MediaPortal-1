@@ -154,6 +154,31 @@ namespace MediaPortal.TagReader
               foundPopm = true;
             }
 
+            // Now look for a POPM frame written by WMP
+            if (!foundPopm)
+            {
+              TagLib.Id3v2.PopularimeterFrame popm = TagLib.Id3v2.PopularimeterFrame.Get(id3v2tag, "Windows Media Player 9 Series", false);
+              if (popm != null)
+              {
+                // Get the rating stored in the WMP POPM frame
+                int rating = popm.Rating;
+                int i = 0;
+                if (rating == 255)
+                  i = 5;
+                else if (rating == 196)
+                  i = 4;
+                else if (rating == 128)
+                  i = 3;
+                else if (rating == 64)
+                  i = 2;
+                else if (rating == 1)
+                  i = 1;
+
+                musictag.Rating = i;
+                foundPopm = true;
+              }
+            }
+
             if (!foundPopm)
             {
               // Now look for any other POPM frame that might exist
@@ -171,6 +196,7 @@ namespace MediaPortal.TagReader
                   i = 2;
                 else if (rating > 0 || rating == 1)
                   i = 1;
+
                 musictag.Rating = i;
                 foundPopm = true;
                 break;  // we only take the first popm frame
