@@ -350,7 +350,7 @@ namespace MediaPortal.MPInstaller
           return defaultValue;
         }
       }
-      catch (Exception ex)
+      catch (Exception )
       {
         return defaultValue;
       }

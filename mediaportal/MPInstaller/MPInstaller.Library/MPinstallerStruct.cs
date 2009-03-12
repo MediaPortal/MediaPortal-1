@@ -431,6 +431,7 @@ namespace MediaPortal.MPInstaller
     public void BuildFile(ListBox ls, ProgressBar pb)
     {
       ZipOutputStream s = new ZipOutputStream(File.Create(_builFileName));
+      s.UseZip64 = UseZip64.Off;
       ls.Items.Clear();
       s.SetLevel(5); // 0 - store only to 9 - means best compression
       pb.Value = 0;
@@ -443,7 +444,6 @@ namespace MediaPortal.MPInstaller
         fs.Read(buffer, 0, buffer.Length);
 
         ZipEntry entry = new ZipEntry("instaler.xmp");
-
         s.PutNextEntry(entry);
 
         s.Write(buffer, 0, buffer.Length);
