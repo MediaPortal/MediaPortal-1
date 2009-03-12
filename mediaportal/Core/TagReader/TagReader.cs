@@ -157,7 +157,7 @@ namespace MediaPortal.TagReader
             // Now look for a POPM frame written by WMP
             if (!foundPopm)
             {
-              TagLib.Id3v2.PopularimeterFrame popm = TagLib.Id3v2.PopularimeterFrame.Get(id3v2tag, "Windows Media Player 9 Series", false);
+              TagLib.Id3v2.PopularimeterFrame popm = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "Windows Media Player 9 Series", false);
               if (popm != null)
               {
                 // Get the rating stored in the WMP POPM frame
