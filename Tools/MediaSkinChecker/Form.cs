@@ -65,7 +65,7 @@ namespace WindowsApplication3
           SW2.Close();
         }
       }
-      MessageBox.Show("Please review {0} for unused Media gfx list.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      MessageBox.Show(String.Format("Please review {0} for unused Media gfx list.", FileLog), "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
       buttonStart.Enabled = true;
     }
 
