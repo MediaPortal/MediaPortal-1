@@ -64,7 +64,7 @@ namespace SetupTv.Sections
     }
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
-    bool _redrawTab1;
+
     public TvChannels()
       : this("TV Channels")
     {
@@ -105,6 +105,13 @@ namespace SetupTv.Sections
 
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in groups)
+      {
+        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
+        item.Tag = group;
+        item.Click += OnAddToFavoritesMenuItem_Click;
+        addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
+      }
       ToolStripMenuItem itemNew = new ToolStripMenuItem("New...");
       itemNew.Click += OnAddToFavoritesMenuItem_Click;
       addToFavoritesToolStripMenuItem.DropDownItems.Add(itemNew);
@@ -113,7 +120,6 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       UpdateMenu();
-      _redrawTab1 = false;
 
       base.OnSectionActivated();
 
