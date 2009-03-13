@@ -9,12 +9,15 @@ namespace WindowsApplication3
   public partial class Form1 : Form
   {
     const string FileLog = @"C:\MediaFolderCheck.txt";
+    const string FileBatch = @"C:\MediaFolderCheck.bat";
+    const string SVNcmd = @"C:\Program Files\CollabNet Subversion Client\svn";
 
     public Form1()
     {
       InitializeComponent();
 
       File.Delete(FileLog);
+      File.Delete(FileBatch);
 
 #if DEBUG
       sourcePath.Text = @"C:\svnroot\mediaportal\trunk\mediaportal\MediaPortal.Base\skin\Blue3wide\Media";
@@ -51,11 +54,15 @@ namespace WindowsApplication3
         }
         if (!found)
         {
-          string msg = String.Format("WARNING: file {0}[{1}] is not used !!!", srcFile.Name.Split('.')[0], srcFile.Name.Split('.')[1]);
-          Console.WriteLine(msg);
-          StreamWriter SW = File.AppendText(FileLog);
-          SW.WriteLine(msg);
-          SW.Close();
+          string msg1 = String.Format("WARNING: file {0}[{1}] is not used !!!", srcFile.Name.Split('.')[0], srcFile.Name.Split('.')[1]);
+          string msg2 = String.Format("\"{0}\" remove {1}", SVNcmd, srcFile.Name);
+          Console.WriteLine(msg1);
+          StreamWriter SW1 = File.AppendText(FileLog);
+          SW1.WriteLine(msg1);
+          SW1.Close();
+          StreamWriter SW2 = File.AppendText(FileBatch);
+          SW2.WriteLine(msg2);
+          SW2.Close();
         }
       }
       MessageBox.Show("Please review {0} for unused Media gfx list.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
