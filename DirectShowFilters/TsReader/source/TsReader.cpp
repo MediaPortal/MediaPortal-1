@@ -394,7 +394,9 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 
   CAutoLock cObjectLock(m_pLock);
 
-  //are we using RTSP or local file
+  if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
+	
+	//are we using RTSP or local file
   if (m_fileDuration==NULL)
   {
     //using RTSP, if its streaming is paused then
@@ -429,6 +431,11 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bSeeking=true;
 
   SetWaitForNewPat(false) ;
+
+  if (m_pSubtitlePin)
+  {
+    m_pSubtitlePin->SetRunningStatus(false);
+  }
 
   //stop duration thread
   StopThread();

@@ -51,6 +51,7 @@ public:
 
   HRESULT OnThreadStartPlay();
 
+	void SetRunningStatus(bool onOff) ;
   bool IsConnected();
 
 protected:
@@ -67,6 +68,7 @@ protected:
   CRefTime  m_lastSeek;
   bool      m_bInFillBuffer;
   bool      m_bPresentSample;
+	bool      m_bRunning ;
 };
 
 #endif

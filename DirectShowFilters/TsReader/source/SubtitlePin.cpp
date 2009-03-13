@@ -217,7 +217,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       //if the filter is currently seeking to a new position
       //or this pin is currently seeking to a new position then
       //we dont try to read any packets, but simply return...
-      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof())
+      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->IsSeekingToEof()|| !m_bRunning)
       {
 //        LogDebug("sub:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
         Sleep(20);
@@ -556,6 +556,11 @@ STDMETHODIMP CSubtitlePin::GetCurrentPosition(LONGLONG *pCurrent)
 {
 //  LogDebug("sub:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
+}
+
+void CSubtitlePin::SetRunningStatus(bool onOff)
+{
+	m_bRunning = onOff;
 }
 
 void CSubtitlePin::LogCurrentPosition()
