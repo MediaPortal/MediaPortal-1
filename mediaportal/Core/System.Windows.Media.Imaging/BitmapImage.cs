@@ -73,8 +73,11 @@ namespace System.Windows.Media.Imaging
 		private void DownloadWorker(object sender, DoWorkEventArgs e)
 		{
           Thread.CurrentThread.Name = "BitmapImage-Downloader";
-			using(WebClient client = new WebClient())
-				client.DownloadData((string)e.Argument);
+          using (WebClient client = new WebClient())
+          {
+            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            client.DownloadData((string)e.Argument);
+          }
 		}
 
 		private void DownloadWorkerProgressChanged(object sender, ProgressChangedEventArgs e)

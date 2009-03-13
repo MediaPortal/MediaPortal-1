@@ -49,6 +49,7 @@ namespace MediaPortal.Playlists
       {
         // We've got a URL pointing to a pls
         WebClient client = new WebClient();
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
         byte[] buffer = client.DownloadData(fileName);
         stream = new MemoryStream(buffer);
       }

@@ -230,6 +230,7 @@ namespace SetupTv
       string[] SCstaname = new string[count];                       // Extracted station name
       string[] SCstabr = new string[count];						   //Bitrate info
       WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+      myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
       // Create Regex objects and define the search criteria.
       Regex nterm = new Regex("Unfortunately, there weren't any SHOUTcast streams found containing the term");
       Regex ngenre = new Regex("Unfortunately, there weren't any SHOUTcast streams found under the genre");
@@ -384,6 +385,7 @@ namespace SetupTv
         WaitLabel.Visible = true;
         WaitLabel.Enabled = true;
         WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+        myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
         string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
         //Get station file number to get the file
         SHOUTcastStation radiostation = listItem.Tag as SHOUTcastStation;

@@ -240,7 +240,8 @@ namespace MediaPortal.Configuration
       string[] SCstanum = new string[count]; // Second part holds file number on Shoutcast
       string[] SCstaname = new string[count]; // Extracted station name
       string[] SCstabr = new string[count]; //Bitrate info
-      WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
+      WebClient myWebClient = new WebClient(); // Create a new WebClient instance.
+      myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
       string HTMLdownload; // Hold HTML for parsing or misc
       byte[] HTMLbuffer; // HTML buffer
       MatchCollection mc; // Holds matched data
@@ -407,6 +408,7 @@ namespace MediaPortal.Configuration
         WaitLabel.Visible = true;
         WaitLabel.Enabled = true;
         WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
+        myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
         string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
         //Get station file number to get the file
         RadioStation radiostation = listItem.Tag as RadioStation;

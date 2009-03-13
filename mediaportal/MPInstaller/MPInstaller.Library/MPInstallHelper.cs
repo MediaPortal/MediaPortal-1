@@ -225,6 +225,7 @@ namespace MediaPortal.MPInstaller
       {
         try
         {
+          client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           client.DownloadFile(url, fil);
           return true;
         }

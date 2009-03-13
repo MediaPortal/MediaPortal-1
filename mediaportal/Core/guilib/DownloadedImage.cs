@@ -112,7 +112,8 @@ namespace MediaPortal.GUI.Library
           {
             Log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
           }
-
+          
+          client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           client.DownloadFile(URL, FileName);
           try
           {

@@ -984,6 +984,7 @@ namespace MediaPortal.GUI.Weather
       {
         try
         {
+          client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           client.DownloadFile(url, weatherFile);
           return true;
         }

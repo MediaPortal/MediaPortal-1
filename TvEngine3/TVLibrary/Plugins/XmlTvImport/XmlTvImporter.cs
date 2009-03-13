@@ -346,6 +346,7 @@ namespace TvEngine
           URL = "ftp://" + URL.Substring(passwordEndIdx + 1);
 
           Client.Credentials = new NetworkCredential(user, pass);
+          Client.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
         else
         {

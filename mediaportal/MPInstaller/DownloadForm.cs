@@ -36,7 +36,7 @@ namespace MediaPortal.MPInstaller
   {
     private string source = string.Empty;
     private string dest = string.Empty;
-    private WebClient client = new WebClient();
+    private WebClient client = new WebClient();    
     public int direction = 0;
     public string user = string.Empty;
     public string password = string.Empty;
@@ -65,7 +65,7 @@ namespace MediaPortal.MPInstaller
         if (direction == 0)
         {
           string result = string.Empty;
-          ;
+
           try
           {
             //login_form dlg = new login_form(user,password);
@@ -77,6 +77,7 @@ namespace MediaPortal.MPInstaller
             if (true)
             {
               client.UseDefaultCredentials = true;
+              client.Proxy.Credentials = CredentialCache.DefaultCredentials;
               //client.Credentials = new NetworkCredential("username", "passs");
 
               if (Path.GetExtension(dest) == ".xml")

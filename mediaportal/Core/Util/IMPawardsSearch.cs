@@ -71,6 +71,7 @@ namespace MediaPortal.Util
       try
       {
         byte[] buffer;
+        wc.Proxy.Credentials = CredentialCache.DefaultCredentials;
         buffer = wc.DownloadData(url);
         result = Encoding.UTF8.GetString(buffer);
       }

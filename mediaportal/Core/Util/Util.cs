@@ -1624,6 +1624,7 @@ namespace MediaPortal.Util
             extensionURL = extensionURL.ToLower();
             extensionFile = extensionFile.ToLower();
             string strLogo = Path.ChangeExtension(strFile, extensionURL);
+            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
             client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {

@@ -83,6 +83,7 @@ namespace WindowPlugins.GUI.Extensions
       currentFolder = string.Empty;
       client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
       client.UseDefaultCredentials = true;
+      client.Proxy.Credentials = CredentialCache.DefaultCredentials;
     
       client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
       client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(client_DownloadFileCompleted);
