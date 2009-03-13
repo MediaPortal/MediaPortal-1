@@ -193,6 +193,13 @@ namespace MediaPortal.Music.Database
 
         string strUri = String.Format("{0}?{1}", strURL, strData);
         HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUri);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         req.ProtocolVersion = HttpVersion.Version11;
         req.UserAgent =
           "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";

@@ -110,7 +110,13 @@ namespace MediaPortal.Util
     {
       Thread.CurrentThread.Name = "HtmlToText";
       HttpWebRequest request = (HttpWebRequest)WebRequest.Create(args[0]);
-
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        // request.Proxy = WebProxy.GetDefaultProxy();
+        request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      }
+      catch (Exception) { }
       HttpWebResponse response = (HttpWebResponse)request.GetResponse();
       Stream stream = response.GetResponseStream();
       StreamReader r = new StreamReader(stream);

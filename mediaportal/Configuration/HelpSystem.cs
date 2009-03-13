@@ -98,6 +98,13 @@ namespace MediaPortal.Configuration
 
         Application.DoEvents();
         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(helpReferencesURL);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         Application.DoEvents();
 
         using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())

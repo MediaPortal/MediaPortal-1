@@ -162,6 +162,13 @@ namespace MediaPortal.Utils.Web
         // Make the Webrequest
         // Create the request header
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         request.UserAgent = _agent;
         request.AllowAutoRedirect = false;
         if (pageRequest.Cookies != string.Empty)
@@ -228,6 +235,13 @@ namespace MediaPortal.Utils.Web
         {
           Uri uri = new Uri(_response.Headers["Location"]);
           HttpWebRequest redirect = (HttpWebRequest)WebRequest.Create(uri);
+          try
+          {
+            // Use the current user in case an NTLM Proxy or similar is used.
+            // request.Proxy = WebProxy.GetDefaultProxy();
+            redirect.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          }
+          catch (Exception) { }
           redirect.UserAgent = _agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();

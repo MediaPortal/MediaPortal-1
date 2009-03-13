@@ -643,7 +643,13 @@ namespace MediaPortal.GUI.RSS
       {
         string data = string.Empty;
         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(feed.m_link);
-
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         HttpWebResponse response = (HttpWebResponse) request.GetResponse();
         using (Stream stream = response.GetResponseStream())
         {

@@ -1691,6 +1691,13 @@ namespace MediaPortal.Util
       {
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
         wr.Timeout = 5000;
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
 
         using (Stream str = ws.GetResponseStream())

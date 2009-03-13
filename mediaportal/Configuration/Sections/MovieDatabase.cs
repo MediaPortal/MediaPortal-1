@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       set { extensions = value; }
     }
 
-    private string[] extensions = new string[] {".avi"};
+    private string[] extensions = new string[] { ".avi" };
 
     /// <summary> 
     /// Required designer variable.
@@ -207,7 +207,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList) section.GetSetting("shares");
+        ArrayList shares = (ArrayList)section.GetSetting("shares");
 
         foreach (string share in shares)
         {
@@ -225,8 +225,8 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        string extensions = (string) section.GetSetting("extensions");
-        Extensions = extensions.Split(new char[] {','});
+        string extensions = (string)section.GetSetting("extensions");
+        Extensions = extensions.Split(new char[] { ',' });
       }
 
       UpdateControlStatus();
@@ -282,7 +282,7 @@ namespace MediaPortal.Configuration.Sections
       ArrayList availablePaths = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
-        string path = sharesListBox.Items[(int) sharesListBox.CheckedIndices[index]].ToString();
+        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
         availablePaths.Add(path);
       }
       conflictFiles = new ArrayList();
@@ -515,7 +515,7 @@ namespace MediaPortal.Configuration.Sections
         DlgMovieConflicts dlg = new DlgMovieConflicts();
         for (int i = 0; i < this.conflictFiles.Count; ++i)
         {
-          IMDBMovie currentMovie = (IMDBMovie) conflictFiles[i];
+          IMDBMovie currentMovie = (IMDBMovie)conflictFiles[i];
           string strFileName = string.Empty;
           string path = currentMovie.Path;
           string filename = currentMovie.File;
@@ -677,7 +677,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        char[] splitter = {'\n', ','};
+        char[] splitter = { '\n', ',' };
         string[] actors = movie.Cast.Split(splitter);
 
         if (actors.Length > 0)
@@ -719,7 +719,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList vecGenres = new ArrayList();
         if (szGenres.IndexOf("/") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new char[] {'/'});
+          Tokens f = new Tokens(szGenres, new char[] { '/' });
           foreach (string strGenre in f)
           {
             String strCurrentGenre = strGenre.Trim();
@@ -1451,7 +1451,7 @@ namespace MediaPortal.Configuration.Sections
         IMDBMovie movie = new IMDBMovie();
         if (cbTitle.SelectedItem != null)
         {
-          ComboBoxItemMovie cbMovie = (ComboBoxItemMovie) cbTitle.SelectedItem;
+          ComboBoxItemMovie cbMovie = (ComboBoxItemMovie)cbTitle.SelectedItem;
           movie.ID = cbMovie.Movie.ID;
         }
         //movie.File=
@@ -1479,7 +1479,7 @@ namespace MediaPortal.Configuration.Sections
           movie.RunTime = Int32.Parse(tbDuration.Text);
           movie.WritingCredits = tbWritingCredits.Text;
           movie.Plot = tbDescription.Text;
-          movie.Rating = (float) Double.Parse(tbRating.Text);
+          movie.Rating = (float)Double.Parse(tbRating.Text);
           movie.TagLine = tbTagline.Text;
           movie.Year = Int32.Parse(tbYear.Text);
           movie.ThumbURL = (useLocalImage ? "file://" + tbImageLocation.Text : tbImageLocation.Text);
@@ -1522,7 +1522,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void OnFuzzyMatchingCheckedChanged(object sender, EventArgs e)
     {
-      _isFuzzyMatching = ((CheckBox) sender).Checked;
+      _isFuzzyMatching = ((CheckBox)sender).Checked;
       SaveSettings();
     }
 
@@ -1946,7 +1946,7 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber) script.CreateObject("Grabber");
+          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
 
           grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
         }
@@ -2023,10 +2023,17 @@ namespace MediaPortal.Configuration.Sections
         }
 
         Application.DoEvents();
-        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         Application.DoEvents();
 
-        using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
@@ -2135,7 +2142,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (cbTitle.SelectedItem != null)
       {
-        ComboBoxItemMovie item = (ComboBoxItemMovie) cbTitle.SelectedItem;
+        ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
         UpdateEdit(item.Movie);
       }
     }
@@ -2159,7 +2166,7 @@ namespace MediaPortal.Configuration.Sections
 
       while (left <= right)
       {
-        midPoint = (left + right)/2;
+        midPoint = (left + right) / 2;
         int comparisonValue = item.CompareTo(items[midPoint].Text);
 
         if (comparisonValue == 0)
@@ -2217,11 +2224,11 @@ namespace MediaPortal.Configuration.Sections
       // Create new thumbs
       try
       {
-        if (Util.Picture.CreateThumbnail(strImageURL, strThumb, (int) Thumbs.ThumbResolution,
-                                         (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+        if (Util.Picture.CreateThumbnail(strImageURL, strThumb, (int)Thumbs.ThumbResolution,
+                                         (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
         {
-          Util.Picture.CreateThumbnail(strImageURL, LargeThumb, (int) Thumbs.ThumbLargeResolution,
-                                       (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          Util.Picture.CreateThumbnail(strImageURL, LargeThumb, (int)Thumbs.ThumbLargeResolution,
+                                       (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
       }
       catch (Exception)
@@ -2265,7 +2272,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start((string) e.Link.LinkData);
+      Process.Start((string)e.Link.LinkData);
     }
   }
 }

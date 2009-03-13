@@ -105,6 +105,13 @@ namespace ProcessPlugins.CallerId
           // based on http://cephas.net/blog/2003/10/25/failsafe_amazon_image_using_java_c_coldfusion.html
         {
           HttpWebRequest webreq = (HttpWebRequest) WebRequest.Create(path);
+          try
+          {
+            // Use the current user in case an NTLM Proxy or similar is used.
+            // request.Proxy = WebProxy.GetDefaultProxy();
+            webreq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          }
+          catch (Exception) { }
           WebResponse response = webreq.GetResponse();
           if (response.ContentType.StartsWith("image"))
           {

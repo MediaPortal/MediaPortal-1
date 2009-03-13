@@ -208,6 +208,13 @@ namespace Rss
           if (request == null)
           {
             request = (HttpWebRequest) WebRequest.Create(uri);
+            try
+            {
+              // Use the current user in case an NTLM Proxy or similar is used.
+              // request.Proxy = WebProxy.GetDefaultProxy();
+              request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            }
+            catch (Exception) { }
           }
           if (oldFeed != null)
           {
