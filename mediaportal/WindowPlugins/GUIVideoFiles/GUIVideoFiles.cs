@@ -1244,21 +1244,7 @@ namespace MediaPortal.GUI.Video
     private void FetchMatroskaInfo(string path, bool pathIsDirectory, ref IMDBMovie movie)
     {
       string xmlFile = string.Empty;
-      if (pathIsDirectory)
-      {
-        try
-        {
-          string[] files = Directory.GetFiles(path, "*.xml");
-          if (files.Length > 0)
-          {
-            xmlFile = files[0];
-          }
-        }
-        catch (Exception)
-        {
-        } // user might not have enough rights to access all files
-      }
-      else
+      if (!pathIsDirectory)
       {
         xmlFile = Path.ChangeExtension(path, ".xml");
       }
