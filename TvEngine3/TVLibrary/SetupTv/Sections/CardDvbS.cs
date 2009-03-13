@@ -153,7 +153,7 @@ namespace SetupTv.Sections
         return;
       if (!context.Url.ToLowerInvariant().StartsWith("http://"))
         return;
-      string itemLine = String.Format("Downloading transponders for:{0}", context.SatteliteName);
+      string itemLine = String.Format("Downloading transponders for: {0}", context.SatteliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
       Application.DoEvents();
@@ -162,12 +162,18 @@ namespace SetupTv.Sections
         try
         {
           File.Delete(context.FileName);
-        } catch (Exception)
-        {
         }
+        catch (Exception) { }
         item.Text = itemLine + " connecting...";
         Application.DoEvents();
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(context.Url);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         item.Text = itemLine + " downloading...";
         Application.DoEvents();
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -192,7 +198,8 @@ namespace SetupTv.Sections
           }
         }
         item.Text = itemLine + " done";
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         item.Text = itemLine + " failed";
       }
@@ -346,7 +353,8 @@ namespace SetupTv.Sections
                 }
                 _transponders.Add(transponder);
                 _count += 1;
-              } catch { }
+              }
+              catch { }
             }
           }
         }
@@ -767,7 +775,8 @@ namespace SetupTv.Sections
         listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", _tvChannelsNew, _tvChannelsUpdated)));
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
         item.EnsureVisible();
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
