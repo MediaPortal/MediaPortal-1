@@ -339,7 +339,7 @@ namespace TvService
               return false;
             }
           }
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.EndTime, false);
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.EndTime, false, false);
           Log.Debug("Recording {0}  added in _recordingsInProgressList", schedule.ProgramName);
           return true;
         }
@@ -357,7 +357,7 @@ namespace TvService
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true);
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true, true);
             return true;
           }
         }
@@ -378,7 +378,7 @@ namespace TvService
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true, true);
               return true;
             }
           }
@@ -398,7 +398,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true, true);
               return true;
             }
           }
@@ -419,7 +419,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), end, true, true);
               return true;
             }
           }
@@ -446,7 +446,7 @@ namespace TvService
                   newSchedule.EndTime = current.EndTime;
                   newSchedule.ScheduleType = 0; // type Once
                   newSchedule.Persist();
-                  newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.EndTime, true);
+                  newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.EndTime, true, true);
                   return true;
                 }
               }
@@ -471,7 +471,7 @@ namespace TvService
               newSchedule.EndTime = program.EndTime;
               newSchedule.ScheduleType = 0; // type Once
               newSchedule.Persist();
-              newRecording = new RecordingDetail(newSchedule, program.ReferencedChannel(), program.EndTime, true);
+              newRecording = new RecordingDetail(newSchedule, program.ReferencedChannel(), program.EndTime, true, true);
               return true;
             }
           }
@@ -636,6 +636,7 @@ namespace TvService
         recording.FileName = fileName;
         recording.RecordingStartDateTime = DateTime.Now;
         int idServer = recording.CardInfo.Card.IdServer;
+        Log.Debug(String.Format("Scheduler: adding new line in db for title=\"{0}\" of type=\"{1}\"", recording.Program.Title,  recording.Schedule.ScheduleType));
         recording.Recording = new Recording(recording.Schedule.IdChannel, recording.RecordingStartDateTime, DateTime.Now, recording.Program.Title,
                             recording.Program.Description, recording.Program.Genre, recording.FileName, recording.Schedule.KeepMethod,
                             recording.Schedule.KeepDate, 0, idServer);

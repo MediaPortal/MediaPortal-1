@@ -41,6 +41,8 @@ namespace TvService
     DateTime _dateTimeRecordingStarted;
     Recording _recording;
     readonly bool _isSerie;
+    private  bool _isSerieFileFormat;
+
     #endregion
 
     #region ctor
@@ -52,13 +54,18 @@ namespace TvService
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
     /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
     /// <param name="isSerie">Is serie recording</param>
-    public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
+    /// <param name="isSerieFileFormat">Used by MakefileName() instead of isSerie</param>
+    /// 
+    /// chemelli: added isSerieFileFormat as isSerie is sometimes corrupted for MakefileName point of view (mantis #1989)
+    /// 
+    public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie, bool isSerieFileFormat)
     {
       _schedule = schedule;
       _channel = channel;
       _endTime = endTime;
       _program = null;
       _isSerie = isSerie;
+      _isSerieFileFormat = isSerieFileFormat;
 
       TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
       TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
@@ -235,14 +242,14 @@ namespace TvService
 
       Setting setting;
 
-      if (!_isSerie)
+      if (!_isSerieFileFormat)
       {
-        Log.Debug("MakeFileName: using \"moviesformat\"...");
+        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerieFileFormat={0})", _isSerieFileFormat);
         setting = layer.GetSetting("moviesformat", "%title%");
       }
       else
       {
-        Log.Debug("MakeFileName: using \"seriesformat\"...");
+        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerieFileFormat={0})", _isSerieFileFormat);
         setting = layer.GetSetting("seriesformat", "%title%");
       }
 
