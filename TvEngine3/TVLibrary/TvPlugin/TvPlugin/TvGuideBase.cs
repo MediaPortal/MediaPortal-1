@@ -143,7 +143,9 @@ namespace TvPlugin
     private bool _notificationEnabled = false;
     private bool _recalculateProgramOffset;
 
-    private int MinYIndex;
+    // current minimum/maximum indexes
+    private int MaxXIndex; // means rows here (channels)
+    private int MinYIndex; // means cols here (programs/time)
 
     /// <summary>
     /// Logic to decide if tvgroup button is available and visible
@@ -586,6 +588,8 @@ namespace TvPlugin
         TVHome.Navigator.SetCurrentGroup(newIndex);
         // set name only, if group button not avail (avoids short "flashing" of text after switching group)
         if (!TvGroupButtonAvail) GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        _channelOffset = 0; // reset to top; otherwise focus could be out of screen if new group has less then old position
+        _cursorX = 0; // first channel
         GetChannels(true);
         Update(false);
         SetFocus();
@@ -900,6 +904,8 @@ namespace TvPlugin
         // button focus should be on tvgroup, so change back to channel name
         if (_cursorY == -1)
           _cursorY = 0;
+        
+        _cursorX = 0; // set to top, otherwise index could be out of range in new group
         SetFocus();
       }
     }
@@ -1277,6 +1283,14 @@ namespace TvPlugin
             //GUIButton3PartControl img=(GUIButton3PartControl)GetControl(_cursorX+(int)Controls.IMG_CHAN1);
             //if (null!=img) _currentChannel=img.Label1;
           }
+          // show all buttons (could be less visible if channels < rows)
+          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+          {
+            GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+            if (imgBut != null)
+              imgBut.IsVisible = true;
+          }
+
           Channel channel = (Channel) _channelList[_singleChannelNumber];
           setGuideHeadingVisibility(false);
           RenderSingleChannel(channel);
@@ -1307,20 +1321,41 @@ namespace TvPlugin
           setGuideHeadingVisibility(true);
           setSingleChannelLabelVisibility(false);
           chan = _channelOffset;
+          int firstButtonYPos = 0;
+          int lastButtonYPos = 0;
+
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
             if (chan < _channelList.Count)
             {
               Channel channel = (Channel) _channelList[chan];
               RenderChannel(ref programs, iChannel, channel, iStart, iEnd, selectCurrentShow);
+              // remember bottom y position from last visible button
+              GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+              if (imgBut != null)
+              {
+                if (iChannel == 0)
+                  firstButtonYPos = imgBut.YPosition;
+
+                lastButtonYPos = imgBut.YPosition + imgBut.Height;
+              }
             }
             chan++;
-            if (chan >= _channelList.Count)
+            if (chan > _channelList.Count)
             {
-              chan = 0;
+              GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+              if (imgBut != null)
+                imgBut.IsVisible = false;
+              //chan = 0;
             }
           }
 
+          GUIImage vertLine = GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
+          if (vertLine != null)
+          {
+            // height taken from last button (bottom) minus the yposition of slider plus the offset of slider in relation to first button
+            vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
+          }
           // update selected channel 
           _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count)
@@ -1544,7 +1579,7 @@ namespace TvPlugin
         chan++;
         if (chan >= _channelList.Count)
         {
-          chan = 0;
+          //chan = 0;
         }
       }
 
@@ -2343,28 +2378,35 @@ namespace TvPlugin
 
       if (_cursorY == 0)
       {
-        if (_cursorX + 1 < _channelCount)
+        // if there are more channels to focus
+        if (_cursorX + 1 < Math.Min(_channelList.Count - _channelOffset, _channelCount)) // _channelCount
         {
           _cursorX++;
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
         else
         {
-          _channelOffset++;
-          if (_channelOffset > 0 && _channelOffset >= _channelList.Count)
+          // reached end of screen
+          // more channels than rows?
+          if (_channelList.Count > _channelCount)
           {
-            _channelOffset -= _channelList.Count;
+            // scroll down
+            _channelOffset++;
+            // reached absolute end? 
+            if (_channelOffset > 0 && _channelOffset >= _channelList.Count - _cursorX)
+            {
+              //_channelOffset -= _channelList.Count;
+              _channelOffset = 0; // set back to top
+              _cursorX = 0;
+            }
           }
-          if (updateScreen)
+          else
           {
-            Update(false);
+            _cursorX = 0; // set back to top
           }
         }
         if (updateScreen)
         {
+          Update(false);
           SetFocus();
           SetProperties();
         }
@@ -2453,6 +2495,14 @@ namespace TvPlugin
       if (updateScreen)
       {
         UnFocus();
+      }
+      if (!_singleChannelView && _cursorY == -1)
+      {
+        _cursorX = -1;
+        _cursorY = 0;
+        GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
+        GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
+        return;
       }
       if (!_singleChannelView && _cursorY == 0 && _cursorX == 0 && _channelOffset == 0)
       {
@@ -3499,8 +3549,14 @@ namespace TvPlugin
 
     private void OnPageDown()
     {
+      int Steps;
+      if (_singleChannelView)
+        Steps = _channelCount; // all available rows
+      else
+        Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount); // only number of additional avail channels
+
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i)
+      for (int i = 0; i < Steps; ++i)
       {
         OnDown(false);
       }
@@ -3632,16 +3688,16 @@ namespace TvPlugin
         _cursorX = 0;
 
         // Last page adjust (To get a full page channel listing)
-        if (iChannelNr > _channelList.Count - _channelCount + 1)
+        if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count,_channelCount) + 1) // minimum of available channel/max visible channels
         {
           _channelOffset = _channelList.Count - _channelCount;
           iChannelNr = iChannelNr - _channelOffset;
         }
 
-        while (iChannelNr >= _channelCount)
+        while (iChannelNr >= Math.Min(_channelList.Count, _channelCount))
         {
-          iChannelNr -= _channelCount;
-          _channelOffset += _channelCount;
+          iChannelNr -= Math.Min(_channelList.Count, _channelCount);
+          _channelOffset += Math.Min(_channelList.Count, _channelCount);
         }
         _cursorX = iChannelNr;
 
