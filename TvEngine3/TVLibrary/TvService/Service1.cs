@@ -44,7 +44,6 @@ using TvEngine;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace TvService
 {
@@ -78,7 +77,8 @@ namespace TvService
         string remotingFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
         // process the remoting configuration file
         RemotingConfiguration.Configure(remotingFile, false);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -108,9 +108,11 @@ namespace TvService
           RequestAdditionalTime(60000);  // starting database can be slow so increase default timeout
           applyProcessPriority();
           _priorityApplied = true;
-        } catch (Exception)
+        }
+        catch (Exception ex)
         {
           // applyProcessPriority can generate an exception when we cannot connect to the database
+          Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
         }
       }
       Thread.CurrentThread.Name = "TVService";
@@ -132,13 +134,12 @@ namespace TvService
       _controller = new TVController();
       _controller.Init();
       StartPlugins();
-      
-      try
+
+      if (!System.IO.Directory.Exists("pmt"))
       {
         System.IO.Directory.CreateDirectory("pmt");
-      } catch (Exception)
-      {
       }
+
       StartRemoting();
       Utils.ShutDownMCEServices();
       _started = true;
@@ -149,11 +150,11 @@ namespace TvService
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       Log.Info("TV Service: Load plugins");
-      
+
       _plugins = new PluginLoader();
       _plugins.Load();
-       
-      Log.Info("TV Service: Plugins loaded");  
+
+      Log.Info("TV Service: Plugins loaded");
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
@@ -167,7 +168,8 @@ namespace TvService
             {
               plugin.Start(_controller);
               _pluginsStarted.Add(plugin);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
               Log.Write(ex);
@@ -179,9 +181,9 @@ namespace TvService
           }
         }
       }
-      
-      Log.Info("TV Service: Plugins started");  
-      
+
+      Log.Info("TV Service: Plugins started");
+
       // fire off startedAll on plugins
       foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
@@ -191,7 +193,8 @@ namespace TvService
           try
           {
             (plugin as ITvServerPluginStartedAll).StartedAll();
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
             Log.Write(ex);
@@ -199,7 +202,7 @@ namespace TvService
         }
       }
     }
-    
+
     private void StopPlugins()
     {
       Log.Info("TV Service: Stop plugins");
@@ -210,17 +213,18 @@ namespace TvService
           try
           {
             plugin.Stop();
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
             Log.Write(ex);
           }
         }
-      _pluginsStarted = new List<ITvServerPlugin>();
+        _pluginsStarted = new List<ITvServerPlugin>();
       }
       Log.Info("TV Service: Plugins stopped");
     }
-    
+
     /// <summary>
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
@@ -424,7 +428,8 @@ namespace TvService
 
 
             DispatchMessageA(ref msgApi);
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
           }
@@ -452,7 +457,7 @@ namespace TvService
       bool accept = true;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
       List<PowerEventHandler> powerEventAllowers = new List<PowerEventHandler>();
-      
+
       // Make a copy of _powerEventHandlers, because the handler might call AddPowerEventHandler
       // or RemovePowerEventHandler when executing thus generating an exception when we iterate.
       List<PowerEventHandler> listCopy = new List<PowerEventHandler>();
@@ -507,7 +512,8 @@ namespace TvService
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
         connectionString = nodeConnection.InnerText;
         provider = nodeProvider.InnerText;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -548,8 +554,10 @@ namespace TvService
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             break;
         }
-      } catch (Exception)
+      }
+      catch (Exception ex)
       {
+        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
       }
 
     }
@@ -599,7 +607,8 @@ namespace TvService
         RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
         RemoteControl.Clear();
 
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -617,7 +626,8 @@ namespace TvService
         {
           RemotingServices.Disconnect(_controller);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
