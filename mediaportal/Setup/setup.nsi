@@ -286,6 +286,15 @@ Section "-prepare" SecPrepare
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
+  
+
+  ; Remove default skins before copying them back ( faster way to cleanup a old install )
+  
+  ${LOG_TEXT} "INFO" "Deleting Skin Blue3..."
+  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3"
+  ${LOG_TEXT} "INFO" "Deleting Skin Blue3wide..."
+  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3wide"
+  
 SectionEnd
 
 !macro BackupInstallDirectory
@@ -615,6 +624,7 @@ SectionEnd
   RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo"
   RMDir /r /REBOOTOK "$MPdir.Skin\BlueTwo wide"
   RMDir /r /REBOOTOK "$MPdir.Skin\Blue3"
+  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3wide"
   RMDir "$MPdir.Skin"
 
   ; Remove Files in MP Root Directory
