@@ -55,7 +55,7 @@ namespace WindowsApplication3
         if (!found)
         {
           string msg1 = String.Format("WARNING: file {0}[{1}] is not used !!!", srcFile.Name.Split('.')[0], srcFile.Name.Split('.')[1]);
-          string msg2 = String.Format("\"{0}\" remove {1}", SVNcmd, srcFile.Name);
+          string msg2 = String.Format("\"{0}\" remove \"{1}\"", SVNcmd, srcFile.Name);
           Console.WriteLine(msg1);
           StreamWriter SW1 = File.AppendText(FileLog);
           SW1.WriteLine(msg1);
