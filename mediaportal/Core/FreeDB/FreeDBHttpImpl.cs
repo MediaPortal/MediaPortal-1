@@ -358,6 +358,13 @@ namespace MediaPortal.Freedb
       Uri url = new Uri(m_serverURL + "?cmd=" + command + m_idStr);
 
       WebRequest req = WebRequest.Create(url);
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        // wr.Proxy = WebProxy.GetDefaultProxy();
+        req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      }
+      catch (Exception) { }
       StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream,
                                              Encoding.GetEncoding(0));
 

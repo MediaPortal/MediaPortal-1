@@ -69,6 +69,13 @@ namespace MediaPortal.Util
 
         // Make the Webrequest
         WebRequest req = WebRequest.Create(builder.Uri.AbsoluteUri);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         WebResponse result = req.GetResponse();
         using (Stream ReceiveStream = result.GetResponseStream())
         {

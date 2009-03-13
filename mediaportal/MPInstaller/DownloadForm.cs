@@ -163,6 +163,7 @@ namespace MediaPortal.MPInstaller
         FileStream outputStream = new FileStream(dest, FileMode.Create);
 
         reqFTP = (FtpWebRequest) FtpWebRequest.Create(new Uri(source));
+        reqFTP.Proxy.Credentials = CredentialCache.DefaultCredentials;
         reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
         reqFTP.UseBinary = true;
         reqFTP.Credentials = new NetworkCredential(user, pwd);
@@ -216,6 +217,9 @@ namespace MediaPortal.MPInstaller
 
       // Provide the WebPermission Credintials
       reqFTP.Credentials = new NetworkCredential(user, pwd);
+
+      // Provide Proxy Auth
+      reqFTP.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
       // By default KeepAlive is true, where the control connection is not closed
       // after a command is executed.
@@ -273,6 +277,7 @@ namespace MediaPortal.MPInstaller
       {
         MessageBox.Show(newFilename);
         reqFTP = (FtpWebRequest) FtpWebRequest.Create(new Uri(source));
+        reqFTP.Proxy.Credentials = CredentialCache.DefaultCredentials;
         reqFTP.Method = WebRequestMethods.Ftp.Rename;
         reqFTP.RenameTo = newFilename;
         reqFTP.UseBinary = true;

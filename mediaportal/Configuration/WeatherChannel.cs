@@ -68,6 +68,13 @@ namespace MediaPortal.Configuration
 
         // Create the request and fetch the response
         WebRequest request = WebRequest.Create(searchURI);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         WebResponse response = request.GetResponse();
 
         // Read data from the response stream

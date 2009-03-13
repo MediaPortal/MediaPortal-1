@@ -54,6 +54,13 @@ namespace PostSetup
 
       // Create the request object.
       WebRequest req = WebRequest.Create(httpSite);
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        // wr.Proxy = WebProxy.GetDefaultProxy();
+        req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      }
+      catch (Exception) { }
 
       // Create the state object.
       DownloadInfo info = new DownloadInfo();
@@ -97,6 +104,13 @@ namespace PostSetup
 
       // Get the WebRequest from RequestState.
       WebRequest req = info.Request;
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        // wr.Proxy = WebProxy.GetDefaultProxy();
+        req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      }
+      catch (Exception) { }
 
       // Call EndGetResponse, which produces the WebResponse object
       // that came from the request issued above.

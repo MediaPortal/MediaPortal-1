@@ -347,7 +347,13 @@ namespace MediaPortal.Video.Database
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strURL);
-
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         result = req.GetResponse();
         ReceiveStream = result.GetResponseStream();
 

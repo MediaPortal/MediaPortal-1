@@ -157,6 +157,13 @@ namespace MediaPortal.Music.Database
       {
         string body;
         WebRequest req = WebRequest.Create(m_albumUrl);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         WebResponse result = req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
         Encoding encode = Encoding.GetEncoding("utf-8");

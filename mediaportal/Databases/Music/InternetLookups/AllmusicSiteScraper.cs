@@ -224,6 +224,13 @@ namespace MediaPortal.Music.Database
 
       // Initialize the WebRequest.
       WebRequest myRequest = WebRequest.Create(strURL);
+      try
+      {
+        // Use the current user in case an NTLM Proxy or similar is used.
+        // wr.Proxy = WebProxy.GetDefaultProxy();
+        myRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      }
+      catch (Exception) { }
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();

@@ -558,6 +558,13 @@ namespace MediaPortal.Music.Amazon
       {
         WebRequest webReq = null;
         webReq = WebRequest.Create(sURL);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // wr.Proxy = WebProxy.GetDefaultProxy();
+          webReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
         WebResponse webResp = webReq.GetResponse();
         img = Image.FromStream(webResp.GetResponseStream());
       }
