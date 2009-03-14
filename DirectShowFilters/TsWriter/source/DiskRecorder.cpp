@@ -339,7 +339,6 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	if (!m_pPmtParser->DecodePmt(section,pcrPid,pidInfos))
 	{
 		WriteLog("!!! PANIC - DecodePmt(...) returned FALSE !!!");
-		delete section.Data;
 		return;
 	}
 	WriteLog("PMT parsed  - Pid 0x%x ServiceId 0x%x stream count: %d",pmtPid, m_iServiceId,pidInfos.size());
@@ -351,7 +350,6 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 		AddStream(info);
 		++it;
 	}
-	delete section.Data;
 }
 
 void CDiskRecorder::SetVideoAudioObserver (IVideoAudioObserver* callback)
