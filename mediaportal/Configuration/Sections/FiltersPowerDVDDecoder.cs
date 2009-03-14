@@ -33,7 +33,7 @@ using Microsoft.Win32;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class FiltersPowerDVD7Decoder : SectionSettings
+  public class FiltersPowerDVDDecoder : SectionSettings
   {
     private MPComboBox comboBoxSpeakerConfig;
     private MPComboBox comboBoxOutPutMode;
@@ -55,15 +55,15 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// 
     /// </summary>
-    public FiltersPowerDVD7Decoder()
-      : this("PowerDVD 7 Decoder Settings")
+    public FiltersPowerDVDDecoder()
+      : this("PowerDVD Decoder Settings")
     {
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public FiltersPowerDVD7Decoder(string name)
+    public FiltersPowerDVDDecoder(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -308,12 +308,12 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUIUseH264HVA.UseVisualStyleBackColor = true;
       this.checkBoxUIUseH264HVA.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
       // 
-      // PowerDVD7DecoderFilters
+      // PowerDVDDecoderFilters
       // 
       this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "PowerDVD7DecoderFilters";
+      this.Name = "PowerDVDDecoderFilters";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();

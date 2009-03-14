@@ -337,14 +337,9 @@ namespace MediaPortal.Configuration
             FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
             AddSection(new ConfigPage(filterSection, windvdConfig, true));
           }
-          if (filter.Equals("CyberLink Audio Decoder (PDVD7)") || filter.Equals("CyberLink Audio Decode (PDVD7.x)"))
+          if (filter.Contains("CyberLink Audio Decoder"))
           {
-            FiltersPowerDVD7Decoder pdvdConfig = new FiltersPowerDVD7Decoder();
-            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
-          }
-          if (filter.Equals("CyberLink Audio Decoder (PDVD8)"))
-          {
-            FiltersPowerDVD8Decoder pdvdConfig = new FiltersPowerDVD8Decoder();
+            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
           if (filter.Equals("MPC - MPA Decoder Filter"))
@@ -393,9 +388,9 @@ namespace MediaPortal.Configuration
             AddSection(new ConfigPage(filterSection, dscalervConfig, true));
           }
           // if we do not have the audio codec installed we want to see the video config nevertheless
-          if (filter.IndexOf("CyberLink Video/SP Decoder (PDVD7") > -1)
+          if (filter.Contains("CyberLink Video/SP Decoder"))
           {
-            FiltersPowerDVD7Decoder pdvdConfig = new FiltersPowerDVD7Decoder();
+            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
         }
