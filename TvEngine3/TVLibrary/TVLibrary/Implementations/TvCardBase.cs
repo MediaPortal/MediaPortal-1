@@ -631,7 +631,7 @@ namespace TvLibrary.Implementations
     /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
     private void FreeSubChannel(int id, bool continueGraph)
     {
-      Log.Log.Info("tvcard:FreeSubChannel:{0} #{1} keep graph={2}", _mapSubChannels.Count, id, continueGraph);
+      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id, continueGraph);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
@@ -667,12 +667,21 @@ namespace TvLibrary.Implementations
         Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
       }
       if (_mapSubChannels.Count == 0)
-      {
+      {        
         _subChannelId = 0;
         if (!continueGraph)
         {
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, stopping graph");
           StopGraph();
         }
+        else
+        {
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continueing graph");
+        }
+      }
+      else
+      {
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
       }
     }
     /// <summary>

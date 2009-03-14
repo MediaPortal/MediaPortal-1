@@ -133,7 +133,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return false;
-        Log.Write("card: StopRecording {0}", _cardHandler.DataBaseCard.IdCard);
+        Log.Write("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.IdCard, user.Name);
         lock (this)
         {
           try
@@ -154,19 +154,29 @@ namespace TvService
           Log.Write("card: StopRecording for card:{0}", _cardHandler.DataBaseCard.IdCard);
           TvCardContext context = _cardHandler.Card.Context as TvCardContext;
           if (context == null)
+          {
+            Log.Write("card: StopRecording context null");
             return false;
+          }
           if (IsRecording(ref user))
           {
             context.GetUser(ref user);
             ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
             if (subchannel == null)
+            {
+              Log.Write("card: StopRecording subchannel null, skipping");
               return false;
+            }
             subchannel.StopRecording();
             _cardHandler.Card.FreeSubChannel(user.SubChannel);
             if (subchannel.IsTimeShifting == false || context.Users.Length <= 1)
             {
               _cardHandler.Users.RemoveUser(user);
             }
+          }
+          else
+          {
+            Log.Write("card: StopRecording user '{0}' not recording, skipping", user.Name);
           }
 
           User[] users = context.Users;
@@ -177,6 +187,7 @@ namespace TvService
             {
               if (subchannel.IsRecording)
               {
+                Log.Write("card: StopRecording setting new context owner on user '{0}'", users[i].Name);
                 context.Owner = users[i];
                 break;
               }

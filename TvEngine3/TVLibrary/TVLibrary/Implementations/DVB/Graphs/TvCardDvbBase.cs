@@ -508,6 +508,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void StopGraph()
     {
+      Log.Log.WriteFile("dvb:StopGraph called");
       if (!CheckThreadId())
         return;
       _epgGrabbing = false;
@@ -526,7 +527,10 @@ namespace TvLibrary.Implementations.DVB
         FilterState state;
         ((IMediaControl)_graphBuilder).GetState(10, out state);
         if (state == FilterState.Stopped)
+        {
+          Log.Log.WriteFile("dvb:StopGraph filterstate already stopped, returning.");
           return;
+        }
         Log.Log.WriteFile("dvb:StopGraph");
         //hr = (_graphBuilder as IMediaControl).StopWhenReady();
         int hr = ((IMediaControl)_graphBuilder).Stop();
@@ -536,6 +540,10 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Unable to stop graph");
         }
         _conditionalAccess.OnStopGraph();
+      }
+      else
+      {
+        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = true");
       }
       _graphState = GraphState.Created;
     }

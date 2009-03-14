@@ -139,6 +139,9 @@ namespace TvLibrary.Implementations.DVB
       _subChannelIndex = -1;
       _tsFilterInterface = (ITsFilter)_filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
+
+      Log.Log.WriteFile("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);      
+
       _parameters = new ScanParameters();
       _subChannelId = subChannelId;
       _conditionalAccess.AddSubChannel(_subChannelId, channel);
@@ -453,15 +456,18 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override void OnStopRecording()
     {
+      Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
       if (IsRecording)
-      {
-        Log.Log.WriteFile("subch:{0}-{1} tswriter StopRecording...", _subChannelId, _subChannelIndex);
-
+      {        
         if (_tsFilterInterface != null)
         {
+          Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId, _subChannelIndex);
           _tsFilterInterface.RecordStopRecord(_subChannelIndex);
           _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
         }
+      }
+      {
+        Log.Log.WriteFile("tvdvbchannel.OnStopRecording - not recording");
       }
     }
 
@@ -509,8 +515,8 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
         if (_tsFilterInterface != null)
-        {
-          _tsFilterInterface.TimeShiftStop(_subChannelIndex);
+        {          
+          _tsFilterInterface.TimeShiftStop(_subChannelIndex);              
         }
         _graphState = GraphState.Created;
       }
