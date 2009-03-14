@@ -1,4 +1,3 @@
-blue3
 #region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
