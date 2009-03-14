@@ -20,16 +20,11 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TvControl;
-using System.Threading;
 using TvLibrary.Log;
 using TvDatabase;
-using Gentle.Common;
-using Gentle.Framework;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
-using TvEngine.Interfaces;
 
 namespace TvEngine
 {
@@ -106,8 +101,11 @@ namespace TvEngine
     public void Stop()
     {
       Log.WriteFile("plugin: ConflictsManager stopped");
-      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-      events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
+
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= events_OnTvServerEvent;
+      }
     }
 
     /// <summary>

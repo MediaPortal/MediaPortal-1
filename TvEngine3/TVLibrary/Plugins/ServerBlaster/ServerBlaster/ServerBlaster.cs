@@ -79,7 +79,7 @@ namespace TvEngine
       Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
       LoadRemoteCodes();
 
-      Log.WriteFile("ServerBlaster: start sender");
+      Log.WriteFile("plugin: ServerBlaster start sender");
       Thread thread = new Thread(new ThreadStart(Sender));
       thread.SetApartmentState(ApartmentState.STA);
       thread.IsBackground = true;
@@ -88,16 +88,19 @@ namespace TvEngine
       thread.Start();
 
 
-      Log.WriteFile("ServerBlaster.Start: Started");
+      Log.WriteFile("plugin: ServerBlaster.Start started");
     }
 
     public void Stop()
     {
-      Log.WriteFile("ServerBlaster.Stop: Stopping");
+      Log.WriteFile("plugin: ServerBlaster.Stop stopping");
       _running = false;
-      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-      events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
-      Log.WriteFile("ServerBlaster.Stop: Stopped");
+
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= events_OnTvServerEvent;
+      }
+      Log.WriteFile("plugin: ServerBlaster.Stop stopped");
     }
 
     public SetupTv.SectionSettings Setup

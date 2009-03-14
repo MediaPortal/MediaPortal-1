@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Windows.Forms;
-
 using TvLibrary.Log;
 using TvControl;
 using SetupTv;
-using TvEngine;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using TvDatabase;
 
 namespace TvEngine
@@ -22,17 +16,17 @@ namespace TvEngine
 
     #region Constants
 
-    static readonly bool    DefaultRunAtStrart  = true;
-    static readonly string  DefaultProgram      = "ComSkip.exe";
-    static readonly string  DefaultParameters   = "\"{0}\"";
+    private const bool DefaultRunAtStrart = true;
+    private const string DefaultProgram = "ComSkip.exe";
+    private const string DefaultParameters = "\"{0}\"";
 
     #endregion Constants
 
     #region Members
 
-    static bool   _runAtStart   = DefaultRunAtStrart;
-    static string _program      = DefaultProgram;
-    static string _parameters   = DefaultParameters;
+    static bool _runAtStart = DefaultRunAtStrart;
+    static string _program = DefaultProgram;
+    static string _parameters = DefaultParameters;
 
     #endregion Members
 
@@ -91,22 +85,25 @@ namespace TvEngine
     [CLSCompliant(false)]
     public void Start(IController controller)
     {
-      Log.Info("ComSkipLauncher: Start");
+      Log.Info("plugin: ComSkipLauncher start");
 
       LoadSettings();
 
-      GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += new TvServerEventHandler(ComSkipLauncher_OnTvServerEvent);
+      GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += ComSkipLauncher_OnTvServerEvent;
     }
 
     public void Stop()
     {
-      Log.Info("ComSkipLauncher: Stop");
+      Log.Info("plugin: ComSkipLauncher stop");
 
-      GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= new TvServerEventHandler(ComSkipLauncher_OnTvServerEvent);
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= ComSkipLauncher_OnTvServerEvent;
+      }
     }
 
     [CLSCompliant(false)]
-    public SetupTv.SectionSettings Setup
+    public SectionSettings Setup
     {
       get { return new SetupTv.Sections.ComSkipSetup(); }
     }
@@ -115,7 +112,7 @@ namespace TvEngine
 
     #region Implementation
 
-    void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
+    static void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       try
       {
@@ -123,17 +120,17 @@ namespace TvEngine
 
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
-          Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
-          
+          Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
+
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
-          
+
           Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
-          Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
+          Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
 
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
@@ -154,14 +151,14 @@ namespace TvEngine
       {
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        _runAtStart   = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
-        _program     = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
-        _parameters  = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
+        _runAtStart = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
+        _program = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
+        _parameters = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
       }
       catch (Exception ex)
       {
         _runAtStart = DefaultRunAtStrart;
-        _program    = DefaultProgram;
+        _program = DefaultProgram;
         _parameters = DefaultParameters;
 
         Log.Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
@@ -172,9 +169,8 @@ namespace TvEngine
       try
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting;
 
-        setting = layer.GetSetting("ComSkipLauncher_RunAtStart");
+        Setting setting = layer.GetSetting("ComSkipLauncher_RunAtStart");
         setting.Value = _runAtStart.ToString();
         setting.Persist();
 

@@ -247,7 +247,7 @@ namespace TvEngine
     public void Start(IController controller)
     {
       LoadSettings();
-      if (_debugMode) Log.WriteFile("plugin: PersonalTVGuide started");
+      Log.WriteFile("plugin: PersonalTVGuide started");
       _stopService = false;
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -260,9 +260,12 @@ namespace TvEngine
     public void Stop()
     {
       _stopService = true;
-      if (_debugMode) Log.WriteFile("plugin: PersonalTVGuide stopped");
-      ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
-      events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
+      Log.WriteFile("plugin: PersonalTVGuide stopped");
+
+      if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
+      {
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= events_OnTvServerEvent;
+      }
     }
 
     #endregion

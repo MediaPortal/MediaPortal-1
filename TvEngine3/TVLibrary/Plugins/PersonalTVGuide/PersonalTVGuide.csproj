@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PersoanlTVGuide.cs" />
+    <Compile Include="PersonalTVGuide.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PTVGSetup.cs">
       <SubType>UserControl</SubType>
