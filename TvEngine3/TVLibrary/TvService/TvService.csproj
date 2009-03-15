@@ -183,4 +183,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
