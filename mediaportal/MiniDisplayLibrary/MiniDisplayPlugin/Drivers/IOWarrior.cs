@@ -38,34 +38,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void AdvancedSettings_OnSettingsChanged()
     {
       Log.Info("IOWarrior.AdvancedSettings_OnSettingsChanged(): called", new object[0]);
-      this.CleanUp();
-      this.LoadAdvancedSettings();
+      CleanUp();
+      LoadAdvancedSettings();
       Thread.Sleep(100);
-      this.Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
-                 Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
-                 Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
-                 Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
-      this.Initialize();
+      Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
+            Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
+            Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+            Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+      Initialize();
     }
 
     public void CleanUp()
     {
-      if (this.iowcommDisplay.IsOpen)
+      if (iowcommDisplay.IsOpen)
       {
         Log.Debug("IOWarrior.CleanUp() - called", new object[0]);
-        this.iowcommDisplay.ClearDisplay();
-        this.iowcommDisplay.CloseDisplay();
+        iowcommDisplay.ClearDisplay();
+        iowcommDisplay.CloseDisplay();
         AdvancedSettings.OnSettingsChanged -=
-          new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+          new AdvancedSettings.OnSettingsChangedHandler(AdvancedSettings_OnSettingsChanged);
       }
     }
 
     private void Clear()
     {
-      if (this.iowcommDisplay.IsOpen)
+      if (iowcommDisplay.IsOpen)
       {
         Log.Debug("IOWarrior.Clear() - called", new object[0]);
-        this.iowcommDisplay.ClearDisplay();
+        iowcommDisplay.ClearDisplay();
       }
     }
 
@@ -81,7 +81,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void DrawImage(Bitmap bitmap)
     {
-      if (!this._isDisabled && this.iowcommDisplay.IsOpen)
+      if (!_isDisabled && iowcommDisplay.IsOpen)
       {
         Log.Debug("IOWarrior.DrawImage() - called", new object[0]);
         if (bitmap == null)
@@ -94,11 +94,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                   bitmap.PixelFormat);
           try
           {
-            if (this.ReceivedBitmapData == null)
+            if (ReceivedBitmapData == null)
             {
-              this.ReceivedBitmapData = new byte[bitmapdata.Stride*this._Grows];
+              ReceivedBitmapData = new byte[bitmapdata.Stride*_Grows];
             }
-            Marshal.Copy(bitmapdata.Scan0, this.ReceivedBitmapData, 0, this.ReceivedBitmapData.Length);
+            Marshal.Copy(bitmapdata.Scan0, ReceivedBitmapData, 0, ReceivedBitmapData.Length);
           }
           catch (Exception exception)
           {
@@ -108,16 +108,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             bitmap.UnlockBits(bitmapdata);
           }
-          byte[] buffer = this.sha256.ComputeHash(this.ReceivedBitmapData);
-          if (ByteArray.AreEqual(buffer, this.lastHash))
+          byte[] buffer = sha256.ComputeHash(ReceivedBitmapData);
+          if (ByteArray.AreEqual(buffer, lastHash))
           {
             Log.Debug("IOWarrior.DrawImage() - completed - bitmap not changed", new object[0]);
           }
           else
           {
-            this.lastHash = buffer;
-            this.iowcommDisplay.SendImage(bitmap);
-            this.UpdateAdvancedSettings();
+            lastHash = buffer;
+            iowcommDisplay.SendImage(bitmap);
+            UpdateAdvancedSettings();
             Log.Debug("IOWarrior.DrawImage() - completed", new object[0]);
           }
         }
@@ -126,37 +126,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void Initialize()
     {
-      if (!this._isDisabled)
+      if (!_isDisabled)
       {
-        if (this.iowcommDisplay.IsOpen)
+        if (iowcommDisplay.IsOpen)
         {
-          this.iowcommDisplay.CloseDisplay();
+          iowcommDisplay.CloseDisplay();
         }
-        this._IsOpen = this.iowcommDisplay.OpenDisplay(this.AdvSettings);
-        if (this._IsOpen)
+        _IsOpen = iowcommDisplay.OpenDisplay(AdvSettings);
+        if (_IsOpen)
         {
           Log.Debug("IOWarrior.Initialize() - Display opened.", new object[0]);
-          this._isDisabled = false;
+          _isDisabled = false;
           AdvancedSettings.OnSettingsChanged +=
-            new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
+            new AdvancedSettings.OnSettingsChangedHandler(AdvancedSettings_OnSettingsChanged);
         }
         else
         {
           Log.Debug("IOWarrior.Initialize() - Unable to open device - display disabled", new object[0]);
-          this._isDisabled = true;
-          this._errorMessage = "IOWarrior.Initialize() failed... No IOWarrior display found";
+          _isDisabled = true;
+          _errorMessage = "IOWarrior.Initialize() failed... No IOWarrior display found";
         }
         Log.Debug("IOWarrior.Initialize() - completed", new object[0]);
-        this.Clear();
+        Clear();
       }
     }
 
     private void LoadAdvancedSettings()
     {
-      this.AdvSettings = AdvancedSettings.Load();
+      AdvSettings = AdvancedSettings.Load();
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml"));
-      this.SettingsLastModTime = info.LastWriteTime;
-      this.LastSettingsCheck = DateTime.Now;
+      SettingsLastModTime = info.LastWriteTime;
+      LastSettingsCheck = DateTime.Now;
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
@@ -170,69 +170,69 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
     {
-      this._IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
-      this.DoDebug = this._IsConfiguring | Settings.Instance.ExtensiveLogging;
+      _IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
+      DoDebug = _IsConfiguring | Settings.Instance.ExtensiveLogging;
       Log.Info("IOWarrior.Setup() - called", new object[0]);
-      Log.Info("IOWarrior.Setup(): IOWarrior Graphical LCD Driver - {0}", new object[] {this.Description});
+      Log.Info("IOWarrior.Setup(): IOWarrior Graphical LCD Driver - {0}", new object[] {Description});
       Log.Info("IOWarrior.Setup(): Called by \"{0}\".", new object[] {Assembly.GetEntryAssembly().FullName});
       FileInfo info = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("IOWarrior: Assembly creation time: {0} ( {1} UTC )",
                  new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
       }
-      if (this.DoDebug)
+      if (DoDebug)
       {
         Log.Info("IOWarrior: Platform: {0}", new object[] {Environment.OSVersion.VersionString});
       }
       try
       {
-        this.LoadAdvancedSettings();
+        LoadAdvancedSettings();
         AdvancedSettings.OnSettingsChanged +=
-          new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-        this._Grows = _linesG;
-        this._Gcols = _colsG;
-        if (this._Gcols > 0x80)
+          new AdvancedSettings.OnSettingsChangedHandler(AdvancedSettings_OnSettingsChanged);
+        _Grows = _linesG;
+        _Gcols = _colsG;
+        if (_Gcols > 0x80)
         {
           Log.Info("IOWarrior.Setup() - Invalid Graphics Columns value", new object[0]);
-          this._Grows = 0x80;
+          _Grows = 0x80;
         }
-        if (this._Grows > 0x40)
+        if (_Grows > 0x40)
         {
           Log.Info("IOWarrior.Setup() - Invalid Graphics Lines value", new object[0]);
-          this._Grows = 0x40;
+          _Grows = 0x40;
         }
       }
       catch (Exception exception)
       {
         Log.Debug("IOWarrior.Setup() - threw an exception: {0}", new object[] {exception.ToString()});
-        this._isDisabled = true;
-        this._errorMessage = "IOWarrior.setup() failed... Did you copy the required files to the MediaPortal directory?";
+        _isDisabled = true;
+        _errorMessage = "IOWarrior.setup() failed... Did you copy the required files to the MediaPortal directory?";
       }
       Log.Info("IOWarrior.Setup() - completed", new object[0]);
     }
 
     private void UpdateAdvancedSettings()
     {
-      if (DateTime.Now.Ticks >= this.LastSettingsCheck.AddMinutes(1.0).Ticks)
+      if (DateTime.Now.Ticks >= LastSettingsCheck.AddMinutes(1.0).Ticks)
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.UpdateAdvancedSettings(): called", new object[0]);
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml")))
         {
           FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml"));
-          if (info.LastWriteTime.Ticks > this.SettingsLastModTime.Ticks)
+          if (info.LastWriteTime.Ticks > SettingsLastModTime.Ticks)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.UpdateAdvancedSettings(): updating advanced settings", new object[0]);
             }
-            this.LoadAdvancedSettings();
+            LoadAdvancedSettings();
           }
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.UpdateAdvancedSettings(): completed", new object[0]);
         }
@@ -246,14 +246,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public string ErrorMessage
     {
-      get { return this._errorMessage; }
+      get { return _errorMessage; }
     }
 
     public bool IsDisabled
     {
       get
       {
-        this._isDisabled = false;
+        _isDisabled = false;
         int num = 0;
         if (!File.Exists("iowkit.dll"))
         {
@@ -261,11 +261,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if ((num > 0) && ((num & 1) > 0))
         {
-          this._errorMessage = "Required file \"iowkit.dll\" is not installed!\n";
-          this._isDisabled = true;
+          _errorMessage = "Required file \"iowkit.dll\" is not installed!\n";
+          _isDisabled = true;
           Log.Info("MatrixGX.IsDisabled() - Required file \"iowkit.dll\" is not installed!", new object[0]);
         }
-        return this._isDisabled;
+        return _isDisabled;
       }
     }
 
@@ -389,85 +389,85 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool BlankDisplayWhenIdle
       {
-        get { return this.m_BlankDisplayWhenIdle; }
-        set { this.m_BlankDisplayWhenIdle = value; }
+        get { return m_BlankDisplayWhenIdle; }
+        set { m_BlankDisplayWhenIdle = value; }
       }
 
       [XmlAttribute]
       public bool BlankDisplayWithVideo
       {
-        get { return this.m_BlankDisplayWithVideo; }
-        set { this.m_BlankDisplayWithVideo = value; }
+        get { return m_BlankDisplayWithVideo; }
+        set { m_BlankDisplayWithVideo = value; }
       }
 
       [XmlAttribute]
       public int BlankIdleTime
       {
-        get { return this.m_BlankIdleTime; }
-        set { this.m_BlankIdleTime = value; }
+        get { return m_BlankIdleTime; }
+        set { m_BlankIdleTime = value; }
       }
 
       [XmlAttribute]
       public bool DelayEQ
       {
-        get { return this.m_DelayEQ; }
-        set { this.m_DelayEQ = value; }
+        get { return m_DelayEQ; }
+        set { m_DelayEQ = value; }
       }
 
       [XmlAttribute]
       public int DelayEqTime
       {
-        get { return this.m_DelayEqTime; }
-        set { this.m_DelayEqTime = value; }
+        get { return m_DelayEqTime; }
+        set { m_DelayEqTime = value; }
       }
 
       [XmlAttribute]
       public bool EnableDisplayAction
       {
-        get { return this.m_EnableDisplayAction; }
-        set { this.m_EnableDisplayAction = value; }
+        get { return m_EnableDisplayAction; }
+        set { m_EnableDisplayAction = value; }
       }
 
       [XmlAttribute]
       public int EnableDisplayActionTime
       {
-        get { return this.m_EnableDisplayActionTime; }
-        set { this.m_EnableDisplayActionTime = value; }
+        get { return m_EnableDisplayActionTime; }
+        set { m_EnableDisplayActionTime = value; }
       }
 
       [XmlAttribute]
       public bool EqDisplay
       {
-        get { return this.m_EqDisplay; }
-        set { this.m_EqDisplay = value; }
+        get { return m_EqDisplay; }
+        set { m_EqDisplay = value; }
       }
 
       [XmlAttribute]
       public int EqRate
       {
-        get { return this.m_EqRate; }
-        set { this.m_EqRate = value; }
+        get { return m_EqRate; }
+        set { m_EqRate = value; }
       }
 
       [XmlAttribute]
       public bool EQTitleDisplay
       {
-        get { return this.m_EQTitleDisplay; }
-        set { this.m_EQTitleDisplay = value; }
+        get { return m_EQTitleDisplay; }
+        set { m_EQTitleDisplay = value; }
       }
 
       [XmlAttribute]
       public int EQTitleDisplayTime
       {
-        get { return this.m_EQTitleDisplayTime; }
-        set { this.m_EQTitleDisplayTime = value; }
+        get { return m_EQTitleDisplayTime; }
+        set { m_EQTitleDisplayTime = value; }
       }
 
       [XmlAttribute]
       public int EQTitleShowTime
       {
-        get { return this.m_EQTitleShowTime; }
-        set { this.m_EQTitleShowTime = value; }
+        get { return m_EQTitleShowTime; }
+        set { m_EQTitleShowTime = value; }
       }
 
       public static AdvancedSettings Instance
@@ -486,50 +486,50 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool NormalEQ
       {
-        get { return this.m_NormalEQ; }
-        set { this.m_NormalEQ = value; }
+        get { return m_NormalEQ; }
+        set { m_NormalEQ = value; }
       }
 
       [XmlAttribute]
       public bool RestrictEQ
       {
-        get { return this.m_RestrictEQ; }
-        set { this.m_RestrictEQ = value; }
+        get { return m_RestrictEQ; }
+        set { m_RestrictEQ = value; }
       }
 
       [XmlAttribute]
       public bool SmoothEQ
       {
-        get { return this.m_SmoothEQ; }
-        set { this.m_SmoothEQ = value; }
+        get { return m_SmoothEQ; }
+        set { m_SmoothEQ = value; }
       }
 
       [XmlAttribute]
       public bool StereoEQ
       {
-        get { return this.m_StereoEQ; }
-        set { this.m_StereoEQ = value; }
+        get { return m_StereoEQ; }
+        set { m_StereoEQ = value; }
       }
 
       [XmlAttribute]
       public bool VUindicators
       {
-        get { return this.m_VUindicators; }
-        set { this.m_VUindicators = value; }
+        get { return m_VUindicators; }
+        set { m_VUindicators = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter
       {
-        get { return this.m_VUmeter; }
-        set { this.m_VUmeter = value; }
+        get { return m_VUmeter; }
+        set { m_VUmeter = value; }
       }
 
       [XmlAttribute]
       public bool VUmeter2
       {
-        get { return this.m_VUmeter2; }
-        set { this.m_VUmeter2 = value; }
+        get { return m_VUmeter2; }
+        set { m_VUmeter2 = value; }
       }
 
       public delegate void OnSettingsChangedHandler();
@@ -548,10 +548,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private const BindingFlags BINDING_FLAGS = (BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
       private BitmapConverter bitmaputils = new BitmapConverter();
       private byte[] byLocal = new byte[0x400];
-      private byte[] byOldImage = new byte[0x400];
+      private readonly byte[] byOldImage = new byte[0x400];
       private DisplayControl DisplaySettings;
       private bool DoDebug;
-      private object DWriteMutex = new object();
+      private readonly object DWriteMutex = new object();
       private EQControl EQSettings;
       private int iDispHeight = 0x40;
       private int iDispWidth = 0x80;
@@ -572,20 +572,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private SystemStatus MPStatus = new SystemStatus();
       private static ModuleBuilder s_mb;
       private bool stopDisplayUpdateThread;
-      private object StopMutex = new object();
+      private readonly object StopMutex = new object();
 
       internal IOWDisplay()
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.iMONDisplay constructor: called", new object[0]);
         }
-        if (this._IOWDLL == null)
+        if (_IOWDLL == null)
         {
-          this.CreateDLLWrapper();
+          CreateDLLWrapper();
         }
         AdvancedSettings.Load();
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.IOWDisplay constructor: completed", new object[0]);
         }
@@ -593,44 +593,44 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void CheckIdleState()
       {
-        if (this.MPStatus.MP_Is_Idle)
+        if (MPStatus.MP_Is_Idle)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.DisplayLines(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
-                     new object[] {this.DisplaySettings.BlankDisplayWhenIdle, this.DisplaySettings._BlankIdleTimeout});
+                     new object[] {DisplaySettings.BlankDisplayWhenIdle, DisplaySettings._BlankIdleTimeout});
           }
-          if (this.DisplaySettings.BlankDisplayWhenIdle)
+          if (DisplaySettings.BlankDisplayWhenIdle)
           {
             if (!_mpIsIdle)
             {
-              if (this.DoDebug)
+              if (DoDebug)
               {
                 Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP going IDLE", new object[0]);
               }
-              this.DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
+              DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
             }
-            if (!this._IsDisplayOff &&
-                ((DateTime.Now.Ticks - this.DisplaySettings._BlankIdleTime) > this.DisplaySettings._BlankIdleTimeout))
+            if (!_IsDisplayOff &&
+                ((DateTime.Now.Ticks - DisplaySettings._BlankIdleTime) > DisplaySettings._BlankIdleTimeout))
             {
-              if (this.DoDebug)
+              if (DoDebug)
               {
                 Log.Info("IOWarrior.IOWDisplay.DisplayLines(): Blanking display due to IDLE state", new object[0]);
               }
-              this.DisplayOff();
+              DisplayOff();
             }
           }
           _mpIsIdle = true;
         }
         else
         {
-          if (this.DisplaySettings.BlankDisplayWhenIdle & _mpIsIdle)
+          if (DisplaySettings.BlankDisplayWhenIdle & _mpIsIdle)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayLines(): MP no longer IDLE - restoring display", new object[0]);
             }
-            this.DisplayOn();
+            DisplayOn();
           }
           _mpIsIdle = false;
         }
@@ -638,15 +638,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public void ClearDisplay()
       {
-        if (this._isOpen && !this._isClosing)
+        if (_isOpen && !_isClosing)
         {
-          lock (this.DWriteMutex)
+          lock (DWriteMutex)
           {
             Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - called", new object[0]);
-            this.IOW_Graphics = Graphics.FromImage(this.IOW_Surface);
-            this.IOW_Graphics.Clear(Color.White);
+            IOW_Graphics = Graphics.FromImage(IOW_Surface);
+            IOW_Graphics.Clear(Color.White);
             Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - Sending blank image to device", new object[0]);
-            this.IOW_ClearDisplay();
+            IOW_ClearDisplay();
           }
           Log.Debug("IOWarrior.IOWDisplay.ClearDisplay() - completed", new object[0]);
         }
@@ -657,30 +657,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - called", new object[0]);
         try
         {
-          lock (this.StopMutex)
+          lock (StopMutex)
           {
             Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() Stopping DisplayUpdate() Thread", new object[0]);
             Thread.Sleep(250);
-            this.stopDisplayUpdateThread = true;
+            stopDisplayUpdateThread = true;
             goto Label_004E;
           }
           Label_0047:
           Thread.Sleep(100);
           Label_004E:
-          if (this._displayThread.IsAlive)
+          if (_displayThread.IsAlive)
           {
             goto Label_0047;
           }
           Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() DisplayUpdate() Thread stopped.", new object[0]);
-          this._isClosing = true;
-          lock (this.DWriteMutex)
+          _isClosing = true;
+          lock (DWriteMutex)
           {
-            this.IOW_ClearDisplay();
-            this.IOW_StopDisplay();
-            this.IOWLib_IowKitCloseDevice(this.IOW_Handle);
-            this.IOW_Graphics.Dispose();
-            this.IOW_Handle = 0;
-            this._isOpen = false;
+            IOW_ClearDisplay();
+            IOW_StopDisplay();
+            IOWLib_IowKitCloseDevice(IOW_Handle);
+            IOW_Graphics.Dispose();
+            IOW_Handle = 0;
+            _isOpen = false;
           }
           Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - Display closed.", new object[0]);
         }
@@ -689,25 +689,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("IOWarrior.IOWDisplay.CloseDisplay() - caught exception on display close: {0}",
                     new object[] {exception.ToString()});
           Log.Error(exception);
-          this._isOpen = false;
+          _isOpen = false;
         }
       }
 
       private bool CreateDLLWrapper()
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): called", new object[0]);
         }
         new FileInfo(Assembly.GetEntryAssembly().Location);
-        this.IOW_DLLFile = Config.GetFile(Config.Dir.Base, "iowkit.dll");
-        if (this.DoDebug)
+        IOW_DLLFile = Config.GetFile(Config.Dir.Base, "iowkit.dll");
+        if (DoDebug)
         {
-          Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): using IOW DLL {1}", new object[] {this.IOW_DLLFile});
+          Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): using IOW DLL {1}", new object[] {IOW_DLLFile});
         }
-        if (this.IOW_DLLFile == string.Empty)
+        if (IOW_DLLFile == string.Empty)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.CreateDLLWrapper(): FAILED - iowkit.dll not found", new object[0]);
           }
@@ -724,34 +724,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 "IOW_DLL_wrapper");
           }
           TypeBuilder builder2 = s_mb.DefineType("IOWDLLWrapper" + Guid.NewGuid().ToString("N"));
-          MethodBuilder builder3 = builder2.DefinePInvokeMethod("IowKitOpenDevice", this.IOW_DLLFile,
+          MethodBuilder builder3 = builder2.DefinePInvokeMethod("IowKitOpenDevice", IOW_DLLFile,
                                                                 MethodAttributes.PinvokeImpl |
                                                                 MethodAttributes.HideBySig | MethodAttributes.Static |
                                                                 MethodAttributes.Public, CallingConventions.Standard,
                                                                 typeof (int), null, CallingConvention.StdCall,
                                                                 CharSet.Auto);
           builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-          builder3 = builder2.DefinePInvokeMethod("IowKitCloseDevice", this.IOW_DLLFile,
+          builder3 = builder2.DefinePInvokeMethod("IowKitCloseDevice", IOW_DLLFile,
                                                   MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                   MethodAttributes.Static | MethodAttributes.Public,
                                                   CallingConventions.Standard, typeof (void), new Type[] {typeof (int)},
                                                   CallingConvention.StdCall, CharSet.Auto);
           builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-          builder3 = builder2.DefinePInvokeMethod("IowKitWrite", this.IOW_DLLFile,
+          builder3 = builder2.DefinePInvokeMethod("IowKitWrite", IOW_DLLFile,
                                                   MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                   MethodAttributes.Static | MethodAttributes.Public,
                                                   CallingConventions.Standard, typeof (int),
                                                   new Type[] {typeof (int), typeof (int), typeof (byte[]), typeof (int)},
                                                   CallingConvention.StdCall, CharSet.Auto);
           builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-          this._IOWDLL = builder2.CreateType();
+          _IOWDLL = builder2.CreateType();
         }
         catch (Exception exception)
         {
           Log.Error("IOWarrior.IOWDisplay.CreateImonDLLwrapper(): caught exception: {0}", new object[] {exception});
           return false;
         }
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.IOWDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.", new object[0]);
         }
@@ -760,84 +760,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void DisplayEQ()
       {
-        if (!_mpIsIdle && this.EQSettings._EqDataAvailable)
+        if (!_mpIsIdle && EQSettings._EqDataAvailable)
         {
-          lock (this.DWriteMutex)
+          lock (DWriteMutex)
           {
             object obj3;
-            RectangleF textBounds = this.GetTextBounds();
-            if (this.DoDebug)
+            RectangleF textBounds = GetTextBounds();
+            if (DoDebug)
             {
               Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called", new object[0]);
             }
-            this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
-                                                ? ((int) textBounds.Height)
-                                                : ((int) textBounds.Width);
-            this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
-            MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
-            Monitor.Enter(obj3 = this.DWriteMutex);
+            EQSettings.Render_MaxValue = (EQSettings.UseNormalEq | EQSettings.UseStereoEq)
+                                           ? ((int) textBounds.Height)
+                                           : ((int) textBounds.Width);
+            EQSettings.Render_BANDS = EQSettings.UseNormalEq ? 0x10 : (EQSettings.UseStereoEq ? 8 : 1);
+            MiniDisplayHelper.ProcessEqData(ref EQSettings);
+            Monitor.Enter(obj3 = DWriteMutex);
             try
             {
-              this.IOW_Graphics.FillRectangle(Brushes.White, textBounds);
-              for (int i = 0; i < this.EQSettings.Render_BANDS; i++)
+              IOW_Graphics.FillRectangle(Brushes.White, textBounds);
+              for (int i = 0; i < EQSettings.Render_BANDS; i++)
               {
                 RectangleF ef2;
-                if (this.DoDebug)
+                if (DoDebug)
                 {
                   Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): Rendering {0} band {1} = {2}",
                            new object[]
                              {
-                               this.EQSettings.UseNormalEq
+                               EQSettings.UseNormalEq
                                  ? "Normal EQ"
-                                 : (this.EQSettings.UseStereoEq
+                                 : (EQSettings.UseStereoEq
                                       ? "Stereo EQ"
-                                      : (this.EQSettings.UseVUmeter ? "VU Meter" : "VU Meter 2")), i,
-                               this.EQSettings.UseNormalEq
-                                 ? this.EQSettings.EqArray[1 + i].ToString()
-                                 : (this.EQSettings.UseStereoEq
-                                      ? (this.EQSettings.EqArray[1 + i].ToString() + " : " +
-                                         this.EQSettings.EqArray[9 + i].ToString())
-                                      : (this.EQSettings.EqArray[1 + i].ToString() + " : " +
-                                         this.EQSettings.EqArray[2 + i].ToString()))
+                                      : (EQSettings.UseVUmeter ? "VU Meter" : "VU Meter 2")), i,
+                               EQSettings.UseNormalEq
+                                 ? EQSettings.EqArray[1 + i].ToString()
+                                 : (EQSettings.UseStereoEq
+                                      ? (EQSettings.EqArray[1 + i].ToString() + " : " +
+                                         EQSettings.EqArray[9 + i].ToString())
+                                      : (EQSettings.EqArray[1 + i].ToString() + " : " +
+                                         EQSettings.EqArray[2 + i].ToString()))
                              });
                 }
-                if (this.EQSettings.UseNormalEq)
+                if (EQSettings.UseNormalEq)
                 {
                   ef2 = new RectangleF(
-                    (textBounds.X + (i*(((int) textBounds.Width)/this.EQSettings.Render_BANDS))) + 1f,
-                    textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[1 + i]),
-                    (float) ((((int) textBounds.Width)/this.EQSettings.Render_BANDS) - 2),
-                    (float) this.EQSettings.EqArray[1 + i]);
-                  this.IOW_Graphics.FillRectangle(Brushes.Black, ef2);
+                    (textBounds.X + (i*(((int) textBounds.Width)/EQSettings.Render_BANDS))) + 1f,
+                    textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[1 + i]),
+                    (float) ((((int) textBounds.Width)/EQSettings.Render_BANDS) - 2),
+                    (float) EQSettings.EqArray[1 + i]);
+                  IOW_Graphics.FillRectangle(Brushes.Black, ef2);
                 }
                 else
                 {
                   int num2;
                   RectangleF ef3;
-                  if (this.EQSettings.UseStereoEq)
+                  if (EQSettings.UseStereoEq)
                   {
-                    int num4 = (((int) textBounds.Width)/2)/this.EQSettings.Render_BANDS;
+                    int num4 = (((int) textBounds.Width)/2)/EQSettings.Render_BANDS;
                     num2 = i*num4;
-                    int num3 = (i + this.EQSettings.Render_BANDS)*num4;
+                    int num3 = (i + EQSettings.Render_BANDS)*num4;
                     ef2 = new RectangleF((textBounds.X + num2) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                         (float) (num4 - 2), (float) this.EQSettings.EqArray[1 + i]);
+                                         textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[1 + i]),
+                                         (float) (num4 - 2), (float) EQSettings.EqArray[1 + i]);
                     ef3 = new RectangleF((textBounds.X + num3) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[9 + i]),
-                                         (float) (num4 - 2), (float) this.EQSettings.EqArray[9 + i]);
-                    this.IOW_Graphics.FillRectangle(Brushes.Black, ef2);
-                    this.IOW_Graphics.FillRectangle(Brushes.Black, ef3);
+                                         textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[9 + i]),
+                                         (float) (num4 - 2), (float) EQSettings.EqArray[9 + i]);
+                    IOW_Graphics.FillRectangle(Brushes.Black, ef2);
+                    IOW_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
-                  else if (this.EQSettings.UseVUmeter | this.EQSettings.UseVUmeter2)
+                  else if (EQSettings.UseVUmeter | EQSettings.UseVUmeter2)
                   {
-                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float) this.EQSettings.EqArray[1 + i],
+                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float) EQSettings.EqArray[1 + i],
                                          (float) (((int) (textBounds.Height/2f)) - 2));
-                    num2 = this.EQSettings.UseVUmeter ? 0 : (((int) textBounds.Width) - this.EQSettings.EqArray[2 + i]);
+                    num2 = EQSettings.UseVUmeter ? 0 : (((int) textBounds.Width) - EQSettings.EqArray[2 + i]);
                     ef3 = new RectangleF((textBounds.X + num2) + 1f, (textBounds.Y + (textBounds.Height/2f)) + 1f,
-                                         (float) this.EQSettings.EqArray[2 + i],
+                                         (float) EQSettings.EqArray[2 + i],
                                          (float) (((int) (textBounds.Height/2f)) - 2));
-                    this.IOW_Graphics.FillRectangle(Brushes.Black, ef2);
-                    this.IOW_Graphics.FillRectangle(Brushes.Black, ef3);
+                    IOW_Graphics.FillRectangle(Brushes.Black, ef2);
+                    IOW_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
                 }
               }
@@ -859,34 +859,34 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void DisplayOff()
       {
-        if (!this._IsDisplayOff)
+        if (!_IsDisplayOff)
         {
-          if (this.DisplaySettings.EnableDisplayAction & this.DisplaySettings._DisplayControlAction)
+          if (DisplaySettings.EnableDisplayAction & DisplaySettings._DisplayControlAction)
           {
-            if ((DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction) <
-                this.DisplaySettings._DisplayControlTimeout)
+            if ((DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction) <
+                DisplaySettings._DisplayControlTimeout)
             {
-              if (this.DoDebug)
+              if (DoDebug)
               {
                 Log.Info("IOWarrior.IOWDisplay.DisplayOff(): DisplayControlAction Timer = {0}.",
-                         new object[] {DateTime.Now.Ticks - this.DisplaySettings._DisplayControlLastAction});
+                         new object[] {DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction});
               }
               return;
             }
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayOff(): DisplayControlAction Timeout expired.", new object[0]);
             }
-            this.DisplaySettings._DisplayControlAction = false;
-            this.DisplaySettings._DisplayControlLastAction = 0L;
+            DisplaySettings._DisplayControlAction = false;
+            DisplaySettings._DisplayControlLastAction = 0L;
           }
           Log.Info("IOWarrior.IOWDisplay.DisplayOff(): called", new object[0]);
-          lock (this.DWriteMutex)
+          lock (DWriteMutex)
           {
             Log.Info("IOWarrior.IOWDisplay.DisplayOff(): Sending Display OFF command to LCD", new object[0]);
-            this.IOW_BacklightOff();
-            this.ClearDisplay();
-            this._IsDisplayOff = true;
+            IOW_BacklightOff();
+            ClearDisplay();
+            _IsDisplayOff = true;
           }
           Log.Info("IOWarrior.IOWDisplay.DisplayOff(): completed", new object[0]);
         }
@@ -894,14 +894,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void DisplayOn()
       {
-        if (this._IsDisplayOff)
+        if (_IsDisplayOff)
         {
           Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
-          lock (this.DWriteMutex)
+          lock (DWriteMutex)
           {
             Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): Sending Display ON command to LCD", new object[0]);
-            this._IsDisplayOff = false;
-            this.IOW_BacklightOn();
+            _IsDisplayOff = false;
+            IOW_BacklightOn();
           }
           Log.Info("MatrixGX.MOGXDisplay.DisplayOn(): called", new object[0]);
         }
@@ -909,113 +909,113 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void DisplayUpdate()
       {
-        if (this.DoDebug)
+        if (DoDebug)
         {
           Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Starting Display Update Thread", new object[0]);
         }
-        if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+        if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
         {
-          GUIWindowManager.OnNewAction += new OnActionHandler(this.OnExternalAction);
+          GUIWindowManager.OnNewAction += new OnActionHandler(OnExternalAction);
         }
         while (true)
         {
-          lock (this.StopMutex)
+          lock (StopMutex)
           {
-            if (this.stopDisplayUpdateThread)
+            if (stopDisplayUpdateThread)
             {
-              if (this.DoDebug)
+              if (DoDebug)
               {
                 Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Display Update Thread terminating", new object[0]);
               }
-              if (this.DisplaySettings.BlankDisplayWithVideo & this.DisplaySettings.EnableDisplayAction)
+              if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
               {
-                GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnExternalAction);
+                GUIWindowManager.OnNewAction -= new OnActionHandler(OnExternalAction);
               }
               return;
             }
           }
-          MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          if (this.DoDebug)
+          MiniDisplayHelper.GetSystemStatus(ref MPStatus);
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Collecting status...", new object[0]);
           }
-          if (this.MPStatus.MediaPlayer_Playing)
+          if (MPStatus.MediaPlayer_Playing)
           {
-            if ((this.MPStatus.Media_IsTV || this.MPStatus.Media_IsTVRecording) &
-                (!this.MPStatus.Media_IsDVD && !this.MPStatus.Media_IsCD))
+            if ((MPStatus.Media_IsTV || MPStatus.Media_IsTVRecording) &
+                (!MPStatus.Media_IsDVD && !MPStatus.Media_IsCD))
             {
-              if (this.MPStatus.MediaPlayer_Playing)
+              if (MPStatus.MediaPlayer_Playing)
               {
-                if (this.DisplaySettings.BlankDisplayWithVideo)
+                if (DisplaySettings.BlankDisplayWithVideo)
                 {
-                  this.DisplayOff();
+                  DisplayOff();
                 }
               }
               else
               {
-                this.RestoreDisplayFromVideoOrIdle();
+                RestoreDisplayFromVideoOrIdle();
               }
             }
-            if (this.MPStatus.Media_IsDVD || this.MPStatus.Media_IsCD)
+            if (MPStatus.Media_IsDVD || MPStatus.Media_IsCD)
             {
-              if (this.MPStatus.MediaPlayer_Playing)
+              if (MPStatus.MediaPlayer_Playing)
               {
-                if ((this.MPStatus.Media_IsDVD & this.MPStatus.Media_IsVideo) &&
-                    this.DisplaySettings.BlankDisplayWithVideo)
+                if ((MPStatus.Media_IsDVD & MPStatus.Media_IsVideo) &&
+                    DisplaySettings.BlankDisplayWithVideo)
                 {
-                  this.DisplayOff();
+                  DisplayOff();
                 }
               }
               else
               {
-                this.RestoreDisplayFromVideoOrIdle();
+                RestoreDisplayFromVideoOrIdle();
               }
             }
-            if (this.MPStatus.Media_IsVideo & !this.MPStatus.Media_IsDVD)
+            if (MPStatus.Media_IsVideo & !MPStatus.Media_IsDVD)
             {
-              if (this.MPStatus.MediaPlayer_Playing)
+              if (MPStatus.MediaPlayer_Playing)
               {
-                if (this.DisplaySettings.BlankDisplayWithVideo)
+                if (DisplaySettings.BlankDisplayWithVideo)
                 {
-                  this.DisplayOff();
+                  DisplayOff();
                 }
               }
               else
               {
-                this.RestoreDisplayFromVideoOrIdle();
+                RestoreDisplayFromVideoOrIdle();
               }
             }
           }
-          if (!this.MPStatus.MediaPlayer_Playing && !this.MPStatus.MediaPlayer_Playing)
+          if (!MPStatus.MediaPlayer_Playing && !MPStatus.MediaPlayer_Playing)
           {
-            this.RestoreDisplayFromVideoOrIdle();
+            RestoreDisplayFromVideoOrIdle();
           }
-          if (!this.MPStatus.MediaPlayer_Active)
+          if (!MPStatus.MediaPlayer_Active)
           {
-            this.RestoreDisplayFromVideoOrIdle();
+            RestoreDisplayFromVideoOrIdle();
           }
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Status collected...", new object[0]);
           }
-          this.GetEQ();
-          this.DisplayEQ();
-          lock (this.DWriteMutex)
+          GetEQ();
+          DisplayEQ();
+          lock (DWriteMutex)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() image built - sending to display", new object[0]);
             }
-            this.IOW_SendImage(this.IOW_Surface);
+            IOW_SendImage(IOW_Surface);
           }
-          if (!this.EQSettings._EqDataAvailable)
+          if (!EQSettings._EqDataAvailable)
           {
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Sleeping...", new object[0]);
             }
             Thread.Sleep(250);
-            if (this.DoDebug)
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Waking...", new object[0]);
             }
@@ -1025,37 +1025,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void GetEQ()
       {
-        lock (this.DWriteMutex)
+        lock (DWriteMutex)
         {
-          this.EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref this.EQSettings);
-          if (this.EQSettings._EqDataAvailable)
+          EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref EQSettings);
+          if (EQSettings._EqDataAvailable)
           {
-            this._displayThread.Priority = ThreadPriority.AboveNormal;
+            _displayThread.Priority = ThreadPriority.AboveNormal;
           }
           else
           {
-            this._displayThread.Priority = ThreadPriority.BelowNormal;
+            _displayThread.Priority = ThreadPriority.BelowNormal;
           }
         }
       }
 
       private RectangleF GetTextBounds()
       {
-        lock (this.DWriteMutex)
+        lock (DWriteMutex)
         {
           GraphicsUnit pixel = GraphicsUnit.Pixel;
-          return this.IOW_Surface.GetBounds(ref pixel);
+          return IOW_Surface.GetBounds(ref pixel);
         }
       }
 
       public void IOW_BacklightOff()
       {
-        this.IOW_SendBits(4, 0, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(4, 0, 0, 0, 0, 0, 0, 0);
       }
 
       public void IOW_BacklightOn()
       {
-        this.IOW_SendBits(4, 1, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(4, 1, 0, 0, 0, 0, 0, 0);
       }
 
       public Bitmap IOW_Bitmap_ConvertBitmap(Bitmap img)
@@ -1072,7 +1072,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             int ofs = (i*bitmapdata.Stride) + (j*4);
             if (Marshal.ReadByte(bitmapdata.Scan0, ofs) != 0xff)
             {
-              this.IOW_Bitmap_SetIndexedPixel(j, i, bmd, true);
+              IOW_Bitmap_SetIndexedPixel(j, i, bmd, true);
             }
           }
         }
@@ -1099,11 +1099,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public byte[] IOW_BitMap_ToByteArray(Bitmap bitmap)
       {
+        for(int i=0; i < byLocal.Length; i++)
+        {
+          byLocal[i] = 0;
+        }
         BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
                                                 bitmap.PixelFormat);
         int length = bitmapdata.Stride*bitmap.Height;
-        this.m_Buffer = new byte[length];
-        Marshal.Copy(bitmapdata.Scan0, this.m_Buffer, 0, length);
+        m_Buffer = new byte[length];
+        Marshal.Copy(bitmapdata.Scan0, m_Buffer, 0, length);
         for (int i = 0; i < 8; i++)
         {
           for (int j = 0; j < 0x10; j++)
@@ -1112,48 +1116,48 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               for (int m = 0; m < 8; m++)
               {
-                if (this.m_Buffer[((i*0x80) + j) + (k*0x10)] == 0)
+                if (m_Buffer[((i*0x80) + j) + (k*0x10)] == 0)
                 {
                   break;
                 }
-                if (this.m_Buffer[((k*0x10) + j) + (i*0x80)] >= Math.Pow(2.0, (double) (7 - m)))
+                if (m_Buffer[((k*0x10) + j) + (i*0x80)] >= Math.Pow(2.0, (double) (7 - m)))
                 {
-                  this.byLocal[(m + (j*8)) + (i*0x80)] =
-                    (byte) (this.byLocal[(m + (j*8)) + (i*0x80)] + Math.Pow(2.0, (double) k));
-                  this.m_Buffer[((i*0x80) + j) + (k*0x10)] =
-                    (byte) (this.m_Buffer[((i*0x80) + j) + (k*0x10)] - Math.Pow(2.0, (double) (7 - m)));
+                  byLocal[(m + (j*8)) + (i*0x80)] =
+                    (byte) (byLocal[(m + (j*8)) + (i*0x80)] + Math.Pow(2.0, (double) k));
+                  m_Buffer[((i*0x80) + j) + (k*0x10)] =
+                    (byte) (m_Buffer[((i*0x80) + j) + (k*0x10)] - Math.Pow(2.0, (double) (7 - m)));
                 }
               }
             }
           }
         }
         bitmap.UnlockBits(bitmapdata);
-        return this.byLocal;
+        return byLocal;
       }
 
       public void IOW_ClearDisplay()
       {
-        Bitmap bitmapRaw = new Bitmap(this.iDispWidth, this.iDispHeight, PixelFormat.Format32bppPArgb);
-        this.IOW_SendImage(bitmapRaw);
+        Bitmap bitmapRaw = new Bitmap(iDispWidth, iDispHeight, PixelFormat.Format32bppPArgb);
+        IOW_SendImage(bitmapRaw);
       }
 
       private void IOW_SendBits(byte reportId, byte d1, byte d2, byte d3, byte d4, byte d5, byte d6, byte d7)
       {
         byte[] buffer = new byte[] {reportId, d1, d2, d3, d4, d5, d6, d7};
-        this.IOWLib_IowKitWrite(this.IOW_Handle, 1, ref buffer, buffer.Length);
+        IOWLib_IowKitWrite(IOW_Handle, 1, ref buffer, buffer.Length);
       }
 
       private void IOW_SendIIC(byte byte1)
       {
-        this.IOW_SendBits(2, 0xc2, 0x70, byte1, 0, 0, 0, 0);
+        IOW_SendBits(2, 0xc2, 0x70, byte1, 0, 0, 0, 0);
       }
 
       public void IOW_SendImage(Bitmap bitmapRaw)
       {
-        Bitmap bitmap = new Bitmap(this.iDispWidth, this.iDispHeight, PixelFormat.Format1bppIndexed);
-        bitmap = this.IOW_Bitmap_ConvertBitmap(bitmapRaw);
-        byte[] buffer = this.IOW_BitMap_ToByteArray(bitmap);
-        this.IOW_SwitchPanel(0);
+        Bitmap bitmap = new Bitmap(iDispWidth, iDispHeight, PixelFormat.Format1bppIndexed);
+        bitmap = IOW_Bitmap_ConvertBitmap(bitmapRaw);
+        byte[] buffer = IOW_BitMap_ToByteArray(bitmap);
+        IOW_SwitchPanel(0);
         int num = 0;
         for (int i = 0; i < 8; i++)
         {
@@ -1162,9 +1166,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             for (int k = 0; k < 0x40; k++)
             {
               int num5 = 0;
-              while (buffer[(((j*0x40) + k) + num5) + (i*0x80)] != this.byOldImage[(((j*0x40) + k) + num5) + (i*0x80)])
+              while (buffer[(((j*0x40) + k) + num5) + (i*0x80)] != byOldImage[(((j*0x40) + k) + num5) + (i*0x80)])
               {
-                this.byOldImage[(((j*0x40) + k) + num5) + (i*0x80)] = buffer[(((j*0x40) + k) + num5) + (i*0x80)];
+                byOldImage[(((j*0x40) + k) + num5) + (i*0x80)] = buffer[(((j*0x40) + k) + num5) + (i*0x80)];
                 num5++;
                 if ((k + num5) >= 0x40)
                 {
@@ -1175,52 +1179,52 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (j != num)
                 {
-                  this.IOW_SwitchPanel(j);
+                  IOW_SwitchPanel(j);
                   num = j;
                 }
-                this.IOW_SendBits(5, 3, 0xc0, (byte) (0x40 + k), (byte) (0xb8 + i), 0, 0, 0);
+                IOW_SendBits(5, 3, 0xc0, (byte) (0x40 + k), (byte) (0xb8 + i), 0, 0, 0);
                 int num6 = 0;
                 while (num5 >= 6)
                 {
-                  this.IOW_SendBits(5, 0x86, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                    buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                    buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                                    buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
-                                    buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)],
-                                    buffer[((((j*0x40) + k) + num6) + 5) + (i*0x80)]);
+                  IOW_SendBits(5, 0x86, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
+                               buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
+                               buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
+                               buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
+                               buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)],
+                               buffer[((((j*0x40) + k) + num6) + 5) + (i*0x80)]);
                   num5 -= 6;
                   num6 += 6;
                 }
                 switch (num5)
                 {
                   case 1:
-                    this.IOW_SendBits(5, 0x81, buffer[(((j*0x40) + k) + num6) + (i*0x80)], 0, 0, 0, 0, 0);
+                    IOW_SendBits(5, 0x81, buffer[(((j*0x40) + k) + num6) + (i*0x80)], 0, 0, 0, 0, 0);
                     break;
 
                   case 2:
-                    this.IOW_SendBits(5, 130, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)], 0, 0, 0, 0);
+                    IOW_SendBits(5, 130, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)], 0, 0, 0, 0);
                     break;
 
                   case 3:
-                    this.IOW_SendBits(5, 0x83, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)], 0, 0, 0);
+                    IOW_SendBits(5, 0x83, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)], 0, 0, 0);
                     break;
 
                   case 4:
-                    this.IOW_SendBits(5, 0x84, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)], 0, 0);
+                    IOW_SendBits(5, 0x84, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)], 0, 0);
                     break;
 
                   case 5:
-                    this.IOW_SendBits(5, 0x85, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
-                                      buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)], 0);
+                    IOW_SendBits(5, 0x85, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
+                                 buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)], 0);
                     break;
                 }
                 k += (num5 + num6) - 1;
@@ -1232,15 +1236,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public void IOW_StartDisplay()
       {
-        this.IOW_SendBits(4, 1, 0, 0, 0, 0, 0, 0);
-        this.IOW_SendBits(5, 1, 0x3f, 0, 0, 0, 0, 0);
-        this.IOW_SendBits(1, 1, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(4, 1, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(5, 1, 0x3f, 0, 0, 0, 0, 0);
+        IOW_SendBits(1, 1, 0, 0, 0, 0, 0, 0);
       }
 
       public void IOW_StopDisplay()
       {
-        this.IOW_SendBits(1, 0, 0, 0, 0, 0, 0, 0);
-        this.IOW_SendBits(4, 0, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(1, 0, 0, 0, 0, 0, 0, 0);
+        IOW_SendBits(4, 0, 0, 0, 0, 0, 0, 0);
       }
 
       public void IOW_SwitchPanel(int panel)
@@ -1248,25 +1252,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         switch (panel)
         {
           case 0:
-            this.IOW_SendIIC(0xdf);
+            IOW_SendIIC(0xdf);
             return;
 
           case 1:
-            this.IOW_SendIIC(0xef);
+            IOW_SendIIC(0xef);
             return;
         }
       }
 
       public void IOWLib_IowKitCloseDevice(int iowHandle)
       {
-        if (this._IOWDLL != null)
+        if (_IOWDLL != null)
         {
           try
           {
-            this._IOWDLL.InvokeMember("IowKitCloseDevice",
-                                      BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                      new object[] {iowHandle});
-            if (this.DoDebug)
+            _IOWDLL.InvokeMember("IowKitCloseDevice",
+                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
+                                 new object[] {iowHandle});
+            if (DoDebug)
             {
               Log.Info("IOWarrior.IOWDisplay.IOWLib_IowKitCloseDevice(): called", new object[0]);
             }
@@ -1280,7 +1284,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public int IOWLib_IowKitOpenDevice()
       {
-        if (this._IOWDLL == null)
+        if (_IOWDLL == null)
         {
           return 0;
         }
@@ -1288,10 +1292,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           int num =
             (int)
-            this._IOWDLL.InvokeMember("IowKitOpenDevice",
-                                      BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                      null);
-          if (this.DoDebug)
+            _IOWDLL.InvokeMember("IowKitOpenDevice",
+                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
+                                 null);
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.IOWLib_IowKitOpenDevice(): Returning: {0}", new object[] {num});
           }
@@ -1306,7 +1310,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public int IOWLib_IowKitWrite(int iowHandle, int numPipe, ref byte[] Buffer, int BufferSize)
       {
-        if (this._IOWDLL == null)
+        if (_IOWDLL == null)
         {
           return 0;
         }
@@ -1314,10 +1318,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           int num =
             (int)
-            this._IOWDLL.InvokeMember("IowKitWrite",
-                                      BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                      new object[] {iowHandle, numPipe, Buffer, BufferSize});
-          if (this.DoDebug)
+            _IOWDLL.InvokeMember("IowKitWrite",
+                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
+                                 new object[] {iowHandle, numPipe, Buffer, BufferSize});
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.IOWLib_IowKitWrite(): Returning: {0}", new object[] {num});
           }
@@ -1332,9 +1336,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void OnExternalAction(Action action)
       {
-        if (this.DisplaySettings.EnableDisplayAction)
+        if (DisplaySettings.EnableDisplayAction)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.OnExternalAction(): received action {0}",
                      new object[] {action.wID.ToString()});
@@ -1352,59 +1356,59 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             return;
           }
-          this.DisplaySettings._DisplayControlAction = true;
-          this.DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
-          if (this.DoDebug)
+          DisplaySettings._DisplayControlAction = true;
+          DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.OnExternalAction(): received DisplayControlAction", new object[0]);
           }
-          this.DisplayOn();
+          DisplayOn();
         }
       }
 
       public bool OpenDisplay(AdvancedSettings UseSettings)
       {
         Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - called", new object[0]);
-        this.AdvSettings = UseSettings;
-        MiniDisplayHelper.InitEQ(ref this.EQSettings);
-        MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
-        this.ParseAdvancedSettings();
+        AdvSettings = UseSettings;
+        MiniDisplayHelper.InitEQ(ref EQSettings);
+        MiniDisplayHelper.InitDisplayControl(ref DisplaySettings);
+        ParseAdvancedSettings();
         try
         {
           using (Profile.Settings settings = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
-            this._AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
+            _AudioUseASIO = settings.GetValueAsBool("audioplayer", "asio", false);
           }
-          this.IOW_Handle = this.IOWLib_IowKitOpenDevice();
-          if ((this.IOW_Handle == -1) | (this.IOW_Handle == 0))
+          IOW_Handle = IOWLib_IowKitOpenDevice();
+          if ((IOW_Handle == -1) | (IOW_Handle == 0))
           {
             Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device not found", new object[0]);
-            this._isOpen = false;
+            _isOpen = false;
           }
           else
           {
             Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - IOWarrior Device found", new object[0]);
-            this.IOW_StartDisplay();
-            this.IOW_ClearDisplay();
-            this.IOW_Surface = new Bitmap(Settings.Instance.GraphicWidth, Settings.Instance.GraphicHeight);
-            this.IOW_Graphics = Graphics.FromImage(this.IOW_Surface);
-            this._isOpen = true;
-            this._isClosing = false;
+            IOW_StartDisplay();
+            IOW_ClearDisplay();
+            IOW_Surface = new Bitmap(Settings.Instance.GraphicWidth, Settings.Instance.GraphicHeight);
+            IOW_Graphics = Graphics.FromImage(IOW_Surface);
+            _isOpen = true;
+            _isClosing = false;
             Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Display Opened", new object[0]);
-            this.stopDisplayUpdateThread = false;
-            this._displayThread = new Thread(new ThreadStart(this.DisplayUpdate));
-            this._displayThread.IsBackground = true;
-            this._displayThread.Priority = ThreadPriority.BelowNormal;
-            this._displayThread.Name = "DisplayUpdateThread";
-            this._displayThread.Start();
-            if (this._displayThread.IsAlive)
+            stopDisplayUpdateThread = false;
+            _displayThread = new Thread(new ThreadStart(DisplayUpdate));
+            _displayThread.IsBackground = true;
+            _displayThread.Priority = ThreadPriority.BelowNormal;
+            _displayThread.Name = "DisplayUpdateThread";
+            _displayThread.Start();
+            if (_displayThread.IsAlive)
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() Thread Started", new object[0]);
             }
             else
             {
               Log.Info("IOWarrior.IOWDisplay.DisplayUpdate() FAILED TO START", new object[0]);
-              this.CloseDisplay();
+              CloseDisplay();
             }
           }
         }
@@ -1413,128 +1417,128 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Display not opened - caught exception {0}",
                    new object[] {exception.ToString()});
           Log.Error(exception);
-          this._isOpen = false;
+          _isOpen = false;
         }
         Log.Info("IOWarrior.IOWDisplay.OpenDisplay() - Completed", new object[0]);
-        return this._isOpen;
+        return _isOpen;
       }
 
       private void ParseAdvancedSettings()
       {
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Called", new object[0]);
-        this.DoDebug = Settings.Instance.ExtensiveLogging;
-        this.EQSettings.UseEqDisplay = this.AdvSettings.EqDisplay;
-        this.EQSettings.UseNormalEq = this.AdvSettings.NormalEQ;
-        this.EQSettings.UseStereoEq = this.AdvSettings.StereoEQ;
-        this.EQSettings.UseVUmeter = this.AdvSettings.VUmeter;
-        this.EQSettings.UseVUmeter2 = this.AdvSettings.VUmeter2;
-        this.EQSettings._useVUindicators = this.AdvSettings.VUindicators;
-        this.EQSettings.RestrictEQ = this.AdvSettings.RestrictEQ;
-        this.EQSettings._EQ_Restrict_FPS = this.AdvSettings.EqRate;
-        this.EQSettings.DelayEQ = this.AdvSettings.DelayEQ;
-        this.EQSettings._DelayEQTime = this.AdvSettings.DelayEqTime;
-        this.EQSettings.SmoothEQ = this.AdvSettings.SmoothEQ;
-        this.EQSettings.EQTitleDisplay = this.AdvSettings.EQTitleDisplay;
-        this.EQSettings._EQTitleDisplayTime = this.AdvSettings.EQTitleDisplayTime;
-        this.EQSettings._EQTitleShowTime = this.AdvSettings.EQTitleShowTime;
-        this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
-                                           ? 0
-                                           : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                              (0xf4240/this.EQSettings._EQ_Restrict_FPS));
-        this.DisplaySettings.BlankDisplayWithVideo = this.AdvSettings.BlankDisplayWithVideo;
-        this.DisplaySettings.EnableDisplayAction = this.AdvSettings.EnableDisplayAction;
-        this.DisplaySettings.DisplayActionTime = this.AdvSettings.EnableDisplayActionTime;
-        this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
-        this.DisplaySettings.BlankDisplayWhenIdle = this.AdvSettings.BlankDisplayWhenIdle;
-        this.DisplaySettings.BlankIdleDelay = this.AdvSettings.BlankIdleTime;
-        this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+        DoDebug = Settings.Instance.ExtensiveLogging;
+        EQSettings.UseEqDisplay = AdvSettings.EqDisplay;
+        EQSettings.UseNormalEq = AdvSettings.NormalEQ;
+        EQSettings.UseStereoEq = AdvSettings.StereoEQ;
+        EQSettings.UseVUmeter = AdvSettings.VUmeter;
+        EQSettings.UseVUmeter2 = AdvSettings.VUmeter2;
+        EQSettings._useVUindicators = AdvSettings.VUindicators;
+        EQSettings.RestrictEQ = AdvSettings.RestrictEQ;
+        EQSettings._EQ_Restrict_FPS = AdvSettings.EqRate;
+        EQSettings.DelayEQ = AdvSettings.DelayEQ;
+        EQSettings._DelayEQTime = AdvSettings.DelayEqTime;
+        EQSettings.SmoothEQ = AdvSettings.SmoothEQ;
+        EQSettings.EQTitleDisplay = AdvSettings.EQTitleDisplay;
+        EQSettings._EQTitleDisplayTime = AdvSettings.EQTitleDisplayTime;
+        EQSettings._EQTitleShowTime = AdvSettings.EQTitleShowTime;
+        EQSettings._EqUpdateDelay = (EQSettings._EQ_Restrict_FPS == 0)
+                                      ? 0
+                                      : ((0x989680/EQSettings._EQ_Restrict_FPS) -
+                                         (0xf4240/EQSettings._EQ_Restrict_FPS));
+        DisplaySettings.BlankDisplayWithVideo = AdvSettings.BlankDisplayWithVideo;
+        DisplaySettings.EnableDisplayAction = AdvSettings.EnableDisplayAction;
+        DisplaySettings.DisplayActionTime = AdvSettings.EnableDisplayActionTime;
+        DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime*0x989680;
+        DisplaySettings.BlankDisplayWhenIdle = AdvSettings.BlankDisplayWhenIdle;
+        DisplaySettings.BlankIdleDelay = AdvSettings.BlankIdleTime;
+        DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay*0x989680;
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Logging Options - Extensive Logging = {0}",
-                 new object[] {this.DoDebug});
+                 new object[] {DoDebug});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options - Equalizer Display: {0}",
-                 new object[] {this.EQSettings.UseEqDisplay});
+                 new object[] {EQSettings.UseEqDisplay});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Normal Equalizer Display: {0}",
-                 new object[] {this.EQSettings.UseNormalEq});
+                 new object[] {EQSettings.UseNormalEq});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Stereo Equalizer Display: {0}",
-                 new object[] {this.EQSettings.UseStereoEq});
+                 new object[] {EQSettings.UseStereoEq});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   VU Meter Display: {0}",
-                 new object[] {this.EQSettings.UseVUmeter});
+                 new object[] {EQSettings.UseVUmeter});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   VU Meter Style 2 Display: {0}",
-                 new object[] {this.EQSettings.UseVUmeter2});
+                 new object[] {EQSettings.UseVUmeter2});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Use VU Channel indicators: {0}",
-                 new object[] {this.EQSettings._useVUindicators});
+                 new object[] {EQSettings._useVUindicators});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Restrict EQ Update Rate: {0}",
-                 new object[] {this.EQSettings.RestrictEQ});
+                 new object[] {EQSettings.RestrictEQ});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
-          new object[] {this.EQSettings._EQ_Restrict_FPS});
+          new object[] {EQSettings._EQ_Restrict_FPS});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Delay EQ Startup: {0}",
-                 new object[] {this.EQSettings.DelayEQ});
+                 new object[] {EQSettings.DelayEQ});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Delay EQ Startup Time: {0} seconds",
-          new object[] {this.EQSettings._DelayEQTime});
+          new object[] {EQSettings._DelayEQTime});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Smooth EQ Amplitude Decay: {0}",
-                 new object[] {this.EQSettings.SmoothEQ});
+                 new object[] {EQSettings.SmoothEQ});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Show Track Info with EQ display: {0}",
-          new object[] {this.EQSettings.EQTitleDisplay});
+          new object[] {EQSettings.EQTitleDisplay});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Show Track Info Interval: {0} seconds",
-          new object[] {this.EQSettings._EQTitleDisplayTime});
+          new object[] {EQSettings._EQTitleDisplayTime});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Show Track Info duration: {0} seconds",
-          new object[] {this.EQSettings._EQTitleShowTime});
+          new object[] {EQSettings._EQTitleShowTime});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options - Blank display with video: {0}",
-                 new object[] {this.DisplaySettings.BlankDisplayWithVideo});
+                 new object[] {DisplaySettings.BlankDisplayWithVideo});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -   Enable Display on Action: {0}",
-                 new object[] {this.DisplaySettings.EnableDisplayAction});
+                 new object[] {DisplaySettings.EnableDisplayAction});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     Enable display for: {0} seconds",
-          new object[] {this.DisplaySettings._DisplayControlTimeout});
+          new object[] {DisplaySettings._DisplayControlTimeout});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options - Blank display when idle: {0}",
-                 new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
+                 new object[] {DisplaySettings.BlankDisplayWhenIdle});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-          new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+          new object[] {DisplaySettings._BlankIdleTimeout/0xf4240L});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Completed", new object[0]);
       }
 
       private void RestoreDisplayFromVideoOrIdle()
       {
-        if (this.DisplaySettings.BlankDisplayWithVideo)
+        if (DisplaySettings.BlankDisplayWithVideo)
         {
-          if (this.DisplaySettings.BlankDisplayWhenIdle)
+          if (DisplaySettings.BlankDisplayWhenIdle)
           {
             if (!_mpIsIdle)
             {
-              this.DisplayOn();
+              DisplayOn();
             }
           }
           else
           {
-            this.DisplayOn();
+            DisplayOn();
           }
         }
       }
 
       public void SendImage(Bitmap _Bitmap)
       {
-        if (!this._isClosing)
+        if (!_isClosing)
         {
-          this.CheckIdleState();
-          if (!(this.EQSettings._EqDataAvailable | this._IsDisplayOff))
+          CheckIdleState();
+          if (!(EQSettings._EqDataAvailable | _IsDisplayOff))
           {
-            lock (this.DWriteMutex)
+            lock (DWriteMutex)
             {
               Log.Debug("IOWarrior.IOWDisplay.SendImage() - called", new object[0]);
-              if ((_Bitmap.Height == this.IOW_Surface.Height) & (_Bitmap.Width == this.IOW_Surface.Width))
+              if ((_Bitmap.Height == IOW_Surface.Height) & (_Bitmap.Width == IOW_Surface.Width))
               {
-                this.IOW_Surface = (Bitmap) _Bitmap.Clone();
+                IOW_Surface = (Bitmap) _Bitmap.Clone();
               }
               else
               {
-                int height = Math.Min(_Bitmap.Height, this.IOW_Surface.Height);
-                int width = Math.Min(_Bitmap.Width, this.IOW_Surface.Width);
-                this.IOW_Surface = _Bitmap.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format1bppIndexed);
+                int height = Math.Min(_Bitmap.Height, IOW_Surface.Height);
+                int width = Math.Min(_Bitmap.Width, IOW_Surface.Width);
+                IOW_Surface = _Bitmap.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format1bppIndexed);
               }
             }
             Log.Debug("IOWarrior.IOWDisplay.SendImage() - completed", new object[0]);
@@ -1544,48 +1548,48 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public void SendText(string _line1, string _line2)
       {
-        this.CheckIdleState();
-        if (this.EQSettings._EqDataAvailable || this._IsDisplayOff)
+        CheckIdleState();
+        if (EQSettings._EqDataAvailable || _IsDisplayOff)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info(
               "IOWarrior.IOWDisplay.SendText(): Suppressing display update! (EqDataAvailable = {0}, _IsDisplayOff = {1})",
-              new object[] {this.EQSettings._EqDataAvailable, this._IsDisplayOff});
+              new object[] {EQSettings._EqDataAvailable, _IsDisplayOff});
           }
         }
-        else if (this._isClosing)
+        else if (_isClosing)
         {
-          if (this.DoDebug)
+          if (DoDebug)
           {
             Log.Info("IOWarrior.IOWDisplay.SendText(): Suppressing display update! Driver is closing", new object[0]);
           }
         }
         else
         {
-          RectangleF textBounds = this.GetTextBounds();
-          lock (this.DWriteMutex)
+          RectangleF textBounds = GetTextBounds();
+          lock (DWriteMutex)
           {
             Log.Info("IOWarrior.IOWDisplay.SendText() - called", new object[0]);
-            this.IOW_Graphics = Graphics.FromImage(this.IOW_Surface);
-            this.IOW_Graphics.SmoothingMode = SmoothingMode.None;
-            this.IOW_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
-            this.IOW_Graphics.Clear(Color.White);
+            IOW_Graphics = Graphics.FromImage(IOW_Surface);
+            IOW_Graphics.SmoothingMode = SmoothingMode.None;
+            IOW_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+            IOW_Graphics.Clear(Color.White);
             Font font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
             int length = _line1.Length;
-            while (this.IOW_Graphics.MeasureString(_line1.Substring(0, length), font).Width > textBounds.Width)
+            while (IOW_Graphics.MeasureString(_line1.Substring(0, length), font).Width > textBounds.Width)
             {
               length--;
             }
-            this.IOW_Graphics.DrawString(_line1.Substring(0, length), font, Brushes.Black, textBounds);
+            IOW_Graphics.DrawString(_line1.Substring(0, length), font, Brushes.Black, textBounds);
             textBounds.Offset(0f, font.GetHeight() + 1f);
             textBounds.Height -= font.GetHeight() + 1f;
             length = _line2.Length;
-            while (this.IOW_Graphics.MeasureString(_line2.Substring(0, length), font).Width > textBounds.Width)
+            while (IOW_Graphics.MeasureString(_line2.Substring(0, length), font).Width > textBounds.Width)
             {
               length--;
             }
-            this.IOW_Graphics.DrawString(_line2.Substring(0, length), font, Brushes.Black, textBounds);
+            IOW_Graphics.DrawString(_line2.Substring(0, length), font, Brushes.Black, textBounds);
           }
           Log.Info("IOWarrior.IOWDisplay.SendText() - completed", new object[0]);
         }
@@ -1593,7 +1597,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public bool IsOpen
       {
-        get { return this._isOpen; }
+        get { return _isOpen; }
       }
     }
   }
