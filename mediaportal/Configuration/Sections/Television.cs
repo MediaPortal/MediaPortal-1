@@ -712,8 +712,8 @@ namespace MediaPortal.Configuration.Sections
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
-        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarnonlinear", false);
-        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", false);
+        cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true);
+        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", true);
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
