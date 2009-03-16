@@ -111,6 +111,13 @@
     <carrier frequency="753500" bandwidth="7"></carrier>
     <carrier frequency="774500" bandwidth="7"></carrier>
   </country>
+  <country name="Australia - NSW - Batemans Bay/Moruya" offset="125">
+	<carrier frequency="184500" bandwidth="7"></carrier>
+	<carrier frequency="205500" bandwidth="7"></carrier>
+	<carrier frequency="212500" bandwidth="7"></carrier>
+	<carrier frequency="774500" bandwidth="7"></carrier>
+	<carrier frequency="795500" bandwidth="7"></carrier>
+  </country>
   <country name="Australia - NSW - Coffs Harbour Mt Moombil" offset="125">
     <carrier frequency="585500" bandwidth="7"></carrier>
     <carrier frequency="564500" bandwidth="7"></carrier>
