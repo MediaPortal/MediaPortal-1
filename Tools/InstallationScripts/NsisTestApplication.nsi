@@ -51,12 +51,12 @@ ShowInstDetails show
 
 ;--------------------------------
 
-Page license
-Page instfiles 
+Page components
+Page instfiles
 
 ;--------------------------------
 
-!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
+#!define INSTALL_LOG_FILE "$DESKTOP\install_$(^Name).log"
 
 #!include "x64.nsh"
 #!include Sections.nsh
@@ -68,7 +68,7 @@ Page instfiles
 
 
 !define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
-!define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
+#!define USE_INSTALL_LOG  ; enables logging during installation and uninstallation
 !include "${svn_InstallScripts}\include-CommonMPMacros.nsh"
 
 ;--------------------------------
@@ -80,7 +80,8 @@ SectionEnd ; end the section
 
 ;--------------------------------
 
-!macro MediaPortalInstallation
+Section /o "MediaPortal Product information"
+
     DetailPrint ""
     DetailPrint "--------------------------------------"
     DetailPrint "- MediaPortal Installation"
@@ -120,109 +121,14 @@ SectionEnd ; end the section
     DetailPrint "!  old MSI-based TVClient is not installed"
   ${EndIf}
 
-!macroend
+SectionEnd
 
-!macro OperationSystemInformation
-    DetailPrint ""
-    DetailPrint "--------------------------------------"
-    DetailPrint "- Operation System Information"
-    DetailPrint "--------------------------------------"
+Section /o "Read MediaPortal directories"
 
-  GetVersion::WindowsName
-  Pop $R0
-  DetailPrint "GetVersion::WindowsName: $R0"
-
-  !insertmacro GetServicePack $R1 $R2
-    DetailPrint "GetServicePack major: $R1"
-    DetailPrint "GetServicePack minor: $R2"
-
-  ${Switch} $R0
-
-    ${Case} 'Win32s'
-    ${Case} '95 OSR2'
-    ${Case} '95'
-    ${Case} '98 SE'
-    ${Case} '98'
-    ${Case} 'ME'
-    ${Case} 'NT'
-    ${Case} 'CE'
-    ${Case} '2000'
-    ${Case} 'XP x64'
-      StrCpy $0 "OSabort"
-      ${Break}
-
-    ${Case} 'Server 2003'
-    ${Case} 'Server 2003 R2'
-    ${Case} 'Server Longhorn'   ; Server 2008
-      StrCpy $0 "OSwarn"
-      ${Break}
-
-    ${Case} 'XP'
-      ${If} $R2 > 0
-        StrCpy $0 "OSwarnBetaSP"
-      ${ElseIf} $R1 < 2
-        StrCpy $0 "OSabort"
-      ${Else}
-        StrCpy $0 "OSok"
-      ${EndIf}
-      ${Break}
-
-    ${Case} 'Vista'
-      ${If} $R2 > 0
-        StrCpy $0 "OSwarnBetaSP"
-      ${ElseIf} $R1 < 1
-        StrCpy $0 "OSwarn"
-      ${Else}
-        StrCpy $0 "OSok"
-      ${EndIf}
-      ${Break}
-
-    ${Default}
-      DetailPrint "unknown OS"
-      StrCpy $0 "OSabort"
-      ${Break}
-
-  ${EndSwitch}
-
-  ; show warnings for some OS
-  ${If} $0 == "OSabort"
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_WIN)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${ElseIf} $0 == "OSwarn"
-    ${If} $DeployMode == 0
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-    ${EndIf}
-  ${ElseIf} $0 == "OSwarnBetaSP"
-    ${If} $DeployMode == 0
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "You are using a beta Service Pack! $(TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED)" IDNO +2
-      ExecShell open "${WEB_REQUIREMENTS}"
-    ${EndIf}
-  ${Else}
-    ; do nothing
-  ${EndIf}
-
-!macroend
-
-!macro AdditionalInformation
-    DetailPrint ""
-    DetailPrint "--------------------------------------"
-    DetailPrint "- Additional Information"
-    DetailPrint "--------------------------------------"
-
-  ${If} ${VCRedistIsInstalled}
-    DetailPrint "X  Visual C++ Redistributable is installed"
-  ${Else}
-    DetailPrint "!  Visual C++ Redistributable is not installed"
-  ${EndIf}
-!macroend
-
-!macro MediaPortalDirs
-    DetailPrint ""
-    DetailPrint "--------------------------------------"
-    DetailPrint "- Read MediaPortal directories"
-    DetailPrint "--------------------------------------"
+  DetailPrint ""
+  DetailPrint "--------------------------------------"
+  DetailPrint "- Read MediaPortal directories"
+  DetailPrint "--------------------------------------"
 
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
@@ -247,23 +153,39 @@ SectionEnd ; end the section
   DetailPrint "    Cache: $MPdir.Cache"
   DetailPrint "    BurnerSupport: $MPdir.BurnerSupport"
 
-!macroend
+SectionEnd
+
+Section /o "OS Information"
+
+    DetailPrint ""
+    DetailPrint "--------------------------------------"
+    DetailPrint "- Operation System Information"
+    DetailPrint "--------------------------------------"
+
+  GetVersion::WindowsName
+  Pop $R0
+  DetailPrint "GetVersion::WindowsName: $R0"
+
+  !insertmacro GetServicePack $R1 $R2
+    DetailPrint "GetServicePack major: $R1"
+    DetailPrint "GetServicePack minor: $R2"
 
 
 
-Section
-  ${LOG_OPEN}
-
+  !insertmacro MediaPortalOperatingSystemCheck 0
+  !insertmacro MediaPortalAdminCheck 0
+  !insertmacro MediaPortalVCRedistCheck 0
   !insertmacro MediaPortalNetFrameworkCheck 0
-  
-  !insertmacro OperationSystemInformation
-  !insertmacro AdditionalInformation
 
-  !insertmacro MediaPortalInstallation
-  !insertmacro MediaPortalDirs
+SectionEnd
 
+Section /o "MediaPortal CleanUp: 1.0 for 1.0.1 Update"
 
-  
+  !include "${svn_MP}\Setup\update-1.0.1.nsh"
+
+SectionEnd
+
+Section /o "other tests"
   
   MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
 
@@ -305,12 +227,3 @@ Section
   
 
 SectionEnd
-
-Function .onInstFailed
-  ${LOG_CLOSE}
-FunctionEnd
-
-Function .onInstSuccess
-  ${LOG_CLOSE}
-FunctionEnd
-
