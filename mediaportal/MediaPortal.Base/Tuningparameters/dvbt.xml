@@ -3048,6 +3048,8 @@
     <carrier frequency="842000" bandwidth="8"></carrier>
     <carrier frequency="850000" bandwidth="8"></carrier>
     <carrier frequency="858000" bandwidth="8"></carrier>
+	<carrier frequency="618000" bandwidth="8"></carrier>
+    <carrier frequency="706000" bandwidth="8"></carrier>
   </country>
   <country name="Spain - Melilla">
     <carrier frequency="794000" bandwidth="8"></carrier>
