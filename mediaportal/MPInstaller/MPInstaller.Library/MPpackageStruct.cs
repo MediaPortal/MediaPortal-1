@@ -181,7 +181,7 @@ namespace MediaPortal.MPInstaller
           while ((entry = s.GetNextEntry()) != null)
           {
             MPIFileList fl = InstallerInfo.FindFileFromZipEntry(entry.Name);
-            //MessageBox.Show(entry.Name+fl.FileName);
+
             if ((fl!=null)&&test_file(fl, entry))
             {
               string tpf;
@@ -218,6 +218,7 @@ namespace MediaPortal.MPInstaller
                 fs.Write(data, 0, nb);
               }
               fs.Close();
+              File.SetLastWriteTimeUtc(tpf, entry.DateTime);
               if (fl.SkinType && fl.FileProperties.DefaultFile)
               {
                 foreach (string sd in this.InstallableSkinList)
@@ -225,17 +226,23 @@ namespace MediaPortal.MPInstaller
                   {
                     string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl, sd));
                     if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
-                      Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
-                    File.Copy(tpf, newtpf, true);
-                    this.InstallerInfo.Uninstall.Add(new UninstallInfo(newtpf));
-                    if (lb != null)
                     {
-                      lb.Items.Add(newtpf);
-                      lb.SelectedIndex = lb.Items.Count - 1;
-                      lb.Update();
-                      lb.Refresh();
+                      Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
                     }
-
+                    // overwrite file only if the file is older like package skin file
+                    if (!File.Exists(newtpf) || File.GetLastWriteTimeUtc(newtpf) < entry.DateTime)
+                    {
+                      File.Copy(tpf, newtpf, true);
+                      File.SetLastWriteTimeUtc(newtpf, entry.DateTime);
+                      this.InstallerInfo.Uninstall.Add(new UninstallInfo(newtpf));
+                      if (lb != null)
+                      {
+                        lb.Items.Add(newtpf);
+                        lb.SelectedIndex = lb.Items.Count - 1;
+                        lb.Update();
+                        lb.Refresh();
+                      }
+                    }
                   }
               }
 
@@ -343,14 +350,15 @@ namespace MediaPortal.MPInstaller
             //MessageBox.Show(script.CreateObject("InstallScript").ToString());
             this.InstallerScript = (MPInstallerScript)script.CreateObject("InstallScript");
           }
-          else
-          {
-            this.InstallerScript = new MPInstallerScript();
-          }
         }
         catch (Exception )
         {
           //MessageBox.Show("Script loading error " + ex.Message + ex.StackTrace);
+          this.InstallerScript = new MPInstallerScript();
+        }
+
+        if (this.InstallerScript == null)
+        {
           this.InstallerScript = new MPInstallerScript();
         }
 
@@ -484,9 +492,9 @@ namespace MediaPortal.MPInstaller
           load();
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //MessageBox.Show(ex.Message + ex.StackTrace);
+        MessageBox.Show(ex.Message + ex.StackTrace);
         isValid = false;
       }
       if (isValid)

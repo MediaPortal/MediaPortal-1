@@ -135,10 +135,9 @@ using System.Text;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.MPInstaller;
 
-namespace MediaPortal.MPInstaller
-{
-  class InstallScript : MPInstallerScript
+class InstallScript : MPInstallerScript
   {
     /// &lt;summary&gt;
     /// Execute when the package is downloaded via GUI 
@@ -203,7 +202,6 @@ namespace MediaPortal.MPInstaller
 
     }
 
-  }
-}</value>
+ }</value>
   </data>
 </root>

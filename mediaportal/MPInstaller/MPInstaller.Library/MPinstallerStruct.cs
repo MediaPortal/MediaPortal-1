@@ -46,9 +46,9 @@ namespace MediaPortal.MPInstaller
   /// </summary>
   public class MPinstallerStruct
   {
-    //public const string DEFAULT_UPDATE_SITE = "http://www.team-mediaportal.com";
+    public const string DEFAULT_UPDATE_SITE = "http://www.team-mediaportal.com";
     // for testing only 
-    public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
+    //public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
 
     public static string[] CategoryListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
 
@@ -324,7 +324,16 @@ namespace MediaPortal.MPInstaller
           for (int i = 0; i < this.FileList.Count; i++)
           {
             MPIFileList it = (MPIFileList)this.FileList[i];
-            it.SetGuid();
+
+            if (projectPropertise.UseRealPathInPackage)
+            {
+              it.GUID = string.Empty;
+            }
+            else
+            {
+              it.SetGuid();
+            }
+
             writer.WriteStartElement("File");
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
@@ -458,12 +467,12 @@ namespace MediaPortal.MPInstaller
         ls.Update();
         if (!string.IsNullOrEmpty(file.FileName) && File.Exists(file.FileName))
         {
-          FileStream fs = File.OpenRead(Path.GetFullPath(file.FileName));
+          string filename = Path.GetFullPath(file.FileName);
+          FileStream fs = File.OpenRead(filename);
           byte[] buffer = new byte[fs.Length];
           fs.Read(buffer, 0, buffer.Length);
-
           ZipEntry entry = new ZipEntry(GetZipEntry(file));
-
+          entry.DateTime = File.GetLastWriteTimeUtc(filename);
           s.PutNextEntry(entry);
 
           s.Write(buffer, 0, buffer.Length);
@@ -776,6 +785,7 @@ namespace MediaPortal.MPInstaller
         ret += flst.FileProperties.OutputFileName;
       return ret;
     }
+
     public static string GetDirEntry(MPIFileList flst)
     {
       string ret = string.Empty;
@@ -857,7 +867,6 @@ namespace MediaPortal.MPInstaller
       }
       if (flst.Type == SKIN_SYSTEMFONT_TYPE)
       {
-
         ret = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot"), "Fonts") + @"\";
       }
 

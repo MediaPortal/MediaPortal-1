@@ -44,6 +44,7 @@ namespace MediaPortal.MPInstaller
     private DateTime creationdate;
     private bool singlegroupselect;
     private bool clarskincache;
+    private bool useRealPathInPackage;
 
     public ProjectPropertiesClass()
     {
@@ -170,6 +171,20 @@ namespace MediaPortal.MPInstaller
         clarskincache = value;
       }
     }
+
+    [Description("If true in package the names are stored like installed one not GUID's, but some case the installation may fail")]
+    public bool UseRealPathInPackage
+    {
+      get
+      {
+        return useRealPathInPackage;
+      }
+      set
+      {
+        useRealPathInPackage = value;
+      }
+    }
+
     public void Save(XmlWriter writer)
     {
       writer.WriteElementString("MPMaxVersion", MPMaxVersion);
@@ -182,6 +197,7 @@ namespace MediaPortal.MPInstaller
       writer.WriteElementString("CreationDate", CreationDate.ToString("dd-MM-yy"));
       writer.WriteElementString("SingleGroupSelect", SingleGroupSelect.ToString());
       writer.WriteElementString("ClearSkinCache", ClearSkinCache.ToString());
+      writer.WriteElementString("UseRealPathInPackage", UseRealPathInPackage.ToString());
     }
 
     public void Load(XmlNode basenode)
@@ -231,6 +247,12 @@ namespace MediaPortal.MPInstaller
           if (node.InnerText == "True")
             ClearSkinCache = true;
           else ClearSkinCache = false;
+
+        node = basenode.SelectSingleNode("UseRealPathInPackage");
+        if (node != null && node.InnerText != null)
+          if (node.InnerText == "True")
+            UseRealPathInPackage = true;
+          else UseRealPathInPackage = false;
       }
 
     }
@@ -244,6 +266,7 @@ namespace MediaPortal.MPInstaller
       WikiURL = string.Empty;
       CreationDate = DateTime.Today;
       SingleGroupSelect = false;
+      UseRealPathInPackage = false;
     }
   }
 
