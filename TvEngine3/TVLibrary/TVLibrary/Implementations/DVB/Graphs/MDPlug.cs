@@ -42,8 +42,6 @@ namespace TvLibrary.Implementations.DVB
     private int _instanceNumber;
     private String _cardFolder;
 
-    private Dictionary<string, IChannel> _channelsDecoding;
-
     #endregion
 
     #region ctor
@@ -68,8 +66,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private MDPlugs(string CardFolder, int InstanceNumber)
     {
-      _channelsDecoding = new Dictionary<string, IChannel>();
-
       _instanceNumber = InstanceNumber;
       _cardFolder = CardFolder;
       Log.Log.Info("mdplugs: InstanceNumber(s) = {0}", _instanceNumber);
@@ -94,7 +90,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     ~MDPlugs()
     {
-      _channelsDecoding = null;
       Close();
     }
     #endregion
@@ -361,14 +356,17 @@ namespace TvLibrary.Implementations.DVB
     public void FreeChannel(string channelName)
     {
       Log.Log.Info("mdplug: FreeChannel {0}", channelName);
-
-      if (_channelsDecoding.ContainsKey(channelName))
+      MDPlug[] plugins = getPlugins();
+      foreach (MDPlug plugin in plugins)
       {
-        _channelsDecoding.Remove(channelName);
-
+        if (plugin.IsDecodingChannel(channelName))
+        {
         //TODO; have the mdapifilter stop decoding the now removed channel.
         // it only fully stops when all subchannels are freed and graph stopped.
+          plugin.FreeDecodingChannel();
+          return;
       }
+    }
     }
 
     /// <summary>
@@ -377,7 +375,11 @@ namespace TvLibrary.Implementations.DVB
     public void FreeAllChannels()
     {
       Log.Log.Info("mdplug: FreeAllChannels");
-      _channelsDecoding = new Dictionary<string, IChannel>();
+      MDPlug[] plugins = getPlugins();
+      foreach (MDPlug plugin in plugins)
+      {
+        plugin.FreeDecodingChannel();
+      }
     }
 
     /// <summary>
@@ -385,26 +387,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>    
     public void SetChannel(int SubCh, IChannel currentChannel, ChannelInfo channelInfo)
     {
-      if (_channelsDecoding == null)
-      {
-        _channelsDecoding = new Dictionary<string, IChannel>();
-      }
-
-      if (_channelsDecoding.ContainsKey(currentChannel.Name))
-      {
-        Log.Log.Info("mdplug: SetChannel already decoding channel {0} subch {1}.", currentChannel.Name, SubCh);
-        return;
-      }
-
-      Log.Log.Info("mdplug: SetChannel nr of currently decoding channels {0}.", _channelsDecoding.Count);
-      int idx = 1;
-      foreach (KeyValuePair<string, IChannel> pair in _channelsDecoding)
-      {
-        IChannel chan = pair.Value;
-        Log.Log.Info("  slot[" + idx + "] {0}", chan.Name);
-        idx++;
-      }
-
       MDPlug[] plugins = getPlugins();
 
       if (plugins == null || plugins.Length == 0)
@@ -413,23 +395,67 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      int channelsDecoding = _channelsDecoding.Count;
-      int nextPluginIndex = channelsDecoding;
+      foreach (MDPlug plugin in plugins)
+      {
+        if (plugin.IsDecodingChannel(currentChannel))
+        {
+          Log.Log.Info("mdplug: SetChannel already decoding channel {0} subch {1}.", currentChannel.Name, SubCh);
+          return;
+        }
+      }
 
-      if (_channelsDecoding.Count == plugins.Length)
+      int slotNumber;
+      MDPlug freePlugin = FindFreeSlot(plugins, currentChannel, out slotNumber);
+      if (freePlugin == null)
       {
         Log.Log.Info("mdplug: SetChannel no free slots available for channel {0} (try increase limit).", currentChannel.Name);
         return;
       }
 
-      Log.Log.Info("mdplug: SetChannel starting decryption on channel '{0}' using plugin slot {1} of {2} avail.", currentChannel.Name, nextPluginIndex + 1, plugins.Length);
-
-      if (plugins[nextPluginIndex] != null)
+      Log.Log.Info("mdplug: SetChannel nr of currently decoding channels {0}.", CalculateSlotsInUse(plugins));
+      int idx = 1;
+      foreach (MDPlug plugin in plugins)
       {
-        plugins[nextPluginIndex].SetChannel(currentChannel, channelInfo);
-        _channelsDecoding.Add(currentChannel.Name, currentChannel);
+        IChannel chan = plugin.GetDecodingChannel();
+        if (chan != null)
+        {
+          Log.Log.Info("  slot[" + idx + "] {0}", chan.Name);
+        }
+        idx++;
       }
+
+      Log.Log.Info("mdplug: SetChannel starting decryption on channel '{0}' using plugin slot {1} of {2} avail.", currentChannel.Name, slotNumber, plugins.Length);
+
+      freePlugin.SetChannel(currentChannel, channelInfo);
     }
+
+    private MDPlug FindFreeSlot(MDPlug[] plugins, IChannel currentChannel, out int slotNumber)
+    {
+      slotNumber = 1;
+      foreach (MDPlug plugin in plugins)
+      {
+        if (plugin.GetDecodingChannel() == null)
+        {
+          return plugin;
+      }
+        slotNumber++;
+      }
+      return null;
+    }
+
+    private int CalculateSlotsInUse(MDPlug[] plugins)
+      {
+      int slotsInUse = 0;
+      foreach (MDPlug plugin in plugins)
+      {
+        if (plugin.GetDecodingChannel() != null)
+        {
+          slotsInUse++;
+        }
+      }
+      return slotsInUse;
+    }
+
     #endregion
   }
   /// <summary>
@@ -710,6 +736,7 @@ namespace TvLibrary.Implementations.DVB
     internal IBaseFilter mdapiFilter;
     IChangeChannel _changeChannel;
     IChangeChannel_Ex _changeChannel_Ex;
+    private IChannel _decodingChannel;
     #endregion
 
     #region ctor
@@ -769,6 +796,28 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region public method
+
+    public IChannel GetDecodingChannel()
+    {
+      return _decodingChannel;
+    }
+
+    public bool IsDecodingChannel(IChannel channel)
+    {
+      return _decodingChannel != null
+        && _decodingChannel.Name == channel.Name;
+    }
+
+    public bool IsDecodingChannel(string channelName)
+    {
+        return _decodingChannel != null
+          && _decodingChannel.Name == channelName;
+    }
+
+    public void FreeDecodingChannel()
+    {
+      _decodingChannel = null;
+    }
 
     /// <summary>
     /// Method release the mdapi filter in ordinary fashion
@@ -1253,6 +1302,8 @@ namespace TvLibrary.Implementations.DVB
           _changeChannel_Ex.ChangeChannelTP82_Ex(lparam, lparam2);
         else
           _changeChannel.ChangeChannelTP82(lparam);
+
+        _decodingChannel = currentChannel;
 
         Log.Log.Info("mdplug: Send channel change to MDAPI filter Ca_Id:{0} CA_Nr:{1} ECM_PID:{2}(0x{3:X})",
            _mDPlugTProg82.CA_ID,
