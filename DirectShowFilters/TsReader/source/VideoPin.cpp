@@ -399,7 +399,9 @@ HRESULT CVideoPin::OnThreadStartPlay()
   demux.SetHoldVideo(false);
 
   m_pTsReaderFilter->SetWaitForSeekToEof(false) ;
-  demux.SetVideoChanging(false);
+
+	while(demux.IsVideoChanging() && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
+
   LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d %d", fStart,m_dRateSeeking,m_pTsReaderFilter->IsSeekingToEof(),m_pTsReaderFilter->IsWaitingForNewPat());
 
   //start playing
@@ -458,6 +460,13 @@ void CVideoPin::UpdateFromSeek()
       return;
     }
   }
+	if (demux.IsVideoChanging())
+	{
+   
+		LogDebug("vid:skip seek-2");
+    demux.FlushVideo() ;
+		return;
+	}
 
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()

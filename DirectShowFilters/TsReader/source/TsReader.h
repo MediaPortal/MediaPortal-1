@@ -67,6 +67,12 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
 
       virtual HRESULT STDMETHODCALLTYPE SetRelaxedMode( 
 								BOOL relaxedReading) = 0;
+
+      virtual void    STDMETHODCALLTYPE OnZapping( 
+								int info) = 0;
+
+      virtual void    STDMETHODCALLTYPE OnGraphRebuild( 
+								int info) = 0;
 		  //virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
 
@@ -129,6 +135,8 @@ public:
 	STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
 	STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
   STDMETHODIMP	  SetRelaxedMode(BOOL relaxedReading);
+  void STDMETHODCALLTYPE  OnZapping(int info);
+  void STDMETHODCALLTYPE  OnGraphRebuild(int info);
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -168,6 +176,7 @@ public:
 
 	REFERENCE_TIME  m_RandomCompensation ;
 	bool            m_bLiveTv ;
+	bool            m_bStopping ;
 
 protected:
   void ThreadProc();
@@ -202,5 +211,6 @@ private:
 	bool            m_WaitForSeekToEof ;
 	bool            m_WaitForNewPat ;
 	bool            m_bPauseOnly ;
+	bool            m_bAnalog ;
 };
 

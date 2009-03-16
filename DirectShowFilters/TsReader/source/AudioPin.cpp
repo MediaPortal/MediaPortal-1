@@ -499,7 +499,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
   }
   else
   {
-    while(m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) Sleep(5) ;
+		while((m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
   }
   LogDebug("aud:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
 
@@ -540,6 +540,13 @@ void CAudioPin::UpdateFromSeek()
       return;
     }
   }
+	if (demux.IsVideoChanging())
+	{
+     LogDebug("aud:skip seek-2");
+    demux.FlushAudio() ;
+		 return ;
+	}
+
   m_seekTimer=GetTickCount();
 
   //Note that the seek timestamp (m_rtStart) is done in the range

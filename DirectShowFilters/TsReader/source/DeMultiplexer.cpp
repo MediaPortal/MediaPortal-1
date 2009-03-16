@@ -217,6 +217,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     if (m_filter.GetAudioPin()->IsConnected())
     {
       m_filter.OnMediaTypeChanged(1);
+			SetVideoChanging(true) ;
     }
   }
   else
@@ -550,6 +551,7 @@ CBuffer* CDeMultiplexer::GetVideo()
     //demuxer should stop getting video packets
     //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
+		if (m_filter.m_bStopping) return NULL;
     if (m_bEndOfFile) return NULL;
     if (m_bHoldVideo) return NULL;
 
@@ -633,6 +635,7 @@ CBuffer* CDeMultiplexer::GetAudio()
     //demuxer should stop getting audio packets
     //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
+		if (m_filter.m_bStopping) return NULL;
 
     if (m_bEndOfFile) return NULL;
     if (m_bHoldAudio) return NULL;
@@ -642,6 +645,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 
   //are there audio packets in the buffer?
   if (m_vecAudioBuffers.size()==0) return NULL ;
+	if (IsVideoChanging()) return NULL ;
   if ((!m_filter.GetVideoPin()->IsConnected()) ||
       ( m_filter.m_bLiveTv && m_bIframeFound && (m_FirstAudioSample.m_time + 1500000 < m_LastAudioSample.m_time)) ||
       (!m_filter.m_bLiveTv &&                  (m_IframeSample.m_time + 1500000 < m_LastAudioSample.m_time)))
@@ -1135,12 +1139,6 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 
       if (m_VideoValidPES)
       {
-        if (m_bSetVideoDiscontinuity)
-        {
-          m_bSetVideoDiscontinuity=false;
-          Cbuf->SetDiscontinuity();
-        }
-
         Cbuf->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
 
         if (m_t_vecVideoBuffers.size())
@@ -1248,14 +1246,12 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 //        i+=16 ;
 //        }
 //        }
-
             if (m_mpegParserTriggerFormatChange)
             {
               LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser");
-              m_filter.SetWaitForSeekToEof(true) ;
+              SetVideoChanging(true);
               m_filter.OnMediaTypeChanged(3);
               m_mpegParserTriggerFormatChange=false;
-              SetVideoChanging(false);
             }
             LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
             m_filter.OnVideoFormatChanged(streamType,m_mpeg2VideoInfo.hdr.rcSource.right,m_mpeg2VideoInfo.hdr.rcSource.bottom,m_mpeg2VideoInfo.hdr.dwPictAspectRatioX,m_mpeg2VideoInfo.hdr.dwPictAspectRatioY,m_mpeg2VideoInfo.hdr.dwBitRate,(m_mpeg2VideoInfo.hdr.dwInterlaceFlags & AMINTERLACE_IsInterlaced==AMINTERLACE_IsInterlaced));
@@ -1290,7 +1286,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
                 if (Ref > m_LastVideoSample) m_LastVideoSample = Ref ;
               }
               m_bIframeFound=true ;
-
+			        if (m_bSetVideoDiscontinuity)
+			        {
+						    m_bSetVideoDiscontinuity=false;
+								(*it)->SetDiscontinuity();
+							}
               m_vecVideoBuffers.push_back(*it) ;
               m_t_vecVideoBuffers.erase(it);
             }
@@ -1742,6 +1742,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       // notify the ITSReaderCallback. MP will then rebuild the graph
       LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
       m_filter.OnMediaTypeChanged(1);
+      SetVideoChanging(true); 
     }
     #else
     if (audioChanged && videoChanged)

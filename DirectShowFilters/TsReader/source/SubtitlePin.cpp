@@ -344,7 +344,7 @@ HRESULT CSubtitlePin::OnThreadStartPlay()
   demux.SetHoldSubtitle(false);
 
   if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
-    while(m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) Sleep(5) ;
+		while((m_pTsReaderFilter->IsSeekingToEof() || demux.IsVideoChanging()) && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
 
   LogDebug("sub:OnThreadStartPlay(%f)", fStart);
 

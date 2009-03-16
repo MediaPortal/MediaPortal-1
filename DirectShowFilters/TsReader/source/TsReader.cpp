@@ -202,6 +202,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_bLiveTv = false ;
   m_RandomCompensation = 0 ;     
 	m_bPauseOnly=false ;
+	m_bAnalog=false ;
+	m_bStopping=false;
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -368,6 +370,29 @@ STDMETHODIMP CTsReaderFilter::SetRelaxedMode(BOOL relaxedReading)
   return S_OK;
 }
 
+void STDMETHODCALLTYPE CTsReaderFilter::OnZapping(int info)
+{
+  LogDebug("OnZapping %d", info);
+	if (info > 0)
+	{
+		SetWaitForNewPat(true) ;
+		m_bAnalog=false ;
+	}
+	else
+	{
+		SetWaitForNewPat(false) ;
+		m_bAnalog=true ;
+	}
+
+  return;
+}
+
+void STDMETHODCALLTYPE CTsReaderFilter::OnGraphRebuild(int info)
+{
+	LogDebug("CTsReaderFilter::OnGraphRebuild %d",info);
+	m_demultiplexer.SetVideoChanging(false) ;
+}
+
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 {
   CRefTime runTime=tStart;
@@ -429,6 +454,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
 
   //guarantees that audio/video/subtitle pins dont block in the fillbuffer() method
   m_bSeeking=true;
+	m_bStopping=true;
 
   SetWaitForNewPat(false) ;
 
@@ -456,6 +482,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
 
   //reset vaues
   m_bSeeking=false;
+	m_bStopping=false;
   LogDebug("CTsReaderFilter::Stop() done %d");
   return hr;
 }
@@ -479,9 +506,9 @@ STDMETHODIMP CTsReaderFilter::Pause()
 			m_RandomCompensation = 0 ;
 			SetWaitForSeekToEof(true) ; // && IsTimeShifting()) ;
 		}
-
-		if ((m_State == State_Running) && IsTimeShifting())
-			SetWaitForNewPat(true) ;
+//
+//		if ((m_State == State_Running) && IsTimeShifting())
+//			SetWaitForNewPat(true) ;
 	}
 	// else .... Immediate Pause after Run with EVR that freezs MP due to SetWaitForSeekToEof(true)...Another way should be found!!
 
@@ -781,13 +808,13 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 
   if (m_bTimeShifting)
   {
-    if (GetTickCount()-m_lastPause < 200)
-      SetWaitForNewPat(false) ;   // This is not a channel change, it's too fast !!.
+//    if (GetTickCount()-m_lastPause < 200)
+//      SetWaitForNewPat(false) ;   // This is not a channel change, it's too fast !!.
 
     doSeek = false ;
     double startTime=m_seekTime.Millisecs();
     double duration=m_duration.Duration().Millisecs();
-    if (startTime+200 < duration)   // Seek to end of file ?
+    if ((startTime+200 < duration) || m_bAnalog)   // Seek to end of file ?
     {
       doSeek = true ;       // No, exec seek !
       m_bLiveTv = false ;   // => No LiveTv.
