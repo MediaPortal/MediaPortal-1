@@ -74,6 +74,12 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int SetRelaxedMode(int relaxedReading);
+
+      [PreserveSig]
+      int OnZapping(int info);
+
+      [PreserveSig]
+      int OnGraphRebuild(int info);
     }
 
     int DSERR_NODRIVER = -2005401480; // No sound driver is available for use
@@ -109,6 +115,7 @@ namespace MediaPortal.Player
 
     #region variables
 
+    protected ITSReader ireader = null;
     protected int iSpeed = 1;
     protected IBaseFilter _fileSource = null;
     protected int _curAudioStream = 0;
@@ -627,6 +634,7 @@ namespace MediaPortal.Player
       if (_bMediaTypeChanged)
       {
         DoGraphRebuild();
+        ireader.OnGraphRebuild(iChangedMediaTypes);
         _bMediaTypeChanged = false;
       }
       if (_bRequestAudioChange)

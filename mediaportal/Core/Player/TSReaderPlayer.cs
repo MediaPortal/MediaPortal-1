@@ -478,7 +478,7 @@ namespace MediaPortal.Player
 
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter) reader;
-        ITSReader ireader = (ITSReader) reader;
+        ireader = (ITSReader) reader;
         ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
         ireader.SetTsReaderCallback(this);
         ireader.SetRequestAudioChangeCallback(this);
@@ -487,6 +487,7 @@ namespace MediaPortal.Player
         if (hr != 0)
         {
           Log.Error("TSReaderPlayer:Failed to add TsReader to graph");
+          ireader = null;
           return false;
         }
 
@@ -1023,5 +1024,19 @@ namespace MediaPortal.Player
         }
       }
     }
+
+    /// <summary>
+    /// Property to specify channel change
+    /// </summary>
+    public override void OnZapping(int info)
+    {
+      if (ireader != null)
+      {
+        ireader.OnZapping(info);
+      }
+      Log.Info("TSReaderPlayer: OnZapping :{0}", info);
+      
+    }
+    
   }
 }

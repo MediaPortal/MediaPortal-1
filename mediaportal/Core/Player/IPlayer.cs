@@ -652,6 +652,10 @@ namespace MediaPortal.Player
       return false;
     }
 
+    public virtual void OnZapping(int info)
+    {
+    }
+
     #region IDisposable Members
 
     public virtual void Release()

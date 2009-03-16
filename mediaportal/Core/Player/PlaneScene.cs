@@ -425,6 +425,8 @@ namespace MediaPortal.Player
           return false;
         }
 
+        GUIGraphicsContext.VideoReceived();
+
         //did the video window,aspect ratio change? if not
         //then we dont need to recalculate and just return the previous settings
         if (!updateCrop && x == _rectPrevious.X && y == _rectPrevious.Y &&
@@ -495,9 +497,6 @@ namespace MediaPortal.Player
         Log.Debug("PlaneScene: dst        : ({0},{1})-({2},{3})",
                   _destinationRect.X, _destinationRect.Y, _destinationRect.X + _destinationRect.Width,
                   _destinationRect.Y + _destinationRect.Height);
-
-        //Console.Beep();
-        GUIGraphicsContext.VideoReceived();
 
         return true;
       }

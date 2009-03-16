@@ -2296,6 +2296,20 @@ namespace MediaPortal.Player
       }
     }
 
+    public static void OnZapping(int info)
+    {
+      if (_player == null)
+      {
+        return ;
+      }
+      else
+      {
+        _player.OnZapping(info);
+        return;
+      }
+    }
+
+
     #region subtitle/audio stream selection
 
     /// <summary>
