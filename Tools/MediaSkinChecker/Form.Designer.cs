@@ -1,4 +1,4 @@
-namespace WindowsApplication3
+namespace MediaSkinChecker
 {
   partial class Form1
   {
@@ -28,15 +28,20 @@ namespace WindowsApplication3
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
       this.sourcePath = new System.Windows.Forms.TextBox();
       this.destinationPath = new System.Windows.Forms.TextBox();
-      this.buttonStart = new System.Windows.Forms.Button();
+      this.buttonUnused = new System.Windows.Forms.Button();
       this.buttonSource = new System.Windows.Forms.Button();
       this.buttonDest = new System.Windows.Forms.Button();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this.buttonMissing = new System.Windows.Forms.Button();
+      this.statusStrip = new System.Windows.Forms.StatusStrip();
+      this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+      this.statusStrip.SuspendLayout();
       this.SuspendLayout();
       // 
       // sourcePath
@@ -53,15 +58,15 @@ namespace WindowsApplication3
       this.destinationPath.Size = new System.Drawing.Size(322, 20);
       this.destinationPath.TabIndex = 1;
       // 
-      // buttonStart
+      // buttonUnused
       // 
-      this.buttonStart.Location = new System.Drawing.Point(135, 227);
-      this.buttonStart.Name = "buttonStart";
-      this.buttonStart.Size = new System.Drawing.Size(75, 23);
-      this.buttonStart.TabIndex = 2;
-      this.buttonStart.Text = "Start";
-      this.buttonStart.UseVisualStyleBackColor = true;
-      this.buttonStart.Click += new System.EventHandler(this.button1_Click);
+      this.buttonUnused.Location = new System.Drawing.Point(23, 225);
+      this.buttonUnused.Name = "buttonUnused";
+      this.buttonUnused.Size = new System.Drawing.Size(133, 23);
+      this.buttonUnused.TabIndex = 2;
+      this.buttonUnused.Text = "Check for UNUSED gfxs";
+      this.buttonUnused.UseVisualStyleBackColor = true;
+      this.buttonUnused.Click += new System.EventHandler(this.buttonUnused_Click);
       // 
       // buttonSource
       // 
@@ -90,9 +95,7 @@ namespace WindowsApplication3
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(356, 39);
       this.label1.TabIndex = 5;
-      this.label1.Text = "This small utility will build a list of all bmp/png files in \"Source directory\"\r\n" +
-          "and check for a reference in all .cs/.xml files in the \"Destination directory\" \r" +
-          "\nafter removing the extension.";
+      this.label1.Text = resources.GetString("label1.Text");
       // 
       // label2
       // 
@@ -112,21 +115,52 @@ namespace WindowsApplication3
       this.label3.TabIndex = 7;
       this.label3.Text = "Destination directory";
       // 
+      // buttonMissing
+      // 
+      this.buttonMissing.Location = new System.Drawing.Point(245, 225);
+      this.buttonMissing.Name = "buttonMissing";
+      this.buttonMissing.Size = new System.Drawing.Size(133, 23);
+      this.buttonMissing.TabIndex = 8;
+      this.buttonMissing.Text = "Check for MISSING gfxs";
+      this.buttonMissing.UseVisualStyleBackColor = true;
+      this.buttonMissing.Click += new System.EventHandler(this.buttonMissing_Click);
+      // 
+      // statusStrip
+      // 
+      this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+      this.statusStrip.Location = new System.Drawing.Point(0, 261);
+      this.statusStrip.Name = "statusStrip";
+      this.statusStrip.Size = new System.Drawing.Size(406, 22);
+      this.statusStrip.TabIndex = 9;
+      this.statusStrip.Text = "statusStrip1";
+      // 
+      // toolStripStatusLabel
+      // 
+      this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+      this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(406, 283);
+      this.Controls.Add(this.statusStrip);
+      this.Controls.Add(this.buttonMissing);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.buttonDest);
       this.Controls.Add(this.buttonSource);
-      this.Controls.Add(this.buttonStart);
+      this.Controls.Add(this.buttonUnused);
       this.Controls.Add(this.destinationPath);
       this.Controls.Add(this.sourcePath);
+      this.MaximizeBox = false;
+      this.MinimizeBox = false;
       this.Name = "Form1";
       this.Text = "File reference checker for MediaPortal skins";
+      this.statusStrip.ResumeLayout(false);
+      this.statusStrip.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -136,13 +170,15 @@ namespace WindowsApplication3
 
     private System.Windows.Forms.TextBox sourcePath;
     private System.Windows.Forms.TextBox destinationPath;
-    private System.Windows.Forms.Button buttonStart;
+    private System.Windows.Forms.Button buttonUnused;
     private System.Windows.Forms.Button buttonSource;
     private System.Windows.Forms.Button buttonDest;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Button buttonMissing;
+    private System.Windows.Forms.StatusStrip statusStrip;
+    private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
   }
 }
-
