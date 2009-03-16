@@ -56,6 +56,7 @@ namespace WindowPlugins.GUI.Extensions
 
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
+    public MPInstallHelper lst_updates = new MPInstallHelper();
     public QueueEnumerator queue = new QueueEnumerator();
 
     #endregion
@@ -187,8 +188,7 @@ namespace WindowPlugins.GUI.Extensions
       }
       else
       {
-        FileInfo finfo = new FileInfo(MpiFileList.ONLINE_LISTING);
-        if (((TimeSpan)(DateTime.Now - finfo.CreationTime)).Days > 5)
+        if (((TimeSpan)(DateTime.Now - File.GetLastWriteTime(MpiFileList.ONLINE_LISTING))).Days > 5)
           shouldUpdate = true;
       }
         
@@ -210,6 +210,15 @@ namespace WindowPlugins.GUI.Extensions
       lst.LoadFromFile();
       lst_online.LoadFromFile(MpiFileList.ONLINE_LISTING);
       lst.LoadOnlineInfo(lst_online);
+
+      foreach (MPpackageStruct pk in lst.Items)
+      {
+        MPpackageStruct online_pk = lst_online.Find(pk.InstallerInfo.Name);
+        if (online_pk != null && VersionPharser.CompareVersions(online_pk.InstallerInfo.Version, pk.InstallerInfo.Version) > 0)
+        {
+          lst_updates.Add(online_pk);
+        }
+      }
 
       queue = queue.Load(MpiFileList.QUEUE_LISTING);
 
@@ -449,10 +458,12 @@ namespace WindowPlugins.GUI.Extensions
       }
       else
       {
-        //Play(item);
         MPpackageStruct pk = item.MusicTag as MPpackageStruct;
         if (pk != null)
         {
+          MPpackageStruct pk_local = lst.Find(pk.InstallerInfo.Name);
+          MPpackageStruct pk_online = lst_online.Find(pk.InstallerInfo.Name);
+
           GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
           if (dlg == null) return;
           dlg.Reset();
@@ -472,16 +483,17 @@ namespace WindowPlugins.GUI.Extensions
               dlg.AddLocalizedString(14006); // uninstall
               dlg.AddLocalizedString(14007); // reinstall
             }
+            if (pk_local != null && pk_online != null && VersionPharser.CompareVersions(pk_online.InstallerInfo.Version, pk_local.InstallerInfo.Version) > 0)
+            {
+              dlg.AddLocalizedString(14018); // update
+            }
           }
           
           // show dialog and wait for result
           dlg.DoModal(GetID);
           if (dlg.SelectedId == -1) return;
           QueueItem qitem = new QueueItem();
-          qitem.Name = pk.InstallerInfo.Name;
-          qitem.DownloadUrl = MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=&passwd=&filename=" + Path.GetFileName(pk.FileName);
-          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk.GetLocalFilename();
-          
+
           switch (dlg.SelectedId)
           {
             case 14005:
@@ -496,8 +508,16 @@ namespace WindowPlugins.GUI.Extensions
             case 14008:
               queue.Remove(pk.InstallerInfo.Name);              
               break;
+            case 14018:
+              qitem.Action = QueueAction.Install;
+              pk = pk_online;
+              break;
           }
           
+          qitem.Name = pk.InstallerInfo.Name;
+          qitem.DownloadUrl = MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=&passwd=&filename=" + Path.GetFileName(pk.FileName);
+          qitem.LocalFile = Config.GetFolder(Config.Dir.Installer) + @"\" + pk.GetLocalFilename();
+                    
           if(qitem.Action==QueueAction.Install)
           {
             if (!File.Exists(qitem.LocalFile))
@@ -602,8 +622,10 @@ namespace WindowPlugins.GUI.Extensions
 
       dlg.AddLocalizedString(14003); // local
       dlg.AddLocalizedString(14004); // online
-      dlg.AddLocalizedString(14015); // updates
-
+      if (lst_updates.items.Count > 0)
+      {
+        dlg.AddLocalizedString(14015); // updates
+      }
       dlg.SelectedLabel = (int)currentListing;
 
       // show dialog and wait for result
@@ -792,6 +814,19 @@ namespace WindowPlugins.GUI.Extensions
           break;
         case Views.Updates:
           {
+            Log.Debug("MyExtensions: loading extensions list from updates ");
+            GUIListItem item = new GUIListItem();
+            foreach (MPpackageStruct pk in lst_updates.Items)
+            {
+              item = new GUIListItem();
+              item.MusicTag = pk;
+              item.IsFolder = false;
+              item.Label = pk.InstallerInfo.Name;
+              item.Label2 = pk.InstallerInfo.Group;
+              item.Rating = pk.VoteValue;
+              item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+              facadeView.Add(item);
+            }
           }
           break;
       }
@@ -926,7 +961,7 @@ namespace WindowPlugins.GUI.Extensions
           switch (method)
           {
             case SortMethod.Name:
-              item.Label2 = pak.InstallerInfo.Group;
+              item.Label2 = pak.InstallerInfo.Version;
               break;
             case SortMethod.Type:
               item.Label2 = pak.InstallerInfo.Group;
