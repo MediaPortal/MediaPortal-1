@@ -126,6 +126,7 @@ namespace TvPlugin
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
+    private static int FramesBeforeStopRenderBlackImage = 0;
 
     // this var is used to block the user from hitting "record now" button multiple times
     // the sideeffect is that the user is able to record the same show twice.
@@ -3052,8 +3053,16 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-        Log.Debug("TvHome.OnVideoReceived()");
-        _waitForVideoReceived.Set();
+        Log.Debug("TvHome.OnVideoReceived() {0}",FramesBeforeStopRenderBlackImage);
+        if (FramesBeforeStopRenderBlackImage != 0)
+        {
+          FramesBeforeStopRenderBlackImage--;
+          if (FramesBeforeStopRenderBlackImage == 0)
+          {
+            GUIGraphicsContext.RenderBlackImage = false;
+            Log.Debug("TvHome.StopRenderBlackImage()");
+          }
+        }
       }
     }
 
@@ -3061,12 +3070,8 @@ namespace TvPlugin
     {
       if (GUIGraphicsContext.RenderBlackImage)
       {
-// Ambass : just cause 1 sec wait when graph need to be rebuild because Video never comes...       _waitForVideoReceived.WaitOne(1000, false);
-        _waitForVideoReceived.Reset();
-
-        //Console.Beep(10000, 2000);
-        GUIGraphicsContext.RenderBlackImage = false;
-        Log.Debug("TvHome.StopRenderBlackImage()");
+        FramesBeforeStopRenderBlackImage = 3;
+        // Ambass : we need to wait the 3rd frame to avoid persistance of previous channel....Why ?????
       }
     }
 
@@ -3243,7 +3248,9 @@ namespace TvPlugin
             // PauseGraph & ContinueGraph does add a bit overhead to channel change times                        
             RenderBlackImage();
             g_Player.PauseGraph();
+            g_Player.OnZapping((int)CardType.DvbS); // Set default as dvb-x
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+            g_Player.OnZapping((int)card.Type);
 
             if (succeeded == TvResult.Succeeded)
             {
