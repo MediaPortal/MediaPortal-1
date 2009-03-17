@@ -838,8 +838,8 @@ Function RenameDirectory
 
 FunctionEnd
 !macro RenameDirectory DirPath NewDirPath
-    Push ${DirPath}
-    Push ${NewDirPath}
+    Push "${DirPath}"
+    Push "${NewDirPath}"
     Call RenameDirectory
 !macroend
 
