@@ -815,6 +815,33 @@ FunctionEnd
 
 !endif # !USE_READ_MP_DIRS
 
+Function RenameDirectory
+
+  Pop $0 ; directory to reneame
+  Pop $1 ; new name for directory
+
+  ; set counter to 0
+  StrCpy $R1 0
+  ${Do}
+
+    IntOp $R1 $R1 + 1
+    ${If} $R1 > 5 ; try to rename the directory max. 5 times
+      ${LOG_TEXT} "INFO" "Renaming the directory failed for some reason. $0"
+      ${ExitDo}
+    ${EndIf}
+
+    ${LOG_TEXT} "INFO" "$R1. try to rename the $0"
+    ClearErrors
+    Rename "$0" "$1"
+
+  ${LoopWhile} ${Errors} ; if errors occured on renaming, try again, until no errors occured
+
+FunctionEnd
+!macro RenameDirectory DirPath NewDirPath
+    Push ${DirPath}
+    Push ${NewDirPath}
+    Call RenameDirectory
+!macroend
 
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP
@@ -899,6 +926,15 @@ DeleteRegKey HKCU "Software\MediaPortal"
 #---------------------------------------------------------------------------
 !macro MediaPortalOperatingSystemCheck HideWarnings
 # HideWarnings   is used to disable some Warning MessageBoxes if needed, for example:     if $DeployMode = 1
+  ${LOG_TEXT} "INFO" ".: Operating System Check :."
+
+  GetVersion::WindowsName
+  Pop $R0
+  ${LOG_TEXT} "INFO" "GetVersion::WindowsName: $R0"
+  !insertmacro GetServicePack $R1 $R2
+  ${LOG_TEXT} "INFO" "GetServicePack major: $R1"
+  ${LOG_TEXT} "INFO" "GetServicePack minor: $R2"
+
 
   ; show error that the OS is not supported and abort the installation
   ${If} ${AtMostWin2000Srv}
@@ -955,9 +991,11 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ; do nothing
   ${EndIf}
 
+  ${LOG_TEXT} "INFO" "============================"
 !macroend
 
 !macro MediaPortalAdminCheck HideWarnings
+  ${LOG_TEXT} "INFO" ".: Administration Rights Check :."
 
   ; check if current user is admin
   UserInfo::GetOriginalAccountType
@@ -968,9 +1006,11 @@ DeleteRegKey HKCU "Software\MediaPortal"
     Abort
   ${EndIf}
 
+  ${LOG_TEXT} "INFO" "============================"
 !macroend
 
 !macro MediaPortalVCRedistCheck HideWarnings
+  ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
   ; check if VC Redist 2005 SP1 is installed
   ${IfNot} ${VCRedistIsInstalled}
@@ -979,6 +1019,7 @@ DeleteRegKey HKCU "Software\MediaPortal"
     Abort
   ${EndIf}
 
+  ${LOG_TEXT} "INFO" "============================"
 !macroend
 
 !macro MediaPortalNetFrameworkCheck HideWarnings
@@ -1027,7 +1068,7 @@ DeleteRegKey HKCU "Software\MediaPortal"
     Abort
   ${EndIf}
 
-  ${LOG_TEXT} "INFO" "END OF .: Microsoft .Net Framework Check :."
+  ${LOG_TEXT} "INFO" "============================"
 !macroend
 
 !endif # !___COMMON_MP_MACROS__NSH___

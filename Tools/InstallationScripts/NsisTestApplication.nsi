@@ -157,21 +157,6 @@ SectionEnd
 
 Section /o "OS, .Net and VCRedist Tests"
 
-    DetailPrint ""
-    DetailPrint "--------------------------------------"
-    DetailPrint "- Operation System Information"
-    DetailPrint "--------------------------------------"
-
-  GetVersion::WindowsName
-  Pop $R0
-  DetailPrint "GetVersion::WindowsName: $R0"
-
-  !insertmacro GetServicePack $R1 $R2
-    DetailPrint "GetServicePack major: $R1"
-    DetailPrint "GetServicePack minor: $R2"
-
-
-
   !insertmacro MediaPortalOperatingSystemCheck 0
   !insertmacro MediaPortalAdminCheck 0
   !insertmacro MediaPortalVCRedistCheck 0
@@ -182,6 +167,20 @@ SectionEnd
 Section /o "MediaPortal CleanUp: 1.0 for 1.0.1 Update"
 
   !include "${svn_MP}\Setup\update-1.0.1.nsh"
+
+SectionEnd
+
+Section /o "Rename MP dir"
+
+    !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
+    ${ReadMediaPortalDirs} $MPdir.Base
+    
+  !insertmacro GET_BACKUP_POSTFIX $R0
+  
+  ${If} ${FileExists} "$MPdir.Base\*.*"
+    ${LOG_TEXT} "INFO" "Installation dir already exists. ($MPdir.Base)"
+    !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"    
+  ${EndIf}
 
 SectionEnd
 
