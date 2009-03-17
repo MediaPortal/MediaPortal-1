@@ -267,6 +267,7 @@ namespace MediaPortal.GUI.Home
         return "media\\" + Path.GetFileName(filename);
       }
 
+      Log.Warn(String.Format("Missing skin gfx file: \"{0}\"", name));
       return string.Empty;
     }
 
