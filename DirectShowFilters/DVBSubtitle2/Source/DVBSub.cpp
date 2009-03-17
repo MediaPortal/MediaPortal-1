@@ -50,7 +50,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.0 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.2 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -298,10 +298,16 @@ STDMETHODIMP CDVBSub::SetFirstPcr( LONGLONG pPcr )
 //
 STDMETHODIMP CDVBSub::SeekDone( CRefTime& rtSeek )
 {
-	// milliseconds to PCR (90Khz)
-	m_CurrentSeekPosition = rtSeek.Millisecs() * 90;
-	LogDebugPTS( "SeekDone", m_CurrentSeekPosition );
-	return S_OK;
+  // Notify reset observer (clears all cached subtitles on client side)
+  if( m_pResetObserver )
+  {
+    (*m_pResetObserver)();
+  }
+
+  // milliseconds to PCR (90Khz)
+  m_CurrentSeekPosition = rtSeek.Millisecs() * 90;
+  LogDebugPTS( "SeekDone", m_CurrentSeekPosition );
+  return S_OK;
 }
 
 
@@ -356,26 +362,11 @@ void CDVBSub::NotifySubtitle()
     pSubtitle->SetTimestamp( pts );
     m_prevSubtitleTimestamp = pSubtitle->PTS();
 
-    LONGLONG pos( 0 );
-    if( m_pIMediaSeeking )
-    {
-      m_pIMediaSeeking->GetCurrentPosition( &pos );
-      if( pos > 0 )
-      {
-	      pos = ( ( pos / 10000 ) );
-      }
-    } 
-
     if( pts <= 0 )
     {
       LogDebug( "Discarding subtitle, invalid timestamp!" );
       DiscardOldestSubtitle();
       return;
-    }
-
-    if( pts <= pos )
-    {
-      LogDebugPTS( "Too old timestamp! - diff = ", pos - pts );
     }
   }
   if( m_pSubtitleObserver )
@@ -532,12 +523,12 @@ STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 //
 void CDVBSub::LogDebugMediaPosition( const char *text )
 {
-  /*if( m_State == State_Stopped || m_State == State_Paused )
+  if( m_State != State_Running )
   {
     LogDebug( text );
     LogDebug( "LogDebugMediaPosition - paused || stopped" );
     return;
-  }*/
+  }
   
   LONGLONG pos( 0 );
   if( m_pIMediaSeeking )

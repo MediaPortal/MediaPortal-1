@@ -646,233 +646,235 @@ void CDVBSubDecoder::Compose_subtitle()
 int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid ) 
 {
   if( m_CurrentSubtitle )
-		delete m_CurrentSubtitle;
+  {
+    delete m_CurrentSubtitle;
+  }
 
-	m_CurrentSubtitle = new CSubtitle( m_ScreenWidth, m_ScreenHeight );
-  
-	memset( m_Buffer, 0x00, sizeof( m_Buffer ) );
-	
-	int n;
-	int vdrmode = 0;
-	int page_id;
-	int new_i;
+  m_CurrentSubtitle = new CSubtitle( m_ScreenWidth, m_ScreenHeight );
 
-	int PES_packet_length;
-	int PES_header_data_length;
+  memset( m_Buffer, 0x00, sizeof( m_Buffer ) );
 
-	uint64_t PTS;
-	int r; 
-	int data_identifier,subtitle_stream_id;
+  int n;
+  int vdrmode = 0;
+  int page_id;
+  int new_i;
 
-	int segment_length;
-	int segment_type;
-  
-	Init_data();
+  int PES_packet_length;
+  int PES_header_data_length;
 
-	PES_packet_length = length;
-	memcpy(buf,data,PES_packet_length);
+  uint64_t PTS;
+  int r; 
+  int data_identifier,subtitle_stream_id;
 
-	while( PES_packet_length >= 0 ) 
-	{
-		PTS = Get_pes_pts(buf);
-		m_CurrentSubtitle->SetPTS( PTS );
+  int segment_length;
+  int segment_type;
+
+  Init_data();
+
+  PES_packet_length = length;
+  memcpy(buf,data,PES_packet_length);
+
+  while( PES_packet_length >= 0 ) 
+  {
+    PTS = Get_pes_pts(buf);
+    m_CurrentSubtitle->SetPTS( PTS );
     //LogDebugPTS( "Subtitle PTS", PTS );
 
-		PES_header_data_length=buf[8];
-		i = 9 + PES_header_data_length;
+    PES_header_data_length=buf[8];
+    i = 9 + PES_header_data_length;
 
-		data_identifier = buf[i++];
-		subtitle_stream_id = buf[i++];
+    data_identifier = buf[i++];
+    subtitle_stream_id = buf[i++];
 
-		if( data_identifier != 0x20 ) 
-		{
-			LogDebug("DVBsubs: ERROR: PES data_identifier != 0x20 (%02x), aborting\n",data_identifier);
-	    if( m_CurrentSubtitle )
+    if( data_identifier != 0x20 ) 
+    {
+      LogDebug("DVBsubs: ERROR: PES data_identifier != 0x20 (%02x), aborting\n",data_identifier);
+      if( m_CurrentSubtitle )
       {
         delete m_CurrentSubtitle;			
         m_CurrentSubtitle = NULL;
       }
       return 1;
-		}
-		
-		if( subtitle_stream_id != 0 ) 
-		{
-			LogDebug( "DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n", subtitle_stream_id );
-	    if( m_CurrentSubtitle )
+    }
+
+    if( subtitle_stream_id != 0 ) 
+    {
+      LogDebug( "DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n", subtitle_stream_id );
+      if( m_CurrentSubtitle )
       {
         delete m_CurrentSubtitle;			
         m_CurrentSubtitle = NULL;
       }
       return 1;
-		}
+    }
 
-		while( i < ( PES_packet_length - 1 ) ) 
-		{
-			/* SUBTITLING SEGMENT */
-			if( buf[i] != 0x0f ) 
-			{ 
-				LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
-				i = PES_packet_length;
-				//continue;
-	      if( m_CurrentSubtitle )
+    while( i < ( PES_packet_length - 1 ) ) 
+    {
+      /* SUBTITLING SEGMENT */
+      if( buf[i] != 0x0f ) 
+      { 
+	      LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
+	      i = PES_packet_length;
+	      //continue;
+        if( m_CurrentSubtitle )
         {
           delete m_CurrentSubtitle;			
           m_CurrentSubtitle = NULL;
         }
         return 1;
-			}
-			
-			i++;
-			segment_type = buf[i++];
-			//LogDebug("Processing segment_type 0x%02x",segment_type);
+      }
+    	
+      i++;
+      segment_type = buf[i++];
+      //LogDebug("Processing segment_type 0x%02x",segment_type);
 
-			page_id = ( buf[i] << 8 ) | buf[i + 1]; 
-			segment_length = ( buf[i + 2] << 8 ) | buf[i + 3];
+      page_id = ( buf[i] << 8 ) | buf[i + 1]; 
+      segment_length = ( buf[i + 2] << 8 ) | buf[i + 3];
 
-			new_i = i + segment_length + 4;
+      new_i = i + segment_length + 4;
 
-			/* SEGMENT_DATA_FIELD */
-			switch(segment_type) 
+      /* SEGMENT_DATA_FIELD */
+      switch(segment_type) 
       {
-				case 0x10: 
-					Process_page_composition_segment(); 
-					break;
-				case 0x11: 
-					Process_region_composition_segment();
-					break;
-				case 0x12: 
-					Process_CLUT_definition_segment();
-					break;
-				case 0x13: 
-					Process_object_data_segment();
-					break;
-				case 0x14: 
-					Process_display_definition_segment();
-					break;
-				case 0x80: 
-					// IMPLEMENTATION IS OPTIONAL - dvbsubs ignores it.
-					// end_of_display_set_segment(); 
+        case 0x10: 
+          Process_page_composition_segment(); 
           break;
-				case 0xFF: 
-					// Brazilian DVB stream contains these. NULL packets?
+        case 0x11: 
+          Process_region_composition_segment();
+          break;
+        case 0x12: 
+          Process_CLUT_definition_segment();
+          break;
+        case 0x13: 
+          Process_object_data_segment();
+          break;
+        case 0x14: 
+          Process_display_definition_segment();
+          break;
+        case 0x80: 
+          // IMPLEMENTATION IS OPTIONAL - dvbsubs ignores it.
+          // end_of_display_set_segment(); 
+          break;
+        case 0xFF: 
+          // Brazilian DVB stream contains these. NULL packets?
           // Ignore?
           return 1;
-					break;
-				default:
-					LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
+          break;
+        default:
+          LogDebug("DVBsubs: ERROR: Unknown segment %02x, length %d, data=%02x %02x %02x %02x",segment_type,segment_length,buf[i+4],buf[i+5],buf[i+6],buf[i+7]);
           return 1;
-			}
-		  i = new_i;
-	  }   
+      }
+      i = new_i;
+    }   
 
-		if (acquired) 
-		{
-			acquired=0;
-			n=0;
-			for (r=0;r<MAX_REGIONS;r++) 
-			{
-				if (regions[r].win >= 0) 
-				{
-					if (page.regions[r].is_visible) 
-					{
-						n++;
-					}
-				}
-			}
-			
-			if( n )
-			{
-			  Compose_subtitle();
-				if( m_pObserver )
-				{
-					LogDebug("DVBsubs: call NotifySubtitle()");
+    if (acquired) 
+    {
+      acquired=0;
+      n=0;
+      for (r=0;r<MAX_REGIONS;r++) 
+      {
+        if (regions[r].win >= 0) 
+        {
+          if (page.regions[r].is_visible) 
+          {
+            n++;
+          }
+        }
+      }
+    	
+      if( n )
+      {
+        Compose_subtitle();
+        if( m_pObserver )
+        {
+          LogDebug("DVBsubs: call NotifySubtitle()");
           m_pObserver->NotifySubtitle();
-				}
-			}
+        }
+      }
       else
-			{
-				if( m_pObserver )
-				{
-					LogDebug("DVBsubs: call UpdateSubtitleTimeout()");
+      {
+        if( m_pObserver )
+        {
+          LogDebug("DVBsubs: call UpdateSubtitleTimeout()");
           m_pObserver->UpdateSubtitleTimeout( m_CurrentSubtitle->PTS() );
-				}
-			}
-		}
-		LogDebug("DVBsubs: END OF INPUT PES DATA.");
-		return 0;
-	}
-	return 0;
+        }
+      }
+    }
+    LogDebug("DVBsubs: END OF INPUT PES DATA.");
+    return 0;
+  }
+  return 0;
 }
 
 uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf) 
 {
   UINT64 k=0LL;
   UINT64 pts=0LL;
-	UINT64 dts=0LL;
-	bool PTS_available=false;
-	bool DTS_available=false;
+  UINT64 dts=0LL;
+  bool PTS_available=false;
+  bool DTS_available=false;
 
-	if ( (buf[7]&0x80)!=0) PTS_available=true;
-	if ( (buf[7]&0x40)!=0) DTS_available=true;
-	
-	if (PTS_available)
-	{
-		pts+= ((buf[13]>>1)&0x7f);				// 7bits	7
-		pts+=(buf[12]<<7);								// 8bits	15
-		pts+=((buf[11]>>1)<<15);					// 7bits	22
-		pts+=((buf[10])<<22);							// 8bits	30
-		k=((buf[9]>>1)&0x7);
-		k <<=30LL;
-		pts+=k;			// 3bits
-		pts &= 0x1FFFFFFFFLL;
-	}
-	if (DTS_available) 
-	{
-		dts= (buf[18]>>1);								// 7bits	7
-		dts+=(buf[17]<<7);								// 8bits	15
-		dts+=((buf[16]>>1)<<15);					// 7bits	22
-		dts+=((buf[15])<<22);							// 8bits	30
-		k=((buf[14]>>1)&0x7);
-		k <<=30LL;
-		dts+=k;			// 3bits
-		dts &= 0x1FFFFFFFFLL;
-	}
-	return( pts );
+  if ( (buf[7]&0x80)!=0) PTS_available=true;
+  if ( (buf[7]&0x40)!=0) DTS_available=true;
+
+  if (PTS_available)
+  {
+    pts+= ((buf[13]>>1)&0x7f);				// 7bits	7
+    pts+=(buf[12]<<7);								// 8bits	15
+    pts+=((buf[11]>>1)<<15);					// 7bits	22
+    pts+=((buf[10])<<22);							// 8bits	30
+    k=((buf[9]>>1)&0x7);
+    k <<=30LL;
+    pts+=k;			// 3bits
+    pts &= 0x1FFFFFFFFLL;
+  }
+  if (DTS_available) 
+  {
+    dts= (buf[18]>>1);								// 7bits	7
+    dts+=(buf[17]<<7);								// 8bits	15
+    dts+=((buf[16]>>1)<<15);					// 7bits	22
+    dts+=((buf[15])<<22);							// 8bits	30
+    k=((buf[14]>>1)&0x7);
+    k <<=30LL;
+    dts+=k;			// 3bits
+    dts &= 0x1FFFFFFFFLL;
+  }
+  return( pts );
 }
 
 BITMAP* CDVBSubDecoder::GetSubtitle()
 {
-	return m_CurrentSubtitle->GetBitmap();
+  return m_CurrentSubtitle->GetBitmap();
 }
 
 long CDVBSubDecoder::GetSubtitleId()
 {
-	return ext;
+  return ext;
 }
 
 void CDVBSubDecoder::SetObserver( MSubdecoderObserver* pObserver )
 {
-	m_pObserver = pObserver;
+  m_pObserver = pObserver;
 }
 
 void CDVBSubDecoder::RemoveObserver( MSubdecoderObserver* pObserver )
 {
-	if( m_pObserver == pObserver )
-	{
-		m_pObserver = NULL;	
-	}
+  if( m_pObserver == pObserver )
+  {
+    m_pObserver = NULL;	
+  }
 }
 
 CSubtitle* CDVBSubDecoder::GetSubtitle( unsigned int place )
 {
-	if( m_RenderedSubtitles.size() > place )
-	{
-		return m_RenderedSubtitles[place];
-	}
-	else
-	{
-		return NULL;
-	}
+  if( m_RenderedSubtitles.size() > place )
+  {
+    return m_RenderedSubtitles[place];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 int CDVBSubDecoder::GetSubtitleCount()
@@ -883,16 +885,16 @@ int CDVBSubDecoder::GetSubtitleCount()
 
 CSubtitle* CDVBSubDecoder::GetLatestSubtitle()
 {
-	int size = m_RenderedSubtitles.size();
+  int size = m_RenderedSubtitles.size();
 
-	if( size > 0 )
-	{
-		return m_RenderedSubtitles[size - 1];
-	}
-	else
-	{
-		return NULL;
-	}
+  if( size > 0 )
+  {
+    return m_RenderedSubtitles[size - 1];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 void CDVBSubDecoder::ReleaseOldestSubtitle()
@@ -906,47 +908,48 @@ void CDVBSubDecoder::ReleaseOldestSubtitle()
 
 void CDVBSubDecoder::Reset()
 {
-	page.page_time_out = 0;
-	page.acquired = 0;
-	page.page_state = 0;
-	page.page_version_number = 0;
-	page.page_state = 0;
+  page.page_time_out = 0;
+  page.acquired = 0;
+  page.page_state = 0;
+  page.page_version_number = 0;
+  page.page_state = 0;
 
-//	region_t regions[MAX_REGIONS];
-	ZeroMemory( colours, 256*3 );
-	ZeroMemory( trans, 256 );
-	
-	apid = 0;
-	y = 0;
-	x = 0;
-	
-	// do not reset ( causes debug files to be over written ) 
-	//ext = 0;
+  //region_t regions[MAX_REGIONS];
 
-	acquired = 0;
-	PTS = 0;
-	first_PTS = 0;
+  ZeroMemory( colours, 256*3 );
+  ZeroMemory( trans, 256 );
 
-	curr_obj = 0;
-	
-	ZeroMemory( curr_reg, 64 );
-	ZeroMemory( buf, 1920*1080 );
+  apid = 0;
+  y = 0;
+  x = 0;
 
-	m_ScreenWidth = 720;
-	m_ScreenHeight = 576;
-	
-	i = 0;
-	
-	nibble_flag = 0;
-	in_scanline = 0;
-	video_pts = 0;
-	first_video_pts = 0;
-	audio_pts = 0;
-	first_audio_pts = 0;
-	audio_pts_wrap = 0;
+  // do not reset ( causes debug files to be over written ) 
+  //ext = 0;
 
-	for( unsigned int i( 0 ) ; i < m_RenderedSubtitles.size() ; i++ )
-	{
-		m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );	
-	}
+  acquired = 0;
+  PTS = 0;
+  first_PTS = 0;
+
+  curr_obj = 0;
+
+  ZeroMemory( curr_reg, 64 );
+  ZeroMemory( buf, 1920*1080 );
+
+  m_ScreenWidth = 720;
+  m_ScreenHeight = 576;
+
+  i = 0;
+
+  nibble_flag = 0;
+  in_scanline = 0;
+  video_pts = 0;
+  first_video_pts = 0;
+  audio_pts = 0;
+  first_audio_pts = 0;
+  audio_pts_wrap = 0;
+
+  for( unsigned int i( 0 ) ; i < m_RenderedSubtitles.size() ; i++ )
+  {
+    m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );	
+  }
 }
