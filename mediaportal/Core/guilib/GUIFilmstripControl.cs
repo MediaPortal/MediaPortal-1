@@ -2959,6 +2959,27 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
 
+    public void Insert(int index, GUIListItem item)
+    {
+      if (item == null)
+      {
+        return;
+      }
+      _listItems.Insert(index, item);
+      int iItemsPerPage = _columns;
+      int iPages = _listItems.Count / iItemsPerPage;
+      if ((_listItems.Count % iItemsPerPage) != 0)
+      {
+        iPages++;
+      }
+      if (_upDownControl != null)
+      {
+        _upDownControl.SetRange(1, iPages);
+        _upDownControl.Value = 1;
+      }
+      _refresh = true;
+    }
+
     public int BackgroundX
     {
       get { return _backGroundPositionX; }

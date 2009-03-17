@@ -566,6 +566,35 @@ namespace MediaPortal.GUI.Library
       _itemList.Add(item);
     }
 
+    public void Insert(int index, GUIListItem item)
+    {
+      if (item == null)
+      {
+        return;
+      }
+      if (_viewAlbum != null)
+      {
+        _viewAlbum.Insert(index, item);
+      }
+      if (_viewList != null)
+      {
+        _viewList.Insert(index, item);
+      }
+      if (_viewThumbnail != null)
+      {
+        _viewThumbnail.Insert(index, item);
+      }
+      if (_viewFilmStrip != null)
+      {
+        _viewFilmStrip.Insert(index, item);
+      }
+      if (_viewPlayList != null)
+      {
+        _viewPlayList.Insert(index, item);
+      }
+      _itemList.Insert(index, item);
+    }
+
     public void Filter(int searchKind, string searchString)
     {
       if (_viewAlbum != null)

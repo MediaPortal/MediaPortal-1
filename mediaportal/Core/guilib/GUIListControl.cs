@@ -3168,6 +3168,38 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
 
+    public void Insert(int index, GUIListItem item)
+    {
+      if (item == null)
+      {
+        return;
+      }
+      if (WordWrap)
+      {
+        ArrayList wrappedLines;
+        int dMaxWidth = (_width - _imageWidth - 16);
+
+        WordWrapText(item.Label, dMaxWidth, out wrappedLines);
+        foreach (string line in wrappedLines)
+        {
+          _listItems.Insert(index, new GUIListItem(line));
+          index++;
+        }
+      }
+      else
+      {
+        _listItems.Insert(index, item);
+      }
+      int iPages = _listItems.Count / _itemsPerPage;
+      if ((_listItems.Count % _itemsPerPage) != 0)
+      {
+        iPages++;
+      }
+      _upDownControl.SetRange(1, iPages);
+      _upDownControl.Value = 1;
+      _refresh = true;
+    }
+
     public int PinIconOffsetX
     {
       get { return _xOffsetPinIcon; }
