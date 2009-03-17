@@ -1785,7 +1785,8 @@
     <String id="107701" prefix="My ">TV/Teletext</String>
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
-    <String id="108888">Music menu</String>
+    <String id="100800">My Extensions</String>
+    <String id="108888">Music menu</String>	
     <String id="109000">MiniDisplay - Setup</String>
     <String id="109001">MiniDisplay - Setup - Backlight</String>
     <String id="109002">MiniDisplay - Setup - Display Control</String>

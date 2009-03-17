@@ -108,6 +108,13 @@ namespace MediaPortal.MPInstaller
     }
 
     /// <summary>
+    /// Called when the install wizard start.
+    /// </summary>
+    virtual public void OnInstallStart()
+    {
+    }
+
+    /// <summary>
     /// Installs the current package.
     /// </summary>
     /// <param name="pb">ProgressBar for overall progress (can bee null) </param>

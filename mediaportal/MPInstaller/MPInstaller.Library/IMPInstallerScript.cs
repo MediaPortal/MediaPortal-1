@@ -11,6 +11,7 @@ namespace MediaPortal.MPInstaller
     bool GUI_Warning();
     bool Warning();
     void Init();
+    void OnInstallStart();
     void Install(ProgressBar pb, ProgressBar pb1, ListBox listbox);
     void OnInstallFileProcesed(MPIFileList mpiFileInfo);
     void OnInstallDone();

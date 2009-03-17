@@ -121,6 +121,7 @@ namespace MediaPortal.MPInstaller
             {
               if (package.InstallPlugin != null)
                 package.InstallPlugin.OnStartInstall(ref package);
+              package.InstallerScript.OnInstallStart();
             }
             catch (Exception)
             {
