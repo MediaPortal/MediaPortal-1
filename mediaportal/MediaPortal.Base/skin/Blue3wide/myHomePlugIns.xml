@@ -5,6 +5,7 @@
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <disabletopbar>yes</disabletopbar>
+  <define>#header.hover:hover_my plugins.png</define>
   <controls>
     <control>
       <description>background image</description>
