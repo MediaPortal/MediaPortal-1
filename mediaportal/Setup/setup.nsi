@@ -413,13 +413,6 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
 
-  ; Remove default skins before copying them back ( faster way to cleanup a old install )
-  
-  ${LOG_TEXT} "INFO" "Deleting Skin Blue3..."
-  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3"
-  ${LOG_TEXT} "INFO" "Deleting Skin Blue3wide..."
-  RMDir /r /REBOOTOK "$MPdir.Skin\Blue3wide"
-  
   SetOutPath "$MPdir.CustomInputDefault"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
   SetOutPath "$MPdir.Language"
