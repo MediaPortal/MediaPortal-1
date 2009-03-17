@@ -155,7 +155,7 @@ Section /o "Read MediaPortal directories"
 
 SectionEnd
 
-Section /o "OS Information"
+Section /o "OS, .Net and VCRedist Tests"
 
     DetailPrint ""
     DetailPrint "--------------------------------------"

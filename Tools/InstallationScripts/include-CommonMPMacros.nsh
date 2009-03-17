@@ -29,6 +29,7 @@
 
 
 !include LogicLib.nsh
+!include x64.nsh
 
 
 !ifndef COMPANY
@@ -63,6 +64,10 @@
 #
 #           enable it by defining         USE_INSTALL_LOG      in parent script
 #---------------------------------------------------------------------------
+!define prefixERROR "[ERROR     !!!]   "
+!define prefixDEBUG "[    DEBUG    ]   "
+!define prefixINFO  "[         INFO]   "
+
 !ifdef USE_INSTALL_LOG
 
 !include FileFunc.nsh
@@ -72,9 +77,6 @@
 Var LogFile
 Var TempInstallLog
 
-!define prefixERROR "[ERROR     !!!]   "
-!define prefixDEBUG "[    DEBUG    ]   "
-!define prefixINFO  "[         INFO]   "
 
 
 !define LOG_OPEN `!insertmacro LOG_OPEN ""`
@@ -151,6 +153,7 @@ Var TempInstallLog
 
 !define LOG_TEXT `!insertmacro LOG_TEXT`
 !macro LOG_TEXT LEVEL TEXT
+      DetailPrint "${prefix${LEVEL}}${TEXT}"
 !macroend
 
 !endif
@@ -509,8 +512,10 @@ LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "Your operatin
 LangString TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED  ${LANG_ENGLISH} "Your operating system is not recommended by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_ADMIN                ${LANG_ENGLISH} "You need administration rights to install $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
 LangString TEXT_MSGBOX_ERROR_VCREDIST             ${LANG_ENGLISH} "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
-LangString TEXT_MSGBOX_ERROR_DOTNET               ${LANG_ENGLISH} "Microsoft .Net Framework 2 SP2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
-LangString TEXT_MSGBOX_ERROR_DOTNET_SP            ${LANG_ENGLISH} "Microsoft .Net Framework 2 is installed.$\r$\nBut Service Pack 2 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET20             ${LANG_ENGLISH} "Microsoft .Net Framework 2.0 SP2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET20_SP          ${LANG_ENGLISH} "Microsoft .Net Framework 2.0 is installed.$\r$\nBut Service Pack 2 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET35             ${LANG_ENGLISH} "Microsoft .Net Framework 3.5 SP1 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_DOTNET35_SP          ${LANG_ENGLISH} "Microsoft .Net Framework 3.5 is installed.$\r$\nBut Service Pack 1 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 
 LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "$(^Name) is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
@@ -977,23 +982,52 @@ DeleteRegKey HKCU "Software\MediaPortal"
 !macroend
 
 !macro MediaPortalNetFrameworkCheck HideWarnings
+  ${LOG_TEXT} "INFO" ".: Microsoft .Net Framework Check :."
 
   ; check if .Net Framework 2.0 is installed
   ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "Install"
-  ${If} $0 != 1
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET)" IDNO +2
-    ExecShell open "${WEB_REQUIREMENTS}"
-    Abort
-  ${EndIf}
-
   ; check if .Net Framework 2.0 SP2 is installed
-  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "SP"
-  ${If} $0 < 2
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET_SP)" IDNO +2
+  ReadRegDWORD $1 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "SP"
+
+  ; check if .Net Framework 3.5 is installed
+  ReadRegDWORD $2 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
+  ; check if .Net Framework 3.5 SP1 is installed
+  ReadRegDWORD $3 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "SP"
+
+  ${LOG_TEXT} "INFO" ".Net 2.0 installed? $0"
+  ${LOG_TEXT} "INFO" ".Net 2.0 ServicePack: $1"
+  ${LOG_TEXT} "INFO" ".Net 3.5 installed? $2"
+  ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $3"
+
+  ${If} ${IsWinVISTA}
+  ${AndIf} ${RunningX64} ; 3.5 is installed, check for sp1
+    ${LOG_TEXT} "INFO" "OS is Vista64, .Net 3.5 is installed."
+
+    ${If} $3 < 1  ; if 3.5, but no sp1
+      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+      Abort
+    ${EndIf}
+
+  ${ElseIf} $0 != 1  ; if no 2.0
+
+    ${If} $2 != 1  ; if no 3.5
+      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET20)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+      Abort
+    ${ElseIf} $3 < 1  ; if 3.5, but no sp1
+      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET35_SP)" IDNO +2
+      ExecShell open "${WEB_REQUIREMENTS}"
+      Abort
+    ${EndIf}
+
+  ${ElseIf} $1 < 2  ; if 2.0, but no sp2
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_DOTNET20_SP)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
   ${EndIf}
 
+  ${LOG_TEXT} "INFO" "END OF .: Microsoft .Net Framework Check :."
 !macroend
 
 !endif # !___COMMON_MP_MACROS__NSH___
