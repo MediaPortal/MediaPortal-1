@@ -64,7 +64,6 @@ Page instfiles
 #!include Library.nsh
 #!include FileFunc.nsh
 #!include Memento.nsh
-!include "${svn_InstallScripts}\include-WinVerEx.nsh"
 
 
 !define USE_READ_MP_DIRS ; defines if MediaPortal's special directories needs to be read from config
