@@ -286,7 +286,11 @@ Section "-prepare" SecPrepare
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
-  
+
+  # if it is an update include a file with  last update/cleanup instructions
+  ${If} $UpdateMode = 1
+    !include "update-1.0.1.nsh"
+  ${EndIf}  
 SectionEnd
 
 !macro BackupInstallDirectory
@@ -819,11 +823,6 @@ Section -Post
   ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
 
   ${RefreshShellIcons}
-
-  # if it is an update include a file with  last update/cleanup instructions
-  ${If} $UpdateMode = 1
-    !include "update-1.0.1.nsh"
-  ${EndIf}
 SectionEnd
 
 #---------------------------------------------------------------------------
