@@ -496,7 +496,7 @@
     <String id="599">Tempesta</String>
     <String id="600">Guida TV</String>
     <String id="601">Registra ora</String>
-    <String id="602">Canale:</String>
+    <String id="602">Canale</String>
     <String id="603">Programmazione</String>
     <String id="604">TV Registrata</String>
     <String id="605" prefix="La mia ">TV</String>
@@ -1489,6 +1489,7 @@
     <String id="14015">Aggiornamenti</String>
     <String id="14016">Ordina per: Download</String>
     <String id="14017">Ordina per: Rating</String>
+    <String id="14018">Installazione aggiornamento</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Il mio ">Tetris</String>
     <String id="19002">Nuova Partita</String>
