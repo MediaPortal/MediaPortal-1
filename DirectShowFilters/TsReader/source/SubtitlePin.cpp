@@ -225,6 +225,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
         pSample->SetActualDataLength(0);
         pSample->SetSyncPoint(FALSE);
         pSample->SetDiscontinuity(FALSE);  // TRUE seems to hold sometimes the working thread....( ambass )
+        m_bInFillBuffer=false;
         return NOERROR;
       }
 

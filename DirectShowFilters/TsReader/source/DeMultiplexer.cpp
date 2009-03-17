@@ -1274,7 +1274,9 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 //#endif
           //yes, then move the full PES in main queue.
           while (m_t_vecVideoBuffers.size())
-          {
+          { 
+            ivecBuffers it ;
+            it = m_t_vecVideoBuffers.begin() ;
             if (Gop || m_bIframeFound)
             {
               CRefTime Ref ;
