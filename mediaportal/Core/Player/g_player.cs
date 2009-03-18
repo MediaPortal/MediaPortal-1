@@ -1391,10 +1391,13 @@ namespace MediaPortal.Player
           //_player.Stop();
           //CachePlayer();
           //_player = null;
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
-          GC.Collect();
+          if (!_player.IsExternal)
+          {
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+          }
           //?? ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.NETDEVFX.v20.de/cpref2/html/M_System_GC_Collect_1_804c5d7d.htm
           bool doStop = true;
           if (Util.Utils.IsAudio(strFile))
@@ -1413,10 +1416,13 @@ namespace MediaPortal.Player
 
             CachePlayer();
             _player = null;
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
+            if (!_player.IsExternal)
+            {
+              GC.Collect();
+              GC.Collect();
+              GC.Collect();
+              GC.Collect();
+            }
           }
         }
 
