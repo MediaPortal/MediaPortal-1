@@ -819,7 +819,9 @@ FunctionEnd
 Function RenameDirectory
 
   Pop $0 ; directory to reneame
-  Pop $1 ; new name for directory
+  Pop $1 ; new path for directory
+  ${LOG_TEXT} "INFO" "RenameDirectory: Old path: $0"
+  ${LOG_TEXT} "INFO" "RenameDirectory: New path: $1"
 
   ; set counter to 0
   StrCpy $R1 0
@@ -827,21 +829,32 @@ Function RenameDirectory
 
     IntOp $R1 $R1 + 1
     ${If} $R1 > 5 ; try to rename the directory max. 5 times
-      ${LOG_TEXT} "INFO" "Renaming the directory failed for some reason. $0"
       ${ExitDo}
     ${EndIf}
 
-    ${LOG_TEXT} "INFO" "$R1. try to rename the $0"
+    ${LOG_TEXT} "INFO" "RenameDirectory: $R1. try to rename"
     ClearErrors
     Rename "$0" "$1"
 
   ${LoopWhile} ${Errors} ; if errors occured on renaming, try again, until no errors occured
 
+  ; output of result
+  ${If} $R1 > 5 ; try to rename the directory max. 5 times
+      ${LOG_TEXT} "ERROR" "RenameDirectory: Renaming directory failed for some reason."
+  ${Else}
+      ${LOG_TEXT} "INFO" "RenameDirectory: Renamed directory successfully."
+  ${EndIf}
 FunctionEnd
 !macro RenameDirectory DirPath NewDirPath
-    Push "${DirPath}"
-    Push "${NewDirPath}"
+  ${If} ${FileExists} "${DirPath}\*.*"
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists: ${DirPath}"
+
+    Push "${NewDirPath}" ; new name for directory
+    Push "${DirPath}" ; directory to reneame
     Call RenameDirectory
+  ${Else}
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
+  ${EndIf}
 !macroend
 
 #---------------------------------------------------------------------------

@@ -266,15 +266,8 @@ Section "-prepare" SecPrepare
 
   ${Else}
 
-    ${If} ${FileExists} "$INSTDIR\*.*"
-      ${LOG_TEXT} "INFO" "Installation dir already exists. ($INSTDIR)"
-      !insertmacro RenameDirectory "$INSTDIR" "$INSTDIR_$R0"
-    ${EndIf}
-  
-    ${If} ${FileExists} "${COMMON_APPDATA}\*.*"
-      ${LOG_TEXT} "INFO" "Configuration dir already exists. (${COMMON_APPDATA})"
-      !insertmacro RenameDirectory "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
-    ${EndIf}
+    !insertmacro RenameDirectory "$INSTDIR" "$INSTDIR_$R0"
+    !insertmacro RenameDirectory "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
 
   ${EndIf}
 

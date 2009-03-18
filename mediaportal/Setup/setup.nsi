@@ -311,15 +311,8 @@ SectionEnd
 
   !insertmacro GET_BACKUP_POSTFIX $R0
 
-  ${If} ${FileExists} "$MPdir.Base\*.*"
-    ${LOG_TEXT} "INFO" "Installation dir already exists. ($MPdir.Base)"
-    !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
-  ${EndIf}
-
-  ${If} ${FileExists} "$MPdir.Config\*.*"
-    ${LOG_TEXT} "INFO" "Configuration dir already exists. ($MPdir.Config)"
-    !insertmacro RenameDirectory "$MPdir.Config" "$MPdir.Config_$R0"
-  ${EndIf}
+  !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
+  !insertmacro RenameDirectory "$MPdir.Config" "$MPdir.Config_$R0"
 
   ${If} ${FileExists} "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml"
     ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."

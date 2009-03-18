@@ -175,12 +175,24 @@ Section /o "Rename MP dir"
     ${ReadMediaPortalDirs} $MPdir.Base
     
   !insertmacro GET_BACKUP_POSTFIX $R0
-  
-  ${If} ${FileExists} "$MPdir.Base\*.*"
-    ${LOG_TEXT} "INFO" "Installation dir already exists. ($MPdir.Base)"
-    !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"    
-  ${EndIf}
 
+  !insertmacro RenameDirectory "$MPdir.Base" "$MPdir.Base_$R0"
+
+  ClearErrors
+  CreateDirectory "C:\MPTestDir"
+    ${If} ${Errors}
+      ${LOG_TEXT} "ERROR" "CreateDirectory"
+    ${EndIf}
+  !insertmacro RenameDirectory "C:\MPTestDir" "C:\MPTestDir_$R0"
+    ${If} ${Errors}
+      ${LOG_TEXT} "ERROR" "RenameDirectory"
+    ${EndIf}
+  RMDir "C:\MPTestDir_$R0"
+    ${If} ${Errors}
+      ${LOG_TEXT} "ERROR" "RMDir"
+    ${EndIf}
+
+  !insertmacro RenameDirectory "C:\MPTestDir" "C:\MPTestDir_$R0"
 SectionEnd
 
 Section /o "other tests"
