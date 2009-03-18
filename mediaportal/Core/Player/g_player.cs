@@ -1414,9 +1414,10 @@ namespace MediaPortal.Player
               _player.Stop();
             }
 
+            bool isExternal = _player.IsExternal;
             CachePlayer();
             _player = null;
-            if (!_player.IsExternal)
+            if (!isExternal)
             {
               GC.Collect();
               GC.Collect();
