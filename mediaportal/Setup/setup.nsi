@@ -255,23 +255,23 @@ ShowUninstDetails show
 !macro ShutdownRunningMediaPortalApplications
   ${LOG_TEXT} "INFO" "Terminating processes..."
 
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
+  ${KillProcess} "MediaPortal.exe"
+  ${KillProcess} "configuration.exe"
 
   ; MPInstaller apps
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "MPIMaker.exe"
+  ${KillProcess} "MPInstaller.exe"
+  ${KillProcess} "MPIMaker.exe"
 
-  ${KILLPROCESS} "WatchDog.exe"
-  ${KILLPROCESS} "MusicShareWatcher.exe"
-  ${KILLPROCESS} "TVGuideScheduler.exe"
+  ${KillProcess} "WatchDog.exe"
+  ${KillProcess} "MusicShareWatcher.exe"
+  ${KillProcess} "TVGuideScheduler.exe"
 
   ; MovieThumbnailer
-  ${KILLPROCESS} "mtn.exe"
+  ${KillProcess} "mtn.exe"
 
   ; WebEPG apps
-  ${KILLPROCESS} "WebEPG.exe"
-  ${KILLPROCESS} "WebEPG-conf.exe"
+  ${KillProcess} "WebEPG.exe"
+  ${KillProcess} "WebEPG-conf.exe"
 !macroend
 
 #---------------------------------------------------------------------------

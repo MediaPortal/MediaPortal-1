@@ -283,8 +283,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${KILLPROCESS} "TVService.exe"
-  ${KILLPROCESS} "SetupTv.exe"
+  ${StopService} "TVservice"
+  ${KillProcess} "SetupTv.exe"
 
   SetOverwrite on
 
@@ -397,8 +397,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${KILLPROCESS} "TVService.exe"
-  ${KILLPROCESS} "SetupTv.exe"
+  ${StopService} "TVservice"
+  ${KillProcess} "SetupTv.exe"
 
   #---------------------------------------------------------------------------
   # CLEARING DATABASE if RemoveAll was selected
@@ -496,8 +496,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
+  ${KillProcess} "MediaPortal.exe"
+  ${KillProcess} "configuration.exe"
 
   SetOverwrite on
 
@@ -542,8 +542,8 @@ ${MementoSectionEnd}
 
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
-  ${KILLPROCESS} "MediaPortal.exe"
-  ${KILLPROCESS} "configuration.exe"
+  ${KillProcess} "MediaPortal.exe"
+  ${KillProcess} "configuration.exe"
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVClient

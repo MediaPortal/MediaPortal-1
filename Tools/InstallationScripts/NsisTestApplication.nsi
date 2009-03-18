@@ -195,45 +195,16 @@ Section /o "Rename MP dir"
   !insertmacro RenameDirectory "C:\MPTestDir" "C:\MPTestDir_$R0"
 SectionEnd
 
-Section /o "other tests"
-  
-  MessageBox MB_ICONINFORMATION|MB_YESNO "Do kill process test?" IDNO noKillProcess
+Section /o "Stop TVService"
 
-  ${KILLPROCESS} "MPInstaller.exe"
-  ${KILLPROCESS} "makensisw.exe"
-  ${KILLPROCESS} "Input Service Configuration.exe"
+  ${StopService} "TVservice"
 
-  DetailPrint "KillProcess FINISHED"
+SectionEnd
 
-  noKillProcess:
-  
-  
-  
-  MessageBox MB_ICONINFORMATION|MB_YESNO "ShutdownTVService?" IDNO noTVShutdown
-  
-  ${LOG_TEXT} "INFO" "Stopping TV Service..."
-  nsExec::ExecToLog 'net stop TVservice'
-  Pop $0
-  DetailPrint "net stop TVservice result: $0"  
-  
-  DetailPrint "TVShutdown FINISHED"
+Section /o "Kill Processes"
 
-  noTVShutdown:
-  
-  
-  MessageBox MB_ICONINFORMATION|MB_YESNO "TVStart?" IDNO noTVStart
-  
-  ${LOG_TEXT} "INFO" "starting TV Service..."
-  nsExec::ExecToLog 'net start TVservice'
-  Pop $0
-  DetailPrint "net start TVservice result: $0"  
-  
-  DetailPrint "TVStart FINISHED"
-
-  noTVStart:
-
-
-  
-  
+  ${KillProcess} "MPInstaller.exe"
+  ${KillProcess} "makensisw.exe"
+  ${KillProcess} "Input Service Configuration.exe"
 
 SectionEnd

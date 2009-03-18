@@ -162,24 +162,108 @@ Var TempInstallLog
 #---------------------------------------------------------------------------
 #   KILL Process       macro for common usage
 #---------------------------------------------------------------------------
-!define KILLPROCESS `!insertmacro KILLPROCESS`
-!macro KILLPROCESS PROCESS
-/*
-!if ${KILLMODE} == "1"
-  ExecShell "" "Cmd.exe" '/C "taskkill /F /IM "${PROCESS}""' SW_HIDE
-  Sleep 300
-!else if ${KILLMODE} == "2"
-  ExecWait '"taskkill" /F /IM "${PROCESS}"'
-!else if ${KILLMODE} == "3"
-  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
-!else
-*/
-  ${LOG_TEXT} "DEBUG" "KILLPROCESS: ${PROCESS}"
-  nsExec::ExecToLog '"taskkill" /F /IM "${PROCESS}"'
+!define KillProcess `!insertmacro KillProcess`
+!macro KillProcess Process
+  ${LOG_TEXT} "INFO" "KillProcess: ${Process}"
 
-  Pop $0
-  ${LOG_TEXT} "DEBUG" "KILLPROCESS result: $0"
+  StrCpy $R1 1  ; set counter to 1
+  ${Do}
 
+    nsExec::Exec '"taskkill" /F /IM "${Process}"'
+
+    Pop $0
+
+    ${Select} $0
+      ${Case} "0"
+        ${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
+        ${ExitDo}
+      ${Case} "128"
+        ${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
+        ${ExitDo}
+      ${CaseElse}
+
+        ${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
+        IntOp $R1 $R1 + 1
+        ${If} $R1 > 5 ; try max. 5 times
+          ${ExitDo}
+        ${Else}
+          ${LOG_TEXT} "INFO" "KillProcess: Trying again. $R1/5"
+        ${EndIf}
+
+      ${EndSelect}
+  ${Loop}
+!macroend
+
+!define StopService `!insertmacro StopService`
+!macro StopService Service
+  ${LOG_TEXT} "INFO" "StopService: ${Service}"
+
+  StrCpy $R1 1  ; set counter to 1
+  ${Do}
+
+    nsExec::Exec 'net stop "${Service}"'
+
+    Pop $0
+
+    ${Select} $0
+      ${Case} "0"
+        ${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
+        ${ExitDo}
+      ${Case} "2"
+        ${LOG_TEXT} "INFO" "StopService: ${Service} is not started."
+        ${ExitDo}
+      ${CaseElse}
+
+        ${LOG_TEXT} "ERROR" "StopService: Unknown result: $0"
+        IntOp $R1 $R1 + 1
+        ${If} $R1 > 5 ; try max. 5 times
+          ${ExitDo}
+        ${Else}
+          ${LOG_TEXT} "INFO" "StopService: Trying again. $R1/5"
+        ${EndIf}
+
+      ${EndSelect}
+  ${Loop}
+!macroend
+
+Function RenameDirectory
+
+  Pop $0 ; directory to reneame
+  Pop $1 ; new path for directory
+  ${LOG_TEXT} "INFO" "RenameDirectory: Old path: $0"
+  ${LOG_TEXT} "INFO" "RenameDirectory: New path: $1"
+
+  StrCpy $R1 0  ; set counter to 0
+  ${Do}
+
+    IntOp $R1 $R1 + 1
+    ${If} $R1 > 5 ; try max. 5 times
+      ${ExitDo}
+    ${EndIf}
+
+    ${LOG_TEXT} "INFO" "RenameDirectory: $R1. try to rename"
+    ClearErrors
+    Rename "$0" "$1"
+
+  ${LoopWhile} ${Errors} ; if errors occured on renaming, try again, until no errors occured
+
+  ; output of result
+  ${If} $R1 > 5 ; try to rename the directory max. 5 times
+      ${LOG_TEXT} "ERROR" "RenameDirectory: Renaming directory failed for some reason."
+  ${Else}
+      ${LOG_TEXT} "INFO" "RenameDirectory: Renamed directory successfully."
+  ${EndIf}
+FunctionEnd
+!macro RenameDirectory DirPath NewDirPath
+  ${If} ${FileExists} "${DirPath}\*.*"
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists: ${DirPath}"
+
+    Push "${NewDirPath}" ; new name for directory
+    Push "${DirPath}" ; directory to reneame
+    Call RenameDirectory
+  ${Else}
+    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
+  ${EndIf}
 !macroend
 
 
@@ -815,47 +899,6 @@ FunctionEnd
 !macroend
 
 !endif # !USE_READ_MP_DIRS
-
-Function RenameDirectory
-
-  Pop $0 ; directory to reneame
-  Pop $1 ; new path for directory
-  ${LOG_TEXT} "INFO" "RenameDirectory: Old path: $0"
-  ${LOG_TEXT} "INFO" "RenameDirectory: New path: $1"
-
-  ; set counter to 0
-  StrCpy $R1 0
-  ${Do}
-
-    IntOp $R1 $R1 + 1
-    ${If} $R1 > 5 ; try to rename the directory max. 5 times
-      ${ExitDo}
-    ${EndIf}
-
-    ${LOG_TEXT} "INFO" "RenameDirectory: $R1. try to rename"
-    ClearErrors
-    Rename "$0" "$1"
-
-  ${LoopWhile} ${Errors} ; if errors occured on renaming, try again, until no errors occured
-
-  ; output of result
-  ${If} $R1 > 5 ; try to rename the directory max. 5 times
-      ${LOG_TEXT} "ERROR" "RenameDirectory: Renaming directory failed for some reason."
-  ${Else}
-      ${LOG_TEXT} "INFO" "RenameDirectory: Renamed directory successfully."
-  ${EndIf}
-FunctionEnd
-!macro RenameDirectory DirPath NewDirPath
-  ${If} ${FileExists} "${DirPath}\*.*"
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory exists: ${DirPath}"
-
-    Push "${NewDirPath}" ; new name for directory
-    Push "${DirPath}" ; directory to reneame
-    Call RenameDirectory
-  ${Else}
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
-  ${EndIf}
-!macroend
 
 #---------------------------------------------------------------------------
 #   COMPLETE MEDIAPORTAL CLEANUP
