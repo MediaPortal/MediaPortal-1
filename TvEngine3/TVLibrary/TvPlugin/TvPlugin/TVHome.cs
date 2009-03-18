@@ -3077,10 +3077,13 @@ namespace TvPlugin
 
     private static void RenderBlackImage()
     {
-      Log.Debug("TvHome.RenderBlackImage()");
-      _waitForBlackScreen.Reset();
-      GUIGraphicsContext.RenderBlackImage = true;
-      _waitForBlackScreen.WaitOne(1000, false);
+      if (GUIGraphicsContext.RenderBlackImage == false)
+      {
+        Log.Debug("TvHome.RenderBlackImage()");
+        _waitForBlackScreen.Reset();
+        GUIGraphicsContext.RenderBlackImage = true;
+        _waitForBlackScreen.WaitOne(1000, false);
+      }
     }
 
     public static bool ViewChannelAndCheck(Channel channel)
@@ -3248,9 +3251,12 @@ namespace TvPlugin
             // PauseGraph & ContinueGraph does add a bit overhead to channel change times                        
             RenderBlackImage();
             g_Player.PauseGraph();
-            g_Player.OnZapping((int)CardType.DvbS); // Set default as dvb-x
+            g_Player.OnZapping(0x80);           // Setup Zapping for TsReader
             succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-            g_Player.OnZapping((int)card.Type);
+            if (card!=null) 
+              g_Player.OnZapping((int)card.Type);
+            else
+              g_Player.OnZapping(-1);            // Send Zapping failed for TsReader.
 
             if (succeeded == TvResult.Succeeded)
             {
