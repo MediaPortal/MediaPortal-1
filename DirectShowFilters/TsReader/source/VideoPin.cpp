@@ -304,7 +304,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 //          else
             // Sample is too late.
 //            m_ShowSample = false ;
-        }
+       }
 
         if (m_bPresentSample)
         {
@@ -402,7 +402,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
 
 	while(demux.IsVideoChanging() && !m_pTsReaderFilter->m_bStopping) Sleep(5) ;
 
-  LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d %d", fStart,m_dRateSeeking,m_pTsReaderFilter->IsSeekingToEof(),m_pTsReaderFilter->IsWaitingForNewPat());
+  LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", fStart,m_dRateSeeking,m_pTsReaderFilter->IsSeekingToEof());
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -535,7 +535,7 @@ void CVideoPin::UpdateFromSeek()
     //m_rtStart=rtSeek;
 
     //clear flags indiciating that the pin is seeking
-    LogDebug("vid seek done 1  --- %d %d",m_pTsReaderFilter->IsSeekingToEof(),m_pTsReaderFilter->IsWaitingForNewPat());
+    LogDebug("vid seek done 1  --- %d",m_pTsReaderFilter->IsSeekingToEof());
     m_bSeeking=false;
 
     demux.FlushVideo() ;
@@ -551,7 +551,7 @@ void CVideoPin::UpdateFromSeek()
     demux.FlushVideo() ;
 
     //clear flags indiciating that the pin is seeking
-    LogDebug("vid seek done 2  --- %d %d",m_pTsReaderFilter->IsSeekingToEof(),m_pTsReaderFilter->IsWaitingForNewPat());
+    LogDebug("vid seek done 2  --- %d",m_pTsReaderFilter->IsSeekingToEof());
     m_bSeeking=false;
   }
 }

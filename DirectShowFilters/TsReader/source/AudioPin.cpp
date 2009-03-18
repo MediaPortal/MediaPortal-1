@@ -298,6 +298,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
                 LogDebug("Compensation : Audio pts behind Video Pts ( Recover skipping Video ) ....") ;
               }
             }
+						if (lastVideo.Millisecs()==firstVideo.Millisecs())		// temporary hack for channels containing full GOP into single PES.
+						{
+							BestCompensation -= (REFERENCE_TIME)5000000 ;
+							AddVideoCompensation += (REFERENCE_TIME)5000000 ;
+						}
             m_pTsReaderFilter->m_RandomCompensation += 500000 ;   // Stupid feature required to have FFRW working with DVXA ( at least ATI.. ) to avoid frozen picture. ( it moves just moves the sample time a bit !! )
             m_pTsReaderFilter->m_RandomCompensation = m_pTsReaderFilter->m_RandomCompensation % 1000000 ;
           }

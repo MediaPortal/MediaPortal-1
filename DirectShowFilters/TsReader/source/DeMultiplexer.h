@@ -100,6 +100,8 @@ public:
 
   void SetVideoChanging(bool onOff) ;
   bool IsVideoChanging() ;
+	void RequestNewPat(void) ;
+	void ClearRequestNewPat(void) ;
 
   bool m_DisableDiscontinuitiesFiltering ;
   CRefTime  m_IframeSample ;
@@ -178,6 +180,8 @@ private:
   //bool m_bPreferAC3;
   int m_iAudioIdx;
   int m_iPatVersion;
+	int m_ReqPatVersion;
+	int m_WaitNewPatTmo;
   int m_receivedPackets;
 
   bool m_bIframeFound ;

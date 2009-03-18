@@ -66,6 +66,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bHoldSubtitle=false;
   m_iAudioIdx=-1;
   m_iPatVersion=-1;
+  m_ReqPatVersion=-1;
   m_receivedPackets=0;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
@@ -677,6 +678,7 @@ void CDeMultiplexer::Start()
   m_bHoldAudio=false;
   m_bHoldVideo=false;
   m_iPatVersion=-1;
+  m_ReqPatVersion=-1;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
   DWORD dwBytesProcessed=0;
@@ -816,7 +818,18 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 
   m_patParser.OnTsPacket(tsPacket);
 
-  if (m_filter.IsWaitingForNewPat()) return ;
+	if (m_iPatVersion==-1) return ;								// First Pat not found
+
+	// Wait for new PAT if required.
+	if ((m_iPatVersion & 0x0F) != (m_ReqPatVersion & 0x0F))
+	{
+		if (m_ReqPatVersion==-1)										
+		{																							// Now, unless channel change, 
+			m_ReqPatVersion = m_iPatVersion ;						// Initialize Pat Request.
+			m_WaitNewPatTmo = GetTickCount() ;					// Now, unless channel change request,timeout will be always true. 
+		}
+		if (GetTickCount() < m_WaitNewPatTmo) return ;		// Timeout not reached.
+	}
 
   //if we have no PCR pid (yet) then there's nothing to decode, so return
   if (m_pids.PcrPid==0) return;
@@ -1462,7 +1475,6 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 
   if (info.PatVersion != m_iPatVersion)
   {
-    m_filter.SetWaitForNewPat(false) ;
     LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
     m_iPatVersion=info.PatVersion;
     m_bSetAudioDiscontinuity=true;
@@ -2067,6 +2079,19 @@ void CDeMultiplexer::SetVideoChanging(bool onOff)
 bool CDeMultiplexer::IsVideoChanging()
 {
   return m_bVideoChanging ;
+}
+
+void CDeMultiplexer::RequestNewPat(void)
+{
+	m_ReqPatVersion++ ;
+	m_ReqPatVersion &= 0x0F ;
+  LogDebug("Request new PAT = %d", m_ReqPatVersion) ;
+	m_WaitNewPatTmo=GetTickCount()+10000 ;
+}
+
+void CDeMultiplexer::ClearRequestNewPat(void)
+{
+	m_ReqPatVersion=m_iPatVersion ;		// Used for AnalogTv or channel change fail.
 }
 
 

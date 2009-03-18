@@ -166,9 +166,6 @@ public:
 	void            SetWaitForSeekToEof(bool onOff) ;
 	bool            IsSeekingToEof() ;
 
-	void            SetWaitForNewPat(bool onOff) ;
-	bool            IsWaitingForNewPat() ;
-
 	DWORD           m_lastPause;
 	bool            m_bStreamCompensated;
 	DWORD           m_lastRun;

@@ -169,7 +169,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.0.4 ----------------");
+  LogDebug("-------------- v1.0.5 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -372,16 +372,19 @@ STDMETHODIMP CTsReaderFilter::SetRelaxedMode(BOOL relaxedReading)
 
 void STDMETHODCALLTYPE CTsReaderFilter::OnZapping(int info)
 {
-  LogDebug("OnZapping %d", info);
-	if (info > 0)
+  LogDebug("OnZapping %x", info);
+	if (info & 0x80)							// Theorically a new PAT ( equal to PAT+1 modulo 16 ) will be issued by TsWriter.
 	{
-		SetWaitForNewPat(true) ;
+		m_demultiplexer.RequestNewPat() ;
 		m_bAnalog=false ;
 	}
 	else
 	{
-		SetWaitForNewPat(false) ;
-		m_bAnalog=true ;
+		if (info <= 0)							// Analog or card assigment failure
+		{
+			m_demultiplexer.ClearRequestNewPat() ;
+			m_bAnalog=true ;
+		}
 	}
 
   return;
@@ -406,12 +409,11 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   {
     m_lastRun += (GetTickCount()-m_lastPause) ;
     SetWaitForSeekToEof(false) ;
-    SetWaitForNewPat(false) ;
   }
   else
   {
     m_lastRun = GetTickCount() ;
-    if (!IsWaitingForNewPat() && m_bLiveTv) ;
+    if (m_bStreamCompensated && m_bLiveTv) ;
       LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_lastPause);
   }
 
@@ -455,8 +457,6 @@ STDMETHODIMP CTsReaderFilter::Stop()
   //guarantees that audio/video/subtitle pins dont block in the fillbuffer() method
   m_bSeeking=true;
 	m_bStopping=true;
-
-  SetWaitForNewPat(false) ;
 
   if (m_pSubtitlePin)
   {
@@ -818,7 +818,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     {
       doSeek = true ;       // No, exec seek !
       m_bLiveTv = false ;   // => No LiveTv.
-      SetWaitForNewPat(false) ;
+//      SetWaitForNewPat(false) ;
     }
     else
     {
@@ -1287,18 +1287,6 @@ bool CTsReaderFilter::IsSeekingToEof()
 {
   return m_WaitForSeekToEof ;
 }
-
-void CTsReaderFilter::SetWaitForNewPat(bool onOff)
-{
-  LogDebug("Wait for new pat %d",onOff) ;
-  m_WaitForNewPat = onOff ;
-}
-
-bool CTsReaderFilter::IsWaitingForNewPat()
-{
-  return m_WaitForNewPat ;
-}
-
 
 
 ////////////////////////////////////////////////////////////////////////
