@@ -422,7 +422,7 @@
     <String id="502">Nelze dokončít úlohu</String>
     <String id="504">Otevřít cílovou složku</String>
     <String id="505">Počítám</String>
-    <String id="506">Jste si jistý?</String>
+    <String id="506">Jste si jistí?</String>
     <String id="507">položky</String>
     <String id="508">do</String>
     <String id="509">Cílový soubor existuje. Přepsat?</String>
@@ -524,7 +524,7 @@
     <String id="649">Každý</String>
     <String id="650">Pokaždé na {0}</String>
     <String id="651">Pokaždé na jakémkoliv kanálu</String>
-    <String id="652">Nahrané TV programy</String>
+    <String id="652">Nahrané TV pořady</String>
     <String id="653">Zrušení záznamu</String>
     <String id="654">Vysunout</String>
     <String id="655">Přehrát TV záznam</String>
@@ -548,7 +548,7 @@
     <String id="673">Rychlost scrolování</String>
     <String id="674">Nastavení GUI</String>
     <String id="675">Příklad:</String>
-    <String id="676">Smazat přehrané záznamy</String>
+    <String id="676">Smazat přehrané záznamy?</String>
     <String id="677">krát</String>
     <String id="678">Třídit podle: Žánru</String>
     <String id="679">Týdně</String>
@@ -705,7 +705,7 @@
     <String id="897">Nastavení</String>
     <String id="898">MPEG2</String>
     <String id="899">WMV</String>
-    <String id="900">Pokračovat v přehrávání v místě přerušení?</String>
+    <String id="900">Pokračovat v místě přerušení?</String>
     <String id="901">MSN Messenger</String>
     <String id="902">Kontakty on-line</String>
     <String id="911">Žádné kanály</String>
@@ -769,7 +769,7 @@
     <String id="991">Priorita</String>
     <String id="992">Vymazat originál</String>
     <String id="993">Vlastní</String>
-    <String id="994">Zapnout Autokompresi</String>
+    <String id="994">Zapnout autokompresi</String>
     <String id="996">Vybrat nahrávání?</String>
     <String id="997">Kompletní</String>
     <String id="998">XviD</String>
@@ -802,6 +802,7 @@
     <String id="1030">Vypnout</String>
     <String id="1031">Restartovat</String>
     <String id="1032">Uspat</String>
+    <String id="1033">Právě probíhá nahrávání</String>
     <String id="1034">Není signál!</String>
     <String id="1035">TV kánál je zakódovaný</String>
     <String id="1036">Žádné video nenalezeno</String>
@@ -845,7 +846,7 @@
     <String id="1087">1536 Kbps</String>
     <String id="1088">3072 Kbps</String>
     <String id="1089">5376 Kbps</String>
-    <String id="1090">Video Standard</String>
+    <String id="1090">Video standard</String>
     <String id="1091">Film</String>
     <String id="1092">NTSC</String>
     <String id="1093">PAL</String>
@@ -948,10 +949,10 @@
     <String id="2052">Search in Recipe</String>
     <String id="2053">Category</String>
     <String id="2054">No Entry!</String>
-    <String id="2055">Settings</String>
+    <String id="2055">Nastavení</String>
     <String id="2056">Videoquality:</String>
     <String id="2057">Audioquality:</String>
-    <String id="2058">Resolution:</String>
+    <String id="2058">Rozlišení:</String>
     <String id="2059">Comskip file found - </String>
     <String id="2060">would you like to use it?</String>
     <String id="2061">The Comskip file is incompatible</String>
@@ -966,7 +967,7 @@
     <String id="2070">Konverze byla dokončena</String>
     <String id="2071">Dvr-ms do mpeg</String>
     <String id="2072">Spustit konverzi</String>
-    <String id="2073">Prosím zvolte dvr-ms, který chcete překonvertovat:</String>
+    <String id="2073">Prosím zvolte dvr-ms soubor, který chcete překonvertovat:</String>
     <String id="2074">Prosím zvolte soubory, které chcete sloučit:</String>
     <String id="2075">Define the new cut points</String>
     <String id="2076">Edit</String>
@@ -976,7 +977,7 @@
     <String id="2080">Nepodporovaný soubor</String>
     <String id="2081">Nelze stříhat</String>
     <String id="2082">Stříhání bylo dokončeno</String>
-    <String id="2083">Would you like to delete the original file?</String>
+    <String id="2083">Přejete si smazat původní soubor?</String>
     <String id="2084">start</String>
     <String id="2085">ukončit</String>
     <String id="2086">dozadu</String>
