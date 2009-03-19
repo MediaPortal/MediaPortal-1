@@ -328,18 +328,25 @@ namespace MediaPortal.MusicShareWatcher
     private int LoadShares()
     {
       Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-      string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
+      
       for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
       {
-        string strShareName = String.Format("sharename{0}", i);
         string strSharePath = String.Format("sharepath{0}", i);
         string shareType = String.Format("sharetype{0}", i);
+        string shareScan = String.Format("sharescan{0}", i);
 
         string ShareType = xmlreader.GetValueAsString("music", shareType, string.Empty);
         if (ShareType == "yes")
         {
+          continue; // We can't monitor ftp shares
+        }
+
+        bool ShareScanData = xmlreader.GetValueAsBool("music", shareScan, true);
+        if (!ShareScanData)
+        {
           continue;
         }
+
         string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
         if (SharePath.Length > 0)

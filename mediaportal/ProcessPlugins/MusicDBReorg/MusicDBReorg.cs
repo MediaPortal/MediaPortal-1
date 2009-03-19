@@ -26,6 +26,7 @@
 #region usings
 
 using System;
+using System.Collections;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
@@ -55,7 +56,8 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private bool _runSaturdays = false;
     private bool _runSundays = false;
     private MusicDatabase mDB = null;
-
+    
+    private ArrayList m_Shares = new ArrayList();
     #endregion
 
     #region Ctor
@@ -116,6 +118,44 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     #endregion
 
     #region Implementation
+    /// <summary>
+    /// Load the Shares
+    /// </summary>
+    /// <returns></returns>
+    private int LoadShares()
+    {
+      m_Shares.Clear();
+      Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
+
+      for (int i = 0; i < MediaPortal.Util.VirtualDirectory.MaxSharesCount; i++)
+      {
+        string strSharePath = String.Format("sharepath{0}", i);
+        string shareType = String.Format("sharetype{0}", i);
+        string shareScan = String.Format("sharescan{0}", i);
+
+        string ShareType = xmlreader.GetValueAsString("music", shareType, string.Empty);
+        if (ShareType == "yes")
+        {
+          continue; // We can't monitor ftp shares
+        }
+
+        bool ShareScanData = xmlreader.GetValueAsBool("music", shareScan, true);
+        if (!ShareScanData)
+        {
+          continue;
+        }
+
+        string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
+
+        if (SharePath.Length > 0)
+        {
+          m_Shares.Add(SharePath);
+        }
+      }
+
+      xmlreader = null;
+      return 0;
+    }
 
     /// <summary>
     /// When the Reorg is run from inside the GUI Settings, we are notified here and prevent shutdown, while the import is running 
@@ -153,7 +193,8 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
 
           try
           {
-            mDB.MusicDatabaseReorg(null);
+            LoadShares();
+            mDB.MusicDatabaseReorg(m_Shares);
           }
           catch (Exception ex)
           {

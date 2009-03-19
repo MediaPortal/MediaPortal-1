@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
@@ -60,6 +61,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxCreateFolderThumb;
     private MPCheckBox checkBoxCreateGenre;
     private MPCheckBox checkBoxAllImages;
+
+    private List<BaseShares.ShareData> sharesData = null;
 
     public class MusicData
     {
@@ -111,14 +114,14 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList) section.GetSetting("shares");
+        sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
 
-        foreach (string share in shares)
+        foreach (BaseShares.ShareData share in sharesData)
         {
           //
-          // Add to share to list box and default to selected
+          // Add to share to list box and select them based on the settings
           //
-          sharesListBox.Items.Add(share, CheckState.Checked);
+          sharesListBox.Items.Add(share.Folder, share.ScanShare);
         }
       }
 
@@ -493,6 +496,8 @@ namespace MediaPortal.Configuration.Sections
 
     private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
+      BaseShares.ShareData share = sharesData[e.Index];
+      share.ScanShare = e.NewValue == CheckState.Checked ? true : false;
       UpdateControlStatus();
     }
 

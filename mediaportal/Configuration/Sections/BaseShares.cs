@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.Profile;
@@ -59,6 +60,7 @@ namespace MediaPortal.Configuration.Sections
       public int Port = 21;
       public bool ActiveConnection = true;
       public Views DefaultView = Views.List;
+      public bool ScanShare = false;
 
       public bool HasPinCode
       {
@@ -548,6 +550,15 @@ namespace MediaPortal.Configuration.Sections
             shares.Add(listItem.SubItems[2].Text);
           }
           return shares;
+
+        case "sharesdata":
+          List<ShareData> sharesdata = new List<ShareData>();
+          
+          foreach (ListViewItem listItem in CurrentShares)
+          {
+            sharesdata.Add((ShareData)listItem.Tag);
+          }
+          return sharesdata;
       }
 
       return null;
@@ -598,6 +609,14 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int) ShareData.Views.List);
 
+          // For Music Shares, we can indicate, if we want to scan them every time
+          bool shareScanData = false;
+          if (section == "music")
+          {
+            string shareScan = String.Format("sharescan{0}", index);
+            shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
+          }
+
           if (shareNameData != null && shareNameData.Length > 0)
           {
             ShareData newShare = new ShareData(shareNameData, sharePathData, sharePinData);
@@ -608,6 +627,11 @@ namespace MediaPortal.Configuration.Sections
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultView = (ShareData.Views) shareView;
+
+            if (section == "music")
+            {
+              newShare.ScanShare = shareScanData;
+            }
 
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
@@ -656,6 +680,8 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePathData = string.Empty;
           int shareView = (int) ShareData.Views.List;
 
+          bool shareScanData = false;
+
           if (CurrentShares != null && CurrentShares.Count > index)
           {
             ShareData shareData = CurrentShares[index].Tag as ShareData;
@@ -674,6 +700,8 @@ namespace MediaPortal.Configuration.Sections
               shareRemotePathData = shareData.RemoteFolder;
               shareView = (int) shareData.DefaultView;
 
+              shareScanData = shareData.ScanShare;
+
               if (CurrentShares[index] == DefaultShare)
               {
                 defaultShare = shareNameData;
@@ -691,6 +719,12 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
           xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
           xmlwriter.SetValue(section, shareViewPath, shareView);
+
+          if (section == "music")
+          {
+            string shareScan = String.Format("sharescan{0}", index);
+            xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
+          }
         }
         xmlwriter.SetValue(section, "default", defaultShare);
         xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
