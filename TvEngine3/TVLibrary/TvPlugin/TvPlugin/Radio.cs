@@ -45,17 +45,12 @@ namespace TvPlugin
     #region constants
 
     private const int WM_POWERBROADCAST = 0x0218;
-    private const int WM_QUERYENDSESSION = 0x0011;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
     private const int PBT_APMQUERYSTANDBY = 0x0001;
-    private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
-    private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
     private const int PBT_APMSUSPEND = 0x0004;
     private const int PBT_APMSTANDBY = 0x0005;
-    private const int PBT_APMRESUMECRITICAL = 0x0006;
     private const int PBT_APMRESUMESUSPEND = 0x0007;
     private const int PBT_APMRESUMESTANDBY = 0x0008;
-    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
 
     #endregion
 
@@ -70,7 +65,7 @@ namespace TvPlugin
       Number = 4
     }
 
-    private enum View : int
+    private enum View
     {
       List = 0,
       Icons = 1,
@@ -84,13 +79,13 @@ namespace TvPlugin
     private View currentView = View.List;
     private SortMethod currentSortMethod = SortMethod.Number;
     private bool sortAscending = true;
-    private DirectoryHistory directoryHistory = new DirectoryHistory();
-    private string currentFolder = null;
+    private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
+    private string currentFolder;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
     private bool showAllChannelsGroup = true;
     private string rootGroup = "(none)";
-    public static RadioChannelGroup selectedGroup = null;
+    public static RadioChannelGroup selectedGroup;
 
     #endregion
 
@@ -106,7 +101,7 @@ namespace TvPlugin
 
     //heartbeat related stuff
     private const int HEARTBEAT_INTERVAL = 5; //seconds
-    private Thread heartBeatTransmitterThread = null;
+    private Thread heartBeatTransmitterThread;
 
     public Radio()
     {
@@ -115,7 +110,7 @@ namespace TvPlugin
       startHeartBeatThread();
 
       //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
-      g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
+      g_Player.PlayBackStopped += g_Player_PlayBackStopped;
     }
 
     private void OnSuspend()
@@ -131,14 +126,14 @@ namespace TvPlugin
         }
         stopHeartBeatThread();
       }
-      catch (Exception)
+      catch
       {
       }
 
       //_resumed = false;
     }
 
-    private void OnResume()
+    private static void OnResume()
     {
       Log.Debug("Radio.OnResume()");
       // _resumed = true;
@@ -196,7 +191,7 @@ namespace TvPlugin
     }*/
 
 
-    private void HeartBeatTransmitter()
+    private static void HeartBeatTransmitter()
     {
       // when debugging we want to disable heartbeats
 
@@ -255,7 +250,7 @@ namespace TvPlugin
       }
     }
 
-    private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    private static void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       if (type == g_Player.MediaType.Radio)
       {
@@ -296,8 +291,7 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string tmpLine = String.Empty;
-        tmpLine = (string) xmlreader.GetValue("myradio", "viewby");
+        string tmpLine = xmlreader.GetValue("myradio", "viewby");
         if (tmpLine != null)
         {
           if (tmpLine == "list")
@@ -314,7 +308,7 @@ namespace TvPlugin
           }
         }
 
-        tmpLine = (string) xmlreader.GetValue("myradio", "sort");
+        tmpLine = xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
         {
           if (tmpLine == "name")
@@ -459,7 +453,7 @@ namespace TvPlugin
 
       SelectCurrentItem();
       LoadDirectory(currentFolder);
-      btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      btnSortBy.SortChanged += SortChanged;
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -475,7 +469,7 @@ namespace TvPlugin
 
       if (control == btnViewAs)
       {
-        bool shouldContinue = false;
+        bool shouldContinue;
         do
         {
           shouldContinue = false;
@@ -533,10 +527,9 @@ namespace TvPlugin
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
-        int itemIndex = (int) msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          OnClick(itemIndex);
+          OnClick();
         }
       }
     }
@@ -704,7 +697,6 @@ namespace TvPlugin
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      string objectCount = String.Empty;
       int totalItems = 0;
       if (currentFolder == null || currentFolder == "..")
       {
@@ -841,7 +833,7 @@ namespace TvPlugin
 
     #endregion
 
-    private void SetLabels()
+    private static void SetLabels()
     {
       // TODO: why this is disabled?      
       return;
@@ -908,7 +900,7 @@ namespace TvPlugin
       {
         return -1;
       }
-      else if (!item1.IsFolder && item2.IsFolder)
+      if (!item1.IsFolder && item2.IsFolder)
       {
         return 1;
       }
@@ -917,11 +909,7 @@ namespace TvPlugin
       SortMethod method = currentSortMethod;
       bool bAscending = sortAscending;
       Channel channel1 = item1.MusicTag as Channel;
-      IList<TuningDetail> details1 = channel1.ReferringTuningDetail();
-      TuningDetail detail1 = details1[0];
       Channel channel2 = item2.MusicTag as Channel;
-      IList<TuningDetail> details2 = channel2.ReferringTuningDetail();
-      TuningDetail detail2 = details2[0];
       switch (method)
       {
         case SortMethod.Name:
@@ -929,10 +917,7 @@ namespace TvPlugin
           {
             return String.Compare(item1.Label, item2.Label, true);
           }
-          else
-          {
-            return String.Compare(item2.Label, item1.Label, true);
-          }
+          return String.Compare(item2.Label, item1.Label, true);
 
         case SortMethod.Type:
           string strURL1 = "0";
@@ -951,10 +936,7 @@ namespace TvPlugin
             {
               return String.Compare(item1.Label, item2.Label, true);
             }
-            else
-            {
-              return String.Compare(item2.Label, item1.Label, true);
-            }
+            return String.Compare(item2.Label, item1.Label, true);
           }
           if (bAscending)
           {
@@ -962,22 +944,13 @@ namespace TvPlugin
             {
               return 1;
             }
-            else
-            {
-              return -1;
-            }
+            return -1;
           }
-          else
+          if (strURL1.Length > 0)
           {
-            if (strURL1.Length > 0)
-            {
-              return -1;
-            }
-            else
-            {
-              return 1;
-            }
+            return -1;
           }
+          return 1;
           //break;
 
         case SortMethod.Number:
@@ -989,35 +962,26 @@ namespace TvPlugin
               {
                 return 1;
               }
-              else
-              {
-                return -1;
-              }
+              return -1;
             }
-            else
+            if (channel2.SortOrder > channel1.SortOrder)
             {
-              if (channel2.SortOrder > channel1.SortOrder)
-              {
-                return 1;
-              }
-              else
-              {
-                return -1;
-              }
+              return 1;
             }
+            return -1;
           }
 
           if (channel1 != null)
           {
             return -1;
           }
-          if (channel2 != null)
-          {
-            return 1;
-          }
-          return 0;
+          return channel2 != null ? 1 : 0;
           //break;
         case SortMethod.Bitrate:
+          IList<TuningDetail> details1 = channel1.ReferringTuningDetail();
+          TuningDetail detail1 = details1[0];
+          IList<TuningDetail> details2 = channel2.ReferringTuningDetail();
+          TuningDetail detail2 = details2[0];
           if (detail1 != null && detail2 != null)
           {
             if (bAscending)
@@ -1026,22 +990,13 @@ namespace TvPlugin
               {
                 return 1;
               }
-              else
-              {
-                return -1;
-              }
+              return -1;
             }
-            else
+            if (detail2.Bitrate > detail1.Bitrate)
             {
-              if (detail2.Bitrate > detail1.Bitrate)
-              {
-                return 1;
-              }
-              else
-              {
-                return -1;
-              }
+              return 1;
             }
+            return -1;
           }
           return 0;
       }
@@ -1050,7 +1005,7 @@ namespace TvPlugin
 
     #endregion
 
-    private void OnClick(int itemIndex)
+    private void OnClick()
     {
       Log.Info("OnClick");
       GUIListItem item = facadeView.SelectedListItem;
@@ -1124,17 +1079,7 @@ namespace TvPlugin
       }
     }
 
-    private bool IsUrl(string fileName)
-    {
-      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-          fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
-      {
-        return true;
-      }
-      return false;
-    }
-
-    private string GetPlayPath(Channel channel)
+    private static string GetPlayPath(Channel channel)
     {
       IList<TuningDetail> details = channel.ReferringTuningDetail();
       TuningDetail detail = details[0];
@@ -1148,7 +1093,7 @@ namespace TvPlugin
       }
     }
 
-    private void Play(GUIListItem item)
+    private static void Play(GUIListItem item)
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
