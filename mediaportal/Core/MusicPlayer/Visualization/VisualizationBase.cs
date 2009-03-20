@@ -218,13 +218,12 @@ namespace MediaPortal.Visualization
           // wait max 5 loops for Vis to get freed
           // Might cause infinite loop with some vis
           int i = 0;
-          bool isFree = false;
           try
           {
-            isFree = BassVis.BASS_VIS_Free(_visParam);
-            while (!isFree && i < 5)
+            BassVis.BASS_VIS_Free(_visParam);
+            while (!BassVis.BASS_VIS_IsFree(_visParam) && i < 5)
             {
-              isFree = BassVis.BASS_VIS_Free(_visParam);
+              BassVis.BASS_VIS_Free(_visParam);
               i++;
               System.Threading.Thread.Sleep(20);
             }
@@ -236,8 +235,10 @@ namespace MediaPortal.Visualization
         }
 
         if (_visParam != null)
+        {
           BassVis.BASS_VIS_Quit(_visParam);
-
+          _visParam = null;
+        }
         return true;
       }
       catch (Exception)
