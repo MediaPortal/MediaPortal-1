@@ -916,7 +916,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   m_audioPid= m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
   if (m_filter.GetAudioPin()->IsConnected()==false) return;
-  if ( header.AdaptionFieldOnly() ) return;
+//  if ( header.AdaptionFieldOnly() ) return;
 
   if ((m_AudioPrevCC !=-1 ) && (m_AudioPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
   {
@@ -924,6 +924,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     m_AudioValidPES = m_DisableDiscontinuitiesFiltering ;
   }
   m_AudioPrevCC = header.ContinuityCounter ;
+
+  if ( header.AdaptionFieldOnly() ) return;
 
   CAutoLock lock (&m_sectionAudio);
   //does tspacket contain the start of a pes packet?
@@ -1072,7 +1074,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   if (m_pids.VideoPid==0) return;
   if (header.Pid!=m_pids.VideoPid) return;
 //  if (m_filter.GetVideoPin()->IsConnected()==false) return;
-  if ( header.AdaptionFieldOnly() ) return;
+//  if ( header.AdaptionFieldOnly() ) return;
 
   if ((m_VideoPrevCC !=-1 ) && (m_VideoPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
   {
@@ -1080,6 +1082,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
     m_VideoValidPES = m_DisableDiscontinuitiesFiltering ;
   }
   m_VideoPrevCC = header.ContinuityCounter ;
+
+  if ( header.AdaptionFieldOnly() ) return;
 
   CAutoLock lock (&m_sectionVideo);
   //does tspacket contain the start of a pes packet?
