@@ -225,10 +225,12 @@ public class MediaPortalApp : D3DApp, IRender
           SetREGSZRegKey(hklm, @"SOFTWARE\Team MediaPortal\MediaPortal", "ConfigDir",
                          Config.GetFolder(Config.Dir.Config));
         }
-      } catch (SecurityException)
+      }
+      catch (SecurityException)
       {
         Log.Error("Not enough permissions to set registry keys for SVN installer");
-      } catch (UnauthorizedAccessException)
+      }
+      catch (UnauthorizedAccessException)
       {
         Log.Error("No write permissions to set registry keys for SVN installer");
       }
@@ -363,7 +365,8 @@ public class MediaPortalApp : D3DApp, IRender
           {
             ctrl = new ServiceController("TVService");
             string name = ctrl.ServiceName;
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             ctrl = null;
             Log.Debug("Main: TV service not installed - proceeding...");
@@ -387,7 +390,8 @@ public class MediaPortalApp : D3DApp, IRender
                 try
                 {
                   ctrl.Start();
-                } catch (Exception)
+                }
+                catch (Exception)
                 {
                   Log.Info("TvService seems to be already starting up.");
                 }
@@ -395,7 +399,8 @@ public class MediaPortalApp : D3DApp, IRender
               try
               {
                 ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
-              } catch (Exception)
+              }
+              catch (Exception)
               {
               }
               if (ctrl.Status == ServiceControllerStatus.Running)
@@ -493,7 +498,8 @@ public class MediaPortalApp : D3DApp, IRender
           }
 #endif
 
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
         //following crashes on some pc's, dunno why
@@ -503,47 +509,47 @@ public class MediaPortalApp : D3DApp, IRender
         try
         {
 #endif
-          Application.DoEvents();
+        Application.DoEvents();
+        if (splashScreen != null)
+        {
+          splashScreen.SetInformation("Initializing DirectX...");
+        }
+
+        MediaPortalApp app = new MediaPortalApp();
+        Log.Debug("Main: Initializing DirectX");
+        if (app.CreateGraphicsSample())
+        {
+          IMessageFilter filter = new ThreadMessageFilter(app);
+          Application.AddMessageFilter(filter);
+          // Initialize Input Devices
           if (splashScreen != null)
           {
-            splashScreen.SetInformation("Initializing DirectX...");
+            splashScreen.SetInformation("Initializing input devices...");
           }
-
-          MediaPortalApp app = new MediaPortalApp();
-          Log.Debug("Main: Initializing DirectX");
-          if (app.CreateGraphicsSample())
+          InputDevices.Init();
+          try
           {
-            IMessageFilter filter = new ThreadMessageFilter(app);
-            Application.AddMessageFilter(filter);
-            // Initialize Input Devices
-            if (splashScreen != null)
-            {
-              splashScreen.SetInformation("Initializing input devices...");
-            }
-            InputDevices.Init();
-            try
-            {
-              //app.PreRun();
-              Log.Info("Main: Running");
-              GUIGraphicsContext.BlankScreen = false;
-              Application.Run(app);
-              app.Focus();
-              Debug.WriteLine("after Application.Run");
-            }
-              //#if !DEBUG
-            catch (Exception ex)
-            {
-              Log.Error(ex);
-              Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-              _mpCrashed = true;
-            }
-            //#endif
-            finally
-            {
-              Application.RemoveMessageFilter(filter);
-            }
-            app.OnExit();
+            //app.PreRun();
+            Log.Info("Main: Running");
+            GUIGraphicsContext.BlankScreen = false;
+            Application.Run(app);
+            app.Focus();
+            Debug.WriteLine("after Application.Run");
           }
+          //#if !DEBUG
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+            Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+            _mpCrashed = true;
+          }
+          //#endif
+          finally
+          {
+            Application.RemoveMessageFilter(filter);
+          }
+          app.OnExit();
+        }
 #if !DEBUG
         } catch (Exception ex)
         {
@@ -617,7 +623,8 @@ public class MediaPortalApp : D3DApp, IRender
                         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
                         @"\Team MediaPortal\MediaPortalDirs.xml");
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         MessageBox.Show(
           "Error opening file " + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
@@ -721,7 +728,8 @@ public class MediaPortalApp : D3DApp, IRender
         _minimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
         _minimizeOnGuiExit = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
       }
-    } catch (Exception)
+    }
+    catch (Exception)
     {
       m_strSkin = "Blue3";
       m_strLanguage = "English";
@@ -996,7 +1004,8 @@ public class MediaPortalApp : D3DApp, IRender
       //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc(ref msg);
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error(ex);
     }
@@ -1253,7 +1262,8 @@ public class MediaPortalApp : D3DApp, IRender
             {
               restartScript.WaitForExit();
             }
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Error("Main: OnResume - WaitForExit: {0}", ex.Message);
           }
@@ -1341,7 +1351,8 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Thread.Sleep(50);
       }
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error(ex);
     }
@@ -1362,7 +1373,8 @@ public class MediaPortalApp : D3DApp, IRender
       CreateStateBlock();
       GUILayerManager.Render(timePassed);
       RenderStats();
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error(ex);
       Log.Error("RenderFrame exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
@@ -1455,7 +1467,8 @@ public class MediaPortalApp : D3DApp, IRender
         }
         splashScreen = null;
       }
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
@@ -1698,6 +1711,10 @@ public class MediaPortalApp : D3DApp, IRender
     if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
     {
       Log.Info("Main: Resetting DX9 device");
+
+      GUITextureManager.Dispose();
+      GUIFontManager.Dispose();
+
       GUIGraphicsContext.DX9Device.EvictManagedResources();
       GUIWaitCursor.Dispose();
       if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
@@ -1783,7 +1800,8 @@ public class MediaPortalApp : D3DApp, IRender
       {
         // Show the frame on the primary surface.
         GUIGraphicsContext.DX9Device.Present(); //SLOW
-      } catch (DeviceLostException ex)
+      }
+      catch (DeviceLostException ex)
       {
         Log.Error("Main: Device lost - {0}", ex.ToString());
         if (!RefreshRateChanger.RefreshRateChangePending)
@@ -1792,7 +1810,8 @@ public class MediaPortalApp : D3DApp, IRender
         }
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
-    } catch (DirectXException dex)
+    }
+    catch (DirectXException dex)
     {
       if (dex.ErrorCode == -2005530508 || // GPU_HUNG
         dex.ErrorCode == -2005530512) // GPU_REMOVED
@@ -1808,7 +1827,8 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Log.Error(dex);
       }
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error(ex);
     }
@@ -1951,7 +1971,8 @@ public class MediaPortalApp : D3DApp, IRender
       {
         GUIWindowManager.DispatchThreadMessages();
         GUIWindowManager.ProcessWindows();
-      } catch (FileNotFoundException ex)
+      }
+      catch (FileNotFoundException ex)
       {
         Log.Error(ex);
         MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", MessageBoxButtons.OK,
@@ -2417,7 +2438,8 @@ public class MediaPortalApp : D3DApp, IRender
               SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
               backbuffer.Dispose();
               Log.Info("Main: Taking screenshot done");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               Log.Info("Main: Error taking screenshot: {0}", ex.Message);
             }
@@ -2543,12 +2565,14 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
       GUIWindowManager.OnAction(action);
-    } catch (FileNotFoundException ex)
+    }
+    catch (FileNotFoundException ex)
     {
       Log.Error(ex);
       MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
       Close();
-    } catch (Exception ex)
+    }
+    catch (Exception ex)
     {
       Log.Error(ex);
       Log.Error("  exception: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
@@ -3113,13 +3137,15 @@ public class MediaPortalApp : D3DApp, IRender
           {
             usbuirtdevice.ChangeTunerChannel(message.Label);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
         try
         {
           winlircdevice.ChangeTunerChannel(message.Label);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
         try
@@ -3128,7 +3154,8 @@ public class MediaPortalApp : D3DApp, IRender
           {
             redeyedevice.ChangeTunerChannel(message.Label);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
         break;
@@ -3559,10 +3586,12 @@ public class MediaPortalApp : D3DApp, IRender
           subkey.SetValue(Value, iValue);
         }
       }
-    } catch (SecurityException)
+    }
+    catch (SecurityException)
     {
       Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
-    } catch (UnauthorizedAccessException)
+    }
+    catch (UnauthorizedAccessException)
     {
       Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
     }
@@ -3579,10 +3608,12 @@ public class MediaPortalApp : D3DApp, IRender
           subkey.SetValue(Name, Value);
         }
       }
-    } catch (SecurityException)
+    }
+    catch (SecurityException)
     {
       Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
-    } catch (UnauthorizedAccessException)
+    }
+    catch (UnauthorizedAccessException)
     {
       Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
     }
@@ -3695,7 +3726,8 @@ public class MediaPortalApp : D3DApp, IRender
         node.InnerText = Directory.GetCurrentDirectory();
       }
       doc.Save("MediaPortal.exe.config");
-    } catch (Exception)
+    }
+    catch (Exception)
     {
     }
     Thumbs.CreateFolders();
@@ -3734,7 +3766,8 @@ public class MediaPortalApp : D3DApp, IRender
 			_updaterThread.Start();
 #endif
 #endif
-    } catch (Exception)
+    }
+    catch (Exception)
     {
     }
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -3795,10 +3828,12 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
-    } catch (SecurityException)
+    }
+    catch (SecurityException)
     {
       Log.Info("Not enough permissions to enable/disable the S3 standby trick");
-    } catch (UnauthorizedAccessException)
+    }
+    catch (UnauthorizedAccessException)
     {
       Log.Info("No write permissions to enable/disable the S3 standby trick");
     }
