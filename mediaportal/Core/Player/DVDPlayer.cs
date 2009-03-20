@@ -2011,15 +2011,40 @@ namespace MediaPortal.Player
 
     public override string AudioLanguage(int iStream)
     {
+      string details = String.Empty;
       int audioLanguage;
       int hr = _dvdInfo.GetAudioLanguage(iStream, out audioLanguage);
+
       if (hr == 0)
       {
+        DvdAudioAttributes attr;
+        hr = _dvdInfo.GetAudioAttributes(iStream, out attr);
+        if (hr == 0)
+        {
+          string channelInfo = String.Empty;
+          int noc = attr.bNumberOfChannels;
+
+          if (noc > 2)
+          {
+            noc -= 1;
+            channelInfo = noc + "." + "1";
+          }
+          else
+          {
+            channelInfo = noc + "." + "0";
+          }
+
+          details = " (" + attr.AudioFormat
+            + " " + channelInfo
+            + " - " + attr.dwFrequency + " Hz " +
+            + + attr.bQuantization +" bits)";
+        }
+        
         foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
         {
           if (ci.LCID == (audioLanguage & 0x3ff))
           {
-            return ci.EnglishName;
+            return ci.EnglishName + details;
           }
         }
       }
