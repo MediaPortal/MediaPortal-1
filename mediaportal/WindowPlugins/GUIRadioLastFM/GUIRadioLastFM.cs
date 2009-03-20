@@ -39,7 +39,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
-using Point=MediaPortal.Drawing.Point;
+using Point = MediaPortal.Drawing.Point;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public GUIRadioLastFM()
     {
-      GetID = (int) Window.WINDOW_RADIO_LASTFM;
+      GetID = (int)Window.WINDOW_RADIO_LASTFM;
     }
 
     #endregion
@@ -156,23 +156,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
         facadeRadioPlaylist.Clear();
         foreach (Song listTrack in _radioTrackList)
         {
-          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] {listTrack});
+          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
         }
       }
       SetThumbnails(ThumbFileName);
 
       // Do proper first time initialisation
-
-      if (!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username)
-      {
-        LastFMStation.LoadSettings();
-        btnSubmitProfile.Selected = AudioscrobblerBase.IsSubmittingRadioSongs;
-        btnDiscoveryMode.Selected = LastFMStation.DiscoveryMode;
-      }
-      else
-      {
-        GUIWaitCursor.Hide();
-      }
+      LastFMStation.LoadSettings(!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username);
+      btnSubmitProfile.Selected = AudioscrobblerBase.IsSubmittingRadioSongs;
+      btnDiscoveryMode.Selected = LastFMStation.DiscoveryMode;
     }
 
     #endregion
@@ -223,7 +215,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && (int) LastFMStation.CurrentStreamState > 2)
+      if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && (int)LastFMStation.CurrentStreamState > 2)
       {
         OnSkipHandler(false);
       }
@@ -401,11 +393,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         VirtualKeyboard keyboard;
         if (_configUseSMSInput)
         {
-          keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_SMS_KEYBOARD);
+          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD);
         }
         else
         {
-          keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         }
         keyboard.Reset();
         keyboard.IsSearchKeyboard = false;
@@ -431,7 +423,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool OnSelectArtist()
     {
       bool hasPlayableSelection = false;
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return hasPlayableSelection;
@@ -484,7 +476,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool OnSelectTag()
     {
       bool hasPlayableSelection = false;
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return hasPlayableSelection;
@@ -537,7 +529,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool OnSelectFriend()
     {
       bool hasPlayableSelection = false;
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return hasPlayableSelection;
@@ -595,7 +587,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       string desiredFriend = String.Empty;
       StreamType TuneIntoSelected = LastFMStation.CurrentTuneType;
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -767,7 +759,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         result += singleString + " ";
       }
-      result = result.TrimEnd(new char[] {' '});
+      result = result.TrimEnd(new char[] { ' ' });
       return result;
     }
 
@@ -776,7 +768,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       List<string> ResultList = new List<string>();
       try
       {
-        Array SingleStrings = aConcatString.Split(new char[] {'.', ','});
+        Array SingleStrings = aConcatString.Split(new char[] { '.', ',' });
         foreach (string strTag in SingleStrings)
         {
           ResultList.Add(strTag.Trim());
@@ -804,14 +796,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           if (facadeRadioPlaylist != null)
           {
-            if (message.SenderControlId == (int) SkinControlIDs.LIST_RADIO_PLAYLIST) // listbox
+            if (message.SenderControlId == (int)SkinControlIDs.LIST_RADIO_PLAYLIST) // listbox
             {
-              if ((int) Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+              if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 Log.Debug("GUIRadioLastFM: OnMessage - selected playlist item {0}",
                           _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex].ToShortString());
                 GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                               new object[] {_radioTrackList[facadeRadioPlaylist.SelectedListItemIndex]});
+                                               new object[] { _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex] });
               }
             }
           }
@@ -822,7 +814,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     protected override void OnShowContextMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
 
       if (dlg == null)
       {
@@ -832,7 +824,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       dlg.Reset();
       dlg.SetHeading(498); // Menu
 
-      if ((int) LastFMStation.CurrentStreamState < 3)
+      if ((int)LastFMStation.CurrentStreamState < 3)
       {
         dlg.AddLocalizedString(34001);
       }
@@ -920,7 +912,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Thread fetchThread = new Thread(new ParameterizedThreadStart(UpdateXspfPlaylistAndStartPlayback));
       fetchThread.IsBackground = true;
       fetchThread.Name = "Last.fm XSPF fetcher";
-      fetchThread.Start((object) StartPlayback);
+      fetchThread.Start((object)StartPlayback);
     }
 
     private bool AddStreamSongToPlaylist(ref Song song)
@@ -1031,7 +1023,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         true,
         @"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" +
         Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=" + AudioscrobblerBase.ClientFakeVersion,
-        (bool) aStartPlayback,
+        (bool)aStartPlayback,
         new XspfPlaylistRequest.XspfPlaylistRequestHandler(OnUpdateXspfPlaylistCompleted));
       _lastRadioPlaylistRequest = request;
       InfoScrobbler.AddRequest(request);
@@ -1122,7 +1114,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
         if (File.Exists(ThumbFileName))
         {
-          GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {ThumbFileName});
+          GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { ThumbFileName });
         }
       }
       else
@@ -1281,7 +1273,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
-      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {String.Empty});
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
 
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
@@ -1319,7 +1311,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (aPlayNow)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] {DetermineNextPlaylistTrack()});
+                                         new object[] { DetermineNextPlaylistTrack() });
         }
       }
       else if (aPlayNow)
@@ -1360,7 +1352,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (facadeRadioPlaylist != null && !aPlayNow)
         {
           GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl),
-                                         new object[] {_radioTrackList[i]});
+                                         new object[] { _radioTrackList[i] });
         }
       }
 
@@ -1372,7 +1364,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] {DetermineNextPlaylistTrack()});
+                                         new object[] { DetermineNextPlaylistTrack() });
         }
         catch (Exception ex)
         {
@@ -1397,7 +1389,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       GUIWaitCursor.Hide();
 
-      GUIDialogOK msgdlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (msgdlg == null)
       {
         return;
@@ -1424,7 +1416,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaybackStarted()
     {
-      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {String.Empty});
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
 
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
@@ -1476,11 +1468,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (_configDirectSkip || directSkip)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] {DetermineNextPlaylistTrack()});
+                                         new object[] { DetermineNextPlaylistTrack() });
         }
         else
         {
-          GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
           if (dlg == null)
           {
             return;
@@ -1499,7 +1491,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           }
 
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] {_radioTrackList[dlg.SelectedId - 1]});
+                                         new object[] { _radioTrackList[dlg.SelectedId - 1] });
         }
       }
       else
@@ -1521,7 +1513,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Thread stateThread = new Thread(new ParameterizedThreadStart(SetAudioScrobblerTrackThread));
       stateThread.IsBackground = true;
       stateThread.Name = "Last.FM event";
-      stateThread.Start((object) filename);
+      stateThread.Start((object)filename);
     }
 
     private void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
@@ -1544,7 +1536,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (_radioTrackList.Count > 0)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] {DetermineNextPlaylistTrack()});
+                                         new object[] { DetermineNextPlaylistTrack() });
         }
         else
         {
@@ -1566,9 +1558,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true);
-        // Stream ended, No more content or bad connection
+      // Stream ended, No more content or bad connection
 
-      GUIDialogOK msgdlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (msgdlg == null)
       {
         return;
@@ -1583,7 +1575,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void PlayBackFailedHandler()
     {
-      GUIDialogOK msgdlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (msgdlg == null)
       {
         return;
@@ -1623,7 +1615,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaySimilarArtistsClicked()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1669,7 +1661,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaySimilarTagsClicked()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1752,7 +1744,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         if (String.IsNullOrEmpty(outName) || outName.Equals("\n"))
         {
-          Log.Info("GUIRadioLastFM: Current playlist did not contain a 'title' - maybe an error of last.fm...");          
+          Log.Info("GUIRadioLastFM: Current playlist did not contain a 'title' - maybe an error of last.fm...");
         }
         else
         {
@@ -1858,7 +1850,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         MenuItem menuItem3 = new MenuItem();
 
         // Initialize contextMenuLastFM
-        contextMenuLastFM.MenuItems.AddRange(new MenuItem[] {menuItem1, menuItem2, menuItem3});
+        contextMenuLastFM.MenuItems.AddRange(new MenuItem[] { menuItem1, menuItem2, menuItem3 });
 
         // Initialize menuItem1
         menuItem1.Index = 0;
@@ -1902,7 +1894,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     // love
     private void Tray_menuItem1_Click(object Sender, EventArgs e)
     {
-      if ((int) LastFMStation.CurrentStreamState > 3) // starting
+      if ((int)LastFMStation.CurrentStreamState > 3) // starting
       {
         OnLoveClicked();
       }
@@ -1911,7 +1903,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     // ban
     private void Tray_menuItem2_Click(object Sender, EventArgs e)
     {
-      if ((int) LastFMStation.CurrentStreamState > 3)
+      if ((int)LastFMStation.CurrentStreamState > 3)
       {
         OnBanClicked();
       }
@@ -1920,7 +1912,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     // skip
     private void Tray_menuItem3_Click(object Sender, EventArgs e)
     {
-      if ((int) LastFMStation.CurrentStreamState > 3)
+      if ((int)LastFMStation.CurrentStreamState > 3)
       {
         OnSkipClicked();
       }

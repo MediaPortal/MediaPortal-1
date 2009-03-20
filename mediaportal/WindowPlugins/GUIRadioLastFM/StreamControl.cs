@@ -211,7 +211,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Serialisation
 
-    public void LoadSettings()
+    public void LoadSettings(bool aForceRequired)
     {
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (_currentUser.Length > 0)
       {
-        AudioscrobblerBase.DoRadioHandshake(true);
+        AudioscrobblerBase.DoRadioHandshake(aForceRequired);
       }
       else
       {
@@ -586,7 +586,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           Thread.Sleep(waittime);
         }
       }
-        // While debugging you might get a waittime which is no longer a valid integer.
+      // While debugging you might get a waittime which is no longer a valid integer.
       catch (Exception)
       {
       }
