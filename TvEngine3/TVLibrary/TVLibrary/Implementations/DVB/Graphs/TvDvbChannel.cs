@@ -751,6 +751,11 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
 
+        if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
+        {
+          hwPids.Add((ushort)info.network_pmt_PID);
+        }
+
         if (info.pids != null)
         {
           foreach (PidInfo pidInfo in info.pids)
@@ -842,7 +847,6 @@ namespace TvLibrary.Implementations.DVB
 
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
         {
-          hwPids.Add((ushort)info.network_pmt_PID);
           _conditionalAccess.SendPids(_subChannelId, (DVBBaseChannel)_currentChannel, hwPids);
         }
 
