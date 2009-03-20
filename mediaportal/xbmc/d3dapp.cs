@@ -1836,7 +1836,14 @@ namespace MediaPortal
 
       if (GUIGraphicsContext.Vmr9Active)
       {
-        frameStatsLine2 = String.Format("VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+        if (GUIGraphicsContext.IsEvr)
+        {
+          frameStatsLine2 = String.Format("EVR {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+        }
+        else
+        {
+          frameStatsLine2 = String.Format("VMR9 {0} ", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
+        }
       }
 
       string quality = String.Format("avg fps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
