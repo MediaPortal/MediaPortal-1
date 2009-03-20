@@ -92,6 +92,13 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
 
   for( int i =  m_Bitmap.bmWidth * m_FirstScanline ; i < ( m_Bitmap.bmHeight + m_FirstScanline ) * m_Bitmap.bmWidth; i++ )
   {
+    if( i < 0 )
+    {
+      // Could happen when no display definition segment has arrived yet and we have HD subtitles.
+      // Just ignore the optimization then.
+      i = 0; 
+    }
+    
     colorData = buffer[i];
     for( int j = 0 ; j < 3 ; j++ )
     {

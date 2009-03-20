@@ -50,7 +50,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.2 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.3 ----------------");
   
   // Create subtitle decoder
   m_pSubDecoder = new CDVBSubDecoder();
