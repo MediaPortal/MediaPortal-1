@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -23,8 +23,8 @@
 
 class MSubdecoderObserver
 {
-	public:
+  public:
 
-		virtual void NotifySubtitle() = 0;
+    virtual void NotifySubtitle() = 0;
     virtual void UpdateSubtitleTimeout( uint64_t pTimeout ) = 0;
 };

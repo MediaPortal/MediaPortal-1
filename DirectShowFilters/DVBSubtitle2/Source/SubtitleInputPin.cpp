@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -33,22 +33,22 @@ extern void LogDebug( const char *fmt, ... );
 // Constructor
 //
 CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
-										LPUNKNOWN pUnk,
-										CBaseFilter *pFilter,
-										CCritSec *pLock,
-										CCritSec *pReceiveLock,
-										CDVBSubDecoder* pSubDecoder,
-										HRESULT *phr ) :
+                    LPUNKNOWN pUnk,
+                    CBaseFilter *pFilter,
+                    CCritSec *pLock,
+                    CCritSec *pReceiveLock,
+                    CDVBSubDecoder* pSubDecoder,
+                    HRESULT *phr ) :
 
     CBaseInputPin(NAME( "CSubtitleInputPin" ),
-					pFilter,						    // Filter
-					pLock,							    // Locking
-					phr,							      // Return code
-					L"In" ),				      	// Pin name
-					m_pReceiveLock( pReceiveLock ),
-					m_pDVBSub( pDVBSub ),
-					m_pSubDecoder( pSubDecoder ),
-					m_SubtitlePid( -1 ),
+          pFilter,                       // Filter
+          pLock,                         // Locking
+          phr,                           // Return code
+          L"In" ),                       // Pin name
+          m_pReceiveLock( pReceiveLock ),
+          m_pDVBSub( pDVBSub ),
+          m_pSubDecoder( pSubDecoder ),
+          m_SubtitlePid( -1 ),
           m_Lock( pLock )
 {
   m_pesDecoder = new CPesDecoder( this );
@@ -76,11 +76,11 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 {
   if( ( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT ) &&
       ( pmt->majortype == MEDIATYPE_Stream ) )
-	{
-      LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
-      return S_OK;
-	}
-	return S_FALSE;
+  {
+    LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
+    return S_OK;
+  }
+  return S_FALSE;
 }
 
 
@@ -126,21 +126,23 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
     return hr;
   }
 
-	if( m_SubtitlePid == -1 )
+  if( m_SubtitlePid == -1 )
+  {
     return S_OK;  // Nothing to be done yet
+  }
 
   CheckPointer( pSample, E_POINTER );
-	PBYTE pbData = NULL;
+  PBYTE pbData = NULL;
 
-	long lDataLen = 0;
-	hr = pSample->GetPointer( &pbData );
+  long lDataLen = 0;
+  hr = pSample->GetPointer( &pbData );
 
   if( FAILED( hr ) )
-	{
-		LogDebug( "Subtitle: Receive() err" );
-		return hr;
-	}
-	lDataLen = pSample->GetActualDataLength();
+  {
+    LogDebug( "Subtitle: Receive() err" );
+    return hr;
+  }
+  lDataLen = pSample->GetActualDataLength();
   OnRawData( pbData, lDataLen );
 
   return S_OK;
@@ -185,8 +187,8 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 //
 void CSubtitleInputPin::Reset()
 {
-	m_bReset = true;
-	m_pesDecoder->Reset();
+  m_bReset = true;
+  m_pesDecoder->Reset();
 }
 
 
@@ -205,7 +207,7 @@ void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 //
 STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
-	LogDebug( "CSubtitleInputPin::BeginFlush" );
+  LogDebug( "CSubtitleInputPin::BeginFlush" );
   HRESULT hr = CBaseInputPin::BeginFlush();
   CAutoLock lock_it( m_Lock );
   LogDebug( "CSubtitleInputPin::BeginFlush - done" );

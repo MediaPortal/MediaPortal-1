@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ extern void GetLogFile(char *pLog);
 CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   CBaseFilter( NAME("MediaPortal DVBSub2"), pUnk, &m_Lock, CLSID_DVBSub2 ),
   m_pSubtitlePin( NULL ),
-	m_pSubDecoder( NULL ),
+  m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
   m_pUpdateTimeoutObserver( NULL ),
   m_pResetObserver( NULL ),
@@ -53,32 +53,32 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   LogDebug("-------------- MediaPortal DVBSub2.ax version 1.3.2 ----------------");
   
   // Create subtitle decoder
-	m_pSubDecoder = new CDVBSubDecoder();
+  m_pSubDecoder = new CDVBSubDecoder();
 
-	if( m_pSubDecoder == NULL )
-	{
+  if( m_pSubDecoder == NULL )
+  {
     if( phr )
-	  {
+    {
       *phr = E_OUTOFMEMORY;
-	  }
+    }
     return;
   }
 
   // Create subtitle input pin
-	m_pSubtitlePin = new CSubtitleInputPin( this,
-								GetOwner(),
-								this,
-								&m_Lock,
-								&m_ReceiveLock,
-								m_pSubDecoder,
-								phr );
+  m_pSubtitlePin = new CSubtitleInputPin( this,
+                         GetOwner(),
+                         this,
+                         &m_Lock,
+                         &m_ReceiveLock,
+                         m_pSubDecoder,
+                         phr );
 
-	if ( m_pSubtitlePin == NULL )
-	{
+  if ( m_pSubtitlePin == NULL )
+  {
     if( phr )
-		{
+    {
       *phr = E_OUTOFMEMORY;
-		}
+    }
     return;
   }
 
@@ -98,14 +98,14 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 //
 CDVBSub::~CDVBSub()
 {
-	LogDebug( "CDVBSub::~CDVBSub() - start" );
+  LogDebug( "CDVBSub::~CDVBSub() - start" );
   if( m_pSubDecoder )
   {
     m_pSubDecoder->SetObserver( NULL );
   }
 
-	delete m_pSubDecoder;
-	delete m_pSubtitlePin;
+  delete m_pSubDecoder;
+  delete m_pSubtitlePin;
   
   LogDebug( "CDVBSub::~CDVBSub() - end" );
 }
@@ -129,7 +129,7 @@ CBasePin * CDVBSub::GetPin( int n )
 //
 int CDVBSub::GetPinCount()
 {
-	return 1; // subtitle in
+  return 1; // subtitle in
 }
 
 
@@ -156,13 +156,13 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
     IFilterGraph *pGraph = GetFilterGraph();    
     if( pGraph )
     {
-	    pGraph->QueryInterface( &m_pIMediaSeeking );
+      pGraph->QueryInterface( &m_pIMediaSeeking );
       pGraph->Release();
     }
   }
 
   LogDebug( "CDVBSub::Run - done" );
-	return hr; 
+  return hr; 
 }
 
 
@@ -191,7 +191,7 @@ STDMETHODIMP CDVBSub::Stop()
 
   // Make sure no further processing is done
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
-	if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
+  if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
   
   //LogDebug( "Release m_pIMediaSeeking" );
   //if( m_pIMediaSeeking )
@@ -215,7 +215,7 @@ void CDVBSub::Reset()
   CAutoLock cObjectLock( m_pLock );
   LogDebug( "CDVBSub::Reset()" );
 
-	if( m_pSubDecoder ) m_pSubDecoder->Reset();
+  if( m_pSubDecoder ) m_pSubDecoder->Reset();
   if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
 
   // Notify reset observer
@@ -233,8 +233,8 @@ void CDVBSub::Reset()
 //
 STDMETHODIMP CDVBSub::Test(int status)
 {
-	LogDebug("TEST : %i", status);
-	return S_OK;
+  LogDebug("TEST : %i", status);
+  return S_OK;
 }
 
 //
@@ -242,8 +242,8 @@ STDMETHODIMP CDVBSub::Test(int status)
 //
 STDMETHODIMP CDVBSub::StatusTest(int status)
 {
-	LogDebug("STATUSTEST : %i", status);
-	return S_OK;
+  LogDebug("STATUSTEST : %i", status);
+  return S_OK;
 }
 
 
@@ -372,16 +372,16 @@ void CDVBSub::NotifySubtitle()
   if( m_pSubtitleObserver )
   {
     // Notify the MediaPortal side
-	  SUBTITLE sub;
-	  GetSubtitle( 0, &sub );
-	  LogDebug( "Calling subtitle callback" );
+    SUBTITLE sub;
+    GetSubtitle( 0, &sub );
+    LogDebug( "Calling subtitle callback" );
     int retval = (*m_pSubtitleObserver)( &sub );
-	  LogDebug( "Subtitle Callback returned" );
-	  DiscardOldestSubtitle();
+    LogDebug( "Subtitle Callback returned" );
+    DiscardOldestSubtitle();
   }
   else
   {
-	  LogDebug( "No callback set" );
+    LogDebug( "No callback set" );
   }
 }
 
@@ -400,11 +400,11 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
 
     LogDebug("Calling update timeout observer - timeout = %lld ms", timeOut );
 
-	  (*m_pUpdateTimeoutObserver)( &timeOut );
+    (*m_pUpdateTimeoutObserver)( &timeOut );
   }
   else
   {
-	  LogDebug( "No m_pUpdateTimeoutObserver set" );
+    LogDebug( "No m_pUpdateTimeoutObserver set" );
   }  
 }
 
@@ -472,7 +472,7 @@ STDMETHODIMP CDVBSub::SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTI
 //
 STDMETHODIMP CDVBSub::SetResetCallback( int (CALLBACK *pResetObserver)() )
 {
-	LogDebug( "SetTimestampResetedCallback called" );
+  LogDebug( "SetTimestampResetedCallback called" );
   m_pResetObserver = pResetObserver;
   return S_OK;
 }
@@ -494,11 +494,11 @@ STDMETHODIMP CDVBSub::SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObs
 //
 STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 {
-	LogDebug( "GetSubtitleCount" );
+  LogDebug( "GetSubtitleCount" );
   if( m_pSubDecoder )
   {
     *pcount = m_pSubDecoder->GetSubtitleCount();
-	  return S_OK;
+    return S_OK;
   }
   return S_FALSE;
 }
@@ -509,11 +509,11 @@ STDMETHODIMP CDVBSub::GetSubtitleCount( int* pcount )
 //
 STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 {
-	LogDebug( "DiscardOldestSubtitle" );
+  LogDebug( "DiscardOldestSubtitle" );
   if( m_pSubDecoder )
   {
     m_pSubDecoder->ReleaseOldestSubtitle();
-	  return S_OK;
+    return S_OK;
   }
   return S_FALSE;
 }
@@ -534,10 +534,10 @@ void CDVBSub::LogDebugMediaPosition( const char *text )
   if( m_pIMediaSeeking )
   {
     m_pIMediaSeeking->GetCurrentPosition( &pos );
-	  if( pos > 0 )
-	  {
-		  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-	    LogDebugPTS( text, pos ); 
+    if( pos > 0 )
+    {
+      pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
+      LogDebugPTS( text, pos ); 
     }
   } 
 }
@@ -552,11 +552,11 @@ CUnknown * WINAPI CDVBSub::CreateInstance( LPUNKNOWN punk, HRESULT *phr )
   LogDebug( "CreateInstance" );
   CDVBSub *pFilter = new CDVBSub( punk, phr, NULL );
   if( pFilter == NULL )
-	{
+  {
     if ( phr )
-		{
+    {
       *phr = E_OUTOFMEMORY;
-		}
+    }
   }
   return pFilter;
 }
@@ -567,35 +567,35 @@ CUnknown * WINAPI CDVBSub::CreateInstance( LPUNKNOWN punk, HRESULT *phr )
 //
 STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 {
-	if ( riid == IID_IDVBSubtitle2 )
-	{
-		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
-		return GetInterface( (IDVBSubtitle *) this, ppv );
-	}
-	else if ( riid == IID_IDVBSubtitleSource )
-	{
-		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
-		return GetInterface( (IDVBSubtitleSource *) this, ppv );
-	}
-	else
-	{
-		//LogDebug( "Forwarding query interface call ... " );
-		HRESULT hr = CBaseFilter::NonDelegatingQueryInterface( riid, ppv );
+  if ( riid == IID_IDVBSubtitle2 )
+  {
+    //LogDebug( "QueryInterface in DVBSub.CPP accepting" );
+    return GetInterface( (IDVBSubtitle *) this, ppv );
+  }
+  else if ( riid == IID_IDVBSubtitleSource )
+  {
+    //LogDebug( "QueryInterface in DVBSub.CPP accepting" );
+    return GetInterface( (IDVBSubtitleSource *) this, ppv );
+  }
+  else
+  {
+    //LogDebug( "Forwarding query interface call ... " );
+    HRESULT hr = CBaseFilter::NonDelegatingQueryInterface( riid, ppv );
 
-		if( SUCCEEDED(hr) )
-		{
-			//LogDebug("QI succeeded");
-		}
-		else if( hr == E_NOINTERFACE )
-		{
-			//LogDebug( "QI -> E_NOINTERFACE" );
-		}
-		else
-		{
-			//LogDebug( "QI failed" );
-		}
-		return hr;
-	}
+    if( SUCCEEDED(hr) )
+    {
+      //LogDebug("QI succeeded");
+    }
+    else if( hr == E_NOINTERFACE )
+    {
+      //LogDebug( "QI -> E_NOINTERFACE" );
+    }
+    else
+    {
+      //LogDebug( "QI failed" );
+    }
+    return hr;
+  }
 }
 
 #ifdef _DEBUG

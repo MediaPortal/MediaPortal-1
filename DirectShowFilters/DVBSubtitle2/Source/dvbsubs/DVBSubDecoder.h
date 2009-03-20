@@ -23,7 +23,7 @@
 
 #pragma once
 #define MAX_REGIONS 32
-	
+  
 #include "windows.h"
 #include <vector>
 #include "subtitle.h"
@@ -35,29 +35,29 @@ typedef unsigned __int8 uint8_t;
 
 typedef struct 
 {
-	int x,y;
-	unsigned char is_visible;
+  int x,y;
+  unsigned char is_visible;
 } visible_region_t;
 
 
 typedef struct 
 {
-	int acquired;
-	int page_time_out;
-	int page_version_number;
-	int page_state;
-	visible_region_t regions[MAX_REGIONS];
+  int acquired;
+  int page_time_out;
+  int page_version_number;
+  int page_state;
+  visible_region_t regions[MAX_REGIONS];
 } page_t;
 
 typedef struct 
 {
-	int width,height;
-	int depth;
-	int win;
-	int CLUT_id;
-	int objects_start,objects_end;
-	unsigned int object_pos[65536];
-	unsigned char img[720*576];
+  int width,height;
+  int depth;
+  int win;
+  int CLUT_id;
+  int objects_start,objects_end;
+  unsigned int object_pos[65536];
+  unsigned char img[720*576];
 } region_t;
 
 class CSubtitle;

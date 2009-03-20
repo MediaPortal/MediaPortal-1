@@ -1,5 +1,5 @@
 /* 
-*	Copyright (C) 2006-2008 Team MediaPortal
+*	Copyright (C) 2006-2009 Team MediaPortal
 *	http://www.team-mediaportal.com
 *
 *  This Program is free software; you can redistribute it and/or modify
@@ -54,21 +54,21 @@ void CPesDecoder::Reset()
 
 int CPesDecoder::GetPid()
 {
-	return m_pid;
+  return m_pid;
 }
 
 void CPesDecoder::SetPid( int pid )
 {
-	m_pid = pid;
+  m_pid = pid;
 }
 
 void CPesDecoder::SetStreamId( int streamId )
 {
-	m_iStreamId=streamId;
+  m_iStreamId=streamId;
 }
 int	CPesDecoder::GetStreamId()
 {
-	return m_iStreamId;
+  return m_iStreamId;
 }
 
 bool CPesDecoder::OnTsPacket( byte* tsPacket )
@@ -171,7 +171,7 @@ bool CPesDecoder::OnTsPacket( byte* tsPacket )
     return false;
   }
 
-	//LogDebug("%i : adaption field length, data start %i", header.AdaptionFieldLength, header.PayLoadStart);
+  //LogDebug("%i : adaption field length, data start %i", header.AdaptionFieldLength, header.PayLoadStart);
   assert(m_iWritePos + 188-pos <= MAX_PES_PACKET );
 
   if( ( 188 - pos < 0 ) )

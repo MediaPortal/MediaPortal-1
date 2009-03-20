@@ -68,14 +68,16 @@ extern void LogDebugPTS( const char *fmt, uint64_t pts );
 
 CDVBSubDecoder::~CDVBSubDecoder()
 {
-	if( m_CurrentSubtitle )
-		delete m_CurrentSubtitle;
+  if( m_CurrentSubtitle )
+  {
+    delete m_CurrentSubtitle;
+  }
 
-	// Release all rendered subtitles
-	for( unsigned int i = 0 ; i < m_RenderedSubtitles.size() ; i++ )
-	{
-		m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );
-	}
+  // Release all rendered subtitles
+  for( unsigned int i = 0 ; i < m_RenderedSubtitles.size() ; i++ )
+  {
+    m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );
+  }
 }
 
 CDVBSubDecoder::CDVBSubDecoder() :
@@ -88,13 +90,13 @@ CDVBSubDecoder::CDVBSubDecoder() :
 
 void CDVBSubDecoder::Init_data() 
 {
-	int i;
+  int i;
 
-	for( i = 0 ; i < MAX_REGIONS ; i++ ) 
-	{
-		page.regions[i].is_visible = 0;
-		regions[i].win = -1;
-	}
+  for( i = 0 ; i < MAX_REGIONS ; i++ ) 
+  {
+    page.regions[i].is_visible = 0;
+    regions[i].win = -1;
+  }
 }
 
 void CDVBSubDecoder::Create_region(int region_id,int region_width,int region_height,int region_depth) 
@@ -108,45 +110,45 @@ void CDVBSubDecoder::Create_region(int region_id,int region_width,int region_hei
 
 void CDVBSubDecoder::Do_plot( int r,int x, int y, unsigned char pixel ) 
 {
-	int i;
-	if ( ( y >= 0 ) && ( y < regions[r].height ) ) 
-	{
-		i = ( y * regions[r].width ) + x;
-		regions[r].img[i] = pixel;
-	} 
-	else 
-	{
-		LogDebug("DVBsubs: plot out of region: x=%d, y=%d - r=%d, height=%d",x,y,r,regions[r].height);
-	}
+  int i;
+  if ( ( y >= 0 ) && ( y < regions[r].height ) ) 
+  {
+    i = ( y * regions[r].width ) + x;
+    regions[r].img[i] = pixel;
+  } 
+  else 
+  {
+    LogDebug("DVBsubs: plot out of region: x=%d, y=%d - r=%d, height=%d",x,y,r,regions[r].height);
+  }
 }
 
 void CDVBSubDecoder::Plot( int r, int run_length, unsigned char pixel ) 
 {
-	int x2 = x + run_length;
+  int x2 = x + run_length;
 
-	//  LogDebug("DVBsubs: plot: x=%d,y=%d,length=%d,pixel=%d", x, y, run_length,pixel );
-	while ( x < x2 ) 
-	{
-		Do_plot( r, x , y , pixel );
-		x++;
-	}
+  //  LogDebug("DVBsubs: plot: x=%d,y=%d,length=%d,pixel=%d", x, y, run_length,pixel );
+  while ( x < x2 ) 
+  {
+    Do_plot( r, x , y , pixel );
+    x++;
+  }
 }
 
 unsigned char CDVBSubDecoder::Next_nibble() 
 {
-	unsigned char x;
+  unsigned char x;
 
-	if ( nibble_flag == 0 ) 
-	{
-		x=( buf[i]&0xf0 ) >> 4;
-		nibble_flag = 1;
-	} 
-	else 
-	{
-		x = ( buf[i++]&0x0f );
-		nibble_flag = 0;
-	}
-	return( x );
+  if ( nibble_flag == 0 ) 
+  {
+    x=( buf[i]&0xf0 ) >> 4;
+    nibble_flag = 1;
+  } 
+  else 
+  {
+    x = ( buf[i++]&0x0f );
+    nibble_flag = 0;
+  }
+  return( x );
 }
 
 /* function taken from "dvd2sub.c" in the svcdsubs packages in the
@@ -156,193 +158,193 @@ void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int 
 {
   // Convert the palette to use RGB colors instead of YUV as converting palette is
   // much faster than converting the whole bitmap.
-	int B = (int)( 1.164 * ( Y - 16 )                        + 2.018 * ( Cb - 128 ) );
-	int G = (int)( 1.164 * ( Y - 16 ) - 0.813 * ( Cr - 128 ) - 0.391 * ( Cb - 128 ) );
-	int R = (int)( 1.164 * ( Y - 16 ) + 1.596 * ( Cr - 128 ) );
-	if ( B < 0 ) B = 0; if ( B > 255 ) B = 255;
-	if ( G < 0 ) G = 0; if ( G > 255 ) G = 255;
-	if ( R < 0 ) R = 0; if ( R > 255 ) R = 255; 
+  int B = (int)( 1.164 * ( Y - 16 )                        + 2.018 * ( Cb - 128 ) );
+  int G = (int)( 1.164 * ( Y - 16 ) - 0.813 * ( Cr - 128 ) - 0.391 * ( Cb - 128 ) );
+  int R = (int)( 1.164 * ( Y - 16 ) + 1.596 * ( Cr - 128 ) );
+  if ( B < 0 ) B = 0; if ( B > 255 ) B = 255;
+  if ( G < 0 ) G = 0; if ( G > 255 ) G = 255;
+  if ( R < 0 ) R = 0; if ( R > 255 ) R = 255; 
 
   //LogDebug("DVBsubs: Setting colour for CLUT_id=%d, CLUT_entry_id=%d",CLUT_id,CLUT_entry_id);
-	if ((CLUT_id > 15) || (CLUT_entry_id > 15)) 
-	{
-		LogDebug( "DVBsubs: ERROR: CLUT_id = %d, CLUT_entry_id = %d", CLUT_id, CLUT_entry_id );
-		return;
-	}
+  if ((CLUT_id > 15) || (CLUT_entry_id > 15)) 
+  {
+    LogDebug( "DVBsubs: ERROR: CLUT_id = %d, CLUT_entry_id = %d", CLUT_id, CLUT_entry_id );
+    return;
+  }
 
-	// A value of zero in the Y_value field signals full transparency
+  // A value of zero in the Y_value field signals full transparency
   if( Y == 0 ) 
-	{
-		trans[(CLUT_id*16)+CLUT_entry_id] = 0x0;
+  {
+    trans[(CLUT_id*16)+CLUT_entry_id] = 0x0;
     R = G = B = 0;
-	} 
-	else
-	{
+  } 
+  else
+  {
     trans[(CLUT_id*16)+CLUT_entry_id] = 0xff - T_value;
-	}
+  }
 
   colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = R;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = G;
-	colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = B;
+  colours[(CLUT_id*48)+(CLUT_entry_id*3)+1] = G;
+  colours[(CLUT_id*48)+(CLUT_entry_id*3)+2] = B;
 }
 
 void CDVBSubDecoder::Decode_4bit_pixel_code_string( int r, int object_id, int ofs, int n ) 
 {
-	int next_bits,
-		switch_1,
-		switch_2,
-		switch_3,
-		run_length,
-		pixel_code;
+  int next_bits,
+    switch_1,
+    switch_2,
+    switch_3,
+    run_length,
+    pixel_code;
 
-	int bits;
-	unsigned int data;
-	int j;
+  int bits;
+  unsigned int data;
+  int j;
 
-	if ( in_scanline == 0 ) 
-	{
-		in_scanline=1;
-	}
-	nibble_flag = 0;
-	j = i + n;
-	while(i < j) 
-	{
-		//LogDebug("DVBsubs: start of loop, i=%d, nibble-flag=%d", i, nibble_flag );
-		//LogDebug("DVBsubs: buf=%02x %02x %02x %02x", buf[i], buf[i+1], buf[i+2], buf[i+3] );
-		bits = 0;
-		pixel_code = 0;
-		next_bits = Next_nibble();
+  if ( in_scanline == 0 ) 
+  {
+    in_scanline=1;
+  }
+  nibble_flag = 0;
+  j = i + n;
+  while(i < j) 
+  {
+    //LogDebug("DVBsubs: start of loop, i=%d, nibble-flag=%d", i, nibble_flag );
+    //LogDebug("DVBsubs: buf=%02x %02x %02x %02x", buf[i], buf[i+1], buf[i+2], buf[i+3] );
+    bits = 0;
+    pixel_code = 0;
+    next_bits = Next_nibble();
 
-		if( next_bits !=0 ) 
-		{
-			pixel_code = next_bits;
-			Plot( r, 1, pixel_code );
-			bits += 4;
-		} 
-		else 
-		{
-			bits+=4;
-			data=Next_nibble();
-			switch_1=(data&0x08)>>3;
-			bits++;
-			
-			if ( switch_1 == 0 ) 
-			{
-				run_length=(data&0x07);
-				bits+=3;
-				if (run_length!=0) 
-				{
-					Plot(r,run_length+2,pixel_code);
-				} 
-				else 
-				{
-					//LogDebug("DVBsubs: end_of_string - run_length=%d", run_length );
-					break;
-				}
-			} 
-			else 
-			{
-				switch_2 = (data&0x04) >> 2;
-				bits++;
-				if( switch_2 == 0 ) 
-				{
-					run_length=(data&0x03);
-					bits+=2;
-					pixel_code=Next_nibble();
-					bits+=4;
-					Plot(r,run_length+4,pixel_code);
-				} 
-				else 
-				{
-					switch_3 = (data&0x03);
-					bits+=2;
-					switch (switch_3) 
-					{
-						case 0: Plot(r,1,pixel_code);
-							break;
-						case 1: Plot(r,2,pixel_code);
-							break;
-						case 2: run_length=Next_nibble();
-							bits+=4;
-							pixel_code=Next_nibble();
-							bits+=4;
-							Plot(r,run_length+9,pixel_code);
-							break;
-						case 3: run_length=Next_nibble();
-							run_length=(run_length<<4)|Next_nibble();
-							bits+=8;
-							pixel_code=Next_nibble();
-							bits+=4;
-							Plot(r,run_length+25,pixel_code);
-					}
-				}
-			}
-		}
-	}
-	
-	if ( nibble_flag == 1 ) 
-	{
-		i++;
-		nibble_flag = 0;
-	}
+    if( next_bits !=0 ) 
+    {
+      pixel_code = next_bits;
+      Plot( r, 1, pixel_code );
+      bits += 4;
+    } 
+    else 
+    {
+      bits+=4;
+      data=Next_nibble();
+      switch_1=(data&0x08)>>3;
+      bits++;
+      
+      if ( switch_1 == 0 ) 
+      {
+        run_length=(data&0x07);
+        bits+=3;
+        if (run_length!=0) 
+        {
+          Plot(r,run_length+2,pixel_code);
+        } 
+        else 
+        {
+          //LogDebug("DVBsubs: end_of_string - run_length=%d", run_length );
+          break;
+        }
+      } 
+      else 
+      {
+        switch_2 = (data&0x04) >> 2;
+        bits++;
+        if( switch_2 == 0 ) 
+        {
+          run_length=(data&0x03);
+          bits+=2;
+          pixel_code=Next_nibble();
+          bits+=4;
+          Plot(r,run_length+4,pixel_code);
+        } 
+        else 
+        {
+          switch_3 = (data&0x03);
+          bits+=2;
+          switch (switch_3) 
+          {
+            case 0: Plot(r,1,pixel_code);
+              break;
+            case 1: Plot(r,2,pixel_code);
+              break;
+            case 2: run_length=Next_nibble();
+              bits+=4;
+              pixel_code=Next_nibble();
+              bits+=4;
+              Plot(r,run_length+9,pixel_code);
+              break;
+            case 3: run_length=Next_nibble();
+              run_length=(run_length<<4)|Next_nibble();
+              bits+=8;
+              pixel_code=Next_nibble();
+              bits+=4;
+              Plot(r,run_length+25,pixel_code);
+          }
+        }
+      }
+    }
+  }
+  
+  if ( nibble_flag == 1 ) 
+  {
+    i++;
+    nibble_flag = 0;
+  }
 }
 
 void CDVBSubDecoder::Process_pixel_data_sub_block( int r, int o, int ofs, int n ) 
 {
-	int data_type;
-	int j;
+  int data_type;
+  int j;
  
-	j = i + n;
+  j = i + n;
 
-	x = ( regions[r].object_pos[o] ) >> 16;
-	y = ( ( regions[r].object_pos[o] ) & 0xffff ) + ofs;
+  x = ( regions[r].object_pos[o] ) >> 16;
+  y = ( ( regions[r].object_pos[o] ) & 0xffff ) + ofs;
 //	LogDebug("DVBsubs: process_pixel_data_sub_block: r=%d, x=%d, y=%d, o=%d, ofs=%d, n=%d",r,x,y,o,ofs);
 //	LogDebug("DVBsubs: process_pixel_data: %02x %02x %02x %02x %02x %02x",buf[i],buf[i+1],buf[i+2],buf[i+3],buf[i+4],buf[i+5]);
 
-	while ( i < j ) 
-	{
-		data_type = buf[i++];
+  while ( i < j ) 
+  {
+    data_type = buf[i++];
 
-		switch( data_type ) 
-		{
-			case 0: 
-				i++;
-			case 0x11: 
-				Decode_4bit_pixel_code_string( r, o, ofs, n-1 );
-				break;
-			case 0xf0: 
-				in_scanline = 0;
-				x = ( regions[r].object_pos[o] ) >> 16;
-				y += 2;
-				break;
-			default: 
-				LogDebug("DVBsubs: unimplemented data_type %02x in pixel_data_sub_block", data_type );
-		}
+    switch( data_type ) 
+    {
+      case 0: 
+        i++;
+      case 0x11: 
+        Decode_4bit_pixel_code_string( r, o, ofs, n-1 );
+        break;
+      case 0xf0: 
+        in_scanline = 0;
+        x = ( regions[r].object_pos[o] ) >> 16;
+        y += 2;
+        break;
+      default: 
+        LogDebug("DVBsubs: unimplemented data_type %02x in pixel_data_sub_block", data_type );
+    }
   }
   i = j;
 }
 void CDVBSubDecoder::Process_page_composition_segment() 
 {
-	int page_id;
-	int segment_length;
-	int page_time_out;
-	int page_version_number;
-	int page_state;
-	int region_id,region_x,region_y;
-	int j;
-	int r;
+  int page_id;
+  int segment_length;
+  int page_time_out;
+  int page_version_number;
+  int page_state;
+  int region_id,region_x,region_y;
+  int j;
+  int r;
 
-	page_id = (buf[i]<<8)|buf[i+1]; i += 2;
-	segment_length = (buf[i]<<8)|buf[i+1]; i += 2;
+  page_id = (buf[i]<<8)|buf[i+1]; i += 2;
+  segment_length = (buf[i]<<8)|buf[i+1]; i += 2;
 
-	j = i + segment_length;
+  j = i + segment_length;
 
-	page_time_out=buf[i++];
-	page_version_number=(buf[i]&0xf0)>>4;
-	page_state=(buf[i]&0x0c)>>2;
-	i++;
-	//LogDebug("DVBsubs: "PAGE_COMPOSITION_SEGMENT: page_id=%04x, page_time_out=%d, page_version=%d,page_state=%d",page_id, page_time_out, page_version_number, page_state );
-	//LogDebug("DVBsubs: page_state=%d", page_state );
+  page_time_out=buf[i++];
+  page_version_number=(buf[i]&0xf0)>>4;
+  page_state=(buf[i]&0x0c)>>2;
+  i++;
+  //LogDebug("DVBsubs: "PAGE_COMPOSITION_SEGMENT: page_id=%04x, page_time_out=%d, page_version=%d,page_state=%d",page_id, page_time_out, page_version_number, page_state );
+  //LogDebug("DVBsubs: page_state=%d", page_state );
   
   // HACK, not all broadcasters provide valid a timeout values for subtitles
   if( page_time_out <= 1 || page_time_out > maxSubtitleTimeOut )
@@ -352,79 +354,79 @@ void CDVBSubDecoder::Process_page_composition_segment()
   }
   m_CurrentSubtitle->SetTimeout( page_time_out );
 
-	if ((acquired==0) && (page_state!=2) && (page_state!=1)) 
-	{
-		//LogDebug("DVBsubs: waiting for mode_change");
-		return;
-	} 
-	else 
-	{
-		acquired=1;
-	}
+  if ((acquired==0) && (page_state!=2) && (page_state!=1)) 
+  {
+    //LogDebug("DVBsubs: waiting for mode_change");
+    return;
+  } 
+  else 
+  {
+    acquired=1;
+  }
 
-	for ( r=0 ; r < MAX_REGIONS ; r++ ) 
-	{
-		page.regions[r].is_visible = 0;
-	}
-	while ( i < j ) 
-	{
-		region_id=buf[i++];
-		i++; // reserved
-		region_x = (buf[i]<<8)|buf[i+1]; i += 2;
-		region_y = (buf[i]<<8)|buf[i+1]; i += 2;
+  for ( r=0 ; r < MAX_REGIONS ; r++ ) 
+  {
+    page.regions[r].is_visible = 0;
+  }
+  while ( i < j ) 
+  {
+    region_id=buf[i++];
+    i++; // reserved
+    region_x = (buf[i]<<8)|buf[i+1]; i += 2;
+    region_y = (buf[i]<<8)|buf[i+1]; i += 2;
 
-		page.regions[region_id].x = region_x;
-		page.regions[region_id].y = region_y;
-		page.regions[region_id].is_visible = 1;
-	}  
+    page.regions[region_id].x = region_x;
+    page.regions[region_id].y = region_y;
+    page.regions[region_id].is_visible = 1;
+  }  
 }
 
 void CDVBSubDecoder::Process_region_composition_segment() 
 {
-	int page_id,
-		segment_length,
-		region_id,
-		region_version_number,
-		region_fill_flag,
-		region_width,
-		region_height,
-		region_level_of_compatibility,
-		region_depth,
-		CLUT_id,
-		region_8_bit_pixel_code,
-		region_4_bit_pixel_code,
-		region_2_bit_pixel_code;
-	int object_id,
-		object_type,
-		object_provider_flag,
-		object_x,
-		object_y,
-		foreground_pixel_code,
-		background_pixel_code;
-	int j;
-	int o;
+  int page_id,
+    segment_length,
+    region_id,
+    region_version_number,
+    region_fill_flag,
+    region_width,
+    region_height,
+    region_level_of_compatibility,
+    region_depth,
+    CLUT_id,
+    region_8_bit_pixel_code,
+    region_4_bit_pixel_code,
+    region_2_bit_pixel_code;
+  int object_id,
+    object_type,
+    object_provider_flag,
+    object_x,
+    object_y,
+    foreground_pixel_code,
+    background_pixel_code;
+  int j;
+  int o;
 
-	page_id = (buf[i]<<8)|buf[i+1]; i+=2;
-	segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
+  page_id = (buf[i]<<8)|buf[i+1]; i+=2;
+  segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
 
-	j = i + segment_length;
+  j = i + segment_length;
 
-	region_id=buf[i++];
-	region_version_number=(buf[i]&0xf0)>>4;
-	region_fill_flag=(buf[i]&0x08)>>3;
-	i++;
+  region_id=buf[i++];
+  region_version_number=(buf[i]&0xf0)>>4;
+  region_fill_flag=(buf[i]&0x08)>>3;
+  i++;
 
-	region_width=(buf[i]<<8)|buf[i+1]; i+=2;
-	region_height=(buf[i]<<8)|buf[i+1]; i+=2;
-	region_level_of_compatibility=(buf[i]&0xe0)>>5;
-	region_depth=(buf[i]&0x1c)>>2;
-	i++;
+  region_width=(buf[i]<<8)|buf[i+1]; i+=2;
+  region_height=(buf[i]<<8)|buf[i+1]; i+=2;
+  region_level_of_compatibility=(buf[i]&0xe0)>>5;
+  region_depth=(buf[i]&0x1c)>>2;
+  i++;
 
-	CLUT_id=buf[i++];
-	region_8_bit_pixel_code=buf[i++];
-	region_4_bit_pixel_code=(buf[i]&0xf0)>>4;
-	region_2_bit_pixel_code=(buf[i]&0x0c)>>2;
-	i++;
+  CLUT_id=buf[i++];
+  region_8_bit_pixel_code=buf[i++];
+  region_4_bit_pixel_code=(buf[i]&0xf0)>>4;
+  region_2_bit_pixel_code=(buf[i]&0x0c)>>2;
+  i++;
 
   if( region_id >= MAX_REGIONS)
   {
@@ -432,155 +434,154 @@ void CDVBSubDecoder::Process_region_composition_segment()
     return;
   }
 
-	if ( regions[region_id].win < 0 ) 
-	{
-		// If the region doesn't exist, then open it.
-		Create_region( region_id, region_width, region_height, region_depth );
-		regions[region_id].CLUT_id = CLUT_id;
-	}
+  if ( regions[region_id].win < 0 ) 
+  {
+    // If the region doesn't exist, then open it.
+    Create_region( region_id, region_width, region_height, region_depth );
+    regions[region_id].CLUT_id = CLUT_id;
+  }
 
-	regions[region_id].width = region_width;
-	regions[region_id].height = region_height;
+  regions[region_id].width = region_width;
+  regions[region_id].height = region_height;
 
-	if (region_fill_flag==1) 
-	{
-		//LogDebug("DVBsubs: "filling region %d with %d", region_id, region_4_bit_pixel_code );
-		memset(regions[region_id].img,region_4_bit_pixel_code, sizeof( regions[region_id].img ) );
-	}
+  if (region_fill_flag==1) 
+  {
+    //LogDebug("DVBsubs: "filling region %d with %d", region_id, region_4_bit_pixel_code );
+    memset(regions[region_id].img,region_4_bit_pixel_code, sizeof( regions[region_id].img ) );
+  }
 
-	regions[region_id].objects_start = i;  
-	regions[region_id].objects_end = j;  
+  regions[region_id].objects_start = i;  
+  regions[region_id].objects_end = j;  
 
-	for ( o = 0 ;o < 65536 ; o++ ) 
-	{
-		regions[region_id].object_pos[o]=0xffffffff;
-	}
+  for ( o = 0 ;o < 65536 ; o++ ) 
+  {
+    regions[region_id].object_pos[o]=0xffffffff;
+  }
 
-	while ( i < j ) 
-	{
-		object_id = (buf[i]<<8)|buf[i+1]; i+=2;
-		object_type = (buf[i]&0xc0)>>6;
-		object_provider_flag = (buf[i]&0x30)>>4;
-		object_x = ((buf[i]&0x0f)<<8)|buf[i+1]; i+=2;
-		object_y = ((buf[i]&0x0f)<<8)|buf[i+1]; i+=2;
+  while ( i < j ) 
+  {
+    object_id = (buf[i]<<8)|buf[i+1]; i+=2;
+    object_type = (buf[i]&0xc0)>>6;
+    object_provider_flag = (buf[i]&0x30)>>4;
+    object_x = ((buf[i]&0x0f)<<8)|buf[i+1]; i+=2;
+    object_y = ((buf[i]&0x0f)<<8)|buf[i+1]; i+=2;
 
-		regions[region_id].object_pos[object_id]=(object_x<<16)|object_y;
+    regions[region_id].object_pos[object_id]=(object_x<<16)|object_y;
       
-		if ((object_type==0x01) || (object_type==0x02)) 
-		{
-			foreground_pixel_code=buf[i++];
-			background_pixel_code=buf[i++];
-		}
-	}
+    if ((object_type==0x01) || (object_type==0x02)) 
+    {
+      foreground_pixel_code=buf[i++];
+      background_pixel_code=buf[i++];
+    }
+  }
 }
 
 void CDVBSubDecoder::Process_CLUT_definition_segment() 
 {
-	int page_id,
-		segment_length,
-		CLUT_id,
-		CLUT_version_number;
+  int page_id,
+    segment_length,
+    CLUT_id,
+    CLUT_version_number;
 
-	int CLUT_entry_id,
-		CLUT_flag_8_bit,
-		CLUT_flag_4_bit,
-		CLUT_flag_2_bit,
-		full_range_flag,
-		Y_value,
-		Cr_value,
-		Cb_value,
-		T_value;
+  int CLUT_entry_id,
+    CLUT_flag_8_bit,
+    CLUT_flag_4_bit,
+    CLUT_flag_2_bit,
+    full_range_flag,
+    Y_value,
+    Cr_value,
+    Cb_value,
+    T_value;
 
-	int j;
+  int j;
 
-	page_id = (buf[i]<<8)|buf[i+1]; i+=2;
-	segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
-	j = i + segment_length;
+  page_id = (buf[i]<<8)|buf[i+1]; i+=2;
+  segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
+  j = i + segment_length;
 
-	CLUT_id = buf[i++];
-	CLUT_version_number = (buf[i]&0xf0)>>4;
-	i++;
+  CLUT_id = buf[i++];
+  CLUT_version_number = (buf[i]&0xf0)>>4;
+  i++;
 
-	while ( i < j ) 
-	{
-		CLUT_entry_id=buf[i++];
-
-		CLUT_flag_2_bit=(buf[i]&0x80)>>7;
-		CLUT_flag_4_bit=(buf[i]&0x40)>>6;
-		CLUT_flag_8_bit=(buf[i]&0x20)>>5;
-		full_range_flag=buf[i]&1;
-		i++;
-	
-		if (full_range_flag==1) 
-		{
-			Y_value=buf[i++];
-			Cr_value=buf[i++];
-			Cb_value=buf[i++];
-			T_value=buf[i++];
-		} 
-		else 
-		{
-			Y_value = (buf[i]&0xfc)>>2;
-			Cr_value = (buf[i]&0x2<<2)|((buf[i+1]&0xc0)>>6);
-			Cb_value = (buf[i+1]&0x2c)>>2;
-			T_value = buf[i+1]&2;
-			i += 2;
-		}
-	Set_clut(CLUT_id,CLUT_entry_id,Y_value,Cr_value,Cb_value,T_value);
+  while ( i < j ) 
+  {
+    CLUT_entry_id=buf[i++];
+    CLUT_flag_2_bit=(buf[i]&0x80)>>7;
+    CLUT_flag_4_bit=(buf[i]&0x40)>>6;
+    CLUT_flag_8_bit=(buf[i]&0x20)>>5;
+    full_range_flag=buf[i]&1;
+    i++;
+  
+    if (full_range_flag==1) 
+    {
+      Y_value=buf[i++];
+      Cr_value=buf[i++];
+      Cb_value=buf[i++];
+      T_value=buf[i++];
+    } 
+    else 
+    {
+      Y_value = (buf[i]&0xfc)>>2;
+      Cr_value = (buf[i]&0x2<<2)|((buf[i+1]&0xc0)>>6);
+      Cb_value = (buf[i+1]&0x2c)>>2;
+      T_value = buf[i+1]&2;
+      i += 2;
+    }
+    Set_clut(CLUT_id,CLUT_entry_id,Y_value,Cr_value,Cb_value,T_value);
   }
 }
 
 void CDVBSubDecoder::Process_object_data_segment() 
 {
-	int page_id,
-		segment_length,
-		object_id,
-		object_version_number,
-		object_coding_method,
-		non_modifying_colour_flag;
+  int page_id,
+    segment_length,
+    object_id,
+    object_version_number,
+    object_coding_method,
+    non_modifying_colour_flag;
       
-	int top_field_data_block_length,
-		bottom_field_data_block_length;
+  int top_field_data_block_length,
+    bottom_field_data_block_length;
       
-	int j;
-	int old_i;
-	int r;
+  int j;
+  int old_i;
+  int r;
 
-	page_id = (buf[i]<<8)|buf[i+1]; i+=2;
-	segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
-	j = i + segment_length;
+  page_id = (buf[i]<<8)|buf[i+1]; i+=2;
+  segment_length = (buf[i]<<8)|buf[i+1]; i+=2;
+  j = i + segment_length;
 
-	object_id = (buf[i]<<8)|buf[i+1]; i+=2;
-	curr_obj = object_id;
-	object_version_number = (buf[i]&0xf0)>>4;
-	object_coding_method = (buf[i]&0x0c)>>2;
-	non_modifying_colour_flag = (buf[i]&0x02)>>1;
-	i++;
+  object_id = (buf[i]<<8)|buf[i+1]; i+=2;
+  curr_obj = object_id;
+  object_version_number = (buf[i]&0xf0)>>4;
+  object_coding_method = (buf[i]&0x0c)>>2;
+  non_modifying_colour_flag = (buf[i]&0x02)>>1;
+  i++;
 
-	//  LogDebug("DVBsubs: "decoding object %d", object_id );
-	
-	old_i = i;
-	for (r=0;r<MAX_REGIONS;r++) 
-	{
-		// If this object is in this region...
-		if (regions[r].win >= 0) 
-		{
-			//LogDebug("DVBsubs: "testing region %d, object_pos=%08x", r, regions[r].object_pos[object_id] );
-			if (regions[r].object_pos[object_id]!=0xffffffff) 
-			{
-				//LogDebug("DVBsubs: "rendering object %d into region %d", object_id, r );
-				i=old_i;
-				
-				if (object_coding_method==0) 
-				{
-					top_field_data_block_length=(buf[i]<<8)|buf[i+1]; i+=2;
-					bottom_field_data_block_length=(buf[i]<<8)|buf[i+1]; i+=2;
-					Process_pixel_data_sub_block(r,object_id,0,top_field_data_block_length);
-					Process_pixel_data_sub_block(r,object_id,1,bottom_field_data_block_length);
-				}
-			}
-		}
-	}
+  //  LogDebug("DVBsubs: "decoding object %d", object_id );
+  
+  old_i = i;
+  for (r=0;r<MAX_REGIONS;r++) 
+  {
+    // If this object is in this region...
+    if (regions[r].win >= 0) 
+    {
+      //LogDebug("DVBsubs: "testing region %d, object_pos=%08x", r, regions[r].object_pos[object_id] );
+      if (regions[r].object_pos[object_id]!=0xffffffff) 
+      {
+        //LogDebug("DVBsubs: "rendering object %d into region %d", object_id, r );
+        i=old_i;
+        
+        if (object_coding_method==0) 
+        {
+          top_field_data_block_length=(buf[i]<<8)|buf[i+1]; i+=2;
+          bottom_field_data_block_length=(buf[i]<<8)|buf[i+1]; i+=2;
+          Process_pixel_data_sub_block(r,object_id,0,top_field_data_block_length);
+          Process_pixel_data_sub_block(r,object_id,1,bottom_field_data_block_length);
+        }
+      }
+    }
+  }
 }
 
 void CDVBSubDecoder::Process_display_definition_segment()
@@ -605,42 +606,42 @@ void CDVBSubDecoder::Process_display_definition_segment()
 
 void CDVBSubDecoder::Compose_subtitle() 
 {
-	int r;
-	int x, y, out_y;
-	int v;
-	int count;
+  int r;
+  int x, y, out_y;
+  int v;
+  int count;
 
-	out_y = 0;  
+  out_y = 0;  
 
-	count = 0;
-	for ( r = 0; r < MAX_REGIONS ; r++ ) 
-	{
-		if (regions[r].win >= 0) 
-		{
-			if (page.regions[r].is_visible) 
-			{
-				count++;
-				out_y=page.regions[r].y*m_ScreenWidth;
-				for ( y = 0 ; y < regions[r].height ; y++ ) 
-				{
-					for ( x = 0 ; x < regions[r].width ; x++ ) 
-					{
-						v = regions[r].img[(y*regions[r].width)+x];
-						m_Buffer[out_y+x+page.regions[r].x]=v+16*regions[r].CLUT_id;
-					}
-				
-				out_y+=m_ScreenWidth;
-				}
-			}
-		}
-	}
-	m_CurrentSubtitle->RenderBitmap( m_Buffer, colours, trans, 256 );
+  count = 0;
+  for ( r = 0; r < MAX_REGIONS ; r++ ) 
+  {
+    if (regions[r].win >= 0) 
+    {
+      if (page.regions[r].is_visible) 
+      {
+        count++;
+        out_y=page.regions[r].y*m_ScreenWidth;
+        for ( y = 0 ; y < regions[r].height ; y++ ) 
+        {
+          for ( x = 0 ; x < regions[r].width ; x++ ) 
+          {
+            v = regions[r].img[(y*regions[r].width)+x];
+            m_Buffer[out_y+x+page.regions[r].x]=v+16*regions[r].CLUT_id;
+          }
+        
+        out_y+=m_ScreenWidth;
+        }
+      }
+    }
+  }
+  m_CurrentSubtitle->RenderBitmap( m_Buffer, colours, trans, 256 );
   
-	m_RenderedSubtitles.resize( m_RenderedSubtitles.size() + 1 );
-	m_RenderedSubtitles[m_RenderedSubtitles.size() - 1] = m_CurrentSubtitle;
-	m_CurrentSubtitle = NULL; // ownership is transfered
+  m_RenderedSubtitles.resize( m_RenderedSubtitles.size() + 1 );
+  m_RenderedSubtitles[m_RenderedSubtitles.size() - 1] = m_CurrentSubtitle;
+  m_CurrentSubtitle = NULL; // ownership is transfered
 
-	LogDebug("New subtitle ready - subtitle cache count = %d", m_RenderedSubtitles.size() );
+  LogDebug("New subtitle ready - subtitle cache count = %d", m_RenderedSubtitles.size() );
 }
 
 int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid ) 
@@ -713,9 +714,9 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
       /* SUBTITLING SEGMENT */
       if( buf[i] != 0x0f ) 
       { 
-	      LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
-	      i = PES_packet_length;
-	      //continue;
+        LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
+        i = PES_packet_length;
+        //continue;
         if( m_CurrentSubtitle )
         {
           delete m_CurrentSubtitle;			
@@ -723,7 +724,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
         }
         return 1;
       }
-    	
+      
       i++;
       segment_type = buf[i++];
       //LogDebug("Processing segment_type 0x%02x",segment_type);
@@ -781,7 +782,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
           }
         }
       }
-    	
+      
       if( n )
       {
         Compose_subtitle();

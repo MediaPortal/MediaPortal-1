@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 CPacketSync::CPacketSync(void)
 {
-	m_tempBufferPos=-1;
+  m_tempBufferPos=-1;
 }
 
 CPacketSync::~CPacketSync(void)
@@ -38,24 +38,24 @@ extern void LogDebug( const char *fmt, ... );
 // datalen=664
 void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
-	//LogDebug("On raw data");
-	int syncOffset=0;
-	if (m_tempBufferPos > 0 )
-	{
-		syncOffset = TS_PACKET_LEN - m_tempBufferPos;
-		memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
+  //LogDebug("On raw data");
+  int syncOffset=0;
+  if (m_tempBufferPos > 0 )
+  {
+    syncOffset = TS_PACKET_LEN - m_tempBufferPos;
+    memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
     if (m_tempBuffer[0] == TS_PACKET_SYNC) 
     {
-		OnTsPacket(m_tempBuffer);
+    OnTsPacket(m_tempBuffer);
     }
-		m_tempBufferPos = 0;
-	}
+    m_tempBufferPos = 0;
+  }
 
-	while (syncOffset < nDataLen)
-	{
-		if (syncOffset + TS_PACKET_LEN > nDataLen) break;
-		if (pData[syncOffset] != TS_PACKET_SYNC) 
-		{
+  while (syncOffset < nDataLen)
+  {
+    if (syncOffset + TS_PACKET_LEN > nDataLen) break;
+    if (pData[syncOffset] != TS_PACKET_SYNC) 
+    {
       //check if this is a corrupted packet...
       int nextPkt=syncOffset + TS_PACKET_LEN;
       if (nextPkt < nDataLen) 
@@ -66,25 +66,25 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
         }
         else
         {
-			    syncOffset++;
-			    continue;
+          syncOffset++;
+          continue;
         }
       }
       else
       {
-			  syncOffset++;
-			  continue;
+        syncOffset++;
+        continue;
       }
-		}
-		OnTsPacket( &pData[syncOffset] );
-		syncOffset += TS_PACKET_LEN;
-	}
+    }
+    OnTsPacket( &pData[syncOffset] );
+    syncOffset += TS_PACKET_LEN;
+  }
 
-	if (syncOffset < nDataLen)
-	{
-		m_tempBufferPos= nDataLen - syncOffset;
-		memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
-	}
+  if (syncOffset < nDataLen)
+  {
+    m_tempBufferPos= nDataLen - syncOffset;
+    memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
+  }
 }
 
 void CPacketSync::OnTsPacket(byte* tsPacket)

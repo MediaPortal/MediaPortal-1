@@ -1,5 +1,5 @@
 /* 
-*	Copyright (C) 2006-2008 Team MediaPortal
+*	Copyright (C) 2006-2009 Team MediaPortal
 *	http://www.team-mediaportal.com
 *
 *  This Program is free software; you can redistribute it and/or modify
@@ -24,30 +24,30 @@
 class CPesCallback
 {
 public:
-	virtual int OnNewPesPacket( int streamId, byte* header, int headerlen,byte* data, int len, bool isStart )=0;
+  virtual int OnNewPesPacket( int streamId, byte* header, int headerlen,byte* data, int len, bool isStart )=0;
 };
 
 class CPesDecoder
 {
 public:
   CPesDecoder( CPesCallback* callback );
-	virtual       ~CPesDecoder( void );
-	void					SetPid( int pid );
-	int						GetPid();
-	bool					OnTsPacket( byte* tsPacket );
-	void					Reset();
-	int						GetStreamId();
-	void					SetStreamId( int streamId );
+  virtual ~CPesDecoder( void );
+  void    SetPid( int pid );
+  int     GetPid();
+  bool    OnTsPacket( byte* tsPacket );
+  void    Reset();
+  int     GetStreamId();
+  void    SetStreamId( int streamId );
 
 private:
   bool          m_bStart;
-	int           m_iPesHeaderLen;
-	byte          m_pesHeader[256];
-	CPesCallback* m_pCallback;
-	unsigned long m_packets;
-	int					  m_pid;
-	byte*					m_pesBuffer;
-	int						m_iWritePos; // next free position in buffer
-	int						m_iStreamId;
-  int						m_iPesLength;
+  int           m_iPesHeaderLen;
+  byte          m_pesHeader[256];
+  CPesCallback* m_pCallback;
+  unsigned long m_packets;
+  int           m_pid;
+  byte*         m_pesBuffer;
+  int           m_iWritePos; // next free position in buffer
+  int           m_iStreamId;
+  int           m_iPesLength;
 };

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -70,14 +70,14 @@ CSubtitle::~CSubtitle()
 int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans, int col_count )
 {
   uint8_t colorData( 0 );
-	long position( 0 );
+  long position( 0 );
   m_FirstScanline = -1;
 
-	for( int i = 0 ; i < m_Bitmap.bmHeight * m_Bitmap.bmWidth; i++ )
-	{
-		for( int j = 0 ; j < 3 ; j++ )
-		{
-			if( m_FirstScanline == -1 )
+  for( int i = 0 ; i < m_Bitmap.bmHeight * m_Bitmap.bmWidth; i++ )
+  {
+    for( int j = 0 ; j < 3 ; j++ )
+    {
+      if( m_FirstScanline == -1 )
       {
         if( buffer[i] > 0 )
         {
@@ -90,53 +90,53 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
 
   m_Bitmap.bmBits	= (LPVOID)m_Data;
 
-	for( int i =  m_Bitmap.bmWidth * m_FirstScanline ; i < ( m_Bitmap.bmHeight + m_FirstScanline ) * m_Bitmap.bmWidth; i++ )
-	{
-		colorData = buffer[i];
+  for( int i =  m_Bitmap.bmWidth * m_FirstScanline ; i < ( m_Bitmap.bmHeight + m_FirstScanline ) * m_Bitmap.bmWidth; i++ )
+  {
+    colorData = buffer[i];
     for( int j = 0 ; j < 3 ; j++ )
-		{
+    {
       m_Data[position] = my_palette[colorData * 3 + j];
       position++;
 
-			// Add alpha channel 
+      // Add alpha channel 
       if( j == 2 )
       {      
         m_Data[position] = my_trans[colorData];
         position++;
       }
-		}
-	}
+    }
+  }
 /*
-	char file_name_tmp[500];
+  char file_name_tmp[500];
 
-	strcpy( file_name_tmp, "d:\\test_output\\" );
-	strncat( file_name_tmp, "test.ppm", 29 );
+  strcpy( file_name_tmp, "d:\\test_output\\" );
+  strncat( file_name_tmp, "test.ppm", 29 );
 
-	FILE* file = fopen( file_name_tmp, "w+" );
+  FILE* file = fopen( file_name_tmp, "w+" );
 
-	// Create debug PPM image file
-	fprintf( file, "P3 %d %d %d\n", m_Bitmap.bmWidth, m_Bitmap.bmHeight * 4, col_count - 1 );
-	
-	for( int k = 0 ; k < m_Bitmap.bmHeight * m_Bitmap.bmWidth ; k++ )
-	{
-		for( int x = 0 ; x < 4 ; x++ )
+  // Create debug PPM image file
+  fprintf( file, "P3 %d %d %d\n", m_Bitmap.bmWidth, m_Bitmap.bmHeight * 4, col_count - 1 );
+  
+  for( int k = 0 ; k < m_Bitmap.bmHeight * m_Bitmap.bmWidth ; k++ )
+  {
+    for( int x = 0 ; x < 4 ; x++ )
     {    
       if( k != 0 && k % ( m_Bitmap.bmWidth * 4 ) == 0 )
-		  {
-			  fprintf( file, "\n" );
-		  }
+      {
+        fprintf( file, "\n" );
+      }
     
       if( x != 3 )
       {
-		    fprintf( file, "%d ", m_Data[k] );
+        fprintf( file, "%d ", m_Data[k] );
       }
     }
-	}
+  }
 
-	fprintf( file, "\n" );	
-	fclose(file);
+  fprintf( file, "\n" );	
+  fclose(file);
 */
-	return 0;
+  return 0;
 }
 
 
@@ -145,10 +145,10 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
 //
 BITMAP* CSubtitle::GetBitmap()
 {
-	if( &m_Bitmap )
-		return &m_Bitmap;
-	else
-		return NULL;
+  if( &m_Bitmap )
+    return &m_Bitmap;
+  else
+    return NULL;
 }
 
 
@@ -157,7 +157,7 @@ BITMAP* CSubtitle::GetBitmap()
 //
 int CSubtitle::Width()
 {
-	return m_Bitmap.bmWidth;
+  return m_Bitmap.bmWidth;
 }
 
 
@@ -166,7 +166,7 @@ int CSubtitle::Width()
 //
 int CSubtitle::Height()
 {
-	return m_Bitmap.bmHeight;
+  return m_Bitmap.bmHeight;
 }
 
 
@@ -175,7 +175,7 @@ int CSubtitle::Height()
 //
 uint64_t CSubtitle::PTS()
 {
-	return m_PTS;
+  return m_PTS;
 }
 
 
@@ -193,7 +193,7 @@ void CSubtitle::SetPTS( uint64_t PTS )
 //
 uint64_t CSubtitle::Timestamp()
 {
-	return m_timestamp;
+  return m_timestamp;
 }
 
 
@@ -202,7 +202,7 @@ uint64_t CSubtitle::Timestamp()
 //
 void CSubtitle::SetTimestamp( uint64_t timestamp )
 {
-	m_timestamp = timestamp;
+  m_timestamp = timestamp;
 }
 
 

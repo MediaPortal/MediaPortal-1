@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -33,13 +33,13 @@ class CSubtitle
 public:
 
   CSubtitle( int screenWidth, int screenHeight );
-	
+  
   ~CSubtitle();
   BITMAP m_Bitmap;
   BITMAP* GetBitmap();
 
   int RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans, int col_count );
-	
+  
   int Width();
   int Height();
   int ScreenWidth();

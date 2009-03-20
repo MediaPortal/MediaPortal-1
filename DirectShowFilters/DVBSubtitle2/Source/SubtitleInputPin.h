@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ public:
                 CBaseFilter *pFilter,
                 CCritSec *pLock,
                 CCritSec *pReceiveLock,
-			          CDVBSubDecoder* pSubDecoder,
+                CDVBSubDecoder* pSubDecoder,
                 HRESULT *phr );
 
   ~CSubtitleInputPin();
@@ -53,7 +53,7 @@ public:
   HRESULT CompleteConnect( IPin *pPin );
   HRESULT BreakConnect();
 
-	void Reset();
+  void Reset();
   void SetSubtitlePid( LONG pPID );
 
   // From CPacketSync
@@ -69,13 +69,13 @@ public:
 
 private:
 
-  CDVBSubDecoder*		m_pSubDecoder;
+  CDVBSubDecoder*   m_pSubDecoder;
   CPesDecoder*      m_pesDecoder;
-	
+  
   LONG  m_SubtitlePid;
 
-  CDVBSub* const    m_pDVBSub;				// Main renderer object
-  CCritSec * const	m_pReceiveLock;   // Sample critical section
+  CDVBSub* const    m_pDVBSub;      // Main renderer object
+  CCritSec * const	m_pReceiveLock; // Sample critical section
   CCritSec* const   m_Lock;	
-  bool				      m_bReset;
+  bool              m_bReset;
 };

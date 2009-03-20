@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -32,39 +32,39 @@ using std::string;
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypesSubtitle =
 {
-	&MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT
+  &MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT
 };
 
 const AMOVIESETUP_PIN sudPins[] =
 {
-	{
-		L"SubtitleIn",				        // Pin string name
-		FALSE,						    // Is it rendered
-		FALSE,						    // Is it an output
-		FALSE,						    // Allowed none
-		FALSE,						    // Likewise many
-		&CLSID_NULL,				  // Connects to filter
-		L"SubtitleIn",				        // Connects to pin
-		1,							      // Number of types
-		&sudPinTypesSubtitle  // Pin information
-	}
+  {
+    L"SubtitleIn",           // Pin string name
+    FALSE,                   // Is it rendered
+    FALSE,                   // Is it an output
+    FALSE,                   // Allowed none
+    FALSE,                   // Likewise many
+    &CLSID_NULL,             // Connects to filter
+    L"SubtitleIn",           // Connects to pin
+    1,                       // Number of types
+    &sudPinTypesSubtitle     // Pin information
+  }
 };
 
 const AMOVIESETUP_FILTER FilterInfo =
 {
-  &CLSID_DVBSub2,		      // Filter CLSID
-  L"MediaPortal DVBSub2",  // String name
-  MERIT_DO_NOT_USE,			  // Filter merit
-  1,										  // Number pins
-  sudPins									  // Pin details
+  &CLSID_DVBSub2,            // Filter CLSID
+  L"MediaPortal DVBSub2",    // String name
+  MERIT_DO_NOT_USE,          // Filter merit
+  1,                         // Number pins
+  sudPins                    // Pin details
 };
 
 
 CFactoryTemplate g_Templates[1] = 
 {
   { 
-    L"MediaPortal DVBSub2",      // Name
-    &CLSID_DVBSub2,              // CLSID
+    L"MediaPortal DVBSub2",     // Name
+    &CLSID_DVBSub2,             // CLSID
     CDVBSub::CreateInstance,    // Method to create an instance of MyComponent
     NULL,                       // Initialization function
     &FilterInfo                 // Set-up information (for filters)
@@ -95,7 +95,7 @@ BOOL APIENTRY DllMain(HANDLE hModule,
                       DWORD  dwReason, 
                       LPVOID lpReserved)
 {
-	LogDebug( "DllMain - called" );
+  LogDebug( "DllMain - called" );
   return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
@@ -104,65 +104,47 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 char *logbuffer=NULL; 
 void GetLogFile(char *pLog)
 {
-  /*OSVERSIONINFO osvi;
-  osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-  GetVersionEx (&osvi);*/
-  
-  // Both Vista and XP are onw using the same logging folders
-  // Vista
-  //if(osvi.dwMajorVersion >= 6) 
-  {
-    TCHAR folder[MAX_PATH];
-    ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBSubs.log",folder);
-  }
-  /*else // XP or earlier
-  {
-  	char moduleFileName[1024];
-	  GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
-	  string logFile=moduleFileName;
-	  logFile=logFile.substr(0, logFile.rfind("\\"));
-	  logFile.append("\\log\\DVBSubs.log");
-    strncpy(pLog, logFile.c_str(), 1024);
-  }*/
+  TCHAR folder[MAX_PATH];
+  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(pLog,"%s\\Team MediaPortal\\MediaPortal\\Log\\DVBSubs.log",folder);
 }
 
 
 void LogDebug(const char *fmt, ...) 
 {
-	va_list ap;
-	va_start(ap,fmt);
+  va_list ap;
+  va_start(ap,fmt);
 
-	char buffer[1000]; 
-	int tmp;
-	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
-	va_end(ap); 
-	SYSTEMTIME systemTime;
-	GetLocalTime(&systemTime);
+  char buffer[1000]; 
+  int tmp;
+  va_start(ap,fmt);
+  tmp=vsprintf(buffer, fmt, ap);
+  va_end(ap); 
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
 
 //#ifdef DONTLOG
   TCHAR filename[1024];
   GetLogFile(filename);
   FILE* fp = fopen(filename,"a+");
 
-	if (fp!=NULL)
-	{
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
-			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			systemTime.wMilliseconds,
-			GetCurrentThreadId(),
-			buffer);
-		fclose(fp);
+  if (fp!=NULL)
+  {
+    fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
+      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+      systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+      systemTime.wMilliseconds,
+      GetCurrentThreadId(),
+      buffer);
+    fclose(fp);
   }
 //#endif
-	char buf[1000];
-	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-		buffer);
-	::OutputDebugString(buf);
+  char buf[1000];
+  sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    buffer);
+  ::OutputDebugString(buf);
 };
 
 //#else
@@ -175,14 +157,14 @@ void LogDebugPTS( const char *fmt, uint64_t pts )
 {
   int h,m,s,u;
 
-	pts /= 90; // Convert to milliseconds
-	h = int( ( pts / ( 1000*60*60 ) ) );
-	m = int( ( pts / ( 1000*60 ) ) - ( h*60 ) );
-	s = int( ( pts/1000 ) - ( h*3600 ) - ( m*60 ) );
-	u = int( pts - ( h*1000*60*60 ) - ( m*1000*60 ) - ( s*1000 ) );
+  pts /= 90; // Convert to milliseconds
+  h = int( ( pts / ( 1000*60*60 ) ) );
+  m = int( ( pts / ( 1000*60 ) ) - ( h*60 ) );
+  s = int( ( pts/1000 ) - ( h*3600 ) - ( m*60 ) );
+  u = int( pts - ( h*1000*60*60 ) - ( m*1000*60 ) - ( s*1000 ) );
 
   sprintf( pts_temp,"%s %d:%02d:%02d%c%03d",fmt,h,m,s,'.',u );
-	LogDebug( pts_temp );
+  LogDebug( pts_temp );
 }
 //#else
 //void LogDebugPTS( const char *fmt, uint64_t pts  ){}
