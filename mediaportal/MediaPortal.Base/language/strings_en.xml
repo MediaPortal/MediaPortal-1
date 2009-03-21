@@ -1489,7 +1489,7 @@
 	<String id="14015">Updates</String>	
 	<String id="14016">Sort by: Download</String>
 	<String id="14017">Sort by: Rating</String>
-	<String id="14018">Install Update</String>		
+	<String id="14018">Install Update</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
@@ -1572,7 +1572,7 @@
     <String id="33002">Scrobble: Neighbours</String>
     <String id="33003">Scrobble: Tags</String>
     <String id="33004">Scrobble: Recently</String>
-    <String id="33005">Account:</String>
+    <String id="33005">Account: </String>
     <String id="33006">Scrobble: Friends</String>
     <String id="33007">Scrobble: Off-line</String>
     <String id="33008">There is no playlist active</String>
@@ -1597,6 +1597,7 @@
     <String id="34002">Friend: </String>
     <String id="34003">Neighbour: </String>
     <String id="34004">Group: </String>
+    <String id="34005">Switch user account</String>
     <String id="34010">Love</String>
     <String id="34011">Ban</String>
     <String id="34012">Skip</String>
@@ -1742,6 +1743,7 @@
     <String id="100761">TV guide</String>
     <String id="100762">Radio guide</String>
     <String id="100770">Explorer</String>
+    <String id="100800" prefix="My ">Extensions</String>
     <String id="101000">keyboard</String>
     <String id="101002">Virtual Standard Keyboard</String>
     <String id="101003">Virtual Web Keyboard</String>
@@ -1785,7 +1787,6 @@
     <String id="107701" prefix="My ">TV/Teletext</String>
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
-    <String id="100800" prefix="My ">Extensions</String>
     <String id="108888">Music menu</String>	
     <String id="109000">MiniDisplay - Setup</String>
     <String id="109001">MiniDisplay - Setup - Backlight</String>

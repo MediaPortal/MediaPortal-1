@@ -49,19 +49,12 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Event delegates
 
     public delegate void PlaylistUpdated(List<Song> songs, string listname, bool playnow);
-
     public event PlaylistUpdated PlaylistUpdateSuccess;
-
     public delegate void PlaylistEmpty(bool playnow);
-
     public event PlaylistEmpty PlaylistUpdateError;
-
     protected delegate void ThreadStartBass(Song starttrack);
-
     protected delegate void ThreadStopPlayer();
-
     protected delegate void ThreadFacadeAddItem(Song songitem);
-
     protected delegate void ThreadUpdateThumb(string thumbpath);
 
     #endregion
@@ -98,9 +91,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _configShowTrayIcon = true;
     private bool _configShowBallonTips = true;
     private bool _configDirectSkip = false;
-    private int _configListEntryCount = 16;
+    private int _configListEntryCount = 24;
     private bool _configOneClickStart = false;
     private bool _configUseSMSInput = true;
+    private List<string> _scrobbleUsers = null;
     private List<string> _usersTopArtists = null;
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
@@ -131,6 +125,30 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void LoadSettings()
     {
+      if (_trayBallonSongChange != null)
+      {
+        _trayBallonSongChange.Visible = true;
+      }
+      if (_usersTopArtists.Count < 1)
+      {
+        btnChooseArtist.Label = GUILocalizeStrings.Get(34032);
+      }
+      if (_usersOwnTags.Count < 1)
+      {
+        // btnChooseTag.Disabled = true;
+        btnChooseTag.Label = GUILocalizeStrings.Get(34030);
+      }
+      if (_usersFriends.Count < 1)
+      {
+        // btnChooseFriend.Disabled = true;
+        btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
+      }
+
+      SetDuration(null, true);
+
+      btnSubmitProfile.Selected = AudioscrobblerBase.IsSubmittingRadioSongs;
+      btnDiscoveryMode.Selected = LastFMStation.DiscoveryMode;
+
       Thread LoadThread = new Thread(new ThreadStart(Worker_LoadSettings));
       LoadThread.IsBackground = true;
       LoadThread.Priority = ThreadPriority.AboveNormal;
@@ -140,31 +158,38 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void Worker_LoadSettings()
     {
-      GUIWaitCursor.Show();
+      try
+      {
+        // Will be stopped on success or error
+        GUIWaitCursor.Show();
 
-      // Do the tasks needed everytime we enter the plugin:
-      string ThumbFileName = String.Empty;
-      if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
-      {
-        // If we leave and reenter the plugin try to set the correct duration
-        SetDuration(AudioscrobblerBase.CurrentPlayingSong, false);
-        ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
-      }
-      // repopulate the facade after maybe exiting the plugin
-      if (facadeRadioPlaylist != null)
-      {
-        facadeRadioPlaylist.Clear();
-        foreach (Song listTrack in _radioTrackList)
+        // Do the tasks needed everytime we enter the plugin:
+        string ThumbFileName = String.Empty;
+        if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
         {
-          GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
+          // If we leave and reenter the plugin try to set the correct duration
+          SetDuration(AudioscrobblerBase.CurrentPlayingSong, false);
+          ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, AudioscrobblerBase.CurrentPlayingSong.Artist);
         }
+        // repopulate the facade after maybe exiting the plugin
+        if (facadeRadioPlaylist != null)
+        {
+          facadeRadioPlaylist.Clear();
+          foreach (Song listTrack in _radioTrackList)
+          {
+            GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl), new object[] { listTrack });
+          }
+        }
+        SetThumbnails(ThumbFileName);
+        _scrobbleUsers = MusicDatabase.Instance.GetAllScrobbleUsers();
+        // Do proper first time initialisation
+        LastFMStation.LoadSettings(!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username);
+        //}
       }
-      SetThumbnails(ThumbFileName);
-
-      // Do proper first time initialisation
-      LastFMStation.LoadSettings(!LastFMStation.IsInit || LastFMStation.AccountUser != AudioscrobblerBase.Username);
-      btnSubmitProfile.Selected = AudioscrobblerBase.IsSubmittingRadioSongs;
-      btnDiscoveryMode.Selected = LastFMStation.DiscoveryMode;
+      catch (Exception ex)
+      {
+        Log.Error("GUIRadioLastFM: Error loading settings - {0}", ex.ToString());
+      }
     }
 
     #endregion
@@ -195,6 +220,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _similarArtistCache = new List<string>(5);
       _trackTagsCache = new List<string>(5);
       _streamSong = new Song();
+      _scrobbleUsers = new List<string>(1);
 
       if (_configShowTrayIcon)
       {
@@ -225,29 +251,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-
-      if (_trayBallonSongChange != null)
-      {
-        _trayBallonSongChange.Visible = true;
-      }
-
-      if (_usersTopArtists.Count < 1)
-      {
-        btnChooseArtist.Label = GUILocalizeStrings.Get(34032);
-      }
-
-      if (_usersOwnTags.Count < 1)
-      {
-        // btnChooseTag.Disabled = true;
-        btnChooseTag.Label = GUILocalizeStrings.Get(34030);
-      }
-      if (_usersFriends.Count < 1)
-      {
-        // btnChooseFriend.Disabled = true;
-        btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
-      }
-
-      SetDuration(null, true);
 
       LoadSettings();
     }
@@ -849,6 +852,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
       dlg.AddLocalizedString(34015); // Reload settings
 
+      if (_scrobbleUsers.Count > 1)
+      {
+        dlg.AddLocalizedString(34005); // Switch user account
+      }
+
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
@@ -899,6 +907,39 @@ namespace MediaPortal.GUI.RADIOLASTFM
           btnChooseTag.Label = GUILocalizeStrings.Get(34030);
           btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
           OnRadioSettingsSuccess();
+          break;
+        case 34005: // Switch user account
+          GUIDialogMenu userdlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+          if (dlg != null)
+          {
+            userdlg.Reset();
+            userdlg.SetHeading(GUILocalizeStrings.Get(497)); //Menu
+            int selected = 0;
+            for (int i = 0; i < _scrobbleUsers.Count; i++)
+            {
+              userdlg.Add(_scrobbleUsers[i]);
+              // preselect the current user
+              if (_scrobbleUsers[i] == AudioscrobblerBase.Username)
+              {
+                selected = i;
+              }
+            }
+            userdlg.SelectedLabel = selected;
+          }
+          userdlg.DoModal(GetID);
+          if (userdlg.SelectedLabel < 0)
+          {
+            return;
+          }
+          if (AudioscrobblerBase.Username != userdlg.SelectedLabelText)
+          {
+            StopPlaybackIfNeed();
+            AudioscrobblerBase.DoChangeUser(userdlg.SelectedLabelText,
+                                            MusicDatabase.Instance.AddScrobbleUserPassword(
+                                              Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(userdlg.SelectedLabelText)), ""));
+
+            LoadSettings();
+          }
           break;
       }
     }

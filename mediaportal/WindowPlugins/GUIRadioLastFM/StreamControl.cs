@@ -34,6 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Playlists;
 using MediaPortal.Utils.Web;
+using MediaPortal.Configuration;
 
 #endregion
 
@@ -218,6 +219,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
 
       _currentUser = AudioscrobblerBase.Username;
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _discoveryMode = xmlreader.GetValueAsBool("audioscrobbler", "discoveryenabled", false);
+      }
 
       if (_currentUser.Length > 0)
       {
@@ -340,7 +345,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       get { return _discoveryMode; }
 
-      set { value = _discoveryMode; }
+      set
+      {
+        _discoveryMode = value;
+        // TODO: add proper multi-user setting...
+        using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          xmlwriter.SetValueAsBool("audioscrobbler", "discoveryenabled", _discoveryMode);
+        }
+      }
     }
 
     public int DiscoveryEnabledInt

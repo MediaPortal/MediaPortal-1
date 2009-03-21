@@ -1488,7 +1488,8 @@
     <String id="14014">Aktualisiere Online Informationen</String>
     <String id="14015">Aktualisierungen</String>
 	<String id="14016">Sortiere: Downloads</String>
-	<String id="14017">Sortiere: Bewertung</String>    
+	<String id="14017">Sortiere: Bewertung</String>
+	<String id="14018">Aktualisierung installieren</String>  
     <String id="16001">Partymix</String>
     <String id="19001" prefix="Mein ">Tetris</String>
     <String id="19002">Neues Spiel</String>
@@ -1596,6 +1597,7 @@
     <String id="34002">Freund: </String>
     <String id="34003">Nachbar: </String>
     <String id="34004">Gruppe: </String>
+    <String id="34005">Zu anderem Benutzer wechseln</String>
     <String id="34010">Lieben</String>
     <String id="34011">Bannen</String>
     <String id="34012">Nächster Titel</String>
@@ -1741,6 +1743,7 @@
     <String id="100761" prefix="Mein ">TV-Programm</String>
     <String id="100762" prefix="Mein ">Radio-Programm</String>
     <String id="100770" prefix="Mein ">Datei-Manager</String>
+    <String id="100800" prefix="Meine ">Erweiterungen</String>
     <String id="101000">Tastatur</String>
     <String id="101002">Standard Bildschirm-Tastatur</String>
     <String id="101003">Web Bildschirm-Tastatur</String>
