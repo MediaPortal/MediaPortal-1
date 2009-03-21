@@ -292,6 +292,10 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>Complete filename of the configuration file</returns>
     private static String GetFileName(string name, int cardId)
     {
+      foreach (char invalidCharacter in Path.GetInvalidFileNameChars())
+      {
+        name = name.Replace(invalidCharacter.ToString(), "");
+      }
       String pathName = Log.Log.GetPathName();
       String fileName = String.Format(@"{0}\AnalogCard\Configuration-{1}-{2}.xml", pathName, cardId, name);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
