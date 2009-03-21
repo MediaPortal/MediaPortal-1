@@ -336,7 +336,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
 
           //set flag to false so we dont keep compensating
-          m_pTsReaderFilter->m_bStreamCompensated = true ;
+          m_pTsReaderFilter->m_bStreamCompensated = true;
+          m_bSubtitleCompensationSet = false;
         }
 
         // Subtitle filter is "found" only after Run() has been completed
