@@ -20,6 +20,7 @@
  */
 
 using System;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
 
@@ -116,19 +117,32 @@ namespace TvService
       if (!context.DoesExists(user))
         return;
 
-      Log.Info("card: remove user:{0} sub:{1}", user.Name, user.SubChannel);
-      context.GetUser(ref user);
-      context.Remove(user);
-      if (context.ContainsUsersForSubchannel(user.SubChannel) == false)
+      int subChannelId;
+      context.GetUser(ref user, out subChannelId);
+      if (subChannelId != -1)
       {
-        //only remove subchannel if it exists.
-        if (_cardHandler.Card.GetSubChannel(user.SubChannel) != null)
+        Log.Info("card: remove user:{0} sub:{1}", user.Name, subChannelId);
+        context.Remove(user);
+        if (!context.ContainsUsersForSubchannel(subChannelId))
         {
-          Log.Info("card: free subchannel sub:{0}", user.SubChannel);
-          _cardHandler.Card.FreeSubChannel(user.SubChannel);
+          //only remove subchannel if it exists.
+          if (_cardHandler.Card.GetSubChannel(subChannelId) != null)
+          {
+            // Before we remove the subchannel we have to stop it
+            ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(subChannelId);
+            if (subChannel.IsTimeShifting)
+            {
+              subChannel.StopTimeShifting();
+            }
+            else if (subChannel.IsRecording)
+            {
+              subChannel.StopRecording();
+            }
+            Log.Info("card: free subchannel sub:{0}", subChannelId);
+            _cardHandler.Card.FreeSubChannel(subChannelId);
+          }
         }
       }
-
       if (_cardHandler.IsIdle)
       {
         _cardHandler.Card.StopGraph();

@@ -205,6 +205,27 @@ namespace TvService
     /// Gets the user.
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name=param name="subChannelId">The subchannel ID of the found user</param>
+    public void GetUser(ref User user, out int subChannelId)
+    {
+      foreach (User existingUser in _users)
+      {
+        if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
+        {
+          TvStoppedReason reason = user.TvStoppedReason;
+          user = (User)existingUser.Clone();
+          user.TvStoppedReason = reason;
+          subChannelId = existingUser.SubChannel;
+          return;
+        }
+      }
+      subChannelId = -1;
+    }
+
+    /// <summary>
+    /// Gets the user.
+    /// </summary>
+    /// <param name="user">The user.</param>
     /// <param name="exists">User exists</param>
     public void GetUser(ref User user, out bool exists)
     {
