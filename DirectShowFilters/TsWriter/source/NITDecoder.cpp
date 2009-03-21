@@ -28,7 +28,6 @@ CNITDecoder::CNITDecoder(void)
 {
 	SetPid(PID_NIT);
   EnableCrcCheck(false);
-	m_lastNetworkId = 0;
 }
 
 CNITDecoder::~CNITDecoder(void)
@@ -59,7 +58,6 @@ void CNITDecoder::Reset()
   m_nit.cableNIT.clear();
   m_nit.terrestialNIT.clear();
   m_nit.lcnNIT.clear();
-	m_lastNetworkId = 0;
 }
 int CNITDecoder::GetLogicialChannelNumber(int networkId, int transportId, int serviceId)
 {
@@ -74,11 +72,6 @@ int CNITDecoder::GetLogicialChannelNumber(int networkId, int transportId, int se
 		}
 	}
 	return 10000;
-}
-
-long CNITDecoder::GetLastNetworkId() const
-{
-	return m_lastNetworkId;
 }
 
 void  CNITDecoder::decodeNITTable(byte* buf)
@@ -121,11 +114,6 @@ void  CNITDecoder::decodeNITTable(byte* buf)
 		section_number = buf[6];
 		last_section_number = buf[7];
 		network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
-
-    if (m_lastNetworkId != 0 && m_lastNetworkId != network_id)
-			LogDebug("Unexpected: Received a new NID (%d -> %d)", m_lastNetworkId, network_id);
-
-    m_lastNetworkId = network_id;
 
 		//LogDebug("NIT section len:%d network_descriptor_length :%d", section_length,network_descriptor_length);
 		l1 = network_descriptor_length;

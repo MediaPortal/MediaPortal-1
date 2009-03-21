@@ -94,7 +94,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
 		  {					
         CChannelInfo info;
 			  DVB_GetService(section+pointer,info);
-        //info.NetworkId=original_network_id;
+        info.NetworkId=original_network_id;
 				info.TransportId=sections.table_id_extension;
         info.ServiceId=service_id;
         info.FreeCAMode=free_CA_mode;

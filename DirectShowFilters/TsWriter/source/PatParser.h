@@ -66,7 +66,6 @@ private:
   CVirtualChannelTableParser m_vctParser;
   CSdtParser                 m_sdtParser;
 	CNITDecoder                m_nitDecoder;
-	long											 m_currentNetworkId;
 
   void                       CleanUp();
 	void											 AnalyzePidInfo(vector<PidInfo2> pidInfo,int &hasVideo, int &hasAudio);
