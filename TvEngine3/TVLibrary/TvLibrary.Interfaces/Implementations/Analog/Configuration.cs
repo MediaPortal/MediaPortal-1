@@ -206,29 +206,28 @@ namespace TvLibrary.Implementations.Analog
             {
               tempValue = 0;
             }
-            _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE) tempValue;
+            _configuration.PlaybackQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
             tempValue = int.Parse(tempNode.Attributes["type"].Value);
             if (tempValue < 1 || tempValue > 6)
             {
               tempValue = 1;
             }
-            _configuration.PlaybackQualityType = (QualityType) tempValue;
+            _configuration.PlaybackQualityType = (QualityType)tempValue;
             tempNode = node.SelectSingleNode("record");
             tempValue = int.Parse(tempNode.Attributes["mode"].Value);
             if (tempValue < 0 || tempValue > 2)
             {
               tempValue = 0;
             }
-            _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE) tempValue;
+            _configuration.RecordQualityMode = (VIDEOENCODER_BITRATE_MODE)tempValue;
             tempValue = int.Parse(tempNode.Attributes["type"].Value);
             if (tempValue < 1 || tempValue > 6)
             {
               tempValue = 1;
             }
-            _configuration.RecordQualityType = (QualityType) tempValue;
+            _configuration.RecordQualityType = (QualityType)tempValue;
           }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");
           Log.Log.Write(e);
@@ -250,7 +249,7 @@ namespace TvLibrary.Implementations.Analog
       XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
-      writer.IndentChar = (char) 9;
+      writer.IndentChar = (char)9;
       writer.WriteStartDocument(true);
       writer.WriteStartElement("configuration"); //<configuration>
       writer.WriteAttributeString("version", "1");
@@ -266,12 +265,12 @@ namespace TvLibrary.Implementations.Analog
       writer.WriteAttributeString("peakValue", XmlConvert.ToString(configuration.CustomPeakQualityValue));
       writer.WriteEndElement(); //</customSettings>
       writer.WriteStartElement("playback"); //<playback>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.PlaybackQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.PlaybackQualityType));
+      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.PlaybackQualityMode));
+      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.PlaybackQualityType));
       writer.WriteEndElement(); //</playback>
       writer.WriteStartElement("record"); //<record>
-      writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.RecordQualityMode));
-      writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.RecordQualityType));
+      writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.RecordQualityMode));
+      writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.RecordQualityType));
       writer.WriteEndElement(); //</record>
       writer.WriteEndElement(); //</qualityControl>
       writer.WriteEndElement(); //</card>
@@ -292,9 +291,12 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>Complete filename of the configuration file</returns>
     private static String GetFileName(string name, int cardId)
     {
-      foreach (char invalidCharacter in Path.GetInvalidFileNameChars())
+      if (!string.IsNullOrEmpty(name))
       {
-        name = name.Replace(invalidCharacter.ToString(), "");
+        foreach (char invalidCharacter in Path.GetInvalidFileNameChars())
+        {
+          name = name.Replace(invalidCharacter.ToString(), "");
+        }
       }
       String pathName = Log.Log.GetPathName();
       String fileName = String.Format(@"{0}\AnalogCard\Configuration-{1}-{2}.xml", pathName, cardId, name);
