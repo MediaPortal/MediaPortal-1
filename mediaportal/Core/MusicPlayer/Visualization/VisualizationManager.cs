@@ -307,7 +307,7 @@ namespace MediaPortal.Visualization
                   }
               }
 
-              if (soniqueVisPaths != null)
+              if (soniqueVisPaths != null && soniqueVisPaths[0] != "")
               {
                   BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
                   _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_SONIQUE);
@@ -332,7 +332,7 @@ namespace MediaPortal.Visualization
                   BassVis.BASS_VIS_Quit(_visParam);
               }
 
-              if (winampVisPaths != null)
+              if (winampVisPaths != null && winampVisPaths[0] != "")
               {
                   BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VizRenderWindow.Handle);
                   _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
