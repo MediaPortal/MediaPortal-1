@@ -117,7 +117,6 @@ CTechnotrend::CTechnotrend(LPUNKNOWN pUnk, HRESULT *phr)
   m_deviceType      = UNKNOWN;
 	m_ciSlotAvailable = 0;
   m_ciStatus        = -1;
-	m_waitTimeout     = 0;
   m_dll             = NULL;
   m_verboseLogging  = false; // Log extended information?
 }
@@ -445,12 +444,7 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_ciSlotAvailable == 1 && 
-      (
-        (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) || // usual internal card/ci
-        (m_deviceType==USB_2 && m_slotStatus==CI_SLOT_MODULE_INSERTED)      // usb box TT 3650 CT only tells "module inserted"
-       )
-     )
+  if (m_ciSlotAvailable == 1 && (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK))
   {
     *yesNo=TRUE;
   }
@@ -583,17 +577,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
     LogDebug("TechnoTrend: DescrambleMultiple: serviceId:%d", pNrs[i]);
   }
 
-	// Workaround for first time initialisation of ci slot
-	// Problem: may cause slow down of channel change, when no CI is available
-	int iRetryLoop=0;
-	while (m_waitTimeout==0 && m_slotStatus==CI_SLOT_UNKNOWN_STATE && iRetryLoop<=10) {
-		//unknown status
-		if (m_verboseLogging) LogDebug("TechnoTrend: Wait for CI slot status, current slot status: %x; try %d; Sleep 100", m_slotStatus, iRetryLoop);
-		iRetryLoop++; 
-		Sleep(100);
-	}	// loop
-
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || (m_deviceType==USB_2 && m_slotStatus==CI_SLOT_MODULE_INSERTED)) // || m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
   {
     BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"bdaapiCIMultiDecode");
     if (readPSI!=NULL)
@@ -609,7 +593,6 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
         }
         else
         {
-          //*succeeded=TRUE;
 				  *succeeded=FALSE;
 					LogDebug("TechnoTrend: services not decoded:%x ciStatus: %d",hr,m_ciStatus);
         }
@@ -624,13 +607,20 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
       LogDebug("TechnoTrend: unable to get proc adress of bdaapiCIMultiDecode");
     }
   }
-  else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE || m_slotStatus==CI_SLOT_EMPTY)
+  else if (m_slotStatus==CI_SLOT_UNKNOWN_STATE)
   {
-		//still no valid state? don't try next time!
-		m_waitTimeout=1;
-    //no CAM inserted
-    LogDebug("TechnoTrend: no cam detected:%d",m_slotStatus);
-    *succeeded=TRUE;
+    LogDebug("TechnoTrend: CI slot state unknown");
+    *succeeded=FALSE; // to allow retry from ConditionalAccess
+  }
+  else if (m_slotStatus==CI_SLOT_MODULE_INSERTED)
+  {
+    LogDebug("TechnoTrend: CI module inserted but not yet ready");
+    *succeeded=FALSE; // to allow retry from ConditionalAccess
+  }
+  else if (m_slotStatus==CI_SLOT_EMPTY)
+  {
+    LogDebug("TechnoTrend: no cam detected, slot empty");
+    *succeeded=TRUE; //no CAM inserted, no retry
   }
   return S_OK;
 }
