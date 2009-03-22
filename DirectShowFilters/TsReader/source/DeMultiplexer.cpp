@@ -906,6 +906,16 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   FillTeletext(header,tsPacket);
 }
 
+/// Validate TS packet discontinuity 
+bool CDeMultiplexer::CheckContinuity(int prevCC, CTsHeader& header)
+{
+  if ((prevCC !=-1 ) && (prevCC != ((header.ContinuityCounter - 1) & 0x0F)))
+  {
+    return false;
+  }
+  return true;
+}
+
 /// This method will check if the tspacket is an audio packet
 /// ifso, it decodes the PES audio packet and stores it in the audio buffers
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
@@ -916,16 +926,15 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   m_audioPid= m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
   if (m_filter.GetAudioPin()->IsConnected()==false) return;
-//  if ( header.AdaptionFieldOnly() ) return;
+  if ( header.AdaptionFieldOnly() )return;
 
-  if ((m_AudioPrevCC !=-1 ) && (m_AudioPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
+  if(!CheckContinuity(m_AudioPrevCC, header))
   {
-    LogDebug("Audio Continuity error... %x ( prev %x )", header.ContinuityCounter, m_AudioPrevCC) ;
-    m_AudioValidPES = m_DisableDiscontinuitiesFiltering ;
+    LogDebug("Audio Continuity error... %x ( prev %x )", header.ContinuityCounter, m_AudioPrevCC);
+    m_AudioValidPES = m_DisableDiscontinuitiesFiltering;  
   }
-  m_AudioPrevCC = header.ContinuityCounter ;
 
-  if ( header.AdaptionFieldOnly() ) return;
+  m_AudioPrevCC = header.ContinuityCounter;
 
   CAutoLock lock (&m_sectionAudio);
   //does tspacket contain the start of a pes packet?
@@ -1074,16 +1083,16 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   if (m_pids.VideoPid==0) return;
   if (header.Pid!=m_pids.VideoPid) return;
 //  if (m_filter.GetVideoPin()->IsConnected()==false) return;
-//  if ( header.AdaptionFieldOnly() ) return;
 
-  if ((m_VideoPrevCC !=-1 ) && (m_VideoPrevCC != ((header.ContinuityCounter - 1) & 0x0F)))
+  if ( header.AdaptionFieldOnly() )return;
+
+  if(!CheckContinuity(m_VideoPrevCC, header))
   {
-    LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC) ;
-    m_VideoValidPES = m_DisableDiscontinuitiesFiltering ;
+    LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC);
+    m_VideoValidPES = m_DisableDiscontinuitiesFiltering;  
   }
-  m_VideoPrevCC = header.ContinuityCounter ;
 
-  if ( header.AdaptionFieldOnly() ) return;
+  m_VideoPrevCC = header.ContinuityCounter;
 
   CAutoLock lock (&m_sectionVideo);
   //does tspacket contain the start of a pes packet?
@@ -1118,11 +1127,13 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 //          m_lastVideoPTS=pts;
           if (diff>10.0)
           {
-						LogDebug("DeMultiplexer::FillVideo pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
-						m_VideoValidPES=false ;
-					}
-					else
-	          m_lastVideoPTS=pts;
+            LogDebug("DeMultiplexer::FillVideo pts jump found : %f %f, %f", (float) diff, (float)pts.ToClock(), (float)m_lastVideoPTS.ToClock());
+            m_VideoValidPES=false ;
+          }
+          else
+          {
+	        m_lastVideoPTS=pts;
+          }
 
           Cbuf->SetPts(pts);
 
@@ -1224,7 +1235,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
           }
           else
           {
-              (*it)->SetFrameType('?');
+            (*it)->SetFrameType('?');
             (*it)->SetFrameCount(0);
             for (; offset < 1000; offset++)
             {
@@ -1294,6 +1305,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
           { 
             ivecBuffers it ;
             it = m_t_vecVideoBuffers.begin() ;
+
             if (Gop || m_bIframeFound)
             {
               CRefTime Ref ;

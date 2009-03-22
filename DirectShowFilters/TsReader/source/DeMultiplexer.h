@@ -52,6 +52,7 @@ public:
   void       OnNewChannel(CChannelInfo& info);
   void       SetFileReader(FileReader* reader);
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
+  bool       CheckContinuity(int prevCC, CTsHeader& header);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillTeletext(CTsHeader& header, byte* tsPacket);
