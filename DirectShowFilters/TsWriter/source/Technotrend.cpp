@@ -445,7 +445,12 @@ STDMETHODIMP CTechnotrend::IsTechnoTrend( BOOL* yesNo)
 STDMETHODIMP CTechnotrend::IsCamReady( BOOL* yesNo)
 {
   *yesNo=FALSE;
-  if (m_ciSlotAvailable == 1 && (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK)) // ||m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_ciSlotAvailable == 1 && 
+      (
+        (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) || // usual internal card/ci
+        (m_deviceType==USB_2 && m_slotStatus==CI_SLOT_MODULE_INSERTED)      // usb box TT 3650 CT only tells "module inserted"
+       )
+     )
   {
     *yesNo=TRUE;
   }
@@ -588,7 +593,7 @@ STDMETHODIMP CTechnotrend::DescrambleMultiple(WORD* pNrs, int NrOfOfPrograms,BOO
 		Sleep(100);
 	}	// loop
 
-  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK) // || m_slotStatus==CI_SLOT_DBG_MSG)
+  if (m_slotStatus==CI_SLOT_CA_OK || m_slotStatus==CI_SLOT_MODULE_OK || (m_deviceType==USB_2 && m_slotStatus==CI_SLOT_MODULE_INSERTED)) // || m_slotStatus==CI_SLOT_DBG_MSG)
   {
     BDAAPICIMULTIDECODE readPSI=(BDAAPICIMULTIDECODE)GetProcAddress(m_dll,"bdaapiCIMultiDecode");
     if (readPSI!=NULL)
