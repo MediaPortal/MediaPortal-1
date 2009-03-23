@@ -65,13 +65,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       keySql.Close();
 
       keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
-                                         "\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll");
+                                         "\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
       if (keySql == null)
       {
         return;
       }
       keySql.SetValue("TcpPort", "1433");
-      keySql.SetValue("TcpDynamicPorts", string.Empty);
+      keySql.DeleteValue("TcpDynamicPorts");
+      keySql.Close();
     }
 
     public string GetDisplayName()
