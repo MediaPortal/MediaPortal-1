@@ -16,7 +16,7 @@
       <id>0</id>
       <posX>60</posX>
       <posY>10</posY>
-      <texture>television_logo-.png</texture>
+      <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

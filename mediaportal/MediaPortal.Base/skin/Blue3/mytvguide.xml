@@ -18,7 +18,7 @@
       <posY>520</posY>
       <width>60</width>
       <height>60</height>
-      <texture>hover_my tv-.png</texture>
+      <texture>hover_my tv.png</texture>
     </control>
     <control>
       <description>Date</description>

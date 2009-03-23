@@ -10,7 +10,7 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.bmp</texture>
+      <texture>black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>

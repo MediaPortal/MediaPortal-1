@@ -82,7 +82,7 @@
           <imageFolderFocus>Picture_cover.png</imageFolderFocus>
           <frame>Picture_cover.png</frame>
           <frameFocus>Picture_cover.png</frameFocus>
-          <background>Coverbig.png</background>
+          <background>emtpy.png</background>
           <thumbs flipY="true" diffuse="Thumb_Mask.png">
           </thumbs>
           <InfoImage flipY="true" diffuse="Thumb_Mask.png">

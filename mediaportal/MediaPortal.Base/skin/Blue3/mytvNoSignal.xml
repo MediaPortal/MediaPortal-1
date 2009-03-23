@@ -22,7 +22,7 @@
       <posY>480</posY>
       <width>200</width>
       <height>5</height>
-      <texturebg>osd_progress_back.png</texturebg>
+      <texturebg>osd_progress_background.png</texturebg>
       <label />
     </control>
     <control>

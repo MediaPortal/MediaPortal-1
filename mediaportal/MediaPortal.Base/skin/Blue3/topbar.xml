@@ -8,7 +8,7 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <texture>background_bar--.png</texture>
+      <texture>empty.png</texture>
     </control>
      <control>
       <description>group element</description>

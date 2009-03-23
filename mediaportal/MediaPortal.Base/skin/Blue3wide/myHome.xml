@@ -64,7 +64,7 @@
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
       <scrollTime>120</scrollTime>
       <scrollTimeMin>60</scrollTimeMin>
-      <textureBackground>background_glass_menu_area-.png</textureBackground>
+      <textureBackground>emtpy.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
     </control>

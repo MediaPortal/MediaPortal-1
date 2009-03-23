@@ -14,7 +14,7 @@
             <type>image</type>
             <description>Playing_back</description>
             <id>0</id>
-            <texture>Playing_back1.png</texture>
+            <texture>playing_back.png</texture>
         </control>
         <control>
             <description>music logo</description>
@@ -33,7 +33,7 @@
             <type>image</type>
             <description>Playing_back</description>
             <id>0</id>
-            <texture>Playing_front1.png</texture>
+            <texture>playing_front.png</texture>
         </control>
         <control>
             <type>image</type>

@@ -43,7 +43,7 @@
       <id>0</id>
       <posX>60</posX>
       <posY>20</posY>
-      <texture flipY="true" diffuse="Thumb_Mask.png">radio_logo.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">hover_LastFmRadio.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

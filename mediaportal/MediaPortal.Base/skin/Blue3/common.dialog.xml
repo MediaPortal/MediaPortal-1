@@ -6,7 +6,7 @@
       <id>0</id>
       <width>720</width>
       <height>576</height>
-      <texture>black.bmp</texture>
+      <texture>black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>

@@ -22,7 +22,7 @@
             <width>155</width>
             <height>155</height>
             <visible>player.hasmedia</visible>
-            <texture flipY="true" diffuse="Thumb_Mask.png">hover_last.fm radio.png</texture>
+            <texture flipY="true" diffuse="Thumb_Mask.png">hover_LastFmRadio.png</texture>
             <animation effect="fade" time="250">WindowOpen</animation>
             <animation effect="fade" time="250">WindowClose</animation>
         </control>
