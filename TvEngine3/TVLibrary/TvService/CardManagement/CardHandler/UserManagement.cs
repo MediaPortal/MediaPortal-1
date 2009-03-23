@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.IO;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
@@ -140,12 +141,44 @@ namespace TvService
             }
             Log.Info("card: free subchannel sub:{0}", subChannelId);
             _cardHandler.Card.FreeSubChannel(subChannelId);
+            CleanTimeShiftFiles(_cardHandler.DataBaseCard.TimeShiftFolder, String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard, subChannelId));
           }
         }
       }
       if (_cardHandler.IsIdle)
       {
         _cardHandler.Card.StopGraph();
+      }
+    }
+
+    /// <summary>
+    /// deletes time shifting files left in the specified folder.
+    /// </summary>
+    /// <param name="folder">The folder.</param>
+    /// <param name="fileName">Name of the file.</param>
+    static void CleanTimeShiftFiles(string folder, string fileName)
+    {
+      try
+      {
+        Log.Write(@"card: delete timeshift files {0}\{1}", folder, fileName);
+        string[] files = Directory.GetFiles(folder);
+        for (int i = 0; i < files.Length; ++i)
+        {
+          if (files[i].IndexOf(fileName) >= 0)
+          {
+            try
+            {
+              Log.Write("card:   delete {0}", files[i]);
+              File.Delete(files[i]);
+            } catch (Exception)
+            {
+              Log.Error("card: Error on delete in CleanTimeshiftFiles");
+            }
+          }
+        }
+      } catch (Exception ex)
+      {
+        Log.Write(ex);
       }
     }
 
