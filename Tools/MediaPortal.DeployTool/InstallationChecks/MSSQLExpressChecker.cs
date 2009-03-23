@@ -43,7 +43,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("Options", "USERNAME", "MediaPortal", iniFile);
       WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
       WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
-      WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
       WritePrivateProfileString("Options", "ADDLOCAL", "ALL", iniFile);
       WritePrivateProfileString("Options", "INSTANCENAME", "SQLEXPRESS", iniFile);
       WritePrivateProfileString("Options", "SQLBROWSERAUTOSTART", "1", iniFile);
@@ -51,6 +50,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("Options", "SECURITYMODE", "SQL", iniFile);
       WritePrivateProfileString("Options", "SAPWD", InstallationProperties.Instance["DBMSPassword"], iniFile);
       WritePrivateProfileString("Options", "DISABLENETWORKPROTOCOLS", "0", iniFile);
+    }
+
+    private static void FixTcpPort()
+    {
+      RegistryKey keySql =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
+                                         "\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      if (keySql == null)
+      {
+        return;
+      }
+      string instanceSQL = (string)keySql.GetValue("SQLEXPRESS");
+      keySql.Close();
+
+      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\" + InstallationProperties.Instance["RegistryKeyAdd"] +
+                                         "\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll");
+      if (keySql == null)
+      {
+        return;
+      }
+      keySql.SetValue("TcpPort", "1433");
+      keySql.SetValue("TcpDynamicPorts", string.Empty);
     }
 
     public string GetDisplayName()
@@ -93,6 +114,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
           if (setup.ExitCode == 0)
           {
             Directory.Delete(tmpPath, true);
+            FixTcpPort();
             return true;
           }
           return false;
