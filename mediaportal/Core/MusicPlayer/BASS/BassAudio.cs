@@ -37,6 +37,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
+using MediaPortal.TagReader;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
@@ -252,6 +253,7 @@ namespace MediaPortal.Player
 
     private SYNCPROC PlaybackFadeOutProcDelegate = null;
     private SYNCPROC PlaybackEndProcDelegate = null;
+    private SYNCPROC CueTrackEndProcDelegate = null;
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
     private SYNCPROC MetaTagSyncProcDelegate = null;
 
@@ -336,6 +338,13 @@ namespace MediaPortal.Player
 
     private StreamCopy _streamcopy;
 
+    // CUE Support
+    private string currentCueFileName = null;
+    private string currentCueFakeTrackFileName = null;
+    private CueSheet currentCueSheet = null;
+    private float cueTrackStartPos = 0;
+    private float cueTrackEndPos = 0;
+    private int cueTrackEndEventHandler;
     #endregion
 
     #region Properties
@@ -363,6 +372,14 @@ namespace MediaPortal.Player
         }
 
         double duration = (double) GetTotalStreamSeconds(stream);
+        if (currentCueSheet != null && (cueTrackEndPos > 0 || cueTrackEndPos > 0))
+        {
+          if (cueTrackEndPos > 0)
+          {
+            duration = cueTrackEndPos;
+          }
+          duration -= cueTrackStartPos;
+        }
         return duration;
       }
     }
@@ -388,6 +405,10 @@ namespace MediaPortal.Player
         //  pos -= _lastFMSongStartPosition;
 
         double curPosition = (double) Bass.BASS_ChannelBytes2Seconds(stream, pos); // the elapsed time length
+        if (currentCueSheet != null && cueTrackStartPos > 0)
+        {
+          curPosition -= cueTrackStartPos;
+        }
         return curPosition;
       }
     }
@@ -437,7 +458,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override string CurrentFile
     {
-      get { return FilePath; }
+      get { return (currentCueSheet != null ? currentCueFakeTrackFileName : FilePath); }
     }
 
     /// <summary>
@@ -834,6 +855,7 @@ namespace MediaPortal.Player
 
         PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
         PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
+        CueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
         PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
         MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
 
@@ -1542,6 +1564,27 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Sets the End Position for the CUE Track
+    /// </summary>
+    /// <param name="stream"></param>
+    private void setCueTrackEndPosition(int stream)
+    {
+      if (currentCueSheet != null)
+      {
+        if (cueTrackEndEventHandler != 0)
+        {
+          Bass.BASS_ChannelRemoveSync(stream, cueTrackEndEventHandler);
+        }
+
+        Bass.BASS_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, cueTrackStartPos));
+        if (cueTrackEndPos > cueTrackStartPos)
+        {
+          cueTrackEndEventHandler = RegisterCueTrackEndEvent(stream, CurrentStreamIndex, Bass.BASS_ChannelSeconds2Bytes(stream, cueTrackEndPos));
+        }
+      }
+    }
+
+    /// <summary>
     /// Starts Playback of the given file
     /// </summary>
     /// <param name="filePath"></param>
@@ -1593,6 +1636,48 @@ namespace MediaPortal.Player
             }
 
             return result;
+          }
+        }
+        else
+        {
+          // Cue support
+          cueTrackStartPos = 0;
+          cueTrackEndPos = 0;
+
+          if (CueUtil.isCueFakeTrackFile(filePath))
+          {
+            Log.Debug("BASS: Playing CUE Track: {0}", filePath);
+            currentCueFakeTrackFileName = filePath;
+            CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
+            if (!cueFakeTrack.CueFileName.Equals(currentCueFileName))
+            {
+              currentCueSheet = new CueSheet(cueFakeTrack.CueFileName);
+              currentCueFileName = cueFakeTrack.CueFileName;
+            }
+
+            Track track = currentCueSheet.Tracks[cueFakeTrack.TrackNumber - 1];
+            Index index = track.Indices[0];
+            cueTrackStartPos = CueUtil.cueIndexToFloatTime(index);
+
+            if (currentCueSheet.Tracks.Length > track.TrackNumber)
+            {
+              Track nextTrack = currentCueSheet.Tracks[cueFakeTrack.TrackNumber];
+              Index nindex = nextTrack.Indices[0];
+              cueTrackEndPos = CueUtil.cueIndexToFloatTime(nindex);
+            }
+
+            string tmpFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
+            if (tmpFilePath.CompareTo(FilePath) == 0 && StreamIsPlaying(stream))
+            {
+              setCueTrackEndPosition(stream);
+              return true;
+            }
+            filePath = tmpFilePath;
+          }
+          else
+          {
+            currentCueFileName = null;
+            currentCueSheet = null;
           }
         }
 
@@ -1799,11 +1884,13 @@ namespace MediaPortal.Player
           {
             if (Bass.BASS_ChannelIsActive(_mixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
+              setCueTrackEndPosition(stream);
               playbackStarted = true;
             }
             else
             {
               playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+              setCueTrackEndPosition(stream);
             }
           }
           else if (_useASIO)
@@ -1836,16 +1923,19 @@ namespace MediaPortal.Player
 
             if (BassAsio.BASS_ASIO_IsStarted())
             {
+              setCueTrackEndPosition(stream); 
               playbackStarted = true;
             }
             else
             {
               BassAsio.BASS_ASIO_Stop();
               playbackStarted = BassAsio.BASS_ASIO_Start(0);
+              setCueTrackEndPosition(stream);
             }
           }
           else
           {
+            setCueTrackEndPosition(stream); 
             playbackStarted = Bass.BASS_ChannelPlay(stream, false);
           }
 
@@ -2029,6 +2119,28 @@ namespace MediaPortal.Player
 
       return syncHandle;
     }
+
+    /// <summary>
+    /// REgister the CUE file TRack End Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="streamIndex"></param>
+    /// <param name="endPos"></param>
+    /// <returns></returns>
+    private int RegisterCueTrackEndEvent(int stream, int streamIndex, long endPos)
+    {
+      int syncHandle = 0;
+
+      syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS, endPos, CueTrackEndProcDelegate, IntPtr.Zero);
+
+      if (syncHandle == 0)
+      {
+        Log.Debug("BASS: RegisterPlaybackCueTrackEndEvent of stream {0} failed with error {1}", stream, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      }
+
+      return syncHandle;
+    }
+
 
     /// <summary>
     /// Unregister the Playback Events
@@ -2224,6 +2336,36 @@ namespace MediaPortal.Player
           Streams[i] = 0;
           break;
         }
+      }
+    }
+
+    /// <summary>
+    /// CUE Track End Procedure
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
+    private void CueTrackEndProc(int handle, int stream, int data, IntPtr userData)
+    {
+      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
+
+      if (_CrossFadeIntervalMS > 0)
+      {
+        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
+
+      if (CrossFade != null)
+      {
+        CrossFade(this, FilePath);
+      }
+
+      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
+      if (removed)
+      {
+        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in CueTrackEndProc");
       }
     }
 
@@ -2703,6 +2845,10 @@ namespace MediaPortal.Player
 
         if (StreamIsPlaying(stream))
         {
+          if (currentCueSheet != null)
+          {
+            position += (int)cueTrackStartPos;
+          }
           if (_Mixing)
           {
             BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, position));

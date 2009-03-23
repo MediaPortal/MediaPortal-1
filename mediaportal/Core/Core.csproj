@@ -340,6 +340,12 @@
     <Compile Include="Player\TeletextSubtitles\TextConversion.cs" />
     <Compile Include="Player\TSHeader.cs" />
     <Compile Include="Player\TSReaderPlayer.cs" />
+    <Compile Include="TagReader\CUE\CueFakeTrack.cs" />
+    <Compile Include="TagReader\CUE\CueSharp.cs" />
+    <Compile Include="TagReader\CUE\CueTrackFileGUIListItemBuilder.cs" />
+    <Compile Include="TagReader\CUE\CueTrackFileStringBuilder.cs" />
+    <Compile Include="TagReader\CUE\CueUtil.cs" />
+    <Compile Include="TagReader\CUE\ICueTrackFileBuilder.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
     <Compile Include="Transcoding\TSReader2WMV.cs" />

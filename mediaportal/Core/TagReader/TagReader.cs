@@ -65,6 +65,19 @@ namespace MediaPortal.TagReader
       if (!IsAudio(strFile))
         return null;
 
+      // Read Cue info
+      if (CueUtil.isCueFakeTrackFile(strFile))
+      {
+        try
+        {
+          return CueUtil.CueFakeTrackFile2MusicTag(strFile);
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("TagReader: Exception reading file {0}. {1}", strFile, ex.Message);
+        }
+      }
+
       char[] trimChars = { ' ', '\x00' };
 
       try

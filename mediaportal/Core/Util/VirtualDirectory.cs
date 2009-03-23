@@ -31,6 +31,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
+using MediaPortal.TagReader;
 
 using EnterpriseDT.Net.Ftp;
 using System.Threading;
@@ -1185,6 +1186,9 @@ namespace MediaPortal.Util
         }
 
         HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
+        
+        // CUE Filter
+        items = (List<GUIListItem>)CueUtil.CUEFileListFilter<GUIListItem>(items, CueUtil.CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER);
       }
       m_strPreviousDir = strDir;
       return items;

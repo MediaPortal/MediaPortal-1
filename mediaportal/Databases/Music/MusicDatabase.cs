@@ -82,7 +82,7 @@ namespace MediaPortal.Music.Database
       _createArtistPreviews = false;
       _createGenrePreviews = true;
       _createMissingFolderThumbs = false;
-      _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+      _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue";
       _stripArtistPrefixes = false;
       _currentDate = DateTime.Now;
 

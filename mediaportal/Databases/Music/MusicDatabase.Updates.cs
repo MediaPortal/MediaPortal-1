@@ -824,6 +824,12 @@ namespace MediaPortal.Music.Database
       Log.Info("Musicdatabasereorg: Found {0} files.", (int) totalFiles);
       Log.Info("Musicdatabasereorg: Now check for new / updated files.");
 
+      // Apply CUE Filter
+      availableFiles = (List<string>)CueUtil.CUEFileListFilterList<string>(availableFiles, CueUtil.CUE_TRACK_FILE_STRING_BUILDER);
+
+      // Update TotalSongs after appolying the CUE Filter
+      TotalSongs = availableFiles.Count;
+
       SQLiteResultSet results;
       foreach (string MusicFile in availableFiles)
       {
