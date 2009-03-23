@@ -1517,15 +1517,9 @@ namespace MediaPortal.Util
             // Skip hidden folders
             if ((!Directory.Exists(FileName) || (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden))
               continue;
-
-            if (File.Exists(FileName + @"\VIDEO_TS\VIDEO_TS.IFO"))
-            {
-              item = new GUIListItem(strPath, "", FileName + @"\VIDEO_TS\VIDEO_TS.IFO", false, null);
-            }
-            else
-            {
-              item = new GUIListItem(strPath, "", FileName, true, new FileInformation(FileName, true));
-            }
+            
+            item = new GUIListItem(strPath, "", FileName, true, new FileInformation(FileName, true));
+            
             Utils.SetDefaultIcons(item);
             int pin;
             if (!IsProtectedShare(item.Path, out pin))

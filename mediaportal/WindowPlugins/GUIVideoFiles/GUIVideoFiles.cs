@@ -1303,6 +1303,10 @@ namespace MediaPortal.GUI.Video
         {
           FetchMatroskaInfo(path, isDirectory, ref info);
         }
+        if (info.IsEmpty && File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) //still empty and is ripped DVD
+        {
+          VideoDatabase.GetMovieInfo(path + @"\VIDEO_TS\VIDEO_TS.IFO", ref info);
+        }
         if (isMultiMovieFolder)
         {
           info.Reset();
