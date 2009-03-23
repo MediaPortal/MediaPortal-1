@@ -151,6 +151,12 @@ namespace SetupTv.Sections
             case TvResult.NotTheOwner:
               MessageBox.Show(this, "Failed since card is in use and we are not the owner");
               break;
+            case TvResult.GraphBuildingFailed:
+              MessageBox.Show(this, "Unable to create graph");
+              break;
+            case TvResult.SWEncoderMissing:
+              MessageBox.Show(this, "No suppported software encoder installed");
+              break;
           }
         }
         else

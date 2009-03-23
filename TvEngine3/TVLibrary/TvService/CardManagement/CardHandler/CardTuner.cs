@@ -174,6 +174,22 @@ namespace TvService
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
         }
         return TvResult.NoSignalDetected;
+      } catch (TvExceptionSWEncoderMissing ex)
+      {
+        Log.Write(ex);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.SWEncoderMissing;
+      } catch (TvExceptionGraphBuildingFailed ex2)
+      {
+        Log.Write(ex2);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.GraphBuildingFailed;
       } catch (Exception ex)
       {
         Log.Write(ex);

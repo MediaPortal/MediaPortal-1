@@ -814,12 +814,12 @@ namespace TvLibrary.Implementations.Analog
           if (!AddAudioCompressor())
           {
             Log.Log.WriteFile("analog:   failed to add audio compressor. you must install a supported audio encoder!");
-            throw new Exception("No audio compressor filter found");
+            throw new TvExceptionSWEncoderMissing("No audio compressor filter found");
           }
           if (!AddVideoCompressor())
           {
-            Log.Log.WriteFile("analog:   failed to add video compressor");
-            throw new Exception("No video compressor filter found");
+            Log.Log.WriteFile("analog:   failed to add video compressor. you must install a supported video encoder!");
+            throw new TvExceptionSWEncoderMissing("No video compressor filter found");
           }
           if (FilterGraphTools.GetFilterName(_filterAudioCompressor).Contains("InterVideo Audio Encoder"))
           {
@@ -892,12 +892,19 @@ namespace TvLibrary.Implementations.Analog
         }
         Log.Log.WriteFile("analog: Graph is built");
         _graphState = GraphState.Created;
-      } catch (Exception ex)
+      } catch(TvExceptionSWEncoderMissing ex)
       {
         Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        Dispose();
+        _graphState = GraphState.Idle;
+        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }
 

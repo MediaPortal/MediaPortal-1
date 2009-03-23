@@ -463,7 +463,7 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
-        throw;
+        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
     }
 

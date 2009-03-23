@@ -2914,6 +2914,12 @@ namespace TvPlugin
         case TvResult.NoTuningDetails:
           errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
           break;
+        case TvResult.GraphBuildingFailed:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1518) + "\r";
+          break;
+        case TvResult.SWEncoderMissing:
+          errorMessage += "\r" + GUILocalizeStrings.Get(1519) + "\r";
+          break;
         default:
           // this error can also happen if we have no connection to the server.
           if (!Connected || !RemoteControl.IsConnected)

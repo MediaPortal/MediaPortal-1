@@ -108,7 +108,15 @@ namespace TvControl
     /// <summary>
     /// Operation failed since we are not the owner of the card
     /// </summary>
-    NotTheOwner
+    NotTheOwner,
+    /// <summary>
+    /// Operation failed since we are unable to build the graph
+    /// </summary>
+    GraphBuildingFailed,
+    /// <summary>
+    /// Operation failed since we can't find a suitable software encoder
+    /// </summary>
+    SWEncoderMissing
   }
 
   /// <summary>

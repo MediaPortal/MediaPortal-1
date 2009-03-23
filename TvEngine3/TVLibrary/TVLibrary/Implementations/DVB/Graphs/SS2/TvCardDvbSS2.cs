@@ -661,111 +661,121 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void BuildGraph()
     {
-      Log.Log.WriteFile("ss2: build graph");
-      if (_graphState != GraphState.Idle)
+      try
       {
-        Log.Log.Error("ss2: Graph already built");
-        throw new TvException("Graph already built");
-      }
-      DevicesInUse.Instance.Add(_tunerDevice);
-      _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _rotEntry = new DsROTEntry(_graphBuilder);
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
-      //=========================================================================================================
-      // add the skystar 2 specific filters
-      //=========================================================================================================
-      Log.Log.WriteFile("ss2:CreateGraph() create B2C2 adapter");
-      _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
-      if (_filterB2C2Adapter == null)
-      {
-        Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        return;
-      }
-      Log.Log.WriteFile("ss2:creategraph() add filters to graph");
-      int hr = _graphBuilder.AddFilter(_filterB2C2Adapter, "B2C2-Source");
-      if (hr != 0)
-      {
-        Log.Log.Error("ss2: FAILED to add B2C2-Adapter");
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        return;
-      }
-      // get interfaces
-      _interfaceB2C2DataCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3;
-      if (_interfaceB2C2DataCtrl == null)
-      {
-        Log.Log.Error("ss2: cannot get IB2C2MPEG2DataCtrl3");
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        return;
-      }
-      _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
-      if (_interfaceB2C2TunerCtrl == null)
-      {
-        Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl3");
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        return;
-      }
-      //=========================================================================================================
-      // initialize skystar 2 tuner
-      //=========================================================================================================
-      Log.Log.WriteFile("ss2: Initialize Tuner()");
-      hr = _interfaceB2C2TunerCtrl.Initialize();
-      if (hr != 0)
-      {
-        //System.Diagnostics.Debugger.Launch();
-        Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
-        // if the skystar2 card is detected as analogue, it needs a device reset 
-
-        ((IMediaControl)_graphBuilder).Stop();
-        FreeAllSubChannels();
-        FilterGraphTools.RemoveAllFilters(_graphBuilder);
-
-        if (_graphBuilder != null)
+        Log.Log.WriteFile("ss2: build graph");
+        if (_graphState != GraphState.Idle)
         {
-          Release.ComObject("graph builder", _graphBuilder);
-          _graphBuilder = null;
+          Log.Log.Error("ss2: Graph already built");
+          throw new TvException("Graph already built");
         }
-
-        if (_capBuilder != null)
+        DevicesInUse.Instance.Add(_tunerDevice);
+        _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+        _graphBuilder = (IFilterGraph2) new FilterGraph();
+        _rotEntry = new DsROTEntry(_graphBuilder);
+        _capBuilder = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
+        _capBuilder.SetFiltergraph(_graphBuilder);
+        //=========================================================================================================
+        // add the skystar 2 specific filters
+        //=========================================================================================================
+        Log.Log.WriteFile("ss2:CreateGraph() create B2C2 adapter");
+        _filterB2C2Adapter =
+          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+        if (_filterB2C2Adapter == null)
         {
-          Release.ComObject("capBuilder", _capBuilder);
-          _capBuilder = null;
+          Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
+          DevicesInUse.Instance.Remove(_tunerDevice);
+          return;
         }
-
-        DevicesInUse.Instance.Remove(_tunerDevice);
-
-        /*
-        if (initResetTries == 0)
+        Log.Log.WriteFile("ss2:creategraph() add filters to graph");
+        int hr = _graphBuilder.AddFilter(_filterB2C2Adapter, "B2C2-Source");
+        if (hr != 0)
         {
-          Log.Log.Error("ss2: resetting driver");
-          HardwareHelperLib.HH_Lib hwHelper = new HardwareHelperLib.HH_Lib();
-          string[] deviceDriverName = new string[1];
-          deviceDriverName[0] = DEVICE_DRIVER_NAME;
-          hwHelper.SetDeviceState(deviceDriverName, false);
-          hwHelper.SetDeviceState(deviceDriverName, true);
-          initResetTries++;          
-
-          BuildGraph();
+          Log.Log.Error("ss2: FAILED to add B2C2-Adapter");
+          DevicesInUse.Instance.Remove(_tunerDevice);
+          return;
         }
-        else
+        // get interfaces
+        _interfaceB2C2DataCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3;
+        if (_interfaceB2C2DataCtrl == null)
         {
-          Log.Log.Error("ss2: resetting driver did not help");          
+          Log.Log.Error("ss2: cannot get IB2C2MPEG2DataCtrl3");
+          DevicesInUse.Instance.Remove(_tunerDevice);
+          return;
+        }
+        _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
+        if (_interfaceB2C2TunerCtrl == null)
+        {
+          Log.Log.Error("ss2: cannot get IB2C2MPEG2TunerCtrl3");
+          DevicesInUse.Instance.Remove(_tunerDevice);
+          return;
+        }
+        //=========================================================================================================
+        // initialize skystar 2 tuner
+        //=========================================================================================================
+        Log.Log.WriteFile("ss2: Initialize Tuner()");
+        hr = _interfaceB2C2TunerCtrl.Initialize();
+        if (hr != 0)
+        {
+          //System.Diagnostics.Debugger.Launch();
+          Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
+          // if the skystar2 card is detected as analogue, it needs a device reset 
+
+          ((IMediaControl) _graphBuilder).Stop();
+          FreeAllSubChannels();
+          FilterGraphTools.RemoveAllFilters(_graphBuilder);
+
+          if (_graphBuilder != null)
+          {
+            Release.ComObject("graph builder", _graphBuilder);
+            _graphBuilder = null;
+          }
+
+          if (_capBuilder != null)
+          {
+            Release.ComObject("capBuilder", _capBuilder);
+            _capBuilder = null;
+          }
+
+          DevicesInUse.Instance.Remove(_tunerDevice);
+
+          /*
+          if (initResetTries == 0)
+          {
+            Log.Log.Error("ss2: resetting driver");
+            HardwareHelperLib.HH_Lib hwHelper = new HardwareHelperLib.HH_Lib();
+            string[] deviceDriverName = new string[1];
+            deviceDriverName[0] = DEVICE_DRIVER_NAME;
+            hwHelper.SetDeviceState(deviceDriverName, false);
+            hwHelper.SetDeviceState(deviceDriverName, true);
+            initResetTries++;          
+
+            BuildGraph();
+          }
+          else
+          {
+            Log.Log.Error("ss2: resetting driver did not help");          
+            CardPresent = false;
+          }    
+          */
           CardPresent = false;
-        }    
-        */
-        CardPresent = false;
-        return;
+          return;
+        }
+        // call checklock once, the return value dont matter
+        _interfaceB2C2TunerCtrl.CheckLock();
+        AddMpeg2DemuxerToGraph();
+        ConnectInfTeeToSS2();
+        ConnectMpeg2DemuxToInfTee();
+        AddTsWriterFilterToGraph();
+        SendHwPids(new List<ushort>());
+        _graphState = GraphState.Created;
+      } catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        Dispose();
+        _graphState = GraphState.Idle;
+        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
       }
-      // call checklock once, the return value dont matter
-      _interfaceB2C2TunerCtrl.CheckLock();
-      AddMpeg2DemuxerToGraph();
-      ConnectInfTeeToSS2();
-      ConnectMpeg2DemuxToInfTee();
-      AddTsWriterFilterToGraph();
-      SendHwPids(new List<ushort>());
-      _graphState = GraphState.Created;
     }
 
     /// <summary>
