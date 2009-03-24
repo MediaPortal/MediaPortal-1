@@ -954,7 +954,8 @@ namespace TvEngine.PowerScheduler
           if (_denySuspendQuery)
           {
             Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-            SuspendSystem("System", (int)(powerStatus == PowerEventType.QuerySuspend ?  RestartOptions.Suspend : RestartOptions.Hibernate ), false);
+			// Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
+            SuspendSystem("System", (int)RestartOptions.Hibernate , false);
             return false;
           }
           return true;
