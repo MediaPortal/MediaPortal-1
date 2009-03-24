@@ -87,20 +87,6 @@ namespace System.Windows.Media.Animation
       return (GetForegroundWindow() == window);
     }
 
-    public static long QueryPerformanceCounter()
-    {
-      long tick = 0;
-      QueryPerformanceCounter(ref tick);
-      return tick;
-    }
-
-    public static long QueryPerformanceFrequency()
-    {
-      long freq = 0;
-      QueryPerformanceFrequency(ref freq);
-      return freq;
-    }
-
     #endregion Helpers
 
     #region Interop
@@ -139,12 +125,6 @@ namespace System.Windows.Media.Animation
 
     [DllImport("user32.dll")]
     public static extern int TranslateMessage(ref Message msg);
-
-    [DllImport("kernel32.dll")]
-    public static extern bool QueryPerformanceCounter(ref long x);
-
-    [DllImport("kernel32.dll")]
-    public static extern bool QueryPerformanceFrequency(ref long x);
 
     #endregion Interop
 

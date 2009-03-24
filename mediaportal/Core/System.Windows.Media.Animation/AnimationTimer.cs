@@ -23,22 +23,25 @@
 
 #endregion
 
+using System.Diagnostics;
+using MediaPortal.ServiceImplementations;
 namespace System.Windows.Media.Animation
 {
   public sealed class AnimationTimer
   {
+    private static Stopwatch clockWatch = new Stopwatch();
+
     #region Constructors
 
     static AnimationTimer()
     {
-      long frequency = 0;
+      clockWatch.Reset();
+      clockWatch.Start();
 
-      if (NativeMethods.QueryPerformanceFrequency(ref frequency) == false)
+      if (!Stopwatch.IsHighResolution)
       {
-        throw new NotSupportedException("Hi-res timer");
+        Log.Warn("AnimationTimer: *** Your system does not support high resolution timers! ***");
       }
-
-      _frequency = frequency;
     }
 
     private AnimationTimer()
@@ -53,23 +56,10 @@ namespace System.Windows.Media.Animation
     {
       get
       {
-        long tick = 0;
-
-        if (NativeMethods.QueryPerformanceCounter(ref tick) == false)
-        {
-          throw new NotSupportedException("Hi-res timer");
-        }
-
-        return TweenHelper.TickCount = ((double) tick/_frequency)*1000;
+        return TweenHelper.TickCount = ((double)clockWatch.ElapsedTicks / Stopwatch.Frequency) * 1000; // ((double) tick/_frequency)*1000;
       }
     }
 
     #endregion Properties
-
-    #region Fields
-
-    private static double _frequency = 0;
-
-    #endregion Fields
   }
 }
