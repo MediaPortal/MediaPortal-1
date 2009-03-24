@@ -71,7 +71,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return;
       }
       keySql.SetValue("TcpPort", "1433");
-      keySql.DeleteValue("TcpDynamicPorts");
+      keySql.SetValue("TcpDynamicPorts", string.Empty);
       keySql.Close();
     }
 

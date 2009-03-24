@@ -52,9 +52,25 @@ namespace MediaPortal.DeployTool.Sections
     {
       if (rbDownloadOnlyChecked)
       {
+        // Download only
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DownloadSettings);
       }
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Upgrade);
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      // "NoRepair" key is not the best choice but we need a key returing 1 as value ;)
+      CheckResult resultMp = Utils.CheckNSISUninstallString("MediaPortal", "NoRepair");
+
+      bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
+      bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
+      bool Mp = resultMp.state != CheckState.NOT_INSTALLED;
+
+      if (TvServer || TvClient || Mp)
+      {
+        // Upgrade 
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Upgrade);
+      }
+      // Normal deploy
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.WatchTV);
     }
 
     public override bool SettingsValid()
@@ -64,21 +80,21 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-      private void bInstallNow_Click(object sender, EventArgs e)
-      {
-          bInstallNow.Image = Images.Choose_button_on;
-          bDownloadOnly.Image = Images.Choose_button_off;
-          rbDownloadOnlyChecked = false;
-      }
+    private void bInstallNow_Click(object sender, EventArgs e)
+    {
+      bInstallNow.Image = Images.Choose_button_on;
+      bDownloadOnly.Image = Images.Choose_button_off;
+      rbDownloadOnlyChecked = false;
+    }
 
-      private void bDownloadOnly_Click(object sender, EventArgs e)
-      {
-          bInstallNow.Image = Images.Choose_button_off;
-          bDownloadOnly.Image = Images.Choose_button_on;
-          rbDownloadOnlyChecked = true;
-      }
+    private void bDownloadOnly_Click(object sender, EventArgs e)
+    {
+      bInstallNow.Image = Images.Choose_button_off;
+      bDownloadOnly.Image = Images.Choose_button_on;
+      rbDownloadOnlyChecked = true;
+    }
 
-    
+
 
   }
 }
