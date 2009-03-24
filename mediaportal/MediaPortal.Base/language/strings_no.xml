@@ -977,6 +977,8 @@
     <String id="1515">Tidsskifting stoppet av\rTV-server</String>
     <String id="1516">Tidsskifting stoppet pga\rukjent årsak</String>
     <String id="1517">Tidsskifting stoppet av\rannen bruker</String>
+    <String id="1518">Kan ikke lage grafen</String>
+    <String id="1519">Ingen støttet software encoder innstallert</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
