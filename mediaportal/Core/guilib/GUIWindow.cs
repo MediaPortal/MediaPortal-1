@@ -1252,7 +1252,8 @@ namespace MediaPortal.GUI.Library
             font = null;
           }
           GUIGraphicsContext.SetScalingResolution(0, 0, false);
-          uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+          //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+          uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
           // render our window animation - returns false if it needs to stop rendering
           if (!RenderAnimation(currentTime))
           {

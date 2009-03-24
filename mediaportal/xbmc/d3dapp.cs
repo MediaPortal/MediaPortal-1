@@ -1878,7 +1878,7 @@ namespace MediaPortal
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
-        framePerSecond = frames / (time - lastTime);
+        framePerSecond = (float)frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;

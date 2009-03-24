@@ -453,7 +453,8 @@ namespace MediaPortal.GUI.Library
         dwColor &= DimColor;
       }
 
-      uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+      //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+      uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
       // Set oversized value
       int iOverSized = 0;
 

@@ -231,7 +231,8 @@ namespace MediaPortal.GUI.Library
       GUIControl cntl = CurrentView;
       if (cntl != null)
       {
-        uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+        //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+        uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
         if (GUIGraphicsContext.Animations)
         {
           cntl.UpdateVisibility();

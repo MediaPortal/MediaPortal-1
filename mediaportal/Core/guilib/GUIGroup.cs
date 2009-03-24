@@ -97,7 +97,8 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+      //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
+      uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
       foreach (GUIControl control in Children)
       {
         control.UpdateVisibility();
