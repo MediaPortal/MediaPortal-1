@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>0</id>
   <defaultcontrol>50</defaultcontrol>
@@ -19,8 +18,9 @@
       <posX>145</posX>
       <posY>30</posY>
       <texture>mediaportaltext.png</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
     </control>
     <control>
       <description>Logo</description>
@@ -31,16 +31,17 @@
       <width>176</width>
       <height>75</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">-</texture>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="333">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
     </control>
     <control>
       <description>Menu</description>
       <type>menu</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
       <id>50</id>
       <posX>672</posX>
       <posY>162</posY>
@@ -62,8 +63,8 @@
       <hoverWidth>515</hoverWidth>
       <hoverHeight>381</hoverHeight>
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
-      <scrollTime>120</scrollTime>
-      <scrollTimeMin>60</scrollTimeMin>
+      <scrollTime>96</scrollTime>
+      <scrollTimeMin>48</scrollTimeMin>
       <textureBackground>emtpy.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
@@ -72,8 +73,9 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
       <id>200</id>
       <posX>609</posX>
       <posY>187</posY>
@@ -85,8 +87,8 @@
     <control>
       <description>Time</description>
       <type>label</type>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" center="640,360" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
       <id>201</id>
       <posX>609</posX>
       <posY>215</posY>
@@ -99,8 +101,9 @@
     <control>
       <description>Back button</description>
       <type>button</type>
-      <animation effect="zoom" start="20,20" end="100,100" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" time="300">WindowClose</animation>
       <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
       <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
       <id>10</id>
@@ -120,8 +123,9 @@
     <control>
       <description>videowallpaper button</description>
       <type>button</type>
-      <animation effect="zoom" start="20,20" end="100,100" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" time="300">WindowClose</animation>
       <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
       <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
       <id>11</id>
@@ -141,8 +145,9 @@
     <control>
       <description>basichome button button</description>
       <type>button</type>
-      <animation effect="zoom" start="20,20" end="100,100" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" time="300">WindowClose</animation>
       <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
       <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
       <id>12</id>
@@ -162,8 +167,9 @@
     <control>
       <description>Exit button</description>
       <type>button</type>
-      <animation effect="zoom" start="20,20" end="100,100" time="500">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="20,20" time="500">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="zoom" start="20,20" end="100,100" time="300">WindowOpen</animation>
+      <animation effect="zoom" start="100,100" end="1,1" time="300">WindowClose</animation>
       <animation effect="zoom" start="100,100" end="110,110" time="300">focus</animation>
       <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
       <id>13</id>
