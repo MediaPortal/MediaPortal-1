@@ -18,6 +18,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class VLSYS_Mplay : BaseDisplay, IDisplay, IDisposable
   {
+    #region variables
     private int _Brightness = 0x3a;
     private bool _EnableDisplay;
     private Thread _EqThread;
@@ -67,6 +68,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private bool _TempCmdSent;
     private DateTime _TempCmdSentTime;
     private bool _TempDataValid;
+    private bool _TempDataValid2;
     private int _TempIndex;
     private bool _UseBrightness;
     private bool _UseClockOnShutdown;
@@ -96,6 +98,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private object ThreadMutex = new object();
     private const int WM_CLOSE = 0x10;
     private const int WM_SYSCOMMAND = 0x112;
+    #endregion
 
     private void AdjustSettingForDetectedDisplay()
     {
@@ -699,7 +702,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("VLSYS_Mplay.GetTempReading(): called", new object[0]);
+            Log.Info("VLSYS_Mplay.GetTempReading(): called");
           }
           if (!this._TempCmdSent)
           {
@@ -707,36 +710,36 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               this.commPort.Write(new byte[] {0xaf}, 0, 1);
               this._TempCmdSent = true;
-              this._TempCmdSentTime = DateTime.Now;
+              this._TempCmdSentTime = DateTime.Now;              
+              this.SetFanSpeed();
               if (this.DoDebug)
               {
-                Log.Info("VLSYS_Mplay.GetTempReading(): Requesting Temperature data", new object[0]);
+                Log.Info("VLSYS_Mplay.GetTempReading(): Requesting Temperature data");
               }
             }
             else if (this.DoDebug)
             {
-              Log.Info("VLSYS_Mplay.GetTempReading(): delaying temperature request", new object[0]);
+              Log.Info("VLSYS_Mplay.GetTempReading(): delaying temperature request");
             }
           }
           else
           {
             if (this.DoDebug)
             {
-              Log.Info("VLSYS_Mplay.GetTempReading(): Temperature request already pending", new object[0]);
+              Log.Info("VLSYS_Mplay.GetTempReading(): Temperature request already pending");
             }
-            if (DateTime.Now.Ticks > this._TempCmdSentTime.AddSeconds(15.0).Ticks)
+            if (DateTime.Now.Ticks > this._TempCmdSentTime.AddSeconds(15.0).Ticks || !_TempDataValid)
             {
               if (this.DoDebug)
               {
-                Log.Info("VLSYS_Mplay.GetTempReading(): Temperature request timed out! - cancelling previous request",
-                         new object[0]);
+                Log.Info("VLSYS_Mplay.GetTempReading(): Temperature request timed out or not valid!");
               }
               this._TempCmdSent = false;
             }
           }
           if (this.DoDebug)
           {
-            Log.Info("VLSYS_Mplay.GetTempReading(): completed", new object[0]);
+            Log.Info("VLSYS_Mplay.GetTempReading(): completed");
           }
         }
       }
@@ -850,6 +853,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
               this.SerialWriteDelay(40);
               Log.Info("VLSYS_Mplay.Initialize(): setting initial fan speed", new object[0]);
+              this.SetFanSpeed();
+              this.SerialWriteDelay(40);
+              this.GetTempReading();
+              this.SerialWriteDelay(40);
+              /*
               byte[] buffer = new byte[3];
               buffer[0] = 0xac;
               this.commPort.Write(buffer, 0, 3);
@@ -859,6 +867,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this.SerialWriteDelay(40);
               this.GetTempReading();
               this.SerialWriteDelay(40);
+               */
             }
           }
           else
@@ -901,89 +910,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         AdvancedSettings.OnSettingsChanged +=
           new AdvancedSettings.OnSettingsChangedHandler(this.AdvancedSettings_OnSettingsChanged);
-        this.Clear();
-        Log.Info("VLSYS_Mplay.Initialize() completed", new object[0]);
-      }
-    }
-
-    public void Initialize_OLD()
-    {
-      Log.Info("VLSYS_Mplay.Initialize(): called", new object[0]);
-      if (this._ManageMHC)
-      {
-        this.TerminateMHC();
-      }
-      if (this.isDisabled)
-      {
-        Log.Info("VLSYS_Mplay.Initialize(): completed - driver disabled", new object[0]);
-      }
-      else
-      {
-        try
-        {
-          Log.Info("VLSYS_Mplay.Initialize(): opening port {0}", new object[] {this.Port});
-          if (this.commPort != null)
-          {
-            this.commPort.Close();
-            this.commPort.Dispose();
-            this.commPort = null;
-          }
-          this.commPort = new SerialPort(this.Port, 0x9600, Parity.None, 8, StopBits.One);
-          this.commPort.DtrEnable = true;
-          this.commPort.RtsEnable = true;
-          if (this._UseRemote || (this._UseFans && (this._Fan1Auto || this._Fan2Auto)))
-          {
-            Log.Info("VLSYS_Mplay.Initialize(): configuring serial data receive support", new object[0]);
-            this.commPort.ReceivedBytesThreshold = 1;
-            this.commPort.DataReceived += new SerialDataReceivedEventHandler(this.WhenDataReceived);
-          }
-          this.commPort.Open();
-          this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.Write(new byte[] {170, 170}, 0, 2);
-          this.commPort.DiscardInBuffer();
-          this.commPort.DiscardOutBuffer();
-          Log.Info("VLSYS_Mplay.Initialize(): Enabling serial receive data processing", new object[0]);
-          this._FlushDataBuffers = true;
-          this._ProcessReceivedData = true;
-          this.commPort.Write(new byte[] {160}, 0, 1);
-          this.Brightness(this._Brightness);
-          if (this._UseFans)
-          {
-            Log.Info("VLSYS_Mplay.Initialize(): configuring fan support", new object[0]);
-            this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
-            this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
-            this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
-            this.commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
-            this.GetTempReading();
-            this.SetFanSpeed();
-          }
-        }
-        catch (Exception exception)
-        {
-          Log.Error("VLSYS_Mplay.Initialize(): CAUGHT EXCEPTION while opening port {0} - {1}",
-                    new object[] {this.Port, exception});
-          this.isDisabled = true;
-          this.errorMessage = "Unable to open port - " + this.Port;
-          if (this.commPort != null)
-          {
-            this.commPort.Close();
-            this.commPort.Dispose();
-            this.commPort = null;
-          }
-          if (this._ManageMHC)
-          {
-            this.RestartMHC();
-          }
-        }
         this.Clear();
         Log.Info("VLSYS_Mplay.Initialize() completed", new object[0]);
       }
@@ -1676,10 +1602,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SerialWriteDelay(int DelayTimeMS)
     {
-      long ticks = DateTime.Now.AddMilliseconds((double) DelayTimeMS).Ticks;
-      while (DateTime.Now.Ticks < ticks)
-      {
-      }
+      Thread.Sleep(DelayTimeMS);
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
@@ -1712,105 +1635,67 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetFanSpeed()
     {
-      if (!this.MPlay_Model.Equals("LIS2"))
+      if (this.MPlay_Model.Equals("LIS2") || this.isDisabled)
       {
-        if (this.isDisabled)
+        if (this.DoDebug)
         {
-          if (this.DoDebug)
+          Log.Info("VLSYS_Mplay.SetFanSpeed() completed - driver disabled", new object[0]);
+        }
+        return;
+      }
+
+      if (this._UseFans)
+      {
+        byte num = this.FanSpeedByte(this._Fan1Speed);
+        byte num2 = this.FanSpeedByte(this._Fan2Speed);
+        if (this.DoDebug)
+        {
+          Log.Info("VLSYS_Mplay.SetFanSpeed() called", new object[0]);
+        }
+        
+        if (this._Fan1Auto)
+        {
+          if (this._TempDataValid)
           {
-            Log.Info("VLSYS_Mplay.SetFanSpeed() completed - driver disabled", new object[0]);
+            num = this.FanSpeedFromTemp(1, this._Temp1);
+            Log.Debug("VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan1: temp = {0}, speed = {1}", _Temp1, num);                       
+          }
+          else if (this.DoDebug)
+          {
+            Log.Info(
+              "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan1: temp = {0}, speed = {1} (Temp data not yet valid)",
+              new object[] { this._Temp1, num });
           }
         }
-        else if (this._UseFans)
+
+        if (this._Fan2Auto)
         {
-          byte num;
-          byte num2;
-          if (this.DoDebug)
-          {
-            Log.Info("VLSYS_Mplay.SetFanSpeed() called", new object[0]);
+          if (this._TempDataValid2)
+          {                        
+            num2 = this.FanSpeedFromTemp(2, this._Temp2);
+            Log.Debug("VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan2: temp = {0}, speed = {1}", _Temp2, num2);
           }
-          if (!this._Fan1Auto && !this._Fan2Auto)
+          else if (this.DoDebug)
           {
-            if (this.DoDebug)
-            {
-              Log.Info("VLSYS_Mplay.SetFanSpeed() using manual settings", new object[0]);
-            }
-            num = this.FanSpeedByte(this._Fan1Speed);
-            num2 = this.FanSpeedByte(this._Fan2Speed);
+            Log.Info(
+              "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan2: temp = {0}, speed = {1} (Temp data not yet valid)",
+              new object[] { this._Temp2, num2 });
           }
-          else
-          {
-            num = 0;
-            num2 = 0;
-            if (!this._Fan1Auto)
-            {
-              num = this.FanSpeedByte(this._Fan1Speed);
-              if (this.DoDebug)
-              {
-                Log.Info("VLSYS_Mplay.SetFanSpeed() Using manual setting for Fan1 - speed = {0}",
-                         new object[] {this._Fan1Speed});
-              }
-            }
-            else
-            {
-              if (this._TempDataValid)
-              {
-                if (this.DoDebug)
-                {
-                  Log.Info("VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan1: temp = {0}, speed = {1}",
-                           new object[] {this._Temp1, num});
-                }
-              }
-              else if (this.DoDebug)
-              {
-                Log.Info(
-                  "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan1: temp = {0}, speed = {1} (Temp data not yet valid)",
-                  new object[] {this._Temp1, num});
-              }
-              num = this.FanSpeedFromTemp(1, this._Temp1);
-            }
-            if (!this._Fan2Auto)
-            {
-              num2 = this.FanSpeedByte(this._Fan2Speed);
-              if (this.DoDebug)
-              {
-                Log.Info("VLSYS_Mplay.SetFanSpeed() Using manual setting for Fan2 - speed = {0}",
-                         new object[] {this._Fan2Speed});
-              }
-            }
-            else
-            {
-              if (this._TempDataValid)
-              {
-                if (this.DoDebug)
-                {
-                  Log.Info("VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan2: temp = {0}, speed = {1}",
-                           new object[] {this._Temp2, num2});
-                }
-              }
-              else if (this.DoDebug)
-              {
-                Log.Info(
-                  "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan2: temp = {0}, speed = {1} (Temp data not yet valid)",
-                  new object[] {this._Temp2, num2});
-              }
-              num2 = this.FanSpeedFromTemp(2, this._Temp2);
-            }
-          }
-          if ((this.MPlay_Model.Equals("ME7") || this.MPlay_Model.Equals("MP7")) || this.MPlay_Model.Equals("MR2"))
-          {
-            this.commPort.Write(new byte[] {0xac, num, num2}, 0, 3);
-          }
-          else
-          {
-            this.commPort.Write(new byte[] {0xac, num, num2}, 0, 3);
-            byte[] buffer = new byte[3];
-            this.commPort.Write(buffer, 0, 3);
-          }
-          if (this.DoDebug)
-          {
-            Log.Info("VLSYS_Mplay.SetFanSpeed() completed", new object[0]);
-          }
+        }
+
+        if ((this.MPlay_Model.Equals("ME7") || this.MPlay_Model.Equals("MP7")) || this.MPlay_Model.Equals("MR2"))
+        {
+          this.commPort.Write(new byte[] { 0xac, num, num2 }, 0, 3);
+        }
+        else
+        {
+          this.commPort.Write(new byte[] { 0xac, num, num2 }, 0, 3);
+          byte[] buffer = new byte[3];
+          this.commPort.Write(buffer, 0, 3);
+        }
+        if (this.DoDebug)
+        {
+          Log.Info("VLSYS_Mplay.SetFanSpeed() completed", new object[0]);
         }
       }
     }
@@ -1835,30 +1720,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.DoDebug)
           {
-            Log.Info("VLSYS_Mplay.SetLine(): Line {0} - Message = \"{1}\"", new object[] {line, message});
+            Log.Info("VLSYS_Mplay.SetLine(): Line {0} - Message = \"{1}\"", new object[] { line, message });
           }
           this.SendCustomCharactersToDisplay();
-          byte[] buffer = new byte[1];
-          this.commPort.Write(buffer, 0, 1);
+          this.commPort.Write(new byte[] { 0 }, 0, 1);
           if (line == 0)
           {
-            this.commPort.Write(new byte[] {0xa1}, 0, 1);
+            this.commPort.Write(new byte[] { 0xa1, 0, 0xa7 }, 0, 3);
           }
           else if (line == 1)
           {
-            this.commPort.Write(new byte[] {0xa2}, 0, 1);
+            this.commPort.Write(new byte[] { 0xa2, 0, 0xa7 }, 0, 3);
           }
           else
           {
             Log.Error("VLSYS_Mplay.SetLine: error bad line number" + line, new object[0]);
             return;
           }
-          byte[] buffer4 = new byte[2];
-          buffer4[1] = 0xa7;
-          this.commPort.Write(buffer4, 0, 2);
           this.commPort.Write(message);
-          byte[] buffer5 = new byte[1];
-          this.commPort.Write(buffer5, 0, 1);
+          this.commPort.Write(new byte[] { 0 }, 0, 1);
           if (this.DoDebug)
           {
             Log.Info("VLSYS_Mplay.SetLine(): message sent to display", new object[0]);
@@ -1905,12 +1785,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           this._mpIsIdle = false;
         }
-        this.GetTempReading();
-        this.SetFanSpeed();
         if (this.DoDebug)
         {
           Log.Info("VLSYS_Mplay.SetLine() completed", new object[0]);
         }
+        this.GetTempReading();
       }
     }
 
@@ -2023,8 +1902,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("VLSYS_Mplay.ShutdownFans() called", new object[0]);
         }
-        int num = 0x47;
-        int num2 = 0x47;
+        int num = 0;
+        int num2 = 0;
         if (this._Fan1Auto)
         {
           if (this._Fan1_AutoMS)
@@ -2033,7 +1912,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            num = this.FanSpeedByte(1);
+            num = this.FanSpeedByte(0);
           }
           if (this.DoDebug)
           {
@@ -2050,7 +1929,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            num2 = this.FanSpeedByte(1);
+            num2 = this.FanSpeedByte(0);
           }
           if (this.DoDebug)
           {
@@ -2205,39 +2084,42 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
+    private void GetDisplayType()
     {
-      if (!this.isDisabled && this.commPort.IsOpen)
+      int bytesToRead = this.commPort.BytesToRead;
+      if (bytesToRead > 2)
       {
-        if (!this._ProcessReceivedData)
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 3; i++)
         {
-          int bytesToRead = this.commPort.BytesToRead;
-          if (bytesToRead > 2)
-          {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < 3; i++)
-            {
-              builder.Append((char) this.commPort.ReadChar());
-            }
-            string cModel = builder.ToString();
-            if (this.IsValidModel(cModel))
-            {
-              this.MPlay_Model = cModel;
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Model ID = \"{0}\"", new object[] {this.MPlay_Model});
-            }
-            else
-            {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): received invalid Model ID \"{0}\"- ignored",
-                       new object[] {cModel.ToString()});
-            }
-          }
-          else
-          {
-            Log.Info("VLSYS_Mplay.WhenDataReceived(): Not processing data - ignored {0} bytes",
-                     new object[] {bytesToRead});
-          }
+          builder.Append((char)this.commPort.ReadChar());
+        }
+        string cModel = builder.ToString();
+        if (this.IsValidModel(cModel))
+        {
+          this.MPlay_Model = cModel;
+          Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Model ID = \"{0}\"", new object[] { this.MPlay_Model });
         }
         else
+        {
+          Log.Info("VLSYS_Mplay.WhenDataReceived(): received invalid Model ID \"{0}\"- ignored",
+                   new object[] { cModel.ToString() });
+        }
+      }
+      else
+      {
+        Log.Info("VLSYS_Mplay.WhenDataReceived(): Not processing data - ignored {0} bytes",
+                 new object[] { bytesToRead });
+      }
+    }
+
+    private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
+    {
+      int byteCount;
+      int[] receivedBytes;
+      if (!this.isDisabled && this.commPort.IsOpen)
+      {
+        if (this._ProcessReceivedData)
         {
           lock (this.CommReadLock)
           {
@@ -2252,496 +2134,146 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 this.commPort.DiscardOutBuffer();
               }
+              this._FlushDataBuffers = false;
               Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - finished", new object[0]);
-            }
-          }
-          if (this._FlushDataBuffers)
-          {
-            this._FlushDataBuffers = false;
-          }
-          else
-          {
-            lock (this.CommReadLock)
+              return;
+            }            
+            if (this.DoDebug)
             {
-              int num;
-              if (this.DoDebug)
-              {
-                Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event", new object[0]);
-              }
-              try
-              {
-                num = this.commPort.BytesToRead;
-              }
-              catch
-              {
-                if (this.DoDebug)
-                {
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): error reading from port - driver disabled", new object[0]);
-                }
-                this.isDisabled = true;
-                goto Label_08F3;
-              }
-              if (num == 0)
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event", new object[0]);
+            }
+            try
+            {
+              byteCount = this.commPort.BytesToRead;
+              if (byteCount == 0)
               {
                 if (this.DoDebug)
                 {
                   Log.Info("VLSYS_Mplay: Got DataReceived event with no data", new object[0]);
                 }
+                return;
               }
-              else
+              receivedBytes = new int[byteCount];
+              for (int count = 0; count < byteCount; count++)
               {
-                if (this.DoDebug)
-                {
-                  Log.Info("VLSYS_Mplay: Got DataReceived event - {0} bytes of data", new object[] {num});
-                }
-                try
-                {
-                  if (this._UseRemote && !this._inputHandler.IsLoaded)
-                  {
-                    if (this.DoDebug)
-                    {
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): Unable to process incoming data - NO REMOTE MAPPING",
-                               new object[] {num});
-                    }
-                    this.commPort.DiscardInBuffer();
-                    this.isDisabled = true;
-                    goto Label_08F3;
-                  }
-                }
-                catch
-                {
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION - NO REMOTE MAPPING", new object[] {num});
-                  this.isDisabled = true;
-                  goto Label_08F3;
-                }
-                char[] buffer = new char[0x10];
-                this.commPort.Read(buffer, 0, num);
-                if ((this.commPort.BytesToRead > 0) && this.DoDebug)
-                {
-                  Log.Info(
-                    "VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle",
-                    new object[0]);
-                }
-                string str2 = string.Empty;
-                if (this.DoDebug)
-                {
-                  for (int m = 0; m < num; m++)
-                  {
-                    str2 = str2 + "0x" + ((byte) buffer[m]).ToString("x00") + " ";
-                  }
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW DATA: {0}", new object[] {str2});
-                }
-                char[] chArray2 = new char[0x10];
-                int num6 = 0;
-                for (int j = 0; j < num; j++)
-                {
-                  int code = buffer[j];
-                  if (this.IsRemoteKeyCode(code) || this.IsTemperatureCode(code))
-                  {
-                    chArray2[num6++] = (char) code;
-                  }
-                }
-                if (this.DoDebug)
-                {
-                  if (num6 > 0)
-                  {
-                    str2 = string.Empty;
-                    for (int n = 0; n < num6; n++)
-                    {
-                      str2 = str2 + "0x" + ((byte) chArray2[n]).ToString("x00") + " ";
-                    }
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): PROCESSABLE DATA: {0}", new object[] {str2});
-                  }
-                  else
-                  {
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): NO PROCESSABLE DATA RECEIVED", new object[] {str2});
-                  }
-                }
-                for (int k = 0; k < num6; k++)
-                {
-                  int num12 = chArray2[k];
-                  if (this.DoDebug)
-                  {
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW REMOTE DATA: 0x{0} 0x{1}",
-                             new object[] {num12.ToString("x00")});
-                  }
-                  if (this.IsTemperatureCode(num12))
-                  {
-                    if (num12 == 0x3f)
-                    {
-                      if (this._TempIndex == 0)
-                      {
-                        this._TempIndex = 1;
-                      }
-                      else
-                      {
-                        this._TempIndex = 0;
-                        this._TempCmdSent = false;
-                        this._TempDataValid = false;
-                      }
-                      if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "VLSYS_Mplay.WhenDataReceived(): ERROR - Received invalid temperature data: data = {0}",
-                          new object[] {num12.ToString("x00")});
-                      }
-                    }
-                    else if (this._TempCmdSent)
-                    {
-                      if (this._TempIndex == 0)
-                      {
-                        if ((this.MPlay_Model.Equals("ME7") || this.MPlay_Model.Equals("MP7")) ||
-                            this.MPlay_Model.Equals("MR2"))
-                        {
-                          if ((num12 != 0xff) && (num12 != 0xfe))
-                          {
-                            this._Temp1 = num12 - 0x6c;
-                            this._TempIndex++;
-                            if (this.DoDebug)
-                            {
-                              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp1 = {0}",
-                                       new object[] {this._Temp1});
-                            }
-                          }
-                        }
-                        else
-                        {
-                          this._Temp1 = num12 - 150;
-                          this._TempIndex++;
-                          if (this.DoDebug)
-                          {
-                            Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp1 = {0}",
-                                     new object[] {this._Temp1});
-                          }
-                        }
-                      }
-                      else if (this._TempIndex == 1)
-                      {
-                        if ((this.MPlay_Model.Equals("ME7") || this.MPlay_Model.Equals("MP7")) ||
-                            this.MPlay_Model.Equals("MR2"))
-                        {
-                          if ((num12 != 0xff) && (num12 != 0xfe))
-                          {
-                            this._Temp2 = num12 - 0x6c;
-                            this._TempIndex++;
-                            if (this.DoDebug)
-                            {
-                              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp2 = {0}",
-                                       new object[] {this._Temp2});
-                            }
-                          }
-                        }
-                        else
-                        {
-                          this._Temp2 = num12 - 150;
-                          this._TempIndex++;
-                          if (this.DoDebug)
-                          {
-                            Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp2 = {0}",
-                                     new object[] {this._Temp2});
-                          }
-                        }
-                      }
-                      if (this._TempIndex == (this.TempCount - 1))
-                      {
-                        this._TempIndex = 0;
-                        this._TempCmdSent = false;
-                        this._TempDataValid = true;
-                      }
-                    }
-                    else if (this.DoDebug)
-                    {
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): ERROR: Received temperature without data request",
-                               new object[0]);
-                    }
-                  }
-                  else if (this.IsRemoteKeyCode(num12) && (num12 != 0x7e))
-                  {
-                    if (!this._UseRemote)
-                    {
-                      if (this.DoDebug)
-                      {
-                        Log.Info("VLSYS_Mplay.WhenDataReceived(): Remote disabled - ignoring", new object[0]);
-                      }
-                    }
-                    else
-                    {
-                      this.FireRemoteEvent(num12);
-                      if (this.DoDebug)
-                      {
-                        Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Remote Button : code = {0}",
-                                 new object[] {num12.ToString("x00")});
-                      }
-                      this._RemoteButtonPending = num12;
-                    }
-                  }
-                  else if (num12 == 0x7e)
-                  {
-                    if (this.IsRemoteKeyCode(this._RemoteButtonPending))
-                    {
-                      this._RemoteButtonPending = 0xff;
-                      if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "VLSYS_Mplay.WhenDataReceived(): Received spurious REPEAT attached to key code - discarding",
-                          new object[0]);
-                      }
-                    }
-                    else if (this.IsRemoteKeyCode(this._LastRemoteButton))
-                    {
-                      if (DateTime.Now.Ticks >
-                          this._LastRemoteButtonTimestamp.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).
-                            Ticks)
-                      {
-                        if ((DateTime.Now.Ticks >
-                             this._LastRemoteButtonTimestamp.AddMilliseconds(this.RemoteSettings.RepeatDelay*2.5).Ticks) &&
-                            (this.RemoteSettings.RepeatDelay > 0))
-                        {
-                          if (this.DoDebug)
-                          {
-                            Log.Info(
-                              "VLSYS_Mplay.WhenDataReceived(): Received Remote Button : spurious REPEAT (excessive delay) - discarding",
-                              new object[0]);
-                          }
-                        }
-                        else
-                        {
-                          if (this.DoDebug)
-                          {
-                            Log.Info(
-                              "VLSYS_Mplay.WhenDataReceived(): Received Remote Button : REPEAT - using code = 0x{0}",
-                              new object[] {this._LastRemoteButton.ToString("x00")});
-                          }
-                          try
-                          {
-                            if (this._UseRemote)
-                            {
-                              this.FireRemoteEvent(this._LastRemoteButton);
-                            }
-                          }
-                          catch
-                          {
-                            Log.Info(
-                              "VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION: Unable to process Remote Button 0x{0}",
-                              new object[] {num12.ToString("x00")});
-                          }
-                        }
-                      }
-                      else if (this.DoDebug)
-                      {
-                        Log.Info(
-                          "VLSYS_Mplay.WhenDataReceived(): discarding REPEAT event - event received before repeat timeout ({0}ms) elapsed",
-                          new object[] {this.RemoteSettings.RepeatDelay});
-                      }
-                    }
-                  }
-                }
-                if (this.DoDebug)
-                {
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): completed", new object[0]);
-                }
+                receivedBytes[count] = commPort.ReadByte();
               }
-              Label_08F3:
-              ;
             }
-          }
-        }
-      }
-    }
-
-    private void WhenDataReceived_OLD(object sender, SerialDataReceivedEventArgs e)
-    {
-      if (!this.isDisabled && this.commPort.IsOpen)
-      {
-        if (!this._ProcessReceivedData)
-        {
-          Log.Info("VLSYS_Mplay.WhenDataReceived(): Not processing data - ignored", new object[0]);
-        }
-        else
-        {
-          lock (this.CommReadLock)
-          {
-            if (this._FlushDataBuffers)
+            catch
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - starting", new object[0]);
-              while (this.commPort.BytesToRead > 0)
-              {
-                this.commPort.DiscardInBuffer();
-              }
-              while (this.commPort.BytesToWrite > 0)
-              {
-                this.commPort.DiscardOutBuffer();
-              }
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - finished", new object[0]);
-            }
-          }
-          if (this._FlushDataBuffers)
-          {
-            this._FlushDataBuffers = false;
-          }
-          else
-          {
-            lock (this.CommReadLock)
-            {
-              int bytesToRead;
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event", new object[0]);
-              try
-              {
-                bytesToRead = this.commPort.BytesToRead;
-              }
-              catch
+              if (this.DoDebug)
               {
                 Log.Info("VLSYS_Mplay.WhenDataReceived(): error reading from port - driver disabled", new object[0]);
+              }
+              this.isDisabled = true;
+              return;
+            }            
+
+            if (this.DoDebug)
+            {
+              Log.Info("VLSYS_Mplay: Got DataReceived event - {0} bytes of data", new object[] { byteCount });
+            }
+            try
+            {
+              if (this._UseRemote && !this._inputHandler.IsLoaded)
+              {
+                if (this.DoDebug)
+                {
+                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Unable to process incoming data - NO REMOTE MAPPING", new object[] { byteCount });
+                }
+                this.commPort.DiscardInBuffer();
                 this.isDisabled = true;
-                goto Label_0610;
+                return;
               }
-              Log.Info("VLSYS_Mplay: Got DataReceived event - {0} bytes of data", new object[] {bytesToRead});
-              try
+            }
+            catch
+            {
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION - NO REMOTE MAPPING", new object[] { byteCount });
+              this.isDisabled = true;
+              return;
+            }            
+            
+            if ((this.commPort.BytesToRead > 0) && this.DoDebug)
+            {
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle", new object[0]);
+            }
+            
+            if (this.DoDebug)
+            {
+              string str2 = string.Empty;
+              for (int count = 0; count < byteCount; count++)
               {
-                if (this._UseRemote && !this._inputHandler.IsLoaded)
-                {
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Unable to process incoming data - NO REMOTE MAPPING",
-                           new object[] {bytesToRead});
-                  this.commPort.DiscardInBuffer();
-                  this.isDisabled = true;
-                  goto Label_0610;
-                }
+               str2 = str2 + "0x" + ((byte)receivedBytes[count]).ToString("x00") + " ";
               }
-              catch
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW DATA: {0}", new object[] { str2 });
+            }
+
+            for (int count = 0; count < byteCount; count++)
+            {
+              int num12 = receivedBytes[count];
+              int temp = 0;
+              if (this.DoDebug)
               {
-                Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION - NO REMOTE MAPPING",
-                         new object[] {bytesToRead});
-                this.isDisabled = true;
-                goto Label_0610;
-              }
-              char[] buffer = new char[0x10];
-              this.commPort.Read(buffer, 0, bytesToRead);
-              if (this.commPort.BytesToRead > 0)
-              {
-                Log.Info(
-                  "VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle",
-                  new object[0]);
-              }
-              string str = string.Empty;
-              for (int i = 0; i < bytesToRead; i++)
-              {
-                str = str + "0x" + ((byte) buffer[i]).ToString("x00") + " ";
-              }
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW DATA: {0}", new object[] {str});
-              char[] chArray2 = new char[0x10];
-              int num4 = 0;
-              for (int j = 0; j < bytesToRead; j++)
-              {
-                int code = buffer[j];
-                if (this.IsRemoteKeyCode(code) || this.IsTemperatureCode(code))
-                {
-                  chArray2[num4++] = (char) code;
-                }
-              }
-              if (num4 > 0)
-              {
-                str = string.Empty;
-                for (int m = 0; m < num4; m++)
-                {
-                  str = str + "0x" + ((byte) chArray2[m]).ToString("x00") + " ";
-                }
-                Log.Info("VLSYS_Mplay.WhenDataReceived(): PROCESSABLE DATA: {0}", new object[] {str});
-              }
-              else
-              {
-                Log.Info("VLSYS_Mplay.WhenDataReceived(): NO PROCESSABLE DATA RECEIVED", new object[] {str});
-              }
-              for (int k = 0; k < num4; k++)
-              {
-                int num10 = chArray2[k];
                 Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW REMOTE DATA: 0x{0} 0x{1}",
-                         new object[] {num10.ToString("x00")});
-                if (this.IsTemperatureCode(num10))
+                         new object[] { num12.ToString("x00") });
+              }
+              if (this.IsRemoteKeyCode(num12) && (num12 != 0x7e))
+              {
+                if (!this._UseRemote)
                 {
-                  if (num10 == 0x3f)
-                  {
-                    if (this._TempIndex == 0)
-                    {
-                      this._TempIndex = 1;
-                    }
-                    else
-                    {
-                      this._TempIndex = 0;
-                      this._TempCmdSent = false;
-                      this._TempDataValid = false;
-                    }
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): ERROR - Received invalid temperature data: data = {0}",
-                             new object[] {num10.ToString("x00")});
-                  }
-                  else if (this._TempCmdSent)
-                  {
-                    if (this._TempIndex == 0)
-                    {
-                      this._Temp1 = num10 - 150;
-                      this._TempIndex = 1;
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp1 = {0}",
-                               new object[] {this._Temp1});
-                    }
-                    else
-                    {
-                      this._Temp2 = num10 - 150;
-                      this._TempIndex = 0;
-                      this._TempCmdSent = false;
-                      this._TempDataValid = true;
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp2 = {0}",
-                               new object[] {this._Temp2});
-                    }
-                  }
-                  else
-                  {
-                    Log.Info("VLSYS_Mplay.WhenDataReceived(): ERROR: Received temperature without data request",
-                             new object[0]);
-                  }
-                }
-                else if (this.IsRemoteKeyCode(num10) && (num10 != 0x7e))
-                {
-                  if (!this._UseRemote)
+                  if (this.DoDebug)
                   {
                     Log.Info("VLSYS_Mplay.WhenDataReceived(): Remote disabled - ignoring", new object[0]);
                   }
-                  else
+                }
+                else
+                {
+                  this.FireRemoteEvent(num12);
+                  if (this.DoDebug)
                   {
-                    if (this._RemoteButtonPending != 0xff)
-                    {
-                      Log.Info(
-                        "VLSYS_Mplay.WhenDataReceived(): new button press received before last button processed: last code = {0}",
-                        new object[] {this._RemoteButtonPending.ToString("x00")});
-                      this.FireRemoteEvent(this._RemoteButtonPending);
-                    }
                     Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Remote Button : code = {0}",
-                             new object[] {num10.ToString("x00")});
-                    this._RemoteButtonPending = num10;
+                             new object[] { num12.ToString("x00") });
+                  }
+                  this._RemoteButtonPending = num12;
+                }
+              }
+              else if (num12 == 0x7e)
+              {
+                if (this.IsRemoteKeyCode(this._RemoteButtonPending))
+                {
+                  this._RemoteButtonPending = 0xff;
+                  if (this.DoDebug)
+                  {
+                    Log.Info(
+                      "VLSYS_Mplay.WhenDataReceived(): Received spurious REPEAT attached to key code - discarding",
+                      new object[0]);
                   }
                 }
-                else if (num10 == 0x7e)
+                else if (this.IsRemoteKeyCode(this._LastRemoteButton))
                 {
-                  if (this.IsRemoteKeyCode(this._RemoteButtonPending))
+                  if (DateTime.Now.Ticks >
+                      this._LastRemoteButtonTimestamp.AddMilliseconds((double)this.RemoteSettings.RepeatDelay).
+                        Ticks)
                   {
-                    try
+                    if ((DateTime.Now.Ticks >
+                         this._LastRemoteButtonTimestamp.AddMilliseconds(this.RemoteSettings.RepeatDelay * 2.5).Ticks) &&
+                        (this.RemoteSettings.RepeatDelay > 0))
                     {
-                      if (this._UseRemote)
+                      if (this.DoDebug)
                       {
-                        this.FireRemoteEvent(this._RemoteButtonPending);
+                        Log.Info(
+                          "VLSYS_Mplay.WhenDataReceived(): Received Remote Button : spurious REPEAT (excessive delay) - discarding",
+                          new object[0]);
                       }
                     }
-                    catch
+                    else
                     {
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION: Unable to process Remote Button",
-                               new object[] {num10.ToString()});
-                    }
-                  }
-                  else if (this.IsRemoteKeyCode(this._LastRemoteButton))
-                  {
-                    if (DateTime.Now.Ticks >
-                        this._LastRemoteButtonTimestamp.AddMilliseconds((double) this.RemoteSettings.RepeatDelay).Ticks)
-                    {
-                      Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Remote Button : REPEAT - using code = 0x{0}",
-                               new object[] {this._LastRemoteButton.ToString("x00")});
+                      if (this.DoDebug)
+                      {
+                        Log.Info(
+                          "VLSYS_Mplay.WhenDataReceived(): Received Remote Button : REPEAT - using code = 0x{0}",
+                          new object[] { this._LastRemoteButton.ToString("x00") });
+                      }
                       try
                       {
                         if (this._UseRemote)
@@ -2753,30 +2285,69 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       {
                         Log.Info(
                           "VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION: Unable to process Remote Button 0x{0}",
-                          new object[] {num10.ToString("x00")});
+                          new object[] { num12.ToString("x00") });
                       }
                     }
-                    else
-                    {
-                      Log.Info(
-                        "VLSYS_Mplay.WhenDataReceived(): discarding REPEAT event - event received before repeat timeout ({0}ms) elapsed",
-                        new object[] {this.RemoteSettings.RepeatDelay});
-                    }
+                  }
+                  else if (this.DoDebug)
+                  {
+                    Log.Info(
+                      "VLSYS_Mplay.WhenDataReceived(): discarding REPEAT event - event received before repeat timeout ({0}ms) elapsed",
+                      new object[] { this.RemoteSettings.RepeatDelay });
                   }
                 }
               }
+              else if (this.IsTemperatureCode(num12))
+              {
+                if ((this.MPlay_Model.Equals("ME7") || this.MPlay_Model.Equals("MP7")) ||
+                    this.MPlay_Model.Equals("MR2"))
+                {
+                  if ((num12 != 0xff) && (num12 != 0xfe))
+                  {
+                    temp = num12 - 0x6c;
+                  }
+                }
+                else
+                {
+                  temp = num12 - 150;
+                }
+                if (this.DoDebug)
+                {
+                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Received temperature data: temp{0} = {1}", _TempIndex, temp);
+                }
+                if (this._TempIndex == 0)
+                {
+                  this._Temp1 = temp;
+                  this._TempDataValid = true;
+                  if (TempCount > 1)
+                  {
+                    this._TempIndex++;
+                  }
+                }
+                else
+                {
+                  this._Temp2 = temp;
+                  this._TempDataValid2 = true;
+                  this._TempIndex = 0;
+                }
+              }
+            }
+            if (this.DoDebug)
+            {
               Log.Info("VLSYS_Mplay.WhenDataReceived(): completed", new object[0]);
-              Label_0610:
-              ;
             }
           }
+        }
+        else
+        {
+          GetDisplayType();
         }
       }
     }
 
     public string Description
     {
-      get { return "VL System Mplay/LIS2 driver V04_17_2008"; }
+      get { return "VL System Mplay/LIS2 driver"; }
     }
 
     public string ErrorMessage
