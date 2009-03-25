@@ -875,7 +875,7 @@ namespace MediaPortal.Music.Database
       } //end for-each
 
       Log.Info("Musicdatabasereorg: Checked {0} files.", totalFiles);
-      Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", totalFiles - AddedCounter);
+      Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", TotalSongs - AddedCounter);
 
       fileCount = TotalSongs;
       return SongCounter;
