@@ -361,12 +361,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (plugin.IsDecodingChannel(channelName))
         {
-        //TODO; have the mdapifilter stop decoding the now removed channel.
-        // it only fully stops when all subchannels are freed and graph stopped.
-          plugin.FreeDecodingChannel();
+          plugin.FreeDecodingChannel(false);
           return;
+        }
       }
-    }
     }
 
     /// <summary>
@@ -378,7 +376,7 @@ namespace TvLibrary.Implementations.DVB
       MDPlug[] plugins = getPlugins();
       foreach (MDPlug plugin in plugins)
       {
-        plugin.FreeDecodingChannel();
+        plugin.FreeDecodingChannel(true);
       }
     }
 
@@ -399,6 +397,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (plugin.IsDecodingChannel(currentChannel))
         {
+          // Increment usage counter of this slot.
+          plugin.IncrementDecodingCounter();
           Log.Log.Info("mdplug: SetChannel already decoding channel {0} subch {1}.", currentChannel.Name, SubCh);
           return;
         }
@@ -737,6 +737,7 @@ namespace TvLibrary.Implementations.DVB
     IChangeChannel _changeChannel;
     IChangeChannel_Ex _changeChannel_Ex;
     private IChannel _decodingChannel;
+    private int _decodingCounter;
     #endregion
 
     #region ctor
@@ -814,9 +815,31 @@ namespace TvLibrary.Implementations.DVB
           && _decodingChannel.Name == channelName;
     }
 
-    public void FreeDecodingChannel()
+    public void IncrementDecodingCounter()
     {
-      _decodingChannel = null;
+      if (_decodingChannel != null)
+      {
+        _decodingCounter++;
+        Log.Log.Info("mdplug: usage counter for channel '{0}' is {1}", _decodingChannel.Name, _decodingCounter);
+      }
+    }
+
+    public void FreeDecodingChannel(bool forceFree)
+    {
+      if (_decodingChannel != null)
+      {
+        _decodingCounter--;
+        if (forceFree
+            || _decodingCounter <= 0)
+        {
+          _decodingChannel = null;
+          _decodingCounter = 0;
+        }
+        else
+        {
+          Log.Log.Info("mdplug: usage counter for channel '{0}' is still {1}", _decodingChannel.Name, _decodingCounter);
+        }
+      }
     }
 
     /// <summary>
@@ -1304,6 +1327,7 @@ namespace TvLibrary.Implementations.DVB
           _changeChannel.ChangeChannelTP82(lparam);
 
         _decodingChannel = currentChannel;
+        _decodingCounter = 1;
 
         Log.Log.Info("mdplug: Send channel change to MDAPI filter Ca_Id:{0} CA_Nr:{1} ECM_PID:{2}(0x{3:X})",
            _mDPlugTProg82.CA_ID,
