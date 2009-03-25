@@ -369,7 +369,7 @@ namespace MediaPortal.GUI.Library
 
     // the multiple information vector
     private static int MULTI_INFO_START = 40000;
-    private static int MULTI_INFO_END = 41000; // 1000 references is all we have for now
+    private static int MULTI_INFO_END = 50000; // 10000 references is all we have for now
     private static int COMBINED_VALUES_START = 100000;
 
     #endregion
@@ -1409,14 +1409,14 @@ namespace MediaPortal.GUI.Library
       // check to see if we have this info already
       for (int i = 0; i < m_multiInfo.Count; i++)
       {
-        if (m_multiInfo[i] == info)
+        if (m_multiInfo[i].Equals(info))
         {
-          return (int) i + MULTI_INFO_START;
+          return i + MULTI_INFO_START;
         }
       }
       // return the new offset
       m_multiInfo.Add(info);
-      return (int) m_multiInfo.Count + MULTI_INFO_START - 1;
+      return m_multiInfo.Count + MULTI_INFO_START - 1;
     }
 
     private static int ConditionalStringParameter(string parameter)
