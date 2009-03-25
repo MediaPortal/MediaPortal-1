@@ -790,9 +790,10 @@ namespace SetupTv.Sections
         Log.Info("TvChannels: Trying to import channels from {0}", openFileDialog1.FileName);
         doc.Load(openFileDialog1.FileName);
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
-        XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
         XmlNodeList channelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
+        XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
         if (channelList != null)
+        {
           foreach (XmlNode nodeChannel in channelList)
           {
             try
@@ -992,77 +993,99 @@ namespace SetupTv.Sections
                     break;
                 }
               }
-            } catch (Exception exc)
+            }
+            catch (Exception exc)
             {
               Log.Error("TvChannels: Failed to add channel - {0}", exc.Message);
             }
           }
-
-        // Import schedules
-        foreach (XmlNode nodeSchedule in scheduleList)
-        {
-          try
-          {
-            scheduleCount++;
-            string programName = nodeSchedule.Attributes["ProgramName"].Value;
-            string channel = nodeSchedule.Attributes["ChannelName"].Value;
-            int idChannel = layer.GetChannelByName(channel).IdChannel;
-
-            DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            int scheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
-            Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
-
-            schedule.ScheduleType = scheduleType;
-            schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-            schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
-            schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
-            schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
-            schedule.Quality = Int32.Parse(nodeSchedule.Attributes["Quality"].Value);
-            schedule.Directory = nodeSchedule.Attributes["Directory"].Value;
-            schedule.KeepMethod = Int32.Parse(nodeSchedule.Attributes["KeepMethod"].Value);
-            schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
-            schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
-            schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
-            schedule.Series = (GetNodeAttribute(nodeSchedule, "Series", "False") == "True");
-            schedule.Persist();
-            Log.Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
-          } catch (Exception ex)
-          {
-            Log.Error("TvChannels: Failed to add schedule - {0}", ex.Message);
-          }
         }
-        // Import channel groups
-        foreach (XmlNode nodeChannelGroup in channelGroupList)
+
+        if (channelGroupList != null)
         {
-          try
+          // Import channel groups
+          foreach (XmlNode nodeChannelGroup in channelGroupList)
           {
-            channelGroupCount++;
-            string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
-            int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-            ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder) ??
-                                 new ChannelGroup(groupName, groupSortOrder);
-            group.Persist();
-            XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
-            foreach (XmlNode nodeMap in mappingList)
+            try
             {
-              Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
-              int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
-              if (channel != null)
+              channelGroupCount++;
+              string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
+              int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
+              ChannelGroup group = layer.GetGroupByName(groupName, groupSortOrder) ??
+                                   new ChannelGroup(groupName, groupSortOrder);
+              group.Persist();
+              XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
+              foreach (XmlNode nodeMap in mappingList)
               {
-                GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
-                map.Persist();
+                Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
+                int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
+                if (channel != null)
+                {
+                  GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
+                  map.Persist();
+                }
               }
             }
-          } catch (Exception exg)
-          {
-            Log.Error("TvChannels: Failed to add group - {0}", exg.Message);
+            catch (Exception exg)
+            {
+              Log.Error("TvChannels: Failed to add group - {0}", exg.Message);
+            }
           }
         }
+
+        if (scheduleList != null)
+        {
+          // Import schedules
+          foreach (XmlNode nodeSchedule in scheduleList)
+          {
+            try
+            {
+              int idChannel = -1;
+
+              string programName = nodeSchedule.Attributes["ProgramName"].Value;
+              string channel = nodeSchedule.Attributes["ChannelName"].Value;
+              if (!string.IsNullOrEmpty(channel))
+              {
+                idChannel = layer.GetChannelByName(channel).IdChannel;
+              }
+              DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              int scheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+              Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
+
+              schedule.ScheduleType = scheduleType;
+              schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
+              schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
+              schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
+              schedule.Quality = Int32.Parse(nodeSchedule.Attributes["Quality"].Value);
+              schedule.Directory = nodeSchedule.Attributes["Directory"].Value;
+              schedule.KeepMethod = Int32.Parse(nodeSchedule.Attributes["KeepMethod"].Value);
+              schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
+              schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
+              schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
+              schedule.Series = (GetNodeAttribute(nodeSchedule, "Series", "False") == "True");
+              if (idChannel > -1)
+              {
+                schedule.Persist();
+                scheduleCount++;
+                Log.Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
+              }
+              else
+                Log.Info("TvChannels: Skipped schedule: {0} because the channel was unknown: {1}", programName, channel);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TvChannels: Failed to add schedule - {0}", ex.Message);
+            }
+          }
+        }
+
         dlg.Close();
         Log.Info("TvChannels: Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount);
         MessageBox.Show(String.Format("Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount));
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         MessageBox.Show(this, "Error while importing:\n\n" + ex + " " + ex.StackTrace);
       }
