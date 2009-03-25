@@ -561,7 +561,7 @@ namespace MediaPortal.Player
       int frames = FrameCounter;
       if (ts.TotalMilliseconds >= 5000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0))
       {
-        GUIGraphicsContext.Vmr9FPS = ((float) (frames*5000))/((float) ts.TotalMilliseconds);
+        GUIGraphicsContext.Vmr9FPS = ((float) (frames*1000))/((float) ts.TotalMilliseconds);
 //         Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
