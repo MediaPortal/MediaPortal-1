@@ -206,6 +206,7 @@ namespace MediaPortal.GUI.Library
     #region variables
 
     private List<PackedTexture> _packedTextures;
+    private const int MAXTEXTURESIZE = 2048; // the maximum width and height which fits into the texture cache - depends on drivers / gfx hardware
 
     #endregion
 
@@ -343,6 +344,12 @@ namespace MediaPortal.GUI.Library
           string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
           files.AddRange(skinFiles);
         }
+        // workaround for uncommon rendering implementation of volume osd - it won't show up without packedtextures
+        else
+        {
+          string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "volume*.png");
+          files.AddRange(skinFiles);
+        }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
           string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png", SearchOption.AllDirectories);
@@ -361,8 +368,8 @@ namespace MediaPortal.GUI.Library
 
       //Determine maximum texture dimensions
       //We limit the max resolution to 2048x2048
-      int iMaxWidth = 2048;
-      int iMaxHeight = 2048;
+      int iMaxWidth = MAXTEXTURESIZE;
+      int iMaxHeight = MAXTEXTURESIZE;
       try
       {
         Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
@@ -372,13 +379,13 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception) { }
 
-      if (iMaxWidth > 2048)
+      if (iMaxWidth > MAXTEXTURESIZE)
       {
-        iMaxWidth = 2048;
+        iMaxWidth = MAXTEXTURESIZE;
       }
-      if (iMaxHeight > 2048)
+      if (iMaxHeight > MAXTEXTURESIZE)
       {
-        iMaxHeight = 2048;
+        iMaxHeight = MAXTEXTURESIZE;
       }
 
       while (true)
@@ -407,8 +414,8 @@ namespace MediaPortal.GUI.Library
                 files[i] = string.Empty;
                 continue;
               }
-              bool dontAdd;
 
+              bool dontAdd;
               if (AddBitmap(bigOne.root, rootImage, files[i], out dontAdd))
               {
                 files[i] = string.Empty;
@@ -526,16 +533,17 @@ namespace MediaPortal.GUI.Library
         bmp = Image.FromFile(file);
       }
 
-      if (bmp.Width >= GUIGraphicsContext.Width ||
-          bmp.Height >= GUIGraphicsContext.Height)
+      //if (bmp.Width >= GUIGraphicsContext.Width || bmp.Height >= GUIGraphicsContext.Height)
+      if (bmp.Width >= MAXTEXTURESIZE || bmp.Height >= MAXTEXTURESIZE)
       {
-        //dontAdd=true;
-        //return false;
+        Log.Warn("TexturePacker: Texture {0} is too large to be cached", file);
+        dontAdd = true;
+        return false;
       }
-      int pos;
+
       string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
 
-      pos = file.IndexOf(skinName);
+      int pos = file.IndexOf(skinName);
       if (pos >= 0)
       {
         file = file.Remove(pos, skinName.Length);
