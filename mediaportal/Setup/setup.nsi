@@ -293,6 +293,7 @@ Section "-prepare" SecPrepare
 
   # if it is an update include a file with  last update/cleanup instructions
   ${If} $UpdateMode = 1
+    ${LOG_TEXT} "INFO" "Removing 1.0 files..."
     !include "update-1.0.1.nsh"
   ${EndIf}  
 SectionEnd
