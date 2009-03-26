@@ -45,16 +45,16 @@
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="250">WindowClose</animation>
       <id>50</id>
       <posX>672</posX>
-      <posY>162</posY>
-      <width>491</width>
+      <posY>160</posY>
+      <width>500</width>
       <textcolor>ffffffff</textcolor>
       <textColorNoFocus>ffa9d0f7</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>38</buttonTextXOff>
       <buttonTextYOff>10</buttonTextYOff>
-      <buttonOffset>31</buttonOffset>
+      <buttonOffset>28</buttonOffset>
       <buttonFont>font18</buttonFont>
-      <buttonHeight>75</buttonHeight>
+      <buttonHeight>77</buttonHeight>
       <spaceBetweenButtons>0</spaceBetweenButtons>
       <numberOfButtons>5</numberOfButtons>
       <textureButtonFocus>hp_selectionbar_focus.png</textureButtonFocus>
@@ -62,10 +62,10 @@
       <hoverX>141</hoverX>
       <hoverY>225</hoverY>
       <hoverWidth>515</hoverWidth>
-      <hoverHeight>381</hoverHeight>
+      <hoverHeight>383</hoverHeight>
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
-      <scrollTime>96</scrollTime>
-      <scrollTimeMin>48</scrollTimeMin>
+      <scrollTime>120</scrollTime>
+      <scrollTimeMin>50</scrollTimeMin>
       <textureBackground>emtpy.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
