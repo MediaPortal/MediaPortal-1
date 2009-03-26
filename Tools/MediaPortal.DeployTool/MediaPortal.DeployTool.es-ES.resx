@@ -510,4 +510,20 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>¡No hay suficiente espacio libre en la unidad especificada! Para la instalación de MediaPortal se necesita al menos {0} MB de espacio libre en disco.</value>
   </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>Detectado {0} MediaPortal</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>Detectado  MediaPortal {0} (build {1})</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Nueva instalación</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Actualizar instalación actual a {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOTA: No puedes actualizar desde SVN build,
+          éstas están diseñadas sólo para su testeo.</value>
+  </data>
 </root>
