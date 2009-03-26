@@ -50,7 +50,7 @@ namespace MPLanguageTool
       int count = 0;
       foreach (DataGridViewRow row in gv.Rows)
       {
-        if (String.IsNullOrEmpty(row.Cells[1].Value.ToString()))
+        if (row.Cells[1].Value == null)
           count++;
       }
       return count;
