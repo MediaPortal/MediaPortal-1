@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -18,8 +17,8 @@
       <width>718</width>
       <height>290</height>
       <texture>dialog_background.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>dialog Heading</description>
@@ -31,8 +30,8 @@
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 1</description>
@@ -43,8 +42,8 @@
       <width>524</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 2</description>
@@ -56,8 +55,8 @@
       <width>524</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 3</description>
@@ -69,8 +68,8 @@
       <width>524</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 4</description>
@@ -82,8 +81,8 @@
       <width>524</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
   </controls>
 </window>

@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2901</id>
   <defaultcontrol>213</defaultcontrol>
@@ -21,8 +20,8 @@
       <texture>#Play.Current.Thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Movie Name</description>
@@ -35,8 +34,8 @@
       <font>font13</font>
       <label>#Play.Current.Title</label>
       <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Plot</description>
@@ -48,8 +47,8 @@
       <label>#Play.Current.Plot</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>AAC</description>
@@ -62,8 +61,8 @@
       <texture>#Play.Current.IsAAC</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>MP3</description>
@@ -76,8 +75,8 @@
       <texture>#Play.Current.IsMP3</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>AC3</description>
@@ -90,8 +89,8 @@
       <texture>#Play.Current.IsAC3</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>DTS</description>
@@ -104,8 +103,8 @@
       <texture>#Play.Current.IsDTS</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>MP2A</description>
@@ -118,8 +117,8 @@
       <texture>#Play.Current.IsMP2A</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>WMA</description>
@@ -132,8 +131,8 @@
       <texture>#Play.Current.IsWMA</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>PCM</description>
@@ -146,8 +145,8 @@
       <texture>#Play.Current.IsPCM</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>DivX</description>
@@ -160,8 +159,8 @@
       <texture>#Play.Current.IsDIVX</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>XVID</description>
@@ -174,8 +173,8 @@
       <texture>#Play.Current.IsXVID</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>H264</description>
@@ -188,8 +187,8 @@
       <texture>#Play.Current.IsH264</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Generic MPEG4</description>
@@ -202,8 +201,8 @@
       <texture>#Play.Current.IsMP4V</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>MP1V</description>
@@ -216,8 +215,8 @@
       <texture>#Play.Current.IsMP1V</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>MP2V</description>
@@ -230,8 +229,8 @@
       <texture>#Play.Current.IsMP2V</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>WMV</description>
@@ -244,8 +243,8 @@
       <texture>#Play.Current.IsWMV</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Subtitles</description>
@@ -258,8 +257,8 @@
       <texture>#Play.Current.HasSubtitles</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
   </controls>
 </window>

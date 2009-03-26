@@ -67,7 +67,7 @@
       <textureNoFocus>Basic_music_nofocus.png</textureNoFocus>
       <hyperlink>501</hyperlink>
       <hover>hover_my music.png</hover>
-       <hoverX>445</hoverX>
+      <hoverX>445</hoverX>
       <hoverY>360</hoverY>
       <hoverWidth>413</hoverWidth>
       <hoverHeight>342</hoverHeight>
@@ -83,7 +83,7 @@
       <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="300">WindowOpen</animation>
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="300">WindowClose</animation>
     </control>
-      <control>
+    <control>
       <description>home BM Video</description>
       <type>button</type>
       <id>3</id>
@@ -122,7 +122,7 @@
       <textureNoFocus>Basic_pictures_nofocus.png</textureNoFocus>
       <hyperlink>2</hyperlink>
       <hover>hover_my pictures.png</hover>
-        <hoverX>445</hoverX>
+      <hoverX>445</hoverX>
       <hoverY>360</hoverY>
       <hoverWidth>413</hoverWidth>
       <hoverHeight>342</hoverHeight>
@@ -149,7 +149,7 @@
       <textureNoFocus>Basic_tv_nofocus.png</textureNoFocus>
       <hyperlink>1</hyperlink>
       <hover>hover_my tv.png</hover>
-       <hoverX>445</hoverX>
+      <hoverX>445</hoverX>
       <hoverY>360</hoverY>
       <hoverWidth>413</hoverWidth>
       <hoverHeight>342</hoverHeight>

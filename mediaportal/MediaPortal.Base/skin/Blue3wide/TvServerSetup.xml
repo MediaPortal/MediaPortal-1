@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>709</id>
   <defaultcontrol>24</defaultcontrol>
@@ -10,8 +9,8 @@
     <import>common.settings.xml</import>
     <control>
       <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>99</posX>
       <posY>188</posY>
@@ -23,8 +22,8 @@
     </control>
     <control>
       <type>group</type>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>99</posX>
       <posY>238</posY>

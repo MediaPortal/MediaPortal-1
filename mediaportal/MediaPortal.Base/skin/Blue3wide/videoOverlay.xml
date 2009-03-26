@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3000</id>
   <defaultcontrol>2</defaultcontrol>
@@ -14,8 +13,8 @@
       <align>left</align>
       <font>font60</font>
       <textcolor>20ffffff</textcolor>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>play logo</description>
@@ -27,8 +26,8 @@
       <height>52</height>
       <texture>logo_play.png</texture>
       <visible>player.playing</visible>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>Pause logo</description>
@@ -40,8 +39,8 @@
       <height>52</height>
       <texture>logo_pause.png</texture>
       <visible>player.paused</visible>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>FF logo</description>
@@ -53,8 +52,8 @@
       <height>52</height>
       <texture>logo_fastforward.png</texture>
       <visible>player.forwarding</visible>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>RW logo</description>
@@ -66,8 +65,8 @@
       <height>52</height>
       <texture>logo_rewind.png</texture>
       <visible>player.rewinding</visible>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>scrolling info label</description>
@@ -79,8 +78,8 @@
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
       <textcolor>EFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
       <id>5</id>
     </control>
     <control>
@@ -92,8 +91,8 @@
       <width>219</width>
       <height>124</height>
       <texture>Picture_cover.png</texture>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <description>video preview window</description>
@@ -107,8 +106,8 @@
       <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
   </controls>
 </window>

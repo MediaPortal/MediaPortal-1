@@ -23,7 +23,7 @@
       <width>568</width>
       <height>900</height>
       <dimColor>00ffffff</dimColor>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
@@ -90,7 +90,7 @@
           <align>left</align>
           <textcolor>20ffffff</textcolor>
           <label>#currentplaytime</label>
-           <visible>!Control.HasFocus(50)+player.hasmedia</visible>
+          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
         </control>
         <control>
           <description>Progress background</description>
@@ -117,8 +117,8 @@
         <control>
           <description>group element</description>
           <type>group</type>
-          <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+          <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
           <posX>71</posX>
           <posY>121</posY>
           <visible>!Control.HasFocus(50)</visible>
@@ -211,13 +211,13 @@
     <control>
       <id>1</id>
       <type>image</type>
-     <posX>86</posX>
+      <posX>86</posX>
       <posY>141</posY>
       <width>188</width>
       <height>272</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <id>1</id>
@@ -228,7 +228,7 @@
       <height>272</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -239,7 +239,7 @@
       <height>282</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -251,7 +251,7 @@
       <label>Info:</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -263,7 +263,7 @@
       <label>#selecteditem</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -275,7 +275,7 @@
       <label>#selecteditem2</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>video rectangle</description>

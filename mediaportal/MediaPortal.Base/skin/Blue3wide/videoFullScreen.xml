@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
@@ -81,7 +80,7 @@
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
     </control>
   </controls>
 </window>

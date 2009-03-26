@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>707</id>
   <defaultcontrol>24</defaultcontrol>
- <allowoverlay>yes</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label:6103</define>
   <define>#header.image:settings_logo.png</define>
   <define>#header.hover:hover_my tv.png</define>

@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2004</id>
   <defaultcontrol>2</defaultcontrol>
@@ -34,7 +33,7 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-       <posX>86</posX>
+      <posX>86</posX>
       <posY>558</posY>
       <width>203</width>
       <height>115</height>

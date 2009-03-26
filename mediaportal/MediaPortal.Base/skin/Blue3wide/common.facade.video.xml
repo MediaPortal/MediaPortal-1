@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -10,8 +9,8 @@
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="250" end="800,0">WindowClose</animation>
-      <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="500" reversible="false">hidden</animation>
-      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="500" reversible="false">visible</animation>
+      <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="300" reversible="false">hidden</animation>
+      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">visible</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -92,8 +91,8 @@
           <visible>facadeview.filmstrip</visible>
           <thumbAnimation effect="zoom" start="100,100" end="130,130" time="200">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="130,130" end="100,100" time="200">unfocus</thumbAnimation>
-          <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="500" reversible="false">unfocus</animation>
-          <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="500" reversible="false">focus</animation>
+          <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="300" reversible="false">unfocus</animation>
+          <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">focus</animation>
         </control>
         <control>
           <description>playlist listcontrol</description>
@@ -102,9 +101,9 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>32</itemWidth>
-     <itemHeight>32</itemHeight>
-    <IconXOff>12</IconXOff>
-    <IconYOff>4</IconYOff>
+          <itemHeight>32</itemHeight>
+          <IconXOff>12</IconXOff>
+          <IconYOff>4</IconYOff>
           <scrollOffset>2</scrollOffset>
         </control>
       </control>

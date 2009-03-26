@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3003</id>
   <defaultcontrol>213</defaultcontrol>
@@ -20,8 +19,8 @@
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>TV Progress Bar</description>
@@ -59,8 +58,8 @@
       <posX>626</posX>
       <posY>647</posY>
       <texture>rec.png</texture>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Name</description>
@@ -73,8 +72,8 @@
       <font>font13</font>
       <label>#TV.View.channel</label>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>On tv NOW</description>
@@ -87,8 +86,8 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Plot</description>
@@ -102,8 +101,8 @@
       <label>#TV.View.description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>On tv NEXT</description>
@@ -116,8 +115,8 @@
       <align>left</align>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Program Button Up</description>
@@ -135,8 +134,8 @@
       <onup>33</onup>
       <ondown>32</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Program Button Down</description>
@@ -154,8 +153,8 @@
       <onup>34</onup>
       <ondown>31</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Button Up</description>
@@ -173,8 +172,8 @@
       <onup>34</onup>
       <ondown>31</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Channel Button Down</description>
@@ -192,8 +191,8 @@
       <onup>33</onup>
       <ondown>32</ondown>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
       <description>Current channel</description>
@@ -207,8 +206,8 @@
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
   </controls>
 </window>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>761</id>
   <defaultcontrol>2</defaultcontrol>
@@ -259,13 +258,13 @@
       <height>425</height>
       <textureFocus>small_vbutton_focus.png</textureFocus>
       <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
-      <label></label>
+      <label/>
       <onleft>60</onleft>
       <onright>6</onright>
       <onup>6</onup>
       <ondown>6</ondown>
-     <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
-     <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
     </control>
     <control>
       <description>TvGroup button label</description>
@@ -277,6 +276,6 @@
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
-      </control>
+    </control>
   </controls>
 </window>

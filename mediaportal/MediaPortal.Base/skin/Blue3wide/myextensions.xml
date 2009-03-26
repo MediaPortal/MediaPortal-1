@@ -9,7 +9,7 @@
   <controls>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-  <control>
+    <control>
       <type>actiongroup</type>
       <description>action menu</description>
       <defaultcontrol>2</defaultcontrol>
@@ -32,40 +32,40 @@
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="300" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="300" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
-      <description>group element</description>
-      <type>group</type>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-      <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
-      <posX>40</posX>
-      <posY>97</posY>
-      <layout>StackLayout</layout>
-      <visible>!Control.HasFocus(50)</visible>
-      <control>
-        <description>View-As</description>
-        <type>button</type>
-        <id>2</id>
-        <label>100</label>
-        <onright>50</onright>
-        <onup>17</onup>
-      </control>
-      <control>
-        <description>Sort</description>
-        <type>sortbutton</type>
-        <id>3</id>
-        <onright>50</onright>
-      </control>
-	  
-      <control>
-        <description>Views</description>
-        <type>button</type>
-        <id>6</id>
-        <label>14002</label>
-        <onright>50</onright>
-      </control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="300" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="300" end="-300,0" reversible="false">hidden</animation>
+        <posX>40</posX>
+        <posY>97</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>100</label>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+        <control>
+          <description>Sort</description>
+          <type>sortbutton</type>
+          <id>3</id>
+          <onright>50</onright>
+        </control>
+
+        <control>
+          <description>Views</description>
+          <type>button</type>
+          <id>6</id>
+          <label>14002</label>
+          <onright>50</onright>
+        </control>
 
       </control>
     </control>

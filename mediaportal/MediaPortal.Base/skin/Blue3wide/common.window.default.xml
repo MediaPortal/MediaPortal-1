@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -54,8 +53,8 @@
       <posY>462</posY>
       <texture>#header.hover</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="350" end="-300,0">hidden</animation>
-      <animation effect="slide" time="450" start="-300,0">visible</animation>
+      <animation effect="slide" time="250" end="-300,0">hidden</animation>
+      <animation effect="slide" time="250" start="-300,0">visible</animation>
     </control>
     <control>
       <description>Number of Files Label</description>

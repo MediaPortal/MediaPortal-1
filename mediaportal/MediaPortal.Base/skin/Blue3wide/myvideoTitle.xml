@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>25</id>
   <defaultcontrol>2</defaultcontrol>
@@ -34,14 +33,14 @@
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
        <control>
           <description>caption of the selected item</description>
@@ -149,8 +148,8 @@
         <control>
           <description>button group</description>
           <type>group</type>
-          <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+          <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
           <posX>71</posX>
           <posY>121</posY>
           <layout>StackLayout</layout>
@@ -246,7 +245,7 @@
       <align>left</align>
       <textcolor>ffffffff</textcolor>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -268,7 +267,7 @@
       <imagesToDraw>10</imagesToDraw>
       <percentage>#rating</percentage>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -281,7 +280,7 @@
       <height>250</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
       <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -294,7 +293,7 @@
       <height>250</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -307,7 +306,7 @@
       <height>258</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -315,8 +314,8 @@
       <description>Genre txt</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>193</posY>
       <label>174</label>
@@ -324,7 +323,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -332,8 +331,8 @@
       <description>Genre value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>212</posY>
       <width>248</width>
@@ -341,7 +340,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -349,8 +348,8 @@
       <description>Director txt</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>243</posY>
       <label>199</label>
@@ -358,7 +357,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -366,8 +365,8 @@
       <description>Director value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>262</posY>
       <label>#director</label>
@@ -375,7 +374,7 @@
       <width>248</width>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -383,8 +382,8 @@
       <description>Year txt</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>293</posY>
       <label>201</label>
@@ -392,7 +391,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -400,8 +399,8 @@
       <description>Year value</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>312</posY>
       <width>248</width>
@@ -409,7 +408,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -417,8 +416,8 @@
       <description>Runtime txt</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>343</posY>
       <label>299</label>
@@ -426,7 +425,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -434,8 +433,8 @@
       <description>Runtime value</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>362</posY>
       <width>248</width>
@@ -443,7 +442,7 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -451,8 +450,8 @@
       <description>MPAA txt</description>
       <type>label</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>393</posY>
       <label>Rating</label>
@@ -460,7 +459,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -468,8 +467,8 @@
       <description>MPAA Rating</description>
       <type>fadelabel</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>305</posX>
       <posY>412</posY>
       <width>248</width>
@@ -478,7 +477,7 @@
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -486,8 +485,8 @@
       <description>Plot value</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <animation effect="fade" time="400">WindowClose</animation>
-      <animation effect="fade" time="400">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <posX>71</posX>
       <posY>462</posY>
       <width>533</width>
@@ -496,7 +495,7 @@
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

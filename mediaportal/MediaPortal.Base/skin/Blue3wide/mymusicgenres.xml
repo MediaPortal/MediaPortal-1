@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>504</id>
   <defaultcontrol>2</defaultcontrol>
@@ -34,14 +33,14 @@
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
       <control>
           <description>caption of the selected item</description>
@@ -149,8 +148,8 @@
         <control>
           <description>group element</description>
           <type>group</type>
-          <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
+          <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
           <posX>71</posX>
           <posY>121</posY>
           <control>
@@ -277,7 +276,7 @@
       <height>202</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <id>500</id>
@@ -288,7 +287,7 @@
       <height>202</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -299,7 +298,7 @@
       <height>210</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -311,7 +310,7 @@
       <label>Info:</label>
       <font>font14</font>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -323,7 +322,7 @@
       <label>#selecteditem</label>
       <font>font14</font>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -335,7 +334,7 @@
       <label>#selecteditem2</label>
       <font>font14</font>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="450" reversible="false">visible</animation>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
    <control>
       <description>video rectangle</description>

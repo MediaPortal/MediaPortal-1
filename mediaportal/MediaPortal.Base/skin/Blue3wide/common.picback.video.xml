@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -12,8 +11,8 @@
       <dimColor>50ffffff</dimColor>
       <texture>#selectedthumb</texture>
       <visible>facadeview.filmstrip</visible>
-      <animation effect="fade" time="450">WindowOpen</animation>
-      <animation effect="fade" time="450">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <id>1</id>

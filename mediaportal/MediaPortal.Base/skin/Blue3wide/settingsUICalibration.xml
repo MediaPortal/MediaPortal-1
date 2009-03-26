@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>10</id>
   <defaultcontrol>2</defaultcontrol>
@@ -16,8 +15,8 @@
       <width>1280</width>
       <height>720</height>
       <texture>settingsUICalibration.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>rectangle image</description>
@@ -26,8 +25,8 @@
       <posX>32</posX>
       <posY>337</posY>
       <texture>calibration_bar.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
     <control>
       <description>coordinates label</description>
@@ -38,8 +37,8 @@
       <label>5</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
     </control>
   </controls>
 </window>
