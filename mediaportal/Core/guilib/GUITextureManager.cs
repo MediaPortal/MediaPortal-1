@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Library
 
     private static void dispose(bool disposing)
     {
-      Log.Info("TextureManager: Dispose()");
+      Log.Debug("TextureManager: Dispose()");
       _packer.Dispose();
       if (disposing)
       {
@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Library
       {
         if (!File.Exists(fileName))
         {
-          Log.Info("TextureManager: texture: {0} does not exist", fileName);
+          Log.Warn("TextureManager: texture: {0} does not exist", fileName);
           return 0;
         }
 
@@ -339,7 +339,7 @@ namespace MediaPortal.GUI.Library
 
     public static int LoadFromMemory(Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
-      Log.Info("TextureManager: load from memory: {0}", name);
+      Log.Debug("TextureManager: load from memory: {0}", name);
       string cacheName = name;
       for (int i = 0; i < _cache.Count; ++i)
       {
@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.Library
         //load gif into texture
         using (MemoryStream stream = new MemoryStream())
         {
-          memoryImage.Save(stream, ImageFormat.Png);
+          memoryImage.Save(stream, ImageFormat.Png);          
           ImageInformation info2 = new ImageInformation();
           stream.Flush();
           stream.Seek(0, SeekOrigin.Begin);
@@ -402,7 +402,7 @@ namespace MediaPortal.GUI.Library
         _cache.Add(newCache);
         _textureCacheLookup[cacheName] = newCache;
 
-        Log.Info("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
+        Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
                  GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
         return newCache.Frames;
       }
@@ -571,7 +571,7 @@ namespace MediaPortal.GUI.Library
             {
               lock (oldImage)
               {
-                Log.Info("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames,
+                Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames,
                          _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));
                 _cache.Remove(oldImage);
                 _textureCacheLookup.Remove(oldImage.Name);
