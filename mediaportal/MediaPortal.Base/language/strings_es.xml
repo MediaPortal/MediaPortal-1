@@ -77,7 +77,7 @@
     <String id="142">Comienzo:</String>
     <String id="143">Actual:</String>
     <String id="144">Construido:</String>
-    <String id="145">Redes:</String>
+    <String id="145">Red:</String>
     <String id="146">Tipo:</String>
     <String id="147">Estático</String>
     <String id="148">DHCP</String>
@@ -1260,10 +1260,10 @@
     <String id="4518">Título del álbum no encontrado\r\n Intentando: {0}</String>
     <String id="4519">Portada actual</String>
     <String id="4520">Saltar</String>
-    <String id="4521">Mostrar información del álbum</String>
+    <String id="4521">Mostrar información del artista/álbum</String>
     <String id="4522">Capturando: {0}...</String>
     <String id="4540">Reproduciendo</String>
-    <String id="4541">Reproduciendo siguiente</String>
+    <String id="4541">Se reproducirá a continuación:</String>
     <String id="4542">Ninguna lista de reproducción cargada</String>
     <String id="4543">Información de pista no disponible</String>
     <String id="4550">Cue</String>
@@ -1472,7 +1472,7 @@
     <String id="13033">Más recientemente estrenado</String>
     <String id="13034">Título</String>
     <String id="13041">Mostrar información del archivo</String>
-    <String id="14001" prefix="Mis">Extensiones</String>
+    <String id="14001" prefix="Mis ">Extensiones</String>
     <String id="14002">Vistas</String>
     <String id="14003">Extensiones instaladas</String>
     <String id="14004">Extensiones en línea</String>
@@ -1487,6 +1487,9 @@
     <String id="14013">¿Quiere continuar?</String>
     <String id="14014">Actualizando información online</String>
     <String id="14015">Actualizaciones</String>
+    <String id="14016">Ordenar por: Descarga</String>
+    <String id="14017">Ordenar por: Puntuación</String>
+    <String id="14018">Instalar Actualización</String>
     <String id="16001">Mezclar party</String>
     <String id="19001" prefix="Mi ">Tetris</String>
     <String id="19002">Nuevo juego</String>
@@ -1580,11 +1583,11 @@
     <String id="33013">Canciones que se parecen a la palabra clave</String>
     <String id="33014">Canciones reproducidas recientemente</String>
     <String id="33016">Canciones que le gustan a sus amigos</String>
-    <String id="33017">Canciones aleatorias</String>
-    <String id="33018">Canciones aleatorias no escuchadas</String>
-    <String id="33019">Canciones aleatorias favoritas</String>
-    <String id="33030">Canciones del álbum favorito</String>
-    <String id="33031">Otras canciones con la palabra clave:</String>
+    <String id="33017">Reproducir pistas al azar</String>
+    <String id="33018">Reprod. al azar canciones no escuchadas</String>
+    <String id="33019">Reprod. al azar canciones favoritas</String>
+    <String id="33030">Canciones favoritas del álbum</String>
+    <String id="33031">Otras canciones con la palabra clave: </String>
     <String id="33032">¡La mejor canción de este disco</String>
     <String id="33033">podría no encontrarse en su colección!</String>
     <String id="33040">Copiar el spam de la reproducción actual al portapapeles</String>
@@ -1594,6 +1597,7 @@
     <String id="34002">Amigo:</String>
     <String id="34003">Vecino:</String>
     <String id="34004">Grupo:</String>
+    <String id="34005">Cambiar cuenta de usuario</String>
     <String id="34010">Amor</String>
     <String id="34011">Bloquear</String>
     <String id="34012">Saltar</String>
@@ -1739,6 +1743,7 @@
     <String id="100761">Guía de TV</String>
     <String id="100762">Guía de Radio</String>
     <String id="100770">Explorador</String>
+    <String id="100800" prefix="Mis">Extensiones</String>
     <String id="101000">teclado</String>
     <String id="101002">Teclado Virtual Estandard</String>
     <String id="101003">Teclado Virtual Web</String>
@@ -1754,7 +1759,7 @@
     <String id="102008">Diálogo de unión de archivos</String>
     <String id="102009">Diálogo de selección</String>
     <String id="102010">Día/Hora</String>
-    <String id="102011">Información artística</String>
+    <String id="102011">Información de artista</String>
     <String id="102012">Menú contextual</String>
     <String id="102013">Votar</String>
     <String id="102014">Información de la foto</String>
@@ -1857,5 +1862,6 @@
     <String id="200068">Incapaz de conectar a la base de datos</String>
     <String id="200069">Todos los puertos IP parecen estar bien</String>
     <String id="200070">Por favor, compruebe el firewall</String>
+    <String id="200071">¿Borrar esta carpeta y todas sus subcarpetas?</String>
   </Section>
 </Language>
