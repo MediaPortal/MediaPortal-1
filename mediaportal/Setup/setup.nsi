@@ -272,6 +272,10 @@ ShowUninstDetails show
   ; WebEPG apps
   ${KillProcess} "WebEPG.exe"
   ${KillProcess} "WebEPG-conf.exe"
+  
+  ;3rd party
+  ${KillProcess} "mptray.exe"
+  
 !macroend
 
 #---------------------------------------------------------------------------
