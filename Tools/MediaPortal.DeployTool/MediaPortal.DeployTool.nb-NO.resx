@@ -510,4 +510,20 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Det er ikke nok plass på valgte harddisk! For innstallasjon av MediaPortal kreves {0} MB fri plass.</value>
   </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} funnet.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (build {1}) funnet.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Ny Innstallasjon</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Oppdatere gjeldende installasjon til {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NB! Du kan ikke oppgradere fra en SVN versjon,
+       de er kun ment for testing.</value>
+  </data>
 </root>
