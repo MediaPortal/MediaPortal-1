@@ -47,6 +47,44 @@ namespace SetupTv.Sections
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
+      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.videoStandardComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.frameRateComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.resolutionComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.defaultValuesButton = new System.Windows.Forms.Button();
+      this.backlightCompensationValue = new System.Windows.Forms.Label();
+      this.whiteBalanceValue = new System.Windows.Forms.Label();
+      this.colorEnableValue = new System.Windows.Forms.Label();
+      this.gammaValue = new System.Windows.Forms.Label();
+      this.sharpnessValue = new System.Windows.Forms.Label();
+      this.saturationValue = new System.Windows.Forms.Label();
+      this.hueValue = new System.Windows.Forms.Label();
+      this.contrastValue = new System.Windows.Forms.Label();
+      this.brightnessValue = new System.Windows.Forms.Label();
+      this.backlightCompensationScrollbar = new System.Windows.Forms.HScrollBar();
+      this.whiteBalanceScrollbar = new System.Windows.Forms.HScrollBar();
+      this.colorEnableScrollbar = new System.Windows.Forms.HScrollBar();
+      this.gammaScrollbar = new System.Windows.Forms.HScrollBar();
+      this.sharpnessScrollbar = new System.Windows.Forms.HScrollBar();
+      this.saturationScrollbar = new System.Windows.Forms.HScrollBar();
+      this.hueScrollbar = new System.Windows.Forms.HScrollBar();
+      this.contrastScrollbar = new System.Windows.Forms.HScrollBar();
+      this.brightnessScrollbar = new System.Windows.Forms.HScrollBar();
+      this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.customSettingsGroup = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.customValuePeak = new System.Windows.Forms.NumericUpDown();
@@ -94,6 +132,10 @@ namespace SetupTv.Sections
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
+      this.tabPage3.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.tabPage4.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.customSettingsGroup.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.customValuePeak)).BeginInit();
@@ -242,6 +284,8 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTabControl1.Controls.Add(this.tabPage1);
+      this.mpTabControl1.Controls.Add(this.tabPage3);
+      this.mpTabControl1.Controls.Add(this.tabPage4);
       this.mpTabControl1.Controls.Add(this.tabPage2);
       this.mpTabControl1.Location = new System.Drawing.Point(3, 3);
       this.mpTabControl1.Name = "mpTabControl1";
@@ -310,6 +354,391 @@ namespace SetupTv.Sections
       this.label1.Size = new System.Drawing.Size(64, 13);
       this.label1.TabIndex = 30;
       this.label1.Text = "Signal level:";
+      // 
+      // tabPage3
+      // 
+      this.tabPage3.Controls.Add(this.groupBox3);
+      this.tabPage3.Controls.Add(this.groupBox2);
+      this.tabPage3.Location = new System.Drawing.Point(4, 22);
+      this.tabPage3.Name = "tabPage3";
+      this.tabPage3.Size = new System.Drawing.Size(466, 388);
+      this.tabPage3.TabIndex = 2;
+      this.tabPage3.Text = "Settings";
+      this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.videoStandardComboBox);
+      this.groupBox3.Controls.Add(this.mpLabel3);
+      this.groupBox3.Location = new System.Drawing.Point(8, 91);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(447, 57);
+      this.groupBox3.TabIndex = 34;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Video Decoder";
+      // 
+      // videoStandardComboBox
+      // 
+      this.videoStandardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.videoStandardComboBox.FormattingEnabled = true;
+      this.videoStandardComboBox.Location = new System.Drawing.Point(137, 19);
+      this.videoStandardComboBox.Name = "videoStandardComboBox";
+      this.videoStandardComboBox.Size = new System.Drawing.Size(281, 21);
+      this.videoStandardComboBox.TabIndex = 14;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(10, 22);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(81, 13);
+      this.mpLabel3.TabIndex = 13;
+      this.mpLabel3.Text = "Video standard:";
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.frameRateComboBox);
+      this.groupBox2.Controls.Add(this.label3);
+      this.groupBox2.Controls.Add(this.resolutionComboBox);
+      this.groupBox2.Controls.Add(this.label4);
+      this.groupBox2.Location = new System.Drawing.Point(8, 176);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(447, 81);
+      this.groupBox2.TabIndex = 33;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Stream Config";
+      // 
+      // refreshRateComboBox
+      // 
+      this.frameRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.frameRateComboBox.FormattingEnabled = true;
+      this.frameRateComboBox.Items.AddRange(new object[] {
+            "29.97 fps (NTSC)",
+            "25 fps (PAL/SECAM)",
+            "15 fps"});
+      this.frameRateComboBox.Location = new System.Drawing.Point(137, 19);
+      this.frameRateComboBox.Name = "frameRateComboBox";
+      this.frameRateComboBox.Size = new System.Drawing.Size(281, 21);
+      this.frameRateComboBox.TabIndex = 12;
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(10, 22);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(60, 13);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "Frame rate:";
+      // 
+      // resolutionComboBox
+      // 
+      this.resolutionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.resolutionComboBox.FormattingEnabled = true;
+      this.resolutionComboBox.Items.AddRange(new object[] {
+            "768x576 PAL square pixels",
+            "720x576 PAL/SECAM ITU-601 D1 (recommended)",
+            "720x480 NTSC ITU-601 D1 (recommended)",
+            "704x576 PAL/SECAM TV broadcast",
+            "704x480 NTSC TV broadcast",
+            "640x480 NTSC square pixels",
+            "352x288 PAL CIF",
+            "352x240 NTSC CIF",
+            "320x240 NTSC CIF square pixels"});
+      this.resolutionComboBox.Location = new System.Drawing.Point(137, 46);
+      this.resolutionComboBox.Name = "resolutionComboBox";
+      this.resolutionComboBox.Size = new System.Drawing.Size(281, 21);
+      this.resolutionComboBox.TabIndex = 11;
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(10, 49);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(60, 13);
+      this.label4.TabIndex = 1;
+      this.label4.Text = "Frame size:";
+      // 
+      // tabPage4
+      // 
+      this.tabPage4.Controls.Add(this.defaultValuesButton);
+      this.tabPage4.Controls.Add(this.backlightCompensationValue);
+      this.tabPage4.Controls.Add(this.whiteBalanceValue);
+      this.tabPage4.Controls.Add(this.colorEnableValue);
+      this.tabPage4.Controls.Add(this.gammaValue);
+      this.tabPage4.Controls.Add(this.sharpnessValue);
+      this.tabPage4.Controls.Add(this.saturationValue);
+      this.tabPage4.Controls.Add(this.hueValue);
+      this.tabPage4.Controls.Add(this.contrastValue);
+      this.tabPage4.Controls.Add(this.brightnessValue);
+      this.tabPage4.Controls.Add(this.backlightCompensationScrollbar);
+      this.tabPage4.Controls.Add(this.whiteBalanceScrollbar);
+      this.tabPage4.Controls.Add(this.colorEnableScrollbar);
+      this.tabPage4.Controls.Add(this.gammaScrollbar);
+      this.tabPage4.Controls.Add(this.sharpnessScrollbar);
+      this.tabPage4.Controls.Add(this.saturationScrollbar);
+      this.tabPage4.Controls.Add(this.hueScrollbar);
+      this.tabPage4.Controls.Add(this.contrastScrollbar);
+      this.tabPage4.Controls.Add(this.brightnessScrollbar);
+      this.tabPage4.Controls.Add(this.label13);
+      this.tabPage4.Controls.Add(this.label12);
+      this.tabPage4.Controls.Add(this.label11);
+      this.tabPage4.Controls.Add(this.label10);
+      this.tabPage4.Controls.Add(this.label9);
+      this.tabPage4.Controls.Add(this.label8);
+      this.tabPage4.Controls.Add(this.label7);
+      this.tabPage4.Controls.Add(this.label6);
+      this.tabPage4.Controls.Add(this.label5);
+      this.tabPage4.Location = new System.Drawing.Point(4, 22);
+      this.tabPage4.Name = "tabPage4";
+      this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage4.Size = new System.Drawing.Size(466, 388);
+      this.tabPage4.TabIndex = 3;
+      this.tabPage4.Text = "VideoProcAmp";
+      this.tabPage4.UseVisualStyleBackColor = true;
+      // 
+      // defaultValuesButton
+      // 
+      this.defaultValuesButton.Location = new System.Drawing.Point(307, 274);
+      this.defaultValuesButton.Name = "defaultValuesButton";
+      this.defaultValuesButton.Size = new System.Drawing.Size(117, 23);
+      this.defaultValuesButton.TabIndex = 59;
+      this.defaultValuesButton.Text = "Default Values";
+      this.defaultValuesButton.UseVisualStyleBackColor = true;
+      this.defaultValuesButton.Click += new System.EventHandler(this.defaultValuesButton_Click);
+      // 
+      // backlightCompensationValue
+      // 
+      this.backlightCompensationValue.AutoSize = true;
+      this.backlightCompensationValue.Location = new System.Drawing.Point(383, 232);
+      this.backlightCompensationValue.Name = "backlightCompensationValue";
+      this.backlightCompensationValue.Size = new System.Drawing.Size(41, 13);
+      this.backlightCompensationValue.TabIndex = 58;
+      this.backlightCompensationValue.Text = "label14";
+      // 
+      // whiteBalanceValue
+      // 
+      this.whiteBalanceValue.AutoSize = true;
+      this.whiteBalanceValue.Location = new System.Drawing.Point(383, 207);
+      this.whiteBalanceValue.Name = "whiteBalanceValue";
+      this.whiteBalanceValue.Size = new System.Drawing.Size(41, 13);
+      this.whiteBalanceValue.TabIndex = 57;
+      this.whiteBalanceValue.Text = "label14";
+      // 
+      // colorEnableValue
+      // 
+      this.colorEnableValue.AutoSize = true;
+      this.colorEnableValue.Location = new System.Drawing.Point(383, 182);
+      this.colorEnableValue.Name = "colorEnableValue";
+      this.colorEnableValue.Size = new System.Drawing.Size(41, 13);
+      this.colorEnableValue.TabIndex = 56;
+      this.colorEnableValue.Text = "label14";
+      // 
+      // gammaValue
+      // 
+      this.gammaValue.AutoSize = true;
+      this.gammaValue.Location = new System.Drawing.Point(383, 157);
+      this.gammaValue.Name = "gammaValue";
+      this.gammaValue.Size = new System.Drawing.Size(41, 13);
+      this.gammaValue.TabIndex = 55;
+      this.gammaValue.Text = "label14";
+      // 
+      // sharpnessValue
+      // 
+      this.sharpnessValue.AutoSize = true;
+      this.sharpnessValue.Location = new System.Drawing.Point(383, 132);
+      this.sharpnessValue.Name = "sharpnessValue";
+      this.sharpnessValue.Size = new System.Drawing.Size(41, 13);
+      this.sharpnessValue.TabIndex = 54;
+      this.sharpnessValue.Text = "label14";
+      // 
+      // saturationValue
+      // 
+      this.saturationValue.AutoSize = true;
+      this.saturationValue.Location = new System.Drawing.Point(383, 107);
+      this.saturationValue.Name = "saturationValue";
+      this.saturationValue.Size = new System.Drawing.Size(41, 13);
+      this.saturationValue.TabIndex = 53;
+      this.saturationValue.Text = "label14";
+      // 
+      // hueValue
+      // 
+      this.hueValue.AutoSize = true;
+      this.hueValue.Location = new System.Drawing.Point(383, 82);
+      this.hueValue.Name = "hueValue";
+      this.hueValue.Size = new System.Drawing.Size(41, 13);
+      this.hueValue.TabIndex = 52;
+      this.hueValue.Text = "label14";
+      // 
+      // contrastValue
+      // 
+      this.contrastValue.AutoSize = true;
+      this.contrastValue.Location = new System.Drawing.Point(383, 57);
+      this.contrastValue.Name = "contrastValue";
+      this.contrastValue.Size = new System.Drawing.Size(41, 13);
+      this.contrastValue.TabIndex = 51;
+      this.contrastValue.Text = "label14";
+      // 
+      // brightnessValue
+      // 
+      this.brightnessValue.AutoSize = true;
+      this.brightnessValue.Location = new System.Drawing.Point(383, 32);
+      this.brightnessValue.Name = "brightnessValue";
+      this.brightnessValue.Size = new System.Drawing.Size(41, 13);
+      this.brightnessValue.TabIndex = 50;
+      this.brightnessValue.Text = "label14";
+      // 
+      // backlightCompensationScrollbar
+      // 
+      this.backlightCompensationScrollbar.Location = new System.Drawing.Point(148, 232);
+      this.backlightCompensationScrollbar.Name = "backlightCompensationScrollbar";
+      this.backlightCompensationScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.backlightCompensationScrollbar.TabIndex = 49;
+      this.backlightCompensationScrollbar.ValueChanged += new System.EventHandler(this.backlightCompensationScrollbar_ValueChanged);
+      // 
+      // whiteBalanceScrollbar
+      // 
+      this.whiteBalanceScrollbar.Location = new System.Drawing.Point(148, 207);
+      this.whiteBalanceScrollbar.Name = "whiteBalanceScrollbar";
+      this.whiteBalanceScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.whiteBalanceScrollbar.TabIndex = 48;
+      this.whiteBalanceScrollbar.ValueChanged += new System.EventHandler(this.whiteBalanceScrollbar_ValueChanged);
+      // 
+      // colorEnableScrollbar
+      // 
+      this.colorEnableScrollbar.Location = new System.Drawing.Point(148, 182);
+      this.colorEnableScrollbar.Name = "colorEnableScrollbar";
+      this.colorEnableScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.colorEnableScrollbar.TabIndex = 47;
+      this.colorEnableScrollbar.ValueChanged += new System.EventHandler(this.colorEnableScrollbar_ValueChanged);
+      // 
+      // gammaScrollbar
+      // 
+      this.gammaScrollbar.Location = new System.Drawing.Point(148, 157);
+      this.gammaScrollbar.Name = "gammaScrollbar";
+      this.gammaScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.gammaScrollbar.TabIndex = 46;
+      this.gammaScrollbar.ValueChanged += new System.EventHandler(this.gammaScrollbar_ValueChanged);
+      // 
+      // sharpnessScrollbar
+      // 
+      this.sharpnessScrollbar.Location = new System.Drawing.Point(148, 132);
+      this.sharpnessScrollbar.Name = "sharpnessScrollbar";
+      this.sharpnessScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.sharpnessScrollbar.TabIndex = 45;
+      this.sharpnessScrollbar.ValueChanged += new System.EventHandler(this.sharpnessScrollbar_ValueChanged);
+      // 
+      // saturationScrollbar
+      // 
+      this.saturationScrollbar.Location = new System.Drawing.Point(148, 107);
+      this.saturationScrollbar.Name = "saturationScrollbar";
+      this.saturationScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.saturationScrollbar.TabIndex = 44;
+      this.saturationScrollbar.ValueChanged += new System.EventHandler(this.saturationScrollbar_ValueChanged);
+      // 
+      // hueScrollbar
+      // 
+      this.hueScrollbar.Location = new System.Drawing.Point(148, 82);
+      this.hueScrollbar.Name = "hueScrollbar";
+      this.hueScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.hueScrollbar.TabIndex = 43;
+      this.hueScrollbar.ValueChanged += new System.EventHandler(this.hueScrollbar_ValueChanged);
+      // 
+      // contrastScrollbar
+      // 
+      this.contrastScrollbar.Location = new System.Drawing.Point(148, 57);
+      this.contrastScrollbar.Name = "contrastScrollbar";
+      this.contrastScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.contrastScrollbar.TabIndex = 42;
+      this.contrastScrollbar.ValueChanged += new System.EventHandler(this.contrastScrollbar_ValueChanged);
+      // 
+      // brightnessScrollbar
+      // 
+      this.brightnessScrollbar.Location = new System.Drawing.Point(148, 32);
+      this.brightnessScrollbar.Name = "brightnessScrollbar";
+      this.brightnessScrollbar.Size = new System.Drawing.Size(219, 13);
+      this.brightnessScrollbar.TabIndex = 41;
+      this.brightnessScrollbar.ValueChanged += new System.EventHandler(this.brightnessScrollbar_ValueChanged);
+      // 
+      // label13
+      // 
+      this.label13.AutoSize = true;
+      this.label13.Location = new System.Drawing.Point(21, 232);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(124, 13);
+      this.label13.TabIndex = 40;
+      this.label13.Text = "Backlight Compensation:";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(21, 207);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(80, 13);
+      this.label12.TabIndex = 39;
+      this.label12.Text = "White Balance:";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(21, 182);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(70, 13);
+      this.label11.TabIndex = 38;
+      this.label11.Text = "Color Enable:";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(21, 157);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(46, 13);
+      this.label10.TabIndex = 37;
+      this.label10.Text = "Gamma:";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(21, 132);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(60, 13);
+      this.label9.TabIndex = 36;
+      this.label9.Text = "Sharpness:";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(21, 107);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(58, 13);
+      this.label8.TabIndex = 35;
+      this.label8.Text = "Saturation:";
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(21, 82);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(30, 13);
+      this.label7.TabIndex = 34;
+      this.label7.Text = "Hue:";
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(21, 57);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(49, 13);
+      this.label6.TabIndex = 33;
+      this.label6.Text = "Contrast:";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(20, 32);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(59, 13);
+      this.label5.TabIndex = 32;
+      this.label5.Text = "Brightness:";
       // 
       // tabPage2
       // 
@@ -856,6 +1285,13 @@ namespace SetupTv.Sections
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
+      this.tabPage3.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
+      this.tabPage4.ResumeLayout(false);
+      this.tabPage4.PerformLayout();
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
       this.customSettingsGroup.ResumeLayout(false);
@@ -940,5 +1376,43 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBarLevel;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TabPage tabPage3;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPComboBox frameRateComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox resolutionComboBox;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPComboBox videoStandardComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private System.Windows.Forms.GroupBox groupBox2;
+    private System.Windows.Forms.TabPage tabPage4;
+    private System.Windows.Forms.Label backlightCompensationValue;
+    private System.Windows.Forms.Label whiteBalanceValue;
+    private System.Windows.Forms.Label colorEnableValue;
+    private System.Windows.Forms.Label gammaValue;
+    private System.Windows.Forms.Label sharpnessValue;
+    private System.Windows.Forms.Label saturationValue;
+    private System.Windows.Forms.Label hueValue;
+    private System.Windows.Forms.Label contrastValue;
+    private System.Windows.Forms.Label brightnessValue;
+    private System.Windows.Forms.HScrollBar backlightCompensationScrollbar;
+    private System.Windows.Forms.HScrollBar whiteBalanceScrollbar;
+    private System.Windows.Forms.HScrollBar colorEnableScrollbar;
+    private System.Windows.Forms.HScrollBar gammaScrollbar;
+    private System.Windows.Forms.HScrollBar sharpnessScrollbar;
+    private System.Windows.Forms.HScrollBar saturationScrollbar;
+    private System.Windows.Forms.HScrollBar hueScrollbar;
+    private System.Windows.Forms.HScrollBar contrastScrollbar;
+    private System.Windows.Forms.HScrollBar brightnessScrollbar;
+    private MediaPortal.UserInterface.Controls.MPLabel label13;
+    private MediaPortal.UserInterface.Controls.MPLabel label12;
+    private MediaPortal.UserInterface.Controls.MPLabel label11;
+    private MediaPortal.UserInterface.Controls.MPLabel label10;
+    private MediaPortal.UserInterface.Controls.MPLabel label9;
+    private MediaPortal.UserInterface.Controls.MPLabel label8;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private System.Windows.Forms.Button defaultValuesButton;
   }
 }

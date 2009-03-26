@@ -661,9 +661,9 @@ namespace TvLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
-    /// Reloads the quality control configuration
+    /// Reloads the card configuration
     /// </summary>
-    public void ReloadQualityControlConfiguration()
+    public void ReloadCardConfiguration()
     {
     }
 

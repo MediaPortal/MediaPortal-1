@@ -97,6 +97,10 @@ namespace TvLibrary.Implementations
     public enum AudioInputType
     {
       /// <summary>
+      /// Automatic detection based on related pin index
+      /// </summary>
+      Automatic,
+      /// <summary>
       /// Tuner input
       /// </summary>
       Tuner,
@@ -150,6 +154,7 @@ namespace TvLibrary.Implementations
     private TunerInputType _tunerSource;
     private VideoInputType _videoInputType;
     private AudioInputType _audioInputType;
+    private bool _vcrSginal;
 
     #endregion
 
@@ -167,6 +172,7 @@ namespace TvLibrary.Implementations
       _audioInputType = AudioInputType.AUXInput1;
       _channelNumber = 4;
       _isRadio = false;
+      _vcrSginal = false;
       Name = String.Empty;
     }
 
@@ -258,8 +264,18 @@ namespace TvLibrary.Implementations
       set { _isRadio = !value; }
     }
 
+    /// <summary>
+    /// boolean indicating if this is channel provides a vcr signal
+    /// </summary>
+    public bool IsVCRSignal
+    {
+      get { return _vcrSginal; }
+      set { _vcrSginal = value; }
+    }
+
     #endregion
 
+    #region overrides
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -273,7 +289,6 @@ namespace TvLibrary.Implementations
                             Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
       return line;
     }
-
 
     /// <summary>
     /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
@@ -325,6 +340,10 @@ namespace TvLibrary.Implementations
       {
         return false;
       }
+      if (ch.IsVCRSignal != IsVCRSignal)
+      {
+        return false;
+      }
       return true;
     }
 
@@ -338,7 +357,8 @@ namespace TvLibrary.Implementations
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
-             _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode();
+             _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^ _vcrSginal.GetHashCode();
     }
+    #endregion
   }
 }

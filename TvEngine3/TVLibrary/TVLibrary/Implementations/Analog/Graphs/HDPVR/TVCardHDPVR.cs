@@ -291,9 +291,9 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Reloads the quality control configuration
+    /// Reloads the card configuration
     /// </summary>
-    public void ReloadQualityControlConfiguration()
+    public void ReloadCardConfiguration()
     {
       if (_qualityControl != null)
       {
@@ -463,7 +463,7 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
-        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
+        throw;
       }
     }
 

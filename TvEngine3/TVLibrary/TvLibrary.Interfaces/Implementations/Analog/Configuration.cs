@@ -23,6 +23,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.Analog
@@ -43,7 +44,7 @@ namespace TvLibrary.Implementations.Analog
     private VIDEOENCODER_BITRATE_MODE _playbackQualityMode;
     private VIDEOENCODER_BITRATE_MODE _recordQualityMode;
     private int _cardId;
-
+    private Graph _graph;
     #endregion
 
     #region ctor
@@ -146,6 +147,15 @@ namespace TvLibrary.Implementations.Analog
       set { _cardId = value; }
     }
 
+    /// <summary>
+    /// Gets/Sets the graph
+    /// </summary>
+    public Graph Graph
+    {
+      get { return _graph; }
+      set { _graph = value; }
+    }
+
     #endregion
 
     #region Read/Write methods
@@ -226,14 +236,17 @@ namespace TvLibrary.Implementations.Analog
               tempValue = 1;
             }
             _configuration.RecordQualityType = (QualityType)tempValue;
+            _configuration.Graph = Graph.CreateInstance(cardNode.SelectSingleNode("graph"));
           }
-        } catch (Exception e)
+        }
+        catch 
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");
-          Log.Log.Write(e);
           _configuration = new Configuration();
           _configuration.Name = name;
           _configuration.DevicePath = devicePath;
+          _configuration.CardId = cardId;
+          _configuration.Graph = Graph.CreateInstance(null);
         }
       }
       return _configuration;
@@ -252,13 +265,14 @@ namespace TvLibrary.Implementations.Analog
       writer.IndentChar = (char)9;
       writer.WriteStartDocument(true);
       writer.WriteStartElement("configuration"); //<configuration>
-      writer.WriteAttributeString("version", "1");
+      writer.WriteAttributeString("version", "2");
       writer.WriteStartElement("card"); //<card>
       writer.WriteAttributeString("cardId", XmlConvert.ToString(configuration.CardId));
       writer.WriteAttributeString("name", configuration.Name);
       writer.WriteStartElement("device"); //<device>
       writer.WriteElementString("path", configuration.DevicePath);
       writer.WriteEndElement(); //</device>
+      configuration.Graph.WriteGraph(writer);
       writer.WriteStartElement("qualityControl"); //<qualityControl>
       writer.WriteStartElement("customSettings"); //<customSettings>
       writer.WriteAttributeString("value", XmlConvert.ToString(configuration.CustomQualityValue));

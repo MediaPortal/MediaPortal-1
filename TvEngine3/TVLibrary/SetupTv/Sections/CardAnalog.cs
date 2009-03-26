@@ -19,13 +19,16 @@
  *
  */
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Threading;
 using DirectShowLib;
 using TvDatabase;
 using TvControl;
 using TvLibrary;
+using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
@@ -89,13 +92,346 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Country", "0").Value);
       mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Source", "0").Value);
-      if (String.IsNullOrEmpty(_cardName) || String.IsNullOrEmpty(_devicePath))
+      _cardName = RemoteControl.Instance.CardName(_cardNumber);
+      _devicePath = RemoteControl.Instance.CardDevice(_cardNumber);
+      if (!String.IsNullOrEmpty(_cardName) && !String.IsNullOrEmpty(_devicePath))
       {
         _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
         customValue.Value = _configuration.CustomQualityValue;
         customValuePeak.Value = _configuration.CustomPeakQualityValue;
         SetBitRateModes();
         SetBitRate();
+        SetVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
+        SetVideoDecoder();
+        SetStreamConfig();
+      } else
+      {
+        SetVideoProcAmp(new Dictionary<VideoProcAmpProperty, VideoQuality>());
+        videoStandardComboBox.Enabled = false;
+        resolutionComboBox.Enabled = false;
+        frameRateComboBox.Enabled = false;
+      }
+    }
+
+    private void SetStreamConfig()
+    {
+      double frameRate = _configuration.Graph.Capture.FrameRate;
+      if (frameRate < 0)
+      {
+        frameRateComboBox.Enabled = false;
+      } else
+      {
+        frameRateComboBox.Enabled = true;
+        string frameRateString = frameRate + " fps";
+        foreach (string item in frameRateComboBox.Items)
+        {
+          if (item.StartsWith(frameRateString))
+          {
+            frameRateComboBox.SelectedItem = item;
+            break;
+          }
+        }
+      }
+      int imageWidth = _configuration.Graph.Capture.ImageWidth;
+      int imageHeight = _configuration.Graph.Capture.ImageHeight;
+      if (imageWidth < 0)
+      {
+        resolutionComboBox.Enabled = false;
+      } else
+      {
+        resolutionComboBox.Enabled = true;
+        string resolution = imageWidth + "x" + imageHeight;
+        foreach (string item in resolutionComboBox.Items)
+        {
+          if (item.StartsWith(resolution))
+          {
+            resolutionComboBox.SelectedItem = item;
+            break;
+          }
+        }
+      }
+
+    }
+
+    private void SetVideoDecoder()
+    {
+      videoStandardComboBox.Items.Clear();
+      AnalogVideoStandard availableVideoStandard = _configuration.Graph.Capture.AvailableVideoStandard;
+      if (availableVideoStandard != AnalogVideoStandard.None)
+      {
+        videoStandardComboBox.Enabled = true;
+        if ((availableVideoStandard & AnalogVideoStandard.NTSC_433) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_433);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.NTSC_M) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.NTSC_M_J) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSC_M_J);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.NTSCMask) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.NTSCMask);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_60) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_60);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_B) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_B);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_D) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_D);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_G) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_G);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_H) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_H);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_I) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_I);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_M) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_M);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_N) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_N);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.PAL_N_COMBO) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.PAL_N_COMBO);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_B) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_B);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_D) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_D);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_G) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_G);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_H) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_H);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_K) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_K);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_K1) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_K1);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_L) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAM_L1) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAM_L1);
+        }
+        if ((availableVideoStandard & AnalogVideoStandard.SECAMMask) != 0)
+        {
+          videoStandardComboBox.Items.Add(AnalogVideoStandard.SECAMMask);
+        }
+        AnalogVideoStandard currentStandard = _configuration.Graph.Capture.CurrentVideoStandard;
+        if (currentStandard != AnalogVideoStandard.None)
+        {
+          videoStandardComboBox.SelectedItem = currentStandard;
+        }
+      } else
+      {
+        videoStandardComboBox.Enabled = false;
+      }
+    }
+
+    private void SetVideoProcAmp(IDictionary<VideoProcAmpProperty, VideoQuality> map)
+    {
+      VideoQuality quality;
+      if (map.ContainsKey(VideoProcAmpProperty.Brightness))
+      {
+        quality = map[VideoProcAmpProperty.Brightness];
+        brightnessScrollbar.Maximum = quality.MaxValue;
+        brightnessScrollbar.Minimum = quality.MinValue;
+        brightnessScrollbar.SmallChange = quality.SteppingDelta;
+        brightnessScrollbar.LargeChange = quality.SteppingDelta;
+        brightnessScrollbar.Value = quality.Value;
+        brightnessValue.Text = quality.Value.ToString();
+        brightnessScrollbar.Enabled = true;
+        brightnessValue.Enabled = true;
+        label5.Enabled = true;
+      } else
+      {
+        brightnessScrollbar.Enabled = false;
+        brightnessValue.Text = string.Empty;
+        brightnessValue.Enabled = false;
+        label5.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Contrast))
+      {
+        quality = map[VideoProcAmpProperty.Contrast];
+        contrastScrollbar.Maximum = quality.MaxValue;
+        contrastScrollbar.Minimum = quality.MinValue;
+        contrastScrollbar.SmallChange = quality.SteppingDelta;
+        contrastScrollbar.LargeChange = quality.SteppingDelta;
+        contrastScrollbar.Value = quality.Value;
+        contrastValue.Text = quality.Value.ToString();
+        contrastScrollbar.Enabled = true;
+        contrastValue.Enabled = true;
+        label6.Enabled = true;
+      } else
+      {
+        contrastScrollbar.Enabled = false;
+        contrastValue.Text = string.Empty;
+        contrastValue.Enabled = false;
+        label6.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Hue))
+      {
+        quality = map[VideoProcAmpProperty.Hue];
+        hueScrollbar.Maximum = quality.MaxValue;
+        hueScrollbar.Minimum = quality.MinValue;
+        hueScrollbar.SmallChange = quality.SteppingDelta;
+        hueScrollbar.LargeChange = quality.SteppingDelta;
+        hueScrollbar.Value = quality.Value;
+        hueValue.Text = quality.Value.ToString();
+        hueScrollbar.Enabled = true;
+        hueValue.Enabled = true;
+        label7.Enabled = true;
+      } else
+      {
+        hueScrollbar.Enabled = false;
+        hueValue.Text = string.Empty;
+        hueValue.Enabled = false;
+        label7.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Saturation))
+      {
+        quality = map[VideoProcAmpProperty.Saturation];
+        saturationScrollbar.Maximum = quality.MaxValue;
+        saturationScrollbar.Minimum = quality.MinValue;
+        saturationScrollbar.SmallChange = quality.SteppingDelta;
+        saturationScrollbar.LargeChange = quality.SteppingDelta;
+        saturationScrollbar.Value = quality.Value;
+        saturationValue.Text = quality.Value.ToString();
+        saturationScrollbar.Enabled = true;
+        saturationValue.Enabled = true;
+        label8.Enabled = true;
+      } else
+      {
+        saturationScrollbar.Enabled = false;
+        saturationValue.Text = string.Empty;
+        saturationValue.Enabled = false;
+        label8.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Sharpness))
+      {
+        quality = map[VideoProcAmpProperty.Sharpness];
+        sharpnessScrollbar.Maximum = quality.MaxValue;
+        sharpnessScrollbar.Minimum = quality.MinValue;
+        sharpnessScrollbar.SmallChange = quality.SteppingDelta;
+        sharpnessScrollbar.LargeChange = quality.SteppingDelta;
+        sharpnessScrollbar.Value = quality.Value;
+        sharpnessValue.Text = quality.Value.ToString();
+        sharpnessScrollbar.Enabled = true;
+        sharpnessValue.Enabled = true;
+        label9.Enabled = true;
+      } else
+      {
+        sharpnessScrollbar.Enabled = false;
+        sharpnessValue.Text = string.Empty;
+        sharpnessValue.Enabled = false;
+        label9.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Gamma))
+      {
+        quality = map[VideoProcAmpProperty.Gamma];
+        gammaScrollbar.Maximum = quality.MaxValue;
+        gammaScrollbar.Minimum = quality.MinValue;
+        gammaScrollbar.SmallChange = quality.SteppingDelta;
+        gammaScrollbar.LargeChange = quality.SteppingDelta;
+        gammaScrollbar.Value = quality.Value;
+        gammaValue.Text = quality.Value.ToString();
+        gammaScrollbar.Enabled = true;
+        gammaValue.Enabled = true;
+        label10.Enabled = true;
+      } else
+      {
+        gammaScrollbar.Enabled = false;
+        gammaValue.Text = string.Empty;
+        gammaValue.Enabled = false;
+        label10.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.ColorEnable))
+      {
+        quality = map[VideoProcAmpProperty.ColorEnable];
+        colorEnableScrollbar.Maximum = quality.MaxValue;
+        colorEnableScrollbar.Minimum = quality.MinValue;
+        colorEnableScrollbar.SmallChange = quality.SteppingDelta;
+        colorEnableScrollbar.LargeChange = quality.SteppingDelta;
+        colorEnableScrollbar.Value = quality.Value;
+        colorEnableValue.Text = quality.Value.ToString();
+        colorEnableScrollbar.Enabled = true;
+        colorEnableValue.Enabled = true;
+        label11.Enabled = true;
+      } else
+      {
+        colorEnableScrollbar.Enabled = false;
+        colorEnableValue.Text = string.Empty;
+        colorEnableValue.Enabled = false;
+        label11.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.WhiteBalance))
+      {
+        quality = map[VideoProcAmpProperty.WhiteBalance];
+        whiteBalanceScrollbar.Maximum = quality.MaxValue;
+        whiteBalanceScrollbar.Minimum = quality.MinValue;
+        whiteBalanceScrollbar.SmallChange = quality.SteppingDelta;
+        whiteBalanceScrollbar.LargeChange = quality.SteppingDelta;
+        whiteBalanceScrollbar.Value = quality.Value;
+        whiteBalanceValue.Text = quality.Value.ToString();
+        whiteBalanceScrollbar.Enabled = true;
+        whiteBalanceValue.Enabled = true;
+        label12.Enabled = true;
+      } else
+      {
+        whiteBalanceScrollbar.Enabled = false;
+        whiteBalanceValue.Text = string.Empty;
+        whiteBalanceValue.Enabled = false;
+        label12.Enabled = false;
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.BacklightCompensation))
+      {
+        quality = map[VideoProcAmpProperty.BacklightCompensation];
+        backlightCompensationScrollbar.Maximum = quality.MaxValue;
+        backlightCompensationScrollbar.Minimum = quality.MinValue;
+        backlightCompensationScrollbar.SmallChange = quality.SteppingDelta;
+        backlightCompensationScrollbar.LargeChange = quality.SteppingDelta;
+        backlightCompensationScrollbar.Value = quality.Value;
+        backlightCompensationValue.Text = quality.Value.ToString();
+        backlightCompensationScrollbar.Enabled = true;
+        backlightCompensationValue.Enabled = true;
+        label13.Enabled = true;
+      } else
+      {
+        backlightCompensationScrollbar.Enabled = false;
+        backlightCompensationValue.Text = string.Empty;
+        backlightCompensationValue.Enabled = false;
+        label13.Enabled = false;
       }
     }
 
@@ -185,7 +521,7 @@ namespace SetupTv.Sections
       setting.Persist();
       UpdateConfiguration();
       Configuration.writeConfiguration(_configuration);
-      RemoteControl.Instance.ReloadQualityControlConfigration(_cardNumber);
+      RemoteControl.Instance.ReloadCardConfiguration(_cardNumber);
     }
 
     private void UpdateConfiguration()
@@ -195,74 +531,120 @@ namespace SetupTv.Sections
       if (cbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      }
-      else if (vbrPlayback.Checked)
+      } else if (vbrPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      }
-      else if (vbrPeakPlayback.Checked)
+      } else if (vbrPeakPlayback.Checked)
       {
         _configuration.PlaybackQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
       if (cbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.ConstantBitRate;
-      }
-      else if (vbrRecord.Checked)
+      } else if (vbrRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRateAverage;
-      }
-      else if (vbrPeakRecord.Checked)
+      } else if (vbrPeakRecord.Checked)
       {
         _configuration.RecordQualityMode = VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak;
       }
       if (defaultPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Default;
-      }
-      else if (customPlayback.Checked)
+      } else if (customPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Custom;
-      }
-      else if (portablePlayback.Checked)
+      } else if (portablePlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Portable;
-      }
-      else if (lowPlayback.Checked)
+      } else if (lowPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Low;
-      }
-      else if (mediumPlayback.Checked)
+      } else if (mediumPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.Medium;
-      }
-      else if (highPlayback.Checked)
+      } else if (highPlayback.Checked)
       {
         _configuration.PlaybackQualityType = QualityType.High;
       }
       if (defaultRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Default;
-      }
-      else if (customRecord.Checked)
+      } else if (customRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Custom;
-      }
-      else if (portableRecord.Checked)
+      } else if (portableRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Portable;
-      }
-      else if (lowRecord.Checked)
+      } else if (lowRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Low;
-      }
-      else if (mediumRecord.Checked)
+      } else if (mediumRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.Medium;
-      }
-      else if (highRecord.Checked)
+      } else if (highRecord.Checked)
       {
         _configuration.RecordQualityType = QualityType.High;
+      }
+      if (_configuration.Graph != null && _configuration.Graph.Capture != null)
+      {
+        UpdateVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
+        if (videoStandardComboBox.Enabled && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
+        {
+          _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
+        }
+        if (frameRateComboBox.Enabled)
+        {
+          string item = frameRateComboBox.SelectedItem.ToString();
+          string frameRate = item.Substring(0, item.IndexOf(" fps"));
+          _configuration.Graph.Capture.FrameRate = Double.Parse(frameRate, CultureInfo.GetCultureInfo("en-GB").NumberFormat);
+        }
+        if (resolutionComboBox.Enabled)
+        {
+          string item = resolutionComboBox.SelectedItem.ToString();
+          _configuration.Graph.Capture.ImageWidth = Int32.Parse(item.Substring(0, 3));
+          _configuration.Graph.Capture.ImageHeight = Int32.Parse(item.Substring(4, 3));
+        }
+      }
+    }
+
+    private void UpdateVideoProcAmp(IDictionary<VideoProcAmpProperty, VideoQuality> map)
+    {
+      if (brightnessScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Brightness].Value = brightnessScrollbar.Value;
+      }
+      if (contrastScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Contrast].Value = contrastScrollbar.Value;
+      }
+      if (hueScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Hue].Value = hueScrollbar.Value;
+      }
+      if (saturationScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Saturation].Value = saturationScrollbar.Value;
+      }
+      if (sharpnessScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Sharpness].Value = sharpnessScrollbar.Value;
+      }
+      if (gammaScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.Gamma].Value = gammaScrollbar.Value;
+      }
+      if (colorEnableScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.ColorEnable].Value = colorEnableScrollbar.Value;
+      }
+      if (whiteBalanceScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.WhiteBalance].Value = whiteBalanceScrollbar.Value;
+      }
+      if (backlightCompensationScrollbar.Enabled)
+      {
+        map[VideoProcAmpProperty.BacklightCompensation].Value = backlightCompensationScrollbar.Value;
       }
     }
 
@@ -292,8 +674,7 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(DoTvScan);
         scanThread.Name = "Analog TV scan thread";
         scanThread.Start();
-      }
-      else
+      } else
       {
         _stopScanning = true;
       }
@@ -322,7 +703,14 @@ namespace SetupTv.Sections
         CountryCollection countries = new CountryCollection();
         User user = new User();
         user.CardId = _cardNumber;
-        RemoteControl.Instance.Tune(ref user, new AnalogChannel(), -1);
+        AnalogChannel temp = new AnalogChannel();
+        temp.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
+        temp.VideoSource = AnalogChannel.VideoInputType.Tuner;
+        temp.AudioSource = AnalogChannel.AudioInputType.Tuner;
+        temp.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
+        temp.IsRadio = false;
+        temp.IsTv = true;
+        RemoteControl.Instance.Tune(ref user, temp, -1);
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         if (maxChannel < 0)
@@ -349,6 +737,8 @@ namespace SetupTv.Sections
           channel.ChannelNumber = channelNr;
           channel.IsTv = true;
           channel.IsRadio = false;
+          channel.VideoSource = AnalogChannel.VideoInputType.Tuner;
+          channel.AudioSource = AnalogChannel.AudioInputType.Automatic;
           string line = String.Format("channel:{0} source:{1} ", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -377,16 +767,14 @@ namespace SetupTv.Sections
           if (checkBoxNoMerge.Checked)
           {
             dbChannel = new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true, channel.Name);
-          }
-          else
+          } else
           {
             dbChannel = layer.GetChannelByName("", channel.Name);
             if (dbChannel != null)
             {
               dbChannel.Name = channel.Name;
               exists = true;
-            }
-            else
+            } else
             {
               dbChannel = layer.AddNewChannel(channel.Name);
             }
@@ -402,16 +790,14 @@ namespace SetupTv.Sections
           {
             line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsUpdated++;
-          }
-          else
+          } else
           {
             line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
             channelsNew++;
           }
           item.Text = line;
         }
-      }
-      finally
+      } finally
       {
         User user = new User();
         user.CardId = _cardNumber;
@@ -457,6 +843,8 @@ namespace SetupTv.Sections
         AnalogChannel radioChannel = new AnalogChannel();
         radioChannel.Frequency = 96000000;
         radioChannel.IsRadio = true;
+        radioChannel.VideoSource = AnalogChannel.VideoInputType.Tuner;
+        radioChannel.AudioSource = AnalogChannel.AudioInputType.Automatic;
         if (!RemoteControl.Instance.CanTune(_cardNumber, radioChannel))
         {
           MessageBox.Show(this, "The Tv Card does not support radio");
@@ -465,8 +853,7 @@ namespace SetupTv.Sections
         Thread scanThread = new Thread(DoRadioScan);
         scanThread.Name = "Analog Radio scan thread";
         scanThread.Start();
-      }
-      else
+      } else
       {
         _stopScanning = true;
       }
@@ -556,8 +943,7 @@ namespace SetupTv.Sections
               dbChannel.Name = channel.Name;
               line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
               channelsUpdated++;
-            }
-            else
+            } else
             {
               dbChannel = layer.AddNewChannel(channel.Name);
               line = String.Format("frequence:{0} MHz : New channel found - {1}", freqMHz.ToString("f2"), channel.Name);
@@ -572,8 +958,7 @@ namespace SetupTv.Sections
             layer.AddTuningDetails(dbChannel, channel);
             layer.MapChannelToCard(card, dbChannel, false);
             freq += 300000;
-          }
-          else
+          } else
           {
             line = String.Format("frequence:{0} MHz : No Signal", freqMHz.ToString("f2"));
             item.Text = line;
@@ -583,8 +968,7 @@ namespace SetupTv.Sections
       } catch (Exception ex)
       {
         Log.Write(ex);
-      }
-      finally
+      } finally
       {
         checkButton.Enabled = true;
         User user = new User();
@@ -608,115 +992,154 @@ namespace SetupTv.Sections
     private void mpButton1_Click(object sender, EventArgs e)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
+      Dictionary<AnalogChannel.VideoInputType, int> videoPinMap = _configuration.Graph.Crossbar.VideoPinMap;
+      AnalogChannel tuningDetail;
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      Channel dbChannel = layer.AddChannel("", "CVBS#1 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      AnalogChannel tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-Video#1 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-Video#2 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "S-Video#3 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "YRYBY#1 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "YRYBY#2 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput2;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
-      dbChannel = layer.AddChannel("", "YRYBY#3 on " + card.IdCard);
-      dbChannel.IsTv = true;
-      dbChannel.Persist();
-      tuningDetail = new AnalogChannel();
-      tuningDetail.IsTv = true;
-      tuningDetail.Name = dbChannel.Name;
-      tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
-      layer.AddTuningDetails(dbChannel, tuningDetail);
-      layer.MapChannelToCard(card, dbChannel, false);
+      Channel dbChannel;
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput1))
+      {
+        dbChannel = layer.AddChannel("", "CVBS#1 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput2))
+      {
+        dbChannel = layer.AddChannel("", "CVBS#2 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.VideoInput3))
+      {
+        dbChannel = layer.AddChannel("", "CVBS#3 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.VideoInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput1))
+      {
+        dbChannel = layer.AddChannel("", "S-Video#1 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput2))
+      {
+        dbChannel = layer.AddChannel("", "S-Video#2 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.SvhsInput3))
+      {
+        dbChannel = layer.AddChannel("", "S-Video#3 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.SvhsInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput1))
+      {
+        dbChannel = layer.AddChannel("", "RGB#1 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput2))
+      {
+        dbChannel = layer.AddChannel("", "RGB#2 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.RgbInput3))
+      {
+        dbChannel = layer.AddChannel("", "RGB#3 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.RgbInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput1))
+      {
+        dbChannel = layer.AddChannel("", "YRYBY#1 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput2))
+      {
+        dbChannel = layer.AddChannel("", "YRYBY#2 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.YRYBYInput3))
+      {
+        dbChannel = layer.AddChannel("", "YRYBY#3 on " + card.IdCard);
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.Name;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+      }
       MessageBox.Show(this, "Channels added.");
     }
 
@@ -731,8 +1154,7 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
           return;
-        }
-        else if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        } else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
           return;
@@ -755,8 +1177,7 @@ namespace SetupTv.Sections
           {
             vbrPeakPlayback.Enabled = true;
             vbrPeakRecord.Enabled = true;
-          }
-          else
+          } else
           {
             vbrPeakPlayback.Enabled = false;
             vbrPeakRecord.Enabled = false;
@@ -767,8 +1188,7 @@ namespace SetupTv.Sections
             customSettingsGroup.Enabled = true;
             customValue.Enabled = true;
             customValuePeak.Enabled = true;
-          }
-          else
+          } else
           {
             bitRate.Enabled = false;
             customSettingsGroup.Enabled = false;
@@ -780,19 +1200,122 @@ namespace SetupTv.Sections
           customValuePeak.Value = _configuration.CustomPeakQualityValue;
           SetBitRateModes();
           SetBitRate();
-        }
-        else
+        } else
         {
           Log.WriteFile("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.", "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-      }
-      finally
+      } finally
       {
         user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
       }
+    }
+
+    private void defaultValuesButton_Click(object sender, EventArgs e)
+    {
+      Dictionary<VideoProcAmpProperty, VideoQuality> map = _configuration.Graph.Capture.VideoProcAmpValues;
+      VideoQuality quality;
+      if (map.ContainsKey(VideoProcAmpProperty.Brightness))
+      {
+        quality = map[VideoProcAmpProperty.Brightness];
+        brightnessScrollbar.Value = quality.DefaultValue;
+        brightnessValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Contrast))
+      {
+        quality = map[VideoProcAmpProperty.Contrast];
+        contrastScrollbar.Value = quality.DefaultValue;
+        contrastValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Hue))
+      {
+        quality = map[VideoProcAmpProperty.Hue];
+        hueScrollbar.Value = quality.DefaultValue;
+        hueValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Saturation))
+      {
+        quality = map[VideoProcAmpProperty.Saturation];
+        saturationScrollbar.Value = quality.DefaultValue;
+        saturationValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Sharpness))
+      {
+        quality = map[VideoProcAmpProperty.Sharpness];
+        sharpnessScrollbar.Value = quality.DefaultValue;
+        sharpnessValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.Gamma))
+      {
+        quality = map[VideoProcAmpProperty.Gamma];
+        gammaScrollbar.Value = quality.DefaultValue;
+        gammaValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.ColorEnable))
+      {
+        quality = map[VideoProcAmpProperty.ColorEnable];
+        colorEnableScrollbar.Value = quality.DefaultValue;
+        colorEnableValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.WhiteBalance))
+      {
+        quality = map[VideoProcAmpProperty.WhiteBalance];
+        whiteBalanceScrollbar.Value = quality.DefaultValue;
+        whiteBalanceValue.Text = quality.DefaultValue.ToString();
+      }
+      if (map.ContainsKey(VideoProcAmpProperty.BacklightCompensation))
+      {
+        quality = map[VideoProcAmpProperty.BacklightCompensation];
+        backlightCompensationScrollbar.Value = quality.DefaultValue;
+        backlightCompensationValue.Text = quality.DefaultValue.ToString();
+      }
+    }
+
+    private void brightnessScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      brightnessValue.Text = brightnessScrollbar.Value.ToString();
+    }
+
+    private void contrastScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      contrastValue.Text = contrastScrollbar.Value.ToString();
+    }
+
+    private void hueScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      hueValue.Text = hueScrollbar.Value.ToString();
+    }
+
+    private void saturationScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      saturationValue.Text = saturationScrollbar.Value.ToString();
+    }
+
+    private void sharpnessScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      sharpnessValue.Text = sharpnessScrollbar.Value.ToString();
+    }
+
+    private void gammaScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      gammaValue.Text = gammaScrollbar.Value.ToString();
+    }
+
+    private void colorEnableScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      colorEnableValue.Text = colorEnableScrollbar.Value.ToString();
+    }
+
+    private void whiteBalanceScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      whiteBalanceValue.Text = whiteBalanceScrollbar.Value.ToString();
+    }
+
+    private void backlightCompensationScrollbar_ValueChanged(object sender, EventArgs e)
+    {
+      backlightCompensationValue.Text = backlightCompensationScrollbar.Value.ToString();
     }
   }
 }

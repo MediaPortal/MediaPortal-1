@@ -1,14 +1,19 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TVLibrary</RootNamespace>
     <AssemblyName>TVLibrary</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,16 +77,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeviceSorter.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\Cards\hauppauge.cs" />
+    <Compile Include="Implementations\Analog\Components\Capture.cs" />
+    <Compile Include="Implementations\Analog\Components\TeletextComponent.cs" />
+    <Compile Include="Implementations\Analog\Components\Crossbar.cs" />
+    <Compile Include="Implementations\Analog\Components\Encoder.cs" />
+    <Compile Include="Implementations\Analog\Components\Tuner.cs" />
+    <Compile Include="Implementations\Analog\Components\TvAudio.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\Hauppauge.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\HDPVRChannel.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\CodecAPIControl.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\BaseControl.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\EncoderAPIControl.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\QualityControlFactory.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\QualityControl\VideoEncoderControl.cs" />
+    <Compile Include="Implementations\Analog\Graphs\HDPVR\HDPVRChannel.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\CodecAPIControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\BaseControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\EncoderAPIControl.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\QualityControlFactory.cs" />
+    <Compile Include="Implementations\Analog\QualityControl\VideoEncoderControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
-    <Compile Include="Implementations\Analog\Graphs\Analog\TVCardHDPVR.cs" />
+    <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConexantBDA.cs" />
@@ -186,6 +197,9 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementations\Analog\Components\Encoding\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

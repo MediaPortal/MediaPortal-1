@@ -238,7 +238,6 @@ namespace TvLibrary.Implementations.DVB
     /// <seealso cref="IsThisComObjectInstalled"/>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static IBaseFilter AddFilterFromClsid(IGraphBuilder graphBuilder, Guid clsid, string name)
     {
@@ -280,7 +279,6 @@ namespace TvLibrary.Implementations.DVB
     /// </example>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
-
     public static IBaseFilter AddFilterByName(IGraphBuilder graphBuilder, Guid deviceCategory, string friendlyName)
     {
       IBaseFilter filter = null;
@@ -319,7 +317,6 @@ namespace TvLibrary.Implementations.DVB
     /// </example>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static IBaseFilter AddFilterByDevicePath(IGraphBuilder graphBuilder, string devicePath, string name)
     {
@@ -370,7 +367,6 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>an instance of the filter if found, null if not</returns>
     /// <seealso cref="FindFilterByClsid"/>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static IBaseFilter FindFilterByName(IGraphBuilder graphBuilder, string filterName)
     {
@@ -409,7 +405,6 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>an instance of the filter if found, null if not</returns>
     /// <seealso cref="FindFilterByName"/>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static IBaseFilter FindFilterByClsid(IGraphBuilder graphBuilder, Guid filterClsid)
     {
@@ -465,7 +460,6 @@ namespace TvLibrary.Implementations.DVB
     /// </example>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder or source is null</exception>
     /// <remarks>This method assumes that the filter is part of the given graph</remarks>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool RenderPin(IGraphBuilder graphBuilder, IBaseFilter source, string pinName)
     {
@@ -490,13 +484,191 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Find a pin on the filter specified
+    /// which can supplies the mediatype and mediasubtype specified
+    /// if found the pin is returned
+    /// </summary>
+    /// <param name="filter">The filter to find the pin on.</param>
+    /// <param name="mediaType">Type of the media.</param>
+    /// <param name="mediaSubtype">The media subtype.</param>
+    /// <param name="direction">The direction of the pin</param>
+    /// <param name="index">Index of the pin</param>
+    public static IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype, PinDirection direction, out int index)
+    {
+
+      IEnumPins enumPins;
+      filter.EnumPins(out enumPins);
+      // loop through all pins
+      index = -1;
+      while (true)
+      {
+        IPin[] pins = new IPin[2];
+        int fetched;
+        enumPins.Next(1, pins, out fetched);
+        if (fetched != 1)
+          break;
+        //first check if the pindirection matches
+        PinDirection pinDirection;
+        pins[0].QueryDirection(out pinDirection);
+        if (pinDirection != direction)
+          continue;
+        index++;
+        //next check if the pin supports the media type requested
+        IEnumMediaTypes enumMedia;
+        AMMediaType[] media = new AMMediaType[2];
+        pins[0].EnumMediaTypes(out enumMedia);
+        while (true)
+        {
+          int fetchedMedia;
+          enumMedia.Next(1, media, out fetchedMedia);
+          if (fetchedMedia != 1)
+            break;
+
+          if (media[0].majorType == mediaType)
+          {
+            if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
+            {
+              DsUtils.FreeAMMediaType(media[0]);
+              return pins[0];
+            }
+          }
+          DsUtils.FreeAMMediaType(media[0]);
+        }
+        Release.ComObject("Find media pin", pins[0]);
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Scans a filter's pins looking for a pin with the specified name
+    /// </summary>
+    /// <param name="vSource">The filter to scan</param>
+    /// <param name="vPinName">The pin name to find</param>
+    /// <param name="vDir">The direction of the pin</param>
+    /// <param name="pinIndex">The index of the pin</param>
+    /// <returns>The matching pin, or null if not found</returns>
+    public static IPin GetPinByName(IBaseFilter vSource, string vPinName, PinDirection vDir, out int pinIndex)
+    {
+      IEnumPins ppEnum;
+      PinInfo ppinfo;
+      IPin pRet = null;
+      IPin[] pPins = new IPin[1];
+      pinIndex = -1;
+      if (vSource == null)
+      {
+        return null;
+      }
+
+      // Get the pin enumerator
+      int hr = vSource.EnumPins(out ppEnum);
+      DsError.ThrowExceptionForHR(hr);
+
+      try
+      {
+        int lFetched;
+        // Walk the pins looking for a match
+        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        {
+          PinDirection ppindir;
+          // Read the info
+          hr = pPins[0].QueryPinInfo(out ppinfo);
+          DsError.ThrowExceptionForHR(hr);
+
+          hr = pPins[0].QueryDirection(out ppindir);
+          DsError.ThrowExceptionForHR(hr);
+
+          // Is it the right direction?
+          if (ppindir == vDir)
+          {
+            pinIndex++;
+            // Is it the right name?
+            if (ppinfo.name == vPinName)
+            {
+              DsUtils.FreePinInfo(ppinfo);
+              pRet = pPins[0];
+              break;
+            }
+          }
+          Marshal.ReleaseComObject(pPins[0]);
+          DsUtils.FreePinInfo(ppinfo);
+        }
+      }
+      finally
+      {
+        Marshal.ReleaseComObject(ppEnum);
+      }
+
+      return pRet;
+    }
+
+    /// <summary>
+    /// Scan's a filter's pins looking for a pin with the specified category and direction
+    /// </summary>
+    /// <param name="vSource">The filter to scan</param>
+    /// <param name="PinCategory">The guid from PinCategory to scan for</param>
+    /// <param name="iIndex">Zero based index (ie 2 will return the third pin of the specified category)</param>
+    /// <param name="vDir">The direction of the pin</param>
+    /// <param name="pinIndex">The index of the pin</param>
+    /// <returns>The matching pin, or null if not found</returns>
+    public static IPin GetPinByCategoryAndDirection(IBaseFilter vSource, Guid PinCategory, int iIndex, PinDirection vDir, out int pinIndex)
+    {
+      IEnumPins ppEnum;
+      IPin pRet = null;
+      IPin[] pPins = new IPin[1];
+      pinIndex = -1;
+      if (vSource == null)
+      {
+        return null;
+      }
+
+      // Get the pin enumerator
+      int hr = vSource.EnumPins(out ppEnum);
+      DsError.ThrowExceptionForHR(hr);
+
+      try
+      {
+        int lFetched;
+        // Walk the pins looking for a match
+        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        {
+          PinDirection ppindir;
+          // Read the direction
+          hr = pPins[0].QueryDirection(out ppindir);
+          DsError.ThrowExceptionForHR(hr);
+
+          if (ppindir == vDir)
+          {
+            pinIndex++;
+            // Is it the right category?
+            if (DsUtils.GetPinCategory(pPins[0]) == PinCategory)
+            {
+              // Is is the right index?
+              if (iIndex == 0)
+              {
+                pRet = pPins[0];
+                break;
+              }
+              iIndex--;
+            }
+          }
+          Marshal.ReleaseComObject(pPins[0]);
+        }
+      }
+      finally
+      {
+        Marshal.ReleaseComObject(ppEnum);
+      }
+
+      return pRet;
+    }
+
+    /// <summary>
     /// Disconnect all pins on a given filter
     /// </summary>
     /// <param name="filter">the filter on which to disconnect all the pins</param>
     /// <exception cref="System.ArgumentNullException">Thrown if filter is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occured during the disconnection process</exception>
     /// <remarks>Both input and output pins are disconnected</remarks>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void DisconnectPins(IBaseFilter filter)
     {
@@ -538,7 +710,6 @@ namespace TvLibrary.Implementations.DVB
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if the method can't enumerate its filters</exception>
     /// <remarks>This method doesn't throw an exception if an error occurs during pin disconnections</remarks>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void DisconnectAllPins(IGraphBuilder graphBuilder)
     {
@@ -576,7 +747,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
     /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if the method can't enumerate its filters</exception>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void RemoveAllFilters(IGraphBuilder graphBuilder)
     {
@@ -623,7 +793,6 @@ namespace TvLibrary.Implementations.DVB
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur during the file creation</exception>
     /// <seealso cref="LoadGraphFile"/>
     /// <remarks>This method overwrites any existing file</remarks>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void SaveGraphFile(IGraphBuilder graphBuilder, string fileName)
     {
@@ -682,7 +851,6 @@ namespace TvLibrary.Implementations.DVB
     /// <exception cref="System.ArgumentException">Thrown if the given file is not a valid graph file</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur during loading</exception>
     /// <seealso cref="SaveGraphFile"/>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void LoadGraphFile(IGraphBuilder graphBuilder, string fileName)
     {
@@ -744,7 +912,6 @@ namespace TvLibrary.Implementations.DVB
     /// <remarks>
     /// This method is intended to be used with <see cref="ShowFilterPropertyPage">ShowFilterPropertyPage</see>
     /// </remarks>
-
     public static bool HasPropertyPages(IBaseFilter filter)
     {
       if (filter == null)
@@ -772,7 +939,6 @@ namespace TvLibrary.Implementations.DVB
     /// }
     /// </code>
     /// </example>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void ShowFilterPropertyPage(IBaseFilter filter, IntPtr parent)
     {
@@ -828,7 +994,6 @@ namespace TvLibrary.Implementations.DVB
     /// </code>
     /// </example>
     /// <returns>true if the object is available, false if not</returns>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsThisComObjectInstalled(Guid clsid)
     {
@@ -853,7 +1018,6 @@ namespace TvLibrary.Implementations.DVB
     /// This method uses <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> internally
     /// </remarks>
     /// <returns>true if VMR9 is present, false if not</returns>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsVMR9Present()
     {
@@ -868,7 +1032,6 @@ namespace TvLibrary.Implementations.DVB
     /// This method uses <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> internally
     /// </remarks>
     /// <returns>true if VMR7 is present, false if not</returns>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsVMR7Present()
     {
@@ -891,7 +1054,6 @@ namespace TvLibrary.Implementations.DVB
     /// If useIntelligentConnect is true, this method can add missing filters between the two pins.<br/>
     /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
     /// </remarks>
-
     public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName, IBaseFilter downFilter, string destPinName, bool useIntelligentConnect)
     {
       if (graphBuilder == null)
@@ -935,7 +1097,6 @@ namespace TvLibrary.Implementations.DVB
     /// If useIntelligentConnect is true, this method can add missing filters between the two pins.<br/>
     /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
     /// </remarks>
-
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin, bool useIntelligentConnect)
     {
@@ -996,6 +1157,88 @@ namespace TvLibrary.Implementations.DVB
     /// helper function to connect 2 filters
     /// </summary>
     /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="pinSource">The ping source.</param>
+    /// <param name="destinationFilter">The destination filter.</param>
+    /// <returns></returns>
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
+    {
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
+      for (int i = 0; i <= 10; ++i)
+      {
+        IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, i);
+        if (pinIn == null)
+          return false;
+        IPin connectedToPin;
+        if (pinIn.ConnectedTo(out connectedToPin) != 0)
+          connectedToPin = null;
+
+        if (connectedToPin == null)
+        {
+          Log.Log.WriteFile("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
+          int hr = graphBuilder.Connect(pinSource, pinIn);
+          if (hr == 0)
+          {
+            Log.Log.WriteFile("analog:  pins connected");
+            Release.ComObject("pindest" + i, pinIn);
+            return true;
+          }
+        }else
+        {
+          Release.ComObject("connectedToPin",connectedToPin);
+        }
+        Release.ComObject("pindest" + i, pinIn);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// helper function to connect 2 filters
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="pinSource">The ping source.</param>
+    /// <param name="destinationFilter">The destination filter.</param>
+    /// <param name="destinationPinIndex">The index of the destination pin</param>
+    /// <returns></returns>
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter, out int destinationPinIndex)
+    {
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
+      destinationPinIndex = -1;
+      for (int i = 0; i <= 10; ++i)
+      {
+        IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, i);
+        if (pinIn == null)
+          return false;
+        destinationPinIndex++;
+        IPin connectedToPin;
+        if (pinIn.ConnectedTo(out connectedToPin) != 0)
+          connectedToPin = null;
+
+        if (connectedToPin == null)
+        {
+          Log.Log.WriteFile("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
+          int hr = graphBuilder.Connect(pinSource, pinIn);
+          if (hr == 0)
+          {
+            Log.Log.WriteFile("analog:  pins connected");
+            Release.ComObject("pindest" + i, pinIn);
+            return true;
+          }
+        }
+        else
+        {
+          Release.ComObject("connectedToPin", connectedToPin);
+        }
+        Release.ComObject("pindest" + i, pinIn);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// helper function to connect 2 filters
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
     /// <param name="sourceFilter">The source filter.</param>
     /// <param name="pinDestination">The pin destination.</param>
     /// <returns></returns>
@@ -1014,6 +1257,38 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pindest" + i, pinOut);
+          return true;
+        }
+        Release.ComObject("pindest" + i, pinOut);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// helper function to connect 2 filters
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder.</param>
+    /// <param name="sourceFilter">The source filter.</param>
+    /// <param name="pinDestination">The pin destination.</param>
+    /// <param name="sourcePinIndex">The determined output index of the source filter</param>
+    /// <returns></returns>
+    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination, out int sourcePinIndex)
+    {
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
+      sourcePinIndex = -1;
+      for (int i = 0; i <= 10; ++i)
+      {
+        IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
+        if (pinOut == null)
+          return false;
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+        int hr = graphBuilder.Connect(pinOut, pinDestination);
+        if (hr == 0)
+        {
+          Log.Log.WriteFile("analog:  pins connected");
+          Release.ComObject("pindest" + i, pinOut);
+          sourcePinIndex = i;
           return true;
         }
         Release.ComObject("pindest" + i, pinOut);
@@ -1079,7 +1354,7 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           pinOut.ConnectedTo(out testPin);
-        } catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ",ex);}
+        } catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ", ex); }
         if (testPin != null)
         {
           Release.ComObject("outPin", pinOut);
@@ -1245,6 +1520,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
       return mediaAudio;
     }
+
     /// <summary>
     /// Gets the audio MPG1 media.
     /// </summary>
@@ -1306,6 +1582,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.Copy(MPEG1AudioFormat, 0, mediaAc3.formatPtr, mediaAc3.formatSize);
       return mediaAc3;
     }
+
     /// <summary>
     /// Gets the audio AAC media type
     /// </summary>
@@ -1325,6 +1602,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.Copy(AACAudioFormat, 0, mediaAac.formatPtr, mediaAac.formatSize);
       return mediaAac;
     }
+
     /// <summary>
     /// Gets the audio LATM AAC media type
     /// </summary>
@@ -1344,6 +1622,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.Copy(AACAudioFormat, 0, mediaLATMAAC.formatPtr, mediaLATMAAC.formatSize);
       return mediaLATMAAC;
     }
+
     /// <summary>
     /// Gets the audio LPCM media type
     /// </summary>
@@ -1363,6 +1642,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.Copy(LPCMAudioFormat, 0, mediaLPCM.formatPtr, mediaLPCM.formatSize);
       return mediaLPCM;
     }
+
     /// <summary>
     /// Gets the transport stream media type
     /// </summary>
@@ -1378,6 +1658,7 @@ namespace TvLibrary.Implementations.DVB
       return mediaTS;
     }
   }
+
   #region Unmanaged Code declarations
 
   [Flags]

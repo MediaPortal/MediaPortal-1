@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,6 +12,11 @@
     <Win32Resource>
     </Win32Resource>
     <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -221,6 +226,8 @@
     <EmbeddedResource Include="41_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="41_upgrade_sqlserver_database.sql" />
     <None Include="App.config" />
+    <EmbeddedResource Include="42_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="42_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="create_mysql_database.sql" />
     <EmbeddedResource Include="create_sqlserver_database.sql" />
     <EmbeddedResource Include="SetupTv.exe.manifest" />

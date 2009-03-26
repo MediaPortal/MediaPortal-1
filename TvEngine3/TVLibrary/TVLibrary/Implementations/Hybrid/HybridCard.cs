@@ -535,11 +535,11 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Reloads the quality control configuration
+    /// Reloads the card configuration
     /// </summary>
-    public void ReloadQualityControlConfiguration()
+    public void ReloadCardConfiguration()
     {
-      _internalCard.ReloadQualityControlConfiguration();
+      _internalCard.ReloadCardConfiguration();
     }
 
     #endregion

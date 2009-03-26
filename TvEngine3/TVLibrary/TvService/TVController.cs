@@ -405,7 +405,7 @@ namespace TvService
                       card.BuildGraph();
                       if (unknownCard is TvCardAnalog)
                       {
-                        ((TvCardAnalog)unknownCard).ReloadQualityControlConfiguration();
+                        ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
                       }
                     }
                     else
@@ -2983,11 +2983,11 @@ namespace TvService
     /// Reloads the configuration of quality control for the given card
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
-    public void ReloadQualityControlConfigration(int cardId)
+    public void ReloadCardConfiguration(int cardId)
     {
       if (ValidateTvControllerParams(cardId) || !SupportsQualityControl(cardId))
         return;
-      _cards[cardId].Card.ReloadQualityControlConfiguration();
+      _cards[cardId].Card.ReloadCardConfiguration();
     }
 
     /// <summary>

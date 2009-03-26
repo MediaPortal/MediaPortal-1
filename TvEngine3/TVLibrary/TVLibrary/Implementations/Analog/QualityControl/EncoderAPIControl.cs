@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2008 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2009 Team MediaPortal - diehard2
+ *	Copyright (C) 2005-2008 Team MediaPortal - diehard2
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -30,31 +30,33 @@ using TvLibrary.Implementations.DVB;
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
   /// <summary>
-  /// Class which implements control of quality trough the use of the IVideoEncoder interface
+  /// Class which implements control of quality trough the use of the IEncoderAPI interface
   /// </summary>
-  public class VideoEncoderControl : BaseControl
+  public class EncoderAPIControl : BaseControl
   {
     #region variable
+#pragma warning disable 618,612
     /// <summary>
-    /// Instance of the encoder that supports the IVideoEncoder
+    /// Instance of the encoder that supports the IEncoderAPI
     /// </summary>
-    private readonly IVideoEncoder _videoEncoder;
+    private readonly IEncoderAPI _encoderAPI;
     #endregion
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="VideoEncoderControl"/> class.
+    /// Initializes a new instance of the <see cref="EncoderAPIControl"/> class.
     /// </summary>
     /// <param name="configuration">The encoder settings to use.</param>
-    /// <param name="videoEncoder">The IVideoEncoder interface to the filter that must be used to control the quality.</param>
-    public VideoEncoderControl(Configuration configuration, IVideoEncoder videoEncoder)
+    /// <param name="encoderAPI">The IEncoderAPI interface to the filter that must be used to control the quality.</param>
+    public EncoderAPIControl(Configuration configuration, IEncoderAPI encoderAPI)
       : base(configuration)
     {
-      _videoEncoder = videoEncoder;
-      Log.Log.WriteFile("analog: IVideoEncoder supported by: " + FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
+      _encoderAPI = encoderAPI;
+      Log.Log.WriteFile("analog: IEncoderAPI supported by: " + FilterGraphTools.GetFilterName(_encoderAPI as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }
     #endregion
+#pragma warning restore 618,612
 
     #region protected method
     /// <summary>
@@ -64,7 +66,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <returns>HR return value</returns>
     protected override int IsSupported(Guid guid)
     {
-      return _videoEncoder.IsSupported(guid);
+      return _encoderAPI.IsSupported(guid);
     }
 
     /// <summary>
@@ -75,7 +77,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <returns>HR result</returns>
     protected override int SetValue(Guid guid, ref object newBitRateModeO)
     {
-      return _videoEncoder.SetValue(guid, ref newBitRateModeO);
+      return _encoderAPI.SetValue(guid, ref newBitRateModeO);
     }
 
     /// <summary>
@@ -88,7 +90,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <returns>HR result</returns>
     protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax, out object steppingDelta)
     {
-      return _videoEncoder.GetParameterRange(guid, out valueMin, out valueMax, out steppingDelta);
+      return _encoderAPI.GetParameterRange(guid, out valueMin, out valueMax, out steppingDelta);
     }
 
     /// <summary>
@@ -99,7 +101,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <returns>HR result object</returns>
     protected override object GetDefaultValue(Guid guid, out object qualityObject)
     {
-      return _videoEncoder.GetDefaultValue(guid, out qualityObject);
+      return _encoderAPI.GetDefaultValue(guid, out qualityObject);
     }
     #endregion
   }

@@ -110,7 +110,7 @@ namespace SetupTv.Sections
               analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
               analogChannel.AudioSource = (AnalogChannel.AudioInputType)comboBoxAudioSource.SelectedIndex;
               analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
-
+              analogChannel.IsVCRSignal = checkBoxVCR.Checked;
               layer.AddTuningDetails(_channel, analogChannel);
             }
           }
@@ -578,6 +578,7 @@ namespace SetupTv.Sections
             comboBoxVideoSource.SelectedIndex = detail.VideoSource;
             comboBoxAudioSource.SelectedIndex = detail.AudioSource;
             textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency, "2");
+            checkBoxVCR.Checked = detail.IsVCRSignal;
           }
 
           //ATSC Tab

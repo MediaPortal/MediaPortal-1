@@ -19,7 +19,6 @@
  *
  */
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
@@ -36,8 +35,7 @@ namespace TvLibrary.Implementations.DVB
     IKNC _KNCInterface;
     readonly IntPtr ptrPmt;
     readonly IntPtr _ptrDataInstance;
-    protected IBDA_Topology _TunerDevice;
-    DVBSChannel _previousChannel;
+    private readonly IBDA_Topology _TunerDevice;
     /// <summary>
     /// Initializes a new instance of the <see cref="KNC"/> class.
     /// </summary>

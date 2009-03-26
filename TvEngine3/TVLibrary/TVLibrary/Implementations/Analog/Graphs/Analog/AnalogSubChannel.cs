@@ -21,8 +21,8 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
+using TvLibrary.Implementations.Analog.Components;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
@@ -34,7 +34,7 @@ namespace TvLibrary.Implementations.Analog
   {
     #region variables
     private readonly TvCardAnalog _card;
-    private readonly IBaseFilter _filterTvAudioTuner;
+    private readonly TvAudio _tvAudio;
     private readonly IBaseFilter _mpFileWriter;
     private readonly IMPRecord _mpRecord;
     #endregion
@@ -44,11 +44,11 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    public AnalogSubChannel(TvCardAnalog card, int subchnnelId, IBaseFilter filterTvAudioTuner, IPin pinVBI, IBaseFilter mpFileWriter)
+    internal AnalogSubChannel(TvCardAnalog card, int subchnnelId, TvAudio tvAudio, bool hasTeletext, IBaseFilter mpFileWriter)
     {
       _card = card;
-      _hasTeletext = (pinVBI != null);
-      _filterTvAudioTuner = filterTvAudioTuner;
+      _hasTeletext = hasTeletext;
+      _tvAudio = tvAudio;
       _mpFileWriter = mpFileWriter;
       _mpRecord = (IMPRecord)_mpFileWriter;
       _mpRecord.AddChannel(ref _subChannelId);
@@ -222,50 +222,7 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        List<IAudioStream> streams = new List<IAudioStream>();
-        if (_filterTvAudioTuner == null)
-          return streams;
-        IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-        TVAudioMode availableAudioModes = TVAudioMode.None;
-        if (tvAudioTunerInterface != null)
-          tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
-        if ((availableAudioModes & (TVAudioMode.Stereo)) != 0)
-        {
-          AnalogAudioStream stream = new AnalogAudioStream();
-          stream.AudioMode = TVAudioMode.Stereo;
-          stream.Language = "Stereo";
-          streams.Add(stream);
-        }
-        if ((availableAudioModes & (TVAudioMode.Mono)) != 0)
-        {
-          AnalogAudioStream stream = new AnalogAudioStream();
-          stream.AudioMode = TVAudioMode.Mono;
-          stream.Language = "Mono";
-          streams.Add(stream);
-        }
-        if ((availableAudioModes & (TVAudioMode.LangA)) != 0)
-        {
-          AnalogAudioStream stream = new AnalogAudioStream();
-          stream.AudioMode = TVAudioMode.LangA;
-          stream.Language = "LangA";
-          streams.Add(stream);
-        }
-        if ((availableAudioModes & (TVAudioMode.LangB)) != 0)
-        {
-          AnalogAudioStream stream = new AnalogAudioStream();
-          stream.AudioMode = TVAudioMode.LangB;
-          stream.Language = "LangB";
-          streams.Add(stream);
-        }
-        if ((availableAudioModes & (TVAudioMode.LangC)) != 0)
-        {
-          AnalogAudioStream stream = new AnalogAudioStream();
-          stream.AudioMode = TVAudioMode.LangC;
-          stream.Language = "LangC";
-          streams.Add(stream);
-        }
-
-        return streams;
+        return _tvAudio.GetAvailableAudioStreams();
       }
     }
 
@@ -276,29 +233,11 @@ namespace TvLibrary.Implementations.Analog
     {
       get
       {
-        if (_filterTvAudioTuner == null)
-          return null;
-        IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-        TVAudioMode mode = TVAudioMode.None;
-        if (tvAudioTunerInterface != null)
-          tvAudioTunerInterface.get_TVAudioMode(out mode);
-        List<IAudioStream> streams = AvailableAudioStreams;
-        foreach (AnalogAudioStream stream in streams)
-        {
-          if (stream.AudioMode == mode)
-            return stream;
-        }
-        return null;
+        return _tvAudio.CurrentAudioStream;
       }
       set
       {
-        AnalogAudioStream stream = value as AnalogAudioStream;
-        if (stream != null && _filterTvAudioTuner != null)
-        {
-          IAMTVAudio tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-          if (tvAudioTunerInterface != null)
-            tvAudioTunerInterface.put_TVAudioMode(stream.AudioMode);
-        }
+        _tvAudio.CurrentAudioStream = value;
       }
     }
     #endregion

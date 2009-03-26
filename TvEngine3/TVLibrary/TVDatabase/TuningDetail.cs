@@ -44,6 +44,7 @@ namespace TvDatabase
     [TableColumn("pcrPid", NotNull = true)] private int pcrPid;
     [TableColumn("videoSource", NotNull = true)] private int videoSource;
     [TableColumn("audioSource", NotNull = true)] private int audioSource;
+    [TableColumn("isVCRSignal", NotNull = true)] private bool isVCRSignal;
     [TableColumn("tuningSource", NotNull = true)] private int tuningSource;
     [TableColumn("videoPid", NotNull = true)] private int videoPid;
     [TableColumn("audioPid", NotNull = true)] private int audioPid;
@@ -66,7 +67,7 @@ namespace TvDatabase
                         int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId,
                         int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc,
                         int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid,
-                        int videoSource, int audioSource, int tuningSource, int videoPid, int audioPid, int band,
+                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid, int band,
                         int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       isChanged = true;
@@ -95,6 +96,7 @@ namespace TvDatabase
       this.pcrPid = pcrPid;
       this.videoSource = videoSource;
       this.audioSource = audioSource;
+      this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
       this.audioPid = audioPid;
       this.videoPid = videoPid;
@@ -115,7 +117,7 @@ namespace TvDatabase
                         int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId,
                         int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate,
                         int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel,
-                        int pcrPid, int videoSource, int audioSource, int tuningSource, int videoPid, int audioPid,
+                        int pcrPid, int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid,
                         int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       this.idTuning = idTuning;
@@ -144,6 +146,7 @@ namespace TvDatabase
       this.pcrPid = pcrPid;
       this.videoSource = videoSource;
       this.audioSource = audioSource;
+      this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
       this.audioPid = audioPid;
       this.videoPid = videoPid;
@@ -524,6 +527,19 @@ namespace TvDatabase
       {
         isChanged |= audioSource != value;
         audioSource = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column vcrSignal
+    /// </summary>
+    public bool IsVCRSignal
+    {
+      get { return isVCRSignal; }
+      set
+      {
+        isChanged |= isVCRSignal != value;
+        isVCRSignal = value;
       }
     }
 

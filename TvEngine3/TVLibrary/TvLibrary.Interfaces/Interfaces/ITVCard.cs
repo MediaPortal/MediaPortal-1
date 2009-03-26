@@ -202,9 +202,9 @@ namespace TvLibrary.Interfaces
     bool SupportsQualityControl { get; }
 
     /// <summary>
-    /// Reloads the quality control configuration
+    /// Reloads the card configuration
     /// </summary>
-    void ReloadQualityControlConfiguration();
+    void ReloadCardConfiguration();
 
     #endregion
 

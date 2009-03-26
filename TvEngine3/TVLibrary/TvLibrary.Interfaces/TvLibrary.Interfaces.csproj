@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,6 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TvLibrary.Interfaces</RootNamespace>
     <AssemblyName>TvLibrary.Interfaces</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +65,12 @@
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="DvbTextConverter.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\Capture.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\Crossbar.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\Teletext.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\TvAudio.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\Graph.cs" />
+    <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />

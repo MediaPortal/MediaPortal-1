@@ -980,10 +980,10 @@ namespace TvControl
     bool SupportsBitRate(int cardId);
 
     /// <summary>
-    /// Reloads the configuration of quality control for the given card
+    /// Reloads the configuration for the given card
     /// </summary>
     /// <param name="cardId">Unique id of the card</param>
-    void ReloadQualityControlConfigration(int cardId);
+    void ReloadCardConfiguration(int cardId);
 
     /// <summary>
     /// Gets the current quality type

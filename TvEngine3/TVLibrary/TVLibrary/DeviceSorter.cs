@@ -55,6 +55,12 @@ namespace TvLibrary
         List<string> compareNames = new List<string>();
         foreach (object obj in arg)
         {
+          String name = obj as String;
+          if(!string.IsNullOrEmpty(name))
+          {
+            compareNames.Add(name);
+            continue;
+          }
           DsDevice dev = obj as DsDevice;
           if (dev == null)
             continue;
