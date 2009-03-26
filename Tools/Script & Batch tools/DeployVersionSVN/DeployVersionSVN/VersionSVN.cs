@@ -41,7 +41,7 @@ namespace DeployVersionSVN
         }
       }
 
-      Console.WriteLine("Not found!");
+      Console.WriteLine("SubWCRev.exe not found!");
       return string.Empty;
     }
   }
