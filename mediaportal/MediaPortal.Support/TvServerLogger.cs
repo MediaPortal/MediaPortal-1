@@ -30,14 +30,11 @@ namespace MediaPortal.Support
 {
   public class TvServerLogger : ILogCreator
   {
-    public TvServerLogger()
-    {
-    }
-
     public void CreateLogs(string destinationFolder)
     {
-      string logPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                       "\\Team MediaPortal\\MediaPortal TV Server\\log";
+      string basePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                        "\\Team MediaPortal\\MediaPortal TV Server";
+      string logPath = basePath + "\\log";
       if (!Directory.Exists(logPath))
       {
         return;
@@ -53,6 +50,12 @@ namespace MediaPortal.Support
       foreach (FileInfo bakFile in bakfiles)
       {
         bakFile.CopyTo(destinationFolder + "\\tvserver_" + bakFile.Name, true);
+      }
+
+      FileInfo[] xmlFiles = new DirectoryInfo(basePath + "\\AnalogCard").GetFiles("*.xml");
+      foreach (FileInfo xmlFile in xmlFiles)
+      {
+        xmlFile.CopyTo(destinationFolder + "\\tvserver_AnalogCard_" + xmlFile.Name, true);
       }
     }
 
