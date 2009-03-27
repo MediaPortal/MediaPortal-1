@@ -85,10 +85,10 @@ namespace TvLibrary.Implementations
           //break;  maybe more than one B2C2 card ?
         }
       }
-      devices = DsDevice.GetDevicesOfCat(FilterCategory.WDMStreamingEncoderDevices);
+      devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
       for (int i = 0; i < devices.Length; ++i)
       {
-        if (String.Compare(devices[i].Name, "Hauppauge HD PVR Encoder", true) == 0)
+        if (String.Compare(devices[i].Name, "Hauppauge HD PVR Crossbar", true) == 0)
         {
           Log.Log.WriteFile("Detected Hauppauge HD PVR");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
@@ -198,41 +198,38 @@ namespace TvLibrary.Implementations
         for (int i = 0; i < devices.Length; i++)
         {
 
-					string name = devices[i].Name ?? "unknown";
+          string name = devices[i].Name ?? "unknown";
           name = name.ToLowerInvariant();
           //Log.Log.WriteFile("Found card:{0}", name);
           //Console.ReadLine();
           IBaseFilter tmp;
-					graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
+          graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
           if (ConnectFilter(graphBuilder, networkDVBT, tmp))
           {
             Log.Log.WriteFile("Detected DVB-T card:{0}", name);
             TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
             _cards.Add(dvbtCard);
-          }
-          else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
+          } else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
           {
             Log.Log.WriteFile("Detected DVB-C card:{0}", name);
             TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
             _cards.Add(dvbcCard);
-          }
-          else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
+          } else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
           {
             Log.Log.WriteFile("Detected DVB-S card:{0}", name);
             TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
-          }
-          else if (ConnectFilter(graphBuilder, networkATSC, tmp))
+          } else if (ConnectFilter(graphBuilder, networkATSC, tmp))
           {
             Log.Log.WriteFile("Detected ATSC card:{0}", name);
             TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("tmp filter",tmp);
+          Release.ComObject("tmp filter", tmp);
         }
         FilterGraphTools.RemoveAllFilters(graphBuilder);
-        Release.ComObject("dvb provider",networkDVBC);
+        Release.ComObject("dvbc provider", networkDVBC);
         Release.ComObject("atsc provider", networkATSC);
         Release.ComObject("dvbs provider", networkDVBS);
         Release.ComObject("dvbt provider", networkDVBT);
@@ -243,7 +240,7 @@ namespace TvLibrary.Implementations
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVTuner);
       for (int i = 0; i < devices.Length; i++)
       {
-				string name = devices[i].Name ?? "unknown";
+        string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
         Log.Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
