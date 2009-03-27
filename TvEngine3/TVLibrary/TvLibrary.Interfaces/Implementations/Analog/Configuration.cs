@@ -248,6 +248,9 @@ namespace TvLibrary.Implementations.Analog
           _configuration.CardId = cardId;
           _configuration.Graph = Graph.CreateInstance(null);
         }
+      }else
+      {
+        _configuration.Graph = Graph.CreateInstance(null);
       }
       return _configuration;
     }
