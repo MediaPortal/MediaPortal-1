@@ -521,7 +521,18 @@ namespace SetupTv.Sections
       setting.Persist();
       UpdateConfiguration();
       Configuration.writeConfiguration(_configuration);
-      RemoteControl.Instance.ReloadCardConfiguration(_cardNumber);
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      if (card.Enabled)
+      {
+        try
+        {
+          RemoteControl.Instance.ReloadCardConfiguration(_cardNumber);
+        }catch
+        {
+          Log.WriteFile("Could not reload card configuration");
+        }
+        return;
+      }
     }
 
     private void UpdateConfiguration()
