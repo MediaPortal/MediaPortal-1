@@ -585,16 +585,16 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_currentChannel != null)
       {
-        if(_currentChannel.VideoSource != channel.VideoSource)
+        if(_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource))
         {
           _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
         }
         if(_currentChannel.AudioSource!= channel.AudioSource)
         {
-          if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+          if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic && _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
           {
             _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
-          } else
+          } else if (_audioPinMap.ContainsKey(channel.AudioSource))
           {
             _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
           }

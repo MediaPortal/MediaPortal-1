@@ -1178,7 +1178,12 @@ namespace SetupTv.Sections
         }
         user = new User();
         user.CardId = _cardNumber;
-        RemoteControl.Instance.Tune(ref user, new AnalogChannel(), -1);
+        AnalogChannel temp = new AnalogChannel();
+        temp.VideoSource = AnalogChannel.VideoInputType.Tuner;
+        temp.AudioSource = AnalogChannel.AudioInputType.Tuner;
+        temp.IsRadio = false;
+        temp.IsTv = true;
+        RemoteControl.Instance.Tune(ref user, temp, -1);
         if (RemoteControl.Instance.SupportsQualityControl(_cardNumber))
         {
           _cardName = RemoteControl.Instance.CardName(_cardNumber);

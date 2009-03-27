@@ -97,6 +97,10 @@ namespace TvLibrary.Implementations.Analog
         return false;
       if (channel.IsRadio)
       {
+        if(_tuner == null)
+        {
+          BuildGraph();
+        }
         return _tuner.SupportsFMRadio;
       }
       return true;

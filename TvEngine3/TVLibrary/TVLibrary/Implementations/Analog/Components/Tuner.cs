@@ -120,7 +120,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _tunerDevice.Name; }
     }
-    
+
     /// <summary>
     /// Gets if the tuner is locked
     /// </summary>
@@ -260,12 +260,12 @@ namespace TvLibrary.Implementations.Analog.Components
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
         graph.Tuner.Name))
       {
-        Log.Log.WriteFile("analog: Detecting capabilities of the tuner"); 
+        Log.Log.WriteFile("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;
         int index;
-        _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null, PinDirection.Output,out index);
+        _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null, PinDirection.Output, out index);
         graph.Tuner.AudioPin = index;
-        return CheckCapabilities();
+        return CheckCapabilities(graph);
       }
       Log.Log.WriteFile("analog: Using stored capabilities of the tuner");
       _audioPin = DsFindPin.ByDirection(_filterTvTuner, PinDirection.Output, graph.Tuner.AudioPin);
@@ -325,7 +325,7 @@ namespace TvLibrary.Implementations.Analog.Components
     /// Checks the capabilities of the tuner device
     /// </summary>
     /// <returns>true, if the checks were successful</returns>
-    private bool CheckCapabilities()
+    private bool CheckCapabilities(Graph graph)
     {
       if (_tuner == null)
       {
@@ -337,6 +337,15 @@ namespace TvLibrary.Implementations.Analog.Components
       _tuner.GetAvailableModes(out tunerModes);
       _supportsFMRadio = (AMTunerModeType.FMRadio & tunerModes) != 0;
       _supportsAMRadio = (AMTunerModeType.AMRadio & tunerModes) != 0;
+      if (_supportsFMRadio)
+      {
+        graph.Tuner.RadioMode = graph.Tuner.RadioMode | RadioMode.AM;
+      }
+      if (_supportsAMRadio)
+      {
+        graph.Tuner.RadioMode = graph.Tuner.RadioMode | RadioMode.AM;
+      }
+
       return true;
     }
 
@@ -348,7 +357,7 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_tuner != null)
       {
         _tuner.ChannelMinMax(out _minChannel, out _maxChannel);
-      }else
+      } else
       {
         _minChannel = 0;
         _maxChannel = 128;
