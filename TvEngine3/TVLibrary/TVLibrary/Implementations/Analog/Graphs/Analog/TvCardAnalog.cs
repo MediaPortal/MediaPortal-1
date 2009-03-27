@@ -589,6 +589,7 @@ namespace TvLibrary.Implementations.Analog
       if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, _tsFileSink, 0))
       {
         Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
+        throw new TvException("Unable to connect pins");
       }
       Release.ComObject("mpegmux pinin", pin);
       if (_capture.SupportsTeletext)
@@ -597,6 +598,7 @@ namespace TvLibrary.Implementations.Analog
         if (!FilterGraphTools.ConnectPin(_graphBuilder, _teletext.WST_VBI_Pin, _tsFileSink, 1))
         {
           Log.Log.WriteFile("analog:unable to connect wst/vbi->tsfilesink");
+          throw new TvException("Unable to connect pins");
         }
       }
       return true;

@@ -1147,7 +1147,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Release.ComObject("Connect Pin", pinDest);
-        throw new TvException("Unable to connect pins");
+        return false;
       }
       Release.ComObject("Connect Pin", pinDest);
       return true;

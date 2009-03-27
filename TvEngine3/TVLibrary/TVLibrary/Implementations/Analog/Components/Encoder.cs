@@ -1838,6 +1838,7 @@ namespace TvLibrary.Implementations.Analog.Components
         if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0))
         {
           Log.Log.WriteFile("analog: unable to connect pinvideo->mpeg muxer");
+          throw new TvException("Unable to connect pins");
         }
         _pinVideoConnected = true;
         Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
@@ -1854,6 +1855,7 @@ namespace TvLibrary.Implementations.Analog.Components
           if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinLPCM, _filterMpegMuxer, 1))
           {
             Log.Log.WriteFile("analog: AddMpegMuxer, unable to connect pinLPCM->mpeg muxer");
+            throw new TvException("Unable to connect pins");
           }
           Log.Log.WriteFile("analog: AddMpegMuxer, connected pinLPCM->mpeg muxer");
         }
@@ -1863,6 +1865,7 @@ namespace TvLibrary.Implementations.Analog.Components
           if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
           {
             Log.Log.WriteFile("analog:AddMpegMuxer, unable to connect pinaudio->mpeg muxer");
+            throw new TvException("Unable to connect pins");
           }
           Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
         }
@@ -1888,7 +1891,10 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_pinVideoConnected)
       {
         Log.Log.Write("analog: Update pin video: connect");
-        FilterGraphTools.ConnectPin(graphBuilder, _pinVideo, _filterMpegMuxer, 0);
+        if(!FilterGraphTools.ConnectPin(graphBuilder, _pinVideo, _filterMpegMuxer, 0))
+        {
+          throw new TvException("Unable to connect pins");
+        }
       }
       else
       {
