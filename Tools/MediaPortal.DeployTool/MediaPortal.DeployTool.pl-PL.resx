@@ -162,7 +162,7 @@
 TV-Server zastępuje całkowicie TV-Plugin i integruje się całkowicie w MediaPortal. </value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
-    <value>Wszystkie konieczne podprogramy będą zainstalowane w standardowych folderach ze standardowymi nastawieniami.</value>
+    <value>Wszystkie konieczne podprogramy będą zainstalowane w standardowych folderach ze standardowymi ustawieniami.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
     <value>Instalacja zaawansowana pozwoli na zmianę miejsca instalacji oraz ustawień</value>
