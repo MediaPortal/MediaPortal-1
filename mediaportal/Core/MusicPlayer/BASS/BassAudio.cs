@@ -372,7 +372,7 @@ namespace MediaPortal.Player
         }
 
         double duration = (double) GetTotalStreamSeconds(stream);
-        if (currentCueSheet != null && (cueTrackEndPos > 0 || cueTrackEndPos > 0))
+        if (currentCueSheet != null)
         {
           if (cueTrackEndPos > 0)
           {
