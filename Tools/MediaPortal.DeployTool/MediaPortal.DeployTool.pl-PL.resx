@@ -207,14 +207,7 @@ również programy telewizyjne.</value>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Ta opcja zainstaluje tylko MediaPortal TV-Server na Twoim komputerze.
 Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych musi być zainstalowana na tym komputerze)</value>
-  </data>
-  <data name="CustomInstallation_rbTvServerSlave" xml:space="preserve">
-    <value>Obecny TV-Server w trybie slave - obecnie potrzebny TV-Server w trybie master</value>
-  </data>
-  <data name="CustomInstallation_labelSlave" xml:space="preserve">
-    <value>Ta opcja zainstaluje na Twoim komputerze MediaPortal TV-Server.
-Ten komputer będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych nie musi być zainstalowana na tym komputerze)</value>
-  </data>
+  </data>  
   <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
     <value>Szukaj</value>
   </data>
