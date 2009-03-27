@@ -499,19 +499,24 @@ Var TempInstallLog
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
   SetRegView 32
+  ${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
     ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ${LOG_TEXT} "INFO" "MediaPortal v0.2.3 installation dir found: ${_var}"
   ${ElseIf} ${MPIsInstalled}
     ReadRegStr ${_var} HKLM "${MP_REG_UNINSTALL}" "InstallPath"
+    ${LOG_TEXT} "INFO" "MediaPortal installation dir found: ${_var}"
   ${Else}
     StrCpy ${_var} ""
+    ${LOG_TEXT} "INFO" "No MediaPortal installation found: _var will be empty"
   ${EndIf}
 
 !macroend
 
 !macro TVSERVER_GET_INSTALL_DIR _var
   SetRegView 32
+  ${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_INSTALL_DIR"
 
   ${If} ${TVServerIsInstalled}
   ${OrIf} ${TVClientIsInstalled}
@@ -524,6 +529,7 @@ Var TempInstallLog
 
 !macro MP_GET_VERSION _var
   SetRegView 32
+  ${LOG_TEXT} "DEBUG" "MACRO:MP_GET_VERSION"
 
   ${If} ${MPIsInstalled}
     ReadRegDWORD $R0 HKLM "${MP_REG_UNINSTALL}" "VersionMajor"
@@ -539,6 +545,7 @@ Var TempInstallLog
 
 !macro TVSERVER_GET_VERSION _var
   SetRegView 32
+  ${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_VERSION"
 
   ${If} ${TVServerIsInstalled}
   ${OrIf} ${TVClientIsInstalled}
@@ -596,6 +603,8 @@ LangString TEXT_MSGBOX_ERROR_DOTNET35_SP          ${LANG_ENGLISH} "Microsoft .Ne
 LangString TEXT_MSGBOX_ERROR_IS_INSTALLED         ${LANG_ENGLISH} "$(^Name) is already installed. You need to uninstall it, before you continue with the installation.$\r$\nUninstall will be lunched when pressing OK."
 LangString TEXT_MSGBOX_ERROR_ON_UNINSTALL         ${LANG_ENGLISH} "An error occured while trying to uninstall old version!$\r$\nDo you still want to continue the installation?"
 LangString TEXT_MSGBOX_ERROR_REBOOT_REQUIRED      ${LANG_ENGLISH} "A reboot is required after a previous action. Reboot you system and try it again."
+LangString TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED ${LANG_ENGLISH} "$(^Name) is not installed. It is not possible to install this update.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
+
 
 LangString UPDATE_ERROR_WRONGEXE                  ${LANG_ENGLISH} "updating $(^Name) is only allowed by starting MediaPortalUpdater!"
 LangString UPDATE_ERROR_UNKNOWN                   ${LANG_ENGLISH} "strange / unknown error, please use full installer"

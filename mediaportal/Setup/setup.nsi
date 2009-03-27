@@ -943,6 +943,12 @@ Function .onInit
   ${EndIf}
 !endif
 
+  ; OS and other common initialization checks are done in the following NSIS header file
+  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
+  !insertmacro MediaPortalAdminCheck $DeployMode
+  !insertmacro MediaPortalVCRedistCheck $DeployMode
+  !insertmacro MediaPortalNetFrameworkCheck $DeployMode
+
   ; check if old mp 0.2.2 is installed
   ${If} ${MP022IsInstalled}
     MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
@@ -961,13 +967,17 @@ Function .onInit
     Abort
   ${EndIf}
 
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
-  !insertmacro MediaPortalAdminCheck $DeployMode
-  !insertmacro MediaPortalVCRedistCheck $DeployMode
-  !insertmacro MediaPortalNetFrameworkCheck $DeployMode
-
+  ; Read installation dir from registry, ONLY if
+  ;   - installer is started in UpdateMode
+  ;   - MediaPortal is already installed
+  ${If} $UpdateMode = 1
+    ${If} ${MPIsInstalled}
+      !insertmacro MP_GET_INSTALL_DIR $INSTDIR
+    ${Else}
+      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
+      Abort
+    ${EndIf}
+  ${EndIf}
 
   ; check if reboot is required
   ${If} ${FileExists} "$MPdir.Base\rebootflag"
