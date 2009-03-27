@@ -35,6 +35,7 @@ namespace MediaPortal.GUI.Library
     public GUISortButtonControl(int parentId)
       : base(parentId)
     {
+
     }
 
     #endregion Constructors
@@ -66,14 +67,10 @@ namespace MediaPortal.GUI.Library
       int w = _sortButtonWidth;
       int h = _sortButtonHeight;
 
-      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename);
-        //, 0xFFFFFFFF);
-      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename);
-        //, 0xFFFFFFFF);
-      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename);
-        //, 0xFFFFFFFF);
-      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h,
-                                            _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
+      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename); //, 0xFFFFFFFF);
+      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename); //, 0xFFFFFFFF);
+      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename); //, 0xFFFFFFFF);
+      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h, _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
       _sortImages[0].ParentControl = this;
       _sortImages[1].ParentControl = this;
       _sortImages[2].ParentControl = this;
@@ -83,7 +80,6 @@ namespace MediaPortal.GUI.Library
       _sortImages[2].DimColor = DimColor;
       _sortImages[3].DimColor = DimColor;
     }
-
     public override void ScaleToScreenResolution()
     {
       base.ScaleToScreenResolution();
@@ -144,8 +140,9 @@ namespace MediaPortal.GUI.Library
         _sortImages[3].Height = _sortButtonHeight;
       }
       int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
-
-      _sortImages[sortImageIndex].Render(timePassed);
+      // Render only when sortbutton is visible
+      if (Visible)
+        _sortImages[sortImageIndex].Render(timePassed);
     }
 
     public override bool HitTest(int x, int y, out int controlID, out bool focused)
