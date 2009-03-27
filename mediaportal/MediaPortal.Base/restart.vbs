@@ -1,5 +1,21 @@
 Option Explicit
 
+' *********************************************
+' This function checks if a process is running 
+' *********************************************
+Function IsProcessRunning( strProcess )
+    Dim Process, strObject
+    IsProcessRunning = False
+    strObject   = "winmgmts:\\.\root\cimv2"
+    For Each Process in GetObject( strObject ).InstancesOf( "win32_process" )
+		If UCase( Process.name ) = UCase( strProcess ) Then
+            IsProcessRunning = True
+            Exit Function
+        End If
+    Next
+End Function
+
+
 Dim   Shell, Shell2, objFolder, objFolderItem, logpath, logold, lognew, syspath, FileSys, LogFile, TmpFile, strEcho, prockill, result, process
 
 ' Values taken from http://msdn.microsoft.com/en-us/library/bb774096(VS.85).aspx
@@ -63,6 +79,11 @@ LogFile.writeline strEcho
 result = Shell.Run (prockill, 0, True)
 strEcho = Date() & "-" & Time() & ": Killed  """ & process & """ (Exit code=" & result & ")"
 LogFile.writeline strEcho	
+
+' Check for MediaPortal still running
+do
+	WScript.Sleep(100)
+loop while IsProcessRunning ( process & ".exe" ) 
 
 strEcho = Date() & "-" & Time() & ": Executing """ & process & """"
 LogFile.writeline strEcho	
