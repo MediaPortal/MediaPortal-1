@@ -36,6 +36,11 @@ namespace TvLibrary.Implementations.Analog
   /// </summary>
   public class TvCardHDPVR : TvCardBase, ITVCard
   {
+    #region const
+    private const string _captureDeviceName = "Hauppauge HD PVR Capture Device";
+    private const string _encoderDeviceName = "Hauppauge HD PVR Encoder";
+    #endregion
+
     #region imports
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
@@ -46,7 +51,9 @@ namespace TvLibrary.Implementations.Analog
     #region variables
     private DsROTEntry _rotEntry;
     private ICaptureGraphBuilder2 _capBuilder;
+    private DsDevice _crossBarDevice;
     private DsDevice _captureDevice;
+    private DsDevice _encoderDevice;
     private IBaseFilter _filterCrossBar;
     private IBaseFilter _filterCapture;
     private IBaseFilter _filterEncoder;
@@ -54,6 +61,20 @@ namespace TvLibrary.Implementations.Analog
     private Configuration _configuration;
     private AnalogChannel _previousChannel;
     private IQuality _qualityControl;
+    /// <summary>
+    /// The mapping of the video input sources to their pin index
+    /// </summary>
+    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinMap;
+    /// <summary>
+    /// The mapping of the video input sources to their related audio pin index
+    /// </summary>
+    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinRelatedAudioMap;
+    /// <summary>
+    /// The mapping of the audio input sources to their pin index
+    /// </summary>
+    private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
+    private int _videoOutPinIndex;
+    private int _audioOutPinIndex;
     private int _cardId;
 
     #endregion
@@ -100,8 +121,6 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override void StopGraph()
     {
-      if (!CheckThreadId())
-        return;
       FreeAllSubChannels();
       FilterState state;
       if (_graphBuilder == null)
@@ -122,7 +141,7 @@ namespace TvLibrary.Implementations.Analog
       int hr = mediaCtl.Stop();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("HDPVR: RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("HDPVR: StopGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
       Log.Log.WriteFile("HDPVR: Graph stopped");
@@ -226,17 +245,16 @@ namespace TvLibrary.Implementations.Analog
       if (_mapSubChannels.ContainsKey(subChannelId))
       {
         subChannel = _mapSubChannels[subChannelId];
-      }
-      else
+      } else
       {
         subChannelId = GetNewSubChannel(channel);
         subChannel = _mapSubChannels[subChannelId];
       }
-      RunGraph(subChannelId);
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
       PerformTuning(channel);
       subChannel.OnAfterTune();
+      RunGraph(subChannelId);
       return subChannel;
     }
 
@@ -291,7 +309,7 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Reloads the card configuration
+    /// Reloads the quality control configuration
     /// </summary>
     public void ReloadCardConfiguration()
     {
@@ -325,8 +343,7 @@ namespace TvLibrary.Implementations.Analog
       if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
       {
         _tunerLocked = false;
-      }
-      else
+      } else
       {
         _tunerLocked = true;
       }
@@ -334,8 +351,7 @@ namespace TvLibrary.Implementations.Analog
       {
         _signalLevel = 100;
         _signalQuality = 100;
-      }
-      else
+      } else
       {
         _signalLevel = 0;
         _signalQuality = 0;
@@ -370,8 +386,6 @@ namespace TvLibrary.Implementations.Analog
       if (_graphBuilder == null)
         return;
       Log.Log.WriteFile("HDPVR:  Dispose()");
-      if (!CheckThreadId())
-        return;
       if (_graphState == GraphState.TimeShifting || _graphState == GraphState.Recording)
       {
         // Stop the graph first. To ensure that the timeshift files are no longer blocked
@@ -421,6 +435,22 @@ namespace TvLibrary.Implementations.Analog
       _graphBuilder = null;
       DevicesInUse.Instance.Remove(_tunerDevice);
       _graphState = GraphState.Idle;
+      if (_crossBarDevice != null)
+      {
+        DevicesInUse.Instance.Remove(_crossBarDevice);
+        _crossBarDevice = null;
+      }
+      if (_captureDevice != null)
+      {
+        DevicesInUse.Instance.Remove(_captureDevice);
+        _captureDevice = null;
+      }
+      if (_encoderDevice != null)
+      {
+        DevicesInUse.Instance.Remove(_encoderDevice);
+        _encoderDevice = null;
+      }
+      _graphState = GraphState.Idle;
       Log.Log.WriteFile("HDPVR:  dispose completed");
     }
 
@@ -458,6 +488,17 @@ namespace TvLibrary.Implementations.Analog
         }
 
         _graphState = GraphState.Created;
+
+        _configuration.Graph.Crossbar.Name = "Hauppauge HD PVR Crossbar";
+        _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
+        _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
+        _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
+        _configuration.Graph.Crossbar.VideoOut = _videoOutPinIndex;
+        _configuration.Graph.Crossbar.AudioOut = _audioOutPinIndex;
+        _configuration.Graph.Capture.Name = _captureDeviceName;
+        _configuration.Graph.Capture.FrameRate = -1d;
+        _configuration.Graph.Capture.ImageHeight = -1;
+        _configuration.Graph.Capture.ImageWidth = -1;
       } catch (Exception ex)
       {
         Log.Log.Write(ex);
@@ -469,83 +510,33 @@ namespace TvLibrary.Implementations.Analog
 
     private void AddCrossBarFilter()
     {
-      DsDevice[] devices;
-      if (!CheckThreadId())
-        return;
       Log.Log.WriteFile("HDPVR: Add Crossbar Filter");
       //get list of all crossbar devices installed on this system
+      _crossBarDevice = _tunerDevice;
+      IBaseFilter tmp;
+      int hr;
       try
       {
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
-        devices = DeviceSorter.Sort(devices, _tunerDevice, _filterCrossBar, _captureDevice, _filterEncoder);
+        //add the crossbar to the graph
+        hr = _graphBuilder.AddSourceFilterForMoniker(_crossBarDevice.Mon, null, _crossBarDevice.Name, out tmp);
       } catch (Exception)
       {
-        Log.Log.WriteFile("HDPVR: AddCrossBarFilter no crossbar devices found");
-        return;
-      }
-      if (devices.Length == 0)
-      {
-        Log.Log.WriteFile("HDPVR: AddCrossBarFilter no crossbar devices found");
-        return;
-      }
-      //try each crossbar
-      for (int i = 0; i < devices.Length; i++)
-      {
-        Log.Log.WriteFile("HDPVR: AddCrossBarFilter try:{0} {1} {2} {3}", devices[i].Name, i, _devicePath, devices[i].DevicePath);
-
-        //if crossbar is already in use then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
-        {
-          continue;
-        }
-
-        if (devices[i].Name != "Hauppauge HD PVR Crossbar")
-        {
-          continue;
-        }
-
-        //if devicepath doesn't match we can skip it
-        if (_devicePath.Substring(0, 48) != devices[i].DevicePath.Substring(0, 48))
-        {
-          Log.Log.WriteFile("HDPVR: AddTvCrossBarFilter bypassing: {0} != {1}", _devicePath.Substring(0, 48), devices[i].DevicePath.Substring(0, 48));
-          continue;
-        }
-        IBaseFilter tmp;
-        int hr;
-        try
-        {
-          //add the crossbar to the graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
-        {
-          Log.Log.WriteFile("HDPVR: cannot add filter to graph");
-          continue;
-        }
-        if (hr == 0)
-        {
-          _filterCrossBar = tmp;
-          break;
-        }
-        //failed. try next crossbar
-        if (tmp != null)
-        {
-          _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("CrossBarFilter", tmp);
-        }
-        continue;
-      }
-      if (_filterCrossBar == null)
-      {
-        Log.Log.Error("HDPVR: unable to add crossbar to graph");
+        Log.Log.WriteFile("HDPVR: cannot add filter to graph");
         throw new TvException("Unable to add crossbar to graph");
       }
+      if (hr == 0)
+      {
+        _filterCrossBar = tmp;
+        CheckCapabilities();
+        return;
+      }
+      Log.Log.WriteFile("HDPVR: cannot add filter to graph");
+      throw new TvException("Unable to add crossbar to graph");
     }
 
     private void AddCaptureFilter()
     {
       DsDevice[] devices;
-      if (!CheckThreadId())
-        return;
       Log.Log.WriteFile("HDPVR: Add Capture Filter");
       //get a list of all video capture devices
       try
@@ -565,21 +556,14 @@ namespace TvLibrary.Implementations.Analog
       //try each video capture filter
       for (int i = 0; i < devices.Length; i++)
       {
-        if (devices[i].Name != "Hauppauge HD PVR Capture Device")
+        if (devices[i].Name != _captureDeviceName)
         {
-          //Log.Log.WriteFile("HDPVR: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
         Log.Log.WriteFile("HDPVR: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          continue;
-        }
-        //if devicepath doesn't match we can skip it
-        if (_devicePath.Substring(0, 48) != devices[i].DevicePath.Substring(0, 48))
-        {
-          Log.Log.WriteFile("HDPVR: AddTvCaptureFilter bypassing: {0} != {1}", _devicePath.Substring(0, 48), devices[i].DevicePath.Substring(0, 48));
           continue;
         }
         IBaseFilter tmp;
@@ -632,8 +616,6 @@ namespace TvLibrary.Implementations.Analog
     private void AddEncoderFilter()
     {
       DsDevice[] devices;
-      if (!CheckThreadId())
-        return;
       Log.Log.WriteFile("HDPVR: AddEncoderFilter");
       // first get all encoder filters available on this system
       try
@@ -662,6 +644,11 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR: AddTvEncoderFilter found:{0} encoders", devices.Length);
       for (int i = 0; i < devices.Length; i++)
       {
+        if (devices[i].Name != _encoderDeviceName)
+        {
+          continue;
+        }
+
         //if encoder is in use, we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
@@ -669,12 +656,6 @@ namespace TvLibrary.Implementations.Analog
           continue;
         }
 
-        //if devicepath doesn't match we can skip it
-        if (_devicePath.Substring(0, 48) != devices[i].DevicePath.Substring(0, 48))
-        {
-          Log.Log.WriteFile("HDPVR: AddTvEncoderFilter bypassing: {0} != {1}", _devicePath.Substring(0, 48), devices[i].DevicePath.Substring(0, 48));
-          continue;
-        }
         Log.Log.WriteFile("HDPVR:  try encoder:{0} {1}", devices[i].Name, i);
         IBaseFilter tmp;
         int hr;
@@ -708,14 +689,15 @@ namespace TvLibrary.Implementations.Analog
           // crossbar->video capture filter, we do it again to connect the 2nd pin
           _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
           _filterEncoder = tmp;
-          DevicesInUse.Instance.Add(_captureDevice);
+          _encoderDevice = devices[i];
+          DevicesInUse.Instance.Add(_encoderDevice);
           Log.Log.WriteFile("HDPVR: AddTvEncoderFilter connected to catpure successfully");
           //and we're done
           return;
         }
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
-        Log.Log.WriteFile("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
+        Log.Log.WriteFile("HDPVR: AddTvEncoderFilter failed to connect to capture");
         _graphBuilder.RemoveFilter(tmp);
         Release.ComObject("capture filter", tmp);
       }
@@ -724,8 +706,6 @@ namespace TvLibrary.Implementations.Analog
 
     private void AddTsWriterFilterToGraph()
     {
-      if (!CheckThreadId())
-        return;
       if (_filterTsWriter == null)
       {
         Log.Log.WriteFile("HDPVR: Add Mediaportal TsWriter filter");
@@ -768,191 +748,12 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="amode">The crossbar audio mode.</param>
     private void SetupCrossBar(AnalogChannel.VideoInputType vmode, AnalogChannel.AudioInputType amode)
     {
-      if (!CheckThreadId())
-        return;
-      Log.Log.WriteFile("HDPVR: SetupCrossBar:{0}", vmode);
-      int outputs, inputs;
-      IAMCrossbar crossbar = (IAMCrossbar)_filterCrossBar;
-      crossbar.get_PinCounts(out outputs, out inputs);
-      int audioOutIndex = 0, videoOutIndex = 0;
-      for (int i = 0; i < outputs; ++i)
+      Log.Log.WriteFile("HDPVR: SetupCrossBar:{0} / {1}", vmode, amode);
+      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+      if (crossBarFilter != null)
       {
-        int relatedPinIndex;
-        PhysicalConnectorType connectorType;
-        crossbar.get_CrossbarPinInfo(false, i, out relatedPinIndex, out connectorType);
-        if (connectorType == PhysicalConnectorType.Video_VideoDecoder)
-        {
-          videoOutIndex = i;
-        }
-        if (connectorType == PhysicalConnectorType.Audio_AudioDecoder)
-        {
-          audioOutIndex = i;
-        }
-      }
-      int audioLine = 0;
-      int audioSPDIF = 0;
-      int audioAux = 0;
-      int videoCvbsNr = 0;
-      int videoSvhsNr = 0;
-      int videoYrYbYNr = 0;
-      for (int i = 0; i < inputs; ++i)
-      {
-        int relatedPinIndex;
-        PhysicalConnectorType connectorType;
-        crossbar.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-        Log.Log.Write("HDPVR: crossbar pin:{0} type:{1}", i, connectorType);
-        if (connectorType == PhysicalConnectorType.Audio_Line)
-        {
-          audioLine++;
-        }
-        if (connectorType == PhysicalConnectorType.Audio_SPDIFDigital)
-        {
-          audioSPDIF++;
-        }
-        if (connectorType == PhysicalConnectorType.Audio_AUX)
-        {
-          audioAux++;
-        }
-        if (connectorType == PhysicalConnectorType.Video_Composite)
-        {
-          videoCvbsNr++;
-        }
-        if (connectorType == PhysicalConnectorType.Video_SVideo)
-        {
-          videoSvhsNr++;
-        }
-        if (connectorType == PhysicalConnectorType.Video_YRYBY)
-        {
-          videoYrYbYNr++;
-        }
-        int hr;
-        switch (vmode)
-        {
-          case AnalogChannel.VideoInputType.VideoInput1:
-            if (connectorType == PhysicalConnectorType.Video_Composite && videoCvbsNr == 1)
-            {
-              hr = crossbar.Route(videoOutIndex, i);
-              Log.Log.Write("  route input:{0} -> video output result:{1:X}", connectorType, hr);
-            }
-            if (amode == AnalogChannel.AudioInputType.AUXInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_AUX && audioAux == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-
-            if (amode == AnalogChannel.AudioInputType.LineInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_Line && audioLine == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-
-            if (amode == AnalogChannel.AudioInputType.SPDIFInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_SPDIFDigital && audioSPDIF == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            break;
-
-          case AnalogChannel.VideoInputType.VideoInput2:
-            break;
-
-          case AnalogChannel.VideoInputType.VideoInput3:
-            break;
-
-          case AnalogChannel.VideoInputType.SvhsInput1:
-            if (connectorType == PhysicalConnectorType.Video_SVideo && videoSvhsNr == 1)
-            {
-              hr = crossbar.Route(videoOutIndex, i);
-              Log.Log.Write("  route input:{0} -> video output result:{1:X}", connectorType, hr);
-            }
-            if (amode == AnalogChannel.AudioInputType.AUXInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_AUX && audioAux == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            if (amode == AnalogChannel.AudioInputType.LineInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_Line && audioLine == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            if (amode == AnalogChannel.AudioInputType.SPDIFInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_SPDIFDigital && audioSPDIF == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            break;
-
-          case AnalogChannel.VideoInputType.SvhsInput2:
-            break;
-
-          case AnalogChannel.VideoInputType.SvhsInput3:
-            break;
-
-          case AnalogChannel.VideoInputType.RgbInput1:
-            break;
-
-          case AnalogChannel.VideoInputType.RgbInput2:
-            break;
-
-          case AnalogChannel.VideoInputType.RgbInput3:
-            break;
-
-          case AnalogChannel.VideoInputType.YRYBYInput1:
-            if (connectorType == PhysicalConnectorType.Video_YRYBY && videoYrYbYNr == 1)
-            {
-              hr = crossbar.Route(videoOutIndex, i);
-              Log.Log.Write("  route input:{0} -> video output result:{1:X}", connectorType, hr);
-            }
-            if (amode == AnalogChannel.AudioInputType.AUXInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_AUX && audioAux == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            if (amode == AnalogChannel.AudioInputType.LineInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_Line && audioLine == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            if (amode == AnalogChannel.AudioInputType.SPDIFInput1)
-            {
-              if (connectorType == PhysicalConnectorType.Audio_SPDIFDigital && audioSPDIF == 1)
-              {
-                hr = crossbar.Route(audioOutIndex, i);
-                Log.Log.Write("  route input:{0} -> audio output result:{1:X}", connectorType, hr);
-              }
-            }
-            break;
-
-          case AnalogChannel.VideoInputType.YRYBYInput2:
-            break;
-
-          case AnalogChannel.VideoInputType.YRYBYInput3:
-            break;
-        }
+        crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[vmode]);
+        crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[amode]);
       }
     }
 
@@ -963,8 +764,6 @@ namespace TvLibrary.Implementations.Analog
     {
       bool graphRunning = GraphRunning();
 
-      if (!CheckThreadId())
-        return;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         _mapSubChannels[subChannel].OnGraphStart();
@@ -975,7 +774,6 @@ namespace TvLibrary.Implementations.Analog
         return;
       }
 
-      Log.Log.WriteFile("HDPVR: RunGraph");
       int hr = 0;
       IMediaControl mediaCtrl = _graphBuilder as IMediaControl;
       if (mediaCtrl == null)
@@ -990,7 +788,10 @@ namespace TvLibrary.Implementations.Analog
         Log.Log.WriteFile("HDPVR: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
-      GraphRunning();
+      if (GraphRunning())
+      {
+        Log.Log.Write("HDPVR: Graph running");
+      }
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         _mapSubChannels[subChannel].OnGraphStarted();
@@ -1000,15 +801,6 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region private helper
-    /// <summary>
-    /// Checks the thread id.
-    /// </summary>
-    /// <returns></returns>
-    private static bool CheckThreadId()
-    {
-      return true;
-    }
-
     private void PerformTuning(IChannel channel)
     {
       AnalogChannel analogChannel = channel as AnalogChannel;
@@ -1022,8 +814,7 @@ namespace TvLibrary.Implementations.Analog
         {
           SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
         }
-      }
-      else
+      } else
       {
         SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
       }
@@ -1038,6 +829,177 @@ namespace TvLibrary.Implementations.Analog
       _lastSignalUpdate = DateTime.MinValue;
     }
 
+    /// <summary>
+    /// Checks the capabilities
+    /// </summary>
+    private void CheckCapabilities()
+    {
+      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+      if (crossBarFilter != null)
+      {
+        int outputs, inputs;
+        crossBarFilter.get_PinCounts(out outputs, out inputs);
+        _videoOutPinIndex = -1;
+        _audioOutPinIndex = -1;
+        _videoPinMap = new Dictionary<AnalogChannel.VideoInputType, int>();
+        _audioPinMap = new Dictionary<AnalogChannel.AudioInputType, int>();
+        _videoPinRelatedAudioMap = new Dictionary<AnalogChannel.VideoInputType, int>();
+        int relatedPinIndex;
+        PhysicalConnectorType connectorType;
+        for (int i = 0; i < outputs; ++i)
+        {
+          crossBarFilter.get_CrossbarPinInfo(false, i, out relatedPinIndex, out connectorType);
+          if (connectorType == PhysicalConnectorType.Video_VideoDecoder)
+          {
+            _videoOutPinIndex = i;
+          }
+          if (connectorType == PhysicalConnectorType.Audio_AudioDecoder)
+          {
+            _audioOutPinIndex = i;
+          }
+        }
+
+        int audioLine = 0;
+        int audioSPDIF = 0;
+        int audioAux = 0;
+        int videoCvbsNr = 0;
+        int videoSvhsNr = 0;
+        int videoYrYbYNr = 0;
+        int videoRgbNr = 0;
+        for (int i = 0; i < inputs; ++i)
+        {
+          crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
+          Log.Log.Write(" crossbar pin:{0} type:{1}", i, connectorType);
+          switch (connectorType)
+          {
+            case PhysicalConnectorType.Audio_Tuner:
+              _audioPinMap.Add(AnalogChannel.AudioInputType.Tuner, i);
+              break;
+            case PhysicalConnectorType.Video_Tuner:
+              _videoPinMap.Add(AnalogChannel.VideoInputType.Tuner, i);
+              _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.Tuner, relatedPinIndex);
+              break;
+            case PhysicalConnectorType.Audio_Line:
+              audioLine++;
+              switch (audioLine)
+              {
+                case 1:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput1, i);
+                  break;
+                case 2:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput2, i);
+                  break;
+                case 3:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput3, i);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Audio_SPDIFDigital:
+              audioSPDIF++;
+              switch (audioSPDIF)
+              {
+                case 1:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput1, i);
+                  break;
+                case 2:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput2, i);
+                  break;
+                case 3:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput3, i);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Audio_AUX:
+              audioAux++;
+              switch (audioAux)
+              {
+                case 1:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput1, i);
+                  break;
+                case 2:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput2, i);
+                  break;
+                case 3:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput3, i);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_Composite:
+              videoCvbsNr++;
+              switch (videoCvbsNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_SVideo:
+              videoSvhsNr++;
+              switch (videoSvhsNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_RGB:
+              videoRgbNr++;
+              switch (videoRgbNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_YRYBY:
+              videoYrYbYNr++;
+              switch (videoYrYbYNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+          }
+        }
+      }
+    }
     #endregion
 
     #region abstract implemented Methods
