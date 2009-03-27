@@ -88,6 +88,7 @@
     <control>
       <description>Time</description>
       <type>label</type>
+      <animation effect="fade" time="300">WindowClose</animation>
       <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="250">WindowOpen</animation>
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="250">WindowClose</animation>
       <id>201</id>
