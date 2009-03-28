@@ -329,6 +329,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_tuner == null)
       {
+        Log.Log.WriteFile("");
         return false;
       }
       UpdateMinMaxChannel();
@@ -337,13 +338,17 @@ namespace TvLibrary.Implementations.Analog.Components
       _tuner.GetAvailableModes(out tunerModes);
       _supportsFMRadio = (AMTunerModeType.FMRadio & tunerModes) != 0;
       _supportsAMRadio = (AMTunerModeType.AMRadio & tunerModes) != 0;
-      if (_supportsFMRadio)
+      if (_supportsFMRadio && !_supportsAMRadio)
       {
-        graph.Tuner.RadioMode = graph.Tuner.RadioMode | RadioMode.AM;
+        graph.Tuner.RadioMode = RadioMode.FM;
       }
-      if (_supportsAMRadio)
+      if (!_supportsFMRadio && _supportsAMRadio)
       {
-        graph.Tuner.RadioMode = graph.Tuner.RadioMode | RadioMode.AM;
+        graph.Tuner.RadioMode = RadioMode.AM;
+      }
+      if (_supportsFMRadio && _supportsAMRadio)
+      {
+        graph.Tuner.RadioMode = RadioMode.FM | RadioMode.AM;
       }
 
       return true;
