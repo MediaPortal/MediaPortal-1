@@ -931,6 +931,8 @@ namespace SetupTv.Sections
           AnalogChannel channel = new AnalogChannel();
           channel.IsRadio = true;
           channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
+          channel.VideoSource = AnalogChannel.VideoInputType.Tuner;
+          channel.AudioSource = AnalogChannel.AudioInputType.Automatic;
           channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
           channel.Frequency = freq;
           channel.IsTv = false;
