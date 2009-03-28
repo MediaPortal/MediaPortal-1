@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Library
 
     private static bool m_bPlayingVideo = false; //boolean indicating if we are playing a movie
     private static int m_iScrollSpeedVertical = 2; //scroll speed for controls which scroll
-    private static int m_iScrollSpeedHorizontal = 8; //scroll speed for controls which scroll
+    private static int m_iScrollSpeedHorizontal = 5; //scroll speed for controls which scroll
     private static int m_iCharsInCharacterSet = 255; //number of characters for current fonts
     private static bool m_bEditMode = false; //boolean indicating if we are in skin edit mode
     private static bool m_bAnimations = true; //boolean indicating animiations are turned on or off
@@ -461,8 +461,8 @@ namespace MediaPortal.GUI.Library
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
         SyncFrameTime();
-        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "scrollspeedvertical", 2);
-        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "scrollspeedhorizontal", 8);
+        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "ScrollDownSpeed", 4);
+        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "ScrollRightSpeed", 2);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 

@@ -34,6 +34,7 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIFadeLabel : GUIControl
   {
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("align")] private Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("font")] protected string _fontName = "";
@@ -46,12 +47,13 @@ namespace MediaPortal.GUI.Library
     private int _scrollPosititionX = 0;
     private bool _fadeIn = false;
     private int _currentFrame = 0;
+    private int _frameLimiter = 0;
 
     private double timeElapsed = 0.0f;
 
     public double TimeSlice
     {
-      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedHorizontal)*0.01f); }
+      get { return 0.01f + ((6 - GUIGraphicsContext.ScrollSpeedHorizontal) * 0.01f); }
     }
 
     private bool _allowScrolling = true;
@@ -239,6 +241,10 @@ namespace MediaPortal.GUI.Library
       timeElapsed += timePassed;
       _currentFrame = (int) (timeElapsed/TimeSlice);
 
+      if (_frameLimiter < GUIGraphicsContext.MaxFPS)
+        _frameLimiter++;
+      else
+        _frameLimiter = 0;
       // More than one label
       _isScrolling = true;
 
@@ -470,11 +476,16 @@ namespace MediaPortal.GUI.Library
       fMaxWidth += 50.0f;
       string szText = "";
 
-      if (_currentFrame > 12 + 25)
+      //if (_currentFrame > 12 + 25)
+      if ((int)timeElapsed > _scrollStartDelay)
       {
         // doscroll (after having waited some frames)
         string wTmp = "";
-        _scrollPosititionX = _currentFrame - (12 + 25);
+
+        //_scrollPosititionX = _currentFrame - (12 + 25);
+        //if (_frameLimiter % (2) == 0)
+        _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
+
         if (_scrollPosition >= wszOrgText.Length)
         {
           wTmp = " ";
@@ -484,6 +495,7 @@ namespace MediaPortal.GUI.Library
           wTmp = wszOrgText.Substring(_scrollPosition, 1);
         }
         _font.GetTextExtent(wTmp, ref fWidth, ref fHeight);
+
         if (_scrollPosititionX - _scrollOffset >= fWidth)
         {
           ++_scrollPosition;
@@ -560,7 +572,6 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        // wait some frames before scrolling
         if (fPosY >= 0.0)
         {
           float fwt = 0, fht = 0;
@@ -657,6 +668,7 @@ namespace MediaPortal.GUI.Library
       _scrollPosititionX = 0;
       _scrollOffset = 0.0f;
       timeElapsed = 0.0f;
+      _frameLimiter = 0;
     }
 
     /// <summary>

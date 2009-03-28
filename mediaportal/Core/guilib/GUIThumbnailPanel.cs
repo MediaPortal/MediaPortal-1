@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Library
 
     public double TimeSlice
     {
-      get { return 0.01f + ((11 - GUIGraphicsContext.ScrollSpeedHorizontal) * 0.01f); }
+      get { return 0.01f + ((6 - GUIGraphicsContext.ScrollSpeedHorizontal) * 0.01f); }
     }
 
 

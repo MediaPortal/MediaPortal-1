@@ -43,8 +43,8 @@ namespace MediaPortal.GUI.Settings
       CONTROL_EXAMPLE2 = 26,
     } ;
 
-    private int m_iSpeedHorizontal = 5;
-    private int m_iSpeedVertical = 5;
+    private int m_iSpeedHorizontal = 2;
+    private int m_iSpeedVertical = 4;
 
     public GUISettingsGUI()
     {
@@ -87,14 +87,14 @@ namespace MediaPortal.GUI.Settings
             GUISpinControl cntl = (GUISpinControl) GetControl((int) Controls.CONTROL_FPS);
             cntl.ShowRange = false;
             GUIControl.ClearControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL);
-            for (int i = 1; i <= 10; ++i)
+            for (int i = 1; i <= 5; ++i)
             {
               GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL, i.ToString());
             }
             GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_SPEED_HORIZONTAL, m_iSpeedHorizontal - 1);
 
             GUIControl.ClearControl(GetID, (int) Controls.CONTROL_SPEED_VERTICAL);
-            for (int i = 1; i <= 10; ++i)
+            for (int i = 1; i <= 5; ++i)
             {
               GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_SPEED_VERTICAL, i.ToString());
             }
@@ -163,8 +163,8 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "scrollspeedhorizontal", 8);
-        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "scrollspeedvertical", 2);
+        m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollRightSpeed", 2);
+        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollDownSpeed", 4);
       }
     }
 
@@ -172,8 +172,8 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("general", "scrollspeedhorizontal", m_iSpeedHorizontal.ToString());
-        xmlwriter.SetValue("general", "scrollspeedvertical", m_iSpeedVertical.ToString());
+        xmlwriter.SetValue("general", "ScrollRightSpeed", m_iSpeedHorizontal.ToString());
+        xmlwriter.SetValue("general", "ScrollDownSpeed", m_iSpeedVertical.ToString());
         xmlwriter.SetValue("screen", "maxguifps", GUIGraphicsContext.MaxFPS);
       }
     }
