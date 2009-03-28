@@ -281,13 +281,16 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: AddCrossBarFilter succeeded");
           break;
         }
-        // cannot connect tv tuner-> tv audio tuner, try next one...
-        graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("crossbarFilter filter", tmp);
         // cannot connect tv tuner to crossbar, try next crossbar device
-        graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("tuner video out", tunerOut);
-        Release.ComObject("crossbar filter", tmp);
+        if (tmp != null)
+        {
+          graphBuilder.RemoveFilter(tmp);
+          Release.ComObject("crossbarFilter filter", tmp);
+        }
+        if (tunerOut != null)
+        {
+          Release.ComObject("tuner video out", tunerOut);
+        }
       }
       return _filterCrossBar != null;
     }
