@@ -1203,124 +1203,124 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private void InitializeComponent()
     {
-      this.treeMapping = new TreeView();
-      this.labelExpand = new MPLabel();
-      this.buttonDefault = new MPButton();
-      this.buttonRemove = new MPButton();
-      this.buttonDown = new MPButton();
-      this.buttonUp = new MPButton();
-      this.beveledLine1 = new MPBeveledLine();
-      this.buttonApply = new MPButton();
-      this.buttonOk = new MPButton();
-      this.buttonCancel = new MPButton();
-      this.headerLabel = new MPGradientLabel();
-      this.buttonNew = new MPButton();
-      this.groupBoxMessageEdit = new GroupBox();
-      this.groupBoxProcess = new MPGroupBox();
-      this.groupBoxTextProgressBar = new MPGroupBox();
-      this.mpTPBlength = new MPTextBox();
-      this.mpLabel12 = new MPLabel();
-      this.mpTPBFillChar = new MPTextBox();
-      this.mpLabel10 = new MPLabel();
-      this.mpTPBValueChar = new MPTextBox();
-      this.mpLabel11 = new MPLabel();
-      this.mpTPBEndChar = new MPTextBox();
-      this.mpLabel9 = new MPLabel();
-      this.mpTPBStartChar = new MPTextBox();
-      this.mpLabel8 = new MPLabel();
-      this.mpTextBoxValueProperty = new MPTextBox();
-      this.mpLabel6 = new MPLabel();
-      this.mpLabel7 = new MPLabel();
-      this.mpTextBoxTargetProperty = new MPTextBox();
-      this.GroupBoxCondition = new MPGroupBox();
-      this.mpLabel2 = new MPLabel();
-      this.mpLabel3 = new MPLabel();
-      this.textBoxCondValue = new MPTextBox();
-      this.ComboBoxCondType = new MPComboBox();
-      this.mpLabel1 = new MPLabel();
-      this.label1 = new MPLabel();
-      this.textBoxProcessValue = new MPTextBox();
-      this.comboBoxProcessType = new MPComboBox();
-      this.groupBoxMessageType = new MPGroupBox();
-      this.comboBoxMessageType = new MPComboBox();
-      this.mpLabel13 = new MPLabel();
-      this.groupBoxStatus = new MPGroupBox();
-      this.ComboBoxStatusProperty = new MPComboBox();
-      this.groupBoxWindow = new MPGroupBox();
-      this.comboBoxWindowProperty = new MPComboBox();
-      this.groupBoxLine = new MPGroupBox();
-      this.comboBoxAlignment = new MPComboBox();
-      this.labelLine = new MPLabel();
-      this.groupboxCharacterEdit = new GroupBox();
-      this.cbR7B0 = new CheckBox();
-      this.cbR7B1 = new CheckBox();
-      this.cbR7B2 = new CheckBox();
-      this.cbR7B3 = new CheckBox();
-      this.cbR7B4 = new CheckBox();
-      this.cbR7B5 = new CheckBox();
-      this.cbR7B6 = new CheckBox();
-      this.cbR7B7 = new CheckBox();
-      this.cbR6B0 = new CheckBox();
-      this.cbR6B1 = new CheckBox();
-      this.cbR6B2 = new CheckBox();
-      this.cbR6B3 = new CheckBox();
-      this.cbR6B4 = new CheckBox();
-      this.cbR6B5 = new CheckBox();
-      this.cbR6B6 = new CheckBox();
-      this.cbR6B7 = new CheckBox();
-      this.cbR5B0 = new CheckBox();
-      this.cbR5B1 = new CheckBox();
-      this.cbR5B2 = new CheckBox();
-      this.cbR5B3 = new CheckBox();
-      this.cbR5B4 = new CheckBox();
-      this.cbR5B5 = new CheckBox();
-      this.cbR5B6 = new CheckBox();
-      this.cbR5B7 = new CheckBox();
-      this.cbR4B0 = new CheckBox();
-      this.cbR4B1 = new CheckBox();
-      this.cbR4B2 = new CheckBox();
-      this.cbR4B3 = new CheckBox();
-      this.cbR4B4 = new CheckBox();
-      this.cbR4B5 = new CheckBox();
-      this.cbR4B6 = new CheckBox();
-      this.cbR4B7 = new CheckBox();
-      this.cbR3B0 = new CheckBox();
-      this.cbR3B1 = new CheckBox();
-      this.cbR3B2 = new CheckBox();
-      this.cbR3B3 = new CheckBox();
-      this.cbR3B4 = new CheckBox();
-      this.cbR3B5 = new CheckBox();
-      this.cbR3B6 = new CheckBox();
-      this.cbR3B7 = new CheckBox();
-      this.cbR2B0 = new CheckBox();
-      this.cbR2B1 = new CheckBox();
-      this.cbR2B2 = new CheckBox();
-      this.cbR2B3 = new CheckBox();
-      this.cbR2B4 = new CheckBox();
-      this.cbR2B5 = new CheckBox();
-      this.cbR2B6 = new CheckBox();
-      this.cbR2B7 = new CheckBox();
-      this.cbR1B0 = new CheckBox();
-      this.cbR1B1 = new CheckBox();
-      this.cbR1B2 = new CheckBox();
-      this.cbR1B3 = new CheckBox();
-      this.cbR1B4 = new CheckBox();
-      this.cbR1B5 = new CheckBox();
-      this.cbR1B6 = new CheckBox();
-      this.cbR1B7 = new CheckBox();
-      this.cbR0B0 = new CheckBox();
-      this.cbR0B1 = new CheckBox();
-      this.cbR0B2 = new CheckBox();
-      this.cbR0B3 = new CheckBox();
-      this.cbR0B4 = new CheckBox();
-      this.cbR0B5 = new CheckBox();
-      this.cbR0B6 = new CheckBox();
-      this.cbR0B7 = new CheckBox();
-      this.groupboxTranslationEdit = new GroupBox();
-      this.mpLabel5 = new MPLabel();
-      this.TextBoxTranslateTo = new MPTextBox();
-      this.mpLabel4 = new MPLabel();
-      this.TextBoxTranslateFrom = new MPTextBox();
+      this.treeMapping = new System.Windows.Forms.TreeView();
+      this.labelExpand = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonRemove = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
+      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
+      this.buttonApply = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
+      this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxMessageEdit = new System.Windows.Forms.GroupBox();
+      this.groupBoxProcess = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxTextProgressBar = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpTPBlength = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTPBFillChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTPBValueChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTPBEndChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTPBStartChar = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTextBoxValueProperty = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpTextBoxTargetProperty = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.GroupBoxCondition = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxCondValue = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.ComboBoxCondType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxProcessValue = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.comboBoxProcessType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBoxMessageType = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxMessageType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.ComboBoxStatusProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBoxWindow = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxWindowProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.groupBoxLine = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxAlignment = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelLine = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupboxCharacterEdit = new System.Windows.Forms.GroupBox();
+      this.cbR7B0 = new System.Windows.Forms.CheckBox();
+      this.cbR7B1 = new System.Windows.Forms.CheckBox();
+      this.cbR7B2 = new System.Windows.Forms.CheckBox();
+      this.cbR7B3 = new System.Windows.Forms.CheckBox();
+      this.cbR7B4 = new System.Windows.Forms.CheckBox();
+      this.cbR7B5 = new System.Windows.Forms.CheckBox();
+      this.cbR7B6 = new System.Windows.Forms.CheckBox();
+      this.cbR7B7 = new System.Windows.Forms.CheckBox();
+      this.cbR6B0 = new System.Windows.Forms.CheckBox();
+      this.cbR6B1 = new System.Windows.Forms.CheckBox();
+      this.cbR6B2 = new System.Windows.Forms.CheckBox();
+      this.cbR6B3 = new System.Windows.Forms.CheckBox();
+      this.cbR6B4 = new System.Windows.Forms.CheckBox();
+      this.cbR6B5 = new System.Windows.Forms.CheckBox();
+      this.cbR6B6 = new System.Windows.Forms.CheckBox();
+      this.cbR6B7 = new System.Windows.Forms.CheckBox();
+      this.cbR5B0 = new System.Windows.Forms.CheckBox();
+      this.cbR5B1 = new System.Windows.Forms.CheckBox();
+      this.cbR5B2 = new System.Windows.Forms.CheckBox();
+      this.cbR5B3 = new System.Windows.Forms.CheckBox();
+      this.cbR5B4 = new System.Windows.Forms.CheckBox();
+      this.cbR5B5 = new System.Windows.Forms.CheckBox();
+      this.cbR5B6 = new System.Windows.Forms.CheckBox();
+      this.cbR5B7 = new System.Windows.Forms.CheckBox();
+      this.cbR4B0 = new System.Windows.Forms.CheckBox();
+      this.cbR4B1 = new System.Windows.Forms.CheckBox();
+      this.cbR4B2 = new System.Windows.Forms.CheckBox();
+      this.cbR4B3 = new System.Windows.Forms.CheckBox();
+      this.cbR4B4 = new System.Windows.Forms.CheckBox();
+      this.cbR4B5 = new System.Windows.Forms.CheckBox();
+      this.cbR4B6 = new System.Windows.Forms.CheckBox();
+      this.cbR4B7 = new System.Windows.Forms.CheckBox();
+      this.cbR3B0 = new System.Windows.Forms.CheckBox();
+      this.cbR3B1 = new System.Windows.Forms.CheckBox();
+      this.cbR3B2 = new System.Windows.Forms.CheckBox();
+      this.cbR3B3 = new System.Windows.Forms.CheckBox();
+      this.cbR3B4 = new System.Windows.Forms.CheckBox();
+      this.cbR3B5 = new System.Windows.Forms.CheckBox();
+      this.cbR3B6 = new System.Windows.Forms.CheckBox();
+      this.cbR3B7 = new System.Windows.Forms.CheckBox();
+      this.cbR2B0 = new System.Windows.Forms.CheckBox();
+      this.cbR2B1 = new System.Windows.Forms.CheckBox();
+      this.cbR2B2 = new System.Windows.Forms.CheckBox();
+      this.cbR2B3 = new System.Windows.Forms.CheckBox();
+      this.cbR2B4 = new System.Windows.Forms.CheckBox();
+      this.cbR2B5 = new System.Windows.Forms.CheckBox();
+      this.cbR2B6 = new System.Windows.Forms.CheckBox();
+      this.cbR2B7 = new System.Windows.Forms.CheckBox();
+      this.cbR1B0 = new System.Windows.Forms.CheckBox();
+      this.cbR1B1 = new System.Windows.Forms.CheckBox();
+      this.cbR1B2 = new System.Windows.Forms.CheckBox();
+      this.cbR1B3 = new System.Windows.Forms.CheckBox();
+      this.cbR1B4 = new System.Windows.Forms.CheckBox();
+      this.cbR1B5 = new System.Windows.Forms.CheckBox();
+      this.cbR1B6 = new System.Windows.Forms.CheckBox();
+      this.cbR1B7 = new System.Windows.Forms.CheckBox();
+      this.cbR0B0 = new System.Windows.Forms.CheckBox();
+      this.cbR0B1 = new System.Windows.Forms.CheckBox();
+      this.cbR0B2 = new System.Windows.Forms.CheckBox();
+      this.cbR0B3 = new System.Windows.Forms.CheckBox();
+      this.cbR0B4 = new System.Windows.Forms.CheckBox();
+      this.cbR0B5 = new System.Windows.Forms.CheckBox();
+      this.cbR0B6 = new System.Windows.Forms.CheckBox();
+      this.cbR0B7 = new System.Windows.Forms.CheckBox();
+      this.groupboxTranslationEdit = new System.Windows.Forms.GroupBox();
+      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.TextBoxTranslateTo = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.TextBoxTranslateFrom = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBoxMessageEdit.SuspendLayout();
       this.groupBoxProcess.SuspendLayout();
       this.groupBoxTextProgressBar.SuspendLayout();
@@ -1336,156 +1336,157 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                  | AnchorStyles.Left)));
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
-      this.treeMapping.Location = new Point(16, 56);
+      this.treeMapping.Location = new System.Drawing.Point(16, 56);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.Size = new Size(312, 335);
+      this.treeMapping.Size = new System.Drawing.Size(312, 335);
       this.treeMapping.TabIndex = 1;
-      this.treeMapping.AfterSelect += new TreeViewEventHandler(this.treeMapping_AfterSelect);
+      this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
       // 
       // labelExpand
       // 
-      this.labelExpand.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelExpand.AutoSize = true;
-      this.labelExpand.Location = new Point(328, 374);
+      this.labelExpand.Location = new System.Drawing.Point(328, 374);
       this.labelExpand.Name = "labelExpand";
-      this.labelExpand.Size = new Size(13, 13);
+      this.labelExpand.Size = new System.Drawing.Size(13, 13);
       this.labelExpand.TabIndex = 29;
       this.labelExpand.Text = "+";
-      this.labelExpand.Click += new EventHandler(this.labelExpand_Click);
+      this.labelExpand.Click += new System.EventHandler(this.labelExpand_Click);
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonDefault.Location = new Point(268, 442);
+      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefault.Location = new System.Drawing.Point(268, 442);
       this.buttonDefault.Name = "buttonDefault";
-      this.buttonDefault.Size = new Size(75, 23);
+      this.buttonDefault.Size = new System.Drawing.Size(75, 23);
       this.buttonDefault.TabIndex = 28;
       this.buttonDefault.Text = "Reset";
       this.buttonDefault.UseVisualStyleBackColor = true;
-      this.buttonDefault.Click += new EventHandler(this.buttonDefault_Click);
+      this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // buttonRemove
       // 
-      this.buttonRemove.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonRemove.Enabled = false;
-      this.buttonRemove.Location = new Point(272, 397);
+      this.buttonRemove.Location = new System.Drawing.Point(272, 397);
       this.buttonRemove.Name = "buttonRemove";
-      this.buttonRemove.Size = new Size(56, 20);
+      this.buttonRemove.Size = new System.Drawing.Size(56, 20);
       this.buttonRemove.TabIndex = 27;
       this.buttonRemove.Text = "Remove";
       this.buttonRemove.UseVisualStyleBackColor = true;
-      this.buttonRemove.Click += new EventHandler(this.buttonRemove_Click);
+      this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
       // 
       // buttonDown
       // 
-      this.buttonDown.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonDown.Enabled = false;
-      this.buttonDown.Location = new Point(97, 397);
+      this.buttonDown.Location = new System.Drawing.Point(97, 397);
       this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new Size(56, 20);
+      this.buttonDown.Size = new System.Drawing.Size(56, 20);
       this.buttonDown.TabIndex = 24;
       this.buttonDown.Text = "Down";
       this.buttonDown.UseVisualStyleBackColor = true;
-      this.buttonDown.Click += new EventHandler(this.buttonDown_Click);
+      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
       // 
       // buttonUp
       // 
-      this.buttonUp.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonUp.Enabled = false;
-      this.buttonUp.Location = new Point(16, 397);
+      this.buttonUp.Location = new System.Drawing.Point(16, 397);
       this.buttonUp.Name = "buttonUp";
-      this.buttonUp.Size = new Size(56, 20);
+      this.buttonUp.Size = new System.Drawing.Size(56, 20);
       this.buttonUp.TabIndex = 23;
       this.buttonUp.Text = "Up";
       this.buttonUp.UseVisualStyleBackColor = true;
-      this.buttonUp.Click += new EventHandler(this.buttonUp_Click);
+      this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((AnchorStyles) (((AnchorStyles.Bottom | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
-      this.beveledLine1.Location = new Point(8, 432);
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Location = new System.Drawing.Point(8, 432);
       this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new Size(572, 2);
+      this.beveledLine1.Size = new System.Drawing.Size(572, 2);
       this.beveledLine1.TabIndex = 21;
       // 
       // buttonApply
       // 
-      this.buttonApply.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonApply.Location = new Point(346, 442);
+      this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonApply.Location = new System.Drawing.Point(346, 442);
       this.buttonApply.Name = "buttonApply";
-      this.buttonApply.Size = new Size(75, 23);
+      this.buttonApply.Size = new System.Drawing.Size(75, 23);
       this.buttonApply.TabIndex = 20;
       this.buttonApply.Text = "Apply";
       this.buttonApply.UseVisualStyleBackColor = true;
-      this.buttonApply.Click += new EventHandler(this.buttonApply_Click);
+      this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonOk.Location = new Point(426, 442);
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Location = new System.Drawing.Point(426, 442);
       this.buttonOk.Name = "buttonOk";
-      this.buttonOk.Size = new Size(75, 23);
+      this.buttonOk.Size = new System.Drawing.Size(75, 23);
       this.buttonOk.TabIndex = 19;
       this.buttonOk.Text = "OK";
       this.buttonOk.UseVisualStyleBackColor = true;
-      this.buttonOk.Click += new EventHandler(this.buttonOk_Click);
+      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonCancel.Location = new Point(505, 442);
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Location = new System.Drawing.Point(505, 442);
       this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new Size(75, 23);
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 18;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
+      this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                  | AnchorStyles.Right)));
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "MiniDisplay.xml";
-      this.headerLabel.FirstColor = SystemColors.InactiveCaption;
-      this.headerLabel.Font = new Font("Verdana", 14.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte) (0)));
-      this.headerLabel.LastColor = Color.WhiteSmoke;
-      this.headerLabel.Location = new Point(16, 16);
+      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
+      this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
       this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new Size(558, 24);
+      this.headerLabel.Size = new System.Drawing.Size(558, 24);
       this.headerLabel.TabIndex = 17;
-      this.headerLabel.TextColor = Color.WhiteSmoke;
-      this.headerLabel.TextFont = new Font("Verdana", 14.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte) (0)));
+      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // buttonNew
       // 
-      this.buttonNew.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonNew.Enabled = false;
-      this.buttonNew.Location = new Point(189, 397);
+      this.buttonNew.Location = new System.Drawing.Point(189, 397);
       this.buttonNew.Name = "buttonNew";
-      this.buttonNew.Size = new Size(56, 20);
+      this.buttonNew.Size = new System.Drawing.Size(56, 20);
       this.buttonNew.TabIndex = 26;
       this.buttonNew.Text = "New";
       this.buttonNew.UseVisualStyleBackColor = true;
-      this.buttonNew.Click += new EventHandler(this.buttonNew_Click);
+      this.buttonNew.Click += new System.EventHandler(this.buttonNew_Click);
       // 
       // groupBoxMessageEdit
       // 
-      this.groupBoxMessageEdit.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                           | AnchorStyles.Left)
-                                                          | AnchorStyles.Right)));
+      this.groupBoxMessageEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxProcess);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxMessageType);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxStatus);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxWindow);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxLine);
-      this.groupBoxMessageEdit.Location = new Point(344, 46);
+      this.groupBoxMessageEdit.Location = new System.Drawing.Point(344, 46);
       this.groupBoxMessageEdit.Name = "groupBoxMessageEdit";
-      this.groupBoxMessageEdit.Size = new Size(239, 380);
+      this.groupBoxMessageEdit.Size = new System.Drawing.Size(239, 380);
       this.groupBoxMessageEdit.TabIndex = 31;
       this.groupBoxMessageEdit.TabStop = false;
       this.groupBoxMessageEdit.Text = "Message Editor";
@@ -1493,9 +1494,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxProcess
       // 
-      this.groupBoxProcess.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                       | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.groupBoxProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProcess.Controls.Add(this.groupBoxTextProgressBar);
       this.groupBoxProcess.Controls.Add(this.GroupBoxCondition);
       this.groupBoxProcess.Controls.Add(this.mpLabel1);
@@ -1503,19 +1504,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxProcess.Controls.Add(this.textBoxProcessValue);
       this.groupBoxProcess.Controls.Add(this.comboBoxProcessType);
       this.groupBoxProcess.Enabled = false;
-      this.groupBoxProcess.FlatStyle = FlatStyle.Popup;
-      this.groupBoxProcess.Location = new Point(7, 192);
+      this.groupBoxProcess.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxProcess.Location = new System.Drawing.Point(7, 192);
       this.groupBoxProcess.Name = "groupBoxProcess";
-      this.groupBoxProcess.Size = new Size(223, 184);
+      this.groupBoxProcess.Size = new System.Drawing.Size(223, 184);
       this.groupBoxProcess.TabIndex = 32;
       this.groupBoxProcess.TabStop = false;
       this.groupBoxProcess.Text = "Process";
       // 
       // groupBoxTextProgressBar
       // 
-      this.groupBoxTextProgressBar.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                               | AnchorStyles.Left)
-                                                              | AnchorStyles.Right)));
+      this.groupBoxTextProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBlength);
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel12);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBFillChar);
@@ -1531,10 +1532,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel7);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTextBoxTargetProperty);
       this.groupBoxTextProgressBar.Enabled = false;
-      this.groupBoxTextProgressBar.FlatStyle = FlatStyle.Popup;
-      this.groupBoxTextProgressBar.Location = new Point(11, 47);
+      this.groupBoxTextProgressBar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxTextProgressBar.Location = new System.Drawing.Point(11, 47);
       this.groupBoxTextProgressBar.Name = "groupBoxTextProgressBar";
-      this.groupBoxTextProgressBar.Size = new Size(201, 131);
+      this.groupBoxTextProgressBar.Size = new System.Drawing.Size(201, 131);
       this.groupBoxTextProgressBar.TabIndex = 33;
       this.groupBoxTextProgressBar.TabStop = false;
       this.groupBoxTextProgressBar.Text = "TextProgressBar Parameters";
@@ -1542,155 +1543,155 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTPBlength
       // 
-      this.mpTPBlength.BorderColor = Color.Empty;
-      this.mpTPBlength.Location = new Point(69, 62);
+      this.mpTPBlength.BorderColor = System.Drawing.Color.Empty;
+      this.mpTPBlength.Location = new System.Drawing.Point(69, 62);
       this.mpTPBlength.MaxLength = 2;
       this.mpTPBlength.Name = "mpTPBlength";
-      this.mpTPBlength.Size = new Size(23, 20);
+      this.mpTPBlength.Size = new System.Drawing.Size(23, 20);
       this.mpTPBlength.TabIndex = 36;
-      this.mpTPBlength.TextChanged += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBlength.TextChanged += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel12
       // 
       this.mpLabel12.AutoSize = true;
-      this.mpLabel12.Location = new Point(6, 65);
+      this.mpLabel12.Location = new System.Drawing.Point(6, 65);
       this.mpLabel12.Name = "mpLabel12";
-      this.mpLabel12.Size = new Size(62, 13);
+      this.mpLabel12.Size = new System.Drawing.Size(62, 13);
       this.mpLabel12.TabIndex = 35;
       this.mpLabel12.Text = "Bar Length:";
       // 
       // mpTPBFillChar
       // 
-      this.mpTPBFillChar.BorderColor = Color.Empty;
-      this.mpTPBFillChar.Location = new Point(167, 39);
+      this.mpTPBFillChar.BorderColor = System.Drawing.Color.Empty;
+      this.mpTPBFillChar.Location = new System.Drawing.Point(167, 39);
       this.mpTPBFillChar.MaxLength = 1;
       this.mpTPBFillChar.Name = "mpTPBFillChar";
-      this.mpTPBFillChar.Size = new Size(23, 20);
+      this.mpTPBFillChar.Size = new System.Drawing.Size(23, 20);
       this.mpTPBFillChar.TabIndex = 34;
-      this.mpTPBFillChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBFillChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel10
       // 
       this.mpLabel10.AutoSize = true;
-      this.mpLabel10.Location = new Point(104, 42);
+      this.mpLabel10.Location = new System.Drawing.Point(104, 42);
       this.mpLabel10.Name = "mpLabel10";
-      this.mpLabel10.Size = new Size(47, 13);
+      this.mpLabel10.Size = new System.Drawing.Size(47, 13);
       this.mpLabel10.TabIndex = 33;
       this.mpLabel10.Text = "Fill Char:";
       // 
       // mpTPBValueChar
       // 
-      this.mpTPBValueChar.BorderColor = Color.Empty;
-      this.mpTPBValueChar.Location = new Point(69, 39);
+      this.mpTPBValueChar.BorderColor = System.Drawing.Color.Empty;
+      this.mpTPBValueChar.Location = new System.Drawing.Point(69, 39);
       this.mpTPBValueChar.MaxLength = 1;
       this.mpTPBValueChar.Name = "mpTPBValueChar";
-      this.mpTPBValueChar.Size = new Size(23, 20);
+      this.mpTPBValueChar.Size = new System.Drawing.Size(23, 20);
       this.mpTPBValueChar.TabIndex = 32;
-      this.mpTPBValueChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBValueChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel11
       // 
       this.mpLabel11.AutoSize = true;
-      this.mpLabel11.Location = new Point(6, 42);
+      this.mpLabel11.Location = new System.Drawing.Point(6, 42);
       this.mpLabel11.Name = "mpLabel11";
-      this.mpLabel11.Size = new Size(62, 13);
+      this.mpLabel11.Size = new System.Drawing.Size(62, 13);
       this.mpLabel11.TabIndex = 31;
       this.mpLabel11.Text = "Value Char:";
       // 
       // mpTPBEndChar
       // 
-      this.mpTPBEndChar.BorderColor = Color.Empty;
-      this.mpTPBEndChar.Location = new Point(167, 17);
+      this.mpTPBEndChar.BorderColor = System.Drawing.Color.Empty;
+      this.mpTPBEndChar.Location = new System.Drawing.Point(167, 17);
       this.mpTPBEndChar.MaxLength = 1;
       this.mpTPBEndChar.Name = "mpTPBEndChar";
-      this.mpTPBEndChar.Size = new Size(23, 20);
+      this.mpTPBEndChar.Size = new System.Drawing.Size(23, 20);
       this.mpTPBEndChar.TabIndex = 30;
-      this.mpTPBEndChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBEndChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel9
       // 
       this.mpLabel9.AutoSize = true;
-      this.mpLabel9.Location = new Point(104, 20);
+      this.mpLabel9.Location = new System.Drawing.Point(104, 20);
       this.mpLabel9.Name = "mpLabel9";
-      this.mpLabel9.Size = new Size(54, 13);
+      this.mpLabel9.Size = new System.Drawing.Size(54, 13);
       this.mpLabel9.TabIndex = 29;
       this.mpLabel9.Text = "End Char:";
       // 
       // mpTPBStartChar
       // 
-      this.mpTPBStartChar.BorderColor = Color.Empty;
-      this.mpTPBStartChar.Location = new Point(69, 17);
+      this.mpTPBStartChar.BorderColor = System.Drawing.Color.Empty;
+      this.mpTPBStartChar.Location = new System.Drawing.Point(69, 17);
       this.mpTPBStartChar.MaxLength = 1;
       this.mpTPBStartChar.Name = "mpTPBStartChar";
-      this.mpTPBStartChar.Size = new Size(23, 20);
+      this.mpTPBStartChar.Size = new System.Drawing.Size(23, 20);
       this.mpTPBStartChar.TabIndex = 28;
-      this.mpTPBStartChar.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTPBStartChar.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel8
       // 
       this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new Point(6, 20);
+      this.mpLabel8.Location = new System.Drawing.Point(6, 20);
       this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new Size(57, 13);
+      this.mpLabel8.Size = new System.Drawing.Size(57, 13);
       this.mpLabel8.TabIndex = 27;
       this.mpLabel8.Text = "Start Char:";
       // 
       // mpTextBoxValueProperty
       // 
-      this.mpTextBoxValueProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                             | AnchorStyles.Right)));
-      this.mpTextBoxValueProperty.BorderColor = Color.Empty;
-      this.mpTextBoxValueProperty.Location = new Point(92, 85);
+      this.mpTextBoxValueProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTextBoxValueProperty.BorderColor = System.Drawing.Color.Empty;
+      this.mpTextBoxValueProperty.Location = new System.Drawing.Point(92, 85);
       this.mpTextBoxValueProperty.MaxLength = 100;
       this.mpTextBoxValueProperty.Name = "mpTextBoxValueProperty";
-      this.mpTextBoxValueProperty.Size = new Size(97, 20);
+      this.mpTextBoxValueProperty.Size = new System.Drawing.Size(97, 20);
       this.mpTextBoxValueProperty.TabIndex = 26;
-      this.mpTextBoxValueProperty.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTextBoxValueProperty.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // mpLabel6
       // 
       this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new Point(6, 88);
+      this.mpLabel6.Location = new System.Drawing.Point(6, 88);
       this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new Size(79, 13);
+      this.mpLabel6.Size = new System.Drawing.Size(79, 13);
       this.mpLabel6.TabIndex = 25;
       this.mpLabel6.Text = "Value Property:";
       // 
       // mpLabel7
       // 
       this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new Point(6, 112);
+      this.mpLabel7.Location = new System.Drawing.Point(6, 112);
       this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new Size(83, 13);
+      this.mpLabel7.Size = new System.Drawing.Size(83, 13);
       this.mpLabel7.TabIndex = 23;
       this.mpLabel7.Text = "Target Property:";
       // 
       // mpTextBoxTargetProperty
       // 
-      this.mpTextBoxTargetProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                              | AnchorStyles.Right)));
-      this.mpTextBoxTargetProperty.BorderColor = Color.Empty;
-      this.mpTextBoxTargetProperty.Location = new Point(92, 108);
+      this.mpTextBoxTargetProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTextBoxTargetProperty.BorderColor = System.Drawing.Color.Empty;
+      this.mpTextBoxTargetProperty.Location = new System.Drawing.Point(92, 108);
       this.mpTextBoxTargetProperty.MaxLength = 100;
       this.mpTextBoxTargetProperty.Name = "mpTextBoxTargetProperty";
-      this.mpTextBoxTargetProperty.Size = new Size(97, 20);
+      this.mpTextBoxTargetProperty.Size = new System.Drawing.Size(97, 20);
       this.mpTextBoxTargetProperty.TabIndex = 22;
-      this.mpTextBoxTargetProperty.LostFocus += new EventHandler(this.TextProgressBar_LostFocus);
+      this.mpTextBoxTargetProperty.LostFocus += new System.EventHandler(this.TextProgressBar_LostFocus);
       // 
       // GroupBoxCondition
       // 
-      this.GroupBoxCondition.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                         | AnchorStyles.Left)
-                                                        | AnchorStyles.Right)));
+      this.GroupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.GroupBoxCondition.Controls.Add(this.mpLabel2);
       this.GroupBoxCondition.Controls.Add(this.mpLabel3);
       this.GroupBoxCondition.Controls.Add(this.textBoxCondValue);
       this.GroupBoxCondition.Controls.Add(this.ComboBoxCondType);
       this.GroupBoxCondition.Enabled = false;
-      this.GroupBoxCondition.FlatStyle = FlatStyle.Popup;
-      this.GroupBoxCondition.Location = new Point(11, 78);
+      this.GroupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.GroupBoxCondition.Location = new System.Drawing.Point(11, 78);
       this.GroupBoxCondition.Name = "GroupBoxCondition";
-      this.GroupBoxCondition.Size = new Size(201, 80);
+      this.GroupBoxCondition.Size = new System.Drawing.Size(201, 80);
       this.GroupBoxCondition.TabIndex = 32;
       this.GroupBoxCondition.TabStop = false;
       this.GroupBoxCondition.Text = "Condition";
@@ -1698,220 +1699,216 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new Point(13, 23);
+      this.mpLabel2.Location = new System.Drawing.Point(13, 23);
       this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new Size(34, 13);
+      this.mpLabel2.Size = new System.Drawing.Size(34, 13);
       this.mpLabel2.TabIndex = 25;
       this.mpLabel2.Text = "Type:";
       // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new Point(13, 56);
+      this.mpLabel3.Location = new System.Drawing.Point(13, 56);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new Size(37, 13);
+      this.mpLabel3.Size = new System.Drawing.Size(37, 13);
       this.mpLabel3.TabIndex = 23;
       this.mpLabel3.Text = "Value:";
       // 
       // textBoxCondValue
       // 
-      this.textBoxCondValue.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                       | AnchorStyles.Right)));
-      this.textBoxCondValue.BorderColor = Color.Empty;
+      this.textBoxCondValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxCondValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxCondValue.Enabled = false;
-      this.textBoxCondValue.Location = new Point(56, 52);
+      this.textBoxCondValue.Location = new System.Drawing.Point(56, 52);
       this.textBoxCondValue.MaxLength = 100;
       this.textBoxCondValue.Name = "textBoxCondValue";
-      this.textBoxCondValue.Size = new Size(133, 20);
+      this.textBoxCondValue.Size = new System.Drawing.Size(133, 20);
       this.textBoxCondValue.TabIndex = 22;
-      this.textBoxCondValue.LostFocus += new EventHandler(this.textBoxCondValue_LostFocus);
+      this.textBoxCondValue.LostFocus += new System.EventHandler(this.textBoxCondValue_LostFocus);
       // 
       // ComboBoxCondType
       // 
-      this.ComboBoxCondType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                       | AnchorStyles.Right)));
-      this.ComboBoxCondType.BorderColor = Color.Empty;
-      this.ComboBoxCondType.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.ComboBoxCondType.ForeColor = Color.DarkGreen;
-      this.ComboBoxCondType.Location = new Point(53, 20);
+      this.ComboBoxCondType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ComboBoxCondType.BorderColor = System.Drawing.Color.Empty;
+      this.ComboBoxCondType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ComboBoxCondType.ForeColor = System.Drawing.Color.DarkGreen;
+      this.ComboBoxCondType.Location = new System.Drawing.Point(53, 20);
       this.ComboBoxCondType.Name = "ComboBoxCondType";
-      this.ComboBoxCondType.Size = new Size(136, 21);
+      this.ComboBoxCondType.Size = new System.Drawing.Size(136, 21);
       this.ComboBoxCondType.Sorted = true;
       this.ComboBoxCondType.TabIndex = 14;
-      this.ComboBoxCondType.SelectionChangeCommitted += new EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
+      this.ComboBoxCondType.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
       // 
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new Point(24, 23);
+      this.mpLabel1.Location = new System.Drawing.Point(24, 23);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new Size(34, 13);
+      this.mpLabel1.Size = new System.Drawing.Size(34, 13);
       this.mpLabel1.TabIndex = 25;
       this.mpLabel1.Text = "Type:";
       // 
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new Point(24, 56);
+      this.label1.Location = new System.Drawing.Point(24, 56);
       this.label1.Name = "label1";
-      this.label1.Size = new Size(37, 13);
+      this.label1.Size = new System.Drawing.Size(37, 13);
       this.label1.TabIndex = 23;
       this.label1.Text = "Value:";
       // 
       // textBoxProcessValue
       // 
-      this.textBoxProcessValue.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                          | AnchorStyles.Right)));
-      this.textBoxProcessValue.BorderColor = Color.Empty;
+      this.textBoxProcessValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxProcessValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxProcessValue.Enabled = false;
-      this.textBoxProcessValue.Location = new Point(67, 52);
+      this.textBoxProcessValue.Location = new System.Drawing.Point(67, 52);
       this.textBoxProcessValue.MaxLength = 100;
       this.textBoxProcessValue.Name = "textBoxProcessValue";
-      this.textBoxProcessValue.Size = new Size(133, 20);
+      this.textBoxProcessValue.Size = new System.Drawing.Size(133, 20);
       this.textBoxProcessValue.TabIndex = 22;
-      this.textBoxProcessValue.LostFocus += new EventHandler(this.textBoxProcessValue_LostFocus);
+      this.textBoxProcessValue.LostFocus += new System.EventHandler(this.textBoxProcessValue_LostFocus);
       // 
       // comboBoxProcessType
       // 
-      this.comboBoxProcessType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                          | AnchorStyles.Right)));
-      this.comboBoxProcessType.BorderColor = Color.Empty;
-      this.comboBoxProcessType.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxProcessType.ForeColor = Color.DarkGreen;
-      this.comboBoxProcessType.Location = new Point(64, 20);
+      this.comboBoxProcessType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProcessType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxProcessType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxProcessType.ForeColor = System.Drawing.Color.DarkGreen;
+      this.comboBoxProcessType.Location = new System.Drawing.Point(64, 20);
       this.comboBoxProcessType.Name = "comboBoxProcessType";
-      this.comboBoxProcessType.Size = new Size(136, 21);
+      this.comboBoxProcessType.Size = new System.Drawing.Size(136, 21);
       this.comboBoxProcessType.Sorted = true;
       this.comboBoxProcessType.TabIndex = 14;
-      this.comboBoxProcessType.SelectionChangeCommitted +=
-        new EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
+      this.comboBoxProcessType.SelectionChangeCommitted += new System.EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
       // 
       // groupBoxMessageType
       // 
-      this.groupBoxMessageType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                          | AnchorStyles.Right)));
+      this.groupBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMessageType.Controls.Add(this.comboBoxMessageType);
       this.groupBoxMessageType.Controls.Add(this.mpLabel13);
       this.groupBoxMessageType.Enabled = false;
-      this.groupBoxMessageType.FlatStyle = FlatStyle.Popup;
-      this.groupBoxMessageType.Location = new Point(7, 105);
+      this.groupBoxMessageType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMessageType.Location = new System.Drawing.Point(7, 105);
       this.groupBoxMessageType.Name = "groupBoxMessageType";
-      this.groupBoxMessageType.Size = new Size(224, 40);
+      this.groupBoxMessageType.Size = new System.Drawing.Size(224, 40);
       this.groupBoxMessageType.TabIndex = 35;
       this.groupBoxMessageType.TabStop = false;
       this.groupBoxMessageType.Text = "Message ";
       // 
       // comboBoxMessageType
       // 
-      this.comboBoxMessageType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                          | AnchorStyles.Right)));
-      this.comboBoxMessageType.BorderColor = Color.Empty;
-      this.comboBoxMessageType.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxMessageType.Location = new Point(80, 13);
+      this.comboBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxMessageType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxMessageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxMessageType.Location = new System.Drawing.Point(80, 13);
       this.comboBoxMessageType.Name = "comboBoxMessageType";
-      this.comboBoxMessageType.Size = new Size(121, 21);
+      this.comboBoxMessageType.Size = new System.Drawing.Size(121, 21);
       this.comboBoxMessageType.TabIndex = 25;
-      this.comboBoxMessageType.SelectedIndexChanged += new EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
+      this.comboBoxMessageType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
       // 
       // mpLabel13
       // 
       this.mpLabel13.AutoSize = true;
-      this.mpLabel13.Location = new Point(24, 16);
+      this.mpLabel13.Location = new System.Drawing.Point(24, 16);
       this.mpLabel13.Name = "mpLabel13";
-      this.mpLabel13.Size = new Size(34, 13);
+      this.mpLabel13.Size = new System.Drawing.Size(34, 13);
       this.mpLabel13.TabIndex = 16;
       this.mpLabel13.Text = "Type:";
       // 
       // groupBoxStatus
       // 
-      this.groupBoxStatus.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                     | AnchorStyles.Right)));
+      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStatus.Controls.Add(this.ComboBoxStatusProperty);
       this.groupBoxStatus.Enabled = false;
-      this.groupBoxStatus.FlatStyle = FlatStyle.Popup;
-      this.groupBoxStatus.Location = new Point(7, 13);
+      this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxStatus.Location = new System.Drawing.Point(7, 13);
       this.groupBoxStatus.Name = "groupBoxStatus";
-      this.groupBoxStatus.Size = new Size(224, 42);
+      this.groupBoxStatus.Size = new System.Drawing.Size(224, 42);
       this.groupBoxStatus.TabIndex = 34;
       this.groupBoxStatus.TabStop = false;
       this.groupBoxStatus.Text = " Status ";
       // 
       // ComboBoxStatusProperty
       // 
-      this.ComboBoxStatusProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                             | AnchorStyles.Right)));
-      this.ComboBoxStatusProperty.BorderColor = Color.Empty;
-      this.ComboBoxStatusProperty.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.ComboBoxStatusProperty.Location = new Point(24, 15);
+      this.ComboBoxStatusProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ComboBoxStatusProperty.BorderColor = System.Drawing.Color.Empty;
+      this.ComboBoxStatusProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ComboBoxStatusProperty.Location = new System.Drawing.Point(24, 15);
       this.ComboBoxStatusProperty.Name = "ComboBoxStatusProperty";
-      this.ComboBoxStatusProperty.Size = new Size(176, 21);
+      this.ComboBoxStatusProperty.Size = new System.Drawing.Size(176, 21);
       this.ComboBoxStatusProperty.TabIndex = 25;
-      this.ComboBoxStatusProperty.SelectionChangeCommitted +=
-        new EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
+      this.ComboBoxStatusProperty.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
       // 
       // groupBoxWindow
       // 
-      this.groupBoxWindow.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                     | AnchorStyles.Right)));
+      this.groupBoxWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxWindow.Controls.Add(this.comboBoxWindowProperty);
       this.groupBoxWindow.Enabled = false;
-      this.groupBoxWindow.FlatStyle = FlatStyle.Popup;
-      this.groupBoxWindow.Location = new Point(7, 59);
+      this.groupBoxWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxWindow.Location = new System.Drawing.Point(7, 59);
       this.groupBoxWindow.Name = "groupBoxWindow";
-      this.groupBoxWindow.Size = new Size(224, 42);
+      this.groupBoxWindow.Size = new System.Drawing.Size(224, 42);
       this.groupBoxWindow.TabIndex = 31;
       this.groupBoxWindow.TabStop = false;
       this.groupBoxWindow.Text = " Window ";
       // 
       // comboBoxWindowProperty
       // 
-      this.comboBoxWindowProperty.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                             | AnchorStyles.Right)));
-      this.comboBoxWindowProperty.BorderColor = Color.Empty;
-      this.comboBoxWindowProperty.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxWindowProperty.ForeColor = Color.Blue;
-      this.comboBoxWindowProperty.Location = new Point(24, 15);
+      this.comboBoxWindowProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxWindowProperty.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxWindowProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxWindowProperty.ForeColor = System.Drawing.Color.Blue;
+      this.comboBoxWindowProperty.Location = new System.Drawing.Point(24, 15);
       this.comboBoxWindowProperty.Name = "comboBoxWindowProperty";
-      this.comboBoxWindowProperty.Size = new Size(176, 21);
+      this.comboBoxWindowProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxWindowProperty.Sorted = true;
       this.comboBoxWindowProperty.TabIndex = 13;
-      this.comboBoxWindowProperty.SelectionChangeCommitted +=
-        new EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
+      this.comboBoxWindowProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
       // 
       // groupBoxLine
       // 
-      this.groupBoxLine.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
+      this.groupBoxLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLine.Controls.Add(this.comboBoxAlignment);
       this.groupBoxLine.Controls.Add(this.labelLine);
       this.groupBoxLine.Enabled = false;
-      this.groupBoxLine.FlatStyle = FlatStyle.Popup;
-      this.groupBoxLine.Location = new Point(7, 149);
+      this.groupBoxLine.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxLine.Location = new System.Drawing.Point(7, 149);
       this.groupBoxLine.Name = "groupBoxLine";
-      this.groupBoxLine.Size = new Size(224, 40);
+      this.groupBoxLine.Size = new System.Drawing.Size(224, 40);
       this.groupBoxLine.TabIndex = 33;
       this.groupBoxLine.TabStop = false;
       this.groupBoxLine.Text = "Line";
       // 
       // comboBoxAlignment
       // 
-      this.comboBoxAlignment.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                        | AnchorStyles.Right)));
-      this.comboBoxAlignment.BorderColor = Color.Empty;
-      this.comboBoxAlignment.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxAlignment.Location = new Point(80, 13);
+      this.comboBoxAlignment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAlignment.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxAlignment.Location = new System.Drawing.Point(80, 13);
       this.comboBoxAlignment.Name = "comboBoxAlignment";
-      this.comboBoxAlignment.Size = new Size(121, 21);
+      this.comboBoxAlignment.Size = new System.Drawing.Size(121, 21);
       this.comboBoxAlignment.TabIndex = 25;
-      this.comboBoxAlignment.SelectionChangeCommitted +=
-        new EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
+      this.comboBoxAlignment.SelectionChangeCommitted += new System.EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
       // 
       // labelLine
       // 
       this.labelLine.AutoSize = true;
-      this.labelLine.Location = new Point(24, 16);
+      this.labelLine.Location = new System.Drawing.Point(24, 16);
       this.labelLine.Name = "labelLine";
-      this.labelLine.Size = new Size(56, 13);
+      this.labelLine.Size = new System.Drawing.Size(56, 13);
       this.labelLine.TabIndex = 16;
       this.labelLine.Text = "Alignment:";
       // 
@@ -1981,9 +1978,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B5);
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B6);
       this.groupboxCharacterEdit.Controls.Add(this.cbR0B7);
-      this.groupboxCharacterEdit.Location = new Point(344, 46);
+      this.groupboxCharacterEdit.Location = new System.Drawing.Point(344, 46);
       this.groupboxCharacterEdit.Name = "groupboxCharacterEdit";
-      this.groupboxCharacterEdit.Size = new Size(239, 380);
+      this.groupboxCharacterEdit.Size = new System.Drawing.Size(239, 380);
       this.groupboxCharacterEdit.TabIndex = 32;
       this.groupboxCharacterEdit.TabStop = false;
       this.groupboxCharacterEdit.Text = " Custom Character Editor ";
@@ -1992,642 +1989,642 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // cbR7B0
       // 
       this.cbR7B0.AutoSize = true;
-      this.cbR7B0.Location = new Point(142, 112);
+      this.cbR7B0.Location = new System.Drawing.Point(142, 112);
       this.cbR7B0.Name = "cbR7B0";
-      this.cbR7B0.Size = new Size(15, 14);
+      this.cbR7B0.Size = new System.Drawing.Size(15, 14);
       this.cbR7B0.TabIndex = 63;
       this.cbR7B0.UseVisualStyleBackColor = true;
-      this.cbR7B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B1
       // 
       this.cbR7B1.AutoSize = true;
-      this.cbR7B1.Location = new Point(130, 112);
+      this.cbR7B1.Location = new System.Drawing.Point(130, 112);
       this.cbR7B1.Name = "cbR7B1";
-      this.cbR7B1.Size = new Size(15, 14);
+      this.cbR7B1.Size = new System.Drawing.Size(15, 14);
       this.cbR7B1.TabIndex = 62;
       this.cbR7B1.UseVisualStyleBackColor = true;
-      this.cbR7B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B2
       // 
       this.cbR7B2.AutoSize = true;
-      this.cbR7B2.Location = new Point(118, 112);
+      this.cbR7B2.Location = new System.Drawing.Point(118, 112);
       this.cbR7B2.Name = "cbR7B2";
-      this.cbR7B2.Size = new Size(15, 14);
+      this.cbR7B2.Size = new System.Drawing.Size(15, 14);
       this.cbR7B2.TabIndex = 61;
       this.cbR7B2.UseVisualStyleBackColor = true;
-      this.cbR7B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B3
       // 
       this.cbR7B3.AutoSize = true;
-      this.cbR7B3.Location = new Point(106, 112);
+      this.cbR7B3.Location = new System.Drawing.Point(106, 112);
       this.cbR7B3.Name = "cbR7B3";
-      this.cbR7B3.Size = new Size(15, 14);
+      this.cbR7B3.Size = new System.Drawing.Size(15, 14);
       this.cbR7B3.TabIndex = 60;
       this.cbR7B3.UseVisualStyleBackColor = true;
-      this.cbR7B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B4
       // 
       this.cbR7B4.AutoSize = true;
-      this.cbR7B4.Location = new Point(94, 112);
+      this.cbR7B4.Location = new System.Drawing.Point(94, 112);
       this.cbR7B4.Name = "cbR7B4";
-      this.cbR7B4.Size = new Size(15, 14);
+      this.cbR7B4.Size = new System.Drawing.Size(15, 14);
       this.cbR7B4.TabIndex = 59;
       this.cbR7B4.UseVisualStyleBackColor = true;
-      this.cbR7B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B5
       // 
       this.cbR7B5.AutoSize = true;
-      this.cbR7B5.Location = new Point(82, 112);
+      this.cbR7B5.Location = new System.Drawing.Point(82, 112);
       this.cbR7B5.Name = "cbR7B5";
-      this.cbR7B5.Size = new Size(15, 14);
+      this.cbR7B5.Size = new System.Drawing.Size(15, 14);
       this.cbR7B5.TabIndex = 58;
       this.cbR7B5.UseVisualStyleBackColor = true;
-      this.cbR7B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B6
       // 
       this.cbR7B6.AutoSize = true;
-      this.cbR7B6.Location = new Point(70, 112);
+      this.cbR7B6.Location = new System.Drawing.Point(70, 112);
       this.cbR7B6.Name = "cbR7B6";
-      this.cbR7B6.Size = new Size(15, 14);
+      this.cbR7B6.Size = new System.Drawing.Size(15, 14);
       this.cbR7B6.TabIndex = 57;
       this.cbR7B6.UseVisualStyleBackColor = true;
-      this.cbR7B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR7B7
       // 
       this.cbR7B7.AutoSize = true;
-      this.cbR7B7.Location = new Point(58, 112);
+      this.cbR7B7.Location = new System.Drawing.Point(58, 112);
       this.cbR7B7.Name = "cbR7B7";
-      this.cbR7B7.Size = new Size(15, 14);
+      this.cbR7B7.Size = new System.Drawing.Size(15, 14);
       this.cbR7B7.TabIndex = 56;
       this.cbR7B7.UseVisualStyleBackColor = true;
-      this.cbR7B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR7B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B0
       // 
       this.cbR6B0.AutoSize = true;
-      this.cbR6B0.Location = new Point(142, 100);
+      this.cbR6B0.Location = new System.Drawing.Point(142, 100);
       this.cbR6B0.Name = "cbR6B0";
-      this.cbR6B0.Size = new Size(15, 14);
+      this.cbR6B0.Size = new System.Drawing.Size(15, 14);
       this.cbR6B0.TabIndex = 55;
       this.cbR6B0.UseVisualStyleBackColor = true;
-      this.cbR6B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B1
       // 
       this.cbR6B1.AutoSize = true;
-      this.cbR6B1.Location = new Point(130, 100);
+      this.cbR6B1.Location = new System.Drawing.Point(130, 100);
       this.cbR6B1.Name = "cbR6B1";
-      this.cbR6B1.Size = new Size(15, 14);
+      this.cbR6B1.Size = new System.Drawing.Size(15, 14);
       this.cbR6B1.TabIndex = 54;
       this.cbR6B1.UseVisualStyleBackColor = true;
-      this.cbR6B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B2
       // 
       this.cbR6B2.AutoSize = true;
-      this.cbR6B2.Location = new Point(118, 100);
+      this.cbR6B2.Location = new System.Drawing.Point(118, 100);
       this.cbR6B2.Name = "cbR6B2";
-      this.cbR6B2.Size = new Size(15, 14);
+      this.cbR6B2.Size = new System.Drawing.Size(15, 14);
       this.cbR6B2.TabIndex = 53;
       this.cbR6B2.UseVisualStyleBackColor = true;
-      this.cbR6B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B3
       // 
       this.cbR6B3.AutoSize = true;
-      this.cbR6B3.Location = new Point(106, 100);
+      this.cbR6B3.Location = new System.Drawing.Point(106, 100);
       this.cbR6B3.Name = "cbR6B3";
-      this.cbR6B3.Size = new Size(15, 14);
+      this.cbR6B3.Size = new System.Drawing.Size(15, 14);
       this.cbR6B3.TabIndex = 52;
       this.cbR6B3.UseVisualStyleBackColor = true;
-      this.cbR6B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B4
       // 
       this.cbR6B4.AutoSize = true;
-      this.cbR6B4.Location = new Point(94, 100);
+      this.cbR6B4.Location = new System.Drawing.Point(94, 100);
       this.cbR6B4.Name = "cbR6B4";
-      this.cbR6B4.Size = new Size(15, 14);
+      this.cbR6B4.Size = new System.Drawing.Size(15, 14);
       this.cbR6B4.TabIndex = 51;
       this.cbR6B4.UseVisualStyleBackColor = true;
-      this.cbR6B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B5
       // 
       this.cbR6B5.AutoSize = true;
-      this.cbR6B5.Location = new Point(82, 100);
+      this.cbR6B5.Location = new System.Drawing.Point(82, 100);
       this.cbR6B5.Name = "cbR6B5";
-      this.cbR6B5.Size = new Size(15, 14);
+      this.cbR6B5.Size = new System.Drawing.Size(15, 14);
       this.cbR6B5.TabIndex = 50;
       this.cbR6B5.UseVisualStyleBackColor = true;
-      this.cbR6B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B6
       // 
       this.cbR6B6.AutoSize = true;
-      this.cbR6B6.Location = new Point(70, 100);
+      this.cbR6B6.Location = new System.Drawing.Point(70, 100);
       this.cbR6B6.Name = "cbR6B6";
-      this.cbR6B6.Size = new Size(15, 14);
+      this.cbR6B6.Size = new System.Drawing.Size(15, 14);
       this.cbR6B6.TabIndex = 49;
       this.cbR6B6.UseVisualStyleBackColor = true;
-      this.cbR6B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR6B7
       // 
       this.cbR6B7.AutoSize = true;
-      this.cbR6B7.Location = new Point(58, 100);
+      this.cbR6B7.Location = new System.Drawing.Point(58, 100);
       this.cbR6B7.Name = "cbR6B7";
-      this.cbR6B7.Size = new Size(15, 14);
+      this.cbR6B7.Size = new System.Drawing.Size(15, 14);
       this.cbR6B7.TabIndex = 48;
       this.cbR6B7.UseVisualStyleBackColor = true;
-      this.cbR6B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR6B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B0
       // 
       this.cbR5B0.AutoSize = true;
-      this.cbR5B0.Location = new Point(142, 88);
+      this.cbR5B0.Location = new System.Drawing.Point(142, 88);
       this.cbR5B0.Name = "cbR5B0";
-      this.cbR5B0.Size = new Size(15, 14);
+      this.cbR5B0.Size = new System.Drawing.Size(15, 14);
       this.cbR5B0.TabIndex = 47;
       this.cbR5B0.UseVisualStyleBackColor = true;
-      this.cbR5B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B1
       // 
       this.cbR5B1.AutoSize = true;
-      this.cbR5B1.Location = new Point(130, 88);
+      this.cbR5B1.Location = new System.Drawing.Point(130, 88);
       this.cbR5B1.Name = "cbR5B1";
-      this.cbR5B1.Size = new Size(15, 14);
+      this.cbR5B1.Size = new System.Drawing.Size(15, 14);
       this.cbR5B1.TabIndex = 46;
       this.cbR5B1.UseVisualStyleBackColor = true;
-      this.cbR5B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B2
       // 
       this.cbR5B2.AutoSize = true;
-      this.cbR5B2.Location = new Point(118, 88);
+      this.cbR5B2.Location = new System.Drawing.Point(118, 88);
       this.cbR5B2.Name = "cbR5B2";
-      this.cbR5B2.Size = new Size(15, 14);
+      this.cbR5B2.Size = new System.Drawing.Size(15, 14);
       this.cbR5B2.TabIndex = 45;
       this.cbR5B2.UseVisualStyleBackColor = true;
-      this.cbR5B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B3
       // 
       this.cbR5B3.AutoSize = true;
-      this.cbR5B3.Location = new Point(106, 88);
+      this.cbR5B3.Location = new System.Drawing.Point(106, 88);
       this.cbR5B3.Name = "cbR5B3";
-      this.cbR5B3.Size = new Size(15, 14);
+      this.cbR5B3.Size = new System.Drawing.Size(15, 14);
       this.cbR5B3.TabIndex = 44;
       this.cbR5B3.UseVisualStyleBackColor = true;
-      this.cbR5B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B4
       // 
       this.cbR5B4.AutoSize = true;
-      this.cbR5B4.Location = new Point(94, 88);
+      this.cbR5B4.Location = new System.Drawing.Point(94, 88);
       this.cbR5B4.Name = "cbR5B4";
-      this.cbR5B4.Size = new Size(15, 14);
+      this.cbR5B4.Size = new System.Drawing.Size(15, 14);
       this.cbR5B4.TabIndex = 43;
       this.cbR5B4.UseVisualStyleBackColor = true;
-      this.cbR5B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B5
       // 
       this.cbR5B5.AutoSize = true;
-      this.cbR5B5.Location = new Point(82, 88);
+      this.cbR5B5.Location = new System.Drawing.Point(82, 88);
       this.cbR5B5.Name = "cbR5B5";
-      this.cbR5B5.Size = new Size(15, 14);
+      this.cbR5B5.Size = new System.Drawing.Size(15, 14);
       this.cbR5B5.TabIndex = 42;
       this.cbR5B5.UseVisualStyleBackColor = true;
-      this.cbR5B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B6
       // 
       this.cbR5B6.AutoSize = true;
-      this.cbR5B6.Location = new Point(70, 88);
+      this.cbR5B6.Location = new System.Drawing.Point(70, 88);
       this.cbR5B6.Name = "cbR5B6";
-      this.cbR5B6.Size = new Size(15, 14);
+      this.cbR5B6.Size = new System.Drawing.Size(15, 14);
       this.cbR5B6.TabIndex = 41;
       this.cbR5B6.UseVisualStyleBackColor = true;
-      this.cbR5B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR5B7
       // 
       this.cbR5B7.AutoSize = true;
-      this.cbR5B7.Location = new Point(58, 88);
+      this.cbR5B7.Location = new System.Drawing.Point(58, 88);
       this.cbR5B7.Name = "cbR5B7";
-      this.cbR5B7.Size = new Size(15, 14);
+      this.cbR5B7.Size = new System.Drawing.Size(15, 14);
       this.cbR5B7.TabIndex = 40;
       this.cbR5B7.UseVisualStyleBackColor = true;
-      this.cbR5B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR5B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B0
       // 
       this.cbR4B0.AutoSize = true;
-      this.cbR4B0.Location = new Point(142, 76);
+      this.cbR4B0.Location = new System.Drawing.Point(142, 76);
       this.cbR4B0.Name = "cbR4B0";
-      this.cbR4B0.Size = new Size(15, 14);
+      this.cbR4B0.Size = new System.Drawing.Size(15, 14);
       this.cbR4B0.TabIndex = 39;
       this.cbR4B0.UseVisualStyleBackColor = true;
-      this.cbR4B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B1
       // 
       this.cbR4B1.AutoSize = true;
-      this.cbR4B1.Location = new Point(130, 76);
+      this.cbR4B1.Location = new System.Drawing.Point(130, 76);
       this.cbR4B1.Name = "cbR4B1";
-      this.cbR4B1.Size = new Size(15, 14);
+      this.cbR4B1.Size = new System.Drawing.Size(15, 14);
       this.cbR4B1.TabIndex = 38;
       this.cbR4B1.UseVisualStyleBackColor = true;
-      this.cbR4B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B2
       // 
       this.cbR4B2.AutoSize = true;
-      this.cbR4B2.Location = new Point(118, 76);
+      this.cbR4B2.Location = new System.Drawing.Point(118, 76);
       this.cbR4B2.Name = "cbR4B2";
-      this.cbR4B2.Size = new Size(15, 14);
+      this.cbR4B2.Size = new System.Drawing.Size(15, 14);
       this.cbR4B2.TabIndex = 37;
       this.cbR4B2.UseVisualStyleBackColor = true;
-      this.cbR4B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B3
       // 
       this.cbR4B3.AutoSize = true;
-      this.cbR4B3.Location = new Point(106, 76);
+      this.cbR4B3.Location = new System.Drawing.Point(106, 76);
       this.cbR4B3.Name = "cbR4B3";
-      this.cbR4B3.Size = new Size(15, 14);
+      this.cbR4B3.Size = new System.Drawing.Size(15, 14);
       this.cbR4B3.TabIndex = 36;
       this.cbR4B3.UseVisualStyleBackColor = true;
-      this.cbR4B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B4
       // 
       this.cbR4B4.AutoSize = true;
-      this.cbR4B4.Location = new Point(94, 76);
+      this.cbR4B4.Location = new System.Drawing.Point(94, 76);
       this.cbR4B4.Name = "cbR4B4";
-      this.cbR4B4.Size = new Size(15, 14);
+      this.cbR4B4.Size = new System.Drawing.Size(15, 14);
       this.cbR4B4.TabIndex = 35;
       this.cbR4B4.UseVisualStyleBackColor = true;
-      this.cbR4B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B5
       // 
       this.cbR4B5.AutoSize = true;
-      this.cbR4B5.Location = new Point(82, 76);
+      this.cbR4B5.Location = new System.Drawing.Point(82, 76);
       this.cbR4B5.Name = "cbR4B5";
-      this.cbR4B5.Size = new Size(15, 14);
+      this.cbR4B5.Size = new System.Drawing.Size(15, 14);
       this.cbR4B5.TabIndex = 34;
       this.cbR4B5.UseVisualStyleBackColor = true;
-      this.cbR4B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B6
       // 
       this.cbR4B6.AutoSize = true;
-      this.cbR4B6.Location = new Point(70, 76);
+      this.cbR4B6.Location = new System.Drawing.Point(70, 76);
       this.cbR4B6.Name = "cbR4B6";
-      this.cbR4B6.Size = new Size(15, 14);
+      this.cbR4B6.Size = new System.Drawing.Size(15, 14);
       this.cbR4B6.TabIndex = 33;
       this.cbR4B6.UseVisualStyleBackColor = true;
-      this.cbR4B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR4B7
       // 
       this.cbR4B7.AutoSize = true;
-      this.cbR4B7.Location = new Point(58, 76);
+      this.cbR4B7.Location = new System.Drawing.Point(58, 76);
       this.cbR4B7.Name = "cbR4B7";
-      this.cbR4B7.Size = new Size(15, 14);
+      this.cbR4B7.Size = new System.Drawing.Size(15, 14);
       this.cbR4B7.TabIndex = 32;
       this.cbR4B7.UseVisualStyleBackColor = true;
-      this.cbR4B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR4B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B0
       // 
       this.cbR3B0.AutoSize = true;
-      this.cbR3B0.Location = new Point(142, 64);
+      this.cbR3B0.Location = new System.Drawing.Point(142, 64);
       this.cbR3B0.Name = "cbR3B0";
-      this.cbR3B0.Size = new Size(15, 14);
+      this.cbR3B0.Size = new System.Drawing.Size(15, 14);
       this.cbR3B0.TabIndex = 31;
       this.cbR3B0.UseVisualStyleBackColor = true;
-      this.cbR3B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B1
       // 
       this.cbR3B1.AutoSize = true;
-      this.cbR3B1.Location = new Point(130, 64);
+      this.cbR3B1.Location = new System.Drawing.Point(130, 64);
       this.cbR3B1.Name = "cbR3B1";
-      this.cbR3B1.Size = new Size(15, 14);
+      this.cbR3B1.Size = new System.Drawing.Size(15, 14);
       this.cbR3B1.TabIndex = 30;
       this.cbR3B1.UseVisualStyleBackColor = true;
-      this.cbR3B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B2
       // 
       this.cbR3B2.AutoSize = true;
-      this.cbR3B2.Location = new Point(118, 64);
+      this.cbR3B2.Location = new System.Drawing.Point(118, 64);
       this.cbR3B2.Name = "cbR3B2";
-      this.cbR3B2.Size = new Size(15, 14);
+      this.cbR3B2.Size = new System.Drawing.Size(15, 14);
       this.cbR3B2.TabIndex = 29;
       this.cbR3B2.UseVisualStyleBackColor = true;
-      this.cbR3B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B3
       // 
       this.cbR3B3.AutoSize = true;
-      this.cbR3B3.Location = new Point(106, 64);
+      this.cbR3B3.Location = new System.Drawing.Point(106, 64);
       this.cbR3B3.Name = "cbR3B3";
-      this.cbR3B3.Size = new Size(15, 14);
+      this.cbR3B3.Size = new System.Drawing.Size(15, 14);
       this.cbR3B3.TabIndex = 28;
       this.cbR3B3.UseVisualStyleBackColor = true;
-      this.cbR3B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B4
       // 
       this.cbR3B4.AutoSize = true;
-      this.cbR3B4.Location = new Point(94, 64);
+      this.cbR3B4.Location = new System.Drawing.Point(94, 64);
       this.cbR3B4.Name = "cbR3B4";
-      this.cbR3B4.Size = new Size(15, 14);
+      this.cbR3B4.Size = new System.Drawing.Size(15, 14);
       this.cbR3B4.TabIndex = 27;
       this.cbR3B4.UseVisualStyleBackColor = true;
-      this.cbR3B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B5
       // 
       this.cbR3B5.AutoSize = true;
-      this.cbR3B5.Location = new Point(82, 64);
+      this.cbR3B5.Location = new System.Drawing.Point(82, 64);
       this.cbR3B5.Name = "cbR3B5";
-      this.cbR3B5.Size = new Size(15, 14);
+      this.cbR3B5.Size = new System.Drawing.Size(15, 14);
       this.cbR3B5.TabIndex = 26;
       this.cbR3B5.UseVisualStyleBackColor = true;
-      this.cbR3B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B6
       // 
       this.cbR3B6.AutoSize = true;
-      this.cbR3B6.Location = new Point(70, 64);
+      this.cbR3B6.Location = new System.Drawing.Point(70, 64);
       this.cbR3B6.Name = "cbR3B6";
-      this.cbR3B6.Size = new Size(15, 14);
+      this.cbR3B6.Size = new System.Drawing.Size(15, 14);
       this.cbR3B6.TabIndex = 25;
       this.cbR3B6.UseVisualStyleBackColor = true;
-      this.cbR3B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR3B7
       // 
       this.cbR3B7.AutoSize = true;
-      this.cbR3B7.Location = new Point(58, 64);
+      this.cbR3B7.Location = new System.Drawing.Point(58, 64);
       this.cbR3B7.Name = "cbR3B7";
-      this.cbR3B7.Size = new Size(15, 14);
+      this.cbR3B7.Size = new System.Drawing.Size(15, 14);
       this.cbR3B7.TabIndex = 24;
       this.cbR3B7.UseVisualStyleBackColor = true;
-      this.cbR3B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR3B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B0
       // 
       this.cbR2B0.AutoSize = true;
-      this.cbR2B0.Location = new Point(142, 52);
+      this.cbR2B0.Location = new System.Drawing.Point(142, 52);
       this.cbR2B0.Name = "cbR2B0";
-      this.cbR2B0.Size = new Size(15, 14);
+      this.cbR2B0.Size = new System.Drawing.Size(15, 14);
       this.cbR2B0.TabIndex = 23;
       this.cbR2B0.UseVisualStyleBackColor = true;
-      this.cbR2B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B1
       // 
       this.cbR2B1.AutoSize = true;
-      this.cbR2B1.Location = new Point(130, 52);
+      this.cbR2B1.Location = new System.Drawing.Point(130, 52);
       this.cbR2B1.Name = "cbR2B1";
-      this.cbR2B1.Size = new Size(15, 14);
+      this.cbR2B1.Size = new System.Drawing.Size(15, 14);
       this.cbR2B1.TabIndex = 22;
       this.cbR2B1.UseVisualStyleBackColor = true;
-      this.cbR2B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B2
       // 
       this.cbR2B2.AutoSize = true;
-      this.cbR2B2.Location = new Point(118, 52);
+      this.cbR2B2.Location = new System.Drawing.Point(118, 52);
       this.cbR2B2.Name = "cbR2B2";
-      this.cbR2B2.Size = new Size(15, 14);
+      this.cbR2B2.Size = new System.Drawing.Size(15, 14);
       this.cbR2B2.TabIndex = 21;
       this.cbR2B2.UseVisualStyleBackColor = true;
-      this.cbR2B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B3
       // 
       this.cbR2B3.AutoSize = true;
-      this.cbR2B3.Location = new Point(106, 52);
+      this.cbR2B3.Location = new System.Drawing.Point(106, 52);
       this.cbR2B3.Name = "cbR2B3";
-      this.cbR2B3.Size = new Size(15, 14);
+      this.cbR2B3.Size = new System.Drawing.Size(15, 14);
       this.cbR2B3.TabIndex = 20;
       this.cbR2B3.UseVisualStyleBackColor = true;
-      this.cbR2B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B4
       // 
       this.cbR2B4.AutoSize = true;
-      this.cbR2B4.Location = new Point(94, 52);
+      this.cbR2B4.Location = new System.Drawing.Point(94, 52);
       this.cbR2B4.Name = "cbR2B4";
-      this.cbR2B4.Size = new Size(15, 14);
+      this.cbR2B4.Size = new System.Drawing.Size(15, 14);
       this.cbR2B4.TabIndex = 19;
       this.cbR2B4.UseVisualStyleBackColor = true;
-      this.cbR2B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B5
       // 
       this.cbR2B5.AutoSize = true;
-      this.cbR2B5.Location = new Point(82, 52);
+      this.cbR2B5.Location = new System.Drawing.Point(82, 52);
       this.cbR2B5.Name = "cbR2B5";
-      this.cbR2B5.Size = new Size(15, 14);
+      this.cbR2B5.Size = new System.Drawing.Size(15, 14);
       this.cbR2B5.TabIndex = 18;
       this.cbR2B5.UseVisualStyleBackColor = true;
-      this.cbR2B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B6
       // 
       this.cbR2B6.AutoSize = true;
-      this.cbR2B6.Location = new Point(70, 52);
+      this.cbR2B6.Location = new System.Drawing.Point(70, 52);
       this.cbR2B6.Name = "cbR2B6";
-      this.cbR2B6.Size = new Size(15, 14);
+      this.cbR2B6.Size = new System.Drawing.Size(15, 14);
       this.cbR2B6.TabIndex = 17;
       this.cbR2B6.UseVisualStyleBackColor = true;
-      this.cbR2B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR2B7
       // 
       this.cbR2B7.AutoSize = true;
-      this.cbR2B7.Location = new Point(58, 52);
+      this.cbR2B7.Location = new System.Drawing.Point(58, 52);
       this.cbR2B7.Name = "cbR2B7";
-      this.cbR2B7.Size = new Size(15, 14);
+      this.cbR2B7.Size = new System.Drawing.Size(15, 14);
       this.cbR2B7.TabIndex = 16;
       this.cbR2B7.UseVisualStyleBackColor = true;
-      this.cbR2B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR2B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B0
       // 
       this.cbR1B0.AutoSize = true;
-      this.cbR1B0.Location = new Point(142, 40);
+      this.cbR1B0.Location = new System.Drawing.Point(142, 40);
       this.cbR1B0.Name = "cbR1B0";
-      this.cbR1B0.Size = new Size(15, 14);
+      this.cbR1B0.Size = new System.Drawing.Size(15, 14);
       this.cbR1B0.TabIndex = 15;
       this.cbR1B0.UseVisualStyleBackColor = true;
-      this.cbR1B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B1
       // 
       this.cbR1B1.AutoSize = true;
-      this.cbR1B1.Location = new Point(130, 40);
+      this.cbR1B1.Location = new System.Drawing.Point(130, 40);
       this.cbR1B1.Name = "cbR1B1";
-      this.cbR1B1.Size = new Size(15, 14);
+      this.cbR1B1.Size = new System.Drawing.Size(15, 14);
       this.cbR1B1.TabIndex = 14;
       this.cbR1B1.UseVisualStyleBackColor = true;
-      this.cbR1B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B2
       // 
       this.cbR1B2.AutoSize = true;
-      this.cbR1B2.Location = new Point(118, 40);
+      this.cbR1B2.Location = new System.Drawing.Point(118, 40);
       this.cbR1B2.Name = "cbR1B2";
-      this.cbR1B2.Size = new Size(15, 14);
+      this.cbR1B2.Size = new System.Drawing.Size(15, 14);
       this.cbR1B2.TabIndex = 13;
       this.cbR1B2.UseVisualStyleBackColor = true;
-      this.cbR1B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B3
       // 
       this.cbR1B3.AutoSize = true;
-      this.cbR1B3.Location = new Point(106, 40);
+      this.cbR1B3.Location = new System.Drawing.Point(106, 40);
       this.cbR1B3.Name = "cbR1B3";
-      this.cbR1B3.Size = new Size(15, 14);
+      this.cbR1B3.Size = new System.Drawing.Size(15, 14);
       this.cbR1B3.TabIndex = 12;
       this.cbR1B3.UseVisualStyleBackColor = true;
-      this.cbR1B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B4
       // 
       this.cbR1B4.AutoSize = true;
-      this.cbR1B4.Location = new Point(94, 40);
+      this.cbR1B4.Location = new System.Drawing.Point(94, 40);
       this.cbR1B4.Name = "cbR1B4";
-      this.cbR1B4.Size = new Size(15, 14);
+      this.cbR1B4.Size = new System.Drawing.Size(15, 14);
       this.cbR1B4.TabIndex = 11;
       this.cbR1B4.UseVisualStyleBackColor = true;
-      this.cbR1B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B5
       // 
       this.cbR1B5.AutoSize = true;
-      this.cbR1B5.Location = new Point(82, 40);
+      this.cbR1B5.Location = new System.Drawing.Point(82, 40);
       this.cbR1B5.Name = "cbR1B5";
-      this.cbR1B5.Size = new Size(15, 14);
+      this.cbR1B5.Size = new System.Drawing.Size(15, 14);
       this.cbR1B5.TabIndex = 10;
       this.cbR1B5.UseVisualStyleBackColor = true;
-      this.cbR1B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B6
       // 
       this.cbR1B6.AutoSize = true;
-      this.cbR1B6.Location = new Point(70, 40);
+      this.cbR1B6.Location = new System.Drawing.Point(70, 40);
       this.cbR1B6.Name = "cbR1B6";
-      this.cbR1B6.Size = new Size(15, 14);
+      this.cbR1B6.Size = new System.Drawing.Size(15, 14);
       this.cbR1B6.TabIndex = 9;
       this.cbR1B6.UseVisualStyleBackColor = true;
-      this.cbR1B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR1B7
       // 
       this.cbR1B7.AutoSize = true;
-      this.cbR1B7.Location = new Point(58, 40);
+      this.cbR1B7.Location = new System.Drawing.Point(58, 40);
       this.cbR1B7.Name = "cbR1B7";
-      this.cbR1B7.Size = new Size(15, 14);
+      this.cbR1B7.Size = new System.Drawing.Size(15, 14);
       this.cbR1B7.TabIndex = 8;
       this.cbR1B7.UseVisualStyleBackColor = true;
-      this.cbR1B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR1B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B0
       // 
       this.cbR0B0.AutoSize = true;
-      this.cbR0B0.Location = new Point(142, 28);
+      this.cbR0B0.Location = new System.Drawing.Point(142, 28);
       this.cbR0B0.Name = "cbR0B0";
-      this.cbR0B0.Size = new Size(15, 14);
+      this.cbR0B0.Size = new System.Drawing.Size(15, 14);
       this.cbR0B0.TabIndex = 7;
       this.cbR0B0.UseVisualStyleBackColor = true;
-      this.cbR0B0.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B0.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B1
       // 
       this.cbR0B1.AutoSize = true;
-      this.cbR0B1.Location = new Point(130, 28);
+      this.cbR0B1.Location = new System.Drawing.Point(130, 28);
       this.cbR0B1.Name = "cbR0B1";
-      this.cbR0B1.Size = new Size(15, 14);
+      this.cbR0B1.Size = new System.Drawing.Size(15, 14);
       this.cbR0B1.TabIndex = 6;
       this.cbR0B1.UseVisualStyleBackColor = true;
-      this.cbR0B1.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B1.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B2
       // 
       this.cbR0B2.AutoSize = true;
-      this.cbR0B2.Location = new Point(118, 28);
+      this.cbR0B2.Location = new System.Drawing.Point(118, 28);
       this.cbR0B2.Name = "cbR0B2";
-      this.cbR0B2.Size = new Size(15, 14);
+      this.cbR0B2.Size = new System.Drawing.Size(15, 14);
       this.cbR0B2.TabIndex = 5;
       this.cbR0B2.UseVisualStyleBackColor = true;
-      this.cbR0B2.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B2.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B3
       // 
       this.cbR0B3.AutoSize = true;
-      this.cbR0B3.Location = new Point(106, 28);
+      this.cbR0B3.Location = new System.Drawing.Point(106, 28);
       this.cbR0B3.Name = "cbR0B3";
-      this.cbR0B3.Size = new Size(15, 14);
+      this.cbR0B3.Size = new System.Drawing.Size(15, 14);
       this.cbR0B3.TabIndex = 4;
       this.cbR0B3.UseVisualStyleBackColor = true;
-      this.cbR0B3.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B3.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B4
       // 
       this.cbR0B4.AutoSize = true;
-      this.cbR0B4.Location = new Point(94, 28);
+      this.cbR0B4.Location = new System.Drawing.Point(94, 28);
       this.cbR0B4.Name = "cbR0B4";
-      this.cbR0B4.Size = new Size(15, 14);
+      this.cbR0B4.Size = new System.Drawing.Size(15, 14);
       this.cbR0B4.TabIndex = 3;
       this.cbR0B4.UseVisualStyleBackColor = true;
-      this.cbR0B4.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B4.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B5
       // 
       this.cbR0B5.AutoSize = true;
-      this.cbR0B5.Location = new Point(82, 28);
+      this.cbR0B5.Location = new System.Drawing.Point(82, 28);
       this.cbR0B5.Name = "cbR0B5";
-      this.cbR0B5.Size = new Size(15, 14);
+      this.cbR0B5.Size = new System.Drawing.Size(15, 14);
       this.cbR0B5.TabIndex = 2;
       this.cbR0B5.UseVisualStyleBackColor = true;
-      this.cbR0B5.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B5.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B6
       // 
       this.cbR0B6.AutoSize = true;
-      this.cbR0B6.Location = new Point(70, 28);
+      this.cbR0B6.Location = new System.Drawing.Point(70, 28);
       this.cbR0B6.Name = "cbR0B6";
-      this.cbR0B6.Size = new Size(15, 14);
+      this.cbR0B6.Size = new System.Drawing.Size(15, 14);
       this.cbR0B6.TabIndex = 1;
       this.cbR0B6.UseVisualStyleBackColor = true;
-      this.cbR0B6.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B6.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // cbR0B7
       // 
       this.cbR0B7.AutoSize = true;
-      this.cbR0B7.Location = new Point(58, 28);
+      this.cbR0B7.Location = new System.Drawing.Point(58, 28);
       this.cbR0B7.Name = "cbR0B7";
-      this.cbR0B7.Size = new Size(15, 14);
+      this.cbR0B7.Size = new System.Drawing.Size(15, 14);
       this.cbR0B7.TabIndex = 0;
       this.cbR0B7.UseVisualStyleBackColor = true;
-      this.cbR0B7.CheckedChanged += new EventHandler(this.CharBitmap_CheckedChanged);
+      this.cbR0B7.CheckedChanged += new System.EventHandler(this.CharBitmap_CheckedChanged);
       // 
       // groupboxTranslationEdit
       // 
@@ -2635,9 +2632,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxTranslationEdit.Controls.Add(this.TextBoxTranslateTo);
       this.groupboxTranslationEdit.Controls.Add(this.mpLabel4);
       this.groupboxTranslationEdit.Controls.Add(this.TextBoxTranslateFrom);
-      this.groupboxTranslationEdit.Location = new Point(344, 46);
+      this.groupboxTranslationEdit.Location = new System.Drawing.Point(344, 46);
       this.groupboxTranslationEdit.Name = "groupboxTranslationEdit";
-      this.groupboxTranslationEdit.Size = new Size(239, 380);
+      this.groupboxTranslationEdit.Size = new System.Drawing.Size(239, 380);
       this.groupboxTranslationEdit.TabIndex = 33;
       this.groupboxTranslationEdit.TabStop = false;
       this.groupboxTranslationEdit.Text = " Translation Editor ";
@@ -2646,46 +2643,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new Point(15, 56);
+      this.mpLabel5.Location = new System.Drawing.Point(15, 56);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new Size(23, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(23, 13);
       this.mpLabel5.TabIndex = 27;
       this.mpLabel5.Text = "To:";
       // 
       // TextBoxTranslateTo
       // 
-      this.TextBoxTranslateTo.BorderColor = Color.Empty;
-      this.TextBoxTranslateTo.Location = new Point(58, 52);
+      this.TextBoxTranslateTo.BorderColor = System.Drawing.Color.Empty;
+      this.TextBoxTranslateTo.Location = new System.Drawing.Point(58, 52);
       this.TextBoxTranslateTo.MaxLength = 100;
       this.TextBoxTranslateTo.Name = "TextBoxTranslateTo";
-      this.TextBoxTranslateTo.Size = new Size(133, 20);
+      this.TextBoxTranslateTo.Size = new System.Drawing.Size(133, 20);
       this.TextBoxTranslateTo.TabIndex = 26;
-      this.TextBoxTranslateTo.LostFocus += new EventHandler(this.TextBoxTranslateTo_LostFocus);
+      this.TextBoxTranslateTo.LostFocus += new System.EventHandler(this.TextBoxTranslateTo_LostFocus);
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new Point(15, 28);
+      this.mpLabel4.Location = new System.Drawing.Point(15, 28);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new Size(33, 13);
+      this.mpLabel4.Size = new System.Drawing.Size(33, 13);
       this.mpLabel4.TabIndex = 25;
       this.mpLabel4.Text = "From:";
       // 
       // TextBoxTranslateFrom
       // 
-      this.TextBoxTranslateFrom.BorderColor = Color.Empty;
-      this.TextBoxTranslateFrom.Location = new Point(58, 24);
+      this.TextBoxTranslateFrom.BorderColor = System.Drawing.Color.Empty;
+      this.TextBoxTranslateFrom.Location = new System.Drawing.Point(58, 24);
       this.TextBoxTranslateFrom.MaxLength = 1;
       this.TextBoxTranslateFrom.Name = "TextBoxTranslateFrom";
-      this.TextBoxTranslateFrom.Size = new Size(133, 20);
+      this.TextBoxTranslateFrom.Size = new System.Drawing.Size(133, 20);
       this.TextBoxTranslateFrom.TabIndex = 24;
-      this.TextBoxTranslateFrom.LostFocus += new EventHandler(this.TextBoxTranslateFrom_LostFocus);
+      this.TextBoxTranslateFrom.LostFocus += new System.EventHandler(this.TextBoxTranslateFrom_LostFocus);
       // 
       // MessageEditForm
       // 
-      this.AutoScaleDimensions = new SizeF(6F, 13F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScroll = true;
-      this.ClientSize = new Size(590, 475);
+      this.ClientSize = new System.Drawing.Size(590, 475);
       this.Controls.Add(this.labelExpand);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
@@ -2703,7 +2700,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.Controls.Add(this.groupboxCharacterEdit);
       this.Name = "MessageEditForm";
       this.ShowInTaskbar = false;
-      this.StartPosition = FormStartPosition.CenterScreen;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MiniDisplay - Setup - Configuration Editor";
       this.groupBoxMessageEdit.ResumeLayout(false);
       this.groupBoxProcess.ResumeLayout(false);
@@ -2724,6 +2721,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxTranslationEdit.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     private void labelExpand_Click(object sender, EventArgs e)
@@ -3953,6 +3951,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         get { return this.dataValue; }
         set { this.dataValue = value; }
       }
+    }
+
+    private void buttonCancel_Click(object sender, EventArgs e)
+    {
+      this.Close();
     }
   }
 }
