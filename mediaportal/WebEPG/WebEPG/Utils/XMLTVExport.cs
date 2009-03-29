@@ -114,20 +114,14 @@ namespace MediaPortal.WebEPG
           _writer.WriteElementString("category", program.Genre);
         }
 
-        string episodeNum = string.Empty;
-        if (program.EpisodeNum != string.Empty)
+        string episodeNum = program.SeriesNum + "." + program.EpisodeNum + "." + program.EpisodePart;
+        
+        if (episodeNum != "..")
         {
-          episodeNum += program.EpisodeNum;
-        }
-
-        if (program.SeriesNum != string.Empty)
-        {
-          episodeNum += "." + program.SeriesNum;
-        }
-
-        if (episodeNum != string.Empty)
-        {
-          _writer.WriteElementString("episode-num", episodeNum);
+          _writer.WriteStartElement("episode-num");
+          _writer.WriteAttributeString("system", "xmltv_ns");
+          _writer.WriteString (episodeNum);
+          _writer.WriteEndElement();
         }
 
         if (program.Repeat != string.Empty)
