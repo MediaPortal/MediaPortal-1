@@ -30,9 +30,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class Animator
   {
-    private const float NUMBEROFFRAMES = 25f; // total 25 frames
-    private const float FRAME_DURATION_IN_MSEC = 0.020f; // 20 msec / frame
-
     // type of animations
     public enum AnimationType
     {
@@ -54,6 +51,12 @@ namespace MediaPortal.GUI.Library
       animType = type;
       fTime = 0f;
       m_Animating = true;
+    }
+
+    private float GetTotalFrameTime()
+    {
+      // Frames e.g. 25  /  Frame time in msec
+      return ((float)GUIGraphicsContext.MaxFPS / 2) * (1 / (float)GUIGraphicsContext.MaxFPS);
     }
 
     /// <summary>
@@ -84,17 +87,17 @@ namespace MediaPortal.GUI.Library
       }
 
       //check if animation should end
-      float fTotalTime = FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
+      float fTotalTime = GetTotalFrameTime();
       if (fTime >= fTotalTime)
       {
         //yes, then end the animation
         m_Animating = false;
         return;
       }
-      float alphaValue = (float) (colorDiffuse >> 24);
-      float fPercent = fTime/fTotalTime;
+      float alphaValue = (float)(colorDiffuse >> 24);
+      float fPercent = fTime / fTotalTime;
       alphaValue *= fPercent;
-      long lAlpha = (long) alphaValue;
+      long lAlpha = (long)alphaValue;
       lAlpha <<= 24;
       colorDiffuse = colorDiffuse & 0x00ffffff;
       colorDiffuse |= lAlpha;
@@ -118,7 +121,9 @@ namespace MediaPortal.GUI.Library
       }
 
       //check if animation should end
-      float fTotalTime = FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES;
+      float fTotalTime = GetTotalFrameTime();
+      float iStepX = 0;
+      float iStepY = 0;
       if (fTime >= fTotalTime)
       {
         //yes, then end the animation
@@ -127,120 +132,106 @@ namespace MediaPortal.GUI.Library
       }
 
       //keep copy of original control rectangle
-      float posx = (float) x;
-      float posy = (float) y;
-      float w = (float) width;
-      float h = (float) height;
-/*
-			float alphaValue= (float)(colorDiffuse >>24);
-			float fPercent=fTime/fTotalTime;
-			alphaValue *=fPercent;
-			long lAlpha=(long)alphaValue;
-			lAlpha<<=24;
-			colorDiffuse =colorDiffuse  & 0x00ffffff;
-			colorDiffuse|=lAlpha;
-*/
+      float posx = (float)x;
+      float posy = (float)y;
+      float w = (float)width;
+      float h = (float)height;
+      /*
+            float alphaValue= (float)(colorDiffuse >>24);
+            float fPercent=fTime/fTotalTime;
+            alphaValue *=fPercent;
+            long lAlpha=(long)alphaValue;
+            lAlpha<<=24;
+            colorDiffuse =colorDiffuse  & 0x00ffffff;
+            colorDiffuse|=lAlpha;
+      */
 
       //modify the coordinates,width,height for the current animation type
       switch (animType)
       {
         case AnimationType.FlyInFromLeft:
+          iStepX = ((float)(x + width)) / fTotalTime;
+          if (iStepX <= 0)
           {
-            float iStepX = ((float) (x + width))/fTotalTime;
-            if (iStepX <= 0)
-            {
-              iStepX = 1;
-            }
-            posx = iStepX*fTime;
-            posx -= (float) width;
-            if (posx > x)
-            {
-              posx = x;
-            }
+            iStepX = 1;
+          }
+          posx = iStepX * fTime;
+          posx -= (float)width;
+          if (posx > x)
+          {
+            posx = x;
           }
           break;
-
         case AnimationType.FlyInFromRight:
+          iStepX = ((float)(GUIGraphicsContext.Width - x)) / fTotalTime;
+          if (iStepX <= 0)
           {
-            float iStepX = ((float) (GUIGraphicsContext.Width - x))/fTotalTime;
-            if (iStepX <= 0)
-            {
-              iStepX = 1;
-            }
-            posx = x + GUIGraphicsContext.Width - (iStepX*fTime);
-            if (posx < x)
-            {
-              posx = x;
-            }
+            iStepX = 1;
+          }
+          posx = x + GUIGraphicsContext.Width - (iStepX * fTime);
+          if (posx < x)
+          {
+            posx = x;
           }
           break;
-
         case AnimationType.FlyInFromTop:
+          iStepY = ((float)(y + height)) / fTotalTime;
+          if (iStepY <= 0)
           {
-            float iStepy = ((float) (y + height))/fTotalTime;
-            if (iStepy <= 0)
-            {
-              iStepy = 1;
-            }
-            posy = iStepy*fTime;
-            posy -= height;
-            if (posy > y)
-            {
-              posy = y;
-            }
+            iStepY = 1;
+          }
+          posy = iStepY * fTime;
+          posy -= height;
+          if (posy > y)
+          {
+            posy = y;
           }
           break;
-
-
         case AnimationType.FlyInFromBottom:
+          iStepY = ((float)(GUIGraphicsContext.Height - y)) / fTotalTime;
+          if (iStepY <= 0)
           {
-            float iStepY = ((float) (GUIGraphicsContext.Height - y))/fTotalTime;
-            if (iStepY <= 0)
-            {
-              iStepY = 1;
-            }
-            posy = GUIGraphicsContext.Height - (iStepY*fTime);
-            if (posy < y)
-            {
-              posy = y;
-            }
+            iStepY = 1;
+          }
+          posy = GUIGraphicsContext.Height - (iStepY * fTime);
+          if (posy < y)
+          {
+            posy = y;
           }
           break;
         case AnimationType.ZoomInFromMiddle:
+          iStepY = ((float)(height / 2)) / (fTotalTime);
+          if (iStepY <= 0)
           {
-            float iStepY = ((float) (height/2))/(fTotalTime);
-            if (iStepY <= 0)
-            {
-              iStepY = 1;
-            }
-            float iStepX = ((float) (width/2))/(fTotalTime);
-            if (iStepX <= 0)
-            {
-              iStepX = 1;
-            }
-
-            iStepY *= fTime;
-            iStepX *= fTime;
-
-
-            posy = y + (height/2) - iStepY;
-            posx = x + (width/2) - iStepX;
-            h = iStepY*2;
-            w = iStepX*2;
+            iStepY = 1;
           }
+          iStepX = ((float)(width / 2)) / (fTotalTime);
+          if (iStepX <= 0)
+          {
+            iStepX = 1;
+          }
+
+          iStepY *= fTime;
+          iStepX *= fTime;
+
+
+          posy = y + (height / 2) - iStepY;
+          posx = x + (width / 2) - iStepX;
+          h = iStepY * 2;
+          w = iStepX * 2;
           break;
       }
       // and return the modified coordinates,with,height
-      x = (int) posx;
-      y = (int) posy;
-      width = (int) w;
-      height = (int) h;
+      x = (int)posx;
+      y = (int)posy;
+      width = (int)w;
+      height = (int)h;
     }
 
     public void Advance(float timePassed)
     {
       fTime += timePassed;
-      if (fTime >= FRAME_DURATION_IN_MSEC*NUMBEROFFRAMES)
+      if (fTime >= GetTotalFrameTime())
       {
         //yes, then end the animation
         m_Animating = false;

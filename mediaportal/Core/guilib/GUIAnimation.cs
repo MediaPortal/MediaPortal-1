@@ -232,6 +232,11 @@ namespace MediaPortal.GUI.Library
       }
 
       _images = null;
+
+      if (_filenames != null)
+      {
+        _filenames = null;
+      }
     }
 
     // recalculate the image dimensions & position
