@@ -245,16 +245,20 @@ namespace TvService
         //find next channel to grab
         while (TransponderList.Instance.CurrentTransponder.GetNextChannel() != null)
         {
+          //get the channel
+          Channel ch = TransponderList.Instance.CurrentTransponder.CurrentChannel;
+
           //check if its time to grab the epg for this channel
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime;
           if (ts.TotalMinutes < _epgReGrabAfter)
+          {
+            Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
+                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
             continue; // less then 2 hrs ago
-
-          //get the channel
-          Channel ch = TransponderList.Instance.CurrentTransponder.CurrentChannel;
+          }
           if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
           {
-            Log.Epg("epg:Grab for card:#{0} transponder #{1}/{2} channel: {3}",
+            Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
                       epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
             //start grabbing
             epgCard.GrabEpg();
