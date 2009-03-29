@@ -71,6 +71,7 @@ namespace MediaPortal.Utils.Web
       _cookies = request._cookies;
       _externalBrowser = request._externalBrowser;
       _encoding = request._encoding;
+      _delay = request._delay;
     }
 
     public HTTPRequest(Uri request)
