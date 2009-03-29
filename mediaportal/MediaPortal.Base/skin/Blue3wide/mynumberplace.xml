@@ -49,14 +49,12 @@
         <type>togglebutton</type>
         <id>6</id>
         <label>19105</label>
-        <font>font13</font>
       </control>
       <control>
         <description>Show Invalid Moves</description>
         <type>togglebutton</type>
         <id>7</id>
         <label>19106</label>
-        <font>font13</font>
       </control>
       <control>
         <description>Level button</description>

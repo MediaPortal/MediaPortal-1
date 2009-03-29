@@ -119,11 +119,6 @@ namespace MediaPortal.GUI.Library
     protected int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
     protected double _lastCommandTime = 0;
 
-    public double TimeSlice
-    {
-      get { return 0.01f + ((6 - GUIGraphicsContext.ScrollSpeedHorizontal)*0.01f); }
-    }
-
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
     protected bool _drawFocus = true;
     [XMLSkinElement("suffix")] protected string _suffix = "|";

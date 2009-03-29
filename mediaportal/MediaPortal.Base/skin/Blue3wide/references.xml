@@ -184,6 +184,7 @@
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>ffFFA075</remoteColor>
     <downloadColor>ff80ff80</downloadColor>
+    <scrollStartDelaySec>1</scrollStartDelaySec>
     <textXOff>8</textXOff>
     <textYOff>5</textYOff>
     <textXOff2>0</textXOff2>
@@ -371,6 +372,7 @@
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>ffFFA075</remoteColor>
     <downloadColor>ff80ff80</downloadColor>
+    <scrollStartDelaySec>1</scrollStartDelaySec>
     <suffix>|</suffix>
     <textureWidthBig>192</textureWidthBig>
     <textureHeightBig>135</textureHeightBig>
@@ -454,7 +456,23 @@
     <align>left</align>
     <font>font13</font>
     <textcolor>white</textcolor>
+    <scrollStartDelaySec>1</scrollStartDelaySec>
   </control>
+  <control>
+    <description>default textboxscrollup</description>
+    <type>textboxscrollup</type>
+    <id>15</id>
+    <posX>515</posX>
+    <posY>567</posY>
+    <width>693</width>
+    <height>137</height>
+    <seperator>----------------------------------------------------------------------------------------------</seperator>
+    <textalign>left</textalign>
+    <font>font13</font>
+    <textcolor>white</textcolor>
+    <scrollStartDelaySec>3</scrollStartDelaySec>
+    <spaceBetweenItems>2</spaceBetweenItems>
+  </control>  
   <control>
     <description>default textarea</description>
     <type>textbox</type>

@@ -198,10 +198,11 @@
       <posY>567</posY>
       <width>693</width>
       <height>137</height>
-      <seperator>----------------------------------------------------------------------------------------------</seperator>
+      <seperator>---------------------------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <font>font13</font>
       <textcolor>White</textcolor>
+      <animation effect="zoom" start="100,100" end="1,1" center="863,635" time="250">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
