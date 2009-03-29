@@ -669,7 +669,6 @@ namespace MediaPortal.GUI.Library
     {
       //base.Render(timePassed);
       _timeElapsed += timePassed;
-      _currentFrame = (int) (_timeElapsed/TimeSlice);
 
       // If there is no font do not render.
       if (null == _font)

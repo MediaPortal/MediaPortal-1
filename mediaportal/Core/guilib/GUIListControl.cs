@@ -111,13 +111,11 @@ namespace MediaPortal.GUI.Library
     protected int _lastItem = -1;
 
     protected double _scrollOffsetX = 0.0f;
-    protected int _currentFrame = 0;
     protected double _timeElapsed = 0.0f;
     protected bool _scrollContinuosly = false;
 
-    [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
-                                                   // this is the offset from the first or last element on screen when scrolling should start
-
+    [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0; // this is the offset from the first or last element on screen when scrolling should start
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
     protected int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
     protected double _lastCommandTime = 0;
 
@@ -304,9 +302,7 @@ namespace MediaPortal.GUI.Library
       _scrollPosition = 0;
       _scrollPosititionX = 0;
       _lastItem = -1;
-
       _scrollOffsetX = 0.0f;
-      _currentFrame = 0;
       _timeElapsed = 0.0f;
       // Reset searchstring
       if (_lastSearchItem != (_cursorX + _offset))
@@ -795,7 +791,6 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       _timeElapsed += timePassed;
-      _currentFrame = (int) (_timeElapsed/TimeSlice);
 
       // If there is no font do not render.
       if (null == _font)
@@ -1079,21 +1074,13 @@ namespace MediaPortal.GUI.Library
           _lastItem = iItem;
           _scrollPosititionX = 0;
           _scrollOffsetX = 0.0f;
-          _currentFrame = 0;
           _timeElapsed = 0.0f;
           _scrollContinuosly = false;
         }
-        if ((_currentFrame > 25 + 12) || _scrollContinuosly)
+        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuosly)
         {
-          if (_scrollContinuosly)
-          {
-            _scrollPosititionX = _currentFrame;
-          }
-          else
-          {
-            _scrollPosititionX = _currentFrame - (25 + 12);
-          }
-
+          _scrollPosititionX = _scrollPosititionX + GUIGraphicsContext.ScrollSpeedHorizontal;
+          //Log.Debug("*** Listcontrol _scrollPosititionX = {0}", _scrollPosititionX);
           char wTmp;
           if (_scrollPosition >= _brackedText.Length)
           {
@@ -1113,7 +1100,6 @@ namespace MediaPortal.GUI.Library
               _scrollPosition = 0;
               _scrollPosititionX = 0;
               _scrollOffsetX = 0.0f;
-              _currentFrame = 0;
               _timeElapsed = 0.0f;
               _scrollContinuosly = true;
             }
