@@ -252,8 +252,8 @@ namespace TvService
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime;
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
-            Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
-                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
+            //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
+            //         epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
             continue; // less then 2 hrs ago
           }
           if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
