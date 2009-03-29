@@ -74,20 +74,28 @@
     <Site url="http://tv.sms.cz/index.php?P_id_kategorie=56456&amp;P_soubor=%2Ftelevize%2Findex.php%3Fdatum%3D[YYYY]-[MM]-[DD]%26zobrazeni%3D" post="" cookies="P_cookies_siroke_zobrazeni=false;P_cookies_televize_stanice=[ID]" external="false" encoding="windows-1250" />
     <Html>
       <Template name="default" start="pruh_delka" end="-- obsah --">
-        <SectionTemplate tags="TS">
+        <SectionTemplate tags="T">
 <TemplateText>
 &lt;table &gt;
 &lt;tr&gt;&lt;td class="cas"&gt;&lt;#START&gt;
 &lt;/td&gt;
 &lt;td class="nazev"&gt;&lt;#TITLE&gt;
 &lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class="info1"&gt;&lt;#DESCRIPTION&gt;
-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;z(&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;
+&lt;td class="info1"&gt;&lt;#DESCRIPTION&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/z)?&gt;
+&lt;/table&gt;
 </TemplateText>
         </SectionTemplate>
       </Template>
       <Searches>
+        <Search match="\([0-9]{1,3}[,][0-9]{0,3}\)" field="#EPISODE" remove="true" />
+        <Search match="\([0-9]{1,3}\)" field="#EPISODE" remove="true" />
         <Search match="\([0-9]{1,3}[/][0-9]{0,3}\)" field="#EPISODE" remove="true" />
+        <Search match="\/[P]{1}\/" field="#PREMIERE" remove="true" />
+        <Search match="\/[R]{1}\/" field="#REPEAT" remove="true" />
       </Searches>
     </Html>
   </Listing>
