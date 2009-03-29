@@ -31,17 +31,14 @@ using System.Collections.Generic;
 
 namespace MediaPortal.GUI.Library
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public class GUITextScrollUpControl : GUIControl
   {
-    protected int _offset = 0;
-    protected int _itemsPerPage = 10;
-    protected int _itemHeight = 10;
-    protected int _xOffset = 16;
+    #region Variables
+
+    #region XML properties
+
     [XMLSkinElement("scrollStartDelaySec")]
-    protected int _scrollStartDelay = 2;
+    protected int _scrollStartDelay = 3;
     [XMLSkinElement("spaceBetweenItems")]
     protected int _spaceBetweenItems = 2;
     [XMLSkinElement("font")]
@@ -52,19 +49,30 @@ namespace MediaPortal.GUI.Library
     protected string _property = "";
     [XMLSkinElement("seperator")]
     protected string _seperator = "";
+    [XMLSkinElement("textalign")]
+    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+
+    #endregion
+
+    protected int _offset = 0;
+    protected int _itemsPerPage = 10;
+    protected int _itemHeight = 10;
+    protected int _xOffset = 16;
     protected GUIFont _font = null;
     protected ArrayList _listItems = new ArrayList();
     protected bool _invalidate = false;
-    [XMLSkinElement("textalign")]
-    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
     private string _previousProperty = "a";
 
     private bool _containsProperty = false;
-    private int _frameLimiter = 0;
+    private int _frameLimiter = 1;
     private double _scrollOffset = 0.0f;
     private int _yPositionScroll = 0;
     private double _timeElapsed = 0.0f;
+
+    #endregion
+
+    #region Constructors
 
     public GUITextScrollUpControl(int dwParentID)
       : base(dwParentID)
@@ -79,6 +87,8 @@ namespace MediaPortal.GUI.Library
 
       _textColor = dwTextColor;
     }
+
+    #endregion
 
     public override void FinalizeConstruction()
     {
@@ -99,6 +109,7 @@ namespace MediaPortal.GUI.Library
     public override void Render(float timePassed)
     {
       _invalidate = false;
+      // Nothing visibile - save CPU cycles
       if (null == _font)
       {
         base.Render(timePassed);
@@ -119,7 +130,7 @@ namespace MediaPortal.GUI.Library
       if (_frameLimiter < GUIGraphicsContext.MaxFPS)
         _frameLimiter++;
       else
-        _frameLimiter = 0;
+        _frameLimiter = 1;
 
       if (_containsProperty)
       {
@@ -128,6 +139,10 @@ namespace MediaPortal.GUI.Library
         strText = strText.Replace("\\r", "\r");
         if (strText != _previousProperty)
         {
+          // Reset the scrolling position - e.g. if we switch in TV Guide between various items
+          _yPositionScroll = 0;
+          _scrollOffset = 0.0f;
+          _frameLimiter = 1;
           _offset = 0;
           _listItems.Clear();
 
@@ -148,41 +163,13 @@ namespace MediaPortal.GUI.Library
           _invalidate = true;
           // apply user scroll speed setting. 1 = slowest / 10 = fastest
           //int userSpeed = 11 - GUIGraphicsContext.ScrollSpeedVertical;           //  10 - 1
-          //float userMulti =((float)(GUIGraphicsContext.ScrollSpeedVertical) / 10f); // 0.1 - 1
-          //float ratio = (float)GUIGraphicsContext.MaxFPS * userMulti;            // e.g. 5-50
-
-          // List<int> renderdrops = new List<int>();
-          //// We start at -1 to avoid loosing a frame at full speed
-          //for (float i = -1; i < (float)GUIGraphicsContext.MaxFPS -1; i = i + ratio)
-          //{
-          //  int dropframe = Convert.ToInt32(i);            
-          //  renderdrops.Add(dropframe);
-          //}
-          // Multiply to make sure we have equally good results
-          //if (renderdrops.Contains(_frameLimiter))
-          //{
-          //  Log.Debug("*** FPS: {0} Drop frame: {1}", GUIGraphicsContext.MaxFPS, _frameLimiter);
-          //}
-          //else
-          //  _yPositionScroll++;
-
-          //int moduloSetting = 1;
-          //// in theory 3 speeds would be enough - let's map the current 1-10 setting somehow useful for backward compatibility
-          //switch (GUIGraphicsContext.ScrollSpeedVertical)
-          //{
-          //  case 1: moduloSetting = 7; break;
-          //  case 2: moduloSetting = 5; break;
-          //  case 3: moduloSetting = 3; break;
-          //  case 4: moduloSetting = 2; break;
-          //  case 5: moduloSetting = 1; break;
-          //  default: moduloSetting = 1; break;
-          //}
 
           if (_frameLimiter % (6 - GUIGraphicsContext.ScrollSpeedVertical) == 0)
             _yPositionScroll++;
           //_yPositionScroll = _yPositionScroll + GUIGraphicsContext.ScrollSpeedVertical;
 
           dwPosY -= (int)(_yPositionScroll - _scrollOffset);
+          Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}", _frameLimiter, dwPosY, _scrollOffset);
 
           if (_positionY - dwPosY >= _itemHeight)
           {
@@ -209,11 +196,15 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
+          _scrollOffset = 0.0f;
+          _frameLimiter = 1;
           _offset = 0;
         }
       }
       else
       {
+        _scrollOffset = 0.0f;
+        _frameLimiter = 1;
         _offset = 0;
       }
 
@@ -654,7 +645,7 @@ namespace MediaPortal.GUI.Library
 
       _yPositionScroll = 0;
       _scrollOffset = 0.0f;
-      _frameLimiter = 0;
+      _frameLimiter = 1;
       _timeElapsed = 0.0f;
     }
 

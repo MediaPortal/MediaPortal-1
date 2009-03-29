@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
     private int _scrollPosititionX = 0;
     private bool _fadeIn = false;
     private int _currentFrame = 0;
-    private int _frameLimiter = 0;
+    private int _frameLimiter = 1;
 
     private double timeElapsed = 0.0f;
 
@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Library
       if (_frameLimiter < GUIGraphicsContext.MaxFPS)
         _frameLimiter++;
       else
-        _frameLimiter = 0;
+        _frameLimiter = 1;
       // More than one label
       _isScrolling = true;
 
@@ -668,7 +668,7 @@ namespace MediaPortal.GUI.Library
       _scrollPosititionX = 0;
       _scrollOffset = 0.0f;
       timeElapsed = 0.0f;
-      _frameLimiter = 0;
+      _frameLimiter = 1;
     }
 
     /// <summary>

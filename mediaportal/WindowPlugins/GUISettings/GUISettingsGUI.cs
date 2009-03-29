@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Settings
     } ;
 
     private int m_iSpeedHorizontal = 2;
-    private int m_iSpeedVertical = 4;
+    private int m_iSpeedVertical = 5;
 
     public GUISettingsGUI()
     {
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollRightSpeed", 2);
-        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollDownSpeed", 4);
+        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollDownSpeed", 5);
       }
     }
 
