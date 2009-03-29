@@ -73,6 +73,16 @@ namespace MediaPortal.Utils.Time
     /// <summary>
     /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
     /// </summary>
+    /// <param name="datetime">The datetime.</param>
+    public WorldDateTime(DateTime datetime, WorldTimeZone timeZone)
+    {
+      SetFromDateTime(datetime);
+      _timeZone = timeZone;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WorldDateTime"/> class.
+    /// </summary>
     /// <param name="year">The year.</param>
     /// <param name="month">The month.</param>
     /// <param name="day">The day.</param>
@@ -267,7 +277,7 @@ namespace MediaPortal.Utils.Time
     public WorldDateTime AddDays(double days)
     {
       DateTime dt = this.DateTime;
-      return new WorldDateTime(dt.AddDays(days));
+      return new WorldDateTime(dt.AddDays(days), _timeZone);
     }
 
     //public WorldDateTime AddHours(double hours)
@@ -331,31 +341,35 @@ namespace MediaPortal.Utils.Time
     {
       TimeSpan ts = this.DateTime.Subtract(value);
 
-      return (long) ts.TotalDays;
+      return (long)ts.TotalDays;
     }
 
     public long SecondsSince(DateTime value)
     {
       TimeSpan ts = this.DateTime.Subtract(value);
 
-      return (long) ts.TotalSeconds;
+      return (long)ts.TotalSeconds;
     }
 
     public long ToEpochTime()
     {
       DateTime dt = this.DateTime;
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
+      if (_timeZone != null)
+        dt = _timeZone.ToUniversalTime(dt);
+      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
       TimeSpan ts = dt.Subtract(dtEpochStartTime);
 
       //long epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds);
 
-      return (long) ts.TotalSeconds;
+      return (long)ts.TotalSeconds;
     }
 
     public long ToEpochDate()
     {
       DateTime dt = this.DateTime;
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
+      if (_timeZone != null)
+        dt = _timeZone.ToUniversalTime(dt);
+      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
       TimeSpan ts = dt.Subtract(dtEpochStartTime);
 
       return ts.Days;
@@ -412,7 +426,7 @@ namespace MediaPortal.Utils.Time
       _second = 0;
       if (ldatetime > 10000000000000)
       {
-        _second = (int) (ldatetime%100L);
+        _second = (int)(ldatetime % 100L);
         ldatetime /= 100L;
         if (_second < 0 || _second > 59)
         {
@@ -420,15 +434,15 @@ namespace MediaPortal.Utils.Time
         }
       }
 
-      _minute = (int) (ldatetime%100L);
+      _minute = (int)(ldatetime % 100L);
       ldatetime /= 100L;
-      _hour = (int) (ldatetime%100L);
+      _hour = (int)(ldatetime % 100L);
       ldatetime /= 100L;
-      _day = (int) (ldatetime%100L);
+      _day = (int)(ldatetime % 100L);
       ldatetime /= 100L;
-      _month = (int) (ldatetime%100L);
+      _month = (int)(ldatetime % 100L);
       ldatetime /= 100L;
-      _year = (int) ldatetime;
+      _year = (int)ldatetime;
 
       if (_day < 0 || _day > 31)
       {
@@ -486,9 +500,9 @@ namespace MediaPortal.Utils.Time
         try
         {
           int iOff = Int32.Parse(strOff);
-          int mintue = (iOff%100);
+          int mintue = (iOff % 100);
           iOff /= 100;
-          int hour = (iOff%100);
+          int hour = (iOff % 100);
           TimeSpan tsOff = new TimeSpan(hour, mintue, 0);
           if (strTimeZone[0] == '-')
           {
@@ -556,7 +570,7 @@ namespace MediaPortal.Utils.Time
     /// <exception cref="T:System.ArgumentException">obj is not the same type as this instance. </exception>
     public int CompareTo(object obj)
     {
-      WorldDateTime compareObj = (WorldDateTime) obj;
+      WorldDateTime compareObj = (WorldDateTime)obj;
       return (DateTime.CompareTo(compareObj.DateTime));
     }
 

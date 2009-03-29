@@ -101,10 +101,10 @@ namespace MediaPortal.WebEPG
       {
         //_grabber = new GrabberConfig(_strBaseDir + File);
 
-        XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
+        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
 
         TextReader r = new StreamReader(_strBaseDir + File);
-        _grabber = (GrabberConfigFile) s.Deserialize(r);
+        _grabber = (GrabberConfigFile)s.Deserialize(r);
       }
       catch (InvalidOperationException ex)
       {
@@ -171,8 +171,8 @@ namespace MediaPortal.WebEPG
         case ListingInfo.Type.Html:
           HtmlParserTemplate defaultTemplate = _grabber.Listing.HtmlTemplate.GetTemplate("default");
           if (defaultTemplate == null ||
-              defaultTemplate.SectionTemplate == null ||
-              defaultTemplate.SectionTemplate.Template == null)
+            defaultTemplate.SectionTemplate == null ||
+            defaultTemplate.SectionTemplate.Template == null)
           {
             _log.Error(LogType.WebEPG, "WebEPG: {0}: No Template", File);
             return false;
@@ -239,7 +239,8 @@ namespace MediaPortal.WebEPG
       {
         _grabber.Listing.Request.Delay = 500;
       }
-      _reqBuilder = new RequestBuilder(_grabber.Listing.Request, startDateTime, _reqData);
+      WorldDateTime reqStartTime = new WorldDateTime(_siteTimeZone.FromLocalTime(startDateTime), _siteTimeZone);
+      _reqBuilder = new RequestBuilder(_grabber.Listing.Request, reqStartTime, _reqData);
       _grabStart = startDateTime;
 
       _log.Debug(LogType.WebEPG, "WebEPG: Grab Start {0} {1}", startDateTime.ToShortTimeString(),
@@ -279,7 +280,7 @@ namespace MediaPortal.WebEPG
       try
       {
         if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName))
-          // (nodeId.InnerText, out idTvChannel, out strTvChannel);
+        // (nodeId.InnerText, out idTvChannel, out strTvChannel);
         {
           TVDatabase.GetProgramsPerChannel(dbChannelName, ref _dbPrograms);
         }
@@ -342,7 +343,7 @@ namespace MediaPortal.WebEPG
       {
         for (int i = _dbLastProg; i < _dbPrograms.Count; i++)
         {
-          TVProgram prog = (TVProgram) _dbPrograms[i];
+          TVProgram prog = (TVProgram)_dbPrograms[i];
 
           if (prog.Title == Title && prog.Start == Start)
           {
@@ -353,7 +354,7 @@ namespace MediaPortal.WebEPG
 
         for (int i = 0; i < _dbLastProg; i++)
         {
-          TVProgram prog = (TVProgram) _dbPrograms[i];
+          TVProgram prog = (TVProgram)_dbPrograms[i];
 
           if (prog.Title == Title && prog.Start == Start)
           {
@@ -372,10 +373,10 @@ namespace MediaPortal.WebEPG
     /// <returns>the tv program data</returns>
     private TVProgram GetProgram(int index)
     {
-      ProgramData guideData = (ProgramData) _parser.GetData(index);
+      ProgramData guideData = (ProgramData)_parser.GetData(index);
 
       if (guideData == null ||
-          guideData.StartTime == null || guideData.Title == string.Empty)
+        guideData.StartTime == null || guideData.Title == string.Empty)
       {
         return null;
       }
@@ -446,7 +447,7 @@ namespace MediaPortal.WebEPG
         {
           _log.Info(LogType.WebEPG, "WebEPG: SubLink Request {0}", guideData.SublinkRequest.ToString());
 
-          WebParser webParser = (WebParser) _parser;
+          WebParser webParser = (WebParser)_parser;
 
           if (!webParser.GetLinkedData(ref guideData))
           {
