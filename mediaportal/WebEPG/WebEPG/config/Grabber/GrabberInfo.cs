@@ -42,6 +42,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlAttribute("availableDays")] public int GrabDays;
     [XmlAttribute("timezone")] public string TimeZone;
     [XmlAttribute("version")] public string Version;
+    [XmlAttribute("treatErrorAsWarning")] public bool TreatErrorAsWarning;
     [XmlIgnore()] public bool Linked;
 
     #endregion

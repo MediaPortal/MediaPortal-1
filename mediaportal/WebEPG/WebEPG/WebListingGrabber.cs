@@ -306,8 +306,12 @@ namespace MediaPortal.WebEPG
 
         if (error)
         {
-          _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
-          break;
+          if (!_grabber.Info.TreatErrorAsWarning)
+          {
+            _log.Error(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
+            break;
+          }
+          _log.Warn(LogType.WebEPG, "WebEPG: ChannelId: {0} grabber error", strChannelID);
         }
 
         //_GrabDay++;
