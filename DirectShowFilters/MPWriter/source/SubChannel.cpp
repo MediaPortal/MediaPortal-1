@@ -121,6 +121,7 @@ STDMETHODIMP CSubChannel::StartTimeShifting()
 	m_bPaused=false;
 	WCHAR wstrFileName[2048];
 	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
+	m_pTeletextGrabber->Start();
 	return S_OK;
 
 }	
@@ -131,6 +132,7 @@ STDMETHODIMP CSubChannel::StopTimeShifting()
 	if (m_bIsTimeShifting)
 	{
 		LogDebug("CSubChannel::StopTimeShifting() - (%d) - Filename:'%s'",m_id,m_strTimeShiftFileName);
+		m_pTeletextGrabber->Stop();
 		m_pTsWriter->Close();
 		strcpy(m_strTimeShiftFileName,"");
 		m_bIsTimeShifting=false;
