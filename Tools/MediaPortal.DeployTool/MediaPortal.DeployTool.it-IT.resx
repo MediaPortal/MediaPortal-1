@@ -529,4 +529,7 @@ Proseguire l'installazione è un vostro rischio.</value>
     <value>NOTA: Non si può aggiornare da una build SVN esistente,
             quest'ultima è intesa solo a scopo di test.</value>
   </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Aggiornamento-&gt;Installazione</value>
+  </data>
 </root>

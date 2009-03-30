@@ -593,6 +593,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Upgrade-&gt;Install.
+        /// </summary>
+        internal static string Install_actionUpgradeInstall {
+            get {
+                return ResourceManager.GetString("Install_actionUpgradeInstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         internal static string Install_buttonDownload {

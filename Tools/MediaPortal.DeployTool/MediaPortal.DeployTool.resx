@@ -532,4 +532,7 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
     <value>NOTE: You cannot upgrade from an existing SVN build,
           those are meant for testing purposes only.</value>
   </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Upgrade-&gt;Install</value>
+  </data>
 </root>

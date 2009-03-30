@@ -142,7 +142,17 @@ namespace MediaPortal.DeployTool.Sections
           if (result.needsDownload)
             item.SubItems.Add(Localizer.GetBestTranslation("Install_actionUninstallDownloadInstall"));
           else
-            item.SubItems.Add(Localizer.GetBestTranslation("Install_actionUninstallInstall"));
+          {
+            if (InstallationProperties.Instance["UpdateMode"] == "yes")
+            {
+              item.SubItems.Add(Localizer.GetBestTranslation("Install_actionUpgradeInstall"));
+            }
+            else
+            {
+              item.SubItems.Add(Localizer.GetBestTranslation("Install_actionUninstallInstall"));
+            }
+          }
+
           item.ImageIndex = 2;
           break;
         case CheckState.SKIPPED:
