@@ -65,6 +65,7 @@ namespace TvPlugin
     #region constants
 
     private const int HEARTBEAT_INTERVAL = 5; //seconds
+    private const int MAX_WAIT_FOR_SERVER_CONNECTION = 10; //seconds
     private const int WM_POWERBROADCAST = 0x0218;
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
@@ -126,6 +127,8 @@ namespace TvPlugin
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
+    private static ManualResetEvent _waitForOnResume = null;
+
     private static int FramesBeforeStopRenderBlackImage = 0;
 
     // this var is used to block the user from hitting "record now" button multiple times
@@ -243,11 +246,11 @@ namespace TvPlugin
 
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
+      _waitForOnResume = new ManualResetEvent(false);
       try
       {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
         appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
-
         m_navigator = new ChannelNavigator();
         LoadSettings();
         string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
@@ -272,6 +275,7 @@ namespace TvPlugin
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
+      _waitForOnResume = new ManualResetEvent(false);
 
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
@@ -1331,14 +1335,18 @@ namespace TvPlugin
       catch (Exception)
       {
       }
-
-      _resumed = false;
+      finally
+      {
+        _resumed = false;
+        _waitForOnResume = new ManualResetEvent(false);
+      }      
     }
 
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
       _resumed = true;
+      _waitForOnResume.Reset();
     }
 
     public void Start()
@@ -1429,28 +1437,39 @@ namespace TvPlugin
       }
 
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
-
-      if (!RemoteControl.IsConnected)
+      
+      int waits = 0;
+      while (true)
       {
-        if (!_onPageLoadDone)
+        if (!RemoteControl.IsConnected)
         {
-          RemoteControl.Clear();
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_SETTINGS_TVENGINE);
+          if (!_onPageLoadDone)
+          {
+            RemoteControl.Clear();
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+            return;
+          }
+          else if (waits >= MAX_WAIT_FOR_SERVER_CONNECTION)
+          {
+            bool res = HandleServerNotConnected();
+
+            UpdateStateOfRecButton();
+            UpdateProgressPercentageBar();
+            UpdateRecordingIndicator();
+            return;
+          }
+          
+          waits++;
+          Log.Info("tv home onpageload: waiting for TVservice {} sec.", waits);
+          Thread.Sleep(1000); //wait 1 sec
+          //GUIWaitCursor.Hide();          
         }
         else
         {
-          bool res = HandleServerNotConnected();
-
-          UpdateStateOfRecButton();
-          UpdateProgressPercentageBar();
-          UpdateRecordingIndicator();
+          Log.Info("tv home onpageload: done waiting for TVservice.");
+          Connected = true;
+          break;
         }
-        //GUIWaitCursor.Hide();
-        return;
-      }
-      else
-      {
-        Connected = true;
       }
 
       try
@@ -3098,6 +3117,7 @@ namespace TvPlugin
       _doingChannelChange = false;
       bool cardChanged = false;
 
+      _waitForOnResume.WaitOne(5000); //wait max 5 secs. for tvplugin to register itself as fully resumed - this is done in the onresume method.
 
       _waitForVideoReceived.Reset();
       _waitForVideoReceived.Reset();
