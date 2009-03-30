@@ -823,6 +823,13 @@ namespace TvPlugin
                     if (merge)
                     {
                       // NO thumbnails for folders please so we can distinguish between single files and folders
+                      if (listRec.StartTime < rec.StartTime)
+                      {
+                        // Make sure that the folder items shows the information of the most recent subitem
+                        // e.g. the Start time might be relevant for sorting the folders correctly.
+                        item.TVTag = (BuildItemFromRecording(rec)).TVTag;
+                      }
+
                       item.IsFolder = true;
                       Utils.SetDefaultIcons(item);
                       item.ThumbnailImage = item.IconImageBig;
