@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Library
           //_yPositionScroll = _yPositionScroll + GUIGraphicsContext.ScrollSpeedVertical;
 
           dwPosY -= (int)(_yPositionScroll - _scrollOffset);
-          Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}", _frameLimiter, dwPosY, _scrollOffset);
+          // Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}", _frameLimiter, dwPosY, _scrollOffset);
 
           if (_positionY - dwPosY >= _itemHeight)
           {
