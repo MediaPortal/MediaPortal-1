@@ -1252,11 +1252,12 @@ namespace TvPlugin
       // if we are currently playing a TV recording and want to play a new tv recoding, then we will avoid the .stop() call, since it will 
       // simly show the last TV channel (time consuming).
       // instead we just playback the newly selected TV recording
-      if (!g_Player.IsTVRecording)
-      {
-        Log.Info("OnSelectedRecording - calling g_Player.Stop(true); ");
-        g_Player.Stop(true);
-      }
+      //if (!g_Player.IsTVRecording)
+      //{
+      //  Log.Info("OnSelectedRecording - calling g_Player.Stop(true); ");
+      //  g_Player.Stop(true);
+      //}
+      g_Player.Stop();
 
       if (TVHome.Card != null)
       {
