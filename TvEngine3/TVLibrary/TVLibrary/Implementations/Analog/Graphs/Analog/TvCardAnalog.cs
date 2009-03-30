@@ -521,7 +521,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.Error("analog: unable to add encoding filter");
           throw new TvException("Analog: unable to add capture filter");
         }
-        Log.Log.WriteFile("analog: FINISHED WITH MY NEW STUFF");
         Log.Log.WriteFile("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter, _capture.VideoFilter, _encoder.MultiplexerFilter, _encoder.VideoCompressorFilter);
         if (_qualityControl == null)
