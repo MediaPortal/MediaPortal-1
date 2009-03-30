@@ -207,8 +207,8 @@ TV Server-ul inlocuiește complet TV Plugin-ul integrat și la rândul lui se in
     <value>Acesta va instala numai MediaPortal TV-Server pe acest PC
 In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV celorlalte PC-uri din rețeaua dumneavoastră LAN. (este necesară instalarea unui database)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Răsfoiți (browse)</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Răsfoiește</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configurează Windows Firewall să permită acces extern către server-ul database</value>
@@ -372,9 +372,6 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Descărcare manuală</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Răsfoiește (browse)</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Trebuie să furnizați o locație validă de instalare pentru MediaPortal.</value>
   </data>
@@ -386,9 +383,6 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Selecționați folder-ul de instalare pentru MediaPortal</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Răsfoițti (browse)</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configurează Windows Firewall să permită la TV-Server acces extern </value>
@@ -496,5 +490,38 @@ Continuați pe riscul dumneavoastră!</value>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>Acest aplicativ acum se va inchide și va deschide folder-ul "MediaPortal Installation".
 Transferați acest folder pe HTPC-ul dumneavoastră.Incepeți instalarea pornind "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Omis</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Chiar doriți să anulați instalarea MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Setările actuale ptr. descărcare: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Vă rugăm selectați setările pentru descărcări:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Nu a fost găsită o conexiune Internet!Să continuați instalarea aveți  nevoie de o conexiune activă.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Spațiu insuficient pe discul specificat!Pentru instalarea MediaPortal aveți nevoie de cel puțin {0} MB de spațiu liber pe disk.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>A fost detectat MediaPortal {0}</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>A fost detectat MediaPortal {0} (build {1})</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Nouă Instalare</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Actualizați Instalarea curentă la {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOTĂ:Nu puteți actualiza o versiune SVN existentă pentru că acestea sunt create numai pentru testare.</value>
   </data>
 </root>
