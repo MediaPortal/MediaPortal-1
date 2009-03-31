@@ -863,23 +863,23 @@ FunctionEnd
   Call ${UNINSTALL_PREFIX}ReadConfig
   Pop $0
   ${If} $0 != 0   ; an error occured
-    ${LOG_TEXT} "ERROR" "could not read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml'"
+    ${LOG_TEXT} "ERROR" "Loading MediaPortalDirectories from MyDocs failed. ('$MyDocs\Team MediaPortal\MediaPortalDirs.xml')"
+    ${LOG_TEXT} "INFO"  "Trying to load from installation directory now."
 
     Push "$MPdir.Base"
     Call ${UNINSTALL_PREFIX}ReadConfig
     Pop $0
     ${If} $0 != 0   ; an error occured
-      ${LOG_TEXT} "ERROR" "could not read '$MPdir.Base\MediaPortalDirs.xml'"
-
-      ${LOG_TEXT} "INFO" "no MediaPortalDirs.xml read. using LoadDefaultDirs"
+      ${LOG_TEXT} "ERROR" "Loading MediaPortalDirectories from InstallDir failed. ('$MPdir.Base\MediaPortalDirs.xml')"
+      ${LOG_TEXT} "INFO"  "Using default paths for MediaPortalDirectories now."
       !insertmacro LoadDefaultDirs
 
     ${Else}
-      ${LOG_TEXT} "INFO" "read '$MPdir.Base\MediaPortalDirs.xml' successfully"
+      ${LOG_TEXT} "INFO" "Loaded MediaPortalDirectories from InstallDir successfully. ('$MPdir.Base\MediaPortalDirs.xml')"
     ${EndIf}
 
   ${Else}
-    ${LOG_TEXT} "INFO" "read '$MyDocs\Team MediaPortal\MediaPortalDirs.xml' successfully"
+    ${LOG_TEXT} "INFO" "Loaded MediaPortalDirectories from MyDocs successfully. ('$MyDocs\Team MediaPortal\MediaPortalDirs.xml')"
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "Installer will use the following directories:"
