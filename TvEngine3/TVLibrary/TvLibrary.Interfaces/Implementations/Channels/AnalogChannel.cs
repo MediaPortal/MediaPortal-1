@@ -169,7 +169,7 @@ namespace TvLibrary.Implementations
       _country = collection.GetTunerCountryFromID(31);
       TunerSource = TunerInputType.Cable;
       _videoInputType = VideoInputType.Tuner;
-      _audioInputType = AudioInputType.AUXInput1;
+      _audioInputType = AudioInputType.Automatic;
       _channelNumber = 4;
       _isRadio = false;
       _vcrSginal = false;
