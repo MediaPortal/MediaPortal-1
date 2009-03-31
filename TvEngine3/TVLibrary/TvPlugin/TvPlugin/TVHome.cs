@@ -126,8 +126,7 @@ namespace TvPlugin
     private static bool _ServerLastStatusOK = true;
 
     private static ManualResetEvent _waitForBlackScreen = null;
-    private static ManualResetEvent _waitForVideoReceived = null;
-    private static ManualResetEvent _waitForOnResume = null;
+    private static ManualResetEvent _waitForVideoReceived = null;    
 
     private static int FramesBeforeStopRenderBlackImage = 0;
 
@@ -246,7 +245,7 @@ namespace TvPlugin
 
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
-      _waitForOnResume = new ManualResetEvent(false);
+      
       try
       {
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
@@ -275,8 +274,6 @@ namespace TvPlugin
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       _waitForBlackScreen = new ManualResetEvent(false);
       _waitForVideoReceived = new ManualResetEvent(false);
-      _waitForOnResume = new ManualResetEvent(false);
-
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
       Log.Info("TVHome V" + versionInfo.FileVersion + ":ctor");
@@ -1337,16 +1334,14 @@ namespace TvPlugin
       }
       finally
       {
-        _resumed = false;
-        _waitForOnResume = new ManualResetEvent(false);
+        _resumed = false;        
       }      
     }
 
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
-      _resumed = true;
-      _waitForOnResume.Reset();
+      _resumed = true;      
     }
 
     public void Start()
@@ -1440,7 +1435,7 @@ namespace TvPlugin
       
       int waits = 0;
       while (true)
-      {
+      {                
         if (!RemoteControl.IsConnected)
         {
           if (!_onPageLoadDone)
@@ -3116,12 +3111,10 @@ namespace TvPlugin
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
       bool cardChanged = false;
-
-      _waitForOnResume.WaitOne(5000); //wait max 5 secs. for tvplugin to register itself as fully resumed - this is done in the onresume method.
-
+      
       _waitForVideoReceived.Reset();
       _waitForVideoReceived.Reset();
-
+      
       //System.Diagnostics.Debugger.Launch();
       try
       {
