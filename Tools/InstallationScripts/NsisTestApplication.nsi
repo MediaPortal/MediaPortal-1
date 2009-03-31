@@ -165,7 +165,25 @@ SectionEnd
 
 Section /o "MediaPortal CleanUp: 1.0 for 1.0.1 Update"
 
-  !include "${svn_MP}\Setup\update-1.0.1.nsh"
+;MP onInit
+    ${If} ${MPIsInstalled}
+      !insertmacro MP_GET_INSTALL_DIR $INSTDIR
+    ${Else}
+      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
+      Abort
+    ${EndIf}
+
+;MP secPrepare
+  ${ReadMediaPortalDirs} "$INSTDIR"
+
+  ${LOG_TEXT} "INFO" "Deleting SkinCache..."
+  RMDir /r "$MPdir.Cache"
+
+  # if it is an update include a file with  last update/cleanup instructions
+  ;${If} $UpdateMode = 1
+    ${LOG_TEXT} "INFO" "Removing 1.0 files..."
+    !include "${svn_MP}\Setup\update-1.0.1.nsh"
+  ;${EndIf}
 
 SectionEnd
 
