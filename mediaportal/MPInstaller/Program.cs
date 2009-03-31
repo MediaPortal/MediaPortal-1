@@ -54,7 +54,13 @@ namespace MediaPortal.MPInstaller
      
       if (fil == @"/queue")
       {
-        Application.Run(new QueueInstaller());
+        QueueEnumerator queue = new QueueEnumerator();
+        QueueInstaller dlg = new QueueInstaller();
+        dlg.queue = queue.Load(MpiFileList.QUEUE_LISTING);
+        if (dlg.queue.Items.Count > 0)
+        {
+          Application.Run(dlg);
+        }
         System.Diagnostics.Process.Start(Config.GetFile(Config.Dir.Base, "MediaPortal.exe"));
         return;
       }

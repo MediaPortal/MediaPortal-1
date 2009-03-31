@@ -40,12 +40,19 @@ namespace MediaPortal.MPInstaller
     public QueueEnumerator Load(string filename)
     {
       QueueEnumerator en = new QueueEnumerator();
-      if (File.Exists(filename))
+      try
       {
-        XmlSerializer serializer = new XmlSerializer(typeof(QueueEnumerator));
-        FileStream fs = new FileStream(filename, FileMode.Open);
-        en = (QueueEnumerator)serializer.Deserialize(fs);
-        fs.Close();
+        if (File.Exists(filename))
+        {
+          XmlSerializer serializer = new XmlSerializer(typeof(QueueEnumerator));
+          FileStream fs = new FileStream(filename, FileMode.Open);
+          en = (QueueEnumerator)serializer.Deserialize(fs);
+          fs.Close();
+        }
+      }
+      catch
+      {
+        
       }
       return en;
     }

@@ -15,7 +15,7 @@ namespace MediaPortal.MPInstaller
   public partial class QueueInstaller : Form
   {
     #region local vars
-    QueueEnumerator queue = new QueueEnumerator();
+    public QueueEnumerator queue = new QueueEnumerator();
     MPInstallHelper inst = new MPInstallHelper();
     int time_to_close = 10;
     #endregion
@@ -33,13 +33,14 @@ namespace MediaPortal.MPInstaller
 
     private void QueueInstaller_Shown(object sender, EventArgs e)
     {
+      this.Refresh();
       Thread.Sleep(2000);
-      queue = queue.Load(MpiFileList.QUEUE_LISTING);
       inst.LoadFromFile();
-      this.Update();
+      this.Refresh();
       progressBar1.Maximum = queue.Items.Count;
       foreach (QueueItem item in queue.Items)
       {
+        this.Refresh();
         Thread.Sleep(1000);
         listBox2.Items.Clear();
         switch (item.Action)

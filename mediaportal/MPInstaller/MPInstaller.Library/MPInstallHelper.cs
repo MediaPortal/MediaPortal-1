@@ -325,7 +325,8 @@ namespace MediaPortal.MPInstaller
         }
         catch (Exception)
         {
-          MessageBox.Show("List loading error", "Error");
+          //MessageBox.Show("List loading error", "Error");
+         
         }
       }
     }

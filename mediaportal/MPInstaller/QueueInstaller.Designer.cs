@@ -104,7 +104,7 @@ namespace MediaPortal.MPInstaller
       this.Controls.Add(this.progressBar1);
       this.Name = "QueueInstaller";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "QueueInstaller";
+      this.Text = "Extension Installer";
       this.Shown += new System.EventHandler(this.QueueInstaller_Shown);
       this.ResumeLayout(false);
 

@@ -619,9 +619,14 @@ namespace WindowPlugins.GUI.Extensions
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(14002); // Sort options
-
-      dlg.AddLocalizedString(14003); // local
-      dlg.AddLocalizedString(14004); // online
+      if (lst.Items.Count > 0)
+      {
+        dlg.AddLocalizedString(14003); // local
+      }
+      if (lst_online.Items.Count > 0)
+      {
+        dlg.AddLocalizedString(14004); // online
+      }
       if (lst_updates.items.Count > 0)
       {
         dlg.AddLocalizedString(14015); // updates
