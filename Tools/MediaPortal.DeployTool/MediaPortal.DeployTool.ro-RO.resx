@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>Doriti să vă uitați la TV cu |Media Portal?</value>
+    <value>Doriți să vă uitați la TV cu Media Portal?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
     <value>Da-Voi utiliza MediaPortal să mă uit laTV</value>
@@ -271,7 +271,7 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Download URL:</value>
   </data>
   <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
-    <value>Target:</value>
+    <value>Țintă:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
     <value>Descărcarea anulată de către user</value>
@@ -355,16 +355,16 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Continuă</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Fișierul necesar incă nu există</value>
+    <value>Fișierul necesar nu există</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>Apăsați ”continuă” cănd ați terminat de descărcat fișierul</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>Trebuie să descărcați manual fișierul următor</value>
+    <value>Trebuie să descărcați manual fișierul următor:</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
-    <value>Deschide directory</value>
+    <value>Deschide director</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
     <value>Link</value>
@@ -379,7 +379,7 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Vă rugăm setați opțiunile dorite pentru instalarea MediaPortal:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
-    <value>Directory de instalare MediaPortal</value>
+    <value>Director de instalare MediaPortal</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Selecționați folder-ul de instalare pentru MediaPortal</value>
@@ -394,10 +394,10 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Vă rugăm selecționați opțiunile dorite pentru instalarea TV-Server:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
-    <value>Directory de instalare TV-server:</value>
+    <value>Director de instalare TV-server:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>Selecționați folder-ul de instalație pentru TV-Server</value>
+    <value>Selecționați folder-ul de instalare pentru TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
     <value>Vă mulțumim că ați ales MediaPortal...The FREE OpenSource MediaCenter!</value>
@@ -439,13 +439,13 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Dezinstalez</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>O conectare la Internet este necesară pentru procesul de instalare.
+    <value>O conexiune Internet este necesară pentru procesul de instalare.
 
 Doriți să porniți procesul de instalare acum sau doriți doar să descărcați componentele necesare și să instalați mai târziu?
-(poate pe un PC fără legătura la internet)</value>
+(poate pe un PC fără conexiune internet)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
-    <value>Doar descarcă componentele necesare</value>
+    <value>Descarcă doar componentele necesare</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
     <value>Pornește instalarea acum</value>
@@ -472,7 +472,7 @@ Doriți să porniți procesul de instalare acum sau doriți doar să descărcaț
     <value>Ne pare rău, sistemul dumneavoastră operativ nu este suportat de MediaPortal!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Sistemul dumneavoastră operativ nu este suportat pentru că Microsoft nu a furnizat anumite ”hotfix” pentru acesta.
+    <value>Sistemul dumneavoastră operativ nu este suportat deoarece Microsoft nu a furnizat anumite ”hotfix” pentru acesta.
 Continuati pe riscul dumneavoastră!</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
@@ -504,7 +504,7 @@ Transferați acest folder pe HTPC-ul dumneavoastră.Incepeți instalarea pornind
     <value>Vă rugăm selectați setările pentru descărcări:</value>
   </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
-    <value>Nu a fost găsită o conexiune Internet!Să continuați instalarea aveți  nevoie de o conexiune activă.</value>
+    <value>Nu a fost găsită o conexiune Internet!Pentru a continua instalarea aveți  nevoie de o conexiune activă.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Spațiu insuficient pe discul specificat!Pentru instalarea MediaPortal aveți nevoie de cel puțin {0} MB de spațiu liber pe disk.</value>
