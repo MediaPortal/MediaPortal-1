@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Settings.Wizard
         xmlwriter.SetValueAsBool("general", "dblclickasrightclick", dblclickasrightclick);
         xmlwriter.SetValueAsBool("general", "useVMR9ZapOSD", useVMR9ZapOSD);
         xmlwriter.SetValueAsBool("general", "enableguisounds", enableguisounds);
-        xmlwriter.SetValueAsBool("general", "screensaver", screensaver);
+        xmlwriter.SetValueAsBool("general", "IdleTimer", screensaver);
         xmlwriter.SetValueAsBool("general", "exclusivemode", exclusivemode);
       }
 

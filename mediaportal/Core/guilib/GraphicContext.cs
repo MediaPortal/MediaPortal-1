@@ -159,6 +159,7 @@ namespace MediaPortal.GUI.Library
     private static float lasttime = 0f;
     private static bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
+    private static bool idleTimePowerSaving = false;
     private static bool turnOffMonitor = false;
     private static PresentParameters presentParameters;
     private static bool vmr9Allowed = true;
@@ -199,6 +200,12 @@ namespace MediaPortal.GUI.Library
       get { return _lastActivity; }
     }
 
+    public static bool SaveRenderCycles
+    {
+      get { return idleTimePowerSaving; }
+      set { idleTimePowerSaving = value; }
+    }
+
     public static bool UseSeparateRenderThread
     {
       get { return _useSeparateRenderThread; }
@@ -222,6 +229,10 @@ namespace MediaPortal.GUI.Library
       get { return blankScreen; }
       set
       {
+        if (value == false)
+        {
+          SaveRenderCycles = false;
+        }
         if (value != blankScreen)
         {
           try
@@ -239,6 +250,7 @@ namespace MediaPortal.GUI.Library
               }
             }
             blankScreen = value;
+
             if (OnVideoWindowChanged != null)
             {
               OnVideoWindowChanged();
@@ -459,10 +471,10 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_iMaxFPS = xmlReader.GetValueAsInt("screen", "maxguifps", 25);
+        m_iMaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
         SyncFrameTime();
-        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "ScrollDownSpeed", 5);
-        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "ScrollRightSpeed", 2);
+        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "ScrollSpeedDown", 4);
+        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "ScrollSpeedRight", 1);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 

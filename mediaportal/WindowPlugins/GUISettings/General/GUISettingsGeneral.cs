@@ -141,7 +141,7 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
-        xmlwriter.SetValueAsBool("general", "screensaver", btnScreenSaver.Selected);
+        xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
         xmlwriter.SetValue("skin", "language", btnLanguage.SelectedLabel);
         xmlwriter.SetValue("skin", "name", btnSkin.Label);
       }
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUISettings
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bool screensaver = xmlreader.GetValueAsBool("general", "screensaver", false);
+        bool screensaver = xmlreader.GetValueAsBool("general", "IdleTimer", false);
         btnScreenSaver.Selected = screensaver;
       }
     }

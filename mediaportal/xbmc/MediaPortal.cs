@@ -97,7 +97,8 @@ public class MediaPortalApp : D3DApp, IRender
   private WinLirc winlircdevice; //sd00//
   private RedEye redeyedevice; //PB00//
   private bool useScreenSaver = true;
-  private int timeScreenSaver = 60;
+  private bool useIdleblankScreen = false;
+  private int timeScreenSaver = 300;
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
   private bool _suspended = false;
@@ -667,8 +668,9 @@ public class MediaPortalApp : D3DApp, IRender
     // check to load plugins
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
-      useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
-      timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
+      useScreenSaver = xmlreader.GetValueAsBool("general", "IdleTimer", true);
+      timeScreenSaver = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
+      useIdleblankScreen = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
       clientSizeX = xmlreader.GetValueAsInt("general", "sizex", clientSizeX);
       clientSizeY = xmlreader.GetValueAsInt("general", "sizey", clientSizeY);
       showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
@@ -1997,7 +1999,22 @@ public class MediaPortalApp : D3DApp, IRender
               TimeSpan ts = DateTime.Now - GUIGraphicsContext.LastActivity;
               if (ts.TotalSeconds >= timeScreenSaver)
               {
-                GUIGraphicsContext.BlankScreen = true;
+                if (useIdleblankScreen)
+                {
+                  if (!GUIGraphicsContext.BlankScreen)
+                  {
+                    Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity", ts.TotalSeconds);
+                  }
+                  GUIGraphicsContext.BlankScreen = true;
+                }
+                else
+                {
+                  if (!GUIGraphicsContext.SaveRenderCycles)
+                  {
+                    Log.Debug("Main: Idle timer is entering power save mode after {0} seconds of inactivity", ts.TotalSeconds);
+                  }
+                  GUIGraphicsContext.SaveRenderCycles = true;
+                }
               }
             }
             else

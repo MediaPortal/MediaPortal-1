@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
                                             // 12 Enable animations / transitions	  
                                             new string[] {"general", "baloontips", "false"},
                                             // 13 Disable Windows tray area's balloon tips (for all apps)
-                                            //new string[] { "general", "screensaver", "false" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
+                                            //new string[] { "general", "IdleTimer", "true" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
                                             new string[] {"general", "turnoffmonitor", "false"},
                                             // 15 Turn off monitor when blanking screen	    
                                             new string[] {"general", "turnmonitoronafterresume", "true"},

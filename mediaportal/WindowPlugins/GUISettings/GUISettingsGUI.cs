@@ -43,8 +43,8 @@ namespace MediaPortal.GUI.Settings
       CONTROL_EXAMPLE2 = 26,
     } ;
 
-    private int m_iSpeedHorizontal = 2;
-    private int m_iSpeedVertical = 5;
+    private int m_iSpeedHorizontal = 1;
+    private int m_iSpeedVertical = 4;
 
     public GUISettingsGUI()
     {
@@ -163,8 +163,8 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollRightSpeed", 2);
-        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollDownSpeed", 5);
+        m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollSpeedRight", 1);
+        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollSpeedDown", 4);
       }
     }
 
@@ -172,9 +172,9 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlwriter.SetValue("general", "ScrollRightSpeed", m_iSpeedHorizontal.ToString());
-        xmlwriter.SetValue("general", "ScrollDownSpeed", m_iSpeedVertical.ToString());
-        xmlwriter.SetValue("screen", "maxguifps", GUIGraphicsContext.MaxFPS);
+        xmlwriter.SetValue("general", "ScrollSpeedRight", m_iSpeedHorizontal.ToString());
+        xmlwriter.SetValue("general", "ScrollSpeedDown", m_iSpeedVertical.ToString());
+        xmlwriter.SetValue("screen", "GuiRenderFps", GUIGraphicsContext.MaxFPS);
       }
     }
 

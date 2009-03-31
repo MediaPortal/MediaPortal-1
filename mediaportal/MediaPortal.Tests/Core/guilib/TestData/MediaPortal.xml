@@ -26,7 +26,7 @@
     <entry name="alwaysontop">no</entry>
     <entry name="exclusivemode">no</entry>
     <entry name="enableguisounds">yes</entry>
-    <entry name="screensaver">yes</entry>
+    <entry name="IdleTimer">yes</entry>
   </section>
   <section name="skin">
     <entry name="language">English</entry>

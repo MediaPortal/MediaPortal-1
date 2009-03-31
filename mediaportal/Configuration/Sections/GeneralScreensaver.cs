@@ -25,8 +25,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "screensaver", false);
-        numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "screensavertime", 60);
+        checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "IdleTimer", true);
+        numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
+        radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
       }
     }
 
@@ -34,11 +35,17 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlreader.SetValueAsBool("general", "screensaver", checkBoxEnableScreensaver.Checked);
-        xmlreader.SetValue("general", "screensavertime", numericUpDownDelay.Value);
+        xmlreader.SetValueAsBool("general", "IdleTimer", checkBoxEnableScreensaver.Checked);
+        xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);
+        xmlreader.SetValueAsBool("general", "IdleBlanking", radioBtnBlankScreen.Checked);
       }
     }
 
     #endregion
+
+    private void checkBoxEnableScreensaver_CheckedChanged(object sender, System.EventArgs e)
+    {
+      groupBoxIdleAction.Enabled = numericUpDownDelay.Enabled = checkBoxEnableScreensaver.Checked;
+    }
   }
 }

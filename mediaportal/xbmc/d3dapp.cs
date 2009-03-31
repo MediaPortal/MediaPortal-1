@@ -1479,7 +1479,7 @@ namespace MediaPortal
         try
         {
 #endif
-          if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this))
+          if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles))
           {
             // Yield some CPU time to other processes
 #if !PROFILING
@@ -1503,7 +1503,7 @@ namespace MediaPortal
       {
 #if !PROFILING
         // if we dont got the focus, then dont use all the CPU
-        if (ActiveForm != this)
+        if (ActiveForm != this || (GUIGraphicsContext.SaveRenderCycles))
         {
           Thread.Sleep(100);
         }
