@@ -2,13 +2,13 @@
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <controls>
     <import>common.time.xml</import>
     <control>
       <type>image</type>
       <description>BG</description>
-       <width>1280</width>
+      <width>1280</width>
       <height>720</height>
       <id>1</id>
     </control>
@@ -173,16 +173,34 @@
         <label>#TV.RecordedTV.Description</label>
         <textcolor>ffb2d4f5</textcolor>
       </control>
-      <!--          <control>
-            <type>label</type>
-            <description>genre</description>
-            <id>17</id>
-            <posX>404</posX>
-            <posY>460</posY>
-            <label>#TV.RecordedTV.Genre</label>
-            <align>right</align>
-            <textcolor>ffb2d4f5</textcolor>
-         </control> -->
+      <control>
+        <id>500</id>
+        <type>image</type>
+        <posX>76</posX>
+        <posY>333</posY>
+        <width>245</width>
+        <height>138</height>
+        <!--      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture> -->
+        <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
+        <visible>facadeview.list+Control.HasFocus(50)</visible>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>71</posX>
+        <posY>330</posY>
+        <width>259</width>
+        <height>148</height>
+        <!--      <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture> -->
+        <texture diffuse="Thumb_Mask.png">Picture_cover.png</texture>
+        <visible>facadeview.list+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>      
     </control>
     <import>common.facade.recordings.xml</import>
   </controls>

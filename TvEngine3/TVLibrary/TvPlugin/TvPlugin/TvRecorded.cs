@@ -52,21 +52,6 @@ namespace TvPlugin
 {
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
-    /*
-    public override void OnAdded()
-    {
-      // replace g_player's ShowFullScreenWindowTV
-      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
-      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler; // singleseaters uses this
-
-      GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_RECORDEDTV, this);
-      Restore();
-      PreInit();
-      ResetAllControls();
-    }
-    */
-
-
     #region ThumbCacher
 
     public class RecordingThumbCacher
@@ -821,16 +806,16 @@ namespace TvPlugin
                         break;
                     }
                     if (merge)
-                    {
-                      // NO thumbnails for folders please so we can distinguish between single files and folders
+                    {                      
                       if (listRec.StartTime < rec.StartTime)
                       {
-                        // Make sure that the folder items shows the information of the most recent subitem
-                        // e.g. the Start time might be relevant for sorting the folders correctly.
+                      // Make sure that the folder items shows the information of the most recent subitem
+                      // e.g. the Start time might be relevant for sorting the folders correctly.
                         item.TVTag = (BuildItemFromRecording(rec)).TVTag;
                       }
 
                       item.IsFolder = true;
+                      // NO thumbnails for folders please so we can distinguish between single files and folders
                       Utils.SetDefaultIcons(item);
                       item.ThumbnailImage = item.IconImageBig;
                       add = false;
@@ -1648,11 +1633,12 @@ namespace TvPlugin
     private void UpdateProperties()
     {
       try
-      {
+      {        
         Recording rec;
         GUIListItem pItem = GetItem(GetSelectedItemNo());
         if (pItem == null)
         {
+          GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
           return;
         }
@@ -1663,6 +1649,10 @@ namespace TvPlugin
           return;
         }
         SetProperties(rec);
+        if (!pItem.IsFolder)
+        {
+          GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+        }
       }
       catch (Exception ex)
       {
