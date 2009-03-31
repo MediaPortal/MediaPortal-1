@@ -2,7 +2,7 @@
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.time.xml</import>
     <control>
