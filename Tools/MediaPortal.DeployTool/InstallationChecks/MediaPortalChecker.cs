@@ -68,6 +68,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
+      if (InstallationProperties.Instance["UpdateMode"] == "yes")
+      {
+        return true;
+      }
+
       string[] UninstKeys = {"MediaPortal",             // 1.x
                              "MediaPortal 0.2.3.0"};    // 0.2.3.0
 
