@@ -252,11 +252,6 @@ ShowUninstDetails show
 # SECTIONS and REMOVEMACROS
 #---------------------------------------------------------------------------
 !macro RenameInstallDirectory
-Section "-prepare" SecPrepare
-  ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
-  ${LOG_TEXT} "INFO" "Prepare installation..."
-  SetShellVarContext all
-
   !insertmacro GET_BACKUP_POSTFIX $R0
 
   ${If} $DeployMode == 1
@@ -270,12 +265,56 @@ Section "-prepare" SecPrepare
     !insertmacro RenameDirectory "${COMMON_APPDATA}" "${COMMON_APPDATA}_$R0"
 
   ${EndIf}
+!macroend
+Section "-prepare" SecPrepare
+  ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
+  ${LOG_TEXT} "INFO" "Prepare installation..."
+  SetShellVarContext all
+
+  ${If} $UpdateMode = 1
+    ${LOG_TEXT} "INFO" "Installer started in UpdateMode."
+
+    ; check current install mode: TVServer / TVClient / SingleSeat (both)
+    ; if only TVServer, uninstall current one and go on with installation of new one
+    ; if only TVClient, uninstall current one and go on with installation of new one
+    ; if SingleSeat, if NoClient (Server installation), uninstall current one (removes both components) and install new server component
+    ; if SingleSeat, if NoServer (Client installation), Do NOT uninstall current one (was removed on during server install already), but install new client component
+    ${If} $noClient == 1
+
+      ${LOG_TEXT} "INFO" "TVServer component will be installed soon. (/noClient was used)"
+
+      ${LOG_TEXT} "INFO" "InstallMode is: Dedicated TVServer or SingleSeat."
+      ${LOG_TEXT} "INFO" "  ==>    Old TVServer/Client will be uninstalled now."
+      !insertmacro NsisSilentUinstall "${TV3_REG_UNINSTALL}"
+
+    ${ElseIf} $noServer == 1
+
+      ${LOG_TEXT} "INFO" "TVClient component will be installed soon. (/noServer was used)"
+
+      ${If} ${TVServerIsInstalled}
+        ${LOG_TEXT} "INFO" "TVServer component is already installed."
+        ${LOG_TEXT} "INFO" "     --> Means it is a SingleSeat installation."
+        ${LOG_TEXT} "INFO" "     --> Means TVServer was already updated."
+        ${LOG_TEXT} "INFO" "  ==>    TVServer/Client won't be uninstalled."
+      ${Else}
+        ${LOG_TEXT} "INFO" "TVServer component isn't already installed."
+        ${LOG_TEXT} "INFO" "     --> Means it is a TVClient-only installation."
+        ${LOG_TEXT} "INFO" "  ==>    Old TVClient will be uninstalled now."
+        !insertmacro NsisSilentUinstall "${TV3_REG_UNINSTALL}"
+      ${EndIf}
+
+    ${EndIf}
+
+  ${Else}
+
+    ${LOG_TEXT} "DEBUG" "SecPrepare: not in updateMode"
+    !if ${VER_BUILD} == 0       # it's an official release
+      !insertmacro RenameInstallDirectory
+    !endif
+
+  ${EndIf}
 
 SectionEnd
-!macroend
-!if ${VER_BUILD} == 0       # it's an official release
-  !insertmacro RenameInstallDirectory
-!endif
 
 ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "DEBUG" "MementoSection SecServer"

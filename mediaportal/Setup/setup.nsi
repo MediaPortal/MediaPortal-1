@@ -285,17 +285,17 @@ Section "-prepare" SecPrepare
   ${LOG_TEXT} "DEBUG" "SECTION SecPrepare"
   ${LOG_TEXT} "INFO" "Prepare installation..."
   ${ReadMediaPortalDirs} "$INSTDIR"
-  
+
   !insertmacro ShutdownRunningMediaPortalApplications
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
 
-  # if it is an update include a file with  last update/cleanup instructions
+  # if it is an update include a file with last update/cleanup instructions
   ${If} $UpdateMode = 1
     ${LOG_TEXT} "INFO" "Removing 1.0 files..."
     !include "update-1.0.1.nsh"
-  ${EndIf}  
+  ${EndIf}
 SectionEnd
 
 !macro BackupInstallDirectory

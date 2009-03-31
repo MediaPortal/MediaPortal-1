@@ -499,7 +499,7 @@ Var TempInstallLog
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
   SetRegView 32
-  ${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
+  ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
     ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
@@ -743,14 +743,14 @@ FunctionEnd
 !insertmacro WordReplace
 !insertmacro un.WordReplace
 !macro ReadMPdir UNINSTALL_PREFIX DIR
-  ${LOG_TEXT} "DEBUG" "macro: ReadMPdir | DIR: ${DIR}"
+  ;${LOG_TEXT} "DEBUG" "macro: ReadMPdir | DIR: ${DIR}"
 
   Push "${DIR}"
   Call ${UNINSTALL_PREFIX}GET_PATH_TEXT
   Pop $0
   ${IfThen} $0 == -1 ${|} Goto error ${|}
 
-  ${LOG_TEXT} "DEBUG" "macro: ReadMPdir | text found in xml: '$0'"
+  ;${LOG_TEXT} "DEBUG" "macro: ReadMPdir | text found in xml: '$0'"
   ${${UNINSTALL_PREFIX}WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
   ${${UNINSTALL_PREFIX}WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
 
@@ -778,7 +778,7 @@ FunctionEnd
 #***************************
 
 !macro ReadConfig UNINSTALL_PREFIX PATH_TO_XML
-  ${LOG_TEXT} "DEBUG" "macro: ReadConfig | UNINSTALL_PREFIX: ${UNINSTALL_PREFIX} | PATH_TO_XML: ${PATH_TO_XML}"
+  ;${LOG_TEXT} "DEBUG" "macro: ReadConfig | UNINSTALL_PREFIX: ${UNINSTALL_PREFIX} | PATH_TO_XML: ${PATH_TO_XML}"
 
   IfFileExists "${PATH_TO_XML}\MediaPortalDirs.xml" 0 error
 
@@ -847,7 +847,7 @@ FunctionEnd
 !define ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs ""`
 !define un.ReadMediaPortalDirs `!insertmacro ReadMediaPortalDirs "un."`
 !macro ReadMediaPortalDirs UNINSTALL_PREFIX INSTDIR
-  ${LOG_TEXT} "DEBUG" "macro ReadMediaPortalDirs"
+  ;${LOG_TEXT} "DEBUG" "macro ReadMediaPortalDirs"
 
   StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
@@ -965,6 +965,31 @@ DeleteRegKey HKCU "Software\MediaPortal"
     ClearErrors
     CopyFiles $R0 "$TEMP\uninstall-temp.exe"
     ExecWait '"$TEMP\uninstall-temp.exe" _?=$R1 /RemoveAll'
+    ;BringToFront
+
+    /*
+    ; if an error occured, ask to cancel installation
+    ${If} ${Errors}
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(TEXT_MSGBOX_ERROR_ON_UNINSTALL)" IDYES +2
+      Quit
+    ${EndIf}
+    */
+  ${EndIf}
+!macroend
+!macro NsisSilentUinstall REG_KEY
+!if "${REG_KEY}" == "${TV3_REG_UNINSTALL}"
+  ${StopService} "TVservice"
+!endif
+
+  ReadRegStr $R0 HKLM "${REG_KEY}" UninstallString
+  ${If} ${FileExists} "$R0"
+    ; get parent folder of uninstallation EXE (RO) and save it to R1
+    ${un.GetParent} $R0 $R1
+    ; start uninstallation of installed MP, from tmp folder, so it will delete itself
+    ;HideWindow
+    ClearErrors
+    CopyFiles $R0 "$TEMP\uninstall-temp.exe"
+    ExecWait '"$TEMP\uninstall-temp.exe" /S _?=$R1'
     ;BringToFront
 
     /*
