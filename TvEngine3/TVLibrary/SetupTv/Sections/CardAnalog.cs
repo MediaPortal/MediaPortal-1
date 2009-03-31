@@ -600,9 +600,15 @@ namespace SetupTv.Sections
       if (_configuration.Graph != null && _configuration.Graph.Capture != null)
       {
         UpdateVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
-        if (videoStandardComboBox.Enabled && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
+        if (videoStandardComboBox.Enabled)
         {
-          _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
+          if (videoStandardComboBox.SelectedIndex != -1 && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
+          {
+            _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard) videoStandardComboBox.SelectedItem;
+          }else
+          {
+            _configuration.Graph.Capture.CurrentVideoStandard = AnalogVideoStandard.None;
+          }
         }
         if (frameRateComboBox.Enabled)
         {
