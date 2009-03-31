@@ -68,6 +68,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
+      if (InstallationProperties.Instance["UpdateMode"] == "yes")
+      {
+        return true;
+      }
+
       string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server", true);
       if (keyUninstall != null && File.Exists(keyUninstall))
       {

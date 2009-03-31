@@ -68,9 +68,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      //Do not uninstall MP before update,
-      //because MediaPortal 1.0.0.0 removes all skin/language/webepg grabber files,
-      //including community plugin files!!  (chefkoch)
       if (InstallationProperties.Instance["UpdateMode"] == "yes")
       {
         return true;
