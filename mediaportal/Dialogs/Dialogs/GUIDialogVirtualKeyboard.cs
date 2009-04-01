@@ -680,7 +680,9 @@ namespace MediaPortal.Dialogs
           ev = Event.EV_BACK_BUTTON;
           UpdateState(ev);
           break;
-
+        case Action.ActionType.ACTION_REMOVE_ITEM:
+          Press(Xkey.XK_BACKSPACE);
+          break;
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {
