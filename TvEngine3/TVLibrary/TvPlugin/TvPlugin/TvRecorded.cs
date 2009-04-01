@@ -1034,7 +1034,7 @@ namespace TvPlugin
         }
 
         // Display previews only if the option to create them is active
-        if (File.Exists(PreviewThumb) && _createRecordedThumbs)
+        if (File.Exists(PreviewThumb) /*&& _createRecordedThumbs*/)
         {
           // Search a larger one
           string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
@@ -1042,15 +1042,15 @@ namespace TvPlugin
           {
             PreviewThumb = PreviewThumbLarge;
           }
+          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
         }
         else
         {
           // Fallback to Logo/Default icon
-          PreviewThumb = SmallThumb;
+          item.IconImageBig = SmallThumb;
+          item.ThumbnailImage = String.Empty;
         }
-
-        item.IconImage = SmallThumb;
-        item.ThumbnailImage = item.IconImageBig = PreviewThumb;
+        item.IconImage = SmallThumb;        
 
         //Mark the recording with a "rec. symbol" if it is an active recording.
         if (IsRecordingActual(aRecording))

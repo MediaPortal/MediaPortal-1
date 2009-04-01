@@ -10,11 +10,11 @@
       <description>BG</description>
       <width>1280</width>
       <height>720</height>
-      <id>1</id>
+      <id>0</id>
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>106</posX>
       <posY>12</posY>
       <texture>television_logo.png</texture>
@@ -22,8 +22,33 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
+      <id>500</id>
       <type>image</type>
-      <id>1</id>
+      <posX>76</posX>
+      <posY>333</posY>
+      <width>245</width>
+      <height>138</height>
+      <texture>#selectedthumb</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>71</posX>
+      <posY>330</posY>
+      <width>259</width>
+      <height>148</height>
+      <texture>Picture_cover.png</texture>
+      <visible>facadeview.list+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>      
+    <control>
+      <type>image</type>
+      <id>0</id>
       <posX>136</posX>
       <posY>500</posY>
       <width>286</width>
@@ -46,7 +71,7 @@
     <control>
       <type>fadelabel</type>
       <description>Selected item Label</description>
-      <id>1</id>
+      <id>0</id>
       <posX>1168</posX>
       <posY>85</posY>
       <width>622</width>
@@ -139,7 +164,6 @@
           <left>0</left>
         </padding>
       </mpe>
-
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
@@ -172,35 +196,7 @@
         <font>font11</font>
         <label>#TV.RecordedTV.Description</label>
         <textcolor>ffb2d4f5</textcolor>
-      </control>
-      <control>
-        <id>500</id>
-        <type>image</type>
-        <posX>76</posX>
-        <posY>333</posY>
-        <width>245</width>
-        <height>138</height>
-        <!--      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture> -->
-        <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
-        <visible>facadeview.list+Control.HasFocus(50)</visible>
-        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="250">WindowClose</animation>
-      </control>
-      <control>
-        <type>image</type>
-        <id>0</id>
-        <posX>71</posX>
-        <posY>330</posY>
-        <width>259</width>
-        <height>148</height>
-        <!--      <texture flipY="true" diffuse="Thumb_Mask.png">Picture_cover.png</texture> -->
-        <texture diffuse="Thumb_Mask.png">Picture_cover.png</texture>
-        <visible>facadeview.list+Control.HasFocus(50)+Control.HasThumb(500)</visible>
-        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="250">WindowClose</animation>
-      </control>      
+      </control>    
     </control>
     <import>common.facade.recordings.xml</import>
   </controls>
