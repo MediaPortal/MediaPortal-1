@@ -60,10 +60,10 @@ namespace MediaPortal.GUI.Library
       timeElapsed = clockWatch.ElapsedTicks;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000)/Stopwatch.Frequency);
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / Stopwatch.Frequency);
         if (milliSecondsLeft > 0)
         {
-          Thread.Sleep((int) milliSecondsLeft);
+          Thread.Sleep((int)milliSecondsLeft);
           //Log.Debug("GUIWindowManager: Wait for desired framerate - sleeping {0} ms.", milliSecondsLeft);
         }
         else
@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Library
           Delegate[] delegates = OnPostRenderAction.GetInvocationList();
           for (int i = 0; i < delegates.Length; ++i)
           {
-            if ((FocusState) delegates[i].DynamicInvoke(new object[] {null, message, false}) == FocusState.FOCUSED)
+            if ((FocusState)delegates[i].DynamicInvoke(new object[] { null, message, false }) == FocusState.FOCUSED)
             {
               return;
             }
@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.Library
 
     private static void CallbackMsg(GUIMessage msg)
     {
-      CallbackEnv env = (CallbackEnv) msg.Object;
+      CallbackEnv env = (CallbackEnv)msg.Object;
       env.result = env.callback(env.param1, env.param2, env.data);
       env.finished.Set();
     }
@@ -397,7 +397,7 @@ namespace MediaPortal.GUI.Library
           for (int i = 0; i < delegates.Length; ++i)
           {
             int iActiveWindow = ActiveWindow;
-            FocusState focusState = (FocusState) delegates[i].DynamicInvoke(new object[] {action, null, false});
+            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, false });
             if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
             {
               return;
@@ -459,7 +459,7 @@ namespace MediaPortal.GUI.Library
       if (null != pWindow)
       {
         if (!foundOverlayRecentlyLostFocus)
-          // Don't send it to window if overlay has just lost focus. Correct control already focused!
+        // Don't send it to window if overlay has just lost focus. Correct control already focused!
         {
           pWindow.OnAction(action);
         }
@@ -473,7 +473,7 @@ namespace MediaPortal.GUI.Library
             for (int i = 0; i < delegates.Length; ++i)
             {
               int iActiveWindow = ActiveWindow;
-              focusState = (FocusState) delegates[i].DynamicInvoke(new object[] {action, null, true});
+              focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
               if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
               {
                 break;
@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.Library
               for (int i = 0; i < delegates.Length; ++i)
               {
                 int iActiveWindow = ActiveWindow;
-                focusState = (FocusState) delegates[i].DynamicInvoke(new object[] {action, null, true});
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
                 if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
                 {
                   break;
@@ -799,7 +799,7 @@ namespace MediaPortal.GUI.Library
             _listHistory.RemoveAt(_listHistory.Count - 1);
           }
           // Get previous window id (previous to the last active window) id
-          _previousActiveWindowId = (int) GUIWindow.Window.WINDOW_HOME;
+          _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
           if (_listHistory.Count > 0)
           {
             _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
@@ -810,7 +810,7 @@ namespace MediaPortal.GUI.Library
           if (replaceWindow)
           {
             // activate HOME window
-            newWindowId = (int) GUIWindow.Window.WINDOW_HOME;
+            newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
             for (int i = 0; i < _windowCount; i++)
             {
               newWindow = _listWindows[i];
@@ -915,10 +915,10 @@ namespace MediaPortal.GUI.Library
         }*/
         GUIMessage msg;
         GUIWindow currentWindow;
-        int _previousActiveWindowId = (int) GUIWindow.Window.WINDOW_HOME;
+        int _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
         if (_listHistory.Count > 0)
         {
-          _previousActiveWindowId = (int) _listHistory[_listHistory.Count - 1];
+          _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
           _listHistory.RemoveAt(_listHistory.Count - 1);
           //Log.Info("Window list remove Id:{0} new count: {1}", _previousActiveWindowId, _listHistory.Count);
         }
@@ -959,10 +959,10 @@ namespace MediaPortal.GUI.Library
           {
             try
             {
-              _previousActiveWindowId = (int) GUIWindow.Window.WINDOW_INVALID;
+              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_INVALID;
               if (_listHistory.Count > 0)
               {
-                _previousActiveWindowId = (int) _listHistory[_listHistory.Count - 1];
+                _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
               }
               _activeWindowIndex = i;
               _activeWindowId = newWindow.GetID;
@@ -986,7 +986,7 @@ namespace MediaPortal.GUI.Library
         // so we go back to the first (home) window cause its the only way to get back 
         // to a working window.
         _activeWindowIndex = 0;
-        _activeWindowId = (int) GUIWindow.Window.WINDOW_HOME;
+        _activeWindowId = (int)GUIWindow.Window.WINDOW_HOME;
         for (int i = 0; i < _windowCount; i++)
         {
           newWindow = _listWindows[i];
@@ -1004,7 +1004,7 @@ namespace MediaPortal.GUI.Library
           OnActivateWindow(newWindow.GetID);
         }
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0,
-                             (int) GUIWindow.Window.WINDOW_INVALID, 0, null);
+                             (int)GUIWindow.Window.WINDOW_INVALID, 0, null);
         newWindow.OnMessage(msg);
       }
       finally
@@ -1347,14 +1347,14 @@ namespace MediaPortal.GUI.Library
       {
         if (_displayedOsd != null)
         {
-          return (GUIWindow.Window) _displayedOsd.GetID;
+          return (GUIWindow.Window)_displayedOsd.GetID;
         }
         else
         {
           return GUIWindow.Window.WINDOW_INVALID;
         }
       }
-      set { _displayedOsd = GetWindow((int) value); }
+      set { _displayedOsd = GetWindow((int)value); }
     }
 
     /// <summary>
@@ -1444,7 +1444,7 @@ namespace MediaPortal.GUI.Library
             {
               for (int x = 0; x < PluginManager.SetupForms.Count; ++x)
               {
-                if (((ISetupForm) PluginManager.SetupForms[x]).GetWindowId() == windowId)
+                if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
                 {
                   Log.Debug("WindowManager: Setup...");
                   PluginManager.SetupForms.RemoveAt(x);

@@ -2003,17 +2003,24 @@ public class MediaPortalApp : D3DApp, IRender
                 {
                   if (!GUIGraphicsContext.BlankScreen)
                   {
-                    Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity", ts.TotalSeconds);
+                    Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
                   }
                   GUIGraphicsContext.BlankScreen = true;
                 }
                 else
                 {
-                  if (!GUIGraphicsContext.SaveRenderCycles)
+                  // Slower rendering will have an impact on scrolling labels or list items
+                  // As long as we're e.g. listening to music on "Playing Now" screen 
+                  // we might not want to slow things down here.
+                  // This feature is mainly intended to save energy on idle 24/7 rigs.
+                  if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
                   {
-                    Log.Debug("Main: Idle timer is entering power save mode after {0} seconds of inactivity", ts.TotalSeconds);
+                    if (!GUIGraphicsContext.SaveRenderCycles)
+                    {
+                      Log.Debug("Main: Idle timer is entering power save mode after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
+                    }
+                    GUIGraphicsContext.SaveRenderCycles = true;
                   }
-                  GUIGraphicsContext.SaveRenderCycles = true;
                 }
               }
             }

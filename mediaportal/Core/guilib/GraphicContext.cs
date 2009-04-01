@@ -143,8 +143,8 @@ namespace MediaPortal.GUI.Library
     //boolean indicating if we should show the GUI background or if we should show live tv in the background
 
     private static bool m_bPlayingVideo = false; //boolean indicating if we are playing a movie
-    private static int m_iScrollSpeedVertical = 2; //scroll speed for controls which scroll
-    private static int m_iScrollSpeedHorizontal = 5; //scroll speed for controls which scroll
+    private static int m_iScrollSpeedVertical = 4; //scroll speed for controls which scroll
+    private static int m_iScrollSpeedHorizontal = 1; //scroll speed for controls which scroll
     private static int m_iCharsInCharacterSet = 255; //number of characters for current fonts
     private static bool m_bEditMode = false; //boolean indicating if we are in skin edit mode
     private static bool m_bAnimations = true; //boolean indicating animiations are turned on or off
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Library
     private static bool vmr9Active = false;
     private static bool m_bisvmr9Exclusive = false;
     private static bool m_bisevr = false;
-    private static int m_iMaxFPS = 20;
+    private static int m_iMaxFPS = 50;
     private static long m_iDesiredFrameTime = 100;
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
@@ -203,7 +203,21 @@ namespace MediaPortal.GUI.Library
     public static bool SaveRenderCycles
     {
       get { return idleTimePowerSaving; }
-      set { idleTimePowerSaving = value; }
+      set 
+      {
+        idleTimePowerSaving = value;
+        if (idleTimePowerSaving)
+        {
+          MaxFPS = 5;
+        }
+        else
+        {
+          using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
+            MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
+          }
+        }
+      }
     }
 
     public static bool UseSeparateRenderThread
