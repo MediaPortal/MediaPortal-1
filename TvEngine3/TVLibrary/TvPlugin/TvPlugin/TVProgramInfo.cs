@@ -41,6 +41,59 @@ using TvLibrary.Interfaces;
 
 namespace TvPlugin
 {
+  #region ScheduleInfo class
+
+  public class ScheduleInfo
+  {
+    public ScheduleInfo(int aIdChannel, string aTitle, string aDescription, string aGenre, DateTime aStartTime, DateTime aEndTime)
+    {
+      idChannel = aIdChannel;
+      title = aTitle;
+      description = aDescription;
+      genre = aGenre;
+      startTime = aStartTime;
+      endTime = aEndTime;
+    }
+
+    private int idChannel;
+    public int IdChannel
+    {
+      get { return idChannel; }
+    }
+
+    private string title;
+    public string Title
+    {
+      get { return title; }
+    }
+
+    private string description;
+    public string Description
+    {
+      get { return description; }
+    }
+
+    private string genre;
+    public string Genre
+    {
+      get { return genre; }
+    }
+
+    private DateTime startTime;
+    public DateTime StartTime
+    {
+      get { return startTime; }
+    }
+
+    private DateTime endTime;
+    public DateTime EndTime
+    {
+      get { return endTime; }
+    }
+  }
+
+  #endregion
+
   /// <summary>
   /// Summary description for GUITVProgramInfo.
   /// </summary>
@@ -48,34 +101,20 @@ namespace TvPlugin
   {
     #region Variables
 
-    [SkinControl(17)]
-    protected GUILabelControl lblProgramGenre = null;
-    [SkinControl(15)]
-    protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControl(14)]
-    protected GUILabelControl lblProgramTime = null;
-    [SkinControl(13)]
-    protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControl(16)]
-    protected GUIFadeLabel lblProgramChannel = null;
-    [SkinControl(2)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControl(3)]
-    protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControl(4)]
-    protected GUIButtonControl btnKeep = null;
-    [SkinControl(5)]
-    protected GUIToggleButtonControl btnNotify = null;
-    [SkinControl(10)]
-    protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControl(6)]
-    protected GUIButtonControl btnQuality = null;
-    [SkinControl(7)]
-    protected GUIButtonControl btnEpisodes = null;
-    [SkinControl(8)]
-    protected GUIButtonControl btnPreRecord = null;
-    [SkinControl(9)]
-    protected GUIButtonControl btnPostRecord = null;
+    [SkinControl(17)]    protected GUILabelControl lblProgramGenre = null;
+    [SkinControl(15)]    protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControl(14)]    protected GUILabelControl lblProgramTime = null;
+    [SkinControl(13)]    protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControl(16)]    protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControl(2)]     protected GUIButtonControl btnRecord = null;
+    [SkinControl(3)]     protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControl(4)]     protected GUIButtonControl btnKeep = null;
+    [SkinControl(5)]     protected GUIToggleButtonControl btnNotify = null;
+    [SkinControl(10)]    protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControl(6)]     protected GUIButtonControl btnQuality = null;
+    [SkinControl(7)]     protected GUIButtonControl btnEpisodes = null;
+    [SkinControl(8)]     protected GUIButtonControl btnPreRecord = null;
+    [SkinControl(9)]     protected GUIButtonControl btnPostRecord = null;
 
     private bool _notificationEnabled;
     private static Program currentProgram;
@@ -106,7 +145,7 @@ namespace TvPlugin
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
-      }
+      }      
     }
 
     #endregion
@@ -154,8 +193,8 @@ namespace TvPlugin
         _preRec = 0;
         _postRec = 0;
 
-        int.TryParse(layer.GetSetting("preRecordInterval", "5").Value, out _preRec);
-        int.TryParse(layer.GetSetting("postRecordInterval", "5").Value, out _postRec);
+        int.TryParse(layer.GetSetting("preRecordInterval", "7").Value, out _preRec);
+        int.TryParse(layer.GetSetting("postRecordInterval", "10").Value, out _postRec);
 
         if (!RecordingIntervalValues.Contains(_preRec))
         {
@@ -319,46 +358,59 @@ namespace TvPlugin
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      if (item != null)
+      lock (updateLock)
       {
-        lock (updateLock)
+        if (item != null && item.MusicTag != null)
         {
-          GUIListItem refItem = new GUIListItem(item);
-          UpdateProgramDescription(refItem);
+          Program lstProg = item.MusicTag as Program;
+          if (lstProg != null)
+          {
+            ScheduleInfo refEpisode = new ScheduleInfo(
+                                                       lstProg.IdChannel,
+                                                       lstProg.Title,
+                                                       lstProg.Description,
+                                                       lstProg.Genre,
+                                                       lstProg.StartTime,
+                                                       lstProg.EndTime
+                                                       );
+            UpdateProgramDescription(refEpisode);
+          }
         }
-      }
-      else
-      {
-        Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
+        else
+        {
+          Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
+        }
       }
     }
 
-    private void UpdateProgramDescription(GUIListItem episode)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void UpdateProgramDescription(ScheduleInfo episode)
     {
-      if (episode == null || episode.MusicTag == null)
+      if (episode == null)
       {
-        return;
+        episode = new ScheduleInfo(CurrentProgram.IdChannel,
+                                   CurrentProgram.Title,
+                                   CurrentProgram.Description,
+                                   CurrentProgram.Genre,
+                                   CurrentProgram.StartTime,
+                                   CurrentProgram.EndTime);
       }
 
       try
       {
-        Program listEpisode = episode.MusicTag as Program;
+        //Log.Debug("TVProgrammInfo.UpdateProgramDescription: {0} - {1}", episode.Title, episode.Description);
 
-        if (listEpisode != null)
-        {
-          Log.Debug("TVProgrammInfo.item_OnItemSelected: {0}", listEpisode.Title);
+        lblProgramChannel.Label = Channel.Retrieve(episode.IdChannel).DisplayName;
+        string strTime = String.Format("{0} {1} - {2}",
+                                       Utils.GetShortDayString(episode.StartTime),
+                                       episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-          string strTime = String.Format("{0} {1} - {2}",
-                                         Utils.GetShortDayString(listEpisode.StartTime),
-                                         listEpisode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                         listEpisode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-          lblProgramGenre.Label = listEpisode.Genre;
-          lblProgramTime.Label = strTime;
-          lblProgramDescription.Label = listEpisode.Description;
-          lblProgramTitle.Label = listEpisode.Title;
-          lblProgramChannel.Label = listEpisode.ReferencedChannel().DisplayName;
-        }
+        lblProgramGenre.Label = episode.Genre;
+        lblProgramTime.Label = strTime;
+        lblProgramDescription.Label = episode.Description;
+        lblProgramTitle.Label = episode.Title;
+        
       }
       catch (Exception ex)
       {
@@ -366,6 +418,7 @@ namespace TvPlugin
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private void Update()
     {
       try
@@ -380,7 +433,7 @@ namespace TvPlugin
         {
           lastSelectedProgram = CurrentProgram;
         }
-        int itemToSelect = -1;
+        
         lstUpcomingEpsiodes.Clear();
         if (CurrentProgram == null)
         {
@@ -388,64 +441,11 @@ namespace TvPlugin
         }
 
         //set program description
-        string strTime = String.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(CurrentProgram.StartTime),
-                                       CurrentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       CurrentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-        lblProgramGenre.Label = CurrentProgram.Genre;
-        lblProgramTime.Label = strTime;
-        lblProgramDescription.Label = CurrentProgram.Description;
-        lblProgramTitle.Label = CurrentProgram.Title;
-        lblProgramChannel.Label = Channel.Retrieve(CurrentProgram.IdChannel).DisplayName;
+        UpdateProgramDescription(null);
 
         //check if we are recording this program
-        IList<Schedule> schedules = Schedule.ListAll();
-        bool isRecording = false;
-        bool isSeries = false;
-        foreach (Schedule schedule in schedules)
-        {
-          Schedule recSched;
-          isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+        CheckRecordingStatus();
 
-          if (isRecording)
-          {
-            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-            {
-              isSeries = true;
-            }
-            break;
-          }
-        }
-        if (isRecording)
-        {
-          btnRecord.Label = GUILocalizeStrings.Get(1039); //dont record
-          btnAdvancedRecord.Disabled = true;
-          btnKeep.Disabled = false;
-          btnQuality.Disabled = true;
-          IList<TuningDetail> details = Channel.Retrieve(CurrentProgram.IdChannel).ReferringTuningDetail();
-          foreach (TuningDetail detail in details)
-          {
-            if (detail.ChannelType == 0)
-            {
-              btnQuality.Disabled = false;
-              break;
-            }
-          }
-          btnEpisodes.Disabled = !isSeries;
-          btnPreRecord.Disabled = false;
-          btnPostRecord.Disabled = false;
-        }
-        else
-        {
-          btnRecord.Label = GUILocalizeStrings.Get(264); //record
-          btnAdvancedRecord.Disabled = false;
-          btnKeep.Disabled = true;
-          btnQuality.Disabled = true;
-          btnEpisodes.Disabled = true;
-          btnPreRecord.Disabled = true;
-          btnPostRecord.Disabled = true;
-        }
         if (_notificationEnabled)
         {
           btnNotify.Disabled = false;
@@ -457,78 +457,128 @@ namespace TvPlugin
           btnNotify.Disabled = true;
         }
 
-        //find upcoming episodes
-        lstUpcomingEpsiodes.Clear();
-        TvBusinessLayer layer = new TvBusinessLayer();
-        DateTime dtDay = DateTime.Now;
-        IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), CurrentProgram.Title, null);
-
-        foreach (Program episode in episodes)
-        {
-          GUIListItem item = new GUIListItem();
-          item.Label = episode.Title;
-          item.OnItemSelected += item_OnItemSelected;
-          string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
-          if (!File.Exists(logo))
-          {
-            item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
-            logo = "defaultVideoBig.png";
-          }
-          Schedule recordingSchedule;
-          bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
-          /*
-          bool isRecPrgNow = false;
-          if (!isRecPrg)
-          {
-            isRecPrgNow = TVHome.IsRecordingSchedule();
-          }*/
-
-          if (isRecPrg)
-          {
-            if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
-            {
-              item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
-            }
-            item.TVTag = recordingSchedule;
-          }
-          else
-          {
-            if (episode.Notify && _notificationEnabled)
-            {
-              item.PinImage = Thumbs.TvNotifyIcon;
-            }
-          }
-
-          item.MusicTag = episode;
-          item.ThumbnailImage = logo;
-          item.IconImageBig = logo;
-          item.IconImage = logo;
-          item.Label2 = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(episode.StartTime),
-                                      episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          if (lastSelectedProgram != null)
-          {
-            if (lastSelectedProgram.IdChannel == episode.IdChannel &&
-                lastSelectedProgram.StartTime == episode.StartTime &&
-                lastSelectedProgram.EndTime == episode.EndTime && lastSelectedProgram.Title == episode.Title)
-            {
-              itemToSelect = lstUpcomingEpsiodes.Count;
-            }
-          }
-          lstUpcomingEpsiodes.Add(item);
-        }
-        if (itemToSelect != -1)
-        {
-          lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
-        }
-
-        //set object count label
-        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
+        PopulateListviewWithUpcomingEpisodes(lastSelectedProgram);
       }
       catch (Exception ex)
       {
         Log.Error("TVProgramInfo: Error in Update() - {0}", ex.ToString());
+      }
+    }
+
+    private void PopulateListviewWithUpcomingEpisodes(Program lastSelectedProgram)
+    {
+      int itemToSelect = -1;
+      lstUpcomingEpsiodes.Clear();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      DateTime dtDay = DateTime.Now;
+      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), CurrentProgram.Title, null);
+
+      foreach (Program episode in episodes)
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = episode.Title;
+        item.OnItemSelected += item_OnItemSelected;
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
+        if (!File.Exists(logo))
+        {
+          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
+          logo = "defaultVideoBig.png";
+        }
+        Schedule recordingSchedule;
+        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
+        /*
+        bool isRecPrgNow = false;
+        if (!isRecPrg)
+        {
+          isRecPrgNow = TVHome.IsRecordingSchedule();
+        }*/
+
+        if (isRecPrg)
+        {
+          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
+          {
+            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+          }
+          item.TVTag = recordingSchedule;
+        }
+        else
+        {
+          if (episode.Notify && _notificationEnabled)
+          {
+            item.PinImage = Thumbs.TvNotifyIcon;
+          }
+        }
+
+        item.MusicTag = episode;
+        item.ThumbnailImage = item.IconImageBig = item.IconImage = logo;
+
+        item.Label2 = String.Format("{0} {1} - {2}",
+                                    Utils.GetShortDayString(episode.StartTime),
+                                    episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                    episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        if (lastSelectedProgram != null)
+        {
+          if (lastSelectedProgram.IdChannel == episode.IdChannel &&
+              lastSelectedProgram.StartTime == episode.StartTime &&
+              lastSelectedProgram.EndTime == episode.EndTime && lastSelectedProgram.Title == episode.Title)
+          {
+            itemToSelect = lstUpcomingEpsiodes.Count;
+          }
+        }
+        lstUpcomingEpsiodes.Add(item);
+      }
+      if (itemToSelect != -1)
+      {
+        lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
+      }
+
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
+    }
+
+    private void CheckRecordingStatus()
+    {
+      IList<Schedule> schedules = Schedule.ListAll();
+      bool isRecording = false;
+      bool isSeries = false;
+      foreach (Schedule schedule in schedules)
+      {
+        Schedule recSched;
+        isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+
+        if (isRecording)
+        {
+          if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+          {
+            isSeries = true;
+          }
+          break;
+        }
+      }
+      if (isRecording)
+      {
+        btnRecord.Label = GUILocalizeStrings.Get(1039); //dont record
+        btnAdvancedRecord.Disabled = btnQuality.Disabled = true;
+        btnKeep.Disabled = false;
+
+        IList<TuningDetail> details = Channel.Retrieve(CurrentProgram.IdChannel).ReferringTuningDetail();
+        foreach (TuningDetail detail in details)
+        {
+          if (detail.ChannelType == 0)
+          {
+            btnQuality.Disabled = false;
+            break;
+          }
+        }
+        btnEpisodes.Disabled = !isSeries;
+        btnPreRecord.Disabled = btnPostRecord.Disabled = false;
+      }
+      else
+      {
+        btnRecord.Label = GUILocalizeStrings.Get(264); //record
+        btnAdvancedRecord.Disabled = false;
+        btnKeep.Disabled = btnQuality.Disabled = btnEpisodes.Disabled = btnPreRecord.Disabled = btnPostRecord.Disabled = true;
       }
     }
 
