@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -37,6 +38,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 
+
 namespace TvPlugin
 {
   /// <summary>
@@ -44,6 +46,8 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
+    #region Variables
+
     [SkinControl(17)]
     protected GUILabelControl lblProgramGenre = null;
     [SkinControl(15)]
@@ -73,20 +77,41 @@ namespace TvPlugin
     [SkinControl(9)]
     protected GUIButtonControl btnPostRecord = null;
 
-    protected bool _notificationEnabled;
-
+    private bool _notificationEnabled;
     private static Program currentProgram;
-
     private readonly List<int> RecordingIntervalValues = new List<int>();
     private int _preRec;
     private int _postRec;
+    private object updateLock = null;
+    private static object fieldLock = new object();
+
+    #endregion
+
+    #region Ctor
 
     public TVProgramInfo()
     {
+      updateLock = new object();
       GetID = (int)Window.WINDOW_TV_PROGRAM_INFO; //748
 
       LoadSettings();
     }
+
+    #endregion
+
+    #region Serialisation
+
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
+      }
+    }
+
+    #endregion
+
+    #region Overrides
 
     public override void OnAdded()
     {
@@ -154,10 +179,77 @@ namespace TvPlugin
       Update();
     }
 
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if (control == btnPreRecord)
+      {
+        OnPreRecordInterval();
+      }
+      if (control == btnPostRecord)
+      {
+        OnPostRecordInterval();
+      }
+      if (control == btnEpisodes)
+      {
+        OnSetEpisodes();
+      }
+      //Quality control is currently not implemented, so we don't want to confuse the user
+      if (control == btnQuality)
+      {
+        OnSetQuality();
+      }
+      if (control == btnKeep)
+      {
+        OnKeep();
+      }
+      if (control == btnRecord)
+      {
+        OnRecordProgram(CurrentProgram);
+      }
+      if (control == btnAdvancedRecord)
+      {
+        OnAdvancedRecord();
+      }
+      if (control == btnNotify)
+      {
+        OnNotify();
+      }
+      if (control == lstUpcomingEpsiodes)
+      {
+        GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
+        if ((item != null) && (item.MusicTag != null))
+        {
+          OnRecordProgram(item.MusicTag as Program);
+        }
+        else
+        {
+          Log.Warn("TVProgrammInfo.OnClicked: item {0} was NULL!", lstUpcomingEpsiodes.SelectedItem.ToString());
+        }
+      }
+
+      base.OnClicked(controlId, control, actionType);
+    }
+
+    #endregion
+
+    #region Fields
+
     public static Program CurrentProgram
     {
-      get { return currentProgram; }
-      set { currentProgram = value; }
+      get
+      {
+        lock (fieldLock)
+        {
+          return currentProgram;
+        }
+      }
+      set
+      {
+        lock (fieldLock)
+        {
+          currentProgram = value;
+        }
+      }
     }
 
     public static Schedule CurrentRecording
@@ -178,24 +270,95 @@ namespace TvPlugin
       }
     }
 
-    private void UpdateProgramDescription(Program program)
+    #endregion
+
+    #region Static methods
+
+    private static string GetRecordingDateTime(Schedule rec)
     {
-      if (program == null)
+      return String.Format("{0} {1} - {2}",
+                           Utils.GetShortDayString(rec.StartTime),
+                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+    }
+
+    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
+    {
+      recordingSchedule = null;
+      IList<Schedule> schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
+      {
+        if (schedule.Canceled != Schedule.MinSchedule)
+        {
+          continue;
+        }
+        if (schedule.IsManual && schedule.IdChannel == program.IdChannel && schedule.EndTime >= program.EndTime)
+        {
+          Schedule manual = schedule.Clone();
+          manual.ProgramName = program.Title;
+          manual.EndTime = program.EndTime;
+          manual.StartTime = program.StartTime;
+          if (manual.IsRecordingProgram(program, filterCanceledRecordings))
+          {
+            recordingSchedule = schedule;
+            return true;
+          }
+        }
+        else if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
+        {
+          recordingSchedule = schedule;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    #endregion
+
+    #region Private methods
+
+    private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      if (item != null)
+      {
+        lock (updateLock)
+        {
+          GUIListItem refItem = new GUIListItem(item);
+          UpdateProgramDescription(refItem);
+        }
+      }
+      else
+      {
+        Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
+      }
+    }
+
+    private void UpdateProgramDescription(GUIListItem episode)
+    {
+      if (episode == null || episode.MusicTag == null)
       {
         return;
       }
+
       try
       {
-        string strTime = String.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(program.StartTime),
-                                       program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        Program listEpisode = episode.MusicTag as Program;
 
-        lblProgramGenre.Label = program.Genre;
-        lblProgramTime.Label = strTime;
-        lblProgramDescription.Label = program.Description;
-        lblProgramTitle.Label = program.Title;
-        lblProgramChannel.Label = Channel.Retrieve(program.IdChannel).DisplayName;
+        if (listEpisode != null)
+        {
+          Log.Debug("TVProgrammInfo.item_OnItemSelected: {0}", listEpisode.Title);
+
+          string strTime = String.Format("{0} {1} - {2}",
+                                         Utils.GetShortDayString(listEpisode.StartTime),
+                                         listEpisode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                         listEpisode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+          lblProgramGenre.Label = listEpisode.Genre;
+          lblProgramTime.Label = strTime;
+          lblProgramDescription.Label = listEpisode.Description;
+          lblProgramTitle.Label = listEpisode.Title;
+          lblProgramChannel.Label = listEpisode.ReferencedChannel().DisplayName;
+        }
       }
       catch (Exception ex)
       {
@@ -215,26 +378,26 @@ namespace TvPlugin
         }
         else
         {
-          lastSelectedProgram = currentProgram;
+          lastSelectedProgram = CurrentProgram;
         }
         int itemToSelect = -1;
         lstUpcomingEpsiodes.Clear();
-        if (currentProgram == null)
+        if (CurrentProgram == null)
         {
           return;
         }
 
         //set program description
         string strTime = String.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(currentProgram.StartTime),
-                                       currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       Utils.GetShortDayString(CurrentProgram.StartTime),
+                                       CurrentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       CurrentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        lblProgramGenre.Label = currentProgram.Genre;
+        lblProgramGenre.Label = CurrentProgram.Genre;
         lblProgramTime.Label = strTime;
-        lblProgramDescription.Label = currentProgram.Description;
-        lblProgramTitle.Label = currentProgram.Title;
-        lblProgramChannel.Label = Channel.Retrieve(currentProgram.IdChannel).DisplayName;
+        lblProgramDescription.Label = CurrentProgram.Description;
+        lblProgramTitle.Label = CurrentProgram.Title;
+        lblProgramChannel.Label = Channel.Retrieve(CurrentProgram.IdChannel).DisplayName;
 
         //check if we are recording this program
         IList<Schedule> schedules = Schedule.ListAll();
@@ -243,7 +406,7 @@ namespace TvPlugin
         foreach (Schedule schedule in schedules)
         {
           Schedule recSched;
-          isRecording = IsRecordingProgram(currentProgram, out recSched, true);
+          isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
           if (isRecording)
           {
@@ -260,7 +423,7 @@ namespace TvPlugin
           btnAdvancedRecord.Disabled = true;
           btnKeep.Disabled = false;
           btnQuality.Disabled = true;
-          IList<TuningDetail> details = Channel.Retrieve(currentProgram.IdChannel).ReferringTuningDetail();
+          IList<TuningDetail> details = Channel.Retrieve(CurrentProgram.IdChannel).ReferringTuningDetail();
           foreach (TuningDetail detail in details)
           {
             if (detail.ChannelType == 0)
@@ -286,7 +449,7 @@ namespace TvPlugin
         if (_notificationEnabled)
         {
           btnNotify.Disabled = false;
-          btnNotify.Selected = currentProgram.Notify;
+          btnNotify.Selected = CurrentProgram.Notify;
         }
         else
         {
@@ -298,7 +461,7 @@ namespace TvPlugin
         lstUpcomingEpsiodes.Clear();
         TvBusinessLayer layer = new TvBusinessLayer();
         DateTime dtDay = DateTime.Now;
-        IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), currentProgram.Title, null);
+        IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), CurrentProgram.Title, null);
 
         foreach (Program episode in episodes)
         {
@@ -369,92 +532,10 @@ namespace TvPlugin
       }
     }
 
-    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
-    {
-      recordingSchedule = null;
-      IList<Schedule> schedules = Schedule.ListAll();
-      foreach (Schedule schedule in schedules)
-      {
-        if (schedule.Canceled != Schedule.MinSchedule)
-        {
-          continue;
-        }
-        if (schedule.IsManual && schedule.IdChannel == program.IdChannel && schedule.EndTime >= program.EndTime)
-        {
-          Schedule manual = schedule.Clone();
-          manual.ProgramName = program.Title;
-          manual.EndTime = program.EndTime;
-          manual.StartTime = program.StartTime;
-          if (manual.IsRecordingProgram(program, filterCanceledRecordings))
-          {
-            recordingSchedule = schedule;
-            return true;
-          }
-        }
-        else if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
-        {
-          recordingSchedule = schedule;
-          return true;
-        }
-      }
-      return false;
-    }
-
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      if (control == btnPreRecord)
-      {
-        OnPreRecordInterval();
-      }
-      if (control == btnPostRecord)
-      {
-        OnPostRecordInterval();
-      }
-      if (control == btnEpisodes)
-      {
-        OnSetEpisodes();
-      }
-      //Quality control is currently not implemented, so we don't want to confuse the user
-      if (control == btnQuality)
-      {
-        OnSetQuality();
-      }
-      if (control == btnKeep)
-      {
-        OnKeep();
-      }
-      if (control == btnRecord)
-      {
-        OnRecordProgram(currentProgram);
-      }
-      if (control == btnAdvancedRecord)
-      {
-        OnAdvancedRecord();
-      }
-      if (control == btnNotify)
-      {
-        OnNotify();
-      }
-      if (control == lstUpcomingEpsiodes)
-      {
-        GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
-        if ((item != null) && (item.MusicTag != null))
-        {
-          OnRecordProgram(item.MusicTag as Program);
-        }
-        else
-        {
-          Log.Warn("TVProgrammInfo.OnClicked: item {0} was NULL!", lstUpcomingEpsiodes.SelectedItem.ToString());
-        }
-      }
-
-      base.OnClicked(controlId, control, actionType);
-    }
-
     private void OnPreRecordInterval()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out rec, false))
+      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -518,8 +599,8 @@ namespace TvPlugin
         rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
 
-        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime,
-                                                       currentProgram.EndTime);
+        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
+                                                       CurrentProgram.EndTime);
         if (assocSchedule != null)
         {
           assocSchedule.PreRecordInterval = rec.PreRecordInterval;
@@ -535,7 +616,7 @@ namespace TvPlugin
     private void OnPostRecordInterval()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out rec, false))
+      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -598,8 +679,8 @@ namespace TvPlugin
         rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
 
-        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, currentProgram.Title, currentProgram.StartTime,
-                                                       currentProgram.EndTime);
+        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
+                                                       CurrentProgram.EndTime);
         if (assocSchedule != null)
         {
           assocSchedule.PostRecordInterval = rec.PostRecordInterval;
@@ -612,7 +693,7 @@ namespace TvPlugin
     private void OnSetQuality()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out rec, false))
+      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -752,7 +833,7 @@ namespace TvPlugin
     private void OnSetEpisodes()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out rec, false))
+      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -984,7 +1065,7 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
-      if (currentProgram == null)
+      if (CurrentProgram == null)
       {
         return;
       }
@@ -1038,21 +1119,21 @@ namespace TvPlugin
             scheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
-        CreateProgram(currentProgram, scheduleType);
+        CreateProgram(CurrentProgram, scheduleType);
 
         if (scheduleType == (int)ScheduleRecordingType.Once)
         {
           //check if this program is interrupted (for example by a news bulletin)
           //ifso ask the user if he wants to record the 2nd part also
-          DateTime dtStart = currentProgram.EndTime.AddMinutes(1);
+          DateTime dtStart = CurrentProgram.EndTime.AddMinutes(1);
           DateTime dtEnd = dtStart.AddHours(3);
           TvBusinessLayer layer = new TvBusinessLayer();
-          IList<Program> programs = layer.GetPrograms(currentProgram.ReferencedChannel(), dtStart, dtEnd);
+          IList<Program> programs = layer.GetPrograms(CurrentProgram.ReferencedChannel(), dtStart, dtEnd);
           if (programs.Count >= 2)
           {
             Program next = programs[0];
             Program nextNext = programs[1];
-            if (nextNext.Title == currentProgram.Title)
+            if (nextNext.Title == CurrentProgram.Title)
             {
               TimeSpan ts = next.EndTime - nextNext.StartTime;
               if (ts.TotalMinutes <= 40)
@@ -1078,13 +1159,13 @@ namespace TvPlugin
 
     private void OnNotify()
     {
-      currentProgram.Notify = !currentProgram.Notify;
+      CurrentProgram.Notify = !CurrentProgram.Notify;
 
       // get the right db instance of current prog before we store it
       // currentProgram is not a ref to the real entity
-      Program modifiedProg = Program.RetrieveByTitleTimesAndChannel(currentProgram.Title, currentProgram.StartTime,
-                                                             currentProgram.EndTime, currentProgram.IdChannel);
-      modifiedProg.Notify = currentProgram.Notify;
+      Program modifiedProg = Program.RetrieveByTitleTimesAndChannel(CurrentProgram.Title, CurrentProgram.StartTime,
+                                                             CurrentProgram.EndTime, CurrentProgram.IdChannel);
+      modifiedProg.Notify = CurrentProgram.Notify;
       modifiedProg.Persist();
       Update();
       TvNotifyManager.OnNotifiesChanged();
@@ -1093,7 +1174,7 @@ namespace TvPlugin
     private void OnKeep()
     {
       Schedule rec;
-      if (false == IsRecordingProgram(currentProgram, out rec, false))
+      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -1145,10 +1226,10 @@ namespace TvPlugin
           dlg.SetHeading(1045);
           for (int iDay = 1; iDay <= 100; iDay++)
           {
-            DateTime dt = currentProgram.StartTime.AddDays(iDay);
+            DateTime dt = CurrentProgram.StartTime.AddDays(iDay);
             dlg.Add(dt.ToLongDateString());
           }
-          TimeSpan ts = (rec.KeepDate - currentProgram.StartTime);
+          TimeSpan ts = (rec.KeepDate - CurrentProgram.StartTime);
           int days = (int)ts.TotalDays;
           if (days >= 100)
           {
@@ -1160,7 +1241,7 @@ namespace TvPlugin
           {
             return;
           }
-          rec.KeepDate = currentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
+          rec.KeepDate = CurrentProgram.StartTime.AddDays(dlg.SelectedLabel + 1);
           break;
         case 1046:
           rec.KeepMethod = (int)KeepMethodType.Always;
@@ -1171,46 +1252,6 @@ namespace TvPlugin
       server.OnNewSchedule();
     }
 
-    private void item_OnItemSelected(GUIListItem item, GUIControl parent)
-    {
-      if (item != null)
-      {
-        Program episode = null;
-        if (item.MusicTag != null)
-        {
-          episode = item.MusicTag as Program;
-        }
-
-        if (episode != null)
-        {
-          Log.Info("TVProgrammInfo.item_OnItemSelected: {0}", episode.Title);
-          UpdateProgramDescription(episode);
-        }
-        else
-        {
-          Log.Warn("TVProgrammInfo.item_OnItemSelected: episode was NULL!");
-        }
-      }
-      else
-      {
-        Log.Warn("TVProgrammInfo.item_OnItemSelected: params where NULL!");
-      }
-    }
-
-    private static string GetRecordingDateTime(Schedule rec)
-    {
-      return String.Format("{0} {1} - {2}",
-                           Utils.GetShortDayString(rec.StartTime),
-                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-    }
-
-    private void LoadSettings()
-    {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
-      }
-    }
+    #endregion
   }
 }
