@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.IO;
 using System.Text;
 
 using MediaPortal.Dialogs;

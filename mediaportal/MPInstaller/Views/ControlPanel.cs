@@ -586,7 +586,7 @@ namespace MediaPortal.MPInstaller
       wiz.package.LoadFromFile(fil);
       if (wiz.package.isValid)
       {
-        wiz.starStep();
+          wiz.starStep();
       }
       else
       {

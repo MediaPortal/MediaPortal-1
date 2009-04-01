@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using System.Text;
 
+using ICSharpCode.SharpZipLib.Zip;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+
+
 
 namespace MediaPortal.MPInstaller
 {
@@ -13,7 +18,7 @@ namespace MediaPortal.MPInstaller
   {
     public MPInstallerScript()
     {
-
+      EnableWizard = true;
     }
 
     private MPpackageStruct currentPackage;
@@ -24,7 +29,13 @@ namespace MediaPortal.MPInstaller
       set { currentPackage = value; }
     }
 
+    private bool enableWizard;
 
+    public bool EnableWizard
+    {
+      get { return enableWizard; }
+      set { enableWizard = value; }
+    }
 
     /// <summary>
     /// Execute when the package is downloaded via GUI 
@@ -126,10 +137,6 @@ namespace MediaPortal.MPInstaller
       CurrentPackage.installLanguage(listbox);
     }
 
-    virtual public void UnInstall()
-    {
-
-    }
 
     /// <summary>
     /// Called when [install file procesed].
@@ -149,8 +156,45 @@ namespace MediaPortal.MPInstaller
     }
 
 
+    /// <summary>
+    /// Executed only if EnableWizard is false
+    /// </summary>
+    /// <returns>True if unistall done</returns>
+    virtual public bool UnInstall()
+    {
+      return true;
+    }
 
-#region helper func's
+    #region Generic methods
+
+    public bool ExtractFile(string FileName, string OutFile)
+    {
+      try
+      {
+        FastZip zipobj = new FastZip();
+        string intenalFileName = MPinstallerStruct.GetZipEntry(this.CurrentPackage.InstallerInfo.FindFile(FileName));
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile))))
+        {
+          File.Delete(Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile)));
+        }
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName)))
+        {
+          File.Delete(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName));
+        }
+        zipobj.ExtractZip(this.CurrentPackage.FileName, Path.GetDirectoryName(OutFile), intenalFileName);
+        File.Move(Path.Combine(Path.GetDirectoryName(OutFile), intenalFileName), Path.Combine(Path.GetDirectoryName(OutFile), Path.GetFileName(OutFile)));
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(ex.Message + ex.InnerException + ex.StackTrace);
+        return false;
+      }
+      return true;
+    }
+    #endregion
+
+
+    #region helper func's
 
     /// <summary>
     /// Tests the version  of package if compatible with current version of MP .

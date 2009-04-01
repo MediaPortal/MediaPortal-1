@@ -16,5 +16,7 @@ namespace MediaPortal.MPInstaller
     void OnInstallFileProcesed(MPIFileList mpiFileInfo);
     void OnInstallDone();
     MPpackageStruct CurrentPackage {  get ;  set  ;}
-   }
+    bool EnableWizard { get;  set;}
+    bool UnInstall();
+  }
 }

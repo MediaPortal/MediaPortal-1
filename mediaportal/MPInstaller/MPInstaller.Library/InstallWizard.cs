@@ -58,51 +58,32 @@ namespace MediaPortal.MPInstaller
       inst.LoadFromFile();
       if (!package.InstallerScript.Warning())
         return;
-      if (inst.IndexOf(package) < 0)
-        nextStep(1);
-      else
-        if (MessageBox.Show("Extension already installed. Do you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+      if (package.InstallerScript.EnableWizard)
+      {
+        if (inst.IndexOf(package) < 0)
           nextStep(1);
+        else
+          if (MessageBox.Show("Extension already installed. Do you want to continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            nextStep(1);
+      }
+      else
+      {
+        package.InstallerScript.Install(null, null, null);
+      }
     }
 
     public void StartUpdate()
     {
       update = true;
       inst.LoadFromFile();
-      nextStep(1);
-      //if (!this.Visible) this.Show();
-      //this.Text = "MediaPortal extension instaler";
-      //skinlister.Items.Clear();
-      //foreach (string sk in package.SkinList)
-      //{
-      //    skinlister.Items.Add(sk, true);
-      //}
-      //if (package._intalerStruct.Logo != null)
-      //{
-      //    pictureBox2.Visible = true;
-      //    pictureBox2.Image = package._intalerStruct.Logo;
-      //}
-      //else
-      //{
-      //    pictureBox2.Visible = false;
-      //}
-      //for (int i = 0; i < skinlister.Items.Count; i++)
-      //{
-      //    if (skinlister.GetItemChecked(i))
-      //        package.InstallableSkinList.Add(skinlister.Items[i].ToString());
-      //}
-      //label2.Visible = true;
-      //progressBar1.Visible = true;
-      //progressBar2.Visible = true;
-      //listBox1.Visible = true; ;
-      //title_label.Text = package._intalerStruct.Name;
-      //label2.Text = "Instaling ...";
-      //button_next.Visible = false;
-      //button_back.Visible = true;
-      //richTextBox1.Text = "";
-      //richTextBox1.Visible = false;
-      //step = 7;
-      //install();
+      if (package.InstallerScript.EnableWizard)
+      {
+        nextStep(1);
+      }
+      else
+      {
+        package.InstallerScript.Install(null, null, null);
+      }
     }
 
     /// <summary>
@@ -461,82 +442,94 @@ namespace MediaPortal.MPInstaller
         }
       }
       if (index > -1)
-        if (((MPpackageStruct)inst.Items[index]).InstallerInfo.Uninstall.Count > 0)
+      {
+        if (!((MPpackageStruct)inst.Items[index]).InstallerScript.EnableWizard)
         {
-          if (MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+          if (((MPpackageStruct)inst.Items[index]).InstallerScript.UnInstall())
           {
-            if (!this.Visible) this.Show();
-            MPpackageStruct p = (MPpackageStruct)inst.Items[index];
-            MPpackageStruct p_temp = new MPpackageStruct();
-
-            if (File.Exists(InstallDir + @"\" + p.FileName))
-              p_temp.LoadFromFile(InstallDir + @"\" + p.FileName);
-            try
-            {
-              if (p_temp.InstallPlugin != null)
-                p_temp.InstallPlugin.OnStartUnInstall(ref p);
-            }
-            catch (Exception)
-            {
-            }
-            label2.Visible = true;
-            progressBar1.Visible = true;
-            progressBar2.Visible = false;
-            listBox1.Visible = true;
-            this.Text = "Uninstalling " + p.InstallerInfo.Name;
-            title_label.Text = p.InstallerInfo.Name;
-            label2.Text = "Uninstalling ...";
-            button_next.Visible = false;
-            button_back.Visible = false;
-            richTextBox1.Text = "";
-            richTextBox1.Visible = false;
-            progressBar1.Maximum = p.InstallerInfo.Uninstall.Count;
-            for (int i = 0; i < p.InstallerInfo.Uninstall.Count; i++)
-            {
-              UninstallInfo u = (UninstallInfo)p.InstallerInfo.Uninstall[i];
-              progressBar1.Value++;
-              progressBar1.Update();
-              progressBar1.Refresh();
-              if (System.IO.File.Exists(u.Path))
-              {
-                if (System.IO.File.GetCreationTime(u.Path) == u.Date)
-                {
-                  try
-                  {
-                    System.IO.File.Delete(u.Path);
-                    listBox1.Items.Add(u.Path);
-                    listBox1.Update();
-                    listBox1.Refresh();
-                    this.Refresh();
-                    this.Update();
-                  }
-                  catch (Exception)
-                  {
-                  }
-                }
-                else
-                  listBox1.Items.Add("File date changed :" + u.Path);
-              }
-              else listBox1.Items.Add("File not found :" + u.Path);
-            }
             inst.Items.RemoveAt(index);
             inst.SaveToFile();
-            if (p_temp.InstallPlugin != null)
-            {
-              try
-              {
-                if (p_temp.InstallPlugin != null)
-                  p_temp.InstallPlugin.OnEndUnInstall(ref p);
-              }
-              catch (Exception)
-              {
-
-              }
-            }
           }
         }
         else
-          MessageBox.Show("Uninstall information not found !");
+        {
+          if (((MPpackageStruct)inst.Items[index]).InstallerInfo.Uninstall.Count > 0)
+          {
+            if (MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+              if (!this.Visible) this.Show();
+              MPpackageStruct p = (MPpackageStruct)inst.Items[index];
+              MPpackageStruct p_temp = new MPpackageStruct();
+              if (File.Exists(InstallDir + @"\" + p.FileName))
+                p_temp.LoadFromFile(InstallDir + @"\" + p.FileName);
+              try
+              {
+                if (p_temp.InstallPlugin != null)
+                  p_temp.InstallPlugin.OnStartUnInstall(ref p);
+              }
+              catch (Exception)
+              {
+              }
+              label2.Visible = true;
+              progressBar1.Visible = true;
+              progressBar2.Visible = false;
+              listBox1.Visible = true;
+              this.Text = "Uninstalling " + p.InstallerInfo.Name;
+              title_label.Text = p.InstallerInfo.Name;
+              label2.Text = "Uninstalling ...";
+              button_next.Visible = false;
+              button_back.Visible = false;
+              richTextBox1.Text = "";
+              richTextBox1.Visible = false;
+              progressBar1.Maximum = p.InstallerInfo.Uninstall.Count;
+              for (int i = 0; i < p.InstallerInfo.Uninstall.Count; i++)
+              {
+                UninstallInfo u = (UninstallInfo)p.InstallerInfo.Uninstall[i];
+                progressBar1.Value++;
+                progressBar1.Update();
+                progressBar1.Refresh();
+                if (System.IO.File.Exists(u.Path))
+                {
+                  if (System.IO.File.GetCreationTime(u.Path) == u.Date)
+                  {
+                    try
+                    {
+                      System.IO.File.Delete(u.Path);
+                      listBox1.Items.Add(u.Path);
+                      listBox1.Update();
+                      listBox1.Refresh();
+                      this.Refresh();
+                      this.Update();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                  }
+                  else
+                    listBox1.Items.Add("File date changed :" + u.Path);
+                }
+                else listBox1.Items.Add("File not found :" + u.Path);
+              }
+              inst.Items.RemoveAt(index);
+              inst.SaveToFile();
+              if (p_temp.InstallPlugin != null)
+              {
+                try
+                {
+                  if (p_temp.InstallPlugin != null)
+                    p_temp.InstallPlugin.OnEndUnInstall(ref p);
+                }
+                catch (Exception)
+                {
+
+                }
+              }
+            }
+          }
+          else
+            MessageBox.Show("Uninstall information not found !");
+        }
+      }
       else
         MessageBox.Show("Uninstall information not found !");
 
