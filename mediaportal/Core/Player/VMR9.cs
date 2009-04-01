@@ -559,10 +559,12 @@ namespace MediaPortal.Player
 
       TimeSpan ts = DateTime.Now - _repaintTimer;
       int frames = FrameCounter;
-      if (ts.TotalMilliseconds >= 5000 || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0))
+      if (ts.TotalMilliseconds >= 5000 
+        || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0)
+        || g_Player.Paused ) // in paused state frames aren't rendered so we need "force" the GUI drawing here
       {
         GUIGraphicsContext.Vmr9FPS = ((float) (frames*1000))/((float) ts.TotalMilliseconds);
-//         Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
+        //Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
