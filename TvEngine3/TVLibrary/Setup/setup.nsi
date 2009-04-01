@@ -790,6 +790,11 @@ Function .onInit
     !insertmacro UnselectSection ${SecServer}
   ${EndIf}
 
+  ; OS and other common initialization checks are done in the following NSIS header file
+  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
+  !insertmacro MediaPortalAdminCheck $DeployMode
+  !insertmacro MediaPortalVCRedistCheck $DeployMode
+
   ; check if old msi based client plugin is installed.
   ${If} ${MSI_TVClientIsInstalled}
     MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MSI_CLIENT)"
@@ -802,12 +807,18 @@ Function .onInit
     Abort
   ${EndIf}
 
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck $DeployMode
-  !insertmacro MediaPortalAdminCheck $DeployMode
-  !insertmacro MediaPortalVCRedistCheck $DeployMode
-
+  ; Read installation dir from registry, ONLY if
+  ;   - installer is started in UpdateMode
+  ;   - MediaPortal is already installed
+  ${If} $UpdateMode = 1
+    ${If} ${TVServerIsInstalled}
+    ${OrIf} ${TVClientIsInstalled}
+      !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
+    ${Else}
+      MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED)"
+      Abort
+    ${EndIf}
+  ${EndIf}
 
   ; check if reboot is required
   ${If} ${FileExists} "$INSTDIR\rebootflag"

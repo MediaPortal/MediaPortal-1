@@ -516,13 +516,15 @@ Var TempInstallLog
 
 !macro TVSERVER_GET_INSTALL_DIR _var
   SetRegView 32
-  ${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_INSTALL_DIR"
+  ;${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_INSTALL_DIR"
 
   ${If} ${TVServerIsInstalled}
   ${OrIf} ${TVClientIsInstalled}
     ReadRegStr ${_var} HKLM "${TV3_REG_UNINSTALL}" "InstallPath"
+    ${LOG_TEXT} "INFO" "TVServer/Client installation dir found: ${_var}"
   ${Else}
     StrCpy ${_var} ""
+    ${LOG_TEXT} "INFO" "No TVServer/Client installation found: _var will be empty"
   ${EndIf}
 
 !macroend
