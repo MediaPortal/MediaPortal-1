@@ -492,11 +492,11 @@ namespace TvService
             if (string.IsNullOrEmpty(dbsCard.TimeShiftFolder))
             {
               TimeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-              if (!Directory.Exists(TimeShiftPath))
-              {
-                Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
-                Directory.CreateDirectory(TimeShiftPath);
-              }
+            }
+            if (!Directory.Exists(TimeShiftPath))
+            {
+              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
+              Directory.CreateDirectory(TimeShiftPath);
             }
 
             Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, TimeShiftPath);
