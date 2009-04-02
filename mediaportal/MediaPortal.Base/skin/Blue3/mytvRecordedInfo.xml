@@ -5,8 +5,11 @@
   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
+      <description>BG</description>
       <type>image</type>
       <id>1</id>
+      <width>720</width>
+      <height>576</height>
     </control>
     <control>
       <type>group</type>
@@ -93,27 +96,26 @@
       <type>image</type>
       <description>Current program background</description>
       <id>300</id>
-      <posX>75</posX>
-      <posY>419</posY>
+      <posX>49</posX>
+	  <posY>419</posY>
       <width>161</width>
-      <height>134</height>
-      <texture>playback_background.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
       <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>videowindow</type>
       <description>TV preview window</description>
       <id>99</id>
-      <posX>86</posX>
-      <posY>431</posY>
-      <width>135</width>
-      <height>108</height>
-      <onup>5</onup>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <posX>56</posX>
+      <posY>425</posY>
+      <width>145</width>
+      <height>111</height>
       <action>18</action>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <textureFocus>tv_green_border.png</textureFocus>
       <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>

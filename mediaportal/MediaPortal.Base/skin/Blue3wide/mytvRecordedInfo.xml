@@ -5,8 +5,11 @@
   <allowoverlay>no</allowoverlay>
   <controls>
     <control>
+      <description>BG</description>
       <type>image</type>
       <id>1</id>
+      <width>1280</width>
+      <height>720</height>
     </control>
     <control>
       <type>group</type>
@@ -93,27 +96,28 @@
       <type>image</type>
       <description>Current program background</description>
       <id>300</id>
-      <posX>133</posX>
-      <posY>523</posY>
-      <width>286</width>
-      <height>167</height>
-      <texture>playback_background.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <posX>78</posX>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>videowindow</type>
       <description>TV preview window</description>
       <id>99</id>
-      <posX>152</posX>
-      <posY>538</posY>
-      <width>240</width>
-      <height>135</height>
-      <onup>5</onup>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
