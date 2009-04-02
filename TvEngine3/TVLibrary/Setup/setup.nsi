@@ -987,7 +987,7 @@ Function FinishShow
   ; This function is called, after the Finish Page creation is finished
 
   ; It checks, if the Server has been selected and only displays the run checkbox in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${IfNot} ${TVServerIsInstalled}
     SendMessage $mui.FinishPage.Run ${BM_CLICK} 0 0
     ShowWindow  $mui.FinishPage.Run ${SW_HIDE}
   ${EndIf}
