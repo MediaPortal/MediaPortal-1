@@ -99,6 +99,7 @@ namespace TvPlugin
     private static VirtualCard _card = null;
     private DateTime _updateTimer = DateTime.Now;
     private static bool _autoTurnOnTv = false;
+    private static int _waitonresume = 0;
     //int _lagtolerance = 10; //Added by joboehl
     public static bool settingsLoaded = false;
     private DateTime _dtlastTime = DateTime.Now;
@@ -114,6 +115,7 @@ namespace TvPlugin
     private static bool _autoFullScreen = false;
     private static bool _autoFullScreenOnly = false;
     private static bool _resumed = false;
+    private static bool _suspended = false;
     private static bool _showlastactivemodule = false;
     private static bool _showlastactivemoduleFullscreen = false;
     private static bool _playbackStopped = false;
@@ -1001,6 +1003,8 @@ namespace TvPlugin
         _showlastactivemodule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         _showlastactivemoduleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
 
+        _waitonresume = xmlreader.GetValueAsInt("tvservice", "waitonresume", 0);
+
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
 
@@ -1334,6 +1338,7 @@ namespace TvPlugin
       }
       finally
       {
+        _suspended = true;
         _resumed = false;        
       }      
     }
@@ -1341,7 +1346,8 @@ namespace TvPlugin
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
-      _resumed = true;      
+      _resumed = true;
+      _suspended = false;
     }
 
     public void Start()
@@ -3111,7 +3117,13 @@ namespace TvPlugin
       //GUIWaitCursor.Show();
       _doingChannelChange = false;
       bool cardChanged = false;
-      
+
+      if (!_resumed && _suspended && _waitonresume > 0)
+      {
+        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms. resumed {1}, suspended {2}", _waitonresume, _resumed, _suspended);
+        Thread.Sleep(_waitonresume);
+      }
+
       _waitForVideoReceived.Reset();
       _waitForVideoReceived.Reset();
       
