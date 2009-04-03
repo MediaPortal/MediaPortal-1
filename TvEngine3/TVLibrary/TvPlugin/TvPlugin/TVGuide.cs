@@ -31,19 +31,22 @@ using MediaPortal.GUI.Library;
 
 namespace TvPlugin
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public class TVGuide : TvGuideBase
   {
     [SkinControl(98)] protected GUIImage videoBackground;
     [SkinControl(99)] protected GUIVideoControl videoWindow;
+
+    #region Ctor
 
     public TVGuide()
       : base()
     {
       GetID = (int) Window.WINDOW_TVGUIDE;
     }
+
+    #endregion
+
+    #region Overrides
 
     public override bool Init()
     {
@@ -75,53 +78,13 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      ///@
-      /*
-      CheckNewTVGuide();
-      // check if there's a new TVguide.xml
-      try
-      {
-        List<TVChannel> channels = new List<TVChannel>();
-        TVDatabase.GetChannels(ref channels);
-        if (channels.Count == 0)
-        {
-          StartImportXML();
-        }
-        channels = null;
-      }
-      catch (Exception)
-      {
-      }
-      */
-
-      ///@
-      //TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-      //TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-      //@ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      ///@
-      ///TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-      ///TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-      ///ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
-
       base.OnPageDestroy(newWindowId);
-      ///@
-      /*
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.IsRecording()))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing... 
-
-            Recorder.StopViewing();
-          }
-        }
-      }*/
     }
+
+    #endregion
   }
 }
