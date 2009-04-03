@@ -22,8 +22,8 @@
 using System;
 using System.Net;
 using TvLibrary;
+using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
 using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
@@ -54,11 +54,6 @@ namespace TvService
     public TvCardHandler(Card dbsCard, ITVCard card)
     {
       _dbsCard = dbsCard;
-      TvCardAnalog analogCard = card as TvCardAnalog;
-      if (analogCard != null)
-      {
-        analogCard.CardId = _dbsCard.IdCard;
-      }
       Card = card;
       IsLocal = _card != null;
       _userManagement = new UserManagement(this);

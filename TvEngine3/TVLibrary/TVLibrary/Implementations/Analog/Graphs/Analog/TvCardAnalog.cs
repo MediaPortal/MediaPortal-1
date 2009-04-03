@@ -62,7 +62,6 @@ namespace TvLibrary.Implementations.Analog
     private Hauppauge _haupPauge;
     private IQuality _qualityControl;
     private Configuration _configuration;
-    private int _cardId;
     #endregion
 
     #region ctor
@@ -82,6 +81,8 @@ namespace TvLibrary.Implementations.Analog
       _conditionalAccess = null;
       _cardType = CardType.Analog;
       _epgGrabbing = false;
+      _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+      Configuration.writeConfiguration(_configuration);
     }
     #endregion
 
@@ -394,7 +395,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Gets or sets the unique id of this card
     /// </summary>
-    public int CardId
+    public override int CardId
     {
       get { return _cardId; }
       set

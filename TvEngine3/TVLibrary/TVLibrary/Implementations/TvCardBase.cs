@@ -58,6 +58,7 @@ namespace TvLibrary.Implementations
           if (dbsCard.DevicePath.Equals(_devicePath))
           {
             _preloadCard = dbsCard.PreloadCard;
+            _cardId = dbsCard.IdCard;
             break;
           }
         }
@@ -190,9 +191,26 @@ namespace TvLibrary.Implementations
     /// Main device of the card
     /// </summary>
     protected DsDevice _device;
+    /// <summary>
+    /// The db card id
+    /// </summary>
+    protected int _cardId;
     #endregion
 
     #region properties
+
+    /// <summary>
+    /// Gets or sets the unique id of this card
+    /// </summary>
+    public virtual int CardId
+    {
+      get { return _cardId; }
+      set
+      {
+        _cardId = value;
+      }
+    }
+
 
     /// <summary>
     /// returns true if card should be preloaded
