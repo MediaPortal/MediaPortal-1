@@ -525,7 +525,10 @@ Verplaats dit bestand naar uw HTPC en start de installatie met "MediaPortal.Depl
     <value>Huidige installatie bijwerken naar {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>Opmerking: U kunt niet op basis van een SVN bijwerken,
+    <value>Opmerking: U kunt niet op basis van een bestaande SVN upgraden,
                    deze zijn alleen voor test doeleinden.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Upgrade-&gt;Installeren</value>
   </data>
 </root>
