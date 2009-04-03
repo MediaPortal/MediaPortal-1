@@ -205,16 +205,22 @@ namespace MediaPortal.GUI.Library
       get { return idleTimePowerSaving; }
       set 
       {
-        idleTimePowerSaving = value;
-        if (idleTimePowerSaving)
+        // Since every action (like keypresses) resets the Blankscreen field we certainly want to check
+        // whether we really need to reload the "old" FPS.
+        if (idleTimePowerSaving != value)
         {
-          MaxFPS = 5;
-        }
-        else
-        {
-          using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          idleTimePowerSaving = value;
+
+          if (idleTimePowerSaving)
           {
-            MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
+            MaxFPS = 5;
+          }
+          else
+          {
+            using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {       
+              MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
+            }
           }
         }
       }
