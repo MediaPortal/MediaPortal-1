@@ -274,7 +274,7 @@
     <String id="340">Diverse artiesten</String>
     <String id="341">DVD afspelen</String>
     <String id="342">Films</String>
-    <String id="343">Framerate aanpassen</String>
+    <String id="343">Beeldsnelheid aanpassen</String>
     <String id="344">Acteurs</String>
     <String id="345">Jaar</String>
     <String id="346">Stapelen</String>
@@ -286,9 +286,9 @@
     <String id="352">Gedimd</String>
     <String id="353">Zwart</String>
     <String id="354">Matrix Trails</String>
-    <String id="355">Schermbeveiliging inactiviteits periode</String>
+    <String id="355">Inschakelvertraging schermbeveiliging</String>
     <String id="356">Schermbeveiliging modus</String>
-    <String id="357">Uitschakeling inactiviteits periode</String>
+    <String id="357">Inschakelvertraging voor afsluiten</String>
     <String id="358">Alle albums</String>
     <String id="359">Recente albums</String>
     <String id="360">Schermbeveiliging</String>
@@ -299,7 +299,7 @@
     <String id="365">Sorteer op: Naam</String>
     <String id="366">Sorteer op: Jaar</String>
     <String id="367">Sorteer op: Score</String>
-    <String id="368">IMDb informatie</String>
+    <String id="368">IMDb info</String>
     <String id="369">Titel</String>
     <String id="370">Onweer</String>
     <String id="371">Gedeeltelijk</String>
@@ -386,7 +386,7 @@
     <String id="454">Rij 4 adres:</String>
     <String id="455">Rijen:</String>
     <String id="456">Modus:</String>
-    <String id="457">Weergave</String>
+    <String id="457">Verander beeld</String>
     <String id="458">B/Mark</String>
     <String id="459">Ondertitels</String>
     <String id="460">Audio stream</String>
@@ -529,8 +529,8 @@
     <String id="632">Objecten</String>
     <String id="633">startdatum/tijd</String>
     <String id="634">einddatum/tijd</String>
-    <String id="635">Tijd:</String>
-    <String id="636">Datum:</String>
+    <String id="635">Tijd</String>
+    <String id="636">Datum</String>
     <String id="637">Wijzig opname</String>
     <String id="638">Nieuwe opname</String>
     <String id="639">Albums van</String>
@@ -977,6 +977,8 @@
     <String id="1515">Timeshifting is gestopt door de\rTV-server</String>
     <String id="1516">Timeshifting is gestopt door een\ronbekende oorzaak</String>
     <String id="1517">Timeshifting is gestopt door een\randere gebruiker</String>
+    <String id="1518">Niet mogelijk om het beeld op te bouwen</String>
+    <String id="1519">Er is geen ondersteunde software encoder geïnstalleerd</String>
     <String id="1950">Status</String>
     <String id="1951">Harde schijf</String>
     <String id="1952">Ventilator</String>
@@ -1374,7 +1376,7 @@
     <String id="9003">Meetmodus:</String>
     <String id="9004">Belichtingscomp.:</String>
     <String id="9005">Sluitersnelheid:</String>
-    <String id="9006">Datum:</String>
+    <String id="9006">Datum genomen:</String>
     <String id="9007">F-nummer:</String>
     <String id="9008">Belichtingstijd:</String>
     <String id="9009">Cameratype:</String>
