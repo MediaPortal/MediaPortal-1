@@ -67,7 +67,7 @@ namespace MediaPortal.TagReader
     /// <returns>Returns true if file is Cue file</returns>
     public static Boolean isCueFile(string fileName)
     {
-      return (System.IO.File.Exists(fileName) && fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName));
+      return (fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName));
     }
 
     /// <summary>
