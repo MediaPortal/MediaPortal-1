@@ -25,7 +25,7 @@
       <type>label</type>
       <id>2</id>
       <posX>444</posX>
-      <posY>87</posY>
+      <posY>110</posY>
       <label>6035</label>
       <font>font16</font>
       <align>right</align>
@@ -36,7 +36,7 @@
       <type>listcontrol</type>
       <id>50</id>
       <posX>142</posX>
-      <posY>106</posY>
+      <posY>175</posY>
       <width>995</width>
       <height>375</height>
       <onleft>51</onleft>
@@ -49,7 +49,7 @@
       <type>smsinput</type>
       <id>51</id>
       <posX>871</posX>
-      <posY>437</posY>
+      <posY>480</posY>
       <width>355</width>
       <height>125</height>
       <onleft>51</onleft>
@@ -60,8 +60,8 @@
       <font>font13</font>
       <textcolor2>ffAAAAAA</textcolor2>
       <textboxFont>font13</textboxFont>
-      <textboxXpos>80</textboxXpos>
-      <textboxYpos>350</textboxYpos>
+      <textboxXpos>150</textboxXpos>
+      <textboxYpos>500</textboxYpos>
       <textboxWidth>400</textboxWidth>
       <textboxHeight>22</textboxHeight>
       <textboxColor>FFFFFF00</textboxColor>
