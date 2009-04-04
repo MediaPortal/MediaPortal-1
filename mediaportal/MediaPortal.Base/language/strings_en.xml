@@ -1474,24 +1474,24 @@
     <String id="13033">Most Recently Launched</String>
     <String id="13034">Title</String>
     <String id="13041">Show File Info</String>
-	<String id="14001" prefix="My ">Extensions</String>
-	<String id="14002">Views</String>
+    <String id="14001" prefix="My ">Extensions</String>
+    <String id="14002">Views</String>
     <String id="14003">Installed extensions</String>
     <String id="14004">Online extensions</String>
     <String id="14005">Install extension</String>
     <String id="14006">UnInstall extension</String>	
     <String id="14007">ReInstall extension</String>
     <String id="14008">Revoke last action</String>
-	<String id="14009">On next restart this action will be executed</String>
-	<String id="14010">Download extension</String>
-	<String id="14011">Select an option</String>
-	<String id="14012">Not supported Mediaportal version !(Needed version {0})</String>	
-	<String id="14013">Do you want continue ?</String>		
-	<String id="14014">Updating online info</String>			
-	<String id="14015">Updates</String>	
-	<String id="14016">Sort by: Download</String>
-	<String id="14017">Sort by: Rating</String>
-	<String id="14018">Install Update</String>
+    <String id="14009">On next restart this action will be executed</String>
+    <String id="14010">Download extension</String>
+    <String id="14011">Select an option</String>
+    <String id="14012">Not supported Mediaportal version !(Needed version {0})</String>	
+    <String id="14013">Do you want continue ?</String>		
+    <String id="14014">Updating online info</String>			
+    <String id="14015">Updates</String>	
+    <String id="14016">Sort by: Download</String>
+    <String id="14017">Sort by: Rating</String>
+    <String id="14018">Install Update</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
@@ -1733,6 +1733,8 @@
     <String id="100707">EPG -&gt; Channel mapping</String>
     <String id="100708">Skip step settings</String>
     <String id="100709">TV server settings</String>
+    <String id="100746">TV search type</String>
+    <String id="100747">TV search</String>
     <String id="100748">Programme info.</String>
     <String id="100749">TV/No signal</String>
     <String id="100750">Recipes</String>
@@ -1864,6 +1866,6 @@
     <String id="200068">Unable to connect to database</String>
     <String id="200069">All ip ports seem to be fine</String>
     <String id="200070">Please check firewall</String>
-	<String id="200071">Delete this folder and all subfolders?</String>
+    <String id="200071">Delete this folder and all subfolders?</String>
   </Section>
 </Language>
