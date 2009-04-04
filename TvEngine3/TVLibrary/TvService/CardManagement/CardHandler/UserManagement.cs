@@ -20,7 +20,7 @@
  */
 
 using System;
-using System.IO;
+using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
@@ -117,68 +117,34 @@ namespace TvService
         return;
       if (!context.DoesExists(user))
         return;
-
-      int subChannelId;
-      context.GetUser(ref user, out subChannelId);
-      if (subChannelId != -1)
+      context.GetUser(ref user, _cardHandler.DataBaseCard.IdCard);
+      context.Remove(user);
+      if (!context.ContainsUsersForSubchannel(user.SubChannel))
       {
-        Log.Info("card: remove user:{0} sub:{1}", user.Name, subChannelId);
-        context.Remove(user);
-        if (!context.ContainsUsersForSubchannel(subChannelId))
+        //only remove subchannel if it exists.
+        if (_cardHandler.Card.GetSubChannel(user.SubChannel) != null)
         {
-          //only remove subchannel if it exists.
-          if (_cardHandler.Card.GetSubChannel(subChannelId) != null)
+          // Before we remove the subchannel we have to stop it
+          ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+          if (subChannel.IsTimeShifting)
           {
-            // Before we remove the subchannel we have to stop it
-            ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(subChannelId);
-            if (subChannel.IsTimeShifting)
-            {
-              subChannel.StopTimeShifting();
-            }
-            else if (subChannel.IsRecording)
-            {
-              subChannel.StopRecording();
-            }
-            Log.Info("card: free subchannel sub:{0}", subChannelId);
-            _cardHandler.Card.FreeSubChannel(subChannelId);
-            CleanTimeShiftFiles(_cardHandler.DataBaseCard.TimeShiftFolder, String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard, subChannelId));
+            subChannel.StopTimeShifting();
+          } else if (subChannel.IsRecording)
+          {
+            subChannel.StopRecording();
           }
+          _cardHandler.Card.FreeSubChannel(user.SubChannel);
+          CleanTimeshiftFilesThread cleanTimeshiftFilesThread = new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeShiftFolder, String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard, user.SubChannel));
+          Thread cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles);
+          cleanupThread.IsBackground = true;
+          cleanupThread.Name = "TS_File_Cleanup";
+          cleanupThread.Priority = ThreadPriority.Lowest;
+          cleanupThread.Start();
         }
       }
       if (_cardHandler.IsIdle)
       {
         _cardHandler.Card.StopGraph();
-      }
-    }
-
-    /// <summary>
-    /// deletes time shifting files left in the specified folder.
-    /// </summary>
-    /// <param name="folder">The folder.</param>
-    /// <param name="fileName">Name of the file.</param>
-    static void CleanTimeShiftFiles(string folder, string fileName)
-    {
-      try
-      {
-        Log.Write(@"card: delete timeshift files {0}\{1}", folder, fileName);
-        string[] files = Directory.GetFiles(folder);
-        for (int i = 0; i < files.Length; ++i)
-        {
-          if (files[i].IndexOf(fileName) >= 0)
-          {
-            try
-            {
-              Log.Write("card:   delete {0}", files[i]);
-              File.Delete(files[i]);
-            } catch (Exception)
-            {
-              Log.Error("card: Error on delete in CleanTimeshiftFiles");
-            }
-          }
-        }
-      } catch (Exception ex)
-      {
-        Log.Write(ex);
       }
     }
 
