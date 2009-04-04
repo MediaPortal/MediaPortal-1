@@ -665,6 +665,7 @@
     <carrier frequency="562000" bandwidth="8"></carrier>
     <carrier frequency="658000" bandwidth="8"></carrier>
     <carrier frequency="674000" bandwidth="8"></carrier>
+    <carrier frequency="730000" bandwidth="8"></carrier>
   </country>
   <country name="Finland - Eurajoki" offset="125">
 	<carrier frequency="610000" bandwidth="8"></carrier>
