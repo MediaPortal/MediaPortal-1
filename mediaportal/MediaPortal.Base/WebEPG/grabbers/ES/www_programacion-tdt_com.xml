@@ -8,7 +8,7 @@
     <Channel id="A3NOVA@antena3.es" siteId="A3_Nova" />
     <Channel id="Antena3@antena3.es" siteId="Antena_3" />
     <Channel id="Canal24@tve.es" siteId="Canal_24h" />
-    <Channel id="TVE50/CLANTV@tve.es" siteId="TVE_50_aniversario" />
+    <Channel id="ClanTV@tve.es" siteId="Clan_TV" />
     <Channel id="CNN+-es" siteId="CNN+" />
     <Channel id="Cuatro.com" siteId="Cuatro" />
     <Channel id="FlyMusic.tv" siteId="Fly_Music" />
@@ -67,3 +67,4 @@
       </Html>
    </Listing>
 </Grabber>
+ 	  	 

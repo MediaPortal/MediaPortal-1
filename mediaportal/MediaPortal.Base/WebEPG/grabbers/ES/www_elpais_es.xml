@@ -1,40 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="3" timezone="" version="2.0" />
+  <Info availableDays="3" timezone="" />
   <Channels>
-    <Channel id="antena3tv.es" siteId="3-Antena+3" />
-    <Channel id="rtvcanal9.com" siteId="8-Canal+9" />
-    <Channel id="canalsur@canalsur.es" siteId="9-Canal+Sur" />
-    <Channel id="canalsur2@canalsur.es" siteId="9-Canal+Sur+2" />
-    <Channel id="canal33-es" siteId="14-Canal+33" />
-    <Channel id="digitalplus@plus.es" siteId="21-Digital+Plus" />
-    <Channel id="etb1@eitb.com" siteId="11-ETB+1" />
-    <Channel id="etb2@eitb.com" siteId="12-ETB+2" />
-    <Channel id="tvela2@tve.es" siteId="2-La+2+de+TVE" />
-    <Channel id="rtvcm.es" siteId="17-PROGRAMACION+DE+CASTILLA+LA+MANCHA+TELEVISIÓN" />
-    <Channel id="k3-es" siteId="20-K3" />
-    <Channel id="punt2-es" siteId="15-Punt+2" />
-    <Channel id="telecinco.es" siteId="4-Tele+5" />
-    <Channel id="telemadrid.es" siteId="6-Telemadrid" />
-    <Channel id="tvcanaria.tv" siteId="16-Televisión+Canaria" />
-    <Channel id="tvcatalunya.com" siteId="7-TV3" />
-    <Channel id="tve1@tve.es" siteId="1-TVE1" />
-    <Channel id="crtvg.es" siteId="10-TVG" />
+    <Channel id="tve1@tve.es" siteId="tve-1" />
+    <Channel id="tve2@tve.es" siteId="la-2" />
+    <Channel id="Antena3" siteId="antena-3" />
+    <Channel id="Cuatro" siteId="cuatro" />
+    <Channel id="Tele5" siteId="telecinco" />
+    <Channel id="LaSexta" siteId="la-sexta-a" />
+    <Channel id="TV3" siteId="tv3" />
+    <Channel id="Punto2" siteId="punto-2" />
+    <Channel id="CastillaLaMancha" siteId="castilla-la-mancha" />
+    <Channel id="ETB1" siteId="etb-1" />
+    <Channel id="ETB2" siteId="etb-2" />
+    <Channel id="Telemadrid" siteId="telemadrid" />
+    <Channel id="Canal2Andalucia" siteId="canal-2-andalucia" />
+    <Channel id="CanalSur" siteId="canal-sur" />
+    <Channel id="TVCanaria" siteId="tccanaria-aut" />
+    <Channel id="TelevisionGalicia" siteId="tvg-aut" />
+    <Channel id="Canal9" siteId="canal9-aut" />
+    <Channel id="clantve@tve.es" siteId="clan-tve" />
+    <Channel id="teledeporte@tve.es" siteId="teledeporte" />
+    <Channel id="tve24h@tve.es" siteId="24-horas" />
+    <Channel id="40Latino" siteId="40-latino" />
+    <Channel id="Canal33" siteId="canal-33" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.elpais.es/parrillatv/resultados.html?franja=&amp;tipo=&amp;canal=[ID]&amp;dia=[YYYY][MM][DD]" post="" external="false" encoding="" />
+    <Site url="http://www.elpais.es/parrillatv/[ID]/[WEEKDAY]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="Programa" end="&lt;!-- BANNER_RIGHT">
         <SectionTemplate tags="T">
           <TemplateText>
-	&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
-	&lt;tr&gt;&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-	&lt;/tr&gt;
-	&lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;
-    </TemplateText>
+            &lt;tr&gt;
+            &lt;td class="hora"&gt; &lt;#START&gt;&lt;/td&gt;
+            &lt;td class="descripcion"&gt;
+            &lt;div&gt;
+            &lt;h4&gt;
+            &lt;a href="/parrillatv/tve-1/noticias-24-horas/26-02-2009/06:00" title="Noticias 24 horas"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+            &lt;/h4&gt;
+            &lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;/td&gt;
+            &lt;td class="minutos"&gt; 60"&lt;/td&gt;
+            &lt;td class="tipo"&gt;
+            &lt;span class="opciondos"&gt;Informativos&lt;/span&gt;
+            &lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
     </Html>

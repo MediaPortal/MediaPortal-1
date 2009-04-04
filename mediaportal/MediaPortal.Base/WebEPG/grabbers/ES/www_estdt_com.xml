@@ -28,18 +28,24 @@
   <Listing type="Html">
     <Site url="http://www.estdt.com/3,[YYYY][MM][DD],[ID],1.html" post="" external="false" encoding="" />
       <Html>
-         <Template name="default">
+         <Template name="default" start="prginclude" end="cuadrofec2">
             <SectionTemplate tags="D">
                <TemplateText>
-                  &lt;div class="prghora"&gt;&lt;#START&gt;&lt;/div&gt;
-                  &lt;div class="prgprog"&gt;
-                  &lt;div class="prgptit"&gt;&lt;#TITLE&gt;&lt;/div&gt;
-                  &lt;Z(&gt;&lt;div class="prgpsub"&gt;&lt;b&gt;&lt;#DESCRIPTION&gt;&lt;/b&gt;&lt;br/&gt;
-                  &lt;/div&gt;&lt;/Z)?&gt;
-                  &lt;/div&gt;
+                 &lt;div class="prghora"&gt;&lt;#START&gt;&lt;/div&gt;
+                 &lt;div class="prgprog"&gt;
+                 &lt;div class="prgptit"&gt;&lt;#TITLE&gt;&lt;/div&gt;
+                 &lt;div class="prgpsub"&gt;
+                 &lt;div class="rels"&gt;
+                 &lt;/div&gt;
+                 &lt;div class="icons"&gt;
+                 &lt;/div&gt;
+                 &lt;/div&gt;
+                 &lt;/div&gt;
+                 &lt;/div&gt;
                </TemplateText>
 	    </SectionTemplate>
          </Template>
       </Html>
    </Listing>
 </Grabber>
+ 	  	 
