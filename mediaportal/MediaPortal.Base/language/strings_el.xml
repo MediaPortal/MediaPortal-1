@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Greek" characters="255">
   <Section name="unmapped">
     <String id="0">Προγράμματα</String>
@@ -286,14 +286,14 @@
     <String id="352">Χαμήλωμα</String>
     <String id="353">Μαύρο</String>
     <String id="354">Matrix Trails</String>
-    <String id="355">Χρόνος ενεργοποίηση προστασίας οθόνης</String>
+    <String id="355">Χρόνος ενεργοποίησης προστασίας οθόνης</String>
     <String id="356">Λειτουργία προστασίας οθόνης</String>
     <String id="357">Χρόνος απενεργοποίησης </String>
     <String id="358">Όλα τα αλμπουμ</String>
     <String id="359">Πρόσφατα αλμπουμ</String>
     <String id="360">Προστασία οθόνης</String>
     <String id="361">Παρουσίαση ανάποδα</String>
-    <String id="362">Επίπεδο Fade Προστασία οθόνης (%)</String>
+    <String id="362">Επίπεδο Fade Προστασίας οθόνης (%)</String>
     <String id="363">Ταξινόμηση: Αρχείο</String>
     <String id="364">DD/DTS Multichannel Passthrough</String>
     <String id="365">Ταξινόμηση: Όνομα</String>
@@ -766,7 +766,7 @@
     <String id="923">Παρουσίαση</String>
     <String id="924">Μενού</String>
     <String id="925">Διαγραφή αυτής της ταινίας</String>
-    <String id="926">Προσθήκη στην λίστα αναπαραγωγής</String>
+    <String id="926">Προσθήκη στην λίστα αναπ/γής</String>
     <String id="927">Προειδοποίηση</String>
     <String id="928">Ευρεση Εξώφυλλου</String>
     <String id="929">Κλείσιμο Μενού</String>
@@ -814,7 +814,7 @@
     <String id="975">Προηγούμενο κεφάλαιο</String>
     <String id="976">Επόμενο κεφάλαιο</String>
     <String id="977">Δεν υπάρχει ελεύθερη κάρτα TV</String>
-    <String id="978">που να μπορεί να ειδωθεί αυτό το κανάλι</String>
+    <String id="978">που να μπορεί να αναπαράγει το κανάλι</String>
     <String id="979">Αναπαραγωγή εγγραφής από την αρχή</String>
     <String id="980">Αναπαραγωγή εγγραφής από το ζωντανό</String>
     <String id="981">Ακύρωση αυτής της εκπομπής</String>
@@ -977,6 +977,8 @@
     <String id="1515">Το Timeshifting σταμάτησε απ'το\rTV-server</String>
     <String id="1516">Το Timeshifting σταμάτησε για \rάγνωστο λόγο</String>
     <String id="1517">Η λειτουργία Timeshifting τερματίστηκε από r/άλλον χρήστη</String>
+    <String id="1518">Αδυναμία δημιουργίας γραφήματος</String>
+    <String id="1519">Δεν έχει εγκατασταθεί encoder</String>
     <String id="1950">Κατάσταση</String>
     <String id="1951">Σκληρός Δίσκος</String>
     <String id="1952">Ανεμ/ρας</String>
@@ -1271,7 +1273,7 @@
     <String id="4552">Παίξιμο Τώρα</String>
     <String id="4553">Λίστα αναπαραγωγής</String>
     <String id="4554">Έρευνα πληροφοριών CD</String>
-    <String id="4555">Τρέχουσα λίστα αναπαραγωγής</String>
+    <String id="4555">Λίστα αναπαραγωγής</String>
     <String id="4557">Προσθήκη όλων στην λίστα αναπαραγωγής</String>
     <String id="5900">Τρέιλερ</String>
     <String id="5901">Προβολή ταινιών</String>
@@ -1399,7 +1401,7 @@
     <String id="9116">Καθαρισμός οθόνης με βίντεο</String>
     <String id="9117">Ενεργοποίηση ενεργειών οθόνης</String>
     <String id="9118">Χρόνος ενέργειας οθόνης</String>
-    <String id="9119">Καθαρισμός οθόνης σε κατάσταση idle</String>
+    <String id="9119">Καθαρισμός οθόνης σε idle</String>
     <String id="9120">Καθυστέρηση idle</String>
     <String id="9121">Προβολή έντασης</String>
     <String id="9122">Προβολή προόδου</String>
@@ -1408,13 +1410,13 @@
     <String id="9125">Κατάσταση CD/DVD</String>
     <String id="9126">Xρήση custom font</String>
     <String id="9127">Μεγάλα Εικονίδια</String>
-    <String id="9128">Χρήση Custom Μεγάλων Εικονιδίων</String>
+    <String id="9128">Custom Μεγάλα Εικονίδια</String>
     <String id="9129">Αναστροφή Μεγάλων Εικονιδίων</String>
     <String id="9130">Font Editor</String>
     <String id="9131">Icon Editor</String>
     <String id="9132">Χρήση ισοσταθμιστή</String>
     <String id="9133">Στυλ Ισοσταθμιστή</String>
-    <String id="9134">Χρήση ομαλοποίησης Ισοσταθμιστή</String>
+    <String id="9134">Χρήση ομαλοποίησης EQ</String>
     <String id="9135">Καθυστέρηση Έναρξης</String>
     <String id="9136">Χρονική Καθυστέρηση</String>
     <String id="9137">Απεικόνιση Τίτλου</String>
@@ -1480,7 +1482,7 @@
     <String id="14006">Απεγκατάσταση επέκτασης</String>
     <String id="14007">Επανεγκατάσταση επέκτασης</String>
     <String id="14008">Αναίρεση προηγούμενης πράξης</String>
-    <String id="14009">Αυτή η πράξη θα πραγματοποιηθεί στην επόμενη επαν/νηση</String>
+    <String id="14009">Αυτή η πράξη θα πραγματοποιηθεί με επανεκ/νηση</String>
     <String id="14010">Μεταφόρτωση επέκτασης</String>
     <String id="14011">Κάνετε επιλογή</String>
     <String id="14012">Μη υποστηριζόμενη έκδοση MediaPortal!(Απαιτούμενη έκδοση {0})</String>
@@ -1517,7 +1519,7 @@
     <String id="19111">Τέλος παιχνιδιού</String>
     <String id="19112">Συγχαρητήρια!</String>
     <String id="19113">Λύσατε το παιχνίδι σωστά.</String>
-    <String id="19114">Λυπάμε - η λύση σας είναι λανθασμένη.</String>
+    <String id="19114">Λυπάμαι - η λύση σας είναι λανθασμένη.</String>
     <String id="19115">παιδιά</String>
     <String id="19116">Τιμή κελιού</String>
     <String id="19117">Καθαρισμός κελιού</String>
@@ -1563,7 +1565,7 @@
     <String id="30004">Προηγούμενη σελίδα</String>
     <String id="30005">Επόμενη σελίδα</String>
     <String id="30006">Σταμάτημα</String>
-    <String id="30007">Εύρεση άλλων βίντεο από τον καλιτέχνη</String>
+    <String id="30007">Εύρεση άλλων βίντεο από τον καλλιτέχνη</String>
     <String id="30008">κατηγορία</String>
     <String id="30009">σελίδα</String>
     <String id="30010">Επιλογή αποτελεμάτων για {0} - σελίδα {1} </String>
@@ -1577,7 +1579,7 @@
     <String id="33007">Scrobble: Εκτός σύνδεσης</String>
     <String id="33008">Δεν υπάρχει ενεργή λίστα αναπαραγωγής</String>
     <String id="33009">για να εισαχθεί ή να προστεθεί το κομμάτι!</String>
-    <String id="33010">Αυτόματη συμπλήρωση λίστας αναπαραγωγής με</String>
+    <String id="33010">Αυτόματη συμπλήρωση λίστας αναπ/γής με</String>
     <String id="33011">παρόμοια κομμάτια</String>
     <String id="33012">κομμάτια που αρέσουν στους γείτονες</String>
     <String id="33013">κομμάτια που ταιριάζουν στο ρυθμισμένο tag</String>
@@ -1588,8 +1590,8 @@
     <String id="33019">τυχαία κομμάτια απ'τα αγαπημένα</String>
     <String id="33030">Καλύτερα κομμάτια από άλμπουμ</String>
     <String id="33031">Άλλα κομμάτια tagged με:</String>
-    <String id="33032">Τα καλύτερα κομμάτια αυτού του άλμπουμ δεν μπορούσαν να</String>
-    <String id="33033">βρεθούν στην συλλογή!</String>
+    <String id="33032">Τα καλύτερα κομμάτια αυτού του άλμπουμ δεν</String>
+    <String id="33033"> μπορούσαν να βρεθούν στην συλλογή!</String>
     <String id="33040">Αντιγραφή του τι παίζει τώρα στο σημειωματάριο</String>
     <String id="33041">Προσθήκη αυτού του άλμπουμ στην λίστα αναπαραγωγής</String>
     <String id="34000">Last.fm</String>
