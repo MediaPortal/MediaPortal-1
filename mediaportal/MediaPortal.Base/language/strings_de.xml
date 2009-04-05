@@ -1489,9 +1489,9 @@
     <String id="14013">Wollen Sie fortfahren ?</String>
     <String id="14014">Aktualisiere Online Informationen</String>
     <String id="14015">Aktualisierungen</String>
-	<String id="14016">Sortiere: Downloads</String>
-	<String id="14017">Sortiere: Bewertung</String>
-	<String id="14018">Aktualisierung installieren</String>  
+    <String id="14016">Sortiere: Downloads</String>
+    <String id="14017">Sortiere: Bewertung</String>
+    <String id="14018">Aktualisierung installieren</String>
     <String id="16001">Partymix</String>
     <String id="19001" prefix="Mein ">Tetris</String>
     <String id="19002">Neues Spiel</String>
@@ -1733,6 +1733,8 @@
     <String id="100707" prefix="Meine ">EPG-Kanal-Zuordnung</String>
     <String id="100708" prefix="Meine ">Skip-Stufen-Einstellungen</String>
     <String id="100709" prefix="Meine ">TV-Server-Einstellungen</String>
+    <String id="100746">TV Suchtyp</String>
+    <String id="100747">TV Suche</String>
     <String id="100748" prefix="Mein ">Programm-Info</String>
     <String id="100749" prefix="Mein ">TV/Kein Signal</String>
     <String id="100750" prefix="Meine ">Rezepte</String>
@@ -1864,6 +1866,6 @@
     <String id="200068">Keine Verbindung zur Datenbank</String>
     <String id="200069">Alle nötigen TCP/IP Ports verfügbar</String>
     <String id="200070">Bitte die Firewall überprüfen</String>
-	<String id="200071">Diesen Ordner inkl. Unterordner löschen?</String>	
+    <String id="200071">Diesen Ordner inkl. Unterordner löschen?</String>
   </Section>
 </Language>
