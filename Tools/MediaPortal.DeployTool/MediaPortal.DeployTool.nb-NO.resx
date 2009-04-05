@@ -524,6 +524,9 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
   </data>
   <data name="Upgrade_note" xml:space="preserve">
     <value>NB! Du kan ikke oppgradere fra en SVN versjon,
-       de er kun ment for testing.</value>
+       siden de er kun ment for testing.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Oppgradere-&gt;Innstallere</value>
   </data>
 </root>
