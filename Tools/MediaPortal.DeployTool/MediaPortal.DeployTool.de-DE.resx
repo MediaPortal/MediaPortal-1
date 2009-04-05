@@ -208,7 +208,7 @@ und integriert sich völlig transparent in die Oberfläche von MediaPortal.</val
     <value>Es wird nur der MediaPortal TV-Server installiert. 
 Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
+  <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Durchsuchen</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
@@ -373,9 +373,6 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Manueller Download</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Durchsuchen</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Sie müssen einen gültigen Installationspfad für die MediaPortal Installation eintragen</value>
   </data>
@@ -387,9 +384,6 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Wählen Sie das Installationsverzeichnis für die MediaPortal Installation.</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Durchsuchen</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Windows Firewall für externen Zugriff auf den TV-Server konfigurieren</value>
@@ -496,6 +490,9 @@ Fortsetzung erfolgt auf eigenes Risiko!</value>
     <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
 Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
   </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Übersprungen</value>
+  </data>
   <data name="Exit_Installation" xml:space="preserve">
     <value>Installation wirklich abbrechen?</value>
   </data>
@@ -505,16 +502,29 @@ Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployT
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Bitte wählen sie die Einstellungen für den Download:</value>
   </data>
-  <data name="Install_stateSkipped" xml:space="preserve">
-    <value>Übersprungen</value>
-  </data>
-  <data name="MainWindow_browseButton" xml:space="preserve">
-    <value>Durchsuchen</value>
-  </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
     <value>Keine Internetverbindung gefunden! Zum Fortführen der Installation wird eine Internetverbindung benötigt.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Auf dem angegebenen Laufwerk ist nicht ausreichend Speicherplatz vorhanden! Zur Installation von MediaPortal werden {0} MB Speicherplatz benötigt.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} ist installiert.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (SVN Version {1}) ist installiert.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Neuinstallation</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Bestehende Installation auf Version {0} aktualisieren</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>Achtung: Eine Aktualisierung basierend auf der Installation
+einer SVN Version ist nicht möglich.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Aktualisierung-&gt;Installation</value>
   </data>
 </root>
