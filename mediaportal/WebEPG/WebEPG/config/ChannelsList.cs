@@ -166,14 +166,16 @@ namespace MediaPortal.EPG.config
       bestCost = MAX_COST + 1;
       for (int i = 0; i < channels.Count; i++)
       {
-        ch = (ChannelGrabberInfo) channels[i];
-        if (Name == ch.FullName)
+        ch = (ChannelGrabberInfo)channels[i];
+        if (ch.GrabberList == null)
+          continue;
+        if (Name.Equals(ch.FullName, StringComparison.OrdinalIgnoreCase))
         {
           retChan = i;
           break;
         }
 
-        if (ch.FullName.IndexOf(Name) != -1)
+        if (ch.FullName.IndexOf(Name, StringComparison.OrdinalIgnoreCase) != -1)
         {
           retChan = i;
           break;
@@ -212,7 +214,7 @@ namespace MediaPortal.EPG.config
         bestCost = MAX_COST + 1;
         for (int i = 0; i < channels.Count; i++)
         {
-          ch = (ChannelGrabberInfo) channels[i];
+          ch = (ChannelGrabberInfo)channels[i];
           if (NameList[k] == ch.FullName)
           {
             retList[k] = ch;
@@ -331,9 +333,9 @@ namespace MediaPortal.EPG.config
       GrabberConfigFile grabber;
       try
       {
-        XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
+        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
         TextReader r = new StreamReader(file.FullName);
-        grabber = (GrabberConfigFile) s.Deserialize(r);
+        grabber = (GrabberConfigFile)s.Deserialize(r);
       }
       catch (InvalidOperationException)
       {
