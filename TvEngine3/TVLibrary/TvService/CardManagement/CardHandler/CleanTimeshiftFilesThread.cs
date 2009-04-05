@@ -73,9 +73,8 @@ namespace TvService
             Log.Write("card:   deleted file {0}", files[i]);
           }
         }
-      } catch (Exception ex)
+      } catch 
       {
-        Log.Write(ex);
         return false;
       }
       return true;
