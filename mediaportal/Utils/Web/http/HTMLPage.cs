@@ -269,21 +269,25 @@ namespace MediaPortal.Utils.Web
           }
         }
 
+        GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
         // Encoding: depends on selected page
-        if (_strPageSource == "" || strEncode.ToLower() != _defaultEncode)
+        if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
         {
           try
           {
             encode = System.Text.Encoding.GetEncoding(strEncode);
             _strPageSource = encode.GetString(pageData);
           }
-          catch (ArgumentException)
+          catch (System.ArgumentException e)
           {
+            GlobalServiceProvider.Get<ILog>().Error(e);
           }
         }
         return true;
       }
       _error = Page.GetError();
+      if (!string.IsNullOrEmpty(_error))
+        GlobalServiceProvider.Get<ILog>().Error("HTMLPage: GetInternal error: {0}", _error);
       return false;
     }
 
