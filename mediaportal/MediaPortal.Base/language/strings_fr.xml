@@ -687,6 +687,9 @@
     <String id="810">Carte</String>
     <String id="820">Supprimer l'enregistrement non vu ?</String>
     <String id="830">Enlever statut déjà vu</String>
+    <String id="831">Ejecter le périphérique</String>
+    <String id="832">Ejection impossible:</String>
+    <String id="833">Le périphérique peut être retiré</String>
     <String id="850" prefix="Mon ">Réveil</String>
     <String id="851">Liste</String>
     <String id="852">Alarme active</String>
@@ -954,6 +957,7 @@
     <String id="1448">Ne rien sélectionner</String>
     <String id="1449">Arrêter l'enregistrement</String>
     <String id="1450">Etes-vous sûr de vouloir arrêter l'enregistrement ?</String>
+    <String id="1451">Impossible de lire</String>
     <String id="1499">Pas de signal</String>
     <String id="1500">Pas de timeshifting</String>
     <String id="1501">Carte désactivée</String>
@@ -1408,6 +1412,7 @@
     <String id="9131">Editeur d'icône</String>
     <String id="9132">Activer l'égaliseur</String>
     <String id="9133">Apparence de l'égaliseur</String>
+    <String id="9134">Lisser l'égaliseur</String>
     <String id="9135">Démarrage différé</String>
     <String id="9136">Durée du différé</String>
     <String id="9137">Afficher le titre</String>
@@ -1465,6 +1470,23 @@
     <String id="13033">Les lancés récemment</String>
     <String id="13034">Titre</String>
     <String id="13041">Affiche Infos</String>
+    <String id="14001">Extensions</String>
+    <String id="14002">Vues</String>
+    <String id="14003">Extensions installées</String>
+    <String id="14004">Extensions en ligne</String>
+    <String id="14005">Installer l'extension</String>
+    <String id="14006">Désinstaller l'extension</String>
+    <String id="14007">Réinstaller l'extension</String>
+    <String id="14008">Annuler la dernière action</String>
+    <String id="14009">Cette action sera prise en compte au prochain démarrage</String>
+    <String id="14010">Télécharger l'extension</String>
+    <String id="14011">Choisir une option</String>
+    <String id="14012">Version de MP non supportée ! (version {0} requise)</String>
+    <String id="14013">Voulez-vous continuer ?</String>
+    <String id="14014">Mise à jour en ligne</String>
+    <String id="14015">Mises à jour</String>
+    <String id="14016">Trier par: téléchargements</String>
+    <String id="14017">Trier par: popularité</String>
     <String id="16001">Mixage de soirée</String>
     <String id="19001" prefix="Mon ">Tetris</String>
     <String id="19002">Nouvelle partie</String>
@@ -1719,6 +1741,8 @@
     <String id="100770">Explorateur</String>
     <String id="101000">Clavier</String>
     <String id="101002">Clavier virtuel</String>
+    <String id="101003">Clavier Web virtuel</String>
+    <String id="101004">Clavier SMS virtuel</String>
     <String id="102000">Boîte de sélection</String>
     <String id="102001" prefix="Ma ">Musique/info</String>
     <String id="102002">Boîte OK</String>
@@ -1747,7 +1771,11 @@
     <String id="103007" prefix="Mon ">TV/Zap OSD</String>
     <String id="103009" prefix="Mon ">TV/Mini EPG</String>
     <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
+    <String id="103012">Détails des réglages TV</String>
     <String id="104711" prefix="Mon ">Wikipedia</String>
+    <String id="105000">Alarme</String>
+    <String id="105001">Alarme - détails de l'alarme</String>
+    <String id="105002">Alarme - durée avant arrêt</String>
     <String id="105900" prefix="Mes ">Bandes Annonces</String>
     <String id="106666">Attente mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
@@ -1829,5 +1857,6 @@
     <String id="200068">Impossible de se connecter à la base de données</String>
     <String id="200069">Tous les ports IP semblent être corrects</String>
     <String id="200070">Veuillez vérifier la configuration du pare-feu</String>
+    <String id="200071">Supprimer ce dossier et tous les sous-dossiers ?</String>
   </Section>
 </Language>
