@@ -89,7 +89,7 @@ namespace MediaPortal.Utils.Time
       if (_overMidnight)
       {
         if (_start < checkTime && checkTime.Hour < 24 ||
-            _end > checkTime && checkTime.Hour > 0)
+            _end > checkTime && checkTime.Hour >= 0)
         {
           return true;
         }
