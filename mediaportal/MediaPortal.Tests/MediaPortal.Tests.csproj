@@ -82,6 +82,8 @@
     <Compile Include="MockObjects\NoLog.cs" />
     <Compile Include="TagReader\TestTagReader.cs" />
     <Compile Include="Utils\Services\ServiceTest.cs" />
+    <Compile Include="Utils\Time\BasicTimeTest.cs" />
+    <Compile Include="Utils\Time\TimeRangeTest.cs" />
     <Compile Include="Utils\Time\WorldDateTimeTest.cs" />
     <Compile Include="Utils\Web\HtmlProfilerTest.cs" />
     <Compile Include="Utils\Web\HtmlSectionParserTest.cs" />
