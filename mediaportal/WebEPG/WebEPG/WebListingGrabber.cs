@@ -490,20 +490,19 @@ namespace MediaPortal.WebEPG
 
       listingCount = _parser.ParseUrl(request);
 
-      if (listingCount == 0) // && _maxListingCount == 0)
+      if (listingCount == 0)
       {
         if (_grabber.Listing.SearchParameters.MaxListingCount == 0 ||
             (_grabber.Listing.SearchParameters.MaxListingCount != 0 && _reqBuilder.Offset == 0))
         {
           _log.Info(LogType.WebEPG, "WebEPG: No Listings Found");
-          _reqBuilder.AddDays(1); // _GrabDay++;
+          //_reqBuilder.AddDays(1); -- removed because adding double days if continuing on error. 5/3/09
           error = true;
         }
         else
         {
           _log.Info(LogType.WebEPG, "WebEPG: Listing Count 0");
         }
-        //_GrabDay++;
       }
       else
       {
@@ -536,7 +535,7 @@ namespace MediaPortal.WebEPG
                     programCount, listingCount, _discarded);
         }
 
-        if (_timeControl.GrabDay > _maxGrabDays) //_GrabDay > _maxGrabDays)
+        if (_timeControl.GrabDay > _maxGrabDays)
         {
           bMore = false;
         }
