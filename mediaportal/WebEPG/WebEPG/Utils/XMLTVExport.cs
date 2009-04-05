@@ -26,6 +26,7 @@
 using System.IO;
 using System.Text;
 using System.Xml;
+using System;
 using MediaPortal.TV.Database;
 
 namespace MediaPortal.WebEPG
@@ -87,10 +88,12 @@ namespace MediaPortal.WebEPG
           program.Title != string.Empty)
       {
         _writer.WriteStartElement("programme");
-        _writer.WriteAttributeString("start", program.Start.ToString());
+        TimeSpan t = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now);
+        string tzOff = " " + t.Hours.ToString("+00;-00") + t.Minutes.ToString("00");
+        _writer.WriteAttributeString("start", program.Start.ToString() + tzOff);
         if (program.End != 0)
         {
-          _writer.WriteAttributeString("stop", program.End.ToString());
+          _writer.WriteAttributeString("stop", program.End.ToString() + tzOff);
         }
         _writer.WriteAttributeString("channel", name + "-" + channelid);
 
