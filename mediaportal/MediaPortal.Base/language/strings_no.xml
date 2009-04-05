@@ -1733,6 +1733,8 @@
     <String id="100707" prefix="Min ">EPG -&gt; Kanal fletting</String>
     <String id="100708" prefix="Mine ">Skip step-innstillinger</String>
     <String id="100709" prefix="Mine ">TV server-innstillinger</String>
+    <String id="100746">TV Søke typer</String>
+    <String id="100747">TV Søk</String>
     <String id="100748" prefix="Min ">Programinfo</String>
     <String id="100749" prefix="Min ">TV/Ingen signal</String>
     <String id="100750" prefix="Mine ">Oppskrifter</String>
