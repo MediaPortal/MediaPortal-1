@@ -128,7 +128,7 @@ namespace MediaPortal.Utils.Web
       }
 
       // create a new IParserData object from the type and arguments given to the constructor
-      IParserData sectionData = (IParserData) Activator.CreateInstance(_dataType, _dataArgs);
+      IParserData sectionData = (IParserData)Activator.CreateInstance(_dataType, _dataArgs);
       if (_sectionParser.ParseSection(sectionSource, ref sectionData))
       {
         return sectionData;
@@ -327,7 +327,7 @@ namespace MediaPortal.Utils.Web
       if ((start = link.IndexOf("(")) != -1)
       {
         args = 0;
-        param = new int[link.Length - start,2];
+        param = new int[link.Length - start, 2];
         param[0, 0] = start + 1;
         for (int i = 0; i < link.Length - start; i++)
         {
