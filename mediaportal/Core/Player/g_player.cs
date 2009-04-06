@@ -1914,8 +1914,8 @@ namespace MediaPortal.Player
         {
           double dTime = (int)_currentStep + _player.CurrentPosition;
           Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
-          if (dTime > _player.Duration) dTime = _player.Duration;  
-          if (IsTV && (dTime+3 > _player.Duration)) dTime = _player.Duration-3 ; // Margin for live Tv
+          if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;  
+          if (IsTV && (dTime+3 > _player.Duration)) dTime = _player.Duration - 3 ; // Margin for live Tv
           if (dTime < 0) dTime = 0d;
 
           Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d),IsTV);
