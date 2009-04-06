@@ -30,23 +30,23 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class VCRedistChecker : IInstallationPackage
+  class VCRedist2008Checker : IInstallationPackage
   {
     public string GetDisplayName()
     {
-      return "MS Visual C++ 2005 SP1 Redist";
+      return "MS Visual C++ 2008 Redist";
     }
 
     public bool Download()
     {
-      const string prg = "VCRedist";
+      const string prg = "VCRedist2008";
       string FileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
       DialogResult result = Utils.RetryDownloadFile(FileName, prg);
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("VCRedist", "FILE"), "/Q");
+      Process setup = Process.Start(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadString("VCRedist2008", "FILE"), "/Q");
       try
       {
         if (setup != null)
@@ -62,7 +62,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     }
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{7299052b-02a4-4627-81f2-1818da5d550d}");
+      Utils.UninstallMSI("{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}");
       return true;
     }
 
@@ -70,12 +70,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       CheckResult result;
       result.needsDownload = true;
-      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist", "FILE");
+      string fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString("VCRedist2008", "FILE");
       FileInfo vcRedistFile = new FileInfo(fileName);
 
       if (vcRedistFile.Exists && vcRedistFile.Length != 0)
         result.needsDownload = false;
-      
+
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
@@ -83,13 +83,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
       //Manifests for Vista
-      const string ManifestCRT_Vista = "x86_microsoft.vc80.crt_1fc8b3b9a1e18e3b_8.0.50727.762_none_10b2f55f9bffb8f8.manifest";
-      const string ManifestMFC_Vista = "x86_microsoft.vc80.mfc_1fc8b3b9a1e18e3b_8.0.50727.762_none_0c178a139ee2a7ed.manifest";
-      const string ManifestATL_Vista = "x86_microsoft.vc80.atl_1fc8b3b9a1e18e3b_8.0.50727.762_none_11ecb0ab9b2caf3c.manifest";
+      const string ManifestCRT_Vista = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.1_none_e163563597edeada.manifest";
+      const string ManifestMFC_Vista = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.1_none_dcc7eae99ad0d9cf.manifest";
+      const string ManifestATL_Vista = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.21022.8_none_bdf22a22ab9e15d5.manifest";
       //Manifests for XP
-      const string ManifestCRT_XP = "x86_Microsoft.VC80.CRT_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_6b128700.manifest";
-      const string ManifestMFC_XP = "x86_Microsoft.VC80.MFC_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_3bf8fa05.manifest";
-      const string ManifestATL_XP = "x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest";
+      const string ManifestCRT_XP = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_6f74963e.manifest";
+      const string ManifestMFC_XP = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_405b0943.manifest";
+      const string ManifestATL_XP = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.21022.8_x-ww_312cf0e9.manifest";
 
       if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) && File.Exists(ManifestDir + ManifestATL_Vista))
         result.state = CheckState.INSTALLED;

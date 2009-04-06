@@ -34,6 +34,16 @@
     <FILE>vcredist_x86.exe</FILE>
     <TYPE>Automatic</TYPE>
   </VCRedist>
+  <VCRedist2005>
+    <URL>http://install.team-mediaportal.com/VcRedist2005</URL>
+    <FILE>vcredist_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </VCRedist2005>
+  <VCRedist2008>
+    <URL>http://install.team-mediaportal.com/VcRedist2008</URL>
+    <FILE>vcredist_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </VCRedist2008>
   <WindowsMediaPlayer>
     <URL>http://install.team-mediaportal.com/WindowsMediaPlayer</URL>
     <FILE>wmp11-windowsxp-x86.exe</FILE>

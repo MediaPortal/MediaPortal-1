@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InstallationChecks\VCRedist2008Checker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
@@ -97,7 +98,7 @@
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
     <Compile Include="InstallationChecks\OldPackagesChecker.cs" />
-    <Compile Include="InstallationChecks\VCRedistChecker.cs" />
+    <Compile Include="InstallationChecks\VCRedist2005Checker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
