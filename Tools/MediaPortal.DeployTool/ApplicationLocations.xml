@@ -36,12 +36,12 @@
   </VCRedist>
   <VCRedist2005>
     <URL>http://install.team-mediaportal.com/VcRedist2005</URL>
-    <FILE>vcredist2005_x86.exe.exe</FILE>
+    <FILE>vcredist2005_x86.exe</FILE>
     <TYPE>Automatic</TYPE>
   </VCRedist2005>
   <VCRedist2008>
     <URL>http://install.team-mediaportal.com/VcRedist2008</URL>
-    <FILE>vcredist2008_x86.exe.exe</FILE>
+    <FILE>vcredist2008_x86.exe</FILE>
     <TYPE>Automatic</TYPE>
   </VCRedist2008>
   <WindowsMediaPlayer>
