@@ -16,7 +16,7 @@
   </MSSQLExpress64>
   <MySQL>
     <URL>http://install.team-mediaportal.com/MySql</URL>
-    <FILE>mysql-essential-5.0.51b-win32.msi</FILE>
+    <FILE>mysql-essential-5.0.77-win32.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL>
   <MediaPortal>
