@@ -11,7 +11,7 @@
   </MSSQLExpress32>
   <MSSQLExpress64>
     <URL>http://install.team-mediaportal.com/Sql2005_64bit</URL>
-    <FILE>sqlexpr.exe</FILE>
+    <FILE>sqlexpr64.exe</FILE>
     <TYPE>Manual</TYPE>
   </MSSQLExpress64>
   <MySQL>
@@ -36,12 +36,12 @@
   </VCRedist>
   <VCRedist2005>
     <URL>http://install.team-mediaportal.com/VcRedist2005</URL>
-    <FILE>vcredist_x86.exe</FILE>
+    <FILE>vcredist2005_x86.exe.exe</FILE>
     <TYPE>Automatic</TYPE>
   </VCRedist2005>
   <VCRedist2008>
     <URL>http://install.team-mediaportal.com/VcRedist2008</URL>
-    <FILE>vcredist_x86.exe</FILE>
+    <FILE>vcredist2008_x86.exe.exe</FILE>
     <TYPE>Automatic</TYPE>
   </VCRedist2008>
   <WindowsMediaPlayer>
