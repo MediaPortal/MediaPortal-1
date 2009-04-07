@@ -434,7 +434,7 @@ Var TempInstallLog
 
 ;======================================   3rd PARTY APPLICATION TESTs
 
-!macro _VCRedistIsInstalled _a _b _t _f
+!macro _VCRedist2005IsInstalled _a _b _t _f
 
   ClearErrors
   ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
@@ -460,7 +460,35 @@ Var TempInstallLog
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC80.ATL_1fc8b3b9a1e18e3b_8.0.50727.762_x-ww_cbb27474.manifest" 0 `${_f}`
   Goto `${_t}`
 !macroend
-!define VCRedistIsInstalled `"" VCRedistIsInstalled ""`
+!define VCRedist2005IsInstalled `"" VCRedist2005IsInstalled ""`
+
+!macro _VCRedist2008IsInstalled _a _b _t _f
+
+  ClearErrors
+  ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+  IfErrors `${_f}`
+
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '5.1' lbl_winnt_XP
+  StrCmp $R1 '5.2' lbl_winnt_2003
+  StrCmp $R1 '6.0' lbl_winnt_vista `${_f}`
+
+
+  lbl_winnt_vista:
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.1_none_e163563597edeada.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.1_none_dcc7eae99ad0d9cf.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.21022.8_none_bdf22a22ab9e15d5.manifest" 0 `${_f}`
+  Goto `${_t}`
+
+  lbl_winnt_2003:
+  lbl_winnt_XP:
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_6f74963e.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.1_x-ww_405b0943.manifest" 0 `${_f}`
+  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.21022.8_x-ww_312cf0e9.manifest" 0 `${_f}`
+  Goto `${_t}`
+!macroend
+!define VCRedist2008IsInstalled `"" VCRedist2008IsInstalled ""`
 
 !macro _dotNetIsInstalled _a _b _t _f
   SetRegView 32
@@ -596,7 +624,8 @@ LangString TEXT_MSGBOX_MORE_INFO                  ${LANG_ENGLISH} "Do you want t
 LangString TEXT_MSGBOX_ERROR_WIN                  ${LANG_ENGLISH} "Your operating system is not supported by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_WIN_NOT_RECOMMENDED  ${LANG_ENGLISH} "Your operating system is not recommended by $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_ADMIN                ${LANG_ENGLISH} "You need administration rights to install $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
-LangString TEXT_MSGBOX_ERROR_VCREDIST             ${LANG_ENGLISH} "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_VCREDIST_2005        ${LANG_ENGLISH} "Microsoft Visual C++ 2005 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
+LangString TEXT_MSGBOX_ERROR_VCREDIST_2008        ${LANG_ENGLISH} "Microsoft Visual C++ 2008 SP1 Redistributable Package (x86) is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_DOTNET20             ${LANG_ENGLISH} "Microsoft .Net Framework 2.0 SP2 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_DOTNET20_SP          ${LANG_ENGLISH} "Microsoft .Net Framework 2.0 is installed.$\r$\nBut Service Pack 2 is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
 LangString TEXT_MSGBOX_ERROR_DOTNET35             ${LANG_ENGLISH} "Microsoft .Net Framework 3.5 SP1 is not installed.$\r$\nIt is a requirement for $(^Name).$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)$\r$\n$\r$\n$(TEXT_MSGBOX_MORE_INFO)"
@@ -1097,10 +1126,15 @@ DeleteRegKey HKCU "Software\MediaPortal"
   ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
   ; check if VC Redist 2005 SP1 is installed
-  ${IfNot} ${VCRedistIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST)" IDNO +2
+  ${IfNot} ${VCRedist2005IsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2005)" IDNO +2
     ExecShell open "${WEB_REQUIREMENTS}"
     Abort
+  ; check if VC Redist 2008 SP1 is installed
+  #${ElseIfNot} ${VCRedist2008IsInstalled}
+  #  MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_VCREDIST_2008)" IDNO +2
+  #  ExecShell open "${WEB_REQUIREMENTS}"
+  #  Abort
   ${EndIf}
 
   ${LOG_TEXT} "INFO" "============================"
