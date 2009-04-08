@@ -23,6 +23,8 @@
 
 #endregion
 
+using System;
+using System.ServiceProcess;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -75,6 +77,33 @@ namespace MediaPortal.DeployTool.InstallationChecks
       keySql.Close();
     }
 
+    private static void StartStopService(bool start)
+    {
+      string[] services = { "MSSQL$SQLEXPRESS", "SQLBrowser" };
+      foreach (string service in services)
+      {
+        ServiceController ctrl = new ServiceController(service);
+        try
+        {
+          if (start)
+          {
+            ctrl.Start();
+          }
+          else
+          {
+            ctrl.Stop();
+            ctrl.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+          }
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(String.Format("SQL - service exception during {0}: {1}", start, ex.Message));
+          return;
+        }
+      }
+      return;
+    }
+
     public string GetDisplayName()
     {
       return "MS SQL Express 2005";
@@ -115,7 +144,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
           if (setup.ExitCode == 0)
           {
             Directory.Delete(tmpPath, true);
+            StartStopService(false);
             FixTcpPort();
+            StartStopService(true);
             return true;
           }
           return false;
