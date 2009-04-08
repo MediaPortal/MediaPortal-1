@@ -527,7 +527,7 @@ namespace SetupTv.Sections
         try
         {
           RemoteControl.Instance.ReloadCardConfiguration(_cardNumber);
-        }catch
+        } catch
         {
           Log.WriteFile("Could not reload card configuration");
         }
@@ -604,8 +604,8 @@ namespace SetupTv.Sections
         {
           if (videoStandardComboBox.SelectedIndex != -1 && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
           {
-            _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard) videoStandardComboBox.SelectedItem;
-          }else
+            _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
+          } else
           {
             _configuration.Graph.Capture.CurrentVideoStandard = AnalogVideoStandard.None;
           }
@@ -716,6 +716,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = false;
         mpButtonScanRadio.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
+        mpButton1.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
         User user = new User();
@@ -728,6 +729,11 @@ namespace SetupTv.Sections
         temp.IsRadio = false;
         temp.IsTv = true;
         RemoteControl.Instance.Tune(ref user, temp, -1);
+        if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
+        {
+          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+          ReCheckSettings();
+        }
         int minChannel = RemoteControl.Instance.MinChannel(_cardNumber);
         int maxChannel = RemoteControl.Instance.MaxChannel(_cardNumber);
         if (maxChannel < 0)
@@ -826,6 +832,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = true;
         mpButtonScanRadio.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
+        mpButton1.Enabled = true;
         _isScanning = false;
         checkButton.Enabled = true;
       }
@@ -866,6 +873,11 @@ namespace SetupTv.Sections
         {
           MessageBox.Show(this, "The Tv Card does not support radio");
           return;
+        }
+        if(string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
+        {
+          _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+          ReCheckSettings();
         }
         Thread scanThread = new Thread(DoRadioScan);
         scanThread.Name = "Analog Radio scan thread";
@@ -922,6 +934,7 @@ namespace SetupTv.Sections
         mpComboBoxSource.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
         mpButtonScanTv.Enabled = false;
+        mpButton1.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
@@ -1001,6 +1014,7 @@ namespace SetupTv.Sections
         mpButtonScanRadio.Enabled = true;
         mpButtonScanTv.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
+        mpButton1.Enabled = true;
         _isScanning = false;
       }
       ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
@@ -1010,6 +1024,26 @@ namespace SetupTv.Sections
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
+      if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
+      {
+        User user = new User();
+        user.CardId = _cardNumber;
+        AnalogChannel temp = new AnalogChannel();
+        temp.TunerSource = TunerInputType.Antenna;
+        temp.VideoSource = AnalogChannel.VideoInputType.Tuner;
+        temp.AudioSource = AnalogChannel.AudioInputType.Tuner;
+        temp.IsRadio = false;
+        temp.IsTv = true;
+        RemoteControl.Instance.Tune(ref user, temp, -1);
+        _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+        if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
+        {
+          MessageBox.Show(this, "The S-Video channels could not be detected.");
+          return;
+        }
+        ReCheckSettings();
+      }
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Dictionary<AnalogChannel.VideoInputType, int> videoPinMap = _configuration.Graph.Crossbar.VideoPinMap;
       AnalogChannel tuningDetail;
@@ -1162,6 +1196,25 @@ namespace SetupTv.Sections
       MessageBox.Show(this, "Channels added.");
     }
 
+    private void ReCheckSettings()
+    {
+      if (!videoStandardComboBox.Enabled)
+      {
+        SetVideoDecoder();
+      }
+      if (!frameRateComboBox.Enabled && !resolutionComboBox.Enabled)
+      {
+        SetStreamConfig();
+      }
+      if (!brightnessScrollbar.Enabled && !contrastScrollbar.Enabled && !hueScrollbar.Enabled &&
+          !saturationScrollbar.Enabled && !sharpnessScrollbar.Enabled && !gammaScrollbar.Enabled &&
+          !colorEnableScrollbar.Enabled && !whiteBalanceScrollbar.Enabled &&
+          !backlightCompensationValue.Enabled)
+      {
+        SetVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
+      }
+    }
+
     private void checkButton_Click(object sender, EventArgs e)
     {
       User user;
@@ -1224,10 +1277,16 @@ namespace SetupTv.Sections
           customValuePeak.Value = _configuration.CustomPeakQualityValue;
           SetBitRateModes();
           SetBitRate();
+          ReCheckSettings();
         } else
         {
           Log.WriteFile("Card doesn't support quality control");
           MessageBox.Show("The used encoder doesn't support quality control.", "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          if(string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
+          {
+            _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
+            ReCheckSettings();
+          }
         }
       } finally
       {
