@@ -81,7 +81,7 @@ Name "MediaPortal Unpacker"
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 Icon "${svn_DeployTool}\Install.ico"
-OutFile "MediaPortalSetup_1.0_SVN${SVN_REVISION}.exe"
+OutFile "MediaPortalSetup_1.1_SVN${SVN_REVISION}.exe"
 InstallDir "$TEMP\MediaPortal Installation"
 
 ;Page directory
